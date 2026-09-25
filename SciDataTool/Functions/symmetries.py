@@ -42,7 +42,7 @@ def rebuild_symmetries_axis(values, symmetries):
     """
     values_new = values
     if "period" in symmetries.keys():
-        for i in range(symmetries.get("period") - 1):
+        for i in range(int(symmetries.get("period")) - 1):
             if len(values) == 1:
                 if "delta" in symmetries.keys():
                     values_new = append(
@@ -58,7 +58,7 @@ def rebuild_symmetries_axis(values, symmetries):
                     )
                 )
     elif "antiperiod" in symmetries.keys():
-        for i in range(symmetries.get("antiperiod") - 1):
+        for i in range(int(symmetries.get("antiperiod")) - 1):
             if len(values) == 1:
                 if "delta" in symmetries.keys():
                     values_new = append(
