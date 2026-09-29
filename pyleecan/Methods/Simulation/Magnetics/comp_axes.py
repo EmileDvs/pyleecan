@@ -38,11 +38,14 @@ def comp_axes(self, output):
         self.is_periodicity_t = False
         if outgeo.per_t_S != 1:
             Nt_tot = axes_dict["time"].get_length(is_oneperiod=False)
+            per_t_S = outgeo.per_t_S
+            if outgeo.is_antiper_t_S:
+                per_t_S *= 2
             self.get_logger().warning(
                 "In Magnetic model, Nt_tot="
                 + str(Nt_tot)
                 + " is not divisible by the machine time periodicity ("
-                + str(outgeo.per_t_S)
+                + str(per_t_S)
                 + "). Time periodicity removed"
             )
 
@@ -54,11 +57,14 @@ def comp_axes(self, output):
         self.is_periodicity_a = False
         if outgeo.per_a != 1:
             Na_tot = axes_dict["angle"].get_length(is_oneperiod=False)
+            per_a = outgeo.per_a
+            if outgeo.is_antiper_a:
+                per_a *= 2
             self.get_logger().warning(
                 "In Magnetic model, Na_tot="
                 + str(Na_tot)
                 + " is not divisible by the machine angular periodicity ("
-                + str(outgeo.per_a)
+                + str(per_a)
                 + "). Angular periodicity removed"
             )
 
