@@ -18,19 +18,14 @@ from .Magnetics import Magnetics
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Simulation.MagFEMM.build_MS_sliced import build_MS_sliced
+except ImportError as error:
+    build_MS_sliced = error
+
+try:
     from ..Methods.Simulation.MagFEMM.comp_flux_airgap import comp_flux_airgap
 except ImportError as error:
     comp_flux_airgap = error
-
-try:
-    from ..Methods.Simulation.MagFEMM.get_path_save import get_path_save
-except ImportError as error:
-    get_path_save = error
-
-try:
-    from ..Methods.Simulation.MagFEMM.solve_FEMM import solve_FEMM
-except ImportError as error:
-    solve_FEMM = error
 
 try:
     from ..Methods.Simulation.MagFEMM.get_meshsolution import get_meshsolution
@@ -38,19 +33,24 @@ except ImportError as error:
     get_meshsolution = error
 
 try:
+    from ..Methods.Simulation.MagFEMM.get_path_save import get_path_save
+except ImportError as error:
+    get_path_save = error
+
+try:
     from ..Methods.Simulation.MagFEMM.get_path_save_fem import get_path_save_fem
 except ImportError as error:
     get_path_save_fem = error
 
 try:
+    from ..Methods.Simulation.MagFEMM.solve_FEMM import solve_FEMM
+except ImportError as error:
+    solve_FEMM = error
+
+try:
     from ..Methods.Simulation.MagFEMM.solve_FEMM_parallel import solve_FEMM_parallel
 except ImportError as error:
     solve_FEMM_parallel = error
-
-try:
-    from ..Methods.Simulation.MagFEMM.build_MS_sliced import build_MS_sliced
-except ImportError as error:
-    build_MS_sliced = error
 
 
 from numpy import isnan
@@ -63,6 +63,17 @@ class MagFEMM(Magnetics):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.MagFEMM.build_MS_sliced
+    if isinstance(build_MS_sliced, ImportError):
+        build_MS_sliced = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MagFEMM method build_MS_sliced: " + str(build_MS_sliced)
+                )
+            )
+        )
+    else:
+        build_MS_sliced = build_MS_sliced
     # cf Methods.Simulation.MagFEMM.comp_flux_airgap
     if isinstance(comp_flux_airgap, ImportError):
         comp_flux_airgap = property(
@@ -75,26 +86,6 @@ class MagFEMM(Magnetics):
         )
     else:
         comp_flux_airgap = comp_flux_airgap
-    # cf Methods.Simulation.MagFEMM.get_path_save
-    if isinstance(get_path_save, ImportError):
-        get_path_save = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MagFEMM method get_path_save: " + str(get_path_save)
-                )
-            )
-        )
-    else:
-        get_path_save = get_path_save
-    # cf Methods.Simulation.MagFEMM.solve_FEMM
-    if isinstance(solve_FEMM, ImportError):
-        solve_FEMM = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MagFEMM method solve_FEMM: " + str(solve_FEMM))
-            )
-        )
-    else:
-        solve_FEMM = solve_FEMM
     # cf Methods.Simulation.MagFEMM.get_meshsolution
     if isinstance(get_meshsolution, ImportError):
         get_meshsolution = property(
@@ -107,6 +98,17 @@ class MagFEMM(Magnetics):
         )
     else:
         get_meshsolution = get_meshsolution
+    # cf Methods.Simulation.MagFEMM.get_path_save
+    if isinstance(get_path_save, ImportError):
+        get_path_save = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MagFEMM method get_path_save: " + str(get_path_save)
+                )
+            )
+        )
+    else:
+        get_path_save = get_path_save
     # cf Methods.Simulation.MagFEMM.get_path_save_fem
     if isinstance(get_path_save_fem, ImportError):
         get_path_save_fem = property(
@@ -119,6 +121,15 @@ class MagFEMM(Magnetics):
         )
     else:
         get_path_save_fem = get_path_save_fem
+    # cf Methods.Simulation.MagFEMM.solve_FEMM
+    if isinstance(solve_FEMM, ImportError):
+        solve_FEMM = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MagFEMM method solve_FEMM: " + str(solve_FEMM))
+            )
+        )
+    else:
+        solve_FEMM = solve_FEMM
     # cf Methods.Simulation.MagFEMM.solve_FEMM_parallel
     if isinstance(solve_FEMM_parallel, ImportError):
         solve_FEMM_parallel = property(
@@ -131,17 +142,6 @@ class MagFEMM(Magnetics):
         )
     else:
         solve_FEMM_parallel = solve_FEMM_parallel
-    # cf Methods.Simulation.MagFEMM.build_MS_sliced
-    if isinstance(build_MS_sliced, ImportError):
-        build_MS_sliced = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MagFEMM method build_MS_sliced: " + str(build_MS_sliced)
-                )
-            )
-        )
-    else:
-        build_MS_sliced = build_MS_sliced
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -167,6 +167,7 @@ class MagFEMM(Magnetics):
         is_set_previous=True,
         is_fast_draw=True,
         is_calc_torque_energy=True,
+        is_separate_meshsolution=False,
         is_remove_slotS=False,
         is_remove_slotR=False,
         is_remove_ventS=False,
@@ -240,6 +241,8 @@ class MagFEMM(Magnetics):
                 is_fast_draw = init_dict["is_fast_draw"]
             if "is_calc_torque_energy" in list(init_dict.keys()):
                 is_calc_torque_energy = init_dict["is_calc_torque_energy"]
+            if "is_separate_meshsolution" in list(init_dict.keys()):
+                is_separate_meshsolution = init_dict["is_separate_meshsolution"]
             if "is_remove_slotS" in list(init_dict.keys()):
                 is_remove_slotS = init_dict["is_remove_slotS"]
             if "is_remove_slotR" in list(init_dict.keys()):
@@ -297,6 +300,7 @@ class MagFEMM(Magnetics):
         self.is_set_previous = is_set_previous
         self.is_fast_draw = is_fast_draw
         self.is_calc_torque_energy = is_calc_torque_energy
+        self.is_separate_meshsolution = is_separate_meshsolution
         # Call Magnetics init
         super(MagFEMM, self).__init__(
             is_remove_slotS=is_remove_slotS,
@@ -369,6 +373,9 @@ class MagFEMM(Magnetics):
         MagFEMM_str += (
             "is_calc_torque_energy = " + str(self.is_calc_torque_energy) + linesep
         )
+        MagFEMM_str += (
+            "is_separate_meshsolution = " + str(self.is_separate_meshsolution) + linesep
+        )
         return MagFEMM_str
 
     def __eq__(self, other):
@@ -415,6 +422,8 @@ class MagFEMM(Magnetics):
         if other.is_fast_draw != self.is_fast_draw:
             return False
         if other.is_calc_torque_energy != self.is_calc_torque_energy:
+            return False
+        if other.is_separate_meshsolution != self.is_separate_meshsolution:
             return False
         return True
 
@@ -672,6 +681,18 @@ class MagFEMM(Magnetics):
                 diff_list.append(name + ".is_calc_torque_energy" + val_str)
             else:
                 diff_list.append(name + ".is_calc_torque_energy")
+        if other._is_separate_meshsolution != self._is_separate_meshsolution:
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_separate_meshsolution)
+                    + ", other="
+                    + str(other._is_separate_meshsolution)
+                    + ")"
+                )
+                diff_list.append(name + ".is_separate_meshsolution" + val_str)
+            else:
+                diff_list.append(name + ".is_separate_meshsolution")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -705,6 +726,7 @@ class MagFEMM(Magnetics):
         S += getsizeof(self.is_set_previous)
         S += getsizeof(self.is_fast_draw)
         S += getsizeof(self.is_calc_torque_energy)
+        S += getsizeof(self.is_separate_meshsolution)
         return S
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
@@ -762,6 +784,7 @@ class MagFEMM(Magnetics):
         MagFEMM_dict["is_set_previous"] = self.is_set_previous
         MagFEMM_dict["is_fast_draw"] = self.is_fast_draw
         MagFEMM_dict["is_calc_torque_energy"] = self.is_calc_torque_energy
+        MagFEMM_dict["is_separate_meshsolution"] = self.is_separate_meshsolution
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         MagFEMM_dict["__class__"] = "MagFEMM"
@@ -801,6 +824,7 @@ class MagFEMM(Magnetics):
         is_set_previous_val = self.is_set_previous
         is_fast_draw_val = self.is_fast_draw
         is_calc_torque_energy_val = self.is_calc_torque_energy
+        is_separate_meshsolution_val = self.is_separate_meshsolution
         is_remove_slotS_val = self.is_remove_slotS
         is_remove_slotR_val = self.is_remove_slotR
         is_remove_ventS_val = self.is_remove_ventS
@@ -843,6 +867,7 @@ class MagFEMM(Magnetics):
             is_set_previous=is_set_previous_val,
             is_fast_draw=is_fast_draw_val,
             is_calc_torque_energy=is_calc_torque_energy_val,
+            is_separate_meshsolution=is_separate_meshsolution_val,
             is_remove_slotS=is_remove_slotS_val,
             is_remove_slotR=is_remove_slotR_val,
             is_remove_ventS=is_remove_ventS_val,
@@ -888,6 +913,7 @@ class MagFEMM(Magnetics):
         self.is_set_previous = None
         self.is_fast_draw = None
         self.is_calc_torque_energy = None
+        self.is_separate_meshsolution = None
         # Set to None the properties inherited from Magnetics
         super(MagFEMM, self)._set_None()
 
@@ -1254,6 +1280,24 @@ class MagFEMM(Magnetics):
         fget=_get_is_calc_torque_energy,
         fset=_set_is_calc_torque_energy,
         doc="""True to calculate torque from integration of energy derivate over rotor elements
+
+        :Type: bool
+        """,
+    )
+
+    def _get_is_separate_meshsolution(self):
+        """getter of is_separate_meshsolution"""
+        return self._is_separate_meshsolution
+
+    def _set_is_separate_meshsolution(self, value):
+        """setter of is_separate_meshsolution"""
+        check_var("is_separate_meshsolution", value, "bool")
+        self._is_separate_meshsolution = value
+
+    is_separate_meshsolution = property(
+        fget=_get_is_separate_meshsolution,
+        fset=_set_is_separate_meshsolution,
+        doc="""To separate FEA and mesh by lamination to account for different periodicities between stator and rotor
 
         :Type: bool
         """,

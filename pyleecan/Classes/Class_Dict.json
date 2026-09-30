@@ -2062,7 +2062,7 @@
                 "name": "Jrms_max",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
@@ -8225,13 +8225,13 @@
         "desc": "Magnetic module: Finite Element model with FEMM",
         "is_internal": false,
         "methods": [
+            "build_MS_sliced",
             "comp_flux_airgap",
-            "get_path_save",
-            "solve_FEMM",
             "get_meshsolution",
+            "get_path_save",
             "get_path_save_fem",
-            "solve_FEMM_parallel",
-            "build_MS_sliced"
+            "solve_FEMM",
+            "solve_FEMM_parallel"
         ],
         "mother": "Magnetics",
         "name": "MagFEMM",
@@ -8435,6 +8435,17 @@
                 "type": "bool",
                 "unit": "",
                 "value": 1
+            },
+            {
+                "as_dict": "",
+                "desc": "To separate FEA and mesh by lamination to account for different periodicities between stator and rotor",
+                "max": "",
+                "min": "",
+                "name": "is_separate_meshsolution",
+                "size": "0",
+                "type": "bool",
+                "unit": "",
+                "value": 0
             }
         ]
     },
@@ -11269,7 +11280,7 @@
                 "name": "Jrms",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
@@ -11888,9 +11899,9 @@
             "clean",
             "comp_emf",
             "comp_power",
+            "comp_torque_MT",
             "get_demag",
-            "store",
-            "comp_torque_MT"
+            "store"
         ],
         "mother": "",
         "name": "OutMag",
@@ -12005,7 +12016,7 @@
                 "size": "",
                 "type": "MeshSolution",
                 "unit": "",
-                "value": ""
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12094,6 +12105,17 @@
                 "type": "float",
                 "unit": "N.m",
                 "value": 0.001
+            },
+            {
+                "as_dict": "",
+                "desc": "List of FEA software mesh and solution per lamination",
+                "max": "",
+                "min": "",
+                "name": "meshsolution_dict",
+                "size": "",
+                "type": "{MeshSolution}",
+                "unit": "",
+                "value": null
             }
         ]
     },
