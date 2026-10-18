@@ -13,12 +13,6 @@ def plot_mesh(
     is_show_fig=True,
     is_show_grid=False,
     win_title=None,
-    color="grey",
-    opacity=1,
-    show_edges=True,
-    edge_color="white",
-    line_width=1,
-    indices_cell=None,
 ):
     """Plot the mesh using pyvista plotter.
 
@@ -40,18 +34,6 @@ def plot_mesh(
         True to show grid
     win_title : str
         To set the name of the plot window
-    color : str
-        To set the background element color of the whole mesh
-    opacity : float
-        To set the opacity of the mesh plot
-    show_edges : bool
-        To set the name of the plot window
-    edge_color : str
-        To set the edge color of mesh elements
-    line_width : float
-        To set the name of the plot window
-    indices_cell : str
-        list of the cells to extract (optional)
 
     Returns
     -------
@@ -69,17 +51,17 @@ def plot_mesh(
     if isinstance(mesh_obj, MeshMat):
         new_mesh = mesh_obj.copy()
         new_mesh.renum()
-        mesh = new_mesh.get_mesh_pv(indices=indices, indices_cell=indices_cell)
+        mesh = new_mesh.get_mesh_pv(indices=indices)
     else:
-        mesh = mesh_obj.get_mesh_pv(indices=indices, indices_cell=indices_cell)
+        mesh = mesh_obj.get_mesh_pv(indices=indices)
 
     pv_plotter.add_mesh(
         mesh,
-        color=color,
-        opacity=opacity,
-        show_edges=show_edges,
-        edge_color=edge_color,
-        line_width=line_width,
+        color="grey",
+        opacity=1,
+        show_edges=True,
+        edge_color="white",
+        line_width=1,
     )
 
     if is_show_grid:
