@@ -18,6 +18,18 @@ from .Magnetics import Magnetics
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Simulation.MagFEMM.build_meshsolution import build_meshsolution
+except ImportError as error:
+    build_meshsolution = error
+
+try:
+    from ..Methods.Simulation.MagFEMM.build_meshsolution_dict import (
+        build_meshsolution_dict,
+    )
+except ImportError as error:
+    build_meshsolution_dict = error
+
+try:
     from ..Methods.Simulation.MagFEMM.build_MS_sliced import build_MS_sliced
 except ImportError as error:
     build_MS_sliced = error
@@ -28,9 +40,9 @@ except ImportError as error:
     comp_flux_airgap = error
 
 try:
-    from ..Methods.Simulation.MagFEMM.get_meshsolution import get_meshsolution
+    from ..Methods.Simulation.MagFEMM.get_FEMM_mesh_results import get_FEMM_mesh_results
 except ImportError as error:
-    get_meshsolution = error
+    get_FEMM_mesh_results = error
 
 try:
     from ..Methods.Simulation.MagFEMM.get_path_save import get_path_save
@@ -63,6 +75,30 @@ class MagFEMM(Magnetics):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.MagFEMM.build_meshsolution
+    if isinstance(build_meshsolution, ImportError):
+        build_meshsolution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MagFEMM method build_meshsolution: "
+                    + str(build_meshsolution)
+                )
+            )
+        )
+    else:
+        build_meshsolution = build_meshsolution
+    # cf Methods.Simulation.MagFEMM.build_meshsolution_dict
+    if isinstance(build_meshsolution_dict, ImportError):
+        build_meshsolution_dict = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MagFEMM method build_meshsolution_dict: "
+                    + str(build_meshsolution_dict)
+                )
+            )
+        )
+    else:
+        build_meshsolution_dict = build_meshsolution_dict
     # cf Methods.Simulation.MagFEMM.build_MS_sliced
     if isinstance(build_MS_sliced, ImportError):
         build_MS_sliced = property(
@@ -86,18 +122,18 @@ class MagFEMM(Magnetics):
         )
     else:
         comp_flux_airgap = comp_flux_airgap
-    # cf Methods.Simulation.MagFEMM.get_meshsolution
-    if isinstance(get_meshsolution, ImportError):
-        get_meshsolution = property(
+    # cf Methods.Simulation.MagFEMM.get_FEMM_mesh_results
+    if isinstance(get_FEMM_mesh_results, ImportError):
+        get_FEMM_mesh_results = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MagFEMM method get_meshsolution: "
-                    + str(get_meshsolution)
+                    "Can't use MagFEMM method get_FEMM_mesh_results: "
+                    + str(get_FEMM_mesh_results)
                 )
             )
         )
     else:
-        get_meshsolution = get_meshsolution
+        get_FEMM_mesh_results = get_FEMM_mesh_results
     # cf Methods.Simulation.MagFEMM.get_path_save
     if isinstance(get_path_save, ImportError):
         get_path_save = property(
@@ -154,7 +190,6 @@ class MagFEMM(Magnetics):
         type_calc_leakage=0,
         file_name="",
         FEMM_dict_enforced=-1,
-        is_get_meshsolution=False,
         is_save_meshsolution_as_file=False,
         is_sliding_band=True,
         transform_list=-1,
@@ -167,7 +202,7 @@ class MagFEMM(Magnetics):
         is_set_previous=True,
         is_fast_draw=True,
         is_calc_torque_energy=True,
-        is_separate_meshsolution=False,
+        is_refine_mesh_hole=False,
         is_remove_slotS=False,
         is_remove_slotR=False,
         is_remove_ventS=False,
@@ -187,6 +222,8 @@ class MagFEMM(Magnetics):
         is_current_harm=True,
         T_mag=20,
         is_periodicity_rotor=False,
+        is_get_meshsolution=False,
+        type_meshsolution=0,
         init_dict=None,
         init_str=None,
     ):
@@ -215,8 +252,6 @@ class MagFEMM(Magnetics):
                 file_name = init_dict["file_name"]
             if "FEMM_dict_enforced" in list(init_dict.keys()):
                 FEMM_dict_enforced = init_dict["FEMM_dict_enforced"]
-            if "is_get_meshsolution" in list(init_dict.keys()):
-                is_get_meshsolution = init_dict["is_get_meshsolution"]
             if "is_save_meshsolution_as_file" in list(init_dict.keys()):
                 is_save_meshsolution_as_file = init_dict["is_save_meshsolution_as_file"]
             if "is_sliding_band" in list(init_dict.keys()):
@@ -241,8 +276,8 @@ class MagFEMM(Magnetics):
                 is_fast_draw = init_dict["is_fast_draw"]
             if "is_calc_torque_energy" in list(init_dict.keys()):
                 is_calc_torque_energy = init_dict["is_calc_torque_energy"]
-            if "is_separate_meshsolution" in list(init_dict.keys()):
-                is_separate_meshsolution = init_dict["is_separate_meshsolution"]
+            if "is_refine_mesh_hole" in list(init_dict.keys()):
+                is_refine_mesh_hole = init_dict["is_refine_mesh_hole"]
             if "is_remove_slotS" in list(init_dict.keys()):
                 is_remove_slotS = init_dict["is_remove_slotS"]
             if "is_remove_slotR" in list(init_dict.keys()):
@@ -281,13 +316,16 @@ class MagFEMM(Magnetics):
                 T_mag = init_dict["T_mag"]
             if "is_periodicity_rotor" in list(init_dict.keys()):
                 is_periodicity_rotor = init_dict["is_periodicity_rotor"]
+            if "is_get_meshsolution" in list(init_dict.keys()):
+                is_get_meshsolution = init_dict["is_get_meshsolution"]
+            if "type_meshsolution" in list(init_dict.keys()):
+                type_meshsolution = init_dict["type_meshsolution"]
         # Set the properties (value check and convertion are done in setter)
         self.Kmesh_fineness = Kmesh_fineness
         self.Kgeo_fineness = Kgeo_fineness
         self.type_calc_leakage = type_calc_leakage
         self.file_name = file_name
         self.FEMM_dict_enforced = FEMM_dict_enforced
-        self.is_get_meshsolution = is_get_meshsolution
         self.is_save_meshsolution_as_file = is_save_meshsolution_as_file
         self.is_sliding_band = is_sliding_band
         self.transform_list = transform_list
@@ -300,7 +338,7 @@ class MagFEMM(Magnetics):
         self.is_set_previous = is_set_previous
         self.is_fast_draw = is_fast_draw
         self.is_calc_torque_energy = is_calc_torque_energy
-        self.is_separate_meshsolution = is_separate_meshsolution
+        self.is_refine_mesh_hole = is_refine_mesh_hole
         # Call Magnetics init
         super(MagFEMM, self).__init__(
             is_remove_slotS=is_remove_slotS,
@@ -322,6 +360,8 @@ class MagFEMM(Magnetics):
             is_current_harm=is_current_harm,
             T_mag=T_mag,
             is_periodicity_rotor=is_periodicity_rotor,
+            is_get_meshsolution=is_get_meshsolution,
+            type_meshsolution=type_meshsolution,
         )
         # The class is frozen (in Magnetics init), for now it's impossible to
         # add new properties
@@ -337,9 +377,6 @@ class MagFEMM(Magnetics):
         MagFEMM_str += "type_calc_leakage = " + str(self.type_calc_leakage) + linesep
         MagFEMM_str += 'file_name = "' + str(self.file_name) + '"' + linesep
         MagFEMM_str += "FEMM_dict_enforced = " + str(self.FEMM_dict_enforced) + linesep
-        MagFEMM_str += (
-            "is_get_meshsolution = " + str(self.is_get_meshsolution) + linesep
-        )
         MagFEMM_str += (
             "is_save_meshsolution_as_file = "
             + str(self.is_save_meshsolution_as_file)
@@ -374,7 +411,7 @@ class MagFEMM(Magnetics):
             "is_calc_torque_energy = " + str(self.is_calc_torque_energy) + linesep
         )
         MagFEMM_str += (
-            "is_separate_meshsolution = " + str(self.is_separate_meshsolution) + linesep
+            "is_refine_mesh_hole = " + str(self.is_refine_mesh_hole) + linesep
         )
         return MagFEMM_str
 
@@ -396,8 +433,6 @@ class MagFEMM(Magnetics):
         if other.file_name != self.file_name:
             return False
         if other.FEMM_dict_enforced != self.FEMM_dict_enforced:
-            return False
-        if other.is_get_meshsolution != self.is_get_meshsolution:
             return False
         if other.is_save_meshsolution_as_file != self.is_save_meshsolution_as_file:
             return False
@@ -423,7 +458,7 @@ class MagFEMM(Magnetics):
             return False
         if other.is_calc_torque_energy != self.is_calc_torque_energy:
             return False
-        if other.is_separate_meshsolution != self.is_separate_meshsolution:
+        if other.is_refine_mesh_hole != self.is_refine_mesh_hole:
             return False
         return True
 
@@ -516,18 +551,6 @@ class MagFEMM(Magnetics):
                 diff_list.append(name + ".FEMM_dict_enforced" + val_str)
             else:
                 diff_list.append(name + ".FEMM_dict_enforced")
-        if other._is_get_meshsolution != self._is_get_meshsolution:
-            if is_add_value:
-                val_str = (
-                    " (self="
-                    + str(self._is_get_meshsolution)
-                    + ", other="
-                    + str(other._is_get_meshsolution)
-                    + ")"
-                )
-                diff_list.append(name + ".is_get_meshsolution" + val_str)
-            else:
-                diff_list.append(name + ".is_get_meshsolution")
         if other._is_save_meshsolution_as_file != self._is_save_meshsolution_as_file:
             if is_add_value:
                 val_str = (
@@ -681,18 +704,18 @@ class MagFEMM(Magnetics):
                 diff_list.append(name + ".is_calc_torque_energy" + val_str)
             else:
                 diff_list.append(name + ".is_calc_torque_energy")
-        if other._is_separate_meshsolution != self._is_separate_meshsolution:
+        if other._is_refine_mesh_hole != self._is_refine_mesh_hole:
             if is_add_value:
                 val_str = (
                     " (self="
-                    + str(self._is_separate_meshsolution)
+                    + str(self._is_refine_mesh_hole)
                     + ", other="
-                    + str(other._is_separate_meshsolution)
+                    + str(other._is_refine_mesh_hole)
                     + ")"
                 )
-                diff_list.append(name + ".is_separate_meshsolution" + val_str)
+                diff_list.append(name + ".is_refine_mesh_hole" + val_str)
             else:
-                diff_list.append(name + ".is_separate_meshsolution")
+                diff_list.append(name + ".is_refine_mesh_hole")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -711,7 +734,6 @@ class MagFEMM(Magnetics):
         if self.FEMM_dict_enforced is not None:
             for key, value in self.FEMM_dict_enforced.items():
                 S += getsizeof(value) + getsizeof(key)
-        S += getsizeof(self.is_get_meshsolution)
         S += getsizeof(self.is_save_meshsolution_as_file)
         S += getsizeof(self.is_sliding_band)
         if self.transform_list is not None:
@@ -726,7 +748,7 @@ class MagFEMM(Magnetics):
         S += getsizeof(self.is_set_previous)
         S += getsizeof(self.is_fast_draw)
         S += getsizeof(self.is_calc_torque_energy)
-        S += getsizeof(self.is_separate_meshsolution)
+        S += getsizeof(self.is_refine_mesh_hole)
         return S
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
@@ -755,7 +777,6 @@ class MagFEMM(Magnetics):
             if self.FEMM_dict_enforced is not None
             else None
         )
-        MagFEMM_dict["is_get_meshsolution"] = self.is_get_meshsolution
         MagFEMM_dict["is_save_meshsolution_as_file"] = self.is_save_meshsolution_as_file
         MagFEMM_dict["is_sliding_band"] = self.is_sliding_band
         MagFEMM_dict["transform_list"] = (
@@ -784,7 +805,7 @@ class MagFEMM(Magnetics):
         MagFEMM_dict["is_set_previous"] = self.is_set_previous
         MagFEMM_dict["is_fast_draw"] = self.is_fast_draw
         MagFEMM_dict["is_calc_torque_energy"] = self.is_calc_torque_energy
-        MagFEMM_dict["is_separate_meshsolution"] = self.is_separate_meshsolution
+        MagFEMM_dict["is_refine_mesh_hole"] = self.is_refine_mesh_hole
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         MagFEMM_dict["__class__"] = "MagFEMM"
@@ -802,7 +823,6 @@ class MagFEMM(Magnetics):
             FEMM_dict_enforced_val = None
         else:
             FEMM_dict_enforced_val = self.FEMM_dict_enforced.copy()
-        is_get_meshsolution_val = self.is_get_meshsolution
         is_save_meshsolution_as_file_val = self.is_save_meshsolution_as_file
         is_sliding_band_val = self.is_sliding_band
         if self.transform_list is None:
@@ -824,7 +844,7 @@ class MagFEMM(Magnetics):
         is_set_previous_val = self.is_set_previous
         is_fast_draw_val = self.is_fast_draw
         is_calc_torque_energy_val = self.is_calc_torque_energy
-        is_separate_meshsolution_val = self.is_separate_meshsolution
+        is_refine_mesh_hole_val = self.is_refine_mesh_hole
         is_remove_slotS_val = self.is_remove_slotS
         is_remove_slotR_val = self.is_remove_slotR
         is_remove_ventS_val = self.is_remove_ventS
@@ -847,6 +867,8 @@ class MagFEMM(Magnetics):
         is_current_harm_val = self.is_current_harm
         T_mag_val = self.T_mag
         is_periodicity_rotor_val = self.is_periodicity_rotor
+        is_get_meshsolution_val = self.is_get_meshsolution
+        type_meshsolution_val = self.type_meshsolution
         # Creates new object of the same type with the copied properties
         obj_copy = type(self)(
             Kmesh_fineness=Kmesh_fineness_val,
@@ -854,7 +876,6 @@ class MagFEMM(Magnetics):
             type_calc_leakage=type_calc_leakage_val,
             file_name=file_name_val,
             FEMM_dict_enforced=FEMM_dict_enforced_val,
-            is_get_meshsolution=is_get_meshsolution_val,
             is_save_meshsolution_as_file=is_save_meshsolution_as_file_val,
             is_sliding_band=is_sliding_band_val,
             transform_list=transform_list_val,
@@ -867,7 +888,7 @@ class MagFEMM(Magnetics):
             is_set_previous=is_set_previous_val,
             is_fast_draw=is_fast_draw_val,
             is_calc_torque_energy=is_calc_torque_energy_val,
-            is_separate_meshsolution=is_separate_meshsolution_val,
+            is_refine_mesh_hole=is_refine_mesh_hole_val,
             is_remove_slotS=is_remove_slotS_val,
             is_remove_slotR=is_remove_slotR_val,
             is_remove_ventS=is_remove_ventS_val,
@@ -887,6 +908,8 @@ class MagFEMM(Magnetics):
             is_current_harm=is_current_harm_val,
             T_mag=T_mag_val,
             is_periodicity_rotor=is_periodicity_rotor_val,
+            is_get_meshsolution=is_get_meshsolution_val,
+            type_meshsolution=type_meshsolution_val,
         )
         return obj_copy
 
@@ -898,7 +921,6 @@ class MagFEMM(Magnetics):
         self.type_calc_leakage = None
         self.file_name = None
         self.FEMM_dict_enforced = None
-        self.is_get_meshsolution = None
         self.is_save_meshsolution_as_file = None
         self.is_sliding_band = None
         self.transform_list = None
@@ -913,7 +935,7 @@ class MagFEMM(Magnetics):
         self.is_set_previous = None
         self.is_fast_draw = None
         self.is_calc_torque_energy = None
-        self.is_separate_meshsolution = None
+        self.is_refine_mesh_hole = None
         # Set to None the properties inherited from Magnetics
         super(MagFEMM, self)._set_None()
 
@@ -1008,24 +1030,6 @@ class MagFEMM(Magnetics):
         doc="""To enforce user-defined values for FEMM main parameters 
 
         :Type: dict
-        """,
-    )
-
-    def _get_is_get_meshsolution(self):
-        """getter of is_get_meshsolution"""
-        return self._is_get_meshsolution
-
-    def _set_is_get_meshsolution(self, value):
-        """setter of is_get_meshsolution"""
-        check_var("is_get_meshsolution", value, "bool")
-        self._is_get_meshsolution = value
-
-    is_get_meshsolution = property(
-        fget=_get_is_get_meshsolution,
-        fset=_set_is_get_meshsolution,
-        doc="""To save FEA and mesh for latter post-procesing 
-
-        :Type: bool
         """,
     )
 
@@ -1285,19 +1289,19 @@ class MagFEMM(Magnetics):
         """,
     )
 
-    def _get_is_separate_meshsolution(self):
-        """getter of is_separate_meshsolution"""
-        return self._is_separate_meshsolution
+    def _get_is_refine_mesh_hole(self):
+        """getter of is_refine_mesh_hole"""
+        return self._is_refine_mesh_hole
 
-    def _set_is_separate_meshsolution(self, value):
-        """setter of is_separate_meshsolution"""
-        check_var("is_separate_meshsolution", value, "bool")
-        self._is_separate_meshsolution = value
+    def _set_is_refine_mesh_hole(self, value):
+        """setter of is_refine_mesh_hole"""
+        check_var("is_refine_mesh_hole", value, "bool")
+        self._is_refine_mesh_hole = value
 
-    is_separate_meshsolution = property(
-        fget=_get_is_separate_meshsolution,
-        fset=_set_is_separate_meshsolution,
-        doc="""To separate FEA and mesh by lamination to account for different periodicities between stator and rotor
+    is_refine_mesh_hole = property(
+        fget=_get_is_refine_mesh_hole,
+        fset=_set_is_refine_mesh_hole,
+        doc="""True to refine mesh around magnet holes in FEMM
 
         :Type: bool
         """,

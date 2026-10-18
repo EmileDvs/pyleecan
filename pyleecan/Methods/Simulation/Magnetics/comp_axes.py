@@ -49,6 +49,38 @@ def comp_axes(self, output):
                 + "). Time periodicity removed"
             )
 
+    # Change Time periodicity in case meshsolution is requested
+    # and rotor time periodicity is not the same as stator time periodicity
+    if self.is_get_meshsolution:
+
+        Time = axes_dict["time"]
+
+        # Adjust time periodicity if it is requested but stator and rotor time periodicities don't match
+        if self.is_periodicity_t:
+
+            Time_S = Time.copy()  # Time axis in stator frame
+            Time_R = Time.copy()  # Time axis in rotor frame
+            # Get time periodicity in stator and rotor frames
+            pert_S, is_apert_S, pert_R, _ = output.simu.machine.comp_periodicity_time()
+
+            # If there is the same time periodicity for stator and rotor, anti-periodicity in stator frame and anti-periodicity in Time axis
+            if pert_S == pert_R and is_apert_S and "antiperiod" in Time.symmetries:
+                # Anti-periodicity in stator frame become periodicity in rotor frame (there is no anti-periodicity in rotor frame)
+                Time_R.symmetries = {"period": Time.symmetries["antiperiod"]}
+            else:
+                # Change stator to rotor periodicity
+                Time_R = Time_S.get_axis_periodic(Nper=pert_R, is_aper=False)
+                Time = Time_R.copy()
+                self.get_logger().debug(
+                    f"""In {self.__class__.__name__ }, calculating magnetic mesh quantities in stator and rotor frames (is_get_meshsolution=True) : 
+            setting time periodicity from stator frame (period={pert_S}, is_antiper={str(is_apert_S)}) to rotor frame (period={pert_R}, is_antiper=False)"""
+                )
+
+            # Store time axes for both stator and rotor frame
+            axes_dict["time"] = Time
+            axes_dict["time_S"] = Time_S
+            axes_dict["time_R"] = Time_R
+
     # Check Angle periodicities regarding Magnetics model input
     per_a0, is_antiper_a0 = axes_dict["angle"].get_periodicity()
     is_periodicity_a0 = per_a0 > 1 or is_antiper_a0
@@ -75,8 +107,12 @@ def comp_axes(self, output):
     axes_dict["z"] = Slice
 
     # Add Time axis on which to calculate torque
-    # Copy from standard Time axis
-    Time_Tem = axes_dict["time"].copy()
+    if self.is_get_meshsolution and self.is_periodicity_t:
+        # Copy from stator referential Time axis
+        Time_Tem = axes_dict["time_S"].copy()
+    else:
+        # Copy from standard Time axis
+        Time_Tem = axes_dict["time"].copy()
 
     # Remove anti-periodicity if any
     if "antiperiod" in Time_Tem.symmetries:
