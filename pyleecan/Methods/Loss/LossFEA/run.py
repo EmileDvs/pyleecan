@@ -38,6 +38,11 @@ def run(self):
             "The LossFEA object must use a magnetic meshsolution calculated by a magnetics FEA model to run"
         )
 
+    if self.type_loss_model_core not in ["Bertotti", "Steinmetz"]:
+        raise InputError(
+            "The LossFEA object only accepts ['Bertotti','Steinmetz'] as self.type_loss_model_core"
+        )
+
     axes_dict, is_mirror = self.comp_axes(output)
 
     # Get mesh groups names
@@ -71,8 +76,6 @@ def run(self):
                 alpha_B=self.alpha_B_enforced,
                 is_stacking_factor=self.is_stacking_factor,
             )
-        else:
-            raise Exception("not implemented yet")
 
     if "stator winding" in list_group:
         self.model_dict["stator joule"] = LossModelJoule(
@@ -101,9 +104,6 @@ def run(self):
                 alpha_B=self.alpha_B_enforced,
                 is_stacking_factor=self.is_stacking_factor,
             )
-
-        else:
-            raise Exception("not implemented yet")
 
     if "rotor magnets" in list_group:
         self.model_dict["rotor magnets"] = LossModelMagnet(group="rotor magnets")
