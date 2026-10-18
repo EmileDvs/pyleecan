@@ -1135,7 +1135,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
             line_edit.setEnabled(False)
             self.table_meta.setCellWidget(1, 3, line_edit)
 
-        # Adjust column width        
+        # Adjust column width
         self.table_meta.resizeColumnsToContents()
 
     def editParent(self, line_edit):
@@ -1624,7 +1624,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
                                             self.parent_dict[modified_class3]
                                         )
                                         for modified_class4 in self.parent_dict[
-                                            modified_class4
+                                            modified_class3
                                         ]:
                                             if modified_class4 in self.parent_dict:
                                                 children_list.extend(
