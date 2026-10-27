@@ -53,9 +53,7 @@ def test_SPMSM015_plot_contour_B_FEMM():
 
     mag_mesh = out.mag.get_meshsolution()
 
-    mag_mesh.plot_contour(
-        is_show_fig=False, save_path=join(save_path, "plot_mesh.png")
-    )
+    mag_mesh.plot_contour(is_show_fig=False, save_path=join(save_path, "plot_mesh.png"))
     mag_mesh.get_group("stator core").plot_contour(
         is_show_fig=False,
         save_path=join(save_path, "plot_mesh_stator.png"),
@@ -66,8 +64,6 @@ def test_SPMSM015_plot_contour_B_FEMM():
     #     is_show_fig=False,
     #     save_path=join(save_path, "plot_mesh_stator.gif"),
     # )
-
-    pass
 
 
 @pytest.mark.long_5s
@@ -113,8 +109,6 @@ def test_Benchmark_plot_contour_B_FEMM():
         is_show_fig=False,
         save_path=join(save_path, "plot_mesh_stator.png"),
     )
-
-    pass
 
 
 @pytest.mark.long_5s
@@ -169,11 +163,9 @@ def test_Benchmark_skew_plot_contour_B_FEMM():
         save_path=join(save_path, "plot_mesh_stator.png"),
     )
 
-    pass
-
 
 if __name__ == "__main__":
-    test_SPMSM015_plot_contour_B_FEMM()
-    test_Benchmark_plot_contour_B_FEMM()
+    # test_SPMSM015_plot_contour_B_FEMM()
+    # test_Benchmark_plot_contour_B_FEMM()
     test_Benchmark_skew_plot_contour_B_FEMM()
     print("Done")

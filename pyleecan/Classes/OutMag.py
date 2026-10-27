@@ -43,6 +43,11 @@ except ImportError as error:
     get_demag = error
 
 try:
+    from ..Methods.Output.OutMag.get_meshsolution import get_meshsolution
+except ImportError as error:
+    get_meshsolution = error
+
+try:
     from ..Methods.Output.OutMag.store import store
 except ImportError as error:
     store = error
@@ -105,6 +110,17 @@ class OutMag(FrozenClass):
         )
     else:
         get_demag = get_demag
+    # cf Methods.Output.OutMag.get_meshsolution
+    if isinstance(get_meshsolution, ImportError):
+        get_meshsolution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutMag method get_meshsolution: " + str(get_meshsolution)
+                )
+            )
+        )
+    else:
+        get_meshsolution = get_meshsolution
     # cf Methods.Output.OutMag.store
     if isinstance(store, ImportError):
         store = property(

@@ -221,7 +221,7 @@ def run(self):
     output.loss.P_out = output.loss.P_in - loss_overall
 
     # Store efficiency
-    output.loss.efficiency = output.loss.P_out / output.loss.P_in
+    output.loss.efficiency = min([output.loss.P_out / output.loss.P_in, 1.0])
 
     # Store mechanical torque
     output.loss.Tmech_av = output.loss.P_out / (2 * np.pi * output.elec.OP.N0 / 60)

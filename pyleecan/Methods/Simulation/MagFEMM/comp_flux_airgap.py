@@ -199,9 +199,6 @@ def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
                     else:
                         out_dict[quantity] = out_dict[quantity][:Nt_S, ...]
 
-            # Revert time axis to stator referential
-            axes_dict["time"] = axes_dict["time_S"].copy()
-
             self.build_meshsolution_dict(
                 out_dict,
                 axes_dict,

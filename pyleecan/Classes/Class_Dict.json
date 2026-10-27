@@ -12097,6 +12097,7 @@
             "comp_power",
             "comp_torque_MT",
             "get_demag",
+            "get_meshsolution",
             "store"
         ],
         "mother": "",

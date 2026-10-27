@@ -46,21 +46,19 @@ def comp_coeff(self, material):
         the peak magnetic flux density (T), and the loss density (W/kg) in this order.
     """
 
-    def comp_loss(xdata, k_hy, k_ed, alpha_f, alpha_B):
+    parameter_names = ["k_hy", "k_ed", "alpha_f", "alpha_B"]
+    parameters = [getattr(self, name) for name in parameter_names]
+    free_indices = [index for index, value in enumerate(parameters) if value is None]
+
+    def comp_loss(xdata, *free_parameters):
         """A function that compute the loss with respect to the maximum value and the frequency of the magnetic flux density
 
         Parameters
         ----------
         xdata : ndarray
             input matrix with f in the first line and B in the second line
-        k_hy : float
-            hysteresis loss coefficient
-        k_ed : float
-            Eddy current loss coefficient
-        alpha_f : float
-            hysteresis frequency power
-        alpha_B : float
-            hysteresis flux density amplitude power
+        *free_parameters : float
+            Values of the coefficients that are not fixed on the loss model
 
         Returns
         -------
@@ -68,16 +66,11 @@ def comp_coeff(self, material):
             loss for each value of f and B in the input array
         """
 
-        if self.k_hy is not None:
-            k_hy = self.k_hy
-        if self.k_ed is not None:
-            k_ed = self.k_ed
-        if self.alpha_f is not None:
-            alpha_f = self.alpha_f
-        if self.alpha_B is not None:
-            alpha_B = self.alpha_B
+        fitted_parameters = parameters.copy()
+        for index, value in zip(free_indices, free_parameters):
+            fitted_parameters[index] = value
 
-        return comp_loss_val(xdata, k_hy, k_ed, alpha_f, alpha_B)
+        return comp_loss_val(xdata, *fitted_parameters)
 
     loss_data = material.mag.LossData.get_data()
 
@@ -88,22 +81,17 @@ def comp_coeff(self, material):
     xdata = np.array([f, B])
     ydata = np.array(loss)
 
-    popt, _ = curve_fit(
-        comp_loss, xdata, ydata, bounds=([0, 0, 0, 0], [np.inf, np.inf, np.inf, np.inf])
-    )
+    if free_indices:
+        popt, _ = curve_fit(
+            comp_loss,
+            xdata,
+            ydata,
+            p0=np.ones(len(free_indices)),
+            bounds=(
+                np.zeros(len(free_indices)),
+                np.full(len(free_indices), np.inf),
+            ),
+        )
 
-    if self.k_hy is None:
-        # Hysteresis loss coefficient [W/kg]
-        self.k_hy = popt[0]
-
-    if self.k_ed is None:
-        # Eddy current loss coefficient [W/kg]
-        self.k_ed = popt[1]
-
-    if self.alpha_f is None:
-        # Hysteresis loss exponent for f
-        self.alpha_f = popt[2]
-
-    if self.alpha_B is None:
-        # Hysteresis loss exponent for B
-        self.alpha_B = popt[3]
+        for index, value in zip(free_indices, popt):
+            setattr(self, parameter_names[index], value)
