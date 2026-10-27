@@ -1,11 +1,8 @@
 from multiprocessing import cpu_count
 from os.path import join
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_almost_equal
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
 
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.Loss import Loss
@@ -66,7 +63,7 @@ def test_FEMM_Loss_Prius():
         is_get_meshsolution=True,
         Tsta=100,
         model_dict={
-            "stator core": LossModelSteinmetz(group="stator core", is_show_fig=True),
+            "stator core": LossModelSteinmetz(group="stator core"),
             "rotor core": LossModelSteinmetz(group="rotor core"),
             "joule": LossModelJoule(group="stator winding"),
             "proximity": LossModelProximity(group="stator winding"),
@@ -177,16 +174,16 @@ def test_FEMM_Loss_diff():
         is_get_meshsolution=True,
         Tsta=100,
         model_dict={
-            "Stator core Bertotti": LossModelBertotti(
-                group="stator core", is_show_fig=True
-            ),
-            "Stator core Steinmetz": LossModelSteinmetz(
-                group="stator core", is_show_fig=True
-            ),
+            "Stator core Bertotti": LossModelBertotti(group="stator core"),
+            "Stator core Steinmetz": LossModelSteinmetz(group="stator core"),
         },
     )
 
     out = simu.run()
+
+    simu.loss.model["Stator core Bertotti"].plot_fitting(is_show_fig=True)
+
+    simu.loss.model["Stator core Steinmetz"].plot_fitting(is_show_fig=True)
 
     out.loss.loss_dict["Difference"] = (
         out.loss.loss_dict.values()[0] - out.loss.loss_dict.values()[1]
@@ -239,10 +236,6 @@ def test_LossFEMM_Prius():
 
     machine = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))
 
-    Ch = 143  # hysteresis loss coefficient [W/(m^3*T^2*Hz)]
-    Ce = 0.530  # eddy current loss coefficients [W/(m^3*T^2*Hz^2)]
-    Cprox = 1  # sigma_w * cond.Hwire * cond.Wwire
-
     simu = Simu1(name="test_FEMM_Loss_Prius", machine=machine)
 
     Ic = 230 * np.exp(1j * 140 * np.pi / 180)
@@ -262,9 +255,19 @@ def test_LossFEMM_Prius():
         is_get_meshsolution=True,
         is_fast_draw=True,
         is_calc_torque_energy=False,
+        type_meshsolution=1,
     )
 
-    simu.loss = LossFEA(is_get_meshsolution=True, Tsta=100, type_skin_effect=1)
+    simu.loss = LossFEA(
+        is_get_meshsolution=True,
+        Tsta=100,
+        type_skin_effect=1,
+        type_loss_model_core="Steinmetz",
+        is_stacking_factor=True,
+        is_calc_windage_loss=False,
+        alpha_f_enforced=1,
+        alpha_B_enforced=2,
+    )
 
     # Same with linear skew
     simu_skew = simu.copy()
