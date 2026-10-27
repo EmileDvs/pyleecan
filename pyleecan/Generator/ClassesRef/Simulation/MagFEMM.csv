@@ -16,7 +16,6 @@ Rag_enforced,m,To enforce a different radius value for air-gap outputs,0,float,N
 is_set_previous,,True set previous .ans result file in current .fem to use it as initialization and speed up calculation time,,bool,1,,,
 is_fast_draw,,True to use the symetry of the lamination to draw the machine faster,0,bool,1,,,
 is_calc_torque_energy,,True to calculate torque from integration of energy derivate over rotor elements,,bool,1,,,
-is_refine_mesh_hole,,True to refine mesh around magnet holes in FEMM,,bool,0,,,
 ,,,,,,,,
 Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
 Simulation,Magnetics,build_meshsolution,VERSION,1,Magnetic module: Finite Element model with FEMM,,,

@@ -2062,7 +2062,7 @@
                 "name": "Jrms_max",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
@@ -8553,17 +8553,6 @@
                 "type": "bool",
                 "unit": "",
                 "value": 1
-            },
-            {
-                "as_dict": "",
-                "desc": "True to refine mesh around magnet holes in FEMM",
-                "max": "",
-                "min": "",
-                "name": "is_refine_mesh_hole",
-                "size": "",
-                "type": "bool",
-                "unit": "",
-                "value": 0
             }
         ]
     },
@@ -11420,7 +11409,7 @@
                 "name": "Jrms",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
