@@ -4,7 +4,7 @@ k_hy_enforced,W/(m3*T2*Hz),User-defined hysteresis loss coefficient to enforce i
 k_p_enforced,W/(m3*T2*Hz2),User-defined proximity loss coefficient to enforce in proximity loss model,,float,None,,,
 type_skin_effect,-,"Skin effect for resistance calculation (0 to ignore skin effect, 1 to consider it)",1,int,1,,,
 type_loss_model_core,-,"Loss model for iron cores : ""Bertotti"" or ""Steinmetz""",1,str,Steinmetz,,,
-is_stacking_factor,-,True to consider lamination stacking factor when calculating core losses,1,bool,0,,,
+is_stacking_factor,-,True to consider lamination stacking factor when calculating core losses,1,bool,1,,,
 k_ex_enforced,W/(m3*T2*Hz2),User-defined hysteresis loss coefficient to enforce in Bertotti iron loss model,,float,None,,,
 alpha_B_enforced,,User-defined hysteresis loss exponent for flux density to enforce for in Bertotti and Steinmetz model,,float,None,,,
 is_calc_windage_loss,-,True to calculate windage losses in the airgap,1,bool,0,,,

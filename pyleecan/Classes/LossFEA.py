@@ -68,7 +68,7 @@ class LossFEA(Loss):
         k_p_enforced=None,
         type_skin_effect=1,
         type_loss_model_core="Steinmetz",
-        is_stacking_factor=False,
+        is_stacking_factor=True,
         k_ex_enforced=None,
         alpha_B_enforced=None,
         is_calc_windage_loss=False,
