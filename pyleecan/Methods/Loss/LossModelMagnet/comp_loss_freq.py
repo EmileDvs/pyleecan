@@ -92,8 +92,8 @@ def comp_loss_freq(self):
     Se = meshsol.mesh.get_element_area()
 
     # Get list of element indices for each magnet
-    list_Imag = list()
-    ind_list = list()
+    list_Imag = []
+    ind_list = []
     for key in meshsol.group:
         if self.group in key and key != self.group:
             ind = int(key.split("_")[-1])

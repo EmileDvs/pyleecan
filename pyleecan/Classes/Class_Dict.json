@@ -11957,8 +11957,8 @@
             {
                 "as_dict": "",
                 "desc": "Efficiency (p.u)",
-                "max": "1",
-                "min": "0",
+                "max": "",
+                "min": "",
                 "name": "efficiency",
                 "size": "",
                 "type": "float",

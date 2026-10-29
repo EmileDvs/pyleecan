@@ -1,5 +1,9 @@
 import numpy as np
 import pytest
+from SciDataTool.Classes.Data1D import Data1D
+from SciDataTool.Classes.DataLinspace import DataLinspace
+from SciDataTool.Classes.DataTime import DataTime
+from SciDataTool.Classes.VectorField import VectorField
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 from pyleecan.Classes.LossModelBertotti import LossModelBertotti
@@ -56,7 +60,11 @@ def make_material(parameters=PARAMETERS):
 def test_comp_coeff_fits_all_parameters():
     model = LossModelSteinmetz()
 
-    model.comp_coeff(make_material())
+    material = make_material()
+
+    model.comp_coeff(material)
+
+    model.plot_fitting(material, is_show_fig=False)
 
     for parameter, expected in PARAMETERS.items():
         assert getattr(model, parameter) == pytest.approx(expected, rel=1e-4)
@@ -68,7 +76,11 @@ def test_comp_coeff_preserves_enforced_parameter(fixed_parameter):
     parameters = {**PARAMETERS, fixed_parameter: fixed_value}
     model = LossModelSteinmetz(**{fixed_parameter: fixed_value})
 
-    model.comp_coeff(make_material(parameters))
+    material = make_material(parameters)
+
+    model.comp_coeff(material)
+
+    model.plot_fitting(material, is_show_fig=False)
 
     assert getattr(model, fixed_parameter) == fixed_value
 
@@ -76,7 +88,11 @@ def test_comp_coeff_preserves_enforced_parameter(fixed_parameter):
 def test_bertotti_comp_coeff_fits_all_parameters():
     model = LossModelBertotti()
 
-    model.comp_coeff(make_bertotti_material())
+    material = make_bertotti_material()
+
+    model.comp_coeff(material)
+
+    model.plot_fitting(material, is_show_fig=False)
 
     for parameter, expected in BERTOTTI_PARAMETERS.items():
         assert getattr(model, parameter) == pytest.approx(expected, rel=1e-4)
@@ -88,6 +104,218 @@ def test_bertotti_comp_coeff_preserves_enforced_parameter(fixed_parameter):
     parameters = {**BERTOTTI_PARAMETERS, fixed_parameter: fixed_value}
     model = LossModelBertotti(**{fixed_parameter: fixed_value})
 
-    model.comp_coeff(make_bertotti_material(parameters))
+    material = make_bertotti_material(parameters)
+
+    model.comp_coeff(material)
+
+    model.plot_fitting(material, is_show_fig=False)
 
     assert getattr(model, fixed_parameter) == fixed_value
+
+
+def test_comp_core_loss_freq_time():
+
+    Nt = 1000
+    Nelem = 1
+    freqs_0 = np.array([1, 5, 7, 11])
+    B_amp = np.zeros(freqs_0.shape, dtype=float)
+    B_amp = 1 / (2 * freqs_0)
+    B_phase = np.zeros(freqs_0.shape, dtype=float)
+    B_phase = 1 / freqs_0
+
+    field = np.zeros((Nt, Nelem, 2), dtype=float)
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1,
+        number=Nt,
+        include_endpoint=False,
+    )
+    Indice = Data1D(values=np.arange(Nelem), name="indice", is_components=True)
+
+    time = Time.get_values()
+
+    for f, B, phase in zip(freqs_0, B_amp, B_phase):
+        if f == 0:
+            coeff = 1
+        else:
+            coeff = np.sqrt(2)
+
+        # B_x component
+        field[:, :, 0] += B / coeff * np.cos(2 * np.pi * f * time)[:, None]
+        # B_y component
+        field[:, :, 1] += B / coeff * np.sin(2 * np.pi * f * time)[:, None]
+
+    symbol = "B"
+    unit = "T"
+    name = "Magnetic flux density"
+    axis_list = [Time, Indice]
+
+    components = {}
+
+    x_data = DataTime(
+        name=name,
+        unit=unit,
+        symbol=symbol + "x",
+        axes=axis_list,
+        values=field[:, :, 0],
+        is_real=True,
+    )
+    components["comp_x"] = x_data
+
+    y_data = DataTime(
+        name=name,
+        unit=unit,
+        symbol=symbol + "y",
+        axes=axis_list,
+        values=field[:, :, 1],
+        is_real=True,
+    )
+    components["comp_y"] = y_data
+
+    Bvect = VectorField(name=name, symbol=symbol, components=components)
+    dB_dt_v = Bvect.get_vectorfield_along("time=derivate", "indice")
+
+    Bval = Bvect.get_xyz_along("time", "indice", is_squeeze=False)
+    Bfft = Bvect.get_xyz_along("freqs", "indice", is_squeeze=False)
+    freqs = Bfft["freqs"]
+
+    # Check input harmonics
+    for f, B, phase in zip(freqs_0, B_amp, B_phase):
+        B_fft_ii = Bfft[freqs == f, 0]
+
+        if f == 0:
+            coeff = 1
+        else:
+            coeff = np.sqrt(2)
+
+        assert pytest.approx(B_fft_ii - B / coeff * np.exp(1j * phase), rel=1e-2) == 0
+
+    Bfft_square = np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2
+
+    dB_dt = dB_dt_v.get_xyz_along("time", "indice", is_squeeze=False)
+
+    # np.testing.assert_array_almost_equal(B_amp, Bfft["comp_x"][1:, 0])
+
+    P_ec = freqs[:, None] ** 2 * Bfft_square
+
+    P_ec1 = freqs_0**2 * B_amp**2
+
+    P_ec2 = (np.abs(dB_dt["comp_x"]) ** 2 + np.abs(dB_dt["comp_y"]) ** 2) / (
+        2 * np.pi**2
+    )
+
+    P_ec.sum(), P_ec1.sum(), P_ec2.mean()
+
+    assert P_ec.sum() - P_ec2.mean() <= 1e-3
+
+    alpha_B = 2.5
+
+    P_hys = freqs[:, None] * Bfft_square ** (alpha_B / 2)
+
+    P_hys1 = freqs_0 * B_amp**alpha_B
+
+    P_hys2 = (
+        np.abs(Bval["comp_x"] * dB_dt["comp_x"])
+        + np.abs(Bval["comp_y"] * dB_dt["comp_y"])
+    ) / np.pi
+
+    P_hys.sum(), P_hys1.sum(), P_hys2.mean()
+
+
+def test_comp_magnet_loss_freq_time():
+
+    Nt = 1000
+    Nelem = 11
+    freqs_0 = np.array([0, 6, 12])  # np.arange(0, Nt / 2 + 1)
+    Az_amp = np.ones(freqs_0.shape, dtype=float)
+    Az_amp[1:] = 1 / freqs_0[1:]
+    Az_phase = np.zeros(freqs_0.shape, dtype=float)
+    Se_mag = 1e-6 * np.ones(Nelem, dtype=float)
+    sigma_m = 5e5
+    kseg = 1
+
+    potential = np.zeros((Nt, Nelem), dtype=float)
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1,
+        number=Nt,
+        include_endpoint=False,
+    )
+    Indice = Data1D(values=np.arange(Nelem), name="indice", is_components=True)
+
+    time = Time.get_values()
+
+    for f, Az, phase in zip(freqs_0, Az_amp, Az_phase):
+        if f == 0:
+            coeff = 1
+        else:
+            coeff = np.sqrt(2)
+        # A_z component
+        potential += Az / coeff * np.cos(2 * np.pi * f * time + phase)[:, None]
+
+    # Take opposite potential on half on the elements
+    potential[:, int(np.round(Nelem / 2)) :] *= -1
+
+    symbol = "Az_{elem}"
+    unit = "Wb/m"
+    name = "Magnetic vector potential"
+    axis_list = [Time, Indice]
+
+    Az_dt = DataTime(
+        name=name,
+        unit=unit,
+        symbol=symbol,
+        axes=axis_list,
+        values=potential,
+        is_real=True,
+    )
+
+    # Compute magnetic vector potential fft
+    Az_df = Az_dt.get_along("freqs", "indice", is_squeeze=False)
+    Az_fft = Az_df[symbol]
+    freqs = Az_df["freqs"]
+
+    # Compute magnetic vector potential derivative over time
+    dAz_dt = Az_dt.get_data_along("time=derivate", "indice")
+    dAz_dt_val = dAz_dt.get_along("time[smallestperiod]", "indice")[dAz_dt.symbol]
+
+    # Check input harmonics
+    for f, Az, phase in zip(freqs_0, Az_amp, Az_phase):
+        Az_fft_ii = Az_fft[freqs == f, 0]
+
+        if f == 0:
+            coeff = 1
+        else:
+            coeff = np.sqrt(2)
+
+        assert pytest.approx(Az_fft_ii - Az / coeff * np.exp(1j * phase), rel=1e-6) == 0
+
+    w = 2 * np.pi * freqs[:, None]
+    Az_mean = np.matmul(Az_fft, Se_mag)[:, None] / np.sum(Se_mag)
+    Jm_fft = -1j * sigma_m * w * (Az_fft - Az_mean)
+    Pdensity = 0.5 * kseg * np.abs(Jm_fft) ** 2 / sigma_m
+    Pmag = np.matmul(Pdensity.sum(axis=0), Se_mag)
+
+    # Calculate eddy-current current density in this magnet
+    Jm1 = -sigma_m * dAz_dt_val
+    # Ensure average current flowing through the surface is 0
+    Jc1 = np.matmul(Jm1, Se_mag)[:, None] / Se_mag.sum()
+    Jm1 -= Jc1
+    # Calculate Joule loss density due to eddy-current
+    Pdensity1 = kseg * Jm1**2 / sigma_m
+    Pmag1 = np.matmul(Pdensity1.mean(axis=0), Se_mag)
+
+    assert pytest.approx(Pmag - Pmag1, abs=0.01) == 0
+
+
+# To run it without pytest
+if __name__ == "__main__":
+    # test_comp_core_loss_freq_time()
+
+    test_comp_magnet_loss_freq_time()
+
+    print("Done")

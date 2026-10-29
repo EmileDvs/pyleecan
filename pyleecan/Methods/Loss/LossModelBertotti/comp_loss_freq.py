@@ -98,16 +98,7 @@ def comp_loss_freq(self):
     Bfft_square = np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2
 
     # Compute the loss density for each element and each frequency
-    Pcore_density_hys = (
-        k_hy
-        / Kf
-        * freqs[:, None]
-        * (
-            np.abs(Bfft["comp_x"]) ** (2 / alpha_B)
-            + np.abs(Bfft["comp_y"]) ** (2 / alpha_B)
-        )
-        ** (alpha_B / 2)
-    )
+    Pcore_density_hys = k_hy / Kf * freqs[:, None] * Bfft_square ** (alpha_B / 2)
     Pcore_density_edd = k_ed / Kf * freqs[:, None] ** 2 * Bfft_square
     Pcore_density_exc = k_ex / Kf * freqs[:, None] ** 1.5 * Bfft_square**0.75
 

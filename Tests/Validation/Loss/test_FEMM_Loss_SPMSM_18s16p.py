@@ -8,6 +8,7 @@ from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.LossFEA import LossFEA
 from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.OPdq import OPdq
+from pyleecan.Classes.OutLoss import OutLoss
 from pyleecan.Classes.Simu1 import Simu1
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions.load import load
@@ -77,19 +78,37 @@ def test_LossFEA_SPMSM():
     # Check Power Dict
     power_dict = out.loss.get_power_dict()
     exp_power_dict = {
-        "stator core": np.float64(3.777740729426553),
+        "stator core": np.float64(3.3278595306143064),
         "stator joule": np.float64(4.385847766901312),
-        "stator proximity": np.float64(0.05520729526553484),
-        "rotor core": np.float64(0.18845068722685906),
-        "rotor magnets": np.float64(1.2931767433060244),
+        "stator proximity": np.float64(0.05525019341272971),
+        "rotor core": np.float64(0.04407322797220236),
+        "rotor magnets": np.float64(1.2951002420384434),
         "stator core + stator joule + stator proximity + rotor core + rotor magnets": np.float64(
-            9.700423222126282
+            9.108130960938993
         ),
-        "total_power": np.float64(61.879146846312864),
+        "total_power": np.float64(61.900931327124255),
     }
     assert len(power_dict.keys()) == len(exp_power_dict.keys())
     for key in power_dict:
         assert power_dict[key] == pytest.approx(exp_power_dict[key], rel=1e-2)
+
+    # Same with temporal approach
+    out_time = out.copy()
+    out_time.simu.loss = LossFEA(
+        is_get_meshsolution=True,
+        Tsta=100,
+        type_skin_effect=1,
+        type_loss_model_core="Steinmetz",
+        is_stacking_factor=True,
+        is_calc_windage_loss=True,
+        is_dynamic=True,
+    )
+
+    out_time.loss = OutLoss()
+    out_time.simu.loss.run()
+
+    # Check Power Dict
+    power_dict_t = out_time.loss.get_power_dict()
 
     power_dict_ref = {
         "mechanical power": 62.30,

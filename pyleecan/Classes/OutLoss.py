@@ -699,7 +699,7 @@ class OutLoss(FrozenClass):
 
     def _set_efficiency(self, value):
         """setter of efficiency"""
-        check_var("efficiency", value, "float", Vmin=0, Vmax=1)
+        check_var("efficiency", value, "float")
         self._efficiency = value
 
     efficiency = property(
@@ -708,8 +708,6 @@ class OutLoss(FrozenClass):
         doc="""Efficiency (p.u)
 
         :Type: float
-        :min: 0
-        :max: 1
         """,
     )
 

@@ -26,7 +26,9 @@ def comp_loss_time(self, axes_dict, is_mirror):
     """
 
     if self.parent.parent.parent is None:
-        raise Exception("Cannot calculate proximity losses if simu is not in an Output")
+        raise ValueError(
+            "Cannot calculate proximity losses if simu is not in an Output"
+        )
     else:
         output = self.parent.parent.parent
 
@@ -105,7 +107,7 @@ def comp_loss_time(self, axes_dict, is_mirror):
         )
 
     # Compute the loss density for each element function of time
-    Pprox_density = k_p / (4 * np.pi**2) * (dB_dt["comp_x"] ** 2 + dB_dt["comp_y"] ** 2)
+    Pprox_density = k_p / (2 * np.pi**2) * (dB_dt["comp_x"] ** 2 + dB_dt["comp_y"] ** 2)
 
     # Integrate volumic density over core volume
     Pprox = Lst * per_a * np.matmul(Pprox_density, Se)

@@ -237,6 +237,16 @@ def test_LossFEMM_Prius():
 
     machine = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))
 
+    material = machine.stator.mat_type
+
+    lm_steinmetz = LossModelSteinmetz()
+    lm_steinmetz.comp_coeff(material)
+    lm_steinmetz.plot_fitting(material, is_show_fig=True)
+
+    lm_bertotti = LossModelBertotti()
+    lm_bertotti.comp_coeff(material)
+    lm_bertotti.plot_fitting(material, is_show_fig=True)
+
     simu = Simu1(name="test_FEMM_Loss_Prius", machine=machine)
 
     Ic = 230 * np.exp(1j * 140 * np.pi / 180)
@@ -256,7 +266,7 @@ def test_LossFEMM_Prius():
         is_get_meshsolution=True,
         is_fast_draw=True,
         is_calc_torque_energy=False,
-        type_meshsolution=1,
+        type_meshsolution=0,
     )
 
     simu.loss = LossFEA(
@@ -273,14 +283,14 @@ def test_LossFEMM_Prius():
     # Check Power Dict
     power_dict = out.loss.get_power_dict()
     exp_power_dict = {
-        "stator core": np.float64(1241.9044330142362),
+        "stator core": np.float64(292.6424838992634),
         "stator joule": np.float64(7579.031160511535),
         "stator proximity": np.float64(16.826278591731466),
-        "rotor core": np.float64(243.8632768409289),
+        "rotor core": np.float64(14.808168474489523),
         "rotor magnets": np.float64(12.178779821075157),
         "airgap windage": 0.1650942739887786,
         "stator core + stator joule + stator proximity + rotor core + rotor magnets + airgap windage": np.float64(
-            9093.969023053496
+            7915.651965572084
         ),
         "total_power": np.float64(54596.16438835998),
     }
@@ -288,6 +298,40 @@ def test_LossFEMM_Prius():
     assert len(power_dict.keys()) == len(exp_power_dict.keys())
     for key in power_dict:
         assert power_dict[key] == pytest.approx(exp_power_dict[key], rel=1e-2)
+
+    # Same with temporal approach
+    out_time = out.copy()
+    out_time.simu.loss = LossFEA(
+        is_get_meshsolution=True,
+        Tsta=100,
+        type_skin_effect=1,
+        type_loss_model_core="Steinmetz",
+        is_stacking_factor=True,
+        is_calc_windage_loss=True,
+        is_dynamic=True,
+    )
+
+    out_time.loss = OutLoss()
+    out_time.simu.loss.run()
+
+    # Check Power Dict
+    power_dict_t = out_time.loss.get_power_dict()
+    exp_power_dict_t = {
+        "stator core": np.float64(2140.899349547698),
+        "stator joule": np.float64(7579.031160511535),
+        "stator proximity": np.float64(16.826278591731466),
+        "rotor core": np.float64(21.211897758961086),
+        "rotor magnets": np.float64(12.178779821075157),
+        "airgap windage": 0.1650942739887786,
+        "stator core + stator joule + stator proximity + rotor core + rotor magnets + airgap windage": np.float64(
+            9770.31256050499
+        ),
+        "total_power": np.float64(54596.16438835998),
+    }
+
+    assert len(power_dict_t.keys()) == len(exp_power_dict_t.keys())
+    for key in power_dict_t:
+        assert power_dict_t[key] == pytest.approx(exp_power_dict_t[key], rel=1e-2)
 
     # Same with Bertotti skew
     out1 = out.copy()
@@ -306,14 +350,14 @@ def test_LossFEMM_Prius():
     # Check Power Dict
     power_dict1 = out1.loss.get_power_dict()
     exp_power_dict1 = {
-        "stator core": np.float64(1171.643667118975),
+        "stator core": np.float64(2140.899349547698),
         "stator joule": np.float64(7579.031160511535),
         "stator proximity": np.float64(16.826278591731466),
-        "rotor core": np.float64(131.93089149571549),
+        "rotor core": np.float64(21.211897758961086),
         "rotor magnets": np.float64(12.178779821075157),
         "airgap windage": 0.1650942739887786,
         "stator core + stator joule + stator proximity + rotor core + rotor magnets + airgap windage": np.float64(
-            8911.77587181302
+            9770.31256050499
         ),
         "total_power": np.float64(54596.16438835998),
     }
@@ -324,7 +368,7 @@ def test_LossFEMM_Prius():
 
     # Same with linear skew
     simu_skew = simu.copy()
-    simu_skew.mag.Slice_enforced=None
+    simu_skew.mag.Slice_enforced = None
     simu_skew.name = simu_skew.name + "_Skew"
     simu_skew.machine.rotor.skew = Skew(rate=1, type_skew="linear", Nstep=3)
     # simu_skew.machine.rotor.skew.plot()

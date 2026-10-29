@@ -4,8 +4,8 @@ import numpy as np
 from .comp_coeff import comp_loss_val
 
 
-def plot_fitting(self, material):
-    """Plot the fitted loss curves (from fitted coefficients k_hy, k_ed, alpha_f, alpha_B) and the loss data stored in the material
+def plot_fitting(self, material, is_show_fig=True):
+    """Plot the fitted loss curves (from fitted coefficients k_hy, k_ed, k_ex, beta) and the loss data stored in the material
 
     Parameters
     ----------
@@ -16,6 +16,8 @@ def plot_fitting(self, material):
         This material object must contain loss data as an ImportMatrixVal object.
         This matrix must contain 3 rows, correspoding to the excitation frequency (Hz),
         the peak magnetic flux density (T), and the loss density (W/kg) in this order.
+    is_show_fig : bool
+        True to show figure
     """
 
     loss_data = material.mag.LossData.get_data()
@@ -77,4 +79,5 @@ def plot_fitting(self, material):
     fig.text(0.02, 0.5, txt, fontsize=12)
     plt.subplots_adjust(left=0.26)
     plt.legend()
-    plt.show()
+    if is_show_fig:
+        plt.show()

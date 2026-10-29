@@ -152,7 +152,7 @@ def comp_loss_time(self, axes_dict, is_mirror):
     # )
 
     Pcore_density_edd = (
-        1 / (2 * np.pi**2) * k_ed / Kf * (dB_dt["comp_x"] ** 2 + dB_dt["comp_y"] ** 2)
+        k_ed / Kf / (2 * np.pi**2) * (dB_dt["comp_x"] ** 2 + dB_dt["comp_y"] ** 2)
     )
 
     Pcore_density_exc = (

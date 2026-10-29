@@ -98,17 +98,8 @@ def comp_loss_freq(self):
     Bfft_square = np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2
 
     # Compute the loss density for each element and each frequency
-    # Pcore_density_hys = k_hy * freqs[:, None] ** alpha_f * Bfft_square ** (alpha_B / 2)
-    # XXX problem hysterisys loss formula in time domain (losses are way too higher)
     Pcore_density_hys = (
-        k_hy
-        / Kf
-        * freqs[:, None] ** alpha_f
-        * (
-            np.abs(Bfft["comp_x"]) ** (2 / alpha_B)
-            + np.abs(Bfft["comp_y"]) ** (2 / alpha_B)
-        )
-        ** (alpha_B / 2)
+        k_hy / Kf * freqs[:, None] ** alpha_f * Bfft_square ** (alpha_B / 2)
     )
     Pcore_density_edd = k_ed / Kf * freqs[:, None] ** 2 * Bfft_square
 

@@ -30,7 +30,7 @@ def comp_loss_time(self, axes_dict, is_mirror):
     """
 
     if self.parent.parent.parent is None:
-        raise Exception("Cannot calculate magnet losses if simu is not in an Output")
+        raise ValueError("Cannot calculate magnet losses if simu is not in an Output")
     else:
         output = self.parent.parent.parent
 
@@ -96,8 +96,8 @@ def comp_loss_time(self, axes_dict, is_mirror):
     Se_all = meshsol.mesh.get_element_area()
 
     # Get list of element indices for each magnet
-    list_Imag = list()
-    ind_list = list()
+    list_Imag = []
+    ind_list = []
     for key in meshsol.group:
         if self.group in key and key != self.group:
             ind = int(key.split("_")[-1])
@@ -132,8 +132,8 @@ def comp_loss_time(self, axes_dict, is_mirror):
         Jc = np.matmul(Jm, Se_mag)[:, None] / Se_mag.sum()
         Jm -= Jc
 
-        # Calculate Joule loss density due to eddy-current
-        Pmagnet_density[:, jj : (jj + len(kmag))] = 0.5 * kseg * Jm**2 / sigma_m
+        # Calculate loss density due to eddy-current
+        Pmagnet_density[:, jj : (jj + len(kmag))] = kseg * Jm**2 / sigma_m
 
         # Increment by the number elements of in this magnet
         jj += len(kmag)

@@ -71,7 +71,7 @@ def comp_loss_time(self, axes_dict, is_mirror):
                     "Cannot calculate windage losses for group=" + self.group
                 )
 
-            Nt = axes_dict["time_S"].get_length(is_smallestperiod=True)
+            Nt = axes_dict["time"].get_length(is_smallestperiod=True)
 
             # Get element indices associated to airgap group at stator side
             Igrp = list(

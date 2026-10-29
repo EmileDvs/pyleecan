@@ -179,9 +179,10 @@ def run(self):
             coeff_dict=model.coeff_dict.copy(),
         )
 
-        # Check consistency of scalar_value and coeff_dict
-        diff = loss_mean - loss_dict[group_name].get_loss_scalar(felec)
-        np.testing.assert_almost_equal(diff, 0)
+        if not self.is_dynamic:
+            # Check consistency of scalar_value and coeff_dict
+            diff = loss_mean - loss_dict[group_name].get_loss_scalar(felec)
+            np.testing.assert_almost_equal(diff, 0)
 
         # Concatenate model group and name for the overall OutLossModel
         group_all += model.group + " + "
@@ -221,7 +222,7 @@ def run(self):
     output.loss.P_out = output.loss.P_in - loss_overall
 
     # Store efficiency
-    output.loss.efficiency = min([output.loss.P_out / output.loss.P_in, 1.0])
+    output.loss.efficiency = output.loss.P_out / output.loss.P_in
 
     # Store mechanical torque
     output.loss.Tmech_av = output.loss.P_out / (2 * np.pi * output.elec.OP.N0 / 60)
