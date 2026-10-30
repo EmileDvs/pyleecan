@@ -42,7 +42,7 @@ def export_along(
     # If args not specified, write only oneperiod/pattern
     if args == tuple():
         # Dynamic import to avoid loop
-        module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+        module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
         DataPattern = module.DataPattern
         arg_list = []
         for axis in self.get_axes():

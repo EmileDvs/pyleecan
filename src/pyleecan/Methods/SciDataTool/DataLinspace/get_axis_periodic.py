@@ -21,7 +21,7 @@ def get_axis_periodic(self, Nper, is_aper=False):
     """
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.DataLinspace", fromlist=["DataLinspace"])
+    module = __import__("pyleecan.Classes.DataLinspace", fromlist=["DataLinspace"])
     DataLinspace = module.DataLinspace
 
     try:

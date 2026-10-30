@@ -14,9 +14,9 @@ def freq_to_time(self):
     """
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.DataTime", fromlist=["DataTime"])
+    module = __import__("pyleecan.Classes.DataTime", fromlist=["DataTime"])
     DataTime = module.DataTime
-    module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+    module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
     DataPattern = module.DataPattern
 
     axes_str = []

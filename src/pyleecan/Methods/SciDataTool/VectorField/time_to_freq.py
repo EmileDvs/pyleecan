@@ -10,8 +10,8 @@ def time_to_freq(self):
     """
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.VectorField", fromlist=["VectorField"])
-    VectorField = getattr(module, "VectorField")
+    module = __import__("pyleecan.Classes.VectorField", fromlist=["VectorField"])
+    VectorField = module.VectorField
 
     comp_dict = dict()
     for key, comp in self.components.items():

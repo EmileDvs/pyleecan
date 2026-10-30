@@ -1,7 +1,8 @@
-import matplotlib.pyplot as plt
-from numpy import arange, nanmax, nanmin, frombuffer
 import imageio
-from ...Functions.Plot import ifft_dict, PARAM_2D
+import matplotlib.pyplot as plt
+from numpy import arange, frombuffer, nanmax, nanmin
+
+from ...Functions.Plot import PARAM_2D, ifft_dict
 
 
 def plot_3D_Data_Animated(
@@ -20,8 +21,8 @@ def plot_3D_Data_Animated(
     """
 
     # Relative import of DataPattern to prevent circular import
-    module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
-    DataPattern = getattr(module, "DataPattern")
+    module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
+    DataPattern = module.DataPattern
 
     # Making sure that we have the right argument for a plot3D
     plot_options = param_dict.copy()

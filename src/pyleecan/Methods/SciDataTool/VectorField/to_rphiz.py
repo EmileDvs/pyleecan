@@ -10,8 +10,8 @@ def to_rphiz(self):
     """
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.VectorField", fromlist=["VectorField"])
-    VectorField = getattr(module, "VectorField")
+    module = __import__("pyleecan.Classes.VectorField", fromlist=["VectorField"])
+    VectorField = module.VectorField
 
     if (
         "radial" in self.components

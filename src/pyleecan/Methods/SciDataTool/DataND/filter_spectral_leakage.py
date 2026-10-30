@@ -49,13 +49,13 @@ def filter_spectral_leakage(
         theoretical frequencies
     """
 
-    module = __import__("SciDataTool.Classes.DataFreq", fromlist=["DataFreq"])
+    module = __import__("pyleecan.Classes.DataFreq", fromlist=["DataFreq"])
     DataFreq = module.DataFreq
 
-    module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+    module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
     DataPattern = module.DataPattern
 
-    module = __import__("SciDataTool.Classes.Data1D", fromlist=["Data1D"])
+    module = __import__("pyleecan.Classes.Data1D", fromlist=["Data1D"])
     Data1D = module.Data1D
 
     if len(axes_list_filt) == 0 or len(arg_list) == 0:

@@ -20,7 +20,7 @@ def plot_2D_Data_Animated(
         frames displayed per second
     """
     # Relative import of DataPattern to prevent circular import
-    module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+    module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
     DataPattern = module.DataPattern
 
     # Making sure that we have the right argument for a plot2D

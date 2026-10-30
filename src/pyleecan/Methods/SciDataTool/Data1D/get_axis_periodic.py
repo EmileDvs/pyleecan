@@ -21,7 +21,7 @@ def get_axis_periodic(self, Nper, is_aper=False):
     """
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.Data1D", fromlist=["Data1D"])
+    module = __import__("pyleecan.Classes.Data1D", fromlist=["Data1D"])
     Data1D = module.Data1D
 
     try:

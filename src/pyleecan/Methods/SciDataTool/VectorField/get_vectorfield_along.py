@@ -10,8 +10,8 @@ def get_vectorfield_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.VectorField", fromlist=["VectorField"])
-    VectorField = getattr(module, "VectorField")
+    module = __import__("pyleecan.Classes.VectorField", fromlist=["VectorField"])
+    VectorField = module.VectorField
 
     comp_dict = dict()
 

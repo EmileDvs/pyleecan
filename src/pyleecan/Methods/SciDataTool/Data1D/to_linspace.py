@@ -13,8 +13,8 @@ def to_linspace(self):
     """
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.DataLinspace", fromlist=["DataLinspace"])
-    DataLinspace = getattr(module, "DataLinspace")
+    module = __import__("pyleecan.Classes.DataLinspace", fromlist=["DataLinspace"])
+    DataLinspace = module.DataLinspace
 
     values = self.values
     number = values.size

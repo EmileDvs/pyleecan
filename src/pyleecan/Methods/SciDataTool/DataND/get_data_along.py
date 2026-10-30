@@ -47,7 +47,7 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         Data_type = "DataND"
 
     # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes." + Data_type, fromlist=[Data_type])
+    module = __import__("pyleecan.Classes." + Data_type, fromlist=[Data_type])
     DataClass = getattr(module, Data_type)
 
     for axis_name in axes_name_new:
