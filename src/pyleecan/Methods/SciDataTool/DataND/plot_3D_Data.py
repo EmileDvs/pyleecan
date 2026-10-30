@@ -19,10 +19,9 @@ from numpy import (
     nanmin as np_min,
 )
 from numpy.core.numeric import zeros_like
-from SciDataTool.Classes.Norm_indices import Norm_indices
 
-from pyleecan.Functions.load.import_class import import_class
-
+from ....Classes.Norm_indices import Norm_indices
+from ....Functions.Load.import_class import import_class
 from ....Functions.SciDataTool.fix_axes_order import fix_axes_order
 from ....Functions.SciDataTool.parser import read_input_strings
 from ....Functions.SciDataTool.Plot import axes_dict, norm_dict, unit_dict

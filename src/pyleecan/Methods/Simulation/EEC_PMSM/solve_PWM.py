@@ -1,7 +1,7 @@
 import numpy as np
 
-from SciDataTool import DataFreq, Data1D
-
+from ....Classes.Data1D import Data1D
+from ....Classes.DataFreq import DataFreq
 from ....Functions.Electrical.dqh_transformation_freq import dqh2n_DataFreq
 
 

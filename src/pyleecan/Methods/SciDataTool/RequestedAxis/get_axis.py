@@ -1,8 +1,8 @@
 from importlib import import_module
 
 from numpy import argsort, array
-from SciDataTool.Classes.DataPattern import DataPattern
 
+from ....Classes.DataPattern import DataPattern
 from ....Functions.SciDataTool import AxisError
 from ....Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 

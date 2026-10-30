@@ -1,7 +1,7 @@
 from numpy import zeros
-from SciDataTool import Data1D
 
 from ....Classes._FEMMHandler import _FEMMHandler
+from ....Classes.Data1D import Data1D
 from ....Classes.OutMagFEMM import OutMagFEMM
 from ....Functions.FEMM.draw_FEMM import draw_FEMM
 from ....Functions.labels import STATOR_LAB
@@ -119,7 +119,7 @@ def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
     out_dict["B_{circ}"] = zeros((Nt, Na))
     if self.is_calc_torque_energy:
         # Init torque array in out_dict
-        out_dict["Tem"] = zeros((Nt))
+        out_dict["Tem"] = zeros(Nt)
     # Init lamination winding flux list of arrays in out_dict
     machine = output.simu.machine
     out_dict["Phi_wind"] = {}
@@ -214,7 +214,7 @@ def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
             field=mu_elem[:, :, None],
             axis_list=axis_list,
             name="Magnetic Permeability",
-            symbol="\mu",
+            symbol=r"\mu",
             unit="H/m",
         )
         Ae_sol = build_solution_data(

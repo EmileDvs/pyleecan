@@ -1,6 +1,5 @@
+from ...Classes.DataTime import DataTime
 from ...Classes.SolutionData import SolutionData
-from SciDataTool import DataTime
-import numpy as np
 
 
 def build_solution_data(

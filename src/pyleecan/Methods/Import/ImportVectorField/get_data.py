@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from SciDataTool import VectorField
+from ....Classes.VectorField import VectorField
 
 
 def get_data(self):

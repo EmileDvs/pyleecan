@@ -1,7 +1,11 @@
-from numpy import ndarray, min as np_min, max as np_max
-
-from SciDataTool import VectorField, Data
 from logging import getLogger
+
+from numpy import max as np_max
+from numpy import min as np_min
+from numpy import ndarray
+
+from ....Classes.Data import Data
+from ....Classes.VectorField import VectorField
 
 
 def log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type):

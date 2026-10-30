@@ -1,6 +1,8 @@
-from ...Classes.SolutionVector import SolutionVector
-from SciDataTool import DataTime, VectorField
 from numpy import all as np_all
+
+from ...Classes.DataTime import DataTime
+from ...Classes.SolutionVector import SolutionVector
+from ...Classes.VectorField import VectorField
 
 
 def build_solution_vector(
@@ -43,7 +45,7 @@ def build_solution_vector(
     )
     components["comp_y"] = y_data
 
-    if field.shape[-1] == 3 and not np_all((field[..., 2] == 0)):
+    if field.shape[-1] == 3 and not np_all(field[..., 2] == 0):
         z_data = DataTime(
             name=name,
             unit=unit,

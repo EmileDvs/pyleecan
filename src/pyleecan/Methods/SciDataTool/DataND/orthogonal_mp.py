@@ -1,5 +1,4 @@
-from SciDataTool.Classes.Data1D import Data1D
-
+from ....Classes.Data1D import Data1D
 from ....Functions.SciDataTool.omp import comp_undersampled_axe, omp
 
 

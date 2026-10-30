@@ -1,5 +1,4 @@
-from SciDataTool import Data1D
-
+from ....Classes.Data1D import Data1D
 from ....Functions.SciDataTool import AxisError
 
 

@@ -1,7 +1,6 @@
 from numpy import array, array2string, column_stack, exp, real, squeeze
 
-from pyleecan.Functions.load.import_class import import_class
-
+from ....Functions.Load.import_class import import_class
 from ....Functions.SciDataTool.conversions import (
     rphiz_to_xyz,
     rphiz_to_xyz_field,

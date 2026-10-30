@@ -1,7 +1,7 @@
 from numpy import float32, float64, int32, int64, ndarray
-from SciDataTool.Classes._check import check_var
 
-from pyleecan.Functions.load.import_class import import_class
+from ....Classes._check import check_var
+from ....Functions.Load.import_class import import_class
 
 
 def _set_normalizations(self, value):

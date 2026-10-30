@@ -1,6 +1,6 @@
 from numpy import inf  # for eval
-from SciDataTool.Classes.RequestedAxis import RequestedAxis
 
+from ...Classes.RequestedAxis import RequestedAxis
 from ...Functions.SciDataTool import AxisError
 
 

@@ -1,12 +1,11 @@
-from numpy import zeros, ones, sqrt, exp, pi, arctan
+from numpy import arctan, exp, ones, pi, sqrt, zeros
 
-from SciDataTool import DataTime, Data1D, DataFreq
-
-from ....Classes.InputVoltage import InputVoltage
+from ....Classes.Data1D import Data1D
+from ....Classes.DataFreq import DataFreq
+from ....Classes.DataTime import DataTime
 from ....Classes.ElecLUTdq import ElecLUTdq
-
+from ....Classes.InputVoltage import InputVoltage
 from ....Functions.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
-
 from ....Methods.Simulation.Input import InputError
 
 

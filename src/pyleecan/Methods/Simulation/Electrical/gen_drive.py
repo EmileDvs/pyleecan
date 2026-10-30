@@ -1,6 +1,7 @@
 import numpy as np
 
-from SciDataTool import DataTime, Data1D
+from ....Classes.Data1D import Data1D
+from ....Classes.DataTime import DataTime
 
 
 def gen_drive(self, output):

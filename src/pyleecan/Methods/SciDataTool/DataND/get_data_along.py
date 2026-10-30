@@ -1,5 +1,4 @@
-from SciDataTool import Data1D
-
+from ....Classes.Data1D import Data1D
 from ....Functions.SciDataTool import axes_dict, rev_axes_dict
 from ....Functions.SciDataTool.conversions import (
     get_unit_derivate,

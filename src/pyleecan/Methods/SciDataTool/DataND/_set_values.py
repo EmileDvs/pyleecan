@@ -1,5 +1,6 @@
-from SciDataTool.Classes._check import check_dimensions, check_var
-from numpy import squeeze, array
+from numpy import array, squeeze
+
+from ....Classes._check import check_dimensions, check_var
 
 
 def _set_values(self, value):

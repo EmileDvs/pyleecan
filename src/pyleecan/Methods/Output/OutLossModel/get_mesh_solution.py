@@ -1,6 +1,4 @@
-import numpy as np
-from SciDataTool import DataFreq
-
+from ....Classes.DataFreq import DataFreq
 from ....Classes.MeshSolution import MeshSolution
 from ....Classes.SolutionData import SolutionData
 

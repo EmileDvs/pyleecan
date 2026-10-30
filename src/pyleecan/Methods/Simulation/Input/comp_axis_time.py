@@ -1,6 +1,9 @@
 from numpy import pi
 
-from SciDataTool import Data1D, DataLinspace, Norm_ref, Norm_affine
+from ....Classes.Data1D import Data1D
+from ....Classes.DataLinspace import DataLinspace
+from ....Classes.Norm_affine import Norm_affine
+from ....Classes.Norm_ref import Norm_ref
 
 
 def comp_axis_time(self, p, per_t=None, is_antiper_t=None, Time_in=None):

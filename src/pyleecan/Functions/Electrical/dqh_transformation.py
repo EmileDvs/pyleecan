@@ -1,7 +1,10 @@
 import numpy as np
 
-from SciDataTool import Data1D, DataFreq, DataTime, DataDual, DataND
-
+from ...Classes.Data1D import Data1D
+from ...Classes.DataDual import DataDual
+from ...Classes.DataFreq import DataFreq
+from ...Classes.DataND import DataND
+from ...Classes.DataTime import DataTime
 from ...Functions.Winding.gen_phase_list import gen_name
 
 

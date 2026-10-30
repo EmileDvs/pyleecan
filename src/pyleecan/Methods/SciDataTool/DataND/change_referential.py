@@ -1,7 +1,6 @@
 import numpy as np
 
-from pyleecan.Functions.load.import_class import import_class
-
+from ....Functions.Load.import_class import import_class
 from ....Functions.SciDataTool.change_referential import (
     change_referential_spectrum,
     change_referential_waveform,

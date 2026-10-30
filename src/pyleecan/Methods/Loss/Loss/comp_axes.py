@@ -1,5 +1,6 @@
 from numpy import concatenate, unique
-from SciDataTool import Data1D
+
+from ....Classes.Data1D import Data1D
 
 
 def comp_axes(self, output):

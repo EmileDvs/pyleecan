@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from SciDataTool import VectorField
 from .....Functions.Plot import fft_dict
 
 

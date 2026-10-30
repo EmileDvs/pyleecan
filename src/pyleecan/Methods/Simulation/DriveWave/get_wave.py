@@ -1,6 +1,8 @@
-from ....Functions.Winding.gen_phase_list import gen_name
-from SciDataTool import Data1D, DataLinspace, DataTime
+from ....Classes.Data1D import Data1D
+from ....Classes.DataLinspace import DataLinspace
+from ....Classes.DataTime import DataTime
 from ....Functions.check_parent import check_parent
+from ....Functions.Winding.gen_phase_list import gen_name
 
 
 def get_wave(self):

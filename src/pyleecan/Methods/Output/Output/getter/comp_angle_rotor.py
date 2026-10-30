@@ -1,6 +1,7 @@
-from numpy import pi, cumsum, roll, array, unique
+from numpy import array, cumsum, pi, roll, unique
 
-from SciDataTool import Norm_vector, Norm_affine
+from .....Classes.Norm_affine import Norm_affine
+from .....Classes.Norm_vector import Norm_vector
 
 
 def comp_angle_rotor(self, Time):

@@ -1,6 +1,7 @@
 from numpy import array, unique
 
-from SciDataTool import DataPattern, Norm_ref
+from ....Classes.DataPattern import DataPattern
+from ....Classes.Norm_ref import Norm_ref
 
 
 def get_data(self):

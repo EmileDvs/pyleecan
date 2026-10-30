@@ -1,13 +1,6 @@
-from os.path import isfile
-from shutil import copyfile
+from numpy import append, concatenate
 
-from numpy import append, concatenate, zeros
-from SciDataTool import Data1D
-
-from ....Classes._FEMMHandler import _FEMMHandler
-from ....Classes.OutMagFEMM import OutMagFEMM
-from ....Functions.FEMM.draw_FEMM import draw_FEMM
-from ....Functions.labels import STATOR_LAB
+from ....Classes.Data1D import Data1D
 from ....Functions.MeshSolution.build_meshsolution import build_meshsolution
 from ....Functions.MeshSolution.build_solution_data import build_solution_data
 from ....Functions.MeshSolution.build_solution_vector import build_solution_vector

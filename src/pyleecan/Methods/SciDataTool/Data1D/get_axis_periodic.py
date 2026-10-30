@@ -1,5 +1,4 @@
-from SciDataTool.Classes.Norm_vector import Norm_vector
-
+from ....Classes.Norm_vector import Norm_vector
 from ....Functions.SciDataTool import AxisError
 
 

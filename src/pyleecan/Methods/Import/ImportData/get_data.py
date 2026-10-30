@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from SciDataTool import Data1D, DataTime, DataFreq
+from ....Classes.Data1D import Data1D
+from ....Classes.DataFreq import DataFreq
+from ....Classes.DataTime import DataTime
 
 
 def get_data(self):

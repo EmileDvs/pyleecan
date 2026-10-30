@@ -1,6 +1,8 @@
-# -*- coding: utf-8 -*-
-from SciDataTool import DataFreq, VectorField, Data1D
-from numpy import power, where, repeat, newaxis, multiply
+from numpy import multiply, newaxis, power, repeat, where
+
+from ....Classes.Data1D import Data1D
+from ....Classes.DataFreq import DataFreq
+from ....Classes.VectorField import VectorField
 
 
 def comp_AGSF_transfer(self, output, rnoise=None):

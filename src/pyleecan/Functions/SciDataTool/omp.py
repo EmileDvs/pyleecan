@@ -1,21 +1,22 @@
-from SciDataTool.Classes.Data1D import Data1D
+from math import floor
 
 import numpy as np
 from numpy import (
-    ndarray,
-    concatenate,
-    identity,
     arange,
     asarray,
-    sin,
-    pi,
-    outer,
+    concatenate,
+    identity,
     linspace,
+    ndarray,
+    outer,
+    pi,
+    sin,
     sqrt,
 )
-from sklearn.linear_model import orthogonal_mp
 from scipy.fft import idct
-from math import floor
+from sklearn.linear_model import orthogonal_mp
+
+from ...Classes.Data1D import Data1D
 
 
 def comp_DST(n: int) -> ndarray:
@@ -57,7 +58,7 @@ def comp_undersampling(K: float, Time: Data1D, seed: int = 42) -> ndarray:
     Time_under: The undersampled version of the Time Data1D object
     """
 
-    assert K <= 1 and K >= 0, "K = {} is not a percentage".format(K)
+    assert K <= 1 and K >= 0, f"K = {K} is not a percentage"
 
     n = len(Time.values)
     m = floor(K * n)

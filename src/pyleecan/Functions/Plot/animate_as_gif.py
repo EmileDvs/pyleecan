@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
+from glob import glob
+from os import remove
+from os.path import join
 
 import imageio
-from os.path import join
-from os import remove
-from glob import glob
-from SciDataTool import VectorField
 from matplotlib.pyplot import subplots
+
+from ...Classes.VectorField import VectorField
 
 
 def animate_as_gif(
@@ -17,7 +17,7 @@ def animate_as_gif(
     index_max=50,
     index_step=1,
     component_list=None,
-    **kwargs
+    **kwargs,
 ):
     """Animate an existing plot command as a gif: animate
 
@@ -59,7 +59,7 @@ def animate_as_gif(
                                 data.components[comp],
                                 fig=fig,
                                 subplot_index=k,
-                                **kwargs
+                                **kwargs,
                             )
                         image = imageio.imread(save_path_temp)
                         writer.append_data(image)
@@ -87,7 +87,7 @@ def animate_as_gif(
                             data_list.components[comp],
                             fig=fig,
                             subplot_index=k,
-                            **kwargs
+                            **kwargs,
                         )
                     image = imageio.imread(save_path_temp)
                     writer.append_data(image)

@@ -1,7 +1,10 @@
-from numpy import max as np_max, min as np_min, mean as np_mean
+from numpy import max as np_max
+from numpy import mean as np_mean
+from numpy import min as np_min
 
-from SciDataTool import DataTime, VectorField, DataFreq, Norm_ref
-
+from ....Classes.DataTime import DataTime
+from ....Classes.Norm_ref import Norm_ref
+from ....Classes.VectorField import VectorField
 from ....Functions.labels import STATOR_LAB
 
 

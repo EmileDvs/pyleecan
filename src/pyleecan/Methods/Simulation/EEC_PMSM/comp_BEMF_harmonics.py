@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
-from numpy import sqrt, cos, sin, pi
-import numpy as np
-from SciDataTool import DataLinspace, DataTime
 import matplotlib.pyplot as plt
+import numpy as np
+from numpy import cos, pi, sin
+
+from ....Classes.DataLinspace import DataLinspace
+from ....Classes.DataTime import DataTime
 
 
 def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time):

@@ -3,12 +3,15 @@ from os.path import join
 from meshio import read
 from numpy import append as np_append
 from numpy import arange
-from SciDataTool import Data1D, DataTime, Norm_ref, VectorField
 
+from ....Classes.Data1D import Data1D
+from ....Classes.DataTime import DataTime
 from ....Classes.MeshSolution import MeshSolution
 from ....Classes.MeshVTK import MeshVTK
+from ....Classes.Norm_ref import Norm_ref
 from ....Classes.SolutionData import SolutionData
 from ....Classes.SolutionVector import SolutionVector
+from ....Classes.VectorField import VectorField
 
 
 def get_meshsolution(self, output):
@@ -103,7 +106,7 @@ def get_meshsolution(self, output):
     sol_dict = dict()
     # for key, value in pt_data.items():
     for key, value in cell_data.items():
-        if key in store_dict.keys():
+        if key in store_dict:
             # siz = value.shape[1]
             siz = value[0].shape[1]
             if siz > 3:

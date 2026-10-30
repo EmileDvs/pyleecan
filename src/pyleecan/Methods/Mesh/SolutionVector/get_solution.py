@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-from numpy import take
-from SciDataTool import Data1D
+from ....Classes.Data1D import Data1D
 
 
 def get_solution(self, indice=None):

@@ -1,14 +1,16 @@
-# -*- coding: utf-8 -*-
-from os.path import join, split, splitext
+from os.path import split, splitext
 
 from meshio import read
 from numpy import arange
-from SciDataTool import Data1D, DataTime, Norm_ref, VectorField
 
+from ....Classes.Data1D import Data1D
+from ....Classes.DataTime import DataTime
 from ....Classes.MeshSolution import MeshSolution
 from ....Classes.MeshVTK import MeshVTK
+from ....Classes.Norm_ref import Norm_ref
 from ....Classes.SolutionData import SolutionData
 from ....Classes.SolutionVector import SolutionVector
+from ....Classes.VectorField import VectorField
 from ....Methods.Elmer.ElmerResultsVTU import ElmerResultsVTUError
 
 # TODO add groups, see get_meshsolution of MagFEMM

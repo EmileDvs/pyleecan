@@ -1,8 +1,10 @@
 import numpy as np
-from SciDataTool import Data1D, DataTime, VectorField
 
+from ....Classes.Data1D import Data1D
+from ....Classes.DataTime import DataTime
 from ....Classes.MeshSolution import MeshSolution
 from ....Classes.SolutionVector import SolutionVector
+from ....Classes.VectorField import VectorField
 
 
 def comp_force_nodal(self, output, axes_dict):
@@ -41,7 +43,7 @@ def comp_force_nodal(self, output, axes_dict):
     # Load magnetic flux B and H and mu objects
     B_sol = meshsolution_group.get_solution(label="B")
     H_sol = meshsolution_group.get_solution(label="H")
-    mu_sol = meshsolution_group.get_solution(label="\mu")
+    mu_sol = meshsolution_group.get_solution(label=r"\mu")
 
     # Import time vector from Time Data object
     if self.is_periodicity_t is not None:

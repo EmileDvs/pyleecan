@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from numpy import array, empty, int32, int64
 from importlib import import_module
+
+from numpy import array, expand_dims, int32, int64
 
 
 def set_array(obj, prop, value):
@@ -123,12 +122,12 @@ def check_type(var_name, value, expect_type, type_value):
             raise CheckTypeError(
                 "For " + var_name + " : list expected, " + type_value + " given"
             )
-    elif expect_type == "int" and type_value == "float":
-        if value % 1 != 0:  # If not an Integer
-            raise CheckTypeError(
-                "For " + var_name + " : Integer expected, " + type_value + " given"
-            )
-    elif expect_type == "int" and type_value == "int32":
+    elif (
+        expect_type == "int"
+        and type_value == "float"
+        or expect_type == "int"
+        and type_value == "int32"
+    ):
         if value % 1 != 0:  # If not an Integer
             raise CheckTypeError(
                 "For " + var_name + " : Integer expected, " + type_value + " given"
@@ -346,43 +345,80 @@ def raise_(ex):
     raise ex
 
 
-class CheckError(Exception):
+def check_dimensions(values, axes):
+    """Check if field and axes have matching dimensions
+    Parameters
+    ----------
+    values : ndarray
+        values array
+    axes : [Data]
+        list of Data objects
+    Returns
+    -------
+    None
+    Raises
+    ------
+    CheckDimError
+        Dimensions of field and axes do not match
+    """
+    if values is None and axes is None:
+        return values
+    else:
+        if isinstance(values, list):
+            values = array(values)
+        values_shape = values.shape
+        axes_shape = []
+        for axis in axes:
+            if hasattr(axis, "values"):
+                axes_shape.append(axis.values.size)
+            else:
+                try:
+                    axes_shape.append(int(axis.number))
+                except:
+                    axes_shape.append(round((axis.final - axis.initial) / axis.step))
+
+        if values_shape != tuple(axes_shape):
+            for i, s in enumerate(axes_shape):
+                if s == 1:
+                    values = expand_dims(values, axis=i)
+            if values.shape != tuple(axes_shape):
+                raise CheckDimError(
+                    "Dimensions of field ("
+                    + str(values_shape)
+                    + ") and axes ("
+                    + str(tuple(axes_shape))
+                    + ") do not match"
+                )
+        return values
+
+
+class CheckDimError(Exception):
     """ """
 
-    pass
+
+class CheckError(Exception):
+    """ """
 
 
 class CheckMinError(CheckError):
     """ """
 
-    pass
-
 
 class CheckMaxError(CheckError):
     """ """
-
-    pass
 
 
 class CheckTypeError(CheckError):
     """ """
 
-    pass
-
 
 class InitUnKnowClassError(CheckError):
     """ """
-
-    pass
 
 
 class UnknowInitDictKeyError(CheckError):
     """ """
 
-    pass
-
 
 class NotADictError(CheckError):
     """ """
-
-    pass

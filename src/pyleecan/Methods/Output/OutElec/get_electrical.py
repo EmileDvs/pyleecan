@@ -1,11 +1,13 @@
-from numpy import zeros, abs as np_abs, argmin, array
+from numpy import abs as np_abs
+from numpy import argmin, array, zeros
 
-from SciDataTool import DataTime, DataFreq, Data1D
-
+from ....Classes.Data1D import Data1D
+from ....Classes.DataFreq import DataFreq
+from ....Classes.DataTime import DataTime
 from ....Functions.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
 from ....Functions.Electrical.dqh_transformation_freq import (
-    n2dqh_DataFreq,
     dqh2n_DataFreq,
+    n2dqh_DataFreq,
 )
 
 
