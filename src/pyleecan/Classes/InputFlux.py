@@ -199,7 +199,13 @@ class InputFlux(InputCurrent):
             + linesep
             + linesep
         )
-        InputFlux_str += "B_enforced = " + str(self.B_enforced) + linesep + linesep
+        if self.B_enforced is not None:
+            tmp = (
+                self.B_enforced.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            )
+            InputFlux_str += "B_enforced = " + tmp
+        else:
+            InputFlux_str += "B_enforced = None" + linesep + linesep
         return InputFlux_str
 
     def __eq__(self, other):
@@ -494,7 +500,8 @@ class InputFlux(InputCurrent):
         self.B_dict = None
         self.unit = None
         self.slice = None
-        self.B_enforced = None
+        if self.B_enforced is not None:
+            self.B_enforced._set_None()
         # Set to None the properties inherited from InputCurrent
         super(InputFlux, self)._set_None()
 
@@ -649,19 +656,23 @@ class InputFlux(InputCurrent):
                 value = None
         if isinstance(value, dict) and "__class__" in value:
             class_obj = import_class(
-                "SciDataTool.Classes", value.get("__class__"), "B_enforced"
+                "pyleecan.Classes", value.get("__class__"), "B_enforced"
             )
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            VectorField = import_class("pyleecan.Classes", "VectorField", "B_enforced")
             value = VectorField()
         check_var("B_enforced", value, "VectorField")
         self._B_enforced = value
+
+        if self._B_enforced is not None:
+            self._B_enforced.parent = self
 
     B_enforced = property(
         fget=_get_B_enforced,
         fset=_set_B_enforced,
         doc="""Airgap flux density as VectorField object
 
-        :Type: SciDataTool.Classes.VectorField.VectorField
+        :Type: VectorField
         """,
     )

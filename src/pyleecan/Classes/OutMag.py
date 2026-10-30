@@ -226,7 +226,11 @@ class OutMag(FrozenClass):
         else:
             OutMag_str += "parent = " + str(type(self.parent)) + " object" + linesep
         OutMag_str += "axes_dict = " + str(self.axes_dict) + linesep + linesep
-        OutMag_str += "B = " + str(self.B) + linesep + linesep
+        if self.B is not None:
+            tmp = self.B.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            OutMag_str += "B = " + tmp
+        else:
+            OutMag_str += "B = None" + linesep + linesep
         if self.Tem is not None:
             tmp = self.Tem.__str__().replace(linesep, linesep + "\t").rstrip("\t")
             OutMag_str += "Tem = " + tmp
@@ -873,7 +877,8 @@ class OutMag(FrozenClass):
         """Set all the properties to None (except pyleecan object)"""
 
         self.axes_dict = None
-        self.B = None
+        if self.B is not None:
+            self.B._set_None()
         if self.Tem is not None:
             self.Tem._set_None()
         self.Tem_av = None
@@ -953,19 +958,23 @@ class OutMag(FrozenClass):
                 )
                 value = None
         if isinstance(value, dict) and "__class__" in value:
-            class_obj = import_class("SciDataTool.Classes", value.get("__class__"), "B")
+            class_obj = import_class("pyleecan.Classes", value.get("__class__"), "B")
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            VectorField = import_class("pyleecan.Classes", "VectorField", "B")
             value = VectorField()
         check_var("B", value, "VectorField")
         self._B = value
+
+        if self._B is not None:
+            self._B.parent = self
 
     B = property(
         fget=_get_B,
         fset=_set_B,
         doc="""Airgap flux density VectorField object
 
-        :Type: SciDataTool.Classes.VectorField.VectorField
+        :Type: VectorField
         """,
     )
 

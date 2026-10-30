@@ -132,7 +132,11 @@ class SolutionVector(Solution):
         SolutionVector_str = ""
         # Get the properties inherited from Solution
         SolutionVector_str += super(SolutionVector, self).__str__()
-        SolutionVector_str += "field = " + str(self.field) + linesep + linesep
+        if self.field is not None:
+            tmp = self.field.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            SolutionVector_str += "field = " + tmp
+        else:
+            SolutionVector_str += "field = None" + linesep + linesep
         return SolutionVector_str
 
     def __eq__(self, other):
@@ -245,7 +249,8 @@ class SolutionVector(Solution):
     def _set_None(self):
         """Set all the properties to None (except pyleecan object)"""
 
-        self.field = None
+        if self.field is not None:
+            self.field._set_None()
         # Set to None the properties inherited from Solution
         super(SolutionVector, self)._set_None()
 
@@ -265,19 +270,23 @@ class SolutionVector(Solution):
                 value = None
         if isinstance(value, dict) and "__class__" in value:
             class_obj = import_class(
-                "SciDataTool.Classes", value.get("__class__"), "field"
+                "pyleecan.Classes", value.get("__class__"), "field"
             )
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            VectorField = import_class("pyleecan.Classes", "VectorField", "field")
             value = VectorField()
         check_var("field", value, "VectorField")
         self._field = value
+
+        if self._field is not None:
+            self._field.parent = self
 
     field = property(
         fget=_get_field,
         fset=_set_field,
         doc="""Data object containing the numerical values of a solution. One of the axis must be "Indices", a list of indices. If the solution is a vector, one of the axis must be "Direction", values ['x','y'] for example.
 
-        :Type: SciDataTool.Classes.VectorField.VectorField
+        :Type: VectorField
         """,
     )

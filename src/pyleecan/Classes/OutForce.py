@@ -101,7 +101,11 @@ class OutForce(FrozenClass):
         else:
             OutForce_str += "parent = " + str(type(self.parent)) + " object" + linesep
         OutForce_str += "axes_dict = " + str(self.axes_dict) + linesep + linesep
-        OutForce_str += "AGSF = " + str(self.AGSF) + linesep + linesep
+        if self.AGSF is not None:
+            tmp = self.AGSF.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            OutForce_str += "AGSF = " + tmp
+        else:
+            OutForce_str += "AGSF = None" + linesep + linesep
         OutForce_str += 'logger_name = "' + str(self.logger_name) + '"' + linesep
         OutForce_str += "Rag = " + str(self.Rag) + linesep
         if self.meshsolution is not None:
@@ -309,7 +313,8 @@ class OutForce(FrozenClass):
         """Set all the properties to None (except pyleecan object)"""
 
         self.axes_dict = None
-        self.AGSF = None
+        if self.AGSF is not None:
+            self.AGSF._set_None()
         self.logger_name = None
         self.Rag = None
         if self.meshsolution is not None:
@@ -370,21 +375,23 @@ class OutForce(FrozenClass):
                 )
                 value = None
         if isinstance(value, dict) and "__class__" in value:
-            class_obj = import_class(
-                "SciDataTool.Classes", value.get("__class__"), "AGSF"
-            )
+            class_obj = import_class("pyleecan.Classes", value.get("__class__"), "AGSF")
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            VectorField = import_class("pyleecan.Classes", "VectorField", "AGSF")
             value = VectorField()
         check_var("AGSF", value, "VectorField")
         self._AGSF = value
+
+        if self._AGSF is not None:
+            self._AGSF.parent = self
 
     AGSF = property(
         fget=_get_AGSF,
         fset=_set_AGSF,
         doc="""Air Gap Surface Force (mainly computed with Maxwell stress tensor)
 
-        :Type: SciDataTool.Classes.VectorField.VectorField
+        :Type: VectorField
         """,
     )
 

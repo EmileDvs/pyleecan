@@ -6,7 +6,7 @@ is_antiper_t,-,If time is antiperiodic,,bool,0,,
 B_dict,-,Dict of Import objects or lists for each component of the flux,,dict,None,,
 unit,-,Unit of the flux if not T,,str,None,,
 slice,m,Slice axis values,,ndarray,None,,
-B_enforced,,Airgap flux density as VectorField object,,SciDataTool.Classes.VectorField.VectorField,None,,
+B_enforced,,Airgap flux density as VectorField object,,VectorField,None,,
 ,
 Package,Inherit,Methods,Constant Name,Constant Value,Class description
 Simulation,InputCurrent,gen_input,VERSION,1,Input to skip the magnetic module and start with the structural one

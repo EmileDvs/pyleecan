@@ -6582,9 +6582,9 @@
                 "min": "",
                 "name": "B_enforced",
                 "size": "",
-                "type": "SciDataTool.Classes.VectorField.VectorField",
+                "type": "VectorField",
                 "unit": "",
-                "value": "None"
+                "value": null
             }
         ]
     },
@@ -12143,9 +12143,9 @@
                 "min": "",
                 "name": "AGSF",
                 "size": "(Nt_tot ,Na_tot)",
-                "type": "SciDataTool.Classes.VectorField.VectorField",
+                "type": "VectorField",
                 "unit": "N.m^2",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12715,9 +12715,9 @@
                 "min": "",
                 "name": "B",
                 "size": "(Nt_tot,Na_tot)",
-                "type": "SciDataTool.Classes.VectorField.VectorField",
+                "type": "VectorField",
                 "unit": "H",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -18969,9 +18969,9 @@
                 "min": "",
                 "name": "field",
                 "size": "",
-                "type": "SciDataTool.Classes.VectorField.VectorField",
+                "type": "VectorField",
                 "unit": "-",
-                "value": "None"
+                "value": null
             }
         ]
     },
