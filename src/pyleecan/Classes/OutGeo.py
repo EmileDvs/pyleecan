@@ -148,7 +148,13 @@ class OutGeo(FrozenClass):
         OutGeo_str += "is_antiper_a = " + str(self.is_antiper_a) + linesep
         OutGeo_str += "per_t_S = " + str(self.per_t_S) + linesep
         OutGeo_str += "is_antiper_t_S = " + str(self.is_antiper_t_S) + linesep
-        OutGeo_str += "axes_dict = " + str(self.axes_dict) + linesep + linesep
+        if len(self.axes_dict) == 0:
+            OutGeo_str += "axes_dict = dict()" + linesep
+        for key, obj in self.axes_dict.items():
+            tmp = (
+                self.axes_dict[key].__str__().replace(linesep, linesep + "\t") + linesep
+            )
+            OutGeo_str += "axes_dict[" + key + "] =" + tmp + linesep + linesep
         OutGeo_str += "per_t_R = " + str(self.per_t_R) + linesep
         OutGeo_str += "is_antiper_t_R = " + str(self.is_antiper_t_R) + linesep
         return OutGeo_str
@@ -884,7 +890,7 @@ class OutGeo(FrozenClass):
                         value[key] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes_dict"
+                        "pyleecan.Classes", obj.get("__class__"), "axes_dict"
                     )
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
@@ -897,7 +903,7 @@ class OutGeo(FrozenClass):
         fset=_set_axes_dict,
         doc="""Dict containing axes data without periodicities used for plots and to have simulation full time/angle vectors
 
-        :Type: {SciDataTool.Classes.DataND.Data}
+        :Type: {Data}
         """,
     )
 

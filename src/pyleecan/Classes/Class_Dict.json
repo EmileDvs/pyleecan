@@ -11903,9 +11903,9 @@
                 "min": "",
                 "name": "axes_dict",
                 "size": "",
-                "type": "{SciDataTool.Classes.DataND.Data}",
+                "type": "{Data}",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12132,9 +12132,9 @@
                 "min": "",
                 "name": "axes_dict",
                 "size": "",
-                "type": "{SciDataTool.Classes.DataND.Data}",
+                "type": "{Data}",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12348,9 +12348,9 @@
                 "min": "",
                 "name": "axes_dict",
                 "size": "",
-                "type": "{SciDataTool.Classes.DataND.Data}",
+                "type": "{Data}",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12554,9 +12554,9 @@
                 "min": "",
                 "name": "axes_dict",
                 "size": "",
-                "type": "{SciDataTool.Classes.DataND.Data}",
+                "type": "{Data}",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12704,9 +12704,9 @@
                 "min": "",
                 "name": "axes_dict",
                 "size": "",
-                "type": "{SciDataTool.Classes.DataND.Data}",
+                "type": "{Data}",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -13033,9 +13033,9 @@
                 "min": "",
                 "name": "axes_dict",
                 "size": "",
-                "type": "{SciDataTool.Classes.DataND.Data}",
+                "type": "{Data}",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",

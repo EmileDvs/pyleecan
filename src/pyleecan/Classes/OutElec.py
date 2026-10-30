@@ -229,7 +229,13 @@ class OutElec(FrozenClass):
             OutElec_str += "parent = None " + linesep
         else:
             OutElec_str += "parent = " + str(type(self.parent)) + " object" + linesep
-        OutElec_str += "axes_dict = " + str(self.axes_dict) + linesep + linesep
+        if len(self.axes_dict) == 0:
+            OutElec_str += "axes_dict = dict()" + linesep
+        for key, obj in self.axes_dict.items():
+            tmp = (
+                self.axes_dict[key].__str__().replace(linesep, linesep + "\t") + linesep
+            )
+            OutElec_str += "axes_dict[" + key + "] =" + tmp + linesep + linesep
         if self.Is is not None:
             tmp = self.Is.__str__().replace(linesep, linesep + "\t").rstrip("\t")
             OutElec_str += "Is = " + tmp
@@ -861,7 +867,7 @@ class OutElec(FrozenClass):
                         value[key] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes_dict"
+                        "pyleecan.Classes", obj.get("__class__"), "axes_dict"
                     )
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
@@ -874,7 +880,7 @@ class OutElec(FrozenClass):
         fset=_set_axes_dict,
         doc="""Dict containing axes data used for Electrical
 
-        :Type: {SciDataTool.Classes.DataND.Data}
+        :Type: {Data}
         """,
     )
 

@@ -171,7 +171,13 @@ class OutLoss(FrozenClass):
             OutLoss_str += "parent = None " + linesep
         else:
             OutLoss_str += "parent = " + str(type(self.parent)) + " object" + linesep
-        OutLoss_str += "axes_dict = " + str(self.axes_dict) + linesep + linesep
+        if len(self.axes_dict) == 0:
+            OutLoss_str += "axes_dict = dict()" + linesep
+        for key, obj in self.axes_dict.items():
+            tmp = (
+                self.axes_dict[key].__str__().replace(linesep, linesep + "\t") + linesep
+            )
+            OutLoss_str += "axes_dict[" + key + "] =" + tmp + linesep + linesep
         if len(self.loss_dict) == 0:
             OutLoss_str += "loss_dict = dict()" + linesep
         for key, obj in self.loss_dict.items():
@@ -366,7 +372,7 @@ class OutLoss(FrozenClass):
                         value[key] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes_dict"
+                        "pyleecan.Classes", obj.get("__class__"), "axes_dict"
                     )
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
@@ -379,7 +385,7 @@ class OutLoss(FrozenClass):
         fset=_set_axes_dict,
         doc="""Dict containing axes data used for Magnetics
 
-        :Type: {SciDataTool.Classes.DataND.Data}
+        :Type: {Data}
         """,
     )
 

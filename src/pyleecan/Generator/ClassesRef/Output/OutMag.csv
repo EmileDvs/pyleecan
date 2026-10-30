@@ -1,5 +1,5 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-axes_dict,,Dict containing axes data used for Magnetics,,{SciDataTool.Classes.DataND.Data},None,,
+axes_dict,,Dict containing axes data used for Magnetics,,{Data},None,,
 B,H,Airgap flux density VectorField object,"(Nt_tot,Na_tot)",VectorField,None,,
 Tem,N.m,Electromagnetic torque DataTime object,Nt_tot,DataND,None,,
 Tem_av,N.m,Average Electromagnetic torque,,float,None,,

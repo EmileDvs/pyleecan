@@ -1,5 +1,5 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-axes_dict,,Dict containing axes data used for Magnetics,,{SciDataTool.Classes.DataND.Data},None,,
+axes_dict,,Dict containing axes data used for Magnetics,,{Data},None,,
 loss_dict,,Dict containing OutLossModel obects for each type of loss,,{OutLossModel},{},,
 logger_name,-,Name of the logger to use,0,str,Pyleecan.Loss,,
 ,

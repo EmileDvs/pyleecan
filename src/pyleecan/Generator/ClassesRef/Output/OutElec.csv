@@ -1,5 +1,5 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-axes_dict,,Dict containing axes data used for Electrical,,{SciDataTool.Classes.DataND.Data},None,,
+axes_dict,,Dict containing axes data used for Electrical,,{Data},None,,
 Is,A,Stator currents DataTime object,"(qs, Nt_tot)",DataND,None,,
 Ir,A,Rotor currents as a function of time (each column correspond to one phase),"(qs, Nt_tot)",DataND,None,,
 logger_name,-,Name of the logger to use,0,str,pyleecan.Electrical,,

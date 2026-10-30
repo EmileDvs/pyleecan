@@ -79,7 +79,13 @@ class OutStruct(FrozenClass):
             OutStruct_str += "parent = None " + linesep
         else:
             OutStruct_str += "parent = " + str(type(self.parent)) + " object" + linesep
-        OutStruct_str += "axes_dict = " + str(self.axes_dict) + linesep + linesep
+        if len(self.axes_dict) == 0:
+            OutStruct_str += "axes_dict = dict()" + linesep
+        for key, obj in self.axes_dict.items():
+            tmp = (
+                self.axes_dict[key].__str__().replace(linesep, linesep + "\t") + linesep
+            )
+            OutStruct_str += "axes_dict[" + key + "] =" + tmp + linesep + linesep
         OutStruct_str += 'logger_name = "' + str(self.logger_name) + '"' + linesep
         if self.meshsolution is not None:
             tmp = (
@@ -290,7 +296,7 @@ class OutStruct(FrozenClass):
                         value[key] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes_dict"
+                        "pyleecan.Classes", obj.get("__class__"), "axes_dict"
                     )
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
@@ -303,7 +309,7 @@ class OutStruct(FrozenClass):
         fset=_set_axes_dict,
         doc="""Dict containing axes data used for Structural
 
-        :Type: {SciDataTool.Classes.DataND.Data}
+        :Type: {Data}
         """,
     )
 
