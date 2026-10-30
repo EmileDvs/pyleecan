@@ -1675,11 +1675,11 @@ wheels = [
 
 [[package]]
 name = "narwhals"
-version = "2.27.1"
+version = "2.28.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/bf/21/f64d6b2dbea7bf3f8c38cdc786dcc6ef012ca3d173ad208c782c9a7bedf6/narwhals-2.27.1.tar.gz", hash = "sha256:aed93076a3ea42d9c32c88e4eb5ea422a21937011cbe1f480f9572a523c82094", size = 735013, upload-time = "2026-10-10T06:52:18.113Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/67/43/e11d75a7fb635c6f63dd6e176cb3e050ec2fee35f2f2267b332a6ad351ec/narwhals-2.28.0.tar.gz", hash = "sha256:2d9860c80d6610820826e94c6e42ce4b1d92d89cdd479586e652a8d211dab345", size = 754977, upload-time = "2026-10-27T12:19:33.777Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d1/89/5d4c86da1130d9059681e5b6cd7645df5c10279a6a079c5c37dcb2cc6f3f/narwhals-2.27.1-py3-none-any.whl", hash = "sha256:d057df13f5852b8e157596e82eb5e955fad267425df5e420e0ee9863da483b31", size = 483211, upload-time = "2026-10-10T06:52:16.32Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/82/8ef9c7e0f50493307a49c09cfa7f00c5a778b6d1921f7b2dabe1d3a5809e/narwhals-2.28.0-py3-none-any.whl", hash = "sha256:1f69d6385ec30e2fa6e1fdeb37c562ecabd0f713f6f3e3b58a668c5c9df9567f", size = 490591, upload-time = "2026-10-27T12:19:31.649Z" },
 ]
 
 [[package]]
@@ -2167,6 +2167,7 @@ dependencies = [
     { name = "gmsh" },
     { name = "h5py" },
     { name = "hypothesis" },
+    { name = "imageio" },
     { name = "ipykernel" },
     { name = "ipympl" },
     { name = "ipython" },
@@ -2184,7 +2185,7 @@ dependencies = [
     { name = "pytest-qt" },
     { name = "pyuff" },
     { name = "pyvista", extra = ["jupyter"] },
-    { name = "scidatatool" },
+    { name = "scikit-learn" },
     { name = "scipy" },
     { name = "setuptools" },
     { name = "swat-em" },
@@ -2210,6 +2211,7 @@ requires-dist = [
     { name = "gmsh", specifier = ">=4.15.2" },
     { name = "h5py", specifier = ">=3.2.1" },
     { name = "hypothesis", specifier = ">=6.170.0" },
+    { name = "imageio", specifier = ">=2.38.1" },
     { name = "ipykernel", specifier = ">=7.4.0" },
     { name = "ipympl", specifier = ">=0.10.0" },
     { name = "ipython", specifier = ">=9.17.1" },
@@ -2227,7 +2229,7 @@ requires-dist = [
     { name = "pytest-qt", specifier = ">=3.3.0" },
     { name = "pyuff", specifier = ">=2.4" },
     { name = "pyvista", extras = ["jupyter"], specifier = ">=0.49.1" },
-    { name = "scidatatool", git = "https://github.com/Eomys/SciDataTool.git" },
+    { name = "scikit-learn", specifier = ">=1.9.1" },
     { name = "scipy", specifier = ">=1.6.0" },
     { name = "setuptools", specifier = ">=84.0.0" },
     { name = "smoot", marker = "python_full_version < '3.14'", git = "https://github.com/Eomys/smoot" },
@@ -2767,20 +2769,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/0a/e8/1e186578076aff7a80735f625005fde678412ab609cd323ed182eb7d6b87/ruff-0.17.1-py3-none-win32.whl", hash = "sha256:1de0030a8aa78c65c5fecb84b2e5c390ac684c0452875a02afc7c083d49a496a", size = 9895093, upload-time = "2026-10-15T15:23:10.582Z" },
     { url = "https://files.pythonhosted.org/packages/6a/2e/da3d9589bae8e8b58f3a48bd5bc0b980232fb14a83bf02c3be7660f87c1b/ruff-0.17.1-py3-none-win_amd64.whl", hash = "sha256:5df76f16580fab58d0f6c98a3ac254a4abceb7b2489b8b678335869cff77b3d7", size = 10097955, upload-time = "2026-10-15T15:23:13.309Z" },
     { url = "https://files.pythonhosted.org/packages/df/c9/0f2a4dea06a5e12c1191ee3d96b1e1233797d0d5e18f97a2b909a95a9836/ruff-0.17.1-py3-none-win_arm64.whl", hash = "sha256:42400b9a6ff8515ff27796f07f92e0195be011c86e81e381606f58ea5502fef4", size = 9853542, upload-time = "2026-10-15T15:23:16.05Z" },
-]
-
-[[package]]
-name = "scidatatool"
-version = "2.5.1"
-source = { git = "https://github.com/Eomys/SciDataTool.git#c6f2497971a24486c64ad27575eb45f12a8458bf" }
-dependencies = [
-    { name = "cloudpickle" },
-    { name = "h5py" },
-    { name = "imageio" },
-    { name = "matplotlib" },
-    { name = "numpy" },
-    { name = "scikit-learn" },
-    { name = "scipy" },
 ]
 
 [[package]]

@@ -16,6 +16,7 @@ dependencies = [
     "gmsh>=4.15.2",
     "h5py>=3.2.1",
     "hypothesis>=6.170.0",
+    "imageio>=2.38.1",
     "ipykernel>=7.4.0",
     "ipympl>=0.10.0",
     "ipython>=9.17.1",
@@ -33,7 +34,7 @@ dependencies = [
     "pytest-qt>=3.3.0",
     "pyuff>=2.4",
     "pyvista[jupyter]>=0.49.1",
-    "scidatatool",
+    "scikit-learn>=1.9.1",
     "scipy>=1.6.0",
     "setuptools>=84.0.0",
     "smoot ; python_full_version < '3.14'",
@@ -55,7 +56,6 @@ requires = ["uv_build>=0.13.0,<0.14.0"]
 build-backend = "uv_build"
 
 [tool.uv.sources]
-scidatatool = { git = "https://github.com/Eomys/SciDataTool.git" }
 swat-em = { git = "https://gitlab.com/CedMrnl/swat-em.git" }
 smoot = { git = "https://github.com/Eomys/smoot" }
 
