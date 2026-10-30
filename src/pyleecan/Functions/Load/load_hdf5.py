@@ -1,6 +1,5 @@
 from h5py import File, Group
-from numpy import bool_, int32, int64, bytes_, ndarray
-from cloudpickle import loads
+from numpy import bool_, bytes_, floating, integer, ndarray
 
 
 def load_hdf5(file_path):
@@ -57,10 +56,10 @@ def construct_dict_from_group(group):
                     value = value.tolist()
                 elif isinstance(value, bool_):  # bool
                     value = bool(value)
-                elif isinstance(value, int64):  # float
-                    value = float(value)
-                elif isinstance(value, int32):  # int
+                elif isinstance(value, integer):  # int
                     value = int(value)
+                elif isinstance(value, floating):  # float
+                    value = float(value)
                 elif isinstance(value, (bytes_, bytes)):  # String
                     value = value.decode("ISO-8859-2")
                     # None is not available in H5 => we use a string
@@ -91,10 +90,10 @@ def construct_dict_from_group(group):
                     value = None
                 elif isinstance(value, bool_):  # bool
                     value = bool(value)
-                elif isinstance(value, int64):  # float
-                    value = float(value)
-                elif isinstance(value, int32):  # int
+                elif isinstance(value, integer):  # int
                     value = int(value)
+                elif isinstance(value, floating):  # float
+                    value = float(value)
                 elif isinstance(value, (bytes_, bytes)):  # String
                     value = value.decode("ISO-8859-2")
                     # None is not available in H5 => we use a string
