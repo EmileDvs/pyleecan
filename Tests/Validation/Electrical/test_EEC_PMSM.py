@@ -1,28 +1,21 @@
+from multiprocessing import cpu_count
 from os.path import join
 
-from numpy import sqrt, pi, linspace, array, zeros
+import pytest
+from numpy import array, linspace, pi, sqrt, zeros
 from numpy.testing import assert_almost_equal
 
-from multiprocessing import cpu_count
-
-import pytest
-
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-
+from pyleecan.Classes.EEC_PMSM import EEC_PMSM
+from pyleecan.Classes.Electrical import Electrical
+from pyleecan.Classes.InputCurrent import InputCurrent
+from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.Simu1 import Simu1
-from pyleecan.Classes.InputCurrent import InputCurrent
-from pyleecan.Classes.Electrical import Electrical
-from pyleecan.Classes.EEC_PMSM import EEC_PMSM
-from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
-
+from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions.load import load
 from pyleecan.Functions.Plot import dict_2D
-
-from pyleecan.definitions import DATA_DIR
-
-from Tests import save_validation_path as save_path
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 is_show_fig = False
 
@@ -71,7 +64,7 @@ def test_EEC_PMSM(nb_worker=int(0.5 * cpu_count())):
             "phase[]",
             # save_path=join(save_path, "EEC_FEMM_IPMSM_currents.png"),
             # is_show_fig=False,
-            **dict_2D
+            **dict_2D,
         )
 
     return out
@@ -145,7 +138,7 @@ def test_EEC_PMSM_sync_rel(nb_worker=int(0.5 * cpu_count())):
             xlabel="Current angle [deg]",
             ylabel="Electrical torque [N.m]",
             title="Electrical torque vs current angle",
-            **dict_2D
+            **dict_2D,
         )
 
         plot_2D(
@@ -155,7 +148,7 @@ def test_EEC_PMSM_sync_rel(nb_worker=int(0.5 * cpu_count())):
             xlabel="Current angle [deg]",
             ylabel="Electrical torque [N.m]",
             title="Electrical torque vs current angle",
-            **dict_2D
+            **dict_2D,
         )
 
     return out

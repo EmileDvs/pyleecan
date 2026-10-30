@@ -1,18 +1,17 @@
 import matplotlib.pyplot as plt
-
 from numpy import (
-    ceil,
-    argmin,
     abs,
     arange,
-    ndarray,
+    argmin,
+    ceil,
     cumsum,
-    zeros,
+    ndarray,
     shape,
+    zeros,
 )
 
-from SciDataTool.Functions.Plot.init_fig import init_fig
-from SciDataTool.Functions.Plot import COLORS, LINESTYLES
+from pyleecan.Functions.SciDataTool.Plot import COLORS, LINESTYLES
+from pyleecan.Functions.SciDataTool.Plot.init_fig import init_fig
 
 
 def plot_2D(
@@ -268,7 +267,7 @@ def plot_2D(
                 )
         plt.xticks(
             range(len(Xdatas[i_Xdatas[i]])),
-            ["{:.2f}".format(f) for f in Xdatas[i_Xdatas[i]]],
+            [f"{f:.2f}" for f in Xdatas[i_Xdatas[i]]],
             rotation=90,
         )
     elif type_plot == "octave":

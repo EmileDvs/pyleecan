@@ -1,27 +1,32 @@
-from numpy.core.numeric import zeros_like
-from SciDataTool.Functions.Plot.plot_4D import plot_4D
-from SciDataTool.Functions.Plot.plot_3D import plot_3D
-from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
-from SciDataTool.Functions.Load.import_class import import_class
-from SciDataTool.Functions.parser import read_input_strings
-from SciDataTool.Functions.fix_axes_order import fix_axes_order
-from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
     any as np_any,
-    where,
-    meshgrid,
-    unique,
-    nanmax as np_max,
-    nanmin as np_min,
-    array2string,
-    linspace,
-    log10,
+)
+from numpy import (
     array,
+    array2string,
     ceil,
     floor,
-    argmin,
+    linspace,
+    log10,
     logical_and,
+    meshgrid,
+    where,
 )
+from numpy import (
+    nanmax as np_max,
+)
+from numpy import (
+    nanmin as np_min,
+)
+from numpy.core.numeric import zeros_like
+from SciDataTool.Classes.Norm_indices import Norm_indices
+
+from pyleecan.Functions.load.import_class import import_class
+from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
+from pyleecan.Functions.SciDataTool.parser import read_input_strings
+from pyleecan.Functions.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
+from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
+from pyleecan.Functions.SciDataTool.Plot.plot_4D import plot_4D
 
 
 def plot_3D_Data(
@@ -447,7 +452,6 @@ def plot_3D_Data(
     zlabel = zlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
 
     if is_fft:
-
         if thresh is None:
             if self.normalizations is not None and "ref" in self.normalizations:
                 thresh = self.normalizations["ref"].ref

@@ -1,8 +1,10 @@
 from copy import copy
-import numpy as np
+
 import imageio
 import matplotlib.pyplot as plt
-from SciDataTool.Functions.Plot.init_fig import init_fig, copy_fig
+import numpy as np
+
+from pyleecan.Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
 
 
 def plot_2D_Data_Animated(
@@ -152,7 +154,6 @@ def plot_2D_Data_Animated(
 
         # for value in animated_values:
         while value_min < value_max - variation_step:
-
             # Select a frequency and make it rotate by playing on the phase
             if "freqs" in arg_list[0]:
                 arg_list0 = arg_list
@@ -251,7 +252,6 @@ def plot_2D_Data_Animated(
         imageio.mimsave(save_path_gif, images, format="GIF-PIL", fps=fps)
 
     else:
-
         # Call the plot on each component
         if component_list is None:  # default: extract all components
             component_list = self.components.keys()

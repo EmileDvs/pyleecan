@@ -1,6 +1,10 @@
 from SciDataTool import Data1D
-from SciDataTool.Functions import axes_dict, rev_axes_dict
-from SciDataTool.Functions.conversions import get_unit_derivate, get_unit_integrate
+
+from pyleecan.Functions.SciDataTool import axes_dict, rev_axes_dict
+from pyleecan.Functions.SciDataTool.conversions import (
+    get_unit_derivate,
+    get_unit_integrate,
+)
 
 
 def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):

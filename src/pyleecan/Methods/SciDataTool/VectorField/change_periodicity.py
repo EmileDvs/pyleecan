@@ -1,6 +1,6 @@
 import numpy as np
 
-from SciDataTool.Functions.Load.import_class import import_class
+from pyleecan.Functions.load.import_class import import_class
 
 
 def change_periodicity(
@@ -124,7 +124,6 @@ def change_periodicity(
 
     # Replicate values by the number of repetitions
     for comp, data in self.components.items():
-
         # Duplicate values
         if Nrep_t > 1 and Nrep_a > 1:
             val_new = np.tile(result[comp], (Nrep_t, Nrep_a, 1))

@@ -1,36 +1,41 @@
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-from SciDataTool.Functions.Plot import (
-    unit_dict,
-    norm_dict,
-    axes_dict,
-    fft_dict,
-    ifft_dict,
-    COLORS,
-)
-from SciDataTool.Functions.Load.import_class import import_class
-from SciDataTool.Functions.fix_axes_order import fix_axes_order
-from SciDataTool.Functions.parser import read_input_strings
-from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
-    squeeze,
-    split,
+    argmax,
+    argsort,
     array,
-    where,
-    unique,
-    nanmax as np_max,
     array2string,
     insert,
-    nanmin as np_min,
     linspace,
-    argsort,
-    argmax,
-    take,
     log10,
     nan,
-    sum as np_sum,
+    split,
     sqrt,
+    squeeze,
+    take,
+    unique,
+    where,
     zeros,
 )
+from numpy import (
+    nanmax as np_max,
+)
+from numpy import (
+    nanmin as np_min,
+)
+from numpy import (
+    sum as np_sum,
+)
+from SciDataTool.Classes.Norm_indices import Norm_indices
+
+from pyleecan.Functions.load.import_class import import_class
+from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
+from pyleecan.Functions.SciDataTool.parser import read_input_strings
+from pyleecan.Functions.SciDataTool.Plot import (
+    COLORS,
+    axes_dict,
+    norm_dict,
+    unit_dict,
+)
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 
 def plot_2D_Data(
@@ -461,7 +466,6 @@ def plot_2D_Data(
 
     # Finish title
     if title is None:
-
         # Reformat in case of operation
         for ope in ["max", "min", "mean"]:
             if "=" + ope in title2:
@@ -570,10 +574,10 @@ def plot_2D_Data(
                     cont = upper_sum / (10 ** (0.1 * OVL))
                 else:
                     upper_sum = np_sum(
-                        10 ** (0.1 * A_weighting) * contrib ** 2, axis=sum_index
+                        10 ** (0.1 * A_weighting) * contrib**2, axis=sum_index
                     )
                     cont = upper_sum / (
-                        ((self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL))
+                        (self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL)
                     )
             elif unit == "dB":
                 arg_list_new = [
@@ -598,8 +602,8 @@ def plot_2D_Data(
                         self.normalizations["ref"].ref * 10 ** (0.1 * OVL)
                     )
                 else:
-                    cont = contrib ** 2 / (
-                        ((self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL))
+                    cont = contrib**2 / (
+                        (self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL)
                     )
             else:
                 symbol = self.symbol
@@ -607,12 +611,12 @@ def plot_2D_Data(
                 if self.unit == "W":
                     cont = Ydatas[i + 1] / OVL
                 else:
-                    cont = Ydatas[i + 1] ** 2 / OVL ** 2
+                    cont = Ydatas[i + 1] ** 2 / OVL**2
             contrib_array[i, :] = cont * 100
         # Remove small contributions
         # Iloads = where(sqrt(np_sum(contrib_array ** 2, 1)) > 1e-2)[0]
         # Sort in decreasing order
-        Isort = argsort(-sqrt(np_sum(contrib_array ** 2, 1)), axis=0)
+        Isort = argsort(-sqrt(np_sum(contrib_array**2, 1)), axis=0)
         Ydatas = [Ydatas[0]]
         legends = [r"100% (overall $" + symbol + "$)"]
         new_color_list = [new_color_list[0]]
@@ -658,7 +662,6 @@ def plot_2D_Data(
 
     # Call generic plot function
     if is_fft:
-
         if thresh is None:
             if self.normalizations is not None and "ref" in self.normalizations:
                 thresh = self.normalizations["ref"].ref
@@ -780,7 +783,6 @@ def plot_2D_Data(
         )
 
     else:
-
         # Force curve plot if type_plot not specified
         if type_plot is None:
             type_plot = "curve"

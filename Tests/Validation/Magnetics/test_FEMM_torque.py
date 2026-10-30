@@ -1,18 +1,19 @@
-from os.path import join
 from multiprocessing import cpu_count
+from os.path import join
+
 import pytest
-from numpy import array, ones, pi, zeros, sqrt
+from numpy import array, ones, pi, sqrt, zeros
+
+from pyleecan.Classes.DataKeeper import DataKeeper
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.Simu1 import Simu1
 from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
-from pyleecan.Classes.DataKeeper import DataKeeper
-from pyleecan.definitions import DATA_DIR
+from pyleecan.definitions import DATA_DIR, config_dict
 from pyleecan.Functions.load import load
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from Tests import save_validation_path as save_path
-from pyleecan.definitions import config_dict
 
 
 @pytest.mark.long_5s

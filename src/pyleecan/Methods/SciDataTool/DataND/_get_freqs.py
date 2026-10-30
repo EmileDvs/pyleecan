@@ -1,6 +1,6 @@
-from numpy import meshgrid, array
+from numpy import array, meshgrid
 
-from SciDataTool.Functions import AxisError
+from pyleecan.Functions.SciDataTool import AxisError
 
 
 def _get_freqs(self):

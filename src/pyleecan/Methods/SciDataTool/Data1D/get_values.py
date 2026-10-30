@@ -1,9 +1,10 @@
 from importlib import import_module
+
 from numpy import array
 
-from SciDataTool.Functions.conversions import convert
-from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
-from SciDataTool.Functions import AxisError, NormError
+from pyleecan.Functions.SciDataTool import AxisError, NormError
+from pyleecan.Functions.SciDataTool.conversions import convert
+from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 
 
 def get_values(
@@ -42,7 +43,7 @@ def get_values(
     """
     # Dynamic import to avoid loop
     module = __import__("SciDataTool.Classes.Norm_vector", fromlist=["Norm_vector"])
-    Norm_vector = getattr(module, "Norm_vector")
+    Norm_vector = module.Norm_vector
 
     if unit != "SI" and unit != self.unit:
         if unit in self.normalizations and normalization is None:
@@ -70,7 +71,6 @@ def get_values(
             self.symmetries["antiperiod"] = 2
             values = rebuild_symmetries_axis(values, self.symmetries)
             self.symmetries["antiperiod"] = nper
-            pass
         elif "period" in self.symmetries:
             pass
         else:

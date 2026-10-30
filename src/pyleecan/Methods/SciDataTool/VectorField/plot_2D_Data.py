@@ -1,12 +1,13 @@
-from numpy import column_stack, array, exp, real, squeeze, array2string
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-from SciDataTool.Functions.conversions import (
+from numpy import array, array2string, column_stack, exp, real, squeeze
+
+from pyleecan.Functions.load.import_class import import_class
+from pyleecan.Functions.SciDataTool.conversions import (
     rphiz_to_xyz,
-    xyz_to_rphiz,
     rphiz_to_xyz_field,
+    xyz_to_rphiz,
 )
-from SciDataTool.Functions.Plot import REV_COMP_DICT
-from SciDataTool.Functions.Load.import_class import import_class
+from pyleecan.Functions.SciDataTool.Plot import REV_COMP_DICT
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 
 def plot_2D_Data(
@@ -130,7 +131,6 @@ def plot_2D_Data(
 
     # Special case of quiver plot
     if type_plot == "quiver":
-
         if component_list is None:
             title = "Total " + self.name
             result = self.get_xyz_along(
@@ -300,7 +300,6 @@ def plot_2D_Data(
         )
 
     else:
-
         # Call the plot on each component
         if component_list is None:  # default: extract all components
             component_list = self.components.keys()

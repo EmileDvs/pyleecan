@@ -1,7 +1,8 @@
-from SciDataTool.Functions import AxisError, NormError, UnitError
-from SciDataTool.Functions.conversions import convert, to_dB, to_dBA, to_noct
-from SciDataTool.Functions.fix_axes_order import fix_axes_order
-from numpy import apply_along_axis, add, take
+from numpy import add, apply_along_axis, take
+
+from pyleecan.Functions.SciDataTool import AxisError, NormError, UnitError
+from pyleecan.Functions.SciDataTool.conversions import convert, to_dB, to_dBA, to_noct
+from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
 
 
 def get_magnitude_along(
@@ -12,7 +13,7 @@ def get_magnitude_along(
     axis_data=[],
     is_squeeze=True,
     is_sum=True,
-    corr_unit=None
+    corr_unit=None,
 ):
     """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
     Parameters
@@ -163,7 +164,6 @@ def get_magnitude_along(
                 )  # Then sum on speed and order axes
 
     else:
-
         return_dict = self.get_along(
             *args,
             axis_data=axis_data,
@@ -230,18 +230,17 @@ def get_magnitude_along(
                 for axis in return_dict["axes_list"]:
                     if axis.name == "freqs" or axis.corr_name == "freqs":
                         index = axis.index
+                if return_dict["axes_list"][
+                    index
+                ].corr_values is not None and return_dict["axes_list"][
+                    index
+                ].unit not in [
+                    "SI",
+                    return_dict["axes_list"][index].corr_unit,
+                ]:
+                    freqs = return_dict["axes_list"][index].corr_values
                 else:
-                    if return_dict["axes_list"][
-                        index
-                    ].corr_values is not None and return_dict["axes_list"][
-                        index
-                    ].unit not in [
-                        "SI",
-                        return_dict["axes_list"][index].corr_unit,
-                    ]:
-                        freqs = return_dict["axes_list"][index].corr_values
-                    else:
-                        freqs = return_dict["freqs"]
+                    freqs = return_dict["freqs"]
                 values = apply_along_axis(
                     to_dBA, index, values, freqs, self.unit, ref_value
                 )
@@ -249,18 +248,17 @@ def get_magnitude_along(
                 for axis in return_dict["axes_list"]:
                     if axis.name == "frequency" or axis.corr_name == "frequency":
                         index = axis.index
+                if return_dict["axes_list"][
+                    index
+                ].corr_values is not None and return_dict["axes_list"][
+                    index
+                ].unit not in [
+                    "SI",
+                    return_dict["axes_list"][index].corr_unit,
+                ]:
+                    freqs = return_dict["axes_list"][index].corr_values
                 else:
-                    if return_dict["axes_list"][
-                        index
-                    ].corr_values is not None and return_dict["axes_list"][
-                        index
-                    ].unit not in [
-                        "SI",
-                        return_dict["axes_list"][index].corr_unit,
-                    ]:
-                        freqs = return_dict["axes_list"][index].corr_values
-                    else:
-                        freqs = return_dict["frequency"]
+                    freqs = return_dict["frequency"]
                 values = apply_along_axis(
                     to_dBA, index, values, freqs, self.unit, ref_value
                 )

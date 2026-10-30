@@ -1,6 +1,9 @@
 from numpy import any as np_any
 
-from SciDataTool.Functions.sum_convolution import get_sum_indices, get_sum_amplitudes
+from pyleecan.Functions.SciDataTool.sum_convolution import (
+    get_sum_amplitudes,
+    get_sum_indices,
+)
 
 
 def sum(

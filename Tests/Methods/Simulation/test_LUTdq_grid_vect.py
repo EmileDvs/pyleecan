@@ -1,22 +1,18 @@
 from os.path import join
-import pytest
+
 import numpy as np
+import pytest
 
-
-from SciDataTool.Functions.Plot.plot_3D import plot_3D
-
-
-from pyleecan.Classes.OPdq import OPdq
-from pyleecan.Classes.Simu1 import Simu1
-from pyleecan.Classes.InputCurrent import InputCurrent
-from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
-from pyleecan.Classes.PostLUT import PostLUT
 from pyleecan.Classes.ElecLUTdq import ElecLUTdq
+from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.MagFEMM import MagFEMM
-
-from pyleecan.Functions.load import load
-
+from pyleecan.Classes.OPdq import OPdq
+from pyleecan.Classes.PostLUT import PostLUT
+from pyleecan.Classes.Simu1 import Simu1
+from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR
+from pyleecan.Functions.load import load
+from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
 
 
 @pytest.mark.skip(reason="Method is not working")
@@ -112,7 +108,7 @@ def test_LUTdq_grid_vect(is_load=True):
     # Plot Phi_d map
     plot_3D(
         Zdata=Phi_dqh_grid[0, :].reshape((nd, nq)).T,
-        zlabel="$\Phi_d$ [Wb]",
+        zlabel=r"$\Phi_d$ [Wb]",
         title="Flux linkage map in dq plane (d-axis)",
         **dict_map,
     )
@@ -120,7 +116,7 @@ def test_LUTdq_grid_vect(is_load=True):
     # Plot Phi_d map
     plot_3D(
         Zdata=Phi_dqh_vect[0, :].reshape((nd, nq)).T,
-        zlabel="$\Phi_d$ [Wb]",
+        zlabel=r"$\Phi_d$ [Wb]",
         title="Flux linkage map in dq plane (d-axis)",
         **dict_map,
     )
@@ -128,7 +124,7 @@ def test_LUTdq_grid_vect(is_load=True):
     # Plot Phi_q map
     plot_3D(
         Zdata=Phi_dqh_grid[1, :].reshape((nd, nq)).T,
-        zlabel="$\Phi_q$ [Wb]",
+        zlabel=r"$\Phi_q$ [Wb]",
         title="Flux linkage map in dq plane (q-axis)",
         **dict_map,
     )
@@ -136,7 +132,7 @@ def test_LUTdq_grid_vect(is_load=True):
     # Plot Phi_q map
     plot_3D(
         Zdata=Phi_dqh_vect[1, :].reshape((nd, nq)).T,
-        zlabel="$\Phi_q$ [Wb]",
+        zlabel=r"$\Phi_q$ [Wb]",
         title="Flux linkage map in dq plane (q-axis)",
         **dict_map,
     )

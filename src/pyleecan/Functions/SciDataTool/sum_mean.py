@@ -1,7 +1,6 @@
 import numpy as np
 
-from SciDataTool.Functions.derivation_integration import integrate
-from SciDataTool.Functions.conversions import convert
+from pyleecan.Functions.SciDataTool.derivation_integration import integrate
 
 
 def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):
@@ -128,7 +127,7 @@ def root_mean_square(values, ax_val, index, Nper, is_aper, is_phys, is_fft):
         # Remove anti-periodicity since values is squared
         is_aper = False
 
-    return np.sqrt(my_mean(values ** 2, ax_val, index, Nper, is_aper, is_phys, is_fft))
+    return np.sqrt(my_mean(values**2, ax_val, index, Nper, is_aper, is_phys, is_fft))
 
 
 def root_sum_square(
@@ -170,10 +169,10 @@ def root_sum_square(
             is_phys = False
 
         if is_phys:
-            values = integrate(values ** 2, ax_val, index, Nper, is_aper, is_phys)
+            values = integrate(values**2, ax_val, index, Nper, is_aper, is_phys)
         else:
             values = my_sum(
-                values ** 2, index, Nper, is_aper, unit, is_fft, corr_unit=corr_unit
+                values**2, index, Nper, is_aper, unit, is_fft, corr_unit=corr_unit
             )
 
         return np.sqrt(values)

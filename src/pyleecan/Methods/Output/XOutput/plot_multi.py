@@ -1,12 +1,10 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 from ....definitions import config_dict
-from ....Methods.Output.XOutput import _get_symbol_data_
-from ....Functions.Plot import dict_2D, dict_3D
 from ....Functions.init_fig import init_fig
+from ....Methods.Output.XOutput import _get_symbol_data_
 
 COLORS = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"]
 COLORMAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
@@ -83,7 +81,7 @@ def plot_multi(
         idx = slice(None)
 
     if plot_type not in ["point", "curve"]:
-        raise PlotError("Unknown plot_type {}.".format(plot_type))
+        raise PlotError(f"Unknown plot_type {plot_type}.")
 
     # get data and labels
     x_values, x_label = _get_symbol_data_(self, x_symbol, idx)

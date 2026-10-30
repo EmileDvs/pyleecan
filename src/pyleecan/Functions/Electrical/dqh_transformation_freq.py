@@ -1,12 +1,12 @@
 import numpy as np
-
 from SciDataTool import Data1D, DataFreq
-from SciDataTool.Functions.set_routines import union1d_tol
+
+from pyleecan.Functions.SciDataTool.set_routines import union1d_tol
 
 from ...Functions.Electrical.dqh_transformation import (
     _check_data,
-    n2abc,
     abc2n,
+    n2abc,
 )
 from ...Functions.Winding.gen_phase_list import gen_name
 

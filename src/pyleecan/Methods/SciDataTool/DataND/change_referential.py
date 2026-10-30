@@ -1,10 +1,10 @@
 import numpy as np
 
-from SciDataTool.Functions.change_referential import (
+from pyleecan.Functions.load.import_class import import_class
+from pyleecan.Functions.SciDataTool.change_referential import (
     change_referential_spectrum,
     change_referential_waveform,
 )
-from SciDataTool.Functions.Load.import_class import import_class
 
 
 def change_referential(
@@ -179,7 +179,6 @@ def change_referential(
     if len(axes_list_change) == 0:
         axes_list_change = list()
         for axis in axes_list:
-
             if axis.name == "time" and is_waveform:
                 axis_new = axis.copy()
                 axis_new.symmetries = sym_t_new

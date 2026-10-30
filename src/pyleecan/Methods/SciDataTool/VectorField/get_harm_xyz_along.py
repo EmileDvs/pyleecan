@@ -1,7 +1,6 @@
 from numpy import zeros
 
-from SciDataTool.Functions.conversions import cart2pol
-from SciDataTool.Functions import AxisError
+from pyleecan.Functions.SciDataTool import AxisError
 
 
 def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]):

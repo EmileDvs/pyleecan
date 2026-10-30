@@ -1,6 +1,6 @@
-from SciDataTool.Functions.parser import read_input_strings
-from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
-from SciDataTool.Functions.fix_axes_order import fix_axes_order
+from pyleecan.Functions.SciDataTool.fft_functions import comp_fftn, comp_ifftn
+from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
+from pyleecan.Functions.SciDataTool.parser import read_input_strings
 
 
 def get_along(

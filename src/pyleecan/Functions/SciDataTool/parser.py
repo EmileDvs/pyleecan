@@ -1,6 +1,7 @@
-from numpy import pi, sqrt, inf  # for eval
-from SciDataTool.Functions import AxisError
+from numpy import inf  # for eval
 from SciDataTool.Classes.RequestedAxis import RequestedAxis
+
+from pyleecan.Functions.SciDataTool import AxisError
 
 
 def read_input_strings(args, axis_data):
@@ -31,11 +32,7 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("->")
             if "=" in elems[1]:
                 unit = elems[1].split("=")[0]
-            elif "[" in elems[1]:
-                unit = elems[1].split("[")[0]
-            elif ">" in elems[1]:
-                unit = elems[1].split("[")[0]
-            elif "<" in elems[1]:
+            elif "[" in elems[1] or ">" in elems[1] or "<" in elems[1]:
                 unit = elems[1].split("[")[0]
             else:
                 unit = elems[1]

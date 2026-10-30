@@ -1,33 +1,40 @@
-from SciDataTool.Functions import UnitError
-from SciDataTool.Functions.fft_functions import (
+from numpy import (
+    abs as np_abs,
+)
+from numpy import (
+    angle as np_angle,
+)
+from numpy import (
+    argwhere,
+    array,
+    column_stack,
+    cos,
+    exp,
+    floor,
+    imag,
+    isnan,
+    log10,
+    nan,
+    ndarray,
+    ones,
+    pi,
+    real,
+    sin,
+    sqrt,
+    square,
+    take,
+    where,
+    zeros,
+)
+from numpy import (
+    sum as np_sum,
+)
+
+from pyleecan.Functions.SciDataTool import UnitError
+from pyleecan.Functions.SciDataTool.fft_functions import (
     comp_fft_freqs,
     comp_fft_time,
     comp_nthoctave_axis,
-)
-from numpy import (
-    pi,
-    log10,
-    sqrt,
-    square,
-    column_stack,
-    exp,
-    real,
-    imag,
-    cos,
-    sin,
-    ndarray,
-    nan,
-    isnan,
-    abs as np_abs,
-    sum as np_sum,
-    angle as np_angle,
-    where,
-    argwhere,
-    array,
-    take,
-    zeros,
-    floor,
-    ones,
 )
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
@@ -99,7 +106,7 @@ def get_dim_prefix(unit_str):
                 p = int(unit_str.rsplit(key[0], 1)[1])
             dim = [p * d for d in key[2]]
             prefix_str = unit_str.rsplit(key[0], 1)[0]
-            if prefix_str in unit_prefixes.keys():
+            if prefix_str in unit_prefixes:
                 prefix = (unit_prefixes.get(prefix_str) * key[1]) ** p
             else:
                 raise UnitError("Prefix " + prefix_str + " unknown")
@@ -226,9 +233,7 @@ def convert(values, unit1, unit2):
         return 1960 * (values + 0.53) / (26.28 - values)
     elif unit1 == "Hz" and unit2 == "Bark":
         return (26.81 * values / (1960 + values)) - 0.53
-    elif unit1 == "dimless" and unit2 == "":
-        return values
-    elif unit1 == "" and unit2 == "dimless":
+    elif unit1 == "dimless" and unit2 == "" or unit1 == "" and unit2 == "dimless":
         return values
     # Generic conversion
     else:
@@ -285,8 +290,7 @@ def to_dB(values, unit, ref_value=1.0):
         if isinstance(values, ndarray):
             values[values < ref_value] = ref_value
         else:
-            if values < ref_value:
-                values = ref_value
+            values = max(values, ref_value)
     mask = values != 0
     try:
         convert(values, unit, "W")
@@ -407,12 +411,12 @@ def dB_to_dBA(values, freqs, noct=None):
         freq2 = square(freqs)
         freq2[freq2 == 0] = nan
         RA = (
-            12200.0 ** 2
-            * freq2 ** 2
+            12200.0**2
+            * freq2**2
             / (
-                (freq2 + 20.6 ** 2)
-                * sqrt((freq2 + 107.7 ** 2) * (freq2 + 737.0 ** 2))
-                * (freq2 + 12200.0 ** 2)
+                (freq2 + 20.6**2)
+                * sqrt((freq2 + 107.7**2) * (freq2 + 737.0**2))
+                * (freq2 + 12200.0**2)
             )
         )
         Aweight = 2.0 + 20.0 * log10(RA)
@@ -456,7 +460,7 @@ def to_noct(values, freqs, noct=3):
             if np_sum(values2) == 0:
                 values_oct.append(0)
             else:
-                values_oct.append(sqrt(np_sum(values2 ** 2)))
+                values_oct.append(sqrt(np_sum(values2**2)))
     values = array(values_oct)
     # Apply bin correction factor for when centre frequencies are not integer
     # multiples of the bandwicth (BW)

@@ -1,5 +1,6 @@
-from SciDataTool.Functions import AxisError
 from SciDataTool.Classes.Norm_vector import Norm_vector
+
+from pyleecan.Functions.SciDataTool import AxisError
 
 
 def get_axis_periodic(self, Nper, is_aper=False):
@@ -22,7 +23,7 @@ def get_axis_periodic(self, Nper, is_aper=False):
 
     # Dynamic import to avoid loop
     module = __import__("SciDataTool.Classes.DataLinspace", fromlist=["DataLinspace"])
-    DataLinspace = getattr(module, "DataLinspace")
+    DataLinspace = module.DataLinspace
 
     try:
         # Reduce axis to the given periodicity

@@ -2,25 +2,19 @@ from multiprocessing import cpu_count
 from os.path import join
 
 import numpy as np
+import pytest
 from numpy.testing import assert_almost_equal
 
-import pytest
-
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-from SciDataTool.Functions.Plot.plot_3D import plot_3D
-
 from pyleecan.Classes.ElecLUTdq import ElecLUTdq
-
-from pyleecan.Classes.OPdq import OPdq
-from pyleecan.Classes.Simu1 import Simu1
 from pyleecan.Classes.InputCurrent import InputCurrent
-from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
 from pyleecan.Classes.MagFEMM import MagFEMM
+from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.PostLUT import PostLUT
-
-from pyleecan.Functions.load import load
-
+from pyleecan.Classes.Simu1 import Simu1
+from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR
+from pyleecan.Functions.load import load
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 is_show_fig = False
 

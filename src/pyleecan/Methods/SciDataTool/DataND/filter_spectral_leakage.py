@@ -1,6 +1,6 @@
 import numpy as np
 
-from SciDataTool.Functions.filter_spectral_leakage import (
+from pyleecan.Functions.SciDataTool.filter_spectral_leakage import (
     filter_spectral_leakage as filter_spectral_leakage_fct,
 )
 
@@ -50,13 +50,13 @@ def filter_spectral_leakage(
     """
 
     module = __import__("SciDataTool.Classes.DataFreq", fromlist=["DataFreq"])
-    DataFreq = getattr(module, "DataFreq")
+    DataFreq = module.DataFreq
 
     module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
-    DataPattern = getattr(module, "DataPattern")
+    DataPattern = module.DataPattern
 
     module = __import__("SciDataTool.Classes.Data1D", fromlist=["Data1D"])
-    Data1D = getattr(module, "Data1D")
+    Data1D = module.Data1D
 
     if len(axes_list_filt) == 0 or len(arg_list) == 0:
         # Get fft along frequency axis (keep other axes)

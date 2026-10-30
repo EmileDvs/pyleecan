@@ -1,11 +1,8 @@
 from multiprocessing import cpu_count
 from os.path import join
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_almost_equal
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
 
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.Loss import Loss

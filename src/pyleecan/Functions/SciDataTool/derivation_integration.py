@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.integrate as scp_int
 
-from SciDataTool.Functions import AxisError
+from pyleecan.Functions.SciDataTool import AxisError
 
 
 def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
@@ -38,7 +38,6 @@ def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
         values = values / (axis_reshaped * 2 * 1j * np.pi)
 
     elif is_phys:
-
         if ax_val.size > 1:
             # Swap axis to always have integration axis on 1st position
             values = np.swapaxes(values, index, 0)

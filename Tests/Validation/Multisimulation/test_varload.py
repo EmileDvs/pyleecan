@@ -1,23 +1,19 @@
 # Load the machine
-import sys
-from os.path import dirname, abspath, normpath, join
-
-from pyleecan.Classes.OPdq import OPdq
-import pytest
-
-from numpy import ones, zeros, linspace, pi, array, sqrt, arange, exp
 from multiprocessing import cpu_count
-
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-from pyleecan.definitions import config_dict
-from pyleecan.Functions.load import load
-from pyleecan.definitions import DATA_DIR
 from os.path import join
-from pyleecan.Classes.Simu1 import Simu1
-from pyleecan.Classes.MagFEMM import MagFEMM
-from pyleecan.Classes.InputCurrent import InputCurrent
-from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
+
+import pytest
+from numpy import arange, array, exp, linspace, ones, pi, sqrt, zeros
+
 from pyleecan.Classes.DataKeeper import DataKeeper
+from pyleecan.Classes.InputCurrent import InputCurrent
+from pyleecan.Classes.MagFEMM import MagFEMM
+from pyleecan.Classes.OPdq import OPdq
+from pyleecan.Classes.Simu1 import Simu1
+from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
+from pyleecan.definitions import DATA_DIR, config_dict
+from pyleecan.Functions.load import load
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from Tests import save_validation_path as save_path
 
 
@@ -70,9 +66,9 @@ def test_varload():
     # creating the Operating point matrix
     OP_matrix = zeros((N_simu, 4))
     # Set N0 = 2000 [rpm] for all simulation
-    OP_matrix[:, 0] = 2000 * ones((N_simu))
+    OP_matrix[:, 0] = 2000 * ones(N_simu)
     # Set I0 = 250/sqrt(2) [Arms] for all simulation
-    OP_matrix[:, 1] = I0_rms * ones((N_simu))
+    OP_matrix[:, 1] = I0_rms * ones(N_simu)
     # Set Phi0 from 60° to 180°
     OP_matrix[:, 2] = Phi0_ref[I_simu]
     # Set reference torque from Yang et al, 2013

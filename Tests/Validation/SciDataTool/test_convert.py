@@ -1,22 +1,23 @@
+from os.path import join
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pytest
+from numpy.testing import assert_array_almost_equal
 from SciDataTool import (
     Data,
-    DataTime,
-    DataLinspace,
     Data1D,
     DataFreq,
-    Norm_affine,
+    DataLinspace,
+    DataTime,
     Norm_func,
     Norm_indices,
-    Norm_vector,
     Norm_ref,
+    Norm_vector,
 )
-from SciDataTool.Functions import NormError
+
+from pyleecan.Functions.SciDataTool import NormError
 from Tests import DATA_DIR
-import numpy as np
-from numpy.testing import assert_array_almost_equal
-from os.path import join
-import matplotlib.pyplot as plt
 
 
 @pytest.mark.validation

@@ -1,25 +1,21 @@
 from os.path import join
 
 import numpy as np
-
 import pytest
 
-from SciDataTool.Functions.Plot.plot_3D import plot_3D
-from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
-
-from pyleecan.Classes.OPdq import OPdq
-from pyleecan.Classes.Simu1 import Simu1
-from pyleecan.Classes.InputVoltage import InputVoltage
-from pyleecan.Classes.InputCurrent import InputCurrent
-from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
-from pyleecan.Classes.PostLUT import PostLUT
 from pyleecan.Classes.ElecLUTdq import ElecLUTdq
-from pyleecan.Classes.MagFEMM import MagFEMM
+from pyleecan.Classes.InputCurrent import InputCurrent
+from pyleecan.Classes.InputVoltage import InputVoltage
 from pyleecan.Classes.LossFEA import LossFEA
-
-from pyleecan.Functions.load import load
-
+from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
+from pyleecan.Classes.MagFEMM import MagFEMM
+from pyleecan.Classes.OPdq import OPdq
+from pyleecan.Classes.PostLUT import PostLUT
+from pyleecan.Classes.Simu1 import Simu1
+from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR
+from pyleecan.Functions.load import load
+from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
 
 
 @pytest.mark.skip(reason="Work in progress")
@@ -125,7 +121,7 @@ def test_ElecLUTdq_solve_power():
     # Plot Phi_d map
     plot_3D(
         Zdata=Phi_dqh_grid[0, :].reshape((nd, nq)).T,
-        zlabel="$\Phi_d$ [Wb]",
+        zlabel=r"$\Phi_d$ [Wb]",
         title="Flux linkage map in dq plane (d-axis)",
         **dict_map,
     )
@@ -133,7 +129,7 @@ def test_ElecLUTdq_solve_power():
     # Plot Phi_q map
     plot_3D(
         Zdata=Phi_dqh_grid[1, :].reshape((nd, nq)).T,
-        zlabel="$\Phi_q$ [Wb]",
+        zlabel=r"$\Phi_q$ [Wb]",
         title="Flux linkage map in dq plane (q-axis)",
         **dict_map,
     )

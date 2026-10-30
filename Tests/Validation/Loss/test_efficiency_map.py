@@ -1,36 +1,29 @@
-from os.path import join, split, exists
+from os.path import exists, join, split
 
 import numpy as np
 import pytest
-
 import SciDataTool
 
 print(SciDataTool.__version__)
 
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-from SciDataTool.Functions.Plot.plot_3D import plot_3D
-
-from pyleecan.Classes.ElecLUTdq import ElecLUTdq
-
-from pyleecan.Classes.OPdq import OPdq
-from pyleecan.Classes.Simu1 import Simu1
-
-from pyleecan.Classes.InputCurrent import InputCurrent
-from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
-from pyleecan.Classes.MagFEMM import MagFEMM
-from pyleecan.Classes.PostLUT import PostLUT
-from pyleecan.Classes.Loss import Loss
-from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
-from pyleecan.Classes.LossModelJoule import LossModelJoule
-from pyleecan.Classes.LossModelProximity import LossModelProximity
-from pyleecan.Classes.LossModelMagnet import LossModelMagnet
 from pyleecan.Classes.DataKeeper import DataKeeper
-
+from pyleecan.Classes.ElecLUTdq import ElecLUTdq
+from pyleecan.Classes.InputCurrent import InputCurrent
+from pyleecan.Classes.Loss import Loss
+from pyleecan.Classes.LossModelJoule import LossModelJoule
+from pyleecan.Classes.LossModelMagnet import LossModelMagnet
+from pyleecan.Classes.LossModelProximity import LossModelProximity
+from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
+from pyleecan.Classes.MagFEMM import MagFEMM
+from pyleecan.Classes.OPdq import OPdq
+from pyleecan.Classes.PostLUT import PostLUT
+from pyleecan.Classes.Simu1 import Simu1
+from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
+from pyleecan.definitions import DATA_DIR, RESULT_DIR
 from pyleecan.Functions.load import load
 from pyleecan.Functions.Load.load_json import LoadMissingFileError
-
-from pyleecan.definitions import DATA_DIR
-from pyleecan.definitions import RESULT_DIR
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
 
 is_show_fig = True
 
@@ -47,8 +40,8 @@ def test_efficiency_map():
     "Electromagnetic Analysis and Design Methodology for Permanent Magnet Motors Using MotorAnalysis-PM Software",
     available at https://www.mdpi.com/2075-1702/7/4/75."""
 
-    Toyota_Prius = load(join(DATA_DIR, "Machine", f"Toyota_Prius.json"))
-    LUT_file_name = f"LUT_eff_Toyota_Prius.h5"
+    Toyota_Prius = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))
+    LUT_file_name = "LUT_eff_Toyota_Prius.h5"
     path_to_LUT = join(RESULT_DIR, LUT_file_name)
 
     if not exists(split(path_to_LUT)[0]):
@@ -188,7 +181,7 @@ def test_efficiency_map():
     try:
         LUT_enforced = load(path_to_LUT)
         simu.elec.LUT_enforced = LUT_enforced
-    except (FileNotFoundError, LoadMissingFileError):
+    except FileNotFoundError, LoadMissingFileError:
         print("The LUT could not be loaded, so it will be computed.")
         LUT_enforced = None
 
@@ -426,7 +419,7 @@ def test_efficiency_map():
         # Plot Phi_d map
         plot_3D(
             Zdata=Phi_dqh_grid[0, :].reshape((nd, nq)).T,
-            zlabel="$\Phi_d$ [Wb]",
+            zlabel=r"$\Phi_d$ [Wb]",
             title="Flux linkage map in dq plane (d-axis)",
             **dict_map,
         )
@@ -434,7 +427,7 @@ def test_efficiency_map():
         # Plot Phi_q map
         plot_3D(
             Zdata=Phi_dqh_grid[1, :].reshape((nd, nq)).T,
-            zlabel="$\Phi_q$ [Wb]",
+            zlabel=r"$\Phi_q$ [Wb]",
             title="Flux linkage map in dq plane (q-axis)",
             **dict_map,
         )

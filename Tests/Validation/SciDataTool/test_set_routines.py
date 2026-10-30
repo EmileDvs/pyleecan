@@ -1,7 +1,11 @@
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
-from SciDataTool.Functions.set_routines import union1d_tol, unique_tol, intersect1d_tol
+from pyleecan.Functions.SciDataTool.set_routines import (
+    intersect1d_tol,
+    union1d_tol,
+    unique_tol,
+)
 
 
 def test_set_routines():
@@ -37,9 +41,6 @@ def test_set_routines():
     z4 = intersect1d_tol(x, y)
     assert z4.size == 0
 
-    pass
-
 
 if __name__ == "__main__":
-
     test_set_routines()

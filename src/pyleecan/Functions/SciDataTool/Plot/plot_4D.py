@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-
-from numpy import log10, abs as np_abs, nanmax as np_max, nan, zeros_like
 import matplotlib.pyplot as plt
+from numpy import abs as np_abs
+from numpy import log10, nan, zeros_like
+from numpy import nanmax as np_max
 
-from SciDataTool.Functions.Plot.init_fig import init_fig
-import numpy as np
+from pyleecan.Functions.SciDataTool.Plot.init_fig import init_fig
 
 
 def plot_4D(

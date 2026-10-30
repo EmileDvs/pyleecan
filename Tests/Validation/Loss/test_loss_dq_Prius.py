@@ -1,9 +1,7 @@
-from os.path import exists, join
+from os.path import join
 
 import numpy as np
 import pytest
-from genericpath import exists
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
 
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.Loss import Loss
@@ -111,7 +109,7 @@ def test_FEMM_Loss_Prius():
 
     for i, out in enumerate(out_list):
         out.loss.loss_list.append(out.loss.loss_list[0] + out.loss.loss_list[1])
-        out.loss.loss_list[2].name = f"(Id={OP_MATRIX[i,1]}, Iq={OP_MATRIX[i,2]})"
+        out.loss.loss_list[2].name = f"(Id={OP_MATRIX[i, 1]}, Iq={OP_MATRIX[i, 2]})"
         out.loss.loss_list[2].get_mesh_solution().get_group(group_names).plot_contour(
             "freqs=sum",
             label=f"{out.loss.loss_list[2].name}",
@@ -121,9 +119,9 @@ def test_FEMM_Loss_Prius():
     for i, out in enumerate(out_list[:-1]):
         for j, other in enumerate(out_list[i + 1 :], start=i + 1):
             out.loss.loss_list.append(out.loss.loss_list[2] - other.loss.loss_list[2])
-            out.loss.loss_list[-1].name = (
-                f"(Id={OP_MATRIX[i,1]}, Iq={OP_MATRIX[i,2]}) - (Id={OP_MATRIX[j,1]}, Iq={OP_MATRIX[j,2]})"
-            )
+            out.loss.loss_list[
+                -1
+            ].name = f"(Id={OP_MATRIX[i, 1]}, Iq={OP_MATRIX[i, 2]}) - (Id={OP_MATRIX[j, 1]}, Iq={OP_MATRIX[j, 2]})"
             out.loss.loss_list[-1].get_mesh_solution().get_group(
                 group_names
             ).plot_contour(

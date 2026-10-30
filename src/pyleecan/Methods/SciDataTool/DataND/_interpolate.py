@@ -1,4 +1,4 @@
-from SciDataTool.Functions.interpolations import (
+from pyleecan.Functions.SciDataTool.interpolations import (
     get_interpolation,
     get_interpolation_step,
 )

@@ -1,31 +1,23 @@
 from os.path import join
 
+import numpy as np
 import pytest
 
-import numpy as np
-from numpy.testing import assert_almost_equal
 from pyleecan.Classes.EEC_SCIM import EEC_SCIM
-
+from pyleecan.Classes.Electrical import Electrical
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.InputVoltage import InputVoltage
-from pyleecan.Classes.LUTslip import LUTslip
-from pyleecan.Classes.Simu1 import Simu1
-from pyleecan.Classes.OPslip import OPslip
-from pyleecan.Classes.MagFEMM import MagFEMM
-from pyleecan.Classes.Electrical import Electrical
 from pyleecan.Classes.Loss import Loss
-from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
 from pyleecan.Classes.LossModelJoule import LossModelJoule
 from pyleecan.Classes.LossModelProximity import LossModelProximity
-
-
-from pyleecan.Functions.load import load
-
+from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
+from pyleecan.Classes.LUTslip import LUTslip
+from pyleecan.Classes.MagFEMM import MagFEMM
+from pyleecan.Classes.OPslip import OPslip
+from pyleecan.Classes.Simu1 import Simu1
 from pyleecan.definitions import DATA_DIR
-
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
+from pyleecan.Functions.load import load
 from pyleecan.Functions.Plot import dict_2D
-
 
 is_show_fig = True
 

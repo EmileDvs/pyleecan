@@ -1,22 +1,16 @@
+from multiprocessing import cpu_count
 from os.path import join
 
 import numpy as np
+import pytest
 from numpy.testing import assert_almost_equal
 
-from multiprocessing import cpu_count
-
-from pyleecan.Functions.load import load
-from pyleecan.definitions import DATA_DIR
-
+from pyleecan.Classes.EEC_SCIM import EEC_SCIM
 from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.OPdq import OPdq
-from pyleecan.Classes.EEC_SCIM import EEC_SCIM
-
-
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-
-from numpy import angle, cos
-import pytest
+from pyleecan.definitions import DATA_DIR
+from pyleecan.Functions.load import load
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 is_show_fig = False
 

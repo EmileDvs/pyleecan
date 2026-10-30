@@ -1,6 +1,7 @@
-from SciDataTool.Functions import NormError
-from SciDataTool.Functions.conversions import convert
 from numpy import angle as np_angle
+
+from pyleecan.Functions.SciDataTool import NormError
+from pyleecan.Functions.SciDataTool.conversions import convert
 
 
 def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):

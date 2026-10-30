@@ -1,8 +1,9 @@
 from importlib import import_module
+
 from numpy import array
 
-from SciDataTool.Functions.conversions import convert
-from SciDataTool.Functions import NormError
+from pyleecan.Functions.SciDataTool import NormError
+from pyleecan.Functions.SciDataTool.conversions import convert
 
 
 def get_values(

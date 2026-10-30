@@ -1,4 +1,4 @@
-from SciDataTool.Functions import AxisError
+from pyleecan.Functions.SciDataTool import AxisError
 
 
 def get_length(self, is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False):

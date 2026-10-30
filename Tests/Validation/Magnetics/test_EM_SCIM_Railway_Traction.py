@@ -1,28 +1,23 @@
-from os.path import join, isfile
-
-import pytest
+from os.path import isfile, join
 
 import numpy as np
+import pytest
 from numpy.testing import assert_almost_equal
 
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-
-from pyleecan.Classes.OPslip import OPslip
-from pyleecan.Classes.Simu1 import Simu1
-from pyleecan.Classes.Electrical import Electrical
 from pyleecan.Classes.EEC_SCIM import EEC_SCIM
-from pyleecan.Classes.LUTslip import LUTslip
+from pyleecan.Classes.Electrical import Electrical
+from pyleecan.Classes.ImportMatlab import ImportMatlab
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.InputVoltage import InputVoltage
-from pyleecan.Classes.VarLoadVoltage import VarLoadVoltage
-from pyleecan.Classes.ImportMatlab import ImportMatlab
+from pyleecan.Classes.LUTslip import LUTslip
 from pyleecan.Classes.MagFEMM import MagFEMM
-
-
+from pyleecan.Classes.OPslip import OPslip
+from pyleecan.Classes.Simu1 import Simu1
+from pyleecan.Classes.VarLoadVoltage import VarLoadVoltage
+from pyleecan.definitions import DATA_DIR, TEST_DIR
 from pyleecan.Functions.load import load
 from pyleecan.Functions.Plot import dict_2D
-
-from pyleecan.definitions import TEST_DIR, DATA_DIR
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 is_show_fig = False
 

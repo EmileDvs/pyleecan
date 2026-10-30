@@ -1,5 +1,6 @@
 from SciDataTool import Data1D
-from SciDataTool.Functions import AxisError
+
+from pyleecan.Functions.SciDataTool import AxisError
 
 
 def freq_to_time(self):
@@ -15,9 +16,9 @@ def freq_to_time(self):
 
     # Dynamic import to avoid loop
     module = __import__("SciDataTool.Classes.DataTime", fromlist=["DataTime"])
-    DataTime = getattr(module, "DataTime")
+    DataTime = module.DataTime
     module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
-    DataPattern = getattr(module, "DataPattern")
+    DataPattern = module.DataPattern
 
     axes_str = []
     for i, axis in enumerate(self.axes):

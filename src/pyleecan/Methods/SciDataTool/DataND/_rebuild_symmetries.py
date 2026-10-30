@@ -1,8 +1,8 @@
-from SciDataTool.Functions.symmetries import (
+from numpy import take
+
+from pyleecan.Functions.SciDataTool.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
-
-from numpy import take
 
 
 def _rebuild_symmetries(
@@ -66,12 +66,7 @@ def _rebuild_symmetries(
                 is_oneperiod = True
                 is_antiperiod = False
             # Ignore symmetries if fft axis
-            elif axis.name in ["freqs", "wavenumber"]:
-                is_smallestperiod = True
-                is_oneperiod = False
-                is_antiperiod = False
-            # Ignore symmetries if non uniform ifft was used
-            elif (
+            elif axis.name in ["freqs", "wavenumber"] or (
                 axis.transform == "ifft"
                 # and len(axis.values) != len(axis.corr_values)
                 and len(axis.values) == values.shape[axis.index]

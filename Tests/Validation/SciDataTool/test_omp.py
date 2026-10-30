@@ -1,9 +1,9 @@
-import pytest
 import numpy as np
-
+import pytest
 from SciDataTool.Classes.Data1D import Data1D
 from SciDataTool.Classes.DataTime import DataTime
-from SciDataTool.Functions.omp import comp_undersampling, comp_undersampled_axe
+
+from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, comp_undersampling
 
 
 @pytest.mark.validation

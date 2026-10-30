@@ -1,31 +1,30 @@
 from numpy import (
-    array,
-    pi,
-    exp,
-    ceil,
-    isin,
-    take,
-    insert,
-    delete,
     allclose,
-    real,
-    linspace,
-    where,
-    isclose,
     around,
+    array,
+    ceil,
+    delete,
+    exp,
+    insert,
+    isclose,
+    isin,
+    linspace,
+    pi,
+    real,
+    take,
+    where,
 )
 from numpy.fft import (
-    fftshift,
-    ifftshift,
-    rfftn,
-    irfftn,
     fftn,
+    fftshift,
     ifftn,
+    ifftshift,
+    irfftn,
+    rfftn,
 )
 
-
-from SciDataTool.Functions.nudft_functions import is_uniform, nudftn, inudftn
-from SciDataTool.Functions.Plot import fft_dict
+from pyleecan.Functions.SciDataTool.nudft_functions import inudftn, is_uniform, nudftn
+from pyleecan.Functions.SciDataTool.Plot import fft_dict
 
 
 def comp_fft_freqs(time, is_time, is_real):

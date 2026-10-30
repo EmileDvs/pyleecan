@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.linalg as np_lin
 
-from SciDataTool.Functions.set_routines import unique_tol
+from pyleecan.Functions.SciDataTool.set_routines import unique_tol
 
 
 def filter_spectral_leakage(
@@ -61,7 +61,6 @@ def filter_spectral_leakage(
             freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
 
     if Wmatf.size == 0 or If.size == 0:
-        
         # Check frequency resolution
         df_fft = np.min(np.abs(np.diff(freqs)))
         df_th = np.min(np.abs(np.diff(freqs_th)))

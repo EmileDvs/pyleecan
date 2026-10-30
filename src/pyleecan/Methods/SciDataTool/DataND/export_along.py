@@ -1,8 +1,9 @@
-from SciDataTool.Functions.Plot import unit_dict
-
 import csv
-import numpy as np
 from os.path import join
+
+import numpy as np
+
+from pyleecan.Functions.SciDataTool.Plot import unit_dict
 
 CHAR_LIST = ["$", "{", "}"]
 
@@ -16,7 +17,7 @@ def export_along(
     file_name=None,
     file_format="csv",
     is_multiple_files=False,
-    plot_options={}
+    plot_options={},
 ):
     """Exports the sliced or interpolated version of the data, using conversions and symmetries if needed, in a file.
     Parameters
@@ -42,7 +43,7 @@ def export_along(
     if args == tuple():
         # Dynamic import to avoid loop
         module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
-        DataPattern = getattr(module, "DataPattern")
+        DataPattern = module.DataPattern
         arg_list = []
         for axis in self.get_axes():
             if isinstance(axis, DataPattern):

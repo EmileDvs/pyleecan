@@ -1,5 +1,6 @@
-from numpy import linspace, array
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
+from numpy import array, linspace
+
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 
 def plot_losses(self, N0_array=None, save_path=None, is_show_fig=True):

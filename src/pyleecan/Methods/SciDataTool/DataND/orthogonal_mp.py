@@ -1,5 +1,6 @@
 from SciDataTool.Classes.Data1D import Data1D
-from SciDataTool.Functions.omp import omp, comp_undersampled_axe
+
+from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, omp
 
 
 def orthogonal_mp(
@@ -24,9 +25,9 @@ def orthogonal_mp(
     # This method should only be used for 1D or 2D field, where the
     # undersampling is in the time's direction
     nombre_axes = len(self.axes)
-    assert (
-        nombre_axes == 2 or nombre_axes == 1
-    ), "Dimension error: {} not in {1,2}".format(nombre_axes)
+    assert nombre_axes == 2 or nombre_axes == 1, (
+        "Dimension error: {} not in {1,2}".format(nombre_axes)
+    )
 
     axes_name = [self.axes[i].name for i in range(nombre_axes)]
     assert "time" in axes_name, "There is no time axe"

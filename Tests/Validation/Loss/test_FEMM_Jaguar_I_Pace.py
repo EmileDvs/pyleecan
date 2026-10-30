@@ -2,8 +2,6 @@ from os.path import join
 
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_almost_equal
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
 
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.Loss import Loss
@@ -21,7 +19,7 @@ is_show_fig = False
 
 
 def find_best_phi0_jaguar():
-    from numpy import arange, array, linspace, ones, pi, sqrt, zeros
+    from numpy import array, linspace, ones, pi, sqrt, zeros
 
     from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
 
@@ -37,10 +35,10 @@ def find_best_phi0_jaguar():
     OP_matrix = zeros((N_speed, 4))
 
     # Set N0 = 2000 [rpm] for all simulation
-    OP_matrix[:, 0] = 2000 * ones((N_speed))
+    OP_matrix[:, 0] = 2000 * ones(N_speed)
 
     # Set I0 = 250 / sqrt(2) [A] (RMS) for all simulation
-    OP_matrix[:, 1] = 250 / sqrt(2) * ones((N_speed))
+    OP_matrix[:, 1] = 250 / sqrt(2) * ones(N_speed)
 
     # Set Phi0 from 60° to 180°
     OP_matrix[:, 2] = Phi0_ref

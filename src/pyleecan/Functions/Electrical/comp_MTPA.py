@@ -1,12 +1,12 @@
 import numpy as np
 
-from SciDataTool.Functions.Plot.plot_3D import plot_3D
+from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
 
-from ...Classes.Electrical import Electrical
 from ...Classes.EEC_PMSM import EEC_PMSM
-from ...Classes.Simu1 import Simu1
-from ...Classes.OPdq import OPdq
+from ...Classes.Electrical import Electrical
 from ...Classes.InputCurrent import InputCurrent
+from ...Classes.OPdq import OPdq
+from ...Classes.Simu1 import Simu1
 
 
 def comp_MTPA(
@@ -236,7 +236,7 @@ def comp_MTPA(
         # Plot Phi_d map
         plot_3D(
             Zdata=eec_param["Phid"].reshape((n_Iq, n_Id)).T,
-            zlabel="$\Phi_d$ [Wb]",
+            zlabel=r"$\Phi_d$ [Wb]",
             title="Flux linkage map in dq plane (d-axis)",
             **dict_map,
         )
@@ -244,7 +244,7 @@ def comp_MTPA(
         # Plot Phi_q map
         plot_3D(
             Zdata=eec_param["Phiq"].reshape((n_Iq, n_Id)).T,
-            zlabel="$\Phi_q$ [Wb]",
+            zlabel=r"$\Phi_q$ [Wb]",
             title="Flux linkage map in dq plane (q-axis)",
             **dict_map,
         )
