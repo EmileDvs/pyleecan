@@ -225,7 +225,28 @@ def run_generate_classes(
 
 if __name__ == "__main__":
     # To generate all classes
-    run_generate_classes()
+    # run_generate_classes()
+
+    # list_csv = [
+    #     "Data.csv",
+    #     "Data1D.csv",
+    #     "DataDual.csv",
+    #     "DataFreq.csv",
+    #     "DataLinspace.csv",
+    #     "DataND.csv",
+    #     "DataPattern.csv",
+    #     "DataTime.csv",
+    #     "Norm_affine.csv",
+    #     "Norm_func.csv",
+    #     "Norm_indices.csv",
+    #     "Norm_ref.csv",
+    #     "Norm_vector.csv",
+    #     "Normalization.csv",
+    #     "RequestedAxis.csv",
+    #     "VectorField.csv",
+    # ]
+
+    list_csv = ["SolutionData.csv", "LUTdq.csv", "OutElec.csv", "OutMag.csv"]
 
     # To generate only one class
-    # run_generate_classes(class_list=["LossModel.csv"])
+    run_generate_classes(class_list=list_csv)

@@ -21,9 +21,9 @@ def comp_mmf_unit(self, Na, Nt, felec=1, current_dir=None, phase_dir=None):
 
     Returns
     -------
-    MMF_U : SciDataTool.Classes.DataND.DataND
+    MMF_U : DataND
         Unit magnetomotive force (Na,Nt)
-    WF : SciDataTool.Classes.DataND.DataND
+    WF : DataND
         Winding functions (qs,Na)
 
     """

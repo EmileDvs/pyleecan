@@ -1,4 +1,4 @@
-from SciDataTool.Methods.DataDual import is_freq
+from ....Methods.SciDataTool.DataDual import is_freq
 
 
 def get_along(

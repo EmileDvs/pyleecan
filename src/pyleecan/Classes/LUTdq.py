@@ -289,7 +289,13 @@ class LUTdq(LUT):
             + linesep
             + linesep
         )
-        LUTdq_str += "Phi_dqh_mag = " + str(self.Phi_dqh_mag) + linesep + linesep
+        if self.Phi_dqh_mag is not None:
+            tmp = (
+                self.Phi_dqh_mag.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            )
+            LUTdq_str += "Phi_dqh_mag = " + tmp
+        else:
+            LUTdq_str += "Phi_dqh_mag = None" + linesep + linesep
         return LUTdq_str
 
     def __eq__(self, other):
@@ -492,7 +498,8 @@ class LUTdq(LUT):
         """Set all the properties to None (except pyleecan object)"""
 
         self.Phi_dqh_mean = None
-        self.Phi_dqh_mag = None
+        if self.Phi_dqh_mag is not None:
+            self.Phi_dqh_mag._set_None()
         # Set to None the properties inherited from LUT
         super(LUTdq, self)._set_None()
 
@@ -537,19 +544,23 @@ class LUTdq(LUT):
                 value = None
         if isinstance(value, dict) and "__class__" in value:
             class_obj = import_class(
-                "SciDataTool.Classes", value.get("__class__"), "Phi_dqh_mag"
+                "pyleecan.Classes", value.get("__class__"), "Phi_dqh_mag"
             )
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            DataND = import_class("pyleecan.Classes", "DataND", "Phi_dqh_mag")
             value = DataND()
         check_var("Phi_dqh_mag", value, "DataND")
         self._Phi_dqh_mag = value
+
+        if self._Phi_dqh_mag is not None:
+            self._Phi_dqh_mag.parent = self
 
     Phi_dqh_mag = property(
         fget=_get_Phi_dqh_mag,
         fset=_set_Phi_dqh_mag,
         doc="""RMS stator winding flux linkage spectrum in dqh frame including harmonics (only magnets)
 
-        :Type: SciDataTool.Classes.DataND.DataND
+        :Type: DataND
         """,
     )

@@ -230,11 +230,23 @@ class OutElec(FrozenClass):
         else:
             OutElec_str += "parent = " + str(type(self.parent)) + " object" + linesep
         OutElec_str += "axes_dict = " + str(self.axes_dict) + linesep + linesep
-        OutElec_str += "Is = " + str(self.Is) + linesep + linesep
-        OutElec_str += "Ir = " + str(self.Ir) + linesep + linesep
+        if self.Is is not None:
+            tmp = self.Is.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            OutElec_str += "Is = " + tmp
+        else:
+            OutElec_str += "Is = None" + linesep + linesep
+        if self.Ir is not None:
+            tmp = self.Ir.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            OutElec_str += "Ir = " + tmp
+        else:
+            OutElec_str += "Ir = None" + linesep + linesep
         OutElec_str += 'logger_name = "' + str(self.logger_name) + '"' + linesep
         OutElec_str += "Pj_losses = " + str(self.Pj_losses) + linesep
-        OutElec_str += "Us = " + str(self.Us) + linesep + linesep
+        if self.Us is not None:
+            tmp = self.Us.__str__().replace(linesep, linesep + "\t").rstrip("\t")
+            OutElec_str += "Us = " + tmp
+        else:
+            OutElec_str += "Us = None" + linesep + linesep
         if self.internal is not None:
             tmp = self.internal.__str__().replace(linesep, linesep + "\t").rstrip("\t")
             OutElec_str += "internal = " + tmp
@@ -800,11 +812,14 @@ class OutElec(FrozenClass):
         """Set all the properties to None (except pyleecan object)"""
 
         self.axes_dict = None
-        self.Is = None
-        self.Ir = None
+        if self.Is is not None:
+            self.Is._set_None()
+        if self.Ir is not None:
+            self.Ir._set_None()
         self.logger_name = None
         self.Pj_losses = None
-        self.Us = None
+        if self.Us is not None:
+            self.Us._set_None()
         if self.internal is not None:
             self.internal._set_None()
         if self.OP is not None:
@@ -878,21 +893,23 @@ class OutElec(FrozenClass):
                 )
                 value = None
         if isinstance(value, dict) and "__class__" in value:
-            class_obj = import_class(
-                "SciDataTool.Classes", value.get("__class__"), "Is"
-            )
+            class_obj = import_class("pyleecan.Classes", value.get("__class__"), "Is")
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            DataND = import_class("pyleecan.Classes", "DataND", "Is")
             value = DataND()
         check_var("Is", value, "DataND")
         self._Is = value
+
+        if self._Is is not None:
+            self._Is.parent = self
 
     Is = property(
         fget=_get_Is,
         fset=_set_Is,
         doc="""Stator currents DataTime object
 
-        :Type: SciDataTool.Classes.DataND.DataND
+        :Type: DataND
         """,
     )
 
@@ -911,21 +928,23 @@ class OutElec(FrozenClass):
                 )
                 value = None
         if isinstance(value, dict) and "__class__" in value:
-            class_obj = import_class(
-                "SciDataTool.Classes", value.get("__class__"), "Ir"
-            )
+            class_obj = import_class("pyleecan.Classes", value.get("__class__"), "Ir")
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            DataND = import_class("pyleecan.Classes", "DataND", "Ir")
             value = DataND()
         check_var("Ir", value, "DataND")
         self._Ir = value
+
+        if self._Ir is not None:
+            self._Ir.parent = self
 
     Ir = property(
         fget=_get_Ir,
         fset=_set_Ir,
         doc="""Rotor currents as a function of time (each column correspond to one phase)
 
-        :Type: SciDataTool.Classes.DataND.DataND
+        :Type: DataND
         """,
     )
 
@@ -980,21 +999,23 @@ class OutElec(FrozenClass):
                 )
                 value = None
         if isinstance(value, dict) and "__class__" in value:
-            class_obj = import_class(
-                "SciDataTool.Classes", value.get("__class__"), "Us"
-            )
+            class_obj = import_class("pyleecan.Classes", value.get("__class__"), "Us")
             value = class_obj(init_dict=value)
         elif type(value) is int and value == -1:  # Default constructor
+            DataND = import_class("pyleecan.Classes", "DataND", "Us")
             value = DataND()
         check_var("Us", value, "DataND")
         self._Us = value
+
+        if self._Us is not None:
+            self._Us.parent = self
 
     Us = property(
         fget=_get_Us,
         fset=_set_Us,
         doc="""Stator voltage as a function of time (each column correspond to one phase)
 
-        :Type: SciDataTool.Classes.DataND.DataND
+        :Type: DataND
         """,
     )
 

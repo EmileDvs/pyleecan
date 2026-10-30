@@ -6801,9 +6801,9 @@
                 "min": "",
                 "name": "Phi_dqh_mag",
                 "size": "(Nharm, 3)",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "Wbrms",
-                "value": "None"
+                "value": null
             }
         ]
     },
@@ -11914,9 +11914,9 @@
                 "min": "",
                 "name": "Is",
                 "size": "(qs, Nt_tot)",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "A",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -11925,9 +11925,9 @@
                 "min": "",
                 "name": "Ir",
                 "size": "(qs, Nt_tot)",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "A",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -11958,9 +11958,9 @@
                 "min": "",
                 "name": "Us",
                 "size": "(qs, Nt_tot)",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "V",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12726,9 +12726,9 @@
                 "min": "",
                 "name": "Tem",
                 "size": "Nt_tot",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "N.m",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12770,9 +12770,9 @@
                 "min": "",
                 "name": "Phi_wind_stator",
                 "size": "(Nt_tot, qs)",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "Wb",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12781,9 +12781,9 @@
                 "min": "",
                 "name": "Phi_wind",
                 "size": "(Nt_tot, qs)",
-                "type": "{SciDataTool.Classes.DataND.DataND}",
+                "type": "{DataND}",
                 "unit": "Wb",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12792,9 +12792,9 @@
                 "min": "",
                 "name": "emf",
                 "size": "(Nt_tot, qs)",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "V",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12869,9 +12869,9 @@
                 "min": "",
                 "name": "Tem_slice",
                 "size": "(Nt_tot, Nslice)",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "N",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -12880,9 +12880,9 @@
                 "min": "",
                 "name": "Phi_wind_slice",
                 "size": "(Nt_tot, qs, Nslice)",
-                "type": "{SciDataTool.Classes.DataND.DataND}",
+                "type": "{DataND}",
                 "unit": "Wb/m",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -18868,9 +18868,9 @@
                 "min": "",
                 "name": "field",
                 "size": "",
-                "type": "SciDataTool.Classes.DataND.DataND",
+                "type": "DataND",
                 "unit": "-",
-                "value": "None"
+                "value": null
             }
         ]
     },
