@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
-from .loggers import init_default_log
 import os
 import platform
+
+from .loggers import init_default_log
 
 PACKAGE_NAME = "pyleecan"
 # User folder (to store machine/materials/config)
@@ -14,3 +14,11 @@ else:
 __version__ = "1.5.2"
 
 init_default_log()
+
+
+def main():
+    from sys import argv
+
+    from .run_GUI import run_GUI
+
+    run_GUI(argv)
