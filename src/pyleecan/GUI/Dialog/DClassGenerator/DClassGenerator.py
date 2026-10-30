@@ -58,7 +58,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
 
         # Get parent dict containing all children of each class
         gen_dict = read_all(DOC_DIR, is_update_mother_of_mother=False)
-        self.parent_dict = dict()
+        self.parent_dict = {}
         for class_name, class_dict in gen_dict.items():
             self.parent_dict[class_name] = sorted(
                 class_dict["daughters"], key=str.lower
@@ -67,7 +67,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
         # Init current variables
         self.current_class_dict = None
         self.current_class_index = None
-        self.list_class_modified = list()
+        self.list_class_modified = []
         if is_app(path_editor_py):
             self.path_editor_py = path_editor_py
         else:
@@ -317,7 +317,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
         # Load csv file (meaning current class without modifications)
         try:
             class_dict_ref = read_file(csv_path)
-        except Exception as e:
+        except Exception:
             print("Cannot check reference csv file: " + csv_path)
             return True
 
@@ -369,7 +369,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
                                 # Try to set variables as float for comparison
                                 if float(data0) != float(data1):
                                     is_modified_class = True
-                            except Exception as e:
+                            except Exception:
                                 # Try to set variables as str for comparison
                                 if str(data0) != str(data1):
                                     is_modified_class = True
@@ -417,7 +417,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
         # Load csv file
         try:
             current_class_dict = read_file(csv_path)
-        except Exception as e:
+        except Exception:
             print("Cannot load csv file: " + csv_path)
             return
 
@@ -428,7 +428,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
             ]
         else:
             print("Cannot set children class list from parent_dict")
-            current_class_dict["daughters"] = list()
+            current_class_dict["daughters"] = []
 
         # Store current class information for further use
         self.current_class_dict = current_class_dict
@@ -1135,7 +1135,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
             line_edit.setEnabled(False)
             self.table_meta.setCellWidget(1, 3, line_edit)
 
-        # Adjust column width        
+        # Adjust column width
         self.table_meta.resizeColumnsToContents()
 
     def editParent(self, line_edit):
@@ -1533,15 +1533,15 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
         """
 
         # Init class dict
-        class_dict = dict()
+        class_dict = {}
         class_dict["name"] = self.dirModel.fileName(self.current_class_index)[:-4]
         class_dict["path"] = realpath(self.dirModel.filePath(self.current_class_index))
-        class_dict["daughters"] = list()
+        class_dict["daughters"] = []
 
         # Read property table
-        prop_list = list()
+        prop_list = []
         for row in range(1, self.table_prop.rowCount(), 1):
-            prop_dict = dict()
+            prop_dict = {}
             for col in range(len(self.list_prop)):
                 val = self.table_prop.cellWidget(row, col).text()
                 prop_dict[MATCH_PROP_DICT[self.list_prop[col]]] = val
@@ -1553,7 +1553,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
         class_dict["properties"] = prop_list
 
         # Read method table
-        class_dict["methods"] = list()
+        class_dict["methods"] = []
         for row in range(self.table_meth.rowCount()):
             val = self.table_meth.cellWidget(row, 0).text()
             if val != "":
@@ -1568,13 +1568,13 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
             class_dict[MATCH_META_DICT[self.list_meta[col]]] = val
 
         # Read constants table
-        cst_list = list()
+        cst_list = []
         for col in range(len(self.list_const)):
             # Recreate list of constants dict
             for row in range(1, self.table_const.rowCount(), 1):
                 val = self.table_const.cellWidget(row, col).text()
                 if len(cst_list) < row:
-                    cst_list.append(dict())
+                    cst_list.append({})
                 cst_list[row - 1][MATCH_CONST_DICT[self.list_const[col]][1]] = val
             class_dict["constants"] = cst_list
         for row, const_dict in enumerate(class_dict["constants"]):
@@ -1597,14 +1597,14 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
         # Check if current class is modified and should be saved
         self.check_class_modified()
 
-        list_class_modified = list()
+        list_class_modified = []
         for c in self.list_class_modified:
             if c is not None and c not in list_class_modified:
                 list_class_modified.append(c)
 
         # Check if each modified class has children and regenerate them
         modified_list = [basename(csv_path)[:-4] for csv_path in list_class_modified]
-        children_list = list()
+        children_list = []
 
         # 6 nested for loops to include childs up to 6 generations
         for modified_class in modified_list:
@@ -1624,7 +1624,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
                                             self.parent_dict[modified_class3]
                                         )
                                         for modified_class4 in self.parent_dict[
-                                            modified_class4
+                                            modified_class3
                                         ]:
                                             if modified_class4 in self.parent_dict:
                                                 children_list.extend(
@@ -1643,7 +1643,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
                                                             ]
                                                         )
         # Only keep unique children
-        children_list_unique = list()
+        children_list_unique = []
         for c in children_list:
             if c is not None and c not in children_list_unique:
                 children_list_unique.append(c)
@@ -1670,7 +1670,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
         )
 
         # Empty the list of modified classes
-        self.list_class_modified = list()
+        self.list_class_modified = []
 
         # Disable generate classes button
         self.b_genclass.setEnabled(False)
@@ -1834,7 +1834,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
                 # Load csv file
                 try:
                     child_class_dict = read_file(child_path)
-                except Exception as e:
+                except Exception:
                     print("Cannot load csv file: " + child_path)
                     return
                 child_class_dict["mother"] = newName[:-4]
@@ -1892,7 +1892,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
             # Load csv file
             try:
                 child_class_dict = read_file(child_path)
-            except Exception as e:
+            except Exception:
                 print("Cannot load csv file: " + child_path)
                 return
             child_class_dict["mother"] = ""
@@ -2037,15 +2037,15 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
             csv_path = realpath(join(folder_path, class_name + ".csv"))
 
         # Init class dict
-        class_dict = dict()
+        class_dict = {}
         class_dict["name"] = class_name
         class_dict["path"] = csv_path
-        class_dict["properties"] = list()
-        class_dict["methods"] = list()
+        class_dict["properties"] = []
+        class_dict["methods"] = []
         class_dict["package"] = self.dirModel.data(index)
         class_dict["mother"] = ""
         class_dict["desc"] = ""
-        class_dict["daughters"] = list()
+        class_dict["daughters"] = []
         class_dict["constants"] = [{"name": "VERSION", "value": 1}]
 
         # Write empty class into csv format
@@ -2073,7 +2073,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
             self.b_genclass.setEnabled(True)
 
         # Update parent dict
-        self.parent_dict[class_name] = list()
+        self.parent_dict[class_name] = []
 
     def openClass(self, index):
         """Open class csv file in editor given by path_editor_csv
