@@ -1,10 +1,12 @@
-# -*- coding: utf-8 -*-
-import sys
-from os.path import dirname, abspath, normpath, join, realpath, basename, isfile
-from os import listdir, remove, system
 import json
+import shutil
+import subprocess
+import sys
 from datetime import datetime
+from os import listdir, remove
+from os.path import abspath, basename, dirname, isfile, join, normpath, realpath
 
+import black
 
 begin = len(normpath(abspath(join(dirname(__file__), "../.."))))
 end = len(normpath(abspath(join(dirname(__file__), ".."))))
@@ -156,23 +158,59 @@ def run_generate_classes(
     if is_black:
         # Run black
         try:
-            import black
+            black_path = shutil.which("black")
 
             if class_list is None:
-                system('"{}" -m black {}'.format(sys.executable, main_dir))
+                try:
+                    # Direct call to black executable
+                    result = subprocess.run([black_path, main_dir], check=True)
+
+                    # Call to python executable "sys.executable" doesn't work
+                    # (whereas black is installed in python directory since it is imported in this script)
+
+                    # result = subprocess.run(
+                    #     [sys.executable, "-m", "black", class_path_py],
+                    #     capture_output=True,
+                    #     text=True,
+                    #     check=True,
+                    # )
+                except subprocess.CalledProcessError as e:
+                    print(f"Black failed for {main_dir}: {e.stderr}")
+                except FileNotFoundError:
+                    print("Black is not installed or not in PATH.")
+
             else:
                 for csv_path in class_list:
                     class_name = basename(csv_path)[:-4]
                     class_path_py = realpath(
                         join(main_dir, "Classes", class_name + ".py")
                     )
-                    out = system(
-                        '"{}" -m black --quiet {}'.format(sys.executable, class_path_py)
-                    )
-                    if out == 0:
-                        print("Reformatting python class file: " + class_path_py)
-                    else:
-                        print("Cannot reformat python class file: " + class_path_py)
+
+                    try:
+                        # Run black on the file; check=True raises an exception on non-zero exit
+
+                        # Direct call to black executable
+                        result = subprocess.run(
+                            [black_path, "--quiet", class_path_py], check=True
+                        )
+
+                        # Call to python executable "sys.executable" doesn't work
+                        # (whereas black is installed in python directory since it is imported in this script)
+
+                        # result = subprocess.run(
+                        #     [sys.executable, "-m", "black", class_path_py],
+                        #     capture_output=True,
+                        #     text=True,
+                        #     check=True,
+                        # )
+
+                        print(f"Formatted {class_path_py} successfully.")
+
+                    except subprocess.CalledProcessError as e:
+                        print(f"Black failed for {class_path_py}: {e.stderr}")
+                    except FileNotFoundError:
+                        print("Black is not installed or not in PATH.")
+
             if black.__version__.split(".")[0] != "24":
                 print("\n############################################")
                 print(
@@ -186,4 +224,8 @@ def run_generate_classes(
 
 
 if __name__ == "__main__":
+    # To generate all classes
     run_generate_classes()
+
+    # To generate only one class
+    # run_generate_classes(class_list=["LossModel.csv"])
