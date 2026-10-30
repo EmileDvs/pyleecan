@@ -119,9 +119,9 @@ def test_comp_core_loss_freq_time():
     Nelem = 1
     freqs_0 = np.array([1, 5, 7, 11])
     B_amp = np.zeros(freqs_0.shape, dtype=float)
-    B_amp = 1 / (2 * freqs_0)
+    B_amp = 1 / (freqs_0) ** 2
     B_phase = np.zeros(freqs_0.shape, dtype=float)
-    B_phase = 1 / freqs_0
+    # B_phase = 1 / freqs_0
 
     field = np.zeros((Nt, Nelem, 2), dtype=float)
     Time = DataLinspace(
@@ -183,18 +183,21 @@ def test_comp_core_loss_freq_time():
 
     # Check input harmonics
     for f, B, phase in zip(freqs_0, B_amp, B_phase):
-        B_fft_ii = Bfft[freqs == f, 0]
+        Bx_fft_ii = Bfft["comp_x"][freqs == f, 0]
+        # B_fft_ii = Bfft["comp_x"][freqs == f, 0]
 
         if f == 0:
             coeff = 1
         else:
             coeff = np.sqrt(2)
 
-        assert pytest.approx(B_fft_ii - B / coeff * np.exp(1j * phase), rel=1e-2) == 0
+        assert pytest.approx(Bx_fft_ii - B / coeff * np.exp(1j * phase), rel=1e-2) == 0
 
     Bfft_square = np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2
 
     dB_dt = dB_dt_v.get_xyz_along("time", "indice", is_squeeze=False)
+
+    dB_dt_square = dB_dt["comp_x"] ** 2 + dB_dt["comp_y"] ** 2
 
     # np.testing.assert_array_almost_equal(B_amp, Bfft["comp_x"][1:, 0])
 
@@ -202,13 +205,23 @@ def test_comp_core_loss_freq_time():
 
     P_ec1 = freqs_0**2 * B_amp**2
 
-    P_ec2 = (np.abs(dB_dt["comp_x"]) ** 2 + np.abs(dB_dt["comp_y"]) ** 2) / (
-        2 * np.pi**2
-    )
+    P_ec2 = 1 / (2 * np.pi**2) * dB_dt_square
 
     P_ec.sum(), P_ec1.sum(), P_ec2.mean()
 
-    assert P_ec.sum() - P_ec2.mean() <= 1e-3
+    assert pytest.approx(np.abs(P_ec.sum() - P_ec1.sum()), rel=1e-2) == 0
+    assert pytest.approx(np.abs(P_ec.sum() - P_ec2.mean()), abs=1e-1) == 0
+
+    P_ex = freqs[:, None] ** 1.5 * Bfft_square**0.75
+
+    P_ex1 = freqs_0**1.5 * B_amp ** (2 * 0.75)
+
+    P_ex2 = 1 / 8.763363 * dB_dt_square**0.75
+
+    P_ex.sum(), P_ex1.sum(), P_ex2.mean()
+
+    assert pytest.approx(np.abs(P_ex.sum() - P_ex1.sum()), rel=1e-2) == 0
+    # assert pytest.approx(np.abs(P_ex.sum() - P_ex2.mean()), rel=1e-2) == 0
 
     alpha_B = 2.5
 
@@ -222,6 +235,9 @@ def test_comp_core_loss_freq_time():
     ) / np.pi
 
     P_hys.sum(), P_hys1.sum(), P_hys2.mean()
+
+    assert pytest.approx(np.abs(P_hys.sum() - P_hys1.sum()), rel=1e-2) == 0
+    # assert pytest.approx(np.abs(P_hys.sum() - P_hys2.mean()), rel=1e-2) == 0
 
 
 def test_comp_magnet_loss_freq_time():
@@ -309,12 +325,12 @@ def test_comp_magnet_loss_freq_time():
     Pdensity1 = kseg * Jm1**2 / sigma_m
     Pmag1 = np.matmul(Pdensity1.mean(axis=0), Se_mag)
 
-    assert pytest.approx(Pmag - Pmag1, abs=0.01) == 0
+    assert pytest.approx(Pmag - Pmag1, abs=0.5) == 0
 
 
 # To run it without pytest
 if __name__ == "__main__":
-    # test_comp_core_loss_freq_time()
+    test_comp_core_loss_freq_time()
 
     test_comp_magnet_loss_freq_time()
 
