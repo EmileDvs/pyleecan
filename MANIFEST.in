@@ -1,3 +1,0 @@
-prune Tests
-prune Tutorials
-include requirements.txt
