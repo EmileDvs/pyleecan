@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/Data.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Data
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Data
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,7 +18,7 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Data._set_normalizations import _set_normalizations
+    from ..Methods.SciDataTool.Data._set_normalizations import _set_normalizations
 except ImportError as error:
     _set_normalizations = error
 
@@ -30,7 +32,7 @@ class Data(FrozenClass):
 
     VERSION = 1
 
-    # cf Methods.Data._set_normalizations
+    # cf Methods.SciDataTool.Data._set_normalizations
     if isinstance(_set_normalizations, ImportError):
         _set_normalizations = property(
             fget=lambda x: raise_(
@@ -44,6 +46,8 @@ class Data(FrozenClass):
         _set_normalizations = _set_normalizations
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -56,13 +60,13 @@ class Data(FrozenClass):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -248,7 +252,7 @@ class Data(FrozenClass):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.symbol = None
         self.name = None
@@ -267,7 +271,7 @@ class Data(FrozenClass):
     symbol = property(
         fget=_get_symbol,
         fset=_set_symbol,
-        doc=u"""Symbol of the variable (in latex syntax)
+        doc="""Symbol of the variable (in latex syntax)
 
         :Type: str
         """,
@@ -285,7 +289,7 @@ class Data(FrozenClass):
     name = property(
         fget=_get_name,
         fset=_set_name,
-        doc=u"""Name of the physical quantity (to be used in plots)
+        doc="""Name of the physical quantity (to be used in plots)
 
         :Type: str
         """,
@@ -303,7 +307,7 @@ class Data(FrozenClass):
     unit = property(
         fget=_get_unit,
         fset=_set_unit,
-        doc=u"""Unit of the physical quantity (to be used in plots)
+        doc="""Unit of the physical quantity (to be used in plots)
 
         :Type: str
         """,
@@ -320,7 +324,7 @@ class Data(FrozenClass):
     normalizations = property(
         fget=_get_normalizations,
         fset=_set_normalizations,
-        doc=u"""Normalizations available for the field and its axes
+        doc="""Normalizations available for the field and its axes
 
         :Type: {Normalization}
         """,

@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/DataPattern.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/DataPattern.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataPattern
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataPattern
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,17 +18,17 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.DataPattern.get_length import get_length
+    from ..Methods.SciDataTool.DataPattern.get_length import get_length
 except ImportError as error:
     get_length = error
 
 try:
-    from ..Methods.DataPattern.get_values import get_values
+    from ..Methods.SciDataTool.DataPattern.get_values import get_values
 except ImportError as error:
     get_values = error
 
 try:
-    from ..Methods.DataPattern.has_period import has_period
+    from ..Methods.SciDataTool.DataPattern.has_period import has_period
 except ImportError as error:
     has_period = error
 
@@ -42,7 +44,7 @@ class DataPattern(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataPattern.get_length
+    # cf Methods.SciDataTool.DataPattern.get_length
     if isinstance(get_length, ImportError):
         get_length = property(
             fget=lambda x: raise_(
@@ -53,7 +55,7 @@ class DataPattern(Data):
         )
     else:
         get_length = get_length
-    # cf Methods.DataPattern.get_values
+    # cf Methods.SciDataTool.DataPattern.get_values
     if isinstance(get_values, ImportError):
         get_values = property(
             fget=lambda x: raise_(
@@ -64,7 +66,7 @@ class DataPattern(Data):
         )
     else:
         get_values = get_values
-    # cf Methods.DataPattern.has_period
+    # cf Methods.SciDataTool.DataPattern.has_period
     if isinstance(has_period, ImportError):
         has_period = property(
             fget=lambda x: raise_(
@@ -77,6 +79,8 @@ class DataPattern(Data):
         has_period = has_period
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -97,13 +101,13 @@ class DataPattern(Data):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -447,7 +451,7 @@ class DataPattern(Data):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.rebuild_indices = None
         self.unique_indices = None
@@ -474,7 +478,7 @@ class DataPattern(Data):
     rebuild_indices = property(
         fget=_get_rebuild_indices,
         fset=_set_rebuild_indices,
-        doc=u"""Indices to rebuild complete axis
+        doc="""Indices to rebuild complete axis
 
         :Type: list
         """,
@@ -494,7 +498,7 @@ class DataPattern(Data):
     unique_indices = property(
         fget=_get_unique_indices,
         fset=_set_unique_indices,
-        doc=u"""Indices which were taken from complete axis
+        doc="""Indices which were taken from complete axis
 
         :Type: list
         """,
@@ -512,7 +516,7 @@ class DataPattern(Data):
     is_step = property(
         fget=_get_is_step,
         fset=_set_is_step,
-        doc=u"""True if the axis is defined by step
+        doc="""True if the axis is defined by step
 
         :Type: bool
         """,
@@ -537,7 +541,7 @@ class DataPattern(Data):
     values = property(
         fget=_get_values,
         fset=_set_values,
-        doc=u"""List or ndarray of the axis values
+        doc="""List or ndarray of the axis values
 
         :Type: ndarray
         """,
@@ -555,7 +559,7 @@ class DataPattern(Data):
     is_components = property(
         fget=_get_is_components,
         fset=_set_is_components,
-        doc=u"""True if the axis values are strings
+        doc="""True if the axis values are strings
 
         :Type: bool
         """,
@@ -575,7 +579,7 @@ class DataPattern(Data):
     symmetries = property(
         fget=_get_symmetries,
         fset=_set_symmetries,
-        doc=u"""Dictionary of the symmetries along each axis, used to reduce storage
+        doc="""Dictionary of the symmetries along each axis, used to reduce storage
 
         :Type: dict
         """,
@@ -600,7 +604,7 @@ class DataPattern(Data):
     values_whole = property(
         fget=_get_values_whole,
         fset=_set_values_whole,
-        doc=u"""Complete axis
+        doc="""Complete axis
 
         :Type: ndarray
         """,
@@ -618,7 +622,7 @@ class DataPattern(Data):
     is_overlay = property(
         fget=_get_is_overlay,
         fset=_set_is_overlay,
-        doc=u"""True if axis must be used to overlay curves in plots
+        doc="""True if axis must be used to overlay curves in plots
 
         :Type: bool
         """,

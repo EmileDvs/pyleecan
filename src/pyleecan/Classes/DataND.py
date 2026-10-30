@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/DataND.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/DataND.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataND
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataND
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,142 +18,146 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.DataND._apply_operations import _apply_operations
+    from ..Methods.SciDataTool.DataND._apply_operations import _apply_operations
 except ImportError as error:
     _apply_operations = error
 
 try:
-    from ..Methods.DataND._comp_axes import _comp_axes
+    from ..Methods.SciDataTool.DataND._comp_axes import _comp_axes
 except ImportError as error:
     _comp_axes = error
 
 try:
-    from ..Methods.DataND._convert import _convert
+    from ..Methods.SciDataTool.DataND._convert import _convert
 except ImportError as error:
     _convert = error
 
 try:
-    from ..Methods.DataND._extract_slices import _extract_slices
+    from ..Methods.SciDataTool.DataND._extract_slices import _extract_slices
 except ImportError as error:
     _extract_slices = error
 
 try:
-    from ..Methods.DataND._extract_slices_fft import _extract_slices_fft
+    from ..Methods.SciDataTool.DataND._extract_slices_fft import _extract_slices_fft
 except ImportError as error:
     _extract_slices_fft = error
 
 try:
-    from ..Methods.DataND._get_field import _get_field
+    from ..Methods.SciDataTool.DataND._get_field import _get_field
 except ImportError as error:
     _get_field = error
 
 try:
-    from ..Methods.DataND._get_freqs import _get_freqs
+    from ..Methods.SciDataTool.DataND._get_freqs import _get_freqs
 except ImportError as error:
     _get_freqs = error
 
 try:
-    from ..Methods.DataND._interpolate import _interpolate
+    from ..Methods.SciDataTool.DataND._interpolate import _interpolate
 except ImportError as error:
     _interpolate = error
 
 try:
-    from ..Methods.DataND._rebuild_symmetries import _rebuild_symmetries
+    from ..Methods.SciDataTool.DataND._rebuild_symmetries import _rebuild_symmetries
 except ImportError as error:
     _rebuild_symmetries = error
 
 try:
-    from ..Methods.DataND._set_values import _set_values
+    from ..Methods.SciDataTool.DataND._set_values import _set_values
 except ImportError as error:
     _set_values = error
 
 try:
-    from ..Methods.DataND.change_referential import change_referential
+    from ..Methods.SciDataTool.DataND.change_referential import change_referential
 except ImportError as error:
     change_referential = error
 
 try:
-    from ..Methods.DataND.compare_along import compare_along
+    from ..Methods.SciDataTool.DataND.compare_along import compare_along
 except ImportError as error:
     compare_along = error
 
 try:
-    from ..Methods.DataND.compare_magnitude_along import compare_magnitude_along
+    from ..Methods.SciDataTool.DataND.compare_magnitude_along import (
+        compare_magnitude_along,
+    )
 except ImportError as error:
     compare_magnitude_along = error
 
 try:
-    from ..Methods.DataND.compare_phase_along import compare_phase_along
+    from ..Methods.SciDataTool.DataND.compare_phase_along import compare_phase_along
 except ImportError as error:
     compare_phase_along = error
 
 try:
-    from ..Methods.DataND.export_along import export_along
+    from ..Methods.SciDataTool.DataND.export_along import export_along
 except ImportError as error:
     export_along = error
 
 try:
-    from ..Methods.DataND.filter_spectral_leakage import filter_spectral_leakage
+    from ..Methods.SciDataTool.DataND.filter_spectral_leakage import (
+        filter_spectral_leakage,
+    )
 except ImportError as error:
     filter_spectral_leakage = error
 
 try:
-    from ..Methods.DataND.get_along import get_along
+    from ..Methods.SciDataTool.DataND.get_along import get_along
 except ImportError as error:
     get_along = error
 
 try:
-    from ..Methods.DataND.get_axes import get_axes
+    from ..Methods.SciDataTool.DataND.get_axes import get_axes
 except ImportError as error:
     get_axes = error
 
 try:
-    from ..Methods.DataND.get_data_along import get_data_along
+    from ..Methods.SciDataTool.DataND.get_data_along import get_data_along
 except ImportError as error:
     get_data_along = error
 
 try:
-    from ..Methods.DataND.get_harmonics import get_harmonics
+    from ..Methods.SciDataTool.DataND.get_harmonics import get_harmonics
 except ImportError as error:
     get_harmonics = error
 
 try:
-    from ..Methods.DataND.get_magnitude_along import get_magnitude_along
+    from ..Methods.SciDataTool.DataND.get_magnitude_along import get_magnitude_along
 except ImportError as error:
     get_magnitude_along = error
 
 try:
-    from ..Methods.DataND.get_phase_along import get_phase_along
+    from ..Methods.SciDataTool.DataND.get_phase_along import get_phase_along
 except ImportError as error:
     get_phase_along = error
 
 try:
-    from ..Methods.DataND.has_period import has_period
+    from ..Methods.SciDataTool.DataND.has_period import has_period
 except ImportError as error:
     has_period = error
 
 try:
-    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
+    from ..Methods.SciDataTool.DataND.orthogonal_mp import orthogonal_mp
 except ImportError as error:
     orthogonal_mp = error
 
 try:
-    from ..Methods.DataND.plot_2D_Data import plot_2D_Data
+    from ..Methods.SciDataTool.DataND.plot_2D_Data import plot_2D_Data
 except ImportError as error:
     plot_2D_Data = error
 
 try:
-    from ..Methods.DataND.plot_2D_Data_Animated import plot_2D_Data_Animated
+    from ..Methods.SciDataTool.DataND.plot_2D_Data_Animated import plot_2D_Data_Animated
 except ImportError as error:
     plot_2D_Data_Animated = error
 
 try:
-    from ..Methods.DataND.plot_3D_Data import plot_3D_Data
+    from ..Methods.SciDataTool.DataND.plot_3D_Data import plot_3D_Data
 except ImportError as error:
     plot_3D_Data = error
 
 try:
-    from ..Methods.DataND.plot_3D_Data_Animated import plot_3D_Data_Animated
+    from ..Methods.SciDataTool.DataND.plot_3D_Data_Animated import plot_3D_Data_Animated
 except ImportError as error:
     plot_3D_Data_Animated = error
 
@@ -167,7 +173,7 @@ class DataND(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataND._apply_operations
+    # cf Methods.SciDataTool.DataND._apply_operations
     if isinstance(_apply_operations, ImportError):
         _apply_operations = property(
             fget=lambda x: raise_(
@@ -179,7 +185,7 @@ class DataND(Data):
         )
     else:
         _apply_operations = _apply_operations
-    # cf Methods.DataND._comp_axes
+    # cf Methods.SciDataTool.DataND._comp_axes
     if isinstance(_comp_axes, ImportError):
         _comp_axes = property(
             fget=lambda x: raise_(
@@ -188,7 +194,7 @@ class DataND(Data):
         )
     else:
         _comp_axes = _comp_axes
-    # cf Methods.DataND._convert
+    # cf Methods.SciDataTool.DataND._convert
     if isinstance(_convert, ImportError):
         _convert = property(
             fget=lambda x: raise_(
@@ -197,7 +203,7 @@ class DataND(Data):
         )
     else:
         _convert = _convert
-    # cf Methods.DataND._extract_slices
+    # cf Methods.SciDataTool.DataND._extract_slices
     if isinstance(_extract_slices, ImportError):
         _extract_slices = property(
             fget=lambda x: raise_(
@@ -208,7 +214,7 @@ class DataND(Data):
         )
     else:
         _extract_slices = _extract_slices
-    # cf Methods.DataND._extract_slices_fft
+    # cf Methods.SciDataTool.DataND._extract_slices_fft
     if isinstance(_extract_slices_fft, ImportError):
         _extract_slices_fft = property(
             fget=lambda x: raise_(
@@ -220,7 +226,7 @@ class DataND(Data):
         )
     else:
         _extract_slices_fft = _extract_slices_fft
-    # cf Methods.DataND._get_field
+    # cf Methods.SciDataTool.DataND._get_field
     if isinstance(_get_field, ImportError):
         _get_field = property(
             fget=lambda x: raise_(
@@ -229,7 +235,7 @@ class DataND(Data):
         )
     else:
         _get_field = _get_field
-    # cf Methods.DataND._get_freqs
+    # cf Methods.SciDataTool.DataND._get_freqs
     if isinstance(_get_freqs, ImportError):
         _get_freqs = property(
             fget=lambda x: raise_(
@@ -238,7 +244,7 @@ class DataND(Data):
         )
     else:
         _get_freqs = _get_freqs
-    # cf Methods.DataND._interpolate
+    # cf Methods.SciDataTool.DataND._interpolate
     if isinstance(_interpolate, ImportError):
         _interpolate = property(
             fget=lambda x: raise_(
@@ -249,7 +255,7 @@ class DataND(Data):
         )
     else:
         _interpolate = _interpolate
-    # cf Methods.DataND._rebuild_symmetries
+    # cf Methods.SciDataTool.DataND._rebuild_symmetries
     if isinstance(_rebuild_symmetries, ImportError):
         _rebuild_symmetries = property(
             fget=lambda x: raise_(
@@ -261,7 +267,7 @@ class DataND(Data):
         )
     else:
         _rebuild_symmetries = _rebuild_symmetries
-    # cf Methods.DataND._set_values
+    # cf Methods.SciDataTool.DataND._set_values
     if isinstance(_set_values, ImportError):
         _set_values = property(
             fget=lambda x: raise_(
@@ -270,7 +276,7 @@ class DataND(Data):
         )
     else:
         _set_values = _set_values
-    # cf Methods.DataND.change_referential
+    # cf Methods.SciDataTool.DataND.change_referential
     if isinstance(change_referential, ImportError):
         change_referential = property(
             fget=lambda x: raise_(
@@ -282,7 +288,7 @@ class DataND(Data):
         )
     else:
         change_referential = change_referential
-    # cf Methods.DataND.compare_along
+    # cf Methods.SciDataTool.DataND.compare_along
     if isinstance(compare_along, ImportError):
         compare_along = property(
             fget=lambda x: raise_(
@@ -293,7 +299,7 @@ class DataND(Data):
         )
     else:
         compare_along = compare_along
-    # cf Methods.DataND.compare_magnitude_along
+    # cf Methods.SciDataTool.DataND.compare_magnitude_along
     if isinstance(compare_magnitude_along, ImportError):
         compare_magnitude_along = property(
             fget=lambda x: raise_(
@@ -305,7 +311,7 @@ class DataND(Data):
         )
     else:
         compare_magnitude_along = compare_magnitude_along
-    # cf Methods.DataND.compare_phase_along
+    # cf Methods.SciDataTool.DataND.compare_phase_along
     if isinstance(compare_phase_along, ImportError):
         compare_phase_along = property(
             fget=lambda x: raise_(
@@ -317,7 +323,7 @@ class DataND(Data):
         )
     else:
         compare_phase_along = compare_phase_along
-    # cf Methods.DataND.export_along
+    # cf Methods.SciDataTool.DataND.export_along
     if isinstance(export_along, ImportError):
         export_along = property(
             fget=lambda x: raise_(
@@ -328,7 +334,7 @@ class DataND(Data):
         )
     else:
         export_along = export_along
-    # cf Methods.DataND.filter_spectral_leakage
+    # cf Methods.SciDataTool.DataND.filter_spectral_leakage
     if isinstance(filter_spectral_leakage, ImportError):
         filter_spectral_leakage = property(
             fget=lambda x: raise_(
@@ -340,7 +346,7 @@ class DataND(Data):
         )
     else:
         filter_spectral_leakage = filter_spectral_leakage
-    # cf Methods.DataND.get_along
+    # cf Methods.SciDataTool.DataND.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
             fget=lambda x: raise_(
@@ -349,7 +355,7 @@ class DataND(Data):
         )
     else:
         get_along = get_along
-    # cf Methods.DataND.get_axes
+    # cf Methods.SciDataTool.DataND.get_axes
     if isinstance(get_axes, ImportError):
         get_axes = property(
             fget=lambda x: raise_(
@@ -358,7 +364,7 @@ class DataND(Data):
         )
     else:
         get_axes = get_axes
-    # cf Methods.DataND.get_data_along
+    # cf Methods.SciDataTool.DataND.get_data_along
     if isinstance(get_data_along, ImportError):
         get_data_along = property(
             fget=lambda x: raise_(
@@ -369,7 +375,7 @@ class DataND(Data):
         )
     else:
         get_data_along = get_data_along
-    # cf Methods.DataND.get_harmonics
+    # cf Methods.SciDataTool.DataND.get_harmonics
     if isinstance(get_harmonics, ImportError):
         get_harmonics = property(
             fget=lambda x: raise_(
@@ -380,7 +386,7 @@ class DataND(Data):
         )
     else:
         get_harmonics = get_harmonics
-    # cf Methods.DataND.get_magnitude_along
+    # cf Methods.SciDataTool.DataND.get_magnitude_along
     if isinstance(get_magnitude_along, ImportError):
         get_magnitude_along = property(
             fget=lambda x: raise_(
@@ -392,7 +398,7 @@ class DataND(Data):
         )
     else:
         get_magnitude_along = get_magnitude_along
-    # cf Methods.DataND.get_phase_along
+    # cf Methods.SciDataTool.DataND.get_phase_along
     if isinstance(get_phase_along, ImportError):
         get_phase_along = property(
             fget=lambda x: raise_(
@@ -403,7 +409,7 @@ class DataND(Data):
         )
     else:
         get_phase_along = get_phase_along
-    # cf Methods.DataND.has_period
+    # cf Methods.SciDataTool.DataND.has_period
     if isinstance(has_period, ImportError):
         has_period = property(
             fget=lambda x: raise_(
@@ -412,7 +418,7 @@ class DataND(Data):
         )
     else:
         has_period = has_period
-    # cf Methods.DataND.orthogonal_mp
+    # cf Methods.SciDataTool.DataND.orthogonal_mp
     if isinstance(orthogonal_mp, ImportError):
         orthogonal_mp = property(
             fget=lambda x: raise_(
@@ -423,7 +429,7 @@ class DataND(Data):
         )
     else:
         orthogonal_mp = orthogonal_mp
-    # cf Methods.DataND.plot_2D_Data
+    # cf Methods.SciDataTool.DataND.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
             fget=lambda x: raise_(
@@ -434,7 +440,7 @@ class DataND(Data):
         )
     else:
         plot_2D_Data = plot_2D_Data
-    # cf Methods.DataND.plot_2D_Data_Animated
+    # cf Methods.SciDataTool.DataND.plot_2D_Data_Animated
     if isinstance(plot_2D_Data_Animated, ImportError):
         plot_2D_Data_Animated = property(
             fget=lambda x: raise_(
@@ -446,7 +452,7 @@ class DataND(Data):
         )
     else:
         plot_2D_Data_Animated = plot_2D_Data_Animated
-    # cf Methods.DataND.plot_3D_Data
+    # cf Methods.SciDataTool.DataND.plot_3D_Data
     if isinstance(plot_3D_Data, ImportError):
         plot_3D_Data = property(
             fget=lambda x: raise_(
@@ -457,7 +463,7 @@ class DataND(Data):
         )
     else:
         plot_3D_Data = plot_3D_Data
-    # cf Methods.DataND.plot_3D_Data_Animated
+    # cf Methods.SciDataTool.DataND.plot_3D_Data_Animated
     if isinstance(plot_3D_Data_Animated, ImportError):
         plot_3D_Data_Animated = property(
             fget=lambda x: raise_(
@@ -471,6 +477,8 @@ class DataND(Data):
         plot_3D_Data_Animated = plot_3D_Data_Animated
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -487,13 +495,13 @@ class DataND(Data):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -741,7 +749,7 @@ class DataND(Data):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.axes = None
         self.FTparameters = None
@@ -786,7 +794,7 @@ class DataND(Data):
     axes = property(
         fget=_get_axes,
         fset=_set_axes,
-        doc=u"""List of the Data1D objects corresponding to the axes
+        doc="""List of the Data1D objects corresponding to the axes
 
         :Type: [SciDataTool.Classes.Data]
         """,
@@ -806,7 +814,7 @@ class DataND(Data):
     FTparameters = property(
         fget=_get_FTparameters,
         fset=_set_FTparameters,
-        doc=u"""Tunable parameters for the Fourier Transforms
+        doc="""Tunable parameters for the Fourier Transforms
 
         :Type: dict
         """,
@@ -819,7 +827,7 @@ class DataND(Data):
     values = property(
         fget=_get_values,
         fset=_set_values,
-        doc=u"""Values of the field
+        doc="""Values of the field
 
         :Type: ndarray
         """,
@@ -837,7 +845,7 @@ class DataND(Data):
     is_real = property(
         fget=_get_is_real,
         fset=_set_is_real,
-        doc=u"""To indicate if the signal is real (use only positive frequencies)
+        doc="""To indicate if the signal is real (use only positive frequencies)
 
         :Type: bool
         """,

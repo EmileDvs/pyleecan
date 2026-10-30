@@ -27,7 +27,7 @@
         "mother": "Line",
         "name": "Arc",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Arc.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Arc.csv",
         "properties": []
     },
     "Arc1": {
@@ -60,7 +60,7 @@
         "mother": "Arc",
         "name": "Arc1",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Arc1.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Arc1.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -138,7 +138,7 @@
         "mother": "Arc",
         "name": "Arc2",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Arc2.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Arc2.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -205,7 +205,7 @@
         "mother": "Arc",
         "name": "Arc3",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Arc3.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Arc3.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -272,7 +272,7 @@
         "mother": "",
         "name": "Bore",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Bore.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Bore.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -316,7 +316,7 @@
         "mother": "Bore",
         "name": "BoreFlower",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/BoreFlower.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/BoreFlower.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -359,7 +359,7 @@
         "mother": "Bore",
         "name": "BoreLSRPM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/BoreLSRPM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/BoreLSRPM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -415,7 +415,7 @@
         "mother": "Bore",
         "name": "BoreSinePole",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/BoreSinePole.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/BoreSinePole.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -491,7 +491,7 @@
         "mother": "Bore",
         "name": "BoreUD",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/BoreUD.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/BoreUD.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -552,7 +552,7 @@
         "mother": "Surface",
         "name": "Circle",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Circle.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Circle.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -615,7 +615,7 @@
         "mother": "Conductor",
         "name": "CondType11",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/CondType11.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/CondType11.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -734,7 +734,7 @@
         "mother": "Conductor",
         "name": "CondType12",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/CondType12.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/CondType12.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -819,7 +819,7 @@
         "mother": "Conductor",
         "name": "CondType13",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/CondType13.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/CondType13.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -914,7 +914,7 @@
         "mother": "Conductor",
         "name": "CondType21",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/CondType21.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/CondType21.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -973,7 +973,7 @@
         "mother": "Conductor",
         "name": "CondType22",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/CondType22.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/CondType22.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1013,7 +1013,7 @@
         "mother": "",
         "name": "Conductor",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Conductor.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Conductor.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1077,7 +1077,7 @@
         "mother": "",
         "name": "Convert",
         "package": "Converter",
-        "path": "pyleecan/Generator/ClassesRef/Converter/Convert.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Converter/Convert.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1215,7 +1215,7 @@
         "mother": "Convert",
         "name": "ConvertMC",
         "package": "Converter",
-        "path": "pyleecan/Generator/ClassesRef/Converter/ConvertMC.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Converter/ConvertMC.csv",
         "properties": []
     },
     "DXFImport": {
@@ -1234,7 +1234,7 @@
         "mother": "",
         "name": "DXFImport",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/DXFImport.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/DXFImport.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1271,6 +1271,280 @@
             }
         ]
     },
+    "Data": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [
+            "Data1D",
+            "DataDual",
+            "DataFreq",
+            "DataLinspace",
+            "DataND",
+            "DataPattern",
+            "DataTime"
+        ],
+        "desc": "Abstract class for all kinds of data",
+        "is_internal": false,
+        "methods": [
+            "_set_normalizations"
+        ],
+        "mother": "",
+        "name": "Data",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Data.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "Symbol of the variable (in latex syntax)",
+                "max": "",
+                "min": "",
+                "name": "symbol",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Name of the physical quantity (to be used in plots)",
+                "max": "",
+                "min": "",
+                "name": "name",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Unit of the physical quantity (to be used in plots)",
+                "max": "",
+                "min": "",
+                "name": "unit",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Normalizations available for the field and its axes",
+                "max": "",
+                "min": "",
+                "name": "normalizations",
+                "size": "",
+                "type": "{Normalization}",
+                "unit": "",
+                "value": {}
+            }
+        ]
+    },
+    "Data1D": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class for axes defined as vectors",
+        "is_internal": false,
+        "methods": [
+            "get_values",
+            "get_length",
+            "get_axis_periodic",
+            "has_period",
+            "get_periodicity",
+            "to_linspace",
+            "get_filter",
+            "check_filter"
+        ],
+        "mother": "Data",
+        "name": "Data1D",
+        "package": "SciDataTool ",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Data1D.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "List or ndarray of the axis values",
+                "max": "",
+                "min": "",
+                "name": "values",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True if the axis values are strings",
+                "max": "",
+                "min": "",
+                "name": "is_components",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            },
+            {
+                "as_dict": "",
+                "desc": "Dictionary of the symmetries along each axis, used to reduce storage",
+                "max": "",
+                "min": "",
+                "name": "symmetries",
+                "size": "",
+                "type": "dict",
+                "unit": "",
+                "value": {}
+            },
+            {
+                "as_dict": "",
+                "desc": "True if axis must be used to overlay curves in plots",
+                "max": "",
+                "min": "",
+                "name": "is_overlay",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            },
+            {
+                "as_dict": "",
+                "desc": "Character used to separate attributes in string case (e.g. \"r=0, stator, radial\")",
+                "max": "",
+                "min": "",
+                "name": "delimiter",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "as_dict": "",
+                "desc": "List of indices to use to sort axis",
+                "max": "",
+                "min": "",
+                "name": "sort_indices",
+                "size": "",
+                "type": "list",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Dict of filter keys",
+                "max": "",
+                "min": "",
+                "name": "filter",
+                "size": "",
+                "type": "dict",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "List of characters to remove in filter table",
+                "max": "",
+                "min": "",
+                "name": "char_to_rm",
+                "size": "",
+                "type": "list",
+                "unit": "",
+                "value": null
+            }
+        ]
+    },
+    "DataDual": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class for fields defined in both time and freq domains",
+        "is_internal": false,
+        "methods": [
+            "get_along",
+            "get_axes"
+        ],
+        "mother": "DataND",
+        "name": "DataDual",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/DataDual.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "List of the Data1D objects corresponding to the axes in time/space domain",
+                "max": "",
+                "min": "",
+                "name": "axes_dt",
+                "size": "",
+                "type": "[SciDataTool.Classes.Data]",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "as_dict": "",
+                "desc": "Values of the field in time/space domain",
+                "max": "",
+                "min": "",
+                "name": "values_dt",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "List of the Data1D objects corresponding to the axes in fourier domain",
+                "max": "",
+                "min": "",
+                "name": "axes_df",
+                "size": "",
+                "type": "[SciDataTool.Classes.Data]",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "as_dict": "",
+                "desc": "Values of the field in fourier domain",
+                "max": "",
+                "min": "",
+                "name": "values_df",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            }
+        ]
+    },
+    "DataFreq": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class for fields defined in Fourier space",
+        "is_internal": false,
+        "methods": [
+            "conv",
+            "freq_to_time",
+            "sum",
+            "to_datadual"
+        ],
+        "mother": "DataND",
+        "name": "DataFreq",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/DataFreq.csv",
+        "properties": []
+    },
     "DataKeeper": {
         "constants": [
             {
@@ -1290,7 +1564,7 @@
         "mother": "",
         "name": "DataKeeper",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/DataKeeper.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/DataKeeper.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1382,6 +1656,343 @@
             }
         ]
     },
+    "DataLinspace": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class for axes defined as linspaces",
+        "is_internal": false,
+        "methods": [
+            "get_values",
+            "get_length",
+            "get_axis_periodic",
+            "has_period",
+            "get_periodicity"
+        ],
+        "mother": "Data",
+        "name": "DataLinspace",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/DataLinspace.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "First value",
+                "max": "",
+                "min": "",
+                "name": "initial",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Last value",
+                "max": "",
+                "min": "",
+                "name": "final",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Step",
+                "max": "",
+                "min": "",
+                "name": "step",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Number of steps",
+                "max": "",
+                "min": "",
+                "name": "number",
+                "size": "",
+                "type": "int",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True if the endpoint must be included",
+                "max": "",
+                "min": "",
+                "name": "include_endpoint",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": true
+            },
+            {
+                "as_dict": "",
+                "desc": "True if the axis values are strings",
+                "max": "",
+                "min": "",
+                "name": "is_components",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            },
+            {
+                "as_dict": "",
+                "desc": "Dictionary of the symmetries along each axis, used to reduce storage",
+                "max": "",
+                "min": "",
+                "name": "symmetries",
+                "size": "",
+                "type": "dict",
+                "unit": "",
+                "value": {}
+            },
+            {
+                "as_dict": "",
+                "desc": "True if axis must be used to overlay curves in plots",
+                "max": "",
+                "min": "",
+                "name": "is_overlay",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            }
+        ]
+    },
+    "DataND": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [
+            "DataDual",
+            "DataFreq",
+            "DataTime"
+        ],
+        "desc": "Abstract class for fields (time or frequency domain)",
+        "is_internal": false,
+        "methods": [
+            "_apply_operations",
+            "_comp_axes",
+            "_convert",
+            "_extract_slices",
+            "_extract_slices_fft",
+            "_get_field",
+            "_get_freqs",
+            "_interpolate",
+            "_rebuild_symmetries",
+            "_set_values",
+            "change_referential",
+            "compare_along",
+            "compare_magnitude_along",
+            "compare_phase_along",
+            "export_along",
+            "filter_spectral_leakage",
+            "get_along",
+            "get_axes",
+            "get_data_along",
+            "get_harmonics",
+            "get_magnitude_along",
+            "get_phase_along",
+            "has_period",
+            "orthogonal_mp",
+            "plot_2D_Data",
+            "plot_2D_Data_Animated",
+            "plot_3D_Data",
+            "plot_3D_Data_Animated"
+        ],
+        "mother": "Data",
+        "name": "DataND",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/DataND.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "List of the Data1D objects corresponding to the axes",
+                "max": "",
+                "min": "",
+                "name": "axes",
+                "size": "",
+                "type": "[SciDataTool.Classes.Data]",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "as_dict": "",
+                "desc": "Tunable parameters for the Fourier Transforms",
+                "max": "",
+                "min": "",
+                "name": "FTparameters",
+                "size": "",
+                "type": "dict",
+                "unit": "",
+                "value": {}
+            },
+            {
+                "as_dict": "",
+                "desc": "Values of the field",
+                "max": "",
+                "min": "",
+                "name": "values",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "To indicate if the signal is real (use only positive frequencies)",
+                "max": "",
+                "min": "",
+                "name": "is_real",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": true
+            }
+        ]
+    },
+    "DataPattern": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class for axes defined as vectors",
+        "is_internal": false,
+        "methods": [
+            "get_length",
+            "get_values",
+            "has_period"
+        ],
+        "mother": "Data",
+        "name": "DataPattern",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/DataPattern.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "Indices to rebuild complete axis",
+                "max": "",
+                "min": "",
+                "name": "rebuild_indices",
+                "size": "",
+                "type": "list",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Indices which were taken from complete axis",
+                "max": "",
+                "min": "",
+                "name": "unique_indices",
+                "size": "",
+                "type": "list",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True if the axis is defined by step",
+                "max": "",
+                "min": "",
+                "name": "is_step",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": true
+            },
+            {
+                "as_dict": "",
+                "desc": "List or ndarray of the axis values",
+                "max": "",
+                "min": "",
+                "name": "values",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True if the axis values are strings",
+                "max": "",
+                "min": "",
+                "name": "is_components",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            },
+            {
+                "as_dict": "",
+                "desc": "Dictionary of the symmetries along each axis, used to reduce storage",
+                "max": "",
+                "min": "",
+                "name": "symmetries",
+                "size": "",
+                "type": "dict",
+                "unit": "",
+                "value": {}
+            },
+            {
+                "as_dict": "",
+                "desc": "Complete axis",
+                "max": "",
+                "min": "",
+                "name": "values_whole",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True if axis must be used to overlay curves in plots",
+                "max": "",
+                "min": "",
+                "name": "is_overlay",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            }
+        ]
+    },
+    "DataTime": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class for fields defined in time space",
+        "is_internal": false,
+        "methods": [
+            "time_to_freq",
+            "to_datadual"
+        ],
+        "mother": "DataND",
+        "name": "DataTime",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/DataTime.csv",
+        "properties": []
+    },
     "Drive": {
         "constants": [
             {
@@ -1398,7 +2009,7 @@
         "mother": "",
         "name": "Drive",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Drive.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Drive.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1451,7 +2062,7 @@
         "mother": "Drive",
         "name": "DriveWave",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/DriveWave.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/DriveWave.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1494,7 +2105,7 @@
         "mother": "",
         "name": "EEC",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/EEC.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/EEC.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1626,7 +2237,7 @@
         "mother": "EEC",
         "name": "EEC_LSRPM",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/EEC_LSRPM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/EEC_LSRPM.csv",
         "properties": []
     },
     "EEC_PMSM": {
@@ -1656,7 +2267,7 @@
         "mother": "EEC",
         "name": "EEC_PMSM",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/EEC_PMSM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/EEC_PMSM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1754,7 +2365,7 @@
         "mother": "EEC",
         "name": "EEC_SCIM",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/EEC_SCIM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/EEC_SCIM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -1942,7 +2553,7 @@
         "mother": "Electrical",
         "name": "ElecLUTdq",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/ElecLUTdq.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/ElecLUTdq.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2062,7 +2673,7 @@
                 "name": "Jrms_max",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
@@ -2110,7 +2721,7 @@
         "mother": "",
         "name": "Electrical",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Electrical.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Electrical.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2222,7 +2833,7 @@
         "mother": "",
         "name": "ElementMat",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/ElementMat.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/ElementMat.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2322,7 +2933,7 @@
         "mother": "",
         "name": "Elmer",
         "package": "Elmer",
-        "path": "pyleecan/Generator/ClassesRef/Elmer/Elmer.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Elmer/Elmer.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2355,7 +2966,7 @@
         "mother": "Elmer",
         "name": "ElmerResults",
         "package": "Elmer",
-        "path": "pyleecan/Generator/ClassesRef/Elmer/ElmerResults.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Elmer/ElmerResults.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2430,7 +3041,7 @@
         "mother": "Elmer",
         "name": "ElmerResultsVTU",
         "package": "Elmer",
-        "path": "pyleecan/Generator/ClassesRef/Elmer/ElmerResultsVTU.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Elmer/ElmerResultsVTU.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2487,7 +3098,7 @@
         "mother": "",
         "name": "EndWinding",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/EndWinding.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/EndWinding.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2519,7 +3130,7 @@
         "mother": "EndWinding",
         "name": "EndWindingCirc",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/EndWindingCirc.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/EndWindingCirc.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2551,7 +3162,7 @@
         "mother": "EndWinding",
         "name": "EndWindingRect",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/EndWindingRect.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/EndWindingRect.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2604,7 +3215,7 @@
         "mother": "GaussPoint",
         "name": "FPGNSeg",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/FPGNSeg.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/FPGNSeg.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2635,7 +3246,7 @@
         "mother": "GaussPoint",
         "name": "FPGNTri",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/FPGNTri.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/FPGNTri.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2671,7 +3282,7 @@
         "mother": "",
         "name": "Force",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Force.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Force.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2758,7 +3369,7 @@
         "mother": "Force",
         "name": "ForceMT",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/ForceMT.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/ForceMT.csv",
         "properties": []
     },
     "ForceTensor": {
@@ -2780,7 +3391,7 @@
         "mother": "Force",
         "name": "ForceTensor",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/ForceTensor.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/ForceTensor.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2830,7 +3441,7 @@
         "mother": "",
         "name": "Frame",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Frame.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Frame.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2899,7 +3510,7 @@
         "mother": "Frame",
         "name": "FrameBar",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/FrameBar.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/FrameBar.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2939,7 +3550,7 @@
         "mother": "",
         "name": "GUIOption",
         "package": "GUIOption",
-        "path": "pyleecan/Generator/ClassesRef/GUI_Option/GUIOption.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/GUI_Option/GUIOption.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -2971,7 +3582,7 @@
         "mother": "",
         "name": "GaussPoint",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/GaussPoint.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/GaussPoint.csv",
         "properties": []
     },
     "Hole": {
@@ -3022,7 +3633,7 @@
         "mother": "",
         "name": "Hole",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/Hole.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/Hole.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -3100,7 +3711,7 @@
         "mother": "HoleMag",
         "name": "HoleM50",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM50.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM50.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -3266,7 +3877,7 @@
         "mother": "HoleMag",
         "name": "HoleM51",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM51.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM51.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -3455,7 +4066,7 @@
         "mother": "HoleMag",
         "name": "HoleM52",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM52.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM52.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -3556,7 +4167,7 @@
         "mother": "HoleMag",
         "name": "HoleM52R",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM52R.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM52R.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -3667,7 +4278,7 @@
         "mother": "HoleMag",
         "name": "HoleM53",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM53.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM53.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -3807,7 +4418,7 @@
         "mother": "Hole",
         "name": "HoleM54",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM54.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM54.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -3883,7 +4494,7 @@
         "mother": "HoleMag",
         "name": "HoleM57",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM57.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM57.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4014,7 +4625,7 @@
         "mother": "HoleMag",
         "name": "HoleM58",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM58.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM58.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4145,7 +4756,7 @@
         "mother": "HoleMag",
         "name": "HoleM60",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM60.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM60.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4265,7 +4876,7 @@
         "mother": "HoleMag",
         "name": "HoleM61",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM61.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM61.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4420,7 +5031,7 @@
         "mother": "HoleMag",
         "name": "HoleM62",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM62.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM62.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4509,7 +5120,7 @@
         "mother": "HoleMag",
         "name": "HoleM63",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleM63.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleM63.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4597,7 +5208,7 @@
         "mother": "HoleMag",
         "name": "HoleMLSRPM",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleMLSRPM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleMLSRPM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4724,7 +5335,7 @@
         "mother": "Hole",
         "name": "HoleMag",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleMag.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleMag.csv",
         "properties": []
     },
     "HoleUD": {
@@ -4751,7 +5362,7 @@
         "mother": "HoleMag",
         "name": "HoleUD",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/HoleUD.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/HoleUD.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4814,7 +5425,7 @@
         "mother": "",
         "name": "Import",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/Import.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/Import.csv",
         "properties": []
     },
     "ImportData": {
@@ -4833,7 +5444,7 @@
         "mother": "",
         "name": "ImportData",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportData.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportData.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4931,7 +5542,7 @@
         "mother": "ImportMatrix",
         "name": "ImportGenMatrixSin",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportGenMatrixSin.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportGenMatrixSin.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -4965,7 +5576,7 @@
         "mother": "ImportMatrix",
         "name": "ImportGenPWM",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportGenPWM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportGenPWM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5183,7 +5794,7 @@
         "mother": "ImportMatrix",
         "name": "ImportGenToothSaw",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportGenToothSaw.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportGenToothSaw.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5271,7 +5882,7 @@
         "mother": "ImportMatrix",
         "name": "ImportGenVectLin",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportGenVectLin.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportGenVectLin.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5335,7 +5946,7 @@
         "mother": "ImportMatrix",
         "name": "ImportGenVectSin",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportGenVectSin.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportGenVectSin.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5410,7 +6021,7 @@
         "mother": "ImportMatrix",
         "name": "ImportMatlab",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportMatlab.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportMatlab.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5461,7 +6072,7 @@
         "mother": "Import",
         "name": "ImportMatrix",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportMatrix.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportMatrix.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5492,7 +6103,7 @@
         "mother": "ImportMatrix",
         "name": "ImportMatrixVal",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportMatrixVal.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportMatrixVal.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5523,7 +6134,7 @@
         "mother": "ImportMatrix",
         "name": "ImportMatrixXls",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportMatrixXls.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportMatrixXls.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5609,7 +6220,7 @@
         "mother": "Import",
         "name": "ImportMeshMat",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportMeshMat.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportMeshMat.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5640,7 +6251,7 @@
         "mother": "Import",
         "name": "ImportMeshUnv",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportMeshUnv.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportMeshUnv.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5671,7 +6282,7 @@
         "mother": "",
         "name": "ImportVectorField",
         "package": "Import",
-        "path": "pyleecan/Generator/ClassesRef/Import/ImportVectorField.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Import/ImportVectorField.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5732,7 +6343,7 @@
         "mother": "",
         "name": "Input",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Input.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Input.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5832,7 +6443,7 @@
         "mother": "InputVoltage",
         "name": "InputCurrent",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/InputCurrent.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/InputCurrent.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5885,7 +6496,7 @@
         "mother": "InputCurrent",
         "name": "InputFlux",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/InputFlux.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/InputFlux.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -5993,7 +6604,7 @@
         "mother": "Input",
         "name": "InputForce",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/InputForce.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/InputForce.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6028,7 +6639,7 @@
         "mother": "Input",
         "name": "InputVoltage",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/InputVoltage.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/InputVoltage.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6143,7 +6754,7 @@
         "mother": "XOutput",
         "name": "LUT",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/LUT.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/LUT.csv",
         "properties": []
     },
     "LUTdq": {
@@ -6170,7 +6781,7 @@
         "mother": "LUT",
         "name": "LUTdq",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/LUTdq.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/LUTdq.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6210,7 +6821,7 @@
         "mother": "LUT",
         "name": "LUTslip",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/LUTslip.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/LUTslip.csv",
         "properties": []
     },
     "LamH": {
@@ -6243,7 +6854,7 @@
         "mother": "Lamination",
         "name": "LamH",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamH.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamH.csv",
         "properties": []
     },
     "LamHole": {
@@ -6265,7 +6876,7 @@
         "mother": "LamH",
         "name": "LamHole",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamHole.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamHole.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6304,7 +6915,7 @@
         "mother": "LamH",
         "name": "LamHoleNS",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamHoleNS.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamHoleNS.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6365,7 +6976,7 @@
         "mother": "Lamination",
         "name": "LamSlot",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSlot.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSlot.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6402,7 +7013,7 @@
         "mother": "LamSlot",
         "name": "LamSlotM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSlotM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSlotM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6451,7 +7062,7 @@
         "mother": "LamSlotM",
         "name": "LamSlotMag",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSlotMag.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSlotMag.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6492,7 +7103,7 @@
         "mother": "LamSlotM",
         "name": "LamSlotMagNS",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSlotMagNS.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSlotMagNS.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6555,7 +7166,7 @@
         "mother": "Lamination",
         "name": "LamSlotMulti",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSlotMulti.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSlotMulti.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6615,7 +7226,7 @@
         "mother": "LamSlotMulti",
         "name": "LamSlotMultiWind",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSlotMultiWind.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSlotMultiWind.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6680,7 +7291,7 @@
         "mother": "LamSlot",
         "name": "LamSlotWind",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSlotWind.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSlotWind.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6736,7 +7347,7 @@
         "mother": "LamSlotWind",
         "name": "LamSquirrelCage",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSquirrelCage.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSquirrelCage.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6795,7 +7406,7 @@
         "mother": "LamSquirrelCage",
         "name": "LamSquirrelCageMag",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/LamSquirrelCageMag.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/LamSquirrelCageMag.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -6870,7 +7481,7 @@
         "mother": "",
         "name": "Lamination",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Lamination.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Lamination.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7050,7 +7661,7 @@
         "mother": "",
         "name": "Line",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Line.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Line.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7085,7 +7696,7 @@
         "mother": "",
         "name": "Loss",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/Loss.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/Loss.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7160,7 +7771,7 @@
         "mother": "Loss",
         "name": "LossFEA",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossFEA.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossFEA.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7230,7 +7841,7 @@
         "mother": "",
         "name": "LossModel",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModel.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModel.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7295,7 +7906,7 @@
         "mother": "LossModel",
         "name": "LossModelBertotti",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModelBertotti.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModelBertotti.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7349,7 +7960,7 @@
         "mother": "LossModel",
         "name": "LossModelJoule",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModelJoule.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModelJoule.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7380,7 +7991,7 @@
         "mother": "LossModel",
         "name": "LossModelMagnet",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModelMagnet.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModelMagnet.csv",
         "properties": []
     },
     "LossModelProximity": {
@@ -7400,7 +8011,7 @@
         "mother": "LossModel",
         "name": "LossModelProximity",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModelProximity.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModelProximity.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7432,7 +8043,7 @@
         "mother": "LossModel",
         "name": "LossModelSteinmetz",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModelSteinmetz.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModelSteinmetz.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7496,7 +8107,7 @@
         "mother": "LossModel",
         "name": "LossModelWindagePyrhonen",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModelWindagePyrhonen.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModelWindagePyrhonen.csv",
         "properties": []
     },
     "LossModelWinding": {
@@ -7516,7 +8127,7 @@
         "mother": "LossModel",
         "name": "LossModelWinding",
         "package": "Loss",
-        "path": "pyleecan/Generator/ClassesRef/Loss/LossModelWinding.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Loss/LossModelWinding.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7580,7 +8191,7 @@
         "mother": "",
         "name": "Machine",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Machine.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Machine.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7670,7 +8281,7 @@
         "mother": "Machine",
         "name": "MachineAsync",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineAsync.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineAsync.csv",
         "properties": []
     },
     "MachineDFIM": {
@@ -7692,7 +8303,7 @@
         "mother": "MachineAsync",
         "name": "MachineDFIM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineDFIM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineDFIM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7735,7 +8346,7 @@
         "mother": "MachineSync",
         "name": "MachineIPMSM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineIPMSM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineIPMSM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7778,7 +8389,7 @@
         "mother": "MachineSync",
         "name": "MachineLSPM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineLSPM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineLSPM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7821,7 +8432,7 @@
         "mother": "MachineDFIM",
         "name": "MachineSCIM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineSCIM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineSCIM.csv",
         "properties": []
     },
     "MachineSIPMSM": {
@@ -7841,7 +8452,7 @@
         "mother": "MachineSync",
         "name": "MachineSIPMSM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineSIPMSM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineSIPMSM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7886,7 +8497,7 @@
         "mother": "MachineSync",
         "name": "MachineSRM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineSRM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineSRM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7929,7 +8540,7 @@
         "mother": "MachineSync",
         "name": "MachineSyRM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineSyRM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineSyRM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -7979,7 +8590,7 @@
         "mother": "Machine",
         "name": "MachineSync",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineSync.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineSync.csv",
         "properties": []
     },
     "MachineUD": {
@@ -7999,7 +8610,7 @@
         "mother": "Machine",
         "name": "MachineUD",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineUD.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineUD.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8042,7 +8653,7 @@
         "mother": "MachineSync",
         "name": "MachineWRSM",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/MachineWRSM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/MachineWRSM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8089,7 +8700,7 @@
         "mother": "Magnetics",
         "name": "MagElmer",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/MagElmer.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/MagElmer.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8236,7 +8847,7 @@
         "mother": "Magnetics",
         "name": "MagFEMM",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/MagFEMM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/MagFEMM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8452,7 +9063,7 @@
         "mother": "",
         "name": "Magnet",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Magnet.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Magnet.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8522,7 +9133,7 @@
         "mother": "",
         "name": "Magnetics",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Magnetics.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Magnetics.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8749,7 +9360,7 @@
         "mother": "",
         "name": "MatEconomical",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/MatEconomical.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/MatEconomical.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8792,7 +9403,7 @@
         "mother": "",
         "name": "MatElectrical",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/MatElectrical.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/MatElectrical.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8843,7 +9454,7 @@
         "mother": "",
         "name": "MatHT",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/MatHT.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/MatHT.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -8921,7 +9532,7 @@
         "mother": "",
         "name": "MatMagnetics",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/MatMagnetics.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/MatMagnetics.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9027,7 +9638,7 @@
         "mother": "",
         "name": "MatStructural",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/MatStructural.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/MatStructural.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9155,7 +9766,7 @@
         "mother": "",
         "name": "Material",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/Material.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/Material.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9277,7 +9888,7 @@
         "mother": "",
         "name": "Mesh",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Mesh.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Mesh.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9323,7 +9934,7 @@
         "mother": "Mesh",
         "name": "MeshMat",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/MeshMat.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/MeshMat.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9418,7 +10029,7 @@
         "mother": "",
         "name": "MeshSolution",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/MeshSolution.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/MeshSolution.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9513,7 +10124,7 @@
         "mother": "Mesh",
         "name": "MeshVTK",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/MeshVTK.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/MeshVTK.csv",
         "properties": [
             {
                 "as_dict": "1",
@@ -9646,7 +10257,7 @@
         "mother": "SolutionMat",
         "name": "Mode",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Mode.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Mode.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9704,7 +10315,7 @@
         "mother": "",
         "name": "ModelBH",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/ModelBH.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/ModelBH.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9758,7 +10369,7 @@
         "mother": "ModelBH",
         "name": "ModelBH_Langevin",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/ModelBH_Langevin.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/ModelBH_Langevin.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9820,7 +10431,7 @@
         "mother": "ModelBH",
         "name": "ModelBH_arctangent",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/ModelBH_arctangent.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/ModelBH_arctangent.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9860,7 +10471,7 @@
         "mother": "",
         "name": "ModelBH_exponential",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/ModelBH_exponential.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/ModelBH_exponential.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9903,7 +10514,7 @@
         "mother": "ModelBH",
         "name": "ModelBH_linear_sat",
         "package": "Material",
-        "path": "pyleecan/Generator/ClassesRef/Material/ModelBH_linear_sat.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Material/ModelBH_linear_sat.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -9970,7 +10581,7 @@
         "mother": "",
         "name": "NodeMat",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/NodeMat.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/NodeMat.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10018,6 +10629,195 @@
             }
         ]
     },
+    "Norm_affine": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Affine function normalization (slope x axis + offset)",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_affine",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Norm_affine.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "slope of the axis function",
+                "max": "",
+                "min": "",
+                "name": "slope",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": 1
+            },
+            {
+                "as_dict": "",
+                "desc": "offset of the axis function",
+                "max": "",
+                "min": "",
+                "name": "offset",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": 0
+            }
+        ]
+    },
+    "Norm_func": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Function normalization (lambda x: function(axis))",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_func",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Norm_func.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "function to apply",
+                "max": "",
+                "min": "",
+                "name": "function",
+                "size": "",
+                "type": "function",
+                "unit": "",
+                "value": ""
+            }
+        ]
+    },
+    "Norm_indices": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Return indices instead of axis values",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_indices",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Norm_indices.csv",
+        "properties": []
+    },
+    "Norm_ref": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Normalization with a reference value (values/ref)",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_ref",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Norm_ref.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "reference value",
+                "max": "",
+                "min": "",
+                "name": "ref",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": 1
+            }
+        ]
+    },
+    "Norm_vector": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Normalization by a given vector",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_vector",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Norm_vector.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "vector to replace axis values",
+                "max": "",
+                "min": "",
+                "name": "vector",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": ""
+            }
+        ]
+    },
+    "Normalization": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [
+            "Norm_affine",
+            "Norm_func",
+            "Norm_indices",
+            "Norm_ref",
+            "Norm_vector"
+        ],
+        "desc": "Abstract class for normalizations",
+        "is_internal": false,
+        "methods": [],
+        "mother": "",
+        "name": "Normalization",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Normalization.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "Normalization must be applied on axis values in this unit",
+                "max": "",
+                "min": "",
+                "name": "unit",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": "SI"
+            }
+        ]
+    },
     "Notch": {
         "constants": [
             {
@@ -10040,7 +10840,7 @@
         "mother": "",
         "name": "Notch",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Notch.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Notch.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10075,7 +10875,7 @@
         "mother": "Notch",
         "name": "NotchEvenDist",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/NotchEvenDist.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/NotchEvenDist.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10122,7 +10922,7 @@
         "mother": "",
         "name": "OP",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/OP.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/OP.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10215,7 +11015,7 @@
         "mother": "",
         "name": "OPMatrix",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/OPMatrix.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/OPMatrix.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10368,7 +11168,7 @@
         "mother": "OP",
         "name": "OPdq",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/OPdq.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/OPdq.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10430,7 +11230,7 @@
         "mother": "OPdq",
         "name": "OPdqf",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/OPdqf.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/OPdqf.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10471,7 +11271,7 @@
         "mother": "OP",
         "name": "OPslip",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/OPslip.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/OPslip.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10546,7 +11346,7 @@
         "mother": "OptiSolver",
         "name": "OptiBayesAlg",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiBayesAlg.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiBayesAlg.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10614,7 +11414,7 @@
         "mother": "OptiBayesAlg",
         "name": "OptiBayesAlgSmoot",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiBayesAlgSmoot.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiBayesAlgSmoot.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10654,7 +11454,7 @@
         "mother": "DataKeeper",
         "name": "OptiConstraint",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiConstraint.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiConstraint.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10697,7 +11497,7 @@
         "mother": "ParamExplorer",
         "name": "OptiDesignVar",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiDesignVar.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiDesignVar.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10740,7 +11540,7 @@
         "mother": "OptiDesignVar",
         "name": "OptiDesignVarInterval",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiDesignVarInterval.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiDesignVarInterval.csv",
         "properties": []
     },
     "OptiDesignVarSet": {
@@ -10757,7 +11557,7 @@
         "mother": "OptiDesignVar",
         "name": "OptiDesignVarSet",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiDesignVarSet.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiDesignVarSet.csv",
         "properties": []
     },
     "OptiGenAlg": {
@@ -10776,7 +11576,7 @@
         "mother": "OptiSolver",
         "name": "OptiGenAlg",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiGenAlg.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiGenAlg.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10879,7 +11679,7 @@
         "mother": "OptiGenAlg",
         "name": "OptiGenAlgNsga2Deap",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiGenAlgNsga2Deap.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiGenAlgNsga2Deap.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -10908,7 +11708,7 @@
         "mother": "DataKeeper",
         "name": "OptiObjective",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiObjective.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiObjective.csv",
         "properties": []
     },
     "OptiProblem": {
@@ -10925,7 +11725,7 @@
         "mother": "",
         "name": "OptiProblem",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiProblem.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiProblem.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11025,7 +11825,7 @@
         "mother": "",
         "name": "OptiSolver",
         "package": "Optimization",
-        "path": "pyleecan/Generator/ClassesRef/Optimization/OptiSolver.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Optimization/OptiSolver.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11094,7 +11894,7 @@
         "mother": "",
         "name": "OutElec",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutElec.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutElec.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11269,7 +12069,7 @@
                 "name": "Jrms",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
@@ -11323,7 +12123,7 @@
         "mother": "",
         "name": "OutForce",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutForce.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutForce.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11396,7 +12196,7 @@
         "mother": "",
         "name": "OutGeo",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutGeo.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutGeo.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11590,7 +12390,7 @@
         "mother": "",
         "name": "OutGeoLam",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutGeoLam.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutGeoLam.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11721,7 +12521,7 @@
         "mother": "",
         "name": "OutInternal",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutInternal.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutInternal.csv",
         "properties": []
     },
     "OutLoss": {
@@ -11745,7 +12545,7 @@
         "mother": "",
         "name": "OutLoss",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutLoss.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutLoss.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11804,7 +12604,7 @@
         "mother": "",
         "name": "OutLossModel",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutLossModel.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutLossModel.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -11895,7 +12695,7 @@
         "mother": "",
         "name": "OutMag",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutMag.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutMag.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12113,7 +12913,7 @@
         "mother": "OutInternal",
         "name": "OutMagElmer",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutMagElmer.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutMagElmer.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12144,7 +12944,7 @@
         "mother": "OutInternal",
         "name": "OutMagFEMM",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutMagFEMM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutMagFEMM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12184,7 +12984,7 @@
         "mother": "",
         "name": "OutPost",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutPost.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutPost.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12224,7 +13024,7 @@
         "mother": "",
         "name": "OutStruct",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/OutStruct.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/OutStruct.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12304,7 +13104,7 @@
         "mother": "",
         "name": "Output",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/Output.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/Output.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12442,7 +13242,7 @@
         "mother": "",
         "name": "ParamExplorer",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/ParamExplorer.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/ParamExplorer.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12520,7 +13320,7 @@
         "mother": "ParamExplorer",
         "name": "ParamExplorerInterval",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/ParamExplorerInterval.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/ParamExplorerInterval.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12598,7 +13398,7 @@
         "mother": "ParamExplorer",
         "name": "ParamExplorerSet",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/ParamExplorerSet.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/ParamExplorerSet.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12637,7 +13437,7 @@
         "mother": "Surface",
         "name": "PolarArc",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/PolarArc.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/PolarArc.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12682,7 +13482,7 @@
         "mother": "",
         "name": "Post",
         "package": "Post",
-        "path": "pyleecan/Generator/ClassesRef/Post/Post.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Post/Post.csv",
         "properties": []
     },
     "PostFunction": {
@@ -12699,7 +13499,7 @@
         "mother": "Post",
         "name": "PostFunction",
         "package": "Post",
-        "path": "pyleecan/Generator/ClassesRef/Post/PostFunction.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Post/PostFunction.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12730,7 +13530,7 @@
         "mother": "PostMethod",
         "name": "PostLUT",
         "package": "Post",
-        "path": "pyleecan/Generator/ClassesRef/Post/PostLUT.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Post/PostLUT.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12775,7 +13575,7 @@
         "mother": "Post",
         "name": "PostMethod",
         "package": "Post",
-        "path": "pyleecan/Generator/ClassesRef/Post/PostMethod.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Post/PostMethod.csv",
         "properties": []
     },
     "PostPlot": {
@@ -12794,7 +13594,7 @@
         "mother": "PostMethod",
         "name": "PostPlot",
         "package": "Post",
-        "path": "pyleecan/Generator/ClassesRef/Post/PostPlot.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Post/PostPlot.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12888,7 +13688,7 @@
         "mother": "",
         "name": "RefElement",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefElement.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefElement.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -12924,7 +13724,7 @@
         "mother": "RefElement",
         "name": "RefLine3",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefLine3.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefLine3.csv",
         "properties": []
     },
     "RefQuad4": {
@@ -12948,7 +13748,7 @@
         "mother": "RefElement",
         "name": "RefQuad4",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefQuad4.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefQuad4.csv",
         "properties": []
     },
     "RefQuad9": {
@@ -12972,7 +13772,7 @@
         "mother": "RefElement",
         "name": "RefQuad9",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefQuad9.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefQuad9.csv",
         "properties": []
     },
     "RefSegmentP1": {
@@ -12997,7 +13797,7 @@
         "mother": "RefElement",
         "name": "RefSegmentP1",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefSegmentP1.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefSegmentP1.csv",
         "properties": []
     },
     "RefTriangle3": {
@@ -13023,7 +13823,7 @@
         "mother": "RefElement",
         "name": "RefTriangle3",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefTriangle3.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefTriangle3.csv",
         "properties": []
     },
     "RefTriangle6": {
@@ -13047,8 +13847,215 @@
         "mother": "RefElement",
         "name": "RefTriangle6",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefTriangle6.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/RefTriangle6.csv",
         "properties": []
+    },
+    "RequestedAxis": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class to handle requested axes during get_along methods",
+        "is_internal": false,
+        "methods": [
+            "get_axis"
+        ],
+        "mother": "",
+        "name": "RequestedAxis",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/RequestedAxis.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "Name requested in get_along command",
+                "max": "",
+                "min": "",
+                "name": "name",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Corresponding axis if a transform is required",
+                "max": "",
+                "min": "",
+                "name": "corr_name",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Unit requested in get_along command",
+                "max": "",
+                "min": "",
+                "name": "unit",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Corresponding unit if a transform is required",
+                "max": "",
+                "min": "",
+                "name": "corr_unit",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Extension of the requested axis (single or interval)",
+                "max": "",
+                "min": "",
+                "name": "extension",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Values of the axis",
+                "max": "",
+                "min": "",
+                "name": "values",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Indices of the axis",
+                "max": "",
+                "min": "",
+                "name": "indices",
+                "size": "",
+                "type": "list",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Input data to interpolate on",
+                "max": "",
+                "min": "",
+                "name": "input_data",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Operation to perform on the axis (coordinate change, etc)",
+                "max": "",
+                "min": "",
+                "name": "operation",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "as_dict": "",
+                "desc": "Index of the axis in the axes list",
+                "max": "",
+                "min": "",
+                "name": "index",
+                "size": "",
+                "type": "int",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Transform to perform on the axis (fft, ifft)",
+                "max": "",
+                "min": "",
+                "name": "transform",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "as_dict": "",
+                "desc": "To indicate if the axis is a DataPattern",
+                "max": "",
+                "min": "",
+                "name": "is_pattern",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            },
+            {
+                "as_dict": "",
+                "desc": "Indices to rebuild pattern",
+                "max": "",
+                "min": "",
+                "name": "rebuild_indices",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "To indicate if the pattern axis is step (for interpolation)",
+                "max": "",
+                "min": "",
+                "name": "is_step",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            },
+            {
+                "as_dict": "",
+                "desc": "To store 1/nth octave band",
+                "max": "",
+                "min": "",
+                "name": "noct",
+                "size": "",
+                "type": "int",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "To store original axis values (useful in case of non uniform fft)",
+                "max": "",
+                "min": "",
+                "name": "corr_values",
+                "size": "",
+                "type": "ndarray",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "To indicate if the values are strings",
+                "max": "",
+                "min": "",
+                "name": "is_components",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": false
+            }
+        ]
     },
     "Rule": {
         "constants": [
@@ -13074,7 +14081,7 @@
         "mother": "",
         "name": "Rule",
         "package": "Converter",
-        "path": "pyleecan/Generator/ClassesRef/Converter/Rule.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Converter/Rule.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13107,7 +14114,7 @@
         "mother": "Rule",
         "name": "RuleComplex",
         "package": "Converter",
-        "path": "pyleecan/Generator/ClassesRef/Converter/RuleComplex.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Converter/RuleComplex.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13162,7 +14169,7 @@
         "mother": "Rule",
         "name": "RuleEquation",
         "package": "Converter",
-        "path": "pyleecan/Generator/ClassesRef/Converter/RuleEquation.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Converter/RuleEquation.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13216,7 +14223,7 @@
         "mother": "Rule",
         "name": "RuleSimple",
         "package": "Converter",
-        "path": "pyleecan/Generator/ClassesRef/Converter/RuleSimple.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Converter/RuleSimple.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13280,7 +14287,7 @@
         "mother": "",
         "name": "ScalarProduct",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/ScalarProduct.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/ScalarProduct.csv",
         "properties": []
     },
     "ScalarProductL2": {
@@ -13299,7 +14306,7 @@
         "mother": "ScalarProduct",
         "name": "ScalarProductL2",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Interpolation/ScalarProductL2.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Interpolation/ScalarProductL2.csv",
         "properties": []
     },
     "Section": {
@@ -13327,7 +14334,7 @@
         "mother": "Elmer",
         "name": "Section",
         "package": "Elmer",
-        "path": "pyleecan/Generator/ClassesRef/Elmer/Section.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Elmer/Section.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13421,7 +14428,7 @@
         "mother": "Line",
         "name": "Segment",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Segment.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Segment.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13465,7 +14472,7 @@
         "mother": "",
         "name": "Shaft",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Shaft.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Shaft.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13518,7 +14525,7 @@
         "mother": "Simulation",
         "name": "Simu1",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Simu1.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Simu1.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13598,7 +14605,7 @@
         "mother": "",
         "name": "Simulation",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Simulation.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Simulation.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13741,7 +14748,7 @@
         "mother": "",
         "name": "Skew",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Skew.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Skew.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -13851,7 +14858,7 @@
         "mother": "",
         "name": "SliceModel",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/SliceModel.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/SliceModel.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14027,7 +15034,7 @@
         "mother": "",
         "name": "Slot",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/Slot.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/Slot.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14090,7 +15097,7 @@
         "mother": "Slot",
         "name": "Slot19",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/Slot19.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/Slot19.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14172,7 +15179,7 @@
         "mother": "Slot",
         "name": "SlotCirc",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotCirc.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotCirc.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14237,7 +15244,7 @@
         "mother": "Slot",
         "name": "SlotDC",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotDC.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotDC.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14359,7 +15366,7 @@
         "mother": "Slot",
         "name": "SlotM10",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM10.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM10.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14438,7 +15445,7 @@
         "mother": "Slot",
         "name": "SlotM11",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM11.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM11.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14516,7 +15523,7 @@
         "mother": "Slot",
         "name": "SlotM12",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM12.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM12.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14594,7 +15601,7 @@
         "mother": "Slot",
         "name": "SlotM13",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM13.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM13.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14684,7 +15691,7 @@
         "mother": "Slot",
         "name": "SlotM14",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM14.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM14.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14773,7 +15780,7 @@
         "mother": "Slot",
         "name": "SlotM15",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM15.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM15.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14861,7 +15868,7 @@
         "mother": "Slot",
         "name": "SlotM16",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM16.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM16.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -14939,7 +15946,7 @@
         "mother": "Slot",
         "name": "SlotM17",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM17.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM17.csv",
         "properties": []
     },
     "SlotM18": {
@@ -14973,7 +15980,7 @@
         "mother": "Slot",
         "name": "SlotM18",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM18.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM18.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15020,7 +16027,7 @@
         "mother": "Slot",
         "name": "SlotM18_2",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM18_2.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM18_2.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15075,7 +16082,7 @@
         "mother": "Slot",
         "name": "SlotM19",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotM19.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotM19.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15132,7 +16139,7 @@
         "mother": "Slot",
         "name": "SlotUD",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotUD.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotUD.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15211,7 +16218,7 @@
         "mother": "Slot",
         "name": "SlotUD2",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotUD2.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotUD2.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15293,7 +16300,7 @@
         "mother": "Slot",
         "name": "SlotW10",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW10.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW10.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15410,7 +16417,7 @@
         "mother": "Slot",
         "name": "SlotW11",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW11.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW11.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15559,7 +16566,7 @@
         "mother": "Slot",
         "name": "SlotW11_2",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW11_2.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW11_2.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15705,7 +16712,7 @@
         "mother": "Slot",
         "name": "SlotW12",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW12.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW12.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15787,7 +16794,7 @@
         "mother": "Slot",
         "name": "SlotW13",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW13.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW13.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -15914,7 +16921,7 @@
         "mother": "Slot",
         "name": "SlotW14",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW14.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW14.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16026,7 +17033,7 @@
         "mother": "Slot",
         "name": "SlotW15",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW15.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW15.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16138,7 +17145,7 @@
         "mother": "Slot",
         "name": "SlotW16",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW16.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW16.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16231,7 +17238,7 @@
         "mother": "Slot",
         "name": "SlotW21",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW21.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW21.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16345,7 +17352,7 @@
         "mother": "Slot",
         "name": "SlotW22",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW22.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW22.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16429,7 +17436,7 @@
         "mother": "Slot",
         "name": "SlotW23",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW23.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW23.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16565,7 +17572,7 @@
         "mother": "Slot",
         "name": "SlotW24",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW24.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW24.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16624,7 +17631,7 @@
         "mother": "Slot",
         "name": "SlotW25",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW25.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW25.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16704,7 +17711,7 @@
         "mother": "Slot",
         "name": "SlotW26",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW26.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW26.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16795,7 +17802,7 @@
         "mother": "Slot",
         "name": "SlotW27",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW27.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW27.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -16918,7 +17925,7 @@
         "mother": "Slot",
         "name": "SlotW28",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW28.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW28.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17012,7 +18019,7 @@
         "mother": "Slot",
         "name": "SlotW29",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW29.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW29.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17124,7 +18131,7 @@
         "mother": "Slot",
         "name": "SlotW30",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW30.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW30.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17226,7 +18233,7 @@
         "mother": "Slot",
         "name": "SlotW60",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW60.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW60.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17350,7 +18357,7 @@
         "mother": "Slot",
         "name": "SlotW61",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW61.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW61.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17485,7 +18492,7 @@
         "mother": "Slot",
         "name": "SlotW62",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW62.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW62.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17609,7 +18616,7 @@
         "mother": "Slot",
         "name": "SlotW63",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotW63.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotW63.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17708,7 +18715,7 @@
         "mother": "Slot",
         "name": "SlotWLSRPM",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/SlotWLSRPM.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/SlotWLSRPM.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17786,7 +18793,7 @@
         "mother": "",
         "name": "Solution",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/Solution.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/Solution.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17852,7 +18859,7 @@
         "mother": "Solution",
         "name": "SolutionData",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/SolutionData.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/SolutionData.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17887,7 +18894,7 @@
         "mother": "Solution",
         "name": "SolutionMat",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/SolutionMat.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/SolutionMat.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17953,7 +18960,7 @@
         "mother": "Solution",
         "name": "SolutionVector",
         "package": "Mesh",
-        "path": "pyleecan/Generator/ClassesRef/Mesh/SolutionVector.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Mesh/SolutionVector.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -17984,7 +18991,7 @@
         "mother": "Elmer",
         "name": "SolverInputFile",
         "package": "Elmer",
-        "path": "pyleecan/Generator/ClassesRef/Elmer/SolverInputFile.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Elmer/SolverInputFile.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18021,7 +19028,7 @@
         "mother": "Structural",
         "name": "StructElmer",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/StructElmer.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/StructElmer.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18121,7 +19128,7 @@
         "mother": "",
         "name": "Structural",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/Structural.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/Structural.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18162,7 +19169,7 @@
         "mother": "Surface",
         "name": "SurfLine",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/SurfLine.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/SurfLine.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18202,7 +19209,7 @@
         "mother": "Surface",
         "name": "SurfRing",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/SurfRing.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/SurfRing.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18255,7 +19262,7 @@
         "mother": "",
         "name": "Surface",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Surface.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Surface.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18305,7 +19312,7 @@
         "mother": "Surface",
         "name": "Trapeze",
         "package": "Geometry",
-        "path": "pyleecan/Generator/ClassesRef/Geometry/Trapeze.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Geometry/Trapeze.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18363,7 +19370,7 @@
         "mother": "",
         "name": "Unit",
         "package": "GUI_Option",
-        "path": "pyleecan/Generator/ClassesRef/GUI_Option/Unit.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/GUI_Option/Unit.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18426,7 +19433,7 @@
         "mother": "VarSimu",
         "name": "VarLoad",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/VarLoad.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/VarLoad.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18459,7 +19466,7 @@
         "mother": "VarLoad",
         "name": "VarLoadCurrent",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/VarLoadCurrent.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/VarLoadCurrent.csv",
         "properties": []
     },
     "VarLoadVoltage": {
@@ -18480,7 +19487,7 @@
         "mother": "VarLoad",
         "name": "VarLoadVoltage",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/VarLoadVoltage.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/VarLoadVoltage.csv",
         "properties": []
     },
     "VarOpti": {
@@ -18505,7 +19512,7 @@
         "mother": "VarParam",
         "name": "VarOpti",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/VarOpti.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/VarOpti.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18563,7 +19570,7 @@
         "mother": "VarSimu",
         "name": "VarParam",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/VarParam.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/VarParam.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18600,7 +19607,7 @@
         "mother": "VarParam",
         "name": "VarParamSweep",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/VarParamSweep.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/VarParamSweep.csv",
         "properties": []
     },
     "VarSimu": {
@@ -18634,7 +19641,7 @@
         "mother": "",
         "name": "VarSimu",
         "package": "Simulation",
-        "path": "pyleecan/Generator/ClassesRef/Simulation/VarSimu.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Simulation/VarSimu.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18770,6 +19777,76 @@
             }
         ]
     },
+    "VectorField": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Class for 2D or 3D vector fields (time or frequency domain)",
+        "is_internal": false,
+        "methods": [
+            "change_periodicity",
+            "change_referential",
+            "filter_spectral_leakage",
+            "freq_to_time",
+            "get_axes",
+            "get_harm_rphiz_along",
+            "get_harm_xyz_along",
+            "get_mag_rphiz_along",
+            "get_mag_xyz_along",
+            "get_rphiz_along",
+            "get_xyz_along",
+            "get_vectorfield_along",
+            "plot_2D_Data",
+            "plot_2D_Data_Animated",
+            "plot_3D_Data",
+            "time_to_freq",
+            "to_xyz",
+            "to_rphiz"
+        ],
+        "mother": "",
+        "name": "VectorField",
+        "package": "SciDataTool",
+        "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/VectorField.csv",
+        "properties": [
+            {
+                "as_dict": "",
+                "desc": "Name of the vector field",
+                "max": "",
+                "min": "",
+                "name": "name",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Symbol of the vector field",
+                "max": "",
+                "min": "",
+                "name": "symbol",
+                "size": "",
+                "type": "str",
+                "unit": "",
+                "value": ""
+            },
+            {
+                "as_dict": "",
+                "desc": "Dict of the components",
+                "max": "",
+                "min": "",
+                "name": "components",
+                "size": "",
+                "type": "{SciDataTool.Classes.DataND}",
+                "unit": "",
+                "value": "-1"
+            }
+        ]
+    },
     "VentilationCirc": {
         "constants": [
             {
@@ -18792,7 +19869,7 @@
         "mother": "Hole",
         "name": "VentilationCirc",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/VentilationCirc.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/VentilationCirc.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18840,7 +19917,7 @@
         "mother": "Hole",
         "name": "VentilationPolar",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/VentilationPolar.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/VentilationPolar.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18899,7 +19976,7 @@
         "mother": "Hole",
         "name": "VentilationTrap",
         "package": "Slot",
-        "path": "pyleecan/Generator/ClassesRef/Slot/VentilationTrap.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Slot/VentilationTrap.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -18984,7 +20061,7 @@
         "mother": "",
         "name": "Winding",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/Winding.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/Winding.csv",
         "properties": [
             {
                 "as_dict": "",
@@ -19230,7 +20307,7 @@
         "mother": "Winding",
         "name": "WindingSC",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/WindingSC.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/WindingSC.csv",
         "properties": []
     },
     "WindingUD": {
@@ -19257,7 +20334,7 @@
         "mother": "Winding",
         "name": "WindingUD",
         "package": "Machine",
-        "path": "pyleecan/Generator/ClassesRef/Machine/WindingUD.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Machine/WindingUD.csv",
         "properties": []
     },
     "XOutput": {
@@ -19304,7 +20381,7 @@
         "mother": "Output",
         "name": "XOutput",
         "package": "Output",
-        "path": "pyleecan/Generator/ClassesRef/Output/XOutput.csv",
+        "path": "src/pyleecan/Generator/ClassesRef/Output/XOutput.csv",
         "properties": [
             {
                 "as_dict": "",

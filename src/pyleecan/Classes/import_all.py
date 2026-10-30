@@ -23,7 +23,15 @@ from ..Classes.Conductor import Conductor
 from ..Classes.Convert import Convert
 from ..Classes.ConvertMC import ConvertMC
 from ..Classes.DXFImport import DXFImport
+from ..Classes.Data import Data
+from ..Classes.Data1D import Data1D
+from ..Classes.DataDual import DataDual
+from ..Classes.DataFreq import DataFreq
 from ..Classes.DataKeeper import DataKeeper
+from ..Classes.DataLinspace import DataLinspace
+from ..Classes.DataND import DataND
+from ..Classes.DataPattern import DataPattern
+from ..Classes.DataTime import DataTime
 from ..Classes.Drive import Drive
 from ..Classes.DriveWave import DriveWave
 from ..Classes.EEC import EEC
@@ -143,6 +151,12 @@ from ..Classes.ModelBH_arctangent import ModelBH_arctangent
 from ..Classes.ModelBH_exponential import ModelBH_exponential
 from ..Classes.ModelBH_linear_sat import ModelBH_linear_sat
 from ..Classes.NodeMat import NodeMat
+from ..Classes.Norm_affine import Norm_affine
+from ..Classes.Norm_func import Norm_func
+from ..Classes.Norm_indices import Norm_indices
+from ..Classes.Norm_ref import Norm_ref
+from ..Classes.Norm_vector import Norm_vector
+from ..Classes.Normalization import Normalization
 from ..Classes.Notch import Notch
 from ..Classes.NotchEvenDist import NotchEvenDist
 from ..Classes.OP import OP
@@ -190,6 +204,7 @@ from ..Classes.RefQuad9 import RefQuad9
 from ..Classes.RefSegmentP1 import RefSegmentP1
 from ..Classes.RefTriangle3 import RefTriangle3
 from ..Classes.RefTriangle6 import RefTriangle6
+from ..Classes.RequestedAxis import RequestedAxis
 from ..Classes.Rule import Rule
 from ..Classes.RuleComplex import RuleComplex
 from ..Classes.RuleEquation import RuleEquation
@@ -262,6 +277,7 @@ from ..Classes.VarOpti import VarOpti
 from ..Classes.VarParam import VarParam
 from ..Classes.VarParamSweep import VarParamSweep
 from ..Classes.VarSimu import VarSimu
+from ..Classes.VectorField import VectorField
 from ..Classes.VentilationCirc import VentilationCirc
 from ..Classes.VentilationPolar import VentilationPolar
 from ..Classes.VentilationTrap import VentilationTrap

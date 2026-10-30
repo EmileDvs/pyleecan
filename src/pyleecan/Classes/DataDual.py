@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/DataDual.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/DataDual.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataDual
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataDual
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,12 +18,12 @@ from .DataND import DataND
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.DataDual.get_along import get_along
+    from ..Methods.SciDataTool.DataDual.get_along import get_along
 except ImportError as error:
     get_along = error
 
 try:
-    from ..Methods.DataDual.get_axes import get_axes
+    from ..Methods.SciDataTool.DataDual.get_axes import get_axes
 except ImportError as error:
     get_axes = error
 
@@ -37,7 +39,7 @@ class DataDual(DataND):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataDual.get_along
+    # cf Methods.SciDataTool.DataDual.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
             fget=lambda x: raise_(
@@ -46,7 +48,7 @@ class DataDual(DataND):
         )
     else:
         get_along = get_along
-    # cf Methods.DataDual.get_axes
+    # cf Methods.SciDataTool.DataDual.get_axes
     if isinstance(get_axes, ImportError):
         get_axes = property(
             fget=lambda x: raise_(
@@ -57,6 +59,8 @@ class DataDual(DataND):
         get_axes = get_axes
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -77,13 +81,13 @@ class DataDual(DataND):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -396,7 +400,7 @@ class DataDual(DataND):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.axes_dt = None
         self.values_dt = None
@@ -441,7 +445,7 @@ class DataDual(DataND):
     axes_dt = property(
         fget=_get_axes_dt,
         fset=_set_axes_dt,
-        doc=u"""List of the Data1D objects corresponding to the axes in time/space domain
+        doc="""List of the Data1D objects corresponding to the axes in time/space domain
 
         :Type: [SciDataTool.Classes.Data]
         """,
@@ -466,7 +470,7 @@ class DataDual(DataND):
     values_dt = property(
         fget=_get_values_dt,
         fset=_set_values_dt,
-        doc=u"""Values of the field in time/space domain
+        doc="""Values of the field in time/space domain
 
         :Type: ndarray
         """,
@@ -508,7 +512,7 @@ class DataDual(DataND):
     axes_df = property(
         fget=_get_axes_df,
         fset=_set_axes_df,
-        doc=u"""List of the Data1D objects corresponding to the axes in fourier domain
+        doc="""List of the Data1D objects corresponding to the axes in fourier domain
 
         :Type: [SciDataTool.Classes.Data]
         """,
@@ -533,7 +537,7 @@ class DataDual(DataND):
     values_df = property(
         fget=_get_values_df,
         fset=_set_values_df,
-        doc=u"""Values of the field in fourier domain
+        doc="""Values of the field in fourier domain
 
         :Type: ndarray
         """,

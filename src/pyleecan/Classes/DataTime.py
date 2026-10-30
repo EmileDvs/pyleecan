@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/DataTime.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/DataTime.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataTime
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataTime
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,12 +18,12 @@ from .DataND import DataND
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.DataTime.time_to_freq import time_to_freq
+    from ..Methods.SciDataTool.DataTime.time_to_freq import time_to_freq
 except ImportError as error:
     time_to_freq = error
 
 try:
-    from ..Methods.DataTime.to_datadual import to_datadual
+    from ..Methods.SciDataTool.DataTime.to_datadual import to_datadual
 except ImportError as error:
     to_datadual = error
 
@@ -37,7 +39,7 @@ class DataTime(DataND):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataTime.time_to_freq
+    # cf Methods.SciDataTool.DataTime.time_to_freq
     if isinstance(time_to_freq, ImportError):
         time_to_freq = property(
             fget=lambda x: raise_(
@@ -48,7 +50,7 @@ class DataTime(DataND):
         )
     else:
         time_to_freq = time_to_freq
-    # cf Methods.DataTime.to_datadual
+    # cf Methods.SciDataTool.DataTime.to_datadual
     if isinstance(to_datadual, ImportError):
         to_datadual = property(
             fget=lambda x: raise_(
@@ -61,6 +63,8 @@ class DataTime(DataND):
         to_datadual = to_datadual
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -77,13 +81,13 @@ class DataTime(DataND):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -232,7 +236,7 @@ class DataTime(DataND):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         # Set to None the properties inherited from DataND
         super(DataTime, self)._set_None()

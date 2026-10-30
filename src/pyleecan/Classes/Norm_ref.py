@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Norm_ref.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/Norm_ref.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Norm_ref
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_ref
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,7 +18,7 @@ from .Normalization import Normalization
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Norm_ref.normalize import normalize
+    from ..Methods.SciDataTool.Norm_ref.normalize import normalize
 except ImportError as error:
     normalize = error
 
@@ -30,7 +32,7 @@ class Norm_ref(Normalization):
 
     VERSION = 1
 
-    # cf Methods.Norm_ref.normalize
+    # cf Methods.SciDataTool.Norm_ref.normalize
     if isinstance(normalize, ImportError):
         normalize = property(
             fget=lambda x: raise_(
@@ -41,17 +43,19 @@ class Norm_ref(Normalization):
         normalize = normalize
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(self, ref=1, unit="SI", init_dict=None, init_str=None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -169,7 +173,7 @@ class Norm_ref(Normalization):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.ref = None
         # Set to None the properties inherited from Normalization
@@ -187,7 +191,7 @@ class Norm_ref(Normalization):
     ref = property(
         fget=_get_ref,
         fset=_set_ref,
-        doc=u"""reference value
+        doc="""reference value
 
         :Type: float
         """,

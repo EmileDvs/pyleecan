@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/RequestedAxis.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/RequestedAxis.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//RequestedAxis
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/RequestedAxis
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,7 +18,7 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.RequestedAxis.get_axis import get_axis
+    from ..Methods.SciDataTool.RequestedAxis.get_axis import get_axis
 except ImportError as error:
     get_axis = error
 
@@ -31,7 +33,7 @@ class RequestedAxis(FrozenClass):
 
     VERSION = 1
 
-    # cf Methods.RequestedAxis.get_axis
+    # cf Methods.SciDataTool.RequestedAxis.get_axis
     if isinstance(get_axis, ImportError):
         get_axis = property(
             fget=lambda x: raise_(
@@ -42,6 +44,8 @@ class RequestedAxis(FrozenClass):
         get_axis = get_axis
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -67,13 +71,13 @@ class RequestedAxis(FrozenClass):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -563,7 +567,7 @@ class RequestedAxis(FrozenClass):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.name = None
         self.corr_name = None
@@ -595,7 +599,7 @@ class RequestedAxis(FrozenClass):
     name = property(
         fget=_get_name,
         fset=_set_name,
-        doc=u"""Name requested in get_along command
+        doc="""Name requested in get_along command
 
         :Type: str
         """,
@@ -613,7 +617,7 @@ class RequestedAxis(FrozenClass):
     corr_name = property(
         fget=_get_corr_name,
         fset=_set_corr_name,
-        doc=u"""Corresponding axis if a transform is required
+        doc="""Corresponding axis if a transform is required
 
         :Type: str
         """,
@@ -631,7 +635,7 @@ class RequestedAxis(FrozenClass):
     unit = property(
         fget=_get_unit,
         fset=_set_unit,
-        doc=u"""Unit requested in get_along command
+        doc="""Unit requested in get_along command
 
         :Type: str
         """,
@@ -649,7 +653,7 @@ class RequestedAxis(FrozenClass):
     corr_unit = property(
         fget=_get_corr_unit,
         fset=_set_corr_unit,
-        doc=u"""Corresponding unit if a transform is required
+        doc="""Corresponding unit if a transform is required
 
         :Type: str
         """,
@@ -667,7 +671,7 @@ class RequestedAxis(FrozenClass):
     extension = property(
         fget=_get_extension,
         fset=_set_extension,
-        doc=u"""Extension of the requested axis (single or interval)
+        doc="""Extension of the requested axis (single or interval)
 
         :Type: str
         """,
@@ -692,7 +696,7 @@ class RequestedAxis(FrozenClass):
     values = property(
         fget=_get_values,
         fset=_set_values,
-        doc=u"""Values of the axis
+        doc="""Values of the axis
 
         :Type: ndarray
         """,
@@ -712,7 +716,7 @@ class RequestedAxis(FrozenClass):
     indices = property(
         fget=_get_indices,
         fset=_set_indices,
-        doc=u"""Indices of the axis
+        doc="""Indices of the axis
 
         :Type: list
         """,
@@ -737,7 +741,7 @@ class RequestedAxis(FrozenClass):
     input_data = property(
         fget=_get_input_data,
         fset=_set_input_data,
-        doc=u"""Input data to interpolate on
+        doc="""Input data to interpolate on
 
         :Type: ndarray
         """,
@@ -755,7 +759,7 @@ class RequestedAxis(FrozenClass):
     operation = property(
         fget=_get_operation,
         fset=_set_operation,
-        doc=u"""Operation to perform on the axis (coordinate change, etc)
+        doc="""Operation to perform on the axis (coordinate change, etc)
 
         :Type: str
         """,
@@ -773,7 +777,7 @@ class RequestedAxis(FrozenClass):
     index = property(
         fget=_get_index,
         fset=_set_index,
-        doc=u"""Index of the axis in the axes list
+        doc="""Index of the axis in the axes list
 
         :Type: int
         """,
@@ -791,7 +795,7 @@ class RequestedAxis(FrozenClass):
     transform = property(
         fget=_get_transform,
         fset=_set_transform,
-        doc=u"""Transform to perform on the axis (fft, ifft)
+        doc="""Transform to perform on the axis (fft, ifft)
 
         :Type: str
         """,
@@ -809,7 +813,7 @@ class RequestedAxis(FrozenClass):
     is_pattern = property(
         fget=_get_is_pattern,
         fset=_set_is_pattern,
-        doc=u"""To indicate if the axis is a DataPattern
+        doc="""To indicate if the axis is a DataPattern
 
         :Type: bool
         """,
@@ -834,7 +838,7 @@ class RequestedAxis(FrozenClass):
     rebuild_indices = property(
         fget=_get_rebuild_indices,
         fset=_set_rebuild_indices,
-        doc=u"""Indices to rebuild pattern
+        doc="""Indices to rebuild pattern
 
         :Type: ndarray
         """,
@@ -852,7 +856,7 @@ class RequestedAxis(FrozenClass):
     is_step = property(
         fget=_get_is_step,
         fset=_set_is_step,
-        doc=u"""To indicate if the pattern axis is step (for interpolation)
+        doc="""To indicate if the pattern axis is step (for interpolation)
 
         :Type: bool
         """,
@@ -870,7 +874,7 @@ class RequestedAxis(FrozenClass):
     noct = property(
         fget=_get_noct,
         fset=_set_noct,
-        doc=u"""To store 1/nth octave band
+        doc="""To store 1/nth octave band
 
         :Type: int
         """,
@@ -895,7 +899,7 @@ class RequestedAxis(FrozenClass):
     corr_values = property(
         fget=_get_corr_values,
         fset=_set_corr_values,
-        doc=u"""To store original axis values (useful in case of non uniform fft)
+        doc="""To store original axis values (useful in case of non uniform fft)
 
         :Type: ndarray
         """,
@@ -913,7 +917,7 @@ class RequestedAxis(FrozenClass):
     is_components = property(
         fget=_get_is_components,
         fset=_set_is_components,
-        doc=u"""To indicate if the values are strings
+        doc="""To indicate if the values are strings
 
         :Type: bool
         """,

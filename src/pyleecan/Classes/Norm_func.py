@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Norm_func.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/Norm_func.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Norm_func
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_func
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,7 +18,7 @@ from .Normalization import Normalization
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Norm_func.normalize import normalize
+    from ..Methods.SciDataTool.Norm_func.normalize import normalize
 except ImportError as error:
     normalize = error
 
@@ -35,7 +37,7 @@ class Norm_func(Normalization):
 
     VERSION = 1
 
-    # cf Methods.Norm_func.normalize
+    # cf Methods.SciDataTool.Norm_func.normalize
     if isinstance(normalize, ImportError):
         normalize = property(
             fget=lambda x: raise_(
@@ -46,17 +48,19 @@ class Norm_func(Normalization):
         normalize = normalize
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(self, function=None, unit="SI", init_dict=None, init_str=None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -147,7 +151,7 @@ class Norm_func(Normalization):
         Norm_func_dict = super(Norm_func, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         if self._function_str is not None:
             Norm_func_dict["function"] = self._function_str
@@ -158,7 +162,7 @@ class Norm_func(Normalization):
             if self.function is not None:
                 self.get_logger().warning(
                     "Norm_func.as_dict(): "
-                    + "Function self.function is not serializable "
+                    + f"Function {self.function.__name__} is not serializable "
                     + "and will be converted to None."
                 )
         # The class name is added to the dict for deserialisation purpose
@@ -180,7 +184,7 @@ class Norm_func(Normalization):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.function = None
         # Set to None the properties inherited from Normalization
@@ -200,7 +204,7 @@ class Norm_func(Normalization):
             self._function_func = eval(value)
         elif isinstance(value, str) and isfile(value) and value[-3:] == ".py":
             self._function_str = value
-            f = open(value, "r", encoding="utf-8-sig")
+            f = open(value, "r")
             exec(f.read(), globals())
             self._function_func = eval(basename(value[:-3]))
         elif callable(value):
@@ -215,7 +219,7 @@ class Norm_func(Normalization):
     function = property(
         fget=_get_function,
         fset=_set_function,
-        doc=u"""function to apply
+        doc="""function to apply
 
         :Type: function
         """,

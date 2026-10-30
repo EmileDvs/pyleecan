@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/VectorField.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/VectorField.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//VectorField
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/VectorField
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,92 +18,102 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.VectorField.change_periodicity import change_periodicity
+    from ..Methods.SciDataTool.VectorField.change_periodicity import change_periodicity
 except ImportError as error:
     change_periodicity = error
 
 try:
-    from ..Methods.VectorField.change_referential import change_referential
+    from ..Methods.SciDataTool.VectorField.change_referential import change_referential
 except ImportError as error:
     change_referential = error
 
 try:
-    from ..Methods.VectorField.filter_spectral_leakage import filter_spectral_leakage
+    from ..Methods.SciDataTool.VectorField.filter_spectral_leakage import (
+        filter_spectral_leakage,
+    )
 except ImportError as error:
     filter_spectral_leakage = error
 
 try:
-    from ..Methods.VectorField.freq_to_time import freq_to_time
+    from ..Methods.SciDataTool.VectorField.freq_to_time import freq_to_time
 except ImportError as error:
     freq_to_time = error
 
 try:
-    from ..Methods.VectorField.get_axes import get_axes
+    from ..Methods.SciDataTool.VectorField.get_axes import get_axes
 except ImportError as error:
     get_axes = error
 
 try:
-    from ..Methods.VectorField.get_harm_rphiz_along import get_harm_rphiz_along
+    from ..Methods.SciDataTool.VectorField.get_harm_rphiz_along import (
+        get_harm_rphiz_along,
+    )
 except ImportError as error:
     get_harm_rphiz_along = error
 
 try:
-    from ..Methods.VectorField.get_harm_xyz_along import get_harm_xyz_along
+    from ..Methods.SciDataTool.VectorField.get_harm_xyz_along import get_harm_xyz_along
 except ImportError as error:
     get_harm_xyz_along = error
 
 try:
-    from ..Methods.VectorField.get_mag_rphiz_along import get_mag_rphiz_along
+    from ..Methods.SciDataTool.VectorField.get_mag_rphiz_along import (
+        get_mag_rphiz_along,
+    )
 except ImportError as error:
     get_mag_rphiz_along = error
 
 try:
-    from ..Methods.VectorField.get_mag_xyz_along import get_mag_xyz_along
+    from ..Methods.SciDataTool.VectorField.get_mag_xyz_along import get_mag_xyz_along
 except ImportError as error:
     get_mag_xyz_along = error
 
 try:
-    from ..Methods.VectorField.get_rphiz_along import get_rphiz_along
+    from ..Methods.SciDataTool.VectorField.get_rphiz_along import get_rphiz_along
 except ImportError as error:
     get_rphiz_along = error
 
 try:
-    from ..Methods.VectorField.get_xyz_along import get_xyz_along
+    from ..Methods.SciDataTool.VectorField.get_xyz_along import get_xyz_along
 except ImportError as error:
     get_xyz_along = error
 
 try:
-    from ..Methods.VectorField.get_vectorfield_along import get_vectorfield_along
+    from ..Methods.SciDataTool.VectorField.get_vectorfield_along import (
+        get_vectorfield_along,
+    )
 except ImportError as error:
     get_vectorfield_along = error
 
 try:
-    from ..Methods.VectorField.plot_2D_Data import plot_2D_Data
+    from ..Methods.SciDataTool.VectorField.plot_2D_Data import plot_2D_Data
 except ImportError as error:
     plot_2D_Data = error
 
 try:
-    from ..Methods.VectorField.plot_2D_Data_Animated import plot_2D_Data_Animated
+    from ..Methods.SciDataTool.VectorField.plot_2D_Data_Animated import (
+        plot_2D_Data_Animated,
+    )
 except ImportError as error:
     plot_2D_Data_Animated = error
 
 try:
-    from ..Methods.VectorField.plot_3D_Data import plot_3D_Data
+    from ..Methods.SciDataTool.VectorField.plot_3D_Data import plot_3D_Data
 except ImportError as error:
     plot_3D_Data = error
 
 try:
-    from ..Methods.VectorField.time_to_freq import time_to_freq
+    from ..Methods.SciDataTool.VectorField.time_to_freq import time_to_freq
 except ImportError as error:
     time_to_freq = error
 
 try:
-    from ..Methods.VectorField.to_xyz import to_xyz
+    from ..Methods.SciDataTool.VectorField.to_xyz import to_xyz
 except ImportError as error:
     to_xyz = error
 
 try:
-    from ..Methods.VectorField.to_rphiz import to_rphiz
+    from ..Methods.SciDataTool.VectorField.to_rphiz import to_rphiz
 except ImportError as error:
     to_rphiz = error
 
@@ -116,7 +128,7 @@ class VectorField(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.VectorField.change_periodicity
+    # cf Methods.SciDataTool.VectorField.change_periodicity
     if isinstance(change_periodicity, ImportError):
         change_periodicity = property(
             fget=lambda x: raise_(
@@ -128,7 +140,7 @@ class VectorField(FrozenClass):
         )
     else:
         change_periodicity = change_periodicity
-    # cf Methods.VectorField.change_referential
+    # cf Methods.SciDataTool.VectorField.change_referential
     if isinstance(change_referential, ImportError):
         change_referential = property(
             fget=lambda x: raise_(
@@ -140,7 +152,7 @@ class VectorField(FrozenClass):
         )
     else:
         change_referential = change_referential
-    # cf Methods.VectorField.filter_spectral_leakage
+    # cf Methods.SciDataTool.VectorField.filter_spectral_leakage
     if isinstance(filter_spectral_leakage, ImportError):
         filter_spectral_leakage = property(
             fget=lambda x: raise_(
@@ -152,7 +164,7 @@ class VectorField(FrozenClass):
         )
     else:
         filter_spectral_leakage = filter_spectral_leakage
-    # cf Methods.VectorField.freq_to_time
+    # cf Methods.SciDataTool.VectorField.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(
             fget=lambda x: raise_(
@@ -163,7 +175,7 @@ class VectorField(FrozenClass):
         )
     else:
         freq_to_time = freq_to_time
-    # cf Methods.VectorField.get_axes
+    # cf Methods.SciDataTool.VectorField.get_axes
     if isinstance(get_axes, ImportError):
         get_axes = property(
             fget=lambda x: raise_(
@@ -172,7 +184,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_axes = get_axes
-    # cf Methods.VectorField.get_harm_rphiz_along
+    # cf Methods.SciDataTool.VectorField.get_harm_rphiz_along
     if isinstance(get_harm_rphiz_along, ImportError):
         get_harm_rphiz_along = property(
             fget=lambda x: raise_(
@@ -184,7 +196,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_harm_rphiz_along = get_harm_rphiz_along
-    # cf Methods.VectorField.get_harm_xyz_along
+    # cf Methods.SciDataTool.VectorField.get_harm_xyz_along
     if isinstance(get_harm_xyz_along, ImportError):
         get_harm_xyz_along = property(
             fget=lambda x: raise_(
@@ -196,7 +208,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_harm_xyz_along = get_harm_xyz_along
-    # cf Methods.VectorField.get_mag_rphiz_along
+    # cf Methods.SciDataTool.VectorField.get_mag_rphiz_along
     if isinstance(get_mag_rphiz_along, ImportError):
         get_mag_rphiz_along = property(
             fget=lambda x: raise_(
@@ -208,7 +220,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_mag_rphiz_along = get_mag_rphiz_along
-    # cf Methods.VectorField.get_mag_xyz_along
+    # cf Methods.SciDataTool.VectorField.get_mag_xyz_along
     if isinstance(get_mag_xyz_along, ImportError):
         get_mag_xyz_along = property(
             fget=lambda x: raise_(
@@ -220,7 +232,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_mag_xyz_along = get_mag_xyz_along
-    # cf Methods.VectorField.get_rphiz_along
+    # cf Methods.SciDataTool.VectorField.get_rphiz_along
     if isinstance(get_rphiz_along, ImportError):
         get_rphiz_along = property(
             fget=lambda x: raise_(
@@ -232,7 +244,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_rphiz_along = get_rphiz_along
-    # cf Methods.VectorField.get_xyz_along
+    # cf Methods.SciDataTool.VectorField.get_xyz_along
     if isinstance(get_xyz_along, ImportError):
         get_xyz_along = property(
             fget=lambda x: raise_(
@@ -243,7 +255,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_xyz_along = get_xyz_along
-    # cf Methods.VectorField.get_vectorfield_along
+    # cf Methods.SciDataTool.VectorField.get_vectorfield_along
     if isinstance(get_vectorfield_along, ImportError):
         get_vectorfield_along = property(
             fget=lambda x: raise_(
@@ -255,7 +267,7 @@ class VectorField(FrozenClass):
         )
     else:
         get_vectorfield_along = get_vectorfield_along
-    # cf Methods.VectorField.plot_2D_Data
+    # cf Methods.SciDataTool.VectorField.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
             fget=lambda x: raise_(
@@ -266,7 +278,7 @@ class VectorField(FrozenClass):
         )
     else:
         plot_2D_Data = plot_2D_Data
-    # cf Methods.VectorField.plot_2D_Data_Animated
+    # cf Methods.SciDataTool.VectorField.plot_2D_Data_Animated
     if isinstance(plot_2D_Data_Animated, ImportError):
         plot_2D_Data_Animated = property(
             fget=lambda x: raise_(
@@ -278,7 +290,7 @@ class VectorField(FrozenClass):
         )
     else:
         plot_2D_Data_Animated = plot_2D_Data_Animated
-    # cf Methods.VectorField.plot_3D_Data
+    # cf Methods.SciDataTool.VectorField.plot_3D_Data
     if isinstance(plot_3D_Data, ImportError):
         plot_3D_Data = property(
             fget=lambda x: raise_(
@@ -289,7 +301,7 @@ class VectorField(FrozenClass):
         )
     else:
         plot_3D_Data = plot_3D_Data
-    # cf Methods.VectorField.time_to_freq
+    # cf Methods.SciDataTool.VectorField.time_to_freq
     if isinstance(time_to_freq, ImportError):
         time_to_freq = property(
             fget=lambda x: raise_(
@@ -300,7 +312,7 @@ class VectorField(FrozenClass):
         )
     else:
         time_to_freq = time_to_freq
-    # cf Methods.VectorField.to_xyz
+    # cf Methods.SciDataTool.VectorField.to_xyz
     if isinstance(to_xyz, ImportError):
         to_xyz = property(
             fget=lambda x: raise_(
@@ -309,7 +321,7 @@ class VectorField(FrozenClass):
         )
     else:
         to_xyz = to_xyz
-    # cf Methods.VectorField.to_rphiz
+    # cf Methods.SciDataTool.VectorField.to_rphiz
     if isinstance(to_rphiz, ImportError):
         to_rphiz = property(
             fget=lambda x: raise_(
@@ -320,19 +332,21 @@ class VectorField(FrozenClass):
         to_rphiz = to_rphiz
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self, name="", symbol="", components=-1, init_dict=None, init_str=None
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -493,7 +507,7 @@ class VectorField(FrozenClass):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.name = None
         self.symbol = None
@@ -511,7 +525,7 @@ class VectorField(FrozenClass):
     name = property(
         fget=_get_name,
         fset=_set_name,
-        doc=u"""Name of the vector field
+        doc="""Name of the vector field
 
         :Type: str
         """,
@@ -529,7 +543,7 @@ class VectorField(FrozenClass):
     symbol = property(
         fget=_get_symbol,
         fset=_set_symbol,
-        doc=u"""Symbol of the vector field
+        doc="""Symbol of the vector field
 
         :Type: str
         """,
@@ -569,7 +583,7 @@ class VectorField(FrozenClass):
     components = property(
         fget=_get_components,
         fset=_set_components,
-        doc=u"""Dict of the components
+        doc="""Dict of the components
 
         :Type: {SciDataTool.Classes.DataND}
         """,

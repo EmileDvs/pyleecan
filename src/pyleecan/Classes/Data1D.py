@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data1D.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/Data1D.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Data1D
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool /Data1D
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,42 +18,42 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Data1D.get_values import get_values
+    from ..Methods.SciDataTool.Data1D.get_values import get_values
 except ImportError as error:
     get_values = error
 
 try:
-    from ..Methods.Data1D.get_length import get_length
+    from ..Methods.SciDataTool.Data1D.get_length import get_length
 except ImportError as error:
     get_length = error
 
 try:
-    from ..Methods.Data1D.get_axis_periodic import get_axis_periodic
+    from ..Methods.SciDataTool.Data1D.get_axis_periodic import get_axis_periodic
 except ImportError as error:
     get_axis_periodic = error
 
 try:
-    from ..Methods.Data1D.has_period import has_period
+    from ..Methods.SciDataTool.Data1D.has_period import has_period
 except ImportError as error:
     has_period = error
 
 try:
-    from ..Methods.Data1D.get_periodicity import get_periodicity
+    from ..Methods.SciDataTool.Data1D.get_periodicity import get_periodicity
 except ImportError as error:
     get_periodicity = error
 
 try:
-    from ..Methods.Data1D.to_linspace import to_linspace
+    from ..Methods.SciDataTool.Data1D.to_linspace import to_linspace
 except ImportError as error:
     to_linspace = error
 
 try:
-    from ..Methods.Data1D.get_filter import get_filter
+    from ..Methods.SciDataTool.Data1D.get_filter import get_filter
 except ImportError as error:
     get_filter = error
 
 try:
-    from ..Methods.Data1D.check_filter import check_filter
+    from ..Methods.SciDataTool.Data1D.check_filter import check_filter
 except ImportError as error:
     check_filter = error
 
@@ -67,7 +69,7 @@ class Data1D(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Data1D.get_values
+    # cf Methods.SciDataTool .Data1D.get_values
     if isinstance(get_values, ImportError):
         get_values = property(
             fget=lambda x: raise_(
@@ -76,7 +78,7 @@ class Data1D(Data):
         )
     else:
         get_values = get_values
-    # cf Methods.Data1D.get_length
+    # cf Methods.SciDataTool .Data1D.get_length
     if isinstance(get_length, ImportError):
         get_length = property(
             fget=lambda x: raise_(
@@ -85,7 +87,7 @@ class Data1D(Data):
         )
     else:
         get_length = get_length
-    # cf Methods.Data1D.get_axis_periodic
+    # cf Methods.SciDataTool .Data1D.get_axis_periodic
     if isinstance(get_axis_periodic, ImportError):
         get_axis_periodic = property(
             fget=lambda x: raise_(
@@ -97,7 +99,7 @@ class Data1D(Data):
         )
     else:
         get_axis_periodic = get_axis_periodic
-    # cf Methods.Data1D.has_period
+    # cf Methods.SciDataTool .Data1D.has_period
     if isinstance(has_period, ImportError):
         has_period = property(
             fget=lambda x: raise_(
@@ -106,7 +108,7 @@ class Data1D(Data):
         )
     else:
         has_period = has_period
-    # cf Methods.Data1D.get_periodicity
+    # cf Methods.SciDataTool .Data1D.get_periodicity
     if isinstance(get_periodicity, ImportError):
         get_periodicity = property(
             fget=lambda x: raise_(
@@ -117,7 +119,7 @@ class Data1D(Data):
         )
     else:
         get_periodicity = get_periodicity
-    # cf Methods.Data1D.to_linspace
+    # cf Methods.SciDataTool .Data1D.to_linspace
     if isinstance(to_linspace, ImportError):
         to_linspace = property(
             fget=lambda x: raise_(
@@ -126,7 +128,7 @@ class Data1D(Data):
         )
     else:
         to_linspace = to_linspace
-    # cf Methods.Data1D.get_filter
+    # cf Methods.SciDataTool .Data1D.get_filter
     if isinstance(get_filter, ImportError):
         get_filter = property(
             fget=lambda x: raise_(
@@ -135,7 +137,7 @@ class Data1D(Data):
         )
     else:
         get_filter = get_filter
-    # cf Methods.Data1D.check_filter
+    # cf Methods.SciDataTool .Data1D.check_filter
     if isinstance(check_filter, ImportError):
         check_filter = property(
             fget=lambda x: raise_(
@@ -148,6 +150,8 @@ class Data1D(Data):
         check_filter = check_filter
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -168,13 +172,13 @@ class Data1D(Data):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -512,7 +516,7 @@ class Data1D(Data):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.values = None
         self.is_components = None
@@ -544,7 +548,7 @@ class Data1D(Data):
     values = property(
         fget=_get_values,
         fset=_set_values,
-        doc=u"""List or ndarray of the axis values
+        doc="""List or ndarray of the axis values
 
         :Type: ndarray
         """,
@@ -562,7 +566,7 @@ class Data1D(Data):
     is_components = property(
         fget=_get_is_components,
         fset=_set_is_components,
-        doc=u"""True if the axis values are strings
+        doc="""True if the axis values are strings
 
         :Type: bool
         """,
@@ -582,7 +586,7 @@ class Data1D(Data):
     symmetries = property(
         fget=_get_symmetries,
         fset=_set_symmetries,
-        doc=u"""Dictionary of the symmetries along each axis, used to reduce storage
+        doc="""Dictionary of the symmetries along each axis, used to reduce storage
 
         :Type: dict
         """,
@@ -600,7 +604,7 @@ class Data1D(Data):
     is_overlay = property(
         fget=_get_is_overlay,
         fset=_set_is_overlay,
-        doc=u"""True if axis must be used to overlay curves in plots
+        doc="""True if axis must be used to overlay curves in plots
 
         :Type: bool
         """,
@@ -618,7 +622,7 @@ class Data1D(Data):
     delimiter = property(
         fget=_get_delimiter,
         fset=_set_delimiter,
-        doc=u"""Character used to separate attributes in string case (e.g. "r=0, stator, radial")
+        doc="""Character used to separate attributes in string case (e.g. "r=0, stator, radial")
 
         :Type: str
         """,
@@ -638,7 +642,7 @@ class Data1D(Data):
     sort_indices = property(
         fget=_get_sort_indices,
         fset=_set_sort_indices,
-        doc=u"""List of indices to use to sort axis
+        doc="""List of indices to use to sort axis
 
         :Type: list
         """,
@@ -658,7 +662,7 @@ class Data1D(Data):
     filter = property(
         fget=_get_filter,
         fset=_set_filter,
-        doc=u"""Dict of filter keys
+        doc="""Dict of filter keys
 
         :Type: dict
         """,
@@ -678,7 +682,7 @@ class Data1D(Data):
     char_to_rm = property(
         fget=_get_char_to_rm,
         fset=_set_char_to_rm,
-        doc=u"""List of characters to remove in filter table
+        doc="""List of characters to remove in filter table
 
         :Type: list
         """,

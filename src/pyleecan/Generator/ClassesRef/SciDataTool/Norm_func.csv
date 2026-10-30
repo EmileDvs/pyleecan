@@ -1,2 +1,5 @@
-Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
-function,,function to apply,,function,,,,,,Normalization,normalize,VERSION,1,Function normalization (lambda x: function(axis)),
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value
+function,,function to apply,,function,,,
+,,,,,,,
+Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille,
+SciDataTool,Normalization,normalize,VERSION,1,Function normalization (lambda x: function(axis)),,

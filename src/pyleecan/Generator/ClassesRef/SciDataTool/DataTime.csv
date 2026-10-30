@@ -1,3 +1,5 @@
-Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
-,,,,,,,,,,DataND,time_to_freq,VERSION,1,Class for fields defined in time space,
-,,,,,,,,,,,to_datadual,,,,
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value
+,,,,,,,
+Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille,
+SciDataTool,DataND,time_to_freq,VERSION,1,Class for fields defined in time space,,
+,,to_datadual,,,,,

@@ -1,12 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/DataFreq.csv
+# -*- coding: utf-8 -*-
+# File generated according to Generator/ClassesRef/SciDataTool/DataFreq.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataFreq
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataFreq
 """
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -16,22 +18,22 @@ from .DataND import DataND
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.DataFreq.conv import conv
+    from ..Methods.SciDataTool.DataFreq.conv import conv
 except ImportError as error:
     conv = error
 
 try:
-    from ..Methods.DataFreq.freq_to_time import freq_to_time
+    from ..Methods.SciDataTool.DataFreq.freq_to_time import freq_to_time
 except ImportError as error:
     freq_to_time = error
 
 try:
-    from ..Methods.DataFreq.sum import sum
+    from ..Methods.SciDataTool.DataFreq.sum import sum
 except ImportError as error:
     sum = error
 
 try:
-    from ..Methods.DataFreq.to_datadual import to_datadual
+    from ..Methods.SciDataTool.DataFreq.to_datadual import to_datadual
 except ImportError as error:
     to_datadual = error
 
@@ -47,7 +49,7 @@ class DataFreq(DataND):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataFreq.conv
+    # cf Methods.SciDataTool.DataFreq.conv
     if isinstance(conv, ImportError):
         conv = property(
             fget=lambda x: raise_(
@@ -56,7 +58,7 @@ class DataFreq(DataND):
         )
     else:
         conv = conv
-    # cf Methods.DataFreq.freq_to_time
+    # cf Methods.SciDataTool.DataFreq.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(
             fget=lambda x: raise_(
@@ -67,7 +69,7 @@ class DataFreq(DataND):
         )
     else:
         freq_to_time = freq_to_time
-    # cf Methods.DataFreq.sum
+    # cf Methods.SciDataTool.DataFreq.sum
     if isinstance(sum, ImportError):
         sum = property(
             fget=lambda x: raise_(
@@ -76,7 +78,7 @@ class DataFreq(DataND):
         )
     else:
         sum = sum
-    # cf Methods.DataFreq.to_datadual
+    # cf Methods.SciDataTool.DataFreq.to_datadual
     if isinstance(to_datadual, ImportError):
         to_datadual = property(
             fget=lambda x: raise_(
@@ -89,6 +91,8 @@ class DataFreq(DataND):
         to_datadual = to_datadual
     # generic save method is available in all object
     save = save
+    # get_logger method is available in all object
+    get_logger = get_logger
 
     def __init__(
         self,
@@ -105,13 +109,13 @@ class DataFreq(DataND):
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
+            for pyleecan type, -1 will call the default constructor
         - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for SciDataTool Object"""
+        object or dict can be given for pyleecan Object"""
 
         if init_str is not None:  # Load from a file
             init_dict = load_init_dict(init_str)[1]
@@ -260,7 +264,7 @@ class DataFreq(DataND):
         return obj_copy
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         # Set to None the properties inherited from DataND
         super(DataFreq, self)._set_None()
