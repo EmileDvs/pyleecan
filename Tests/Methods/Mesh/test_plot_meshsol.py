@@ -1,13 +1,14 @@
 import numpy as np
 import pytest
-from SciDataTool import DataFreq, DataLinspace, VectorField
 
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataLinspace import DataLinspace
 from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.MeshMat import MeshMat
 from pyleecan.Classes.MeshSolution import MeshSolution
 from pyleecan.Classes.NodeMat import NodeMat
 from pyleecan.Classes.SolutionVector import SolutionVector
-from pyleecan.Functions.load import load
+from pyleecan.Classes.VectorField import VectorField
 from Tests import save_plot_path as save_path
 
 

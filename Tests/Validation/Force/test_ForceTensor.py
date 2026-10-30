@@ -1,21 +1,18 @@
-# -*- coding: utf-8 -*-
 import csv
-from multiprocessing import cpu_count
 from os.path import join
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from numpy import exp, mean, meshgrid, pi, real, zeros
-from numpy.testing import assert_array_almost_equal
-from SciDataTool import Data1D, DataTime, VectorField
 
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.ForceTensor import ForceTensor
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.Simu1 import Simu1
 from pyleecan.Classes.SolutionVector import SolutionVector
+from pyleecan.Classes.VectorField import VectorField
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions.load import load
 from Tests import save_plot_path as save_path

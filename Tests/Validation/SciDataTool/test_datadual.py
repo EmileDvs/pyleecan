@@ -1,13 +1,12 @@
-import pytest
-from SciDataTool import (
-    DataTime,
-    Data1D,
-    DataLinspace,
-    DataFreq,
-    DataDual,
-)
 import numpy as np
+import pytest
 from numpy.testing import assert_array_almost_equal
+
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataDual import DataDual
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
 
 
 @pytest.mark.validation

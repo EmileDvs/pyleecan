@@ -1,8 +1,10 @@
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from SciDataTool import DataLinspace, DataTime, VectorField, DataPattern
-
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataPattern import DataPattern
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.VectorField import VectorField
 
 is_show_fig = False
 
@@ -83,7 +85,6 @@ def test_change_referential_vf_waveform_per():
     assert_almost_equal(field, field_RR, decimal=7)
 
     if is_show_fig:
-
         Field.plot_2D_Data(
             "time[smallestperiod]",
             "angle[0]",
@@ -109,8 +110,6 @@ def test_change_referential_vf_waveform_per():
         Field_R.plot_3D_Data("freqs", "wavenumber", is_same_size=True)
 
         Field_RR.plot_3D_Data("freqs", "wavenumber", is_same_size=True)
-
-    pass
 
 
 def test_change_referential_vf_waveform_aper():
@@ -187,7 +186,6 @@ def test_change_referential_vf_waveform_aper():
     assert_almost_equal(field, field_RR, decimal=5)
 
     if is_show_fig:
-
         Field.plot_2D_Data(
             "time[smallestperiod]",
             "angle[0]",
@@ -213,8 +211,6 @@ def test_change_referential_vf_waveform_aper():
         Field_R.plot_3D_Data("freqs", "wavenumber", is_same_size=True)
 
         Field_RR.plot_3D_Data("freqs", "wavenumber", is_same_size=True)
-
-    pass
 
 
 def test_change_referential_vf_spectrum():
@@ -302,8 +298,6 @@ def test_change_referential_vf_spectrum():
         Field_R.plot_3D_Data("freqs", "wavenumber", is_same_size=True)
 
         Field_RR.plot_3D_Data("freqs", "wavenumber", is_same_size=True)
-
-    pass
 
 
 if __name__ == "__main__":

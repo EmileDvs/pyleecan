@@ -1,8 +1,12 @@
-import pytest
 import numpy as np
+import pytest
 from numpy.testing import assert_array_almost_equal, assert_equal
 
-from SciDataTool import DataLinspace, DataTime, Norm_ref, Data1D, DataPattern
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataPattern import DataPattern
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.Norm_ref import Norm_ref
 
 
 @pytest.mark.validation
@@ -263,8 +267,8 @@ def test_get_data_along_integrate():
     assert_array_almost_equal(Field_mean2.values, 0.5 * A, decimal=14)
     Field_rms1 = Field1.get_data_along("time=rms", "angle")
     Field_rms2 = Field2.get_data_along("time=rms", "angle")
-    assert_array_almost_equal(Field_rms1.values, np.sqrt(3 * A ** 2 / 8), decimal=14)
-    assert_array_almost_equal(Field_rms2.values, np.sqrt(3 * A ** 2 / 8), decimal=14)
+    assert_array_almost_equal(Field_rms1.values, np.sqrt(3 * A**2 / 8), decimal=14)
+    assert_array_almost_equal(Field_rms2.values, np.sqrt(3 * A**2 / 8), decimal=14)
 
     # Test unit change
     Field.unit = "ms"

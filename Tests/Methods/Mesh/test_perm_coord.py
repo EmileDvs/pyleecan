@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-from SciDataTool import DataFreq, DataLinspace, VectorField
 
 from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.MeshMat import MeshMat
@@ -8,7 +7,6 @@ from pyleecan.Classes.MeshSolution import MeshSolution
 from pyleecan.Classes.MeshVTK import MeshVTK
 from pyleecan.Classes.NodeMat import NodeMat
 from pyleecan.Classes.SolutionMat import SolutionMat
-from Tests import save_plot_path as save_path
 
 
 @pytest.mark.MeshSol

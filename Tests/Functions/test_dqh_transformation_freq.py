@@ -1,16 +1,17 @@
 import pytest
-
-from numpy import pi, array, linspace, zeros, cos, exp, abs as np_abs, angle
+from numpy import abs as np_abs
+from numpy import angle, array, cos, exp, linspace, pi, zeros
 from numpy.testing import assert_array_almost_equal
 
-from SciDataTool import DataTime, Data1D, Norm_ref
-
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.Norm_ref import Norm_ref
 from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
 from pyleecan.Functions.Electrical.dqh_transformation_freq import (
-    n2dqh_DataFreq,
     dqh2n_DataFreq,
     get_phase_dir,
     get_phase_dir_DataFreq,
+    n2dqh_DataFreq,
 )
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 
@@ -120,8 +121,6 @@ def test_dqh_transformation_freq(param_dict):
 
         In_df.plot_2D_Data("time", "phase[]")
         In_df.plot_2D_Data("freqs", "phase[]")
-
-    pass
 
 
 if __name__ == "__main__":

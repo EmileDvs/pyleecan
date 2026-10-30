@@ -1,14 +1,13 @@
-import pytest
-from SciDataTool import (
-    DataTime,
-    Data1D,
-    DataLinspace,
-    VectorField,
-    Norm_ref,
-    DataPattern,
-)
 import numpy as np
+import pytest
 from numpy.testing import assert_array_almost_equal
+
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataPattern import DataPattern
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.Norm_ref import Norm_ref
+from pyleecan.Classes.VectorField import VectorField
 
 
 @pytest.mark.validation

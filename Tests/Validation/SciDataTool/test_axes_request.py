@@ -1,8 +1,11 @@
-import pytest
-import numpy as np
 from os.path import join
 
-from SciDataTool import DataLinspace, DataTime, Data1D
+import numpy as np
+import pytest
+
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
 from Tests import save_validation_path
 
 

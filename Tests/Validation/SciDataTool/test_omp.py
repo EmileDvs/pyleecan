@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-from SciDataTool.Classes.Data1D import Data1D
-from SciDataTool.Classes.DataTime import DataTime
 
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, comp_undersampling
 
 

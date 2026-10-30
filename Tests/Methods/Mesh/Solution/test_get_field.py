@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
-
-import pytest
 import numpy as np
-from unittest import TestCase
+import pytest
 
-from SciDataTool import DataTime, Data1D, DataLinspace, VectorField
-
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.SolutionData import SolutionData
 from pyleecan.Classes.SolutionMat import SolutionMat
 from pyleecan.Classes.SolutionVector import SolutionVector
+from pyleecan.Classes.VectorField import VectorField
 
 
 @pytest.mark.MeshSol

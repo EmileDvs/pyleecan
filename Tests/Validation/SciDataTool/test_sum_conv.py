@@ -1,9 +1,11 @@
-import pytest
-
 import numpy as np
+import pytest
 from numpy.testing import assert_array_almost_equal
 
-from SciDataTool import DataTime, DataFreq, Data1D, DataLinspace
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
 
 arg_dict = {
     "is_auto_range": False,
@@ -100,8 +102,6 @@ def test_conv(val_dict):
     if is_show_fig:
         df3.plot_2D_Data("freqs", data_list=[df3_bis], legend_list=["conv", "FFT"])
 
-    pass
-
 
 @pytest.mark.parametrize("val_dict", val_list)
 def test_sum(val_dict):
@@ -153,14 +153,10 @@ def test_sum(val_dict):
     if is_show_fig:
         df3.plot_2D_Data("freqs", data_list=[df3_bis], legend_list=["conv", "FFT"])
 
-    pass
-
 
 if __name__ == "__main__":
-
     for val_dict in val_list:
         test_conv(val_dict)
 
     for val_dict in val_list:
         test_sum(val_dict)
-

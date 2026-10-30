@@ -1,9 +1,10 @@
-import random as rd
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from SciDataTool import Data1D, DataTime, DataFreq
+
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataTime import DataTime
 
 
 @pytest.mark.validation
@@ -161,9 +162,9 @@ def test_force_nudft_1d():
     # Compute non uniform discrete Fourier transform
     result_nudft = field.get_along("freqs=axis_data", axis_data={"freqs": freqs})
 
-    assert np.allclose(
-        result_fft["X"][:-1], result_nudft["X"][:-1]
-    ), "The FFT and NUDFT methods sould return approximatly the same results"
+    assert np.allclose(result_fft["X"][:-1], result_nudft["X"][:-1]), (
+        "The FFT and NUDFT methods sould return approximatly the same results"
+    )
 
 
 @pytest.mark.validation

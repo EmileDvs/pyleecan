@@ -1,15 +1,16 @@
-# -*- coding: utf-8 -*-
-
-import pytest
-from numpy import array, zeros, abs as np_abs
-from random import randint
 from unittest import TestCase
 
-from SciDataTool import DataTime, Data1D, DataLinspace, VectorField
+import pytest
+from numpy import abs as np_abs
+from numpy import array, zeros
 
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.SolutionData import SolutionData
 from pyleecan.Classes.SolutionMat import SolutionMat
 from pyleecan.Classes.SolutionVector import SolutionVector
+from pyleecan.Classes.VectorField import VectorField
 
 
 @pytest.mark.MeshSol

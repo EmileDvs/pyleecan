@@ -1,16 +1,15 @@
-import pytest
-from SciDataTool import (
-    DataTime,
-    DataFreq,
-    DataLinspace,
-    Data1D,
-    VectorField,
-    Norm_indices,
-)
 import numpy as np
+import pytest
+from numpy import delete, exp, insert, pi, real, take, zeros
+from numpy.fft import fftn, fftshift, ifftn, ifftshift, irfftn, rfftn
 from numpy.testing import assert_array_almost_equal
-from numpy import zeros, exp, real, pi, take, insert, delete
-from numpy.fft import rfftn, irfftn, fftshift, fftn, ifftshift, ifftn
+
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.Norm_indices import Norm_indices
+from pyleecan.Classes.VectorField import VectorField
 
 
 @pytest.mark.validation
@@ -75,7 +74,7 @@ def test_fft2_remove_periodicity():
         for ifrq in range(Nf):
             fit = freqs[ifrq]
             field_ift = field_ift + abs(X_test[ifrq, ir]) * np.cos(
-                (2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir]))
+                2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir])
             )
 
     assert_array_almost_equal(field_ift, field_new)
@@ -89,7 +88,7 @@ def test_fft2_remove_periodicity():
         for ifrq in range(Nf):
             fit = freqs[ifrq]
             field_ift = field_ift + abs(X_test[ifrq, ir]) * np.cos(
-                (2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir]))
+                2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir])
             )
 
     assert_array_almost_equal(field_ift, field)
@@ -100,7 +99,7 @@ def test_compare_rfft_fft_irfft_ifft():
 
     Nt = 20
 
-    X = np.random.random((Nt))
+    X = np.random.random(Nt)
     size = Nt
 
     # RFFT
@@ -207,7 +206,7 @@ def test_fft1d():
 @pytest.mark.validation
 def test_fft2d():
 
-    #%% Test&
+    # %% Test&
     f = 50
     time = np.linspace(0, 1 / f, 6, endpoint=False)
     Time = DataLinspace(
@@ -279,9 +278,9 @@ def test_fft2d():
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
     assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
     X = np.zeros((3, 5))
-    X[
-        1, 3
-    ] = 5  # The negative wavenumber -3 is folded on +3 to keep signal energy constant
+    X[1, 3] = (
+        5  # The negative wavenumber -3 is folded on +3 to keep signal energy constant
+    )
 
     X[0, 1] = -1
     assert_array_almost_equal(X, result["X"])
@@ -303,7 +302,7 @@ def test_ifft1d():
     freqs = np.array([-150, -100, -50, 0, 50, 100])
     Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
 
-    #%% Test1 : Random complex signal
+    # %% Test1 : Random complex signal
     field = np.random.random(6) + 1j * np.random.random(6)
     Field = DataFreq(
         name="field", symbol="X", axes=[Freqs], values=field, unit="m", is_real=False
@@ -313,7 +312,7 @@ def test_ifft1d():
     assert_array_almost_equal(np.linspace(0, 1 / f, 6, endpoint=False), time)
 
     Nf = len(freqs)
-    field_ift = np.zeros((6))
+    field_ift = np.zeros(6)
     for ifrq in range(Nf):
         fit = freqs[ifrq]
         field_ift = field_ift + (field[ifrq] * np.exp(1j * (2 * np.pi * fit * time)))
@@ -323,7 +322,7 @@ def test_ifft1d():
     Field_IFT = Field.freq_to_time()
     assert_array_almost_equal(Field_IFT.get_along("freqs")["X"], field)
 
-    #%% Test2 : Real-time signal
+    # %% Test2 : Real-time signal
     field = np.array(
         [
             0,
@@ -354,7 +353,7 @@ def test_ifft1d():
 @pytest.mark.validation
 def test_ifft2d():
 
-    #%% Test 1
+    # %% Test 1
     f = 50
     freqs = np.array([0, 50, 100, 150])
     Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
@@ -386,7 +385,7 @@ def test_ifft2d():
     Field_2 = Field_IFT.time_to_freq()
     assert_array_almost_equal(Field_2.get_along("angle", "time")["X"], field_ift)
 
-    #%% Test 2
+    # %% Test 2
     X = np.random.random((6, 10)) + np.random.random((6, 10)) * 1j
     freqs = np.array([-150, -100, -50, 0, 50, 100])
     Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
@@ -421,7 +420,7 @@ def test_ifft2d():
 
     assert_array_almost_equal(field_ift, result["X"])
 
-    #%% Test 3 : Real signal
+    # %% Test 3 : Real signal
     r = 2
     my_field = np.cos(r * Xangle + 2 * np.pi * f * Xtime + np.pi / 6) + np.cos(
         -2 * r * Xangle + 2 * np.pi * 2 * f * Xtime
@@ -454,7 +453,7 @@ def test_ifft2d():
         for ifrq in range(len(freqs_test)):
             fit = freqs_test[ifrq]
             field_ift = field_ift + abs(X_test[ifrq, ir]) * np.cos(
-                (2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir]))
+                2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir])
             )
 
     assert_array_almost_equal(field_ift, result["X"])
@@ -565,7 +564,7 @@ def test_ifft2d_vector():
         for ifrq in range(len(freqs_test)):
             fit = freqs_test[ifrq]
             field_ift = field_ift + abs(X_test[ifrq, ir]) * np.cos(
-                (2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir]))
+                2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir])
             )
 
     assert_array_almost_equal(field_ift, X)
@@ -633,7 +632,7 @@ def test_ifft1d_random():
         include_endpoint=False,
     )
 
-    X = np.random.random((Nt))
+    X = np.random.random(Nt)
     Field = DataTime(
         name="field",
         symbol="X",

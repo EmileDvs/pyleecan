@@ -1,10 +1,13 @@
+import time as exec_time
+
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
-import time as exec_time
-
-from SciDataTool import DataLinspace, Data1D, DataTime, VectorField, DataFreq
-
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.VectorField import VectorField
 
 is_show_fig = False
 
@@ -41,8 +44,6 @@ def test_filter_spectral_leakage_1d():
             data_list=[Field_filtered],
             legend_list=["Original", "Filtered"],
         )
-
-    pass
 
 
 def test_filter_spectral_leakage_2d():
@@ -96,8 +97,6 @@ def test_filter_spectral_leakage_2d():
             is_2D_view=True,
             is_same_size=True,
         )
-
-    pass
 
 
 def test_filter_spectral_leakage_vectorfield():
@@ -207,8 +206,6 @@ def test_filter_spectral_leakage_vectorfield():
         X_vf.components["tangential"].plot_3D_Data("freqs", "wavenumber")
         FFT_vf_filt.components["tangential"].plot_3D_Data("freqs", "wavenumber")
         FFT_vf_nudft.components["tangential"].plot_3D_Data("freqs", "wavenumber")
-
-    pass
 
 
 if __name__ == "__main__":

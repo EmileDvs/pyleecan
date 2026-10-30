@@ -3,7 +3,10 @@ from os.path import join
 import pytest
 from numpy import cos, linspace, meshgrid, pi, sin, zeros
 
-from SciDataTool import Data1D, DataLinspace, DataTime, Norm_affine
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.Norm_affine import Norm_affine
 from Tests import save_validation_path
 
 

@@ -4,18 +4,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.testing import assert_array_almost_equal
-from SciDataTool import (
-    Data,
-    Data1D,
-    DataFreq,
-    DataLinspace,
-    DataTime,
-    Norm_func,
-    Norm_indices,
-    Norm_ref,
-    Norm_vector,
-)
 
+from pyleecan.Classes.Data import Data
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.Norm_func import Norm_func
+from pyleecan.Classes.Norm_indices import Norm_indices
+from pyleecan.Classes.Norm_ref import Norm_ref
+from pyleecan.Classes.Norm_vector import Norm_vector
 from pyleecan.Functions.SciDataTool import NormError
 from Tests import DATA_DIR
 

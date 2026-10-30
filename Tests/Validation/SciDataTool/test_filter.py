@@ -1,7 +1,9 @@
-import pytest
 import numpy as np
+import pytest
 
-from SciDataTool import Data1D, DataLinspace, DataTime
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
 
 
 @pytest.mark.validation

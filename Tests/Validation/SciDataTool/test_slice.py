@@ -1,7 +1,10 @@
 import pytest
-from SciDataTool import DataLinspace, DataTime, DataPattern
-from numpy import meshgrid, linspace, array, repeat, nan, pi, cos
+from numpy import array, cos, linspace, meshgrid, nan, pi, repeat
 from numpy.testing import assert_array_almost_equal
+
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataPattern import DataPattern
+from pyleecan.Classes.DataTime import DataTime
 
 
 @pytest.mark.validation
@@ -46,7 +49,7 @@ def test_slice():
 
     # rms value 'Y=rms' (arithmetic)
     result = Field.get_along("time", "Y=rms")
-    expected = (field ** 2).mean(axis=1) ** (1 / 2)
+    expected = (field**2).mean(axis=1) ** (1 / 2)
     assert_array_almost_equal(expected, result["Z"])
 
     # Extract data by indices
@@ -73,7 +76,7 @@ def test_slice():
     # Interpolation on double point
     f = 50
     Nt_tot = 10
-    Na_tot = 2 ** 11
+    Na_tot = 2**11
     time = linspace(0, 1 / f, Nt_tot, endpoint=False)
     Time = DataLinspace(
         name="time",
