@@ -1,4 +1,4 @@
-# <img alt="Pyleecan" src="pyleecan/GUI/Resources/images/icon/pyleecan_64.png" height="24"> PYLEECAN
+# <img alt="Pyleecan" src="src/pyleecan/GUI/Resources/images/icon/pyleecan_64.png" height="24"> PYLEECAN
 
 [![PyPI version](https://badge.fury.io/py/pyleecan.svg)](https://badge.fury.io/py/pyleecan)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)

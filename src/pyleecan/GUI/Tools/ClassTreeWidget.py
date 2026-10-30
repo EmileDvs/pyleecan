@@ -1,17 +1,21 @@
-# -*- coding: utf-8 -*-
-
 from os.path import join
 
 from PySide6 import QtGui
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QDialog, QLabel, QSplitter, QTreeView
-from PySide6.QtWidgets import QDialogButtonBox, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QLabel,
+    QSplitter,
+    QTreeView,
+    QVBoxLayout,
+)
 
-from ...definitions import ROOT_DIR
 from ...Classes._ClassInfo import ClassInfo
+from ...definitions import ROOT_DIR
 
-ICON = join(ROOT_DIR, "pyleecan/GUI/Resources/images/icon/pyleecan_64.png")
+ICON = join(ROOT_DIR, "src/pyleecan/GUI/Resources/images/icon/pyleecan_64.png")
 
 
 class ClassTreeWidget(QDialog):
@@ -21,7 +25,7 @@ class ClassTreeWidget(QDialog):
     """
 
     def __init__(self, keys=None, expand=True):
-        super(ClassTreeWidget, self).__init__()
+        super().__init__()
         self.setupUi()
         self.expandAll = expand
         self.setMinimumHeight(600)

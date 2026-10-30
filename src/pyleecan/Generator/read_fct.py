@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-from os import walk
-from os.path import isfile, join, basename, isdir
-
 from csv import reader
+from os import walk
+from os.path import basename, isdir, isfile, join
 
-from ..Generator import PYTHON_TYPE
 from ..definitions import PACKAGE_NAME
+from ..Generator import PYTHON_TYPE
 
 # Constants for csv reading, i.e. column number of data
 NAME_COL = 0  # attribue name
@@ -56,7 +54,7 @@ def read_all(
     gen_dict : dict
         Dict with key = class name and value = class dict (name, package, properties, methods...)
     """
-    gen_dict = dict()
+    gen_dict = {}
 
     if not isdir(path):
         raise Exception(
@@ -105,7 +103,7 @@ def read_file(file_path, soft_name=PACKAGE_NAME):
     class_dict : dict
         Dict containing all the class informations (properties, package, methods...)
     """
-    class_dict = dict()
+    class_dict = {}
     # Open the module doc
     if not isfile(file_path):
         raise NotAFile("File not found")
@@ -113,7 +111,7 @@ def read_file(file_path, soft_name=PACKAGE_NAME):
     # The class name is the csv file name
     class_dict["name"] = basename(file_path)[:-4]
     try:  # Cleanup path to avoid "commit noise"
-        class_dict["path"] = file_path[file_path.rfind(soft_name) :]
+        class_dict["path"] = "src\\" + file_path[file_path.rfind(soft_name) :]
     except ValueError:  # Path doesn't contain pyleecan
         class_dict["path"] = file_path
     # Cleanup \ to avoid errors
@@ -461,10 +459,6 @@ def is_list_unknow_type(type_name):
 class NotAFile(Exception):
     """Raised when the code generator is call on a wrong path"""
 
-    pass
-
 
 class InheritError(Exception):
     """Raised when a class has a wrong mother defined"""
-
-    pass

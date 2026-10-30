@@ -1,21 +1,20 @@
-# -*- coding: utf-8 -*-
-import os
-import shutil
 import sys
-from json import load
-from logging import getLogger
-from os.path import abspath, dirname, basename, join, normpath, realpath
-from matplotlib.colors import ListedColormap
-from numpy import load as np_load
+from os.path import abspath, dirname, join, normpath, realpath
+
 from matplotlib import font_manager
 
 PYTHON_DEFAULT_ENCODING = "utf-8-sig"
 
-ROOT_DIR = normpath(abspath(join(dirname(__file__), ".."))).replace("\\", "/")
+ROOT_DIR = (
+    normpath(abspath(join(dirname(__file__), "..")))
+    .replace("\\", "/")
+    .replace("/src", "")
+)
 # Further import
 try:
-    from .Functions.init_environment import get_config_dict
     from pyleecan import PACKAGE_NAME, USER_DIR
+
+    from .Functions.init_environment import get_config_dict
 except ImportError:
     # Add root dir to python path
     sys.path.insert(0, ROOT_DIR)
