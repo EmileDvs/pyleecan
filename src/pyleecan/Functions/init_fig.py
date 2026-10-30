@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from matplotlib.pyplot import subplots
-import mpl_toolkits.mplot3d
+import io
+import pickle
 
 
 def init_fig(fig=None, ax=None, shape="default", is_3d=False):
@@ -111,3 +110,20 @@ def init_subplot(fig=None, subplot_index=None, is_3d=False):
         ax = fig.axes[subplot_index]
 
     return fig, ax
+
+
+def copy_fig(fig):
+    """Copy the figure to avoid reference passing
+
+    Returns
+    -------
+    Figure
+        the new figure object
+    """
+    # Creating the buffer in which to pickle the fig
+    buf = io.BytesIO()
+    pickle.dump(fig, buf)
+    buf.seek(0)
+    # Loading the figure in a new figure
+    fig_dock = pickle.load(buf)
+    return fig_dock
