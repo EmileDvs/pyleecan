@@ -542,7 +542,11 @@ class DataND(Data):
         DataND_str = ""
         # Get the properties inherited from Data
         DataND_str += super(DataND, self).__str__()
-        DataND_str += "axes = " + str(self.axes) + linesep + linesep
+        if len(self.axes) == 0:
+            DataND_str += "axes = []" + linesep
+        for ii in range(len(self.axes)):
+            tmp = self.axes[ii].__str__().replace(linesep, linesep + "\t") + linesep
+            DataND_str += "axes[" + str(ii) + "] =" + tmp + linesep + linesep
         DataND_str += "FTparameters = " + str(self.FTparameters) + linesep
         DataND_str += (
             "values = "
@@ -781,7 +785,7 @@ class DataND(Data):
                         value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes"
+                        "pyleecan.Classes", obj.get("__class__"), "axes"
                     )
                     value[ii] = class_obj(init_dict=obj)
                 if value[ii] is not None:
@@ -796,7 +800,7 @@ class DataND(Data):
         fset=_set_axes,
         doc="""List of the Data1D objects corresponding to the axes
 
-        :Type: [SciDataTool.Classes.Data]
+        :Type: [Data]
         """,
     )
 

@@ -1,7 +1,7 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value
-axes_dt,,List of the Data1D objects corresponding to the axes in time/space domain,,[SciDataTool.Classes.Data],None,,
+axes_dt,,List of the Data1D objects corresponding to the axes in time/space domain,,[Data],None,,
 values_dt,,Values of the field in time/space domain,,ndarray,None,,
-axes_df,,List of the Data1D objects corresponding to the axes in fourier domain,,[SciDataTool.Classes.Data],None,,
+axes_df,,List of the Data1D objects corresponding to the axes in fourier domain,,[Data],None,,
 values_df,,Values of the field in fourier domain,,ndarray,None,,
 ,,,,,,,
 Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille,

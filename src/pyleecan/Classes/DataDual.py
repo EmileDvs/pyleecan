@@ -143,7 +143,11 @@ class DataDual(DataND):
         DataDual_str = ""
         # Get the properties inherited from DataND
         DataDual_str += super(DataDual, self).__str__()
-        DataDual_str += "axes_dt = " + str(self.axes_dt) + linesep + linesep
+        if len(self.axes_dt) == 0:
+            DataDual_str += "axes_dt = []" + linesep
+        for ii in range(len(self.axes_dt)):
+            tmp = self.axes_dt[ii].__str__().replace(linesep, linesep + "\t") + linesep
+            DataDual_str += "axes_dt[" + str(ii) + "] =" + tmp + linesep + linesep
         DataDual_str += (
             "values_dt = "
             + linesep
@@ -151,7 +155,11 @@ class DataDual(DataND):
             + linesep
             + linesep
         )
-        DataDual_str += "axes_df = " + str(self.axes_df) + linesep + linesep
+        if len(self.axes_df) == 0:
+            DataDual_str += "axes_df = []" + linesep
+        for ii in range(len(self.axes_df)):
+            tmp = self.axes_df[ii].__str__().replace(linesep, linesep + "\t") + linesep
+            DataDual_str += "axes_df[" + str(ii) + "] =" + tmp + linesep + linesep
         DataDual_str += (
             "values_df = "
             + linesep
@@ -432,7 +440,7 @@ class DataDual(DataND):
                         value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes_dt"
+                        "pyleecan.Classes", obj.get("__class__"), "axes_dt"
                     )
                     value[ii] = class_obj(init_dict=obj)
                 if value[ii] is not None:
@@ -447,7 +455,7 @@ class DataDual(DataND):
         fset=_set_axes_dt,
         doc="""List of the Data1D objects corresponding to the axes in time/space domain
 
-        :Type: [SciDataTool.Classes.Data]
+        :Type: [Data]
         """,
     )
 
@@ -499,7 +507,7 @@ class DataDual(DataND):
                         value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes_df"
+                        "pyleecan.Classes", obj.get("__class__"), "axes_df"
                     )
                     value[ii] = class_obj(init_dict=obj)
                 if value[ii] is not None:
@@ -514,7 +522,7 @@ class DataDual(DataND):
         fset=_set_axes_df,
         doc="""List of the Data1D objects corresponding to the axes in fourier domain
 
-        :Type: [SciDataTool.Classes.Data]
+        :Type: [Data]
         """,
     )
 

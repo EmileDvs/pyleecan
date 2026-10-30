@@ -1484,9 +1484,9 @@
                 "min": "",
                 "name": "axes_dt",
                 "size": "",
-                "type": "[SciDataTool.Classes.Data]",
+                "type": "[Data]",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -1506,9 +1506,9 @@
                 "min": "",
                 "name": "axes_df",
                 "size": "",
-                "type": "[SciDataTool.Classes.Data]",
+                "type": "[Data]",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",
@@ -1824,9 +1824,9 @@
                 "min": "",
                 "name": "axes",
                 "size": "",
-                "type": "[SciDataTool.Classes.Data]",
+                "type": "[Data]",
                 "unit": "",
-                "value": "None"
+                "value": null
             },
             {
                 "as_dict": "",

@@ -1,5 +1,5 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value
-axes,,List of the Data1D objects corresponding to the axes,,[SciDataTool.Classes.Data],None,,
+axes,,List of the Data1D objects corresponding to the axes,,[Data],None,,
 FTparameters,,Tunable parameters for the Fourier Transforms,,dict,{},,
 values,,Values of the field,,ndarray,None,,
 is_real,,To indicate if the signal is real (use only positive frequencies),,bool,True,,
