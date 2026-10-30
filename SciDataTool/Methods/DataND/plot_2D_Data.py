@@ -199,7 +199,7 @@ def plot_2D_Data(
         if is_norm:
             if ylabel is None:
                 ylabel = (
-                    r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\,$" + unit_str
+                    r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\\,$" + unit_str
                 )
         else:
             if self.symbol == "Magnitude":
@@ -207,7 +207,7 @@ def plot_2D_Data(
                     ylabel = "Magnitude " + unit_str
             else:
                 if ylabel is None:
-                    ylabel = r"$" + self.symbol + "\,$" + unit_str
+                    ylabel = r"$" + self.symbol + "\\,$" + unit_str
 
     # Extract field and axes
     Xdatas = []
