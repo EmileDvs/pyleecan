@@ -47,16 +47,21 @@ def filter_spectral_leakage(
     """
 
     # Symmetrize theoretical frequencies to negative values if necessary
-    Nhalf = (
-        int(freqs_th.size / 2)
-        if freqs_th.size % 2 == 0
-        else int((freqs_th.size + 1) / 2)
-    )
-    if freqs_th.size == 1 or not np.all(freqs_th[:Nhalf] == -np.flip(freqs_th[Nhalf:])):
-        freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
+    if freqs_th.size % 2 == 0:
+        Nhalf = int(freqs_th.size / 2)
+        if freqs_th.size == 1 or not np.all(
+            freqs_th[:Nhalf] == -np.flip(freqs_th[Nhalf:])
+        ):
+            freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
+    else:
+        Nhalf = int((freqs_th.size + 1) / 2)
+        if freqs_th.size == 1 or not np.all(
+            freqs_th[: Nhalf - 1] == -np.flip(freqs_th[Nhalf:])
+        ):
+            freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
 
     if Wmatf.size == 0 or If.size == 0:
-
+        
         # Check frequency resolution
         df_fft = np.min(np.abs(np.diff(freqs)))
         df_th = np.min(np.abs(np.diff(freqs_th)))
@@ -72,27 +77,27 @@ def filter_spectral_leakage(
         # Find closest index of each frequency in the grid
         If = np.argmin(np.abs(freqs[:, None] - freqs_th[None, :]), axis=0)
 
-        # Filtering will be performed, match theoretical frequencies with closest
-        # frequency in FFT frequency vector
-        If0 = np.unique(If)
-        if If0.size != If.size:
-            If_new = np.zeros(freqs_th.size, dtype=int)
-            for ii, jj in enumerate(If):
-                kk = jj
-                if kk + 1 < freqs.size:
-                    # Going forward
-                    while kk in If_new:
-                        kk += 1
-                else:
-                    # Going backwards
-                    while kk in If_new:
-                        kk -= 1
-                If_new[ii] = kk
-            if np.unique(If_new).size < If.size:
-                print(
-                    "Wrong match between FFT and theoretical frequencies, spectral leakage filtering maybe inaccurate"
-                )
-            If = np.sort(If_new)
+        # # Filtering will be performed, match theoretical frequencies with closest
+        # # frequency in FFT frequency vector
+        # If0 = np.unique(If1)
+        # if If0.size != If1.size:
+        #     If_new = np.zeros(freqs_th.size, dtype=int)
+        #     for ii, jj in enumerate(If1):
+        #         kk = jj
+        #         if kk + 1 < freqs.size:
+        #             # Going forward
+        #             while kk in If_new:
+        #                 kk += 1
+        #         else:
+        #             # Going backwards
+        #             while kk in If_new:
+        #                 kk -= 1
+        #         If_new[ii] = kk
+        #     if np.unique(If_new).size < If1.size:
+        #         print(
+        #             "Wrong match between FFT and theoretical frequencies, spectral leakage filtering maybe inaccurate"
+        #         )
+        #     If_test = np.sort(If_new)
 
         # Calculate filtering matrix: spectrum of door window
         xfreqs2, xfreqs1 = np.meshgrid(freqs_th, freqs[If])
@@ -141,7 +146,7 @@ def filter_spectral_leakage(
         # spec_val = np.abs(np.sqrt(np.sum(spectrum[If_ref, :] ** 2, axis=-1)))
         spec_val0 = np.abs(np.sqrt(np.sum(spectrum[If, :] ** 2, axis=-1)))
         # spec_val1 = np.abs(np.sqrt(np.sum(spectrum[If1, :] ** 2, axis=-1)))
-        spec_val_filt = np.abs(np.sqrt(np.sum(spectrum_filt ** 2, axis=-1)))
+        spec_val_filt = np.abs(np.sqrt(np.sum(spectrum_filt**2, axis=-1)))
         plt.figure()
         # plt.plot(freqs[If_ref], spec_val)
         plt.plot(freqs[If], spec_val0)
