@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.integrate as scp_int
 
-from pyleecan.Functions.SciDataTool import AxisError
+from ...Functions.SciDataTool import AxisError
 
 
 def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):

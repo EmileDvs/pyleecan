@@ -1,6 +1,6 @@
 from numpy import take
 
-from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries
+from ....Functions.SciDataTool.symmetries import rebuild_symmetries
 
 
 def _get_field(self, axes_list):

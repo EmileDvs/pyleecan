@@ -1,4 +1,4 @@
-from pyleecan.Functions.SciDataTool import AxisError
+from ....Functions.SciDataTool import AxisError
 
 
 def get_filter(self, filter_dict):

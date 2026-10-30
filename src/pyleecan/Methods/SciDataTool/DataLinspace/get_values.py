@@ -2,9 +2,9 @@ from importlib import import_module
 
 from numpy import array, linspace
 
-from pyleecan.Functions.SciDataTool import AxisError, NormError
-from pyleecan.Functions.SciDataTool.conversions import convert
-from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
+from ....Functions.SciDataTool import AxisError, NormError
+from ....Functions.SciDataTool.conversions import convert
+from ....Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 
 
 def get_values(

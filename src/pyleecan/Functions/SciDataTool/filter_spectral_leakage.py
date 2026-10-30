@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.linalg as np_lin
 
-from pyleecan.Functions.SciDataTool.set_routines import unique_tol
+from ...Functions.SciDataTool.set_routines import unique_tol
 
 
 def filter_spectral_leakage(

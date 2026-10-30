@@ -10,8 +10,8 @@ from numpy import (
     zeros,
 )
 
-from pyleecan.Functions.SciDataTool.Plot import COLORS, LINESTYLES
-from pyleecan.Functions.SciDataTool.Plot.init_fig import init_fig
+from ....Functions.SciDataTool.Plot import COLORS, LINESTYLES
+from ....Functions.SciDataTool.Plot.init_fig import init_fig
 
 
 def plot_2D(

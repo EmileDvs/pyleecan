@@ -1,6 +1,6 @@
 from numpy import take
 
-from pyleecan.Functions.SciDataTool.symmetries import (
+from ....Functions.SciDataTool.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 

@@ -1,4 +1,4 @@
-from pyleecan.Functions.SciDataTool.Plot import fft_dict, ifft_dict
+from ...Functions.SciDataTool.Plot import fft_dict, ifft_dict
 
 
 def is_axes_in_order(axes_selected, data):
@@ -28,7 +28,6 @@ def is_axes_in_order(axes_selected, data):
         if axes_name.index(ifft_dict[axes_selected_name[0]]) > axes_name.index(
             ifft_dict[axes_selected_name[1]]
         ):
-
             not_in_order = True
             axes_selected = [axes_selected[1], axes_selected[0]]
 
@@ -36,7 +35,6 @@ def is_axes_in_order(axes_selected, data):
         if axes_name.index(fft_dict[axes_selected_name[0]]) > axes_name.index(
             fft_dict[axes_selected_name[1]]
         ):
-
             not_in_order = True
             axes_selected = [axes_selected[1], axes_selected[0]]
 

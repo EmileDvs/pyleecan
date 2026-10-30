@@ -1,7 +1,7 @@
 from SciDataTool import Data1D
 
-from pyleecan.Functions.SciDataTool import axes_dict, rev_axes_dict
-from pyleecan.Functions.SciDataTool.conversions import (
+from ....Functions.SciDataTool import axes_dict, rev_axes_dict
+from ....Functions.SciDataTool.conversions import (
     get_unit_derivate,
     get_unit_integrate,
 )

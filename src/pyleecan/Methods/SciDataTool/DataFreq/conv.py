@@ -1,7 +1,7 @@
 from numpy import any as np_any
 from numpy import inf
 
-from pyleecan.Functions.SciDataTool.sum_convolution import (
+from ....Functions.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
 )

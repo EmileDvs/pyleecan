@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.interpolate as scp_int
 
-from pyleecan.Functions.SciDataTool.set_routines import unique_tol
+from ...Functions.SciDataTool.set_routines import unique_tol
 
 
 def change_referential_spectrum(

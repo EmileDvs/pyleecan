@@ -23,8 +23,8 @@ from numpy.fft import (
     rfftn,
 )
 
-from pyleecan.Functions.SciDataTool.nudft_functions import inudftn, is_uniform, nudftn
-from pyleecan.Functions.SciDataTool.Plot import fft_dict
+from ...Functions.SciDataTool.nudft_functions import inudftn, is_uniform, nudftn
+from ...Functions.SciDataTool.Plot import fft_dict
 
 
 def comp_fft_freqs(time, is_time, is_real):

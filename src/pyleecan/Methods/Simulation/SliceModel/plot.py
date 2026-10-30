@@ -1,8 +1,7 @@
 from numpy import pi
 
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
-
 from ....Functions.Plot import dict_2D
+from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 
 def plot(

@@ -1,4 +1,4 @@
-from pyleecan.Functions.SciDataTool import AxisError
+from ....Functions.SciDataTool import AxisError
 
 
 def check_filter(self):

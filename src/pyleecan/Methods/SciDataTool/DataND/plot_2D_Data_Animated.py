@@ -2,7 +2,7 @@ import imageio
 import matplotlib.pyplot as plt
 from numpy import arange, frombuffer, nanmax, nanmin
 
-from pyleecan.Functions.SciDataTool.Plot import PARAM_3D, fft_dict, ifft_dict
+from ....Functions.SciDataTool.Plot import PARAM_3D, fft_dict, ifft_dict
 
 
 def plot_2D_Data_Animated(

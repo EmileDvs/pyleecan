@@ -1,6 +1,6 @@
 from SciDataTool.Classes.Data1D import Data1D
 
-from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, omp
+from ....Functions.SciDataTool.omp import comp_undersampled_axe, omp
 
 
 def orthogonal_mp(

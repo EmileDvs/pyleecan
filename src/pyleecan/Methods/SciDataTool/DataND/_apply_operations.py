@@ -1,14 +1,14 @@
 from numpy import abs as np_abs
 from numpy import nanmax, nanmin
 
-from pyleecan.Functions.SciDataTool.derivation_integration import (
+from ....Functions.SciDataTool.derivation_integration import (
     antiderivate,
     derivate,
     integrate,
     integrate_local,
     integrate_local_pattern,
 )
-from pyleecan.Functions.SciDataTool.sum_mean import (
+from ....Functions.SciDataTool.sum_mean import (
     my_mean,
     my_sum,
     root_mean_square,

@@ -4,7 +4,7 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from pyleecan.Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
+from ....Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
 
 
 def plot_2D_Data_Animated(

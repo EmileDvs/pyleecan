@@ -1,13 +1,13 @@
 import numpy as np
-from SciDataTool import Data1D, DataFreq
 
-from pyleecan.Functions.SciDataTool.set_routines import union1d_tol
-
+from ...Classes.Data1D import Data1D
+from ...Classes.DataFreq import DataFreq
 from ...Functions.Electrical.dqh_transformation import (
     _check_data,
     abc2n,
     n2abc,
 )
+from ...Functions.SciDataTool.set_routines import union1d_tol
 from ...Functions.Winding.gen_phase_list import gen_name
 
 

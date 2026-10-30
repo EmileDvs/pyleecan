@@ -3,8 +3,8 @@ from importlib import import_module
 from numpy import argsort, array
 from SciDataTool.Classes.DataPattern import DataPattern
 
-from pyleecan.Functions.SciDataTool import AxisError
-from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
+from ....Functions.SciDataTool import AxisError
+from ....Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 
 operation_list = [
     "max",

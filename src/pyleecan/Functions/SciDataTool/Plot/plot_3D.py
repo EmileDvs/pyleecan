@@ -8,8 +8,8 @@ from numpy import log10
 from numpy import nanmax as np_max
 from numpy import nanmin as np_min
 
-from pyleecan.Functions.SciDataTool.Plot import COLORS
-from pyleecan.Functions.SciDataTool.Plot.init_fig import init_fig
+from ....Functions.SciDataTool.Plot import COLORS
+from ....Functions.SciDataTool.Plot.init_fig import init_fig
 
 
 def plot_3D(

@@ -1,4 +1,4 @@
-from pyleecan.Functions.SciDataTool import axes_dict, rev_axes_dict
+from ....Functions.SciDataTool import axes_dict, rev_axes_dict
 
 
 def _comp_axes(self, axes_list):

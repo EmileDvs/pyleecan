@@ -30,8 +30,8 @@ from numpy import (
     sum as np_sum,
 )
 
-from pyleecan.Functions.SciDataTool import UnitError
-from pyleecan.Functions.SciDataTool.fft_functions import (
+from ...Functions.SciDataTool import UnitError
+from ...Functions.SciDataTool.fft_functions import (
     comp_fft_freqs,
     comp_fft_time,
     comp_nthoctave_axis,

@@ -1,8 +1,8 @@
 import numpy as np
 
-from pyleecan.Functions.SciDataTool import NormError, UnitError
-from pyleecan.Functions.SciDataTool.conversions import convert as convert_unit
-from pyleecan.Functions.SciDataTool.conversions import to_dB, to_dBA
+from ....Functions.SciDataTool import NormError, UnitError
+from ....Functions.SciDataTool.conversions import convert as convert_unit
+from ....Functions.SciDataTool.conversions import to_dB, to_dBA
 
 
 def _convert(self, values, unit, is_norm, is_squeeze, axes_list):

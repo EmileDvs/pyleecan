@@ -1,7 +1,7 @@
 from numpy import inf  # for eval
 from SciDataTool.Classes.RequestedAxis import RequestedAxis
 
-from pyleecan.Functions.SciDataTool import AxisError
+from ...Functions.SciDataTool import AxisError
 
 
 def read_input_strings(args, axis_data):

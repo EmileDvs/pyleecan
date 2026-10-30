@@ -27,15 +27,16 @@ from numpy import (
 from SciDataTool.Classes.Norm_indices import Norm_indices
 
 from pyleecan.Functions.load.import_class import import_class
-from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
-from pyleecan.Functions.SciDataTool.parser import read_input_strings
-from pyleecan.Functions.SciDataTool.Plot import (
+
+from ....Functions.SciDataTool.fix_axes_order import fix_axes_order
+from ....Functions.SciDataTool.parser import read_input_strings
+from ....Functions.SciDataTool.Plot import (
     COLORS,
     axes_dict,
     norm_dict,
     unit_dict,
 )
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 
 def plot_2D_Data(

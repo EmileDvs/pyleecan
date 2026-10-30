@@ -1,6 +1,6 @@
 import numpy as np
 
-from pyleecan.Functions.SciDataTool.set_routines import unique_tol
+from ...Functions.SciDataTool.set_routines import unique_tol
 
 
 def get_conv_indices(freqs1, freqs2, f_min, f_max, tol_freq):

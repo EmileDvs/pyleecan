@@ -1,9 +1,8 @@
 import numpy as np
 
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
-
 from ....definitions import config_dict
 from ....Functions.init_fig import init_fig
+from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
 from ....Methods.Output.XOutput import _get_symbol_data_
 
 COLORS = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"]

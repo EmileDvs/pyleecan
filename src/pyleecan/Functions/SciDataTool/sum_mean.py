@@ -1,6 +1,6 @@
 import numpy as np
 
-from pyleecan.Functions.SciDataTool.derivation_integration import integrate
+from ...Functions.SciDataTool.derivation_integration import integrate
 
 
 def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):

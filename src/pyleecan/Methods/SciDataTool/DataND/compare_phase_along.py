@@ -1,4 +1,4 @@
-from pyleecan.Functions.SciDataTool.interpolations import (
+from ....Functions.SciDataTool.interpolations import (
     get_common_base,
     get_interpolation,
 )

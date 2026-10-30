@@ -22,11 +22,12 @@ from numpy.core.numeric import zeros_like
 from SciDataTool.Classes.Norm_indices import Norm_indices
 
 from pyleecan.Functions.load.import_class import import_class
-from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
-from pyleecan.Functions.SciDataTool.parser import read_input_strings
-from pyleecan.Functions.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
-from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
-from pyleecan.Functions.SciDataTool.Plot.plot_4D import plot_4D
+
+from ....Functions.SciDataTool.fix_axes_order import fix_axes_order
+from ....Functions.SciDataTool.parser import read_input_strings
+from ....Functions.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
+from ....Functions.SciDataTool.Plot.plot_3D import plot_3D
+from ....Functions.SciDataTool.Plot.plot_4D import plot_4D
 
 
 def plot_3D_Data(

@@ -1,6 +1,6 @@
 from numpy import array
 
-from pyleecan.Functions.SciDataTool.Plot import fft_dict, ifft_dict
+from ...Functions.SciDataTool.Plot import fft_dict, ifft_dict
 
 
 def fix_axes_order(axes_list, args):

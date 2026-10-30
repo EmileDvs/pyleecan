@@ -3,7 +3,7 @@ from numpy import abs as np_abs
 from numpy import log10, nan, zeros_like
 from numpy import nanmax as np_max
 
-from pyleecan.Functions.SciDataTool.Plot.init_fig import init_fig
+from ....Functions.SciDataTool.Plot.init_fig import init_fig
 
 
 def plot_4D(

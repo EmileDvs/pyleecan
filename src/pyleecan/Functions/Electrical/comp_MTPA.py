@@ -1,12 +1,11 @@
 import numpy as np
 
-from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
-
 from ...Classes.EEC_PMSM import EEC_PMSM
 from ...Classes.Electrical import Electrical
 from ...Classes.InputCurrent import InputCurrent
 from ...Classes.OPdq import OPdq
 from ...Classes.Simu1 import Simu1
+from ...Functions.SciDataTool.Plot.plot_3D import plot_3D
 
 
 def comp_MTPA(

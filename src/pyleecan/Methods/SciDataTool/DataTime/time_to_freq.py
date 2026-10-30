@@ -1,6 +1,6 @@
 from SciDataTool import Data1D
 
-from pyleecan.Functions.SciDataTool import AxisError
+from ....Functions.SciDataTool import AxisError
 
 
 def time_to_freq(self):

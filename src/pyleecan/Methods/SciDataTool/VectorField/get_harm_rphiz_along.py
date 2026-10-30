@@ -1,7 +1,7 @@
 from numpy import zeros
 
-from pyleecan.Functions.SciDataTool import AxisError
-from pyleecan.Functions.SciDataTool.conversions import cart2pol
+from ....Functions.SciDataTool import AxisError
+from ....Functions.SciDataTool.conversions import cart2pol
 
 
 def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]):

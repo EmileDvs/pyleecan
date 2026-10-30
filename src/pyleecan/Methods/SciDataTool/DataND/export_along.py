@@ -3,7 +3,7 @@ from os.path import join
 
 import numpy as np
 
-from pyleecan.Functions.SciDataTool.Plot import unit_dict
+from ....Functions.SciDataTool.Plot import unit_dict
 
 CHAR_LIST = ["$", "{", "}"]
 

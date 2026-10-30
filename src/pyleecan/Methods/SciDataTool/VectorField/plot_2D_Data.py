@@ -1,13 +1,14 @@
 from numpy import array, array2string, column_stack, exp, real, squeeze
 
 from pyleecan.Functions.load.import_class import import_class
-from pyleecan.Functions.SciDataTool.conversions import (
+
+from ....Functions.SciDataTool.conversions import (
     rphiz_to_xyz,
     rphiz_to_xyz_field,
     xyz_to_rphiz,
 )
-from pyleecan.Functions.SciDataTool.Plot import REV_COMP_DICT
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ....Functions.SciDataTool.Plot import REV_COMP_DICT
+from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 
 def plot_2D_Data(

@@ -1,7 +1,7 @@
 from numpy import zeros
 
-from pyleecan.Functions.SciDataTool import AxisError
-from pyleecan.Functions.SciDataTool.conversions import pol2cart
+from ....Functions.SciDataTool import AxisError
+from ....Functions.SciDataTool.conversions import pol2cart
 
 
 def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True):
