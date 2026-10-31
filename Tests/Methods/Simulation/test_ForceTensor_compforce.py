@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -126,6 +125,10 @@ def test_comp_normal_to_edge():
 
     dim = 2
 
+    def cross2d(x, y):
+        """for numpy 2.0+ compatibility, np.cross doesn't support cross product in R2 anymore"""
+        return x[..., 0] * y[..., 1] - x[..., 1] * y[..., 0]
+
     for key in mesh.element_dict:
         nb_node_per_element = mesh.element_dict[
             key
@@ -150,7 +153,7 @@ def test_comp_normal_to_edge():
 
             # Triangle orientation, needed for normal orientation. 1 if trigo oriented, -1 otherwise
             orientation_sign = np.sign(
-                np.cross(
+                cross2d(
                     element_coordinate[1] - element_coordinate[0],
                     element_coordinate[2] - element_coordinate[0],
                 )
@@ -169,7 +172,7 @@ def test_comp_normal_to_edge():
                 )
                 normal_to_edge = (
                     normal_to_edge_unoriented
-                    * np.sign(np.cross(normal_to_edge_unoriented, edge_vector))
+                    * np.sign(cross2d(normal_to_edge_unoriented, edge_vector))
                     * orientation_sign
                 )
                 normal_to_edge.reshape(dim, 1)
@@ -217,5 +220,5 @@ def test_comp_normal_to_edge():
 
 if __name__ == "__main__":
     test_comp_normal_to_edge()
-    test_comp_magnetostrictive_tensor_1element()
+    # test_comp_magnetostrictive_tensor_1element()
     # test_element_loop_1element()

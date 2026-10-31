@@ -3,7 +3,7 @@ from os.path import isdir, join
 
 import matplotlib.pyplot as plt
 import pytest
-from numpy import linspace
+
 from pyleecan.Classes.ImportGenPWM import ImportGenPWM
 from Tests import save_plot_path as save_path
 
@@ -14,14 +14,14 @@ if not isdir(save_path):
 
 @pytest.mark.long_5s
 @pytest.mark.long_1m
-def testSPWM():
+def testSPWM(is_save_fig=False):
     """Check"""
     # fs, duration, f,fmax,fmode, fswimode,fswi, fswi_max,typePWM, Vdc1, U0, type_carrier
     for ii in range(2):
         for jj in range(5):
             for hh in range(4):
                 test_obj = ImportGenPWM(
-                    fs=96000,
+                    fs=96000 / 100,
                     duration=2,
                     f=1,
                     fmax=5,
@@ -42,33 +42,36 @@ def testSPWM():
                 # Generate the signal
                 Uabc, Vas, _, carrier, time = test_obj.get_data()
 
-                # Plot/save the result
-                plt.close("all")
-                plt.plot(time, Uabc[:, 1])
-                plt.plot(time, Vas)
-                plt.plot(time, carrier)
-                fig = plt.gcf()
-                fig.savefig(
-                    join(
-                        save_path,
-                        "test_ImportGenPWM_"
-                        + str(ii)
-                        + "_"
-                        + str(jj)
-                        + "_"
-                        + str(hh)
-                        + "_SPWM.png",
+                # print(f"{ii}/1, {jj}/4, {hh}/3")
+
+                if is_save_fig:
+                    # Plot/save the result
+                    plt.close("all")
+                    plt.plot(time, Uabc[:, 1])
+                    plt.plot(time, Vas)
+                    plt.plot(time, carrier)
+                    fig = plt.gcf()
+                    fig.savefig(
+                        join(
+                            save_path,
+                            "test_ImportGenPWM_"
+                            + str(ii)
+                            + "_"
+                            + str(jj)
+                            + "_"
+                            + str(hh)
+                            + "_SPWM.png",
+                        )
                     )
-                )
 
 
 @pytest.mark.long_5s
-def testDPWM():
+def testDPWM(is_save_fig=False):
     """Check"""
     for ii in range(9):
         # fs, duration, f,fmax,fmode, fswimode,fswi, fswi_max,typePWM, Vdc1, U0, type_carrier
         test_obj = ImportGenPWM(
-            fs=96000,
+            fs=96000 / 100,
             duration=2,
             f=1,
             fmax=5,
@@ -88,13 +91,16 @@ def testDPWM():
         # Generate the signal
         Uabc, Vas, _, carrier, time = test_obj.get_data()
 
-        # Plot/save the result
-        plt.close("all")
-        plt.plot(time, Uabc[:, 1])
-        plt.plot(time, Vas)
-        plt.plot(time, carrier)
-        fig = plt.gcf()
-        fig.savefig(join(save_path, "test_ImportGenPWM_" + str(ii) + ".png"))
+        # print(f"{ii}/8")
+
+        if is_save_fig:
+            # Plot/save the result
+            plt.close("all")
+            plt.plot(time, Uabc[:, 1])
+            plt.plot(time, Vas)
+            plt.plot(time, carrier)
+            fig = plt.gcf()
+            fig.savefig(join(save_path, "test_ImportGenPWM_" + str(ii) + ".png"))
 
 
 if __name__ == "__main__":
