@@ -380,7 +380,14 @@ class VectorField(FrozenClass):
             )
         VectorField_str += 'name = "' + str(self.name) + '"' + linesep
         VectorField_str += 'symbol = "' + str(self.symbol) + '"' + linesep
-        VectorField_str += "components = " + str(self.components) + linesep + linesep
+        if len(self.components) == 0:
+            VectorField_str += "components = dict()" + linesep
+        for key, obj in self.components.items():
+            tmp = (
+                self.components[key].__str__().replace(linesep, linesep + "\t")
+                + linesep
+            )
+            VectorField_str += "components[" + key + "] =" + tmp + linesep + linesep
         return VectorField_str
 
     def __eq__(self, other):
@@ -572,7 +579,7 @@ class VectorField(FrozenClass):
                         value[key] = None
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "components"
+                        "pyleecan.Classes", obj.get("__class__"), "components"
                     )
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
@@ -585,6 +592,6 @@ class VectorField(FrozenClass):
         fset=_set_components,
         doc="""Dict of the components
 
-        :Type: {SciDataTool.Classes.DataND}
+        :Type: {DataND}
         """,
     )

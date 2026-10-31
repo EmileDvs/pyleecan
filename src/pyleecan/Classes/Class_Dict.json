@@ -19841,9 +19841,9 @@
                 "min": "",
                 "name": "components",
                 "size": "",
-                "type": "{SciDataTool.Classes.DataND}",
+                "type": "{DataND}",
                 "unit": "",
-                "value": "-1"
+                "value": -1
             }
         ]
     },
