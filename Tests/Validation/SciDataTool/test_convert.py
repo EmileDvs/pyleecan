@@ -15,7 +15,7 @@ from pyleecan.Classes.Norm_indices import Norm_indices
 from pyleecan.Classes.Norm_ref import Norm_ref
 from pyleecan.Classes.Norm_vector import Norm_vector
 from pyleecan.Functions.SciDataTool import NormError
-from Tests import DATA_DIR
+from Tests import TEST_DATA_DIR
 
 
 @pytest.mark.validation
@@ -188,10 +188,10 @@ def test_setter_norm():
 
 @pytest.mark.validation
 def test_noct():
-    data = np.load(join(DATA_DIR, "pinknoise_fine_band.npy"))
+    data = np.load(join(TEST_DATA_DIR, "pinknoise_fine_band.npy"))
     freqs = data[1, :]
     field = data[0, :]
-    data_oct = np.load(join(DATA_DIR, "pinknoise_third_oct.npy"))
+    data_oct = np.load(join(TEST_DATA_DIR, "pinknoise_third_oct.npy"))
     foct = data_oct[1, :]
     field_oct = data_oct[0, :]
 
@@ -229,7 +229,7 @@ def test_noct():
 
 @pytest.mark.validation
 def test_dba():
-    data = np.load(join(DATA_DIR, "pinknoise_fine_band.npy"))
+    data = np.load(join(TEST_DATA_DIR, "pinknoise_fine_band.npy"))
     freqs = data[1, :]
     field = data[0, :]
 

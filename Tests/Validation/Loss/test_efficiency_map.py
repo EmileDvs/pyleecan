@@ -2,9 +2,6 @@ from os.path import exists, join, split
 
 import numpy as np
 import pytest
-import SciDataTool
-
-print(SciDataTool.__version__)
 
 from pyleecan.Classes.DataKeeper import DataKeeper
 from pyleecan.Classes.ElecLUTdq import ElecLUTdq
