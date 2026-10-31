@@ -74,16 +74,16 @@ except ImportError as error:
     get_rphiz_along = error
 
 try:
-    from ..Methods.SciDataTool.VectorField.get_xyz_along import get_xyz_along
-except ImportError as error:
-    get_xyz_along = error
-
-try:
     from ..Methods.SciDataTool.VectorField.get_vectorfield_along import (
         get_vectorfield_along,
     )
 except ImportError as error:
     get_vectorfield_along = error
+
+try:
+    from ..Methods.SciDataTool.VectorField.get_xyz_along import get_xyz_along
+except ImportError as error:
+    get_xyz_along = error
 
 try:
     from ..Methods.SciDataTool.VectorField.plot_2D_Data import plot_2D_Data
@@ -108,14 +108,14 @@ except ImportError as error:
     time_to_freq = error
 
 try:
-    from ..Methods.SciDataTool.VectorField.to_xyz import to_xyz
-except ImportError as error:
-    to_xyz = error
-
-try:
     from ..Methods.SciDataTool.VectorField.to_rphiz import to_rphiz
 except ImportError as error:
     to_rphiz = error
+
+try:
+    from ..Methods.SciDataTool.VectorField.to_xyz import to_xyz
+except ImportError as error:
+    to_xyz = error
 
 
 from numpy import isnan
@@ -244,17 +244,6 @@ class VectorField(FrozenClass):
         )
     else:
         get_rphiz_along = get_rphiz_along
-    # cf Methods.SciDataTool.VectorField.get_xyz_along
-    if isinstance(get_xyz_along, ImportError):
-        get_xyz_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_xyz_along: " + str(get_xyz_along)
-                )
-            )
-        )
-    else:
-        get_xyz_along = get_xyz_along
     # cf Methods.SciDataTool.VectorField.get_vectorfield_along
     if isinstance(get_vectorfield_along, ImportError):
         get_vectorfield_along = property(
@@ -267,6 +256,17 @@ class VectorField(FrozenClass):
         )
     else:
         get_vectorfield_along = get_vectorfield_along
+    # cf Methods.SciDataTool.VectorField.get_xyz_along
+    if isinstance(get_xyz_along, ImportError):
+        get_xyz_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_xyz_along: " + str(get_xyz_along)
+                )
+            )
+        )
+    else:
+        get_xyz_along = get_xyz_along
     # cf Methods.SciDataTool.VectorField.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
@@ -312,15 +312,6 @@ class VectorField(FrozenClass):
         )
     else:
         time_to_freq = time_to_freq
-    # cf Methods.SciDataTool.VectorField.to_xyz
-    if isinstance(to_xyz, ImportError):
-        to_xyz = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use VectorField method to_xyz: " + str(to_xyz))
-            )
-        )
-    else:
-        to_xyz = to_xyz
     # cf Methods.SciDataTool.VectorField.to_rphiz
     if isinstance(to_rphiz, ImportError):
         to_rphiz = property(
@@ -330,6 +321,15 @@ class VectorField(FrozenClass):
         )
     else:
         to_rphiz = to_rphiz
+    # cf Methods.SciDataTool.VectorField.to_xyz
+    if isinstance(to_xyz, ImportError):
+        to_xyz = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method to_xyz: " + str(to_xyz))
+            )
+        )
+    else:
+        to_xyz = to_xyz
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

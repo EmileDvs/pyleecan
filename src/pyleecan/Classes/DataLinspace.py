@@ -18,9 +18,9 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.SciDataTool.DataLinspace.get_values import get_values
+    from ..Methods.SciDataTool.DataLinspace.get_axis_periodic import get_axis_periodic
 except ImportError as error:
-    get_values = error
+    get_axis_periodic = error
 
 try:
     from ..Methods.SciDataTool.DataLinspace.get_length import get_length
@@ -28,19 +28,19 @@ except ImportError as error:
     get_length = error
 
 try:
-    from ..Methods.SciDataTool.DataLinspace.get_axis_periodic import get_axis_periodic
+    from ..Methods.SciDataTool.DataLinspace.get_periodicity import get_periodicity
 except ImportError as error:
-    get_axis_periodic = error
+    get_periodicity = error
+
+try:
+    from ..Methods.SciDataTool.DataLinspace.get_values import get_values
+except ImportError as error:
+    get_values = error
 
 try:
     from ..Methods.SciDataTool.DataLinspace.has_period import has_period
 except ImportError as error:
     has_period = error
-
-try:
-    from ..Methods.SciDataTool.DataLinspace.get_periodicity import get_periodicity
-except ImportError as error:
-    get_periodicity = error
 
 
 from numpy import isnan
@@ -53,28 +53,6 @@ class DataLinspace(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.SciDataTool.DataLinspace.get_values
-    if isinstance(get_values, ImportError):
-        get_values = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataLinspace method get_values: " + str(get_values)
-                )
-            )
-        )
-    else:
-        get_values = get_values
-    # cf Methods.SciDataTool.DataLinspace.get_length
-    if isinstance(get_length, ImportError):
-        get_length = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataLinspace method get_length: " + str(get_length)
-                )
-            )
-        )
-    else:
-        get_length = get_length
     # cf Methods.SciDataTool.DataLinspace.get_axis_periodic
     if isinstance(get_axis_periodic, ImportError):
         get_axis_periodic = property(
@@ -87,17 +65,17 @@ class DataLinspace(Data):
         )
     else:
         get_axis_periodic = get_axis_periodic
-    # cf Methods.SciDataTool.DataLinspace.has_period
-    if isinstance(has_period, ImportError):
-        has_period = property(
+    # cf Methods.SciDataTool.DataLinspace.get_length
+    if isinstance(get_length, ImportError):
+        get_length = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use DataLinspace method has_period: " + str(has_period)
+                    "Can't use DataLinspace method get_length: " + str(get_length)
                 )
             )
         )
     else:
-        has_period = has_period
+        get_length = get_length
     # cf Methods.SciDataTool.DataLinspace.get_periodicity
     if isinstance(get_periodicity, ImportError):
         get_periodicity = property(
@@ -110,6 +88,28 @@ class DataLinspace(Data):
         )
     else:
         get_periodicity = get_periodicity
+    # cf Methods.SciDataTool.DataLinspace.get_values
+    if isinstance(get_values, ImportError):
+        get_values = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataLinspace method get_values: " + str(get_values)
+                )
+            )
+        )
+    else:
+        get_values = get_values
+    # cf Methods.SciDataTool.DataLinspace.has_period
+    if isinstance(has_period, ImportError):
+        has_period = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataLinspace method has_period: " + str(has_period)
+                )
+            )
+        )
+    else:
+        has_period = has_period
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

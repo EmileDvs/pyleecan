@@ -1,6 +1,6 @@
-Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value
-slope,,slope of the axis function,,float,1,,
-offset,,offset of the axis function,,float,0,,
-,,,,,,,
-Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille,
-SciDataTool,Normalization,normalize,VERSION,1,Affine function normalization (slope x axis + offset),,
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
+slope,,slope of the axis function,,float,1,,,
+offset,,offset of the axis function,,float,0,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+SciDataTool,Normalization,normalize,VERSION,1,Affine function normalization (slope x axis + offset),,,

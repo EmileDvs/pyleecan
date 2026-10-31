@@ -18,14 +18,9 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.SciDataTool.Data1D.get_values import get_values
+    from ..Methods.SciDataTool.Data1D.check_filter import check_filter
 except ImportError as error:
-    get_values = error
-
-try:
-    from ..Methods.SciDataTool.Data1D.get_length import get_length
-except ImportError as error:
-    get_length = error
+    check_filter = error
 
 try:
     from ..Methods.SciDataTool.Data1D.get_axis_periodic import get_axis_periodic
@@ -33,9 +28,14 @@ except ImportError as error:
     get_axis_periodic = error
 
 try:
-    from ..Methods.SciDataTool.Data1D.has_period import has_period
+    from ..Methods.SciDataTool.Data1D.get_filter import get_filter
 except ImportError as error:
-    has_period = error
+    get_filter = error
+
+try:
+    from ..Methods.SciDataTool.Data1D.get_length import get_length
+except ImportError as error:
+    get_length = error
 
 try:
     from ..Methods.SciDataTool.Data1D.get_periodicity import get_periodicity
@@ -43,19 +43,19 @@ except ImportError as error:
     get_periodicity = error
 
 try:
+    from ..Methods.SciDataTool.Data1D.get_values import get_values
+except ImportError as error:
+    get_values = error
+
+try:
+    from ..Methods.SciDataTool.Data1D.has_period import has_period
+except ImportError as error:
+    has_period = error
+
+try:
     from ..Methods.SciDataTool.Data1D.to_linspace import to_linspace
 except ImportError as error:
     to_linspace = error
-
-try:
-    from ..Methods.SciDataTool.Data1D.get_filter import get_filter
-except ImportError as error:
-    get_filter = error
-
-try:
-    from ..Methods.SciDataTool.Data1D.check_filter import check_filter
-except ImportError as error:
-    check_filter = error
 
 
 from numpy import array, array_equal
@@ -69,24 +69,17 @@ class Data1D(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.SciDataTool .Data1D.get_values
-    if isinstance(get_values, ImportError):
-        get_values = property(
+    # cf Methods.SciDataTool .Data1D.check_filter
+    if isinstance(check_filter, ImportError):
+        check_filter = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Data1D method get_values: " + str(get_values))
+                ImportError(
+                    "Can't use Data1D method check_filter: " + str(check_filter)
+                )
             )
         )
     else:
-        get_values = get_values
-    # cf Methods.SciDataTool .Data1D.get_length
-    if isinstance(get_length, ImportError):
-        get_length = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Data1D method get_length: " + str(get_length))
-            )
-        )
-    else:
-        get_length = get_length
+        check_filter = check_filter
     # cf Methods.SciDataTool .Data1D.get_axis_periodic
     if isinstance(get_axis_periodic, ImportError):
         get_axis_periodic = property(
@@ -99,15 +92,24 @@ class Data1D(Data):
         )
     else:
         get_axis_periodic = get_axis_periodic
-    # cf Methods.SciDataTool .Data1D.has_period
-    if isinstance(has_period, ImportError):
-        has_period = property(
+    # cf Methods.SciDataTool .Data1D.get_filter
+    if isinstance(get_filter, ImportError):
+        get_filter = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Data1D method has_period: " + str(has_period))
+                ImportError("Can't use Data1D method get_filter: " + str(get_filter))
             )
         )
     else:
-        has_period = has_period
+        get_filter = get_filter
+    # cf Methods.SciDataTool .Data1D.get_length
+    if isinstance(get_length, ImportError):
+        get_length = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Data1D method get_length: " + str(get_length))
+            )
+        )
+    else:
+        get_length = get_length
     # cf Methods.SciDataTool .Data1D.get_periodicity
     if isinstance(get_periodicity, ImportError):
         get_periodicity = property(
@@ -119,6 +121,24 @@ class Data1D(Data):
         )
     else:
         get_periodicity = get_periodicity
+    # cf Methods.SciDataTool .Data1D.get_values
+    if isinstance(get_values, ImportError):
+        get_values = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Data1D method get_values: " + str(get_values))
+            )
+        )
+    else:
+        get_values = get_values
+    # cf Methods.SciDataTool .Data1D.has_period
+    if isinstance(has_period, ImportError):
+        has_period = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Data1D method has_period: " + str(has_period))
+            )
+        )
+    else:
+        has_period = has_period
     # cf Methods.SciDataTool .Data1D.to_linspace
     if isinstance(to_linspace, ImportError):
         to_linspace = property(
@@ -128,26 +148,6 @@ class Data1D(Data):
         )
     else:
         to_linspace = to_linspace
-    # cf Methods.SciDataTool .Data1D.get_filter
-    if isinstance(get_filter, ImportError):
-        get_filter = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Data1D method get_filter: " + str(get_filter))
-            )
-        )
-    else:
-        get_filter = get_filter
-    # cf Methods.SciDataTool .Data1D.check_filter
-    if isinstance(check_filter, ImportError):
-        check_filter = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Data1D method check_filter: " + str(check_filter)
-                )
-            )
-        )
-    else:
-        check_filter = check_filter
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

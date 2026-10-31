@@ -1,5 +1,5 @@
-Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value
-ref,,reference value,,float,1,,
-,,,,,,,
-Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille,
-SciDataTool,Normalization,normalize,VERSION,1,Normalization with a reference value (values/ref),,
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
+ref,,reference value,,float,1,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+SciDataTool,Normalization,normalize,VERSION,1,Normalization with a reference value (values/ref),,,

@@ -1354,14 +1354,14 @@
         "desc": "Class for axes defined as vectors",
         "is_internal": false,
         "methods": [
-            "get_values",
-            "get_length",
+            "check_filter",
             "get_axis_periodic",
-            "has_period",
-            "get_periodicity",
-            "to_linspace",
             "get_filter",
-            "check_filter"
+            "get_length",
+            "get_periodicity",
+            "get_values",
+            "has_period",
+            "to_linspace"
         ],
         "mother": "Data",
         "name": "Data1D",
@@ -1667,11 +1667,11 @@
         "desc": "Class for axes defined as linspaces",
         "is_internal": false,
         "methods": [
-            "get_values",
-            "get_length",
             "get_axis_periodic",
-            "has_period",
-            "get_periodicity"
+            "get_length",
+            "get_periodicity",
+            "get_values",
+            "has_period"
         ],
         "mother": "Data",
         "name": "DataLinspace",
@@ -10698,7 +10698,7 @@
                 "size": "",
                 "type": "function",
                 "unit": "",
-                "value": ""
+                "value": null
             }
         ]
     },
@@ -19798,14 +19798,14 @@
             "get_mag_rphiz_along",
             "get_mag_xyz_along",
             "get_rphiz_along",
-            "get_xyz_along",
             "get_vectorfield_along",
+            "get_xyz_along",
             "plot_2D_Data",
             "plot_2D_Data_Animated",
             "plot_3D_Data",
             "time_to_freq",
-            "to_xyz",
-            "to_rphiz"
+            "to_rphiz",
+            "to_xyz"
         ],
         "mother": "",
         "name": "VectorField",

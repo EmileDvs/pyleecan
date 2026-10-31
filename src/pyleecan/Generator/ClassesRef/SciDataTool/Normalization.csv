@@ -1,5 +1,5 @@
-Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value
-unit,,Normalization must be applied on axis values in this unit,,str,SI,,
-,,,,,,,
-Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille,
-SciDataTool,,,VERSION,1,Abstract class for normalizations,,
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
+unit,,Normalization must be applied on axis values in this unit,,str,SI,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+SciDataTool,,,VERSION,1,Abstract class for normalizations,,,
