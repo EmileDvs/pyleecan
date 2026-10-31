@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-
 from os import chdir, listdir, remove
 from os.path import isdir, join
 
 import pytest
 from cloudpickle import dumps
 from numpy import array, array_equal
+
 from pyleecan.Classes._check import CheckMaxError, CheckMinError, CheckTypeError
 from pyleecan.Classes._frozen import FrozenClass, FrozenError
 from pyleecan.Classes.import_all import *
@@ -253,7 +252,7 @@ def test_class_inherit(class_dict):
             == True
         )
     else:
-        assert eval("issubclass(" + class_dict["name"] + ", FrozenClass)") == True
+        assert issubclass(eval(class_dict["name"]), FrozenClass) == True
 
 
 @pytest.mark.parametrize("class_dict", class_list)
@@ -436,5 +435,10 @@ def test_class_copy(class_dict):
 
 
 if __name__ == "__main__":
+    # for class_dict0 in class_list:
+    #     # test_class_as_dict(class_dict0)
+
+    #     test_class_inherit(class_dict0)
+
     # test_class_as_dict(class_list[116])
     test_class_prop_doc(class_list[160])
