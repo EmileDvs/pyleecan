@@ -6,7 +6,7 @@ from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, comp_undersampling
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_omp_SMV():
     """
     Test the recovery of a sparse undersampled signal in the SMV (1D) situation
@@ -70,7 +70,7 @@ def test_omp_SMV():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_comp_undersampled_axe():
     """
     Test if comp_undersampled_axe is able to recover the observations - samples indices array M
@@ -92,7 +92,7 @@ def test_comp_undersampled_axe():
     np.testing.assert_array_equal(M, comp_undersampled_axe(Time, Time_under))
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_omp_dataND():
     """
     Test the recovery of a sparse undersampled signal in the MMV situation
@@ -165,7 +165,7 @@ def test_omp_dataND():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_comp_undersampling():
     """
     Test the undersampling function and that we can recover the undersampled indices

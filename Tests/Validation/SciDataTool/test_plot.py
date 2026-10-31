@@ -10,7 +10,7 @@ from pyleecan.Classes.Norm_affine import Norm_affine
 from Tests import save_validation_path
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 # @pytest.mark.DEV
 @pytest.mark.parametrize(
     ("axis1", "axis2", "plot_name"),
@@ -37,7 +37,7 @@ def test_plot_2D(axis1, axis2, plot_name):
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 # @pytest.mark.DEV
 @pytest.mark.parametrize(
     ("axis1", "axis2", "view_2D", "plot_name"),
@@ -153,5 +153,7 @@ def test_strings():
 
 
 if __name__ == "__main__":
+    test_plot_2D("time", "angle=[0,pi/4,pi/2]", "plot_2D")
+    test_plot_3D("time", r"angle{°}", True, "plot_3D_flat")
     test_normalization()
     test_strings()

@@ -6,7 +6,7 @@ from pyleecan.Classes.DataLinspace import DataLinspace
 from pyleecan.Classes.DataTime import DataTime
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_filter_meth():
     X = Data1D(
         name="loadcases",
@@ -59,7 +59,7 @@ def test_filter_meth():
     assert indices == [6, 7, 8, 9, 10, 11]
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_filter_field():
     X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
     Y = Data1D(

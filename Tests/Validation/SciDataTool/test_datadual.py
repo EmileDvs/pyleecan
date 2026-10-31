@@ -9,7 +9,7 @@ from pyleecan.Classes.DataLinspace import DataLinspace
 from pyleecan.Classes.DataTime import DataTime
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_datadual():
     f = 50
     time = np.linspace(0, 1 / f, 10, endpoint=False)

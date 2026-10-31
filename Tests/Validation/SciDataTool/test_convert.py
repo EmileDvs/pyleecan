@@ -18,7 +18,7 @@ from pyleecan.Functions.SciDataTool import NormError
 from Tests import TEST_DATA_DIR
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_units():
     time = np.linspace(0, 10, 10, endpoint=False)
     angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
@@ -55,7 +55,7 @@ def test_units():
     assert_array_almost_equal(1e-5 * field[0, :], result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_units_fft():
     time = np.linspace(0, 10, 10, endpoint=False)
     angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
@@ -88,7 +88,7 @@ def test_units_fft():
     assert_array_almost_equal(180 / np.pi * angle, result["angle"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_norm():
     f = 50
     time = np.linspace(0, 1 / f, 10, endpoint=False)
@@ -157,7 +157,7 @@ def test_norm():
     assert_array_almost_equal(np.linspace(0, 10, 10, endpoint=False), result["angle"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_setter_norm():
     """Check that you can set Normalization with the old format"""
     norm_dict = {
@@ -186,7 +186,7 @@ def test_setter_norm():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_noct():
     data = np.load(join(TEST_DATA_DIR, "pinknoise_fine_band.npy"))
     freqs = data[1, :]
@@ -227,7 +227,7 @@ def test_noct():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_dba():
     data = np.load(join(TEST_DATA_DIR, "pinknoise_fine_band.npy"))
     freqs = data[1, :]
@@ -252,7 +252,7 @@ def test_dba():
     assert_array_almost_equal(result_Hz["X"], result_elec_order["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_dba_speed_order():
     Speed = DataLinspace(
         name="speed",
@@ -290,7 +290,7 @@ def test_dba_speed_order():
     assert result["X"].shape == (11, 20, 6)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_dba_speed_order_norm():
     Revolution = DataLinspace(
         name="revolution",
@@ -334,7 +334,7 @@ def test_dba_speed_order_norm():
     assert result["X"].shape == (11, 20, 6)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_db_sum():
     Freqs = DataLinspace(
         name="freqs",

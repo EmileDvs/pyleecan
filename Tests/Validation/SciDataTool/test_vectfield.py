@@ -10,7 +10,7 @@ from pyleecan.Classes.Norm_ref import Norm_ref
 from pyleecan.Classes.VectorField import VectorField
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_one_comp():
     x = np.array(
         [
@@ -60,7 +60,7 @@ def test_one_comp():
     assert_array_almost_equal(np.zeros((8, 8)), result["comp_z"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_xyz_integration():
     f = 50
     Time = DataLinspace(
@@ -114,7 +114,7 @@ def test_xyz_integration():
     assert result["comp_x"].shape == (10,)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_xyz_rphiz():
     f = 50
     Time = DataLinspace(
@@ -177,7 +177,7 @@ def test_xyz_rphiz():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_xyz_sym():
     f = 50
     Time = DataLinspace(
@@ -235,7 +235,7 @@ def test_xyz_sym():
     assert VecField_rphiz.components["radial"].compare(VecField.components["radial"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_vectorfield():
     f = 50
     Time = DataLinspace(

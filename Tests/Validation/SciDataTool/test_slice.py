@@ -7,7 +7,7 @@ from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes.DataTime import DataTime
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 # @pytest.mark.DEV
 def test_slice():
     """Test slicing"""

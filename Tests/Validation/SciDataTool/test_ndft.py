@@ -7,7 +7,7 @@ from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_nudft_1d():
     """
     Test DFT on non-uniform frequencies
@@ -55,7 +55,7 @@ def test_nudft_1d():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_inudft_1d():
     """
     Test iDFT on non-uniform frequencies, use nudft and inudft
@@ -118,7 +118,7 @@ def test_inudft_1d():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_force_nudft_1d():
 
     time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 200))
@@ -167,7 +167,7 @@ def test_force_nudft_1d():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_nudft_2d():
     def f_2d(t, theta):
         """
@@ -230,7 +230,7 @@ def test_nudft_2d():
     np.testing.assert_array_almost_equal(result_idft["X"].real, field, decimal=3)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_nudft_2d_wavenumber():
     def f_2d(t, theta):
         """

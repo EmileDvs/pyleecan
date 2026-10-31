@@ -7,14 +7,14 @@ from numpy.random import default_rng
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.Norm_ref import Norm_ref
-from Tests import save_validation_path
+from Tests import TEST_DATA_DIR, save_validation_path
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_plot_octave():
 
     # Load data
-    spec_data = np.load(r"Tests\Data\pinknoise_third_oct.npy")
+    spec_data = np.load(join(TEST_DATA_DIR, "pinknoise_third_oct.npy"))
 
     # Define axis objects
     frequency = Data1D(

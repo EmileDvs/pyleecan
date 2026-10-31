@@ -9,7 +9,7 @@ from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.Norm_ref import Norm_ref
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along():
     f = 50
     Time = DataLinspace(
@@ -49,7 +49,7 @@ def test_get_data_along():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along_symmetry():
     f = 50
     Time = DataLinspace(
@@ -91,7 +91,7 @@ def test_get_data_along_symmetry():
     assert Field_extract.axes[0].symmetries == {"period": 2}
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along_single():
     f = 50
     Time = DataLinspace(
@@ -141,7 +141,7 @@ def test_get_data_along_single():
     assert Field_extract.axes[0].name == "time"
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along_integrate():
 
     # Test integrate / sum / mean / rms with and without anti-periodicity
@@ -288,7 +288,7 @@ def test_get_data_along_integrate():
     assert Field_int.unit == "ms2"
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along_antiderivate():
     f = 50
     Time = DataLinspace(
@@ -351,7 +351,7 @@ def test_get_data_along_antiderivate():
     assert Field_int.unit == "ms2"
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along_derivate():
     f = 50
     Time = DataLinspace(
@@ -422,7 +422,7 @@ def test_get_data_along_derivate():
     assert Field_der.unit == "ms2"
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along_to_linspace():
     """Test to_linspace method that is called in get_data_along"""
     Time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 100))
@@ -446,7 +446,7 @@ def test_get_data_along_to_linspace():
     assert_array_almost_equal(Time.get_values(), Time_lin.get_values())
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 @pytest.mark.skip(reason="still under development")
 def test_get_data_along_integrate_local():
 
@@ -495,7 +495,7 @@ def test_get_data_along_integrate_local():
     assert Field_int_loc.unit == "ms"
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_get_data_along_integrate_local_pattern():
 
     # Test integration per step with DataPattern

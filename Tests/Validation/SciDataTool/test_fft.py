@@ -12,7 +12,7 @@ from pyleecan.Classes.Norm_indices import Norm_indices
 from pyleecan.Classes.VectorField import VectorField
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft2_remove_periodicity():
     f = 50
     Nt_tot = 16
@@ -94,7 +94,7 @@ def test_fft2_remove_periodicity():
     assert_array_almost_equal(field_ift, field)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_compare_rfft_fft_irfft_ifft():
 
     Nt = 20
@@ -133,7 +133,7 @@ def test_compare_rfft_fft_irfft_ifft():
     assert_array_almost_equal(values_IFT, values_IFT2)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft1d():
     f = 50
     time = np.linspace(0, 1 / f, 10, endpoint=False)
@@ -203,7 +203,7 @@ def test_fft1d():
     assert_array_almost_equal(result["time"], time)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft2d():
 
     # %% Test&
@@ -296,7 +296,7 @@ def test_fft2d():
     assert_array_almost_equal(Field_FT.get_along("angle", "time")["X"], field)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_ifft1d():
     f = 50
     freqs = np.array([-150, -100, -50, 0, 50, 100])
@@ -350,7 +350,7 @@ def test_ifft1d():
     assert_array_almost_equal(Field_IFT.get_along("freqs")["X"], field)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_ifft2d():
 
     # %% Test 1
@@ -459,7 +459,7 @@ def test_ifft2d():
     assert_array_almost_equal(field_ift, result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_ifft2d_vector():
 
     f = 50
@@ -581,7 +581,7 @@ def test_ifft2d_vector():
     assert_array_almost_equal(field_ift, X)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_ifft2d_random():
 
     f = 50
@@ -618,7 +618,7 @@ def test_ifft2d_random():
     assert_array_almost_equal(Field_FT.get_along(*arg_list)["X"], field)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_ifft1d_random():
     # %%
     f = 50
@@ -646,7 +646,7 @@ def test_ifft1d_random():
     assert_array_almost_equal(X, result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft2d_period():
     # %%
     f = 50
@@ -689,7 +689,7 @@ def test_fft2d_period():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_ifft2d_period():
     f = 50
     freqs = np.array([0, 50, 100, 150])
@@ -724,7 +724,7 @@ def test_ifft2d_period():
     assert_array_almost_equal(field_ift[9, :], result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_init_new_object():
     # %%
     f = 50
@@ -774,7 +774,7 @@ def test_init_new_object():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft2_anti_period():
     # %%
     f = 50
@@ -822,7 +822,7 @@ def test_fft2_anti_period():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft2_anti_period_random():
     # %%
     f = 50
@@ -857,7 +857,7 @@ def test_fft2_anti_period_random():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft2_interp():
     f = 50
     time = np.linspace(0, 1 / (2 * f), 10, endpoint=False)
@@ -883,7 +883,7 @@ def test_fft2_interp():
     assert result["X"].shape == (40, 50)
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_fft1d_non_uniform(per_a=2, is_apera=True, is_add_zero_freq=False):
     """check non uniform fft1d
     TODO: solve bug for a single frequency vector"""

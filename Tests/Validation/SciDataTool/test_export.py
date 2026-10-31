@@ -9,7 +9,7 @@ from pyleecan.Classes.DataTime import DataTime
 from Tests import save_validation_path
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_export_2D():
     """Test export"""
     X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)

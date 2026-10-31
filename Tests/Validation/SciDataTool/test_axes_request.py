@@ -9,7 +9,7 @@ from pyleecan.Classes.DataTime import DataTime
 from Tests import save_validation_path
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_request_sum():
     f = 50
     Time = DataLinspace(
@@ -44,7 +44,7 @@ def test_request_sum():
     )
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_request_largest():
     X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
     Y = Data1D(

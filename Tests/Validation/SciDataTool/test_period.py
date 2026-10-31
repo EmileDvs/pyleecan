@@ -8,7 +8,7 @@ from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes.DataTime import DataTime
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_period_linspace():
     time = np.linspace(0, 10, 10, endpoint=False)
     Time = DataLinspace(
@@ -50,7 +50,7 @@ def test_period_linspace():
     assert_array_almost_equal(50, result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_period_1d():
     time = np.linspace(0, 10, 10, endpoint=False)
     Time = Data1D(
@@ -90,7 +90,7 @@ def test_period_1d():
     assert_array_almost_equal(50, result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_antiperiod_linspace():
     time = np.linspace(0, 16, 16, endpoint=False)
     Time = DataLinspace(
@@ -133,7 +133,7 @@ def test_antiperiod_linspace():
     assert_array_almost_equal(50, result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_antiperiod_1d():
     time = np.linspace(0, 16, 16, endpoint=False)
     Time = Data1D(
@@ -173,7 +173,7 @@ def test_antiperiod_1d():
     assert_array_almost_equal(50, result["X"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_period_2d():
     time = np.linspace(0, 10, 10, endpoint=False)
     Time = DataLinspace(
@@ -211,7 +211,7 @@ def test_period_2d():
     assert_array_almost_equal(angle, result["angle"])
 
 
-@pytest.mark.validation
+@pytest.mark.scidatatool
 def test_pattern():
     Slices = DataPattern(
         name="slice",
@@ -363,5 +363,9 @@ def test_period_single():
 
 if __name__ == "__main__":
     test_period_linspace()
-    test_antiperiod_linspace()
     test_period_1d()
+    test_antiperiod_linspace()
+    test_antiperiod_1d()
+    test_period_2d()
+    test_pattern()
+    test_period_single()

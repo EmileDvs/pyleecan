@@ -1,4 +1,4 @@
-from numpy import inf  # for eval
+from numpy import inf, pi  # import pi for eval  # noqa: F401
 
 from ...Classes.RequestedAxis import RequestedAxis
 from ...Functions.SciDataTool import AxisError
