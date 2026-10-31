@@ -31,7 +31,7 @@ def get_axis(self, axis, is_real):
     """
 
     if self.operation is not None:
-        module = import_module("SciDataTool.Functions.conversions")
+        module = import_module("pyleecan.Functions.conversions")
         func = getattr(module, self.operation)  # Conversion function
     if isinstance(axis, DataPattern):
         self.is_pattern = True

@@ -27,8 +27,8 @@ def change_periodicity(
         Vectorfield converted with new periodicities
     """
 
-    DataLinspace = import_class("SciDataTool.Classes", "DataLinspace")
-    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
+    DataLinspace = import_class("pyleecan.Classes", "DataLinspace")
+    DataPattern = import_class("pyleecan.Classes", "DataPattern")
 
     # Get axes list in original VectorField
     # Assumes axes are the following: time, angle, z and z is DataPattern or radius

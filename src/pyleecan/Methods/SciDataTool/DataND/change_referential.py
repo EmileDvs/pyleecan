@@ -72,14 +72,14 @@ def change_referential(
 
     """
 
-    Data1D = import_class("SciDataTool.Classes", "Data1D")
-    DataLinspace = import_class("SciDataTool.Classes", "DataLinspace")
-    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
+    Data1D = import_class("pyleecan.Classes", "Data1D")
+    DataLinspace = import_class("pyleecan.Classes", "DataLinspace")
+    DataPattern = import_class("pyleecan.Classes", "DataPattern")
 
     if is_waveform:
-        DataClass = import_class("SciDataTool.Classes", "DataTime")
+        DataClass = import_class("pyleecan.Classes", "DataTime")
     else:
-        DataClass = import_class("SciDataTool.Classes", "DataFreq")
+        DataClass = import_class("pyleecan.Classes", "DataFreq")
 
     # Get axes list
     axes_list = self.get_axes()

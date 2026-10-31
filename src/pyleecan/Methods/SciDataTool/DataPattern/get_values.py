@@ -55,7 +55,7 @@ def get_values(
 
     # fft/ifft
     if operation is not None:
-        module = import_module("SciDataTool.Functions.conversions")
+        module = import_module("pyleecan.Functions.conversions")
         func = getattr(module, operation)  # Conversion function
         values = array(func(values, is_real=is_real))
 

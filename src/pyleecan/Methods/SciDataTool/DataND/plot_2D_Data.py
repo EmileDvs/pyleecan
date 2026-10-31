@@ -147,7 +147,7 @@ def plot_2D_Data(
     """
 
     # Dynamic import to avoid import loop
-    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
+    DataPattern = import_class("pyleecan.Classes", "DataPattern")
 
     # Extract arg_list it the function called from another script with *arg_list
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:

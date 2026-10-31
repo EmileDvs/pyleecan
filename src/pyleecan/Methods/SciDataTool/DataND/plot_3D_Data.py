@@ -137,7 +137,7 @@ def plot_3D_Data(
     """
 
     # Dynamic import to avoid import loop
-    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
+    DataPattern = import_class("pyleecan.Classes", "DataPattern")
 
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]  # if called from another script with *arg_list
