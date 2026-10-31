@@ -442,3 +442,4 @@ if __name__ == "__main__":
 
     # test_class_as_dict(class_list[116])
     test_class_prop_doc(class_list[160])
+    # test_class_init_default(class_list[179])

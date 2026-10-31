@@ -1,16 +1,17 @@
-from numpy import ones, pi, array, linspace, zeros
-from os.path import join
-import pytest
+import time
 from multiprocessing import cpu_count
+from os.path import join
 
-from pyleecan.Classes.Simu1 import Simu1
+import pytest
+from numpy import array
+
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.MagFEMM import MagFEMM
-from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
 from pyleecan.Classes.OPdq import OPdq
-from pyleecan.Functions.load import load
+from pyleecan.Classes.Simu1 import Simu1
+from pyleecan.Classes.VarLoadCurrent import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR
-import time
+from pyleecan.Functions.load import load
 
 
 @pytest.mark.MagFEMM
@@ -25,7 +26,7 @@ def test_copy_out():
     # Initialization of the simulation starting point
     simu.input = InputCurrent()
     # Set time and space discretization
-    simu.input.Nt_tot = 128
+    simu.input.Nt_tot = 8 * 4
     simu.input.Na_tot = 2048
     simu.input.OP = OPdq(N0=3000, Id_ref=0, Iq_ref=0)
 
@@ -40,6 +41,8 @@ def test_copy_out():
         is_periodicity_a=True,
         is_periodicity_t=True,
         nb_worker=cpu_count(),
+        Kmesh_fineness=0.2,
+        Kgeo_fineness=0.2,
     )
     simu.force = None
     simu.struct = None
