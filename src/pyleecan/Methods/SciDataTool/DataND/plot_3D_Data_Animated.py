@@ -2,7 +2,7 @@ import imageio
 import matplotlib.pyplot as plt
 from numpy import arange, frombuffer, nanmax, nanmin
 
-from ...Functions.Plot import PARAM_2D, ifft_dict
+from ....Functions.SciDataTool.Plot import PARAM_2D, ifft_dict
 
 
 def plot_3D_Data_Animated(
