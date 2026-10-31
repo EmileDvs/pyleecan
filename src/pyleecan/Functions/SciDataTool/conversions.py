@@ -294,9 +294,13 @@ def to_dB(values, unit, ref_value=1.0):
     mask = values != 0
     try:
         convert(values, unit, "W")
-        values_dB = 10.0 * where(mask, log10(values / ref_value, where=mask), 0)
+        values_dB = 10.0 * where(
+            mask, log10(values / ref_value, where=mask, out=None), 0
+        )
     except Exception:
-        values_dB = 20.0 * where(mask, log10(values / ref_value, where=mask), 0)
+        values_dB = 20.0 * where(
+            mask, log10(values / ref_value, where=mask, out=None), 0
+        )
     return values_dB
 
 
