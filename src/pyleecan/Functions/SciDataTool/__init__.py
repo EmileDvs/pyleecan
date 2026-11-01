@@ -27,6 +27,7 @@ axes_dict = {
     "time": ["freqs", "ifft", "s"],
     "xyz": ["rphiz", "pol2cart", "m"],
 }
+axes_dict_transformation = axes_dict
 
 rev_axes_dict = {
     "wavenumber": ["angle", "fft", "dimless"],

@@ -2528,11 +2528,6 @@ class Lamination(FrozenClass):
 
         pass
 
-    class LC_VentYokeIn(LaminationCheckError):
-        """ """
-
-        pass
-
     class LC_RadiusError(LaminationCheckError):
         """ """
 
@@ -2543,13 +2538,18 @@ class Lamination(FrozenClass):
 
         pass
 
+    class LC_VentYokeIn(LaminationCheckError):
+        """ """
+
+        pass
+
 
 MachineCheckError = Lamination.MachineCheckError
 
 LaminationCheckError = Lamination.LaminationCheckError
 
-LC_VentYokeIn = Lamination.LC_VentYokeIn
-
 LC_RadiusError = Lamination.LC_RadiusError
 
 LC_VentYokeOut = Lamination.LC_VentYokeOut
+
+LC_VentYokeIn = Lamination.LC_VentYokeIn

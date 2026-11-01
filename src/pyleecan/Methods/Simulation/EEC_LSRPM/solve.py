@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 from numpy import array, pi
-from scipy.linalg import solve
+from scipy import linalg
 
 
-def solve_EEC(self, output):
+def solve(self, output):
     """Compute the parameters dict for the equivalent electrical circuit
       cf PhD thesis of SIJIE NI
       "Damper winding for noise and vibration reductionof Permanent Magnet Synchronous Machine"
@@ -76,7 +74,7 @@ def solve_EEC(self, output):
         )
         XE = array([0, ws * Phi_m, 0, ws * Phi_m])
         XU = array([U_ds, U_qs, 0, 0])
-        XI = solve(XR, XU - XE)
+        XI = linalg.solve(XR, XU - XE)
 
         output.elec.Ids_ref = XI[0]
         output.elec.Iqs_ref = XI[1]

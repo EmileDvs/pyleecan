@@ -1989,7 +1989,12 @@ class SlotW11_2(Slot):
 
         pass
 
-    class S11_2_R1CheckError(SlotCheckError):
+    class S11_2_RHCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S11_2_H1rCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1999,17 +2004,12 @@ class SlotW11_2(Slot):
 
         pass
 
-    class S11_2_RHCheckError(SlotCheckError):
-        """ """
-
-        pass
-
     class S11_2_W01CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S11_2_H1rCheckError(SlotCheckError):
+    class S11_2_R1CheckError(SlotCheckError):
         """ """
 
         pass
@@ -2021,12 +2021,12 @@ LaminationCheckError = SlotW11_2.LaminationCheckError
 
 SlotCheckError = SlotW11_2.SlotCheckError
 
-S11_2_R1CheckError = SlotW11_2.S11_2_R1CheckError
+S11_2_RHCheckError = SlotW11_2.S11_2_RHCheckError
+
+S11_2_H1rCheckError = SlotW11_2.S11_2_H1rCheckError
 
 S11_2_RWCheckError = SlotW11_2.S11_2_RWCheckError
 
-S11_2_RHCheckError = SlotW11_2.S11_2_RHCheckError
-
 S11_2_W01CheckError = SlotW11_2.S11_2_W01CheckError
 
-S11_2_H1rCheckError = SlotW11_2.S11_2_H1rCheckError
+S11_2_R1CheckError = SlotW11_2.S11_2_R1CheckError

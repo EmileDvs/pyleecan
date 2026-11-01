@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlgNsga2Deap
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - cross: module contains unsupported top-level Try statements
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,6 @@ from pyleecan.Classes.OptiGenAlg import OptiGenAlg
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Optimization.OptiGenAlgNsga2Deap.cross import cross
 from pyleecan.Classes.OptiObjective import OptiObjective
 from pyleecan.Classes.OptiDesignVarSet import OptiDesignVarSet
 from pyleecan.Classes.OptiDesignVarInterval import OptiDesignVarInterval
@@ -33,8 +28,8 @@ from pyleecan.Classes.Output import Output
 from pyleecan.Classes.XOutput import XOutput
 from pyleecan.Classes.VarSimu import VarSimu
 import random, numpy as np, matplotlib.pyplot as plt
+from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 from collections.abc import Iterable
-from deap.tools import mutPolynomialBounded, selNSGA2
 from pyleecan.Methods.Output.XOutput import _get_symbol_data_
 from pyleecan.Methods.Optimization.OptiGenAlgNsga2Deap.solve import (
     print_gen_simu,
@@ -232,7 +227,37 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         )
 
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.cross
-    cross = cross
+    def cross(self, indiv1, indiv2):
+        """Perform the crossover (One crossover by default)
+
+        Parameters
+        ----------
+        self : OptiGenNsga2Deap
+            Optimization solver
+
+        indiv1 : individual
+            first individual to modify
+        indiv2 : individual
+            second individual to modify
+
+        Returns
+        -------
+        is_cross : bool
+            True if the crossover append
+        """
+
+        if random.random() < self.p_cross:
+            if self.crossover == None:
+                if cxOnePoint == None:
+                    raise ImportError("deap module is needed.")
+                else:
+                    cxOnePoint(indiv1, indiv2)
+            else:
+                self.crossover(indiv1, indiv2)
+
+            return True
+        else:
+            return False
 
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.delete_toolbox
     def delete_toolbox(self):

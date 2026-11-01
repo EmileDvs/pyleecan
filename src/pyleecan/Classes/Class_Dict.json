@@ -1365,7 +1365,7 @@
         ],
         "mother": "Data",
         "name": "Data1D",
-        "package": "SciDataTool ",
+        "package": "SciDataTool",
         "path": "src/pyleecan/Generator/ClassesRef/SciDataTool/Data1D.csv",
         "properties": [
             {

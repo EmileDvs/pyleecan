@@ -1304,12 +1304,12 @@ class SlotW10(Slot):
 
         pass
 
-    class S10_H1rCheckError(SlotCheckError):
+    class S10_W01CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S10_W01CheckError(SlotCheckError):
+    class S10_H1rCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1323,6 +1323,6 @@ SlotCheckError = SlotW10.SlotCheckError
 
 S10_W02CheckError = SlotW10.S10_W02CheckError
 
-S10_H1rCheckError = SlotW10.S10_H1rCheckError
-
 S10_W01CheckError = SlotW10.S10_W01CheckError
+
+S10_H1rCheckError = SlotW10.S10_H1rCheckError

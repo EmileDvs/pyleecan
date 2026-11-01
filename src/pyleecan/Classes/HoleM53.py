@@ -1674,11 +1674,6 @@ class HoleM53(HoleMag):
 
         pass
 
-    class S53_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM53 is None"""
-
-        pass
-
     class S53_Rext0CheckError(SlotCheckError):
         """ """
 
@@ -1689,12 +1684,17 @@ class HoleM53(HoleMag):
 
         pass
 
-    class S53_Rext1CheckError(SlotCheckError):
+    class S53_W5CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S53_W5CheckError(SlotCheckError):
+    class S53_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM53 is None"""
+
+        pass
+
+    class S53_Rext1CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1708,12 +1708,12 @@ SlotCheckError = HoleM53.SlotCheckError
 
 Slot53InterError = HoleM53.Slot53InterError
 
-S53_NoneError = HoleM53.S53_NoneError
-
 S53_Rext0CheckError = HoleM53.S53_Rext0CheckError
 
 S53_W4CheckError = HoleM53.S53_W4CheckError
 
-S53_Rext1CheckError = HoleM53.S53_Rext1CheckError
-
 S53_W5CheckError = HoleM53.S53_W5CheckError
+
+S53_NoneError = HoleM53.S53_NoneError
+
+S53_Rext1CheckError = HoleM53.S53_Rext1CheckError

@@ -4,11 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataND
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - plot_2D_Data: import name 'axes_dict' refers to different sources (pyleecan.Functions.SciDataTool.axes_dict and pyleecan.Functions.SciDataTool.Plot.axes_dict)
-# - plot_3D_Data: import name 'axes_dict' refers to different sources (pyleecan.Functions.SciDataTool.axes_dict and pyleecan.Functions.SciDataTool.Plot.axes_dict)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -22,8 +17,6 @@ from pyleecan.Classes.Data import Data
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.SciDataTool.DataND.plot_2D_Data import plot_2D_Data
-from pyleecan.Methods.SciDataTool.DataND.plot_3D_Data import plot_3D_Data
 import numpy as np, csv, imageio, matplotlib.pyplot as plt
 from pyleecan.Functions.SciDataTool.derivation_integration import (
     antiderivate,
@@ -39,7 +32,7 @@ from pyleecan.Functions.SciDataTool.sum_mean import (
     root_sum_square,
 )
 from pyleecan.Functions.SciDataTool import (
-    axes_dict,
+    axes_dict_transformation,
     rev_axes_dict,
     NormError,
     UnitError,
@@ -73,6 +66,9 @@ from pyleecan.Methods.SciDataTool.DataND.export_along import format_matrix
 from os.path import join
 from pyleecan.Functions.SciDataTool.Plot import (
     unit_dict,
+    COLORS,
+    axes_dict,
+    norm_dict,
     PARAM_3D,
     fft_dict,
     ifft_dict,
@@ -86,6 +82,10 @@ from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
 from pyleecan.Functions.SciDataTool.parser import read_input_strings
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, omp
+from pyleecan.Classes.Norm_indices import Norm_indices
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
+from pyleecan.Functions.SciDataTool.Plot.plot_4D import plot_4D
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -228,17 +228,25 @@ class DataND(Data):
                         transforms.append("fft")
             if axis_requested.index is None:
                 # Check if requested axis is in correspondance dicts
-                if axis_name in axes_dict.keys():
+                if axis_name in axes_dict_transformation.keys():
                     for index, axis in enumerate(self.axes):
-                        if axis.name == axes_dict[axis_name][0]:
-                            axis_requested.corr_name = axes_dict[axis_name][0]
-                            axis_requested.corr_unit = axes_dict[axis_name][2]
+                        if axis.name == axes_dict_transformation[axis_name][0]:
+                            axis_requested.corr_name = axes_dict_transformation[
+                                axis_name
+                            ][0]
+                            axis_requested.corr_unit = axes_dict_transformation[
+                                axis_name
+                            ][2]
                             axis_requested.is_components = axis.is_components
                             axis_requested.operation = (
-                                axes_dict[axis_name][0] + "_to_" + axis_name
+                                axes_dict_transformation[axis_name][0]
+                                + "_to_"
+                                + axis_name
                             )
-                            axis_requested.transform = axes_dict[axis_name][1]
-                            transforms.append(axes_dict[axis_name][1])
+                            axis_requested.transform = axes_dict_transformation[
+                                axis_name
+                            ][1]
+                            transforms.append(axes_dict_transformation[axis_name][1])
                             axis_requested.index = index
                     if axis_requested.index is None:
                         # Axis does not exist and is ignored
@@ -1725,13 +1733,13 @@ class DataND(Data):
                         is_components = axis.is_components
                         axis_values = results[axis_name]
                         ax_unit = axis.unit
-                    elif axis_name in axes_dict:
-                        if axes_dict[axis_name][0] == axis.name:
+                    elif axis_name in axes_dict_transformation:
+                        if axes_dict_transformation[axis_name][0] == axis.name:
                             index = i
                             name = axis_name
                             is_components = axis.is_components
                             axis_values = results[axis_name]
-                            ax_unit = axes_dict[axis_name][2]
+                            ax_unit = axes_dict_transformation[axis_name][2]
                     elif axis_name in rev_axes_dict:
                         if rev_axes_dict[axis_name][0] == axis.name:
                             index = i
@@ -2279,7 +2287,846 @@ class DataND(Data):
         return recovered_dataND
 
     # cf Methods.SciDataTool.DataND.plot_2D_Data
-    plot_2D_Data = plot_2D_Data
+    def plot_2D_Data(
+        self,
+        *arg_list,
+        axis_data=None,
+        is_norm=False,
+        unit="SI",
+        overall_axes=[],
+        contribution_axis=None,
+        data_list=[],
+        legend_list=[],
+        color_list=None,
+        linestyles=None,
+        linewidth_list=[1.5],
+        save_path=None,
+        x_min=None,
+        x_max=None,
+        y_min=None,
+        y_max=None,
+        is_logscale_x=False,
+        is_logscale_y=False,
+        is_disp_title=True,
+        is_grid=True,
+        is_auto_ticks=True,
+        is_auto_range=True,
+        xlabel=None,
+        ylabel=None,
+        title=None,
+        fig=None,
+        ax=None,
+        barwidth=100,
+        type_plot=None,
+        fund_harm_dict=None,
+        is_show_fig=None,
+        win_title=None,
+        thresh=None,
+        font_name="arial",
+        font_size_title=12,
+        font_size_label=10,
+        font_size_legend=8,
+        is_show_legend=True,
+        is_outside_legend=False,
+        is_frame_legend=True,
+        is_indlabels=False,
+        annotations=None,
+        is_export=False,
+    ):
+        """Plots a field as a function of time
+
+        Parameters
+        ----------
+        data : Data
+            a Data object
+        *arg_list : list of str
+            arguments to specify which axes to plot
+        is_norm : bool
+            boolean indicating if the field must be normalized
+        unit : str
+            unit in which to plot the field
+        data_list : list
+            list of Data objects to compare
+        legend_list : list
+            list of legends to use for each Data object (including reference one) instead of data.name
+        color_list : list
+            list of colors to use for each Data object
+        save_path : str
+            full path including folder, name and extension of the file to save if save_path is not None
+        x_min : float
+            minimum value for the x-axis
+        x_max : float
+            maximum value for the x-axis
+        y_min : float
+            minimum value for the y-axis
+        y_max : float
+            maximum value for the y-axis
+        is_logscale_x : bool
+            boolean indicating if the x-axis must be set in logarithmic scale
+        is_logscale_y : bool
+            boolean indicating if the y-axis must be set in logarithmic scale
+        is_disp_title : bool
+            boolean indicating if the title must be displayed
+        is_grid : bool
+            boolean indicating if the grid must be displayed
+        is_auto_ticks : bool
+            in fft, adjust ticks to freqs (deactivate if too close)
+        is_auto_range : bool
+            in fft, display up to 1% of max
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            ax on which to plot the data
+        barwidth : float
+            barwidth scaling factor, only if type_plot = "bargraph"
+        type_plot : str
+            type of 2D graph : "curve", "bargraph", "barchart" or "quiver"
+        fund_harm_dict : dict
+            Dict containing axis name as key and frequency/order/wavenumber of fundamental harmonic as value to display fundamental harmonic in red in the fft
+        is_show_fig : bool
+            True to show figure after plot
+        win_title : str
+            Title of the plot window
+        thresh : float
+            threshold for automatic fft ticks
+        is_outside_legend : bool
+            True to display legend outside the graph
+        is_frame_legend : bool
+            True to display legend in a frame
+        """
+
+        # Dynamic import to avoid import loop
+        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+
+        # Extract arg_list it the function called from another script with *arg_list
+        if len(arg_list) == 1 and type(arg_list[0]) == tuple:
+            arg_list = arg_list[0]
+
+        axes_names = [
+            axis.name for axis in read_input_strings(arg_list, axis_data=axis_data)
+        ]
+
+        # Fix axes order
+        arg_list_along = fix_axes_order(
+            [axis.name for axis in self.get_axes()], arg_list
+        )
+
+        # In case of 1D fft, keep only positive wavenumbers
+        for i, arg in enumerate(arg_list_along):
+            if "wavenumber" in arg and "=" not in arg and "[" not in arg:
+                liste = list(arg_list_along)
+                liste[i] = arg.replace("wavenumber", "wavenumber>0")
+                arg_list_along = tuple(liste)
+
+        if color_list == [] or color_list is None:
+            color_list = COLORS
+
+        new_color_list = color_list.copy()
+
+        # Set unit
+        if unit == "SI":
+            unit = self.unit
+
+        # Detect if is fft, build ylabel
+        if "dB" in unit and "ref" in self.normalizations:
+            unit_str = (
+                "["
+                + unit
+                + " re. "
+                + str(self.normalizations["ref"].ref)
+                + " $"
+                + self.unit
+                + "$]"
+            )
+        else:
+            unit_str = r"$[" + unit + "]$"
+        is_fft = False
+        if (
+            any("wavenumber" in s for s in arg_list)
+            or any("freqs" in s for s in arg_list)
+        ) and type_plot != "curve":
+            is_fft = True
+            if self.symbol == "Magnitude":
+                if ylabel is None:
+                    ylabel = "Magnitude " + unit_str
+            else:
+                if ylabel is None:
+                    ylabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
+        else:
+            if is_norm:
+                if ylabel is None:
+                    ylabel = (
+                        r"$\frac{"
+                        + self.symbol
+                        + "}{"
+                        + self.symbol
+                        + "_0}\\,$"
+                        + unit_str
+                    )
+            else:
+                if self.symbol == "Magnitude":
+                    if ylabel is None:
+                        ylabel = "Magnitude " + unit_str
+                else:
+                    if ylabel is None:
+                        ylabel = r"$" + self.symbol + "\\,$" + unit_str
+
+        # Extract field and axes
+        Xdatas = []
+        Ydatas = []
+        data_list2 = [self] + data_list
+        for i, d in enumerate(data_list2):
+            if is_fft or "dB" in unit:
+                result = d.get_magnitude_along(
+                    *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
+                )
+                if i == 0:
+                    axes_list = result.pop("axes_list")
+                    axes_dict_other = result.pop("axes_dict_other")
+                    result_0 = result
+            else:
+                result = d.get_along(
+                    *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
+                )
+                if i == 0:
+                    axes_list = result.pop("axes_list")
+                    axes_dict_other = result.pop("axes_dict_other")
+                    result_0 = result
+            Ydatas.append(result.pop(d.symbol))
+            # in string case not overlay, Xdatas is a linspace
+            if (
+                axes_list[list(result.keys()).index(axes_names[0])].is_components
+                and axes_list[list(result.keys()).index(axes_names[0])].extension
+                != "list"
+            ):
+                xdata = np.linspace(
+                    0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]])
+                )
+            else:
+                xdata = result[axes_names[0]]
+            Xdatas.append(xdata)
+
+        # Build xlabel and title
+        title1 = self.name[0].capitalize() + self.name[1:] + " "
+        title2 = "for "
+        for axis in axes_list:
+            if axis.unit in norm_dict and axis.unit != "Hz":
+                name = norm_dict[axis.unit].split(" [")[0]
+            elif axis.name in axes_dict:
+                name = axes_dict[axis.name]
+            else:
+                name = axis.name
+            if (
+                axis.extension
+                in [
+                    "whole",
+                    "interval",
+                    "oneperiod",
+                    "antiperiod",
+                    "smallestperiod",
+                    "axis_data",
+                    "list",
+                ]
+                and len(axis.values) > 1
+                or (len(axis.values) == 1 and len(axes_list) == 1)
+            ):
+                if axis.unit == "SI":
+                    if axis.name in unit_dict:
+                        axis_unit = unit_dict[axis.name]
+                    else:
+                        axis_unit = axis.unit
+                    if xlabel is None:
+                        xlabel = (
+                            name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
+                        )
+                    main_axis_name = name
+                elif axis.unit in norm_dict:
+                    if xlabel is None:
+                        xlabel = norm_dict[axis.unit]
+                    if axis.unit == "Hz":
+                        main_axis_name = "frequency"
+                    else:
+                        main_axis_name = axis.unit
+                else:
+                    axis_unit = axis.unit
+                    if xlabel is None:
+                        xlabel = (
+                            name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
+                        )
+                    main_axis_name = name
+                if (
+                    axis.name == "angle"
+                    and axis.unit == "°"
+                    and round(np.nanmax(axis.values) / 6) % 5 == 0
+                ):
+                    xticks = [i * round(np.nanmax(axis.values) / 6) for i in range(7)]
+                else:
+                    xticks = None
+                if (
+                    axes_list[list(result.keys()).index(axes_names[0])].is_components
+                    and not self.get_axes()[0].is_overlay
+                ):
+                    xticklabels = result[axes_names[0]]
+                    xticks = Xdatas[0]
+                else:
+                    xticklabels = None
+                    xticks = None
+            else:
+                if axis.corr_unit == "SI":
+                    if axis.name in unit_dict:
+                        axis_unit = unit_dict[axis.name]
+                    else:
+                        axis_unit = axis.unit
+                elif axis.corr_unit in norm_dict and axis.corr_unit != "Hz":
+                    axis_unit = norm_dict[axis.corr_unit]
+                else:
+                    axis_unit = axis.unit
+
+                if isinstance(result_0[axis.name], str):
+                    title2 += name + "=" + result_0[axis.name]
+                else:
+                    if isinstance(result_0[axis.name][0], str):
+                        axis_str = result_0[axis.name][0]
+                    else:
+                        if result_0[axis.name][0] > 10:
+                            fmt = "{:.5g}"
+                        else:
+                            fmt = "{:.3g}"
+                        axis_str = np.array2string(
+                            result_0[axis.name], formatter={"float_kind": fmt.format}
+                        ).replace(" ", ", ")
+
+                    if len(result_0[axis.name]) == 1:
+                        axis_str = axis_str.strip("[]")
+
+                    index = None
+                    if axis.is_pattern and len(axis.values) == 1:
+                        for axis_obj in self.get_axes():
+                            if axis_obj.name == axis.name:
+                                index = axis.indices[0]
+
+                    title2 += (
+                        name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "]"
+                    )
+                    if index is not None:
+                        title2 += " (slice " + str(index + 1) + "), "
+                    else:
+                        title2 += ", "
+
+        # Title part 3 containing axes that are here but not involved in requested axes
+        title3 = ""
+        for axis_name in axes_dict_other:
+            is_display = True
+            for axis in self.axes:
+                if axis.name == axis_name:
+                    if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
+                        is_display = False
+            if is_display:
+                if isinstance(axes_dict_other[axis_name][0], str):
+                    title3 += axis_name + "=" + axes_dict_other[axis_name][0]
+                else:
+                    if axes_dict_other[axis_name][0] > 10:
+                        fmt = "{:.5g}"
+                    else:
+                        fmt = "{:.3g}"
+                    title3 += (
+                        axis_name
+                        + "="
+                        + np.array2string(
+                            axes_dict_other[axis_name][0],
+                            formatter={"float_kind": fmt.format},
+                        ).replace(" ", ", ")
+                        + " ["
+                        + axes_dict_other[axis_name][1]
+                        + "], "
+                    )
+
+        if title2 == "for " and title3 == "":
+            title2 = ""
+
+        # Detect discontinuous axis (Norm_indices) to use bargraph
+        for axis in axes_list:
+            if axis.unit in self.axes[axis.index].normalizations:
+                if isinstance(
+                    self.axes[axis.index].normalizations[axis.unit], Norm_indices
+                ):
+                    type_plot = "bargraph"
+
+        # Detect how many curves are overlaid, build legend and color lists
+        if legend_list == [] and data_list != []:
+            legend_list = [d.name for d in data_list2]
+        elif legend_list == []:
+            legend_list = ["" for d in data_list2]
+        legends = []
+        # Prepare colors
+        linestyle_list = linestyles
+        for i, d in enumerate(data_list2):
+            is_overlay = False
+            for axis in axes_list:
+                if axis.extension == "list" and len(axis.values) > 1:
+                    is_overlay = True
+                    if linestyles is None:
+                        linestyles = ["dashed"]
+                    n_curves = len(axis.values)
+                    if axis.unit == "SI":
+                        if axis.name in unit_dict:
+                            axis_unit = unit_dict[axis.name]
+                        else:
+                            axis_unit = axis.unit
+                    elif axis.unit in norm_dict:
+                        axis_unit = norm_dict[axis.unit]
+                    else:
+                        axis_unit = axis.unit
+                    if len(d.axes[axis.index].get_values()) > 1:
+                        legends += [
+                            (
+                                legend_list[i]
+                                + " "
+                                + axis.name
+                                + "="
+                                + axis.values.tolist()[j].replace(";", "")
+                                + " "
+                                + axis_unit
+                                if isinstance(axis.values.tolist()[j], str)
+                                else legend_list[i]
+                                + " "
+                                + axis.name
+                                + "="
+                                + "%.3g" % axis.values.tolist()[j]
+                                + " "
+                                + axis_unit
+                            )
+                            .replace("SI", "")
+                            .replace(" []", "")
+                            for j in range(n_curves)
+                        ]
+                    else:
+                        legends += [legend_list[i]]
+
+            if not is_overlay:
+                legends += [legend_list[i]]
+                # Adjust colors in non overlay case with overlay axis
+                if len(data_list2) > 1:
+                    for axis in self.get_axes():
+                        if axis.is_overlay and len(color_list) > len(axis.values):
+                            new_color_list[1:] = color_list[len(axis.values) :]
+
+        # Split Ydatas if the plot overlays several curves
+        if is_overlay:
+            Ydata = []
+            for d in Ydatas:
+                if d.ndim != 1:
+                    axis_index = np.where(np.array(d.shape) == n_curves)[0]
+                    if axis_index.size > 1:
+                        print("WARNING, several axes with same dimensions")
+                    Ydata += np.split(d, n_curves, axis=axis_index[-1])
+                else:
+                    Ydata += [d]
+            Ydatas = [np.squeeze(d) for d in Ydata]
+            Xdata = []
+            for i in range(len(data_list2)):
+                Xdata += [Xdatas[i] for x in range(n_curves)]
+            Xdatas = Xdata
+
+        # Finish title
+        if title is None:
+            # Reformat in case of operation
+            for ope in ["max", "min", "mean"]:
+                if "=" + ope in title2:
+                    title2 = ""
+                    title1 = (
+                        ope[0].capitalize()
+                        + ope[1:]
+                        + " "
+                        + title1[0].lower()
+                        + title1[1:]
+                    )
+
+            # Concatenate all title parts
+            if is_overlay:
+                title = title1 + title3
+            else:
+                title = title1 + title2 + title3
+
+            # Remove last coma due to title2 or title3
+            title = title.rstrip(", ")
+
+            # Remove dimless and quotes
+            title = title.replace("SI", "").replace("[]", "").replace("'", "")
+
+        xlabel = xlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+        ylabel = ylabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+
+        # Overall computation
+        if overall_axes != []:
+            if self.unit == "W":
+                op = "=sum"
+            else:
+                op = "=rss"
+            arg_list_ovl = [0 for i in range(len(arg_list))]
+            # Add sum to overall_axes
+            for axis in overall_axes:
+                is_match = False
+                for i, arg in enumerate(arg_list):
+                    if axis in arg:
+                        is_match = True
+                        arg_list_ovl[i] = axis + op
+                if not is_match:
+                    arg_list_ovl.append(axis + op)
+            # Add other requested axes
+            for i, arg in enumerate(arg_list):
+                if arg_list_ovl[i] == 0:
+                    arg_list_ovl[i] = arg
+            if is_fft or "dB" in unit:
+                result = self.get_magnitude_along(
+                    *arg_list_ovl, unit=unit, axis_data=axis_data
+                )
+            else:
+                result = self.get_along(*arg_list_ovl, unit=unit, axis_data=axis_data)
+            Y_overall = result[self.symbol]
+            # in string case not overlay, Xdatas is a linspace
+            if (
+                axes_list[list(result.keys()).index(axes_names[0])].is_components
+                and axes_list[list(result.keys()).index(axes_names[0])].extension
+                != "list"
+            ):
+                xdata = np.linspace(
+                    0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]])
+                )
+            else:
+                xdata = result[list(result)[0]]
+            Ydatas.insert(0, Y_overall)
+            Xdatas.insert(0, xdata)
+            new_color_list = new_color_list.copy()
+            new_color_list.insert(0, "#000000")
+            legends.insert(0, "Overall")
+
+        # Contribution computation
+        if contribution_axis is not None:
+            contribution_name = contribution_axis.split("[")[0]
+            selection = contribution_axis.split("[")[1].rstrip("]").split(",")
+            contrib_axis = self.get_axes(contribution_name)[0]
+            type_plot = "stack"
+            OVL = Y_overall
+            if True in ["sum" in arg for arg in arg_list_along]:
+                sum_index = ["sum" in arg for arg in arg_list_along].index(True)
+            else:
+                sum_index = ["rss" in arg for arg in arg_list_along].index(True)
+            contrib_index = None
+            if contribution_name in [axis.name for axis in axes_list]:
+                contrib_index = [axis.name for axis in axes_list].index(
+                    contribution_name
+                )
+            contrib_array = np.zeros((contrib_axis.get_length(), len(Y_overall)))
+            for i in range(contrib_axis.get_length()):
+                if unit == "dBA":
+                    arg_list_new = [
+                        (
+                            axis.name
+                            if axis.name != contribution_name
+                            else contribution_name + "[" + str(i) + "]"
+                        )
+                        for axis in self.get_axes()
+                    ]
+                    contrib = self.get_magnitude_along(*arg_list_new, unit="SI")[
+                        self.symbol
+                    ]
+                    symbol = "AS" + self.symbol.capitalize() + "L"
+                    name = (
+                        "Sound " + self.name.lower().replace("acoustic ", "") + " Level"
+                    )
+                    A_weighting = (
+                        self.get_magnitude_along(*arg_list_new, unit="dBA")[self.symbol]
+                        - self.get_magnitude_along(*arg_list_new, unit="dB")[
+                            self.symbol
+                        ]
+                    )
+                    if self.unit == "W":
+                        upper_sum = np.sum(
+                            10 ** (0.1 * A_weighting)
+                            * contrib
+                            / self.normalizations["ref"].ref,
+                            axis=sum_index,
+                        )
+                        cont = upper_sum / (10 ** (0.1 * OVL))
+                    else:
+                        upper_sum = np.sum(
+                            10 ** (0.1 * A_weighting) * contrib**2, axis=sum_index
+                        )
+                        cont = upper_sum / (
+                            (self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL)
+                        )
+                elif unit == "dB":
+                    arg_list_new = [
+                        (
+                            arg
+                            if contribution_name not in arg
+                            else contribution_name + "[" + str(i) + "]"
+                        )
+                        for arg in arg_list_along
+                    ]
+                    contrib = self.get_magnitude_along(*arg_list_new, unit="SI")[
+                        self.symbol
+                    ]
+                    if "acoustic" in self.name.lower():
+                        symbol = "S" + self.symbol.capitalize() + "L"
+                        name = (
+                            "Sound "
+                            + self.name.lower().replace("acoustic ", "")
+                            + " Level"
+                        )
+                    else:
+                        symbol = self.symbol
+                        name = self.name
+                    if self.unit == "W":
+                        cont = contrib / (
+                            self.normalizations["ref"].ref * 10 ** (0.1 * OVL)
+                        )
+                    else:
+                        cont = contrib**2 / (
+                            (self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL)
+                        )
+                else:
+                    symbol = self.symbol
+                    name = self.name
+                    if self.unit == "W":
+                        cont = Ydatas[i + 1] / OVL
+                    else:
+                        cont = Ydatas[i + 1] ** 2 / OVL**2
+                contrib_array[i, :] = cont * 100
+            # Remove small contributions
+            # Iloads = where(sqrt(np_sum(contrib_array ** 2, 1)) > 1e-2)[0]
+            # Sort in decreasing order
+            Isort = np.argsort(-np.sqrt(np.sum(contrib_array**2, 1)), axis=0)
+            Ydatas = [Ydatas[0]]
+            legends = [r"100% (overall $" + symbol + "$)"]
+            new_color_list = [new_color_list[0]]
+            for i in range(len(Isort)):
+                if (
+                    contrib_index is not None
+                    and axes_list[contrib_index].indices is not None
+                    and "all" in selection
+                ):
+                    if Isort[i] in axes_list[contrib_index].indices:
+                        Ydatas.append(contrib_array[Isort[i], :])
+                        legends.append(contrib_axis.values[Isort[i]])
+                        new_color_list.append(color_list[i % (len(color_list))])
+                elif "all" in selection or all(
+                    [s in contrib_axis.values[Isort[i]] for s in selection]
+                ):
+                    Ydatas.append(contrib_array[Isort[i], :])
+                    legends.append(contrib_axis.values[Isort[i]])
+                    new_color_list.append(color_list[i % (len(color_list))])
+            sel_str = ""
+            if "all" not in selection:
+                if "stator" in selection:
+                    sel_str += " applied to stator"
+                elif "rotor" in selection:
+                    sel_str += " applied to rotor"
+                if "radial" in selection:
+                    sel_str += " in radial direction"
+                elif "circ." in selection:
+                    sel_str += " in circumferential direction"
+                title = " ".join(selection).capitalize()
+            else:
+                title = axes_dict[contribution_name].capitalize()
+            ylabel = name + " contribution [%]"
+            title = "Contribution of magnetic Load Cases" + sel_str
+
+        # Deactivate legend if only one item
+        if type_plot == "point":
+            legends = []
+
+        if "dB" in unit:  # Replace <=0 by nans
+            for ydata in Ydatas:
+                ydata[ydata <= 0] = np.nan
+
+        # Call generic plot function
+        if is_fft:
+            if thresh is None:
+                if self.normalizations is not None and "ref" in self.normalizations:
+                    thresh = self.normalizations["ref"].ref
+                else:
+                    thresh = 0.02
+
+            freqs = Xdatas[0]
+            if "dB" in unit:
+                indices = [
+                    ind
+                    for ind, y in enumerate(Ydatas[0])
+                    if abs(y)
+                    > max(10 * np.log10(thresh) + abs(np.nanmax(Ydatas[0])), 0)
+                ]
+            else:
+                if Ydatas[0].size == 1:
+                    indices = [0]
+                else:
+                    indices = [
+                        ind
+                        for ind, y in enumerate(Ydatas[0])
+                        if abs(y) > abs(thresh * np.nanmax(Ydatas[0]))
+                    ]
+            xticks = np.unique(np.insert(freqs[indices], 0, 0))
+
+            if is_auto_range:
+                if len(xticks) > 1:
+                    if x_min is None:
+                        x_min = xticks[0]
+                    else:
+                        x_min = max(x_min, xticks[0])
+                    if x_max is None:
+                        x_max = xticks[-1]
+                    else:
+                        x_max = min(x_max, xticks[-1])
+                else:
+                    if x_min is None:
+                        x_min = np.nanmin(freqs)
+                    else:
+                        x_min = max(x_min, np.nanmin(freqs))
+                    if x_max is None:
+                        x_max = np.nanmax(freqs)
+                    else:
+                        x_max = min(x_max, np.nanmax(freqs))
+
+            else:
+                if x_min is None:
+                    x_min = np.nanmin(freqs)
+                if x_max is None:
+                    x_max = np.nanmax(freqs)
+
+            x_min = x_min - x_max * 0.05
+            x_max = x_max * 1.05
+
+            if (
+                len(xticks) == 0
+                or (
+                    len(xticks) > 20
+                    and not axes_list[
+                        list(result.keys()).index(axes_names[0])
+                    ].is_components
+                )
+                or not is_auto_ticks
+            ):
+                xticks = None
+
+            # Force bargraph for fft if type_graph not specified
+            if type_plot is None:
+                type_plot = "bargraph"
+
+            # Option to draw fundamental harmonic in red
+            if not fund_harm_dict:
+                fund_harm = None
+            else:
+                # Activate the option only if main axis is in dict and only one Data is plotted
+                if main_axis_name in fund_harm_dict and len(Ydatas) == 1:
+                    fund_harm = fund_harm_dict[main_axis_name]
+                else:
+                    # Deactivate the option
+                    fund_harm = None
+
+            if is_export:
+                return Xdatas, Ydatas, title, xlabel, ylabel, legends
+            plot_2D(
+                Xdatas,
+                Ydatas,
+                legend_list=legends,
+                color_list=new_color_list,
+                linestyle_list=linestyle_list,
+                linewidth_list=linewidth_list,
+                fig=fig,
+                ax=ax,
+                title=title,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                type_plot=type_plot,
+                x_min=x_min,
+                x_max=x_max,
+                y_min=y_min,
+                y_max=y_max,
+                is_logscale_x=is_logscale_x,
+                is_logscale_y=is_logscale_y,
+                is_disp_title=is_disp_title,
+                is_grid=is_grid,
+                xticks=xticks,
+                xticklabels=xticklabels,
+                save_path=save_path,
+                barwidth=barwidth,
+                fund_harm=fund_harm,
+                is_show_fig=is_show_fig,
+                win_title=win_title,
+                font_name=font_name,
+                font_size_title=font_size_title,
+                font_size_label=font_size_label,
+                font_size_legend=font_size_legend,
+                is_show_legend=is_show_legend,
+                is_outside_legend=is_outside_legend,
+                is_frame_legend=is_frame_legend,
+                is_indlabels=is_indlabels,
+            )
+
+        else:
+            # Force curve plot if type_plot not specified
+            if type_plot is None:
+                type_plot = "curve"
+            annot = None
+            # Hidden annotations
+            if annotations is not None:
+                try:
+                    annot = list()
+                    for ii in range(len(self.get_axes(annotations[0])[0].get_values())):
+                        if annotations[2] == "max":
+                            index = np.argmax(np.take(result[self.symbol], ii, axis=0))
+                            annot.append("main " + annotations[1].rstrip("s") + ": ")
+                    # Keep only requested indices
+                    annot = np.array(annot)[
+                        axes_list[
+                            [axis.name for axis in axes_list].index(annotations[0])
+                        ].indices
+                    ].tolist()
+                    if len(overall_axes) != 0:
+                        annot.insert(0, "Overall")
+                except Exception:
+                    pass
+
+            if is_export:
+                return Xdatas, Ydatas, title, xlabel, ylabel, legends
+            plot_2D(
+                Xdatas,
+                Ydatas,
+                legend_list=legends,
+                color_list=new_color_list,
+                fig=fig,
+                ax=ax,
+                title=title,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                type_plot=type_plot,
+                x_min=x_min,
+                x_max=x_max,
+                y_min=y_min,
+                y_max=y_max,
+                is_logscale_x=is_logscale_x,
+                is_logscale_y=is_logscale_y,
+                is_disp_title=is_disp_title,
+                is_grid=is_grid,
+                xticks=xticks,
+                xticklabels=xticklabels,
+                barwidth=barwidth,
+                linestyle_list=linestyle_list,
+                linewidth_list=linewidth_list,
+                save_path=save_path,
+                is_show_fig=is_show_fig,
+                win_title=win_title,
+                font_name=font_name,
+                font_size_title=font_size_title,
+                font_size_label=font_size_label,
+                font_size_legend=font_size_legend,
+                is_show_legend=is_show_legend,
+                is_outside_legend=is_outside_legend,
+                is_frame_legend=is_frame_legend,
+                is_indlabels=is_indlabels,
+                annotations=annot,
+            )
 
     # cf Methods.SciDataTool.DataND.plot_2D_Data_Animated
     def plot_2D_Data_Animated(
@@ -2397,7 +3244,732 @@ class DataND(Data):
         imageio.mimsave(save_path, images, format="GIF-PIL", fps=fps)
 
     # cf Methods.SciDataTool.DataND.plot_3D_Data
-    plot_3D_Data = plot_3D_Data
+    def plot_3D_Data(
+        self,
+        *arg_list,
+        axis_data=None,
+        is_norm=False,
+        unit="SI",
+        save_path=None,
+        x_min=None,
+        x_max=None,
+        y_min=None,
+        y_max=None,
+        z_min=None,
+        z_max=None,
+        z_range=None,
+        is_auto_ticks=True,
+        is_auto_range=True,
+        is_2D_view=True,
+        is_contour=False,
+        is_same_size=True,
+        N_stem=100,
+        fig=None,
+        ax=None,
+        is_show_fig=None,
+        is_logscale_x=False,
+        is_logscale_y=False,
+        is_logscale_z=False,
+        thresh=None,
+        is_switch_axes=False,
+        colormap="jet",
+        win_title=None,
+        font_name="arial",
+        font_size_title=12,
+        font_size_label=10,
+        font_size_legend=8,
+        xlabel=None,
+        ylabel=None,
+        zlabel=None,
+        title=None,
+        is_disp_title=True,
+        type_plot=None,
+        annotation_delim=None,
+        marker_color="k",
+        is_shading_flat=None,
+        is_hide_annotation=False,
+        is_filter_x=True,
+        is_filter_y=True,
+    ):
+        """Plots a field as a function of two axes
+
+        Parameters
+        ----------
+        data : Data
+            a Data object
+        *arg_list : list of str
+            arguments to specify which axes to plot
+        is_norm : bool
+            boolean indicating if the field must be normalized
+        unit : str
+            unit in which to plot the field
+        save_path : str
+            full path including folder, name and extension of the file to save if save_path is not None
+        x_min : float
+            minimum value for the x-axis
+        x_max : float
+            maximum value for the x-axis
+        y_min : float
+            minimum value for the y-axis
+        y_max : float
+            maximum value for the y-axis
+        z_min : float
+            minimum value for the z-axis
+        z_max : float
+            maximum value for the z-axis
+        z_range : float
+            range to use for the z-axis
+        is_auto_ticks : bool
+            in fft, adjust ticks to freqs (deactivate if too close)
+        is_auto_range : bool
+            in fft, display up to 1% of max
+        is_2D_view : bool
+            True to plot Data in xy plane and put z as colormap
+        is_contour : bool
+            True to show contour line if is_fft = False and is_2D_view = True
+        is_same_size : bool
+            True to have all color blocks with same size in 2D view
+        N_stem : int
+            number of harmonics to plot (only for stem plots)
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            ax on which to plot the data
+        is_show_fig : bool
+            True to show figure after plot
+        is_logscale_x : bool
+            boolean indicating if the x-axis must be set in logarithmic scale
+        is_logscale_y : bool
+            boolean indicating if the y-axis must be set in logarithmic scale
+        is_logscale_z : bool
+            boolean indicating if the z-axis must be set in logarithmic scale
+        thresh : float
+            threshold for automatic fft ticks
+        is_switch_axes : bool
+            to switch x and y axes
+        is_shading_flat : bool
+            True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
+        """
+
+        # Dynamic import to avoid import loop
+        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+
+        if len(arg_list) == 1 and type(arg_list[0]) == tuple:
+            arg_list = arg_list[0]  # if called from another script with *arg_list
+
+        axes_names = [
+            axis.name for axis in read_input_strings(arg_list, axis_data=axis_data)
+        ]
+
+        # Fix axes order
+        arg_list_along = fix_axes_order(
+            [axis.name for axis in self.get_axes()], arg_list
+        )
+
+        # Set unit
+        if unit == "SI":
+            unit = self.unit
+        if "dB" in unit:
+            if "ref" in self.normalizations:
+                ref = self.normalizations["ref"].ref
+            else:
+                ref = 1
+            unit_str = r"[" + unit + " re. " + str(ref) + " $" + self.unit + "$]"
+        else:
+            unit_str = r"$[" + unit + "]$"
+
+        # Detect fft
+        is_fft = False
+        if any("wavenumber" in s for s in arg_list) or any(
+            "freqs" in s for s in arg_list
+        ):
+            is_fft = True
+            if zlabel is None:
+                if self.symbol == "Magnitude":
+                    zlabel = "Magnitude " + unit_str
+                else:
+                    zlabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
+        else:
+            if zlabel is None:
+                if is_norm:
+                    zlabel = (
+                        r"$\frac{"
+                        + self.symbol
+                        + "}{"
+                        + self.symbol
+                        + "_0}$ "
+                        + unit_str
+                    )
+                else:
+                    if self.symbol == "Magnitude":
+                        zlabel = "Magnitude " + unit_str
+                    else:
+                        zlabel = r"$" + self.symbol + "$ " + unit_str
+
+        # Extract field and axes
+        if is_fft:
+            if is_2D_view:
+                result = self.get_magnitude_along(
+                    *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
+                )
+            else:
+                result = self.get_harmonics(
+                    N_stem,
+                    *arg_list_along,
+                    axis_data=axis_data,
+                    unit=unit,
+                    is_norm=is_norm,
+                    is_flat=True,
+                )
+        else:
+            result = self.get_along(
+                *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
+            )
+
+        if type_plot == "scatter" and not is_fft:
+            is_fft = True
+            is_same_size = False
+        axes_list = result["axes_list"]
+        axes_dict_other = result["axes_dict_other"]
+        if axes_list[list(result.keys()).index(axes_names[0])].is_components:
+            Xdata = np.linspace(
+                0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]])
+            )
+        else:
+            Xdata = result[axes_names[0]]
+        if axes_list[list(result.keys()).index(axes_names[1])].is_components:
+            Ydata = np.linspace(
+                0, len(result[axes_names[1]]) - 1, len(result[axes_names[1]])
+            )
+        else:
+            Ydata = result[axes_names[1]]
+        Zdata = result[self.symbol]
+        if Xdata.size == 1:
+            Zdata = Zdata[None, ...]
+        if Ydata.size == 1:
+            Zdata = Zdata[..., None]
+        if is_fft and not is_2D_view:
+            X_flat = Xdata
+            Y_flat = Ydata
+            Z_flat = Zdata
+
+        else:
+            Y_map, X_map = np.meshgrid(Ydata, Xdata)
+            X_flat = X_map.flatten()
+            Y_flat = Y_map.flatten()
+            Z_flat = Zdata.flatten()
+        if z_range is None:
+            if z_min is None:
+                if is_fft:
+                    z_min = 0
+                else:
+                    if "dB" in unit:
+                        z_min = np.floor(np.nanmin(Zdata))
+                    else:
+                        z_min = np.nanmin(Zdata)
+            if z_max is None:
+                z_max = np.nanmax(Zdata)
+        else:
+            if z_min is None and z_max is None:
+                if "dB" in unit:
+                    z_max = np.ceil(np.nanmax(Zdata))
+                else:
+                    z_max = np.nanmax(Zdata)
+            if z_max is None:
+                z_max = z_min + z_range
+            if z_min is None:
+                z_min = z_max - z_range
+
+        # Build labels and titles
+        title1 = self.name[0].capitalize() + self.name[1:] + " "
+        axis = axes_list[list(result.keys()).index(axes_names[0])]
+        if axis.name in axes_dict:
+            name = axes_dict[axis.name]
+        else:
+            name = axis.name
+        if axis.unit == "SI":
+            axis_unit = unit_dict[axis.name]
+            if xlabel is None:
+                xlabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
+        elif axis.unit in norm_dict:
+            if xlabel is None:
+                xlabel = norm_dict[axis.unit]
+        else:
+            axis_unit = axis.unit
+            if xlabel is None:
+                xlabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
+        if (
+            axis.name == "angle"
+            and axis.unit == "°"
+            and round(np.nanmax(axis.values) / 6) % 5 == 0
+        ):
+            xticks = [i * round(np.nanmax(axis.values) / 6) for i in range(7)]
+        else:
+            xticks = None
+        if axis.is_components:
+            xticklabels = result[axis.name]
+            xticks = Xdata
+            if annotation_delim is not None and annotation_delim in xticklabels[0]:
+                annotations_x = np.array(
+                    [label.split(annotation_delim)[1] for label in xticklabels]
+                )
+                xticklabels = np.array(
+                    [label.split(annotation_delim)[0] for label in xticklabels]
+                )
+        else:
+            xticklabels = None
+            annotations_x = np.core.numeric.zeros_like(Xdata)
+
+        axis = axes_list[list(result.keys()).index(axes_names[1])]
+        if axis.name in axes_dict:
+            name = axes_dict[axis.name]
+        else:
+            name = axis.name
+        if axis.unit == "SI":
+            axis_unit = unit_dict[axis.name]
+            if ylabel is None:
+                ylabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
+        elif axis.unit in norm_dict:
+            if ylabel is None:
+                ylabel = norm_dict[axis.unit]
+        else:
+            axis_unit = axis.unit
+            if ylabel is None:
+                ylabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
+        if (
+            axis.name == "angle"
+            and axis.unit == "°"
+            and round(np.nanmax(axis.values) / 6) % 5 == 0
+        ):
+            yticks = [i * round(np.nanmax(axis.values) / 6) for i in range(7)]
+        else:
+            yticks = None
+        if axis.is_components:
+            yticklabels = result[axis.name]
+            yticks = Ydata
+            if annotation_delim is not None and annotation_delim in yticklabels[0]:
+                annotations_y = np.array(
+                    [label.split(annotation_delim)[1] for label in yticklabels]
+                )
+                yticklabels = np.array(
+                    [label.split(annotation_delim)[0] for label in yticklabels]
+                )
+            else:
+                annotations_y = np.core.numeric.zeros_like(Ydata)
+        else:
+            yticklabels = None
+            annotations_y = np.core.numeric.zeros_like(Ydata)
+
+        if is_fft and is_2D_view and annotation_delim is not None:
+            _, annotations = np.meshgrid(annotations_y, annotations_x)
+            annotations = annotations.flatten()
+        else:
+            annotations = None
+
+        # Detect discontinuous axis (Norm_indices) to use flat shading
+        if is_shading_flat is None:
+            is_shading_flat = False
+            flat_indices = []
+            for axis in axes_list:
+                if axis.unit in self.axes[axis.index].normalizations:
+                    if isinstance(
+                        self.axes[axis.index].normalizations[axis.unit], Norm_indices
+                    ):
+                        is_shading_flat = True
+                        flat_indices.append(axes_names.index(axis.name))
+
+        title2 = "for "
+        for axis in axes_list:
+            if not (
+                axis.extension
+                in [
+                    "whole",
+                    "interval",
+                    "oneperiod",
+                    "antiperiod",
+                    "smallestperiod",
+                    "axis_data",
+                    "list",
+                ]
+                and len(axis.values) > 1
+                or (len(axis.values) == 1 and len(axes_list) == 1)
+            ):
+                is_display = True
+            else:
+                is_display = False
+            if is_display:
+                if axis.unit == "SI":
+                    axis_unit = unit_dict[axis.name]
+                elif axis.unit in norm_dict:
+                    axis_unit = norm_dict[axis.unit]
+                else:
+                    axis_unit = axis.unit
+
+                if isinstance(result[axis.name], str):
+                    axis_str = result[axis.name]
+                else:
+                    if isinstance(result[axis.name][0], str):
+                        axis_str = result[axis.name][0]
+                    else:
+                        if result[axis.name][0] > 10:
+                            fmt = "{:.5g}"
+                        else:
+                            fmt = "{:.3g}"
+                        axis_str = (
+                            np.array2string(
+                                result[axis.name],
+                                formatter={"float_kind": fmt.format},
+                            )
+                            .replace(" ", ", ")
+                            .replace("[", "")
+                            .replace("]", "")
+                            + " ["
+                            + axis_unit
+                            + "]"
+                        )
+
+                    index = None
+                    if axis.is_pattern and len(axis.values) == 1:
+                        for axis_obj in self.get_axes():
+                            if axis_obj.name == axis.name:
+                                index = axis.indices[0]
+
+                    title2 += axis.name + "=" + axis_str
+                    if index is not None:
+                        title2 += " (slice " + str(index + 1) + "), "
+                    else:
+                        title2 += ", "
+
+        title3 = ""
+        for axis_name in axes_dict_other:
+            is_display = True
+            for axis in self.axes:
+                if axis.name == axis_name:
+                    if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
+                        is_display = False
+            if is_display:
+                if isinstance(axes_dict_other[axis_name][0], str):
+                    axis_str = axes_dict_other[axis_name][0]
+                else:
+                    if axes_dict_other[axis_name][0] > 10:
+                        fmt = "{:.5g}"
+                    else:
+                        fmt = "{:.3g}"
+                    axis_str = (
+                        np.array2string(
+                            axes_dict_other[axis_name][0],
+                            formatter={"float_kind": fmt.format},
+                        ).replace(" ", ", ")
+                        + " ["
+                        + axes_dict_other[axis_name][1]
+                        + "], "
+                    )
+
+                title3 += axis_name + "=" + axis_str
+
+        if title2 == "for " and title3 == "":
+            title2 = ""
+
+        if title is None:
+            title = title1 + title2 + title3
+            title = title.rstrip(", ")
+
+        title = title.replace("SI", "").replace(" []", "")
+        xlabel = xlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+        ylabel = ylabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+        zlabel = zlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+
+        if is_fft:
+            if thresh is None:
+                if self.normalizations is not None and "ref" in self.normalizations:
+                    thresh = self.normalizations["ref"].ref
+                else:
+                    thresh = 0.02
+
+            if "dB" in unit:
+                threshold = max(10 * np.log10(thresh) + abs(np.nanmax(Zdata)), 0)
+            else:
+                threshold = abs(thresh * np.nanmax(Zdata))
+            indices_x = np.any(np.where(Zdata > threshold, True, False), axis=1)
+            indices_y = np.any(np.where(Zdata > threshold, True, False), axis=0)
+
+            if is_filter_x:
+                xticks = Xdata[indices_x]
+                if xticklabels is not None:
+                    xticklabels = xticklabels[indices_x]
+            else:
+                xticks = Xdata
+            if is_filter_y:
+                yticks = Ydata[indices_y]
+                if yticklabels is not None:
+                    yticklabels = yticklabels[indices_y]
+            else:
+                yticks = Ydata
+
+            annotation_threshold = None
+            if annotations is not None:
+                annotation_threshold = threshold
+            if is_auto_range:
+                if len(xticks) > 1:
+                    if x_min is None:
+                        x_min = xticks[0]
+                    else:
+                        x_min = max(x_min, xticks[0])
+                    if x_max is None:
+                        x_max = xticks[-1]
+                    else:
+                        x_max = min(x_max, xticks[-1])
+                else:
+                    if x_min is None:
+                        x_min = np.nanmin(Xdata)
+                    else:
+                        x_min = max(x_min, np.nanmin(Xdata))
+                    if x_max is None:
+                        x_max = np.nanmax(Xdata)
+                    else:
+                        x_max = min(x_max, np.nanmax(Xdata))
+                if len(yticks) > 1:
+                    if y_min is None:
+                        if (
+                            axes_list[1].name == "wavenumber"
+                            or axes_list[1].corr_name == "wavenumber"
+                        ):
+                            y_min = max(yticks[0], -100)
+                        else:
+                            y_min = 0
+                    else:
+                        y_min = max(y_min, yticks[0])
+                    if y_max is None:
+                        if (
+                            axes_list[1].name == "wavenumber"
+                            or axes_list[1].corr_name == "wavenumber"
+                        ):
+                            y_max = min(yticks[-1], 100)
+                        else:
+                            y_max = yticks[-1]
+                    else:
+                        y_max = min(y_max, yticks[-1])
+                else:
+                    if y_min is None:
+                        y_min = max(np.nanmin(Ydata), -100)
+                    else:
+                        y_min = max(y_min, np.nanmin(Ydata))
+                    if y_max is None:
+                        y_max = min(np.nanmax(Ydata), 100)
+                    else:
+                        y_max = min(y_max, np.nanmax(Ydata))
+            else:
+                if x_min is None:
+                    x_min = np.nanmin(Xdata)
+                if x_max is None:
+                    x_max = np.nanmax(Xdata)
+                if y_min is None:
+                    y_min = np.nanmin(Ydata)
+                if y_max is None:
+                    y_max = np.nanmax(Ydata)
+
+            x_min = x_min - x_max * 0.05
+            x_max = x_max * 1.05
+            y_min = y_min - y_max * 0.2
+            y_max = y_max * 1.2
+
+            if len(xticks) == 0 or (
+                np.logical_and(xticks > x_min, xticks < x_max).sum() > 20
+                and not axes_list[
+                    list(result.keys()).index(axes_names[0])
+                ].is_components
+            ):
+                xticks = None
+            if len(yticks) == 0 or (
+                np.logical_and(yticks > y_min, yticks < y_max).sum() > 20
+                and not axes_list[
+                    list(result.keys()).index(axes_names[1])
+                ].is_components
+            ):
+                yticks = None
+
+            if not is_auto_ticks:
+                xticks = None
+                yticks = None
+            if is_2D_view:
+                if type_plot is None:
+                    type_plot = "scatter"
+                plot_4D(
+                    X_flat,
+                    Y_flat,
+                    Z_flat,
+                    Sdata=None,
+                    is_same_size=is_same_size,
+                    x_min=x_min,
+                    x_max=x_max,
+                    y_min=y_min,
+                    y_max=y_max,
+                    z_max=z_max,
+                    z_min=z_min,
+                    title=title,
+                    xticks=xticks,
+                    yticks=yticks,
+                    xticklabels=xticklabels,
+                    yticklabels=yticklabels,
+                    xlabel=xlabel,
+                    ylabel=ylabel,
+                    zlabel=zlabel,
+                    fig=fig,
+                    ax=ax,
+                    type_plot=type_plot,
+                    save_path=save_path,
+                    is_show_fig=is_show_fig,
+                    is_logscale_x=is_logscale_x,
+                    is_logscale_y=is_logscale_y,
+                    is_logscale_z=is_logscale_z,
+                    is_switch_axes=is_switch_axes,
+                    colormap=colormap,
+                    win_title=win_title,
+                    font_name=font_name,
+                    font_size_title=font_size_title,
+                    font_size_label=font_size_label,
+                    font_size_legend=font_size_legend,
+                    is_grid=True,
+                    is_disp_title=is_disp_title,
+                    annotations=annotations,
+                    annotation_threshold=annotation_threshold,
+                    marker_color=marker_color,
+                    is_hide_annotation=is_hide_annotation,
+                )
+            else:
+                plot_3D(
+                    X_flat,
+                    Y_flat,
+                    Z_flat,
+                    fig=fig,
+                    ax=ax,
+                    x_min=x_min,
+                    x_max=x_max,
+                    y_min=y_min,
+                    y_max=y_max,
+                    z_min=0,
+                    z_max=z_max,
+                    title=title,
+                    xticks=xticks,
+                    yticks=yticks,
+                    xticklabels=xticklabels,
+                    yticklabels=yticklabels,
+                    xlabel=xlabel,
+                    ylabel=ylabel,
+                    zlabel=zlabel,
+                    type_plot="stem",
+                    save_path=save_path,
+                    is_show_fig=is_show_fig,
+                    is_logscale_x=is_logscale_x,
+                    is_logscale_y=is_logscale_y,
+                    is_logscale_z=is_logscale_z,
+                    is_switch_axes=is_switch_axes,
+                    colormap=colormap,
+                    win_title=win_title,
+                    font_name=font_name,
+                    font_size_title=font_size_title,
+                    font_size_label=font_size_label,
+                    font_size_legend=font_size_legend,
+                    is_disp_title=is_disp_title,
+                )
+        else:
+            if x_min is None:
+                x_min = np.nanmin(Xdata)
+            if x_max is None:
+                x_max = np.nanmax(Xdata)
+            if y_min is None:
+                y_min = np.nanmin(Ydata)
+            if y_max is None:
+                y_max = np.nanmax(Ydata)
+            if is_2D_view:
+                if type_plot is None:
+                    type_plot = "pcolor"
+                if is_shading_flat and type_plot == "pcolormesh":
+                    # 0.5 offset
+                    if 0 in flat_indices:
+                        Xdata = Xdata - 0.5
+                        x_min -= 0.5
+                        x_max -= 0.5
+                    if 1 in flat_indices:
+                        Ydata = Ydata - 0.5
+                        y_min -= 0.5
+                        y_max -= 0.5
+                    Ydata, Xdata = np.meshgrid(Ydata, Xdata)
+                if type_plot == "pcolor":
+                    Zdata = Zdata.T
+                plot_3D(
+                    Xdata,
+                    Ydata,
+                    Zdata,
+                    x_min=x_min,
+                    x_max=x_max,
+                    y_min=y_min,
+                    y_max=y_max,
+                    z_max=z_max,
+                    z_min=z_min,
+                    xlabel=xlabel,
+                    ylabel=ylabel,
+                    zlabel=zlabel,
+                    title=title,
+                    xticks=xticks,
+                    yticks=yticks,
+                    xticklabels=xticklabels,
+                    yticklabels=yticklabels,
+                    fig=fig,
+                    ax=ax,
+                    type_plot=type_plot,
+                    is_contour=is_contour,
+                    is_shading_flat=is_shading_flat,
+                    save_path=save_path,
+                    is_show_fig=is_show_fig,
+                    is_logscale_x=is_logscale_x,
+                    is_logscale_y=is_logscale_y,
+                    is_logscale_z=is_logscale_z,
+                    is_switch_axes=is_switch_axes,
+                    colormap=colormap,
+                    win_title=win_title,
+                    font_name=font_name,
+                    font_size_title=font_size_title,
+                    font_size_label=font_size_label,
+                    font_size_legend=font_size_legend,
+                    is_disp_title=is_disp_title,
+                )
+            else:
+                plot_3D(
+                    X_map,
+                    Y_map,
+                    Zdata,
+                    fig=fig,
+                    ax=ax,
+                    x_min=x_min,
+                    x_max=x_max,
+                    y_min=y_min,
+                    y_max=y_max,
+                    z_min=z_min,
+                    z_max=z_max,
+                    title=title,
+                    xlabel=xlabel,
+                    ylabel=ylabel,
+                    zlabel=zlabel,
+                    yticks=yticks,
+                    xticklabels=xticklabels,
+                    yticklabels=yticklabels,
+                    type_plot="surf",
+                    save_path=save_path,
+                    is_show_fig=is_show_fig,
+                    is_logscale_x=is_logscale_x,
+                    is_logscale_y=is_logscale_y,
+                    is_logscale_z=is_logscale_z,
+                    is_switch_axes=is_switch_axes,
+                    colormap=colormap,
+                    win_title=win_title,
+                    font_name=font_name,
+                    font_size_title=font_size_title,
+                    font_size_label=font_size_label,
+                    font_size_legend=font_size_legend,
+                    is_disp_title=is_disp_title,
+                    is_shading_flat=is_shading_flat,
+                )
 
     # cf Methods.SciDataTool.DataND.plot_3D_Data_Animated
     def plot_3D_Data_Animated(

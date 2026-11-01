@@ -1385,13 +1385,13 @@ class HoleM60(HoleMag):
 
         pass
 
-    class S60_WCheckError(SlotCheckError):
-        """ """
+    class S60_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM58 is None"""
 
         pass
 
-    class S60_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM58 is None"""
+    class S60_WCheckError(SlotCheckError):
+        """ """
 
         pass
 
@@ -1402,6 +1402,6 @@ LaminationCheckError = HoleM60.LaminationCheckError
 
 SlotCheckError = HoleM60.SlotCheckError
 
-S60_WCheckError = HoleM60.S60_WCheckError
-
 S60_NoneError = HoleM60.S60_NoneError
+
+S60_WCheckError = HoleM60.S60_WCheckError

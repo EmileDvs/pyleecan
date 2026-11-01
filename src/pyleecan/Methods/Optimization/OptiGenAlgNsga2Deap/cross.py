@@ -1,9 +1,6 @@
-try:
-    from deap.tools import cxOnePoint
-except ImportError:
-    cxOnePoint = None
-
 import random
+
+from deap.tools import cxOnePoint
 
 
 def cross(self, indiv1, indiv2):

@@ -286,9 +286,6 @@ class LamSlotWind(LamSlot):
         d_angle = ((2 * np.pi - phimax) / p) % (2 * np.pi / p)
 
         if is_plot:
-            import matplotlib.pyplot as plt
-            import numpy as np
-
             # Reconstruct fundamental MMF wave
             magmax = np.abs(mmf_ft[indr_fund])
             mmf_waveform = magmax * np.cos(p * angle_stator + phimax)

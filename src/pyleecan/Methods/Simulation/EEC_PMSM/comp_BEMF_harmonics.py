@@ -1,12 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import cos, pi, sin
+from pylab import False_
 
 from ....Classes.DataLinspace import DataLinspace
 from ....Classes.DataTime import DataTime
 
 
-def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time):
+def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time, is_test=False_):
     """
     Compute the back electromotive force harmonics from magnet fluxes (PMSM)
 
@@ -52,31 +53,31 @@ def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time):
     )
 
     # Load Phi into DataTime
-    Phi_A_data = DataTime(
-        name="Phi_A",
-        symbol="Phi_A",
-        unit="Wb",
-        normalizations=None,
-        axes=[time_axis],
-        values=Phi_A,
-    )
+    # Phi_A_data = DataTime(
+    #     name="Phi_A",
+    #     symbol="Phi_A",
+    #     unit="Wb",
+    #     normalizations=None,
+    #     axes=[time_axis],
+    #     values=Phi_A,
+    # )
 
-    Phi_B_data = DataTime(
-        name="Phi_B",
-        symbol="Phi_B",
-        unit="Wb",
-        normalizations=None,
-        axes=[time_axis],
-        values=Phi_B,
-    )
-    Phi_C_data = DataTime(
-        name="Phi_C",
-        symbol="Phi_C",
-        unit="Wb",
-        normalizations=None,
-        axes=[time_axis],
-        values=Phi_C,
-    )
+    # Phi_B_data = DataTime(
+    #     name="Phi_B",
+    #     symbol="Phi_B",
+    #     unit="Wb",
+    #     normalizations=None,
+    #     axes=[time_axis],
+    #     values=Phi_B,
+    # )
+    # Phi_C_data = DataTime(
+    #     name="Phi_C",
+    #     symbol="Phi_C",
+    #     unit="Wb",
+    #     normalizations=None,
+    #     axes=[time_axis],
+    #     values=Phi_C,
+    # )
 
     Phi_d_data = DataTime(
         name="Phi_d",
@@ -126,38 +127,37 @@ def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time):
     E_q = 2 * pi * freqs_d * complx_d + 2 * pi * freqs_q * complx_q * 1j
     E_h = 2 * pi * freqs_h * complx_h * 1j
 
+    if is_test:
+        # Example:
+        N = 10000
+        # sample spacing
+        T = 1.0 / 20000
+        time = np.linspace(0.0, N * T, N, endpoint=False)
+        Phi_A = (
+            0.5 * np.cos(50.0 * 2.0 * np.pi * time)
+            + 0.001 * np.cos(100 * 2.0 * np.pi * time)
+            + 0.0009 * np.cos(150 * 2.0 * np.pi * time)
+        )
+        Phi_B = (
+            0.5 * np.cos(50.0 * 2.0 * np.pi * time - 2 * pi / 3)
+            + 0.001 * np.cos(100 * 2.0 * np.pi * time - 2 * pi / 3)
+            + 0.0009 * np.cos(150 * 2.0 * np.pi * time - 2 * pi / 3)
+        )
+        Phi_C = (
+            0.5 * np.cos(50.0 * 2.0 * np.pi * time + 2 * pi / 3)
+            + 0.001 * np.cos(100 * 2.0 * np.pi * time + 2 * pi / 3)
+            + 0.0009 * np.cos(150 * 2.0 * np.pi * time + 2 * pi / 3)
+        )
+        delta = 50.0 * 2.0 * np.pi * time
+
+        E_d, E_q, E_h, freqs_d, freqs_q, freqs_h = comp_BEMF_harmonics(
+            Phi_A=Phi_A, Phi_B=Phi_B, Phi_C=Phi_C, delta=delta, time=time
+        )
+
+        fig, axs = plt.subplots(3)
+        axs[0].plot(freqs_d, abs(E_d))
+        axs[1].plot(freqs_q, abs(E_q))
+        axs[2].plot(freqs_h, abs(E_h))
+        plt.show()
+
     return E_d, E_q, E_h, freqs_d, freqs_q, freqs_h
-
-
-if __name__ == "__main__":
-    # Example:
-    N = 10000
-    # sample spacing
-    T = 1.0 / 20000
-    time = np.linspace(0.0, N * T, N, endpoint=False)
-    Phi_A = (
-        0.5 * np.cos(50.0 * 2.0 * np.pi * time)
-        + 0.001 * np.cos(100 * 2.0 * np.pi * time)
-        + 0.0009 * np.cos(150 * 2.0 * np.pi * time)
-    )
-    Phi_B = (
-        0.5 * np.cos(50.0 * 2.0 * np.pi * time - 2 * pi / 3)
-        + 0.001 * np.cos(100 * 2.0 * np.pi * time - 2 * pi / 3)
-        + 0.0009 * np.cos(150 * 2.0 * np.pi * time - 2 * pi / 3)
-    )
-    Phi_C = (
-        0.5 * np.cos(50.0 * 2.0 * np.pi * time + 2 * pi / 3)
-        + 0.001 * np.cos(100 * 2.0 * np.pi * time + 2 * pi / 3)
-        + 0.0009 * np.cos(150 * 2.0 * np.pi * time + 2 * pi / 3)
-    )
-    delta = 50.0 * 2.0 * np.pi * time
-
-    E_d, E_q, E_h, freqs_d, freqs_q, freqs_h = comp_BEMF_harmonics(
-        Phi_A=Phi_A, Phi_B=Phi_B, Phi_C=Phi_C, delta=delta, time=time
-    )
-
-    fig, axs = plt.subplots(3)
-    axs[0].plot(freqs_d, abs(E_d))
-    axs[1].plot(freqs_q, abs(E_q))
-    axs[2].plot(freqs_h, abs(E_h))
-    plt.show()

@@ -1473,7 +1473,7 @@ class SlotW60(Slot):
 
         pass
 
-    class S60_RCheckError(SlotCheckError):
+    class S60_WindWError(SlotCheckError):
         """ """
 
         pass
@@ -1483,7 +1483,7 @@ class SlotW60(Slot):
 
         pass
 
-    class S60_WindWError(SlotCheckError):
+    class S60_RCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1507,11 +1507,11 @@ SlotCheckError = SlotW60.SlotCheckError
 
 S60_WindError = SlotW60.S60_WindError
 
-S60_RCheckError = SlotW60.S60_RCheckError
+S60_WindWError = SlotW60.S60_WindWError
 
 S60_W21CheckError = SlotW60.S60_W21CheckError
 
-S60_WindWError = SlotW60.S60_WindWError
+S60_RCheckError = SlotW60.S60_RCheckError
 
 S60_WindHError = SlotW60.S60_WindHError
 

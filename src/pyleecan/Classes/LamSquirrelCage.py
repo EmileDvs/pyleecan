@@ -1239,12 +1239,12 @@ class LamSquirrelCage(LamSlotWind):
 
         pass
 
-    class SCC_NotARotor(SquirrelCageCheckError):
+    class SCC_WrongCond(SquirrelCageCheckError):
         """ """
 
         pass
 
-    class SCC_WrongCond(SquirrelCageCheckError):
+    class SCC_NotARotor(SquirrelCageCheckError):
         """ """
 
         pass
@@ -1258,6 +1258,6 @@ Lam_WindCheckError = LamSquirrelCage.Lam_WindCheckError
 
 SquirrelCageCheckError = LamSquirrelCage.SquirrelCageCheckError
 
-SCC_NotARotor = LamSquirrelCage.SCC_NotARotor
-
 SCC_WrongCond = LamSquirrelCage.SCC_WrongCond
+
+SCC_NotARotor = LamSquirrelCage.SCC_NotARotor

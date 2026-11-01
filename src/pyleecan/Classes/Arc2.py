@@ -675,12 +675,12 @@ class Arc2(Arc):
         """,
     )
 
-    class PointArc2Error(Exception):
+    class AngleArc2Error(Exception):
         """ """
 
         pass
 
-    class AngleArc2Error(Exception):
+    class PointArc2Error(Exception):
         """ """
 
         pass
@@ -701,9 +701,9 @@ class Arc2(Arc):
         pass
 
 
-PointArc2Error = Arc2.PointArc2Error
-
 AngleArc2Error = Arc2.AngleArc2Error
+
+PointArc2Error = Arc2.PointArc2Error
 
 NbPointArc2DError = Arc2.NbPointArc2DError
 

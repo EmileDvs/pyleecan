@@ -19,6 +19,7 @@ from pyleecan.Classes.Input import Input
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Classes.OutElec import OutElec
+from pyleecan.Classes.Simulation import Simulation
 from pyleecan.Methods.Simulation.Input import (
     CURRENT_DIR_REF,
     ROT_DIR_REF,
@@ -45,8 +46,6 @@ class InputVoltage(Input):
         self : InputVoltage
             An InputVoltage object
         """
-
-        from pyleecan.Classes.Simulation import Simulation
 
         # Get the simulation
         if isinstance(self.parent, Simulation):

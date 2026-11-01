@@ -1956,12 +1956,12 @@ class HoleM51(HoleMag):
 
         pass
 
-    class S51_AlphaCheckError(SlotCheckError):
-        """ """
+    class S51_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM51 is None"""
 
         pass
 
-    class S51_WCheckError(SlotCheckError):
+    class S51_AlphaCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1971,8 +1971,8 @@ class HoleM51(HoleMag):
 
         pass
 
-    class S51_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM51 is None"""
+    class S51_WCheckError(SlotCheckError):
+        """ """
 
         pass
 
@@ -1983,10 +1983,10 @@ LaminationCheckError = HoleM51.LaminationCheckError
 
 SlotCheckError = HoleM51.SlotCheckError
 
-S51_AlphaCheckError = HoleM51.S51_AlphaCheckError
+S51_NoneError = HoleM51.S51_NoneError
 
-S51_WCheckError = HoleM51.S51_WCheckError
+S51_AlphaCheckError = HoleM51.S51_AlphaCheckError
 
 S51_RHCheckError = HoleM51.S51_RHCheckError
 
-S51_NoneError = HoleM51.S51_NoneError
+S51_WCheckError = HoleM51.S51_WCheckError

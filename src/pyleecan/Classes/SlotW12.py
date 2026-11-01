@@ -1054,12 +1054,12 @@ class SlotW12(Slot):
 
         pass
 
-    class S12_R20CheckError(SlotCheckError):
+    class S12_RboCheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S12_RboCheckError(SlotCheckError):
+    class S12_R20CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1071,6 +1071,6 @@ LaminationCheckError = SlotW12.LaminationCheckError
 
 SlotCheckError = SlotW12.SlotCheckError
 
-S12_R20CheckError = SlotW12.S12_R20CheckError
-
 S12_RboCheckError = SlotW12.S12_RboCheckError
+
+S12_R20CheckError = SlotW12.S12_R20CheckError

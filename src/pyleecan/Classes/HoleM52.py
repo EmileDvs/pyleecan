@@ -1231,13 +1231,13 @@ class HoleM52(HoleMag):
 
         pass
 
-    class S52_W1CheckError(SlotCheckError):
-        """ """
+    class S52_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM52 is None"""
 
         pass
 
-    class S52_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM52 is None"""
+    class S52_W1CheckError(SlotCheckError):
+        """ """
 
         pass
 
@@ -1252,6 +1252,6 @@ S52_alphaCheckError = HoleM52.S52_alphaCheckError
 
 S52_H12CheckError = HoleM52.S52_H12CheckError
 
-S52_W1CheckError = HoleM52.S52_W1CheckError
-
 S52_NoneError = HoleM52.S52_NoneError
+
+S52_W1CheckError = HoleM52.S52_W1CheckError
