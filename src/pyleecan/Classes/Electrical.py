@@ -1,33 +1,25 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/Electrical.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Electrical
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Electrical"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Classes.Data1D import Data1D
-from pyleecan.Classes.DataTime import DataTime
-from pyleecan.Classes.EEC_SCIM import EEC_SCIM
-from pyleecan.Classes.EEC_PMSM import EEC_PMSM
+from pyleecan.Classes.MachineIPMSM import MachineIPMSM
 from pyleecan.Classes.MachineSCIM import MachineSCIM
 from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
-from pyleecan.Classes.MachineIPMSM import MachineIPMSM
 
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.EEC_PMSM import EEC_PMSM
+from pyleecan.Classes.EEC_SCIM import EEC_SCIM
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.save import save
 
 
 class Electrical(FrozenClass):

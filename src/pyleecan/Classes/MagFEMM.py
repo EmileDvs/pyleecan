@@ -1,50 +1,42 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/MagFEMM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/MagFEMM
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/MagFEMM"""
 
-from os import linesep
+import os
+from multiprocessing import cpu_count
+from multiprocessing.dummy import Pool
+from os import linesep, remove, rename
+from os.path import isfile, join, splitext
+from shutil import copyfile
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
+
+import numpy as np
+from pyleecan.Classes.Magnetics import Magnetics
+from pyleecan.Classes.MeshMat import MeshMat
+from pyleecan.Classes.NodeMat import NodeMat
+from pyleecan.Classes.OutMagFEMM import OutMagFEMM
+from pyleecan.Classes.RefTriangle3 import RefTriangle3
+from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
+
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._FEMMHandler import _FEMMHandler
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.ElementMat import ElementMat
+from pyleecan.Classes.FPGNTri import FPGNTri
+from pyleecan.definitions import MAIN_DIR
+from pyleecan.Functions.FEMM import FEMM_GROUPS
+from pyleecan.Functions.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
+from pyleecan.Functions.FEMM.comp_FEMM_torque import comp_FEMM_torque
+from pyleecan.Functions.FEMM.draw_FEMM import draw_FEMM
+from pyleecan.Functions.FEMM.update_FEMM_simulation import update_FEMM_simulation
 from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
+from pyleecan.Functions.labels import STATOR_LAB
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Magnetics import Magnetics
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, os
-from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Functions.MeshSolution.build_meshsolution import build_meshsolution
 from pyleecan.Functions.MeshSolution.build_solution_data import build_solution_data
 from pyleecan.Functions.MeshSolution.build_solution_vector import build_solution_vector
-from pyleecan.Classes._FEMMHandler import _FEMMHandler
-from pyleecan.Classes.OutMagFEMM import OutMagFEMM
-from pyleecan.Functions.FEMM.draw_FEMM import draw_FEMM
-from pyleecan.Functions.labels import STATOR_LAB
-from os.path import join, isfile, splitext
-from pyleecan.Classes.ElementMat import ElementMat
-from pyleecan.Classes.FPGNTri import FPGNTri
-from pyleecan.Classes.MeshMat import MeshMat
-from pyleecan.Classes.NodeMat import NodeMat
-from pyleecan.Classes.RefTriangle3 import RefTriangle3
-from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
-from pyleecan.definitions import MAIN_DIR
-from pyleecan.Functions.FEMM import FEMM_GROUPS
-from os import remove, rename
-from pyleecan.Functions.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
-from pyleecan.Functions.FEMM.comp_FEMM_torque import comp_FEMM_torque
-from pyleecan.Functions.FEMM.update_FEMM_simulation import update_FEMM_simulation
-from multiprocessing import cpu_count
-from multiprocessing.dummy import Pool
-from shutil import copyfile
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.save import save
 
 
 class MagFEMM(Magnetics):

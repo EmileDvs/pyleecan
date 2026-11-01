@@ -1,29 +1,24 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/HoleM54.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM54
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM54"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Hole import Hole
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.Arc3 import Arc3
-from pyleecan.Classes.SurfLine import SurfLine
+import matplotlib.pyplot as plt
+import numpy as np
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes.SurfLine import SurfLine
+
+from pyleecan.Classes import ParentMissingError
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Arc3 import Arc3
+from pyleecan.Classes.Hole import Hole
 from pyleecan.definitions import config_dict
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -34,10 +29,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Classes import ParentMissingError
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.save import save
 
 
 class HoleM54(Hole):
@@ -839,8 +831,8 @@ class HoleM54(Hole):
 
         pass
 
-    class H54_W0CheckError(SlotCheckError):
-        """ """
+    class S54_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM54 is None"""
 
         pass
 
@@ -849,8 +841,8 @@ class HoleM54(Hole):
 
         pass
 
-    class S54_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM54 is None"""
+    class H54_W0CheckError(SlotCheckError):
+        """ """
 
         pass
 
@@ -861,8 +853,8 @@ LaminationCheckError = HoleM54.LaminationCheckError
 
 SlotCheckError = HoleM54.SlotCheckError
 
-H54_W0CheckError = HoleM54.H54_W0CheckError
+S54_NoneError = HoleM54.S54_NoneError
 
 H54_R1CheckError = HoleM54.H54_R1CheckError
 
-S54_NoneError = HoleM54.S54_NoneError
+H54_W0CheckError = HoleM54.H54_W0CheckError

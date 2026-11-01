@@ -1,27 +1,22 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Optimization/OptiGenAlg.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlg
-"""
-
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.OptiSolver import OptiSolver
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlg"""
 
 from ntpath import basename
+from os import linesep
 from os.path import isfile
-from pyleecan.Classes._check import CheckTypeError
-import numpy as np
-import random
+from sys import getsizeof
 
-from pyleecan.Classes._check import InitUnKnowClassError
+import numpy as np
+from pyleecan.Classes.OptiSolver import OptiSolver
+
+from pyleecan.Classes._check import (
+    CheckTypeError,
+    check_var,
+)
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class OptiGenAlg(OptiSolver):

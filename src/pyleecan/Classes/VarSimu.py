@@ -1,37 +1,28 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/VarSimu.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/VarSimu
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/VarSimu"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
+
+import numpy as np
+
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
+from pyleecan.Classes.DataKeeper import DataKeeper
+from pyleecan.Classes.ElecLUTdq import ElecLUTdq
+from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Classes.DataKeeper import DataKeeper
+from pyleecan.Functions.save import save
 from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
-import numpy as np
-from pyleecan.Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step
 from pyleecan.Functions.Simulation.VarSimu.log_datakeeper_step_result import (
     log_datakeeper_step_result,
 )
-from pyleecan.Classes.MagFEMM import MagFEMM
-from pyleecan.Classes.ElecLUTdq import ElecLUTdq
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step
 
 
 class VarSimu(FrozenClass):

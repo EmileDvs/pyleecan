@@ -1,32 +1,24 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/LamSlotM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotM
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotM"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.LamSlot import LamSlot
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.patches import Patch
+
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.labels import decode_label, MAG_LAB
+from pyleecan.Functions.labels import MAG_LAB, decode_label
+from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.save import save
 
 
 class LamSlotM(LamSlot):

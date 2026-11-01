@@ -1,30 +1,21 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/OutLossModel.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutLossModel
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutLossModel"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Classes.DataFreq import DataFreq
-from pyleecan.Classes.MeshSolution import MeshSolution
-from pyleecan.Classes.SolutionData import SolutionData
 
 import numpy as np
+from pyleecan.Classes.SolutionData import SolutionData
 
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.MeshSolution import MeshSolution
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.save import save
 
 
 class OutLossModel(FrozenClass):

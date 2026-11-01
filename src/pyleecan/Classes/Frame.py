@@ -1,34 +1,26 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/Frame.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Frame
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Frame"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Classes.Circle import Circle
-from pyleecan.Classes.Arc1 import Arc1
+import numpy as np
+from matplotlib.patches import Patch
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.SurfRing import SurfRing
-import numpy as np
-from matplotlib.patches import Patch
-from pyleecan.Functions.init_fig import init_fig
+
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Circle import Circle
 from pyleecan.definitions import config_dict
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.save import save
 
 
 class Frame(FrozenClass):

@@ -1,29 +1,22 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/LUTdq.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/LUTdq
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/LUTdq"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.LUT import LUT
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, scipy.interpolate as scp_int
-from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
+import numpy as np
+import scipy.interpolate as scp_int
+
+from pyleecan.Classes._check import check_var
 from pyleecan.Classes.EEC_PMSM import EEC_PMSM
 from pyleecan.Classes.Electrical import Electrical
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Classes.LUT import LUT
+from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.save import save
 
 
 class LUTdq(LUT):

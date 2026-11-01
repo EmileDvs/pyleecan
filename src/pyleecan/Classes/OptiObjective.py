@@ -1,28 +1,11 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Optimization/OptiObjective.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiObjective
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiObjective"""
 
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
 from pyleecan.Classes.DataKeeper import DataKeeper
-
-import numpy as np
-from ntpath import basename
-from os.path import isfile
-from pyleecan.Classes._check import CheckTypeError
-
-import random
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class OptiObjective(DataKeeper):

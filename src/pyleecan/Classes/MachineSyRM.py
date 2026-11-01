@@ -1,27 +1,19 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/MachineSyRM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineSyRM
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineSyRM"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
+
 from pyleecan.Classes.MachineSync import MachineSync
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
+from pyleecan.Classes._check import check_var
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.LamSlotWind import LamSlotWind
-
-import numpy as np
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.save import save
 
 
 class MachineSyRM(MachineSync):

@@ -1,60 +1,52 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/Lamination.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Lamination
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Lamination"""
 
+from math import gcd
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Patch
+from pyleecan.Classes.NotchEvenDist import NotchEvenDist
+from pyleecan.Classes.OutGeoLam import OutGeoLam
+from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.SurfRing import SurfRing
-from pyleecan.Functions.labels import (
-    LAM_LAB,
-    BORE_LAB,
-    YOKE_LAB,
-    RADIUS_PROP_LAB,
-    BOUNDARY_PROP_LAB,
-    YS_LAB,
-    YSR_LAB,
-    YSL_LAB,
-    STATOR_LAB,
-    ROTOR_LAB,
-    NOTCH_LAB,
-    YSNR_LAB,
-    YSNL_LAB,
-)
-from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
-import numpy as np, matplotlib.pyplot as plt
+
+from pyleecan.Classes import NotImplementedYetError
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes.OutGeoLam import OutGeoLam
-from math import gcd
-from pyleecan.Functions.Winding.gen_phase_list import gen_name
-from pyleecan.Classes.NotchEvenDist import NotchEvenDist
-from pyleecan.Classes import NotImplementedYetError
-from matplotlib.patches import Patch
+from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
+from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.labels import (
+    BORE_LAB,
+    BOUNDARY_PROP_LAB,
+    LAM_LAB,
+    NOTCH_LAB,
+    RADIUS_PROP_LAB,
+    ROTOR_LAB,
+    STATOR_LAB,
+    YOKE_LAB,
+    YS_LAB,
+    YSL_LAB,
+    YSNL_LAB,
+    YSNR_LAB,
+    YSR_LAB,
+)
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.definitions import config_dict
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.save import save
+from pyleecan.Functions.Winding.gen_phase_list import gen_name
 
 
 class Lamination(FrozenClass):
@@ -2569,7 +2561,7 @@ class Lamination(FrozenClass):
 
         pass
 
-    class LC_RadiusError(LaminationCheckError):
+    class LC_VentYokeOut(LaminationCheckError):
         """ """
 
         pass
@@ -2579,7 +2571,7 @@ class Lamination(FrozenClass):
 
         pass
 
-    class LC_VentYokeOut(LaminationCheckError):
+    class LC_RadiusError(LaminationCheckError):
         """ """
 
         pass
@@ -2589,8 +2581,8 @@ MachineCheckError = Lamination.MachineCheckError
 
 LaminationCheckError = Lamination.LaminationCheckError
 
-LC_RadiusError = Lamination.LC_RadiusError
+LC_VentYokeOut = Lamination.LC_VentYokeOut
 
 LC_VentYokeIn = Lamination.LC_VentYokeIn
 
-LC_VentYokeOut = Lamination.LC_VentYokeOut
+LC_RadiusError = Lamination.LC_RadiusError

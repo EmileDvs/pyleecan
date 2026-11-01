@@ -1,43 +1,33 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Geometry/Surface.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Surface
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Surface"""
 
+from math import ceil
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from math import ceil
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc2 import Arc2
 from pyleecan.Classes.Arc3 import Arc3
-from pyleecan.Functions.FEMM.get_mesh_param import get_mesh_param
+from pyleecan.Classes.Segment import Segment
+from pyleecan.definitions import PACKAGE_NAME, config_dict
 from pyleecan.Functions.FEMM.get_FEMM_BC_propname import get_FEMM_BC_propname
+from pyleecan.Functions.FEMM.get_mesh_param import get_mesh_param
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.labels import (
-    DRAW_PROP_LAB,
-    decode_label,
+    BORE_LAB,
     BOUNDARY_PROP_LAB,
+    DRAW_PROP_LAB,
+    LAM_LAB,
     RADIUS_PROP_LAB,
     YOKE_LAB,
-    BORE_LAB,
-    LAM_LAB,
+    decode_label,
 )
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.definitions import config_dict, PACKAGE_NAME
-from pyleecan.Classes.Segment import Segment
-
-import numpy as np
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class Surface(FrozenClass):

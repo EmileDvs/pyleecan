@@ -1,30 +1,26 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/HoleM60.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM60
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM60"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.HoleMag import HoleMag
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Classes.Arc3 import Arc3
+import matplotlib.pyplot as plt
+import numpy as np
+from pyleecan.Classes.HoleMag import HoleMag
+from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Functions.labels import HOLEM_LAB
+
+from pyleecan.Classes import ParentMissingError
+from pyleecan.Classes._check import check_var
 from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.LamHole import LamHole
+from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.definitions import config_dict
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -35,10 +31,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Classes import ParentMissingError
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.save import save
 
 
 class HoleM60(HoleMag):
@@ -1387,13 +1380,13 @@ class HoleM60(HoleMag):
 
         pass
 
-    class S60_WCheckError(SlotCheckError):
-        """ """
+    class S60_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM58 is None"""
 
         pass
 
-    class S60_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM58 is None"""
+    class S60_WCheckError(SlotCheckError):
+        """ """
 
         pass
 
@@ -1404,6 +1397,6 @@ LaminationCheckError = HoleM60.LaminationCheckError
 
 SlotCheckError = HoleM60.SlotCheckError
 
-S60_WCheckError = HoleM60.S60_WCheckError
-
 S60_NoneError = HoleM60.S60_NoneError
+
+S60_WCheckError = HoleM60.S60_WCheckError

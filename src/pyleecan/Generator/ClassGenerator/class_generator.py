@@ -1,7 +1,9 @@
 import ast
 import builtins
+import subprocess
+import tempfile
 import warnings
-from os.path import dirname, isfile, join
+from os.path import basename, dirname, isfile, join
 from textwrap import indent
 
 from ...Generator import TAB
@@ -141,7 +143,9 @@ def _get_exception_classes(module):
             base_name = (
                 base.id
                 if isinstance(base, ast.Name)
-                else base.attr if isinstance(base, ast.Attribute) else None
+                else base.attr
+                if isinstance(base, ast.Attribute)
+                else None
             )
             if base_name in {"Exception", "BaseException"} or (
                 base_name is not None and "Error" in base_name
@@ -318,9 +322,7 @@ def _rewrite_method_call_targets(source, call_redirects):
         function_start = line_offsets[node.func.lineno - 1] + node.func.col_offset
         function_end = function_start + len(node.func.id.encode("utf-8"))
         target = (
-            "self." + method_name
-            if receiver is None
-            else receiver + "." + method_name
+            "self." + method_name if receiver is None else receiver + "." + method_name
         )
         replacements.append((function_start, function_end, target.encode("utf-8")))
         if receiver is not None:
@@ -412,9 +414,7 @@ def _class_module_imports(path_to_gen, class_module, soft_name):
     imports = []
     class_package = [soft_name, "Classes"]
     for node in class_tree.body:
-        if isinstance(node, ast.Import):
-            import_nodes = [node]
-        elif isinstance(node, ast.ImportFrom):
+        if isinstance(node, ast.Import) or isinstance(node, ast.ImportFrom):
             import_nodes = [node]
         else:
             continue
@@ -783,7 +783,7 @@ def _get_method_source(
             if len(names) == 1 and len(targets) == 1:
                 try:
                     ast.literal_eval(node.value)
-                except (ValueError, TypeError, SyntaxError):
+                except ValueError, TypeError, SyntaxError:
                     pass
                 else:
                     name = next(iter(names))
@@ -939,9 +939,7 @@ def _get_method_source(
                 ast.alias(name=name)
                 for name in helper_names
                 if name not in inline_helper_names
-                and METHOD_IMPORT_REDIRECTS.get(
-                    (".".join(helper_module[1:]), name)
-                )
+                and METHOD_IMPORT_REDIRECTS.get((".".join(helper_module[1:]), name))
                 is None
             ]
             if imported_helpers:
@@ -1108,9 +1106,7 @@ def _get_method_source(
         method_source, method_body_imports, start_line, method_node
     )
     method_source = _rename_method_references(method_source, renamed_method_names)
-    method_source = _rewrite_method_call_targets(
-        method_source, method_call_redirects
-    )
+    method_source = _rewrite_method_call_targets(method_source, method_call_redirects)
     method_helper_names = inline_helper_names.difference(method_local_names)
     method_source = _rename_method_references(
         method_source,
@@ -1126,7 +1122,9 @@ def _get_method_source(
         (
             method_node.args.posonlyargs[0].arg
             if method_node.args.posonlyargs
-            else method_node.args.args[0].arg if method_node.args.args else None
+            else method_node.args.args[0].arg
+            if method_node.args.args
+            else None
         ),
     )
     source_lines = source.splitlines()
@@ -1257,10 +1255,7 @@ def _find_repeated_method_assignments(path_to_gen, class_pack, class_name, metho
                 continue
             is_configured_plot_assignment = (
                 value is not None
-                and (
-                    name.endswith("_COLOR")
-                    or name in CONFIGURED_PLOT_CONSTANT_NAMES
-                )
+                and (name.endswith("_COLOR") or name in CONFIGURED_PLOT_CONSTANT_NAMES)
                 and any(
                     isinstance(child, ast.Name) and child.id == "config_dict"
                     for child in ast.walk(value)
@@ -1372,8 +1367,7 @@ def _prepare_class_methods(
                 )
                 if (
                     configured_helper is None
-                    or absolute_module
-                    != soft_name + ".Methods." + configured_helper[0]
+                    or absolute_module != soft_name + ".Methods." + configured_helper[0]
                     or alias.name != configured_helper[1]
                 ):
                     retained_aliases.append(alias)
@@ -1385,9 +1379,7 @@ def _prepare_class_methods(
                     "__init__.py",
                 )
                 with open(helper_path, encoding="utf-8") as helper_file:
-                    helper_module = ast.parse(
-                        helper_file.read(), filename=helper_path
-                    )
+                    helper_module = ast.parse(helper_file.read(), filename=helper_path)
                 helper_node = next(
                     (
                         node
@@ -1434,9 +1426,7 @@ def _prepare_class_methods(
                     ]
                     if used_aliases:
                         if isinstance(helper_import, ast.Import):
-                            class_method_imports.append(
-                                ast.Import(names=used_aliases)
-                            )
+                            class_method_imports.append(ast.Import(names=used_aliases))
                             continue
                         helper_package = [
                             soft_name,
@@ -1450,8 +1440,7 @@ def _prepare_class_methods(
                         while (
                             common < len(target_package)
                             and common < len(absolute_helper_module)
-                            and target_package[common]
-                            == absolute_helper_module[common]
+                            and target_package[common] == absolute_helper_module[common]
                         ):
                             common += 1
                         class_method_imports.append(
@@ -2043,6 +2032,79 @@ def _apply_numpy_import_style(source):
     return source_bytes.decode("utf-8")
 
 
+def _organize_header_imports(source, class_name, class_path):
+    """Run Ruff's import organizer on the generated module header only."""
+    module = ast.parse(source, filename=class_path)
+    class_node = next(
+        (
+            node
+            for node in module.body
+            if isinstance(node, ast.ClassDef) and node.name == class_name
+        ),
+        None,
+    )
+    if class_node is None:
+        raise ValueError(
+            "Could not find generated class " + class_name + " in " + class_path
+        )
+
+    source_header_end = sum(
+        len(line) for line in source.splitlines(keepends=True)[: class_node.lineno - 1]
+    )
+    with tempfile.TemporaryDirectory(dir=dirname(class_path)) as temp_dir:
+        temp_path = join(temp_dir, basename(class_path))
+        with open(temp_path, "w", encoding="utf-8") as temp_file:
+            temp_file.write(source)
+        result = subprocess.run(
+            [
+                "ruff",
+                "check",
+                "--select",
+                "F401,I001",
+                "--fix-only",
+                temp_path,
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode:
+            raise RuntimeError(
+                "Ruff could not organize imports in "
+                + class_path
+                + ": "
+                + (result.stderr or result.stdout).strip()
+            )
+        result = subprocess.run(
+            ["ruff", "format", temp_path],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode:
+            raise RuntimeError(
+                "Ruff could not format imports in "
+                + class_path
+                + ": "
+                + (result.stderr or result.stdout).strip()
+            )
+        with open(temp_path, encoding="utf-8") as temp_file:
+            organized_source = temp_file.read()
+        organized_module = ast.parse(organized_source, filename=class_path)
+        organized_class = next(
+            node
+            for node in organized_module.body
+            if isinstance(node, ast.ClassDef) and node.name == class_name
+        )
+        organized_header_end = sum(
+            len(line)
+            for line in organized_source.splitlines(keepends=True)[
+                : organized_class.lineno - 1
+            ]
+        )
+    return organized_source[:organized_header_end] + source[source_header_end:]
+
+
 def _is_numpy_import(node):
     if isinstance(node, ast.ImportFrom):
         return bool(
@@ -2082,9 +2144,7 @@ def _normalize_method_numpy_imports(method_source, method_imports):
         "#"
     ):
         start_line -= 1
-    method_source = "\n".join(
-        lines[start_line - 1 : method_nodes[-1].end_lineno]
-    )
+    method_source = "\n".join(lines[start_line - 1 : method_nodes[-1].end_lineno])
     return method_source, imports
 
 
@@ -2313,7 +2373,7 @@ def generate_class(
     if class_name in import_type_list:  # For recursive class
         import_type_list.remove(class_name)
     # Encoding
-    class_file.write("# -*- coding: utf-8 -*-\n")
+    # class_file.write("# -*- coding: utf-8 -*-\n")
 
     # Warning
     class_file.write(
@@ -2337,12 +2397,16 @@ def generate_class(
         + class_dict["name"]
         + '\n"""\n\n'
     )
-    for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items():
-        class_file.write(name + " = " + repr(value) + "\n")
-    for name, expression in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(
-        class_name, {}
-    ).items():
-        class_file.write(name + " = " + expression + "\n")
+    class_file.writelines(
+        name + " = " + repr(value) + "\n"
+        for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items()
+    )
+    class_file.writelines(
+        name + " = " + expression + "\n"
+        for name, expression in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(
+            class_name, {}
+        ).items()
+    )
     if (
         class_name in CLASS_MODULE_CONSTANTS
         or class_name in CLASS_MODULE_CONSTANT_EXPRESSIONS
@@ -2354,8 +2418,10 @@ def generate_class(
             "# These methods remain imported because their source or imports cannot "
             "be safely moved into this class.\n"
         )
-        for meth, reason in fallback_reasons.items():
-            class_file.write("# - " + meth + ": " + reason + "\n")
+        class_file.writelines(
+            "# - " + meth + ": " + reason + "\n"
+            for meth, reason in fallback_reasons.items()
+        )
         class_file.write("\n")
 
     # Import
@@ -2401,11 +2467,11 @@ def generate_class(
 
     # Import all the methods of the class
     # The methods are in Methods.<Main package>.<class name>, one file per method
-    if len(class_dict["methods"]) > 0:
-        class_file.write("# Import all class method\n")
-        class_file.write(
-            "# Try/catch to remove unnecessary dependencies in unused method\n"
-        )
+    # if len(class_dict["methods"]) > 0:
+    #     class_file.write("# Import all class method\n")
+    #     class_file.write(
+    #         "# Try/catch to remove unnecessary dependencies in unused method\n"
+    #     )
     class_file.writelines(
         import_method(class_pack, class_name, meth)
         for meth in class_dict["methods"]
@@ -2622,26 +2688,26 @@ def generate_class(
             "\n" + generate_properties(gen_dict, class_dict, soft_name=soft_name) + "\n"
         )
 
-    for definition in class_error_definitions:
-        class_file.write(
-            TAB + ast.unparse(definition).replace("\n", "\n" + TAB) + "\n\n"
-        )
+    class_file.writelines(
+        TAB + ast.unparse(definition).replace("\n", "\n" + TAB) + "\n\n"
+        for definition in class_error_definitions
+    )
 
     # End of class generation
     class_file.close()
     class_path = join(path_to_gen, class_name + ".py")
     if class_error_definitions:
         with open(class_path, "a", encoding="utf-8") as generated_file:
-            for definition in class_error_definitions:
-                generated_file.write(
-                    "\n"
-                    + definition.name
-                    + " = "
-                    + class_name
-                    + "."
-                    + definition.name
-                    + "\n"
-                )
+            generated_file.writelines(
+                "\n"
+                + definition.name
+                + " = "
+                + class_name
+                + "."
+                + definition.name
+                + "\n"
+                for definition in class_error_definitions
+            )
     module_class_definitions = CLASS_MODULE_CLASS_DEFINITIONS.get(class_name)
     if module_class_definitions is not None:
         module_path = join(
@@ -2653,9 +2719,7 @@ def generate_class(
         with open(module_path, encoding="utf-8") as module_file:
             module = ast.parse(module_file.read(), filename=module_path)
         definitions = {
-            node.name: node
-            for node in module.body
-            if isinstance(node, ast.ClassDef)
+            node.name: node for node in module.body if isinstance(node, ast.ClassDef)
         }
         missing_definitions = set(module_class_definitions[1]).difference(definitions)
         if missing_definitions:
@@ -2667,11 +2731,14 @@ def generate_class(
             )
         with open(class_path, "a", encoding="utf-8") as generated_file:
             generated_file.write("\n")
-            for name in module_class_definitions[1]:
-                generated_file.write(ast.unparse(definitions[name]) + "\n\n")
+            generated_file.writelines(
+                ast.unparse(definitions[name]) + "\n\n"
+                for name in module_class_definitions[1]
+            )
     with open(class_path, encoding="utf-8") as generated_file:
         source = generated_file.read()
     source = _apply_numpy_import_style(source)
     source = _apply_import_style(source, soft_name, import_style)
+    source = _organize_header_imports(source, class_name, class_path)
     with open(class_path, "w", encoding="utf-8") as generated_file:
         generated_file.write(source)

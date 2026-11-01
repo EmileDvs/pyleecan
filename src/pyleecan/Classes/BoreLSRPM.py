@@ -1,29 +1,20 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/BoreLSRPM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/BoreLSRPM
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/BoreLSRPM"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Bore import Bore
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes import ParentMissingError
 import numpy as np
+from pyleecan.Classes.Segment import Segment
 
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Classes import ParentMissingError
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Bore import Bore
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class BoreLSRPM(Bore):

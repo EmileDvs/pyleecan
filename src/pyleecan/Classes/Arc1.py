@@ -1,27 +1,18 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Geometry/Arc1.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc1
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc1"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Arc import Arc
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Classes.Machine import ARC_NPOINT_D
 
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes.Arc import Arc
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class Arc1(Arc):
@@ -771,12 +762,12 @@ class Arc1(Arc):
         """,
     )
 
-    class RadiusArc1Error(Exception):
+    class PointArc1Error(Exception):
         """ """
 
         pass
 
-    class PointArc1Error(Exception):
+    class RadiusArc1Error(Exception):
         """ """
 
         pass
@@ -797,9 +788,9 @@ class Arc1(Arc):
         pass
 
 
-RadiusArc1Error = Arc1.RadiusArc1Error
-
 PointArc1Error = Arc1.PointArc1Error
+
+RadiusArc1Error = Arc1.RadiusArc1Error
 
 NbPointArc1DError = Arc1.NbPointArc1DError
 

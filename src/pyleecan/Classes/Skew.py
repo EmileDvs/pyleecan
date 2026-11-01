@@ -1,36 +1,27 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/Skew.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Skew
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Skew"""
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
 
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np
-from pyleecan.Functions.load import import_class
-from pyleecan.Functions.Plot import dict_2D
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
-
 from ntpath import basename
+from os import linesep
 from os.path import isfile
-from pyleecan.Classes._check import CheckTypeError
+from sys import getsizeof
 
-import random
+import numpy as np
 
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Classes._check import (
+    CheckTypeError,
+    check_var,
+)
+from pyleecan.Classes._frozen import FrozenClass
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import import_class, load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions.save import save
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 
 class Skew(FrozenClass):
