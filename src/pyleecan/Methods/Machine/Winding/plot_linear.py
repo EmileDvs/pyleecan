@@ -4,9 +4,9 @@ from numpy import array, conjugate, delete, imag, insert, ones, real, round
 
 from ....Classes._swat_em import datamodel
 from ....definitions import config_dict
+from ....Functions._swat_em.config import config
 from ....Functions.Geometry.inter_line_line import inter_line_line
 from ....Functions.init_fig import init_fig
-from ....Functions.Winding._swat_em.config import config
 from ....Functions.Winding.gen_phase_list import gen_name
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]

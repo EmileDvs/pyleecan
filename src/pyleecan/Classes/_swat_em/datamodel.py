@@ -11,9 +11,9 @@ import string
 
 import numpy as np
 
-from pyleecan.Functions.Winding._swat_em import analyse, wdggenerator
-from pyleecan.Functions.Winding._swat_em import report as rep
-from pyleecan.Functions.Winding._swat_em.config import config, get_phase_color
+from ...Functions._swat_em import analyse, wdggenerator
+from ...Functions._swat_em import report as rep
+from ...Functions._swat_em.config import config, get_phase_color
 
 
 class datamodel:
