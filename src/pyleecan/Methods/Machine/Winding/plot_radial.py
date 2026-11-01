@@ -1,5 +1,5 @@
-from swat_em import datamodel, plots
-from swat_em.config import config
+from ....Functions.Winding._swat_em import datamodel, plots
+from ....Functions.Winding._swat_em.config import config
 
 from ....definitions import config_dict
 

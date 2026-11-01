@@ -1,6 +1,6 @@
 from matplotlib.patches import Patch, FancyArrowPatch
 import matplotlib.pyplot as plt
-from swat_em import datamodel
+from ....Functions.Winding._swat_em import datamodel
 from numpy import sqrt
 
 from ....Functions.labels import decode_label, WIND_LAB, BAR_LAB

@@ -1,6 +1,6 @@
 from numpy import ones, real, imag, conjugate, array, delete, insert, round
-from swat_em import datamodel
-from swat_em.config import config
+from ....Functions.Winding._swat_em import datamodel
+from ....Functions.Winding._swat_em.config import config
 from matplotlib.patches import Rectangle, Patch, FancyArrowPatch
 import matplotlib.pyplot as plt
 

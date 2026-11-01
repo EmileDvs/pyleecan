@@ -38,7 +38,6 @@ dependencies = [
     "scipy>=1.6.0",
     "setuptools>=84.0.0",
     "smoot ; python_full_version < '3.14'",
-    "swat-em",
     "sympy>=1.14.0",
     "vtk>=9.2.6",
     "xlrd>=1.2.0",
@@ -56,7 +55,6 @@ requires = ["uv_build>=0.13.0,<0.14.0"]
 build-backend = "uv_build"
 
 [tool.uv.sources]
-swat-em = { git = "https://gitlab.com/CedMrnl/swat-em.git" }
 smoot = { git = "https://github.com/Eomys/smoot" }
 
 [dependency-groups]

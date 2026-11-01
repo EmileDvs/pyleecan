@@ -29,7 +29,7 @@ deps = [
     "pyuff",
     "deap",
     "smoot",
-    "swat-em",
+    "openpyxl",
     "ddt",
     "nbformat",
     "nbconvert",
@@ -60,7 +60,7 @@ deps = [
     "pyuff",
     "deap",
     # "smoot", -> fix for smt
-    "swat-em",
+    "openpyxl",
     "ddt",
     "nbformat",
     "nbconvert",

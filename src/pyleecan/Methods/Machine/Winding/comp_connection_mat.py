@@ -2,7 +2,7 @@ from numpy import zeros, swapaxes, sign
 
 from ....Methods.Machine.Winding import WindingError
 
-from swat_em import datamodel
+from ....Functions.Winding._swat_em import datamodel
 
 
 def comp_connection_mat(self, Zs=None, p=None):
