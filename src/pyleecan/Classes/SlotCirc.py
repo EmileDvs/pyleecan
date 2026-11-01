@@ -14,9 +14,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Geometry.circle_from_3_points import circle_from_3_points
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,

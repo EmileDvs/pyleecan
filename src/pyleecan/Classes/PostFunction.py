@@ -9,7 +9,6 @@ from sys import getsizeof
 
 from pyleecan.Classes.Post import Post
 from pyleecan.Classes._check import CheckTypeError
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

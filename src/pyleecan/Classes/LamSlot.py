@@ -9,7 +9,6 @@ import numpy as np
 from matplotlib.patches import Patch
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,

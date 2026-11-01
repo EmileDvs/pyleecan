@@ -6,7 +6,6 @@ from pyleecan.Classes.InputVoltage import InputVoltage
 from pyleecan.Classes.ParamExplorerSet import ParamExplorerSet
 from pyleecan.Classes.Simulation import Simulation
 from pyleecan.Classes.VarLoad import VarLoad
-
 from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )

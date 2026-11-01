@@ -15,7 +15,6 @@ from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.PolarArc import PolarArc
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,

@@ -14,9 +14,7 @@ from pyleecan.Classes.Norm_vector import Norm_vector
 from pyleecan.Classes.OutGeoLam import OutGeoLam
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.definitions import RESULT_DIR, config_dict
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import fft_dict
 from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot

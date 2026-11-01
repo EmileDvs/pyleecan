@@ -10,7 +10,6 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.labels import SOP_LAB, WIND_LAB

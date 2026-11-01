@@ -10,9 +10,7 @@ from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.SurfLine import SurfLine
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,

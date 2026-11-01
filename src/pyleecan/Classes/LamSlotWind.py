@@ -22,9 +22,7 @@ from pyleecan.Classes.WindingSC import WindingSC
 from pyleecan.Classes.WindingUD import WindingUD
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._swat_em import datamodel
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Electrical.dqh_transformation import dqh2n
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import dict_2D

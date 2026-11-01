@@ -9,7 +9,6 @@ import numpy as np
 from pyleecan.Classes.Arc import Arc
 from pyleecan.Classes.Machine import ARC_NPOINT_D
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save
@@ -762,12 +761,12 @@ class Arc1(Arc):
         """,
     )
 
-    class PointArc1Error(Exception):
+    class RadiusArc1Error(Exception):
         """ """
 
         pass
 
-    class RadiusArc1Error(Exception):
+    class PointArc1Error(Exception):
         """ """
 
         pass
@@ -788,9 +787,9 @@ class Arc1(Arc):
         pass
 
 
-PointArc1Error = Arc1.PointArc1Error
-
 RadiusArc1Error = Arc1.RadiusArc1Error
+
+PointArc1Error = Arc1.PointArc1Error
 
 NbPointArc1DError = Arc1.NbPointArc1DError
 

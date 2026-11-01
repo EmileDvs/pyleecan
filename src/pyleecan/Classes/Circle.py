@@ -10,9 +10,7 @@ from matplotlib.patches import Circle
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Classes.Surface import Surface
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

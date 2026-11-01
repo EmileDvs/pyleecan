@@ -15,7 +15,6 @@ from pyleecan.Classes.DataLinspace import DataLinspace
 from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.EEC import EEC
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Electrical.dqh_transformation_freq import dqh2n_DataFreq
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

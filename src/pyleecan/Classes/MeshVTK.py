@@ -24,9 +24,7 @@ from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import RESULT_DIR
-
 from pyleecan.Functions.GUI.log_error import log_error
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

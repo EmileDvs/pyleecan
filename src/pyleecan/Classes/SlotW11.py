@@ -15,9 +15,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -1962,12 +1960,17 @@ class SlotW11(Slot):
 
         pass
 
-    class S11_RWCheckError(SlotCheckError):
+    class S11_H1rCheckError(SlotCheckError):
         """ """
 
         pass
 
     class S11_W01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S11_RHCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1982,11 +1985,6 @@ class SlotW11(Slot):
 
         pass
 
-    class S11_H1rCheckError(SlotCheckError):
-        """ """
-
-        pass
-
 
 MachineCheckError = SlotW11.MachineCheckError
 
@@ -1994,14 +1992,12 @@ LaminationCheckError = SlotW11.LaminationCheckError
 
 SlotCheckError = SlotW11.SlotCheckError
 
-S11_RWCheckError = SlotW11.S11_RWCheckError
-
-S11_RHCheckError = SlotW11.S11_RHCheckError
+S11_H1rCheckError = SlotW11.S11_H1rCheckError
 
 S11_W01CheckError = SlotW11.S11_W01CheckError
 
-S11_R1CheckError = SlotW11.S11_R1CheckError
-
 S11_RHCheckError = SlotW11.S11_RHCheckError
 
-S11_H1rCheckError = SlotW11.S11_H1rCheckError
+S11_R1CheckError = SlotW11.S11_R1CheckError
+
+S11_RWCheckError = SlotW11.S11_RWCheckError

@@ -14,9 +14,7 @@ from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,

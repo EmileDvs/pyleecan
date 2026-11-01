@@ -6,11 +6,10 @@ from os import linesep
 from sys import getsizeof
 
 import numpy as np
+
 from pyleecan.Classes.Surface import Surface
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.init_fig import init_fig

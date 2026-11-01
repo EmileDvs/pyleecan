@@ -6,10 +6,11 @@ from os import linesep
 from sys import getsizeof
 
 import numpy as np
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.VectorField import VectorField
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

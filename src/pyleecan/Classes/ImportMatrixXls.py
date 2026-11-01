@@ -10,7 +10,6 @@ from pandas import ExcelFile, read_excel
 
 from pyleecan.Classes.ImportMatrix import ImportMatrix
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.path_tools import abs_file_path

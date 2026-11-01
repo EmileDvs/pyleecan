@@ -12,7 +12,6 @@ from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.Electrical.dqh_transformation import (
     dqh2n_DataTime,
     n2dqh_DataTime,

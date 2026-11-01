@@ -14,9 +14,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -1466,12 +1464,7 @@ class SlotW60(Slot):
 
         pass
 
-    class S60_InnerCheckError(SlotCheckError):
-        """ """
-
-        pass
-
-    class S60_WindWError(SlotCheckError):
+    class S60_RCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1481,7 +1474,12 @@ class SlotW60(Slot):
 
         pass
 
-    class S60_RCheckError(SlotCheckError):
+    class S60_WindWError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S60_WindHError(SlotCheckError):
         """ """
 
         pass
@@ -1500,12 +1498,12 @@ SlotCheckError = SlotW60.SlotCheckError
 
 S60_WindError = SlotW60.S60_WindError
 
-S60_WindHError = SlotW60.S60_WindHError
-
-S60_WindWError = SlotW60.S60_WindWError
+S60_RCheckError = SlotW60.S60_RCheckError
 
 S60_W21CheckError = SlotW60.S60_W21CheckError
 
-S60_RCheckError = SlotW60.S60_RCheckError
+S60_WindWError = SlotW60.S60_WindWError
+
+S60_WindHError = SlotW60.S60_WindHError
 
 S60_InnerCheckError = SlotW60.S60_InnerCheckError

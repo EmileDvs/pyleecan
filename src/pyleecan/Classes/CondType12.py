@@ -11,9 +11,7 @@ from matplotlib.patches import Circle, Patch
 from pyleecan.Classes.Conductor import Conductor
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.init_fig import init_fig

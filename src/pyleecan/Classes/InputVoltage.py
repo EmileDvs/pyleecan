@@ -10,7 +10,6 @@ from pyleecan.Classes.Input import CURRENT_DIR_REF, Input, PHASE_DIR_REF, ROT_DI
 from pyleecan.Classes.OutElec import OutElec
 from pyleecan.Classes.Simulation import Simulation
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

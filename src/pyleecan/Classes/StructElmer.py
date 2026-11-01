@@ -9,12 +9,12 @@ from sys import getsizeof
 
 import gmsh
 import numpy as np
+
 from pyleecan.Classes.ElmerResultsVTU import ElmerResultsVTU
 from pyleecan.Classes.Section import File, MATC, Section, Variable
 from pyleecan.Classes.SolverInputFile import SolverInputFile
 from pyleecan.Classes.Structural import Structural
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.get_path_binary import get_path_binary

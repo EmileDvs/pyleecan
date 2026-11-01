@@ -6,12 +6,12 @@ from os import linesep
 from sys import getsizeof
 
 import numpy as np
+
 from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.OPdqf import OPdqf
 from pyleecan.Classes.OPslip import OPslip
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

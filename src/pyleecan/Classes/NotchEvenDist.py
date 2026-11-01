@@ -9,7 +9,6 @@ import numpy as np
 
 from pyleecan.Classes.Notch import Notch
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger

@@ -3,8 +3,8 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_indices"""
 
 import numpy as np
-from pyleecan.Classes.Normalization import Normalization
 
+from pyleecan.Classes.Normalization import Normalization
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

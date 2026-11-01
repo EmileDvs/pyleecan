@@ -8,9 +8,9 @@ from os.path import isfile
 from sys import getsizeof
 
 import numpy as np
+
 from pyleecan.Classes.OptiSolver import OptiSolver
 from pyleecan.Classes._check import CheckTypeError, check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

@@ -10,7 +10,6 @@ import numpy as np
 
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger

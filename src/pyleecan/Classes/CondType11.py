@@ -11,9 +11,7 @@ from matplotlib.patches import Patch, Rectangle
 from pyleecan.Classes.Conductor import Conductor
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,

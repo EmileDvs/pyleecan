@@ -19,9 +19,7 @@ from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.SurfRing import SurfRing
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
 from pyleecan.Functions.Load.import_class import import_class
@@ -2562,12 +2560,12 @@ class Lamination(FrozenClass):
 
         pass
 
-    class LC_VentYokeIn(LaminationCheckError):
+    class LC_VentYokeOut(LaminationCheckError):
         """ """
 
         pass
 
-    class LC_RadiusError(LaminationCheckError):
+    class LC_VentYokeIn(LaminationCheckError):
         """ """
 
         pass
@@ -2582,8 +2580,8 @@ MachineCheckError = Lamination.MachineCheckError
 
 LaminationCheckError = Lamination.LaminationCheckError
 
+LC_VentYokeOut = Lamination.LC_VentYokeOut
+
 LC_VentYokeIn = Lamination.LC_VentYokeIn
 
 LC_RadiusError = Lamination.LC_RadiusError
-
-LC_VentYokeOut = Lamination.LC_VentYokeOut

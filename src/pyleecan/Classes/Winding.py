@@ -12,9 +12,7 @@ from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
 from pyleecan.Classes._swat_em import datamodel
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Winding.gen_phase_list import gen_name

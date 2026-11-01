@@ -8,7 +8,6 @@ from sys import getsizeof
 import numpy as np
 from pyleecan.Classes.SolutionMat import SolutionMat
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Structural.conversions import cart2pol, pol2cart
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

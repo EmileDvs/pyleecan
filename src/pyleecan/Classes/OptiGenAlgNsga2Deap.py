@@ -24,7 +24,6 @@ from pyleecan.Classes.ParamExplorerSet import ParamExplorerSet
 from pyleecan.Classes.VarSimu import VarSimu
 from pyleecan.Classes.XOutput import XOutput
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Optimization.check_cstr import check_cstr
 from pyleecan.Functions.Optimization.evaluate import evaluate
 from pyleecan.Functions.Optimization.tournamentDCD import tournamentDCD

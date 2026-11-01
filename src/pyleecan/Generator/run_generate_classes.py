@@ -1,10 +1,10 @@
-from pyleecan.Generator.write_fct import write_file
+from concurrent.futures import ThreadPoolExecutor
 import json
 import shutil
 import subprocess
 import sys
 from datetime import datetime
-from os import listdir, remove
+from os import cpu_count, listdir, remove
 from os.path import abspath, basename, dirname, isfile, join, normpath, realpath
 
 import black
@@ -24,7 +24,8 @@ sys.path.append(MAIN_DIR[:begin])
 exec(
     "from "
     + soft_name
-    + ".Generator.ClassGenerator.class_generator import generate_class"
+    + ".Generator.ClassGenerator.class_generator import "
+    + "generate_class, get_class_import_graph"
 )
 exec("from " + soft_name + ".Generator.read_fct import read_all")
 exec("from " + soft_name + ".definitions import MAIN_DIR, DOC_DIR, INT_DIR")
@@ -35,7 +36,12 @@ PACKAGE_LIST = ["Geometry", "Machine", "Material", "Slot", "Import"]
 
 
 def generate_code(
-    root_path, gen_dict=None, soft_name="pyleecan", is_log=True, class_list=None
+    root_path,
+    gen_dict=None,
+    soft_name="pyleecan",
+    is_log=True,
+    class_list=None,
+    max_workers=None,
 ):
     """Generate the package Classes code according to doc in root_path
 
@@ -51,6 +57,8 @@ def generate_code(
         True to add the log related code (get_logger...)
     class_list : list
         List of class csv path to generate
+    max_workers : int, optional
+        Maximum number of classes to generate concurrently. Defaults to at most 8.
 
     Returns
     -------
@@ -61,6 +69,11 @@ def generate_code(
     DOC_DIR = join(root_path, "Generator", "ClassesRef")
     print("Reading classes csv in: " + DOC_DIR)
     print("Saving generated files in: " + CLASS_DIR)
+
+    # Read all the csv files and snapshot imports before generated files are removed.
+    if gen_dict is None:
+        gen_dict = read_all(DOC_DIR, soft_name=soft_name)
+    class_import_graph = get_class_import_graph(CLASS_DIR, gen_dict, soft_name)
 
     if class_list is None:
         # Deleting all the previous class
@@ -94,27 +107,17 @@ def generate_code(
     load_file.write("from ..Classes.import_all import *\n\n")
     load_file.write("load_switch = {\n")
 
-    # Read all the csv files
-    if gen_dict is None:
-        gen_dict = read_all(DOC_DIR, soft_name=soft_name)
-
-    # Generate all the class files (sorted to remove "commit noise")
+    # Keep generated bookkeeping deterministic while class modules are generated in parallel.
+    generation_names = []
     for class_name, _ in iter(sorted(list(gen_dict.items()))):
         import_file.write(
             "from ..Classes." + class_name + " import " + class_name + "\n"
         )
         load_file.write('    "' + class_name + '": ' + class_name + ",\n")
         if class_list is None:
-            print("Generation of " + class_name + " class")
-            generate_class(
-                gen_dict, class_name, CLASS_DIR, soft_name=soft_name, is_log=is_log
-            )
-        else:
-            if class_name in class_name_list:
-                print("Generation of " + class_name + " class")
-                generate_class(
-                    gen_dict, class_name, CLASS_DIR, soft_name=soft_name, is_log=is_log
-                )
+            generation_names.append(class_name)
+        elif class_name in class_name_list:
+            generation_names.append(class_name)
 
     import_file.close()
     load_file.write("}\n")
@@ -122,6 +125,32 @@ def generate_code(
 
     print("Generation of load_switch.py")
     print("Generation of import_all.py")
+
+    def generate_one_class(class_name, import_graph=None):
+        print("Generation of " + class_name + " class")
+        generation_kwargs = {"soft_name": soft_name, "is_log": is_log}
+        if import_graph is not None:
+            generation_kwargs["class_import_graph"] = import_graph
+        generate_class(gen_dict, class_name, CLASS_DIR, **generation_kwargs)
+
+    if generation_names and len(class_import_graph) == len(gen_dict):
+        if max_workers is None:
+            max_workers = min(8, cpu_count() or 1)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [
+                executor.submit(
+                    generate_one_class,
+                    class_name,
+                    class_import_graph,
+                )
+                for class_name in generation_names
+            ]
+            for future in futures:
+                future.result()
+    else:
+        # Preserve the generator's dynamic cycle checks when no complete snapshot exists.
+        for class_name in generation_names:
+            generate_one_class(class_name)
 
     # Save gen_dict
     class_dict_file = join(CLASS_DIR, "Class_Dict.json")
@@ -137,6 +166,7 @@ def run_generate_classes(
     soft_name=soft_name,
     is_log=is_log,
     class_list=None,
+    max_workers=None,
 ):
     """Main function to generate classes"""
 
@@ -163,7 +193,12 @@ def run_generate_classes(
     )
 
     generate_code(
-        main_dir, gen_dict, soft_name=soft_name, is_log=is_log, class_list=class_list
+        main_dir,
+        gen_dict,
+        soft_name=soft_name,
+        is_log=is_log,
+        class_list=class_list,
+        max_workers=max_workers,
     )
 
     if is_black:
@@ -236,7 +271,7 @@ def run_generate_classes(
 
 if __name__ == "__main__":
     # To generate all classes
-    run_generate_classes()
+    run_generate_classes(max_workers=cpu_count())
 
     # list_csv = [
     #     "Data.csv",

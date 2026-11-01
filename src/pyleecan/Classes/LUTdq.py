@@ -12,7 +12,6 @@ from pyleecan.Classes.EEC_PMSM import EEC_PMSM
 from pyleecan.Classes.Electrical import Electrical
 from pyleecan.Classes.LUT import LUT
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger

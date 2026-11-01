@@ -7,7 +7,6 @@ from sys import getsizeof
 
 from pyleecan.Classes.GaussPoint import GaussPoint
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

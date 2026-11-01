@@ -12,9 +12,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from pyleecan.Classes.OptiObjective import OptiObjective
 from pyleecan.Classes.Output import Output
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from pyleecan.Functions.get_logger import get_logger

@@ -6,9 +6,6 @@ from os import linesep
 from sys import getsizeof
 
 import numpy as np
-from pyleecan.Classes.OutMag import OutMag
-
-from pyleecan.Classes._check import check_var
 from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 from pyleecan.Classes.ImportMatrixXls import ImportMatrixXls
@@ -16,7 +13,6 @@ from pyleecan.Classes.Input import Input
 from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.OutMag import OutMag
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

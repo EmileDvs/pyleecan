@@ -3,7 +3,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/LUT"""
 
 from pyleecan.Classes.XOutput import XOutput
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

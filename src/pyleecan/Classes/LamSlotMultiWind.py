@@ -12,9 +12,7 @@ from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Classes.LamSlotMulti import LamSlotMulti
 from pyleecan.Classes.WindingSC import WindingSC
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,

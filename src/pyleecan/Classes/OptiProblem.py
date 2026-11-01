@@ -9,7 +9,6 @@ from sys import getsizeof
 
 from pyleecan.Classes._check import CheckTypeError, check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

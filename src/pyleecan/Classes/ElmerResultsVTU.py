@@ -18,7 +18,6 @@ from pyleecan.Classes.SolutionData import SolutionData
 from pyleecan.Classes.SolutionVector import SolutionVector
 from pyleecan.Classes.VectorField import VectorField
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

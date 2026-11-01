@@ -15,9 +15,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -1202,12 +1200,12 @@ class SlotW22(Slot):
 
         pass
 
-    class S22_A02CheckError(SlotCheckError):
+    class S22_SpCheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S22_SpCheckError(SlotCheckError):
+    class S22_A02CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1219,6 +1217,6 @@ LaminationCheckError = SlotW22.LaminationCheckError
 
 SlotCheckError = SlotW22.SlotCheckError
 
-S22_A02CheckError = SlotW22.S22_A02CheckError
-
 S22_SpCheckError = SlotW22.S22_SpCheckError
+
+S22_A02CheckError = SlotW22.S22_A02CheckError

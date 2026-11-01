@@ -8,7 +8,6 @@ from os.path import isfile
 import numpy as np
 
 from pyleecan.Classes.Winding import Winding
-
 from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
 from pyleecan.Functions.get_logger import get_logger

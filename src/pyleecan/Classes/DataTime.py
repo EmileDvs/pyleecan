@@ -4,7 +4,6 @@
 
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataND import DataND
-
 from pyleecan.Functions.SciDataTool import AxisError
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

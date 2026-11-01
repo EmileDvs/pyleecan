@@ -13,7 +13,6 @@ import numpy as np
 
 from pyleecan.Classes._check import CheckTypeError, check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import dict_2D
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D

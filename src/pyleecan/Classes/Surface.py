@@ -12,9 +12,7 @@ from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.definitions import PACKAGE_NAME, config_dict
-
 from pyleecan.Functions.FEMM.get_FEMM_BC_propname import get_FEMM_BC_propname
 from pyleecan.Functions.FEMM.get_mesh_param import get_mesh_param
 from pyleecan.Functions.get_logger import get_logger

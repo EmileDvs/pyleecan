@@ -10,7 +10,6 @@ from pyleecan.Classes.DataLinspace import DataLinspace
 from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.Drive import Drive
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 from pyleecan.Functions.check_parent import check_parent

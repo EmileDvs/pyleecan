@@ -12,7 +12,6 @@ from pyleecan.Classes.ElecLUTdq import ElecLUTdq
 from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,

@@ -7,13 +7,13 @@ from os.path import isfile
 from sys import getsizeof
 
 import numpy as np
+from scipy.io import loadmat
+
 from pyleecan.Classes.ImportMatrix import ImportMatrix
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save
-from scipy.io import loadmat
 
 
 class ImportMatlab(ImportMatrix):

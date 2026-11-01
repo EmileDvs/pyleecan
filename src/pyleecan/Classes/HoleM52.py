@@ -13,9 +13,7 @@ from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -1217,11 +1215,6 @@ class HoleM52(HoleMag):
 
         pass
 
-    class S52_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM52 is None"""
-
-        pass
-
     class S52_W1CheckError(SlotCheckError):
         """ """
 
@@ -1229,6 +1222,11 @@ class HoleM52(HoleMag):
 
     class S52_H12CheckError(SlotCheckError):
         """ """
+
+        pass
+
+    class S52_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM52 is None"""
 
         pass
 
@@ -1244,12 +1242,10 @@ LaminationCheckError = HoleM52.LaminationCheckError
 
 SlotCheckError = HoleM52.SlotCheckError
 
-S52_NoneError = HoleM52.S52_NoneError
-
-S52_H12CheckError = HoleM52.S52_H12CheckError
-
 S52_W1CheckError = HoleM52.S52_W1CheckError
 
 S52_H12CheckError = HoleM52.S52_H12CheckError
+
+S52_NoneError = HoleM52.S52_NoneError
 
 S52_alphaCheckError = HoleM52.S52_alphaCheckError

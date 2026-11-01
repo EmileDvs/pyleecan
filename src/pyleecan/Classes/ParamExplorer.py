@@ -8,9 +8,7 @@ from sys import getsizeof
 
 from pyleecan.Classes._check import CheckTypeError, check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.definitions import PYTHON_DEFAULT_ENCODING
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.path_tools import abs_file_path

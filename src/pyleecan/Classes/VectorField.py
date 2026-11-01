@@ -12,7 +12,6 @@ import numpy as np
 
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.SciDataTool import AxisError
 from pyleecan.Functions.SciDataTool.Plot import REV_COMP_DICT

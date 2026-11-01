@@ -12,7 +12,6 @@ from sys import getsizeof
 from pyleecan import __version__
 from pyleecan.Classes.Elmer import Elmer
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

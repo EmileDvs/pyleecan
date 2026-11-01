@@ -10,7 +10,6 @@ import numpy as np
 from pyleecan.Classes.Line import Line
 from pyleecan.Classes.Machine import LINE_NPOINT_D
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Plot import TEXT_BOX

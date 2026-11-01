@@ -376,7 +376,9 @@ def _get_method_body_imports(method_node):
     return imports
 
 
-def _get_imported_class_modules(import_node, source_package, path_to_gen, soft_name):
+def _get_imported_class_modules(
+    import_node, source_package, path_to_gen, soft_name, class_import_graph=None
+):
     """Return generated class modules referenced by a static import."""
     imported_modules = []
     if isinstance(import_node, ast.Import):
@@ -398,7 +400,11 @@ def _get_imported_class_modules(import_node, source_package, path_to_gen, soft_n
         if module_parts[:2] != [soft_name, "Classes"] or len(module_parts) < 3:
             continue
         class_module = module_parts[2]
-        if isfile(join(path_to_gen, class_module + ".py")):
+        if (
+            class_module in class_import_graph
+            if class_import_graph is not None
+            else isfile(join(path_to_gen, class_module + ".py"))
+        ):
             imported_modules.append(class_module)
     return imported_modules
 
@@ -427,12 +433,30 @@ def _class_module_imports(path_to_gen, class_module, soft_name):
     return imports
 
 
+def get_class_import_graph(path_to_gen, gen_dict, soft_name):
+    """Snapshot generated class imports before class files are rewritten."""
+    return {
+        class_name: tuple(_class_module_imports(path_to_gen, class_name, soft_name))
+        for class_name in gen_dict
+        if isfile(join(path_to_gen, class_name + ".py"))
+    }
+
+
 def _would_create_class_import_cycle(
-    import_node, source_package, path_to_gen, class_name, soft_name
+    import_node,
+    source_package,
+    path_to_gen,
+    class_name,
+    soft_name,
+    class_import_graph=None,
 ):
     """Check whether hoisting an import would create a generated-class cycle."""
     pending = _get_imported_class_modules(
-        import_node, source_package, path_to_gen, soft_name
+        import_node,
+        source_package,
+        path_to_gen,
+        soft_name,
+        class_import_graph=class_import_graph,
     )
     visited = set()
     while pending:
@@ -442,7 +466,10 @@ def _would_create_class_import_cycle(
         if class_module in visited:
             continue
         visited.add(class_module)
-        pending.extend(_class_module_imports(path_to_gen, class_module, soft_name))
+        if class_import_graph is None:
+            pending.extend(_class_module_imports(path_to_gen, class_module, soft_name))
+        else:
+            pending.extend(class_import_graph.get(class_module, ()))
     return False
 
 
@@ -674,7 +701,13 @@ def _expand_error_wildcard_imports(
 
 
 def _get_method_source(
-    path_to_gen, class_pack, class_name, meth, soft_name, hoist_names=()
+    path_to_gen,
+    class_pack,
+    class_name,
+    meth,
+    soft_name,
+    hoist_names=(),
+    class_import_graph=None,
 ):
     """Return a method definition and the imports it needs."""
     method_parts = [part for part in (class_pack or "").split(".") if part]
@@ -941,7 +974,12 @@ def _get_method_source(
         for node in _get_method_body_imports(method_node)
         if not _has_method_body_import_guard(source, node)
         and not _would_create_class_import_cycle(
-            node, source_package, path_to_gen, class_name, soft_name
+            node,
+            source_package,
+            path_to_gen,
+            class_name,
+            soft_name,
+            class_import_graph=class_import_graph,
         )
     ]
 
@@ -1322,7 +1360,13 @@ def _find_repeated_method_assignments(path_to_gen, class_pack, class_name, metho
 
 
 def _prepare_class_methods(
-    path_to_gen, class_pack, class_name, methods, soft_name, reserved_names=()
+    path_to_gen,
+    class_pack,
+    class_name,
+    methods,
+    soft_name,
+    reserved_names=(),
+    class_import_graph=None,
 ):
     """Inline methods and collect their imports without name conflicts."""
     prepared = {}
@@ -1355,6 +1399,7 @@ def _prepare_class_methods(
             meth,
             soft_name,
             repeated_assignments.get(meth, set()),
+            class_import_graph=class_import_graph,
         )
         if reason is not None:
             warnings.warn(
@@ -2202,10 +2247,7 @@ def _regroup_pyleecan_imports(source, class_name, class_path):
                     )
                 )
             )
-        if package_lines:
-            if grouped_lines:
-                grouped_lines.append("")
-            grouped_lines.extend(package_lines)
+        grouped_lines.extend(package_lines)
     grouped_imports = "\n".join(grouped_lines) + "\n"
 
     source_lines = source.splitlines(keepends=True)
@@ -2476,6 +2518,7 @@ def generate_class(
     soft_name="pyleecan",
     is_log=True,
     import_style="absolute",
+    class_import_graph=None,
 ):
     """generate the corresponding class file (erase the previous code)
 
@@ -2519,6 +2562,7 @@ def generate_class(
         class_dict["methods"],
         soft_name,
         reserved_names=reserved_names,
+        class_import_graph=class_import_graph,
     )
 
     # Start of file generation

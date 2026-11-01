@@ -12,7 +12,6 @@ from pyleecan.Classes.EEC import EEC
 from pyleecan.Classes.ImportGenVectLin import ImportGenVectLin
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Electrical.dqh_transformation import abc2n, n2abc
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger

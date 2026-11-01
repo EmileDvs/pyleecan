@@ -11,7 +11,6 @@ from matplotlib.patches import Patch
 
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )

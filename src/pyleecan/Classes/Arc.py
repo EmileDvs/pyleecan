@@ -4,19 +4,15 @@
 
 import numpy as np
 from pyleecan.Classes.Line import Line
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np
-from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
-from pyleecan.Functions.Geometry.inter_circle_circle import inter_circle_circle
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.Plot import TEXT_BOX
 from pyleecan.Classes.Segment import Segment
 from pyleecan.definitions import PACKAGE_NAME
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.Geometry.inter_circle_circle import inter_circle_circle
+from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
+from pyleecan.Functions.Plot import TEXT_BOX
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class Arc(Line):

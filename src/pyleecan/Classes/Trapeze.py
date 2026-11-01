@@ -11,9 +11,7 @@ from matplotlib.patches import Polygon
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Surface import Surface
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

@@ -6,9 +6,9 @@ from os import linesep
 from sys import getsizeof
 
 import numpy as np
+
 from pyleecan.Classes.Normalization import Normalization
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.SciDataTool import NormError
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

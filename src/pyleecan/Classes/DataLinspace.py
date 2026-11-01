@@ -10,7 +10,6 @@ import numpy as np
 from pyleecan.Classes.Data import Data
 from pyleecan.Classes.Norm_vector import Norm_vector
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.SciDataTool import AxisError, NormError
 from pyleecan.Functions.SciDataTool.conversions import convert
 from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis

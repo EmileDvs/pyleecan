@@ -11,7 +11,6 @@ from pyleecan.Classes.Norm_ref import Norm_ref
 from pyleecan.Classes.VectorField import VectorField
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.MeshSolution.get_area import get_area
 from pyleecan.Functions.MeshSolution.get_indices_limited import get_indices_limited

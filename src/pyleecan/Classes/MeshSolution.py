@@ -17,9 +17,7 @@ from pyleecan.Classes.Solution import Solution
 from pyleecan.Classes.SolutionVector import SolutionVector
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.GUI.log_error import log_error
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot

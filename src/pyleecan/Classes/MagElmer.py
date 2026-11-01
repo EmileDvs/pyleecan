@@ -24,7 +24,6 @@ from pyleecan.Classes.SolutionData import SolutionData
 from pyleecan.Classes.SolutionVector import SolutionVector
 from pyleecan.Classes.VectorField import VectorField
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Winding.find_wind_phase_color import get_phase_id
@@ -57,8 +56,6 @@ from pyleecan.Functions.labels import (
     SHAFTSL_LAB,
     SHAFTSR_LAB,
     SHAFT_LAB,
-    SHAFTSL_LAB,
-    SHAFTSR_LAB,
     SLID_LAB,
     STATOR_LAB,
     STATOR_LAB_S,

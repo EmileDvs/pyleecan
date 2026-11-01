@@ -14,9 +14,7 @@ from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import (
@@ -1952,6 +1950,11 @@ class HoleM51(HoleMag):
 
         pass
 
+    class S51_RHCheckError(SlotCheckError):
+        """ """
+
+        pass
+
     class S51_NoneError(SlotCheckError):
         """Raised when a propery of HoleM51 is None"""
 
@@ -1967,11 +1970,6 @@ class HoleM51(HoleMag):
 
         pass
 
-    class S51_RHCheckError(SlotCheckError):
-        """ """
-
-        pass
-
 
 MachineCheckError = HoleM51.MachineCheckError
 
@@ -1979,10 +1977,10 @@ LaminationCheckError = HoleM51.LaminationCheckError
 
 SlotCheckError = HoleM51.SlotCheckError
 
+S51_RHCheckError = HoleM51.S51_RHCheckError
+
 S51_NoneError = HoleM51.S51_NoneError
 
 S51_AlphaCheckError = HoleM51.S51_AlphaCheckError
 
 S51_WCheckError = HoleM51.S51_WCheckError
-
-S51_RHCheckError = HoleM51.S51_RHCheckError

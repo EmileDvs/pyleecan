@@ -9,7 +9,6 @@ import numpy as np
 from pyleecan.Classes.OPMatrix import OPMatrix
 from pyleecan.Classes.VarSimu import VarSimu
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

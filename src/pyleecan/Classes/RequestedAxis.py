@@ -11,7 +11,6 @@ import numpy as np
 from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.SciDataTool import AxisError
 from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 from pyleecan.Functions.get_logger import get_logger

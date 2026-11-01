@@ -6,13 +6,13 @@ from os import linesep
 from sys import getsizeof
 
 import numpy as np
+
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.ElecLUTdq import ElecLUTdq
 from pyleecan.Classes.InputVoltage import InputVoltage
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Electrical.dqh_transformation import (
     get_phase_dir,
     n2dqh_DataTime,

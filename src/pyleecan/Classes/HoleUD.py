@@ -9,7 +9,6 @@ import numpy as np
 
 from pyleecan.Classes.HoleMag import HoleMag
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.labels import HOLEM_LAB, HOLEV_LAB, LAM_LAB

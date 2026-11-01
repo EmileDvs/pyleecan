@@ -5,7 +5,6 @@
 import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataND import DataND
-
 from pyleecan.Functions.SciDataTool import AxisError
 from pyleecan.Functions.SciDataTool.sum_convolution import (
     get_conv_amplitudes,

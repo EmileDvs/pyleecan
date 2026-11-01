@@ -7,11 +7,10 @@ from sys import getsizeof
 
 import numpy as np
 from matplotlib.patches import Polygon
+
 from pyleecan.Classes.Surface import Surface
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Geometry.comp_surface_num import comp_surface_num
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.get_logger import get_logger

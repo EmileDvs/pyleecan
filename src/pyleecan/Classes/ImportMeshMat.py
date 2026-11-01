@@ -15,7 +15,6 @@ from pyleecan.Classes.NodeMat import NodeMat
 from pyleecan.Classes.RefQuad4 import RefQuad4
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes._check import check_var
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

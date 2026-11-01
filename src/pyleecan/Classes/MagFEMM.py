@@ -22,9 +22,7 @@ from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
 from pyleecan.Classes._FEMMHandler import _FEMMHandler
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import MAIN_DIR
-
 from pyleecan.Functions.FEMM import FEMM_GROUPS
 from pyleecan.Functions.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
 from pyleecan.Functions.FEMM.comp_FEMM_torque import comp_FEMM_torque

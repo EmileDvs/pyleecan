@@ -14,7 +14,6 @@ from pyleecan.Classes.Data import Data
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.Norm_indices import Norm_indices
 from pyleecan.Classes._check import check_dimensions, check_var
-
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.SciDataTool import (
     AxisError,
@@ -75,6 +74,7 @@ from pyleecan.Functions.SciDataTool.sum_mean import (
     root_sum_square,
 )
 from pyleecan.Functions.SciDataTool.symmetries import (
+    rebuild_symmetries,
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 from pyleecan.Functions.get_logger import get_logger

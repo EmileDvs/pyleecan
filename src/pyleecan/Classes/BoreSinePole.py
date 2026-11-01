@@ -13,9 +13,7 @@ from pyleecan.Classes.Bore import Bore
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes._check import check_var
-
 from pyleecan.definitions import config_dict
-
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
