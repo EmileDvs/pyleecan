@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
 import pytest
+from numpy import arcsin, pi
 
-
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Classes.SlotW21 import SlotW21
 from pyleecan.Classes.LamSlot import LamSlot
-from numpy import ndarray, pi, arcsin, exp
-from ddt import ddt, data
 from pyleecan.Classes.Slot import Slot
+from pyleecan.Classes.SlotW21 import SlotW21
 from pyleecan.Methods.Slot.SlotW21 import S21_H1rCheckError
 
 # For AlmostEqual
@@ -65,7 +60,7 @@ slotW21_test.append(
 )
 
 
-class Test_SlotW21_meth(object):
+class Test_SlotW21_meth:
     """pytest for SlotW21 methods"""
 
     @pytest.mark.parametrize("test_dict", slotW21_test)
