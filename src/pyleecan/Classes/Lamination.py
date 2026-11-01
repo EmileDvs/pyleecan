@@ -44,10 +44,7 @@ import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
-from pyleecan.Methods.Machine.Lamination.build_yoke_side_line import (
-    DELTA,
-    merge_line_list,
-)
+from pyleecan.Methods.Machine.Lamination.build_yoke_side_line import merge_line_list
 from pyleecan.Classes.OutGeoLam import OutGeoLam
 from math import gcd
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
@@ -523,7 +520,15 @@ class Lamination(FrozenClass):
 
     # cf Methods.Machine.Lamination.build_yoke_side_line
     def build_yoke_side_line(
-        self, sym, vent_surf_list, ZBR=None, ZTR=None, ZBL=None, ZTL=None
+        self,
+        sym,
+        vent_surf_list,
+        ZBR=None,
+        ZTR=None,
+        ZBL=None,
+        ZTL=None,
+        *,
+        DELTA=1e-06
     ):
         """Define the Yoke Side lines of a Lamination by taking into account sym and vent
 

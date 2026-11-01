@@ -18,12 +18,10 @@ from pyleecan.Classes.Line import Line
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods.Geometry.Arc.comp_maxseg import MAXSEG_default
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.Geometry.inter_circle_circle import inter_circle_circle
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot import TEXT_BOX
-from pyleecan.Methods.Geometry.Arc.split_line import DELTA
 from pyleecan.Classes.Segment import Segment
 from pyleecan.definitions import PACKAGE_NAME
 
@@ -70,7 +68,7 @@ class Arc(Line):
             return min([D2, D3, D4])
 
     # cf Methods.Geometry.Arc.comp_maxseg
-    def comp_maxseg(self, elementsize, maxseg_amp):
+    def comp_maxseg(self, elementsize, maxseg_amp, *, MAXSEG_default=5):
         """
         Computes the number of segments per arc degrees in
         function of the elementsize of the region
@@ -448,7 +446,7 @@ class Arc(Line):
         return fig, ax
 
     # cf Methods.Geometry.Arc.split_line
-    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
+    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None, *, DELTA=1e-07):
         """Cut the Arc according to a line defined by two complex
         "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
 

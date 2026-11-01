@@ -34,7 +34,6 @@ from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot import TEXT_BOX
-from pyleecan.Methods.Geometry.Segment.split_line import DELTA
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -560,7 +559,7 @@ class Segment(Line):
             self.begin = self.get_middle()
 
     # cf Methods.Geometry.Segment.split_line
-    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
+    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None, *, DELTA=1e-09):
         """Cut the Segment according to a line defined by two complex
         "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
 

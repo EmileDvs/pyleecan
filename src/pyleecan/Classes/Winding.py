@@ -20,13 +20,6 @@ from pyleecan.Classes._frozen import FrozenClass
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes._swat_em import datamodel
 from pyleecan.Methods.Machine.Winding import WindingError
-from pyleecan.Methods.Machine.Winding.export_to_csv import (
-    COIL_NAME,
-    RAD_NAME,
-    SEP,
-    TAN_NAME,
-    ZS_NAME,
-)
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 from pyleecan.Functions.Winding.reverse_wind_mat import (
     reverse_wind_mat,
@@ -542,7 +535,18 @@ class Winding(FrozenClass):
         return xi
 
     # cf Methods.Machine.Winding.export_to_csv
-    def export_to_csv(self, file_path=None, is_add_header=True, is_skip_empty=False):
+    def export_to_csv(
+        self,
+        file_path=None,
+        is_add_header=True,
+        is_skip_empty=False,
+        *,
+        ZS_NAME="Slot Id",
+        COIL_NAME="Ntcoil",
+        RAD_NAME="Rad Layer Id",
+        TAN_NAME="Tan Layer Id",
+        SEP=","
+    ):
         """Export the winding matrix to a csv file. One matrix for each phase
         Column Slot id, Ntcoil, Rad id, Tan id
 

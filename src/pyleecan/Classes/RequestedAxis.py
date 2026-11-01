@@ -17,7 +17,6 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.SciDataTool.RequestedAxis.get_axis import operation_list
 from importlib import import_module
 import numpy as np
 from pyleecan.Classes.DataPattern import DataPattern
@@ -34,7 +33,24 @@ class RequestedAxis(FrozenClass):
     VERSION = 1
 
     # cf Methods.SciDataTool.RequestedAxis.get_axis
-    def get_axis(self, axis, is_real):
+    def get_axis(
+        self,
+        axis,
+        is_real,
+        *,
+        operation_list=[
+            "max",
+            "min",
+            "sum",
+            "rss",
+            "mean",
+            "rms",
+            "integrate",
+            "integrate_local",
+            "derivate",
+            "antiderivate",
+        ]
+    ):
         """Computes the vector 'axis' in the unit required, using conversions and symmetries if needed.
         Parameters
         ----------

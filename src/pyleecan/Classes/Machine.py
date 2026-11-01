@@ -35,7 +35,7 @@ from pyleecan.Methods.Machine.Machine.get_lam_by_label import LabelInputError
 from pyleecan.Functions.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
 from pyleecan.Methods.Machine.Machine.get_lam_list import KeyInputError
 from pyleecan.Methods.Machine.Machine.get_material_dict import get_material
-from pyleecan.Methods.Machine.Machine.plot import COMP_EDGE_COLOR, PATCH_COLOR_ALPHA
+from pyleecan.Methods.Machine.Machine.plot import PATCH_COLOR_ALPHA
 from pyleecan.Functions.init_fig import init_fig
 from matplotlib.patches import Patch, Polygon
 from matplotlib.pyplot import subplots
@@ -936,6 +936,8 @@ class Machine(FrozenClass):
         is_max_sym=False,
         is_clean_plot=False,
         is_winding_connection=False,
+        *,
+        COMP_EDGE_COLOR="r--",
     ):
         """Plot the Machine in a matplotlib fig
 

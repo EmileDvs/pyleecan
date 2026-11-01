@@ -48,11 +48,7 @@ from pyleecan.Methods.Simulation.Input import (
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
 from pyleecan.Classes.SlotW22 import SlotW22
-from pyleecan.Methods.Machine.LamSlotWind.plot import (
-    MINUS_HATCH,
-    PHASE_COLORS,
-    PLUS_HATCH,
-)
+from pyleecan.Methods.Machine.LamSlotWind.plot import PHASE_COLORS
 from matplotlib.patches import FancyArrowPatch, Patch
 from pyleecan.Classes._swat_em import datamodel
 from pyleecan.Classes.WindingSC import WindingSC
@@ -950,6 +946,9 @@ class LamSlotWind(LamSlot):
         is_clean_plot=False,
         is_winding_connection=False,
         is_winding_connection_phase_A=False,
+        *,
+        PLUS_HATCH="++",
+        MINUS_HATCH="..",
     ):
         """Plot the Lamination in a matplotlib fig
 

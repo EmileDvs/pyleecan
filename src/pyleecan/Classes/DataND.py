@@ -69,7 +69,7 @@ from pyleecan.Functions.SciDataTool.change_referential import (
     change_referential_spectrum,
     change_referential_waveform,
 )
-from pyleecan.Methods.SciDataTool.DataND.export_along import CHAR_LIST, format_matrix
+from pyleecan.Methods.SciDataTool.DataND.export_along import format_matrix
 from os.path import join
 from pyleecan.Functions.SciDataTool.Plot import (
     unit_dict,
@@ -1121,6 +1121,7 @@ class DataND(Data):
         file_format="csv",
         is_multiple_files=False,
         plot_options={},
+        CHAR_LIST=["$", "{", "}"],
     ):
         """Exports the sliced or interpolated version of the data, using conversions and symmetries if needed, in a file.
         Parameters

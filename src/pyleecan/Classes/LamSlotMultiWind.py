@@ -21,11 +21,7 @@ from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Load.import_class import import_class
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
-from pyleecan.Methods.Machine.LamSlotMultiWind.plot import (
-    MINUS_HATCH,
-    PHASE_COLORS,
-    PLUS_HATCH,
-)
+from pyleecan.Methods.Machine.LamSlotMultiWind.plot import PHASE_COLORS
 from matplotlib.patches import Patch
 from pyleecan.Functions.labels import decode_label, WIND_LAB, BAR_LAB
 from pyleecan.Functions.Winding.find_wind_phase_color import find_wind_phase_color
@@ -330,6 +326,9 @@ class LamSlotMultiWind(LamSlotMulti):
         save_path=None,
         win_title=None,
         is_winding_connection=False,
+        *,
+        PLUS_HATCH="++",
+        MINUS_HATCH="..",
     ):
         """Plot the Lamination with empty Slots in a matplotlib fig
 
@@ -743,7 +742,7 @@ class LamSlotMultiWind(LamSlotMulti):
         LamSlotMultiWind_dict = super(LamSlotMultiWind, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         LamSlotMultiWind_dict["Ksfill"] = self.Ksfill
         if self.winding is None:
@@ -752,7 +751,7 @@ class LamSlotMultiWind(LamSlotMulti):
             LamSlotMultiWind_dict["winding"] = self.winding.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name

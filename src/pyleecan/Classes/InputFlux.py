@@ -17,7 +17,6 @@ from pyleecan.Classes.InputCurrent import InputCurrent
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.InputFlux.gen_input import VERBOSE_KEY
 import numpy as np
 from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
@@ -38,7 +37,11 @@ class InputFlux(InputCurrent):
     VERSION = 1
 
     # cf Methods.Simulation.InputFlux.gen_input
-    def gen_input(self):
+    def gen_input(
+        self,
+        *,
+        VERBOSE_KEY={"B_{rad}": "Radial", "B_{circ}": "Tangential", "B_{ax}": "Axial"}
+    ):
         """Generate the input for the force/stress module (magnetic output)
 
         Parameters

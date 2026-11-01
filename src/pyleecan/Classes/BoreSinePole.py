@@ -18,7 +18,6 @@ from pyleecan.Classes.Bore import Bore
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.BoreSinePole.get_bore_line import (
-    NN,
     _get_phi,
     _get_pole_width_max,
 )
@@ -65,7 +64,7 @@ class BoreSinePole(Bore):
         return self.N, False
 
     # cf Methods.Machine.BoreSinePole.get_bore_line
-    def get_bore_line(self, prop_dict=None):
+    def get_bore_line(self, prop_dict=None, *, NN=30):
         """Return the bore line description
         adapted sine field pole geometry from the text book:
         "Müller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008."

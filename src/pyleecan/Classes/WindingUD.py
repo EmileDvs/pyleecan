@@ -17,12 +17,6 @@ from pyleecan.Classes.Winding import Winding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.WindingUD.import_from_csv import (
-    COIL_COL,
-    RAD_COL,
-    TAN_COL,
-    ZS_COL,
-)
 from os.path import isfile
 from csv import reader
 import numpy as np
@@ -45,7 +39,9 @@ class WindingUD(Winding):
     NAME = "User defined"
 
     # cf Methods.Machine.WindingUD.import_from_csv
-    def import_from_csv(self, file_path=None):
+    def import_from_csv(
+        self, file_path=None, *, ZS_COL=0, COIL_COL=1, RAD_COL=2, TAN_COL=3
+    ):
         """Import the winding matrix from a csv file.
         One matrix for each phase
         Column Slot id, Ntcoil, Rad id, Tan id

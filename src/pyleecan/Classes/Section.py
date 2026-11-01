@@ -18,7 +18,7 @@ from pyleecan.Classes.Elmer import Elmer
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Elmer.Section import ElmerSectionError
-from pyleecan.Methods.Elmer.Section.write import END, INDENT, NEWLINE, _convert
+from pyleecan.Methods.Elmer.Section.write import INDENT, _convert
 from io import StringIO
 
 import numpy as np
@@ -96,7 +96,7 @@ class Section(Elmer):
         return (value, comment)
 
     # cf Methods.Elmer.Section.write
-    def write(self, stream=None):
+    def write(self, stream=None, *, NEWLINE="\n", END="End"):
         """Write the Elmer SIF section to a stream. If no stream is given, the method
         will return a StringIO.
         """

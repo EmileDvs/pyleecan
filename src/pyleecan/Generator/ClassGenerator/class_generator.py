@@ -59,7 +59,31 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
     if any(isinstance(node, ast.Global) for node in ast.walk(method_node)):
         return None, [], "method declares module globals"
 
+    signature_nodes = (
+        method_node.decorator_list
+        + method_node.args.defaults
+        + [node for node in method_node.args.kw_defaults if node is not None]
+        + [
+            argument.annotation
+            for argument in (
+                method_node.args.posonlyargs
+                + method_node.args.args
+                + method_node.args.kwonlyargs
+            )
+            if argument.annotation is not None
+        ]
+    )
+    if method_node.returns is not None:
+        signature_nodes.append(method_node.returns)
+    signature_names = {
+        node.id
+        for root_node in signature_nodes
+        for node in ast.walk(root_node)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
+
     helper_bindings = set()
+    literal_defaults = {}
     has_module_helpers = False
     for node in module.body:
         if node is method_node or (
@@ -82,12 +106,21 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
             has_module_helpers = True
         elif isinstance(node, (ast.Assign, ast.AnnAssign)):
             targets = node.targets if isinstance(node, ast.Assign) else [node.target]
-            helper_bindings.update(
+            names = {
                 child.id
                 for target in targets
                 for child in ast.walk(target)
                 if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Store)
-            )
+            }
+            helper_bindings.update(names)
+            if len(names) == 1 and len(targets) == 1:
+                try:
+                    ast.literal_eval(node.value)
+                except (ValueError, TypeError, SyntaxError):
+                    pass
+                else:
+                    name = next(iter(names))
+                    literal_defaults[name] = ast.unparse(node.value)
             has_module_helpers = True
         else:
             return (
@@ -98,6 +131,11 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
                 + " statements",
             )
 
+    inline_literal_defaults = {
+        name: value
+        for name, value in literal_defaults.items()
+        if name not in signature_names
+    }
     source_package = [
         soft_name,
         "Methods",
@@ -109,7 +147,9 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
     method_imports = []
 
     if has_module_helpers:
-        helper_names = sorted(used_names.intersection(helper_bindings))
+        helper_names = sorted(
+            used_names.intersection(helper_bindings - inline_literal_defaults.keys())
+        )
         if helper_names:
             helper_module = source_package + [method_name]
             common = 0
@@ -178,6 +218,16 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
     while start_line > 1 and source_lines[start_line - 2].lstrip().startswith("#"):
         start_line -= 1
     method_source = "\n".join(source_lines[start_line - 1 : method_node.end_lineno])
+    method_source = _add_literal_keyword_defaults(
+        method_source, inline_literal_defaults, used_names
+    )
+    method_tree = ast.parse(method_source)
+    if any(
+        _is_numpy_import(node) for node in method_imports + list(ast.walk(method_tree))
+    ):
+        method_source, method_imports = _normalize_method_numpy_imports(
+            method_source, method_imports
+        )
     return method_source, method_imports, None
 
 
@@ -393,6 +443,367 @@ def _apply_import_style(source, soft_name, import_style):
     for start, end, replacement in reversed(replacements):
         lines[start : end + 1] = [replacement]
     return "\n".join(lines) + ("\n" if source.endswith("\n") else "")
+
+
+def _get_numpy_scope_info(scope_body):
+    """Collect names local to a scope and its directly imported NumPy symbols."""
+    local_names = set()
+    numpy_names = {}
+    global_names = set()
+    assigned_names = set()
+
+    class ScopeVisitor(ast.NodeVisitor):
+        def visit_FunctionDef(self, node):
+            local_names.add(node.name)
+
+        visit_AsyncFunctionDef = visit_FunctionDef
+
+        def visit_ClassDef(self, node):
+            local_names.add(node.name)
+
+        def visit_Lambda(self, node):
+            return
+
+        def visit_Name(self, node):
+            if isinstance(node.ctx, (ast.Store, ast.Del)):
+                local_names.add(node.id)
+                assigned_names.add(node.id)
+
+        def visit_Global(self, node):
+            global_names.update(node.names)
+
+        def visit_Import(self, node):
+            for alias in node.names:
+                local_names.add(alias.asname or alias.name.split(".")[0])
+                if alias.name == "numpy" or alias.name.startswith("numpy."):
+                    module_name = alias.name[len("numpy") :].lstrip(".")
+                    numpy_names[alias.asname or alias.name.split(".")[0]] = (
+                        (module_name or None) if alias.asname else None
+                    )
+
+        def visit_ImportFrom(self, node):
+            for alias in node.names:
+                local_names.add(alias.asname or alias.name)
+                if (
+                    node.module
+                    and (node.module == "numpy" or node.module.startswith("numpy."))
+                    and alias.name != "*"
+                ):
+                    module_name = node.module[len("numpy") :].lstrip(".")
+                    imported_name = ".".join(
+                        part for part in (module_name, alias.name) if part
+                    )
+                    numpy_names[alias.asname or alias.name] = imported_name
+
+    visitor = ScopeVisitor()
+    for statement in scope_body:
+        visitor.visit(statement)
+
+    local_names.difference_update(global_names)
+    for name in global_names:
+        numpy_names.pop(name, None)
+    shadowed_numpy_names = assigned_names.intersection(numpy_names)
+    return local_names, numpy_names, shadowed_numpy_names
+
+
+def _apply_numpy_import_style(source):
+    """Use ``import numpy as np`` for NumPy imports and their references."""
+    tree = ast.parse(source)
+    _, module_names, module_shadowed_names = _get_numpy_scope_info(tree.body)
+
+    source_bytes = source.encode("utf-8")
+    line_offsets = [0]
+    for index, value in enumerate(source_bytes):
+        if value == ord("\n"):
+            line_offsets.append(index + 1)
+
+    replacements = []
+    duplicate_module_imports = set()
+    has_module_numpy_import = False
+    for node in tree.body:
+        if (
+            isinstance(node, ast.ImportFrom)
+            and node.module
+            and (node.module == "numpy" or node.module.startswith("numpy."))
+        ):
+            if any(alias.name == "*" for alias in node.names):
+                continue
+            if has_module_numpy_import:
+                duplicate_module_imports.add(id(node))
+            has_module_numpy_import = True
+        elif isinstance(node, ast.Import):
+            numpy_aliases = [
+                alias
+                for alias in node.names
+                if alias.name == "numpy" or alias.name.startswith("numpy.")
+            ]
+            if numpy_aliases:
+                if has_module_numpy_import:
+                    duplicate_module_imports.add(id(node))
+                has_module_numpy_import = True
+
+    def add_statement_replacement(node, replacement):
+        start = line_offsets[node.lineno - 1]
+        statement_start = start + node.col_offset
+        end = line_offsets[node.end_lineno - 1] + node.end_col_offset
+        line_end = source_bytes.find(b"\n", end)
+        if line_end == -1:
+            line_end = len(source_bytes)
+        indentation = source_bytes[start:statement_start]
+        suffix = source_bytes[end:line_end]
+        replacements.append((start, line_end, indentation + replacement + suffix))
+
+    class ReferenceVisitor(ast.NodeVisitor):
+        def __init__(self):
+            self.scopes = []
+
+        def visit_FunctionDef(self, node):
+            self._visit_function(node)
+
+        def visit_AsyncFunctionDef(self, node):
+            self._visit_function(node)
+
+        def _visit_function(self, node):
+            for decorator in node.decorator_list:
+                self.visit(decorator)
+            for default in node.args.defaults + node.args.kw_defaults:
+                if default is not None:
+                    self.visit(default)
+            for argument in (
+                node.args.posonlyargs + node.args.args + node.args.kwonlyargs
+            ):
+                if argument.annotation is not None:
+                    self.visit(argument.annotation)
+            if node.args.vararg and node.args.vararg.annotation:
+                self.visit(node.args.vararg.annotation)
+            if node.args.kwarg and node.args.kwarg.annotation:
+                self.visit(node.args.kwarg.annotation)
+            if node.returns is not None:
+                self.visit(node.returns)
+            body = node.body
+            local_names, numpy_names, shadowed_numpy_names = _get_numpy_scope_info(body)
+            argument_names = {
+                argument.arg
+                for argument in (
+                    node.args.posonlyargs + node.args.args + node.args.kwonlyargs
+                )
+            }
+            if node.args.vararg:
+                argument_names.add(node.args.vararg.arg)
+            if node.args.kwarg:
+                argument_names.add(node.args.kwarg.arg)
+            local_names.update(argument_names)
+            self.scopes.append((local_names, numpy_names, shadowed_numpy_names))
+            for statement in body:
+                self.visit(statement)
+            self.scopes.pop()
+
+        def visit_ClassDef(self, node):
+            for decorator in node.decorator_list:
+                self.visit(decorator)
+            for base in node.bases:
+                self.visit(base)
+            for keyword in node.keywords:
+                self.visit(keyword.value)
+            for statement in node.body:
+                self.visit(statement)
+
+        def visit_Name(self, node):
+            if not isinstance(node.ctx, ast.Load):
+                return
+
+            imported_name = None
+            for local_names, numpy_names, shadowed_numpy_names in reversed(self.scopes):
+                if node.id in shadowed_numpy_names:
+                    return
+                if node.id in numpy_names:
+                    imported_name = numpy_names[node.id]
+                    break
+                if node.id in local_names:
+                    return
+            else:
+                if node.id not in module_names:
+                    return
+                if node.id in module_shadowed_names:
+                    return
+                imported_name = module_names[node.id]
+
+            if imported_name is None:
+                replacement = b"np"
+            else:
+                replacement = ("np." + imported_name).encode("utf-8")
+            start = line_offsets[node.lineno - 1] + node.col_offset
+            end = start + len(node.id.encode("utf-8"))
+            replacements.append((start, end, replacement))
+
+    ReferenceVisitor().visit(tree)
+
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.ImportFrom)
+            and node.module
+            and (node.module == "numpy" or node.module.startswith("numpy."))
+        ):
+            if any(alias.name == "*" for alias in node.names):
+                continue
+            replacement = (
+                b"" if id(node) in duplicate_module_imports else b"import numpy as np"
+            )
+            add_statement_replacement(node, replacement)
+        elif isinstance(node, ast.Import):
+            aliases = []
+            changed = False
+            numpy_seen = False
+            for alias in node.names:
+                if alias.name == "numpy" or alias.name.startswith("numpy."):
+                    if id(node) in duplicate_module_imports or numpy_seen:
+                        changed = True
+                        continue
+                    aliases.append(ast.alias(name="numpy", asname="np"))
+                    numpy_seen = True
+                    changed = True
+                else:
+                    aliases.append(alias)
+            if changed:
+                add_statement_replacement(
+                    node,
+                    (
+                        ast.unparse(ast.Import(names=aliases)).encode("utf-8")
+                        if aliases
+                        else b""
+                    ),
+                )
+
+    for start, end, replacement in sorted(replacements, reverse=True):
+        source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
+    return source_bytes.decode("utf-8")
+
+
+def _is_numpy_import(node):
+    if isinstance(node, ast.ImportFrom):
+        return bool(
+            node.module and (node.module == "numpy" or node.module.startswith("numpy."))
+        )
+    return isinstance(node, ast.Import) and any(
+        alias.name == "numpy" or alias.name.startswith("numpy.") for alias in node.names
+    )
+
+
+def _normalize_method_numpy_imports(method_source, method_imports):
+    """Normalize a method's NumPy imports before checking inter-method conflicts."""
+    import_source = "\n".join(ast.unparse(node) for node in method_imports)
+    combined_source = (import_source + "\n\n" if import_source else "") + method_source
+    normalized_source = _apply_numpy_import_style(combined_source)
+    tree = ast.parse(normalized_source)
+    method_node = next(
+        node
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    )
+    imports = [
+        node
+        for node in tree.body
+        if isinstance(node, (ast.Import, ast.ImportFrom))
+        and node.lineno < method_node.lineno
+    ]
+
+    lines = normalized_source.splitlines()
+    start_line = min(
+        [method_node.lineno]
+        + [decorator.lineno for decorator in method_node.decorator_list]
+    )
+    import_end = max((node.end_lineno for node in imports), default=0)
+    while start_line > import_end + 1 and lines[start_line - 2].lstrip().startswith(
+        "#"
+    ):
+        start_line -= 1
+    method_source = "\n".join(lines[start_line - 1 : method_node.end_lineno])
+    return method_source, imports
+
+
+def _add_literal_keyword_defaults(method_source, literal_defaults, used_names):
+    """Turn referenced module literals into keyword-only method defaults."""
+    tree = ast.parse(method_source)
+    method_node = next(
+        node
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    )
+    arguments = method_node.args
+    defined_arguments = {
+        argument.arg
+        for argument in (
+            arguments.posonlyargs
+            + arguments.args
+            + arguments.kwonlyargs
+            + ([arguments.vararg] if arguments.vararg else [])
+            + ([arguments.kwarg] if arguments.kwarg else [])
+        )
+    }
+    method_locals = {
+        node.id
+        for node in ast.walk(method_node)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del))
+    }
+    defaults = [
+        (name, value)
+        for name, value in literal_defaults.items()
+        if name in used_names
+        and name not in defined_arguments
+        and name not in method_locals
+    ]
+    if not defaults:
+        return method_source
+
+    keyword_defaults = ", ".join(name + "=" + value for name, value in defaults)
+    has_keyword_section = bool(arguments.vararg or arguments.kwonlyargs)
+    if has_keyword_section:
+        insertion = ", " + keyword_defaults
+        insertion_argument = (
+            arguments.kwonlyargs[-1] if arguments.kwonlyargs else arguments.vararg
+        )
+    else:
+        insertion = ", *, " + keyword_defaults
+        positional_arguments = arguments.posonlyargs + arguments.args
+        insertion_argument = positional_arguments[-1] if positional_arguments else None
+
+    encoded_lines = method_source.splitlines(keepends=True)
+
+    def offset_for_position(line_number, column_offset):
+        character_prefix = sum(len(line) for line in encoded_lines[: line_number - 1])
+        current_line = encoded_lines[line_number - 1]
+        character_column = len(
+            current_line.encode("utf-8")[:column_offset].decode("utf-8")
+        )
+        return character_prefix + character_column
+
+    def argument_end(argument):
+        positional_arguments = arguments.posonlyargs + arguments.args
+        if argument in positional_arguments:
+            default_start = len(positional_arguments) - len(arguments.defaults)
+            argument_index = positional_arguments.index(argument)
+            if argument_index >= default_start:
+                default = arguments.defaults[argument_index - default_start]
+                return offset_for_position(default.end_lineno, default.end_col_offset)
+        elif argument in arguments.kwonlyargs:
+            default = arguments.kw_defaults[arguments.kwonlyargs.index(argument)]
+            if default is not None:
+                return offset_for_position(default.end_lineno, default.end_col_offset)
+        return offset_for_position(argument.end_lineno, argument.end_col_offset)
+
+    if insertion_argument is not None:
+        offset = argument_end(insertion_argument)
+    elif arguments.kwarg is not None:
+        offset = offset_for_position(arguments.kwarg.lineno, arguments.kwarg.col_offset)
+        insertion = "*, " + keyword_defaults + ", "
+    else:
+        closing_paren = method_source.find(")", method_node.args.end_col_offset)
+        if closing_paren == -1:
+            raise SyntaxError("Could not locate method signature closing parenthesis")
+        offset = closing_paren
+        insertion = "*, " + keyword_defaults
+
+    return method_source[:offset] + insertion + method_source[offset:]
 
 
 def generate_class(
@@ -737,6 +1148,7 @@ def generate_class(
     class_path = join(path_to_gen, class_name + ".py")
     with open(class_path, encoding="utf-8") as generated_file:
         source = generated_file.read()
+    source = _apply_numpy_import_style(source)
     source = _apply_import_style(source, soft_name, import_style)
     with open(class_path, "w", encoding="utf-8") as generated_file:
         generated_file.write(source)

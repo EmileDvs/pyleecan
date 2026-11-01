@@ -17,7 +17,6 @@ from pyleecan.Classes.Structural import Structural
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.StructElmer.gen_case import ID_LAM, ID_MAG
 from os.path import join, split, exists, splitext
 import numpy as np, gmsh
 from pyleecan.Classes.Section import Section
@@ -54,7 +53,7 @@ class StructElmer(Structural):
     VERSION = 1
 
     # cf Methods.Simulation.StructElmer.gen_case
-    def gen_case(self, output, mesh_names):
+    def gen_case(self, output, mesh_names, *, ID_LAM=1, ID_MAG=2):
         """Setup the Elmer Case file (.sif file)"""
 
         # get the save path
