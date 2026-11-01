@@ -62,7 +62,6 @@ from pyleecan.Functions.SciDataTool.change_referential import (
     change_referential_spectrum,
     change_referential_waveform,
 )
-from pyleecan.Methods.SciDataTool.DataND.export_along import format_matrix
 from os.path import join
 from pyleecan.Functions.SciDataTool.Plot import (
     unit_dict,
@@ -1277,7 +1276,7 @@ class DataND(Data):
                         # Second line: axes + second axis values
                         if len(Ydatas) > 1:
                             A2_cell = xlabel + "/" + legends[-1].split("=")[0]
-                            second_line = format_matrix(
+                            second_line = self.format_matrix(
                                 np.insert(
                                     np.array(legends).astype("<U64"),
                                     0,
@@ -1297,7 +1296,7 @@ class DataND(Data):
                             field = np.array(Ydatas)
                         if field.shape[0] != len(Xdata[0]):
                             field = field.T
-                        matrix = format_matrix(
+                        matrix = self.format_matrix(
                             np.column_stack((np.array(Xdata[0]).T, field)).astype(
                                 "str"
                             ),
@@ -1327,7 +1326,7 @@ class DataND(Data):
                                 + axes_list_new[1].unit
                                 + "]"
                             )
-                            second_line = format_matrix(
+                            second_line = self.format_matrix(
                                 np.insert(
                                     results[axes_list_new[1].name].astype("<U64"),
                                     0,
@@ -1346,7 +1345,7 @@ class DataND(Data):
                             field = np.take(results[self.symbol], i, axis=2)
                         else:
                             field = results[self.symbol]
-                        matrix = format_matrix(
+                        matrix = self.format_matrix(
                             np.column_stack(
                                 (results[axes_list_new[0].name].T, field)
                             ).astype("str"),
@@ -1356,6 +1355,12 @@ class DataND(Data):
 
         else:
             raise Exception("export format not supported")
+
+    @staticmethod
+    def format_matrix(a, char_list):
+        for char in char_list:
+            a = np.char.replace(a, char, "")
+        return a
 
     # cf Methods.SciDataTool.DataND.filter_spectral_leakage
     def filter_spectral_leakage(

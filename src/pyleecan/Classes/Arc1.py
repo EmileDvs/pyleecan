@@ -18,7 +18,7 @@ from pyleecan.Classes.Arc import Arc
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods.Machine import ARC_NPOINT_D
+from pyleecan.Classes.Machine import ARC_NPOINT_D
 
 
 from pyleecan.Classes._check import InitUnKnowClassError

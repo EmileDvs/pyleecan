@@ -19,12 +19,8 @@ from pyleecan.Classes.Input import Input
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Classes.OutElec import OutElec
+from pyleecan.Classes.Input import CURRENT_DIR_REF, ROT_DIR_REF, PHASE_DIR_REF
 from pyleecan.Classes.Simulation import Simulation
-from pyleecan.Methods.Simulation.Input import (
-    CURRENT_DIR_REF,
-    ROT_DIR_REF,
-    PHASE_DIR_REF,
-)
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 

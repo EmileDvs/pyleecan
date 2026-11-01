@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Input
 """
 
+ROT_DIR_REF = -1
+CURRENT_DIR_REF = -1
+PHASE_DIR_REF = -1
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger

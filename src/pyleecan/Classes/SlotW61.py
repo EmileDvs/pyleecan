@@ -1500,12 +1500,12 @@ class SlotW61(Slot):
 
         pass
 
-    class S61_W21CheckError(SlotCheckError):
+    class S61_WindHError(SlotCheckError):
         """ """
 
         pass
 
-    class S61_WindHError(SlotCheckError):
+    class S61_InnerCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1515,7 +1515,7 @@ class SlotW61(Slot):
 
         pass
 
-    class S61_InnerCheckError(SlotCheckError):
+    class S61_W21CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1529,10 +1529,10 @@ SlotCheckError = SlotW61.SlotCheckError
 
 S61_WindError = SlotW61.S61_WindError
 
-S61_W21CheckError = SlotW61.S61_W21CheckError
-
 S61_WindHError = SlotW61.S61_WindHError
+
+S61_InnerCheckError = SlotW61.S61_InnerCheckError
 
 S61_WindWError = SlotW61.S61_WindWError
 
-S61_InnerCheckError = SlotW61.S61_InnerCheckError
+S61_W21CheckError = SlotW61.S61_W21CheckError

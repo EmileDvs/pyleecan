@@ -47,6 +47,7 @@ class LamSquirrelCage(LamSlotWind):
 
     VERSION = 1
     SCR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SCR_COLOR"]
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
     ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
     STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     BAR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["BAR_COLOR"]
@@ -1239,12 +1240,12 @@ class LamSquirrelCage(LamSlotWind):
 
         pass
 
-    class SCC_WrongCond(SquirrelCageCheckError):
+    class SCC_NotARotor(SquirrelCageCheckError):
         """ """
 
         pass
 
-    class SCC_NotARotor(SquirrelCageCheckError):
+    class SCC_WrongCond(SquirrelCageCheckError):
         """ """
 
         pass
@@ -1258,6 +1259,6 @@ Lam_WindCheckError = LamSquirrelCage.Lam_WindCheckError
 
 SquirrelCageCheckError = LamSquirrelCage.SquirrelCageCheckError
 
-SCC_WrongCond = LamSquirrelCage.SCC_WrongCond
-
 SCC_NotARotor = LamSquirrelCage.SCC_NotARotor
+
+SCC_WrongCond = LamSquirrelCage.SCC_WrongCond

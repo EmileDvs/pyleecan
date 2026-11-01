@@ -29,7 +29,10 @@ class SurfRing(Surface):
     """SurfRing is a surface between two closed surfaces (lamination surfaces for instance)"""
 
     VERSION = 1
+    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
     PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
+    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
+    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
     # cf Methods.Geometry.SurfRing.check
     # -*- coding: utf-8 -*-

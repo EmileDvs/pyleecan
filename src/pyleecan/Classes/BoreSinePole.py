@@ -17,15 +17,13 @@ from pyleecan.Classes.Bore import Bore
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.BoreSinePole.get_bore_line import (
-    _get_phi,
-    _get_pole_width_max,
-)
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes import ParentMissingError
 import numpy as np, matplotlib.pyplot as plt
+from scipy.optimize import fmin
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Lamination import Lamination
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -43,6 +41,7 @@ class BoreSinePole(Bore):
     """Class for Sine Field Pole Bore shape adapted from 'Muller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008.'"""
 
     VERSION = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Machine.BoreSinePole.comp_periodicity_spatial
     def comp_periodicity_spatial(self):
@@ -94,13 +93,13 @@ class BoreSinePole(Bore):
         alpha1 = np.pi / self.N  # Half bore pitch [rad]
 
         # Checking max width and W0
-        w_max = _get_pole_width_max(self)  # [m]
+        w_max = self._get_pole_width_max(self)  # [m]
         if self.W0 is not None and self.W0 < w_max:
             w_max = self.W0
         elif self.W0 is not None and self.W0 > w_max:
             logger.warning("Enforcing permissible pole width (W0).")
 
-        phi_max = _get_phi(self, w_max)
+        phi_max = self._get_phi(self, w_max)
         phi = np.linspace(-phi_max, phi_max, 2 * NN + 1)
 
         Zedge = self.get_pole_shape(-phi_max)
@@ -151,6 +150,53 @@ class BoreSinePole(Bore):
                 )
 
         return bore_list
+
+    @staticmethod
+    def _get_phi(obj, w):
+        """Return the angle of the pole width
+
+        Parameters
+        ----------
+        obj : BoreSinePole
+            a BoreSinePole object
+
+        Returns
+        -------
+        phi : float
+            angle of the pole width [rad]
+        """
+        phi_max = BoreSinePole._get_phi_max(obj)
+        phi = fmin(
+            lambda x: abs(obj.get_pole_shape(x).imag - w / 2) + max(x - phi_max, 0),
+            0,
+            disp=False,
+        )[0]
+        return phi
+
+    @staticmethod
+    def _get_phi_max(obj):
+        """ "Internal method to get max. pole angle."""
+        phi_max = fmin(lambda x: -obj.get_pole_shape(x).imag, 0, disp=False)[0]
+        return min(np.pi / 2, phi_max)
+
+    @staticmethod
+    def _get_pole_width_max(obj):
+        """Return the max. pole width and the angle of the max. pole width
+
+        Parameters
+        ----------
+        obj : BoreSinePole
+            a BoreSinePole object
+
+        Returns
+        -------
+        w_max : float
+            max. pole width [m]
+        """
+        phi_max = BoreSinePole._get_phi_max(obj)
+        w_max = 2 * obj.get_pole_shape(phi_max).imag
+
+        return w_max
 
     # cf Methods.Machine.BoreSinePole.get_pole_shape
     def get_pole_shape(self, phi):

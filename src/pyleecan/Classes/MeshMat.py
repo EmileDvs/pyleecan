@@ -26,12 +26,12 @@ from pyleecan.Classes.RefQuad4 import RefQuad4
 from pyleecan.Classes.RefQuad9 import RefQuad9
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes.RefTriangle6 import RefTriangle6
-from pyleecan.Methods.Mesh.MeshMat.get_element import _check_element_name
+from pyleecan.Classes.MeshVTK import MeshVTK
+from pyleecan.Classes.ElementMat import ElementMat
 from os import makedirs, remove
 from os.path import dirname, isdir
 from pyvista.core.pointset import UnstructuredGrid
 from pyleecan.definitions import RESULT_DIR
-from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.FPGNSeg import FPGNSeg
 from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
 from pyleecan.Functions.GUI.log_error import log_error
@@ -165,7 +165,6 @@ class MeshMat(Mesh):
             return new_mesh
 
         # Avoiding cicular import
-        from pyleecan.Classes.MeshVTK import MeshVTK
 
         elements_ = []
         element_types = []
@@ -351,7 +350,7 @@ class MeshMat(Mesh):
         if isinstance(element_indices, (int, np.integer)):
             element_indices = (element_indices,)
 
-        element_name = _check_element_name(
+        element_name = self._check_element_name(
             element_mat_dict=self.element_dict, element_name=element_name
         )
 
@@ -391,6 +390,42 @@ class MeshMat(Mesh):
 
         return dict_connectivity, nb_element, dict_index
 
+    @staticmethod
+    def _check_element_name(
+        element_mat_dict: Dict[str, ElementMat], element_name: Union[List[str], str]
+    ) -> List[str]:
+        """Check if the element names provided are in the element dictionnary
+
+        Parameters
+        ----------
+        element_mat_dict : Dict[str, ElementMat]
+            Dict of elements
+        element_name : Union[List[str], str]
+            name of elements
+
+        Returns
+        -------
+        List[str]
+            Name of elements processed
+
+        Raises
+        ------
+        ValueError
+            A provided name is not in the dictionnary
+        """
+        if isinstance(element_name, str):
+            element_name = [element_name]
+        elif len(element_name) == 0:
+            return list(element_mat_dict.keys())
+
+        all_element_names = element_mat_dict.keys()
+        for elem_name in element_name:
+            if elem_name not in all_element_names:
+                raise ValueError(
+                    f'Wrong element_name value, "{elem_name}" not in {list(all_element_names)}'
+                )
+        return element_name
+
     # cf Methods.Mesh.MeshMat.get_element_area
     def get_element_area(
         self,
@@ -416,7 +451,7 @@ class MeshMat(Mesh):
         logger = self.get_logger()
         area = []
 
-        element_name = _check_element_name(
+        element_name = self._check_element_name(
             element_mat_dict=self.element_dict, element_name=element_name
         )
 
@@ -468,7 +503,7 @@ class MeshMat(Mesh):
 
         """
 
-        element_name = _check_element_name(
+        element_name = self._check_element_name(
             element_mat_dict=self.element_dict, element_name=element_name
         )
 

@@ -17,9 +17,8 @@ from pyleecan.Classes.Line import Line
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Segment.comp_distance import distance_numpy
 import numpy as np
-from pyleecan.Methods.Machine import LINE_NPOINT_D
+from pyleecan.Classes.Machine import LINE_NPOINT_D
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.init_fig import init_fig
@@ -80,7 +79,29 @@ class Segment(Line):
         Z1 = np.array([self.begin.real, self.begin.imag, 0])
         Z2 = np.array([self.end.real, self.end.imag, 0])
         Z3 = np.array([Z.real, Z.imag, 0])
-        return distance_numpy(Z1, Z2, Z3)
+        return self.distance_numpy(Z1, Z2, Z3)
+
+    @staticmethod
+    def distance_numpy(A, B, P):
+        # from: https://gist.github.com/nim65s/5e9902cd67f094ce65b0
+        """segment line AB, point P, where each one is an array([x, y])"""
+        if all(A == P) or all(B == P):
+            return 0
+        if (
+            np.arccos(
+                np.dot((P - A) / np.linalg.norm(P - A), (B - A) / np.linalg.norm(B - A))
+            )
+            > np.pi / 2
+        ):
+            return np.linalg.norm(P - A)
+        if (
+            np.arccos(
+                np.dot((P - B) / np.linalg.norm(P - B), (A - B) / np.linalg.norm(A - B))
+            )
+            > np.pi / 2
+        ):
+            return np.linalg.norm(P - B)
+        return np.linalg.norm(np.cross(A - B, A - P)) / np.linalg.norm(B - A)
 
     # cf Methods.Geometry.Segment.comp_length
     def comp_length(self):

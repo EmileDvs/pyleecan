@@ -4,7 +4,7 @@ from os.path import join
 from ....Functions.GMSH.draw_GMSH import draw_GMSH
 from ....Methods.Simulation.StructElmer import (
     _execute,
-    StructElmer_BP_dict,
+    _get_BP_dict,
 )
 
 
@@ -38,7 +38,7 @@ def gen_mesh(self, output):
     draw_GMSH(
         output=output,
         sym=sym_r,  # TODO is it possible to have to use draw_GMSH with sym_r > sym ?
-        boundary_prop=StructElmer_BP_dict,
+        boundary_prop=_get_BP_dict(),
         is_lam_only_S=False,
         is_lam_only_R=False,
         is_sliding_band=False,

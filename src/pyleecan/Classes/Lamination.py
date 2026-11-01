@@ -39,7 +39,7 @@ import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
-from pyleecan.Methods.Machine.Lamination.build_yoke_side_line import merge_line_list
+from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.OutGeoLam import OutGeoLam
 from math import gcd
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
@@ -574,21 +574,62 @@ class Lamination(FrozenClass):
 
         lam_lab = self.get_label()
         if self.is_internal:
-            right_list = merge_line_list(
+            right_list = self.merge_line_list(
                 ZBR, ZTR, lam_lab + "_" + YSR_LAB, inter_line_list_R
             )
-            left_list = merge_line_list(
+            left_list = self.merge_line_list(
                 ZTL, ZBL, lam_lab + "_" + YSL_LAB, inter_line_list_L
             )
         else:
-            left_list = merge_line_list(
+            left_list = self.merge_line_list(
                 ZBL, ZTL, lam_lab + "_" + YSL_LAB, inter_line_list_L
             )
-            right_list = merge_line_list(
+            right_list = self.merge_line_list(
                 ZTR, ZBR, lam_lab + "_" + YSR_LAB, inter_line_list_R
             )
 
         return right_list, left_list
+
+    @staticmethod
+    def merge_line_list(Z1, Z2, label, inter_list):
+        """Merge the ventilation lines and the yoke side line"""
+        is_int_to_ext = abs(Z1) < abs(Z2)
+        #  Always number the lines from int to out (to match both sides)
+        if not is_int_to_ext:
+            Z1, Z2 = Z2, Z1
+        # Sort the inter_list by begin (assume that the vents doesn't collide)
+        inter_list.sort(key=lambda x: abs(x.get_begin()), reverse=False)
+        # Make sure that all the lines are int to ext
+        for line in inter_list:
+            if abs(line.get_end()) < abs(line.get_begin()):
+                line.reverse()
+
+        line_list = list()
+        Zb = Z1  # Current Begin
+        ii = 0  # Line index
+        for line in inter_list:
+            line_list.append(
+                Segment(
+                    Zb,
+                    line.get_begin(),
+                    prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)},
+                )
+            )
+            ii += 1
+            line.prop_dict[BOUNDARY_PROP_LAB] = label + "-" + str(ii)
+            ii += 1
+            Zb = line.get_end()
+        # Add last line (or Z1 to Z2 if no intersection)
+        line_list.append(
+            Segment(Zb, Z2, prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)})
+        )
+        # reverse the lines if needed
+        if not is_int_to_ext:
+            line_list = line_list[::-1]
+            for line in line_list:
+                line.reverse()
+
+        return line_list
 
     # cf Methods.Machine.Lamination.check
     def check(self):
@@ -2533,12 +2574,12 @@ class Lamination(FrozenClass):
 
         pass
 
-    class LC_VentYokeOut(LaminationCheckError):
+    class LC_VentYokeIn(LaminationCheckError):
         """ """
 
         pass
 
-    class LC_VentYokeIn(LaminationCheckError):
+    class LC_VentYokeOut(LaminationCheckError):
         """ """
 
         pass
@@ -2550,6 +2591,6 @@ LaminationCheckError = Lamination.LaminationCheckError
 
 LC_RadiusError = Lamination.LC_RadiusError
 
-LC_VentYokeOut = Lamination.LC_VentYokeOut
-
 LC_VentYokeIn = Lamination.LC_VentYokeIn
+
+LC_VentYokeOut = Lamination.LC_VentYokeOut

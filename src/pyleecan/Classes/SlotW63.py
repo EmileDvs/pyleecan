@@ -1376,7 +1376,7 @@ class SlotW63(Slot):
 
         pass
 
-    class S63_W0CheckError(SlotCheckError):
+    class S63_InnerCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1386,7 +1386,7 @@ class SlotW63(Slot):
 
         pass
 
-    class S63_InnerCheckError(SlotCheckError):
+    class S63_W0CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1400,8 +1400,8 @@ SlotCheckError = SlotW63.SlotCheckError
 
 S63_WindError = SlotW63.S63_WindError
 
-S63_W0CheckError = SlotW63.S63_W0CheckError
+S63_InnerCheckError = SlotW63.S63_InnerCheckError
 
 S63_H0CheckError = SlotW63.S63_H0CheckError
 
-S63_InnerCheckError = SlotW63.S63_InnerCheckError
+S63_W0CheckError = SlotW63.S63_W0CheckError

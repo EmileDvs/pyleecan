@@ -55,10 +55,6 @@ from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.LamSlotMag import LamSlotMag
 from pyleecan.Classes.SlotM14 import SlotM14
 from pyleecan.Classes.NotchEvenDist import NotchEvenDist
-from pyleecan.Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict import (
-    isfloat,
-    isint,
-)
 from os.path import join, isfile
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 from pyleecan.Classes.SlotW63 import SlotW63
@@ -1032,13 +1028,13 @@ class ConvertMC(Convert):
                         value = lb[1]
 
                         # changement type after equal (value)
-                        if isint(value):
+                        if self.isint(value):
                             value = int(value)
                         elif value == "True":
                             value = True
                         elif value == ("False"):
                             value = False
-                        elif isfloat(value):
+                        elif self.isfloat(value):
                             value = float(value)
 
                         if value == (""):
@@ -1072,6 +1068,22 @@ class ConvertMC(Convert):
 
                 self.other_dict = other_dict
                 self.other_unit_dict = other_unit_dict
+
+    @staticmethod
+    def isfloat(value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def isint(value):
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
 
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_pole_to_P
     def convert_pole_to_P(self):

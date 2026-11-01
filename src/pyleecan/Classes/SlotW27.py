@@ -1207,12 +1207,12 @@ class SlotW27(Slot):
 
         pass
 
-    class S27_W01CheckError(SlotCheckError):
+    class S27_W12CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S27_W12CheckError(SlotCheckError):
+    class S27_W01CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1229,8 +1229,8 @@ LaminationCheckError = SlotW27.LaminationCheckError
 
 SlotCheckError = SlotW27.SlotCheckError
 
-S27_W01CheckError = SlotW27.S27_W01CheckError
-
 S27_W12CheckError = SlotW27.S27_W12CheckError
+
+S27_W01CheckError = SlotW27.S27_W01CheckError
 
 S27_W03CheckError = SlotW27.S27_W03CheckError

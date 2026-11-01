@@ -18,19 +18,13 @@ from pyleecan.Classes.Structural import Structural
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from os.path import join, split, exists, splitext
-import numpy as np, gmsh
+import numpy as np, gmsh, subprocess
 from pyleecan.Classes.Section import Section
 from pyleecan.Classes.SolverInputFile import SolverInputFile
-from pyleecan.Methods.Elmer.Section import File, Variable, MATC
-from pyleecan.Methods.Simulation.StructElmer.gen_mesh import _gen_mesh
+from pyleecan.Classes.Section import File, Variable, MATC
 from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
-from pyleecan.Methods.Simulation.StructElmer import StructElmer_BP_dict, _execute
 from pyleecan.Classes.ElmerResultsVTU import ElmerResultsVTU
 from os import makedirs, replace
-from pyleecan.Methods.Simulation.StructElmer.process_mesh import (
-    _get_names_physical,
-    _remove_entities,
-)
 from pyleecan.Functions.labels import (
     SHAFT_LAB,
     decode_label,
@@ -40,7 +34,30 @@ from pyleecan.Functions.labels import (
     STATOR_LAB_S,
     LAM_LAB_S,
     WIND_LAB_S,
+    AIRBOX_R_LAB,
+    AIRBOX_SR_LAB,
+    SHAFTSR_LAB,
+    SHAFTSL_LAB,
+    YSR_LAB,
+    YSL_LAB,
+    ROTOR_LAB,
+    STATOR_LAB,
+    SBS_TR_LAB,
+    SBS_TL_LAB,
+    SBS_BR_LAB,
+    SBS_BL_LAB,
+    SBR_B_LAB,
+    SBR_T_LAB,
+    AS_TR_LAB,
+    AS_TL_LAB,
+    AS_BR_LAB,
+    AS_BL_LAB,
+    AR_T_LAB,
+    AIRBOX_SL_LAB,
+    LAM_LAB,
+    BORE_LAB,
 )
+from pyleecan.Functions.get_path_binary import get_path_binary
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -350,6 +367,59 @@ class StructElmer(Structural):
         with open(sif_file, "wt") as f:
             sif.write(f)
 
+    @staticmethod
+    def _execute(binary_name, cwd, logger, parameter=None):
+        """Function to execute Elmer Binaries in the current working directory 'cwd'"""
+        binary = get_path_binary(binary_name)
+        cmd = ['"' + binary + '"']
+        logger.info(f"Calling {binary_name}: " + " ".join(map(str, cmd)))
+        if parameter:
+            cmd.extend(parameter)
+        popen = subprocess.Popen(
+            " ".join(cmd),
+            stdout=subprocess.PIPE,
+            universal_newlines=True,
+            shell=True,
+            cwd=cwd,
+        )
+        for stdout_line in iter(popen.stdout.readline, ""):
+            yield stdout_line
+        popen.stdout.close()
+        return_code = popen.wait()
+        if return_code:
+            raise ElmerProcessError(
+                f"Elmer Process Error while executing {' '.join(cmd)}: Return Code [{return_code}]"
+            )
+
+    @staticmethod
+    def _get_BP_dict():
+        """Build the mapping of Pyleecan labels to structural Elmer boundaries."""
+        rotor_label = ROTOR_LAB + "-0_"
+        stator_label = STATOR_LAB + "-0_"
+        return {
+            AS_BR_LAB: "MASTER_ROTOR_BOUNDARY",
+            AS_BL_LAB: "SLAVE_ROTOR_BOUNDARY",
+            SBS_BR_LAB: "MASTER_ROTOR_BOUNDARY",
+            SBS_BL_LAB: "SLAVE_ROTOR_BOUNDARY",
+            SBR_B_LAB: "SB_ROTOR_BOUNDARY",
+            rotor_label + LAM_LAB + BORE_LAB: "ROTOR_BORE_CURVE",
+            rotor_label + YSR_LAB: "MASTER_ROTOR_BOUNDARY",
+            rotor_label + YSL_LAB: "SLAVE_ROTOR_BOUNDARY",
+            stator_label + YSR_LAB: "MASTER_STATOR_BOUNDARY",
+            stator_label + YSL_LAB: "SLAVE_STATOR_BOUNDARY",
+            SHAFTSR_LAB: "MASTER_ROTOR_BOUNDARY",
+            SHAFTSL_LAB: "SLAVE_ROTOR_BOUNDARY",
+            AIRBOX_R_LAB: "VP0_BOUNDARY",
+            AIRBOX_SR_LAB: "MASTER_STATOR_BOUNDARY",
+            AIRBOX_SL_LAB: "SLAVE_STATOR_BOUNDARY",
+            AS_TR_LAB: "MASTER_STATOR_BOUNDARY",
+            AS_TL_LAB: "SLAVE_STATOR_BOUNDARY",
+            AR_T_LAB: "AIRGAP_ARC_BOUNDARY",
+            SBS_TR_LAB: "MASTER_STATOR_BOUNDARY",
+            SBS_TL_LAB: "SLAVE_STATOR_BOUNDARY",
+            SBR_T_LAB: "SB_STATOR_BOUNDARY",
+        }
+
     # cf Methods.Simulation.StructElmer.gen_mesh
     def gen_mesh(self, output):
         """Initialize the FEA simulation model
@@ -381,7 +451,7 @@ class StructElmer(Structural):
         draw_GMSH(
             output=output,
             sym=sym_r,  # TODO is it possible to have to use draw_GMSH with sym_r > sym ?
-            boundary_prop=StructElmer_BP_dict,
+            boundary_prop=self._get_BP_dict(),
             is_lam_only_S=False,
             is_lam_only_R=False,
             is_sliding_band=False,
@@ -411,9 +481,41 @@ class StructElmer(Structural):
             )
 
         # convert to ElmerGrid mesh
-        _gen_mesh(save_dir, "Mesh", lam_name, mag_name, self.get_logger())
+        self._gen_mesh(save_dir, "Mesh", lam_name, mag_name, self.get_logger())
 
         return names
+
+    @staticmethod
+    def _gen_mesh(cwd, out_name, lam_name, mag_name=None, logger=None):
+        """Convert the mesh from GMSH format to ElmerGrid format
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
+        # command line parameter to ElmerGrid
+        parameter = []
+        parameter.append("14 2")
+        parameter.append(lam_name)
+        if mag_name is not None:
+            parameter.append("-in")
+            parameter.append(mag_name)
+            parameter.append("-unite")
+
+        parameter.append("-out")
+        parameter.append(out_name)
+        parameter.append("-2d")
+        parameter.append("-autoclean")
+        parameter.append("-names")
+
+        # execute ElmerGrid
+        for info in self._execute("ElmerGrid", cwd, logger, parameter=parameter):
+            print(info, end="")
+
+        return True
 
     # cf Methods.Simulation.StructElmer.get_meshsolution
     def get_meshsolution(self, output):
@@ -507,7 +609,7 @@ class StructElmer(Structural):
         # remove unused model parts
         sta_lam = (STATOR_LAB_S + "-0_" + LAM_LAB_S).lower()  # Stator Lamination
         sta_wind = (STATOR_LAB_S + "-0_" + WIND_LAB_S).lower()  # Stator Winding
-        _remove_entities(gmsh, labels=[sta_lam, sta_wind])
+        self._remove_entities(gmsh, labels=[sta_lam, sta_wind])
 
         # get group names
         grps = gmsh.model.getPhysicalGroups(-1)
@@ -541,7 +643,7 @@ class StructElmer(Structural):
 
             hole_lines = []
             for line in lam_lines:
-                names = _get_names_physical(
+                names = self._get_names_physical(
                     gmsh,
                     dimtag=[
                         1,
@@ -566,7 +668,7 @@ class StructElmer(Structural):
             lines = gmsh.model.getBoundary([(2, magnet)])
             # store new group names in 'groups_dict' to set it later
             for line in lines:
-                names = _get_names_physical(
+                names = self._get_names_physical(
                     gmsh,
                     dimtag=[
                         1,
@@ -653,7 +755,7 @@ class StructElmer(Structural):
             ]
 
             for line in lam_lines:
-                names = _get_names_physical(gmsh, dimtag=[1, line])
+                names = self._get_names_physical(gmsh, dimtag=[1, line])
                 for key in keeper_list:
                     if any([key in name for name in names]):
                         if key not in groups_dict:
@@ -761,6 +863,83 @@ class StructElmer(Structural):
 
         return gmsh, grps, grp_names
 
+    @staticmethod
+    def _get_names_physical(gmsh, dimtag):
+        grp_tags = gmsh.model.getPhysicalGroupsForEntity(*dimtag)
+        names = [gmsh.model.getPhysicalName(1, tag) for tag in grp_tags]
+
+        return names
+
+    @staticmethod
+    def _remove_entities(gmsh, labels):
+        """
+        Remove model entities that have one of the given labels in their physical
+        groups names.
+
+        Parameters
+        ----------
+
+        gmsh :
+            gmsh object
+
+        labels : list
+            list of labels
+
+        """
+        # TODO add test that entities are not in surf or part of other 'keeper'entities
+        # get all group names
+        grps = gmsh.model.getPhysicalGroups(-1)
+        grp_names = [gmsh.model.getPhysicalName(*grp) for grp in grps]
+
+        # get entities that will be removed
+        pt_list = []
+        line_list = []
+        surf_list = []
+        for grp, name in zip(grps, grp_names):
+            if any([label in name.lower() for label in labels]):
+                dim = grp[0]
+                entities = gmsh.model.getEntitiesForPhysicalGroup(dim, grp[1])
+                if dim == 0:
+                    pt_list.extend(entities.tolist())
+                elif dim == 1:
+                    line_list.extend(entities.tolist())
+                elif dim == 2:
+                    surf_list.extend(entities.tolist())
+
+        # get lines of surfaces
+        for surf in surf_list:
+            lines = gmsh.model.getBoundary(
+                [(2, surf)]
+            )  # TODO check if holes are included
+            for line in lines:
+                line_list.append(line[1])
+
+        # get points of lines
+        for line in line_list:
+            pts = gmsh.model.getBoundary([(1, line)])
+            for pt in pts:
+                pt_list.append(pt[1])
+
+        # get unique list of entities to remove
+        line_list = list(set(line_list))
+        pt_list = list(set(pt_list))
+
+        # delete unused entities
+        for surf in surf_list:
+            # gmsh.model.removeEntities((2, surf), recursive=False)
+            gmsh.model.geo.remove([(2, surf)], recursive=False)
+
+        for line in line_list:
+            # gmsh.model.removeEntities((1, line), recursive=False)
+            gmsh.model.geo.remove([(1, line)], recursive=False)
+
+        for pt in pt_list:
+            # gmsh.model.removeEntities((0, pt), recursive=False)
+            gmsh.model.geo.remove([(0, pt)], recursive=False)
+
+        # synchronize to apply changes to model
+        gmsh.model.geo.synchronize()
+
     # cf Methods.Simulation.StructElmer.run
     def run(self):
         """Run the Structural module"""
@@ -806,7 +985,7 @@ class StructElmer(Structural):
 
         logger = self.get_logger()
 
-        for info in _execute("ElmerSolver", cwd, logger):
+        for info in self._execute("ElmerSolver", cwd, logger):
             print(info, end="")
 
     # generic save method is available in all object
@@ -1264,3 +1443,9 @@ class StructElmer(Structural):
 
 
 InputError = StructElmer.InputError
+
+
+class ElmerProcessError(Exception):
+    """Raised when there is an Elmer Binary process error"""
+
+    pass

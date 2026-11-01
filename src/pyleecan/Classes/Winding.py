@@ -27,7 +27,6 @@ from pyleecan.Functions.Winding.reverse_wind_mat import (
     permute_B_C,
 )
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
-from pyleecan.Methods.Machine.Winding.plot_linear import PHASE_COLORS
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from pyleecan.definitions import config_dict
 from pyleecan.Functions._swat_em.config import config
@@ -44,6 +43,7 @@ class Winding(FrozenClass):
 
     VERSION = 1
     NAME = "Star of slots"
+    PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
     ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
     STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
@@ -972,14 +972,14 @@ class Winding(FrozenClass):
                     arrow_1 = FancyArrowPatch(
                         (start_point_1.real, start_point_1.imag),
                         (start_point_1.real, 0),
-                        facecolor=PHASE_COLORS[idx_phase],
+                        facecolor=self.PHASE_COLORS[idx_phase],
                         linewidth=0,
                         arrowstyle="Simple, tail_width=0, head_width=8, head_length=12",
                     )
                     arrow_2 = FancyArrowPatch(
                         (start_point_2.real, start_point_2.imag),
                         (start_point_2.real, 0),
-                        facecolor=PHASE_COLORS[idx_phase],
+                        facecolor=self.PHASE_COLORS[idx_phase],
                         linewidth=0,
                         arrowstyle="Simple, tail_width=0, head_width=8, head_length=12",
                     )
@@ -1019,7 +1019,7 @@ class Winding(FrozenClass):
                         ax.plot(
                             points.real,
                             points.imag,
-                            color=PHASE_COLORS[idx_phase],
+                            color=self.PHASE_COLORS[idx_phase],
                         )
 
         # Step 3-3: Adding stator tooth patches to the figure
@@ -1072,8 +1072,8 @@ class Winding(FrozenClass):
         for idx_phase_nb in range(self.qs):
             # Avoid adding twice the same label
             if not phase_name[idx_phase_nb] in label_leg:
-                index = idx_phase_nb % len(PHASE_COLORS)
-                patch_leg.append(Patch(color=PHASE_COLORS[index]))
+                index = idx_phase_nb % len(self.PHASE_COLORS)
+                patch_leg.append(Patch(color=self.PHASE_COLORS[index]))
                 label_leg.append(phase_name[idx_phase_nb])
 
         # Adding the legend if necessary

@@ -26,10 +26,9 @@ from pyleecan.Functions.Plot import fft_dict
 from os.path import join, abspath, isdir
 from os import makedirs
 from pyleecan.definitions import RESULT_DIR
-from pyleecan.Methods.Output.Output.plot.Magnetic.plot_B_mesh import FONT_FAMILY_PYVISTA
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot
 from pyleecan.Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
-from pyleecan.Methods.Output.Output.print_memory import detail_prop
 from sys import getsizeof
 from pyleecan.Functions.Load.import_class import import_class
 
@@ -41,6 +40,8 @@ class Output(FrozenClass):
     """Main Output object: gather all the outputs of all the modules"""
 
     VERSION = 1
+    COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
+    FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 
     # cf Methods.Output.Output.getter.comp_angle_rotor
     def comp_angle_rotor(self, Time):
@@ -596,7 +597,7 @@ class Output(FrozenClass):
                 position="upper_edge",
                 color="black",
                 font_size=10,
-                font=FONT_FAMILY_PYVISTA,
+                font=self.FONT_FAMILY_PYVISTA,
             )
 
         # Get the mesh_pv and field
@@ -780,27 +781,27 @@ class Output(FrozenClass):
 
         mem_str += tab + "simu: " + str(getsizeof(self.simu)) + " o\n"
         if detail_level > 1:
-            mem_str += detail_prop(self, "simu", tab_level=tab_level + 1)
+            mem_str += self.detail_prop(self, "simu", tab_level=tab_level + 1)
 
         mem_str += tab + "geo: " + str(getsizeof(self.geo)) + " o\n"
         if detail_level > 1:
-            mem_str += detail_prop(self, "geo", tab_level=tab_level + 1)
+            mem_str += self.detail_prop(self, "geo", tab_level=tab_level + 1)
 
         mem_str += tab + "elec: " + str(getsizeof(self.elec)) + " o\n"
         if detail_level > 1:
-            mem_str += detail_prop(self, "elec", tab_level=tab_level + 1)
+            mem_str += self.detail_prop(self, "elec", tab_level=tab_level + 1)
 
         mem_str += tab + "mag: " + str(getsizeof(self.mag)) + " o\n"
         if detail_level > 1:
-            mem_str += detail_prop(self, "mag", tab_level=tab_level + 1)
+            mem_str += self.detail_prop(self, "mag", tab_level=tab_level + 1)
 
         mem_str += tab + "force: " + str(getsizeof(self.force)) + " o\n"
         if detail_level > 1:
-            mem_str += detail_prop(self, "force", tab_level=tab_level + 1)
+            mem_str += self.detail_prop(self, "force", tab_level=tab_level + 1)
 
         mem_str += tab + "struct: " + str(getsizeof(self.struct)) + " o\n"
         if detail_level > 1:
-            mem_str += detail_prop(self, "struct", tab_level=tab_level + 1)
+            mem_str += self.detail_prop(self, "struct", tab_level=tab_level + 1)
 
         mem_str += tab + "post: " + str(getsizeof(self.post)) + " o\n"
 
@@ -808,6 +809,36 @@ class Output(FrozenClass):
             print(mem_str)
         else:
             return mem_str
+
+    @staticmethod
+    def detail_prop(self, prop_name, tab_level=1):
+        """Detail the content of the property"""
+
+        tab = ""
+        for _ in range(tab_level):
+            tab += "    "
+
+        mem_str = ""
+        prop = getattr(self, prop_name)
+        for attr in dir(prop):
+            if (
+                # Not method
+                not callable(getattr(prop, attr))
+                # Not private properties
+                and not attr.startswith("_")
+                # Not following properties
+                and attr not in ["VERSION", "logger_name", "parent"]
+            ):
+                mem_str += (
+                    tab
+                    + prop_name
+                    + "."
+                    + attr
+                    + ": "
+                    + str(getsizeof(getattr(prop, attr)))
+                    + " o\n"
+                )
+        return mem_str
 
     # generic save method is available in all object
     save = save

@@ -36,18 +36,14 @@ from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Functions.Electrical.dqh_transformation import dqh2n
 from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Methods.Simulation.Input import (
-    CURRENT_DIR_REF,
-    PHASE_DIR_REF,
-    ROT_DIR_REF,
-)
+from pyleecan.Classes.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
 from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
 from pyleecan.Classes.SlotW22 import SlotW22
-from pyleecan.Methods.Machine.LamSlotWind.plot import PHASE_COLORS
 from matplotlib.patches import FancyArrowPatch, Patch
 from pyleecan.Classes._swat_em import datamodel
 from pyleecan.Classes.WindingSC import WindingSC
 from pyleecan.Classes.WindingUD import WindingUD
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot import dict_2D
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
@@ -55,7 +51,6 @@ from pyleecan.Functions.Plot.get_color_legend_from_surface import (
 )
 from pyleecan.Functions.Winding.find_wind_phase_color import find_wind_phase_color
 from pyleecan.Functions.Winding.gen_phase_list import gen_name, gen_color
-from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot.set_plot_gui_icon import set_plot_gui_icon
 from matplotlib.lines import Line2D
 from matplotlib.pyplot import plot, subplots
@@ -68,6 +63,7 @@ class LamSlotWind(LamSlot):
     """Lamination with Slot filled with winding"""
 
     VERSION = 1
+    PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 
     # cf Methods.Machine.LamSlotWind.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
@@ -286,6 +282,7 @@ class LamSlotWind(LamSlot):
         d_angle = ((2 * np.pi - phimax) / p) % (2 * np.pi / p)
 
         if is_plot:
+
             # Reconstruct fundamental MMF wave
             magmax = np.abs(mmf_ft[indr_fund])
             mmf_waveform = magmax * np.cos(p * angle_stator + phimax)
@@ -1237,7 +1234,7 @@ class LamSlotWind(LamSlot):
                         start_point,
                         end_point,
                         connectionstyle="arc3,rad=" + str(angle),
-                        facecolor=PHASE_COLORS[idx_phase],
+                        facecolor=self.PHASE_COLORS[idx_phase],
                         **kw,
                     )
                     patches.append(line)
@@ -1330,8 +1327,8 @@ class LamSlotWind(LamSlot):
                     for ii in range(qs):
                         if not phase_name[ii] in label_leg:
                             # Avoid adding twice the same label
-                            index = ii % len(PHASE_COLORS)
-                            patch_leg.append(Patch(color=PHASE_COLORS[index]))
+                            index = ii % len(self.PHASE_COLORS)
+                            patch_leg.append(Patch(color=self.PHASE_COLORS[index]))
                             label_leg.append(phase_name[ii])
 
                 if is_legend:

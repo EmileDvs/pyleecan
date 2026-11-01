@@ -17,6 +17,7 @@ from pyleecan.Classes.Conductor import Conductor
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
+from pyleecan.definitions import config_dict
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -26,6 +27,8 @@ class CondType13(Conductor):
     """parallel stranded conductor consisting of at least a single round wire"""
 
     VERSION = 1
+    COND_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
+    INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
 
     # cf Methods.Machine.CondType13.comp_height
     def comp_height(self):

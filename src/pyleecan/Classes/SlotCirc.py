@@ -24,6 +24,7 @@ from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Classes.Segment import Segment
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -45,6 +46,7 @@ class SlotCirc(Slot):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Slot.SlotCirc._comp_line_dict
     def _comp_line_dict(self):

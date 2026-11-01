@@ -30,9 +30,6 @@ from ....Functions.labels import (
     BORE_LAB,
 )
 
-R_LAB = ROTOR_LAB + "-0_"
-S_LAB = STATOR_LAB + "-0_"
-
 
 class ElmerProcessError(Exception):
     """Raised when there is an Elmer Binary process error"""
@@ -69,39 +66,36 @@ def _execute(binary_name, cwd, logger, parameter=None):
         )
 
 
-# dictionary to match StructElmer FEA boundary conditions (dict values)
-# with pyleecan line boundary properties (dict keys)
-# that are set in the build_geometry methods
-StructElmer_BP_dict = dict()
-# Airgap Int/Bottom
-StructElmer_BP_dict[AS_BR_LAB] = "MASTER_ROTOR_BOUNDARY"
-StructElmer_BP_dict[AS_BL_LAB] = "SLAVE_ROTOR_BOUNDARY"
-# Sliding Band Int/Bottom
-StructElmer_BP_dict[SBS_BR_LAB] = "MASTER_ROTOR_BOUNDARY"
-StructElmer_BP_dict[SBS_BL_LAB] = "SLAVE_ROTOR_BOUNDARY"
-StructElmer_BP_dict[SBR_B_LAB] = "SB_ROTOR_BOUNDARY"
+def _get_BP_dict():
+    """Build the mapping of Pyleecan labels to structural Elmer boundaries."""
+    rotor_label = ROTOR_LAB + "-0_"
+    stator_label = STATOR_LAB + "-0_"
+    return {
+        AS_BR_LAB: "MASTER_ROTOR_BOUNDARY",
+        AS_BL_LAB: "SLAVE_ROTOR_BOUNDARY",
+        SBS_BR_LAB: "MASTER_ROTOR_BOUNDARY",
+        SBS_BL_LAB: "SLAVE_ROTOR_BOUNDARY",
+        SBR_B_LAB: "SB_ROTOR_BOUNDARY",
+        rotor_label + LAM_LAB + BORE_LAB: "ROTOR_BORE_CURVE",
+        rotor_label + YSR_LAB: "MASTER_ROTOR_BOUNDARY",
+        rotor_label + YSL_LAB: "SLAVE_ROTOR_BOUNDARY",
+        stator_label + YSR_LAB: "MASTER_STATOR_BOUNDARY",
+        stator_label + YSL_LAB: "SLAVE_STATOR_BOUNDARY",
+        SHAFTSR_LAB: "MASTER_ROTOR_BOUNDARY",
+        SHAFTSL_LAB: "SLAVE_ROTOR_BOUNDARY",
+        AIRBOX_R_LAB: "VP0_BOUNDARY",
+        AIRBOX_SR_LAB: "MASTER_STATOR_BOUNDARY",
+        AIRBOX_SL_LAB: "SLAVE_STATOR_BOUNDARY",
+        AS_TR_LAB: "MASTER_STATOR_BOUNDARY",
+        AS_TL_LAB: "SLAVE_STATOR_BOUNDARY",
+        AR_T_LAB: "AIRGAP_ARC_BOUNDARY",
+        SBS_TR_LAB: "MASTER_STATOR_BOUNDARY",
+        SBS_TL_LAB: "SLAVE_STATOR_BOUNDARY",
+        SBR_T_LAB: "SB_STATOR_BOUNDARY",
+    }
 
-# Lamination/Shaft
-StructElmer_BP_dict[R_LAB + LAM_LAB + BORE_LAB] = "ROTOR_BORE_CURVE"
-StructElmer_BP_dict[R_LAB + YSR_LAB] = "MASTER_ROTOR_BOUNDARY"  # Rotor Yoke Side Right
-StructElmer_BP_dict[R_LAB + YSL_LAB] = "SLAVE_ROTOR_BOUNDARY"  # Rotor Yoke Side Left
-StructElmer_BP_dict[S_LAB + YSR_LAB] = (
-    "MASTER_STATOR_BOUNDARY"  # Stator Yoke Side Right
-)
-StructElmer_BP_dict[S_LAB + YSL_LAB] = "SLAVE_STATOR_BOUNDARY"  # Stator Yoke Side Left
-StructElmer_BP_dict[SHAFTSR_LAB] = "MASTER_ROTOR_BOUNDARY"  # Shaft Side Right
-StructElmer_BP_dict[SHAFTSL_LAB] = "SLAVE_ROTOR_BOUNDARY"  # Shaft Side Left
-# Airbox
-StructElmer_BP_dict[AIRBOX_R_LAB] = "VP0_BOUNDARY"
-StructElmer_BP_dict[AIRBOX_SR_LAB] = "MASTER_STATOR_BOUNDARY"
-StructElmer_BP_dict[AIRBOX_SL_LAB] = "SLAVE_STATOR_BOUNDARY"
-# Airgap Top/Ext
-StructElmer_BP_dict[AS_TR_LAB] = "MASTER_STATOR_BOUNDARY"
-StructElmer_BP_dict[AS_TL_LAB] = "SLAVE_STATOR_BOUNDARY"
-StructElmer_BP_dict[AR_T_LAB] = "AIRGAP_ARC_BOUNDARY"
-StructElmer_BP_dict[SBS_TR_LAB] = "MASTER_STATOR_BOUNDARY"
-StructElmer_BP_dict[SBS_TL_LAB] = "SLAVE_STATOR_BOUNDARY"
-StructElmer_BP_dict[SBR_T_LAB] = "SB_STATOR_BOUNDARY"
+
+StructElmer_BP_dict = _get_BP_dict()
 
 
 # List of all StructElmer Boundary conditions

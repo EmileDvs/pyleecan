@@ -34,7 +34,7 @@ from pyleecan.Functions.labels import (
 )
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.definitions import config_dict, PACKAGE_NAME
-from pyleecan.Methods.Geometry.Surface.split_line import join_surf_line
+from pyleecan.Classes.Segment import Segment
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -409,7 +409,7 @@ class Surface(FrozenClass):
         # Create the resulting surface and update ref point
         if len(top_split_list) > 0:
             if is_join:  # Make sure that the surface is closed (if needed)
-                top_split_list = join_surf_line(top_split_list, prop_dict_join)
+                top_split_list = self.join_surf_line(top_split_list, prop_dict_join)
             top_surf = SurfLine(label=self.label, line_list=top_split_list)
             top_surf.comp_point_ref(is_set=True)
         else:
@@ -417,13 +417,39 @@ class Surface(FrozenClass):
 
         if len(bot_split_list) > 0:
             if is_join:  # Make sure that the surface is closed (if needed)
-                bot_split_list = join_surf_line(bot_split_list, prop_dict_join)
+                bot_split_list = self.join_surf_line(bot_split_list, prop_dict_join)
             bot_surf = SurfLine(label=self.label, line_list=bot_split_list)
             bot_surf.comp_point_ref(is_set=True)
         else:
             bot_surf = None
 
         return top_surf, bot_surf
+
+    @staticmethod
+    def join_surf_line(split_list, prop_dict_join):
+        """Join the surface to make sur the the surface is closed"""
+        final_list = list()
+        for ii in range(len(split_list) - 1):
+            final_list.append(split_list[ii])
+            if abs(split_list[ii].get_end() - split_list[ii + 1].get_begin()) > 1e-6:
+                final_list.append(
+                    Segment(
+                        begin=split_list[ii].get_end(),
+                        end=split_list[ii + 1].get_begin(),
+                        prop_dict=prop_dict_join,
+                    )
+                )
+        final_list.append(split_list[-1])
+        # Add last line
+        if abs(split_list[-1].get_end() - split_list[0].get_begin()) > 1e-6:
+            final_list.append(
+                Segment(
+                    begin=split_list[-1].get_end(),
+                    end=split_list[0].get_begin(),
+                    prop_dict=prop_dict_join,
+                )
+            )
+        return final_list
 
     # generic save method is available in all object
     save = save

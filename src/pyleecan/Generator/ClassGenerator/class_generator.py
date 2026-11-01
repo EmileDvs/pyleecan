@@ -21,6 +21,93 @@ from ...Generator.read_fct import (
 )
 
 CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
+METHOD_IMPORT_REDIRECTS = {
+    ("Methods.Machine", "ARC_NPOINT_D"): "Machine",
+    ("Methods.Machine", "LINE_NPOINT_D"): "Machine",
+    ("Methods.Machine.Skew", "TYPE_SKEW_LIST"): "Skew",
+    ("Methods.Elmer.Section", "File"): "Section",
+    ("Methods.Elmer.Section", "Variable"): "Section",
+    ("Methods.Elmer.Section", "MATC"): "Section",
+    ("Methods.Elmer.Section.write", "INDENT"): "SolverInputFile",
+    ("Methods.Elmer.SolverInputFile.write", "INDENT"): "SolverInputFile",
+    ("Methods.Simulation.Input", "CURRENT_DIR_REF"): "Input",
+    ("Methods.Simulation.Input", "ROT_DIR_REF"): "Input",
+    ("Methods.Simulation.Input", "PHASE_DIR_REF"): "Input",
+}
+CLASS_MODULE_CONSTANTS = {
+    "Machine": {"ARC_NPOINT_D": 99, "LINE_NPOINT_D": 1},
+    "Skew": {
+        "TYPE_SKEW_LIST": ["linear", "vshape", "zig-zag", "user-defined", "function"]
+    },
+    "Input": {
+        "ROT_DIR_REF": -1,
+        "CURRENT_DIR_REF": -1,
+        "PHASE_DIR_REF": -1,
+    },
+}
+CLASS_MODULE_CONSTANT_EXPRESSIONS = {
+    "SolverInputFile": {
+        "WHITESPACE": repr(" "),
+        "INDENT": "2 * WHITESPACE",
+    }
+}
+CLASS_BODY_CONSTANTS = {
+    "SolverInputFile": {
+        "WHITESPACE": repr(" "),
+        "COMMENT": repr("! "),
+        "NEWLINE": repr("\n"),
+        "END": repr("End"),
+        "MESH_FILE": repr("Mesh"),
+    }
+}
+CLASS_METHOD_HELPERS = {
+    "XOutput": {
+        "_get_symbol_data_": ("Output.XOutput", "_get_symbol_data_"),
+    },
+    "DataDual": {
+        "is_freq": ("SciDataTool.DataDual", "is_freq"),
+    },
+    "MagElmer": {
+        "_get_BP_dict": ("Simulation.MagElmer", "_get_BP_dict"),
+    },
+    "StructElmer": {
+        "_get_BP_dict": ("Simulation.StructElmer", "_get_BP_dict"),
+        "_execute": ("Simulation.StructElmer", "_execute"),
+    },
+}
+CLASS_STATIC_METHOD_HELPERS = {
+    "DataDual": {"is_freq"},
+    "MagElmer": {"_get_BP_dict"},
+    "StructElmer": {"_get_BP_dict", "_execute"},
+}
+CLASS_MODULE_CLASS_DEFINITIONS = {
+    "Section": ("Elmer.Section", ("File", "Variable", "MATC")),
+    "StructElmer": ("Simulation.StructElmer", ("ElmerProcessError",)),
+}
+METHOD_CALL_REDIRECTS = {
+    ("OptiGenAlgNsga2Deap", "Methods.Output.XOutput", "_get_symbol_data_"): (
+        "self.xoutput",
+        "_get_symbol_data_",
+    ),
+    ("MeshMat", "Methods.Mesh.MeshMat.get_element", "_check_element_name"): (
+        None,
+        "_check_element_name",
+    ),
+}
+CONFIGURED_PLOT_CONSTANT_NAMES = {
+    "PATCH_COLOR_ALPHA",
+    "PATCH_EDGE",
+    "PATCH_EDGE_ALPHA",
+    "PHASE_COLORS",
+    "COLORS",
+    "COLORMAP",
+    "COLOR_MAP",
+    "FONT_NAME",
+    "FONT_SIZE_TITLE",
+    "FONT_SIZE_LABEL",
+    "FONT_SIZE_LEGEND",
+    "FONT_FAMILY_PYVISTA",
+}
 
 
 def _load_method_error_module(path_to_gen, module_name):
@@ -183,6 +270,241 @@ def _same_error_class_import(path_to_gen, first_identity, second_identity):
             path_to_gen, second_identity[2], second_identity[3]
         )
     )
+
+
+def _rename_method_references(source, renamed_names):
+    """Rename Python name references without changing comments or string literals."""
+    if not renamed_names:
+        return source
+    tree = ast.parse(source)
+    source_bytes = source.encode("utf-8")
+    line_offsets = [0]
+    for index, value in enumerate(source_bytes):
+        if value == ord("\n"):
+            line_offsets.append(index + 1)
+
+    replacements = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Name) or node.id not in renamed_names:
+            continue
+        start = line_offsets[node.lineno - 1] + node.col_offset
+        end = start + len(node.id.encode("utf-8"))
+        replacements.append((start, end, renamed_names[node.id].encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
+    return source_bytes.decode("utf-8")
+
+
+def _rewrite_method_call_targets(source, call_redirects):
+    """Redirect imported helper calls to methods on an existing object."""
+    if not call_redirects:
+        return source
+    tree = ast.parse(source)
+    source_bytes = source.encode("utf-8")
+    line_offsets = [0]
+    for index, value in enumerate(source_bytes):
+        if value == ord("\n"):
+            line_offsets.append(index + 1)
+
+    replacements = []
+    for node in ast.walk(tree):
+        if not (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id in call_redirects
+        ):
+            continue
+        receiver, method_name = call_redirects[node.func.id]
+        function_start = line_offsets[node.func.lineno - 1] + node.func.col_offset
+        function_end = function_start + len(node.func.id.encode("utf-8"))
+        target = (
+            "self." + method_name
+            if receiver is None
+            else receiver + "." + method_name
+        )
+        replacements.append((function_start, function_end, target.encode("utf-8")))
+        if receiver is not None:
+            if not node.args or ast.unparse(node.args[0]) != receiver:
+                raise ValueError(
+                    "Cannot redirect "
+                    + node.func.id
+                    + " call without its expected receiver "
+                    + receiver
+                )
+            if len(node.args) < 2:
+                raise ValueError(
+                    "Cannot redirect "
+                    + node.func.id
+                    + " call without additional positional arguments"
+                )
+            first_argument_start = (
+                line_offsets[node.args[0].lineno - 1] + node.args[0].col_offset
+            )
+            second_argument_start = (
+                line_offsets[node.args[1].lineno - 1] + node.args[1].col_offset
+            )
+            replacements.append((first_argument_start, second_argument_start, b""))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
+    return source_bytes.decode("utf-8")
+
+
+def _get_method_body_imports(method_node):
+    """Collect static imports in a method body without entering nested scopes."""
+    imports = []
+
+    class ImportVisitor(ast.NodeVisitor):
+        def visit_Import(self, node):
+            imports.append(node)
+
+        def visit_ImportFrom(self, node):
+            imports.append(node)
+
+        def visit_FunctionDef(self, node):
+            return
+
+        visit_AsyncFunctionDef = visit_FunctionDef
+
+        def visit_ClassDef(self, node):
+            return
+
+    visitor = ImportVisitor()
+    for statement in method_node.body:
+        visitor.visit(statement)
+    return imports
+
+
+def _get_imported_class_modules(import_node, source_package, path_to_gen, soft_name):
+    """Return generated class modules referenced by a static import."""
+    imported_modules = []
+    if isinstance(import_node, ast.Import):
+        module_names = [alias.name.split(".") for alias in import_node.names]
+    else:
+        module_parts = _get_absolute_import_module(import_node, source_package)
+        if module_parts[:2] != [soft_name, "Classes"]:
+            return []
+        if len(module_parts) > 2:
+            module_names = [module_parts]
+        else:
+            module_names = [
+                module_parts + alias.name.split(".")
+                for alias in import_node.names
+                if alias.name != "*"
+            ]
+
+    for module_parts in module_names:
+        if module_parts[:2] != [soft_name, "Classes"] or len(module_parts) < 3:
+            continue
+        class_module = module_parts[2]
+        if isfile(join(path_to_gen, class_module + ".py")):
+            imported_modules.append(class_module)
+    return imported_modules
+
+
+def _class_module_imports(path_to_gen, class_module, soft_name):
+    """Return top-level generated class imports for one class module."""
+    class_path = join(path_to_gen, class_module + ".py")
+    if not isfile(class_path):
+        return []
+    with open(class_path, encoding="utf-8") as class_file:
+        class_tree = ast.parse(class_file.read())
+
+    imports = []
+    class_package = [soft_name, "Classes"]
+    for node in class_tree.body:
+        if isinstance(node, ast.Import):
+            import_nodes = [node]
+        elif isinstance(node, ast.ImportFrom):
+            import_nodes = [node]
+        else:
+            continue
+        for import_node in import_nodes:
+            imports.extend(
+                _get_imported_class_modules(
+                    import_node, class_package, path_to_gen, soft_name
+                )
+            )
+    return imports
+
+
+def _would_create_class_import_cycle(
+    import_node, source_package, path_to_gen, class_name, soft_name
+):
+    """Check whether hoisting an import would create a generated-class cycle."""
+    pending = _get_imported_class_modules(
+        import_node, source_package, path_to_gen, soft_name
+    )
+    visited = set()
+    while pending:
+        class_module = pending.pop()
+        if class_module == class_name:
+            return True
+        if class_module in visited:
+            continue
+        visited.add(class_module)
+        pending.extend(_class_module_imports(path_to_gen, class_module, soft_name))
+    return False
+
+
+def _has_method_body_import_guard(source, import_node):
+    """Keep imports explicitly marked as local circular-import guards."""
+    source_lines = source.splitlines()
+    line_index = import_node.lineno - 2
+    while line_index >= 0:
+        line = source_lines[line_index].strip().lower()
+        if not line:
+            return False
+        if line.startswith("#"):
+            return "circular" in line or "importerror" in line
+        if (
+            line.startswith("import ")
+            or line.startswith("from ")
+            or line in ("(", ")")
+            or line.endswith(("(", ","))
+        ):
+            line_index -= 1
+            continue
+        return False
+    return False
+
+
+def _remove_method_body_imports(
+    source, method_body_imports, method_start_line, method_node
+):
+    """Remove extracted static imports while retaining the surrounding source."""
+    source_bytes = source.encode("utf-8")
+    line_offsets = [0]
+    for index, value in enumerate(source_bytes):
+        if value == ord("\n"):
+            line_offsets.append(index + 1)
+
+    extracted_imports = set(method_body_imports)
+    imports_requiring_pass = set()
+    for parent in ast.walk(method_node):
+        for _, statements in ast.iter_fields(parent):
+            if not isinstance(statements, list) or not all(
+                isinstance(statement, ast.stmt) for statement in statements
+            ):
+                continue
+            suite_imports = [
+                statement for statement in statements if statement in extracted_imports
+            ]
+            if suite_imports and len(suite_imports) == len(statements):
+                imports_requiring_pass.add(
+                    min(suite_imports, key=lambda node: node.lineno)
+                )
+
+    replacements = []
+    for node in method_body_imports:
+        start_line = node.lineno - method_start_line
+        end_line = node.end_lineno - method_start_line
+        start = line_offsets[start_line] + node.col_offset
+        end = line_offsets[end_line] + node.end_col_offset
+        replacement = b"pass" if node in imports_requiring_pass else b""
+        replacements.append((start, end, replacement))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
+    return source_bytes.decode("utf-8")
 
 
 def _expand_error_wildcard_imports(
@@ -367,6 +689,31 @@ def _get_method_source(
         for node in ast.walk(method_node)
         if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
     }
+    helper_function_nodes = {
+        node.name: node
+        for node in module.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node is not method_node
+        and not node.decorator_list
+    }
+    inline_helper_names = set()
+    pending_helpers = list(used_names.intersection(helper_function_nodes))
+    while pending_helpers:
+        helper_name = pending_helpers.pop()
+        if helper_name in inline_helper_names:
+            continue
+        inline_helper_names.add(helper_name)
+        helper_used_names = {
+            node.id
+            for node in ast.walk(helper_function_nodes[helper_name])
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+        }
+        used_names.update(helper_used_names)
+        pending_helpers.extend(
+            name
+            for name in helper_used_names
+            if name in helper_function_nodes and name not in inline_helper_names
+        )
     module.body, wildcard_reason = _expand_error_wildcard_imports(
         module, method_node, used_names, path_to_gen, source_package
     )
@@ -420,6 +767,8 @@ def _get_method_source(
                     "module uses a wildcard import whose names cannot be resolved safely",
                 )
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            if node is method_node:
+                continue
             helper_bindings.add(node.name)
             has_module_helpers = True
         elif isinstance(node, (ast.Assign, ast.AnnAssign)):
@@ -455,6 +804,8 @@ def _get_method_source(
         name: value
         for name, value in literal_defaults.items()
         if name not in signature_names
+        and name not in CLASS_BODY_CONSTANTS.get(class_name, {})
+        and name not in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(class_name, {})
     }
     method_local_names = {
         node.id
@@ -511,13 +862,21 @@ def _get_method_source(
         for node in ast.walk(root_node)
         if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
     }
+    configured_assignment_names = {
+        name
+        for name in hoist_names.intersection(module_assignments)
+        if any(
+            isinstance(node, ast.Name) and node.id == "config_dict"
+            for node in ast.walk(module_assignments[name])
+        )
+    }
     hoisted_names = {
         name
         for name in used_names.intersection(module_assignments, hoist_names)
         if name not in method_local_names
         and name not in signature_non_default_names
         and (name not in signature_default_names or name in direct_default_names)
-    }
+    } | configured_assignment_names
     if hoisted_names and not method_node.args.args:
         return (
             None,
@@ -546,11 +905,25 @@ def _get_method_source(
     target_package = [soft_name, "Classes"]
     method_imports = []
     import_used_names = used_names | extra_used_names
+    renamed_method_names = {}
+    method_call_redirects = {}
+    method_body_imports = [
+        node
+        for node in _get_method_body_imports(method_node)
+        if not _has_method_body_import_guard(source, node)
+        and not _would_create_class_import_cycle(
+            node, source_package, path_to_gen, class_name, soft_name
+        )
+    ]
 
     if has_module_helpers:
         helper_names = sorted(
             import_used_names.intersection(
-                helper_bindings - inline_literal_defaults.keys() - hoisted_names
+                helper_bindings
+                - inline_literal_defaults.keys()
+                - hoisted_names
+                - CLASS_BODY_CONSTANTS.get(class_name, {}).keys()
+                - CLASS_MODULE_CONSTANT_EXPRESSIONS.get(class_name, {}).keys()
             )
         )
         if helper_names:
@@ -562,20 +935,46 @@ def _get_method_source(
                 and target_package[common] == helper_module[common]
             ):
                 common += 1
-            method_imports.append(
-                ast.ImportFrom(
-                    module=".".join(helper_module[common:]),
-                    names=[ast.alias(name=name) for name in helper_names],
-                    level=len(target_package) - common + 1,
+            imported_helpers = [
+                ast.alias(name=name)
+                for name in helper_names
+                if name not in inline_helper_names
+                and METHOD_IMPORT_REDIRECTS.get(
+                    (".".join(helper_module[1:]), name)
                 )
-            )
+                is None
+            ]
+            if imported_helpers:
+                method_imports.append(
+                    ast.ImportFrom(
+                        module=".".join(helper_module[common:]),
+                        names=imported_helpers,
+                        level=len(target_package) - common + 1,
+                    )
+                )
+            for name in helper_names:
+                target_class = METHOD_IMPORT_REDIRECTS.get(
+                    (".".join(helper_module[1:]), name)
+                )
+                if target_class is None:
+                    continue
+                if target_class != class_name:
+                    method_imports.append(
+                        ast.ImportFrom(
+                            module=soft_name + ".Classes." + target_class,
+                            names=[ast.alias(name=name)],
+                            level=0,
+                        )
+                    )
 
-    for node in module.body:
+    for node in module.body + method_body_imports:
+        is_method_body_import = node in method_body_imports
         if isinstance(node, ast.Import):
             aliases = [
                 alias
                 for alias in node.names
-                if (alias.asname or alias.name.split(".")[0]) in import_used_names
+                if is_method_body_import
+                or (alias.asname or alias.name.split(".")[0]) in import_used_names
             ]
             if aliases:
                 method_imports.append(ast.Import(names=aliases))
@@ -583,11 +982,73 @@ def _get_method_source(
             aliases = [
                 alias
                 for alias in node.names
-                if alias.name == "*"
+                if is_method_body_import
+                or alias.name == "*"
                 or (alias.asname or alias.name) in import_used_names
             ]
             if not aliases:
                 continue
+
+            absolute_module_parts = _get_absolute_import_module(node, source_package)
+            redirect_module = ".".join(
+                absolute_module_parts[1:]
+                if absolute_module_parts[:1] == [soft_name]
+                else absolute_module_parts
+            )
+            redirected_aliases = {}
+            for alias in aliases:
+                method_call_redirect = METHOD_CALL_REDIRECTS.get(
+                    (class_name, redirect_module, alias.name)
+                )
+                if method_call_redirect is not None:
+                    method_call_redirects[alias.asname or alias.name] = (
+                        method_call_redirect
+                    )
+                    continue
+                target_class = METHOD_IMPORT_REDIRECTS.get(
+                    (redirect_module, alias.name)
+                )
+                if target_class is not None:
+                    target_module = soft_name + ".Classes." + target_class
+                    redirected_aliases.setdefault(target_module, []).append(alias)
+            for target_module, target_aliases in redirected_aliases.items():
+                if target_module != soft_name + ".Classes." + class_name:
+                    method_imports.append(
+                        ast.ImportFrom(
+                            module=target_module,
+                            names=target_aliases,
+                            level=0,
+                        )
+                    )
+            aliases = [
+                alias
+                for alias in aliases
+                if (redirect_module, alias.name) not in METHOD_IMPORT_REDIRECTS
+                and (
+                    class_name,
+                    redirect_module,
+                    alias.name,
+                )
+                not in METHOD_CALL_REDIRECTS
+            ]
+            if not aliases:
+                continue
+
+            if _get_absolute_import_module(node, source_package) == [
+                soft_name,
+                "Functions",
+                "SciDataTool",
+            ]:
+                updated_aliases = []
+                for alias in aliases:
+                    if alias.name == "axes_dict":
+                        updated_aliases.append(
+                            ast.alias(name="axes_dict_transformation")
+                        )
+                        renamed_method_names["axes_dict"] = "axes_dict_transformation"
+                    else:
+                        updated_aliases.append(alias)
+                aliases = updated_aliases
 
             if node.level:
                 module_parts = source_package[: len(source_package) - node.level + 1]
@@ -643,6 +1104,18 @@ def _get_method_source(
     while start_line > 1 and source_lines[start_line - 2].lstrip().startswith("#"):
         start_line -= 1
     method_source = "\n".join(source_lines[start_line - 1 : method_node.end_lineno])
+    method_source = _remove_method_body_imports(
+        method_source, method_body_imports, start_line, method_node
+    )
+    method_source = _rename_method_references(method_source, renamed_method_names)
+    method_source = _rewrite_method_call_targets(
+        method_source, method_call_redirects
+    )
+    method_helper_names = inline_helper_names.difference(method_local_names)
+    method_source = _rename_method_references(
+        method_source,
+        {name: "self." + name for name in method_helper_names},
+    )
     method_source = _add_literal_keyword_defaults(
         method_source, inline_literal_defaults, used_names
     )
@@ -656,6 +1129,50 @@ def _get_method_source(
             else method_node.args.args[0].arg if method_node.args.args else None
         ),
     )
+    source_lines = source.splitlines()
+    helper_sources = []
+    for helper_name in sorted(inline_helper_names):
+        helper_node = helper_function_nodes[helper_name]
+        helper_source = "\n".join(
+            source_lines[helper_node.lineno - 1 : helper_node.end_lineno]
+        )
+        helper_local_names = {
+            node.id
+            for node in ast.walk(helper_node)
+            if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del))
+        }
+        helper_local_names.update(
+            argument.arg
+            for argument in (
+                helper_node.args.posonlyargs
+                + helper_node.args.args
+                + helper_node.args.kwonlyargs
+            )
+        )
+        helper_reference_names = {
+            name: class_name + "." + name
+            for name in inline_helper_names.difference(helper_local_names)
+        }
+        helper_reference_names.update(
+            {
+                name: class_name + "." + name
+                for name in hoisted_names.difference(helper_local_names)
+            }
+        )
+        helper_reference_names.update(
+            {
+                name: class_name + "." + name
+                for name in CLASS_BODY_CONSTANTS.get(class_name, {}).keys()
+                if name not in helper_local_names
+            }
+        )
+        helper_source = _rename_method_references(
+            helper_source,
+            helper_reference_names,
+        )
+        helper_sources.append("@staticmethod\n" + helper_source)
+    if helper_sources:
+        method_source += "\n\n" + "\n\n".join(helper_sources)
     method_tree = ast.parse(method_source)
     if any(
         _is_numpy_import(node) for node in method_imports + list(ast.walk(method_tree))
@@ -738,22 +1255,31 @@ def _find_repeated_method_assignments(path_to_gen, class_pack, class_name, metho
                 value = node.value
             else:
                 continue
-            if value is None or name not in used_names or name in local_names:
+            is_configured_plot_assignment = (
+                value is not None
+                and (
+                    name.endswith("_COLOR")
+                    or name in CONFIGURED_PLOT_CONSTANT_NAMES
+                )
+                and any(
+                    isinstance(child, ast.Name) and child.id == "config_dict"
+                    for child in ast.walk(value)
+                )
+            )
+            if (
+                value is None
+                or name in local_names
+                or (name not in used_names and not is_configured_plot_assignment)
+            ):
                 continue
             try:
                 ast.literal_eval(value)
-            except (ValueError, TypeError, SyntaxError):
+            except ValueError, TypeError, SyntaxError:
                 assigned_names.add(name)
                 assignment_methods.setdefault(name, set()).add(meth)
                 if name in direct_default_names:
                     default_assignments.setdefault(meth, set()).add(name)
-                if (
-                    name.endswith("_COLOR")
-                    or name in {"PATCH_COLOR_ALPHA", "PATCH_EDGE", "PATCH_EDGE_ALPHA"}
-                ) and any(
-                    isinstance(node, ast.Name) and node.id == "config_dict"
-                    for node in ast.walk(value)
-                ):
+                if is_configured_plot_assignment:
                     configured_plot_assignments.add(name)
         method_assignments[meth] = assigned_names
 
@@ -783,6 +1309,8 @@ def _prepare_class_methods(
     target_package = [soft_name, "Classes"]
     class_attributes = {}
     class_error_definitions = {}
+    class_method_definitions = {}
+    class_method_imports = []
     method_default_overrides = {}
     repeated_assignments = _find_repeated_method_assignments(
         path_to_gen, class_pack, class_name, methods
@@ -817,6 +1345,131 @@ def _prepare_class_methods(
             prepared[meth] = None
             fallback_reasons[meth] = reason
             continue
+
+        filtered_method_imports = []
+        for import_node in method_imports:
+            if not isinstance(import_node, ast.ImportFrom):
+                filtered_method_imports.append(import_node)
+                continue
+            absolute_module = ".".join(
+                _get_absolute_import_module(import_node, target_package)
+            )
+            retained_aliases = []
+            for alias in import_node.names:
+                configured_module_classes = CLASS_MODULE_CLASS_DEFINITIONS.get(
+                    class_name
+                )
+                if (
+                    configured_module_classes is not None
+                    and absolute_module
+                    == soft_name + ".Methods." + configured_module_classes[0]
+                    and alias.name in configured_module_classes[1]
+                ):
+                    continue
+                binding = alias.asname or alias.name
+                configured_helper = CLASS_METHOD_HELPERS.get(class_name, {}).get(
+                    binding
+                )
+                if (
+                    configured_helper is None
+                    or absolute_module
+                    != soft_name + ".Methods." + configured_helper[0]
+                    or alias.name != configured_helper[1]
+                ):
+                    retained_aliases.append(alias)
+                    continue
+                helper_path = join(
+                    dirname(path_to_gen),
+                    "Methods",
+                    *configured_helper[0].split("."),
+                    "__init__.py",
+                )
+                with open(helper_path, encoding="utf-8") as helper_file:
+                    helper_module = ast.parse(
+                        helper_file.read(), filename=helper_path
+                    )
+                helper_node = next(
+                    (
+                        node
+                        for node in helper_module.body
+                        if isinstance(node, ast.FunctionDef)
+                        and node.name == configured_helper[1]
+                    ),
+                    None,
+                )
+                if helper_node is None:
+                    raise ValueError(
+                        "Could not find configured class helper "
+                        + configured_helper[1]
+                        + " in "
+                        + helper_path
+                    )
+                if configured_helper[1] in CLASS_STATIC_METHOD_HELPERS.get(
+                    class_name, set()
+                ):
+                    helper_node.decorator_list.insert(
+                        0, ast.Name(id="staticmethod", ctx=ast.Load())
+                    )
+                class_method_definitions[helper_node.name] = helper_node
+                helper_used_names = {
+                    node.id
+                    for node in ast.walk(helper_node)
+                    if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+                }
+                for helper_import in helper_module.body:
+                    if not isinstance(helper_import, (ast.Import, ast.ImportFrom)):
+                        continue
+                    used_aliases = [
+                        helper_alias
+                        for helper_alias in helper_import.names
+                        if (
+                            helper_alias.asname
+                            or (
+                                helper_alias.name.split(".")[0]
+                                if isinstance(helper_import, ast.Import)
+                                else helper_alias.name
+                            )
+                        )
+                        in helper_used_names
+                    ]
+                    if used_aliases:
+                        if isinstance(helper_import, ast.Import):
+                            class_method_imports.append(
+                                ast.Import(names=used_aliases)
+                            )
+                            continue
+                        helper_package = [
+                            soft_name,
+                            "Methods",
+                            *configured_helper[0].split("."),
+                        ]
+                        absolute_helper_module = _get_absolute_import_module(
+                            helper_import, helper_package
+                        )
+                        common = 0
+                        while (
+                            common < len(target_package)
+                            and common < len(absolute_helper_module)
+                            and target_package[common]
+                            == absolute_helper_module[common]
+                        ):
+                            common += 1
+                        class_method_imports.append(
+                            ast.ImportFrom(
+                                module=".".join(absolute_helper_module[common:]),
+                                names=used_aliases,
+                                level=len(target_package) - common + 1,
+                            )
+                        )
+            if retained_aliases:
+                filtered_method_imports.append(
+                    ast.ImportFrom(
+                        module=import_node.module,
+                        names=retained_aliases,
+                        level=import_node.level,
+                    )
+                )
+        method_imports = filtered_method_imports
 
         candidate_bindings = {}
         conflict = False
@@ -985,6 +1638,63 @@ def _prepare_class_methods(
                     else alias.name
                 )
                 identity = candidate_bindings[binding]
+                if identity in import_keys:
+                    continue
+                import_keys.add(identity)
+                import_groups[group_key].names.append(alias)
+
+    if class_method_definitions:
+        helper_names = set(class_method_definitions)
+        for meth, method_source in prepared.items():
+            if method_source is not None:
+                prepared[meth] = _rename_method_references(
+                    method_source,
+                    {name: "self." + name for name in helper_names},
+                )
+        first_method = next(
+            (meth for meth, source in prepared.items() if source is not None), None
+        )
+        if first_method is not None:
+            helper_sources = [
+                ast.unparse(class_method_definitions[name])
+                for name in sorted(class_method_definitions)
+            ]
+            prepared[first_method] += "\n\n" + "\n\n".join(helper_sources)
+        for import_node in class_method_imports:
+            group_key = (
+                type(import_node).__name__,
+                getattr(import_node, "level", 0),
+                getattr(import_node, "module", None),
+                any(alias.name == "*" for alias in import_node.names),
+            )
+            if group_key not in import_groups:
+                grouped_import = (
+                    ast.Import(names=[])
+                    if isinstance(import_node, ast.Import)
+                    else ast.ImportFrom(
+                        module=import_node.module,
+                        names=[],
+                        level=import_node.level,
+                    )
+                )
+                import_groups[group_key] = grouped_import
+                imports.append(grouped_import)
+            for alias in import_node.names:
+                binding = alias.asname or (
+                    alias.name.split(".")[0]
+                    if isinstance(import_node, ast.Import)
+                    else alias.name
+                )
+                identity = _get_import_identity(import_node, alias, target_package)
+                previous = import_bindings.get(binding)
+                if previous is not None and previous != identity:
+                    raise ValueError(
+                        "Class helper import name '"
+                        + binding
+                        + "' conflicts with "
+                        + _format_import_identity(previous)
+                    )
+                import_bindings[binding] = identity
                 if identity in import_keys:
                     continue
                 import_keys.add(identity)
@@ -1349,11 +2059,12 @@ def _normalize_method_numpy_imports(method_source, method_imports):
     combined_source = (import_source + "\n\n" if import_source else "") + method_source
     normalized_source = _apply_numpy_import_style(combined_source)
     tree = ast.parse(normalized_source)
-    method_node = next(
+    method_nodes = [
         node
         for node in tree.body
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-    )
+    ]
+    method_node = method_nodes[0]
     imports = [
         node
         for node in tree.body
@@ -1371,7 +2082,9 @@ def _normalize_method_numpy_imports(method_source, method_imports):
         "#"
     ):
         start_line -= 1
-    method_source = "\n".join(lines[start_line - 1 : method_node.end_lineno])
+    method_source = "\n".join(
+        lines[start_line - 1 : method_nodes[-1].end_lineno]
+    )
     return method_source, imports
 
 
@@ -1624,6 +2337,17 @@ def generate_class(
         + class_dict["name"]
         + '\n"""\n\n'
     )
+    for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items():
+        class_file.write(name + " = " + repr(value) + "\n")
+    for name, expression in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(
+        class_name, {}
+    ).items():
+        class_file.write(name + " = " + expression + "\n")
+    if (
+        class_name in CLASS_MODULE_CONSTANTS
+        or class_name in CLASS_MODULE_CONSTANT_EXPRESSIONS
+    ):
+        class_file.write("\n")
     if fallback_reasons:
         class_file.write("# Inline fallback report:\n")
         class_file.write(
@@ -1777,6 +2501,10 @@ def generate_class(
         for cst in class_dict["constants"]
     )
     class_file.writelines(
+        TAB + name + " = " + value + "\n"
+        for name, value in CLASS_BODY_CONSTANTS.get(class_name, {}).items()
+    )
+    class_file.writelines(
         TAB + ast.unparse(assignment) + "\n" for assignment in class_attributes
     )
     class_file.write("\n")
@@ -1914,6 +2642,33 @@ def generate_class(
                     + definition.name
                     + "\n"
                 )
+    module_class_definitions = CLASS_MODULE_CLASS_DEFINITIONS.get(class_name)
+    if module_class_definitions is not None:
+        module_path = join(
+            dirname(path_to_gen),
+            "Methods",
+            *module_class_definitions[0].split("."),
+            "__init__.py",
+        )
+        with open(module_path, encoding="utf-8") as module_file:
+            module = ast.parse(module_file.read(), filename=module_path)
+        definitions = {
+            node.name: node
+            for node in module.body
+            if isinstance(node, ast.ClassDef)
+        }
+        missing_definitions = set(module_class_definitions[1]).difference(definitions)
+        if missing_definitions:
+            raise ValueError(
+                "Could not find configured module classes: "
+                + ", ".join(sorted(missing_definitions))
+                + " in "
+                + module_path
+            )
+        with open(class_path, "a", encoding="utf-8") as generated_file:
+            generated_file.write("\n")
+            for name in module_class_definitions[1]:
+                generated_file.write(ast.unparse(definitions[name]) + "\n\n")
     with open(class_path, encoding="utf-8") as generated_file:
         source = generated_file.read()
     source = _apply_numpy_import_style(source)

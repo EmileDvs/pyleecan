@@ -20,15 +20,7 @@ from pyleecan.Classes.Output import Output
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.OptiObjective import OptiObjective
 from matplotlib.colors import LinearSegmentedColormap
-from pyleecan.Methods.Output.XOutput import _get_symbol_data_
-from pyleecan.Methods.Output.XOutput.plot_multi import (
-    COLORMAP,
-    COLORS,
-    FONT_NAME,
-    FONT_SIZE_LABEL,
-    FONT_SIZE_LEGEND,
-    FONT_SIZE_TITLE,
-)
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from sys import getsizeof
@@ -41,11 +33,39 @@ class XOutput(Output):
     """XOutput object: gather all the outputs of all the modules for multiple simulations"""
 
     VERSION = 1
+    COLORS = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"]
+    COLORMAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
+    FONT_NAME = config_dict["PLOT"]["FONT_NAME"]
+    FONT_SIZE_TITLE = config_dict["PLOT"]["FONT_SIZE_TITLE"]
+    FONT_SIZE_LABEL = config_dict["PLOT"]["FONT_SIZE_LABEL"]
+    FONT_SIZE_LEGEND = config_dict["PLOT"]["FONT_SIZE_LEGEND"]
 
     # cf Methods.Output.XOutput.__delitem__
     def __delitem__(self, key):
         """Called to implement deletion of self[key]."""
         return self.xoutput_dict.__delitem__(key)
+
+    def _get_symbol_data_(self, symbol, index):
+        """Helper function to get data and label by symbol to avoid duplicate code."""
+        if symbol in self.keys():
+            data = self[symbol]
+            values = np.array(data.result)[index]
+        elif symbol in [pe.symbol for pe in self.paramexplorer_list]:
+            data = self.get_paramexplorer(symbol)
+            values = np.array(data.value)[index]
+        else:
+            symbol_ = next(iter(self.keys()))
+            self.get_logger().warning(
+                f"XOutput.plot_pareto(): Symbol '{symbol}' not found. "
+                + f"Using symbol '{symbol_}' instead."
+            )
+            symbol = symbol_
+            data = self[symbol]
+            values = np.array(data.result)[index]
+        label = symbol
+        if data.unit not in ["", None]:
+            label += " [{}]".format(data.unit)
+        return (values, label)
 
     # cf Methods.Output.XOutput.__getitem__
     def __getitem__(self, idx):
@@ -290,8 +310,8 @@ class XOutput(Output):
         ngen = ngen[indx]
 
         # get data and labels
-        x_values, x_label = _get_symbol_data_(self, x_symbol, indx)
-        y_values, y_label = _get_symbol_data_(self, y_symbol, indx)
+        x_values, x_label = self._get_symbol_data_(self, x_symbol, indx)
+        y_values, y_label = self._get_symbol_data_(self, y_symbol, indx)
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -401,14 +421,14 @@ class XOutput(Output):
             raise PlotError(f"Unknown plot_type {plot_type}.")
 
         # get data and labels
-        x_values, x_label = _get_symbol_data_(self, x_symbol, idx)
-        y_values, y_label = _get_symbol_data_(self, y_symbol, idx)
+        x_values, x_label = self._get_symbol_data_(self, x_symbol, idx)
+        y_values, y_label = self._get_symbol_data_(self, y_symbol, idx)
 
         if c_symbol is None:
-            colors = COLORS[0]
+            colors = self.COLORS[0]
         else:
             # get the color data
-            c_values, _ = _get_symbol_data_(self, c_symbol, idx)
+            c_values, _ = self._get_symbol_data_(self, c_symbol, idx)
             colors = c_values[:, np.newaxis]
 
         # add legend
@@ -418,7 +438,7 @@ class XOutput(Output):
             legends = []
 
         if cmap is None:
-            cmap = COLORMAP
+            cmap = self.COLORMAP
 
         (fig, ax, _, _) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
@@ -437,10 +457,10 @@ class XOutput(Output):
             win_title=win_title,
             fig=fig,
             ax=ax,
-            font_name=FONT_NAME,
-            font_size_title=FONT_SIZE_TITLE,
-            font_size_label=FONT_SIZE_LABEL,
-            font_size_legend=FONT_SIZE_LEGEND,
+            font_name=self.FONT_NAME,
+            font_size_title=self.FONT_SIZE_TITLE,
+            font_size_label=self.FONT_SIZE_LABEL,
+            font_size_legend=self.FONT_SIZE_LEGEND,
         )
         return fig, ax
 

@@ -4,6 +4,8 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Skew
 """
 
+TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -18,7 +20,6 @@ from pyleecan.Classes._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods.Machine.Skew import TYPE_SKEW_LIST
 from pyleecan.Functions.load import import_class
 from pyleecan.Functions.Plot import dict_2D
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D

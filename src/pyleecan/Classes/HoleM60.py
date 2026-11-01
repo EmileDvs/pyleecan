@@ -24,6 +24,7 @@ from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -45,6 +46,7 @@ class HoleM60(HoleMag):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Slot.HoleM60._comp_point_coordinate
     def _comp_point_coordinate(self):
@@ -1385,13 +1387,13 @@ class HoleM60(HoleMag):
 
         pass
 
-    class S60_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM58 is None"""
+    class S60_WCheckError(SlotCheckError):
+        """ """
 
         pass
 
-    class S60_WCheckError(SlotCheckError):
-        """ """
+    class S60_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM58 is None"""
 
         pass
 
@@ -1402,6 +1404,6 @@ LaminationCheckError = HoleM60.LaminationCheckError
 
 SlotCheckError = HoleM60.SlotCheckError
 
-S60_NoneError = HoleM60.S60_NoneError
-
 S60_WCheckError = HoleM60.S60_WCheckError
+
+S60_NoneError = HoleM60.S60_NoneError

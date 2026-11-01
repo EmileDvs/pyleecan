@@ -17,7 +17,7 @@ from pyleecan.Classes.Elmer import Elmer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Elmer.Section.write import INDENT, _convert
+from pyleecan.Classes.SolverInputFile import INDENT
 from io import StringIO
 
 import numpy as np
@@ -122,7 +122,7 @@ class Section(Elmer):
             if isinstance(value, list) and len(value) > 1:
                 n = "(" + str(len(value)) + ")"
             stream.write(NEWLINE + INDENT)
-            stream.write(key + n + " = " + _convert(value))
+            stream.write(key + n + " = " + self._convert(value))
             if comment:
                 stream.write(INDENT + "! " + comment)
 
@@ -130,6 +130,43 @@ class Section(Elmer):
         stream.write(NEWLINE + END + NEWLINE)
 
         return stream
+
+    @staticmethod
+    def _convert(value, get_type=True):
+        """internal method to convert the data corresponding to Elmer SIF needs"""
+        if isinstance(value, File):  # check before str due to inheretance
+            return "File " * get_type + f'"{value}"'
+
+        if isinstance(value, str):
+            return "String " * get_type + f'"{value}"'
+
+        if isinstance(value, float):
+            return "Real " * get_type + f"{value}"
+
+        if isinstance(value, bool):
+            return "Logical " * get_type + f"{value}"
+
+        if isinstance(value, int):
+            return "Integer " * get_type + f"{value}"
+
+        if isinstance(value, list):
+            val_str = ""
+            for idx, val in enumerate(value):
+                get_type = True if idx == 0 else False
+                val_str += Section._convert(val, get_type=get_type) + " "
+            return val_str
+
+        if isinstance(value, Variable):
+            return (
+                "Variable "
+                + value.name
+                + NEWLINE
+                + 2 * INDENT
+                + Section._convert(value.value)
+            )
+
+        if isinstance(value, MATC):
+            return f'Real MATC "{value.expr}"'
 
     # generic save method is available in all object
     save = save
@@ -325,7 +362,7 @@ class Section(Elmer):
         Section_dict = super(Section, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         Section_dict["section"] = self.section
         Section_dict["id"] = self.id
@@ -478,3 +515,20 @@ class Section(Elmer):
 
 
 ElmerSectionError = Section.ElmerSectionError
+
+
+class File(str):
+    pass
+
+
+class Variable:
+
+    def __init__(self, name=None, value=None):
+        self.name = name
+        self.value = value
+
+
+class MATC:
+
+    def __init__(self, expr=None):
+        self.expr = expr

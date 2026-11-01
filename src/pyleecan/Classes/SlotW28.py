@@ -1159,7 +1159,7 @@ class SlotW28(Slot):
 
         pass
 
-    class S28_R1R1CheckError(SlotCheckError):
+    class S28_ZsCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1174,7 +1174,7 @@ class SlotW28(Slot):
 
         pass
 
-    class S28_ZsCheckError(SlotCheckError):
+    class S28_R1R1CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1186,10 +1186,10 @@ LaminationCheckError = SlotW28.LaminationCheckError
 
 SlotCheckError = SlotW28.SlotCheckError
 
-S28_R1R1CheckError = SlotW28.S28_R1R1CheckError
+S28_ZsCheckError = SlotW28.S28_ZsCheckError
 
 S28_RboW0CheckError = SlotW28.S28_RboW0CheckError
 
 S28_R1W3CheckError = SlotW28.S28_R1W3CheckError
 
-S28_ZsCheckError = SlotW28.S28_ZsCheckError
+S28_R1R1CheckError = SlotW28.S28_R1R1CheckError

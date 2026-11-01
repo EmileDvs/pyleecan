@@ -1187,12 +1187,12 @@ class SlotW25(Slot):
 
         pass
 
-    class S25_W4CheckError(SlotCheckError):
+    class S25_HWCheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S25_HWCheckError(SlotCheckError):
+    class S25_W4CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1204,6 +1204,6 @@ LaminationCheckError = SlotW25.LaminationCheckError
 
 SlotCheckError = SlotW25.SlotCheckError
 
-S25_W4CheckError = SlotW25.S25_W4CheckError
-
 S25_HWCheckError = SlotW25.S25_HWCheckError
+
+S25_W4CheckError = SlotW25.S25_W4CheckError

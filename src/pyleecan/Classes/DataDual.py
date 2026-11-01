@@ -17,7 +17,6 @@ from pyleecan.Classes.DataND import DataND
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.SciDataTool.DataDual import is_freq
 
 import numpy as np
 
@@ -59,7 +58,7 @@ class DataDual(DataND):
         """
 
         # Get best attributes (time/space or fourier)
-        if is_freq(*args):
+        if self.is_freq(*args):
             if hasattr(self, "values_df") and self.values_df is not None:
                 # Replace axes and values with fourier ones
                 self.axes = self.axes_df
@@ -88,6 +87,18 @@ class DataDual(DataND):
             is_magnitude=is_magnitude,
             corr_unit=corr_unit,
         )
+
+    @staticmethod
+    def is_freq(*args):
+        """Determine if input args require FreqPart"""
+        is_freq = False
+        if len(args) == 1 and type(args[0]) == tuple:
+            args = args[0]
+        for arg in args:
+            if "freqs" in arg or "wavenumber" in arg:
+                is_freq = True
+                break
+        return is_freq
 
     # cf Methods.SciDataTool.DataDual.get_axes
     def get_axes(self, *args):

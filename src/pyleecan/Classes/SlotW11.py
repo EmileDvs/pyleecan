@@ -1970,7 +1970,7 @@ class SlotW11(Slot):
 
         pass
 
-    class S11_W01CheckError(SlotCheckError):
+    class S11_R1CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1980,7 +1980,7 @@ class SlotW11(Slot):
 
         pass
 
-    class S11_R1CheckError(SlotCheckError):
+    class S11_W01CheckError(SlotCheckError):
         """ """
 
         pass
@@ -2002,11 +2002,11 @@ LaminationCheckError = SlotW11.LaminationCheckError
 
 SlotCheckError = SlotW11.SlotCheckError
 
-S11_W01CheckError = SlotW11.S11_W01CheckError
+S11_R1CheckError = SlotW11.S11_R1CheckError
 
 S11_H1rCheckError = SlotW11.S11_H1rCheckError
 
-S11_R1CheckError = SlotW11.S11_R1CheckError
+S11_W01CheckError = SlotW11.S11_W01CheckError
 
 S11_RWCheckError = SlotW11.S11_RWCheckError
 

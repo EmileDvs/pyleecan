@@ -1361,17 +1361,17 @@ class SlotW13(Slot):
 
         pass
 
-    class S13_W12CheckError(SlotCheckError):
-        """ """
-
-        pass
-
     class S13_W01CheckError(SlotCheckError):
         """ """
 
         pass
 
     class S13_H1rCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S13_W12CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1383,8 +1383,8 @@ LaminationCheckError = SlotW13.LaminationCheckError
 
 SlotCheckError = SlotW13.SlotCheckError
 
-S13_W12CheckError = SlotW13.S13_W12CheckError
-
 S13_W01CheckError = SlotW13.S13_W01CheckError
 
 S13_H1rCheckError = SlotW13.S13_H1rCheckError
+
+S13_W12CheckError = SlotW13.S13_W12CheckError

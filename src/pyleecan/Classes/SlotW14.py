@@ -1497,12 +1497,12 @@ class SlotW14(Slot):
 
         pass
 
-    class S14_Rbo0CheckError(SlotCheckError):
+    class S14_Rbo1CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S14_Rbo1CheckError(SlotCheckError):
+    class S14_Rbo0CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1514,6 +1514,6 @@ LaminationCheckError = SlotW14.LaminationCheckError
 
 SlotCheckError = SlotW14.SlotCheckError
 
-S14_Rbo0CheckError = SlotW14.S14_Rbo0CheckError
-
 S14_Rbo1CheckError = SlotW14.S14_Rbo1CheckError
+
+S14_Rbo0CheckError = SlotW14.S14_Rbo0CheckError

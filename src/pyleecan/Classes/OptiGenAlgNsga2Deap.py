@@ -20,9 +20,6 @@ from pyleecan.Classes.OptiGenAlg import OptiGenAlg
 from pyleecan.Classes.OptiObjective import OptiObjective
 from pyleecan.Classes.OptiDesignVarSet import OptiDesignVarSet
 from pyleecan.Classes.OptiDesignVarInterval import OptiDesignVarInterval
-from pyleecan.Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox import (
-    create_indiv,
-)
 from deap import base, creator, tools
 from pyleecan.Classes.Output import Output
 from pyleecan.Classes.XOutput import XOutput
@@ -30,11 +27,6 @@ from pyleecan.Classes.VarSimu import VarSimu
 import random, numpy as np, matplotlib.pyplot as plt
 from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 from collections.abc import Iterable
-from pyleecan.Methods.Output.XOutput import _get_symbol_data_
-from pyleecan.Methods.Optimization.OptiGenAlgNsga2Deap.solve import (
-    print_gen_simu,
-    print_obj,
-)
 from copy import deepcopy
 from datetime import datetime
 from pyleecan.Classes.DataKeeper import DataKeeper
@@ -216,7 +208,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         # Register individual and population
         self.toolbox.register(
             "individual",
-            create_indiv,
+            self.create_indiv,
             self.toolbox.creator,
             output,
             self.problem.design_var,
@@ -225,6 +217,56 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         self.toolbox.register(
             "population", tools.initRepeat, list, self.toolbox.individual
         )
+
+    @staticmethod
+    def create_indiv(create, output, design_var_list):
+        """Create individual using DEAP tools
+
+        Parameters
+        ----------
+        creator : function
+            function to create the individual
+        output : ....Classes.Output
+            output of the individual
+        design_var_list : list
+            Design variables
+
+        Returns:
+        --------
+        indiv : list
+            individual
+        """
+
+        # Extract design variables
+        var = []
+
+        for design_var in design_var_list:
+            # Generate the first value
+            value = design_var.get_value(design_var.space)
+            design_var.setter(output.simu, value)
+            var.append(value)
+
+        ind = create(var)
+
+        # Store the design_var_name_list
+        ind.design_var_name_list = [dv.name for dv in design_var_list]
+
+        # Store setters in a list
+        ind.setter_list = [dv.setter for dv in design_var_list]
+
+        # Store the design variables
+        ind.design_var = design_var_list
+
+        # Store the simulation validity
+        ind.is_simu_valid = False
+
+        # Store the number of constraints violations
+        ind.cstr_viol = 0
+
+        # Output with the design variables set
+        ind.output = type(output)(simu=output.simu.as_dict(keep_function=True))
+
+        return ind
 
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.cross
     def cross(self, indiv1, indiv2):
@@ -381,8 +423,8 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         design_var = design_var[indx]
 
         # get data and labels
-        x_values, x_label = _get_symbol_data_(self.xoutput, x_symbol, indx)
-        y_values, y_label = _get_symbol_data_(self.xoutput, y_symbol, indx)
+        x_values, x_label = self.xoutput._get_symbol_data_(x_symbol, indx)
+        y_values, y_label = self.xoutput._get_symbol_data_(y_symbol, indx)
 
         # Get pareto front
         pareto = fitness
@@ -424,7 +466,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             colors = pyleecan_color
         else:
             # get the color data
-            c_values, _ = _get_symbol_data_(self.xoutput, c_symbol, indx)
+            c_values, _ = self.xoutput._get_symbol_data_(c_symbol, indx)
             colors = c_values[idx_non_dom][:, np.newaxis]
 
         if cmap is None:
@@ -591,9 +633,9 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             nb_error = 0
             for i in range(0, self.size_pop):
                 time = datetime.now().strftime("%H:%M:%S")
-                print_gen_simu(time, 0, i, self.size_pop, nb_error, pop)
+                self.print_gen_simu(time, 0, i, self.size_pop, nb_error, pop)
                 nb_error += evaluate(self, pop[i])
-                print_obj(self.problem.obj_func, pop[i])
+                self.print_obj(self.problem.obj_func, pop[i])
 
             # Check the constraints violation
             nb_infeasible = 0
@@ -675,9 +717,9 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
                 nb_error = 0
                 for i in range(len(to_eval)):
                     time = datetime.now().strftime("%H:%M:%S")
-                    print_gen_simu(time, ngen, i, self.size_pop, nb_error, to_eval)
+                    self.print_gen_simu(time, ngen, i, self.size_pop, nb_error, to_eval)
                     nb_error += evaluate(self, to_eval[i])
-                    print_obj(self.problem.obj_func, to_eval[i])
+                    self.print_obj(self.problem.obj_func, to_eval[i])
 
                 # Check the constraints violation
                 nb_infeasible = 0
@@ -775,6 +817,40 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         except Exception as err:
             logger.error("{}: {}".format(type(err).__name__, err))
             raise err
+
+    @staticmethod
+    def print_gen_simu(time, gen_id, simu_id, size_pop, nb_error, to_eval):
+        print(
+            "\r{}  gen {:>5}: simu {}/{} ({:>5.2f}%), {:>4} errors.".format(
+                time,
+                gen_id,
+                (simu_id + 1),
+                size_pop,
+                (simu_id) * 100 / size_pop,
+                nb_error,
+            )
+        )
+        msg = "Design Variables: "
+        for ii in range(len(to_eval[simu_id])):
+            msg += (
+                to_eval[simu_id].design_var[ii].symbol
+                + ": "
+                + format(to_eval[simu_id][ii], ".2e")
+                + ", "
+            )
+        print(msg[:-2])
+
+    @staticmethod
+    def print_obj(obj_func, indiv):
+        msg = "Objectives: "
+        for ii in range(len(obj_func)):
+            msg += (
+                obj_func[ii].symbol
+                + ": "
+                + format(indiv.fitness.values[ii], ".2e")
+                + ", "
+            )
+        print(msg[:-2] + "\n")
 
     # generic save method is available in all object
     save = save

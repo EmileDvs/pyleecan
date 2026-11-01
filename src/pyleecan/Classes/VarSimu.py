@@ -22,7 +22,7 @@ from pyleecan.Classes.DataKeeper import DataKeeper
 from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
-from pyleecan.Methods.Simulation.VarSimu.run import log_step_simu, print_progress_bar
+import numpy as np
 from pyleecan.Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step
 from pyleecan.Functions.Simulation.VarSimu.log_datakeeper_step_result import (
     log_datakeeper_step_result,
@@ -30,7 +30,7 @@ from pyleecan.Functions.Simulation.VarSimu.log_datakeeper_step_result import (
 from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.ElecLUTdq import ElecLUTdq
 
-import numpy as np
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -375,7 +375,7 @@ class VarSimu(FrozenClass):
                 xoutput.xoutput_ref_index = ref_simu_index
 
         progress += 1
-        print_progress_bar(nb_simu, progress, ref_simu.layer)
+        self.print_progress_bar(nb_simu, progress, ref_simu.layer)
 
         # Store the Ouput part of the xoutput_ref into the main xoutput
         ref_out_dict = Output.as_dict(xoutput_ref)
@@ -404,7 +404,7 @@ class VarSimu(FrozenClass):
         # Execute the simulation list
         for idx, simu_step in enumerate(simulation_list):
             # Display simulation progress
-            log_step_simu(
+            self.log_step_simu(
                 idx, self.nb_simu, xoutput.paramexplorer_list, logger, simu_step.layer
             )
             simu_step.index = idx
@@ -436,13 +436,91 @@ class VarSimu(FrozenClass):
                 # Print DataKeeper content
                 log_datakeeper_step_result(simu_step, keeper_list, idx, self.NAME)
             progress += 1
-            print_progress_bar(nb_simu, progress, simu_step.layer)
+            self.print_progress_bar(nb_simu, progress, simu_step.layer)
 
         # Running postprocessings
         if self.postproc_list:
             logger.info("Running " + self.NAME + " postprocessings...")
             for postproc in self.postproc_list:
                 postproc.run(xoutput)
+
+    @staticmethod
+    def log_step_simu(index, nb_simu, paramexplorer_list, logger, layer):
+        """Add in the log some information about the simulation about to run
+        Ex: "Running simulation 3/4 with Id=-135.41881, Iq=113.62987"
+
+        Parameters
+        ----------
+        index : int
+            Index of the simulation about to run
+        nb_simu : int
+            Total number of simulation to run
+        paramexplorer_list : list
+            List of ParamExplorer to get the modification of the simu
+        logger : Logger
+            Logger to use (info)
+        """
+
+        if layer == 2:
+            msg = "    "
+        else:
+            msg = ""
+        InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
+        InputVoltage = import_class("pyleecan.Classes", "InputVoltage")
+        msg += "Running simulation " + str(index + 1) + "/" + str(nb_simu) + " with "
+        for param_exp in paramexplorer_list:
+            value = param_exp.get_value()[index]
+            if isinstance(value, InputCurrent):
+                msg += "N0=" + format(value.OP.N0, ".6g") + " [rpm]"
+                msg += ", Id=" + format(value.OP.Id_ref, ".4g") + " [Arms]"
+                msg += ", Iq=" + format(value.OP.Iq_ref, ".4g") + " [Arms], "
+            elif isinstance(value, InputVoltage):
+                msg += "N0=" + format(value.OP.N0, ".6g") + " [rpm]"
+                msg += ", U0=" + format(value.OP.U0_ref, ".4g") + " [Vrms]"
+                msg += ", UPhi0=" + format(value.OP.UPhi0_ref, ".4g") + " [rad], "
+                if value.OP.slip_ref is not None:
+                    msg += ", slip=" + format(value.OP.slip_ref, ".4g") + " [-], "
+            elif isinstance(value, (list, np.ndarray)):
+                msg += param_exp.symbol
+                msg += "="
+                msg += format(value)
+                msg += ", "
+            else:
+                try:
+                    data_str = format(value, ".8g")
+                except:
+                    data_str = "'NA'"
+                msg += param_exp.symbol
+                msg += "="
+                msg += data_str
+                msg += ", "
+        msg = msg[:-2]
+        logger.info(msg)
+
+    @staticmethod
+    def print_progress_bar(Nsimu, index, layer):
+        """Print the progress bar
+        Ex: "[=========================                         ]  50%"
+
+        Parameters
+        ----------
+        Nsimu : int
+            Total number of simulation
+        index : int
+            Index of the simulation about to run
+        """
+        if layer == 2:
+            msg = "               "
+        else:
+            msg = ""
+        print(
+            "\r"
+            + msg
+            + "["
+            + "=" * (50 * index // (Nsimu))
+            + " " * (50 - ((50 * index) // (Nsimu)))
+            + "] {:3d}%".format(((100 * index) // (Nsimu)))
+        )
 
     # cf Methods.Simulation.VarSimu.set_reused_data
     def set_reused_data(self, simu, output, is_log=True, simu_type="VarSimu"):

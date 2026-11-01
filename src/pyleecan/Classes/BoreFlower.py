@@ -23,6 +23,7 @@ from pyleecan.Classes import ParentMissingError
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Classes.Segment import Segment
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -40,6 +41,7 @@ class BoreFlower(Bore):
     """Class for Bore flower shape"""
 
     VERSION = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Machine.BoreFlower.comp_periodicity_spatial
     def comp_periodicity_spatial(self):

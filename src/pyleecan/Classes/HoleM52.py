@@ -22,6 +22,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
 from pyleecan.Classes.LamHole import LamHole
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -44,6 +45,7 @@ class HoleM52(HoleMag):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Slot.HoleM52._comp_point_coordinate
     def _comp_point_coordinate(self):
@@ -1221,11 +1223,6 @@ class HoleM52(HoleMag):
 
         pass
 
-    class S52_alphaCheckError(SlotCheckError):
-        """ """
-
-        pass
-
     class S52_H12CheckError(SlotCheckError):
         """ """
 
@@ -1241,6 +1238,11 @@ class HoleM52(HoleMag):
 
         pass
 
+    class S52_alphaCheckError(SlotCheckError):
+        """ """
+
+        pass
+
 
 MachineCheckError = HoleM52.MachineCheckError
 
@@ -1248,10 +1250,10 @@ LaminationCheckError = HoleM52.LaminationCheckError
 
 SlotCheckError = HoleM52.SlotCheckError
 
-S52_alphaCheckError = HoleM52.S52_alphaCheckError
-
 S52_H12CheckError = HoleM52.S52_H12CheckError
 
 S52_NoneError = HoleM52.S52_NoneError
 
 S52_W1CheckError = HoleM52.S52_W1CheckError
+
+S52_alphaCheckError = HoleM52.S52_alphaCheckError

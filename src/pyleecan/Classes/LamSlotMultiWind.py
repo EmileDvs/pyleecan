@@ -21,12 +21,12 @@ from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Load.import_class import import_class
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
-from pyleecan.Methods.Machine.LamSlotMultiWind.plot import PHASE_COLORS
 from matplotlib.patches import Patch
 from pyleecan.Functions.labels import decode_label, WIND_LAB, BAR_LAB
 from pyleecan.Functions.Winding.find_wind_phase_color import find_wind_phase_color
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 from pyleecan.Classes.WindingSC import WindingSC
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
@@ -40,6 +40,7 @@ class LamSlotMultiWind(LamSlotMulti):
     """Lamination with list of Slot filled with winding"""
 
     VERSION = 1
+    PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 
     # cf Methods.Machine.LamSlotMultiWind.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
@@ -477,21 +478,26 @@ class LamSlotMultiWind(LamSlotMulti):
                         for ii in range(qs):
                             if not phase_name[ii] in label_leg and not is_add_sign:
                                 # Avoid adding twice the same label
-                                index = ii % len(PHASE_COLORS)
-                                patch_leg.append(Patch(color=PHASE_COLORS[index]))
+                                index = ii % len(self.PHASE_COLORS)
+                                patch_leg.append(Patch(color=self.PHASE_COLORS[index]))
                                 label_leg.append(phase_name[ii])
                             if not "Phase +" in label_leg and is_add_sign:
                                 # Avoid adding twice the same label
-                                index = ii % len(PHASE_COLORS)
+                                index = ii % len(self.PHASE_COLORS)
                                 patch_leg.append(
-                                    Patch(color=PHASE_COLORS[index], hatch=PLUS_HATCH)
+                                    Patch(
+                                        color=self.PHASE_COLORS[index], hatch=PLUS_HATCH
+                                    )
                                 )
                                 label_leg.append(phase_name[ii] + " +")
                             if not "Phase -" in label_leg and is_add_sign:
                                 # Avoid adding twice the same label
-                                index = ii % len(PHASE_COLORS)
+                                index = ii % len(self.PHASE_COLORS)
                                 patch_leg.append(
-                                    Patch(color=PHASE_COLORS[index], hatch=MINUS_HATCH)
+                                    Patch(
+                                        color=self.PHASE_COLORS[index],
+                                        hatch=MINUS_HATCH,
+                                    )
                                 )
                                 label_leg.append(phase_name[ii] + " -")
                 ax.legend(patch_leg, label_leg)
