@@ -1,8 +1,7 @@
-from numpy import zeros, swapaxes, sign
+from numpy import sign, swapaxes, zeros
 
+from ....Classes._swat_em import datamodel
 from ....Methods.Machine.Winding import WindingError
-
-from ....Functions.Winding._swat_em import datamodel
 
 
 def comp_connection_mat(self, Zs=None, p=None):

@@ -1,19 +1,19 @@
-from matplotlib.patches import Patch, FancyArrowPatch
 import matplotlib.pyplot as plt
-from ....Functions.Winding._swat_em import datamodel
+from matplotlib.patches import FancyArrowPatch, Patch
 from numpy import sqrt
 
-from ....Functions.labels import decode_label, WIND_LAB, BAR_LAB
-from ....Functions.Winding.find_wind_phase_color import find_wind_phase_color
-from ....Functions.Winding.gen_phase_list import gen_name
-from ....Functions.init_fig import init_fig
-from ....Functions.Plot import dict_2D
-from ....definitions import config_dict
+from ....Classes._swat_em import datamodel
 from ....Classes.WindingSC import WindingSC
 from ....Classes.WindingUD import WindingUD
+from ....definitions import config_dict
+from ....Functions.init_fig import init_fig
+from ....Functions.labels import BAR_LAB, WIND_LAB, decode_label
+from ....Functions.Plot import dict_2D
 from ....Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
+from ....Functions.Winding.find_wind_phase_color import find_wind_phase_color
+from ....Functions.Winding.gen_phase_list import gen_name
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 PLUS_HATCH = "++"

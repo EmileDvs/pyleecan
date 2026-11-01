@@ -1,13 +1,13 @@
-from numpy import ones, real, imag, conjugate, array, delete, insert, round
-from ....Functions.Winding._swat_em import datamodel
-from ....Functions.Winding._swat_em.config import config
-from matplotlib.patches import Rectangle, Patch, FancyArrowPatch
 import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
+from numpy import array, conjugate, delete, imag, insert, ones, real, round
 
-from ....Functions.init_fig import init_fig
-from ....Functions.Geometry.inter_line_line import inter_line_line
-from ....Functions.Winding.gen_phase_list import gen_name
+from ....Classes._swat_em import datamodel
 from ....definitions import config_dict
+from ....Functions.Geometry.inter_line_line import inter_line_line
+from ....Functions.init_fig import init_fig
+from ....Functions.Winding._swat_em.config import config
+from ....Functions.Winding.gen_phase_list import gen_name
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
