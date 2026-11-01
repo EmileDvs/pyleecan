@@ -17,11 +17,10 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import array
 import numpy as np
 from scipy.optimize import curve_fit
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -59,7 +58,7 @@ class ModelBH(FrozenClass):
         B = BH[:, 1]
 
         # Find the optimum parameter for curve fitting
-        popt, _ = curve_fit(self.BH_func, H, B, p0=array([self.param1, self.param2]))
+        popt, _ = curve_fit(self.BH_func, H, B, p0=np.array([self.param1, self.param2]))
 
         param1 = popt[0]
         param2 = popt[1]
@@ -195,8 +194,8 @@ class ModelBH(FrozenClass):
         if (
             other._Bmax is not None
             and self._Bmax is not None
-            and isnan(other._Bmax)
-            and isnan(self._Bmax)
+            and np.isnan(other._Bmax)
+            and np.isnan(self._Bmax)
         ):
             pass
         elif other._Bmax != self._Bmax:
@@ -210,8 +209,8 @@ class ModelBH(FrozenClass):
         if (
             other._Hmax is not None
             and self._Hmax is not None
-            and isnan(other._Hmax)
-            and isnan(self._Hmax)
+            and np.isnan(other._Hmax)
+            and np.isnan(self._Hmax)
         ):
             pass
         elif other._Hmax != self._Hmax:
@@ -225,8 +224,8 @@ class ModelBH(FrozenClass):
         if (
             other._delta is not None
             and self._delta is not None
-            and isnan(other._delta)
-            and isnan(self._delta)
+            and np.isnan(other._delta)
+            and np.isnan(self._delta)
         ):
             pass
         elif other._delta != self._delta:

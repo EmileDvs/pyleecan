@@ -18,7 +18,6 @@ from pyleecan.Classes.LossModel import LossModel
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from numpy import abs as np_abs, matmul, pi, sum as np_sum, zeros
 from pyleecan.Classes.HoleM50 import HoleM50
 from pyleecan.Classes.HoleM51 import HoleM51
 from pyleecan.Classes.HoleM52 import HoleM52
@@ -28,7 +27,7 @@ from pyleecan.Classes.HoleM58 import HoleM58
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.LamSlotMag import LamSlotMag
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -188,7 +187,7 @@ class LossModelMagnet(LossModel):
             Az_df = Az_dt.get_along("freqs", "indice" + str(kmag), "z=mean")
             if ii == 0:
                 freqs = Az_df["freqs"]
-                w = 2 * pi * freqs[:, None]
+                w = 2 * np.pi * freqs[:, None]
                 sigma_m = magnet.mat_type.elec.get_conductivity(T_op=self.parent.Trot)
                 # if self.type_skin_effect:
                 #     # Get magnet conductivity including skin effect
@@ -200,10 +199,10 @@ class LossModelMagnet(LossModel):
                 #     sigma_m = sigma_m / kr_skin[:, None]
                 Pmagnet_density = np.zeros((freqs.size, len(ind_all)))
             Az_fft = Az_df["A_z^{element}"]
-            Az_mean = matmul(Az_fft, Se_mag)[:, None] / np_sum(Se_mag)
+            Az_mean = np.matmul(Az_fft, Se_mag)[:, None] / np.sum(Se_mag)
             Jm_fft = -1j * sigma_m * w * (Az_fft - Az_mean)
             Pmagnet_density[:, jj : (jj + len(kmag))] = (
-                0.5 * kseg * np_abs(Jm_fft) ** 2 / sigma_m
+                0.5 * kseg * np.abs(Jm_fft) ** 2 / sigma_m
             )
             jj += len(kmag)
 
@@ -270,14 +269,14 @@ class LossModelMagnet(LossModel):
         n = freqs / felec
         # Integrate loss density over group volume
         I0 = n != 0
-        Af = zeros(w.size)
+        Af = np.zeros(w.size)
         Af[I0] = (
             L1
             * per_a
-            * matmul(Pmagnet_density[I0, :] / freqs[I0, None] ** 2, Se[ind_all])
+            * np.matmul(Pmagnet_density[I0, :] / freqs[I0, None] ** 2, Se[ind_all])
         )
         # Sum over orders
-        A = np_sum(Af * n**2)
+        A = np.sum(Af * n**2)
         self.coeff_dict = {"2": A}
 
         return Pmagnet_density, freqs

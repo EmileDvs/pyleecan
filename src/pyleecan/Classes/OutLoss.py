@@ -17,10 +17,10 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, array, linspace
+import numpy as np
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -60,7 +60,7 @@ class OutLoss(FrozenClass):
         machine = self.parent.simu.machine
 
         Rag = machine.comp_Rgap_mec()
-        Sag = 2 * pi * Rag * machine.stator.L1
+        Sag = 2 * np.pi * Rag * machine.stator.L1
 
         loss_density_ag = loss / Sag
 
@@ -140,14 +140,14 @@ class OutLoss(FrozenClass):
         """
 
         if N0_array is None:
-            N0_array = linspace(10, 8000, 100)
+            N0_array = np.linspace(10, 8000, 100)
         if self.parent is None:
             raise Exception("Error: OutLoss is not in Output object")
 
         p = self.parent.simu.machine.get_pole_pair_number()
 
         array_list = [
-            array([out_loss.get_loss_scalar(speed / 60 * p) for speed in N0_array])
+            np.array([out_loss.get_loss_scalar(speed / 60 * p) for speed in N0_array])
             for out_loss in self.loss_dict.values()
         ]
 

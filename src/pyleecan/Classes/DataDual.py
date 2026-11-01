@@ -19,8 +19,8 @@ from pyleecan.Classes.DataND import DataND
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.SciDataTool.DataDual import is_freq
 
-from numpy import array, array_equal
-from numpy import isnan
+import numpy as np
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -242,11 +242,11 @@ class DataDual(DataND):
             return False
         if other.axes_dt != self.axes_dt:
             return False
-        if not array_equal(other.values_dt, self.values_dt):
+        if not np.array_equal(other.values_dt, self.values_dt):
             return False
         if other.axes_df != self.axes_df:
             return False
-        if not array_equal(other.values_df, self.values_df):
+        if not np.array_equal(other.values_df, self.values_df):
             return False
         return True
 
@@ -283,7 +283,7 @@ class DataDual(DataND):
                         is_add_value=is_add_value,
                     )
                 )
-        if not array_equal(other.values_dt, self.values_dt):
+        if not np.array_equal(other.values_dt, self.values_dt):
             diff_list.append(name + ".values_dt")
         if (other.axes_df is None and self.axes_df is not None) or (
             other.axes_df is not None and self.axes_df is None
@@ -303,7 +303,7 @@ class DataDual(DataND):
                         is_add_value=is_add_value,
                     )
                 )
-        if not array_equal(other.values_df, self.values_df):
+        if not np.array_equal(other.values_df, self.values_df):
             diff_list.append(name + ".values_df")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -528,10 +528,10 @@ class DataDual(DataND):
     def _set_values_dt(self, value):
         """setter of values_dt"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("values_dt", value, "ndarray")
@@ -595,10 +595,10 @@ class DataDual(DataND):
     def _set_values_df(self, value):
         """setter of values_df"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("values_df", value, "ndarray")

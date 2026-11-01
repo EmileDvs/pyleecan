@@ -22,7 +22,7 @@ from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Methods.Simulation.EEC import AbstractClassError
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -458,8 +458,8 @@ class EEC(FrozenClass):
         if (
             other._Tsta is not None
             and self._Tsta is not None
-            and isnan(other._Tsta)
-            and isnan(self._Tsta)
+            and np.isnan(other._Tsta)
+            and np.isnan(self._Tsta)
         ):
             pass
         elif other._Tsta != self._Tsta:
@@ -473,8 +473,8 @@ class EEC(FrozenClass):
         if (
             other._Trot is not None
             and self._Trot is not None
-            and isnan(other._Trot)
-            and isnan(self._Trot)
+            and np.isnan(other._Trot)
+            and np.isnan(self._Trot)
         ):
             pass
         elif other._Trot != self._Trot:
@@ -488,8 +488,8 @@ class EEC(FrozenClass):
         if (
             other._Xkr_skinS is not None
             and self._Xkr_skinS is not None
-            and isnan(other._Xkr_skinS)
-            and isnan(self._Xkr_skinS)
+            and np.isnan(other._Xkr_skinS)
+            and np.isnan(self._Xkr_skinS)
         ):
             pass
         elif other._Xkr_skinS != self._Xkr_skinS:
@@ -507,8 +507,8 @@ class EEC(FrozenClass):
         if (
             other._Xke_skinS is not None
             and self._Xke_skinS is not None
-            and isnan(other._Xke_skinS)
-            and isnan(self._Xke_skinS)
+            and np.isnan(other._Xke_skinS)
+            and np.isnan(self._Xke_skinS)
         ):
             pass
         elif other._Xke_skinS != self._Xke_skinS:
@@ -526,8 +526,8 @@ class EEC(FrozenClass):
         if (
             other._Xkr_skinR is not None
             and self._Xkr_skinR is not None
-            and isnan(other._Xkr_skinR)
-            and isnan(self._Xkr_skinR)
+            and np.isnan(other._Xkr_skinR)
+            and np.isnan(self._Xkr_skinR)
         ):
             pass
         elif other._Xkr_skinR != self._Xkr_skinR:
@@ -545,8 +545,8 @@ class EEC(FrozenClass):
         if (
             other._Xke_skinR is not None
             and self._Xke_skinR is not None
-            and isnan(other._Xke_skinR)
-            and isnan(self._Xke_skinR)
+            and np.isnan(other._Xke_skinR)
+            and np.isnan(self._Xke_skinR)
         ):
             pass
         elif other._Xke_skinR != self._Xke_skinR:
@@ -564,8 +564,8 @@ class EEC(FrozenClass):
         if (
             other._R1 is not None
             and self._R1 is not None
-            and isnan(other._R1)
-            and isnan(self._R1)
+            and np.isnan(other._R1)
+            and np.isnan(self._R1)
         ):
             pass
         elif other._R1 != self._R1:

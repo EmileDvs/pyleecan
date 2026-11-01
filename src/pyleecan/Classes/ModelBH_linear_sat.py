@@ -17,10 +17,9 @@ from pyleecan.Classes.ModelBH import ModelBH
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import ndarray, argwhere
 import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -47,8 +46,8 @@ class ModelBH_linear_sat(ModelBH):
         """
         B = mu_a * H
 
-        if isinstance(B, ndarray):
-            B[argwhere(B >= Bs)] = Bs
+        if isinstance(B, np.ndarray):
+            B[np.argwhere(B >= Bs)] = Bs
         elif B >= Bs:
             B = Bs
 
@@ -201,8 +200,8 @@ class ModelBH_linear_sat(ModelBH):
         if (
             other._Bs is not None
             and self._Bs is not None
-            and isnan(other._Bs)
-            and isnan(self._Bs)
+            and np.isnan(other._Bs)
+            and np.isnan(self._Bs)
         ):
             pass
         elif other._Bs != self._Bs:
@@ -214,8 +213,8 @@ class ModelBH_linear_sat(ModelBH):
         if (
             other._mu_a is not None
             and self._mu_a is not None
-            and isnan(other._mu_a)
-            and isnan(self._mu_a)
+            and np.isnan(other._mu_a)
+            and np.isnan(self._mu_a)
         ):
             pass
         elif other._mu_a != self._mu_a:
@@ -229,8 +228,8 @@ class ModelBH_linear_sat(ModelBH):
         if (
             other._param1 is not None
             and self._param1 is not None
-            and isnan(other._param1)
-            and isnan(self._param1)
+            and np.isnan(other._param1)
+            and np.isnan(self._param1)
         ):
             pass
         elif other._param1 != self._param1:
@@ -248,8 +247,8 @@ class ModelBH_linear_sat(ModelBH):
         if (
             other._param2 is not None
             and self._param2 is not None
-            and isnan(other._param2)
-            and isnan(self._param2)
+            and np.isnan(other._param2)
+            and np.isnan(self._param2)
         ):
             pass
         elif other._param2 != self._param2:

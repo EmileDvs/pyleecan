@@ -22,25 +22,7 @@ from pyleecan.Classes.LamSlot import LamSlot
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.LamSlotWind.check import check
-from numpy import (
-    pi,
-    abs as np_abs,
-    angle as np_angle,
-    sign,
-    dot,
-    exp,
-    ones,
-    sqrt,
-    squeeze,
-    zeros,
-    gcd,
-    linspace,
-    meshgrid,
-    repeat,
-    sum as np_sum,
-    mean,
-    array,
-)
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.labels import (
     update_RTS_index,
@@ -71,7 +53,6 @@ from pyleecan.Methods.Machine.LamSlotWind.plot import (
     PHASE_COLORS,
     PLUS_HATCH,
 )
-import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Patch
 from pyleecan.Classes._swat_em import datamodel
 from pyleecan.Classes.WindingSC import WindingSC
@@ -88,7 +69,7 @@ from pyleecan.Functions.Plot.set_plot_gui_icon import set_plot_gui_icon
 from matplotlib.lines import Line2D
 from matplotlib.pyplot import plot, subplots
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -133,7 +114,7 @@ class LamSlotWind(LamSlot):
             # getting number of slot
             Zs = self.slot.Zs
             # getting angle between Slot
-            slot_pitch = 2 * pi / Zs
+            slot_pitch = 2 * np.pi / Zs
             # getting Nrad and Ntan
             if self.winding is None or self.winding.conductor is None:
                 Nrad, Ntan = 1, 1
@@ -223,7 +204,7 @@ class LamSlotWind(LamSlot):
                         surf_list.append(new_surf)
             # Shift to have a tooth center on Ox
             for surf in surf_list:
-                surf.rotate(pi / Zs)
+                surf.rotate(np.pi / Zs)
 
         surf_list = surf_lam + surf_list
 
@@ -269,29 +250,29 @@ class LamSlotWind(LamSlot):
         mmf_ft = results[MMF.symbol]
 
         # Find the fundamental harmonic of MMF
-        indr_fund = np_abs(wavenumber - p).argmin()
-        phimax = np_angle(mmf_ft[indr_fund])
+        indr_fund = np.abs(wavenumber - p).argmin()
+        phimax = np.angle(mmf_ft[indr_fund])
 
         # Get the angle for which mmf is max
         # MMF_max = A*cos(p*d_angle + phimax) which is maximum for p*d_angle + phimax = 2*pi
-        d_angle = ((2 * pi - phimax) / p) % (2 * pi / p)
+        d_angle = ((2 * np.pi - phimax) / p) % (2 * np.pi / p)
 
         if is_plot:
             import matplotlib.pyplot as plt
-            from numpy import squeeze, argmax, cos
+            import numpy as np
 
             # Reconstruct fundamental MMF wave
-            magmax = np_abs(mmf_ft[indr_fund])
-            mmf_waveform = magmax * cos(p * angle_stator + phimax)
+            magmax = np.abs(mmf_ft[indr_fund])
+            mmf_waveform = magmax * np.cos(p * angle_stator + phimax)
 
             # Get the first angle where mmf is max
-            I_max = argmax(mmf_waveform)
+            I_max = np.argmax(mmf_waveform)
             d_angle0 = angle_stator[I_max]  # d_angle0->d_angle when Na->inf
 
             fig, ax = plt.subplots()
             ax.plot(
                 angle_stator,
-                squeeze(MMF.get_along("angle[oneperiod]")[MMF.symbol]),
+                np.squeeze(MMF.get_along("angle[oneperiod]")[MMF.symbol]),
                 "k",
             )
             ax.plot(angle_stator, mmf_waveform, "r")
@@ -490,7 +471,7 @@ class LamSlotWind(LamSlot):
 
         # Rotating direction is the sign of the mechanical speed of the magnetomotive force fundamental,
         # i.e frequency over wavenumber
-        mmf_dir = int(sign(f / r))
+        mmf_dir = int(np.sign(f / r))
 
         if is_plot:
             MMF.plot_3D_Data("freqs", "wavenumber")
@@ -579,23 +560,23 @@ class LamSlotWind(LamSlot):
         )
 
         if qs == 6 and self.winding.dual_tri_phase_shift is not None:
-            Is_val = zeros((1, 6), dtype=complex)
+            Is_val = np.zeros((1, 6), dtype=complex)
             Id = 1
             Iq = 0
-            I0 = sqrt(Id**2 + Iq**2) * sqrt(2)
+            I0 = np.sqrt(Id**2 + Iq**2) * np.sqrt(2)
             phi0 = 0
             if not self.winding.is_wye:
-                I0 = I0 / sqrt(3)
-                phi0 = phi0 + pi / 6
-            Is_val[0, 0] = I0 * exp(1j * phi0)
-            Is_val[0, 1] = I0 * exp(1j * (phi0 + self.winding.dual_tri_phase_shift))
-            Is_val[0, 2] = I0 * exp(1j * (phi0 + 2 * pi / 3))
-            Is_val[0, 3] = I0 * exp(
-                1j * (phi0 + 2 * pi / 3 + self.winding.dual_tri_phase_shift)
+                I0 = I0 / np.sqrt(3)
+                phi0 = phi0 + np.pi / 6
+            Is_val[0, 0] = I0 * np.exp(1j * phi0)
+            Is_val[0, 1] = I0 * np.exp(1j * (phi0 + self.winding.dual_tri_phase_shift))
+            Is_val[0, 2] = I0 * np.exp(1j * (phi0 + 2 * np.pi / 3))
+            Is_val[0, 3] = I0 * np.exp(
+                1j * (phi0 + 2 * np.pi / 3 + self.winding.dual_tri_phase_shift)
             )
-            Is_val[0, 4] = I0 * exp(1j * (phi0 + 4 * pi / 3))
-            Is_val[0, 5] = I0 * exp(
-                1j * (phi0 + 4 * pi / 3 + self.winding.dual_tri_phase_shift)
+            Is_val[0, 4] = I0 * np.exp(1j * (phi0 + 4 * np.pi / 3))
+            Is_val[0, 5] = I0 * np.exp(
+                1j * (phi0 + 4 * np.pi / 3 + self.winding.dual_tri_phase_shift)
             )
             # Create Data object
             Phases = Data1D(
@@ -623,12 +604,12 @@ class LamSlotWind(LamSlot):
                 axis_data={"time": axes_dict["time"].get_values(is_oneperiod=True)},
             )["I_s"]
         else:
-            Idq = zeros((angle_elec.size, 3))
-            Idq[:, 0] = ones(angle_elec.size)
+            Idq = np.zeros((angle_elec.size, 3))
+            Idq[:, 0] = np.ones(angle_elec.size)
             I = dqh2n(Idq, angle_elec, n=qs, is_n_rms=False, phase_dir=phase_dir)
 
         # Compute unit mmf
-        mmf_u = squeeze(dot(I, wf))
+        mmf_u = np.squeeze(np.dot(I, wf))
 
         # Create a Data object
 
@@ -717,7 +698,7 @@ class LamSlotWind(LamSlot):
         # Angular periodicity
         if self.winding is not None and self.winding.conductor is not None:
             per_a_w, is_antiper_a_w = self.winding.get_periodicity()
-            per_a = int(gcd(per_a, per_a_w))
+            per_a = int(np.gcd(per_a, per_a_w))
             is_antiper_a = is_antiper_a and is_antiper_a_w
 
         per_a, is_antiper_a = self.comp_periodicity_duct_spatial(per_a, is_antiper_a)
@@ -844,7 +825,7 @@ class LamSlotWind(LamSlot):
 
         # Space discretization
         if angle is None:
-            angle = linspace(0, pi * 2 / per_a, Na, endpoint=False)
+            angle = np.linspace(0, np.pi * 2 / per_a, Na, endpoint=False)
         else:
             Na = angle.size
 
@@ -859,38 +840,38 @@ class LamSlotWind(LamSlot):
 
         wind_mat = self.winding.get_connection_mat(Zs)
         # sum wind_mat along Nlay_rad axis
-        wind_mat = np_sum(wind_mat, axis=0)
+        wind_mat = np.sum(wind_mat, axis=0)
 
         # angle of the center of the slots
         # By convention a tooth is centered on the X axis
-        alpha_slot = linspace(0, 2 * pi / per_a, Zs0, endpoint=False) + pi / Zs
+        alpha_slot = np.linspace(0, 2 * np.pi / per_a, Zs0, endpoint=False) + np.pi / Zs
 
         # angle of the lay in a slot (Nlay point, end and begin excluded)
-        alpha_lay = linspace(-slot_angle / 2, slot_angle / 2, Ntan + 1, endpoint=False)[
-            1:
-        ]
+        alpha_lay = np.linspace(
+            -slot_angle / 2, slot_angle / 2, Ntan + 1, endpoint=False
+        )[1:]
 
         if alpha_mmf0 != 0:
-            angle = (angle - alpha_mmf0) % (2 * pi)
+            angle = (angle - alpha_mmf0) % (2 * np.pi)
 
-        wf = zeros((qs, Na))
+        wf = np.zeros((qs, Na))
         for n in range(Ntan):
             # [Na, Zs]
-            Xalpha_slot, Xangle = meshgrid(alpha_slot + alpha_lay[n], angle)
+            Xalpha_slot, Xangle = np.meshgrid(alpha_slot + alpha_lay[n], angle)
 
-            Xwind = zeros((1, Zs0, qs))
+            Xwind = np.zeros((1, Zs0, qs))
             Xwind[0, :, :] = wind_mat[n, 0:Zs0, :]
             # Extended winding matrix [Na, Zs, qs]
-            Xwind = repeat(Xwind, Na, axis=0)
+            Xwind = np.repeat(Xwind, Na, axis=0)
             # Single winding function in every slot and angle for nth layer [Na, Zs]
             Xwf = -0.5 * comp_cond_function(Xalpha_slot, slot_opening, Xangle)
 
             for q in range(qs):
                 # winding function of qth phase (sum over layers) [qs, Na]
-                wf[q, :] += np_sum(Xwind[:, :, q] * Xwf, axis=1)
+                wf[q, :] += np.sum(Xwind[:, :, q] * Xwf, axis=1)
 
         if per_a > 1:
-            wf = wf - mean(wf, axis=1)[:, None]
+            wf = wf - np.mean(wf, axis=1)[:, None]
 
         return wf
 
@@ -1214,7 +1195,7 @@ class LamSlotWind(LamSlot):
                     ]
 
                     # Computing the angle of the arc and its sign
-                    dist_AB = sqrt(
+                    dist_AB = np.sqrt(
                         (end_point[0] - start_point[0]) ** 2
                         + (end_point[1] - start_point[1]) ** 2
                     )
@@ -1486,7 +1467,7 @@ class LamSlotWind(LamSlot):
         H = 1
 
         # Coordinate of the First Slot   (center on 0)
-        Slot_tan = array(
+        Slot_tan = np.array(
             [-Wt / 2 - W0 / 2, -W0 / 2, -W0 / 2, W0 / 2, W0 / 2, W0 / 2 + Wt / 2]
         )
         Slot_rad = [0, 0, H, H, 0, 0]
@@ -1503,10 +1484,10 @@ class LamSlotWind(LamSlot):
         plot(x, y, "r-")
 
         # First Winding Grid (Coordinate of the winding mark)
-        range_x = linspace(-W0 / 2, W0 / 2, Ntan + 1, endpoint=False)
-        range_y = linspace(0, H, Nrad + 1, endpoint=False)
+        range_x = np.linspace(-W0 / 2, W0 / 2, Ntan + 1, endpoint=False)
+        range_y = np.linspace(0, H, Nrad + 1, endpoint=False)
         # We don't want the first and last point of the linespace
-        Grid_x, Grid_y = meshgrid(range_x[1:], range_y[1:])
+        Grid_x, Grid_y = np.meshgrid(range_x[1:], range_y[1:])
 
         # Plot the Winding Grid point by point by reading wind_mat
         for Zs in range(0, Nplot):  # For "every" Slot
@@ -1765,8 +1746,8 @@ class LamSlotWind(LamSlot):
         if (
             other._Ksfill is not None
             and self._Ksfill is not None
-            and isnan(other._Ksfill)
-            and isnan(self._Ksfill)
+            and np.isnan(other._Ksfill)
+            and np.isnan(self._Ksfill)
         ):
             pass
         elif other._Ksfill != self._Ksfill:

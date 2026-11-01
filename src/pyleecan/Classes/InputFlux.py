@@ -18,7 +18,7 @@ from pyleecan.Classes.InputCurrent import InputCurrent
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Simulation.InputFlux.gen_input import VERBOSE_KEY
-from numpy import arange, array
+import numpy as np
 from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 from pyleecan.Classes.ImportMatrixXls import ImportMatrixXls
@@ -27,9 +27,8 @@ from pyleecan.Classes.InputCurrent import InputCurrent
 from pyleecan.Classes.OutMag import OutMag
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
-from numpy import ndarray
-from numpy import array, array_equal
-from numpy import isnan
+
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -83,7 +82,7 @@ class InputFlux(InputCurrent):
                     if self.slice is not None:
                         axes_values["slice"] = self.slice
                     else:
-                        axes_values["slice"] = arange(len(comp))
+                        axes_values["slice"] = np.arange(len(comp))
                 elif isinstance(comp, ImportMatrixXls):
                     # Only this one is used to import flux from excel files
                     logger.info(
@@ -136,10 +135,10 @@ class InputFlux(InputCurrent):
                 Slice = DataPattern(
                     name="z",
                     unit="m",
-                    values=array([-L1 / 2], dtype=float),
+                    values=np.array([-L1 / 2], dtype=float),
                     rebuild_indices=[0, 0],
                     unique_indices=[0],
-                    values_whole=array([-L1 / 2, L1 / 2], dtype=float),
+                    values_whole=np.array([-L1 / 2, L1 / 2], dtype=float),
                 )
 
             # Store in axes_dict
@@ -343,7 +342,7 @@ class InputFlux(InputCurrent):
             return False
         if other.unit != self.unit:
             return False
-        if not array_equal(other.slice, self.slice):
+        if not np.array_equal(other.slice, self.slice):
             return False
         if other.B_enforced != self.B_enforced:
             return False
@@ -424,7 +423,7 @@ class InputFlux(InputCurrent):
                 diff_list.append(name + ".unit" + val_str)
             else:
                 diff_list.append(name + ".unit")
-        if not array_equal(other.slice, self.slice):
+        if not np.array_equal(other.slice, self.slice):
             diff_list.append(name + ".slice")
         if (other.B_enforced is None and self.B_enforced is not None) or (
             other.B_enforced is not None and self.B_enforced is None
@@ -736,10 +735,10 @@ class InputFlux(InputCurrent):
     def _set_slice(self, value):
         """setter of slice"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("slice", value, "ndarray")

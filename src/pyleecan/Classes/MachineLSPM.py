@@ -19,7 +19,7 @@ from pyleecan.Classes.MachineSync import MachineSync
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine import MachineCheckError
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

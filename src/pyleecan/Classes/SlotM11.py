@@ -17,13 +17,12 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import exp, pi
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Methods.Slot.Slot import SlotCheckError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotM11.plot_schematics import KEY_COLOR, MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -37,7 +36,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -64,16 +63,16 @@ class SlotM11(Slot):
 
         Rbo = self.get_Rbo()
 
-        Z1 = Rbo * exp(-1j * self.W0 / 2)
+        Z1 = Rbo * np.exp(-1j * self.W0 / 2)
 
         if self.is_outwards():
-            Z2 = (Rbo + self.H0) * exp(-1j * self.W0 / 2)
-            ZM1 = (Rbo + self.H0) * exp(-1j * self.W1 / 2)
-            ZM2 = (Rbo + self.H0 - self.H1) * exp(-1j * self.W1 / 2)
+            Z2 = (Rbo + self.H0) * np.exp(-1j * self.W0 / 2)
+            ZM1 = (Rbo + self.H0) * np.exp(-1j * self.W1 / 2)
+            ZM2 = (Rbo + self.H0 - self.H1) * np.exp(-1j * self.W1 / 2)
         else:  # inward slot
-            Z2 = (Rbo - self.H0) * exp(-1j * self.W0 / 2)
-            ZM1 = (Rbo - self.H0) * exp(-1j * self.W1 / 2)
-            ZM2 = (Rbo - self.H0 + self.H1) * exp(-1j * self.W1 / 2)
+            Z2 = (Rbo - self.H0) * np.exp(-1j * self.W0 / 2)
+            ZM1 = (Rbo - self.H0) * np.exp(-1j * self.W1 / 2)
+            ZM2 = (Rbo - self.H0 + self.H1) * np.exp(-1j * self.W1 / 2)
 
         point_dict = dict()
         point_dict["Z1"] = Z1
@@ -144,9 +143,9 @@ class SlotM11(Slot):
 
         if self.W1 is not None and self.W0 < self.W1:
             raise SlotCheckError("You must have W1 <= W0")
-        if self.W1 is not None and self.W1 >= slot_pitch_tol * 2 * pi / self.Zs:
+        if self.W1 is not None and self.W1 >= slot_pitch_tol * 2 * np.pi / self.Zs:
             raise SlotCheckError("You must have W1 < pi/p (use ring magnet instead)")
-        if self.W0 >= slot_pitch_tol * 2 * pi / self.Zs:
+        if self.W0 >= slot_pitch_tol * 2 * np.pi / self.Zs:
             raise SlotCheckError("You must have W0 < pi/p")
 
     # cf Methods.Slot.SlotM11.comp_angle_opening
@@ -228,8 +227,8 @@ class SlotM11(Slot):
         R1 = abs(Z1)
         R2 = abs(Z2)
 
-        S1 = pi * R1**2 * (self.W0 / (2 * pi))
-        S2 = pi * R2**2 * (self.W0 / (2 * pi))
+        S1 = np.pi * R1**2 * (self.W0 / (2 * np.pi))
+        S2 = np.pi * R2**2 * (self.W0 / (2 * np.pi))
 
         return abs(S1 - S2)
 
@@ -256,8 +255,8 @@ class SlotM11(Slot):
         R1 = abs(ZM1)
         R2 = abs(ZM2)
 
-        S1 = pi * R1**2 * (self.W1 / (2 * pi))
-        S2 = pi * R2**2 * (self.W1 / (2 * pi))
+        S1 = np.pi * R1**2 * (self.W1 / (2 * np.pi))
+        S2 = np.pi * R2**2 * (self.W1 / (2 * np.pi))
 
         return abs(S1 - S2)
 
@@ -367,7 +366,7 @@ class SlotM11(Slot):
             True if the active surface angular width matches the slot pitch
         """
 
-        return self.W1 == 2 * pi / self.Zs
+        return self.W1 == 2 * np.pi / self.Zs
 
     # cf Methods.Slot.SlotM11.plot_schematics
     def plot_schematics(
@@ -423,7 +422,9 @@ class SlotM11(Slot):
 
         # Use some default parameter
         if is_default:
-            slot = type(self)(Zs=8, H0=20e-3, W0=pi / 8, H1=15e-3, W1=pi / 8 * 0.75)
+            slot = type(self)(
+                Zs=8, H0=20e-3, W0=np.pi / 8, H1=15e-3, W1=np.pi / 8 * 0.75
+            )
             if is_default == 1:  # Internal Rotor schematics
                 lam = LamSlot(
                     Rint=0.1, Rext=0.135, is_internal=True, is_stator=False, slot=slot
@@ -454,7 +455,7 @@ class SlotM11(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -479,8 +480,8 @@ class SlotM11(Slot):
                 # W0
                 R = Rbo + sign * self.H0 * 1.1
                 line = Arc1(
-                    begin=R * exp(-1j * self.W0 / 2),
-                    end=R * exp(1j * self.W0 / 2),
+                    begin=R * np.exp(-1j * self.W0 / 2),
+                    end=R * np.exp(1j * self.W0 / 2),
                     radius=R,
                     is_trigo_direction=True,
                 )
@@ -510,8 +511,8 @@ class SlotM11(Slot):
                     # W1
                     R = self.get_Rbo() + sign * (self.H0 - self.H1 * 1.1)
                     line = Arc1(
-                        begin=R * exp(-1j * self.W1 / 2),
-                        end=R * exp(1j * self.W1 / 2),
+                        begin=R * np.exp(-1j * self.W1 / 2),
+                        end=R * np.exp(1j * self.W1 / 2),
                         radius=R,
                         is_trigo_direction=True,
                     )
@@ -548,7 +549,7 @@ class SlotM11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z1 Line
-                line = Segment(0, Rbo * 2 * exp(-1j * self.W0 / 2))
+                line = Segment(0, Rbo * 2 * np.exp(-1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -557,7 +558,7 @@ class SlotM11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z2 Line
-                line = Segment(0, Rbo * 2 * exp(1j * self.W0 / 2))
+                line = Segment(0, Rbo * 2 * np.exp(1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -567,7 +568,7 @@ class SlotM11(Slot):
                 )
                 if type_add_active != 0:
                     # ZM1 Line
-                    line = Segment(0, Rbo * 2 * exp(-1j * self.W1 / 2))
+                    line = Segment(0, Rbo * 2 * np.exp(-1j * self.W1 / 2))
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -576,7 +577,7 @@ class SlotM11(Slot):
                         linewidth=MAIN_LINE_WIDTH,
                     )
                     # ZM2 Line
-                    line = Segment(0, Rbo * 2 * exp(1j * self.W1 / 2))
+                    line = Segment(0, Rbo * 2 * np.exp(1j * self.W1 / 2))
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -745,8 +746,8 @@ class SlotM11(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -758,8 +759,8 @@ class SlotM11(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -771,8 +772,8 @@ class SlotM11(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -784,8 +785,8 @@ class SlotM11(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:

@@ -17,12 +17,12 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import transpose, interp, zeros, ndarray, iscomplexobj
+import numpy as np
 from pyleecan.Classes.SliceModel import SliceModel
 from pyleecan.Classes.MeshSolution import MeshSolution
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -165,7 +165,7 @@ class Magnetics(FrozenClass):
                 Npcp = 1
 
             # Interpolate stator currents on input time vector
-            Is_val = transpose(
+            Is_val = np.transpose(
                 Is.get_along(
                     "time=axis_data",
                     "phase",
@@ -202,7 +202,7 @@ class Magnetics(FrozenClass):
                 str_phase = "phase"
 
             # Interpolate stator currents on input time vector
-            Ir_val = transpose(
+            Ir_val = np.transpose(
                 Ir.get_along(
                     "time=axis_data",
                     str_phase,
@@ -251,7 +251,7 @@ class Magnetics(FrozenClass):
                 Nslices = 2
                 z_list = [-0.5 * L, 0.5 * L]
                 is_step = True
-                angle_rotor = zeros(Nslices)
+                angle_rotor = np.zeros(Nslices)
 
             elif is_rotor_skew:
                 # Slice model is given by skew slices
@@ -280,7 +280,7 @@ class Magnetics(FrozenClass):
                     z_norm = slice_model.get_distribution()
                     z_list = [z * L for z in z_norm]
                     # Interpolating rotor skew angle given new slice distribution
-                    angle_rotor = interp(z_list, z_skew, angle_skew)
+                    angle_rotor = np.interp(z_list, z_skew, angle_skew)
 
                 else:
                     if self.Nslices_enforced is not None:
@@ -296,7 +296,7 @@ class Magnetics(FrozenClass):
             slice_model.z_list = z_list
             slice_model.Nslices = Nslices
             slice_model.angle_rotor = angle_rotor
-            slice_model.angle_stator = zeros(Nslices)
+            slice_model.angle_stator = np.zeros(Nslices)
             slice_model.is_step = is_step
             slice_model.is_skew = is_rotor_skew
 
@@ -361,7 +361,7 @@ class Magnetics(FrozenClass):
                         break
             if is_resize:
                 for key in out_dict:
-                    if isinstance(out_dict[key], ndarray):
+                    if isinstance(out_dict[key], np.ndarray):
                         out_dict[key] = out_dict[key][..., None]
                     elif key == "Phi_wind":
                         for phi_key in out_dict[key]:
@@ -389,25 +389,25 @@ class Magnetics(FrozenClass):
 
         if is_loop:
             for key in out_dict:
-                if isinstance(out_dict[key], ndarray):
+                if isinstance(out_dict[key], np.ndarray):
                     field = out_dict[key].copy()
-                    if iscomplexobj(field):
+                    if np.iscomplexobj(field):
                         dtype = complex
                     else:
                         dtype = float
-                    out_dict[key] = zeros(
+                    out_dict[key] = np.zeros(
                         tuple([s for s in field.shape] + [Nslices]), dtype=dtype
                     )
                     out_dict[key][..., 0] = field
                 elif isinstance(out_dict[key], dict):
                     for key2 in out_dict[key]:
-                        if isinstance(out_dict[key][key2], ndarray):
-                            if iscomplexobj(out_dict[key][key2]):
+                        if isinstance(out_dict[key][key2], np.ndarray):
+                            if np.iscomplexobj(out_dict[key][key2]):
                                 dtype = complex
                             else:
                                 dtype = float
                             field = out_dict[key][key2].copy()
-                            out_dict[key][key2] = zeros(
+                            out_dict[key][key2] = np.zeros(
                                 tuple([s for s in field.shape] + [Nslices]), dtype=dtype
                             )
                             out_dict[key][key2][..., 0] = field
@@ -431,7 +431,7 @@ class Magnetics(FrozenClass):
 
                 # Store in out_dict matrices
                 for key in out_dict_index:
-                    if isinstance(out_dict_index[key], ndarray):
+                    if isinstance(out_dict_index[key], np.ndarray):
                         out_dict[key][..., ii + 1] = out_dict_index[key]
                     elif isinstance(out_dict[key], dict):
                         for key2 in out_dict[key]:
@@ -781,8 +781,8 @@ class Magnetics(FrozenClass):
         if (
             other._angle_stator_shift is not None
             and self._angle_stator_shift is not None
-            and isnan(other._angle_stator_shift)
-            and isnan(self._angle_stator_shift)
+            and np.isnan(other._angle_stator_shift)
+            and np.isnan(self._angle_stator_shift)
         ):
             pass
         elif other._angle_stator_shift != self._angle_stator_shift:
@@ -800,8 +800,8 @@ class Magnetics(FrozenClass):
         if (
             other._angle_rotor_shift is not None
             and self._angle_rotor_shift is not None
-            and isnan(other._angle_rotor_shift)
-            and isnan(self._angle_rotor_shift)
+            and np.isnan(other._angle_rotor_shift)
+            and np.isnan(self._angle_rotor_shift)
         ):
             pass
         elif other._angle_rotor_shift != self._angle_rotor_shift:
@@ -880,8 +880,8 @@ class Magnetics(FrozenClass):
         if (
             other._T_mag is not None
             and self._T_mag is not None
-            and isnan(other._T_mag)
-            and isnan(self._T_mag)
+            and np.isnan(other._T_mag)
+            and np.isnan(self._T_mag)
         ):
             pass
         elif other._T_mag != self._T_mag:

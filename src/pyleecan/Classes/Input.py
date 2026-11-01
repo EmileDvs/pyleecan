@@ -17,7 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi
+import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataLinspace import DataLinspace
 from pyleecan.Classes.Norm_ref import Norm_ref
@@ -25,9 +25,8 @@ from pyleecan.Classes.Norm_indices import Norm_indices
 from pyleecan.Classes.Norm_affine import Norm_affine
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
-from numpy import ndarray
-from numpy import array, array_equal
-from numpy import isnan
+
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -277,7 +276,7 @@ class Input(FrozenClass):
                 name="angle",
                 unit="rad",
                 initial=0,
-                final=2 * pi,
+                final=2 * np.pi,
                 number=self.Na_tot,
                 include_endpoint=False,
                 normalizations=norm_angle,
@@ -347,7 +346,7 @@ class Input(FrozenClass):
                         name="phase",
                         unit="rad",
                         initial=0,
-                        final=2 * pi / per_a,
+                        final=2 * np.pi / per_a,
                         number=int(len(name_phase) / per_a),
                         include_endpoint=False,
                         symmetries=sym_dict,
@@ -371,7 +370,7 @@ class Input(FrozenClass):
                     name="phase",
                     unit="rad",
                     initial=0,
-                    final=2 * pi,
+                    final=2 * np.pi,
                     number=1,
                     include_endpoint=False,
                     normalizations={"bar_id": Norm_indices()},
@@ -412,9 +411,9 @@ class Input(FrozenClass):
         norm_time = {
             "elec_order": Norm_ref(ref=f_elec),
             "mech_order": Norm_ref(ref=N0 / 60),
-            "angle_elec": Norm_ref(ref=self.current_dir / (2 * pi * f_elec)),
+            "angle_elec": Norm_ref(ref=self.current_dir / (2 * np.pi * f_elec)),
             "angle_rotor": Norm_affine(
-                slope=self.rot_dir * N0 * 360 / 60, offset=A0 * 180 / pi
+                slope=self.rot_dir * N0 * 360 / 60, offset=A0 * 180 / np.pi
             ),
         }
 
@@ -627,8 +626,8 @@ class Input(FrozenClass):
         if (
             other._Nrev is not None
             and self._Nrev is not None
-            and isnan(other._Nrev)
-            and isnan(self._Nrev)
+            and np.isnan(other._Nrev)
+            and np.isnan(self._Nrev)
         ):
             pass
         elif other._Nrev != self._Nrev:
@@ -667,8 +666,8 @@ class Input(FrozenClass):
         if (
             other._t_final is not None
             and self._t_final is not None
-            and isnan(other._t_final)
-            and isnan(self._t_final)
+            and np.isnan(other._t_final)
+            and np.isnan(self._t_final)
         ):
             pass
         elif other._t_final != self._t_final:
@@ -800,10 +799,10 @@ class Input(FrozenClass):
         ImportMatrixVal = import_class("pyleecan.Classes", "ImportMatrixVal", "time")
         if isinstance(value, str):  # Load from file
             value = load_init_dict(value)[1]
-        if isinstance(value, ndarray):
+        if isinstance(value, np.ndarray):
             value = ImportMatrixVal(value=value)
         elif isinstance(value, list):
-            value = ImportMatrixVal(value=array(value))
+            value = ImportMatrixVal(value=np.array(value))
         elif value == -1:
             value = ImportMatrix()
         elif isinstance(value, dict):
@@ -834,10 +833,10 @@ class Input(FrozenClass):
         ImportMatrixVal = import_class("pyleecan.Classes", "ImportMatrixVal", "angle")
         if isinstance(value, str):  # Load from file
             value = load_init_dict(value)[1]
-        if isinstance(value, ndarray):
+        if isinstance(value, np.ndarray):
             value = ImportMatrixVal(value=value)
         elif isinstance(value, list):
-            value = ImportMatrixVal(value=array(value))
+            value = ImportMatrixVal(value=np.array(value))
         elif value == -1:
             value = ImportMatrix()
         elif isinstance(value, dict):

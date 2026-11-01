@@ -20,9 +20,8 @@ from pyleecan.Classes.LossModel import LossModel
 import matplotlib.pyplot as plt, numpy as np
 from scipy.optimize import curve_fit
 from itertools import groupby
-from numpy import abs as np_abs, matmul, sqrt as np_sqrt, sum as np_sum
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -326,8 +325,8 @@ class LossModelSteinmetz(LossModel):
         # Compute magnetic flux density FFT
         Bfft = Bvect.get_xyz_along("freqs", "indice=" + str(Igrp), "z=mean")
         freqs = Bfft["freqs"]
-        Bfft_magnitude = np_sqrt(
-            np_abs(Bfft["comp_x"]) ** 2 + np_abs(Bfft["comp_y"]) ** 2
+        Bfft_magnitude = np.sqrt(
+            np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2
         )
 
         # Compute the loss density for each element and each frequency
@@ -343,10 +342,10 @@ class LossModelSteinmetz(LossModel):
         n = freqs / felec
 
         # Integrate loss density over group volume to get polynomial coefficients
-        coeff = Lst * per_a * matmul(Bfft_magnitude**2, Se)
-        A = np_sum(k_ed * coeff * n**2)
-        coeff = Lst * per_a * matmul(Bfft_magnitude**alpha_B, Se)
-        B = np_sum(k_hy * coeff * n**alpha_f)
+        coeff = Lst * per_a * np.matmul(Bfft_magnitude**2, Se)
+        A = np.sum(k_ed * coeff * n**2)
+        coeff = Lst * per_a * np.matmul(Bfft_magnitude**alpha_B, Se)
+        B = np.sum(k_hy * coeff * n**alpha_f)
         self.coeff_dict = {"2": A, str(alpha_f): B}
 
         return Pcore_density, freqs
@@ -461,8 +460,8 @@ class LossModelSteinmetz(LossModel):
         if (
             other._k_hy is not None
             and self._k_hy is not None
-            and isnan(other._k_hy)
-            and isnan(self._k_hy)
+            and np.isnan(other._k_hy)
+            and np.isnan(self._k_hy)
         ):
             pass
         elif other._k_hy != self._k_hy:
@@ -476,8 +475,8 @@ class LossModelSteinmetz(LossModel):
         if (
             other._k_ed is not None
             and self._k_ed is not None
-            and isnan(other._k_ed)
-            and isnan(self._k_ed)
+            and np.isnan(other._k_ed)
+            and np.isnan(self._k_ed)
         ):
             pass
         elif other._k_ed != self._k_ed:
@@ -491,8 +490,8 @@ class LossModelSteinmetz(LossModel):
         if (
             other._alpha_f is not None
             and self._alpha_f is not None
-            and isnan(other._alpha_f)
-            and isnan(self._alpha_f)
+            and np.isnan(other._alpha_f)
+            and np.isnan(self._alpha_f)
         ):
             pass
         elif other._alpha_f != self._alpha_f:
@@ -510,8 +509,8 @@ class LossModelSteinmetz(LossModel):
         if (
             other._alpha_B is not None
             and self._alpha_B is not None
-            and isnan(other._alpha_B)
-            and isnan(self._alpha_B)
+            and np.isnan(other._alpha_B)
+            and np.isnan(self._alpha_B)
         ):
             pass
         elif other._alpha_B != self._alpha_B:

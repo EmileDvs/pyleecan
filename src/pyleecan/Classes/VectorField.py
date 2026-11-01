@@ -19,7 +19,6 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, imageio, matplotlib.pyplot as plt
 from pyleecan.Functions.Load.import_class import import_class
-from numpy import zeros, array, array2string, column_stack, exp, real, squeeze
 from pyleecan.Functions.SciDataTool import AxisError
 from pyleecan.Functions.SciDataTool.conversions import (
     cart2pol,
@@ -33,7 +32,7 @@ from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from copy import copy
 from pyleecan.Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -473,7 +472,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultr)
             del return_dict[self.components["comp_x"].symbol]
 
@@ -489,7 +488,7 @@ class VectorField(FrozenClass):
                 )
                 field_r = resultphi[self.components["radial"].symbol]
             else:
-                field_r = zeros(shape)
+                field_r = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_harmonics(
                     N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
@@ -501,7 +500,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultphi)
             del return_dict[self.components["tangential"].symbol]
 
@@ -511,8 +510,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["axial"].symbol]
             shape = field_z.shape
-            field_r = zeros(shape)
-            field_t = zeros(shape)
+            field_r = np.zeros(shape)
+            field_t = np.zeros(shape)
             return_dict = dict(resultz)
             del return_dict[self.components["axial"].symbol]
 
@@ -522,8 +521,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["comp_z"].symbol]
             shape = field_z.shape
-            field_r = zeros(shape)
-            field_t = zeros(shape)
+            field_r = np.zeros(shape)
+            field_t = np.zeros(shape)
             return_dict = resultz
             del return_dict[self.components["comp_z"].symbol]
 
@@ -644,7 +643,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             # Build return dict
             return_dict = dict(resultx)
             del return_dict[self.components["radial"].symbol]
@@ -669,7 +668,7 @@ class VectorField(FrozenClass):
                 )
                 field_y = resulty[self.components["comp_y"].symbol]
             else:
-                field_y = zeros(shape)
+                field_y = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_harmonics(
                     N_harm,
@@ -689,7 +688,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultx)
             del return_dict[self.components["comp_x"].symbol]
 
@@ -713,7 +712,7 @@ class VectorField(FrozenClass):
                 )
                 field_x = resultx[self.components["comp_x"].symbol]
             else:
-                field_x = zeros(shape)
+                field_x = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_harmonics(
                     N_harm,
@@ -733,7 +732,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resulty)
             del return_dict[self.components["comp_y"].symbol]
 
@@ -747,8 +746,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["axial"].symbol]
             shape = field_z.shape
-            field_x = zeros(shape)
-            field_y = zeros(shape)
+            field_x = np.zeros(shape)
+            field_y = np.zeros(shape)
             return_dict = dict(resultz)
             del return_dict[self.components["axial"].symbol]
 
@@ -762,8 +761,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["comp_z"].symbol]
             shape = field_z.shape
-            field_x = zeros(shape)
-            field_y = zeros(shape)
+            field_x = np.zeros(shape)
+            field_y = np.zeros(shape)
             return_dict = resultz
             del return_dict[self.components["comp_z"].symbol]
 
@@ -876,7 +875,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultr)
             del return_dict[self.components["comp_x"].symbol]
 
@@ -892,7 +891,7 @@ class VectorField(FrozenClass):
                 )
                 field_t = resultphi[self.components["tangential"].symbol]
             else:
-                field_t = zeros(shape)
+                field_t = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_magnitude_along(
                     args, unit=unit, is_norm=is_norm, axis_data=axis_data
@@ -904,7 +903,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultr)
             del return_dict[self.components["radial"].symbol]
 
@@ -920,7 +919,7 @@ class VectorField(FrozenClass):
                 )
                 field_r = resultphi[self.components["radial"].symbol]
             else:
-                field_r = zeros(shape)
+                field_r = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_magnitude_along(
                     args, unit=unit, is_norm=is_norm, axis_data=axis_data
@@ -932,7 +931,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultphi)
             del return_dict[self.components["tangential"].symbol]
 
@@ -942,8 +941,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["axial"].symbol]
             shape = field_z.shape
-            field_r = zeros(shape)
-            field_t = zeros(shape)
+            field_r = np.zeros(shape)
+            field_t = np.zeros(shape)
             return_dict = dict(resultz)
             del return_dict[self.components["axial"].symbol]
 
@@ -953,8 +952,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["comp_z"].symbol]
             shape = field_z.shape
-            field_r = zeros(shape)
-            field_t = zeros(shape)
+            field_r = np.zeros(shape)
+            field_t = np.zeros(shape)
             return_dict = resultz
             del return_dict[self.components["comp_z"].symbol]
 
@@ -1070,7 +1069,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             # Build return dict
             return_dict = dict(resultx)
             del return_dict[self.components["radial"].symbol]
@@ -1087,7 +1086,7 @@ class VectorField(FrozenClass):
                 )
                 field_y = resulty[self.components["comp_y"].symbol]
             else:
-                field_y = zeros(shape)
+                field_y = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_magnitude_along(
                     args, unit=unit, is_norm=is_norm, axis_data=axis_data
@@ -1099,7 +1098,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultx)
             del return_dict[self.components["comp_x"].symbol]
 
@@ -1115,7 +1114,7 @@ class VectorField(FrozenClass):
                 )
                 field_x = resultx[self.components["comp_x"].symbol]
             else:
-                field_x = zeros(shape)
+                field_x = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_magnitude_along(
                     args, unit=unit, is_norm=is_norm, axis_data=axis_data
@@ -1127,7 +1126,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resulty)
             del return_dict[self.components["comp_y"].symbol]
 
@@ -1137,8 +1136,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["axial"].symbol]
             shape = field_z.shape
-            field_x = zeros(shape)
-            field_y = zeros(shape)
+            field_x = np.zeros(shape)
+            field_y = np.zeros(shape)
             return_dict = dict(resultz)
             del return_dict[self.components["axial"].symbol]
 
@@ -1148,8 +1147,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["comp_z"].symbol]
             shape = field_z.shape
-            field_x = zeros(shape)
-            field_y = zeros(shape)
+            field_x = np.zeros(shape)
+            field_y = np.zeros(shape)
             return_dict = resultz
             del return_dict[self.components["comp_z"].symbol]
 
@@ -1275,7 +1274,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultr)
             del return_dict[self.components["comp_x"].symbol]
 
@@ -1299,7 +1298,7 @@ class VectorField(FrozenClass):
                 )
                 field_c = resultphi[self.components["tangential"].symbol]
             else:
-                field_c = zeros(shape)
+                field_c = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_along(
                     args,
@@ -1319,7 +1318,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultr)
             del return_dict[self.components["radial"].symbol]
 
@@ -1343,7 +1342,7 @@ class VectorField(FrozenClass):
                 )
                 field_r = resultphi[self.components["radial"].symbol]
             else:
-                field_r = zeros(shape)
+                field_r = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_along(
                     args,
@@ -1363,7 +1362,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultphi)
             del return_dict[self.components["tangential"].symbol]
 
@@ -1377,8 +1376,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["axial"].symbol]
             shape = field_z.shape
-            field_r = zeros(shape)
-            field_c = zeros(shape)
+            field_r = np.zeros(shape)
+            field_c = np.zeros(shape)
             return_dict = dict(resultz)
             del return_dict[self.components["axial"].symbol]
 
@@ -1392,8 +1391,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["comp_z"].symbol]
             shape = field_z.shape
-            field_r = zeros(shape)
-            field_c = zeros(shape)
+            field_r = np.zeros(shape)
+            field_c = np.zeros(shape)
             return_dict = resultz
             del return_dict[self.components["comp_z"].symbol]
 
@@ -1486,7 +1485,7 @@ class VectorField(FrozenClass):
                 )
                 field_c = Dataphi.values
             else:
-                field_c = zeros(shape, dtype=field_r.dtype)
+                field_c = np.zeros(shape, dtype=field_r.dtype)
                 Dataphi = type(Datar)(
                     name=Datar.name,
                     unit=Datar.unit,
@@ -1551,7 +1550,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             # Build return dict
             return_dict = dict(resultx)
             del return_dict[self.components["radial"].symbol]
@@ -1576,7 +1575,7 @@ class VectorField(FrozenClass):
                 )
                 field_y = resulty[self.components["comp_y"].symbol]
             else:
-                field_y = zeros(shape)
+                field_y = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_along(
                     args,
@@ -1596,7 +1595,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resultx)
             del return_dict[self.components["comp_x"].symbol]
 
@@ -1620,7 +1619,7 @@ class VectorField(FrozenClass):
                 )
                 field_x = resultx[self.components["comp_x"].symbol]
             else:
-                field_x = zeros(shape)
+                field_x = np.zeros(shape)
             if "axial" in self.components.keys():
                 resultz = self.components["axial"].get_along(
                     args,
@@ -1640,7 +1639,7 @@ class VectorField(FrozenClass):
                 )
                 field_z = resultz[self.components["comp_z"].symbol]
             else:
-                field_z = zeros(shape)
+                field_z = np.zeros(shape)
             return_dict = dict(resulty)
             del return_dict[self.components["comp_y"].symbol]
 
@@ -1654,8 +1653,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["axial"].symbol]
             shape = field_z.shape
-            field_x = zeros(shape)
-            field_y = zeros(shape)
+            field_x = np.zeros(shape)
+            field_y = np.zeros(shape)
             return_dict = dict(resultz)
             del return_dict[self.components["axial"].symbol]
 
@@ -1669,8 +1668,8 @@ class VectorField(FrozenClass):
             )
             field_z = resultz[self.components["comp_z"].symbol]
             shape = field_z.shape
-            field_x = zeros(shape)
-            field_y = zeros(shape)
+            field_x = np.zeros(shape)
+            field_y = np.zeros(shape)
             return_dict = resultz
             del return_dict[self.components["comp_z"].symbol]
 
@@ -1817,16 +1816,16 @@ class VectorField(FrozenClass):
                 )
 
                 if "x" in result and "y" in result:
-                    Xdatas = column_stack((result["x"], result["y"]))
+                    Xdatas = np.column_stack((result["x"], result["y"]))
                 else:
                     if radius is None:
                         radius = 1
                     phi = result["angle"]
-                    rphi = column_stack((array([radius] * len(phi)), phi))
+                    rphi = np.column_stack((np.array([radius] * len(phi)), phi))
                     Xdatas = rphiz_to_xyz(rphi)
 
-                Ydatas = column_stack(
-                    (squeeze(result["comp_x"]), squeeze(result["comp_y"]))
+                Ydatas = np.column_stack(
+                    (np.squeeze(result["comp_x"]), np.squeeze(result["comp_y"]))
                 )
             else:
                 title = REV_COMP_DICT[component_list[0]].capitalize() + " " + self.name
@@ -1839,20 +1838,20 @@ class VectorField(FrozenClass):
                         is_norm=is_norm,
                     )
                     if "x" in result and "y" in result:
-                        Xdatas = column_stack((result["x"], result["y"]))
+                        Xdatas = np.column_stack((result["x"], result["y"]))
                     else:
                         if radius is None:
                             radius = 1
                         phi = result["angle"]
-                        rphi = column_stack((array([radius] * len(phi)), phi))
+                        rphi = np.column_stack((np.array([radius] * len(phi)), phi))
                         Xdatas = rphiz_to_xyz(rphi)
                     Y_comp = result[vecfield.components[component_list[0]].symbol]
                     if component_list[0] == "comp_x":
                         Y_comp[Xdatas[:, 0] < 0] = -Y_comp[Xdatas[:, 0] < 0]
-                        Ydatas = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                        Ydatas = np.column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                     else:
                         Y_comp[Xdatas[:, 1] < 0] = -Y_comp[Xdatas[:, 1] < 0]
-                        Ydatas = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+                        Ydatas = np.column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
                 else:
                     vecfield = self.to_rphiz()
                     result = vecfield.components[component_list[0]].get_along(
@@ -1864,13 +1863,13 @@ class VectorField(FrozenClass):
                     Y_comp = result[vecfield.components[component_list[0]].symbol]
 
                     if "x" in result and "y" in result:
-                        Xdatas = column_stack((result["x"], result["y"]))
+                        Xdatas = np.column_stack((result["x"], result["y"]))
                         rphiz = xyz_to_rphiz(Xdatas)
 
                         if component_list[0] == "radial":
-                            Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                            Y_3d = np.column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                         else:
-                            Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+                            Y_3d = np.column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
 
                         Ydatas = rphiz_to_xyz_field(Y_3d, rphiz[:, 1])
 
@@ -1878,23 +1877,23 @@ class VectorField(FrozenClass):
                         if radius is None:
                             radius = 1
                         phi = result["angle"]
-                        rphi = column_stack((array([radius] * len(phi)), phi))
+                        rphi = np.column_stack((np.array([radius] * len(phi)), phi))
                         Xdatas = rphiz_to_xyz(rphi)
                         if component_list[0] == "radial":
-                            Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                            Y_3d = np.column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                         else:
-                            Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+                            Y_3d = np.column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
 
                         Ydatas = rphiz_to_xyz_field(Y_3d, phi)
 
-            Ydatas = real(Ydatas * exp(1j * phase))
+            Ydatas = np.real(Ydatas * np.exp(1j * phase))
 
             title2 = " for "
             if "time" in result:
                 if isinstance(result["time"], str):
                     time_str = result["time"]
                 else:
-                    time_str = array2string(
+                    time_str = np.array2string(
                         result["time"], formatter={"float_kind": "{:.3g}".format}
                     )
                 title2 += (
@@ -1905,7 +1904,7 @@ class VectorField(FrozenClass):
             elif "freqs" in result:
                 title2 += (
                     "freqs="
-                    + array2string(
+                    + np.array2string(
                         result["freqs"], formatter={"float_kind": "{:.5g}".format}
                     )
                     .replace(" ", ", ")
@@ -1932,7 +1931,7 @@ class VectorField(FrozenClass):
                         title3 += (
                             axis_name
                             + "="
-                            + array2string(
+                            + np.array2string(
                                 axes_dict_other[axis_name][0],
                                 formatter={"float_kind": "{:.3g}".format},
                             )

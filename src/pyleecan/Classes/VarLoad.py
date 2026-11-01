@@ -20,10 +20,10 @@ from pyleecan.Classes.VarSimu import VarSimu
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Classes._check import check_var
-from numpy import ndarray, array
+import numpy as np
 from pyleecan.Classes.OPMatrix import OPMatrix
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -37,7 +37,7 @@ class VarLoad(VarSimu):
     def _set_OP_matrix(self, value):
         """setter of OP_matrix"""
         if isinstance(value, list):
-            value = array(value)
+            value = np.array(value)
         if isinstance(value, str):  # Load from file
             try:
                 value = load_init_dict(value)[1]
@@ -51,7 +51,7 @@ class VarLoad(VarSimu):
                 "pyleecan.Classes", value.get("__class__"), "OP_matrix"
             )
             value = class_obj(init_dict=value)
-        elif isinstance(value, ndarray):
+        elif isinstance(value, np.ndarray):
             # Conver matrix to OP_matrix object
             class_obj = import_class("pyleecan.Classes", "OPMatrix", "OP_matrix")
             value_obj = class_obj()
@@ -145,7 +145,7 @@ class VarLoad(VarSimu):
             Index of the OP from the OP_matrix to set in the input (if is_update_input)
         """
 
-        if isinstance(OP_matrix, ndarray):
+        if isinstance(OP_matrix, np.ndarray):
             self.OP_matrix = OPMatrix()
             self.OP_matrix.set_OP_array(OP_matrix, *arg_list)
         else:

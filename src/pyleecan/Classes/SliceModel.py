@@ -17,7 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import array, unique, linspace, sqrt, pi
+import numpy as np
 from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes.Norm_ref import Norm_ref
 from pyleecan.Methods.Simulation.Input import InputError
@@ -25,8 +25,7 @@ from scipy.stats import norm
 from pyleecan.Functions.Plot import dict_2D
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -52,10 +51,10 @@ class SliceModel(FrozenClass):
         """
 
         # Get all z values
-        values_whole = array(self.z_list)
+        values_whole = np.array(self.z_list)
 
         # Keep only unique values of relative skew between stator and rotor
-        (_, unique_indices, rebuild_indices) = unique(
+        (_, unique_indices, rebuild_indices) = np.unique(
             (self.angle_stator - self.angle_rotor).round(decimals=4),
             return_index=True,
             return_inverse=True,
@@ -117,23 +116,23 @@ class SliceModel(FrozenClass):
                 )
 
             if type_distribution == "uniform":
-                z_list = linspace(-0.5, 0.5, self.Nslices).tolist()
+                z_list = np.linspace(-0.5, 0.5, self.Nslices).tolist()
 
             elif type_distribution == "gauss":
                 Npoints = self.Nslices
                 if Npoints % 2 == 0:
-                    x = linspace(-1, 0, int(Npoints))
+                    x = np.linspace(-1, 0, int(Npoints))
                     dist = norm.pdf(x, 0, 1)
                     # Rescale so that max = 0.5
-                    dist = dist / (1 / sqrt(2 * pi) - dist[0]) * 0.5
+                    dist = dist / (1 / np.sqrt(2 * np.pi) - dist[0]) * 0.5
                     dist_list = (dist - dist[-1]).tolist()
                     z_list = [z for (i, z) in enumerate(dist_list) if i % 2 == 0]
                     z_list = z_list + [-z for z in reversed(z_list)]
                 else:
-                    x = linspace(-1, 0, int((Npoints + 1) / 2))
+                    x = np.linspace(-1, 0, int((Npoints + 1) / 2))
                     dist = norm.pdf(x, 0, 1)
                     # Rescale so that max = 0.5
-                    dist = dist / (1 / sqrt(2 * pi) - dist[0]) * 0.5
+                    dist = dist / (1 / np.sqrt(2 * np.pi) - dist[0]) * 0.5
                     z_list = (dist - dist[-1]).tolist()
                     z_list = z_list[:-1] + [-z for z in reversed(z_list)]
 
@@ -175,7 +174,7 @@ class SliceModel(FrozenClass):
 
         plot_2D(
             [z_list],
-            [[a * 180 / pi for a in angle_list]],
+            [[a * 180 / np.pi for a in angle_list]],
             xlabel="Axial direction [m]",
             ylabel=lam_name + " skew angle [°]",
             type_plot="curve_point",
@@ -298,9 +297,9 @@ class SliceModel(FrozenClass):
             return False
         if other.z_list != self.z_list:
             return False
-        if not array_equal(other.angle_rotor, self.angle_rotor):
+        if not np.array_equal(other.angle_rotor, self.angle_rotor):
             return False
-        if not array_equal(other.angle_stator, self.angle_stator):
+        if not np.array_equal(other.angle_stator, self.angle_stator):
             return False
         if other.L != self.L:
             return False
@@ -354,15 +353,15 @@ class SliceModel(FrozenClass):
                 diff_list.append(name + ".z_list" + val_str)
             else:
                 diff_list.append(name + ".z_list")
-        if not array_equal(other.angle_rotor, self.angle_rotor):
+        if not np.array_equal(other.angle_rotor, self.angle_rotor):
             diff_list.append(name + ".angle_rotor")
-        if not array_equal(other.angle_stator, self.angle_stator):
+        if not np.array_equal(other.angle_stator, self.angle_stator):
             diff_list.append(name + ".angle_stator")
         if (
             other._L is not None
             and self._L is not None
-            and isnan(other._L)
-            and isnan(self._L)
+            and np.isnan(other._L)
+            and np.isnan(self._L)
         ):
             pass
         elif other._L != self._L:
@@ -574,10 +573,10 @@ class SliceModel(FrozenClass):
     def _set_angle_rotor(self, value):
         """setter of angle_rotor"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("angle_rotor", value, "ndarray")
@@ -599,10 +598,10 @@ class SliceModel(FrozenClass):
     def _set_angle_stator(self, value):
         """setter of angle_stator"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("angle_stator", value, "ndarray")

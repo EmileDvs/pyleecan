@@ -21,7 +21,7 @@ from inspect import signature
 from os.path import join
 from pyleecan.Functions.Plot import dict_2D, dict_3D
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

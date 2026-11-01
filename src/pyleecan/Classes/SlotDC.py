@@ -17,13 +17,13 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import arcsin, exp, sqrt, cos, sin, pi, abs as np_abs
+import numpy as np
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Methods.Slot.Slot import SlotCheckError
 from pyleecan.Classes.SurfLine import SurfLine
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -53,11 +53,11 @@ class SlotDC(Slot):
 
         # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W1
         # alpha = self.comp_angle_opening()
-        alpha = 2 * float(arcsin(self.W1 / (2 * Rbo)))
+        alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo)))
 
         # Compute all points coordinates
-        Z0 = Rbo * exp(1j * 0)
-        Z1 = Rbo * exp(-1j * alpha / 2)
+        Z0 = Rbo * np.exp(1j * 0)
+        Z1 = Rbo * np.exp(-1j * alpha / 2)
         if self.is_outwards():
             sign = +1
         else:
@@ -69,17 +69,17 @@ class SlotDC(Slot):
 
         Z2 = (
             Zc1
-            - sign * sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)
+            - sign * np.sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)
             - 1j * (self.W1 / 2)
         )
         Z3 = (
             Zc1
-            + sign * sqrt((self.D1 / 2) ** 2 - (self.W2 / 2) ** 2)
+            + sign * np.sqrt((self.D1 / 2) ** 2 - (self.W2 / 2) ** 2)
             - 1j * (self.W2 / 2)
         )
         Z4 = (
             Zc2
-            - sign * sqrt((self.D2 / 2) ** 2 - (self.W2 / 2) ** 2)
+            - sign * np.sqrt((self.D2 / 2) ** 2 - (self.W2 / 2) ** 2)
             - 1j * (self.W2 / 2)
         )
 
@@ -198,7 +198,7 @@ class SlotDC(Slot):
 
         Rbo = self.get_Rbo()
 
-        return float(2 * arcsin(self.W1 / (2 * Rbo)))
+        return float(2 * np.arcsin(self.W1 / (2 * Rbo)))
 
     # cf Methods.Slot.SlotDC.comp_height
     def comp_height(self):
@@ -222,7 +222,7 @@ class SlotDC(Slot):
         # Computation of the arc height
         Rbo = self.get_Rbo()
         alpha = self.comp_angle_opening() / 2
-        Harc = float(Rbo * (1 - cos(alpha)))
+        Harc = float(Rbo * (1 - np.cos(alpha)))
 
         if self.is_outwards():
             return H - Harc
@@ -246,7 +246,10 @@ class SlotDC(Slot):
         """
 
         return (
-            self.R3 + self.H3 + self.H2 + sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)
+            self.R3
+            + self.H3
+            + self.H2
+            + np.sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)
         )
 
     # cf Methods.Slot.SlotDC.comp_surface
@@ -291,7 +294,7 @@ class SlotDC(Slot):
         S6 = self.W1 * abs(Z12.real - Z11.real)
         # Top arc of the slot (on bore radius)
         alpha = self.comp_angle_opening()
-        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         if self.is_outwards():
             return Swind + S6 - Sarc
@@ -333,24 +336,24 @@ class SlotDC(Slot):
         ] = self._comp_point_coordinate()
 
         # Half circle R3
-        S1 = self.R3**2 * pi / 2
+        S1 = self.R3**2 * np.pi / 2
         # Tapeze H3
         S2 = self.H3 * (self.R3 * 2 + self.D2) / 2
         # Half circle D2
-        S3 = (self.D2 / 2) ** 2 * pi / 2
+        S3 = (self.D2 / 2) ** 2 * np.pi / 2
         # Remove arc from Half Circle D2
-        alpha1 = float(2 * arcsin(self.W2 / (2 * self.D2 / 2)))
-        Sarc1 = ((self.D2 / 2) ** 2.0) / 2.0 * (alpha1 - sin(alpha1))
+        alpha1 = float(2 * np.arcsin(self.W2 / (2 * self.D2 / 2)))
+        Sarc1 = ((self.D2 / 2) ** 2.0) / 2.0 * (alpha1 - np.sin(alpha1))
         # Rectangle Z10,Z9,Z4,Z3
-        S4 = self.W2 * np_abs(Z10.real - Z9.real)
+        S4 = self.W2 * np.abs(Z10.real - Z9.real)
         # Circle D1
-        S5 = (self.D1 / 2) ** 2 * pi
+        S5 = (self.D1 / 2) ** 2 * np.pi
         # Remove arc from Circle D1 from rectangle Z10,Z9,Z4,Z3
-        alpha2 = float(2 * arcsin(self.W2 / (2 * self.D1 / 2)))
-        Sarc2 = ((self.D1 / 2) ** 2.0) / 2.0 * (alpha2 - sin(alpha2))
+        alpha2 = float(2 * np.arcsin(self.W2 / (2 * self.D1 / 2)))
+        Sarc2 = ((self.D1 / 2) ** 2.0) / 2.0 * (alpha2 - np.sin(alpha2))
         # Remove arc from Circle D1 from W1 rectangle
-        alpha3 = float(2 * arcsin(self.W1 / (2 * self.D1 / 2)))
-        Sarc3 = ((self.D1 / 2) ** 2.0) / 2.0 * (alpha3 - sin(alpha3))
+        alpha3 = float(2 * np.arcsin(self.W1 / (2 * self.D1 / 2)))
+        Sarc3 = ((self.D1 / 2) ** 2.0) / 2.0 * (alpha3 - np.sin(alpha3))
 
         return S1 + S2 + S3 - Sarc1 + S4 + S5 - Sarc2 - Sarc3
 
@@ -530,8 +533,8 @@ class SlotDC(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -543,8 +546,8 @@ class SlotDC(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -556,8 +559,8 @@ class SlotDC(Slot):
         if (
             other._D1 is not None
             and self._D1 is not None
-            and isnan(other._D1)
-            and isnan(self._D1)
+            and np.isnan(other._D1)
+            and np.isnan(self._D1)
         ):
             pass
         elif other._D1 != self._D1:
@@ -569,8 +572,8 @@ class SlotDC(Slot):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:
@@ -582,8 +585,8 @@ class SlotDC(Slot):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -595,8 +598,8 @@ class SlotDC(Slot):
         if (
             other._D2 is not None
             and self._D2 is not None
-            and isnan(other._D2)
-            and isnan(self._D2)
+            and np.isnan(other._D2)
+            and np.isnan(self._D2)
         ):
             pass
         elif other._D2 != self._D2:
@@ -608,8 +611,8 @@ class SlotDC(Slot):
         if (
             other._H3 is not None
             and self._H3 is not None
-            and isnan(other._H3)
-            and isnan(self._H3)
+            and np.isnan(other._H3)
+            and np.isnan(self._H3)
         ):
             pass
         elif other._H3 != self._H3:
@@ -621,8 +624,8 @@ class SlotDC(Slot):
         if (
             other._R3 is not None
             and self._R3 is not None
-            and isnan(other._R3)
-            and isnan(self._R3)
+            and np.isnan(other._R3)
+            and np.isnan(self._R3)
         ):
             pass
         elif other._R3 != self._R3:

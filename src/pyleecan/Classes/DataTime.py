@@ -20,8 +20,8 @@ from pyleecan.Classes.DataND import DataND
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Functions.SciDataTool import AxisError
 
-from numpy import array, array_equal
-from numpy import isnan
+import numpy as np
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

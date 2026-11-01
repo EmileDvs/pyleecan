@@ -22,7 +22,7 @@ from pyleecan.Classes.Surface import Surface
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Geometry.Circle.check import check
-from numpy import pi, exp
+import numpy as np
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Methods.Geometry.Circle.get_patches import (
     PATCH_COLOR,
@@ -36,7 +36,7 @@ from pyleecan.Methods.Geometry.Circle import (
     PointTranslateCircleError,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -66,7 +66,7 @@ class Circle(Surface):
         # Check if the circle is correct
         self.check()
 
-        length = self.radius * 2 * pi
+        length = self.radius * 2 * np.pi
 
         return length
 
@@ -108,7 +108,7 @@ class Circle(Surface):
 
         """
 
-        return pi * self.radius**2
+        return np.pi * self.radius**2
 
     # cf Methods.Geometry.Circle.discretize
     def discretize(self):
@@ -247,9 +247,9 @@ class Circle(Surface):
         self.check()
 
         # Modification of the object from the rotation
-        self.center = self.center * exp(1j * angle)
+        self.center = self.center * np.exp(1j * angle)
         if self.point_ref is not None:
-            self.point_ref = self.point_ref * exp(1j * angle)
+            self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # cf Methods.Geometry.Circle.translate
     def translate(self, Zt):
@@ -389,8 +389,8 @@ class Circle(Surface):
         if (
             other._radius is not None
             and self._radius is not None
-            and isnan(other._radius)
-            and isnan(self._radius)
+            and np.isnan(other._radius)
+            and np.isnan(self._radius)
         ):
             pass
         elif other._radius != self._radius:

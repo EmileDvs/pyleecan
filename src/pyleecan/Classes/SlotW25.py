@@ -24,11 +24,10 @@ from pyleecan.Classes.Slot import Slot
 from pyleecan.Methods.Slot.SlotW25.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
-from numpy import arcsin, exp, pi, angle, linspace, zeros, sin
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Methods.Slot.SlotW25.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -42,7 +41,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -115,32 +114,32 @@ class SlotW25(Slot):
         # Zxt is the equivalent of point Zx in tooth ref
 
         # alpha_0 is the angle to rotate Z0 so ||Z1,Z8|| = W4
-        alpha_0 = float(arcsin(self.W4 / (2 * Rbo)))
+        alpha_0 = float(np.arcsin(self.W4 / (2 * Rbo)))
 
         # comp point coordinate (in complex)
-        Z0 = Rbo * exp(1j * 0)
-        Z1t = Z0 * exp(1j * alpha_0)
+        Z0 = Rbo * np.exp(1j * 0)
+        Z1t = Z0 * np.exp(1j * alpha_0)
 
         if self.is_outwards():
             Z2t = Z1t + self.H1
             # alpha_1 is the angle of Z3t so ||Z3t,Z6t|| = W3
-            alpha_1 = float(arcsin(self.W3 / (2 * abs(Z2t))))
-            Z3t = abs(Z2t) * exp(1j * alpha_1)
+            alpha_1 = float(np.arcsin(self.W3 / (2 * abs(Z2t))))
+            Z3t = abs(Z2t) * np.exp(1j * alpha_1)
             Z4t = Z3t + self.H2
         else:  # inward slot
             Z2t = Z1t - self.H1
             # alpha_1 is the angle of Z3t so ||Z3t,Z6t|| = W3
-            alpha_1 = float(arcsin(self.W3 / (2 * abs(Z2t))))
-            Z3t = abs(Z2t) * exp(1j * alpha_1)
+            alpha_1 = float(np.arcsin(self.W3 / (2 * abs(Z2t))))
+            Z3t = abs(Z2t) * np.exp(1j * alpha_1)
             Z4t = Z3t - self.H2
 
         point_dict = dict()
         # Rotation to get the slot
-        hssp = pi / self.Zs
-        point_dict["Z1"] = Z1t * exp(-1j * hssp)
-        point_dict["Z2"] = Z2t * exp(-1j * hssp)
-        point_dict["Z3"] = Z3t * exp(-1j * hssp)
-        point_dict["Z4"] = Z4t * exp(-1j * hssp)
+        hssp = np.pi / self.Zs
+        point_dict["Z1"] = Z1t * np.exp(-1j * hssp)
+        point_dict["Z2"] = Z2t * np.exp(-1j * hssp)
+        point_dict["Z3"] = Z3t * np.exp(-1j * hssp)
+        point_dict["Z4"] = Z4t * np.exp(-1j * hssp)
         # symetry
         point_dict["Z5"] = point_dict["Z4"].conjugate()
         point_dict["Z6"] = point_dict["Z3"].conjugate()
@@ -210,13 +209,13 @@ class SlotW25(Slot):
         Z4 = point_dict["Z4"]
         Z5 = point_dict["Z5"]
         Z6 = point_dict["Z6"]
-        X = linspace(Z3, Z4, Nrad + 1)
+        X = np.linspace(Z3, Z4, Nrad + 1)
 
         # Nrad+1 and Ntan+1 because 3 points => 2 zones
-        Z = zeros((Nrad + 1, Ntan + 1), dtype=complex)
+        Z = np.zeros((Nrad + 1, Ntan + 1), dtype=complex)
         for ii in range(Nrad + 1):
-            Z[ii][:] = abs(X[ii]) * exp(
-                1j * linspace(angle(X[ii]), angle(X[ii].conjugate()), Ntan + 1)
+            Z[ii][:] = abs(X[ii]) * np.exp(
+                1j * np.linspace(np.angle(X[ii]), np.angle(X[ii].conjugate()), Ntan + 1)
             )
 
         if self.is_outwards():
@@ -316,9 +315,9 @@ class SlotW25(Slot):
         """
         Rbo = self.get_Rbo()
 
-        slot_pitch = 2 * pi / self.Zs
+        slot_pitch = 2 * np.pi / self.Zs
 
-        alpha_4 = float(2 * arcsin(self.W4 / (2 * Rbo)))
+        alpha_4 = float(2 * np.arcsin(self.W4 / (2 * Rbo)))
         return slot_pitch - alpha_4
 
     # cf Methods.Slot.SlotW25.comp_height
@@ -410,16 +409,16 @@ class SlotW25(Slot):
             Rext = abs(Z2)
 
         # Surface of a slot pitch
-        Sring = (pi * Rext**2 - pi * Rint**2) * 1 / self.Zs
+        Sring = (np.pi * Rext**2 - np.pi * Rint**2) * 1 / self.Zs
 
         # Tooth surface
         St = self.H2 * self.W3
 
-        alpha_bore = 2 * arcsin(self.W3 / (2 * Rint))
-        Sarc_bore = (Rint**2.0) / 2.0 * (alpha_bore - sin(alpha_bore))
+        alpha_bore = 2 * np.arcsin(self.W3 / (2 * Rint))
+        Sarc_bore = (Rint**2.0) / 2.0 * (alpha_bore - np.sin(alpha_bore))
 
-        alpha_yoke = 2 * arcsin(self.W3 / (2 * Rext))
-        Sarc_yoke = (Rext**2.0) / 2.0 * (alpha_yoke - sin(alpha_yoke))
+        alpha_yoke = 2 * np.arcsin(self.W3 / (2 * Rext))
+        Sarc_yoke = (Rext**2.0) / 2.0 * (alpha_yoke - np.sin(alpha_yoke))
 
         return Sring - (St + Sarc_yoke - Sarc_bore)
 
@@ -452,16 +451,16 @@ class SlotW25(Slot):
             Rext = abs(Z1)
 
         # Surface of a slot pitch
-        Sring = (pi * Rext**2 - pi * Rint**2) * 1 / self.Zs
+        Sring = (np.pi * Rext**2 - np.pi * Rint**2) * 1 / self.Zs
 
         # Tooth surface
         St = self.H1 * self.W4
 
-        alpha_bore = 2 * arcsin(self.W4 / (2 * Rint))
-        Sarc_bore = (Rint**2.0) / 2.0 * (alpha_bore - sin(alpha_bore))
+        alpha_bore = 2 * np.arcsin(self.W4 / (2 * Rint))
+        Sarc_bore = (Rint**2.0) / 2.0 * (alpha_bore - np.sin(alpha_bore))
 
-        alpha_yoke = 2 * arcsin(self.W4 / (2 * Rext))
-        Sarc_yoke = (Rext**2.0) / 2.0 * (alpha_yoke - sin(alpha_yoke))
+        alpha_yoke = 2 * np.arcsin(self.W4 / (2 * Rext))
+        Sarc_yoke = (Rext**2.0) / 2.0 * (alpha_yoke - np.sin(alpha_yoke))
 
         return Sring - (St + Sarc_yoke - Sarc_bore)
 
@@ -648,14 +647,14 @@ class SlotW25(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
                 sign = 1
             else:
                 sign = -1
-            sp = 2 * pi / self.Zs
+            sp = 2 * np.pi / self.Zs
             # Adding point label
             if is_add_point_label:
                 for name, Z in point_dict.items():
@@ -670,7 +669,7 @@ class SlotW25(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W4
-                line = Segment(point_dict["Z8"], point_dict["Z1"] * exp(1j * sp))
+                line = Segment(point_dict["Z8"], point_dict["Z1"] * np.exp(1j * sp))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -684,7 +683,7 @@ class SlotW25(Slot):
                 # W3
                 line = Segment(
                     (point_dict["Z3"] + point_dict["Z4"]) / 2,
-                    (point_dict["Z5"] + point_dict["Z6"]) / 2 * exp(-1j * sp),
+                    (point_dict["Z5"] + point_dict["Z6"]) / 2 * np.exp(-1j * sp),
                 )
                 line.plot(
                     fig=fig,
@@ -748,8 +747,8 @@ class SlotW25(Slot):
                 # Middle arc
                 R = abs(point_dict["Z3"])
                 line = Arc1(
-                    begin=R * exp(-1j * pi / 2 * 0.9),
-                    end=R * exp(1j * pi / 2 * 0.9),
+                    begin=R * np.exp(-1j * np.pi / 2 * 0.9),
+                    end=R * np.exp(1j * np.pi / 2 * 0.9),
                     radius=R,
                     is_trigo_direction=True,
                 )
@@ -763,8 +762,8 @@ class SlotW25(Slot):
                 # Bot arc
                 R = abs(point_dict["Z4"])
                 line = Arc1(
-                    begin=R * exp(-1j * pi / 2 * 0.9),
-                    end=R * exp(1j * pi / 2 * 0.9),
+                    begin=R * np.exp(-1j * np.pi / 2 * 0.9),
+                    end=R * np.exp(1j * np.pi / 2 * 0.9),
                     radius=R,
                     is_trigo_direction=True,
                 )
@@ -776,7 +775,7 @@ class SlotW25(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Tooth axis
-                line = Segment(0, lam.Rext * 1.5 * exp(-1j * sp / 2))
+                line = Segment(0, lam.Rext * 1.5 * np.exp(-1j * sp / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -784,7 +783,7 @@ class SlotW25(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * sp / 2))
+                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * sp / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -807,7 +806,7 @@ class SlotW25(Slot):
                 )
 
             # Zooming and cleaning
-            W = (point_dict["Z4"] * exp(1j * sp)).imag * 1.1
+            W = (point_dict["Z4"] * np.exp(1j * sp)).imag * 1.1
             Rint = min(point_dict["Z4"].real, point_dict["Z1"].real)
             Rext = max(point_dict["Z4"].real, point_dict["Z1"].real)
 
@@ -936,8 +935,8 @@ class SlotW25(Slot):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:
@@ -949,8 +948,8 @@ class SlotW25(Slot):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -962,8 +961,8 @@ class SlotW25(Slot):
         if (
             other._W4 is not None
             and self._W4 is not None
-            and isnan(other._W4)
-            and isnan(self._W4)
+            and np.isnan(other._W4)
+            and np.isnan(self._W4)
         ):
             pass
         elif other._W4 != self._W4:
@@ -975,8 +974,8 @@ class SlotW25(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:

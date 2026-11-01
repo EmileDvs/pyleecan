@@ -17,9 +17,9 @@ from pyleecan.Classes.LossModel import LossModel
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, abs as np_abs, matmul, sqrt as np_sqrt, sum as np_sum
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -43,7 +43,7 @@ class LossModelProximity(LossModel):
         kf = self.parent.parent.machine.stator.comp_fill_factor()
 
         # Proximity loss coefficient [W/kg]
-        self.k_p = kf * pi**2 / 8 * sigma * d**2
+        self.k_p = kf * np.pi**2 / 8 * sigma * d**2
 
     # cf Methods.Loss.LossModelProximity.comp_loss
     def comp_loss(self):
@@ -130,8 +130,8 @@ class LossModelProximity(LossModel):
         # Compute magnetic flux density FFT
         Bfft = Bvect.get_xyz_along("freqs", "indice=" + str(Igrp), "z=mean")
         freqs = Bfft["freqs"]
-        Bfft_magnitude = np_sqrt(
-            np_abs(Bfft["comp_x"]) ** 2 + np_abs(Bfft["comp_y"]) ** 2
+        Bfft_magnitude = np.sqrt(
+            np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2
         )
 
         # Proximity loss density for each frequency and element
@@ -146,8 +146,8 @@ class LossModelProximity(LossModel):
         n = freqs / felec
 
         # Integrate loss density over group volume to get polynomial coefficients
-        coeff = Lst * per_a * matmul(Bfft_magnitude**2, Se)
-        A = np_sum(k_p * coeff * n**2)
+        coeff = Lst * per_a * np.matmul(Bfft_magnitude**2, Se)
+        A = np.sum(k_p * coeff * n**2)
         self.coeff_dict = {"2": A}
 
         return Pcore_density, freqs
@@ -241,8 +241,8 @@ class LossModelProximity(LossModel):
         if (
             other._k_p is not None
             and self._k_p is not None
-            and isnan(other._k_p)
-            and isnan(self._k_p)
+            and np.isnan(other._k_p)
+            and np.isnan(self._k_p)
         ):
             pass
         elif other._k_p != self._k_p:

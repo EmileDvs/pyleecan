@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes._frozen import FrozenClass
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -155,8 +155,8 @@ class MatStructural(FrozenClass):
         if (
             other._rho is not None
             and self._rho is not None
-            and isnan(other._rho)
-            and isnan(self._rho)
+            and np.isnan(other._rho)
+            and np.isnan(self._rho)
         ):
             pass
         elif other._rho != self._rho:
@@ -170,8 +170,8 @@ class MatStructural(FrozenClass):
         if (
             other._Ex is not None
             and self._Ex is not None
-            and isnan(other._Ex)
-            and isnan(self._Ex)
+            and np.isnan(other._Ex)
+            and np.isnan(self._Ex)
         ):
             pass
         elif other._Ex != self._Ex:
@@ -183,8 +183,8 @@ class MatStructural(FrozenClass):
         if (
             other._Ey is not None
             and self._Ey is not None
-            and isnan(other._Ey)
-            and isnan(self._Ey)
+            and np.isnan(other._Ey)
+            and np.isnan(self._Ey)
         ):
             pass
         elif other._Ey != self._Ey:
@@ -196,8 +196,8 @@ class MatStructural(FrozenClass):
         if (
             other._Ez is not None
             and self._Ez is not None
-            and isnan(other._Ez)
-            and isnan(self._Ez)
+            and np.isnan(other._Ez)
+            and np.isnan(self._Ez)
         ):
             pass
         elif other._Ez != self._Ez:
@@ -209,8 +209,8 @@ class MatStructural(FrozenClass):
         if (
             other._nu_xy is not None
             and self._nu_xy is not None
-            and isnan(other._nu_xy)
-            and isnan(self._nu_xy)
+            and np.isnan(other._nu_xy)
+            and np.isnan(self._nu_xy)
         ):
             pass
         elif other._nu_xy != self._nu_xy:
@@ -224,8 +224,8 @@ class MatStructural(FrozenClass):
         if (
             other._nu_xz is not None
             and self._nu_xz is not None
-            and isnan(other._nu_xz)
-            and isnan(self._nu_xz)
+            and np.isnan(other._nu_xz)
+            and np.isnan(self._nu_xz)
         ):
             pass
         elif other._nu_xz != self._nu_xz:
@@ -239,8 +239,8 @@ class MatStructural(FrozenClass):
         if (
             other._nu_yz is not None
             and self._nu_yz is not None
-            and isnan(other._nu_yz)
-            and isnan(self._nu_yz)
+            and np.isnan(other._nu_yz)
+            and np.isnan(self._nu_yz)
         ):
             pass
         elif other._nu_yz != self._nu_yz:
@@ -254,8 +254,8 @@ class MatStructural(FrozenClass):
         if (
             other._Gxz is not None
             and self._Gxz is not None
-            and isnan(other._Gxz)
-            and isnan(self._Gxz)
+            and np.isnan(other._Gxz)
+            and np.isnan(self._Gxz)
         ):
             pass
         elif other._Gxz != self._Gxz:
@@ -269,8 +269,8 @@ class MatStructural(FrozenClass):
         if (
             other._Gxy is not None
             and self._Gxy is not None
-            and isnan(other._Gxy)
-            and isnan(self._Gxy)
+            and np.isnan(other._Gxy)
+            and np.isnan(self._Gxy)
         ):
             pass
         elif other._Gxy != self._Gxy:
@@ -284,8 +284,8 @@ class MatStructural(FrozenClass):
         if (
             other._Gyz is not None
             and self._Gyz is not None
-            and isnan(other._Gyz)
-            and isnan(self._Gyz)
+            and np.isnan(other._Gyz)
+            and np.isnan(self._Gyz)
         ):
             pass
         elif other._Gyz != self._Gyz:

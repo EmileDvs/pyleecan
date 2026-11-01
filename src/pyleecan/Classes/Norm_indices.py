@@ -17,9 +17,9 @@ from pyleecan.Classes.Normalization import Normalization
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import array
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -44,7 +44,7 @@ class Norm_indices(Normalization):
         -------
         Vector of axis values
         """
-        return array([i for i in range(len(values))])
+        return np.array([i for i in range(len(values))])
 
     # generic save method is available in all object
     save = save

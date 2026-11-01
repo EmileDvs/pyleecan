@@ -20,9 +20,9 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 from scipy.io import loadmat
 from pyleecan.Methods.Import.ImportMatlab import MatFileError
 from os.path import isfile
-from numpy import squeeze
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -60,7 +60,7 @@ class ImportMatlab(ImportMatrix):
                 + self.file_path
             )
 
-        return squeeze(data_dict[self.var_name])
+        return np.squeeze(data_dict[self.var_name])
 
     # generic save method is available in all object
     save = save

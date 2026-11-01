@@ -22,10 +22,10 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc2 import Arc2
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
-from numpy import exp, pi, arcsin
+import numpy as np
 from copy import deepcopy
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -106,11 +106,11 @@ class FrameBar(Frame):
             ###Circular Shape
             # Define Points
             Z0 = lam_outer.Rext
-            rot_angle = arcsin(self.wbar / 2.0 / Z0)
-            Z1 = Z0 * exp(rot_angle * -1j)
-            Z2 = (Z0 + h_gap) * exp(rot_angle * -1j)
-            Z3 = (Z0 + h_gap) * exp(rot_angle * 1j)
-            Z4 = Z0 * exp(rot_angle * 1j)
+            rot_angle = np.arcsin(self.wbar / 2.0 / Z0)
+            Z1 = Z0 * np.exp(rot_angle * -1j)
+            Z2 = (Z0 + h_gap) * np.exp(rot_angle * -1j)
+            Z3 = (Z0 + h_gap) * np.exp(rot_angle * 1j)
+            Z4 = Z0 * np.exp(rot_angle * 1j)
             # Define Lines
             curve_list = list()
             curve_list.append(Segment(Z1, Z2))
@@ -125,7 +125,7 @@ class FrameBar(Frame):
             )
             # Rotate surface so bars are evenly distributed
             surf_list.append(deepcopy(surf_bar))
-            bar_angle = 2 * pi / self.Nbar
+            bar_angle = 2 * np.pi / self.Nbar
             for i in range(1, self.Nbar):
                 surf_bar.rotate(bar_angle)
                 surf_list.append(deepcopy(surf_bar))
@@ -173,8 +173,8 @@ class FrameBar(Frame):
         """
 
         # Outer Frame Surface
-        S_ext = (self.Rext**2) * pi
-        S_int = (self.Rint**2) * pi
+        S_ext = (self.Rext**2) * np.pi
+        S_int = (self.Rint**2) * np.pi
         S_outer = S_ext - S_int
 
         # Bar Surface
@@ -207,8 +207,8 @@ class FrameBar(Frame):
         r_out = self._get_Rint()
         h_gap = self.comp_height_gap()
         r_in = r_out - h_gap
-        rot_angle = 2 * arcsin(self.wbar / 2.0 / r_in)
-        Sbar = self.Nbar * pi * (r_out**2 - r_in**2) * rot_angle / (2 * pi)
+        rot_angle = 2 * np.arcsin(self.wbar / 2.0 / r_in)
+        Sbar = self.Nbar * np.pi * (r_out**2 - r_in**2) * rot_angle / (2 * np.pi)
 
         return Sbar
 
@@ -229,9 +229,9 @@ class FrameBar(Frame):
         """
 
         # Surface of the external disk
-        S_ext = (self.Rext**2) * pi
+        S_ext = (self.Rext**2) * np.pi
         # Surface of the internal disk
-        S_int = (self.Rint**2) * pi
+        S_int = (self.Rint**2) * np.pi
         # Surface of the bars
         S_bar = self.comp_surface_bar()
 
@@ -343,8 +343,8 @@ class FrameBar(Frame):
         if (
             other._wbar is not None
             and self._wbar is not None
-            and isnan(other._wbar)
-            and isnan(self._wbar)
+            and np.isnan(other._wbar)
+            and np.isnan(self._wbar)
         ):
             pass
         elif other._wbar != self._wbar:

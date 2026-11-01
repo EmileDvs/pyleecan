@@ -24,7 +24,7 @@ from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
 )
 from pyleecan.Classes.InputVoltage import InputVoltage
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

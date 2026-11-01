@@ -15,13 +15,13 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes.DataKeeper import DataKeeper
 
-from numpy import array, ndarray
+import numpy as np
 from ntpath import basename
 from os.path import isfile
 from pyleecan.Classes._check import CheckTypeError
-import numpy as np
+
 import random
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -157,8 +157,8 @@ class OptiConstraint(DataKeeper):
         if (
             other._value is not None
             and self._value is not None
-            and isnan(other._value)
-            and isnan(self._value)
+            and np.isnan(other._value)
+            and np.isnan(self._value)
         ):
             pass
         elif other._value != self._value:

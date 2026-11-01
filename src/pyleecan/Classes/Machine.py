@@ -30,18 +30,17 @@ from pyleecan.Methods.Machine.Machine.check import (
     MC_StatorNotStator,
 )
 from pyleecan.Classes.OutGeo import OutGeo
-from numpy import gcd, pi
+import numpy as np, matplotlib.pyplot as plt, matplotlib.animation as animation
 from pyleecan.Methods.Machine.Machine.get_lam_by_label import LabelInputError
 from pyleecan.Functions.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
 from pyleecan.Methods.Machine.Machine.get_lam_list import KeyInputError
 from pyleecan.Methods.Machine.Machine.get_material_dict import get_material
 from pyleecan.Methods.Machine.Machine.plot import COMP_EDGE_COLOR, PATCH_COLOR_ALPHA
-import matplotlib.pyplot as plt, matplotlib.animation as animation
 from pyleecan.Functions.init_fig import init_fig
 from matplotlib.patches import Patch, Polygon
 from matplotlib.pyplot import subplots
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -557,7 +556,7 @@ class Machine(FrozenClass):
         pera_r, is_antipera_r = self.rotor.comp_periodicity_spatial()
 
         # Get machine spatial periodicity
-        pera = int(gcd(gcd(pera_s, pera_r), p))
+        pera = int(np.gcd(np.gcd(pera_s, pera_r), p))
 
         # Get machine time and spatial anti-periodicities
         is_apera = bool(is_antipera_s and is_antipera_r)
@@ -1156,7 +1155,7 @@ class Machine(FrozenClass):
         Rsurf = self.rotor.build_geometry(sym=1, alpha=0, delta=0)
 
         # Rotation angle between each frame
-        Dalpha = 2 * pi * Nrot / Nframe
+        Dalpha = 2 * np.pi * Nrot / Nframe
 
         def init():
             """Create the patches for the first image"""

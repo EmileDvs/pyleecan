@@ -17,13 +17,13 @@ from pyleecan.Classes.LamH import LamH
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import exp, pi, gcd
+import numpy as np
 from pyleecan.Functions.labels import decode_label, HOLEM_LAB
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
 from pyleecan.Classes.LamH import LamH
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -79,15 +79,15 @@ class LamHoleNS(LamH):
                     for ii in range(int(Zh / sym / 2)):
                         off = 0  # All north
                         if mag is not None and mag.type_magnetization == 3:
-                            off -= pi / 2
-                        Z1 = (mag_surf.point_ref + delta) * exp(
-                            1j * (ii * 4 * pi / Zh + pi / Zh + alpha)
+                            off -= np.pi / 2
+                        Z1 = (mag_surf.point_ref + delta) * np.exp(
+                            1j * (ii * 4 * np.pi / Zh + np.pi / Zh + alpha)
                         )
                         Z2 = (
                             mag_surf.point_ref
                             + delta
-                            + H / 5 * exp(1j * (mag_dir + off))
-                        ) * exp(1j * (ii * 4 * pi / Zh + pi / Zh + alpha))
+                            + H / 5 * np.exp(1j * (mag_dir + off))
+                        ) * np.exp(1j * (ii * 4 * np.pi / Zh + np.pi / Zh + alpha))
                         ax.annotate(
                             text="",
                             xy=(Z2.real, Z2.imag),
@@ -115,17 +115,17 @@ class LamHoleNS(LamH):
                     # Create arrow coordinates
                     Zh = hole.Zh
                     for ii in range(int(Zh / sym / 2)):
-                        off = pi  # All north
+                        off = np.pi  # All north
                         if mag is not None and mag.type_magnetization == 3:
-                            off -= pi / 2
-                        Z1 = (mag_surf.point_ref + delta) * exp(
-                            1j * (ii * 4 * pi / Zh + 3 * pi / Zh + alpha)
+                            off -= np.pi / 2
+                        Z1 = (mag_surf.point_ref + delta) * np.exp(
+                            1j * (ii * 4 * np.pi / Zh + 3 * np.pi / Zh + alpha)
                         )
                         Z2 = (
                             mag_surf.point_ref
                             + delta
-                            + H / 5 * exp(1j * (mag_dir + off))
-                        ) * exp(1j * (ii * 4 * pi / Zh + 3 * pi / Zh + alpha))
+                            + H / 5 * np.exp(1j * (mag_dir + off))
+                        ) * np.exp(1j * (ii * 4 * np.pi / Zh + 3 * np.pi / Zh + alpha))
                         ax.annotate(
                             text="",
                             xy=(Z2.real, Z2.imag),
@@ -170,7 +170,7 @@ class LamHoleNS(LamH):
         ii = 0
         for hole in self.hole_north:
             # Create the first hole surface(s)
-            surf_hole = hole.build_geometry(alpha=pi / hole.Zh)
+            surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh)
             surf_list.extend(
                 transform_hole_surf(
                     hole_surf_list=surf_hole,
@@ -182,13 +182,13 @@ class LamHoleNS(LamH):
             )
         # Holes surface(s)
         for hole in self.hole_south:
-            surf_hole = hole.build_geometry(alpha=2 * pi / hole.Zh)
+            surf_hole = hole.build_geometry(alpha=2 * np.pi / hole.Zh)
             surf_list.extend(
                 transform_hole_surf(
                     hole_surf_list=surf_hole,
                     Zh=int(hole.Zh / 2),
                     sym=sym,
-                    alpha=pi / hole.Zh,
+                    alpha=np.pi / hole.Zh,
                     delta=0,
                 )
             )
@@ -277,9 +277,9 @@ class LamHoleNS(LamH):
         if len(nb_list) == 1:
             per_a = nb_list[0]
         else:
-            per_a = gcd(nb_list[0], nb_list[1])
+            per_a = np.gcd(nb_list[0], nb_list[1])
             for ii in range(2, len(nb_list)):
-                per_a = gcd(per_a, nb_list[ii])
+                per_a = np.gcd(per_a, nb_list[ii])
         is_antiper_a = False
 
         # Account for duct periodicity

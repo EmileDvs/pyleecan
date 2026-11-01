@@ -19,7 +19,7 @@ from pyleecan.Classes.Rule import Rule
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Classes._check import check_var
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

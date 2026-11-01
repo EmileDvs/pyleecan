@@ -25,11 +25,10 @@ from pyleecan.Methods.Slot.SlotW12.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
-from numpy import arcsin, exp, cos, pi, sin
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Methods.Slot.SlotW12.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -44,7 +43,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -138,11 +137,11 @@ class SlotW12(Slot):
         Rbo = self.get_Rbo()
 
         # alpha is the angle to rotate Z0 so ||Z1,Z8|| = 2*R2
-        alpha = float(arcsin(self.R2 / Rbo))
+        alpha = float(np.arcsin(self.R2 / Rbo))
 
         # comp point coordinate (in complex)
-        Z0 = Rbo * exp(1j * 0)
-        Z1 = Z0 * exp(-1j * alpha)
+        Z0 = Rbo * np.exp(1j * 0)
+        Z1 = Z0 * np.exp(-1j * alpha)
 
         if self.is_outwards():
             Z2 = Z1 + self.H0
@@ -229,7 +228,7 @@ class SlotW12(Slot):
 
         Rbo = self.get_Rbo()
 
-        return float(2 * arcsin(self.R2 / Rbo))
+        return float(2 * np.arcsin(self.R2 / Rbo))
 
     # cf Methods.Slot.SlotW12.comp_height
     def comp_height(self):
@@ -252,7 +251,7 @@ class SlotW12(Slot):
 
         # Computation of the arc height
         alpha = self.comp_angle_opening() / 2
-        Harc = float(Rbo * (1 - cos(alpha)))
+        Harc = float(Rbo * (1 - np.cos(alpha)))
 
         if self.is_outwards():
             return self.H0 - Harc + self.R1 * 2 + self.H1 + self.R2
@@ -312,7 +311,7 @@ class SlotW12(Slot):
         """
 
         S3 = 2 * self.R2 * self.H1
-        S4 = pi * self.R2**2 / 2.0
+        S4 = np.pi * self.R2**2 / 2.0
 
         return S3 + S4
 
@@ -337,11 +336,11 @@ class SlotW12(Slot):
 
         S1 = self.H0 * 2 * self.R2
         S2 = 4 * self.R1 * self.R2
-        S3 = pi * self.R1**2
+        S3 = np.pi * self.R1**2
 
         # The bottom is an arc
         alpha = self.comp_angle_opening()
-        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
         if self.is_outwards():
@@ -530,7 +529,7 @@ class SlotW12(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -814,8 +813,8 @@ class SlotW12(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -827,8 +826,8 @@ class SlotW12(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -840,8 +839,8 @@ class SlotW12(Slot):
         if (
             other._R1 is not None
             and self._R1 is not None
-            and isnan(other._R1)
-            and isnan(self._R1)
+            and np.isnan(other._R1)
+            and np.isnan(self._R1)
         ):
             pass
         elif other._R1 != self._R1:
@@ -853,8 +852,8 @@ class SlotW12(Slot):
         if (
             other._R2 is not None
             and self._R2 is not None
-            and isnan(other._R2)
-            and isnan(self._R2)
+            and np.isnan(other._R2)
+            and np.isnan(self._R2)
         ):
             pass
         elif other._R2 != self._R2:

@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes.ModelBH import ModelBH
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -115,8 +115,8 @@ class ModelBH_arctangent(ModelBH):
         if (
             other._k is not None
             and self._k is not None
-            and isnan(other._k)
-            and isnan(self._k)
+            and np.isnan(other._k)
+            and np.isnan(self._k)
         ):
             pass
         elif other._k != self._k:
@@ -128,8 +128,8 @@ class ModelBH_arctangent(ModelBH):
         if (
             other._mu_a is not None
             and self._mu_a is not None
-            and isnan(other._mu_a)
-            and isnan(self._mu_a)
+            and np.isnan(other._mu_a)
+            and np.isnan(self._mu_a)
         ):
             pass
         elif other._mu_a != self._mu_a:

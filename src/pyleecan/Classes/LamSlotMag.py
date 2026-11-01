@@ -17,7 +17,7 @@ from pyleecan.Classes.LamSlotM import LamSlotM
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, unique
+import numpy as np
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.labels import (
     update_RTS_index,
@@ -32,8 +32,7 @@ from pyleecan.Functions.labels import (
 )
 from pyleecan.Methods.Machine.LamSlotMag import LMC_SlotTooLong
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -90,7 +89,7 @@ class LamSlotMag(LamSlotM):
         )
 
         Zs = self.slot.Zs
-        slot_pitch = 2 * pi / Zs
+        slot_pitch = 2 * np.pi / Zs
 
         # Add the magnet surface(s)
         if is_magnet and self.magnet is not None:
@@ -170,7 +169,7 @@ class LamSlotMag(LamSlotM):
 
             # Shift to have a tooth center on Ox
             for surf in mag_surf_list:
-                surf.rotate(pi / Zs)
+                surf.rotate(np.pi / Zs)
             surf_list.extend(mag_surf_list)
 
         return surf_list
@@ -302,7 +301,7 @@ class LamSlotMag(LamSlotM):
         if self.mur_lin_matrix is None and self.Brm20_matrix is None:
             return [self.magnet]
         elif self.mur_lin_matrix is not None:
-            _, index_unique = unique(self.mur_lin_matrix, return_index=True)
+            _, index_unique = np.unique(self.mur_lin_matrix, return_index=True)
             for ii, flat_index in enumerate(index_unique):
                 mag_list.append(self.magnet.copy())
                 mag_list[-1].mat_type.name = "Magnet_" + str(ii + 1)
@@ -312,7 +311,7 @@ class LamSlotMag(LamSlotM):
                 if self.Brm20_matrix is not None:
                     mag_list[-1].mat_type.mag.Brm20 = self.Brm20_matrix.flat[flat_index]
         else:  # Only change Brm20
-            Brm20_val = unique(self.Brm20_matrix)
+            Brm20_val = np.unique(self.Brm20_matrix)
             for ii, Brm20 in enumerate(Brm20_val):
                 mag_list.append(self.magnet.copy())
                 mag_list[-1].mat_type.mag.Brm20 = Brm20

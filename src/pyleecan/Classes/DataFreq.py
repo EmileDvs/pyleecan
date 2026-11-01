@@ -17,7 +17,7 @@ from pyleecan.Classes.DataND import DataND
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import any as np_any, inf
+import numpy as np
 from pyleecan.Functions.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
@@ -27,8 +27,7 @@ from pyleecan.Functions.SciDataTool.sum_convolution import (
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Functions.SciDataTool import AxisError
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -42,7 +41,7 @@ class DataFreq(DataND):
         self,
         other,
         f_min=None,
-        f_max=inf,
+        f_max=np.inf,
         tol_freq=1e-4,
         name=None,
         symbol=None,
@@ -91,14 +90,14 @@ class DataFreq(DataND):
             raise Exception("self axis is not frequency axis")
         else:
             freqs1 = self.axes[0].get_values()
-            if np_any(freqs1) < 0:
+            if np.any(freqs1) < 0:
                 raise Exception("self contains negative frequency values")
 
         if other.axes[0].name != "freqs":
             raise Exception("other axis is not frequency axis")
         else:
             freqs2 = other.axes[0].get_values()
-            if np_any(freqs2) < 0:
+            if np.any(freqs2) < 0:
                 raise Exception("other contains negative frequency values")
 
         # Fill metadata
@@ -255,14 +254,14 @@ class DataFreq(DataND):
             raise Exception("self axis is not frequency axis")
         else:
             freqs1 = self.axes[0].get_values()
-            if np_any(freqs1) < 0:
+            if np.any(freqs1) < 0:
                 raise Exception("self contains negative frequency values")
 
         if other.axes[0].name != "freqs":
             raise Exception("other axis is not frequency axis")
         else:
             freqs2 = other.axes[0].get_values()
-            if np_any(freqs2) < 0:
+            if np.any(freqs2) < 0:
                 raise Exception("other contains negative frequency values")
 
         # Fill metadata

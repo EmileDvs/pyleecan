@@ -17,34 +17,9 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import (
-    sign,
-    swapaxes,
-    zeros,
-    squeeze,
-    abs as np_abs,
-    mod,
-    where,
-    all as np_all,
-    gcd,
-    angle,
-    exp,
-    linspace,
-    pi,
-    sum,
-    abs,
-    array,
-    conjugate,
-    delete,
-    imag,
-    insert,
-    ones,
-    real,
-    round,
-)
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes._swat_em import datamodel
 from pyleecan.Methods.Machine.Winding import WindingError
-from numpy.fft import fft
 from pyleecan.Methods.Machine.Winding.export_to_csv import (
     COIL_NAME,
     RAD_NAME,
@@ -65,7 +40,6 @@ from pyleecan.Methods.Machine.Winding.plot_linear import (
     ROTOR_COLOR,
     STATOR_COLOR,
 )
-import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from pyleecan.definitions import config_dict
 from pyleecan.Functions._swat_em.config import config
@@ -73,8 +47,7 @@ from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions._swat_em import plots
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -166,7 +139,7 @@ class Winding(FrozenClass):
         wdg.genwdg(Q=Zs, P=2 * p, m=qs, layers=Nlayer, turns=Ntcoil, w=self.coil_pitch)
 
         # init connexion matrix
-        wind_mat = zeros((Nlayer, 1, Zs, qs))
+        wind_mat = np.zeros((Nlayer, 1, Zs, qs))
 
         # get connexion matrix from swat-em
         wind_mat_swat = wdg.get_phases()
@@ -193,12 +166,12 @@ class Winding(FrozenClass):
                 if len(layer) > 0:
                     for cond in layer:
                         wind_mat[Nlayer - ll - 1, 0, abs(cond) - 1, qq] = (
-                            sign(cond) * Ntcoil
+                            np.sign(cond) * Ntcoil
                         )
 
         # permute radial and tangential layers if coil span is 1
         if wdg.get_coilspan() == 1:
-            wind_mat = swapaxes(wind_mat, 0, 1)
+            wind_mat = np.swapaxes(wind_mat, 0, 1)
 
         # check that requested number of parallel connections is feasible
         Npcp_list = wdg.get_parallel_connections()
@@ -412,9 +385,9 @@ class Winding(FrozenClass):
         wind_mat2 = wind_mat
         # Avoid to squeeze qs=1 (WRSM)
         if wind_mat.shape[1] == 1:
-            wind_mat2 = squeeze(wind_mat2, 1)
+            wind_mat2 = np.squeeze(wind_mat2, 1)
         if wind_mat.shape[0] == 1:
-            wind_mat2 = squeeze(wind_mat2, 0)
+            wind_mat2 = np.squeeze(wind_mat2, 0)
 
         if wind_mat2.ndim == 4:  # rad and tan > 2
             Nlay = wind_mat2.shape[0] * wind_mat2.shape[1]
@@ -433,21 +406,21 @@ class Winding(FrozenClass):
             # Looking for the periodicity of each layer
             for l in range(Nlay):
                 # FFT of connectivity array for the given layer and phase
-                wind_mat_ql_fft = fft(wind_mat2[l, :, q])
+                wind_mat_ql_fft = np.fft.fft(wind_mat2[l, :, q])
                 # Find indices of nonzero amplitudes
-                I0 = where(np_abs(wind_mat_ql_fft) > 1e-3)[0]
+                I0 = np.where(np.abs(wind_mat_ql_fft) > 1e-3)[0]
                 if len(I0) == 0:  # This phase is not present in this layer
                     pass  # No impact on symmetry
                 else:
                     # Periodicity is given by the non zero lowest order
                     Nperw_ql = I0[0] if I0[0] != 0 else I0[1]
-                    Nperw = gcd(Nperw, Nperw_ql)
+                    Nperw = np.gcd(Nperw, Nperw_ql)
                     if I0[0] == 0:
                         # Anti-periodicity is necessary false if there is a constant component
                         is_aper = False
                     else:
                         # Anti-periodicity is true if all non-zero components are odd multiple of periodicity
-                        is_aper = is_aper and np_all(mod(I0 / Nperw_ql, 2) == 1)
+                        is_aper = is_aper and np.all(np.mod(I0 / Nperw_ql, 2) == 1)
 
                 if Nperw == 1 and not is_aper:
                     # No need to further continue if there is no anti-periodicity
@@ -499,16 +472,16 @@ class Winding(FrozenClass):
         qs = self.qs  # number of phases
 
         slot_ang = (
-            linspace(0, Zs, num=Zs, endpoint=False) * 2 * pi / Zs * p
+            np.linspace(0, Zs, num=Zs, endpoint=False) * 2 * np.pi / Zs * p
         )  # slot electrical angle
-        phasor = exp(1j * slot_ang)  # slot voltage phasor
+        phasor = np.exp(1j * slot_ang)  # slot voltage phasor
 
-        angle_vec = zeros(qs)
+        angle_vec = np.zeros(qs)
 
         for phase in range(qs):
-            wind_sum = sum(wind_mat[:, :, :, phase], (0, 1))
-            phasor_sum = sum(wind_sum * phasor)
-            angle_vec[phase] = angle(phasor_sum)
+            wind_sum = np.sum(wind_mat[:, :, :, phase], (0, 1))
+            phasor_sum = np.sum(wind_sum * phasor)
+            angle_vec[phase] = np.angle(phasor_sum)
 
         return angle_vec
 
@@ -551,18 +524,20 @@ class Winding(FrozenClass):
         p = self.p
 
         # slot electrical angle
-        slot_ang = linspace(0, Zs, num=Zs, endpoint=False) * 2 * pi / Zs * p
+        slot_ang = np.linspace(0, Zs, num=Zs, endpoint=False) * 2 * np.pi / Zs * p
 
         phase = 0
-        wind_ph1 = sum(wind_mat[:, :, :, phase], (0, 1))
-        wind_ref = sum(abs(wind_mat[:, :, :, phase]))
+        wind_ph1 = np.sum(wind_mat[:, :, :, phase], (0, 1))
+        wind_ref = np.sum(np.abs(wind_mat[:, :, :, phase]))
 
         xi = list()
 
         for harm in Harmonics:
-            xi.append(abs(sum(exp(1j * slot_ang * harm) * wind_ph1)) / wind_ref)
+            xi.append(
+                np.abs(np.sum(np.exp(1j * slot_ang * harm) * wind_ph1)) / wind_ref
+            )
 
-        xi = array(xi)
+        xi = np.array(xi)
 
         return xi
 
@@ -820,7 +795,7 @@ class Winding(FrozenClass):
 
         # Step 2-1: Adding slot surface as rectangural patches
         xy = [(k - 0.5 - bz / 2, -hz / 2) for k in range(Zs_per + 1)]
-        width = ones([Zs_per + 1]) * bz
+        width = np.ones([Zs_per + 1]) * bz
         height = hz
 
         # First tooth is cut in half so we have two surfaces instead of 1
@@ -880,7 +855,7 @@ class Winding(FrozenClass):
                 P5 = db1 - 1j * h1
 
                 point_list = [P0, P1, P2, P3, P4, P5]
-                x_, y_ = real(point_list), imag(point_list)
+                x_, y_ = np.real(point_list), np.imag(point_list)
 
                 # Step 2-2-2: Shifting the coil pattern to the right slot according to the direction of the winding and the potential winding transformation
                 direct = coil[2]
@@ -942,11 +917,11 @@ class Winding(FrozenClass):
                     # Listing the point corrected and its conjugate
                     point_corrected = list()
                     point_corrected.append(point_correct[0])
-                    point_corrected.append(conjugate(point_correct[0]))
+                    point_corrected.append(np.conjugate(point_correct[0]))
 
                     # Putting the corrected point on the left border to complete the coil
-                    point_to_add = array(point_corrected) - Zs_per
-                    point_to_add = insert(point_to_add, 1, wrong_points - Zs_per)
+                    point_to_add = np.array(point_corrected) - Zs_per
+                    point_to_add = np.insert(point_to_add, 1, wrong_points - Zs_per)
 
                     # Replacing the incorrect point by the new P2 and P3
                     for idx_point, _ in enumerate(idx_point_too_far):
@@ -956,7 +931,7 @@ class Winding(FrozenClass):
 
                     # Removing point that are not necessary (when more that 2 point are out of bounds)
                     if idx_point_to_remove != list():
-                        point_list_updated = delete(
+                        point_list_updated = np.delete(
                             point_list_updated, idx_point_to_remove
                         )
 
@@ -1033,13 +1008,13 @@ class Winding(FrozenClass):
 
                     # Adding condition to make sure that we do not draw lines between two point on the left or  the right border
                     if (
-                        round(real(begin), decimals=1) != -0.5
-                        or round(real(end), decimals=1) != -0.5
+                        np.round(np.real(begin), decimals=1) != -0.5
+                        or np.round(np.real(end), decimals=1) != -0.5
                     ) and (
-                        round(real(begin), decimals=1) != Zs_per - 0.5
-                        or round(real(end), decimals=1) != Zs_per - 0.5
+                        np.round(np.real(begin), decimals=1) != Zs_per - 0.5
+                        or np.round(np.real(end), decimals=1) != Zs_per - 0.5
                     ):
-                        points = array([begin, end])
+                        points = np.array([begin, end])
                         ax.plot(
                             points.real,
                             points.imag,
@@ -1348,7 +1323,7 @@ class Winding(FrozenClass):
             return False
         if other.coil_pitch != self.coil_pitch:
             return False
-        if not array_equal(other.wind_mat, self.wind_mat):
+        if not np.array_equal(other.wind_mat, self.wind_mat):
             return False
         if other.Nlayer != self.Nlayer:
             return False
@@ -1449,8 +1424,8 @@ class Winding(FrozenClass):
         if (
             other._Lewout is not None
             and self._Lewout is not None
-            and isnan(other._Lewout)
-            and isnan(self._Lewout)
+            and np.isnan(other._Lewout)
+            and np.isnan(self._Lewout)
         ):
             pass
         elif other._Lewout != self._Lewout:
@@ -1490,7 +1465,7 @@ class Winding(FrozenClass):
                 diff_list.append(name + ".coil_pitch" + val_str)
             else:
                 diff_list.append(name + ".coil_pitch")
-        if not array_equal(other.wind_mat, self.wind_mat):
+        if not np.array_equal(other.wind_mat, self.wind_mat):
             diff_list.append(name + ".wind_mat")
         if other._Nlayer != self._Nlayer:
             if is_add_value:
@@ -1576,8 +1551,8 @@ class Winding(FrozenClass):
         if (
             other._dual_tri_phase_shift is not None
             and self._dual_tri_phase_shift is not None
-            and isnan(other._dual_tri_phase_shift)
-            and isnan(self._dual_tri_phase_shift)
+            and np.isnan(other._dual_tri_phase_shift)
+            and np.isnan(self._dual_tri_phase_shift)
         ):
             pass
         elif other._dual_tri_phase_shift != self._dual_tri_phase_shift:
@@ -1993,10 +1968,10 @@ class Winding(FrozenClass):
     def _set_wind_mat(self, value):
         """setter of wind_mat"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("wind_mat", value, "ndarray")

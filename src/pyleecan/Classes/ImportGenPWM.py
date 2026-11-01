@@ -19,9 +19,8 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
 from scipy import signal, integrate
-from numpy import sqrt
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -460,7 +459,7 @@ class ImportGenPWM(ImportMatrix):
         if self.Vdc1 is None:
             raise Exception("Cannot calculate modulation index if self.Vdc1 is None")
 
-        return 2 * sqrt(2) * self.U0 / self.Vdc1
+        return 2 * np.sqrt(2) * self.U0 / self.Vdc1
 
     # generic save method is available in all object
     save = save
@@ -659,8 +658,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._fs is not None
             and self._fs is not None
-            and isnan(other._fs)
-            and isnan(self._fs)
+            and np.isnan(other._fs)
+            and np.isnan(self._fs)
         ):
             pass
         elif other._fs != self._fs:
@@ -672,8 +671,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._duration is not None
             and self._duration is not None
-            and isnan(other._duration)
-            and isnan(self._duration)
+            and np.isnan(other._duration)
+            and np.isnan(self._duration)
         ):
             pass
         elif other._duration != self._duration:
@@ -691,8 +690,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._f is not None
             and self._f is not None
-            and isnan(other._f)
-            and isnan(self._f)
+            and np.isnan(other._f)
+            and np.isnan(self._f)
         ):
             pass
         elif other._f != self._f:
@@ -704,8 +703,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._fmax is not None
             and self._fmax is not None
-            and isnan(other._fmax)
-            and isnan(self._fmax)
+            and np.isnan(other._fmax)
+            and np.isnan(self._fmax)
         ):
             pass
         elif other._fmax != self._fmax:
@@ -739,8 +738,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._fswi is not None
             and self._fswi is not None
-            and isnan(other._fswi)
-            and isnan(self._fswi)
+            and np.isnan(other._fswi)
+            and np.isnan(self._fswi)
         ):
             pass
         elif other._fswi != self._fswi:
@@ -754,8 +753,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._fswi_max is not None
             and self._fswi_max is not None
-            and isnan(other._fswi_max)
-            and isnan(self._fswi_max)
+            and np.isnan(other._fswi_max)
+            and np.isnan(self._fswi_max)
         ):
             pass
         elif other._fswi_max != self._fswi_max:
@@ -785,8 +784,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._Vdc1 is not None
             and self._Vdc1 is not None
-            and isnan(other._Vdc1)
-            and isnan(self._Vdc1)
+            and np.isnan(other._Vdc1)
+            and np.isnan(self._Vdc1)
         ):
             pass
         elif other._Vdc1 != self._Vdc1:
@@ -800,8 +799,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._U0 is not None
             and self._U0 is not None
-            and isnan(other._U0)
-            and isnan(self._U0)
+            and np.isnan(other._U0)
+            and np.isnan(self._U0)
         ):
             pass
         elif other._U0 != self._U0:
@@ -879,8 +878,8 @@ class ImportGenPWM(ImportMatrix):
         if (
             other._Phi0 is not None
             and self._Phi0 is not None
-            and isnan(other._Phi0)
-            and isnan(self._Phi0)
+            and np.isnan(other._Phi0)
+            and np.isnan(self._Phi0)
         ):
             pass
         elif other._Phi0 != self._Phi0:

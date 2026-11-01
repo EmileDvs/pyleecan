@@ -32,7 +32,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
 )
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -647,8 +647,8 @@ class CondType11(Conductor):
         if (
             other._Hwire is not None
             and self._Hwire is not None
-            and isnan(other._Hwire)
-            and isnan(self._Hwire)
+            and np.isnan(other._Hwire)
+            and np.isnan(self._Hwire)
         ):
             pass
         elif other._Hwire != self._Hwire:
@@ -662,8 +662,8 @@ class CondType11(Conductor):
         if (
             other._Wwire is not None
             and self._Wwire is not None
-            and isnan(other._Wwire)
-            and isnan(self._Wwire)
+            and np.isnan(other._Wwire)
+            and np.isnan(self._Wwire)
         ):
             pass
         elif other._Wwire != self._Wwire:
@@ -701,8 +701,8 @@ class CondType11(Conductor):
         if (
             other._Wins_wire is not None
             and self._Wins_wire is not None
-            and isnan(other._Wins_wire)
-            and isnan(self._Wins_wire)
+            and np.isnan(other._Wins_wire)
+            and np.isnan(self._Wins_wire)
         ):
             pass
         elif other._Wins_wire != self._Wins_wire:
@@ -720,8 +720,8 @@ class CondType11(Conductor):
         if (
             other._Wins_coil is not None
             and self._Wins_coil is not None
-            and isnan(other._Wins_coil)
-            and isnan(self._Wins_coil)
+            and np.isnan(other._Wins_coil)
+            and np.isnan(self._Wins_coil)
         ):
             pass
         elif other._Wins_coil != self._Wins_coil:
@@ -751,8 +751,8 @@ class CondType11(Conductor):
         if (
             other._alpha_ew is not None
             and self._alpha_ew is not None
-            and isnan(other._alpha_ew)
-            and isnan(self._alpha_ew)
+            and np.isnan(other._alpha_ew)
+            and np.isnan(self._alpha_ew)
         ):
             pass
         elif other._alpha_ew != self._alpha_ew:

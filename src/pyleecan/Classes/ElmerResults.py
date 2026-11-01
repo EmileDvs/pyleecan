@@ -18,9 +18,9 @@ from pyleecan.Classes.Elmer import Elmer
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from os.path import exists
-from numpy import loadtxt
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -89,7 +89,7 @@ class ElmerResults(Elmer):
 
         # load raw data
         usecols = self.usecols if self.usecols else None
-        data = loadtxt(filename, unpack=False, usecols=usecols)
+        data = np.loadtxt(filename, unpack=False, usecols=usecols)
         data_size = data.shape[1]
 
         # check if columns names are avialable and get names in case

@@ -22,7 +22,7 @@ from pyleecan.Classes.Conductor import Conductor
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.CondType12.check import check
-from numpy import sqrt, pi, exp
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Methods.Machine.CondType12.plot import (
     COND_COLOR,
     COND_INS_COLOR,
@@ -31,11 +31,10 @@ from pyleecan.Methods.Machine.CondType12.plot import (
 )
 from matplotlib.patches import Circle, Patch
 from pyleecan.Functions.init_fig import init_fig
-import matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -99,7 +98,7 @@ class CondType12(Conductor):
 
         """
 
-        return int(sqrt(self.Nwppc))
+        return int(np.sqrt(self.Nwppc))
 
     # cf Methods.Machine.CondType12.comp_nb_radial_wire
     def comp_nb_radial_wire(self):
@@ -117,7 +116,7 @@ class CondType12(Conductor):
 
         """
 
-        return int(sqrt(self.Nwppc))
+        return int(np.sqrt(self.Nwppc))
 
     # cf Methods.Machine.CondType12.comp_surface
     def comp_surface(self):
@@ -135,7 +134,7 @@ class CondType12(Conductor):
 
         """
 
-        return pi * ((self.comp_width() / 2.0) ** 2)
+        return np.pi * ((self.comp_width() / 2.0) ** 2)
 
     # cf Methods.Machine.CondType12.comp_surface_active
     def comp_surface_active(self):
@@ -153,7 +152,7 @@ class CondType12(Conductor):
 
         """
 
-        Sact = ((self.Wwire / 2.0) ** 2) * pi * self.Nwppc
+        Sact = ((self.Wwire / 2.0) ** 2) * np.pi * self.Nwppc
 
         return Sact
 
@@ -264,11 +263,11 @@ class CondType12(Conductor):
             # The 3 centers are on the edges of an Equilateral Triangle
             # (side length : a = Dwire + 2Wins_wire)
             # The Radius of the circumscribed cercle is : a *sqrt(3)/3
-            R = (self.Wwire + 2 * self.Wins_wire) * sqrt(3) / 3.0
+            R = (self.Wwire + 2 * self.Wins_wire) * np.sqrt(3) / 3.0
             center_list.append((0, R))
             # We found the coordinate of the other center by complex rotation
-            Z2 = R * 1j * exp(1j * 2 * pi / 3)
-            Z3 = R * 1j * exp(-1j * 2 * pi / 3)
+            Z2 = R * 1j * np.exp(1j * 2 * np.pi / 3)
+            Z3 = R * 1j * np.exp(-1j * 2 * np.pi / 3)
             center_list.append((Z2.real, Z2.imag))
             center_list.append((Z3.real, Z3.imag))
         elif self.Nwppc == 4:
@@ -605,8 +604,8 @@ class CondType12(Conductor):
         if (
             other._Wwire is not None
             and self._Wwire is not None
-            and isnan(other._Wwire)
-            and isnan(self._Wwire)
+            and np.isnan(other._Wwire)
+            and np.isnan(self._Wwire)
         ):
             pass
         elif other._Wwire != self._Wwire:
@@ -620,8 +619,8 @@ class CondType12(Conductor):
         if (
             other._Wins_cond is not None
             and self._Wins_cond is not None
-            and isnan(other._Wins_cond)
-            and isnan(self._Wins_cond)
+            and np.isnan(other._Wins_cond)
+            and np.isnan(self._Wins_cond)
         ):
             pass
         elif other._Wins_cond != self._Wins_cond:
@@ -647,8 +646,8 @@ class CondType12(Conductor):
         if (
             other._Wins_wire is not None
             and self._Wins_wire is not None
-            and isnan(other._Wins_wire)
-            and isnan(self._Wins_wire)
+            and np.isnan(other._Wins_wire)
+            and np.isnan(self._Wins_wire)
         ):
             pass
         elif other._Wins_wire != self._Wins_wire:
@@ -666,8 +665,8 @@ class CondType12(Conductor):
         if (
             other._Kwoh is not None
             and self._Kwoh is not None
-            and isnan(other._Kwoh)
-            and isnan(self._Kwoh)
+            and np.isnan(other._Kwoh)
+            and np.isnan(self._Kwoh)
         ):
             pass
         elif other._Kwoh != self._Kwoh:

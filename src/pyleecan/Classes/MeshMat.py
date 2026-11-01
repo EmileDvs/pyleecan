@@ -18,7 +18,6 @@ from pyleecan.Classes.Mesh import Mesh
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from typing import Union, Literal, Dict, List, Optional, Tuple
-from numpy.typing import ArrayLike
 import numpy as np, pyvista as pv, meshio, copy, os
 from pyleecan.Classes.NodeMat import NodeMat
 from itertools import repeat
@@ -28,7 +27,6 @@ from pyleecan.Classes.RefQuad9 import RefQuad9
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes.RefTriangle6 import RefTriangle6
 from pyleecan.Methods.Mesh.MeshMat.get_element import _check_element_name
-from numpy import array, ndarray
 from os import makedirs, remove
 from os.path import dirname, isdir
 from pyvista.core.pointset import UnstructuredGrid
@@ -38,7 +36,7 @@ from pyleecan.Classes.FPGNSeg import FPGNSeg
 from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
 from pyleecan.Functions.GUI.log_error import log_error
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -49,7 +47,7 @@ class MeshMat(Mesh):
 
     # cf Methods.Mesh.MeshMat.add_element
     def add_element(
-        self, node_indices: ArrayLike, element_type: str
+        self, node_indices: np.typing.ArrayLike, element_type: str
     ) -> Union[int, None]:
         """Add a new element defined by node indices and element type.
 
@@ -398,7 +396,7 @@ class MeshMat(Mesh):
         self,
         element_indices: Optional[List[int]] = None,
         element_name: Union[List[str], str] = [],
-    ) -> ndarray:
+    ) -> np.ndarray:
         """
         Return the area of the elements on the outer surface.
         #TODO address multiple element type issue, i.e. distracted indices
@@ -444,14 +442,14 @@ class MeshMat(Mesh):
 
                 area.extend(A)
 
-        return array(area)
+        return np.array(area)
 
     # cf Methods.Mesh.MeshMat.get_element_coordinate
     def get_element_coordinate(
         self,
         element_indices: Optional[List[int]] = None,
         element_name: Union[List[str], str] = [],
-    ) -> Dict[str, ndarray]:
+    ) -> Dict[str, np.ndarray]:
         """Return a connectivity matrix where the nodes indices are replaced by their coordinates.
 
         Parameters
@@ -480,7 +478,7 @@ class MeshMat(Mesh):
         node_coordinates = {}
         for key, connectivity in element_connectivity_dict.items():
             if connectivity.ndim > 1:
-                node_coordinates[key] = array(
+                node_coordinates[key] = np.array(
                     [self.get_node_coordinate(nodes) for nodes in connectivity]
                 )
             else:
@@ -583,7 +581,9 @@ class MeshMat(Mesh):
         return element_indices
 
     # cf Methods.Mesh.MeshMat.get_node_coordinate
-    def get_node_coordinate(self, indices: Optional[ArrayLike] = None) -> np.ndarray:
+    def get_node_coordinate(
+        self, indices: Optional[np.typing.ArrayLike] = None
+    ) -> np.ndarray:
         """Return the coordinates of the node with provided indices.
         If indices is not specified, returns every node coordinates
 
@@ -603,7 +603,9 @@ class MeshMat(Mesh):
             return self.node.get_coord(indices)
 
     # cf Methods.Mesh.MeshMat.get_node_indice
-    def get_node_indice(self, coordinates: Optional[ArrayLike] = None) -> ArrayLike:
+    def get_node_indice(
+        self, coordinates: Optional[np.typing.ArrayLike] = None
+    ) -> np.typing.ArrayLike:
         """Return a matrix of nodes coordinates.
 
         Parameters

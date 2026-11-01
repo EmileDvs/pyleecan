@@ -25,7 +25,7 @@ from pyleecan.Methods.Machine.WindingUD.import_from_csv import (
 )
 from os.path import isfile
 from csv import reader
-from numpy import zeros, amax, tile, array, power, mod, arange, sign
+import numpy as np
 from pyleecan.Methods.Machine.WindingUD.init_as_CW1L import WindingT2DefNtError
 from pyleecan.Methods.Machine.Winding import WindingError
 from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
@@ -34,8 +34,7 @@ from pyleecan.Methods.Machine.WindingUD.init_as_CW2LR import WindingT5DefMsError
 from pyleecan.Methods.Machine.WindingUD.init_as_CW2LT import WindingT1DefMsError
 from pyleecan.Methods.Machine.WindingUD.init_as_DWL import WindingDefMsError
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -91,7 +90,7 @@ class WindingUD(Winding):
                     + str(wind_shape[2])
                     + ")"
                 )
-            wind_mat = zeros(wind_shape)
+            wind_mat = np.zeros(wind_shape)
 
             # Load matrix
             qs_id = 0
@@ -110,14 +109,14 @@ class WindingUD(Winding):
         if self.parent is not None and self.parent.slot is not None:
             Zs = self.parent.slot.Zs
             if wind_mat.shape[2] < Zs:
-                wind_mat = tile(wind_mat, (1, 1, Zs // wind_mat.shape[2], 1))
+                wind_mat = np.tile(wind_mat, (1, 1, Zs // wind_mat.shape[2], 1))
 
         # Update property
         self.clean()  # Remove periodicity
         self.wind_mat = wind_mat
         self.Nlayer = wind_shape[0] * wind_shape[1]
         self.qs = wind_shape[3]
-        self.Ntcoil = amax(self.wind_mat)
+        self.Ntcoil = np.amax(self.wind_mat)
 
     # cf Methods.Machine.WindingUD.init_as_CW1L
     def init_as_CW1L(self, Zs=None):
@@ -173,13 +172,17 @@ class WindingUD(Winding):
 
         # first strategy - checked with Umbra_08 motor and Umbra_05: the winding
         # direction of each tooth is reversed
-        wind_mat = zeros((1, 1, Zs, qs))
+        wind_mat = np.zeros((1, 1, Zs, qs))
 
         for k in range(0, int(Nt)):  # winding alternatively the teeth
             for q in range(0, qs):
-                xenc = q * 4 + k * 2 * qs + array([1, 2])
-                wind_mat[0][0][int((xenc[0] - 1) % Zs)][q] = power(-1, xenc[0] + k + 1)
-                wind_mat[0][0][int((xenc[1] - 1) % Zs)][q] = power(-1, xenc[1] + k + 1)
+                xenc = q * 4 + k * 2 * qs + np.array([1, 2])
+                wind_mat[0][0][int((xenc[0] - 1) % Zs)][q] = np.power(
+                    -1, xenc[0] + k + 1
+                )
+                wind_mat[0][0][int((xenc[1] - 1) % Zs)][q] = np.power(
+                    -1, xenc[1] + k + 1
+                )
 
         wind_mat *= Ntcoil
 
@@ -245,17 +248,17 @@ class WindingUD(Winding):
         # Ntspc = self.Ntcoil * Ncspc #Number of turns in series per phase
         Ntcoil = self.Ntcoil  # Number of turns per coils
 
-        wind_mat = zeros((2, 1, Zs, self.qs))
+        wind_mat = np.zeros((2, 1, Zs, self.qs))
         # creates highest harmonic at Zs/2+1 and Zs/2-1
         if ms == 0.5:  # then Zs/qs is integer
             # traditional non overlapping all teeth wound winding
             for q in range(0, self.qs):
                 for k in range(0, Zs // self.qs):  # number of Ncgr coils
-                    xenc = q + array([1, 0]) + k * qs
-                    wind_mat[0, 0, int(mod(xenc[0] - 1, Zs)), q] = (
+                    xenc = q + np.array([1, 0]) + k * qs
+                    wind_mat[0, 0, int(np.mod(xenc[0] - 1, Zs)), q] = (
                         +Ntcoil
                     )  # right/top/2
-                    wind_mat[1, 0, int(mod(xenc[1] - 1, Zs)), q] = (
+                    wind_mat[1, 0, int(np.mod(xenc[1] - 1, Zs)), q] = (
                         -Ntcoil
                     )  # left/bottom/1
         elif (
@@ -265,8 +268,8 @@ class WindingUD(Winding):
             for q in range(0, self.qs):
                 for k in range(0, int((Zs // self.qs) // Ncgr)):  # number of Ncgr coils
                     for l in range(0, int(Ncgr)):
-                        id0 = int(mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
-                        id1 = int(mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
+                        id0 = int(np.mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
+                        id1 = int(np.mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
                         # left / bottom / 1
                         wind_mat[1, 0, id0, q] = -((-1) ** (l + q - 1 + k)) * Ntcoil
                         # right / top / 2
@@ -343,17 +346,17 @@ class WindingUD(Winding):
         # Ntspc = self.Ntcoil * Ncspc #Number of turns in series per phase
         Ntcoil = self.Ntcoil  # number of turns per coils
 
-        wind_mat = zeros((1, 2, Zs, int(qs)))
+        wind_mat = np.zeros((1, 2, Zs, int(qs)))
         # creates highest harmonic at Zs/2+1 and Zs/2-1
         if ms == 0.5:  # then Zs/qs is integer
             # traditional non overlapping all teeth wound winding
             for q in range(0, int(qs)):
                 for k in range(0, int(Zs / qs)):  # number of Ncgr coils
-                    xenc = q + array([1, 0]) + k * qs
-                    wind_mat[0, 0, int(mod(xenc[0] - 1, Zs)), q] = (
+                    xenc = q + np.array([1, 0]) + k * qs
+                    wind_mat[0, 0, int(np.mod(xenc[0] - 1, Zs)), q] = (
                         +Ntcoil
                     )  # right/top/2
-                    wind_mat[0, 1, int(mod(xenc[1] - 1, Zs)), q] = (
+                    wind_mat[0, 1, int(np.mod(xenc[1] - 1, Zs)), q] = (
                         -Ntcoil
                     )  # left/bottom/1
         elif ms != 0.5 and Ncgr % 1 == 0:
@@ -362,8 +365,8 @@ class WindingUD(Winding):
             for q in range(0, int(qs)):
                 for k in range(0, int(nlay)):  # number of Ncgr coils
                     for l in range(0, int(Ncgr)):
-                        id0 = int(mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
-                        id1 = int(mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
+                        id0 = int(np.mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
+                        id1 = int(np.mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
                         # left / bottom / 1
                         wind_mat[0, 1, id0, q] = -((-1) ** (l + q - 1 + k)) * Ntcoil
                         # right / top / 2
@@ -436,7 +439,7 @@ class WindingUD(Winding):
         ms = Zs / 2.0 / float(p) / float(qs)
         tausp = Zs / 2.0 / float(p)
         Ntcoil = self.Ntcoil  # number of turns per coils
-        wind_mat = zeros((nlay, 1, Zs, qs))
+        wind_mat = np.zeros((nlay, 1, Zs, qs))
 
         if qs == 3:
             phase_order = [1, -3, 2]
@@ -456,7 +459,7 @@ class WindingUD(Winding):
                     ph = abs(phase_order[k])
                     # cf Gieras p36
                     z = (
-                        arange(1, ms + 1)
+                        np.arange(1, ms + 1)
                         + i * (Zs / p)
                         + k * ms
                         + nl * (coil_pitch - tausp)
@@ -465,11 +468,11 @@ class WindingUD(Winding):
                     sp = ((z - 1) % Zs).astype(int)  # positive pole
                     sm = ((z + Zs / 2 / p - 1) % Zs).astype(int)  # negative pole
                     for s in sp:
-                        wind_mat[nl, 0, s, ph - 1] = Ntcoil * sign(
+                        wind_mat[nl, 0, s, ph - 1] = Ntcoil * np.sign(
                             phase_order[k]
                         )  # Accumulation for a single slot
                     for s in sm:
-                        wind_mat[nl, 0, s, ph - 1] = -Ntcoil * sign(
+                        wind_mat[nl, 0, s, ph - 1] = -Ntcoil * np.sign(
                             phase_order[k]
                         )  # Accumulation for a single slot
 

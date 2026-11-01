@@ -20,7 +20,7 @@ from pyleecan.Classes.Elmer import Elmer
 from pyleecan.Methods.Elmer.SolverInputFile.write import _write_header
 from io import StringIO
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

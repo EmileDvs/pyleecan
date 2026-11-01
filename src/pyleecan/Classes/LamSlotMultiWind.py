@@ -19,7 +19,7 @@ from pyleecan.Classes.LamSlotMulti import LamSlotMulti
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Load.import_class import import_class
-from numpy import linspace, meshgrid, pi, repeat, sum as np_sum, zeros, mean
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
 from pyleecan.Methods.Machine.LamSlotMultiWind.plot import (
     MINUS_HATCH,
@@ -27,7 +27,6 @@ from pyleecan.Methods.Machine.LamSlotMultiWind.plot import (
     PLUS_HATCH,
 )
 from matplotlib.patches import Patch
-import matplotlib.pyplot as plt
 from pyleecan.Functions.labels import decode_label, WIND_LAB, BAR_LAB
 from pyleecan.Functions.Winding.find_wind_phase_color import find_wind_phase_color
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
@@ -37,8 +36,7 @@ from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -241,7 +239,7 @@ class LamSlotMultiWind(LamSlotMulti):
 
         # Space discretization
         if angle is None:
-            angle = linspace(0, pi * 2 / per_a, Na, endpoint=False)
+            angle = np.linspace(0, np.pi * 2 / per_a, Na, endpoint=False)
         else:
             Na = angle.size
 
@@ -258,38 +256,38 @@ class LamSlotMultiWind(LamSlotMulti):
 
         wind_mat = self.winding.get_connection_mat(Zs)
         # sum wind_mat along Nlay_rad axis
-        wind_mat = np_sum(wind_mat, axis=0)
+        wind_mat = np.sum(wind_mat, axis=0)
 
         # angle of the center of the slots
         # By convention a tooth is centered on the X axis
         alpha_slot = self.alpha[:Zs0]
 
         if alpha_mmf0 != 0:
-            angle = (angle - alpha_mmf0) % (2 * pi)
+            angle = (angle - alpha_mmf0) % (2 * np.pi)
 
-        wf = zeros((qs, Na))
+        wf = np.zeros((qs, Na))
         for ii, slot in enumerate(slot_list):
             slot_angle = slot.comp_angle_active_eq()
             slot_opening = slot.comp_angle_opening()
             for n in range(Ntan):
                 # [Na, Zs]
-                alpha_lay = linspace(
+                alpha_lay = np.linspace(
                     -slot_angle / 2, slot_angle / 2, Ntan + 1, endpoint=False
                 )[1:]
-                Xalpha_slot, Xangle = meshgrid(alpha_slot[ii] + alpha_lay[n], angle)
+                Xalpha_slot, Xangle = np.meshgrid(alpha_slot[ii] + alpha_lay[n], angle)
 
-                Xwind = zeros((1, Zs0, qs))
+                Xwind = np.zeros((1, Zs0, qs))
                 Xwind[0, :, :] = wind_mat[n, 0:Zs0, :]
                 # Extended winding matrix [Na, Zs, qs]
-                Xwind = repeat(Xwind, Na, axis=0)
+                Xwind = np.repeat(Xwind, Na, axis=0)
                 # Single winding function in every slot and angle for nth layer [Na, Zs]
                 Xwf = -0.5 * comp_cond_function(Xalpha_slot, slot_opening, Xangle)
 
                 for q in range(qs):
-                    wf[q, :] += np_sum(Xwind[n, ii, q] * Xwf, axis=1)
+                    wf[q, :] += np.sum(Xwind[n, ii, q] * Xwf, axis=1)
 
         if per_a > 1:
-            wf = wf - mean(wf, axis=1)[:, None]
+            wf = wf - np.mean(wf, axis=1)[:, None]
 
         return wf
 
@@ -686,8 +684,8 @@ class LamSlotMultiWind(LamSlotMulti):
         if (
             other._Ksfill is not None
             and self._Ksfill is not None
-            and isnan(other._Ksfill)
-            and isnan(self._Ksfill)
+            and np.isnan(other._Ksfill)
+            and np.isnan(self._Ksfill)
         ):
             pass
         elif other._Ksfill != self._Ksfill:

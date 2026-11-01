@@ -22,13 +22,12 @@ from pyleecan.Classes.HoleMag import HoleMag
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.HoleM50.check import check
-from numpy import arcsin, arctan, cos, exp, array, angle, pi, imag as np_imag
+import numpy as np, matplotlib.pyplot as plt
 from scipy.optimize import fsolve
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB, MAGNET_PROP_LAB
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -42,7 +41,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -70,23 +69,23 @@ class HoleM50(HoleMag):
         Rext = self.get_Rext()
 
         # magnet pole pitch angle, must be <2*pi/2*p
-        alpham = 2 * arcsin(self.W0 / (2 * (Rext - self.H1)))  # angle (Z9,0,Z9')
+        alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # angle (Z9,0,Z9')
 
-        Harc = (Rext - self.H1) * (1 - cos(alpham / 2))
+        Harc = (Rext - self.H1) * (1 - np.cos(alpham / 2))
         # alpha on schematics
-        gammam = arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2.0 - self.W1 / 2.0))
+        gammam = np.arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2.0 - self.W1 / 2.0))
         #  betam = pi/2-alpham/2-gammam;#40.5
-        hssp = pi / self.Zh
+        hssp = np.pi / self.Zh
 
-        x78 = (self.H3 - self.H2) / cos(gammam)  # distance from 7 to 8
+        x78 = (self.H3 - self.H2) / np.cos(gammam)  # distance from 7 to 8
         Z9 = Rext - Harc - self.H1 - 1j * self.W0 / 2
         Z8 = Rext - self.H0 - 1j * self.W1 / 2
         Z7 = Rext - self.H0 - x78 - 1j * self.W1 / 2
-        Z1 = (Rext - self.H1) * exp(
-            1j * (-hssp + arcsin(self.W3 / (2 * (Rext - self.H1))))
+        Z1 = (Rext - self.H1) * np.exp(
+            1j * (-hssp + np.arcsin(self.W3 / (2 * (Rext - self.H1))))
         )
-        Z11 = (Z1 * exp(1j * hssp) + self.H4) * exp(-1j * hssp)
-        Z10 = (Z9 * exp(1j * hssp) + self.H4) * exp(-1j * hssp)
+        Z11 = (Z1 * np.exp(1j * hssp) + self.H4) * np.exp(-1j * hssp)
+        Z10 = (Z9 * np.exp(1j * hssp) + self.H4) * np.exp(-1j * hssp)
 
         # Magnet coordinate with Z8 as center and x as the top edge of the magnet
         Z8a = -1j * (self.H3 - self.H2)
@@ -97,20 +96,24 @@ class HoleM50(HoleMag):
         Z6 = Z5 + 1j * self.H2
         Z3 = Z4 + 1j * self.H2
 
-        Zmag = array([Z8a, Z8b, Z6, Z5, Z4, Z3, Z8c])
-        Zmag = Zmag * exp(1j * angle(Z9 - Z8))
+        Zmag = np.array([Z8a, Z8b, Z6, Z5, Z4, Z3, Z8c])
+        Zmag = Zmag * np.exp(1j * np.angle(Z9 - Z8))
         Zmag = Zmag + Z8
 
         # final complex numbers Zmag=[Z8b Z6 Z5 Z4 Z3 Z8c]
         (Z8a, Z8b, Z6, Z5, Z4, Z3, Z8c) = Zmag
 
         # Rotation so [Z1,Z2] is parallel to the x axis
-        Z3r, Z1r, Z6r = Z3 * exp(1j * hssp), Z1 * exp(1j * hssp), Z6 * exp(1j * hssp)
+        Z3r, Z1r, Z6r = (
+            Z3 * np.exp(1j * hssp),
+            Z1 * np.exp(1j * hssp),
+            Z6 * np.exp(1j * hssp),
+        )
         # numerical resolution to find the last point Z2
         x = fsolve(
-            lambda x: np_imag((Z3r - (Z1r - x)) / (Z6r - Z3r)), self.H3 - self.H2
+            lambda x: np.imag((Z3r - (Z1r - x)) / (Z6r - Z3r)), self.H3 - self.H2
         )
-        Z2 = (Z1r - x[0]) * exp(-1j * hssp)
+        Z2 = (Z1r - x[0]) * np.exp(-1j * hssp)
 
         point_dict = dict()
         point_dict["Z1"] = Z1
@@ -568,10 +571,10 @@ class HoleM50(HoleMag):
         """
         Rext = self.get_Rext()
 
-        alpham = 2 * arcsin(self.W0 / (2 * (Rext - self.H1)))
+        alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))
 
-        Harc = (Rext - self.H1) * (1 - cos(alpham / 2))
-        return arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2 - self.W1 / 2))
+        Harc = (Rext - self.H1) * (1 - np.cos(alpham / 2))
+        return np.arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2 - self.W1 / 2))
 
     # cf Methods.Slot.HoleM50.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -605,8 +608,8 @@ class HoleM50(HoleMag):
                 mag_dict[key] += value
 
         if not is_north:
-            mag_dict["magnet_0"] += pi
-            mag_dict["magnet_1"] += pi
+            mag_dict["magnet_0"] += np.pi
+            mag_dict["magnet_1"] += np.pi
 
         return mag_dict
 
@@ -674,7 +677,7 @@ class HoleM50(HoleMag):
         alpha = self.comp_alpha()
 
         # Distance fromZ8 to Z9
-        L89 = (self.W0 / 2 - self.W1 / 2) / cos(alpha)
+        L89 = (self.W0 / 2 - self.W1 / 2) / np.cos(alpha)
 
         return L89 - self.W4 - self.W2
 
@@ -804,16 +807,16 @@ class HoleM50(HoleMag):
             if self.parent is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
             lam = self.parent
-            alpha = pi / 2  # To rotate the schematics
-            rot = exp(1j * alpha)
+            alpha = np.pi / 2  # To rotate the schematics
+            rot = np.exp(1j * alpha)
             fig, ax = lam.plot(
-                alpha=pi / self.Zh + alpha,
+                alpha=np.pi / self.Zh + alpha,
                 is_show_fig=False,
                 is_lam_only=type_add_active == 0,
                 fig=fig,
                 ax=ax,
             )  # center hole on Ox axis
-            sp = 2 * pi / self.Zh
+            sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo()
             point_dict = self._comp_point_coordinate()
 
@@ -852,7 +855,10 @@ class HoleM50(HoleMag):
                 # W3
                 line = Segment(
                     (point_dict["Z1s"] + point_dict["Z11s"]) * 0.5 * rot,
-                    (point_dict["Z1"] + point_dict["Z11"]) * 0.5 * rot * exp(1j * sp),
+                    (point_dict["Z1"] + point_dict["Z11"])
+                    * 0.5
+                    * rot
+                    * np.exp(1j * sp),
                 )
                 line.plot(label="W3", offset_label=-1j * self.H3 * 0.3, **kwargs)
                 # W4
@@ -867,8 +873,8 @@ class HoleM50(HoleMag):
                 )
                 # H1
                 line = Segment(
-                    Rbo * exp(-1j * sp / 2) * rot,
-                    (Rbo - self.H1) * exp(-1j * sp / 2) * rot,
+                    Rbo * np.exp(-1j * sp / 2) * rot,
+                    (Rbo - self.H1) * np.exp(-1j * sp / 2) * rot,
                 )
                 line.plot(label="H1", offset_label=self.H3 * 0.2, **kwargs)
                 # H2
@@ -890,13 +896,13 @@ class HoleM50(HoleMag):
                 lines.append(Segment(0, lam.Rext * 1.5 * rot))
 
                 # Tooth axis
-                lines.append(Segment(0, lam.Rext * 1.5 * exp(1j * sp / 2) * rot))
+                lines.append(Segment(0, lam.Rext * 1.5 * np.exp(1j * sp / 2) * rot))
 
-                lines.append(Segment(0, lam.Rext * 1.5 * exp(-1j * sp / 2) * rot))
+                lines.append(Segment(0, lam.Rext * 1.5 * np.exp(-1j * sp / 2) * rot))
                 # H1 radius
                 R = Rbo - self.H1
-                rot_N = exp(-1j * pi / 2 * 0.9) * rot
-                rot_P = exp(1j * pi / 2 * 0.9) * rot
+                rot_N = np.exp(-1j * np.pi / 2 * 0.9) * rot
+                rot_P = np.exp(1j * np.pi / 2 * 0.9) * rot
                 lines.append(
                     Arc1(
                         begin=R * rot_N,
@@ -1148,8 +1154,8 @@ class HoleM50(HoleMag):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -1161,8 +1167,8 @@ class HoleM50(HoleMag):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -1174,8 +1180,8 @@ class HoleM50(HoleMag):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -1187,8 +1193,8 @@ class HoleM50(HoleMag):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -1200,8 +1206,8 @@ class HoleM50(HoleMag):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -1213,8 +1219,8 @@ class HoleM50(HoleMag):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:
@@ -1226,8 +1232,8 @@ class HoleM50(HoleMag):
         if (
             other._H3 is not None
             and self._H3 is not None
-            and isnan(other._H3)
-            and isnan(self._H3)
+            and np.isnan(other._H3)
+            and np.isnan(self._H3)
         ):
             pass
         elif other._H3 != self._H3:
@@ -1239,8 +1245,8 @@ class HoleM50(HoleMag):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:
@@ -1252,8 +1258,8 @@ class HoleM50(HoleMag):
         if (
             other._H4 is not None
             and self._H4 is not None
-            and isnan(other._H4)
-            and isnan(self._H4)
+            and np.isnan(other._H4)
+            and np.isnan(self._H4)
         ):
             pass
         elif other._H4 != self._H4:
@@ -1265,8 +1271,8 @@ class HoleM50(HoleMag):
         if (
             other._W4 is not None
             and self._W4 is not None
-            and isnan(other._W4)
-            and isnan(self._W4)
+            and np.isnan(other._W4)
+            and np.isnan(self._W4)
         ):
             pass
         elif other._W4 != self._W4:

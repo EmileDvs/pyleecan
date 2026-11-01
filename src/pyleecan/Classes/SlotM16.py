@@ -22,11 +22,10 @@ from pyleecan.Classes.Slot import Slot
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.SlotM16.check import check
-from numpy import arcsin, exp, sin, pi
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotM16.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
@@ -42,7 +41,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -70,10 +69,10 @@ class SlotM16(Slot):
         Rbo = self.get_Rbo()
 
         # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W0
-        alpha = arcsin(self.W0 / (2 * Rbo))
+        alpha = np.arcsin(self.W0 / (2 * Rbo))
 
-        Z0 = Rbo * exp(1j * 0)
-        Z1 = Z0 * exp(1j * -alpha)
+        Z0 = Rbo * np.exp(1j * 0)
+        Z1 = Z0 * np.exp(1j * -alpha)
 
         if self.is_outwards():
             Z2 = Z1 + self.H0
@@ -158,7 +157,7 @@ class SlotM16(Slot):
         """
         Rbo = self.get_Rbo()
 
-        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+        return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # cf Methods.Slot.SlotM16.comp_height
     def comp_height(self):
@@ -240,7 +239,7 @@ class SlotM16(Slot):
 
         # The bottom is an arc
         alpha = self.comp_angle_opening()
-        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
         if self.is_outwards():
@@ -388,7 +387,7 @@ class SlotM16(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -621,8 +620,8 @@ class SlotM16(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -634,8 +633,8 @@ class SlotM16(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -647,8 +646,8 @@ class SlotM16(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -660,8 +659,8 @@ class SlotM16(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:

@@ -20,7 +20,7 @@ from pyleecan.Classes._frozen import FrozenClass
 from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.VectorField import VectorField
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -246,8 +246,8 @@ class OutForce(FrozenClass):
         if (
             other._Rag is not None
             and self._Rag is not None
-            and isnan(other._Rag)
-            and isnan(self._Rag)
+            and np.isnan(other._Rag)
+            and np.isnan(self._Rag)
         ):
             pass
         elif other._Rag != self._Rag:

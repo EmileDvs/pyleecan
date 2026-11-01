@@ -19,7 +19,7 @@ from pyleecan.Classes.Slot import Slot
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
-from numpy import arcsin, exp, pi, cos, sin
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Methods.Slot.SlotW30 import (
@@ -31,7 +31,6 @@ from pyleecan.Methods.Slot.SlotW30 import (
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotW30.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -45,7 +44,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -206,22 +205,22 @@ class SlotW30(Slot):
         Rbo = self.get_Rbo()
 
         # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W0
-        alpha = arcsin(self.W0 / (2 * Rbo))
-        hsp = pi / self.Zs  # Half slot pitch
+        alpha = np.arcsin(self.W0 / (2 * Rbo))
+        hsp = np.pi / self.Zs  # Half slot pitch
 
-        Z0 = Rbo * exp(1j * 0)
-        Z12 = Z0 * exp(1j * alpha)
+        Z0 = Rbo * np.exp(1j * 0)
+        Z12 = Z0 * np.exp(1j * alpha)
 
         if self.is_outwards():
             Z11 = Z12 + self.H0
 
-            Zp1 = Rbo * exp(1j * hsp)
-            Zp2 = 2 * Rbo * exp(1j * hsp)
-            Zp1 = Zp1 * exp(-1j * hsp) - (self.W3 / 2) * 1j
-            Zp2 = Zp2 * exp(-1j * hsp) - (self.W3 / 2) * 1j
+            Zp1 = Rbo * np.exp(1j * hsp)
+            Zp2 = 2 * Rbo * np.exp(1j * hsp)
+            Zp1 = Zp1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
+            Zp2 = Zp2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
 
-            Zp1 = Zp1 * exp(1j * hsp)
-            Zp2 = Zp2 * exp(1j * hsp)
+            Zp1 = Zp1 * np.exp(1j * hsp)
+            Zp2 = Zp2 * np.exp(1j * hsp)
 
             Zp3 = Z12.real + self.H0 + self.H1
             Zp4 = Z12.real + self.H0 + self.H1 + 1j
@@ -231,13 +230,13 @@ class SlotW30(Slot):
                 Z80 = Zc1[0]
 
             else:
-                ZR1 = Rbo * exp(1j * hsp)
-                ZR2 = 2 * Rbo * exp(1j * hsp)
-                ZR1 = ZR1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
-                ZR2 = ZR2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+                ZR1 = Rbo * np.exp(1j * hsp)
+                ZR2 = 2 * Rbo * np.exp(1j * hsp)
+                ZR1 = ZR1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+                ZR2 = ZR2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
 
-                ZR1 = ZR1 * exp(1j * hsp)
-                ZR2 = ZR2 * exp(1j * hsp)
+                ZR1 = ZR1 * np.exp(1j * hsp)
+                ZR2 = ZR2 * np.exp(1j * hsp)
 
                 ZR3 = Z12.real + self.H0 + self.H1 - self.R2
                 ZR4 = Z12.real + self.H0 + self.H1 - self.R2 + 1j
@@ -266,13 +265,13 @@ class SlotW30(Slot):
                 Z100 = Zc2[0]
 
             else:
-                Zt1 = Rbo * exp(1j * hsp)
-                Zt2 = 2 * Rbo * exp(1j * hsp)
-                Zt1 = Zt1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
-                Zt2 = Zt2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+                Zt1 = Rbo * np.exp(1j * hsp)
+                Zt2 = 2 * Rbo * np.exp(1j * hsp)
+                Zt1 = Zt1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+                Zt2 = Zt2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
 
-                Zt1 = Zt1 * exp(1j * hsp)
-                Zt2 = Zt2 * exp(1j * hsp)
+                Zt1 = Zt1 * np.exp(1j * hsp)
+                Zt2 = Zt2 * np.exp(1j * hsp)
 
                 Zt3 = Z12.real + self.H0 + self.R1
                 Zt4 = Z12.real + self.H0 + self.R1 + 1j
@@ -297,13 +296,13 @@ class SlotW30(Slot):
         else:
             Z11 = Z12 - self.H0
 
-            Zp1 = Rbo * exp(1j * hsp)
-            Zp2 = 2 * Rbo * exp(1j * hsp)
-            Zp1 = Zp1 * exp(-1j * hsp) - (self.W3 / 2) * 1j
-            Zp2 = Zp2 * exp(-1j * hsp) - (self.W3 / 2) * 1j
+            Zp1 = Rbo * np.exp(1j * hsp)
+            Zp2 = 2 * Rbo * np.exp(1j * hsp)
+            Zp1 = Zp1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
+            Zp2 = Zp2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
 
-            Zp1 = Zp1 * exp(1j * hsp)
-            Zp2 = Zp2 * exp(1j * hsp)
+            Zp1 = Zp1 * np.exp(1j * hsp)
+            Zp2 = Zp2 * np.exp(1j * hsp)
 
             Zp3 = Z12.real - self.H0 - self.H1
             Zp4 = Z12.real - self.H0 - self.H1 + 1j
@@ -313,13 +312,13 @@ class SlotW30(Slot):
                 Z80 = Zc1[0]
 
             else:
-                ZR1 = Rbo * exp(1j * hsp)
-                ZR2 = 2 * Rbo * exp(1j * hsp)
-                ZR1 = ZR1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
-                ZR2 = ZR2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+                ZR1 = Rbo * np.exp(1j * hsp)
+                ZR2 = 2 * Rbo * np.exp(1j * hsp)
+                ZR1 = ZR1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+                ZR2 = ZR2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
 
-                ZR1 = ZR1 * exp(1j * hsp)
-                ZR2 = ZR2 * exp(1j * hsp)
+                ZR1 = ZR1 * np.exp(1j * hsp)
+                ZR2 = ZR2 * np.exp(1j * hsp)
 
                 ZR3 = Z12.real - self.H0 - self.H1 + self.R2
                 ZR4 = Z12.real - self.H0 - self.H1 + self.R2 + 1j
@@ -348,13 +347,13 @@ class SlotW30(Slot):
                 Z100 = Zc2[0]
 
             else:
-                Zt1 = Rbo * exp(1j * hsp)
-                Zt2 = 2 * Rbo * exp(1j * hsp)
-                Zt1 = Zt1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
-                Zt2 = Zt2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+                Zt1 = Rbo * np.exp(1j * hsp)
+                Zt2 = 2 * Rbo * np.exp(1j * hsp)
+                Zt1 = Zt1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+                Zt2 = Zt2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
 
-                Zt1 = Zt1 * exp(1j * hsp)
-                Zt2 = Zt2 * exp(1j * hsp)
+                Zt1 = Zt1 * np.exp(1j * hsp)
+                Zt2 = Zt2 * np.exp(1j * hsp)
 
                 Zt3 = Z12.real - self.H0 - self.R1
                 Zt4 = Z12.real - self.H0 - self.R1 + 1j
@@ -571,7 +570,7 @@ class SlotW30(Slot):
 
         Rbo = self.get_Rbo()
 
-        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+        return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # cf Methods.Slot.SlotW30.comp_height
     def comp_height(self):
@@ -601,7 +600,7 @@ class SlotW30(Slot):
 
         # The bottom is an arc
         alpha = self.comp_angle_opening()
-        Harc = float(Rbo * (1 - cos(alpha / 2)))
+        Harc = float(Rbo * (1 - np.cos(alpha / 2)))
 
         if self.is_outwards():
             return abs(Z7) - Rbo
@@ -667,7 +666,7 @@ class SlotW30(Slot):
 
         # The bottom is an arc
         alpha = self.comp_angle_opening()
-        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         S1 = (self.H0) * self.W0
 
@@ -908,7 +907,7 @@ class SlotW30(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -916,7 +915,7 @@ class SlotW30(Slot):
             else:
                 sign = -1
             Rbo = self.get_Rbo()
-            sp = 2 * pi / self.Zs
+            sp = 2 * np.pi / self.Zs
             # Adding point label
             if is_add_point_label:
                 for name, Z in point_dict.items():
@@ -932,8 +931,8 @@ class SlotW30(Slot):
             if is_add_schematics:
                 # H0
                 line = Segment(
-                    point_dict["Z1"] * exp(1j * sp),
-                    point_dict["Z2"] * exp(1j * sp),
+                    point_dict["Z1"] * np.exp(1j * sp),
+                    point_dict["Z2"] * np.exp(1j * sp),
                 )
                 line.plot(
                     fig=fig,
@@ -988,7 +987,7 @@ class SlotW30(Slot):
                 )
 
                 # W3
-                line = Segment(point_dict["Z8"], point_dict["Z5"] * exp(1j * sp))
+                line = Segment(point_dict["Z8"], point_dict["Z5"] * np.exp(1j * sp))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1001,7 +1000,8 @@ class SlotW30(Slot):
                 )
                 # W0
                 line = Segment(
-                    point_dict["Z12"] * exp(-1j * sp), point_dict["Z1"] * exp(-1j * sp)
+                    point_dict["Z12"] * np.exp(-1j * sp),
+                    point_dict["Z1"] * np.exp(-1j * sp),
                 )
                 line.plot(
                     fig=fig,
@@ -1025,7 +1025,7 @@ class SlotW30(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Tooth axis
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * pi / self.Zs))
+                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * np.pi / self.Zs))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1035,8 +1035,8 @@ class SlotW30(Slot):
                 )
                 # Top arc
                 line = Arc1(
-                    begin=Rbo * exp(-1j * pi / 2 * 0.9),
-                    end=Rbo * exp(1j * pi / 2 * 0.9),
+                    begin=Rbo * np.exp(-1j * np.pi / 2 * 0.9),
+                    end=Rbo * np.exp(1j * np.pi / 2 * 0.9),
                     radius=Rbo,
                     is_trigo_direction=True,
                 )
@@ -1084,7 +1084,7 @@ class SlotW30(Slot):
                 )
 
                 # W3 line
-                line = Segment(point_dict["Z8"], point_dict["Z5"] * exp(1j * sp))
+                line = Segment(point_dict["Z8"], point_dict["Z5"] * np.exp(1j * sp))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1092,7 +1092,7 @@ class SlotW30(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Z9"], point_dict["Z4"] * exp(1j * sp))
+                line = Segment(point_dict["Z9"], point_dict["Z4"] * np.exp(1j * sp))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1115,7 +1115,7 @@ class SlotW30(Slot):
                 )
 
             # Zooming and cleaning
-            W = (point_dict["Z7"] * exp(1j * sp)).imag * 1
+            W = (point_dict["Z7"] * np.exp(1j * sp)).imag * 1
             Rint = min(point_dict["Z5"].real, point_dict["Z1"].real)
             Rext = max(point_dict["Z5"].real, point_dict["Z1"].real)
 
@@ -1258,8 +1258,8 @@ class SlotW30(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -1271,8 +1271,8 @@ class SlotW30(Slot):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:
@@ -1284,8 +1284,8 @@ class SlotW30(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -1297,8 +1297,8 @@ class SlotW30(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -1310,8 +1310,8 @@ class SlotW30(Slot):
         if (
             other._R1 is not None
             and self._R1 is not None
-            and isnan(other._R1)
-            and isnan(self._R1)
+            and np.isnan(other._R1)
+            and np.isnan(self._R1)
         ):
             pass
         elif other._R1 != self._R1:
@@ -1323,8 +1323,8 @@ class SlotW30(Slot):
         if (
             other._R2 is not None
             and self._R2 is not None
-            and isnan(other._R2)
-            and isnan(self._R2)
+            and np.isnan(other._R2)
+            and np.isnan(self._R2)
         ):
             pass
         elif other._R2 != self._R2:

@@ -18,7 +18,7 @@ from pyleecan.Classes.Rule import Rule
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -214,8 +214,8 @@ class RuleSimple(Rule):
         if (
             other._scaling_to_P is not None
             and self._scaling_to_P is not None
-            and isnan(other._scaling_to_P)
-            and isnan(self._scaling_to_P)
+            and np.isnan(other._scaling_to_P)
+            and np.isnan(self._scaling_to_P)
         ):
             pass
         elif other._scaling_to_P != self._scaling_to_P:

@@ -18,7 +18,7 @@ from pyleecan.Classes.Mesh import Mesh
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from typing import Literal, Optional
-from numpy import arange, array
+import numpy as np, pyvista as pv, os, shutil
 from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.FPGNSeg import FPGNSeg
 from pyleecan.Classes.FPGNTri import FPGNTri
@@ -29,16 +29,13 @@ from pyleecan.Classes.RefQuad9 import RefQuad9
 from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
-import numpy as np, pyvista as pv, os, shutil
 from meshio import read
-from numpy.typing import ArrayLike
 from os.path import join
 from pyleecan.definitions import RESULT_DIR
 from pyleecan.Classes.MeshMat import MeshMat
 from pyleecan.Functions.GUI.log_error import log_error
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from cloudpickle import dumps, loads
 from pyleecan.Classes._check import CheckTypeError
 
@@ -94,20 +91,20 @@ class MeshVTK(Mesh):
             new_mesh = MeshMat(dimension=self.dimension)
 
             connect_all = self.get_element()[0]
-            nodes = array(self.get_node_coordinate())
+            nodes = np.array(self.get_node_coordinate())
             nb_node = nodes.shape[0]
 
             new_mesh.node = NodeMat(
                 coordinate=scale * nodes,
                 nb_node=nb_node,
-                indice=arange(nb_node),
+                indice=np.arange(nb_node),
             )
 
             min_indice = 0
             for key in connect_all:
                 connect = connect_all[key]
                 nb_element = connect.shape[0]
-                indices = arange(min_indice, min_indice + nb_element)
+                indices = np.arange(min_indice, min_indice + nb_element)
                 min_indice += nb_element
 
                 if key == "line":
@@ -282,7 +279,9 @@ class MeshVTK(Mesh):
             return mesh
 
     # cf Methods.Mesh.MeshVTK.get_node_coordinate
-    def get_node_coordinate(self, indices: Optional[ArrayLike] = None) -> np.ndarray:
+    def get_node_coordinate(
+        self, indices: Optional[np.typing.ArrayLike] = None
+    ) -> np.ndarray:
         """Return the coordinates of the node with provided indices.
         If indices is not specified, returns every node coordinates
 
@@ -633,7 +632,7 @@ class MeshVTK(Mesh):
             return False
         if other.surf_name != self.surf_name:
             return False
-        if not array_equal(other.node_normals, self.node_normals):
+        if not np.array_equal(other.node_normals, self.node_normals):
             return False
         return True
 
@@ -740,7 +739,7 @@ class MeshVTK(Mesh):
                 diff_list.append(name + ".surf_name" + val_str)
             else:
                 diff_list.append(name + ".surf_name")
-        if not array_equal(other.node_normals, self.node_normals):
+        if not np.array_equal(other.node_normals, self.node_normals):
             diff_list.append(name + ".node_normals")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -1032,10 +1031,10 @@ class MeshVTK(Mesh):
     def _set_node_normals(self, value):
         """setter of node_normals"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("node_normals", value, "ndarray")

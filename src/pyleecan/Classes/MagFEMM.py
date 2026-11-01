@@ -17,7 +17,7 @@ from pyleecan.Classes.Magnetics import Magnetics
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import append, concatenate, zeros, pi, roll, sin, cos, all
+import numpy as np, os
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Functions.MeshSolution.build_meshsolution import build_meshsolution
 from pyleecan.Functions.MeshSolution.build_solution_data import build_solution_data
@@ -26,7 +26,6 @@ from pyleecan.Classes._FEMMHandler import _FEMMHandler
 from pyleecan.Classes.OutMagFEMM import OutMagFEMM
 from pyleecan.Functions.FEMM.draw_FEMM import draw_FEMM
 from pyleecan.Functions.labels import STATOR_LAB
-import os, numpy as np
 from os.path import join, isfile, splitext
 from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.FPGNTri import FPGNTri
@@ -44,7 +43,7 @@ from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool
 from shutil import copyfile
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -97,7 +96,9 @@ class MagFEMM(Magnetics):
                 field_x = comp_x.values
                 comp_y = solution.field.components["comp_y"]
                 field_y = comp_y.values
-                field = concatenate((field_x[..., None], field_y[..., None]), axis=-1)
+                field = np.concatenate(
+                    (field_x[..., None], field_y[..., None]), axis=-1
+                )
 
                 axes_list = comp_x.axes
 
@@ -106,7 +107,7 @@ class MagFEMM(Magnetics):
                 new_field_x = new_comp_x.values
                 new_comp_y = new_solution.field.components["comp_y"]
                 new_field_y = new_comp_y.values
-                new_field = concatenate(
+                new_field = np.concatenate(
                     (new_field_x[..., None], new_field_y[..., None]), axis=-1
                 )
             else:
@@ -119,11 +120,11 @@ class MagFEMM(Magnetics):
 
             if "z" in name:
                 axis_slice = axes_list[2].copy()
-                axis_slice.values = append(axis_slice.values, ii)
-                new_field = concatenate((field, new_field[:, :, None]), axis=2)
+                axis_slice.values = np.append(axis_slice.values, ii)
+                new_field = np.concatenate((field, new_field[:, :, None]), axis=2)
             else:
                 axis_slice = Data1D(name="z", values=[ii - 1, ii])
-                new_field = concatenate(
+                new_field = np.concatenate(
                     (field[:, :, None], new_field[:, :, None]), axis=2
                 )
 
@@ -268,11 +269,11 @@ class MagFEMM(Magnetics):
                 FEMM_dict = self.FEMM_dict_enforced
 
         # Init flux arrays in out_dict
-        out_dict["B_{rad}"] = zeros((Nt, Na))
-        out_dict["B_{circ}"] = zeros((Nt, Na))
+        out_dict["B_{rad}"] = np.zeros((Nt, Na))
+        out_dict["B_{circ}"] = np.zeros((Nt, Na))
         if self.is_calc_torque_energy:
             # Init torque array in out_dict
-            out_dict["Tem"] = zeros(Nt)
+            out_dict["Tem"] = np.zeros(Nt)
         # Init lamination winding flux list of arrays in out_dict
         machine = output.simu.machine
         out_dict["Phi_wind"] = {}
@@ -280,7 +281,7 @@ class MagFEMM(Magnetics):
         for label in machine.get_lam_list_label():
             if "phase_" + label in axes_dict_elec:
                 qs = axes_dict_elec["phase_" + label].get_length(is_smallestperiod=True)
-                out_dict["Phi_wind"][label] = zeros((Nt, qs))
+                out_dict["Phi_wind"][label] = np.zeros((Nt, qs))
         # delete 'Phi_wind' if empty
         if len(out_dict["Phi_wind"]) == 0:
             out_dict.pop("Phi_wind")
@@ -770,9 +771,9 @@ class MagFEMM(Magnetics):
         A_elem = None
 
         # Check current values
-        if all(Is == 0):
+        if np.all(Is == 0):
             Is = None
-        if all(Ir == 0):
+        if np.all(Ir == 0):
             Ir = None
 
         k1 = 0
@@ -832,16 +833,16 @@ class MagFEMM(Magnetics):
                     (
                         out_dict["B_{rad}"][ii, jj],
                         out_dict["B_{circ}"][ii, jj],
-                    ) = femm.mo_getgapb("bc_ag2", angle[jj] * 180 / pi)
+                    ) = femm.mo_getgapb("bc_ag2", angle[jj] * 180 / np.pi)
             else:
                 for jj in range(Na):
-                    B = femm.mo_getb(Rag * cos(angle[jj]), Rag * sin(angle[jj]))
-                    out_dict["B_{rad}"][ii, jj] = B[0] * cos(angle[jj]) + B[1] * sin(
-                        angle[jj]
-                    )
-                    out_dict["B_{circ}"][ii, jj] = -B[0] * sin(angle[jj]) + B[1] * cos(
-                        angle[jj]
-                    )
+                    B = femm.mo_getb(Rag * np.cos(angle[jj]), Rag * np.sin(angle[jj]))
+                    out_dict["B_{rad}"][ii, jj] = B[0] * np.cos(angle[jj]) + B[
+                        1
+                    ] * np.sin(angle[jj])
+                    out_dict["B_{circ}"][ii, jj] = -B[0] * np.sin(angle[jj]) + B[
+                        1
+                    ] * np.cos(angle[jj])
 
             # Compute the torque
             if self.is_calc_torque_energy:
@@ -886,11 +887,11 @@ class MagFEMM(Magnetics):
                     Nelem = meshFEMM.element_dict["triangle"].nb_element
                     Nnode = meshFEMM.node.nb_node
                     Nt0 = end_t - start_t
-                    B_elem = zeros([Nt0, Nelem, 3])
-                    H_elem = zeros([Nt0, Nelem, 3])
-                    mu_elem = zeros([Nt0, Nelem])
-                    A_node = zeros([Nt0, Nnode])
-                    A_elem = zeros([Nt0, Nelem])
+                    B_elem = np.zeros([Nt0, Nelem, 3])
+                    H_elem = np.zeros([Nt0, Nelem, 3])
+                    mu_elem = np.zeros([Nt0, Nelem])
+                    A_node = np.zeros([Nt0, Nnode])
+                    A_elem = np.zeros([Nt0, Nelem])
 
                 # Shift time index ii in case start_t is not 0 (parallelization)
                 ii0 = ii - start_t
@@ -910,9 +911,9 @@ class MagFEMM(Magnetics):
 
         # Shift to take into account stator position
         if self.angle_stator_shift != 0:
-            roll_id = int(self.angle_stator_shift * Na / (2 * pi))
-            out_dict["B_{rad}"] = roll(out_dict["B_{rad}"], roll_id, axis=1)
-            out_dict["B_{circ}"] = roll(out_dict["B_{circ}"], roll_id, axis=1)
+            roll_id = int(self.angle_stator_shift * Na / (2 * np.pi))
+            out_dict["B_{rad}"] = np.roll(out_dict["B_{rad}"], roll_id, axis=1)
+            out_dict["B_{circ}"] = np.roll(out_dict["B_{circ}"], roll_id, axis=1)
 
         if not is_sliding_band:
             # Remove initial .fem
@@ -1128,13 +1129,13 @@ class MagFEMM(Magnetics):
 
         # Building mesh solution
         if self.is_get_meshsolution:
-            B_elem = concatenate([res[0] for res in results], axis=0)
-            H_elem = concatenate([res[1] for res in results], axis=0)
-            mu_elem = concatenate([res[2] for res in results], axis=0)
-            A_node = concatenate([res[3] for res in results], axis=0)
+            B_elem = np.concatenate([res[0] for res in results], axis=0)
+            H_elem = np.concatenate([res[1] for res in results], axis=0)
+            mu_elem = np.concatenate([res[2] for res in results], axis=0)
+            A_node = np.concatenate([res[3] for res in results], axis=0)
             meshFEMM = results[0][4]
             groups = results[0][5]
-            A_elem = concatenate([res[6] for res in results], axis=0)
+            A_elem = np.concatenate([res[6] for res in results], axis=0)
 
         # Remove temporary .fem and .ans files
         for w in range(nb_worker, 0, -1):
@@ -1446,8 +1447,8 @@ class MagFEMM(Magnetics):
         if (
             other._Kmesh_fineness is not None
             and self._Kmesh_fineness is not None
-            and isnan(other._Kmesh_fineness)
-            and isnan(self._Kmesh_fineness)
+            and np.isnan(other._Kmesh_fineness)
+            and np.isnan(self._Kmesh_fineness)
         ):
             pass
         elif other._Kmesh_fineness != self._Kmesh_fineness:
@@ -1465,8 +1466,8 @@ class MagFEMM(Magnetics):
         if (
             other._Kgeo_fineness is not None
             and self._Kgeo_fineness is not None
-            and isnan(other._Kgeo_fineness)
-            and isnan(self._Kgeo_fineness)
+            and np.isnan(other._Kgeo_fineness)
+            and np.isnan(self._Kgeo_fineness)
         ):
             pass
         elif other._Kgeo_fineness != self._Kgeo_fineness:
@@ -1630,8 +1631,8 @@ class MagFEMM(Magnetics):
         if (
             other._Rag_enforced is not None
             and self._Rag_enforced is not None
-            and isnan(other._Rag_enforced)
-            and isnan(self._Rag_enforced)
+            and np.isnan(other._Rag_enforced)
+            and np.isnan(self._Rag_enforced)
         ):
             pass
         elif other._Rag_enforced != self._Rag_enforced:

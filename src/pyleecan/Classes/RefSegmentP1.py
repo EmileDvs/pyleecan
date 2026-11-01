@@ -20,7 +20,7 @@ from pyleecan.Classes.RefElement import RefElement
 import numpy as np
 from typing import Optional, Tuple
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

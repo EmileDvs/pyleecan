@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes.OptiSolver import OptiSolver
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

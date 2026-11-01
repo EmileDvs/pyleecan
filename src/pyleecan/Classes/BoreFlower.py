@@ -20,8 +20,7 @@ from pyleecan.Classes.Bore import Bore
 from pyleecan.Functions.Geometry.comp_flower_arc import comp_flower_arc
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Methods import ParentMissingError
-from numpy import pi, exp, angle
-import matplotlib.pyplot as plt
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import (
@@ -33,7 +32,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -89,12 +88,12 @@ class BoreFlower(Bore):
             )
 
         # Compute the shape
-        (alpha_lim, zL, zR) = comp_flower_arc(2 * pi / self.N, self.Rarc, R)
+        (alpha_lim, zL, zR) = comp_flower_arc(2 * np.pi / self.N, self.Rarc, R)
 
         # Create the lines
         bore_list = list()
         for ii in range(self.N):
-            rot = exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha))
+            rot = np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha))
             arc = Arc1(
                 begin=zR * rot, end=zL * rot, radius=self.Rarc, prop_dict=prop_dict
             )
@@ -143,7 +142,7 @@ class BoreFlower(Bore):
 
         # Use some default parameter
         if is_default:
-            bore = type(self)(N=8, Rarc=0.2, alpha=pi / 8)
+            bore = type(self)(N=8, Rarc=0.2, alpha=np.pi / 8)
             lam = Lamination(
                 Rint=0.135, Rext=0.3, is_internal=True, is_stator=False, bore=bore
             )
@@ -232,7 +231,7 @@ class BoreFlower(Bore):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Machine center
-                line = Segment(0, Rbo * exp(1j * angle(Z2)))
+                line = Segment(0, Rbo * np.exp(1j * np.angle(Z2)))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -242,8 +241,8 @@ class BoreFlower(Bore):
                 )
                 # Rbo circle arc
                 line = Arc1(
-                    begin=Rbo * exp(-1j * pi / 2),
-                    end=Rbo * exp(1j * pi / 2),
+                    begin=Rbo * np.exp(-1j * np.pi / 2),
+                    end=Rbo * np.exp(1j * np.pi / 2),
                     radius=Rbo,
                     is_trigo_direction=True,
                 )
@@ -255,8 +254,8 @@ class BoreFlower(Bore):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Arc1(
-                    begin=Rbo * exp(1j * pi / 2),
-                    end=Rbo * exp(-1j * pi / 2),
+                    begin=Rbo * np.exp(1j * np.pi / 2),
+                    end=Rbo * np.exp(-1j * np.pi / 2),
                     radius=Rbo,
                     is_trigo_direction=True,
                 )
@@ -377,8 +376,8 @@ class BoreFlower(Bore):
         if (
             other._Rarc is not None
             and self._Rarc is not None
-            and isnan(other._Rarc)
-            and isnan(self._Rarc)
+            and np.isnan(other._Rarc)
+            and np.isnan(self._Rarc)
         ):
             pass
         elif other._Rarc != self._Rarc:

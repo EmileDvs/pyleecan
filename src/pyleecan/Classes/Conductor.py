@@ -17,9 +17,9 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, sqrt, sin, cos, sinh, cosh
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -94,17 +94,17 @@ class Conductor(FrozenClass):
         sigma = self.cond_mat.elec.get_conductivity(T_op=T_op, T_ref=T_ref)
 
         # Magnetic permeability
-        mu0 = 4 * pi * 1e-7
+        mu0 = 4 * np.pi * 1e-7
         if self.cond_mat.mag is None or self.cond_mat.mag.mur_lin is None:
             mur = 1
         else:
             mur = self.cond_mat.mag.mur_lin
 
         # Electrical pulsation
-        w = 2 * pi * freq
+        w = 2 * np.pi * freq
 
         # reduced conductor height Eq(4.90) p.257 + addind relative permeatibility
-        ksi = h4 * sqrt(w * mu0 * mur * sigma * bc / (2 * b4))
+        ksi = h4 * np.sqrt(w * mu0 * mur * sigma * bc / (2 * b4))
 
         if not isinstance(ksi, float):
             # Avoid numerical error with 0
@@ -114,12 +114,12 @@ class Conductor(FrozenClass):
         phip = (
             3
             / (2 * ksi)
-            * (sinh(2 * ksi) - sin(2 * ksi))
-            / (cosh(2 * ksi) - cos(2 * ksi))
+            * (np.sinh(2 * ksi) - np.sin(2 * ksi))
+            / (np.cosh(2 * ksi) - np.cos(2 * ksi))
         )
 
         # resistance factor function psi prime Eq(4.91) p.257
-        psip = 1 / ksi * (sinh(ksi) + sin(ksi)) / (cosh(ksi) + cos(ksi))
+        psip = 1 / ksi * (np.sinh(ksi) + np.sin(ksi)) / (np.cosh(ksi) + np.cos(ksi))
 
         # average resistance factor  Eq(4.91) p.257
         kl_skin = phip / zt**2 + ((zt**2 - 1) / zt**2) * psip
@@ -179,17 +179,17 @@ class Conductor(FrozenClass):
         sigma = self.cond_mat.elec.get_conductivity(T_op=T_op, T_ref=T_ref)
 
         # Magnetic permeability
-        mu0 = 4 * pi * 1e-7
+        mu0 = 4 * np.pi * 1e-7
         if self.cond_mat.mag is None or self.cond_mat.mag.mur_lin is None:
             mur = 1
         else:
             mur = self.cond_mat.mag.mur_lin
 
         # Electrical pulsation
-        w = 2 * pi * freq
+        w = 2 * np.pi * freq
 
         # reduced conductor height Eq(5.24) p.270 + adding relative permeatibility
-        ksi = hc * sqrt((1 / 2) * w * mu0 * mur * sigma * za * bc0 / b)
+        ksi = hc * np.sqrt((1 / 2) * w * mu0 * mur * sigma * za * bc0 / b)
 
         if not isinstance(ksi, float):
             # Avoid numerical error with 0
@@ -201,10 +201,14 @@ class Conductor(FrozenClass):
             kr_skin = 1 + 0.59 * ((zt**2 - 0.2) / 9) * ksi**4
         else:
             # resistance factor function phi Eq(5.26) p.271
-            phi = ksi * (sinh(2 * ksi) + sin(2 * ksi)) / (cosh(2 * ksi) - cos(2 * ksi))
+            phi = (
+                ksi
+                * (np.sinh(2 * ksi) + np.sin(2 * ksi))
+                / (np.cosh(2 * ksi) - np.cos(2 * ksi))
+            )
 
             # resistance factor function psi Eq(5.27) p.271
-            psi = 2 * ksi * (sinh(ksi) - sin(ksi)) / (cosh(ksi) + cos(ksi))
+            psi = 2 * ksi * (np.sinh(ksi) - np.sin(ksi)) / (np.cosh(ksi) + np.cos(ksi))
 
             kr_skin = phi + ((zt**2 - 1) / 3) * psi  # Eq(5.28) p.271
             # kr_approx = 1 + (zt ** 2 - 0.2) / 9 * ksi ** 4  # Eq(5.29) p.271

@@ -18,11 +18,9 @@ from pyleecan.Classes._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from numpy.typing import ArrayLike
 from typing import Union, Optional
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -32,7 +30,7 @@ class NodeMat(FrozenClass):
     VERSION = 1
 
     # cf Methods.Mesh.NodeMat.add_node
-    def add_node(self, coordinate: ArrayLike) -> Union[None, int]:
+    def add_node(self, coordinate: np.typing.ArrayLike) -> Union[None, int]:
         """Add a new node defined by its coordinates to the NodeMat
         (if a node of this coordinate already exist, do nothing)
 
@@ -68,7 +66,7 @@ class NodeMat(FrozenClass):
         return new_index
 
     # cf Methods.Mesh.NodeMat.get_coord
-    def get_coord(self, node_indices: ArrayLike) -> np.ndarray:
+    def get_coord(self, node_indices: np.typing.ArrayLike) -> np.ndarray:
         """Return the coordinates of node(s).
 
         Parameters
@@ -225,13 +223,13 @@ class NodeMat(FrozenClass):
 
         if type(other) != type(self):
             return False
-        if not array_equal(other.coordinate, self.coordinate):
+        if not np.array_equal(other.coordinate, self.coordinate):
             return False
         if other.nb_node != self.nb_node:
             return False
         if other.delta != self.delta:
             return False
-        if not array_equal(other.indice, self.indice):
+        if not np.array_equal(other.indice, self.indice):
             return False
         return True
 
@@ -243,7 +241,7 @@ class NodeMat(FrozenClass):
         if type(other) != type(self):
             return ["type(" + name + ")"]
         diff_list = list()
-        if not array_equal(other.coordinate, self.coordinate):
+        if not np.array_equal(other.coordinate, self.coordinate):
             diff_list.append(name + ".coordinate")
         if other._nb_node != self._nb_node:
             if is_add_value:
@@ -260,8 +258,8 @@ class NodeMat(FrozenClass):
         if (
             other._delta is not None
             and self._delta is not None
-            and isnan(other._delta)
-            and isnan(self._delta)
+            and np.isnan(other._delta)
+            and np.isnan(self._delta)
         ):
             pass
         elif other._delta != self._delta:
@@ -272,7 +270,7 @@ class NodeMat(FrozenClass):
                 diff_list.append(name + ".delta" + val_str)
             else:
                 diff_list.append(name + ".delta")
-        if not array_equal(other.indice, self.indice):
+        if not np.array_equal(other.indice, self.indice):
             diff_list.append(name + ".indice")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -370,10 +368,10 @@ class NodeMat(FrozenClass):
     def _set_coordinate(self, value):
         """setter of coordinate"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("coordinate", value, "ndarray")
@@ -431,10 +429,10 @@ class NodeMat(FrozenClass):
     def _set_indice(self, value):
         """setter of indice"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("indice", value, "ndarray")

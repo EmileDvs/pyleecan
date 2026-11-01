@@ -19,7 +19,7 @@ from pyleecan.Classes.Elmer import Elmer
 # Try/catch to remove unnecessary dependencies in unused method
 from os.path import split, splitext
 from meshio import read
-from numpy import arange
+import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.MeshSolution import MeshSolution
@@ -30,7 +30,7 @@ from pyleecan.Classes.SolutionVector import SolutionVector
 from pyleecan.Classes.VectorField import VectorField
 from pyleecan.Methods.Elmer.ElmerResultsVTU import ElmerResultsVTUError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -74,7 +74,7 @@ class ElmerResultsVTU(Elmer):
         pt_data = meshsolvtu.point_data  # point_data is of type dict
 
         # setup axes
-        indices = arange(meshsolvtu.points.shape[0])
+        indices = np.arange(meshsolvtu.points.shape[0])
         Indices = Data1D(name="indice", values=indices, is_components=True)
 
         # store only data from store dict if available

@@ -17,10 +17,9 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import ndarray
 import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -30,7 +29,7 @@ class RefElement(FrozenClass):
     VERSION = 1
 
     # cf Methods.Mesh.RefElement.get_element_area
-    def get_element_area(self, element_coordinate: ndarray) -> ndarray:
+    def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:
         """Return the area of the elements.
 
         Parameters
@@ -141,8 +140,8 @@ class RefElement(FrozenClass):
         if (
             other._epsilon is not None
             and self._epsilon is not None
-            and isnan(other._epsilon)
-            and isnan(self._epsilon)
+            and np.isnan(other._epsilon)
+            and np.isnan(self._epsilon)
         ):
             pass
         elif other._epsilon != self._epsilon:

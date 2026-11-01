@@ -49,7 +49,7 @@ from pyleecan.Classes.SlotW30 import SlotW30
 from pyleecan.Classes.SlotW11 import SlotW11
 from pyleecan.Classes.SlotW14 import SlotW14
 from pyleecan.Classes.SlotW21 import SlotW21
-from numpy import pi
+import numpy as np
 from pyleecan.Classes.CondType11 import CondType11
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.LamSlotMag import LamSlotMag
@@ -68,7 +68,7 @@ from pyleecan.Classes.RuleSimple import RuleSimple
 from pyleecan.Classes.RuleEquation import RuleEquation
 from pyleecan.Classes.RuleComplex import RuleComplex
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -531,11 +531,11 @@ class ConvertMC(Convert):
         self.other_unit_dict["m"] = 0.001
 
         self.other_unit_dict["rad"] = 1
-        self.other_unit_dict["deg"] = 180 / pi
+        self.other_unit_dict["deg"] = 180 / np.pi
 
         # conversion electrical degree
         pole_pair_number = self.machine.get_pole_pair_number()
-        self.other_unit_dict["ED"] = (4 / pole_pair_number) * (pi / 180)
+        self.other_unit_dict["ED"] = (4 / pole_pair_number) * (np.pi / 180)
 
         self.other_unit_dict[None] = 1  # No unit => No scale
         self.other_unit_dict[""] = 1  # No unit => No scale
@@ -1059,11 +1059,11 @@ class ConvertMC(Convert):
                     other_unit_dict["m"] = 1
 
                 other_unit_dict["rad"] = 1
-                other_unit_dict["deg"] = pi / 180
+                other_unit_dict["deg"] = np.pi / 180
 
                 pole_number = other_dict["[Dimensions]"]["Pole_Number"]
 
-                other_unit_dict["ED"] = (2 / pole_number) * (pi / 180)
+                other_unit_dict["ED"] = (2 / pole_number) * (np.pi / 180)
                 # we want to have rad so we need to multiply by 2/pole_number
                 other_unit_dict[None] = 1  # No unit => No scale
                 other_unit_dict[""] = 1  # No unit => No scale

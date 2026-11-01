@@ -19,7 +19,7 @@ from pyleecan.Classes.Structural import Structural
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Simulation.StructElmer.gen_case import ID_LAM, ID_MAG
 from os.path import join, split, exists, splitext
-from numpy import pi
+import numpy as np, gmsh
 from pyleecan.Classes.Section import Section
 from pyleecan.Classes.SolverInputFile import SolverInputFile
 from pyleecan.Methods.Elmer.Section import File, Variable, MATC
@@ -32,7 +32,6 @@ from pyleecan.Methods.Simulation.StructElmer.process_mesh import (
     _get_names_physical,
     _remove_entities,
 )
-import gmsh
 from pyleecan.Functions.labels import (
     SHAFT_LAB,
     decode_label,
@@ -45,7 +44,7 @@ from pyleecan.Functions.labels import (
 )
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -316,7 +315,7 @@ class StructElmer(Structural):
         boundaries.append(bnd)
 
         # --- body force ----------------------------------------------------------------- #
-        omega = 2 * pi * self.parent.input.OP.N0 / 60
+        omega = 2 * np.pi * self.parent.input.OP.N0 / 60
         bfs = []
 
         ID_list = [
@@ -939,8 +938,8 @@ class StructElmer(Structural):
         if (
             other._Kmesh_fineness is not None
             and self._Kmesh_fineness is not None
-            and isnan(other._Kmesh_fineness)
-            and isnan(self._Kmesh_fineness)
+            and np.isnan(other._Kmesh_fineness)
+            and np.isnan(self._Kmesh_fineness)
         ):
             pass
         elif other._Kmesh_fineness != self._Kmesh_fineness:

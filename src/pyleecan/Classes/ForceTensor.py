@@ -24,7 +24,7 @@ from pyleecan.Classes.MeshSolution import MeshSolution
 from pyleecan.Classes.SolutionVector import SolutionVector
 from pyleecan.Classes.VectorField import VectorField
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

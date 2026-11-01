@@ -28,7 +28,7 @@ from pyleecan.Methods.Simulation.VarOpti.check import (
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Classes.OptiProblem import OptiProblem
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

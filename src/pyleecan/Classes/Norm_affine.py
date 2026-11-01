@@ -18,7 +18,7 @@ from pyleecan.Classes.Normalization import Normalization
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -123,8 +123,8 @@ class Norm_affine(Normalization):
         if (
             other._slope is not None
             and self._slope is not None
-            and isnan(other._slope)
-            and isnan(self._slope)
+            and np.isnan(other._slope)
+            and np.isnan(self._slope)
         ):
             pass
         elif other._slope != self._slope:
@@ -138,8 +138,8 @@ class Norm_affine(Normalization):
         if (
             other._offset is not None
             and self._offset is not None
-            and isnan(other._offset)
-            and isnan(self._offset)
+            and np.isnan(other._offset)
+            and np.isnan(self._offset)
         ):
             pass
         elif other._offset != self._offset:

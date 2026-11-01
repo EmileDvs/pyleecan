@@ -38,7 +38,7 @@ from pyleecan.Functions.Simulation.VarSimu.log_datakeeper_step_result import (
 from pyleecan.Classes.MagFEMM import MagFEMM
 from pyleecan.Classes.ElecLUTdq import ElecLUTdq
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

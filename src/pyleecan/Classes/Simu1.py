@@ -19,7 +19,7 @@ from pyleecan.Classes.Simulation import Simulation
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

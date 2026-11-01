@@ -17,12 +17,12 @@ from pyleecan.Classes.LamH import LamH
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import exp, pi
+import numpy as np
 from pyleecan.Functions.labels import decode_label, HOLEM_LAB
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -76,17 +76,17 @@ class LamHole(LamH):
                     # Create arrow coordinates
                     Zh = hole.Zh
                     for ii in range(int(Zh / sym)):
-                        off = pi if ii % 2 == 1 else 0
+                        off = np.pi if ii % 2 == 1 else 0
                         if mag is not None and mag.type_magnetization == 3:
-                            off -= pi / 2
-                        Z1 = (mag_surf.point_ref + delta) * exp(
-                            1j * (ii * 2 * pi / Zh + pi / Zh + alpha)
+                            off -= np.pi / 2
+                        Z1 = (mag_surf.point_ref + delta) * np.exp(
+                            1j * (ii * 2 * np.pi / Zh + np.pi / Zh + alpha)
                         )
                         Z2 = (
                             mag_surf.point_ref
                             + delta
-                            + H / 5 * exp(1j * (mag_dir + off))
-                        ) * exp(1j * (ii * 2 * pi / Zh + pi / Zh + alpha))
+                            + H / 5 * np.exp(1j * (mag_dir + off))
+                        ) * np.exp(1j * (ii * 2 * np.pi / Zh + np.pi / Zh + alpha))
                         ax.annotate(
                             text="",
                             xy=(Z2.real, Z2.imag),
@@ -130,7 +130,7 @@ class LamHole(LamH):
         # Holes surface(s)
         for hole in self.hole:
             # Create the first hole surface(s)
-            surf_hole = hole.build_geometry(alpha=pi / hole.Zh)
+            surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh)
             surf_list.extend(
                 transform_hole_surf(
                     hole_surf_list=surf_hole, Zh=hole.Zh, sym=sym, alpha=0, delta=0

@@ -22,13 +22,13 @@ from ntpath import basename
 from pyleecan.Functions.path_tools import abs_file_path
 from pyleecan.definitions import PYTHON_DEFAULT_ENCODING
 
-from numpy import array, ndarray
+import numpy as np
 from ntpath import basename
 from os.path import isfile
 from pyleecan.Classes._check import CheckTypeError
-import numpy as np
+
 import random
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -365,7 +365,7 @@ class DataKeeper(FrozenClass):
                             **kwargs,
                         )
                     )
-                elif isinstance(obj, ndarray):
+                elif isinstance(obj, np.ndarray):
                     if type_handle_ndarray == 0:
                         DataKeeper_dict["result"].append(obj.tolist())
                     elif type_handle_ndarray == 1:
@@ -585,7 +585,7 @@ class DataKeeper(FrozenClass):
                     value[ii].parent = self
                 if isinstance(obj, list):
                     try:  # list to array (for list of list use 'list')
-                        value[ii] = array(obj)
+                        value[ii] = np.array(obj)
                     except Exception as e:
                         pass
         if value == -1:

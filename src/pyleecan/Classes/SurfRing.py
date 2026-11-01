@@ -17,11 +17,11 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import array, sum, real, imag, exp
+import numpy as np
 from pyleecan.Methods.Geometry.SurfRing.get_patches import PATCH_COLOR
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -91,7 +91,7 @@ class SurfRing(Surface):
             point_list.append(line.get_middle())
         for line in in_lines[: len(in_lines) / 2]:
             point_list.append(line.get_middle())
-        point_ref = sum(array(point_list)) / len(point_list)
+        point_ref = np.sum(np.array(point_list)) / len(point_list)
 
         if is_set:
             self.point_ref = point_ref
@@ -236,20 +236,20 @@ class SurfRing(Surface):
         for idx in range(len(points) - 1):
             z1 = points[idx]
             z2 = points[idx + 1]
-            x1 = real(z1)
-            y1 = imag(z1)
-            x2 = real(z2)
-            y2 = imag(z2)
+            x1 = np.real(z1)
+            y1 = np.imag(z1)
+            x2 = np.real(z2)
+            y2 = np.imag(z2)
             ax.plot([x1, x2], [y1, y2], "k")
 
         points = self.in_surf.discretize(10)
         for idx in range(len(points) - 1):
             z1 = points[idx]
             z2 = points[idx + 1]
-            x1 = real(z1)
-            y1 = imag(z1)
-            x2 = real(z2)
-            y2 = imag(z2)
+            x1 = np.real(z1)
+            y1 = np.imag(z1)
+            x2 = np.real(z2)
+            y2 = np.imag(z2)
             ax.plot([x1, x2], [y1, y2], "k")
 
         # Axis Setup
@@ -282,7 +282,7 @@ class SurfRing(Surface):
         self.out_surf.rotate(angle)
         self.in_surf.rotate(angle)
         if self.point_ref is not None:
-            self.point_ref = self.point_ref * exp(1j * angle)
+            self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # cf Methods.Geometry.SurfRing.translate
     def translate(self, Zt):

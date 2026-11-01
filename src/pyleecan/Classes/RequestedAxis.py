@@ -19,13 +19,12 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.SciDataTool.RequestedAxis.get_axis import operation_list
 from importlib import import_module
-from numpy import argsort, array
+import numpy as np
 from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Functions.SciDataTool import AxisError
 from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -72,7 +71,7 @@ class RequestedAxis(FrozenClass):
                         self.indices = axis.sort_indices[:N]
                         self.values = values[self.indices]
                     else:
-                        self.indices = argsort(values)[::-1][:N].tolist()
+                        self.indices = np.argsort(values)[::-1][:N].tolist()
                         self.values = values[self.indices]
                 else:
                     self.values = values[self.indices]
@@ -179,7 +178,7 @@ class RequestedAxis(FrozenClass):
                 and self.unit != "SI"
                 or self.operation is not None
             ):
-                self.corr_values = array(
+                self.corr_values = np.array(
                     axis.get_values(
                         is_oneperiod=is_oneperiod,
                         is_antiperiod=is_antiperiod,
@@ -254,7 +253,7 @@ class RequestedAxis(FrozenClass):
                     if hasattr(axis, "sort_indices") and axis.sort_indices is not None:
                         self.indices = axis.sort_indices[:N]
                     else:
-                        self.indices = argsort(values)[::-1][:N].tolist()
+                        self.indices = np.argsort(values)[::-1][:N].tolist()
                 self.values = values[self.indices]
                 if self.extension in operation_list:
                     self.indices = None
@@ -431,11 +430,11 @@ class RequestedAxis(FrozenClass):
             return False
         if other.extension != self.extension:
             return False
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             return False
         if other.indices != self.indices:
             return False
-        if not array_equal(other.input_data, self.input_data):
+        if not np.array_equal(other.input_data, self.input_data):
             return False
         if other.operation != self.operation:
             return False
@@ -445,13 +444,13 @@ class RequestedAxis(FrozenClass):
             return False
         if other.is_pattern != self.is_pattern:
             return False
-        if not array_equal(other.rebuild_indices, self.rebuild_indices):
+        if not np.array_equal(other.rebuild_indices, self.rebuild_indices):
             return False
         if other.is_step != self.is_step:
             return False
         if other.noct != self.noct:
             return False
-        if not array_equal(other.corr_values, self.corr_values):
+        if not np.array_equal(other.corr_values, self.corr_values):
             return False
         if other.is_components != self.is_components:
             return False
@@ -517,7 +516,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".extension" + val_str)
             else:
                 diff_list.append(name + ".extension")
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._indices != self._indices:
             if is_add_value:
@@ -531,7 +530,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".indices" + val_str)
             else:
                 diff_list.append(name + ".indices")
-        if not array_equal(other.input_data, self.input_data):
+        if not np.array_equal(other.input_data, self.input_data):
             diff_list.append(name + ".input_data")
         if other._operation != self._operation:
             if is_add_value:
@@ -577,7 +576,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".is_pattern" + val_str)
             else:
                 diff_list.append(name + ".is_pattern")
-        if not array_equal(other.rebuild_indices, self.rebuild_indices):
+        if not np.array_equal(other.rebuild_indices, self.rebuild_indices):
             diff_list.append(name + ".rebuild_indices")
         if other._is_step != self._is_step:
             if is_add_value:
@@ -599,7 +598,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".noct" + val_str)
             else:
                 diff_list.append(name + ".noct")
-        if not array_equal(other.corr_values, self.corr_values):
+        if not np.array_equal(other.corr_values, self.corr_values):
             diff_list.append(name + ".corr_values")
         if other._is_components != self._is_components:
             if is_add_value:
@@ -901,10 +900,10 @@ class RequestedAxis(FrozenClass):
     def _set_values(self, value):
         """setter of values"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("values", value, "ndarray")
@@ -946,10 +945,10 @@ class RequestedAxis(FrozenClass):
     def _set_input_data(self, value):
         """setter of input_data"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("input_data", value, "ndarray")
@@ -1043,10 +1042,10 @@ class RequestedAxis(FrozenClass):
     def _set_rebuild_indices(self, value):
         """setter of rebuild_indices"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("rebuild_indices", value, "ndarray")
@@ -1104,10 +1103,10 @@ class RequestedAxis(FrozenClass):
     def _set_corr_values(self, value):
         """setter of corr_values"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("corr_values", value, "ndarray")

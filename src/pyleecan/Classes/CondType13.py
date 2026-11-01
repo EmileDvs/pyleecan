@@ -18,7 +18,7 @@ from pyleecan.Classes.Conductor import Conductor
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -370,8 +370,8 @@ class CondType13(Conductor):
         if (
             other._Wwire is not None
             and self._Wwire is not None
-            and isnan(other._Wwire)
-            and isnan(self._Wwire)
+            and np.isnan(other._Wwire)
+            and np.isnan(self._Wwire)
         ):
             pass
         elif other._Wwire != self._Wwire:
@@ -385,8 +385,8 @@ class CondType13(Conductor):
         if (
             other._Wins_cond is not None
             and self._Wins_cond is not None
-            and isnan(other._Wins_cond)
-            and isnan(self._Wins_cond)
+            and np.isnan(other._Wins_cond)
+            and np.isnan(self._Wins_cond)
         ):
             pass
         elif other._Wins_cond != self._Wins_cond:
@@ -428,8 +428,8 @@ class CondType13(Conductor):
         if (
             other._Wins_wire is not None
             and self._Wins_wire is not None
-            and isnan(other._Wins_wire)
-            and isnan(self._Wins_wire)
+            and np.isnan(other._Wins_wire)
+            and np.isnan(self._Wins_wire)
         ):
             pass
         elif other._Wins_wire != self._Wins_wire:
@@ -447,8 +447,8 @@ class CondType13(Conductor):
         if (
             other._Kwoh is not None
             and self._Kwoh is not None
-            and isnan(other._Kwoh)
-            and isnan(self._Kwoh)
+            and np.isnan(other._Kwoh)
+            and np.isnan(self._Kwoh)
         ):
             pass
         elif other._Kwoh != self._Kwoh:

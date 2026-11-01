@@ -30,18 +30,6 @@ from pyleecan.Methods.Mesh.MeshSolution.export_to_mat import del_value_None
 from scipy.io import savemat
 import os, numpy as np
 from pyleecan.Functions.GUI.log_error import log_error
-from numpy import (
-    zeros,
-    hstack,
-    squeeze,
-    swapaxes,
-    exp,
-    linspace,
-    max as np_max,
-    min as np_min,
-    pi,
-    real,
-)
 from pyleecan.Methods.Mesh.MeshSolution.get_field import (
     apply_normal_center_surf_vectorfield,
 )
@@ -59,7 +47,7 @@ from pyleecan.Methods.Mesh.MeshSolution.plot_contour import (
 from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot
 from pyleecan.Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -248,7 +236,7 @@ class MeshSolution(FrozenClass):
         # Add third dimension if needed
         ind = axes_list[0].index("component")
         if axes_list[1][ind] == 2:
-            vect_field = hstack((vect_field, zeros((vect_field.shape[0], 1))))
+            vect_field = np.hstack((vect_field, np.zeros((vect_field.shape[0], 1))))
 
         if field_name is None:
             field_name = label if label is not None else "Field"
@@ -346,7 +334,7 @@ class MeshSolution(FrozenClass):
                     axes_list[1][ind_indices0],
                     axes_list[1][0],
                 )  # length swap
-                field = swapaxes(field, 0, ind_indices0)  # field axis swap
+                field = np.swapaxes(field, 0, ind_indices0)  # field axis swap
                 ind_indices = 0
 
             else:
@@ -365,7 +353,7 @@ class MeshSolution(FrozenClass):
                     axes_list[1][ind_component0],
                     axes_list[1][1],
                 )  # length swap
-                field = swapaxes(field, 1, ind_component0)  # field axis swap
+                field = np.swapaxes(field, 1, ind_component0)  # field axis swap
                 ind_component = 1
             else:
                 ind_component = None
@@ -470,11 +458,11 @@ class MeshSolution(FrozenClass):
 
         # Reverse axes swaps (to match with get_axes_list)
         if ind_component is not None:
-            result = swapaxes(result, 1, ind_component0)
-        result = swapaxes(result, 0, ind_indices0)
+            result = np.swapaxes(result, 1, ind_component0)
+        result = np.swapaxes(result, 0, ind_indices0)
 
         if is_squeeze:
-            result = squeeze(result)
+            result = np.squeeze(result)
             if shape_result[ind_indices] == 1:
                 # Re add node dimension which has been squeezed if there is only one node
                 result = result[None, ...]
@@ -526,7 +514,7 @@ class MeshSolution(FrozenClass):
         # Add third dimension if needed
         ind = axes_list[0].index("component")
         if axes_list[1][ind] == 2:
-            vect_field = hstack((vect_field, zeros((vect_field.shape[0], 1))))
+            vect_field = np.hstack((vect_field, np.zeros((vect_field.shape[0], 1))))
             is_2D = True
         else:
             is_2D = False
@@ -921,7 +909,7 @@ class MeshSolution(FrozenClass):
         #     mesh_pv[field_name] = real(field)
         #     mesh_field = mesh_pv
         if clim is None:
-            clim = [np_min(real(field)), np_max(real(field))]
+            clim = [np.min(np.real(field)), np.max(np.real(field))]
             if abs((clim[1] - clim[0]) / clim[1]) < 0.01:
                 clim[0] = -abs(clim[1])
                 clim[1] = abs(clim[1])
@@ -963,7 +951,7 @@ class MeshSolution(FrozenClass):
                 nframe = 25
                 mesh_pv_B, field_B, field_name_B = self.get_mesh_field_pv(args)
                 is_time = False
-                t = linspace(0.0, 1.0, nframe + 1)[:nframe]
+                t = np.linspace(0.0, 1.0, nframe + 1)[:nframe]
 
             for i in range(nframe):
                 # Compute colorbar boundaries
@@ -973,7 +961,7 @@ class MeshSolution(FrozenClass):
                     phase = 1
                 else:
                     field = field_B
-                    phase = exp(1j * 2 * pi * t[i])
+                    phase = np.exp(1j * 2 * np.pi * t[i])
                 # Compute pyvista object
                 plot_mesh_field(
                     pv_plotter,

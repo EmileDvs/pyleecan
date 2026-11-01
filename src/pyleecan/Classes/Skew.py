@@ -17,7 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, array, linspace, mean as np_mean, floor, flip, concatenate, arange
+import numpy as np
 from pyleecan.Methods.Machine.Skew import TYPE_SKEW_LIST
 from pyleecan.Functions.load import import_class
 from pyleecan.Functions.Plot import dict_2D
@@ -26,9 +26,9 @@ from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from ntpath import basename
 from os.path import isfile
 from pyleecan.Classes._check import CheckTypeError
-import numpy as np
+
 import random
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -67,7 +67,7 @@ class Skew(FrozenClass):
         else:
             Z = self.parent.parent.rotor.get_Zs()
 
-        sp = 2 * pi / Z
+        sp = 2 * np.pi / Z
 
         if rate is None and angle_overall is None:
             # Set rate value by default
@@ -98,23 +98,27 @@ class Skew(FrozenClass):
                         + str(type_skew)
                     )
 
-                z_list = linspace(-0.5, 0.5, Nstep + 1)
+                z_list = np.linspace(-0.5, 0.5, Nstep + 1)
 
                 if type_skew == "linear" or Nstep == 2:
-                    angle_list = linspace(-angle_overall / 2, angle_overall / 2, Nstep)
+                    angle_list = np.linspace(
+                        -angle_overall / 2, angle_overall / 2, Nstep
+                    )
 
                 elif type_skew == "vshape":
-                    Nhalf = int(floor((Nstep + 1) / 2))
+                    Nhalf = int(np.floor((Nstep + 1) / 2))
 
-                    angles_half = linspace(-angle_overall, 0, Nhalf)
+                    angles_half = np.linspace(-angle_overall, 0, Nhalf)
 
                     if Nstep % 2 == 0:
-                        angle_list = concatenate((angles_half, flip(angles_half)))
+                        angle_list = np.concatenate((angles_half, np.flip(angles_half)))
                     else:
-                        angle_list = concatenate((angles_half[:-1], flip(angles_half)))
+                        angle_list = np.concatenate(
+                            (angles_half[:-1], np.flip(angles_half))
+                        )
 
                 elif type_skew == "zig-zag":
-                    angle_list = 0.5 * angle_overall * (-1) ** arange(Nstep)
+                    angle_list = 0.5 * angle_overall * (-1) ** np.arange(Nstep)
 
                 elif type_skew == "function":
                     if self.function is None:
@@ -122,12 +126,12 @@ class Skew(FrozenClass):
                             "Function must be defined if type_skew == function"
                         )
                     try:
-                        angle_list = self.function(array(z_list))
+                        angle_list = self.function(np.array(z_list))
                     except Exception:
                         raise Exception("Error in skew function definition")
 
                 # Put average skew angle to zero
-                angle_list = list(array(angle_list) - np_mean(angle_list))
+                angle_list = list(np.array(angle_list) - np.mean(angle_list))
 
             elif type_skew == "user-defined":
                 if angle_list is None:
@@ -139,7 +143,7 @@ class Skew(FrozenClass):
 
                 if z_list is None:
                     # Init as linear skew type
-                    z_list = linspace(-0.5, 0.5, Nstep + 1)
+                    z_list = np.linspace(-0.5, 0.5, Nstep + 1)
 
                 else:
                     if len(angle_list) != len(z_list) - 1:
@@ -163,7 +167,7 @@ class Skew(FrozenClass):
         else:
             if type_skew == "linear":
                 Nstep = 2
-                z_list = linspace(-0.5, 0.5, Nstep)
+                z_list = np.linspace(-0.5, 0.5, Nstep)
                 angle_list = [z * angle_overall for z in z_list]
 
             else:
@@ -258,7 +262,7 @@ class Skew(FrozenClass):
         angle_list, z_list = self.comp_pattern()
 
         legend_list = ["Skew pattern"]
-        y_list = [[a * 180 / pi for a in angle_list]]
+        y_list = [[a * 180 / np.pi for a in angle_list]]
         linestyle_list = ["solid"]
 
         LamSlotM = import_class("pyleecan.Classes", "LamSlotM")
@@ -427,8 +431,8 @@ class Skew(FrozenClass):
         if (
             other._rate is not None
             and self._rate is not None
-            and isnan(other._rate)
-            and isnan(self._rate)
+            and np.isnan(other._rate)
+            and np.isnan(self._rate)
         ):
             pass
         elif other._rate != self._rate:
@@ -488,8 +492,8 @@ class Skew(FrozenClass):
         if (
             other._angle_overall is not None
             and self._angle_overall is not None
-            and isnan(other._angle_overall)
-            and isnan(self._angle_overall)
+            and np.isnan(other._angle_overall)
+            and np.isnan(self._angle_overall)
         ):
             pass
         elif other._angle_overall != self._angle_overall:

@@ -22,7 +22,7 @@ from pyleecan.Classes.Arc import Arc
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Geometry.Arc1.check import check
-from numpy import pi, angle as np_angle, exp, linspace, angle, abs as np_abs, sqrt
+import numpy as np
 from pyleecan.Methods.Machine import ARC_NPOINT_D
 from pyleecan.Methods.Geometry.Arc1 import (
     NbPointArc1DError,
@@ -30,7 +30,7 @@ from pyleecan.Methods.Geometry.Arc1 import (
     PointTranslateArc1Error,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -66,7 +66,7 @@ class Arc1(Arc):
 
         # 2*pi*R is the length of the total circle
         # The arc is an alpha / 2pi portion of the cercle
-        return float(2 * pi * R * (alpha / (2 * pi)))
+        return float(2 * np.pi * R * (alpha / (2 * np.pi)))
 
     # cf Methods.Geometry.Arc1.comp_radius
     def comp_radius(self):
@@ -123,19 +123,19 @@ class Arc1(Arc):
         zc = self.get_center()
 
         # Geometric transformation : center is the origin, angle(begin) = 0
-        Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
-        Zend = (z2 - zc) * exp(-1j * np_angle(z1 - zc))
+        Zstart = (z1 - zc) * np.exp(-1j * np.angle(z1 - zc))
+        Zend = (z2 - zc) * np.exp(-1j * np.angle(z1 - zc))
 
         # Generation of the point by rotation
         if self.is_trigo_direction:
             sign = 1
         else:
             sign = -1
-        t = linspace(0, self.get_angle(), nb_point + 2)
-        list_point = Zstart * exp(1j * t)
+        t = np.linspace(0, self.get_angle(), nb_point + 2)
+        list_point = Zstart * np.exp(1j * t)
 
         # Geometric transformation : return to the main axis
-        list_point = list_point * exp(1j * np_angle(z1 - zc)) + zc
+        list_point = list_point * np.exp(1j * np.angle(z1 - zc)) + zc
 
         return list_point
 
@@ -157,25 +157,25 @@ class Arc1(Arc):
         """
         # Go to center ref with begin on the X > 0 axis
         Zc = self.get_center()
-        Z2 = (self.end - Zc) * exp(-1j * angle(self.begin - Zc))
+        Z2 = (self.end - Zc) * np.exp(-1j * np.angle(self.begin - Zc))
 
         if Z2.imag > 0 and self.is_trigo_direction:
-            alpha = angle(Z2)
+            alpha = np.angle(Z2)
         elif Z2.imag > 0 and not self.is_trigo_direction:
-            alpha = -(2 * pi - angle(Z2))
+            alpha = -(2 * np.pi - np.angle(Z2))
         elif Z2.imag < 0 and self.is_trigo_direction:
-            alpha = 2 * pi - abs(angle(Z2))
+            alpha = 2 * np.pi - abs(np.angle(Z2))
         elif Z2.imag < 0 and not self.is_trigo_direction:
-            alpha = angle(Z2)
+            alpha = np.angle(Z2)
         elif Z2.imag == 0 and self.is_trigo_direction:
-            alpha = abs(angle(Z2))
+            alpha = abs(np.angle(Z2))
         elif Z2.imag == 0 and not self.is_trigo_direction:
-            alpha = -abs(angle(Z2))
+            alpha = -abs(np.angle(Z2))
         else:
             alpha = 0
 
         if is_deg:
-            return alpha * 180 / pi
+            return alpha * 180 / np.pi
         else:
             return alpha
 
@@ -217,22 +217,22 @@ class Arc1(Arc):
         z1 = self.begin
         z2 = self.end
         R = self.radius
-        D12 = np_abs(z2 - z1)  # length of segment [begin,end]
+        D12 = np.abs(z2 - z1)  # length of segment [begin,end]
 
         # Centre at the middle of begin and end (distance(Z1, Z2) = diameter )
-        if np_abs(D12 - np_abs(2 * R)) < 1e-6:
+        if np.abs(D12 - np.abs(2 * R)) < 1e-6:
             Zc = (z2 + z1) / 2.0
         else:
             # In the coordinate system begin on center and end on X > 0 axis
             if R > 0:  # Center is above the segment
-                Zc = D12 / 2 + 1j * sqrt(R**2 - (D12 / 2) ** 2)
+                Zc = D12 / 2 + 1j * np.sqrt(R**2 - (D12 / 2) ** 2)
             else:
-                Zc = D12 / 2 - 1j * sqrt(R**2 - (D12 / 2) ** 2)
+                Zc = D12 / 2 - 1j * np.sqrt(R**2 - (D12 / 2) ** 2)
             # Go back to the original coordinate system
-            Zc = Zc * exp(1j * np_angle(z2 - z1)) + z1
+            Zc = Zc * np.exp(1j * np.angle(z2 - z1)) + z1
 
         # Return (0,0) if the point is too close from 0
-        if np_abs(Zc) < 1e-6:
+        if np.abs(Zc) < 1e-6:
             Zc = 0
 
         return Zc
@@ -275,17 +275,17 @@ class Arc1(Arc):
         zc = self.get_center()
 
         # Geometric transformation : center is the origine, angle(begin) = 0
-        Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
+        Zstart = (z1 - zc) * np.exp(-1j * np.angle(z1 - zc))
 
         # Generation of the point by rotation
         alpha = self.get_angle()
-        Zmid = Zstart * exp(1j * alpha / 2)
+        Zmid = Zstart * np.exp(1j * alpha / 2)
 
         # Geometric transformation : return to the main axis
-        Zmid = Zmid * exp(1j * np_angle(z1 - zc)) + zc
+        Zmid = Zmid * np.exp(1j * np.angle(z1 - zc)) + zc
 
         # Return (0,0) if the point is too close from 0
-        if np_abs(Zmid) < 1e-6:
+        if np.abs(Zmid) < 1e-6:
             Zmid = 0
 
         return Zmid
@@ -332,8 +332,8 @@ class Arc1(Arc):
         self.check()
 
         # Modification from the rotation  of the object
-        self.begin = self.begin * exp(1j * angle)
-        self.end = self.end * exp(1j * angle)
+        self.begin = self.begin * np.exp(1j * angle)
+        self.end = self.end * np.exp(1j * angle)
 
     # cf Methods.Geometry.Arc1.scale
     def scale(self, scale_factor):
@@ -402,7 +402,7 @@ class Arc1(Arc):
         # Check if the point is on the circle
         Zc = self.get_center()
         R = self.comp_radius()
-        if abs(np_abs(Z1 - Zc) - R) > 1e-6:
+        if abs(np.abs(Z1 - Zc) - R) > 1e-6:
             raise Exception("Point is not on the line")
 
         # Check that the center is the same
@@ -563,8 +563,8 @@ class Arc1(Arc):
         if (
             other._radius is not None
             and self._radius is not None
-            and isnan(other._radius)
-            and isnan(self._radius)
+            and np.isnan(other._radius)
+            and np.isnan(self._radius)
         ):
             pass
         elif other._radius != self._radius:

@@ -22,8 +22,8 @@ from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.MeshSolution import MeshSolution
 from pyleecan.Classes.SolutionData import SolutionData
 
-from numpy import array, array_equal
-from numpy import isnan
+import numpy as np
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -410,7 +410,7 @@ class OutLossModel(FrozenClass):
             return False
         if other.name != self.name:
             return False
-        if not array_equal(other.loss_density, self.loss_density):
+        if not np.array_equal(other.loss_density, self.loss_density):
             return False
         if other.coeff_dict != self.coeff_dict:
             return False
@@ -438,7 +438,7 @@ class OutLossModel(FrozenClass):
                 diff_list.append(name + ".name" + val_str)
             else:
                 diff_list.append(name + ".name")
-        if not array_equal(other.loss_density, self.loss_density):
+        if not np.array_equal(other.loss_density, self.loss_density):
             diff_list.append(name + ".loss_density")
         if other._coeff_dict != self._coeff_dict:
             if is_add_value:
@@ -475,8 +475,8 @@ class OutLossModel(FrozenClass):
         if (
             other._scalar_value is not None
             and self._scalar_value is not None
-            and isnan(other._scalar_value)
-            and isnan(self._scalar_value)
+            and np.isnan(other._scalar_value)
+            and np.isnan(self._scalar_value)
         ):
             pass
         elif other._scalar_value != self._scalar_value:
@@ -607,10 +607,10 @@ class OutLossModel(FrozenClass):
     def _set_loss_density(self, value):
         """setter of loss_density"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("loss_density", value, "ndarray")

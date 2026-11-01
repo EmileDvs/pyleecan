@@ -17,9 +17,9 @@ from pyleecan.Classes.Conductor import Conductor
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import sqrt
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -48,7 +48,7 @@ class CondType22(Conductor):
             Hbar = self.parent.parent.slot.comp_height()
 
         else:
-            Hbar = sqrt(self.Sbar)
+            Hbar = np.sqrt(self.Sbar)
 
         return Hbar
 
@@ -144,7 +144,7 @@ class CondType22(Conductor):
             Wbar = self.parent.parent.slot.comp_width()
 
         else:
-            Wbar = sqrt(self.Sbar)
+            Wbar = np.sqrt(self.Sbar)
 
         return Wbar
 
@@ -242,8 +242,8 @@ class CondType22(Conductor):
         if (
             other._Sbar is not None
             and self._Sbar is not None
-            and isnan(other._Sbar)
-            and isnan(self._Sbar)
+            and np.isnan(other._Sbar)
+            and np.isnan(self._Sbar)
         ):
             pass
         elif other._Sbar != self._Sbar:

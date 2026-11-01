@@ -17,17 +17,15 @@ from pyleecan.Classes.EEC import EEC
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import zeros, sqrt, isnan, tile, where, pi, interp, inf, exp
+import numpy as np, scipy.interpolate as scp_int
 from pyleecan.Functions.Electrical.dqh_transformation import n2abc, abc2n
 from pyleecan.Functions.labels import STATOR_LAB, ROTOR_LAB
 from multiprocessing import cpu_count
 from pyleecan.Classes.ImportGenVectLin import ImportGenVectLin
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 from pyleecan.Functions.Load.import_class import import_class
-import scipy.interpolate as scp_int
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -76,7 +74,7 @@ class EEC_SCIM(EEC):
             if is_anti_per:
                 qsr_eff = qsr // (sym * (1 + is_anti_per))
                 for ii in range(qsr_eff):
-                    if not all(isnan(Phi[:, ii + qsr_eff]).tolist()):
+                    if not all(np.isnan(Phi[:, ii + qsr_eff]).tolist()):
                         logger.warning(
                             f"{type(self).__name__}: "
                             + f"Rotor fluxlinkage of bar {ii + qsr_eff} will be overridden."
@@ -85,7 +83,7 @@ class EEC_SCIM(EEC):
             # reconstruct periodicity
             if sym != 1:
                 qsr_eff = qsr // sym
-                if not all(isnan(Phi[:, qsr_eff:]).tolist()):
+                if not all(np.isnan(Phi[:, qsr_eff:]).tolist()):
                     logger.warning(
                         f"{type(self).__name__}: "
                         + f"Rotor fluxlinkage of bar "
@@ -100,7 +98,7 @@ class EEC_SCIM(EEC):
             Phi = Phi / (sym * (1 + is_anti_per))
 
         # compute mean value of periodic bar flux linkage
-        Phi_ab = zeros([Phi.shape[0], 2])
+        Phi_ab = np.zeros([Phi.shape[0], 2])
         if (qsr % p) == 0:
             qsr_per_pole = qsr // p
             for ii in range(p):
@@ -111,11 +109,11 @@ class EEC_SCIM(EEC):
             logger.warning(f"{type(self).__name__}: " + "Not Implemented Yet")
 
         # compute rotor and stator flux linkage
-        Phi_r = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / sqrt(2)
+        Phi_r = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / np.sqrt(2)
         Phi_ab = n2abc(
             out.mag.Phi_wind[STATOR_LAB + "-0"].get_along("time", "phase")["Phi_{wind}"]
         )
-        Phi_s = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / sqrt(2)
+        Phi_s = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / np.sqrt(2)
 
         return Phi_s, Phi_r
 
@@ -173,7 +171,7 @@ class EEC_SCIM(EEC):
         Nrev = self.Nrev
 
         T = Nrev / (N0 / 60)
-        Ir = ImportMatrixVal(value=zeros((self.Nt_tot, qsr)))
+        Ir = ImportMatrixVal(value=np.zeros((self.Nt_tot, qsr)))
         time = ImportGenVectLin(start=0, stop=T, num=self.Nt_tot, endpoint=False)
 
         # TODO estimate magnetizing current if self.I == None
@@ -220,11 +218,11 @@ class EEC_SCIM(EEC):
         par["L1"] = L1 * Xke_skinS
 
         # set current values
-        Ir_ = zeros([self.Nt_tot, 2])
-        Ir_[:, 0] = self.I * K21Z * sqrt(2)
+        Ir_ = np.zeros([self.Nt_tot, 2])
+        Ir_[:, 0] = self.I * K21Z * np.sqrt(2)
         Ir = abc2n(Ir_, n=qsr // p)  # TODO no rotation for now
 
-        Ir = ImportMatrixVal(value=tile(Ir, (1, p)))
+        Ir = ImportMatrixVal(value=np.tile(Ir, (1, p)))
 
         simu.input.Is = None
         simu.input.Id_ref = 0
@@ -534,7 +532,7 @@ class EEC_SCIM(EEC):
         Im_table = self.Im_table
 
         # solving elementary system, initial start with unsaturated inductance
-        i_start = where(Im_table > 0)[0][0]
+        i_start = np.where(Im_table > 0)[0][0]
         self.Lm = Lm_table[i_start]
         delta_Lm = self.solve_elementary()
         if Lm_table.size > 1:
@@ -556,7 +554,7 @@ class EEC_SCIM(EEC):
         out_dict["Uq"] = self.U1.imag
         out_dict["Id"] = self.I1.real
         out_dict["Iq"] = self.I1.imag
-        out_dict["Ir"] = self.I2 * self.K21I * sqrt(2)
+        out_dict["Ir"] = self.I2 * self.K21I * np.sqrt(2)
 
         return out_dict
 
@@ -580,7 +578,7 @@ class EEC_SCIM(EEC):
 
         felec = self.OP.get_felec()
         slip = self.OP.get_slip()
-        ws = 2 * pi * felec
+        ws = 2 * np.pi * felec
 
         Xm = ws * self.Lm
         X1 = ws * self.L1
@@ -591,7 +589,7 @@ class EEC_SCIM(EEC):
 
         # rotor impedance
         if slip == 0:
-            Z2 = inf
+            Z2 = np.inf
         else:
             Z2 = 1j * X2 + self.R2 / slip
 
@@ -604,13 +602,13 @@ class EEC_SCIM(EEC):
         U_dict, I_dict = self.OP.get_U0_UPhi0(), self.OP.get_I0_Phi0()
         if U_dict["U0"] is not None:  # Voltage driven
             UPhi0_ref = 0 if U_dict["UPhi0"] is None else U_dict["UPhi0"]
-            U1 = U_dict["U0"] * exp(1j * UPhi0_ref)
+            U1 = U_dict["U0"] * np.exp(1j * UPhi0_ref)
             I1 = (U1 + 1j * 0) / Ztot
             E = U1 - Z1 * I1
             Im = E / Zm
         elif I_dict["I0"] is not None:  # Current driven
             IPhi0_ref = 0 if I_dict["Phi0"] is None else I_dict["Phi0"]
-            I1 = I_dict["I0"] * exp(1j * IPhi0_ref)
+            I1 = I_dict["I0"] * np.exp(1j * IPhi0_ref)
             Im = I1 / (1 + Zm / Z2 + Zm / self.Rfe)
             E = Zm * Im
             U1 = E + Z1 * I1
@@ -626,7 +624,7 @@ class EEC_SCIM(EEC):
             self.Im_table, self.Lm_table, kind="linear", fill_value="extrapolate"
         )(abs(Im))
         # linear interpolation with nearest extrapolation if Im is outside Im_table
-        Lm2 = interp(abs(Im), self.Im_table, self.Lm_table)
+        Lm2 = np.interp(abs(Im), self.Im_table, self.Lm_table)
         # magnetizing inductance is the average of both to simulate the saturation increase
         Lm = 0.5 * (Lm1 + Lm2)
 
@@ -890,9 +888,9 @@ class EEC_SCIM(EEC):
             return False
         if other.K21I != self.K21I:
             return False
-        if not array_equal(other.Im_table, self.Im_table):
+        if not np.array_equal(other.Im_table, self.Im_table):
             return False
-        if not array_equal(other.Lm_table, self.Lm_table):
+        if not np.array_equal(other.Lm_table, self.Lm_table):
             return False
         if other.I1 != self.I1:
             return False
@@ -928,8 +926,8 @@ class EEC_SCIM(EEC):
         if (
             other._Rfe is not None
             and self._Rfe is not None
-            and isnan(other._Rfe)
-            and isnan(self._Rfe)
+            and np.isnan(other._Rfe)
+            and np.isnan(self._Rfe)
         ):
             pass
         elif other._Rfe != self._Rfe:
@@ -943,8 +941,8 @@ class EEC_SCIM(EEC):
         if (
             other._L1 is not None
             and self._L1 is not None
-            and isnan(other._L1)
-            and isnan(self._L1)
+            and np.isnan(other._L1)
+            and np.isnan(self._L1)
         ):
             pass
         elif other._L1 != self._L1:
@@ -956,8 +954,8 @@ class EEC_SCIM(EEC):
         if (
             other._R2 is not None
             and self._R2 is not None
-            and isnan(other._R2)
-            and isnan(self._R2)
+            and np.isnan(other._R2)
+            and np.isnan(self._R2)
         ):
             pass
         elif other._R2 != self._R2:
@@ -969,8 +967,8 @@ class EEC_SCIM(EEC):
         if (
             other._L2 is not None
             and self._L2 is not None
-            and isnan(other._L2)
-            and isnan(self._L2)
+            and np.isnan(other._L2)
+            and np.isnan(self._L2)
         ):
             pass
         elif other._L2 != self._L2:
@@ -982,8 +980,8 @@ class EEC_SCIM(EEC):
         if (
             other._K21Z is not None
             and self._K21Z is not None
-            and isnan(other._K21Z)
-            and isnan(self._K21Z)
+            and np.isnan(other._K21Z)
+            and np.isnan(self._K21Z)
         ):
             pass
         elif other._K21Z != self._K21Z:
@@ -997,8 +995,8 @@ class EEC_SCIM(EEC):
         if (
             other._K21I is not None
             and self._K21I is not None
-            and isnan(other._K21I)
-            and isnan(self._K21I)
+            and np.isnan(other._K21I)
+            and np.isnan(self._K21I)
         ):
             pass
         elif other._K21I != self._K21I:
@@ -1009,9 +1007,9 @@ class EEC_SCIM(EEC):
                 diff_list.append(name + ".K21I" + val_str)
             else:
                 diff_list.append(name + ".K21I")
-        if not array_equal(other.Im_table, self.Im_table):
+        if not np.array_equal(other.Im_table, self.Im_table):
             diff_list.append(name + ".Im_table")
-        if not array_equal(other.Lm_table, self.Lm_table):
+        if not np.array_equal(other.Lm_table, self.Lm_table):
             diff_list.append(name + ".Lm_table")
         if other._I1 != self._I1:
             if is_add_value:
@@ -1046,8 +1044,8 @@ class EEC_SCIM(EEC):
         if (
             other._Lm is not None
             and self._Lm is not None
-            and isnan(other._Lm)
-            and isnan(self._Lm)
+            and np.isnan(other._Lm)
+            and np.isnan(self._Lm)
         ):
             pass
         elif other._Lm != self._Lm:
@@ -1388,10 +1386,10 @@ class EEC_SCIM(EEC):
     def _set_Im_table(self, value):
         """setter of Im_table"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Im_table", value, "ndarray")
@@ -1413,10 +1411,10 @@ class EEC_SCIM(EEC):
     def _set_Lm_table(self, value):
         """setter of Lm_table"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Lm_table", value, "ndarray")

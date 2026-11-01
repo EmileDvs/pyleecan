@@ -21,7 +21,7 @@ from pyleecan.Methods.Elmer.Section import ElmerSectionError
 from pyleecan.Methods.Elmer.Section.write import END, INDENT, NEWLINE, _convert
 from io import StringIO
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

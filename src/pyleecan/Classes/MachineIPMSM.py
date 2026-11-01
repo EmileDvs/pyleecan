@@ -25,7 +25,7 @@ from pyleecan.Methods.Machine.MachineIPMSM.check import (
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

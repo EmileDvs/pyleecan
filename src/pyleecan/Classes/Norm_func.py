@@ -23,7 +23,7 @@ from os.path import isfile
 from pyleecan.Classes._check import CheckTypeError
 import numpy as np
 import random
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

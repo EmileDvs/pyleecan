@@ -17,14 +17,13 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import exp, pi, sqrt, sin, cos, arcsin
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB
 from pyleecan.Methods.Slot.SlotWLSRPM import SLSRPMOutterError
 from pyleecan.Methods.Slot.SlotWLSRPM.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -38,7 +37,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -65,7 +64,7 @@ class SlotWLSRPM(Slot):
 
         Rbo = self.get_Rbo()
 
-        hsp = pi / self.Zs  # Half slot pitch
+        hsp = np.pi / self.Zs  # Half slot pitch
 
         # ZXt => Complex coordinate in the tooth ref
         # ZX => Complex coordinate in the slot ref
@@ -76,13 +75,13 @@ class SlotWLSRPM(Slot):
         Zcl = Rbo
 
         # relation bewteen the axis tooth and the axis slot
-        Zcht = Zch * exp(1j * hsp)
-        xcht = Zch * cos(hsp)
-        ycht = Zch * sin(hsp)
+        Zcht = Zch * np.exp(1j * hsp)
+        xcht = Zch * np.cos(hsp)
+        ycht = Zch * np.sin(hsp)
 
-        Zclt = Zcl * exp(1j * hsp)
-        xclt = Zcl * cos(hsp)
-        yclt = Zcl * sin(hsp)
+        Zclt = Zcl * np.exp(1j * hsp)
+        xclt = Zcl * np.cos(hsp)
+        yclt = Zcl * np.sin(hsp)
 
         # Line Zch Zcl
         # y=-(xcht-xclt)/(ycht-yclt)*x+ycht+xcht*(xcht-xclt)/(ycht-yclt)
@@ -99,29 +98,29 @@ class SlotWLSRPM(Slot):
             + xcht * (xcht - xclt) / (ycht - yclt)
         )
         Z4t = x4t + 1j * y4t
-        Z4 = Z4t * exp(-1j * hsp)
+        Z4 = Z4t * np.exp(-1j * hsp)
         # Z3
         x3t = x4t
         y3t = y4t - self.W1 + self.R1
         Z3t = x3t + 1j * y3t
-        Z3 = Z3t * exp(-1j * hsp)
+        Z3 = Z3t * np.exp(-1j * hsp)
         # Z2
         x2t = x3t - self.R1
         y2t = self.W3 / 2
         Z2t = x2t + 1j * y2t
-        Z2 = Z2t * exp(-1j * hsp)
+        Z2 = Z2t * np.exp(-1j * hsp)
         # Z1
         y1t = self.W3 / 2
-        x1t = sqrt((Rbo) ** 2 - (y1t) ** 2)
+        x1t = np.sqrt((Rbo) ** 2 - (y1t) ** 2)
         Z1t = x1t + 1j * y1t
-        Z1 = Z1t * exp(-1j * hsp)
+        Z1 = Z1t * np.exp(-1j * hsp)
 
         # Z9 damper winding point
 
         x9t = x1t + self.H3
         y9t = self.W3 / 2
         Z9t = x9t + 1j * y9t
-        Z9 = Z9t * exp(-1j * hsp)
+        Z9 = Z9t * np.exp(-1j * hsp)
 
         point_dict = dict()
         # symetry
@@ -392,7 +391,7 @@ class SlotWLSRPM(Slot):
 
         """
         Rbo = self.get_Rbo()
-        return 2 * (pi / self.Zs - arcsin(self.W3 / 2 / Rbo))
+        return 2 * (np.pi / self.Zs - np.arcsin(self.W3 / 2 / Rbo))
 
     # cf Methods.Slot.SlotWLSRPM.comp_height
     def comp_height(self):
@@ -585,14 +584,14 @@ class SlotWLSRPM(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
                 sign = 1
             else:
                 sign = -1
-            sp = 2 * pi / self.Zs  # Slot pitch
+            sp = 2 * np.pi / self.Zs  # Slot pitch
             # Adding point label
             if is_add_point_label:
                 for name, Z in point_dict.items():
@@ -624,7 +623,8 @@ class SlotWLSRPM(Slot):
                 # W3
                 line = Segment(
                     point_dict["Z2"],
-                    point_dict["Z2"] + self.W3 * exp(1j * -(pi / 2 + 15 / 180 * pi)),
+                    point_dict["Z2"]
+                    + self.W3 * np.exp(1j * -(np.pi / 2 + 15 / 180 * np.pi)),
                 )
                 line.plot(
                     fig=fig,
@@ -711,7 +711,7 @@ class SlotWLSRPM(Slot):
                 )
 
             # Zooming and cleaning
-            W = (point_dict["Zch"] * exp(1j * sp)).imag
+            W = (point_dict["Zch"] * np.exp(1j * sp)).imag
             Rint = min(point_dict["Z2"].real, point_dict["Z1"].real)
             Rext = max(point_dict["Z2"].real, point_dict["Z1"].real)
 
@@ -847,8 +847,8 @@ class SlotWLSRPM(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -860,8 +860,8 @@ class SlotWLSRPM(Slot):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:
@@ -873,8 +873,8 @@ class SlotWLSRPM(Slot):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -886,8 +886,8 @@ class SlotWLSRPM(Slot):
         if (
             other._R1 is not None
             and self._R1 is not None
-            and isnan(other._R1)
-            and isnan(self._R1)
+            and np.isnan(other._R1)
+            and np.isnan(self._R1)
         ):
             pass
         elif other._R1 != self._R1:
@@ -899,8 +899,8 @@ class SlotWLSRPM(Slot):
         if (
             other._H3 is not None
             and self._H3 is not None
-            and isnan(other._H3)
-            and isnan(self._H3)
+            and np.isnan(other._H3)
+            and np.isnan(self._H3)
         ):
             pass
         elif other._H3 != self._H3:

@@ -23,7 +23,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.SurfLine import SurfLine
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

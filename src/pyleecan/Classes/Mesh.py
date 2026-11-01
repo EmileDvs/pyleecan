@@ -19,9 +19,8 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 from typing import Optional
 import numpy as np
-from numpy.typing import ArrayLike
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -31,7 +30,9 @@ class Mesh(FrozenClass):
     VERSION = 1
 
     # cf Methods.Mesh.Mesh.get_node_coordinate
-    def get_node_coordinate(self, indices: Optional[ArrayLike] = None) -> np.ndarray:
+    def get_node_coordinate(
+        self, indices: Optional[np.typing.ArrayLike] = None
+    ) -> np.ndarray:
         """Return the coordinates of the node with provided indices.
         If indices is not specified, returns every node coordinates
 

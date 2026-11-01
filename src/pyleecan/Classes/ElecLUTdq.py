@@ -17,14 +17,13 @@ from pyleecan.Classes.Electrical import Electrical
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import meshgrid, linspace, zeros, array
-from pyleecan.Classes.LUTdq import LUTdq
 import numpy as np
+from pyleecan.Classes.LUTdq import LUTdq
 from pyleecan.Classes.EEC_PMSM import EEC_PMSM
 from pyleecan.Classes.OutLoss import OutLoss
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -57,22 +56,22 @@ class ElecLUTdq(Electrical):
 
         if self.is_grid_dq:
             N_OP = self.n_Id * self.n_Iq
-            Id, Iq = meshgrid(
-                linspace(self.Id_min, self.Id_max, self.n_Id),
-                linspace(self.Iq_min, self.Iq_max, self.n_Iq),
+            Id, Iq = np.meshgrid(
+                np.linspace(self.Id_min, self.Id_max, self.n_Id),
+                np.linspace(self.Iq_min, self.Iq_max, self.n_Iq),
             )
         else:
-            Id0 = linspace(self.Id_min, self.Id_max, self.n_Id)
-            Iq0 = linspace(self.Iq_min, self.Iq_max, self.n_Iq)
+            Id0 = np.linspace(self.Id_min, self.Id_max, self.n_Id)
+            Iq0 = np.linspace(self.Iq_min, self.Iq_max, self.n_Iq)
             if 0 in Id0 and 0 in Iq0:
-                Iq0 = array([val for val in Iq0 if val != 0])
+                Iq0 = np.array([val for val in Iq0 if val != 0])
             N_OP = self.n_Id + Iq0.size
-            Id = zeros(N_OP)
-            Iq = zeros(N_OP)
+            Id = np.zeros(N_OP)
+            Iq = np.zeros(N_OP)
             Id[: self.n_Id] = Id0
             Iq[self.n_Id :] = Iq0
 
-        OP_matrix = zeros((N_OP, 3))
+        OP_matrix = np.zeros((N_OP, 3))
         OP_matrix[:, 0] = N0
         OP_matrix[:, 1] = Id.ravel()
         OP_matrix[:, 2] = Iq.ravel()
@@ -949,8 +948,8 @@ class ElecLUTdq(Electrical):
         if (
             other._Id_min is not None
             and self._Id_min is not None
-            and isnan(other._Id_min)
-            and isnan(self._Id_min)
+            and np.isnan(other._Id_min)
+            and np.isnan(self._Id_min)
         ):
             pass
         elif other._Id_min != self._Id_min:
@@ -968,8 +967,8 @@ class ElecLUTdq(Electrical):
         if (
             other._Id_max is not None
             and self._Id_max is not None
-            and isnan(other._Id_max)
-            and isnan(self._Id_max)
+            and np.isnan(other._Id_max)
+            and np.isnan(self._Id_max)
         ):
             pass
         elif other._Id_max != self._Id_max:
@@ -987,8 +986,8 @@ class ElecLUTdq(Electrical):
         if (
             other._Iq_min is not None
             and self._Iq_min is not None
-            and isnan(other._Iq_min)
-            and isnan(self._Iq_min)
+            and np.isnan(other._Iq_min)
+            and np.isnan(self._Iq_min)
         ):
             pass
         elif other._Iq_min != self._Iq_min:
@@ -1006,8 +1005,8 @@ class ElecLUTdq(Electrical):
         if (
             other._Iq_max is not None
             and self._Iq_max is not None
-            and isnan(other._Iq_max)
-            and isnan(self._Iq_max)
+            and np.isnan(other._Iq_max)
+            and np.isnan(self._Iq_max)
         ):
             pass
         elif other._Iq_max != self._Iq_max:
@@ -1066,8 +1065,8 @@ class ElecLUTdq(Electrical):
         if (
             other._Urms_max is not None
             and self._Urms_max is not None
-            and isnan(other._Urms_max)
-            and isnan(self._Urms_max)
+            and np.isnan(other._Urms_max)
+            and np.isnan(self._Urms_max)
         ):
             pass
         elif other._Urms_max != self._Urms_max:
@@ -1085,8 +1084,8 @@ class ElecLUTdq(Electrical):
         if (
             other._Jrms_max is not None
             and self._Jrms_max is not None
-            and isnan(other._Jrms_max)
-            and isnan(self._Jrms_max)
+            and np.isnan(other._Jrms_max)
+            and np.isnan(self._Jrms_max)
         ):
             pass
         elif other._Jrms_max != self._Jrms_max:
@@ -1104,8 +1103,8 @@ class ElecLUTdq(Electrical):
         if (
             other._Irms_max is not None
             and self._Irms_max is not None
-            and isnan(other._Irms_max)
-            and isnan(self._Irms_max)
+            and np.isnan(other._Irms_max)
+            and np.isnan(self._Irms_max)
         ):
             pass
         elif other._Irms_max != self._Irms_max:
@@ -1123,8 +1122,8 @@ class ElecLUTdq(Electrical):
         if (
             other._load_rate is not None
             and self._load_rate is not None
-            and isnan(other._load_rate)
-            and isnan(self._load_rate)
+            and np.isnan(other._load_rate)
+            and np.isnan(self._load_rate)
         ):
             pass
         elif other._load_rate != self._load_rate:

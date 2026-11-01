@@ -17,7 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import abs as np_abs, argmin, array, zeros, sqrt, ones
+import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
@@ -29,9 +29,8 @@ from pyleecan.Functions.Electrical.dqh_transformation_freq import (
     dqh2n_DataFreq,
     n2dqh_DataFreq,
 )
-import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -103,7 +102,7 @@ class OutElec(FrozenClass):
                     unit="Hz",
                     normalizations=Time.normalizations.copy(),
                     is_components=Time.is_components,
-                    values=array([0]),
+                    values=np.array([0]),
                 )
                 axes_list = [Freqs, Phase]
                 DataClass = DataFreq
@@ -126,12 +125,12 @@ class OutElec(FrozenClass):
                 and (data_dict["Ad"] != 0 or data_dict["Aq"] != 0)
             ):
                 # Generate constant dqh values along time
-                A_val = zeros((N, 3))
+                A_val = np.zeros((N, 3))
                 A_val[:, 0] = data_dict["Ad"]
                 A_val[:, 1] = data_dict["Aq"]
             else:
                 # Enforce zero values in quantity
-                A_val = zeros((N, qs))
+                A_val = np.zeros((N, qs))
 
             A_dqh = DataClass(
                 name=data_dict["name"],
@@ -194,7 +193,7 @@ class OutElec(FrozenClass):
             # Get index of fundamental frequency
             Freqs = obj.axes[0]
             freqs = Freqs.get_values()
-            ifund = argmin(np_abs(freqs - felec))
+            ifund = np.argmin(np.abs(freqs - felec))
 
             if is_fund_only:
                 # Keep only fundamental frequency
@@ -204,7 +203,7 @@ class OutElec(FrozenClass):
                     unit=Freqs.unit,
                     normalizations=Freqs.normalizations,
                     is_components=Freqs.is_components,
-                    values=array([freqs[ifund]]),
+                    values=np.array([freqs[ifund]]),
                 )
                 obj.axes[0] = Freqs_fund
                 obj.values = obj.values[ifund, ...]
@@ -305,7 +304,9 @@ class OutElec(FrozenClass):
 
             Idq_dict = self.OP.get_Id_Iq()
 
-            self.Jrms = sqrt(Idq_dict["Id"] ** 2 + Idq_dict["Iq"] ** 2) / (Swire * Npcp)
+            self.Jrms = np.sqrt(Idq_dict["Id"] ** 2 + Idq_dict["Iq"] ** 2) / (
+                Swire * Npcp
+            )
 
         return self.Jrms
 
@@ -336,7 +337,7 @@ class OutElec(FrozenClass):
             raise Exception('You must define "N0" before calling get_Nr')
 
         # Same speed for every timestep
-        Nr = self.OP.get_N0() * ones(Time.get_length(is_smallestperiod=True))
+        Nr = self.OP.get_N0() * np.ones(Time.get_length(is_smallestperiod=True))
 
         return Nr
 
@@ -792,8 +793,8 @@ class OutElec(FrozenClass):
         if (
             other._Pj_losses is not None
             and self._Pj_losses is not None
-            and isnan(other._Pj_losses)
-            and isnan(self._Pj_losses)
+            and np.isnan(other._Pj_losses)
+            and np.isnan(self._Pj_losses)
         ):
             pass
         elif other._Pj_losses != self._Pj_losses:
@@ -850,8 +851,8 @@ class OutElec(FrozenClass):
         if (
             other._Pem_av is not None
             and self._Pem_av is not None
-            and isnan(other._Pem_av)
-            and isnan(self._Pem_av)
+            and np.isnan(other._Pem_av)
+            and np.isnan(self._Pem_av)
         ):
             pass
         elif other._Pem_av != self._Pem_av:
@@ -869,8 +870,8 @@ class OutElec(FrozenClass):
         if (
             other._Tem_av is not None
             and self._Tem_av is not None
-            and isnan(other._Tem_av)
-            and isnan(self._Tem_av)
+            and np.isnan(other._Tem_av)
+            and np.isnan(self._Tem_av)
         ):
             pass
         elif other._Tem_av != self._Tem_av:
@@ -938,8 +939,8 @@ class OutElec(FrozenClass):
         if (
             other._P_out is not None
             and self._P_out is not None
-            and isnan(other._P_out)
-            and isnan(self._P_out)
+            and np.isnan(other._P_out)
+            and np.isnan(self._P_out)
         ):
             pass
         elif other._P_out != self._P_out:
@@ -953,8 +954,8 @@ class OutElec(FrozenClass):
         if (
             other._Jrms is not None
             and self._Jrms is not None
-            and isnan(other._Jrms)
-            and isnan(self._Jrms)
+            and np.isnan(other._Jrms)
+            and np.isnan(self._Jrms)
         ):
             pass
         elif other._Jrms != self._Jrms:
@@ -968,8 +969,8 @@ class OutElec(FrozenClass):
         if (
             other._P_in is not None
             and self._P_in is not None
-            and isnan(other._P_in)
-            and isnan(self._P_in)
+            and np.isnan(other._P_in)
+            and np.isnan(self._P_in)
         ):
             pass
         elif other._P_in != self._P_in:
@@ -983,8 +984,8 @@ class OutElec(FrozenClass):
         if (
             other._Arms is not None
             and self._Arms is not None
-            and isnan(other._Arms)
-            and isnan(self._Arms)
+            and np.isnan(other._Arms)
+            and np.isnan(self._Arms)
         ):
             pass
         elif other._Arms != self._Arms:
@@ -998,8 +999,8 @@ class OutElec(FrozenClass):
         if (
             other._Erms is not None
             and self._Erms is not None
-            and isnan(other._Erms)
-            and isnan(self._Erms)
+            and np.isnan(other._Erms)
+            and np.isnan(self._Erms)
         ):
             pass
         elif other._Erms != self._Erms:

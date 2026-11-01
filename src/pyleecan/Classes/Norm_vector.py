@@ -19,8 +19,8 @@ from pyleecan.Classes.Normalization import Normalization
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Functions.SciDataTool import NormError
 
-from numpy import array, array_equal
-from numpy import isnan
+import numpy as np
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -108,7 +108,7 @@ class Norm_vector(Normalization):
         # Check the properties inherited from Normalization
         if not super(Norm_vector, self).__eq__(other):
             return False
-        if not array_equal(other.vector, self.vector):
+        if not np.array_equal(other.vector, self.vector):
             return False
         return True
 
@@ -127,7 +127,7 @@ class Norm_vector(Normalization):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not array_equal(other.vector, self.vector):
+        if not np.array_equal(other.vector, self.vector):
             diff_list.append(name + ".vector")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -205,10 +205,10 @@ class Norm_vector(Normalization):
     def _set_vector(self, value):
         """setter of vector"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("vector", value, "ndarray")

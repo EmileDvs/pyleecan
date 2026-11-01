@@ -22,11 +22,11 @@ from pyleecan.Classes.Slot import Slot
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.Slot19.check import check
-from numpy import exp, arcsin, sin
+import numpy as np
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -58,13 +58,13 @@ class Slot19(Slot):
         alpha1 = self.comp_angle_bottom() / 2
 
         # comp point coordinate (in complex)
-        Z_ = Rbo * exp(1j * 0)
-        Z0 = Z_ * exp(1j * alpha0)
+        Z_ = Rbo * np.exp(1j * 0)
+        Z0 = Z_ * np.exp(1j * alpha0)
 
         if self.is_outwards():
-            Z1 = (Rbo + self.H0) * exp(1j * alpha1)
+            Z1 = (Rbo + self.H0) * np.exp(1j * alpha1)
         else:  # inward slot
-            Z1 = (Rbo - self.H0) * exp(1j * alpha1)
+            Z1 = (Rbo - self.H0) * np.exp(1j * alpha1)
 
         # symetry
         Z2 = Z1.conjugate()
@@ -126,9 +126,9 @@ class Slot19(Slot):
             return self.W1
         else:
             if self.is_outwards():
-                alpha = 2 * float(arcsin(self.W1 / (2 * Rbo + 2 * self.H0)))
+                alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo + 2 * self.H0)))
             else:  # inward slot
-                alpha = 2 * float(arcsin(self.W1 / (2 * Rbo - 2 * self.H0)))
+                alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo - 2 * self.H0)))
 
         return alpha
 
@@ -153,7 +153,7 @@ class Slot19(Slot):
         if self.Wx_is_rad:
             return self.W0
         else:
-            return float(2 * arcsin(self.W0 / (2 * Rbo)))
+            return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # cf Methods.Slot.Slot19.comp_height
     def comp_height(self):
@@ -202,12 +202,12 @@ class Slot19(Slot):
         else:
             R1 = Rbo - self.H0
 
-        W0 = 2 * Rbo * sin(alpha0 / 2)
-        W1 = 2 * R1 * sin(alpha1 / 2)
+        W0 = 2 * Rbo * np.sin(alpha0 / 2)
+        W1 = 2 * R1 * np.sin(alpha1 / 2)
 
         Str = 1 / 2 * (W0 + W1) * self.H0
-        S0 = Rbo**2 / 2 * (alpha0 - sin(alpha0))
-        S1 = R1**2 / 2 * (alpha1 - sin(alpha1))
+        S0 = Rbo**2 / 2 * (alpha0 - np.sin(alpha0))
+        S1 = R1**2 / 2 * (alpha1 - np.sin(alpha1))
 
         return Str + S1 - S0
 
@@ -316,8 +316,8 @@ class Slot19(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -329,8 +329,8 @@ class Slot19(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -342,8 +342,8 @@ class Slot19(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:

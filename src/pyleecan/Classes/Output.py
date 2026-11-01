@@ -17,18 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import (
-    array,
-    cumsum,
-    pi,
-    roll,
-    unique,
-    exp,
-    linspace,
-    max as np_max,
-    min as np_min,
-    real,
-)
+import numpy as np
 from pyleecan.Classes.Norm_affine import Norm_affine
 from pyleecan.Classes.Norm_vector import Norm_vector
 from scipy.io import savemat
@@ -45,7 +34,7 @@ from pyleecan.Methods.Output.Output.print_memory import detail_prop
 from sys import getsizeof
 from pyleecan.Functions.Load.import_class import import_class
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -85,26 +74,26 @@ class Output(FrozenClass):
         A0 = self.get_angle_rotor_initial()
 
         # Case where normalization is a constant
-        if unique(Nr).size == 1:
+        if np.unique(Nr).size == 1:
             # Define affine normalization between time and rotor angle
             Time.normalizations["angle_rotor"] = Norm_affine(
-                slope=rot_dir * Nr[0] * 360 / 60, offset=A0 * 180 / pi
+                slope=rot_dir * Nr[0] * 360 / 60, offset=A0 * 180 / np.pi
             )
             # Compute rotor angle array from normalization
-            angle_rotor = Time.get_values(normalization="angle_rotor") * pi / 180
+            angle_rotor = Time.get_values(normalization="angle_rotor") * np.pi / 180
 
         else:
             # Calculate rotor angle from spee
             time = Time.get_values(is_smallestperiod=True)
             if time.size == 1:
                 # Only one time step, no need to compute the position
-                angle_rotor = array([A0])
+                angle_rotor = np.array([A0])
             else:
                 deltaT = time[1] - time[0]
                 # Convert Nr from [rpm] to [rad/s] (time in [s] and angle_rotor in [rad])
-                Ar = cumsum(rot_dir * deltaT * Nr * 2 * pi / 60)
+                Ar = np.cumsum(rot_dir * deltaT * Nr * 2 * np.pi / 60)
                 # Enforce first position to 0
-                Ar = roll(Ar, 1)
+                Ar = np.roll(Ar, 1)
                 Ar[0] = 0
                 angle_rotor = Ar + A0
             # Define vector normalization between time and rotor angle
@@ -202,7 +191,7 @@ class Output(FrozenClass):
 
         if "angle_rotor" in Time.normalizations:
             # angle rotor is stored in degrees as normalization of Time axis
-            angle_rotor = Time.get_values(normalization="angle_rotor") * pi / 180
+            angle_rotor = Time.get_values(normalization="angle_rotor") * np.pi / 180
         else:
             # Recalculate rotor angular position over time (should not happen)
             self.get_logger().warning(
@@ -631,7 +620,7 @@ class Output(FrozenClass):
         #     mesh_pv[field_name] = real(field)
         #     mesh_field = mesh_pv
         if clim is None:
-            clim = [np_min(real(field)), np_max(real(field))]
+            clim = [np.min(np.real(field)), np.max(np.real(field))]
             if (clim[1] - clim[0]) / clim[1] < 0.01:
                 clim[0] = -abs(clim[1])
                 clim[1] = abs(clim[1])
@@ -701,7 +690,7 @@ class Output(FrozenClass):
                 nframe = 25
                 mesh_pv_B, field_B, field_name_B = MS_B_plot.get_mesh_field_pv(args)
                 is_time = False
-                t = linspace(0.0, 1.0, nframe + 1)[:nframe]
+                t = np.linspace(0.0, 1.0, nframe + 1)[:nframe]
 
             for i in range(nframe):
                 # Compute colorbar boundaries
@@ -713,7 +702,7 @@ class Output(FrozenClass):
                         field_At = field_A[i, :]
                 else:
                     field = field_B
-                    phase = exp(1j * 2 * pi * t[i])
+                    phase = np.exp(1j * 2 * np.pi * t[i])
 
                     if is_contour:
                         field_At = field_A
@@ -729,7 +718,7 @@ class Output(FrozenClass):
                 )
 
                 if is_contour:
-                    mesh_pv_Az[field_name_A] = real(field_At * phase)
+                    mesh_pv_Az[field_name_A] = np.real(field_At * phase)
                     contours = mesh_pv_Az.contour()
                     pv_plotter.add_mesh(contours, color="black", line_width=5)
 

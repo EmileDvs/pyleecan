@@ -20,9 +20,8 @@ from pyleecan.Classes.LossModel import LossModel
 import matplotlib.pyplot as plt, numpy as np
 from scipy.optimize import curve_fit
 from itertools import groupby
-from numpy import abs as np_abs, matmul, sqrt as np_sqrt, sum as np_sum
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -342,8 +341,8 @@ class LossModelBertotti(LossModel):
         # Compute magnetic flux density FFT
         Bfft = Bvect.get_xyz_along("freqs", "indice=" + str(Igrp), "z=mean")
         freqs = Bfft["freqs"]
-        Bfft_magnitude = np_sqrt(
-            np_abs(Bfft["comp_x"]) ** 2 + np_abs(Bfft["comp_y"]) ** 2
+        Bfft_magnitude = np.sqrt(
+            np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2
         )
 
         # Compute the loss density for each element and each frequency
@@ -360,17 +359,17 @@ class LossModelBertotti(LossModel):
         n = freqs / felec
 
         # Integrate loss density over group volume to get polynomial coefficients
-        coeff = Lst * per_a * matmul(Bfft_magnitude**2, Se)
+        coeff = Lst * per_a * np.matmul(Bfft_magnitude**2, Se)
         # Get polynomial coefficient
-        B = np_sum(k_ed * coeff * n**2)
+        B = np.sum(k_ed * coeff * n**2)
 
-        coeff = Lst * per_a * matmul(Bfft_magnitude**1.5, Se)
+        coeff = Lst * per_a * np.matmul(Bfft_magnitude**1.5, Se)
         # Get polynomial coefficient
-        C = np_sum(k_ex * coeff * n**1.5)
+        C = np.sum(k_ex * coeff * n**1.5)
 
-        coeff = Lst * per_a * matmul(Bfft_magnitude**2, Se)
+        coeff = Lst * per_a * np.matmul(Bfft_magnitude**2, Se)
         # Get polynomial coefficient
-        A = np_sum(k_hy * coeff * n)
+        A = np.sum(k_hy * coeff * n)
 
         self.coeff_dict = {"1": A, "2": B, "1.5": C}
 
@@ -479,8 +478,8 @@ class LossModelBertotti(LossModel):
         if (
             other._k_hy is not None
             and self._k_hy is not None
-            and isnan(other._k_hy)
-            and isnan(self._k_hy)
+            and np.isnan(other._k_hy)
+            and np.isnan(self._k_hy)
         ):
             pass
         elif other._k_hy != self._k_hy:
@@ -494,8 +493,8 @@ class LossModelBertotti(LossModel):
         if (
             other._k_ed is not None
             and self._k_ed is not None
-            and isnan(other._k_ed)
-            and isnan(self._k_ed)
+            and np.isnan(other._k_ed)
+            and np.isnan(self._k_ed)
         ):
             pass
         elif other._k_ed != self._k_ed:
@@ -509,8 +508,8 @@ class LossModelBertotti(LossModel):
         if (
             other._k_ex is not None
             and self._k_ex is not None
-            and isnan(other._k_ex)
-            and isnan(self._k_ex)
+            and np.isnan(other._k_ex)
+            and np.isnan(self._k_ex)
         ):
             pass
         elif other._k_ex != self._k_ex:

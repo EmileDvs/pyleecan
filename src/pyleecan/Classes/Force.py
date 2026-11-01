@@ -17,13 +17,13 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import multiply, newaxis, power, repeat, where
+import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.VectorField import VectorField
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -73,21 +73,29 @@ class Force(FrozenClass):
         Ratio = Rag / Rsbo
 
         # Transfer coefficients Eq. (46)
-        Sn = (Ratio**2) * (power(Ratio, wavenumber) + power(Ratio, -wavenumber)) / 2
-        Cn = (Ratio**2) * (power(Ratio, wavenumber) - power(Ratio, -wavenumber)) / 2
+        Sn = (
+            (Ratio**2)
+            * (np.power(Ratio, wavenumber) + np.power(Ratio, -wavenumber))
+            / 2
+        )
+        Cn = (
+            (Ratio**2)
+            * (np.power(Ratio, wavenumber) - np.power(Ratio, -wavenumber))
+            / 2
+        )
 
         # Noise filtering (useful with magnetic FEA)
         if rnoise is not None:
-            Inoise = where(abs(wavenumber) > rnoise)[0]
+            Inoise = np.where(abs(wavenumber) > rnoise)[0]
             Sn[Inoise] = 1
             Cn[Inoise] = 0
 
-        XSn = repeat(Sn[..., newaxis], Nf, axis=1).transpose()
-        XCn = repeat(Cn[..., newaxis], Nf, axis=1).transpose()
+        XSn = np.repeat(Sn[..., np.newaxis], Nf, axis=1).transpose()
+        XCn = np.repeat(Cn[..., np.newaxis], Nf, axis=1).transpose()
 
         # Transfer law Eq. (45)
-        Prad_wr_TR = multiply(XSn, Prad_wr) + 1j * multiply(XCn, Ptan_wr)
-        Ptan_wr_TR = multiply(XSn, Ptan_wr) - 1j * multiply(XCn, Prad_wr)
+        Prad_wr_TR = np.multiply(XSn, Prad_wr) + 1j * np.multiply(XCn, Ptan_wr)
+        Ptan_wr_TR = np.multiply(XSn, Ptan_wr) - 1j * np.multiply(XCn, Prad_wr)
 
         # Save results as Data objects
         Datafreqs = Data1D(name="freqs", values=freqs)
@@ -382,8 +390,8 @@ class Force(FrozenClass):
         if (
             other._Rsbo_enforced_transfer is not None
             and self._Rsbo_enforced_transfer is not None
-            and isnan(other._Rsbo_enforced_transfer)
-            and isnan(self._Rsbo_enforced_transfer)
+            and np.isnan(other._Rsbo_enforced_transfer)
+            and np.isnan(self._Rsbo_enforced_transfer)
         ):
             pass
         elif other._Rsbo_enforced_transfer != self._Rsbo_enforced_transfer:

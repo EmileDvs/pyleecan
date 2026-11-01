@@ -17,10 +17,10 @@ from pyleecan.Classes.EndWinding import EndWinding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import log, pi, sqrt
+import numpy as np
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -77,16 +77,16 @@ class EndWindingCirc(EndWinding):
                 )
 
         # End winding is a circle whose radius is half the coil pitch distance
-        Re = pi / Zs * Rmid * coil_pitch
+        Re = np.pi / Zs * Rmid * coil_pitch
 
         # Eq(5.49) p.234
         Scond = self.parent.conductor.comp_surface()
-        R = 0.4394 * sqrt(Scond)
+        R = 0.4394 * np.sqrt(Scond)
 
         # Eq (5.48) p 233
         Ntcoil = self.parent.Ntcoil
-        mu0 = 4 * pi * 1e-7
-        Lw = mu0 * Re * Ntcoil**2 * (log(8 * Re / R) - 2)
+        mu0 = 4 * np.pi * 1e-7
+        Lw = mu0 * Re * Ntcoil**2 * (np.log(8 * Re / R) - 2)
 
         return Lw
 
@@ -138,8 +138,8 @@ class EndWindingCirc(EndWinding):
 
         # calculate the EW length as a quarter circle base on the circumferential length
         # TODO do better aprox. based on tooth width / slot width for tooth coil winding
-        circ_length = 2 * pi * Rmid * coil_pitch / Zs
-        end_wind_length = pi * circ_length / 4
+        circ_length = 2 * np.pi * Rmid * coil_pitch / Zs
+        end_wind_length = np.pi * circ_length / 4
 
         return end_wind_length
 
@@ -215,8 +215,8 @@ class EndWindingCirc(EndWinding):
         if (
             other._coil_pitch is not None
             and self._coil_pitch is not None
-            and isnan(other._coil_pitch)
-            and isnan(self._coil_pitch)
+            and np.isnan(other._coil_pitch)
+            and np.isnan(self._coil_pitch)
         ):
             pass
         elif other._coil_pitch != self._coil_pitch:

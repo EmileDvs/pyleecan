@@ -30,7 +30,7 @@ from pyleecan.Classes.Output import Output
 from pyleecan.Classes.XOutput import XOutput
 from pyleecan.Classes.DataKeeper import DataKeeper
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

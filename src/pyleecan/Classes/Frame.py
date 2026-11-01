@@ -22,12 +22,12 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.SurfRing import SurfRing
-from numpy import exp, pi
+import numpy as np
 from pyleecan.Methods.Machine.Frame.plot import FRAME_COLOR
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -80,9 +80,9 @@ class Frame(FrozenClass):
                 ]
             else:  # Part of the frame
                 Z0 = self.Rint
-                Z3 = Z0 * exp(1j * 2 * pi / sym)
+                Z3 = Z0 * np.exp(1j * 2 * np.pi / sym)
                 Z1 = self.Rext
-                Z2 = Z1 * exp(1j * 2 * pi / sym)
+                Z2 = Z1 * np.exp(1j * 2 * np.pi / sym)
                 curve_list = list()
                 curve_list.append(Segment(Z0, Z1))
                 curve_list.append(Arc1(Z1, Z2, self.Rext))
@@ -161,9 +161,9 @@ class Frame(FrozenClass):
         """
 
         # Surface of the external disk
-        S_ext = (self.Rext**2) * pi
+        S_ext = (self.Rext**2) * np.pi
         # Surface of the internal disk
-        S_int = (self.Rint**2) * pi
+        S_int = (self.Rint**2) * np.pi
 
         return S_ext - S_int
 
@@ -374,8 +374,8 @@ class Frame(FrozenClass):
         if (
             other._Lfra is not None
             and self._Lfra is not None
-            and isnan(other._Lfra)
-            and isnan(self._Lfra)
+            and np.isnan(other._Lfra)
+            and np.isnan(self._Lfra)
         ):
             pass
         elif other._Lfra != self._Lfra:
@@ -389,8 +389,8 @@ class Frame(FrozenClass):
         if (
             other._Rint is not None
             and self._Rint is not None
-            and isnan(other._Rint)
-            and isnan(self._Rint)
+            and np.isnan(other._Rint)
+            and np.isnan(self._Rint)
         ):
             pass
         elif other._Rint != self._Rint:
@@ -404,8 +404,8 @@ class Frame(FrozenClass):
         if (
             other._Rext is not None
             and self._Rext is not None
-            and isnan(other._Rext)
-            and isnan(self._Rext)
+            and np.isnan(other._Rext)
+            and np.isnan(self._Rext)
         ):
             pass
         elif other._Rext != self._Rext:

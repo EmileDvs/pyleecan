@@ -17,11 +17,10 @@ from pyleecan.Classes.ModelBH import ModelBH
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import cosh, sinh, ndarray, argwhere, isnan as np_isnan
-from math import isnan
 import numpy as np
+from math import isnan
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -46,12 +45,12 @@ class ModelBH_Langevin(ModelBH):
             B(H) values
 
         """
-        B = Bs * (cosh(H / a) / sinh(H / a) - a / H)
+        B = Bs * (np.cosh(H / a) / np.sinh(H / a) - a / H)
 
-        if isinstance(B, ndarray):
-            B[argwhere(np_isnan(B))] = Bs
-            B[argwhere(H == 0)] = 0
-        elif isnan(B):
+        if isinstance(B, np.ndarray):
+            B[np.argwhere(np.isnan(B))] = Bs
+            B[np.argwhere(H == 0)] = 0
+        elif np.isnan(B):
             if H == 0:
                 B = 0
             else:
@@ -206,8 +205,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._Bs is not None
             and self._Bs is not None
-            and isnan(other._Bs)
-            and isnan(self._Bs)
+            and np.isnan(other._Bs)
+            and np.isnan(self._Bs)
         ):
             pass
         elif other._Bs != self._Bs:
@@ -219,8 +218,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._a is not None
             and self._a is not None
-            and isnan(other._a)
-            and isnan(self._a)
+            and np.isnan(other._a)
+            and np.isnan(self._a)
         ):
             pass
         elif other._a != self._a:
@@ -232,8 +231,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._param1 is not None
             and self._param1 is not None
-            and isnan(other._param1)
-            and isnan(self._param1)
+            and np.isnan(other._param1)
+            and np.isnan(self._param1)
         ):
             pass
         elif other._param1 != self._param1:
@@ -251,8 +250,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._param2 is not None
             and self._param2 is not None
-            and isnan(other._param2)
-            and isnan(self._param2)
+            and np.isnan(other._param2)
+            and np.isnan(self._param2)
         ):
             pass
         elif other._param2 != self._param2:

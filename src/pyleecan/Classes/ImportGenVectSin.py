@@ -17,9 +17,9 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import linspace, sin, pi
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -44,9 +44,9 @@ class ImportGenVectSin(ImportMatrix):
 
         """
 
-        time = linspace(start=0, stop=self.Tf, num=self.N, endpoint=False)
+        time = np.linspace(start=0, stop=self.Tf, num=self.N, endpoint=False)
 
-        vect = self.A * sin(2 * pi * self.f * time + self.Phi)
+        vect = self.A * np.sin(2 * np.pi * self.f * time + self.Phi)
         return self.edit_matrix(vect)
 
     # generic save method is available in all object
@@ -155,8 +155,8 @@ class ImportGenVectSin(ImportMatrix):
         if (
             other._f is not None
             and self._f is not None
-            and isnan(other._f)
-            and isnan(self._f)
+            and np.isnan(other._f)
+            and np.isnan(self._f)
         ):
             pass
         elif other._f != self._f:
@@ -168,8 +168,8 @@ class ImportGenVectSin(ImportMatrix):
         if (
             other._A is not None
             and self._A is not None
-            and isnan(other._A)
-            and isnan(self._A)
+            and np.isnan(other._A)
+            and np.isnan(self._A)
         ):
             pass
         elif other._A != self._A:
@@ -181,8 +181,8 @@ class ImportGenVectSin(ImportMatrix):
         if (
             other._Phi is not None
             and self._Phi is not None
-            and isnan(other._Phi)
-            and isnan(self._Phi)
+            and np.isnan(other._Phi)
+            and np.isnan(self._Phi)
         ):
             pass
         elif other._Phi != self._Phi:
@@ -202,8 +202,8 @@ class ImportGenVectSin(ImportMatrix):
         if (
             other._Tf is not None
             and self._Tf is not None
-            and isnan(other._Tf)
-            and isnan(self._Tf)
+            and np.isnan(other._Tf)
+            and np.isnan(self._Tf)
         ):
             pass
         elif other._Tf != self._Tf:

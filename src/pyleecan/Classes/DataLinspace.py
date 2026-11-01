@@ -20,11 +20,11 @@ from pyleecan.Classes.Data import Data
 from pyleecan.Classes.Norm_vector import Norm_vector
 from pyleecan.Functions.SciDataTool import AxisError, NormError
 from importlib import import_module
-from numpy import array, linspace
+import numpy as np
 from pyleecan.Functions.SciDataTool.conversions import convert
 from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -224,7 +224,9 @@ class DataLinspace(Data):
         else:
             number = self.number
             final = self.final
-        values = linspace(initial, final, int(number), endpoint=self.include_endpoint)
+        values = np.linspace(
+            initial, final, int(number), endpoint=self.include_endpoint
+        )
 
         norm_vector = None
 
@@ -266,7 +268,7 @@ class DataLinspace(Data):
         if operation is not None:
             module = import_module("pyleecan.Functions.SciDataTool.conversions")
             func = getattr(module, operation)  # Conversion function
-            values = array(func(values, is_real=is_real))
+            values = np.array(func(values, is_real=is_real))
             if is_full and (self.name == "freqs" or self.name == "wavenumber"):
                 if "period" in self.symmetries:
                     if self.name != "time":
@@ -461,8 +463,8 @@ class DataLinspace(Data):
         if (
             other._initial is not None
             and self._initial is not None
-            and isnan(other._initial)
-            and isnan(self._initial)
+            and np.isnan(other._initial)
+            and np.isnan(self._initial)
         ):
             pass
         elif other._initial != self._initial:
@@ -480,8 +482,8 @@ class DataLinspace(Data):
         if (
             other._final is not None
             and self._final is not None
-            and isnan(other._final)
-            and isnan(self._final)
+            and np.isnan(other._final)
+            and np.isnan(self._final)
         ):
             pass
         elif other._final != self._final:
@@ -495,8 +497,8 @@ class DataLinspace(Data):
         if (
             other._step is not None
             and self._step is not None
-            and isnan(other._step)
-            and isnan(self._step)
+            and np.isnan(other._step)
+            and np.isnan(self._step)
         ):
             pass
         elif other._step != self._step:

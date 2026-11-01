@@ -21,10 +21,9 @@ from pyleecan.Methods.Simulation.OPMatrix import OPMatrixException
 from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.OPdqf import OPdqf
 from pyleecan.Classes.OPslip import OPslip
-from numpy import zeros, angle, exp, hstack
+import numpy as np
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -146,7 +145,7 @@ class OPMatrix(FrozenClass):
 
         # Init OP_matrix
         N_OP = self.get_N_OP()
-        OP_matrix = zeros((N_OP, len(arg_list)))
+        OP_matrix = np.zeros((N_OP, len(arg_list)))
 
         # Setup default argument (N0, Id, Iq, Tem, Pem)
         if len(arg_list) == 0:
@@ -218,11 +217,11 @@ class OPMatrix(FrozenClass):
         if is_convert_I0:
             Z = OP_matrix[:, I0_index] + 1j * OP_matrix[:, Phi0_index]
             OP_matrix[:, I0_index] = abs(Z)
-            OP_matrix[:, Phi0_index] = angle(Z)
+            OP_matrix[:, Phi0_index] = np.angle(Z)
         if is_convert_U0:
             Z = OP_matrix[:, U0_index] + 1j * OP_matrix[:, UPhi0_index]
             OP_matrix[:, U0_index] = abs(Z)
-            OP_matrix[:, UPhi0_index] = angle(Z)
+            OP_matrix[:, UPhi0_index] = np.angle(Z)
         return OP_matrix
 
     # cf Methods.Simulation.OPMatrix.get_OP_list
@@ -363,14 +362,14 @@ class OPMatrix(FrozenClass):
                 Phi0_index = arg_list_lower.index("iphi0")
             I0 = OP_matrix[:, I0_index]
             Phi0 = OP_matrix[:, Phi0_index]
-            Z = I0 * exp(1j * Phi0)
+            Z = I0 * np.exp(1j * Phi0)
             OP_matrix[:, I0_index] = Z.real
             OP_matrix[:, Phi0_index] = Z.imag
             arg_list[I0_index] = "Id"
             arg_list[Phi0_index] = "Iq"
         # Convertion I0 to Id (assume Phi0=0)
         elif "i0" in arg_list_lower and "phi0" not in arg_list_lower:
-            OP_matrix = hstack((OP_matrix, zeros((OP_matrix.shape[0], 1))))
+            OP_matrix = np.hstack((OP_matrix, np.zeros((OP_matrix.shape[0], 1))))
             arg_list[arg_list_lower.index("i0")] = "Id"
             arg_list.append("Iq")
 
@@ -382,14 +381,14 @@ class OPMatrix(FrozenClass):
             )
             U0 = OP_matrix[:, U0_index]
             UPhi0 = OP_matrix[:, UPhi0_index]
-            Z = U0 * exp(1j * UPhi0)
+            Z = U0 * np.exp(1j * UPhi0)
             OP_matrix[:, U0_index] = Z.real
             OP_matrix[:, UPhi0_index] = Z.imag
             arg_list[U0_index] = "Ud"
             arg_list[UPhi0_index] = "Uq"
         # Convertion U0 to Ud (assume UPhi0=0)
         elif "u0" in arg_list_lower and "uphi0" not in arg_list_lower:
-            OP_matrix = hstack((OP_matrix, zeros((OP_matrix.shape[0], 1))))
+            OP_matrix = np.hstack((OP_matrix, np.zeros((OP_matrix.shape[0], 1))))
             arg_list[arg_list_lower.index("u0")] = "Ud"
             arg_list.append("Uq")
 
@@ -584,25 +583,25 @@ class OPMatrix(FrozenClass):
 
         if type(other) != type(self):
             return False
-        if not array_equal(other.N0, self.N0):
+        if not np.array_equal(other.N0, self.N0):
             return False
-        if not array_equal(other.Id_ref, self.Id_ref):
+        if not np.array_equal(other.Id_ref, self.Id_ref):
             return False
-        if not array_equal(other.Iq_ref, self.Iq_ref):
+        if not np.array_equal(other.Iq_ref, self.Iq_ref):
             return False
-        if not array_equal(other.Ud_ref, self.Ud_ref):
+        if not np.array_equal(other.Ud_ref, self.Ud_ref):
             return False
-        if not array_equal(other.Uq_ref, self.Uq_ref):
+        if not np.array_equal(other.Uq_ref, self.Uq_ref):
             return False
-        if not array_equal(other.Tem_av_ref, self.Tem_av_ref):
+        if not np.array_equal(other.Tem_av_ref, self.Tem_av_ref):
             return False
-        if not array_equal(other.Pem_av_ref, self.Pem_av_ref):
+        if not np.array_equal(other.Pem_av_ref, self.Pem_av_ref):
             return False
-        if not array_equal(other.slip_ref, self.slip_ref):
+        if not np.array_equal(other.slip_ref, self.slip_ref):
             return False
         if other.is_output_power != self.is_output_power:
             return False
-        if not array_equal(other.If_ref, self.If_ref):
+        if not np.array_equal(other.If_ref, self.If_ref):
             return False
         if other.col_names != self.col_names:
             return False
@@ -616,21 +615,21 @@ class OPMatrix(FrozenClass):
         if type(other) != type(self):
             return ["type(" + name + ")"]
         diff_list = list()
-        if not array_equal(other.N0, self.N0):
+        if not np.array_equal(other.N0, self.N0):
             diff_list.append(name + ".N0")
-        if not array_equal(other.Id_ref, self.Id_ref):
+        if not np.array_equal(other.Id_ref, self.Id_ref):
             diff_list.append(name + ".Id_ref")
-        if not array_equal(other.Iq_ref, self.Iq_ref):
+        if not np.array_equal(other.Iq_ref, self.Iq_ref):
             diff_list.append(name + ".Iq_ref")
-        if not array_equal(other.Ud_ref, self.Ud_ref):
+        if not np.array_equal(other.Ud_ref, self.Ud_ref):
             diff_list.append(name + ".Ud_ref")
-        if not array_equal(other.Uq_ref, self.Uq_ref):
+        if not np.array_equal(other.Uq_ref, self.Uq_ref):
             diff_list.append(name + ".Uq_ref")
-        if not array_equal(other.Tem_av_ref, self.Tem_av_ref):
+        if not np.array_equal(other.Tem_av_ref, self.Tem_av_ref):
             diff_list.append(name + ".Tem_av_ref")
-        if not array_equal(other.Pem_av_ref, self.Pem_av_ref):
+        if not np.array_equal(other.Pem_av_ref, self.Pem_av_ref):
             diff_list.append(name + ".Pem_av_ref")
-        if not array_equal(other.slip_ref, self.slip_ref):
+        if not np.array_equal(other.slip_ref, self.slip_ref):
             diff_list.append(name + ".slip_ref")
         if other._is_output_power != self._is_output_power:
             if is_add_value:
@@ -644,7 +643,7 @@ class OPMatrix(FrozenClass):
                 diff_list.append(name + ".is_output_power" + val_str)
             else:
                 diff_list.append(name + ".is_output_power")
-        if not array_equal(other.If_ref, self.If_ref):
+        if not np.array_equal(other.If_ref, self.If_ref):
             diff_list.append(name + ".If_ref")
         if other._col_names != self._col_names:
             if is_add_value:
@@ -901,10 +900,10 @@ class OPMatrix(FrozenClass):
     def _set_N0(self, value):
         """setter of N0"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("N0", value, "ndarray")
@@ -926,10 +925,10 @@ class OPMatrix(FrozenClass):
     def _set_Id_ref(self, value):
         """setter of Id_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Id_ref", value, "ndarray")
@@ -951,10 +950,10 @@ class OPMatrix(FrozenClass):
     def _set_Iq_ref(self, value):
         """setter of Iq_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Iq_ref", value, "ndarray")
@@ -976,10 +975,10 @@ class OPMatrix(FrozenClass):
     def _set_Ud_ref(self, value):
         """setter of Ud_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Ud_ref", value, "ndarray")
@@ -1001,10 +1000,10 @@ class OPMatrix(FrozenClass):
     def _set_Uq_ref(self, value):
         """setter of Uq_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Uq_ref", value, "ndarray")
@@ -1026,10 +1025,10 @@ class OPMatrix(FrozenClass):
     def _set_Tem_av_ref(self, value):
         """setter of Tem_av_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Tem_av_ref", value, "ndarray")
@@ -1051,10 +1050,10 @@ class OPMatrix(FrozenClass):
     def _set_Pem_av_ref(self, value):
         """setter of Pem_av_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Pem_av_ref", value, "ndarray")
@@ -1076,10 +1075,10 @@ class OPMatrix(FrozenClass):
     def _set_slip_ref(self, value):
         """setter of slip_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("slip_ref", value, "ndarray")
@@ -1119,10 +1118,10 @@ class OPMatrix(FrozenClass):
     def _set_If_ref(self, value):
         """setter of If_ref"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("If_ref", value, "ndarray")

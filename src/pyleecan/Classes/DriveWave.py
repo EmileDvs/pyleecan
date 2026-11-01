@@ -23,7 +23,7 @@ from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Functions.check_parent import check_parent
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

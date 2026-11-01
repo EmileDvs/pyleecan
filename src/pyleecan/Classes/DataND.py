@@ -24,22 +24,7 @@ from pyleecan.Classes.Data import Data
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.SciDataTool.DataND.plot_2D_Data import plot_2D_Data
 from pyleecan.Methods.SciDataTool.DataND.plot_3D_Data import plot_3D_Data
-from numpy import (
-    abs as np_abs,
-    nanmax,
-    nanmin,
-    take,
-    array,
-    meshgrid,
-    squeeze,
-    argsort,
-    negative,
-    add,
-    apply_along_axis,
-    angle as np_angle,
-    arange,
-    frombuffer,
-)
+import numpy as np, csv, imageio, matplotlib.pyplot as plt
 from pyleecan.Functions.SciDataTool.derivation_integration import (
     antiderivate,
     derivate,
@@ -60,7 +45,6 @@ from pyleecan.Functions.SciDataTool import (
     UnitError,
     AxisError,
 )
-import numpy as np, csv, imageio, matplotlib.pyplot as plt
 from pyleecan.Functions.SciDataTool.conversions import (
     convert as convert_unit,
     to_dB,
@@ -103,8 +87,7 @@ from pyleecan.Functions.SciDataTool.parser import read_input_strings
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, omp
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -130,7 +113,7 @@ class DataND(Data):
 
         # Take magnitude before summing
         if is_magnitude and "dB" not in unit:
-            values = np_abs(values)
+            values = np.abs(values)
 
         # Apply sums, means, etc
         for axis_requested in axes_list:
@@ -157,10 +140,10 @@ class DataND(Data):
                 is_fft = False
             # max over max axes
             if extension in "max":
-                values = nanmax(values, axis=index)
+                values = np.nanmax(values, axis=index)
             # min over max axes
             elif extension in "min":
-                values = nanmin(values, axis=index)
+                values = np.nanmin(values, axis=index)
             # sum over sum axes
             elif extension in "sum":
                 values = my_sum(
@@ -212,7 +195,7 @@ class DataND(Data):
 
         if is_magnitude and "dB" in unit:  # Correction for negative/small dB/dBA
             values[values < 2] = 0
-            values = np_abs(values)
+            values = np.abs(values)
 
         return values
 
@@ -398,10 +381,10 @@ class DataND(Data):
                         axis_requested.indices is not None
                         and axis_requested.transform != "fft"
                     ):
-                        values = take(values, axis_requested.indices, axis=index)
+                        values = np.take(values, axis_requested.indices, axis=index)
             if not is_match:  # Axis was not specified -> take slice at the first value
                 axes_dict_other[axis.name] = [axis.get_values()[0], axis.unit]
-                values = take(values, [0], axis=index)
+                values = np.take(values, [0], axis=index)
         return values, axes_dict_other
 
     # cf Methods.SciDataTool.DataND._extract_slices_fft
@@ -431,9 +414,9 @@ class DataND(Data):
                         axis_requested.indices is not None
                         and axis_requested.transform == "fft"
                     ):
-                        values = take(values, axis_requested.indices, axis=index)
+                        values = np.take(values, axis_requested.indices, axis=index)
             if not is_match:  # Axis was not specified -> take slice at the first value
-                values = take(values, [0], axis=index)
+                values = np.take(values, [0], axis=index)
         return values
 
     # cf Methods.SciDataTool.DataND._get_field
@@ -475,7 +458,7 @@ class DataND(Data):
                 and max(axis_requested.indices) >= values.shape[axis_requested.index]
             ):
                 # DataPattern case where all values are requested
-                values = take(
+                values = np.take(
                     values, axis_requested.rebuild_indices, axis_requested.index
                 )
             elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
@@ -548,10 +531,10 @@ class DataND(Data):
                 normalization = None
             speed = self.get_axes()[index_speed].get_values(normalization=normalization)
             order_strings = self.get_axes()[index_order].get_values().tolist()
-            orders = array(
+            orders = np.array(
                 [int(s.split(";")[0].replace("H", "")) for s in order_strings]
             )
-            os, so = meshgrid(orders, speed)
+            os, so = np.meshgrid(orders, speed)
             freqs = so * 60 / os
 
         return freqs
@@ -635,7 +618,7 @@ class DataND(Data):
                     and axis.indices is None
                 )
             ):
-                values = take(values, axis.rebuild_indices, axis.index)
+                values = np.take(values, axis.rebuild_indices, axis.index)
             elif axis.transform != "fft" and axis.extension in [
                 "whole",
                 "interval",
@@ -687,17 +670,17 @@ class DataND(Data):
     def _set_values(self, value):
         """setter of values"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("values", value, "ndarray")
 
         # Check dimensions
         if value is not None:
-            value = squeeze(value)
+            value = np.squeeze(value)
         value = check_dimensions(value, self.axes)
         self._values = value
 
@@ -1841,11 +1824,11 @@ class DataND(Data):
             f = return_dict["freqs"]
             # Flatten the data
             values_flat = values.flatten()
-            R, F = meshgrid(r, f)
+            R, F = np.meshgrid(r, f)
             f = F.flatten()
             r = R.flatten()
             # Get the N_harm largest peaks
-            indices = argsort(negative(values_flat))
+            indices = np.argsort(np.negative(values_flat))
             indices = indices[:N_harm]
             values = values_flat[indices]
             f = f[indices]
@@ -1861,7 +1844,7 @@ class DataND(Data):
         # 1D cases
         elif "freqs" in return_dict:
             f = return_dict["freqs"]
-            indices = argsort(negative(values))
+            indices = np.argsort(np.negative(values))
             indices = indices[:N_harm]
             f = f[indices]
             values = values[indices]
@@ -1869,7 +1852,7 @@ class DataND(Data):
             return_dict[self.symbol] = values
         elif "wavenumber" in return_dict:
             r = return_dict["wavenumber"]
-            indices = argsort(negative(values))
+            indices = np.argsort(np.negative(values))
             indices = indices[:N_harm]
             r = r[indices]
             values = values[indices]
@@ -2052,7 +2035,7 @@ class DataND(Data):
                 if axis.name == "freqs" or axis.corr_name == "freqs":
                     index = axis.index
                     if axis.noct is not None:
-                        (values, foct) = apply_along_axis(
+                        (values, foct) = np.apply_along_axis(
                             to_noct, index, values, return_dict["freqs"], noct=axis.noct
                         )
                         return_dict[axis.name] = foct
@@ -2088,7 +2071,7 @@ class DataND(Data):
                             index_list.append(ii)
                     A_weight = self.normalizations["A-weight"].vector
                     for index in index_list:
-                        A_weight = take(
+                        A_weight = np.take(
                             A_weight,
                             axes_list[index].indices,
                             axis=index,
@@ -2100,7 +2083,7 @@ class DataND(Data):
                         A_weight.shape
                         + shape[len(self.normalizations["A-weight"].vector.shape) :]
                     )
-                    values = apply_along_axis(add, 0, values, A_weight)
+                    values = np.apply_along_axis(np.add, 0, values, A_weight)
                     values = values.reshape(shape)
                 elif "freqs" in return_dict.keys():
                     for axis in return_dict["axes_list"]:
@@ -2117,7 +2100,7 @@ class DataND(Data):
                         freqs = return_dict["axes_list"][index].corr_values
                     else:
                         freqs = return_dict["freqs"]
-                    values = apply_along_axis(
+                    values = np.apply_along_axis(
                         to_dBA, index, values, freqs, self.unit, ref_value
                     )
                 elif "frequency" in return_dict.keys():
@@ -2135,7 +2118,7 @@ class DataND(Data):
                         freqs = return_dict["axes_list"][index].corr_values
                     else:
                         freqs = return_dict["frequency"]
-                    values = apply_along_axis(
+                    values = np.apply_along_axis(
                         to_dBA, index, values, freqs, self.unit, ref_value
                     )
                 elif "order" in return_dict:
@@ -2143,7 +2126,7 @@ class DataND(Data):
                     freqs = freqs.ravel("C")
                     shape = values.shape
                     values = values.reshape(freqs.shape + shape[2:])
-                    values = apply_along_axis(
+                    values = np.apply_along_axis(
                         to_dBA, 0, values, freqs, self.unit, ref_value
                     )
                     values = values.reshape(shape)
@@ -2183,7 +2166,7 @@ class DataND(Data):
         return_dict = self.get_along(args, axis_data=axis_data)
         values = return_dict[self.symbol]
         # Compute magnitude
-        values = np_angle(values)
+        values = np.angle(values)
         # Convert into right unit (apart because of degree conversion)
         if unit == self.unit or unit == "SI":
             if is_norm:
@@ -2363,23 +2346,25 @@ class DataND(Data):
             ]
             fps = 1
         else:
-            value_max = nanmax(result[animated_axis])
-            value_min = nanmin(result[animated_axis])
+            value_max = np.nanmax(result[animated_axis])
+            value_min = np.nanmin(result[animated_axis])
             variation_step = (value_max - value_min) / nb_frames
 
-            frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+            frames_list = np.arange(
+                start=value_min, stop=value_max, step=variation_step
+            )
             frames_list = ["=" + str(frame) for frame in frames_list]
 
         # detecting if we are animating a regular plot (=> computing limit for y) or a "fft" plot (=> limit already set)
         if plot_options["y_min"] == None or plot_options["y_max"] == None:
             # Setting the options of the plot
-            y_max = nanmax(result[self.symbol])
-            y_min = nanmin(result[self.symbol])
+            y_max = np.nanmax(result[self.symbol])
+            y_min = np.nanmin(result[self.symbol])
             marge = (
                 y_max - y_min
             ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-            plot_options["y_min"] = nanmin(result[self.symbol]) - abs(marge)
-            plot_options["y_max"] = nanmax(result[self.symbol]) + abs(marge)
+            plot_options["y_min"] = np.nanmin(result[self.symbol]) - abs(marge)
+            plot_options["y_max"] = np.nanmax(result[self.symbol]) + abs(marge)
 
         plot_options["is_show_fig"] = False
 
@@ -2401,7 +2386,7 @@ class DataND(Data):
                 fig.suptitle(suptitle_ref)
 
             fig.canvas.draw()
-            image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
             images.append(image)
 
@@ -2477,11 +2462,13 @@ class DataND(Data):
             ]
             fps = 1
         else:
-            value_max = nanmax(result[animated_axis])
-            value_min = nanmin(result[animated_axis])
+            value_max = np.nanmax(result[animated_axis])
+            value_min = np.nanmin(result[animated_axis])
             variation_step = (value_max - value_min) / nb_frames
 
-            frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+            frames_list = np.arange(
+                start=value_min, stop=value_max, step=variation_step
+            )
             frames_list = ["=" + str(frame) for frame in frames_list]
 
         plot_options["is_show_fig"] = False
@@ -2504,7 +2491,7 @@ class DataND(Data):
                 fig.suptitle(suptitle_ref)
 
             fig.canvas.draw()
-            image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
             images.append(image)
 
@@ -2609,7 +2596,7 @@ class DataND(Data):
             return False
         if other.FTparameters != self.FTparameters:
             return False
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             return False
         if other.is_real != self.is_real:
             return False
@@ -2660,7 +2647,7 @@ class DataND(Data):
                 diff_list.append(name + ".FTparameters" + val_str)
             else:
                 diff_list.append(name + ".FTparameters")
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._is_real != self._is_real:
             if is_add_value:

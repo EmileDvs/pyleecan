@@ -17,11 +17,11 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi
+import numpy as np
 from pyleecan.Functions.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
 from pyleecan.Methods.Slot.Slot import SlotCheckError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -83,7 +83,7 @@ class HoleUD(HoleMag):
 
         # Apply the transformations
         # Modulo on Alpha0 for sym
-        Alpha0 = self.Alpha0 % (2 * pi / self.Zh)
+        Alpha0 = self.Alpha0 % (2 * np.pi / self.Zh)
         for surf in surf_list:
             surf.rotate(alpha + Alpha0)
             surf.translate(delta)

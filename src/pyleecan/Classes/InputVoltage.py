@@ -17,7 +17,7 @@ from pyleecan.Classes.Input import Input
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import angle, pi, cos, sin
+import numpy as np
 from pyleecan.Classes.OutElec import OutElec
 from pyleecan.Methods.Simulation.Input import (
     CURRENT_DIR_REF,
@@ -27,9 +27,8 @@ from pyleecan.Methods.Simulation.Input import (
 )
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
-from numpy import ndarray
-from numpy import array, array_equal
-from numpy import isnan
+
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -139,7 +138,9 @@ class InputVoltage(Input):
             and outelec.OP.Pem_av_in is not None
         ):
             # Get reference torque function of reference power and speed
-            outelec.OP.Tem_av_ref = outelec.OP.Pem_av_in / (2 * pi * outelec.OP.N0 / 60)
+            outelec.OP.Tem_av_ref = outelec.OP.Pem_av_in / (
+                2 * np.pi * outelec.OP.N0 / 60
+            )
 
         if (
             not self.is_generator
@@ -148,7 +149,7 @@ class InputVoltage(Input):
         ):
             # Get reference torque function of reference power and speed
             outelec.OP.Tem_av_ref = outelec.OP.Pem_av_ref / (
-                2 * pi * outelec.OP.N0 / 60
+                2 * np.pi * outelec.OP.N0 / 60
             )
 
         # Generate PWM signal
@@ -162,11 +163,13 @@ class InputVoltage(Input):
                 if (
                     self.PWM.U0 is not None
                     and outelec.PWM.Phi0 is not None
-                    and (outelec.PWM.U0 != abs(U0c) or outelec.PWM.Phi0 != angle(U0c))
+                    and (
+                        outelec.PWM.U0 != abs(U0c) or outelec.PWM.Phi0 != np.angle(U0c)
+                    )
                 ):
                     logger.warning("Enforcing PWM.U0 = Ud_ref + jUq_ref")
                 outelec.PWM.U0 = abs(U0c)
-                outelec.PWM.Phi0 = angle(U0c)
+                outelec.PWM.Phi0 = np.angle(U0c)
             # Fill generator with simu data
             felec = self.OP.get_felec()
             qs = simu.machine.stator.winding.qs
@@ -193,8 +196,8 @@ class InputVoltage(Input):
             Voltage phase [rad]
         """
 
-        self.OP.Ud_ref = U0 * cos(Phi0)
-        self.OP.Uq_ref = U0 * sin(Phi0)
+        self.OP.Ud_ref = U0 * np.cos(Phi0)
+        self.OP.Uq_ref = U0 * np.sin(Phi0)
         if abs(self.OP.Ud_ref) < 1e-10:
             self.OP.Ud_ref = 0
         if abs(self.OP.Uq_ref) < 1e-10:
@@ -371,8 +374,8 @@ class InputVoltage(Input):
         if (
             other._angle_rotor_initial is not None
             and self._angle_rotor_initial is not None
-            and isnan(other._angle_rotor_initial)
-            and isnan(self._angle_rotor_initial)
+            and np.isnan(other._angle_rotor_initial)
+            and np.isnan(self._angle_rotor_initial)
         ):
             pass
         elif other._angle_rotor_initial != self._angle_rotor_initial:

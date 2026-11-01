@@ -17,7 +17,7 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import array, sum, exp, angle, min as np_min, max as np_max, argmin
+import numpy as np
 from pyleecan.Functions.Geometry.comp_surface_num import comp_surface_num
 from pyleecan.Methods.Geometry.SurfLine.get_patches import (
     PATCH_COLOR,
@@ -28,7 +28,7 @@ from pyleecan.Methods.Geometry.SurfLine.get_patches import (
 from matplotlib.patches import Polygon
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -97,18 +97,18 @@ class SurfLine(Surface):
             the reference point of the surface
         """
 
-        middle_array = array([line.get_middle() for line in self.get_lines()])
-        point_ref = sum(middle_array) / middle_array.size
+        middle_array = np.array([line.get_middle() for line in self.get_lines()])
+        point_ref = np.sum(middle_array) / middle_array.size
 
         # Use another method if the point is not is the surface
         if not self.is_inside(Z=point_ref, if_online=False):
             middle_array_abs = abs(middle_array)
             # Find "min abs" middle
-            mid_id = argmin(middle_array_abs)
+            mid_id = np.argmin(middle_array_abs)
             Zmid = middle_array[mid_id]
-            H = np_max(middle_array_abs) - np_min(middle_array_abs)
+            H = np.max(middle_array_abs) - np.min(middle_array_abs)
 
-            point_ref = (abs(Zmid) + H / 100) * exp(1j * angle(Zmid))
+            point_ref = (abs(Zmid) + H / 100) * np.exp(1j * np.angle(Zmid))
 
         if is_set:
             self.point_ref = point_ref
@@ -334,7 +334,7 @@ class SurfLine(Surface):
         for line in self.line_list:
             line.rotate(angle)
         if self.point_ref is not None:
-            self.point_ref = self.point_ref * exp(1j * angle)
+            self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # cf Methods.Geometry.SurfLine.scale
     def scale(self, scale_factor):

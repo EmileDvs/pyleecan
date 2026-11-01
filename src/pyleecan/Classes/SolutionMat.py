@@ -18,10 +18,8 @@ from pyleecan.Classes.Solution import Solution
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from numpy import take, where, array
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -169,11 +167,11 @@ class SolutionMat(Solution):
         new_indice = [ii for ii in indice if ii in s_indice]
 
         # get array index of new_indice
-        array_indice = [where(array(s_indice) == ii)[0][0] for ii in new_indice]
+        array_indice = [np.where(np.array(s_indice) == ii)[0][0] for ii in new_indice]
 
         # setup requested solution
         axis_size[Iindice] = len(new_indice)
-        new_field_sol = take(field_sol, array_indice, axis=Iindice)
+        new_field_sol = np.take(field_sol, array_indice, axis=Iindice)
 
         solution = type(self)(
             label=self.label,
@@ -291,9 +289,9 @@ class SolutionMat(Solution):
         # Check the properties inherited from Solution
         if not super(SolutionMat, self).__eq__(other):
             return False
-        if not array_equal(other.field, self.field):
+        if not np.array_equal(other.field, self.field):
             return False
-        if not array_equal(other.indice, self.indice):
+        if not np.array_equal(other.indice, self.indice):
             return False
         if other.axis_name != self.axis_name:
             return False
@@ -316,9 +314,9 @@ class SolutionMat(Solution):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not array_equal(other.field, self.field):
+        if not np.array_equal(other.field, self.field):
             diff_list.append(name + ".field")
-        if not array_equal(other.indice, self.indice):
+        if not np.array_equal(other.indice, self.indice):
             diff_list.append(name + ".indice")
         if other._axis_name != self._axis_name:
             if is_add_value:
@@ -473,10 +471,10 @@ class SolutionMat(Solution):
     def _set_field(self, value):
         """setter of field"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("field", value, "ndarray")
@@ -498,10 +496,10 @@ class SolutionMat(Solution):
     def _set_indice(self, value):
         """setter of indice"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("indice", value, "ndarray")

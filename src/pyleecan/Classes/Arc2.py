@@ -22,7 +22,7 @@ from pyleecan.Classes.Arc import Arc
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Geometry.Arc2.check import check
-from numpy import pi, abs as np_abs, angle as np_angle, exp, linspace, angle
+import numpy as np
 from pyleecan.Methods.Machine import ARC_NPOINT_D
 from pyleecan.Methods.Geometry.Arc2 import (
     NbPointArc2DError,
@@ -30,7 +30,7 @@ from pyleecan.Methods.Geometry.Arc2 import (
     PointTranslateArc2Error,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -62,7 +62,7 @@ class Arc2(Arc):
 
         # 2*pi*R is the length of the total circle
         # The arc is an alpha / 2pi portion of the cercle
-        return float(2 * pi * R * (abs(angle) / (2 * pi)))
+        return float(2 * np.pi * R * (abs(angle) / (2 * np.pi)))
 
     # cf Methods.Geometry.Arc2.comp_radius
     def comp_radius(self):
@@ -83,7 +83,7 @@ class Arc2(Arc):
 
         z1 = self.begin
         zc = self.center
-        return float(np_abs(z1 - zc))  # Radius of the arc
+        return float(np.abs(z1 - zc))  # Radius of the arc
 
     # cf Methods.Geometry.Arc2.discretize
     def discretize(self, nb_point=ARC_NPOINT_D):
@@ -119,14 +119,14 @@ class Arc2(Arc):
         zc = self.center
 
         # Geometric transformation : center is the origine, angle(begin) = 0
-        Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
+        Zstart = (z1 - zc) * np.exp(-1j * np.angle(z1 - zc))
 
         # Generation of the point by rotation
-        t = linspace(0, self.angle, nb_point + 2)
-        list_point = Zstart * exp(1j * t)
+        t = np.linspace(0, self.angle, nb_point + 2)
+        list_point = Zstart * np.exp(1j * t)
 
         # Geometric transformation : return to the main axis
-        list_point = list_point * exp(1j * np_angle(z1 - zc)) + zc
+        list_point = list_point * np.exp(1j * np.angle(z1 - zc)) + zc
 
         return list_point
 
@@ -148,7 +148,7 @@ class Arc2(Arc):
         """
 
         if is_deg:
-            return self.angle * 180 / pi
+            return self.angle * 180 / np.pi
         else:
             return self.angle
 
@@ -211,10 +211,10 @@ class Arc2(Arc):
         # Geometric transformation : center is the origine (-zc)
         # Then rotation of begin of the correct angle (*exp(i*pi*angle))
         # Then return to the main axis (+zc)
-        z2 = (z1 - zc) * exp(1j * angle) + zc
+        z2 = (z1 - zc) * np.exp(1j * angle) + zc
 
         # Return (0,0) if the point is too close from 0
-        if np_abs(z2) < 1e-6:
+        if np.abs(z2) < 1e-6:
             z2 = 0
         return z2
 
@@ -240,16 +240,16 @@ class Arc2(Arc):
         zc = self.center
 
         # Geometric transformation : center is the origine, angle(begin) = 0
-        Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
+        Zstart = (z1 - zc) * np.exp(-1j * np.angle(z1 - zc))
 
         # Generation of the point by rotation
-        Zmid = Zstart * exp(1j * self.angle / 2.0)
+        Zmid = Zstart * np.exp(1j * self.angle / 2.0)
 
         # Geometric transformation : return to the main axis
-        Zmid = Zmid * exp(1j * np_angle(z1 - zc)) + zc
+        Zmid = Zmid * np.exp(1j * np.angle(z1 - zc)) + zc
 
         # Return (0,0) if the point is too close from 0
-        if np_abs(Zmid) < 1e-6:
+        if np.abs(Zmid) < 1e-6:
             Zmid = 0
 
         return Zmid
@@ -293,8 +293,8 @@ class Arc2(Arc):
         self.check()
 
         # Modification from the rotation  of the object
-        self.begin = self.begin * exp(1j * angle)
-        self.center = self.center * exp(1j * angle)
+        self.begin = self.begin * np.exp(1j * angle)
+        self.center = self.center * np.exp(1j * angle)
 
     # cf Methods.Geometry.Arc2.scale
     def scale(self, scale_factor):
@@ -354,13 +354,13 @@ class Arc2(Arc):
         # Check if the point is on the circle
         Zc = self.get_center()
         R = self.comp_radius()
-        if abs(np_abs(Z1 - Zc) - R) > 1e-6:
+        if abs(np.abs(Z1 - Zc) - R) > 1e-6:
             raise Exception("Point is not on the line")
 
         if is_begin:
-            self.angle = angle((Z1 - Zc) * exp(-1j * angle(self.begin)))
+            self.angle = np.angle((Z1 - Zc) * np.exp(-1j * np.angle(self.begin)))
         else:
-            self.angle = angle((self.get_end() - Zc) * exp(-1j * angle(Z1)))
+            self.angle = np.angle((self.get_end() - Zc) * np.exp(-1j * np.angle(Z1)))
             self.begin = Z1
 
     # cf Methods.Geometry.Arc2.translate
@@ -507,8 +507,8 @@ class Arc2(Arc):
         if (
             other._angle is not None
             and self._angle is not None
-            and isnan(other._angle)
-            and isnan(self._angle)
+            and np.isnan(other._angle)
+            and np.isnan(self._angle)
         ):
             pass
         elif other._angle != self._angle:

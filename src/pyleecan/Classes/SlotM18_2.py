@@ -17,7 +17,7 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, exp
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
@@ -29,7 +29,6 @@ from pyleecan.Functions.labels import (
     YOKE_LAB,
 )
 from pyleecan.Methods.Slot.SlotM18_2.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -43,7 +42,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -70,16 +69,16 @@ class SlotM18_2(Slot):
 
         Rbo = self.get_Rbo()
 
-        sp = 2 * pi / self.Zs
-        Z1 = Rbo * exp(-1j * sp / 2)
-        ZM1 = Rbo * exp(-1j * sp / 2)
+        sp = 2 * np.pi / self.Zs
+        Z1 = Rbo * np.exp(-1j * sp / 2)
+        ZM1 = Rbo * np.exp(-1j * sp / 2)
 
         if self.is_outwards():
-            ZM2 = (Rbo - self.H0_bore) * exp(-1j * sp / 2)
-            ZM3 = (Rbo - self.H0_bore - self.H0_gap) * exp(-1j * sp / 2)
+            ZM2 = (Rbo - self.H0_bore) * np.exp(-1j * sp / 2)
+            ZM3 = (Rbo - self.H0_bore - self.H0_gap) * np.exp(-1j * sp / 2)
         else:  # inward slot
-            ZM2 = (Rbo + self.H0_bore) * exp(-1j * sp / 2)
-            ZM3 = (Rbo + self.H0_bore + self.H0_gap) * exp(-1j * sp / 2)
+            ZM2 = (Rbo + self.H0_bore) * np.exp(-1j * sp / 2)
+            ZM3 = (Rbo + self.H0_bore + self.H0_gap) * np.exp(-1j * sp / 2)
 
         point_dict = dict()
         point_dict["Z1"] = Z1
@@ -287,7 +286,7 @@ class SlotM18_2(Slot):
 
         """
 
-        return 2 * pi / self.Zs
+        return 2 * np.pi / self.Zs
 
     # cf Methods.Slot.SlotM18_2.comp_height
     def comp_height(self):
@@ -367,8 +366,8 @@ class SlotM18_2(Slot):
         R1 = abs(ZM1)
         R2 = abs(ZM3)
 
-        S1 = pi * R1**2 / self.Zs
-        S2 = pi * R2**2 / self.Zs
+        S1 = np.pi * R1**2 / self.Zs
+        S2 = np.pi * R2**2 / self.Zs
 
         return abs(S1 - S2)
 
@@ -561,7 +560,7 @@ class SlotM18_2(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -609,8 +608,8 @@ class SlotM18_2(Slot):
                 # Magnet separation lines
                 for ii in range(self.Zs):
                     line = Segment(
-                        point_dict["ZM1"] * exp(1j * 2 * pi / self.Zs * ii),
-                        point_dict["ZM2"] * exp(1j * 2 * pi / self.Zs * ii),
+                        point_dict["ZM1"] * np.exp(1j * 2 * np.pi / self.Zs * ii),
+                        point_dict["ZM2"] * np.exp(1j * 2 * np.pi / self.Zs * ii),
                     )
                     line.plot(
                         fig=fig,
@@ -745,8 +744,8 @@ class SlotM18_2(Slot):
         if (
             other._H0_bore is not None
             and self._H0_bore is not None
-            and isnan(other._H0_bore)
-            and isnan(self._H0_bore)
+            and np.isnan(other._H0_bore)
+            and np.isnan(self._H0_bore)
         ):
             pass
         elif other._H0_bore != self._H0_bore:
@@ -764,8 +763,8 @@ class SlotM18_2(Slot):
         if (
             other._H0_gap is not None
             and self._H0_gap is not None
-            and isnan(other._H0_gap)
-            and isnan(self._H0_gap)
+            and np.isnan(other._H0_gap)
+            and np.isnan(self._H0_gap)
         ):
             pass
         elif other._H0_gap != self._H0_gap:

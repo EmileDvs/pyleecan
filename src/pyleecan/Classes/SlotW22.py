@@ -25,11 +25,10 @@ from pyleecan.Methods.Slot.SlotW22.check import check
 from pyleecan.Classes.Arc2 import Arc2
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
-from numpy import exp, linspace, meshgrid, pi, angle
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Methods.Slot.SlotW22.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -43,7 +42,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -140,16 +139,16 @@ class SlotW22(Slot):
         Rbo = self.get_Rbo()
 
         # comp point coordinate (in complex)
-        Z1 = Rbo * exp(-1j * self.W0 / 2)
+        Z1 = Rbo * np.exp(-1j * self.W0 / 2)
         if self.is_outwards():
             R1 = Rbo + self.H0
             R2 = Rbo + self.H0 + self.H2
         else:  # inward slot
             R1 = Rbo - self.H0
             R2 = Rbo - self.H0 - self.H2
-        Z2 = R1 * exp(-1j * self.W0 / 2.0)
-        Z3 = R1 * exp(-1j * self.W2 / 2.0)
-        Z4 = R2 * exp(-1j * self.W2 / 2.0)
+        Z2 = R1 * np.exp(-1j * self.W0 / 2.0)
+        Z3 = R1 * np.exp(-1j * self.W2 / 2.0)
+        Z4 = R2 * np.exp(-1j * self.W2 / 2.0)
 
         point_dict = dict()
         # symetry
@@ -225,14 +224,14 @@ class SlotW22(Slot):
 
         # Polar Meshgrid
         if self.is_outwards():
-            r = linspace(Rbo + self.H0, Rbo + self.H0 + self.H2, Nrad + 1)
+            r = np.linspace(Rbo + self.H0, Rbo + self.H0 + self.H2, Nrad + 1)
         else:
-            r = linspace(Rbo - self.H0, Rbo - self.H0 - self.H2, Nrad + 1)
+            r = np.linspace(Rbo - self.H0, Rbo - self.H0 - self.H2, Nrad + 1)
 
-        theta = linspace(-self.W2 / 2.0, self.W2 / 2.0, Ntan + 1)
-        Z = meshgrid(r, theta)
+        theta = np.linspace(-self.W2 / 2.0, self.W2 / 2.0, Ntan + 1)
+        Z = np.meshgrid(r, theta)
 
-        Z = Z[0] * exp(1j * Z[1])
+        Z = Z[0] * np.exp(1j * Z[1])
         Z = Z.T
         # if self.is_outwards():
         #     assert Z[0][0] == (Rbo + self.H0) * exp(-1j * self.W2 * 0.5)  # Z6
@@ -309,12 +308,12 @@ class SlotW22(Slot):
         if (Ntan == 2 and Nrad == 1) and self.W0 != self.W2:
             # Cut Ox- surface
             arc_to_cut = surf_list[0].line_list[0]
-            arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * exp(-1j * self.W0 / 2))
+            arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * np.exp(-1j * self.W0 / 2))
             surf_list[0].line_list = [arc1[0], arc2[0]] + surf_list[0].line_list[1:]
             surf_list[0].line_list[1].prop_dict = {DRAW_PROP_LAB: False}
             # Cut Ox+ surface
             arc_to_cut = surf_list[1].line_list[0]
-            arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * exp(1j * self.W0 / 2))
+            arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * np.exp(1j * self.W0 / 2))
             surf_list[1].line_list = [arc1[0], arc2[0]] + surf_list[1].line_list[1:]
             surf_list[1].line_list[0].prop_dict = {DRAW_PROP_LAB: False}
 
@@ -418,22 +417,22 @@ class SlotW22(Slot):
 
         if self.is_outwards():
             # Surface of the external disk
-            Sext = ((self.H2 + self.H0 + Rbo) ** 2) * pi
+            Sext = ((self.H2 + self.H0 + Rbo) ** 2) * np.pi
 
             # Surface of the internal disk
-            Sint = ((self.H0 + Rbo) ** 2) * pi
+            Sint = ((self.H0 + Rbo) ** 2) * np.pi
         else:
             # Surface of the external disk
-            Sext = ((Rbo - self.H0) ** 2) * pi
+            Sext = ((Rbo - self.H0) ** 2) * np.pi
 
             # Surface of the internal disk
-            Sint = ((Rbo - self.H2 - self.H0) ** 2) * pi
+            Sint = ((Rbo - self.H2 - self.H0) ** 2) * np.pi
 
         # Surface of the ring
         Sring = Sext - Sint
 
         # Only an W2 angle of the ring
-        return Sring * self.W2 / (2 * pi)
+        return Sring * self.W2 / (2 * np.pi)
 
     # cf Methods.Slot.SlotW22.comp_surface_opening
     def comp_surface_opening(self):
@@ -456,21 +455,21 @@ class SlotW22(Slot):
         # Computation of isthmus surface
         if self.is_outwards():
             # Surface of the external disk
-            Sext = ((self.H0 + Rbo) ** 2) * pi
+            Sext = ((self.H0 + Rbo) ** 2) * np.pi
 
             # Surface of the internal disk
-            Sint = (Rbo**2) * pi
+            Sint = (Rbo**2) * np.pi
         else:
             # Surface of the external disk
-            Sext = (Rbo**2) * pi
+            Sext = (Rbo**2) * np.pi
 
             # Surface of the internal disk
-            Sint = ((Rbo - self.H0) ** 2) * pi
+            Sint = ((Rbo - self.H0) ** 2) * np.pi
         # Surface of the ring
         Sring = Sext - Sint
 
         # Only an W0 angle of the ring
-        return Sring * self.W0 / (2 * pi)
+        return Sring * self.W0 / (2 * np.pi)
 
     # cf Methods.Slot.SlotW22.get_surface_active
     def get_surface_active(self, alpha=0, delta=0):
@@ -630,7 +629,7 @@ class SlotW22(Slot):
 
         # Use some default parameter
         if is_default:
-            slot = type(self)(Zs=8, H0=10e-3, W0=pi / 24, H2=60e-3, W2=pi / 8)
+            slot = type(self)(Zs=8, H0=10e-3, W0=np.pi / 24, H2=60e-3, W2=np.pi / 8)
             lam = LamSlot(
                 Rint=0.135, Rext=0.3, is_internal=False, is_stator=True, slot=slot
             )
@@ -655,7 +654,7 @@ class SlotW22(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -679,8 +678,8 @@ class SlotW22(Slot):
                 # W0
                 R = Rbo + sign * self.H0 * 0.5
                 line = Arc1(
-                    begin=R * exp(-1j * self.W0 / 2),
-                    end=R * exp(1j * self.W0 / 2),
+                    begin=R * np.exp(-1j * self.W0 / 2),
+                    end=R * np.exp(1j * self.W0 / 2),
                     radius=R,
                     is_trigo_direction=True,
                 )
@@ -696,8 +695,8 @@ class SlotW22(Slot):
                 # W2
                 R = Rbo + sign * (self.H0 + self.H2 * 0.5)
                 line = Arc1(
-                    begin=R * exp(-1j * self.W2 / 2),
-                    end=R * exp(1j * self.W2 / 2),
+                    begin=R * np.exp(-1j * self.W2 / 2),
+                    end=R * np.exp(1j * self.W2 / 2),
                     radius=R,
                     is_trigo_direction=True,
                 )
@@ -761,8 +760,8 @@ class SlotW22(Slot):
                 )
                 # Bot Arc
                 line = Arc1(
-                    begin=abs(point_dict["Z4"]) * exp(-1j * pi / 4),
-                    end=abs(point_dict["Z4"]) * exp(1j * pi / 4),
+                    begin=abs(point_dict["Z4"]) * np.exp(-1j * np.pi / 4),
+                    end=abs(point_dict["Z4"]) * np.exp(1j * np.pi / 4),
                     radius=abs(point_dict["Z4"]),
                     is_trigo_direction=True,
                 )
@@ -775,8 +774,8 @@ class SlotW22(Slot):
                 )
                 # Middle Arc
                 line = Arc1(
-                    begin=abs(point_dict["Z3"]) * exp(-1j * pi / 4),
-                    end=abs(point_dict["Z3"]) * exp(1j * pi / 4),
+                    begin=abs(point_dict["Z3"]) * np.exp(-1j * np.pi / 4),
+                    end=abs(point_dict["Z3"]) * np.exp(1j * np.pi / 4),
                     radius=abs(point_dict["Z3"]),
                     is_trigo_direction=True,
                 )
@@ -788,7 +787,9 @@ class SlotW22(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Rad lines
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * angle(point_dict["Z1"])))
+                line = Segment(
+                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z1"]))
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -796,7 +797,9 @@ class SlotW22(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * angle(point_dict["Z3"])))
+                line = Segment(
+                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z3"]))
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -804,7 +807,9 @@ class SlotW22(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * angle(point_dict["Z5"])))
+                line = Segment(
+                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z5"]))
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -812,7 +817,9 @@ class SlotW22(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * angle(point_dict["Z7"])))
+                line = Segment(
+                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z7"]))
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -964,8 +971,8 @@ class SlotW22(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -977,8 +984,8 @@ class SlotW22(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -990,8 +997,8 @@ class SlotW22(Slot):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -1003,8 +1010,8 @@ class SlotW22(Slot):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:

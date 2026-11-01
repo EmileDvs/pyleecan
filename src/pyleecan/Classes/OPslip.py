@@ -18,9 +18,9 @@ from pyleecan.Classes.OP import OP
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Simulation.Input import InputError
-from numpy import exp, angle
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -111,7 +111,7 @@ class OPslip(OP):
         else:
             IPhi0_ref = self.IPhi0_ref
 
-        Z = self.I0_ref * exp(1j * IPhi0_ref)
+        Z = self.I0_ref * np.exp(1j * IPhi0_ref)
 
         return {"Id": Z.real, "Iq": Z.imag}
 
@@ -218,7 +218,7 @@ class OPslip(OP):
         else:
             UPhi0_ref = self.UPhi0_ref
 
-        Z = self.U0_ref * exp(1j * UPhi0_ref)
+        Z = self.U0_ref * np.exp(1j * UPhi0_ref)
 
         return {"Ud": Z.real, "Uq": Z.imag}
 
@@ -259,7 +259,7 @@ class OPslip(OP):
         else:
             Z = Id + 1j * Iq
             self.I0_ref = abs(Z)
-            self.IPhi0_ref = angle(Z)
+            self.IPhi0_ref = np.angle(Z)
 
     # cf Methods.Simulation.OPslip.set_U0_UPhi0
     def set_U0_UPhi0(self, U0, UPhi0):
@@ -298,7 +298,7 @@ class OPslip(OP):
         else:
             Z = Ud + 1j * Uq
             self.U0_ref = abs(Z)
-            self.UPhi0_ref = angle(Z)
+            self.UPhi0_ref = np.angle(Z)
 
     # generic save method is available in all object
     save = save
@@ -428,8 +428,8 @@ class OPslip(OP):
         if (
             other._I0_ref is not None
             and self._I0_ref is not None
-            and isnan(other._I0_ref)
-            and isnan(self._I0_ref)
+            and np.isnan(other._I0_ref)
+            and np.isnan(self._I0_ref)
         ):
             pass
         elif other._I0_ref != self._I0_ref:
@@ -447,8 +447,8 @@ class OPslip(OP):
         if (
             other._IPhi0_ref is not None
             and self._IPhi0_ref is not None
-            and isnan(other._IPhi0_ref)
-            and isnan(self._IPhi0_ref)
+            and np.isnan(other._IPhi0_ref)
+            and np.isnan(self._IPhi0_ref)
         ):
             pass
         elif other._IPhi0_ref != self._IPhi0_ref:
@@ -466,8 +466,8 @@ class OPslip(OP):
         if (
             other._slip_ref is not None
             and self._slip_ref is not None
-            and isnan(other._slip_ref)
-            and isnan(self._slip_ref)
+            and np.isnan(other._slip_ref)
+            and np.isnan(self._slip_ref)
         ):
             pass
         elif other._slip_ref != self._slip_ref:
@@ -485,8 +485,8 @@ class OPslip(OP):
         if (
             other._U0_ref is not None
             and self._U0_ref is not None
-            and isnan(other._U0_ref)
-            and isnan(self._U0_ref)
+            and np.isnan(other._U0_ref)
+            and np.isnan(self._U0_ref)
         ):
             pass
         elif other._U0_ref != self._U0_ref:
@@ -504,8 +504,8 @@ class OPslip(OP):
         if (
             other._UPhi0_ref is not None
             and self._UPhi0_ref is not None
-            and isnan(other._UPhi0_ref)
-            and isnan(self._UPhi0_ref)
+            and np.isnan(other._UPhi0_ref)
+            and np.isnan(self._UPhi0_ref)
         ):
             pass
         elif other._UPhi0_ref != self._UPhi0_ref:

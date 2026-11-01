@@ -24,8 +24,7 @@ from pyleecan.Methods.Machine.BoreSinePole.get_bore_line import (
 )
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Methods import ParentMissingError
-from numpy import linspace, pi, exp, arccos, cos, sin
-import matplotlib.pyplot as plt
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.Plot import (
@@ -37,7 +36,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -93,7 +92,7 @@ class BoreSinePole(Bore):
         logger = self.get_logger()
 
         # Compute the shape
-        alpha1 = pi / self.N  # Half bore pitch [rad]
+        alpha1 = np.pi / self.N  # Half bore pitch [rad]
 
         # Checking max width and W0
         w_max = _get_pole_width_max(self)  # [m]
@@ -103,17 +102,19 @@ class BoreSinePole(Bore):
             logger.warning("Enforcing permissible pole width (W0).")
 
         phi_max = _get_phi(self, w_max)
-        phi = linspace(-phi_max, phi_max, 2 * NN + 1)
+        phi = np.linspace(-phi_max, phi_max, 2 * NN + 1)
 
         Zedge = self.get_pole_shape(-phi_max)
-        xedge = (Zedge * exp(1j * alpha1)).real
+        xedge = (Zedge * np.exp(1j * alpha1)).real
         Rq = Rbo + self.delta_d - self.delta_q
 
         # Create the first pole bore line
         Z = [self.get_pole_shape(p) for p in phi]
 
         if self.delta_q is not None and Rq < xedge:
-            line = Segment(Zedge * exp(1j * alpha1), 1j * Zedge.imag * exp(1j * alpha1))
+            line = Segment(
+                Zedge * np.exp(1j * alpha1), 1j * Zedge.imag * np.exp(1j * alpha1)
+            )
             inter = line.intersect_line(Rq, Rq + 1j * Rq)
             if len(inter) != 1:
                 raise ()  # TODO
@@ -124,17 +125,17 @@ class BoreSinePole(Bore):
                     raise ()  # TODO
 
                 logger.warning("Enforcing permissible q axis air gap (delta_q).")
-                Z.insert(0, inter[0] * exp(-1j * alpha1))
+                Z.insert(0, inter[0] * np.exp(-1j * alpha1))
                 Z.append(Z[0].conjugate())
 
             else:
-                Z.insert(0, inter[0] * exp(-1j * alpha1))
+                Z.insert(0, inter[0] * np.exp(-1j * alpha1))
                 Z.append(Z[0].conjugate())
-                Z.insert(0, Rq * exp(-1j * alpha1))
+                Z.insert(0, Rq * np.exp(-1j * alpha1))
                 Z.append(Z[0].conjugate())
 
         else:
-            Z.append(xedge * exp(1j * alpha1))
+            Z.append(xedge * np.exp(1j * alpha1))
             Z.insert(0, Z[-1].conjugate())
 
         # Create the lines
@@ -143,8 +144,9 @@ class BoreSinePole(Bore):
             for jj in range(len(Z) - 1):
                 bore_list.append(
                     Segment(
-                        Z[jj] * exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
-                        Z[jj + 1] * exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
+                        Z[jj] * np.exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
+                        Z[jj + 1]
+                        * np.exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
                         prop_dict=prop_dict,
                     )
                 )
@@ -174,15 +176,15 @@ class BoreSinePole(Bore):
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
         # limit phi to valid values
-        phi_max = arccos(self.delta_d / (self.delta_d + Rbo)) / self.k
+        phi_max = np.arccos(self.delta_d / (self.delta_d + Rbo)) / self.k
         phi = max(-phi_max, phi)
         phi = min(phi_max, phi)
 
         # compute the point on the bore radius arc
-        delta = self.delta_d / cos(phi * self.k)
+        delta = self.delta_d / np.cos(phi * self.k)
         r = Rbo + self.delta_d - delta
-        x = r * cos(2 * phi / self.N)
-        y = r * sin(2 * phi / self.N)
+        x = r * np.cos(2 * phi / self.N)
+        y = r * np.sin(2 * phi / self.N)
 
         return x + 1j * y
 
@@ -253,7 +255,7 @@ class BoreSinePole(Bore):
             Zq1 = lines[0].get_end()
             Zq2 = lines[-1].get_begin()
             Rbo = self.parent.get_Rbo()
-            alpha = pi / self.N
+            alpha = np.pi / self.N
             # H = self.Rarc / 8  # Small distance for label placement
 
             # Adding schematics
@@ -261,7 +263,7 @@ class BoreSinePole(Bore):
                 # delta_q
                 p1 = Rbo + self.delta_d - self.delta_q
                 p2 = Rbo + self.delta_d
-                line = Segment(p1 * exp(2j * alpha), p2 * exp(2j * alpha))
+                line = Segment(p1 * np.exp(2j * alpha), p2 * np.exp(2j * alpha))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -273,7 +275,9 @@ class BoreSinePole(Bore):
                     fontsize=SC_FONT_SIZE,
                 )
                 # W0
-                line = Segment(Zq1 * exp(2 * 1j * alpha), Zq2 * exp(4 * 1j * alpha))
+                line = Segment(
+                    Zq1 * np.exp(2 * 1j * alpha), Zq2 * np.exp(4 * 1j * alpha)
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -326,19 +330,19 @@ class BoreSinePole(Bore):
                 #     linewidth=MAIN_LINE_WIDTH,
                 # )
                 # Machine center
-                line = Segment(0, Rbo * exp(1j * alpha))
+                line = Segment(0, Rbo * np.exp(1j * alpha))
                 line.plot(**plot_args)
                 # Rbo circle arc
-                Z1 = Rbo * exp(-1j * pi / 2)
-                Z2 = Rbo * exp(1j * pi / 2)
+                Z1 = Rbo * np.exp(-1j * np.pi / 2)
+                Z2 = Rbo * np.exp(1j * np.pi / 2)
                 line = Arc1(begin=Z1, end=Z2, radius=Rbo, is_trigo_direction=True)
                 line.plot(**plot_args)
                 line = Arc1(begin=Z2, end=Z1, radius=Rbo, is_trigo_direction=True)
                 line.plot(**plot_args)
                 # Rbo + delta_d circle arc
                 R = Rbo + self.delta_d
-                Z1 = R * exp(-1j * pi / 2)
-                Z2 = R * exp(1j * pi / 2)
+                Z1 = R * np.exp(-1j * np.pi / 2)
+                Z2 = R * np.exp(1j * np.pi / 2)
                 line = Arc1(begin=Z1, end=Z2, radius=R, is_trigo_direction=True)
                 line.plot(**plot_args)
                 line = Arc1(begin=Z2, end=Z1, radius=R, is_trigo_direction=True)
@@ -480,8 +484,8 @@ class BoreSinePole(Bore):
         if (
             other._k is not None
             and self._k is not None
-            and isnan(other._k)
-            and isnan(self._k)
+            and np.isnan(other._k)
+            and np.isnan(self._k)
         ):
             pass
         elif other._k != self._k:
@@ -493,8 +497,8 @@ class BoreSinePole(Bore):
         if (
             other._delta_d is not None
             and self._delta_d is not None
-            and isnan(other._delta_d)
-            and isnan(self._delta_d)
+            and np.isnan(other._delta_d)
+            and np.isnan(self._delta_d)
         ):
             pass
         elif other._delta_d != self._delta_d:
@@ -512,8 +516,8 @@ class BoreSinePole(Bore):
         if (
             other._delta_q is not None
             and self._delta_q is not None
-            and isnan(other._delta_q)
-            and isnan(self._delta_q)
+            and np.isnan(other._delta_q)
+            and np.isnan(self._delta_q)
         ):
             pass
         elif other._delta_q != self._delta_q:
@@ -531,8 +535,8 @@ class BoreSinePole(Bore):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:

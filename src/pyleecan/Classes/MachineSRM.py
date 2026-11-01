@@ -21,7 +21,7 @@ from pyleecan.Methods.Machine.MachineSRM.check import SRM_WrongRotor, SRM_WrongS
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

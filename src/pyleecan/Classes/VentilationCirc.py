@@ -24,8 +24,7 @@ from pyleecan.Classes.Hole import Hole
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.VentilationCirc.build_geometry import build_geometry
 from pyleecan.Methods.Slot.VentilationCirc.check import check
-from numpy import exp, pi
-import matplotlib.pyplot as plt
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
@@ -41,7 +40,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -66,9 +65,9 @@ class VentilationCirc(Hole):
         """
         Rbo = self.get_Rbo()
 
-        Z1 = (self.H0 - self.D0 / 2) * exp(1j * self.Alpha0)
-        Z2 = (self.H0 + self.D0 / 2) * exp(1j * self.Alpha0)
-        Zc = (self.H0) * exp(1j * self.Alpha0)
+        Z1 = (self.H0 - self.D0 / 2) * np.exp(1j * self.Alpha0)
+        Z2 = (self.H0 + self.D0 / 2) * np.exp(1j * self.Alpha0)
+        Zc = (self.H0) * np.exp(1j * self.Alpha0)
 
         point_dict = dict()
         # symetry
@@ -124,7 +123,7 @@ class VentilationCirc(Hole):
 
         self.check()
 
-        return pi * ((self.D0 / 2.0) ** 2)
+        return np.pi * ((self.D0 / 2.0) ** 2)
 
     # cf Methods.Slot.VentilationCirc.get_center
     def get_center(self):
@@ -145,7 +144,11 @@ class VentilationCirc(Hole):
         Zc_list = list()
 
         for ii in range(self.Zh):
-            Zc = self.H0 * exp(1j * self.Alpha0) * exp(ii * 1j * 2 * pi / self.Zh)
+            Zc = (
+                self.H0
+                * np.exp(1j * self.Alpha0)
+                * np.exp(ii * 1j * 2 * np.pi / self.Zh)
+            )
             Zc_list.append(Zc)
 
         return Zc_list
@@ -241,7 +244,7 @@ class VentilationCirc(Hole):
                 fig=fig,
                 ax=ax,
             )  # center hole on Ox axis
-            sp = 2 * pi / self.Zh
+            sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo()
             point_dict = self._comp_point_coordinate()
 
@@ -272,8 +275,8 @@ class VentilationCirc(Hole):
                 )
                 # D0
                 line = Segment(
-                    point_dict["Z1"] * exp(1j * 2 * pi / self.Zh),
-                    point_dict["Z2"] * exp(1j * 2 * pi / self.Zh),
+                    point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
                 )
                 line.plot(
                     fig=fig,
@@ -313,7 +316,7 @@ class VentilationCirc(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Center axis
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * self.Alpha0))
+                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -323,8 +326,8 @@ class VentilationCirc(Hole):
                 )
                 # H0 radius
                 line = Arc1(
-                    begin=self.H0 * exp(-1j * pi / 2 * 0.9),
-                    end=self.H0 * exp(1j * pi / 2 * 0.9),
+                    begin=self.H0 * np.exp(-1j * np.pi / 2 * 0.9),
+                    end=self.H0 * np.exp(1j * np.pi / 2 * 0.9),
                     radius=self.H0,
                     is_trigo_direction=True,
                 )
@@ -460,8 +463,8 @@ class VentilationCirc(Hole):
         if (
             other._D0 is not None
             and self._D0 is not None
-            and isnan(other._D0)
-            and isnan(self._D0)
+            and np.isnan(other._D0)
+            and np.isnan(self._D0)
         ):
             pass
         elif other._D0 != self._D0:
@@ -473,8 +476,8 @@ class VentilationCirc(Hole):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:

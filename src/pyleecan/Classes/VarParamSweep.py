@@ -24,7 +24,7 @@ from pyleecan.Methods.Simulation.VarParamSweep.check_param import (
 from pyleecan.Classes.ParamExplorerSet import ParamExplorerSet
 import itertools
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

@@ -17,7 +17,7 @@ from pyleecan.Classes.Line import Line
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import sqrt, angle, exp, sign, abs, pi, sin, abs as np_abs
+import numpy as np
 from pyleecan.Methods.Geometry.Arc.comp_maxseg import MAXSEG_default
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.Geometry.inter_circle_circle import inter_circle_circle
@@ -27,7 +27,7 @@ from pyleecan.Methods.Geometry.Arc.split_line import DELTA
 from pyleecan.Classes.Segment import Segment
 from pyleecan.definitions import PACKAGE_NAME
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -57,11 +57,11 @@ class Arc(Line):
         Z2 = Z - Zc
 
         A1 = self.get_angle()
-        A2 = angle(Z2 * exp(-1j * angle(self.get_begin() - Zc)))
+        A2 = np.angle(Z2 * np.exp(-1j * np.angle(self.get_begin() - Zc)))
 
-        if sign(A1) == sign(A2) and abs(A2) < abs(A1):
+        if np.sign(A1) == np.sign(A2) and abs(A2) < abs(A1):
             # The point is on the correct side of the arc
-            D1 = abs(sqrt(Z2.real**2 + Z2.imag**2) - self.comp_radius())
+            D1 = abs(np.sqrt(Z2.real**2 + Z2.imag**2) - self.comp_radius())
             return D1
         else:
             D2 = abs(Z - self.get_begin())
@@ -99,18 +99,18 @@ class Arc(Line):
             begin = self.get_begin()
             end = self.get_end()
 
-            if abs(angle) == 180:
-                l_arc = pi * abs(begin - end) / 2
-            elif abs(angle) == 90:
-                l_arc = pi / 2 * abs(begin - end) / sqrt(2)
+            if np.abs(angle) == 180:
+                l_arc = np.pi * np.abs(begin - end) / 2
+            elif np.abs(angle) == 90:
+                l_arc = np.pi / 2 * np.abs(begin - end) / np.sqrt(2)
             else:
-                l_arc = abs((begin - end) / (2 * sin(angle / 2 * pi / 180))) * abs(
-                    angle * pi / 180
-                )
+                l_arc = np.abs(
+                    (begin - end) / (2 * np.sin(angle / 2 * np.pi / 180))
+                ) * np.abs(angle * np.pi / 180)
 
             n_seg = l_arc / elementsize
 
-            maxseg = abs(min(MAXSEG_default, abs(angle / n_seg * maxseg_amp)))
+            maxseg = np.abs(min(MAXSEG_default, np.abs(angle / n_seg * maxseg_amp)))
 
         return maxseg
 
@@ -179,7 +179,7 @@ class Arc(Line):
         femm.mi_setnodeprop(nodeprop, group)
         femm.mi_clearselected()
 
-        if abs(angle) > 180:
+        if np.abs(angle) > 180:
             if is_draw:
                 femm.mi_addnode(X2, Y2)
 
@@ -202,8 +202,8 @@ class Arc(Line):
         # Set Arc properties
         if angle > 180:
             cent = self.get_center()
-            mid1 = cent + (mid - cent) * exp(1j * angle / 4)
-            mid2 = cent + (mid - cent) * exp(-1j * angle / 4)
+            mid1 = cent + (mid - cent) * np.exp(1j * angle / 4)
+            mid2 = cent + (mid - cent) * np.exp(-1j * angle / 4)
             femm.mi_selectarcsegment(mid1.real, mid1.imag)
             femm.mi_selectarcsegment(mid2.real, mid1.imag)
         else:
@@ -241,20 +241,20 @@ class Arc(Line):
         # Order the intersection points (begin=>intersect1=>intersection2=>end)
         if len(Zlist) == 2:
             begin = self.get_begin()
-            if np_abs(Zlist[0] - begin) < 1e-6:
+            if np.abs(Zlist[0] - begin) < 1e-6:
                 # First point is begin
                 return Zlist
-            if np_abs(Zlist[1] - begin) < 1e-6:
+            if np.abs(Zlist[1] - begin) < 1e-6:
                 # Second point is begin
                 return Zlist[::-1]
 
             # Go to the coordinate system Zc as center, begin on X > 0 axis
-            Z1 = (Zlist[0] - Zc) * exp(-1j * angle(begin - Zc))
-            Z2 = (Zlist[1] - Zc) * exp(-1j * angle(begin - Zc))
+            Z1 = (Zlist[0] - Zc) * np.exp(-1j * np.angle(begin - Zc))
+            Z2 = (Zlist[1] - Zc) * np.exp(-1j * np.angle(begin - Zc))
 
             alpha = self.get_angle()
-            A1 = angle(Z1) % (2 * pi)
-            A2 = angle(Z2) % (2 * pi)
+            A1 = np.angle(Z1) % (2 * np.pi)
+            A2 = np.angle(Z2) % (2 * np.pi)
             # Check if Zlist needs to be reversed
             if alpha > 0 and A1 > A2:
                 return Zlist[::-1]
@@ -351,24 +351,24 @@ class Arc(Line):
         R = self.comp_radius()
 
         # Check if on the circle
-        if abs(np_abs(Z - Zc) - R) > 1e-6:
+        if abs(np.abs(Z - Zc) - R) > 1e-6:
             return False
 
         # Check if point is begin or end
         begin = self.get_begin()
         end = self.get_end()
-        if np_abs(Z - begin) < 1e-6:
+        if np.abs(Z - begin) < 1e-6:
             return True
-        if np_abs(Z - end) < 1e-6:
+        if np.abs(Z - end) < 1e-6:
             return True
 
         # Go to the coordinate system Zc as center, begin on X > 0 axis
-        Ze = (end - Zc) * exp(-1j * angle(begin - Zc))
-        Z = (Z - Zc) * exp(-1j * angle(begin - Zc))
+        Ze = (end - Zc) * np.exp(-1j * np.angle(begin - Zc))
+        Z = (Z - Zc) * np.exp(-1j * np.angle(begin - Zc))
 
         alpha = self.get_angle()
-        Ae = angle(Ze) % (2 * pi)
-        Az = angle(Z) % (2 * pi)
+        Ae = np.angle(Ze) % (2 * np.pi)
+        Az = np.angle(Z) % (2 * np.pi)
         if alpha > 0:  # Trigo direction
             if Ae > Az:
                 return True
@@ -478,8 +478,8 @@ class Arc(Line):
         # Get the intersection point
         Z_int = self.intersect_line(Z1, Z2)
         # Begin and end point in the line coordonate system
-        Zb = (self.get_begin() - Z1) * exp(-1j * angle(Z2 - Z1))
-        Ze = (self.get_end() - Z1) * exp(-1j * angle(Z2 - Z1))
+        Zb = (self.get_begin() - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
+        Ze = (self.get_end() - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
         # Center of the arc (for later check)
         Zc = self.get_center()
 
@@ -505,8 +505,8 @@ class Arc(Line):
             )
             # Fix radius if needed
             if (
-                np_abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
-                and np_abs(line1.get_center() - Zc) > 1e-6
+                np.abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
+                and np.abs(line1.get_center() - Zc) > 1e-6
             ):
                 line1.radius = -1 * line1.radius
             # Intersection => End
@@ -518,8 +518,8 @@ class Arc(Line):
             )
             # Fix radius if needed
             if (
-                np_abs(line2.begin - line2.end) > 1e-6
-                and np_abs(line2.get_center() - Zc) > 1e-6  # Avoid error for center
+                np.abs(line2.begin - line2.end) > 1e-6
+                and np.abs(line2.get_center() - Zc) > 1e-6  # Avoid error for center
             ):
                 line2.radius = -1 * line2.radius
 
@@ -565,8 +565,8 @@ class Arc(Line):
             )
             # Fix radius if needed
             if (
-                np_abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
-                and np_abs(line1.get_center() - Zc) > 1e-6
+                np.abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
+                and np.abs(line1.get_center() - Zc) > 1e-6
             ):
                 line1.radius = -1 * line1.radius
             # Intersection 1 => Intersection 2
@@ -578,8 +578,8 @@ class Arc(Line):
             )
             # Fix radius if needed
             if (
-                np_abs(line2.begin - line2.end) > 1e-6  # Avoid error for center
-                and np_abs(line2.get_center() - Zc) > 1e-6
+                np.abs(line2.begin - line2.end) > 1e-6  # Avoid error for center
+                and np.abs(line2.get_center() - Zc) > 1e-6
             ):
                 line2.radius = -1 * line2.radius
             # Intersection 2 => End
@@ -591,8 +591,8 @@ class Arc(Line):
             )
             # Fix radius if needed
             if (
-                np_abs(line3.begin - line3.end) > 1e-6  # Avoid error for center
-                and np_abs(line3.get_center() - Zc) > 1e-6
+                np.abs(line3.begin - line3.end) > 1e-6  # Avoid error for center
+                and np.abs(line3.get_center() - Zc) > 1e-6
             ):
                 line3.radius = -1 * line3.radius
             # Line Intersection 1 => Intersection 2 for join
@@ -603,17 +603,17 @@ class Arc(Line):
                 line_list = [line1, seg_join, line3]
             else:
                 line_list = [line1, line3]
-            if np_abs(Z_int[0] - self.get_begin()) < DELTA:  # Begin==Int1
+            if np.abs(Z_int[0] - self.get_begin()) < DELTA:  # Begin==Int1
                 line_list.pop(0)
-            if np_abs(Z_int[1] - self.get_end()) < DELTA:
+            if np.abs(Z_int[1] - self.get_end()) < DELTA:
                 line_list.pop(-1)
 
             # If the intersetion points are begin and end
             if (
-                np_abs(Z_int[0] - self.get_begin()) < DELTA
-                and np_abs(Z_int[1] - self.get_end()) < DELTA
+                np.abs(Z_int[0] - self.get_begin()) < DELTA
+                and np.abs(Z_int[1] - self.get_end()) < DELTA
             ):
-                Zm = (self.get_middle() - Z1) * exp(-1j * angle(Z2 - Z1))
+                Zm = (self.get_middle() - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
                 # begin and end are on the line => Zm.imag != 0
                 if Zm.imag > 0:
                     return [line4], []

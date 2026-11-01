@@ -17,9 +17,9 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import angle, exp
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -50,12 +50,12 @@ class Line(FrozenClass):
         L = self.comp_length() / 3
 
         # In ref begin=O and end on Ox
-        Zm2 = (Zm - Zb) * exp(-1j * angle(Ze - Zb))
+        Zm2 = (Zm - Zb) * np.exp(-1j * np.angle(Ze - Zb))
         Zn2 = Zm2 + 1j * L
 
-        Zn = Zn2 * exp(1j * angle(Ze - Zb)) + Zb
+        Zn = Zn2 * np.exp(1j * np.angle(Ze - Zb)) + Zb
 
-        return angle(Zn - Zm)
+        return np.angle(Zn - Zm)
 
     # generic save method is available in all object
     save = save

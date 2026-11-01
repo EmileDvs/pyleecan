@@ -22,7 +22,7 @@ from pyleecan.Methods.Import.ImportMatrixXls import XlsFileError
 from os.path import isfile
 from pyleecan.Functions.path_tools import abs_file_path
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

@@ -18,10 +18,9 @@ from pyleecan.Classes.SolutionMat import SolutionMat
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Functions.Structural.conversions import cart2pol, pol2cart
-from numpy import max as np_max, min as np_min
+import numpy as np
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -92,7 +91,7 @@ class Mode(SolutionMat):
         """
 
         radial_shape = self.get_shape_pol()[:, 0]
-        clim = [np_min(radial_shape), np_max(radial_shape)]
+        clim = [np.min(radial_shape), np.max(radial_shape)]
         self.parent.mesh.plot_contour(
             radial_shape, field_name="Radial displacement", clim=clim
         )
@@ -116,7 +115,7 @@ class Mode(SolutionMat):
 
         radial_shape = self.get_shape_pol()[:, 0]
         shape_xyz = self.get_shape_xyz()
-        clim = [np_min(radial_shape), np_max(radial_shape)]
+        clim = [np.min(radial_shape), np.max(radial_shape)]
         self.parent.mesh.plot_deformation_animated(
             shape_xyz,
             radial_shape,
@@ -247,8 +246,8 @@ class Mode(SolutionMat):
         if (
             other._nat_freq is not None
             and self._nat_freq is not None
-            and isnan(other._nat_freq)
-            and isnan(self._nat_freq)
+            and np.isnan(other._nat_freq)
+            and np.isnan(self._nat_freq)
         ):
             pass
         elif other._nat_freq != self._nat_freq:

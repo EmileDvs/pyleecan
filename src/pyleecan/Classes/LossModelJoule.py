@@ -17,9 +17,9 @@ from pyleecan.Classes.LossModel import LossModel
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, sqrt, array, sum as np_sum, zeros
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -84,14 +84,14 @@ class LossModelJoule(LossModel):
         sigma = conductor.cond_mat.elec.get_conductivity(T_op=T_op, T_ref=T_ref)
 
         # Magnetic permeability
-        mu0 = 4 * pi * 1e-7
+        mu0 = 4 * np.pi * 1e-7
         if conductor.cond_mat.mag is None or conductor.cond_mat.mag.mur_lin is None:
             mur = 1
         else:
             mur = conductor.cond_mat.mag.mur_lin
 
         # reduced conductor height Eq(5.24) p.270 divided by the frequency + adding relative permeatibility
-        ksi = hc * sqrt(pi * mu0 * mur * sigma * za * bc0 / b)
+        ksi = hc * np.sqrt(np.pi * mu0 * mur * sigma * za * bc0 / b)
 
         if not isinstance(ksi, float):
             # Avoid numerical error with 0
@@ -174,9 +174,9 @@ class LossModelJoule(LossModel):
         Se = ms.mesh.get_element_area()[ms.group[self.group]]
 
         # Constant component and twice the electrical frequency have same joule density values
-        freqs = array([felec])
-        Pjoule_density = zeros((freqs.size, Se.size))
-        Pjoule_density[0, :] = Pjoule / (per_a * Lst * np_sum(Se))
+        freqs = np.array([felec])
+        Pjoule_density = np.zeros((freqs.size, Se.size))
+        Pjoule_density[0, :] = Pjoule / (per_a * Lst * np.sum(Se))
 
         A = coeff * k
         B = coeff

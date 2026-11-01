@@ -17,11 +17,10 @@ from pyleecan.Classes.RefElement import RefElement
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import abs, array, ndarray, newaxis, dot
 import numpy as np
 from typing import Optional, Tuple
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -31,7 +30,7 @@ class RefTriangle3(RefElement):
     VERSION = 1
 
     # cf Methods.Mesh.RefTriangle3.get_element_area
-    def get_element_area(self, element_coordinate: ndarray) -> ndarray:
+    def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:
         """Return the area of the elements.
         https://en.wikipedia.org/wiki/Shoelace_formula
 
@@ -48,20 +47,20 @@ class RefTriangle3(RefElement):
             area of the elements
         """
         if isinstance(element_coordinate, list):
-            element_coordinate = array(element_coordinate)
+            element_coordinate = np.array(element_coordinate)
 
         if element_coordinate.shape[-1] == 2:  # 2D - case
             if (
                 len(element_coordinate.shape) == 2
             ):  # only one indice -> adapt array shape
-                element_coordinate = element_coordinate[newaxis, :, :]
+                element_coordinate = element_coordinate[np.newaxis, :, :]
 
             a = element_coordinate[:, 0, 0] - element_coordinate[:, 1, 0]  # x1 - x2
             b = element_coordinate[:, 0, 1] - element_coordinate[:, 2, 1]  # y1 - y3
             c = element_coordinate[:, 0, 0] - element_coordinate[:, 2, 0]  # x1 - x3
             d = element_coordinate[:, 0, 1] - element_coordinate[:, 1, 1]  # y1 - y2
 
-        area = 1 / 2 * abs(a * b - c * d)
+        area = 1 / 2 * np.abs(a * b - c * d)
 
         return area
 
@@ -175,7 +174,7 @@ class RefTriangle3(RefElement):
 
     # cf Methods.Mesh.RefTriangle3.is_inside
     def is_inside(
-        self, node: ndarray, point: ndarray, normal_t: Optional[ndarray] = None
+        self, node: np.ndarray, point: np.ndarray, normal_t: Optional[np.ndarray] = None
     ) -> Tuple[bool, float, float]:
         """Check if a point is inside the element defined by the nodes.
 
@@ -206,7 +205,7 @@ class RefTriangle3(RefElement):
         # Optional : Check that normals are almost aligned
         if normal_t is not None:
             normal_s = self.get_normal(node)
-            scal_st = dot(normal_t[0:2], normal_s)
+            scal_st = np.dot(normal_t[0:2], normal_s)
             is_colinear = abs(scal_st) > 1 - 2 * self.epsilon
             is_inside = is_inside & is_colinear
 

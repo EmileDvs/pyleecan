@@ -22,13 +22,12 @@ from pyleecan.Classes.EEC import EEC
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Simulation.EEC_PMSM.comp_BEMF_harmonics import comp_BEMF_harmonics
-from numpy import array, pi
-import numpy.linalg as np_lin, numpy as np
+import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Functions.Electrical.dqh_transformation_freq import dqh2n_DataFreq
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -295,14 +294,14 @@ class EEC_PMSM(EEC):
             Dict containing all magnetic quantities that have been calculated in EEC
         """
 
-        ws = 2 * pi * self.OP.get_felec()
+        ws = 2 * np.pi * self.OP.get_felec()
 
         out_dict = dict()
 
         if self.OP.get_Ud_Uq()["Ud"] is not None:
             # Voltage driven
             # Impedance matrix
-            XR = array(
+            XR = np.array(
                 [
                     [self.R1, -ws * self.Lq],
                     [ws * self.Ld, self.R1],
@@ -310,13 +309,13 @@ class EEC_PMSM(EEC):
             )
             # Back emf array
             if self.Phid_mag is not None:
-                XE = array([-ws * self.Phiq_mag, ws * self.Phid_mag])
+                XE = np.array([-ws * self.Phiq_mag, ws * self.Phid_mag])
             else:
-                XE = array([0, 0])
+                XE = np.array([0, 0])
             # Voltage array
-            XU = array([self.OP.get_Ud_Uq()["Ud"], self.OP.get_Ud_Uq()["Uq"]])
+            XU = np.array([self.OP.get_Ud_Uq()["Ud"], self.OP.get_Ud_Uq()["Uq"]])
             # Solve system to get current array
-            XI = np_lin.solve(XR, XU - XE)
+            XI = np.linalg.solve(XR, XU - XE)
 
             # Store values in out_dict
             out_dict["Id"] = XI[0]
@@ -700,8 +699,8 @@ class EEC_PMSM(EEC):
         if (
             other._Ld is not None
             and self._Ld is not None
-            and isnan(other._Ld)
-            and isnan(self._Ld)
+            and np.isnan(other._Ld)
+            and np.isnan(self._Ld)
         ):
             pass
         elif other._Ld != self._Ld:
@@ -713,8 +712,8 @@ class EEC_PMSM(EEC):
         if (
             other._Lq is not None
             and self._Lq is not None
-            and isnan(other._Lq)
-            and isnan(self._Lq)
+            and np.isnan(other._Lq)
+            and np.isnan(self._Lq)
         ):
             pass
         elif other._Lq != self._Lq:
@@ -726,8 +725,8 @@ class EEC_PMSM(EEC):
         if (
             other._Phid is not None
             and self._Phid is not None
-            and isnan(other._Phid)
-            and isnan(self._Phid)
+            and np.isnan(other._Phid)
+            and np.isnan(self._Phid)
         ):
             pass
         elif other._Phid != self._Phid:
@@ -741,8 +740,8 @@ class EEC_PMSM(EEC):
         if (
             other._Phiq is not None
             and self._Phiq is not None
-            and isnan(other._Phiq)
-            and isnan(self._Phiq)
+            and np.isnan(other._Phiq)
+            and np.isnan(self._Phiq)
         ):
             pass
         elif other._Phiq != self._Phiq:
@@ -756,8 +755,8 @@ class EEC_PMSM(EEC):
         if (
             other._Phid_mag is not None
             and self._Phid_mag is not None
-            and isnan(other._Phid_mag)
-            and isnan(self._Phid_mag)
+            and np.isnan(other._Phid_mag)
+            and np.isnan(self._Phid_mag)
         ):
             pass
         elif other._Phid_mag != self._Phid_mag:
@@ -775,8 +774,8 @@ class EEC_PMSM(EEC):
         if (
             other._Phiq_mag is not None
             and self._Phiq_mag is not None
-            and isnan(other._Phiq_mag)
-            and isnan(self._Phiq_mag)
+            and np.isnan(other._Phiq_mag)
+            and np.isnan(self._Phiq_mag)
         ):
             pass
         elif other._Phiq_mag != self._Phiq_mag:

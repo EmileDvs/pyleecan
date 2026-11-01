@@ -17,9 +17,9 @@ from pyleecan.Classes.Import import Import
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import transpose
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -47,7 +47,7 @@ class ImportMatrix(Import):
         """
 
         if self.is_transpose:
-            return transpose(matrix)
+            return np.transpose(matrix)
         return matrix
 
     # generic save method is available in all object

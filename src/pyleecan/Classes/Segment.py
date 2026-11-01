@@ -23,7 +23,7 @@ from pyleecan.Classes.Line import Line
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Geometry.Segment.check import check
 from pyleecan.Methods.Geometry.Segment.comp_distance import distance_numpy
-from numpy import array, linspace, abs as np_abs, exp, angle
+import numpy as np
 from pyleecan.Methods.Machine import LINE_NPOINT_D
 from pyleecan.Methods.Geometry.Segment import (
     NbPointSegmentDError,
@@ -36,7 +36,7 @@ from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot import TEXT_BOX
 from pyleecan.Methods.Geometry.Segment.split_line import DELTA
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -65,9 +65,9 @@ class Segment(Line):
             distance of a point to the Segment
         """
 
-        Z1 = array([self.begin.real, self.begin.imag, 0])
-        Z2 = array([self.end.real, self.end.imag, 0])
-        Z3 = array([Z.real, Z.imag, 0])
+        Z1 = np.array([self.begin.real, self.begin.imag, 0])
+        Z2 = np.array([self.end.real, self.end.imag, 0])
+        Z3 = np.array([Z.real, Z.imag, 0])
         return distance_numpy(Z1, Z2, Z3)
 
     # cf Methods.Geometry.Segment.comp_length
@@ -129,7 +129,7 @@ class Segment(Line):
 
         # t start by 0 (begin) and end by 1 (end)
         # len(t) = nb_point +2 : begin + end + nb_point between
-        t = linspace(0, 1, nb_point + 2)
+        t = np.linspace(0, 1, nb_point + 2)
 
         # We use the complex representation of the point
         z1 = self.begin
@@ -296,9 +296,9 @@ class Segment(Line):
             # One intersect. Is it between begin and end or not ?
             Z_int = Z_list[0]
             Seg_len = self.comp_length()
-            if np_abs(Z_int - Z3) <= Seg_len and np_abs(Z_int - Z4) <= Seg_len:
+            if np.abs(Z_int - Z3) <= Seg_len and np.abs(Z_int - Z4) <= Seg_len:
                 return [Z_int]
-            elif np_abs(Z_int - Z3) <= 1e-6 or np_abs(Z_int - Z4) <= 1e-6:
+            elif np.abs(Z_int - Z3) <= 1e-6 or np.abs(Z_int - Z4) <= 1e-6:
                 # Zint is begin or end
                 return [Z_int]
             else:
@@ -454,7 +454,7 @@ class Segment(Line):
                 arrowprops=dict(arrowstyle="<->", linewidth=linewidth, color=color),
             )
         else:  # Plot as a line
-            points = array([begin, end])
+            points = np.array([begin, end])
             ax.plot(
                 points.real,
                 points.imag,
@@ -517,8 +517,8 @@ class Segment(Line):
         self.check()
 
         # Modification from the rotation of the object
-        self.begin = self.begin * exp(1j * angle)
-        self.end = self.end * exp(1j * angle)
+        self.begin = self.begin * np.exp(1j * angle)
+        self.end = self.end * np.exp(1j * angle)
 
     # cf Methods.Geometry.Segment.scale
     def scale(self, scale_factor):
@@ -585,8 +585,8 @@ class Segment(Line):
 
         Z_int = self.intersect_line(Z1, Z2)
         # Begin and end point in the line coordonate system
-        Zb = (self.begin - Z1) * exp(-1j * angle(Z2 - Z1))
-        Ze = (self.end - Z1) * exp(-1j * angle(Z2 - Z1))
+        Zb = (self.begin - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
+        Ze = (self.end - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
 
         if len(Z_int) == 0:
             # No intersection copy the line

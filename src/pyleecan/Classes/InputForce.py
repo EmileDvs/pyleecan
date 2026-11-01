@@ -21,9 +21,9 @@ from pyleecan.Classes.OutForce import OutForce
 from pyleecan.Methods.Simulation.Input import InputError
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
-from numpy import ndarray
-from numpy import array, array_equal
-from numpy import isnan
+import numpy as np
+
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

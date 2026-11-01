@@ -7,8 +7,6 @@
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
 # - check: module uses a wildcard import whose names cannot be resolved safely
-# - comp_periodicity_geo: import name 'gcd' refers to different sources (math.gcd and numpy.gcd)
-# - comp_periodicity_spatial: import name 'gcd' refers to different sources (math.gcd and numpy.gcd)
 
 from os import linesep
 from sys import getsizeof
@@ -24,12 +22,6 @@ from pyleecan.Classes._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.Lamination.check import check
-from pyleecan.Methods.Machine.Lamination.comp_periodicity_geo import (
-    comp_periodicity_geo,
-)
-from pyleecan.Methods.Machine.Lamination.comp_periodicity_spatial import (
-    comp_periodicity_spatial,
-)
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.SurfRing import SurfRing
 from pyleecan.Functions.labels import (
@@ -48,7 +40,7 @@ from pyleecan.Functions.labels import (
     YSNL_LAB,
 )
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
-from numpy import exp, pi, angle as np_angle
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
@@ -61,7 +53,6 @@ from math import gcd
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 from pyleecan.Classes.NotchEvenDist import NotchEvenDist
 from pyleecan.Methods import NotImplementedYetError
-import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
@@ -74,7 +65,7 @@ from pyleecan.Methods.Machine.Lamination.plot_preview_notch import (
 )
 from pyleecan.Functions.Load.import_class import import_class
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -286,8 +277,8 @@ class Lamination(FrozenClass):
                 radius_lines.append(arc1)
                 radius_lines.append(arc2)
             else:
-                end_angle = 2 * pi / sym
-                rot = exp(1j * end_angle)
+                end_angle = 2 * np.pi / sym
+                rot = np.exp(1j * end_angle)
                 arc = Arc1(begin=R, end=R * rot, radius=R, is_trigo_direction=True)
                 radius_lines.append(arc)
             radius_desc.append(
@@ -336,8 +327,8 @@ class Lamination(FrozenClass):
                         "obj": None,
                         "lines": [
                             Arc1(
-                                begin=R * exp(1j * begin),
-                                end=R * exp(1j * end),
+                                begin=R * np.exp(1j * begin),
+                                end=R * np.exp(1j * end),
                                 radius=R,
                                 is_trigo_direction=True,
                             )
@@ -349,9 +340,9 @@ class Lamination(FrozenClass):
         radius_desc.append(all_desc_list[-1])
         # Add first and last radius line if required
         if all_desc_list[0]["begin_angle"] > 0:
-            if sym == 1 and all_desc_list[-1]["end_angle"] > 2 * pi:
+            if sym == 1 and all_desc_list[-1]["end_angle"] > 2 * np.pi:
                 # Alpha >0, last notch cross Ox
-                begin = all_desc_list[-1]["end_angle"] - 2 * pi
+                begin = all_desc_list[-1]["end_angle"] - 2 * np.pi
                 radius_desc.insert(
                     0,
                     {
@@ -360,8 +351,8 @@ class Lamination(FrozenClass):
                         "obj": None,
                         "lines": [
                             Arc1(
-                                begin=R * exp(1j * begin),
-                                end=R * exp(1j * all_desc_list[0]["begin_angle"]),
+                                begin=R * np.exp(1j * begin),
+                                end=R * np.exp(1j * all_desc_list[0]["begin_angle"]),
                                 radius=R,
                                 is_trigo_direction=True,
                             )
@@ -378,8 +369,8 @@ class Lamination(FrozenClass):
                         "obj": None,
                         "lines": [
                             Arc1(
-                                begin=R * exp(1j * 0),
-                                end=R * exp(1j * all_desc_list[0]["begin_angle"]),
+                                begin=R * np.exp(1j * 0),
+                                end=R * np.exp(1j * all_desc_list[0]["begin_angle"]),
                                 radius=R,
                                 is_trigo_direction=True,
                             )
@@ -387,19 +378,21 @@ class Lamination(FrozenClass):
                         "label": "Radius",
                     },
                 )
-        if all_desc_list[-1]["end_angle"] < 2 * pi / sym:
+        if all_desc_list[-1]["end_angle"] < 2 * np.pi / sym:
             if all_desc_list[0]["begin_angle"] < 0 and sym == 1:
                 # Full lamination with slot/notch on Ox
                 radius_desc.append(
                     {
                         "begin_angle": all_desc_list[-1]["end_angle"],
-                        "end_angle": 2 * pi + all_desc_list[0]["begin_angle"],
+                        "end_angle": 2 * np.pi + all_desc_list[0]["begin_angle"],
                         "obj": None,
                         "lines": [
                             Arc1(
-                                begin=R * exp(1j * all_desc_list[-1]["end_angle"]),
+                                begin=R * np.exp(1j * all_desc_list[-1]["end_angle"]),
                                 end=R
-                                * exp(1j * (2 * pi + all_desc_list[0]["begin_angle"])),
+                                * np.exp(
+                                    1j * (2 * np.pi + all_desc_list[0]["begin_angle"])
+                                ),
                                 radius=R,
                                 is_trigo_direction=True,
                             )
@@ -411,12 +404,12 @@ class Lamination(FrozenClass):
                 radius_desc.append(
                     {
                         "begin_angle": all_desc_list[-1]["end_angle"],
-                        "end_angle": 2 * pi / sym,
+                        "end_angle": 2 * np.pi / sym,
                         "obj": None,
                         "lines": [
                             Arc1(
-                                begin=R * exp(1j * all_desc_list[-1]["end_angle"]),
-                                end=R * exp(1j * 2 * pi / sym),
+                                begin=R * np.exp(1j * all_desc_list[-1]["end_angle"]),
+                                end=R * np.exp(1j * 2 * np.pi / sym),
                                 radius=R,
                                 is_trigo_direction=True,
                             )
@@ -473,12 +466,14 @@ class Lamination(FrozenClass):
                     radius_desc_list[0]["begin_angle"] = 0
                     radius_desc_list[0]["lines"] = lines
                 # Cut last desc (if needed)
-                if radius_desc_list[-1]["end_angle"] > 2 * pi / sym:
+                if radius_desc_list[-1]["end_angle"] > 2 * np.pi / sym:
                     lines = list()
                     for line in radius_desc_list[-1]["lines"]:
-                        _, bot_split_list = line.split_line(0, exp(1j * 2 * pi / sym))
+                        _, bot_split_list = line.split_line(
+                            0, np.exp(1j * 2 * np.pi / sym)
+                        )
                         lines.extend(bot_split_list)
-                    radius_desc_list[-1]["end_angle"] = 2 * pi / sym
+                    radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
                     radius_desc_list[-1]["lines"] = lines
             # Extract the line list
             radius_lines = list()
@@ -503,7 +498,7 @@ class Lamination(FrozenClass):
             if sym > 2:
                 lines = list()
                 for line in radius_lines:
-                    _, bot_split_list = line.split_line(0, exp(1j * 2 * pi / sym))
+                    _, bot_split_list = line.split_line(0, np.exp(1j * 2 * np.pi / sym))
                     lines.extend(bot_split_list)
                 radius_lines = lines
             # Only radius lines => prop_dict on all lines
@@ -565,18 +560,18 @@ class Lamination(FrozenClass):
                     and YS_LAB in line.prop_dict[BOUNDARY_PROP_LAB]
                 ):
                     # Find if the line collide on right or left
-                    if abs(np_angle(line.get_middle())) < DELTA:
+                    if abs(np.angle(line.get_middle())) < DELTA:
                         inter_line_list_R.append(line)
                     else:
                         inter_line_list_L.append(line)
 
         # Yoke Limit point
         if ZBR is None:
-            alpha = 2 * pi / sym
+            alpha = 2 * np.pi / sym
             ZBR = self.Rint
             ZTR = self.Rext
-            ZBL = ZBR * exp(1j * alpha)
-            ZTL = ZTR * exp(1j * alpha)
+            ZBL = ZBR * np.exp(1j * alpha)
+            ZTL = ZTR * np.exp(1j * alpha)
 
         lam_lab = self.get_label()
         if self.is_internal:
@@ -618,7 +613,7 @@ class Lamination(FrozenClass):
 
         q_angle = self.comp_angle_d_axis()
         p = self.get_pole_pair_number()
-        return q_angle + pi / p / 2
+        return q_angle + np.pi / p / 2
 
     # cf Methods.Machine.Lamination.comp_height_yoke
     def comp_height_yoke(self):
@@ -767,9 +762,110 @@ class Lamination(FrozenClass):
         return per_a, is_antiper_a
 
     # cf Methods.Machine.Lamination.comp_periodicity_geo
-    comp_periodicity_geo = comp_periodicity_geo
+    def comp_periodicity_geo(self):
+        """Compute the geometric periodicity factor of the lamination
+
+        Parameters
+        ----------
+        self : lamination
+            A lamination object
+
+        Returns
+        -------
+        per_a : int
+            Number of spatial periodicities of the lamination
+        is_antiper_a : bool
+            True if an spatial anti-periodicity is possible after the periodicities
+        """
+
+        if hasattr(self, "get_Zs"):
+            Zs = self.get_Zs()
+
+            nb_list = [Zs]
+            # account for notches and bore
+            if self.notch is not None:
+                for notch in self.notch:
+                    nb_list.append(notch.comp_periodicity_spatial()[0])
+
+            if self.bore:
+                nb_list.append(self.bore.comp_periodicity_spatial()[0])
+            if self.yoke:
+                nb_list.append(self.yoke.comp_periodicity_spatial()[0])
+
+            # compute the gcd of the list
+            if len(nb_list) == 1:
+                per_a = nb_list[0]
+            else:
+                per_a = np.gcd(nb_list[0], nb_list[1])
+                for ii in range(2, len(nb_list)):
+                    per_a = np.gcd(per_a, nb_list[ii])
+
+            nb_list.pop(0)
+            is_antiper_a = False
+
+            # Account for duct periodicity
+            per_a, is_antiper_a = self.comp_periodicity_duct_spatial(
+                per_a, is_antiper_a
+            )
+            per_a = int(per_a)
+
+        else:
+            per_a = None
+            is_antiper_a = False
+
+        return per_a, is_antiper_a
+
     # cf Methods.Machine.Lamination.comp_periodicity_spatial
-    comp_periodicity_spatial = comp_periodicity_spatial
+    def comp_periodicity_spatial(self):
+        """Compute the periodicity factor of the lamination
+
+        Parameters
+        ----------
+        self : lamination
+            A lamination object
+
+        Returns
+        -------
+        per_a : int
+            Number of spatial periodicities of the lamination
+        is_antiper_a : bool
+            True if an spatial anti-periodicity is possible after the periodicities
+        """
+
+        if hasattr(self, "get_Zs") and hasattr(self, "get_pole_pair_number"):
+            Zs = self.get_Zs()
+            p = self.get_pole_pair_number()
+
+            nb_list = [p, Zs]
+            # account for notches and bore
+            if self.notch is not None:
+                for notch in self.notch:
+                    nb_list.append(notch.comp_periodicity_spatial()[0])
+
+            if self.bore:
+                nb_list.append(self.bore.comp_periodicity_spatial()[0])
+            if self.yoke:
+                nb_list.append(self.yoke.comp_periodicity_spatial()[0])
+
+            # compute the gcd of the list
+            per_a = np.gcd(nb_list[0], nb_list[1])
+            for ii in range(2, len(nb_list)):
+                per_a = np.gcd(per_a, nb_list[ii])
+
+            nb_list.pop(0)
+            is_antiper_a = all([nb / per_a % 2 == 0 for nb in nb_list])
+
+            # Account for duct periodicity
+            per_a, is_antiper_a = self.comp_periodicity_duct_spatial(
+                per_a, is_antiper_a
+            )
+            per_a = int(per_a)
+
+        else:
+            per_a = None
+            is_antiper_a = False
+
+        return per_a, is_antiper_a
 
     # cf Methods.Machine.Lamination.comp_point_ref
     def comp_point_ref(self, sym=1):
@@ -806,7 +902,7 @@ class Lamination(FrozenClass):
 
         # Find an angle without notches on the yoke
         if not self.has_notch(is_bore=False):
-            angle = pi / sym
+            angle = np.pi / sym
         else:
             yoke_desc_list = self.build_radius_desc(sym=sym, is_bore=False)
             ii = 0
@@ -822,7 +918,7 @@ class Lamination(FrozenClass):
                 yoke_desc_list[ii]["begin_angle"] + yoke_desc_list[ii]["end_angle"]
             ) / 2
 
-        return Rref * exp(1j * angle)
+        return Rref * np.exp(1j * angle)
 
     # cf Methods.Machine.Lamination.comp_radius_mec
     def comp_radius_mec(self):
@@ -914,12 +1010,12 @@ class Lamination(FrozenClass):
         if ext_shape is not None:
             S_ext = ext_shape.comp_surface()
         else:
-            S_ext = (self.Rext**2) * pi
+            S_ext = (self.Rext**2) * np.pi
         # Surface of the internal disk
         if int_shape is not None:
             S_int = int_shape.comp_surface()
         else:
-            S_int = (self.Rint**2) * pi
+            S_int = (self.Rint**2) * np.pi
 
         # Surface of lamination without hole
         Slam = S_ext - S_int
@@ -1409,7 +1505,7 @@ class Lamination(FrozenClass):
             ax=ax,
             is_edge_only=True,
             edgecolor="r--",
-            alpha=-pi / self.notch[index].notch_shape.Zs + self.notch[index].alpha,
+            alpha=-np.pi / self.notch[index].notch_shape.Zs + self.notch[index].alpha,
         )
         # Setup legend
         if self.is_stator:
@@ -1611,8 +1707,8 @@ class Lamination(FrozenClass):
         if (
             other._L1 is not None
             and self._L1 is not None
-            and isnan(other._L1)
-            and isnan(self._L1)
+            and np.isnan(other._L1)
+            and np.isnan(self._L1)
         ):
             pass
         elif other._L1 != self._L1:
@@ -1645,8 +1741,8 @@ class Lamination(FrozenClass):
         if (
             other._Wrvd is not None
             and self._Wrvd is not None
-            and isnan(other._Wrvd)
-            and isnan(self._Wrvd)
+            and np.isnan(other._Wrvd)
+            and np.isnan(self._Wrvd)
         ):
             pass
         elif other._Wrvd != self._Wrvd:
@@ -1660,8 +1756,8 @@ class Lamination(FrozenClass):
         if (
             other._Kf1 is not None
             and self._Kf1 is not None
-            and isnan(other._Kf1)
-            and isnan(self._Kf1)
+            and np.isnan(other._Kf1)
+            and np.isnan(self._Kf1)
         ):
             pass
         elif other._Kf1 != self._Kf1:
@@ -1687,8 +1783,8 @@ class Lamination(FrozenClass):
         if (
             other._Rint is not None
             and self._Rint is not None
-            and isnan(other._Rint)
-            and isnan(self._Rint)
+            and np.isnan(other._Rint)
+            and np.isnan(self._Rint)
         ):
             pass
         elif other._Rint != self._Rint:
@@ -1702,8 +1798,8 @@ class Lamination(FrozenClass):
         if (
             other._Rext is not None
             and self._Rext is not None
-            and isnan(other._Rext)
-            and isnan(self._Rext)
+            and np.isnan(other._Rext)
+            and np.isnan(self._Rext)
         ):
             pass
         elif other._Rext != self._Rext:

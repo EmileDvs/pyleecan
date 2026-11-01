@@ -17,17 +17,15 @@ from pyleecan.Classes.LamSlot import LamSlot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, exp
+import numpy as np, matplotlib.pyplot as plt
 from matplotlib.patches import Patch
-import matplotlib.pyplot as plt
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.labels import decode_label, MAG_LAB
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -53,7 +51,7 @@ class LamSlotM(LamSlot):
             angle between the X axis and the first d+ axis
         """
 
-        angle = pi / self.get_pole_pair_number() / 2
+        angle = np.pi / self.get_pole_pair_number() / 2
 
         if self.has_magnet():
             if hasattr(self, "magnet") and self.magnet.type_magnetization == 3:
@@ -228,11 +226,11 @@ class LamSlotM(LamSlot):
                     for ii in range(Zs // sym):
                         # if mag is not None and mag.type_magnetization == 3:
                         #     off -= pi / 2
-                        Z1 = (abs(surf.point_ref) + delta - H / 4) * exp(
-                            1j * (ii * 2 * pi / Zs + pi / Zs + alpha)
+                        Z1 = (abs(surf.point_ref) + delta - H / 4) * np.exp(
+                            1j * (ii * 2 * np.pi / Zs + np.pi / Zs + alpha)
                         )
-                        Z2 = (abs(surf.point_ref) + delta + H / 4) * exp(
-                            1j * (ii * 2 * pi / Zs + pi / Zs + alpha)
+                        Z2 = (abs(surf.point_ref) + delta + H / 4) * np.exp(
+                            1j * (ii * 2 * np.pi / Zs + np.pi / Zs + alpha)
                         )
                         # Change arrow direction for North/South
                         if ii % 2 == 1:
@@ -430,9 +428,9 @@ class LamSlotM(LamSlot):
         # Check the properties inherited from LamSlot
         if not super(LamSlotM, self).__eq__(other):
             return False
-        if not array_equal(other.mur_lin_matrix, self.mur_lin_matrix):
+        if not np.array_equal(other.mur_lin_matrix, self.mur_lin_matrix):
             return False
-        if not array_equal(other.Brm20_matrix, self.Brm20_matrix):
+        if not np.array_equal(other.Brm20_matrix, self.Brm20_matrix):
             return False
         return True
 
@@ -451,9 +449,9 @@ class LamSlotM(LamSlot):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not array_equal(other.mur_lin_matrix, self.mur_lin_matrix):
+        if not np.array_equal(other.mur_lin_matrix, self.mur_lin_matrix):
             diff_list.append(name + ".mur_lin_matrix")
-        if not array_equal(other.Brm20_matrix, self.Brm20_matrix):
+        if not np.array_equal(other.Brm20_matrix, self.Brm20_matrix):
             diff_list.append(name + ".Brm20_matrix")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -607,10 +605,10 @@ class LamSlotM(LamSlot):
     def _set_mur_lin_matrix(self, value):
         """setter of mur_lin_matrix"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("mur_lin_matrix", value, "ndarray")
@@ -632,10 +630,10 @@ class LamSlotM(LamSlot):
     def _set_Brm20_matrix(self, value):
         """setter of Brm20_matrix"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Brm20_matrix", value, "ndarray")

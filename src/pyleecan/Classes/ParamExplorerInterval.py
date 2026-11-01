@@ -17,14 +17,14 @@ from pyleecan.Classes.ParamExplorer import ParamExplorer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import linspace
+import numpy as np
 
 from ntpath import basename
 from os.path import isfile
 from pyleecan.Classes._check import CheckTypeError
-import numpy as np
+
 import random
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -100,7 +100,7 @@ class ParamExplorerInterval(ParamExplorer):
                 dtype = float
             elif self.type_value == 1:
                 dtype = int
-            value = linspace(
+            value = np.linspace(
                 start=self.min_value,
                 stop=self.max_value,
                 num=self.N,
@@ -232,8 +232,8 @@ class ParamExplorerInterval(ParamExplorer):
         if (
             other._min_value is not None
             and self._min_value is not None
-            and isnan(other._min_value)
-            and isnan(self._min_value)
+            and np.isnan(other._min_value)
+            and np.isnan(self._min_value)
         ):
             pass
         elif other._min_value != self._min_value:
@@ -251,8 +251,8 @@ class ParamExplorerInterval(ParamExplorer):
         if (
             other._max_value is not None
             and self._max_value is not None
-            and isnan(other._max_value)
-            and isnan(self._max_value)
+            and np.isnan(other._max_value)
+            and np.isnan(self._max_value)
         ):
             pass
         elif other._max_value != self._max_value:

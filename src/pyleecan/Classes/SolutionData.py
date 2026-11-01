@@ -19,7 +19,7 @@ from pyleecan.Classes.Solution import Solution
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Classes.Data1D import Data1D
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

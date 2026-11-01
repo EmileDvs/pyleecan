@@ -17,10 +17,10 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import zeros
+import numpy as np
 from pyleecan.Methods.Simulation.OPMatrix import OPMatrixException
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -84,7 +84,7 @@ class OP(FrozenClass):
             arg_list = arg_list[0]
 
         # Init OP_matrix
-        OP_matrix = zeros((1, len(arg_list)))
+        OP_matrix = np.zeros((1, len(arg_list)))
 
         # Setup default argument (N0, Id, Iq, Tem, Pem)
         Idq_dict = self.get_Id_Iq()
@@ -248,8 +248,8 @@ class OP(FrozenClass):
         if (
             other._N0 is not None
             and self._N0 is not None
-            and isnan(other._N0)
-            and isnan(self._N0)
+            and np.isnan(other._N0)
+            and np.isnan(self._N0)
         ):
             pass
         elif other._N0 != self._N0:
@@ -261,8 +261,8 @@ class OP(FrozenClass):
         if (
             other._felec is not None
             and self._felec is not None
-            and isnan(other._felec)
-            and isnan(self._felec)
+            and np.isnan(other._felec)
+            and np.isnan(self._felec)
         ):
             pass
         elif other._felec != self._felec:
@@ -276,8 +276,8 @@ class OP(FrozenClass):
         if (
             other._Tem_av_ref is not None
             and self._Tem_av_ref is not None
-            and isnan(other._Tem_av_ref)
-            and isnan(self._Tem_av_ref)
+            and np.isnan(other._Tem_av_ref)
+            and np.isnan(self._Tem_av_ref)
         ):
             pass
         elif other._Tem_av_ref != self._Tem_av_ref:
@@ -295,8 +295,8 @@ class OP(FrozenClass):
         if (
             other._Pem_av_ref is not None
             and self._Pem_av_ref is not None
-            and isnan(other._Pem_av_ref)
-            and isnan(self._Pem_av_ref)
+            and np.isnan(other._Pem_av_ref)
+            and np.isnan(self._Pem_av_ref)
         ):
             pass
         elif other._Pem_av_ref != self._Pem_av_ref:
@@ -314,8 +314,8 @@ class OP(FrozenClass):
         if (
             other._Pem_av_in is not None
             and self._Pem_av_in is not None
-            and isnan(other._Pem_av_in)
-            and isnan(self._Pem_av_in)
+            and np.isnan(other._Pem_av_in)
+            and np.isnan(self._Pem_av_in)
         ):
             pass
         elif other._Pem_av_in != self._Pem_av_in:
@@ -333,8 +333,8 @@ class OP(FrozenClass):
         if (
             other._efficiency is not None
             and self._efficiency is not None
-            and isnan(other._efficiency)
-            and isnan(self._efficiency)
+            and np.isnan(other._efficiency)
+            and np.isnan(self._efficiency)
         ):
             pass
         elif other._efficiency != self._efficiency:

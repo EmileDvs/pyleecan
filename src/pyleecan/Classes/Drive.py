@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes._frozen import FrozenClass
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -99,8 +99,8 @@ class Drive(FrozenClass):
         if (
             other._Umax is not None
             and self._Umax is not None
-            and isnan(other._Umax)
-            and isnan(self._Umax)
+            and np.isnan(other._Umax)
+            and np.isnan(self._Umax)
         ):
             pass
         elif other._Umax != self._Umax:
@@ -114,8 +114,8 @@ class Drive(FrozenClass):
         if (
             other._Imax is not None
             and self._Imax is not None
-            and isnan(other._Imax)
-            and isnan(self._Imax)
+            and np.isnan(other._Imax)
+            and np.isnan(self._Imax)
         ):
             pass
         elif other._Imax != self._Imax:

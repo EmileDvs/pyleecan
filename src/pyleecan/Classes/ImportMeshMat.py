@@ -26,7 +26,7 @@ from pyleecan.Classes.NodeMat import NodeMat
 from pyleecan.Classes.RefQuad4 import RefQuad4
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

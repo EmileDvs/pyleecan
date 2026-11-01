@@ -22,11 +22,10 @@ from pyleecan.Classes.Hole import Hole
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.HoleM54.check import check
-from numpy import pi, exp, abs as np_abs
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Classes.SurfLine import SurfLine
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import (
@@ -41,7 +40,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -71,10 +70,10 @@ class HoleM54(Hole):
         # Compute point coordinates
         Zc0 = Rext - self.H0 + self.R1
         Z0 = Rext - self.H0
-        Z1 = (self.R1 * exp(1j * (-pi + self.W0 / 2))) + Zc0
-        Z2 = (self.R1 * exp(1j * (pi - self.W0 / 2))) + Zc0
-        Z4 = ((self.R1 + self.H1) * exp(1j * (-pi + self.W0 / 2))) + Zc0
-        Z3 = ((self.R1 + self.H1) * exp(1j * (pi - self.W0 / 2))) + Zc0
+        Z1 = (self.R1 * np.exp(1j * (-np.pi + self.W0 / 2))) + Zc0
+        Z2 = (self.R1 * np.exp(1j * (np.pi - self.W0 / 2))) + Zc0
+        Z4 = ((self.R1 + self.H1) * np.exp(1j * (-np.pi + self.W0 / 2))) + Zc0
+        Z3 = ((self.R1 + self.H1) * np.exp(1j * (np.pi - self.W0 / 2))) + Zc0
 
         point_dict = dict()
         point_dict["Z0"] = Z0
@@ -192,7 +191,7 @@ class HoleM54(Hole):
         for curve in surf_list[0].line_list:
             point_list.extend(curve.discretize())
 
-        Rmax = max([np_abs(point) for point in point_list])
+        Rmax = max([np.abs(point) for point in point_list])
         Rmin = Rext - self.H0 - self.H1
         return (Rmin, Rmax)
 
@@ -212,11 +211,11 @@ class HoleM54(Hole):
 
         """
 
-        Sint = pi * self.R1**2
-        Sext = pi * (self.R1 + self.H1) ** 2
-        Sarc = (Sext - Sint) * (self.W0 / (2 * pi))
+        Sint = np.pi * self.R1**2
+        Sext = np.pi * (self.R1 + self.H1) ** 2
+        Sarc = (Sext - Sint) * (self.W0 / (2 * np.pi))
 
-        return Sarc + pi * (self.H1 / 2) ** 2
+        return Sarc + np.pi * (self.H1 / 2) ** 2
 
     # cf Methods.Slot.HoleM54.plot_schematics
     def plot_schematics(
@@ -272,7 +271,7 @@ class HoleM54(Hole):
 
         # Use some default parameter
         if is_default:
-            hole = type(self)(Zh=8, W0=pi / 3, H0=25e-3, H1=10e-3, R1=75e-3)
+            hole = type(self)(Zh=8, W0=np.pi / 3, H0=25e-3, H1=10e-3, R1=75e-3)
             lam = LamHole(
                 Rint=0.1, Rext=0.2, is_internal=True, is_stator=False, hole=[hole]
             )
@@ -296,22 +295,22 @@ class HoleM54(Hole):
             if self.parent is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
             lam = self.parent
-            alpha = pi / 2  # To rotate the schematics
+            alpha = np.pi / 2  # To rotate the schematics
             fig, ax = lam.plot(
-                alpha=pi / self.Zh + alpha,
+                alpha=np.pi / self.Zh + alpha,
                 is_show_fig=False,
                 is_lam_only=type_add_active == 0,
                 fig=fig,
                 ax=ax,
             )  # center hole on Ox axis
-            sp = 2 * pi / self.Zh
+            sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo()
             point_dict = self._comp_point_coordinate()
 
             # Adding point label
             if is_add_point_label:
                 for name, Z in point_dict.items():
-                    Z = Z * exp(1j * alpha)
+                    Z = Z * np.exp(1j * alpha)
                     ax.text(
                         Z.real,
                         Z.imag,
@@ -324,8 +323,8 @@ class HoleM54(Hole):
             if is_add_schematics:
                 # H1
                 line = Segment(
-                    Rbo * exp(1j * alpha),
-                    point_dict["Z0"] * exp(1j * alpha),
+                    Rbo * np.exp(1j * alpha),
+                    point_dict["Z0"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -339,8 +338,8 @@ class HoleM54(Hole):
                 )
                 # H1
                 line = Segment(
-                    point_dict["Z2"] * exp(1j * alpha),
-                    point_dict["Z3"] * exp(1j * alpha),
+                    point_dict["Z2"] * np.exp(1j * alpha),
+                    point_dict["Z3"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -354,8 +353,8 @@ class HoleM54(Hole):
                 )
                 # R1
                 line = Segment(
-                    point_dict["Z1"] * exp(1j * alpha),
-                    point_dict["Zc0"] * exp(1j * alpha),
+                    point_dict["Z1"] * np.exp(1j * alpha),
+                    point_dict["Zc0"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -369,8 +368,10 @@ class HoleM54(Hole):
                 )
                 # W0
                 line = Arc1(
-                    begin=(point_dict["Z2"] + point_dict["Zc0"]) / 2 * exp(1j * alpha),
-                    end=(point_dict["Z1"] + point_dict["Zc0"]) / 2 * exp(1j * alpha),
+                    begin=(point_dict["Z2"] + point_dict["Zc0"])
+                    / 2
+                    * np.exp(1j * alpha),
+                    end=(point_dict["Z1"] + point_dict["Zc0"]) / 2 * np.exp(1j * alpha),
                     radius=self.R1,
                     is_trigo_direction=True,
                 )
@@ -386,7 +387,7 @@ class HoleM54(Hole):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * alpha))
+                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * alpha))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -396,8 +397,8 @@ class HoleM54(Hole):
                 )
                 # H1 line
                 line = Arc3(
-                    begin=(point_dict["Zc0"] + 1j * self.R1) * exp(1j * alpha),
-                    end=(point_dict["Zc0"] - 1j * self.R1) * exp(1j * alpha),
+                    begin=(point_dict["Zc0"] + 1j * self.R1) * np.exp(1j * alpha),
+                    end=(point_dict["Zc0"] - 1j * self.R1) * np.exp(1j * alpha),
                     is_trigo_direction=True,
                 )
                 line.plot(
@@ -409,9 +410,9 @@ class HoleM54(Hole):
                 )
                 line = Arc3(
                     begin=(point_dict["Zc0"] + 1j * (self.R1 + self.H1))
-                    * exp(1j * alpha),
+                    * np.exp(1j * alpha),
                     end=(point_dict["Zc0"] - 1j * (self.R1 + self.H1))
-                    * exp(1j * alpha),
+                    * np.exp(1j * alpha),
                     is_trigo_direction=True,
                 )
                 line.plot(
@@ -423,8 +424,8 @@ class HoleM54(Hole):
                 )
                 # R1 lines
                 line = Segment(
-                    point_dict["Zc0"] * exp(1j * alpha),
-                    point_dict["Z4"] * exp(1j * alpha),
+                    point_dict["Zc0"] * np.exp(1j * alpha),
+                    point_dict["Z4"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -434,8 +435,8 @@ class HoleM54(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Zc0"] * exp(1j * alpha),
-                    point_dict["Z3"] * exp(1j * alpha),
+                    point_dict["Zc0"] * np.exp(1j * alpha),
+                    point_dict["Z3"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -583,8 +584,8 @@ class HoleM54(Hole):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -596,8 +597,8 @@ class HoleM54(Hole):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -609,8 +610,8 @@ class HoleM54(Hole):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -622,8 +623,8 @@ class HoleM54(Hole):
         if (
             other._R1 is not None
             and self._R1 is not None
-            and isnan(other._R1)
-            and isnan(self._R1)
+            and np.isnan(other._R1)
+            and np.isnan(self._R1)
         ):
             pass
         elif other._R1 != self._R1:

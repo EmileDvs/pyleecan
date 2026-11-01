@@ -17,10 +17,10 @@ from pyleecan.Classes.EndWinding import EndWinding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi
+import numpy as np
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -53,7 +53,7 @@ class EndWindingRect(EndWinding):
         p = winding.p
         Ntcoil = winding.Ntcoil
 
-        mu0 = 4 * pi * 1e-7
+        mu0 = 4 * np.pi * 1e-7
 
         if winding.Lewout is not None:
             l_ew = winding.Lewout
@@ -119,7 +119,7 @@ class EndWindingRect(EndWinding):
                 )
 
         # end winding length is half the distance between two slots separated by the coil pitch
-        end_wind_length = coil_pitch * pi / Zs * Rmid
+        end_wind_length = coil_pitch * np.pi / Zs * Rmid
 
         return end_wind_length
 
@@ -215,8 +215,8 @@ class EndWindingRect(EndWinding):
         if (
             other._coil_pitch is not None
             and self._coil_pitch is not None
-            and isnan(other._coil_pitch)
-            and isnan(self._coil_pitch)
+            and np.isnan(other._coil_pitch)
+            and np.isnan(self._coil_pitch)
         ):
             pass
         elif other._coil_pitch != self._coil_pitch:
@@ -234,8 +234,8 @@ class EndWindingRect(EndWinding):
         if (
             other._lambda_length is not None
             and self._lambda_length is not None
-            and isnan(other._lambda_length)
-            and isnan(self._lambda_length)
+            and np.isnan(other._lambda_length)
+            and np.isnan(self._lambda_length)
         ):
             pass
         elif other._lambda_length != self._lambda_length:
@@ -253,8 +253,8 @@ class EndWindingRect(EndWinding):
         if (
             other._lambda_width is not None
             and self._lambda_width is not None
-            and isnan(other._lambda_width)
-            and isnan(self._lambda_width)
+            and np.isnan(other._lambda_width)
+            and np.isnan(self._lambda_width)
         ):
             pass
         elif other._lambda_width != self._lambda_width:

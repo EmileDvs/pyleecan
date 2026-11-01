@@ -17,7 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, max as np_max, mean as np_mean, min as np_min
+import numpy as np
 from pyleecan.Functions.SciDataTool.derivation_integration import integrate
 from pyleecan.Functions.MeshSolution.get_area import get_area
 from pyleecan.Functions.MeshSolution.get_indices_limited import get_indices_limited
@@ -26,7 +26,7 @@ from pyleecan.Classes.Norm_ref import Norm_ref
 from pyleecan.Classes.VectorField import VectorField
 from pyleecan.Functions.labels import STATOR_LAB
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -126,7 +126,7 @@ class OutMag(FrozenClass):
             and self.parent.elec.OP.get_N0() is not None
             and self.Tem_av is not None
         ):
-            self.Pem_av = 2 * pi * self.parent.elec.OP.get_N0() / 60 * self.Tem_av
+            self.Pem_av = 2 * np.pi * self.parent.elec.OP.get_N0() / 60 * self.Tem_av
         else:
             self.Pem_av = None
 
@@ -172,7 +172,7 @@ class OutMag(FrozenClass):
                 R = self.Rag
 
             # Magnetic void permeability
-            mu_0 = 4 * pi * 1e-7
+            mu_0 = 4 * np.pi * 1e-7
 
             # Integrate over angle to get the electromagnetic torque per slice
             Nper, _ = B.get_axes()[1].get_periodicity()
@@ -344,11 +344,11 @@ class OutMag(FrozenClass):
             self.Tem.name = "Electromagnetic torque"
 
             # Calculate average torque in Nm
-            self.Tem_av = np_mean(self.Tem.values)
+            self.Tem_av = np.mean(self.Tem.values)
             # self.Tem_av = float(self.Tem.get_along("time=mean")[self.Tem.symbol])
 
             # Calculate peak to peak torque in absolute value [N.m]
-            self.Tem_rip_pp = abs(np_max(self.Tem.values) - np_min(self.Tem.values))
+            self.Tem_rip_pp = abs(np.max(self.Tem.values) - np.min(self.Tem.values))
 
             # Calculate torque ripple in percentage [%]
             if self.Tem_av != 0:
@@ -686,8 +686,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_av is not None
             and self._Tem_av is not None
-            and isnan(other._Tem_av)
-            and isnan(self._Tem_av)
+            and np.isnan(other._Tem_av)
+            and np.isnan(self._Tem_av)
         ):
             pass
         elif other._Tem_av != self._Tem_av:
@@ -705,8 +705,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_rip_norm is not None
             and self._Tem_rip_norm is not None
-            and isnan(other._Tem_rip_norm)
-            and isnan(self._Tem_rip_norm)
+            and np.isnan(other._Tem_rip_norm)
+            and np.isnan(self._Tem_rip_norm)
         ):
             pass
         elif other._Tem_rip_norm != self._Tem_rip_norm:
@@ -724,8 +724,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_rip_pp is not None
             and self._Tem_rip_pp is not None
-            and isnan(other._Tem_rip_pp)
-            and isnan(self._Tem_rip_pp)
+            and np.isnan(other._Tem_rip_pp)
+            and np.isnan(self._Tem_rip_pp)
         ):
             pass
         elif other._Tem_rip_pp != self._Tem_rip_pp:
@@ -825,8 +825,8 @@ class OutMag(FrozenClass):
         if (
             other._Rag is not None
             and self._Rag is not None
-            and isnan(other._Rag)
-            and isnan(self._Rag)
+            and np.isnan(other._Rag)
+            and np.isnan(self._Rag)
         ):
             pass
         elif other._Rag != self._Rag:
@@ -840,8 +840,8 @@ class OutMag(FrozenClass):
         if (
             other._Pem_av is not None
             and self._Pem_av is not None
-            and isnan(other._Pem_av)
-            and isnan(self._Pem_av)
+            and np.isnan(other._Pem_av)
+            and np.isnan(self._Pem_av)
         ):
             pass
         elif other._Pem_av != self._Pem_av:
@@ -903,8 +903,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_norm is not None
             and self._Tem_norm is not None
-            and isnan(other._Tem_norm)
-            and isnan(self._Tem_norm)
+            and np.isnan(other._Tem_norm)
+            and np.isnan(self._Tem_norm)
         ):
             pass
         elif other._Tem_norm != self._Tem_norm:

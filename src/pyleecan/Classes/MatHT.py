@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes._frozen import FrozenClass
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -118,8 +118,8 @@ class MatHT(FrozenClass):
         if (
             other._lambda_x is not None
             and self._lambda_x is not None
-            and isnan(other._lambda_x)
-            and isnan(self._lambda_x)
+            and np.isnan(other._lambda_x)
+            and np.isnan(self._lambda_x)
         ):
             pass
         elif other._lambda_x != self._lambda_x:
@@ -137,8 +137,8 @@ class MatHT(FrozenClass):
         if (
             other._lambda_y is not None
             and self._lambda_y is not None
-            and isnan(other._lambda_y)
-            and isnan(self._lambda_y)
+            and np.isnan(other._lambda_y)
+            and np.isnan(self._lambda_y)
         ):
             pass
         elif other._lambda_y != self._lambda_y:
@@ -156,8 +156,8 @@ class MatHT(FrozenClass):
         if (
             other._lambda_z is not None
             and self._lambda_z is not None
-            and isnan(other._lambda_z)
-            and isnan(self._lambda_z)
+            and np.isnan(other._lambda_z)
+            and np.isnan(self._lambda_z)
         ):
             pass
         elif other._lambda_z != self._lambda_z:
@@ -175,8 +175,8 @@ class MatHT(FrozenClass):
         if (
             other._Cp is not None
             and self._Cp is not None
-            and isnan(other._Cp)
-            and isnan(self._Cp)
+            and np.isnan(other._Cp)
+            and np.isnan(self._Cp)
         ):
             pass
         elif other._Cp != self._Cp:
@@ -188,8 +188,8 @@ class MatHT(FrozenClass):
         if (
             other._alpha is not None
             and self._alpha is not None
-            and isnan(other._alpha)
-            and isnan(self._alpha)
+            and np.isnan(other._alpha)
+            and np.isnan(self._alpha)
         ):
             pass
         elif other._alpha != self._alpha:

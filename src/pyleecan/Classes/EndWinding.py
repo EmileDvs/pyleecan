@@ -18,7 +18,7 @@ from pyleecan.Classes._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -123,8 +123,8 @@ class EndWinding(FrozenClass):
         if (
             other._Lew_enforced is not None
             and self._Lew_enforced is not None
-            and isnan(other._Lew_enforced)
-            and isnan(self._Lew_enforced)
+            and np.isnan(other._Lew_enforced)
+            and np.isnan(self._Lew_enforced)
         ):
             pass
         elif other._Lew_enforced != self._Lew_enforced:

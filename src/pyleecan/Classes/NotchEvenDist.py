@@ -19,9 +19,9 @@ from pyleecan.Classes.Notch import Notch
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
 from pyleecan.Functions.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
-from numpy import pi
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -184,12 +184,12 @@ class NotchEvenDist(Notch):
         op = self.notch_shape.comp_angle_opening()
         Zs = self.notch_shape.Zs
         # No need to rotate more than a notch pitch
-        alpha = self.alpha % (2 * pi / Zs)
+        alpha = self.alpha % (2 * np.pi / Zs)
 
         for ii in range(Zs // sym):
             notch_dict = dict()
-            notch_dict["begin_angle"] = 2 * pi / Zs * ii + alpha - op / 2
-            notch_dict["end_angle"] = 2 * pi / Zs * ii + alpha + op / 2
+            notch_dict["begin_angle"] = 2 * np.pi / Zs * ii + alpha - op / 2
+            notch_dict["end_angle"] = 2 * np.pi / Zs * ii + alpha + op / 2
             notch_dict["obj"] = self.notch_shape
             notch_dict["lines"] = self.notch_shape.build_geometry()
             # Apply rotation
@@ -201,8 +201,8 @@ class NotchEvenDist(Notch):
         # If first notch is on Ox, then sym+1 notch are required (half on both yoke side)
         if notch_list[0]["begin_angle"] < 0 and sym != 1:
             notch_dict = dict()
-            notch_dict["begin_angle"] = 2 * pi / Zs * (ii + 1) + alpha - op / 2
-            notch_dict["end_angle"] = 2 * pi / Zs * (ii + 1) + alpha + op / 2
+            notch_dict["begin_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha - op / 2
+            notch_dict["end_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha + op / 2
             notch_dict["obj"] = self.notch_shape
             notch_dict["lines"] = self.notch_shape.build_geometry()
             # Apply rotation
@@ -299,8 +299,8 @@ class NotchEvenDist(Notch):
         if (
             other._alpha is not None
             and self._alpha is not None
-            and isnan(other._alpha)
-            and isnan(self._alpha)
+            and np.isnan(other._alpha)
+            and np.isnan(self._alpha)
         ):
             pass
         elif other._alpha != self._alpha:

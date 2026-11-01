@@ -21,7 +21,7 @@ from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

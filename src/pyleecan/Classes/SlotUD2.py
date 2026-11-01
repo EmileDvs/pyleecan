@@ -21,7 +21,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Classes._check import check_var
 from pyleecan.Methods.Slot.Slot import SlotCheckError
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

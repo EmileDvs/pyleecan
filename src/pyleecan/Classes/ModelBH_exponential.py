@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes._frozen import FrozenClass
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -93,8 +93,8 @@ class ModelBH_exponential(FrozenClass):
         if (
             other._Bs is not None
             and self._Bs is not None
-            and isnan(other._Bs)
-            and isnan(self._Bs)
+            and np.isnan(other._Bs)
+            and np.isnan(self._Bs)
         ):
             pass
         elif other._Bs != self._Bs:
@@ -106,8 +106,8 @@ class ModelBH_exponential(FrozenClass):
         if (
             other._mu_a is not None
             and self._mu_a is not None
-            and isnan(other._mu_a)
-            and isnan(self._mu_a)
+            and np.isnan(other._mu_a)
+            and np.isnan(self._mu_a)
         ):
             pass
         elif other._mu_a != self._mu_a:

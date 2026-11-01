@@ -34,7 +34,7 @@ from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from sys import getsizeof
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

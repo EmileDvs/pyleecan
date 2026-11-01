@@ -17,12 +17,11 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import arcsin, exp, abs as np_abs, sqrt, sin, pi
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotM19.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -37,7 +36,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -65,9 +64,9 @@ class SlotM19(Slot):
         Rbo = self.get_Rbo()
 
         # alpha is the angle to rotate Z0 so ||Z1,Z4|| = W1
-        alpha = float(arcsin(self.W1 / (2 * Rbo)))
+        alpha = float(np.arcsin(self.W1 / (2 * Rbo)))
 
-        Z1 = Rbo * exp(-1j * alpha)
+        Z1 = Rbo * np.exp(-1j * alpha)
 
         if self.is_outwards():
             Zmid = Rbo + self.H0
@@ -154,7 +153,7 @@ class SlotM19(Slot):
 
         Rbo = self.get_Rbo()
 
-        return float(2 * arcsin(self.W1 / (2 * Rbo)))
+        return float(2 * np.arcsin(self.W1 / (2 * Rbo)))
 
     # cf Methods.Slot.SlotM19.comp_height
     def comp_height(self):
@@ -183,7 +182,7 @@ class SlotM19(Slot):
         Rbo = self.get_Rbo()
 
         if self.is_outwards():
-            return np_abs(sqrt(Z2.real**2 + Z2.imag**2)) - np_abs(Rbo)
+            return np.abs(np.sqrt(Z2.real**2 + Z2.imag**2)) - np.abs(Rbo)
 
         else:
             return self.H0
@@ -229,7 +228,7 @@ class SlotM19(Slot):
 
         # The bottom is an arc
         alpha = self.comp_angle_opening()
-        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         S1 = abs(Z1.real - Z2.real) * (self.W1 + self.W0) / 2
 
@@ -396,7 +395,7 @@ class SlotM19(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -626,8 +625,8 @@ class SlotM19(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -639,8 +638,8 @@ class SlotM19(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -652,8 +651,8 @@ class SlotM19(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:

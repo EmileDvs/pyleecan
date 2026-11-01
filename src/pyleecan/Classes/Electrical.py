@@ -17,7 +17,6 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, angle
 import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataTime import DataTime
@@ -28,7 +27,7 @@ from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
 from pyleecan.Classes.MachineIPMSM import MachineIPMSM
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -72,7 +71,7 @@ class Electrical(FrozenClass):
             Dict containing all magnetic quantities that have been calculated in comp_parameters of EEC
         """
 
-        omega = 2 * pi * N0 / 60
+        omega = 2 * np.pi * N0 / 60
 
         P = out_dict["Pem_av"]
 
@@ -232,7 +231,7 @@ class Electrical(FrozenClass):
                 out_dict = eec_out.solve()
                 U0c = out_dict["Ud"] + 1j * out_dict["Uq"]
                 output.elec.PWM.U0 = abs(U0c)
-                output.elec.PWM.Phi0 = angle(U0c)
+                output.elec.PWM.Phi0 = np.angle(U0c)
 
                 # Calculate PWM voltage
                 self.gen_drive(output)
@@ -421,8 +420,8 @@ class Electrical(FrozenClass):
         if (
             other._freq_max is not None
             and self._freq_max is not None
-            and isnan(other._freq_max)
-            and isnan(self._freq_max)
+            and np.isnan(other._freq_max)
+            and np.isnan(self._freq_max)
         ):
             pass
         elif other._freq_max != self._freq_max:
@@ -453,8 +452,8 @@ class Electrical(FrozenClass):
         if (
             other._Tsta is not None
             and self._Tsta is not None
-            and isnan(other._Tsta)
-            and isnan(self._Tsta)
+            and np.isnan(other._Tsta)
+            and np.isnan(self._Tsta)
         ):
             pass
         elif other._Tsta != self._Tsta:
@@ -468,8 +467,8 @@ class Electrical(FrozenClass):
         if (
             other._Trot is not None
             and self._Trot is not None
-            and isnan(other._Trot)
-            and isnan(self._Trot)
+            and np.isnan(other._Trot)
+            and np.isnan(self._Trot)
         ):
             pass
         elif other._Trot != self._Trot:

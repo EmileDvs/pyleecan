@@ -22,7 +22,7 @@ from pyleecan.Classes.Surface import Surface
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Geometry.PolarArc.check import check
-from numpy import pi, angle, exp
+import numpy as np
 from pyleecan.Methods.Geometry.PolarArc.discretize import NbPointPolarArcError
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
@@ -34,7 +34,7 @@ from pyleecan.Methods.Geometry.PolarArc.get_patches import (
 )
 from matplotlib.patches import Polygon
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -112,7 +112,7 @@ class PolarArc(Surface):
         Rint = abs(self.point_ref) - self.height / 2
         Rext = Rint + self.height
 
-        return (pi * Rext**2 - pi * Rint**2) * (self.angle / (2 * pi))
+        return (np.pi * Rext**2 - np.pi * Rint**2) * (self.angle / (2 * np.pi))
 
     # cf Methods.Geometry.PolarArc.discretize
     # -*-- coding: utf-8 -*
@@ -165,14 +165,14 @@ class PolarArc(Surface):
         self.check()
 
         Z_ref = self.point_ref
-        center = Z_ref * exp(-1j * angle(Z_ref))
+        center = Z_ref * np.exp(-1j * np.angle(Z_ref))
         H = self.height
         A = self.angle
         # the points of the PolarArc
-        Z2 = (center - (H / 2)) * exp(1j * (-(A / 2))) * exp(1j * angle(Z_ref))
-        Z3 = (center + (H / 2)) * exp(1j * (-(A / 2))) * exp(1j * angle(Z_ref))
-        Z4 = (center + (H / 2)) * exp(1j * (A / 2)) * exp(1j * angle(Z_ref))
-        Z1 = (center - (H / 2)) * exp(1j * (A / 2)) * exp(1j * angle(Z_ref))
+        Z2 = (center - (H / 2)) * np.exp(1j * (-(A / 2))) * np.exp(1j * np.angle(Z_ref))
+        Z3 = (center + (H / 2)) * np.exp(1j * (-(A / 2))) * np.exp(1j * np.angle(Z_ref))
+        Z4 = (center + (H / 2)) * np.exp(1j * (A / 2)) * np.exp(1j * np.angle(Z_ref))
+        Z1 = (center - (H / 2)) * np.exp(1j * (A / 2)) * np.exp(1j * np.angle(Z_ref))
 
         # Lines that delimit the PolarArc
         line1 = Arc1(Z1, Z2, -abs(Z1), is_trigo_direction=False)
@@ -260,7 +260,7 @@ class PolarArc(Surface):
             return  # Nothing to do
         # check if the PolarArc is correct
         self.check()
-        self.point_ref = self.point_ref * exp(1j * angle)
+        self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # cf Methods.Geometry.PolarArc.translate
     def translate(self, Zt):
@@ -366,8 +366,8 @@ class PolarArc(Surface):
         if (
             other._angle is not None
             and self._angle is not None
-            and isnan(other._angle)
-            and isnan(self._angle)
+            and np.isnan(other._angle)
+            and np.isnan(self._angle)
         ):
             pass
         elif other._angle != self._angle:
@@ -381,8 +381,8 @@ class PolarArc(Surface):
         if (
             other._height is not None
             and self._height is not None
-            and isnan(other._height)
-            and isnan(self._height)
+            and np.isnan(other._height)
+            and np.isnan(self._height)
         ):
             pass
         elif other._height != self._height:

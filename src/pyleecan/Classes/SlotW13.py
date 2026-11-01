@@ -24,11 +24,10 @@ from pyleecan.Classes.Slot import Slot
 from pyleecan.Methods.Slot.SlotW13.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
-from numpy import arcsin, exp, linspace, zeros, cos, sin, tan, pi
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Methods.Slot.SlotW13.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -43,7 +42,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -149,11 +148,11 @@ class SlotW13(Slot):
         H1 = self.get_H1()
 
         # alpha is the angle to rotate Z0 so ||Z1,Z10|| = W0
-        alpha = float(arcsin(self.W0 / (2 * Rbo)))
+        alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
 
         # comp point coordinate (in complex)
-        Z0 = Rbo * exp(1j * 0)
-        Z1 = Z0 * exp(-1j * alpha)
+        Z0 = Rbo * np.exp(1j * 0)
+        Z1 = Z0 * np.exp(-1j * alpha)
 
         if self.is_outwards():
             Z2 = Z1 + self.H0
@@ -245,11 +244,11 @@ class SlotW13(Slot):
         Z6 = point_dict["Z6"]
         Z7 = point_dict["Z7"]
 
-        X = linspace(Z4, Z5, Nrad + 1)
+        X = np.linspace(Z4, Z5, Nrad + 1)
         # Nrad+1 and Ntan+1 because 3 points => 2 zones
-        Z = zeros((Nrad + 1, Ntan + 1), dtype=complex)
+        Z = np.zeros((Nrad + 1, Ntan + 1), dtype=complex)
         for ii in range(Nrad + 1):
-            Z[ii][:] = linspace(X[ii], X[ii].conjugate(), Ntan + 1)
+            Z[ii][:] = np.linspace(X[ii], X[ii].conjugate(), Ntan + 1)
 
         assert Z[0][0] == Z4
         assert Z[Nrad][0] == Z5
@@ -328,7 +327,7 @@ class SlotW13(Slot):
 
         Rbo = self.get_Rbo()
 
-        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+        return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # cf Methods.Slot.SlotW13.comp_height
     def comp_height(self):
@@ -352,7 +351,7 @@ class SlotW13(Slot):
 
         # Computation of the arc height
         alpha = self.comp_angle_opening() / 2
-        Harc = float(Rbo * (1 - cos(alpha)))
+        Harc = float(Rbo * (1 - np.cos(alpha)))
 
         if self.is_outwards():
             return abs(Rbo - Harc + self.H0 + H1 + self.H2 + 1j * self.W3 / 2.0) - Rbo
@@ -438,7 +437,7 @@ class SlotW13(Slot):
 
         # The bottom is an arc
         alpha = self.comp_angle_opening()
-        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
         if self.is_outwards():
@@ -463,7 +462,7 @@ class SlotW13(Slot):
         """
 
         if self.H1_is_rad:  # H1 in rad
-            return ((self.W1 - self.W0) / 2.0) * tan(self.H1)  # convertion to m
+            return ((self.W1 - self.W0) / 2.0) * np.tan(self.H1)  # convertion to m
         else:  # H1 in m
             return self.H1
 
@@ -663,7 +662,7 @@ class SlotW13(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -973,8 +972,8 @@ class SlotW13(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -986,8 +985,8 @@ class SlotW13(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -999,8 +998,8 @@ class SlotW13(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -1012,8 +1011,8 @@ class SlotW13(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -1025,8 +1024,8 @@ class SlotW13(Slot):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -1038,8 +1037,8 @@ class SlotW13(Slot):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:
@@ -1051,8 +1050,8 @@ class SlotW13(Slot):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:

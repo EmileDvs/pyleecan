@@ -19,7 +19,7 @@ from pyleecan.Classes.PostMethod import PostMethod
 # Try/catch to remove unnecessary dependencies in unused method
 from os.path import join
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

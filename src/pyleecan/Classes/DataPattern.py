@@ -18,12 +18,11 @@ from pyleecan.Classes.Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from importlib import import_module
-from numpy import array
+import numpy as np
 from pyleecan.Functions.SciDataTool import NormError
 from pyleecan.Functions.SciDataTool.conversions import convert
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -104,7 +103,7 @@ class DataPattern(Data):
         if operation is not None:
             module = import_module("pyleecan.Functions.SciDataTool.conversions")
             func = getattr(module, operation)  # Conversion function
-            values = array(func(values, is_real=is_real))
+            values = np.array(func(values, is_real=is_real))
 
         if unit != "SI" and unit != self.unit:
             if unit in self.normalizations and normalization is None:
@@ -278,13 +277,13 @@ class DataPattern(Data):
             return False
         if other.is_step != self.is_step:
             return False
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             return False
         if other.is_components != self.is_components:
             return False
         if other.symmetries != self.symmetries:
             return False
-        if not array_equal(other.values_whole, self.values_whole):
+        if not np.array_equal(other.values_whole, self.values_whole):
             return False
         if other.is_overlay != self.is_overlay:
             return False
@@ -341,7 +340,7 @@ class DataPattern(Data):
                 diff_list.append(name + ".is_step" + val_str)
             else:
                 diff_list.append(name + ".is_step")
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._is_components != self._is_components:
             if is_add_value:
@@ -367,7 +366,7 @@ class DataPattern(Data):
                 diff_list.append(name + ".symmetries" + val_str)
             else:
                 diff_list.append(name + ".symmetries")
-        if not array_equal(other.values_whole, self.values_whole):
+        if not np.array_equal(other.values_whole, self.values_whole):
             diff_list.append(name + ".values_whole")
         if other._is_overlay != self._is_overlay:
             if is_add_value:
@@ -600,10 +599,10 @@ class DataPattern(Data):
     def _set_values(self, value):
         """setter of values"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("values", value, "ndarray")
@@ -663,10 +662,10 @@ class DataPattern(Data):
     def _set_values_whole(self, value):
         """setter of values_whole"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("values_whole", value, "ndarray")

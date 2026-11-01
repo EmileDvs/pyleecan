@@ -22,7 +22,7 @@ from pyleecan.loggers import gen_logger_config_dict, DEFAULT_LOG_NAME
 from logging.config import dictConfig
 from os.path import join
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

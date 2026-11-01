@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes.OPdq import OPdq
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -140,8 +140,8 @@ class OPdqf(OPdq):
         if (
             other._If_ref is not None
             and self._If_ref is not None
-            and isnan(other._If_ref)
-            and isnan(self._If_ref)
+            and np.isnan(other._If_ref)
+            and np.isnan(self._If_ref)
         ):
             pass
         elif other._If_ref != self._If_ref:

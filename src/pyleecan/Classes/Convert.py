@@ -55,7 +55,7 @@ from pyleecan.Classes.SlotW14 import SlotW14
 from pyleecan.Classes.SlotW21 import SlotW21
 from pyleecan.Classes.Material import Material
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

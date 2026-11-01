@@ -20,7 +20,7 @@ from pyleecan.Classes._frozen import FrozenClass
 from pyleecan.Methods.Simulation.Input import InputError
 from pyleecan.Classes.OutStruct import OutStruct
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

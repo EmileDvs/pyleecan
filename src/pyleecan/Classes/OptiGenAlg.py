@@ -20,7 +20,7 @@ from os.path import isfile
 from pyleecan.Classes._check import CheckTypeError
 import numpy as np
 import random
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -184,8 +184,8 @@ class OptiGenAlg(OptiSolver):
         if (
             other._p_cross is not None
             and self._p_cross is not None
-            and isnan(other._p_cross)
-            and isnan(self._p_cross)
+            and np.isnan(other._p_cross)
+            and np.isnan(self._p_cross)
         ):
             pass
         elif other._p_cross != self._p_cross:
@@ -203,8 +203,8 @@ class OptiGenAlg(OptiSolver):
         if (
             other._p_mutate is not None
             and self._p_mutate is not None
-            and isnan(other._p_mutate)
-            and isnan(self._p_mutate)
+            and np.isnan(other._p_mutate)
+            and np.isnan(self._p_mutate)
         ):
             pass
         elif other._p_mutate != self._p_mutate:

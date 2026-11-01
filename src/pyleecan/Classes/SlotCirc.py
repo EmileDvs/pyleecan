@@ -18,11 +18,10 @@ from pyleecan.Classes.Slot import Slot
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Classes.Arc1 import Arc1
-from numpy import exp, arcsin, pi, sin
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.circle_from_3_points import circle_from_3_points
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import (
@@ -37,7 +36,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -123,8 +122,8 @@ class SlotCirc(Slot):
         Rbo = self.get_Rbo()
         alpha = self.comp_angle_opening()
 
-        Z1 = Rbo * exp(-1j * alpha / 2)
-        Z2 = Rbo * exp(1j * alpha / 2)
+        Z1 = Rbo * np.exp(-1j * alpha / 2)
+        Z2 = Rbo * np.exp(1j * alpha / 2)
         if self.is_H0_bore:
             if self.is_outwards():
                 ZM = Rbo + self.H0
@@ -235,7 +234,7 @@ class SlotCirc(Slot):
 
         Rbo = self.get_Rbo()
 
-        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+        return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # cf Methods.Slot.SlotCirc.comp_height
     def comp_height(self):
@@ -316,14 +315,14 @@ class SlotCirc(Slot):
         """
 
         R0 = self._comp_R0()
-        alpha = float(2 * arcsin(self.W0 / (2 * R0)))
+        alpha = float(2 * np.arcsin(self.W0 / (2 * R0)))
         # Area of the full circle
-        S1 = pi * (R0**2)
+        S1 = np.pi * (R0**2)
         # Area of the top Arc
-        S2 = (R0**2.0) / 2.0 * (alpha - sin(alpha))
+        S2 = (R0**2.0) / 2.0 * (alpha - np.sin(alpha))
         # Arc of the bore
         alpha_op = self.comp_angle_opening()
-        S3 = (self.get_Rbo() ** 2.0) / 2.0 * (alpha_op - sin(alpha_op))
+        S3 = (self.get_Rbo() ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
 
         if self.H0 < self.W0 / 2:
             # Center is in airgap
@@ -530,7 +529,7 @@ class SlotCirc(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
 
@@ -714,8 +713,8 @@ class SlotCirc(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -727,8 +726,8 @@ class SlotCirc(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:

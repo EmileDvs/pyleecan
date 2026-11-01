@@ -17,9 +17,9 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import inf
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -54,7 +54,7 @@ class MatElectrical(FrozenClass):
             raise Exception("Cannot calculate conductivity if rh0 is None")
 
         if self.rho == 0:
-            sigma = inf
+            sigma = np.inf
 
         else:
             rho = self.get_resistivity(T_op, T_ref)
@@ -167,8 +167,8 @@ class MatElectrical(FrozenClass):
         if (
             other._rho is not None
             and self._rho is not None
-            and isnan(other._rho)
-            and isnan(self._rho)
+            and np.isnan(other._rho)
+            and np.isnan(self._rho)
         ):
             pass
         elif other._rho != self._rho:
@@ -182,8 +182,8 @@ class MatElectrical(FrozenClass):
         if (
             other._epsr is not None
             and self._epsr is not None
-            and isnan(other._epsr)
-            and isnan(self._epsr)
+            and np.isnan(other._epsr)
+            and np.isnan(self._epsr)
         ):
             pass
         elif other._epsr != self._epsr:
@@ -197,8 +197,8 @@ class MatElectrical(FrozenClass):
         if (
             other._alpha is not None
             and self._alpha is not None
-            and isnan(other._alpha)
-            and isnan(self._alpha)
+            and np.isnan(other._alpha)
+            and np.isnan(self._alpha)
         ):
             pass
         elif other._alpha != self._alpha:

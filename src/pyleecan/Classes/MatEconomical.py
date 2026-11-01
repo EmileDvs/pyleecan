@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes._frozen import FrozenClass
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -93,8 +93,8 @@ class MatEconomical(FrozenClass):
         if (
             other._cost_unit is not None
             and self._cost_unit is not None
-            and isnan(other._cost_unit)
-            and isnan(self._cost_unit)
+            and np.isnan(other._cost_unit)
+            and np.isnan(self._cost_unit)
         ):
             pass
         elif other._cost_unit != self._cost_unit:

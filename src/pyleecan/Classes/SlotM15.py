@@ -17,13 +17,12 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import arcsin, exp, sin, pi
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Methods.Slot.Slot import SlotCheckError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotM15.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -38,7 +37,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -65,17 +64,17 @@ class SlotM15(Slot):
 
         Rbo = self.get_Rbo()
 
-        Z1 = Rbo * exp(-1j * self.W0 / 2)
+        Z1 = Rbo * np.exp(-1j * self.W0 / 2)
 
         # alpha_lim = 2 * arcsin(self.W1 * 0.5 / self.Rtopm)  # Angle of the top arc
         # H_top_arc = self.Rtopm * (1 - cos(alpha_lim / 2))  # Height of the top arc
         if self.is_outwards():
-            Z2 = (Rbo + self.H0) * exp(-1j * self.W0 / 2)
+            Z2 = (Rbo + self.H0) * np.exp(-1j * self.W0 / 2)
         else:  # inward slot
-            Z2 = (Rbo - self.H0) * exp(-1j * self.W0 / 2)
+            Z2 = (Rbo - self.H0) * np.exp(-1j * self.W0 / 2)
 
-        alpha_M = float(arcsin(self.W1 / (2 * abs(Z2))))
-        ZM1 = abs(Z2) * exp(-1j * alpha_M)
+        alpha_M = float(np.arcsin(self.W1 / (2 * abs(Z2))))
+        ZM1 = abs(Z2) * np.exp(-1j * alpha_M)
         if self.is_outwards():
             ZM0 = abs(Z2) - self.H1
             Zc = ZM0 + self.Rtopm
@@ -157,7 +156,7 @@ class SlotM15(Slot):
         Rbo = self.get_Rbo()
 
         # conversion W0 rad -> m
-        W0_m = 2 * (Rbo - self.H0) * sin(self.W0 / 2)
+        W0_m = 2 * (Rbo - self.H0) * np.sin(self.W0 / 2)
 
         if W0_m < self.W1:
             raise SlotCheckError("You must have W1 <= W0")
@@ -243,8 +242,8 @@ class SlotM15(Slot):
         R1 = abs(Z1)
         R2 = abs(Z2)
 
-        S1 = pi * R1**2 * (self.W0 / (2 * pi))
-        S2 = pi * R2**2 * (self.W0 / (2 * pi))
+        S1 = np.pi * R1**2 * (self.W0 / (2 * np.pi))
+        S2 = np.pi * R2**2 * (self.W0 / (2 * np.pi))
 
         return abs(S1 - S2)
 
@@ -271,12 +270,12 @@ class SlotM15(Slot):
         S1 = abs(ZM1 - ZM2) * self.W1
 
         # Top Arc
-        alpha = 2 * float(arcsin(self.W1 / (2 * self.Rtopm)))
-        Sarc = (self.Rtopm**2.0) / 2.0 * (alpha - sin(alpha))
+        alpha = 2 * float(np.arcsin(self.W1 / (2 * self.Rtopm)))
+        Sarc = (self.Rtopm**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Bottom polar to remove
-        alpha = 2 * float(arcsin(self.W1 / (2 * abs(ZM1))))
-        Sarc2 = (abs(ZM1) ** 2.0) / 2.0 * (alpha - sin(alpha))
+        alpha = 2 * float(np.arcsin(self.W1 / (2 * abs(ZM1))))
+        Sarc2 = (abs(ZM1) ** 2.0) / 2.0 * (alpha - np.sin(alpha))
 
         return S1 + Sarc - Sarc2
 
@@ -402,7 +401,7 @@ class SlotM15(Slot):
         # Use some default parameter
         if is_default:
             slot = type(self)(
-                Zs=2, W0=60 * pi / 180, H0=0.03, H1=0.02, W1=0.05, Rtopm=0.05
+                Zs=2, W0=60 * np.pi / 180, H0=0.03, H1=0.02, W1=0.05, Rtopm=0.05
             )
             lam = LamSlot(
                 Rint=40e-3, Rext=0.11, is_internal=True, is_stator=False, slot=slot
@@ -428,7 +427,7 @@ class SlotM15(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
             if self.is_outwards():
@@ -453,8 +452,8 @@ class SlotM15(Slot):
                 # W0
                 R = Rbo + sign * self.H0 * 1.1
                 line = Arc1(
-                    begin=R * exp(-1j * self.W0 / 2),
-                    end=R * exp(1j * self.W0 / 2),
+                    begin=R * np.exp(-1j * self.W0 / 2),
+                    end=R * np.exp(1j * self.W0 / 2),
                     radius=R,
                     is_trigo_direction=True,
                 )
@@ -526,7 +525,7 @@ class SlotM15(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z1 Line
-                line = Segment(0, Rbo * 2 * exp(-1j * self.W0 / 2))
+                line = Segment(0, Rbo * 2 * np.exp(-1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -535,7 +534,7 @@ class SlotM15(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z2 Line
-                line = Segment(0, Rbo * 2 * exp(1j * self.W0 / 2))
+                line = Segment(0, Rbo * 2 * np.exp(1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -721,8 +720,8 @@ class SlotM15(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -734,8 +733,8 @@ class SlotM15(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -747,8 +746,8 @@ class SlotM15(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -760,8 +759,8 @@ class SlotM15(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -773,8 +772,8 @@ class SlotM15(Slot):
         if (
             other._Rtopm is not None
             and self._Rtopm is not None
-            and isnan(other._Rtopm)
-            and isnan(self._Rtopm)
+            and np.isnan(other._Rtopm)
+            and np.isnan(self._Rtopm)
         ):
             pass
         elif other._Rtopm != self._Rtopm:

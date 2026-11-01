@@ -23,7 +23,7 @@ from pyleecan.Classes.EEC import EEC
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Simulation.EEC_LSRPM.solve import solve
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

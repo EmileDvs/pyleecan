@@ -22,7 +22,7 @@ from pyleecan.Classes.Surface import Surface
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Geometry.Trapeze.check import check
-from numpy import angle, exp
+import numpy as np
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Methods.Geometry.Trapeze.get_patches import (
     PATCH_COLOR,
@@ -32,7 +32,7 @@ from pyleecan.Methods.Geometry.Trapeze.get_patches import (
 )
 from matplotlib.patches import Polygon
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -159,10 +159,10 @@ class Trapeze(Surface):
         W2 = self.W2
 
         # The 4 points of the Trapeze object
-        Z1 = (complex(-H / 2, W1 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
-        Z2 = (complex(-H / 2, -W1 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
-        Z3 = (complex(H / 2, -W2 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
-        Z4 = (complex(H / 2, W2 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
+        Z1 = (complex(-H / 2, W1 / 2) * np.exp(1j * (np.angle(Z_ref)))) + Z_ref
+        Z2 = (complex(-H / 2, -W1 / 2) * np.exp(1j * (np.angle(Z_ref)))) + Z_ref
+        Z3 = (complex(H / 2, -W2 / 2) * np.exp(1j * (np.angle(Z_ref)))) + Z_ref
+        Z4 = (complex(H / 2, W2 / 2) * np.exp(1j * (np.angle(Z_ref)))) + Z_ref
 
         # The lines that delimit the Trapeze
         line1 = Segment(Z1, Z2)
@@ -259,7 +259,7 @@ class Trapeze(Surface):
             return  # Nothing to do
         # check if the Trapeze is correct
         self.check()
-        self.point_ref = self.point_ref * exp(1j * angle)
+        self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # cf Methods.Geometry.Trapeze.translate
     def translate(self, Zt):
@@ -371,8 +371,8 @@ class Trapeze(Surface):
         if (
             other._height is not None
             and self._height is not None
-            and isnan(other._height)
-            and isnan(self._height)
+            and np.isnan(other._height)
+            and np.isnan(self._height)
         ):
             pass
         elif other._height != self._height:
@@ -390,8 +390,8 @@ class Trapeze(Surface):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:
@@ -403,8 +403,8 @@ class Trapeze(Surface):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:

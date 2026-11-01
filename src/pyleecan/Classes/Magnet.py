@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes._frozen import FrozenClass
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -140,8 +140,8 @@ class Magnet(FrozenClass):
         if (
             other._Lmag is not None
             and self._Lmag is not None
-            and isnan(other._Lmag)
-            and isnan(self._Lmag)
+            and np.isnan(other._Lmag)
+            and np.isnan(self._Lmag)
         ):
             pass
         elif other._Lmag != self._Lmag:

@@ -20,7 +20,7 @@ from pyleecan.Classes.Conductor import Conductor
 from matplotlib.patches import Patch, Rectangle
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -348,8 +348,8 @@ class CondType21(Conductor):
         if (
             other._Hbar is not None
             and self._Hbar is not None
-            and isnan(other._Hbar)
-            and isnan(self._Hbar)
+            and np.isnan(other._Hbar)
+            and np.isnan(self._Hbar)
         ):
             pass
         elif other._Hbar != self._Hbar:
@@ -363,8 +363,8 @@ class CondType21(Conductor):
         if (
             other._Wbar is not None
             and self._Wbar is not None
-            and isnan(other._Wbar)
-            and isnan(self._Wbar)
+            and np.isnan(other._Wbar)
+            and np.isnan(self._Wbar)
         ):
             pass
         elif other._Wbar != self._Wbar:
@@ -378,8 +378,8 @@ class CondType21(Conductor):
         if (
             other._Wins is not None
             and self._Wins is not None
-            and isnan(other._Wins)
-            and isnan(self._Wins)
+            and np.isnan(other._Wins)
+            and np.isnan(self._Wins)
         ):
             pass
         elif other._Wins != self._Wins:

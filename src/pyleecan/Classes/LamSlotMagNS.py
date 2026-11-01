@@ -17,7 +17,7 @@ from pyleecan.Classes.LamSlotM import LamSlotM
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, gcd
+import numpy as np
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.labels import (
     update_RTS_index,
@@ -32,8 +32,7 @@ from pyleecan.Functions.labels import (
 )
 from pyleecan.Methods.Machine.LamSlotMag import LMC_SlotTooLong
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -90,7 +89,7 @@ class LamSlotMagNS(LamSlotM):
         )
 
         Zs = self.slot.Zs
-        slot_pitch = 2 * pi / Zs
+        slot_pitch = 2 * np.pi / Zs
         mag_surf_list = list()
         # Add North magnet surface(s)
         if is_magnet and self.magnet_north is not None:
@@ -209,7 +208,7 @@ class LamSlotMagNS(LamSlotM):
 
         # Shift to have a tooth center on Ox
         for surf in mag_surf_list:
-            surf.rotate(pi / Zs)
+            surf.rotate(np.pi / Zs)
         surf_list.extend(mag_surf_list)
 
         return surf_list
@@ -334,9 +333,9 @@ class LamSlotMagNS(LamSlotM):
         if len(nb_list) == 1:
             per_a = nb_list[0]
         else:
-            per_a = gcd(nb_list[0], nb_list[1])
+            per_a = np.gcd(nb_list[0], nb_list[1])
             for ii in range(2, len(nb_list)):
-                per_a = gcd(per_a, nb_list[ii])
+                per_a = np.gcd(per_a, nb_list[ii])
         is_antiper_a = False
 
         # Account for duct periodicity
@@ -489,8 +488,8 @@ class LamSlotMagNS(LamSlotM):
         for ii in range(Zs // sym):
             if ii % 2 == 0 and self.slot.is_bore == is_bore:  # North
                 slot_dict = dict()
-                slot_dict["begin_angle"] = 2 * pi / Zs * ii - opN / 2 + pi / Zs
-                slot_dict["end_angle"] = 2 * pi / Zs * ii + opN / 2 + pi / Zs
+                slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opN / 2 + np.pi / Zs
+                slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opN / 2 + np.pi / Zs
                 slot_dict["obj"] = self.slot
                 slot_dict["lines"] = self.slot.build_geometry()
                 # Apply rotation
@@ -500,8 +499,8 @@ class LamSlotMagNS(LamSlotM):
                 slot_list.append(slot_dict)
             elif ii % 2 == 1 and self.slot_south.is_bore == is_bore:  # South
                 slot_dict = dict()
-                slot_dict["begin_angle"] = 2 * pi / Zs * ii - opS / 2 + pi / Zs
-                slot_dict["end_angle"] = 2 * pi / Zs * ii + opS / 2 + pi / Zs
+                slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opS / 2 + np.pi / Zs
+                slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opS / 2 + np.pi / Zs
                 slot_dict["obj"] = self.slot_south
                 slot_dict["lines"] = self.slot_south.build_geometry()
                 # Apply rotation

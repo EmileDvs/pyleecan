@@ -22,7 +22,7 @@ from pyleecan.Classes.Lamination import Lamination
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.LamSlot.check import check
-from numpy import pi
+import numpy as np
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.labels import update_RTS_index
 from matplotlib.patches import Patch
@@ -31,7 +31,7 @@ from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -144,9 +144,13 @@ class LamSlot(Lamination):
         Ryoke = self.get_Ryoke()
         Hyoke = self.comp_height_yoke()
         if self.is_internal:
-            S_dict["Syoke"] = pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
+            S_dict["Syoke"] = (
+                np.pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
+            )
         else:
-            S_dict["Syoke"] = pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
+            S_dict["Syoke"] = (
+                np.pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
+            )
 
         S_dict["Sslot"] = Sslot
         S_dict["Slam"] -= Sslot
@@ -204,8 +208,8 @@ class LamSlot(Lamination):
 
         for ii in range(Zs // sym):
             slot_dict = dict()
-            slot_dict["begin_angle"] = 2 * pi / Zs * ii - op / 2 + pi / Zs
-            slot_dict["end_angle"] = 2 * pi / Zs * ii + op / 2 + pi / Zs
+            slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - op / 2 + np.pi / Zs
+            slot_dict["end_angle"] = 2 * np.pi / Zs * ii + op / 2 + np.pi / Zs
             slot_dict["obj"] = self.slot
             slot_dict["lines"] = self.slot.build_geometry()
             # Apply rotation
@@ -238,7 +242,7 @@ class LamSlot(Lamination):
         if not hasattr(self.slot, "get_surface_opening"):
             return close_list
         else:  # Get slot closing surfaces (no surface if wedges)
-            slot_pitch = 2 * pi / self.slot.Zs
+            slot_pitch = 2 * np.pi / self.slot.Zs
             # for slot to draw
             for ii in range(self.slot.Zs // sym):
                 slot_surf = self.slot.get_surface_opening(

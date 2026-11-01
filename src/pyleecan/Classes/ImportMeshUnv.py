@@ -18,9 +18,8 @@ from pyleecan.Classes.Import import Import
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, pyuff
-from numpy import array as np_array, hstack, newaxis, stack, vstack
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -55,9 +54,9 @@ class ImportMeshUnv(Import):
         for dataset in datasets:
             # If nodes dataset
             if dataset["type"] == 15:
-                nodes = stack(
+                nodes = np.stack(
                     (
-                        np_array(dataset["node_nums"], np.int32),
+                        np.array(dataset["node_nums"], np.int32),
                         dataset["x"],
                         dataset["y"],
                         dataset["z"],
@@ -75,9 +74,9 @@ class ImportMeshUnv(Import):
                         and isinstance(elt_type, str)
                         and isinstance(elt_dict, dict)
                     ):
-                        elements[elt_type] = hstack(
+                        elements[elt_type] = np.hstack(
                             (
-                                np_array(elt_dict["element_nums"])[:, newaxis],
+                                np.array(elt_dict["element_nums"])[:, np.newaxis],
                                 elt_dict["nodes_nums"],
                             )
                         )
@@ -104,7 +103,7 @@ class ImportMeshUnv(Import):
                 n = int(len(nodes_nums) / 4)
                 nodes_nums = np.reshape(nodes_nums, (n, 4))
                 element_nums = np.arange(len(nodes_nums))
-                elements["quad"] = vstack((element_nums, nodes_nums.T)).T
+                elements["quad"] = np.vstack((element_nums, nodes_nums.T)).T
 
         return nodes, elements
 

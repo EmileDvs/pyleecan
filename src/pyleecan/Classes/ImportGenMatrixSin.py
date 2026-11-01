@@ -17,7 +17,7 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import vstack, column_stack
+import numpy as np
 from pyleecan.Methods.Import.ImportGenMatrixSin import (
     GenSinEmptyError,
     GenSinDimError,
@@ -26,7 +26,7 @@ from pyleecan.Methods.Import.ImportGenMatrixSin import (
 )
 from pyleecan.Classes.ImportGenVectSin import ImportGenVectSin
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -79,9 +79,9 @@ class ImportGenMatrixSin(ImportMatrix):
                     + ")"
                 )
         if is_T:  # Conctenate the columns
-            matrix = column_stack([sin_obj.get_data() for sin_obj in self.sin_list])
+            matrix = np.column_stack([sin_obj.get_data() for sin_obj in self.sin_list])
         else:  # Concatenate the lines
-            matrix = vstack([sin_obj.get_data() for sin_obj in self.sin_list])
+            matrix = np.vstack([sin_obj.get_data() for sin_obj in self.sin_list])
         return self.edit_matrix(matrix)
 
     # cf Methods.Import.ImportGenMatrixSin.init_vector

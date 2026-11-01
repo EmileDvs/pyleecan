@@ -19,7 +19,7 @@ from pyleecan.Classes.ScalarProduct import ScalarProduct
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

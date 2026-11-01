@@ -18,8 +18,8 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 
-from numpy import array, array_equal
-from numpy import isnan
+import numpy as np
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -102,7 +102,7 @@ class ImportMatrixVal(ImportMatrix):
         # Check the properties inherited from ImportMatrix
         if not super(ImportMatrixVal, self).__eq__(other):
             return False
-        if not array_equal(other.value, self.value):
+        if not np.array_equal(other.value, self.value):
             return False
         return True
 
@@ -121,7 +121,7 @@ class ImportMatrixVal(ImportMatrix):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not array_equal(other.value, self.value):
+        if not np.array_equal(other.value, self.value):
             diff_list.append(name + ".value")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -199,10 +199,10 @@ class ImportMatrixVal(ImportMatrix):
     def _set_value(self, value):
         """setter of value"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("value", value, "ndarray")

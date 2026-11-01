@@ -22,13 +22,12 @@ from pyleecan.Classes.HoleMag import HoleMag
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.HoleM51.check import check
-from numpy import exp, pi, cos, sin, tan, arctan, angle
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -43,7 +42,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -73,8 +72,8 @@ class HoleM51(HoleMag):
         # comp point coordinate (in complex)
         alpha = self.comp_alpha()
 
-        Wslot = 2 * sin(self.W1 / 2) * (Rext - self.H1)
-        L = 0.5 * (Wslot - self.W0) / cos(alpha)  # ||P2,P5||
+        Wslot = 2 * np.sin(self.W1 / 2) * (Rext - self.H1)
+        L = 0.5 * (Wslot - self.W0) / np.cos(alpha)  # ||P2,P5||
 
         # Center of the hole
         Z0 = Rext - self.H0
@@ -86,26 +85,28 @@ class HoleM51(HoleMag):
         Z12 = Z2 - self.H2
         Z13 = Z12 - 1j * self.W2
         Z14 = Z13 - 1j * self.W3
-        Z11 = Z12 + 1j * tan(alpha / 2) * self.H2
-        Z16 = Z15 - 1j * tan(alpha / 2) * self.H2
+        Z11 = Z12 + 1j * np.tan(alpha / 2) * self.H2
+        Z16 = Z15 - 1j * np.tan(alpha / 2) * self.H2
 
         # Draw the left side with center P2, and X axis =(P2,P5), Y axis=(P2,P10)
-        Z3 = self.W4 * exp(1j * (pi / 2 - alpha)) + Z2
-        Z4 = (self.W4 + self.W5) * exp(1j * (pi / 2 - alpha)) + Z2
-        Z5 = (Rext - self.H1) * exp(1j * self.W1 / 2)
-        Z10 = (1j * self.H2) * exp(1j * (pi / 2 - alpha)) + Z2
-        Z9 = (1j * self.H2 + self.W4) * exp(1j * (pi / 2 - alpha)) + Z2
-        Z8 = (1j * self.H2 + self.W4 + self.W5) * exp(1j * (pi / 2 - alpha)) + Z2
-        Z7 = (1j * self.H2 + L) * exp(1j * (pi / 2 - alpha)) + Z2
+        Z3 = self.W4 * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+        Z4 = (self.W4 + self.W5) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+        Z5 = (Rext - self.H1) * np.exp(1j * self.W1 / 2)
+        Z10 = (1j * self.H2) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+        Z9 = (1j * self.H2 + self.W4) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+        Z8 = (1j * self.H2 + self.W4 + self.W5) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+        Z7 = (1j * self.H2 + L) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
 
         # Draw the right side with center P25, X axis (P25,P23), Y axis(P25,P17)
-        Z24 = self.W6 * exp(-1j * (pi / 2 - alpha)) + Z25
-        Z23 = (self.W6 + self.W7) * exp(-1j * (pi / 2 - alpha)) + Z25
-        Z22 = (Rext - self.H1) * exp(-1j * self.W1 / 2)
-        Z17 = (-1j * self.H2) * exp(-1j * (pi / 2 - alpha)) + Z25
-        Z18 = (-1j * self.H2 + self.W6) * exp(-1j * (pi / 2 - alpha)) + Z25
-        Z19 = (-1j * self.H2 + self.W6 + self.W7) * exp(-1j * (pi / 2 - alpha)) + Z25
-        Z20 = (-1j * self.H2 + L) * exp(-1j * (pi / 2 - alpha)) + Z25
+        Z24 = self.W6 * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+        Z23 = (self.W6 + self.W7) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+        Z22 = (Rext - self.H1) * np.exp(-1j * self.W1 / 2)
+        Z17 = (-1j * self.H2) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+        Z18 = (-1j * self.H2 + self.W6) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+        Z19 = (-1j * self.H2 + self.W6 + self.W7) * np.exp(
+            -1j * (np.pi / 2 - alpha)
+        ) + Z25
+        Z20 = (-1j * self.H2 + L) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
 
         # Z6 is the intersection of the line [Z7,Z10] and Circle centre
         # (0,0) radius Rext - H1
@@ -429,17 +430,17 @@ class HoleM51(HoleMag):
         """
         Rext = self.get_Rext()
 
-        alpha = -arctan(
+        alpha = -np.arctan(
             2
             * (
                 self.H0
-                - self.H1 * cos(0.5 * self.W1)
-                + Rext * cos(0.5 * self.W1)
+                - self.H1 * np.cos(0.5 * self.W1)
+                + Rext * np.cos(0.5 * self.W1)
                 - Rext
             )
             / (
-                2.0 * self.H1 * sin(0.5 * self.W1)
-                - 2 * Rext * sin(0.5 * self.W1)
+                2.0 * self.H1 * np.sin(0.5 * self.W1)
+                - 2 * Rext * np.sin(0.5 * self.W1)
                 + self.W0
             )
         )
@@ -476,9 +477,9 @@ class HoleM51(HoleMag):
         mag_dict["magnet_2"] = S2.comp_normal()
 
         if not is_north:
-            mag_dict["magnet_0"] += pi
-            mag_dict["magnet_1"] += pi
-            mag_dict["magnet_2"] += pi
+            mag_dict["magnet_0"] += np.pi
+            mag_dict["magnet_1"] += np.pi
+            mag_dict["magnet_2"] += np.pi
 
         if self.magnetization_dict_offset is not None:
             for key, value in self.magnetization_dict_offset:
@@ -551,7 +552,7 @@ class HoleM51(HoleMag):
         """
 
         Rext = self.get_Rext()
-        return 2 * sin(self.W1 / 2) * (Rext - self.H1)
+        return 2 * np.sin(self.W1 / 2) * (Rext - self.H1)
 
     # cf Methods.Slot.HoleM51.has_magnet
     def has_magnet(self):
@@ -632,7 +633,7 @@ class HoleM51(HoleMag):
             hole = type(self)(
                 Zh=8,
                 W0=0.016,
-                W1=pi / 6,
+                W1=np.pi / 6,
                 W2=0.004,
                 W3=0.01,
                 W4=0.004,
@@ -676,22 +677,22 @@ class HoleM51(HoleMag):
             if type_add_active == 0:
                 lam.hole[0].remove_magnet()
 
-            alpha = pi / 2  # To rotate the schematics
+            alpha = np.pi / 2  # To rotate the schematics
             fig, ax = lam.plot(
-                alpha=pi / self.Zh + alpha,
+                alpha=np.pi / self.Zh + alpha,
                 is_show_fig=False,
                 is_lam_only=type_add_active == 0,
                 fig=fig,
                 ax=ax,
             )  # center hole on Ox axis
-            sp = 2 * pi / self.Zh
+            sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo()
             point_dict = self._comp_point_coordinate()
 
             # Adding point label
             if is_add_point_label:
                 for name, Z in point_dict.items():
-                    Z = Z * exp(1j * alpha)
+                    Z = Z * np.exp(1j * alpha)
                     ax.text(
                         Z.real,
                         Z.imag,
@@ -706,10 +707,10 @@ class HoleM51(HoleMag):
                 Zlim1 = point_dict["Z2"] + self.H0 * 0.2
                 Zlim2 = point_dict["Z25"] + self.H0 * 0.2
                 plot_quote(
-                    point_dict["Z2"] * exp(1j * alpha),
-                    Zlim1 * exp(1j * alpha),
-                    Zlim2 * exp(1j * alpha),
-                    point_dict["Z25"] * exp(1j * alpha),
+                    point_dict["Z2"] * np.exp(1j * alpha),
+                    Zlim1 * np.exp(1j * alpha),
+                    Zlim2 * np.exp(1j * alpha),
+                    point_dict["Z25"] * np.exp(1j * alpha),
                     offset_label=(1 + 1j) * self.H2 * 0.3,
                     fig=fig,
                     ax=ax,
@@ -718,8 +719,8 @@ class HoleM51(HoleMag):
                 # W1
                 R = Rbo + self.H0 * 0.1
                 line = Arc1(
-                    begin=R * exp(-1j * self.W1 / 2) * exp(1j * alpha),
-                    end=R * exp(1j * self.W1 / 2) * exp(1j * alpha),
+                    begin=R * np.exp(-1j * self.W1 / 2) * np.exp(1j * alpha),
+                    end=R * np.exp(1j * self.W1 / 2) * np.exp(1j * alpha),
                     radius=R,
                     is_trigo_direction=True,
                 )
@@ -735,8 +736,8 @@ class HoleM51(HoleMag):
                 if type_add_active != 0:
                     # W2
                     line = Segment(
-                        (point_dict["Z2"] + point_dict["Z12"]) / 2 * exp(1j * alpha),
-                        (point_dict["Z1"] + point_dict["Z13"]) / 2 * exp(1j * alpha),
+                        (point_dict["Z2"] + point_dict["Z12"]) / 2 * np.exp(1j * alpha),
+                        (point_dict["Z1"] + point_dict["Z13"]) / 2 * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -750,8 +751,8 @@ class HoleM51(HoleMag):
                     )
                     # W3
                     line = Segment(
-                        point_dict["Z13"] * exp(1j * alpha),
-                        point_dict["Z14"] * exp(1j * alpha),
+                        point_dict["Z13"] * np.exp(1j * alpha),
+                        point_dict["Z14"] * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -765,8 +766,8 @@ class HoleM51(HoleMag):
                     )
                     # W4
                     line = Segment(
-                        (point_dict["Z3"] + point_dict["Z9"]) / 2 * exp(1j * alpha),
-                        (point_dict["Z10"] + point_dict["Z2"]) / 2 * exp(1j * alpha),
+                        (point_dict["Z3"] + point_dict["Z9"]) / 2 * np.exp(1j * alpha),
+                        (point_dict["Z10"] + point_dict["Z2"]) / 2 * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -780,8 +781,8 @@ class HoleM51(HoleMag):
                     )
                     # W5
                     line = Segment(
-                        point_dict["Z9"] * exp(1j * alpha),
-                        point_dict["Z8"] * exp(1j * alpha),
+                        point_dict["Z9"] * np.exp(1j * alpha),
+                        point_dict["Z8"] * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -795,8 +796,12 @@ class HoleM51(HoleMag):
                     )
                     # W6
                     line = Segment(
-                        (point_dict["Z25"] + point_dict["Z17"]) / 2 * exp(1j * alpha),
-                        (point_dict["Z24"] + point_dict["Z18"]) / 2 * exp(1j * alpha),
+                        (point_dict["Z25"] + point_dict["Z17"])
+                        / 2
+                        * np.exp(1j * alpha),
+                        (point_dict["Z24"] + point_dict["Z18"])
+                        / 2
+                        * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -810,8 +815,8 @@ class HoleM51(HoleMag):
                     )
                     # W7
                     line = Segment(
-                        point_dict["Z18"] * exp(1j * alpha),
-                        point_dict["Z19"] * exp(1j * alpha),
+                        point_dict["Z18"] * np.exp(1j * alpha),
+                        point_dict["Z19"] * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -825,7 +830,7 @@ class HoleM51(HoleMag):
                     )
                 # H0
                 line = Segment(
-                    point_dict["Z1"].real * exp(1j * alpha), Rbo * exp(1j * alpha)
+                    point_dict["Z1"].real * np.exp(1j * alpha), Rbo * np.exp(1j * alpha)
                 )
                 line.plot(
                     fig=fig,
@@ -838,10 +843,10 @@ class HoleM51(HoleMag):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H1
-                A = angle(point_dict["Z22"])
+                A = np.angle(point_dict["Z22"])
                 line = Segment(
-                    Rbo * exp(1j * A) * exp(1j * alpha),
-                    (Rbo - self.H1) * exp(1j * A) * exp(1j * alpha),
+                    Rbo * np.exp(1j * A) * np.exp(1j * alpha),
+                    (Rbo - self.H1) * np.exp(1j * A) * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -855,8 +860,8 @@ class HoleM51(HoleMag):
                 )
                 # H2
                 line = Segment(
-                    point_dict["Z5"] * exp(1j * alpha),
-                    point_dict["Z7"] * exp(1j * alpha),
+                    point_dict["Z5"] * np.exp(1j * alpha),
+                    point_dict["Z7"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -871,7 +876,7 @@ class HoleM51(HoleMag):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * alpha))
+                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * alpha))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -884,8 +889,8 @@ class HoleM51(HoleMag):
                     0,
                     abs(point_dict["Z5"])
                     * 1.5
-                    * exp(1j * angle(point_dict["Z5"]))
-                    * exp(1j * alpha),
+                    * np.exp(1j * np.angle(point_dict["Z5"]))
+                    * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -898,8 +903,8 @@ class HoleM51(HoleMag):
                     0,
                     abs(point_dict["Z22"])
                     * 1.5
-                    * exp(1j * angle(point_dict["Z22"]))
-                    * exp(1j * alpha),
+                    * np.exp(1j * np.angle(point_dict["Z22"]))
+                    * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -910,8 +915,12 @@ class HoleM51(HoleMag):
                 )
                 # H1 radius
                 line = Arc1(
-                    begin=(Rbo - self.H1) * exp(-1j * pi / 2 * 0.9) * exp(1j * alpha),
-                    end=(Rbo - self.H1) * exp(1j * pi / 2 * 0.9) * exp(1j * alpha),
+                    begin=(Rbo - self.H1)
+                    * np.exp(-1j * np.pi / 2 * 0.9)
+                    * np.exp(1j * alpha),
+                    end=(Rbo - self.H1)
+                    * np.exp(1j * np.pi / 2 * 0.9)
+                    * np.exp(1j * alpha),
                     radius=Rbo - self.H1,
                     is_trigo_direction=True,
                 )
@@ -924,8 +933,8 @@ class HoleM51(HoleMag):
                 )
                 # Triangle lines
                 line = Segment(
-                    point_dict["Z7"] * exp(1j * alpha),
-                    point_dict["Z5"] * exp(1j * alpha),
+                    point_dict["Z7"] * np.exp(1j * alpha),
+                    point_dict["Z5"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -935,8 +944,8 @@ class HoleM51(HoleMag):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Z2"] * exp(1j * alpha),
-                    point_dict["Z10"] * exp(1j * alpha),
+                    point_dict["Z2"] * np.exp(1j * alpha),
+                    point_dict["Z10"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -946,8 +955,8 @@ class HoleM51(HoleMag):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Z2"] * exp(1j * alpha),
-                    point_dict["Z12"] * exp(1j * alpha),
+                    point_dict["Z2"] * np.exp(1j * alpha),
+                    point_dict["Z12"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -957,8 +966,8 @@ class HoleM51(HoleMag):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Z25"] * exp(1j * alpha),
-                    point_dict["Z15"] * exp(1j * alpha),
+                    point_dict["Z25"] * np.exp(1j * alpha),
+                    point_dict["Z15"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -968,8 +977,8 @@ class HoleM51(HoleMag):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Z25"] * exp(1j * alpha),
-                    point_dict["Z17"] * exp(1j * alpha),
+                    point_dict["Z25"] * np.exp(1j * alpha),
+                    point_dict["Z17"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -979,8 +988,8 @@ class HoleM51(HoleMag):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Z22"] * exp(1j * alpha),
-                    point_dict["Z20"] * exp(1j * alpha),
+                    point_dict["Z22"] * np.exp(1j * alpha),
+                    point_dict["Z20"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -991,8 +1000,8 @@ class HoleM51(HoleMag):
                 )
 
             # Zooming and cleaning
-            W = (point_dict["Z22"] * exp(1j * alpha)).real * 1.2
-            Rint = (point_dict["Z13"] * exp(1j * alpha)).imag * 0.9
+            W = (point_dict["Z22"] * np.exp(1j * alpha)).real * 1.2
+            Rint = (point_dict["Z13"] * np.exp(1j * alpha)).imag * 0.9
             Rext = self.parent.Rext * 1.1
 
             ax.axis("equal")
@@ -1224,8 +1233,8 @@ class HoleM51(HoleMag):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -1237,8 +1246,8 @@ class HoleM51(HoleMag):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -1250,8 +1259,8 @@ class HoleM51(HoleMag):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -1263,8 +1272,8 @@ class HoleM51(HoleMag):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -1276,8 +1285,8 @@ class HoleM51(HoleMag):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -1289,8 +1298,8 @@ class HoleM51(HoleMag):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:
@@ -1302,8 +1311,8 @@ class HoleM51(HoleMag):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:
@@ -1315,8 +1324,8 @@ class HoleM51(HoleMag):
         if (
             other._W4 is not None
             and self._W4 is not None
-            and isnan(other._W4)
-            and isnan(self._W4)
+            and np.isnan(other._W4)
+            and np.isnan(self._W4)
         ):
             pass
         elif other._W4 != self._W4:
@@ -1328,8 +1337,8 @@ class HoleM51(HoleMag):
         if (
             other._W5 is not None
             and self._W5 is not None
-            and isnan(other._W5)
-            and isnan(self._W5)
+            and np.isnan(other._W5)
+            and np.isnan(self._W5)
         ):
             pass
         elif other._W5 != self._W5:
@@ -1341,8 +1350,8 @@ class HoleM51(HoleMag):
         if (
             other._W6 is not None
             and self._W6 is not None
-            and isnan(other._W6)
-            and isnan(self._W6)
+            and np.isnan(other._W6)
+            and np.isnan(self._W6)
         ):
             pass
         elif other._W6 != self._W6:
@@ -1354,8 +1363,8 @@ class HoleM51(HoleMag):
         if (
             other._W7 is not None
             and self._W7 is not None
-            and isnan(other._W7)
-            and isnan(self._W7)
+            and np.isnan(other._W7)
+            and np.isnan(self._W7)
         ):
             pass
         elif other._W7 != self._W7:

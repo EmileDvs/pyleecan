@@ -19,7 +19,7 @@ from pyleecan.Classes.XOutput import XOutput
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Functions.Load.import_class import import_class
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

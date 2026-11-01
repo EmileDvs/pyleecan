@@ -18,9 +18,9 @@ from pyleecan.Classes.OP import OP
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Simulation.Input import InputError
-from numpy import angle, pi, exp
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -84,7 +84,7 @@ class OPdq(OP):
             return {"I0": None, "Phi0": None}
         else:
             Z = self.Id_ref + 1j * self.Iq_ref
-            return {"I0": abs(Z), "Phi0": angle(Z) % (2 * pi)}
+            return {"I0": abs(Z), "Phi0": np.angle(Z) % (2 * np.pi)}
 
     # cf Methods.Simulation.OPdq.get_Id_Iq
     def get_Id_Iq(self):
@@ -172,7 +172,7 @@ class OPdq(OP):
 
         else:
             Z = self.Ud_ref + 1j * self.Uq_ref
-            return {"U0": abs(Z), "UPhi0": angle(Z) % (2 * pi)}
+            return {"U0": abs(Z), "UPhi0": np.angle(Z) % (2 * np.pi)}
 
     # cf Methods.Simulation.OPdq.get_Ud_Uq
     def get_Ud_Uq(self):
@@ -209,7 +209,7 @@ class OPdq(OP):
             self.Id_ref = 0
             self.Iq_ref = 0
         else:
-            Z = I0 * exp(1j * Phi0)
+            Z = I0 * np.exp(1j * Phi0)
             self.Id_ref = Z.real
             self.Iq_ref = Z.imag
 
@@ -247,7 +247,7 @@ class OPdq(OP):
             self.Ud_ref = 0
             self.Uq_ref = 0
         else:
-            Z = U0 * exp(1j * UPhi0)
+            Z = U0 * np.exp(1j * UPhi0)
             self.Ud_ref = Z.real
             self.Uq_ref = Z.imag
 
@@ -389,8 +389,8 @@ class OPdq(OP):
         if (
             other._Id_ref is not None
             and self._Id_ref is not None
-            and isnan(other._Id_ref)
-            and isnan(self._Id_ref)
+            and np.isnan(other._Id_ref)
+            and np.isnan(self._Id_ref)
         ):
             pass
         elif other._Id_ref != self._Id_ref:
@@ -408,8 +408,8 @@ class OPdq(OP):
         if (
             other._Iq_ref is not None
             and self._Iq_ref is not None
-            and isnan(other._Iq_ref)
-            and isnan(self._Iq_ref)
+            and np.isnan(other._Iq_ref)
+            and np.isnan(self._Iq_ref)
         ):
             pass
         elif other._Iq_ref != self._Iq_ref:
@@ -427,8 +427,8 @@ class OPdq(OP):
         if (
             other._Ud_ref is not None
             and self._Ud_ref is not None
-            and isnan(other._Ud_ref)
-            and isnan(self._Ud_ref)
+            and np.isnan(other._Ud_ref)
+            and np.isnan(self._Ud_ref)
         ):
             pass
         elif other._Ud_ref != self._Ud_ref:
@@ -446,8 +446,8 @@ class OPdq(OP):
         if (
             other._Uq_ref is not None
             and self._Uq_ref is not None
-            and isnan(other._Uq_ref)
-            and isnan(self._Uq_ref)
+            and np.isnan(other._Uq_ref)
+            and np.isnan(self._Uq_ref)
         ):
             pass
         elif other._Uq_ref != self._Uq_ref:

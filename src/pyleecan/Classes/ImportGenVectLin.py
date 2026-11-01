@@ -18,9 +18,9 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Import import ImportError
-from numpy import linspace
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -67,7 +67,7 @@ class ImportGenVectLin(ImportMatrix):
 
         """
 
-        vect = linspace(
+        vect = np.linspace(
             start=self.start, stop=self.stop, num=int(self.num), endpoint=self.endpoint
         )
 
@@ -172,8 +172,8 @@ class ImportGenVectLin(ImportMatrix):
         if (
             other._start is not None
             and self._start is not None
-            and isnan(other._start)
-            and isnan(self._start)
+            and np.isnan(other._start)
+            and np.isnan(self._start)
         ):
             pass
         elif other._start != self._start:
@@ -187,8 +187,8 @@ class ImportGenVectLin(ImportMatrix):
         if (
             other._stop is not None
             and self._stop is not None
-            and isnan(other._stop)
-            and isnan(self._stop)
+            and np.isnan(other._stop)
+            and np.isnan(self._stop)
         ):
             pass
         elif other._stop != self._stop:
@@ -202,8 +202,8 @@ class ImportGenVectLin(ImportMatrix):
         if (
             other._num is not None
             and self._num is not None
-            and isnan(other._num)
-            and isnan(self._num)
+            and np.isnan(other._num)
+            and np.isnan(self._num)
         ):
             pass
         elif other._num != self._num:

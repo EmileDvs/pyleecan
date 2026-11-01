@@ -21,7 +21,7 @@ from pyleecan.Classes.Circle import Circle
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
-from numpy import exp, pi
+import numpy as np
 from pyleecan.Functions.labels import (
     SHAFT_LAB,
     NO_LAM_LAB,
@@ -34,7 +34,7 @@ from pyleecan.Methods.Machine.Shaft.plot import SHAFT_COLOR
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -77,7 +77,7 @@ class Shaft(FrozenClass):
             )
         else:
             begin = self.Drsh / 2
-            end = begin * exp(1j * 2 * pi / sym)
+            end = begin * np.exp(1j * 2 * np.pi / sym)
             surface = SurfLine(
                 line_list=[
                     Segment(0, begin, prop_dict={BOUNDARY_PROP_LAB: SHAFTSR_LAB}),
@@ -116,7 +116,9 @@ class Shaft(FrozenClass):
         if self.Lshaft is None:
             return 0
         else:
-            return self.Lshaft * pi * ((self.Drsh / 2) ** 2) * self.mat_type.struct.rho
+            return (
+                self.Lshaft * np.pi * ((self.Drsh / 2) ** 2) * self.mat_type.struct.rho
+            )
 
     # cf Methods.Machine.Shaft.plot
     def plot(
@@ -272,8 +274,8 @@ class Shaft(FrozenClass):
         if (
             other._Lshaft is not None
             and self._Lshaft is not None
-            and isnan(other._Lshaft)
-            and isnan(self._Lshaft)
+            and np.isnan(other._Lshaft)
+            and np.isnan(self._Lshaft)
         ):
             pass
         elif other._Lshaft != self._Lshaft:
@@ -304,8 +306,8 @@ class Shaft(FrozenClass):
         if (
             other._Drsh is not None
             and self._Drsh is not None
-            and isnan(other._Drsh)
-            and isnan(self._Drsh)
+            and np.isnan(other._Drsh)
+            and np.isnan(self._Drsh)
         ):
             pass
         elif other._Drsh != self._Drsh:

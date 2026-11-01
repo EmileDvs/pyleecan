@@ -18,14 +18,13 @@ from pyleecan.Classes.Winding import Winding
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.WindingSC.comp_connection_mat import WindingT10DefQsError
-from numpy import zeros
+import numpy as np
 from pyleecan.Methods.Machine.Winding import WindingError
 from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
 from pyleecan.Classes.Lamination import Lamination
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -92,7 +91,7 @@ class WindingSC(Winding):
                 "wrong winding definition, you must have " "qs = Zs !"
             )
 
-        wind_mat = zeros((1, 1, Zs, self.qs))
+        wind_mat = np.zeros((1, 1, Zs, self.qs))
 
         for ii in range(Zs):
             # phase n°ii

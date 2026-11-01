@@ -17,13 +17,13 @@ from pyleecan.Classes.LamSquirrelCage import LamSquirrelCage
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi
+import numpy as np
 from pyleecan.Classes.LamSquirrelCage import LamSquirrelCage
 from pyleecan.Functions.labels import update_RTS_index
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -81,9 +81,9 @@ class LamSquirrelCageMag(LamSquirrelCage):
                 + " holes and sym="
                 + str(sym)
             )  # For now only
-            angle = 2 * pi / Zh
+            angle = 2 * np.pi / Zh
             # Create the first hole surface(s)
-            surf_hole = hole.build_geometry(alpha=pi / Zh)
+            surf_hole = hole.build_geometry(alpha=np.pi / Zh)
 
             hole_surf_list = list()
             # Copy the hole for Zh / sym
@@ -160,9 +160,13 @@ class LamSquirrelCageMag(LamSquirrelCage):
         Ryoke = self.get_Ryoke()
         Hyoke = self.comp_height_yoke()
         if self.is_internal:
-            S_dict["Syoke"] = pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
+            S_dict["Syoke"] = (
+                np.pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
+            )
         else:
-            S_dict["Syoke"] = pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
+            S_dict["Syoke"] = (
+                np.pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
+            )
 
         S_dict["Smag"] = Smag
         S_dict["Shole"] = Shole

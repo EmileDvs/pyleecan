@@ -17,7 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi, abs as np_abs, exp
+import numpy as np
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Methods import ParentMissingError
 from pyleecan.Methods.Slot.Hole import MagnetIndexError
@@ -27,7 +27,7 @@ from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -77,7 +77,7 @@ class Hole(FrozenClass):
             mag_dict = self.magnetization_dict_offset.copy()
             if not is_north:
                 for key in mag_dict.keys():
-                    mag_dict[key] += pi
+                    mag_dict[key] += np.pi
             return mag_dict
         else:
             return dict()
@@ -104,7 +104,7 @@ class Hole(FrozenClass):
             for curve in surf.get_lines():
                 point_list.extend(curve.discretize())
 
-        abs_list = [np_abs(point) for point in point_list]
+        abs_list = [np.abs(point) for point in point_list]
         Rmax = max(abs_list)
         Rmin = min(abs_list)
         return (Rmin, Rmax)
@@ -401,7 +401,7 @@ class Hole(FrozenClass):
                         break
                 # Create arrow coordinates
                 Z1 = mag_surf.point_ref
-                Z2 = mag_surf.point_ref + H / 5 * exp(1j * mag_dir)
+                Z2 = mag_surf.point_ref + H / 5 * np.exp(1j * mag_dir)
                 ax.annotate(
                     text="",
                     xy=(Z2.real, Z2.imag),
@@ -582,8 +582,8 @@ class Hole(FrozenClass):
         if (
             other._Alpha0 is not None
             and self._Alpha0 is not None
-            and isnan(other._Alpha0)
-            and isnan(self._Alpha0)
+            and np.isnan(other._Alpha0)
+            and np.isnan(self._Alpha0)
         ):
             pass
         elif other._Alpha0 != self._Alpha0:

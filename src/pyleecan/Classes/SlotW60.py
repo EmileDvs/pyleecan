@@ -24,12 +24,11 @@ from pyleecan.Classes.Slot import Slot
 from pyleecan.Methods.Slot.SlotW60.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
-from numpy import pi, exp, cos, arcsin, sin
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotW60 import S60_WindError
 from pyleecan.Functions.labels import WIND_LAB, SOP_LAB, DRAW_PROP_LAB
 from pyleecan.Methods.Slot.SlotW60.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt, numpy as np
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -44,7 +43,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -145,28 +144,28 @@ class SlotW60(Slot):
         """
 
         Rbo = self.get_Rbo()
-        hsp = pi / self.Zs
+        hsp = np.pi / self.Zs
 
         # Zxt => In the tooth ref (Ox as the sym axis of the tooth)
         Z1t = Rbo
 
         # Height of the arc (Z2t, Rbo-R1, Z2t.conjugate())
-        alpha = arcsin(self.W1 / (2 * self.R1))
-        Harc = float(self.R1 * (1 - cos(alpha)))
+        alpha = np.arcsin(self.W1 / (2 * self.R1))
+        Harc = float(self.R1 * (1 - np.cos(alpha)))
 
         Z2t = Rbo - Harc + 1j * self.W1 / 2
         Z3t = Z2t - self.H1
         Z4t = Z3t.real + 1j * self.W2 / 2
         Z5t = Z4t - self.H2
-        Z6t = (Z5t.real / cos(hsp)) * exp(1j * hsp)
+        Z6t = (Z5t.real / np.cos(hsp)) * np.exp(1j * hsp)
 
         # Go to the slot ref
-        Z1 = Z1t * exp(-1j * hsp)
-        Z2 = Z2t * exp(-1j * hsp)
-        Z3 = Z3t * exp(-1j * hsp)
-        Z4 = Z4t * exp(-1j * hsp)
-        Z5 = Z5t * exp(-1j * hsp)
-        Z6 = Z6t * exp(-1j * hsp)
+        Z1 = Z1t * np.exp(-1j * hsp)
+        Z2 = Z2t * np.exp(-1j * hsp)
+        Z3 = Z3t * np.exp(-1j * hsp)
+        Z4 = Z4t * np.exp(-1j * hsp)
+        Z5 = Z5t * np.exp(-1j * hsp)
+        Z6 = Z6t * np.exp(-1j * hsp)
         Z7 = Z5.conjugate()
         Z8 = Z4.conjugate()
         Z9 = Z3.conjugate()
@@ -174,18 +173,18 @@ class SlotW60(Slot):
         Z11 = Z1.conjugate()
 
         # Compute the point in the tooth ref
-        Z4t = Z4 * exp(1j * hsp)
-        Z5t = Z5 * exp(1j * hsp)
+        Z4t = Z4 * np.exp(1j * hsp)
+        Z5t = Z5 * np.exp(1j * hsp)
         Zw1t = Z4t - self.H3
         Zw2t = Z5t + self.H4
         Zw3t = Zw2t + 1j * ((self.W1 - self.W2) / 2 - self.W3)
         Zw4t = Zw1t + 1j * ((self.W1 - self.W2) / 2 - self.W3)
 
         # Go back to slot ref
-        Zw1 = Zw1t * exp(1j * -hsp)
-        Zw2 = Zw2t * exp(1j * -hsp)
-        Zw3 = Zw3t * exp(1j * -hsp)
-        Zw4 = Zw4t * exp(1j * -hsp)
+        Zw1 = Zw1t * np.exp(1j * -hsp)
+        Zw2 = Zw2t * np.exp(1j * -hsp)
+        Zw3 = Zw3t * np.exp(1j * -hsp)
+        Zw4 = Zw4t * np.exp(1j * -hsp)
         Zw1s = Zw1.conjugate()
         Zw2s = Zw2.conjugate()
         Zw3s = Zw3.conjugate()
@@ -204,8 +203,8 @@ class SlotW60(Slot):
         point_dict["Z9"] = Z9
         point_dict["Z10"] = Z10
         point_dict["Z11"] = Z11
-        point_dict["Zc"] = (Rbo - self.R1) * exp(1j * (pi / self.Zs))
-        point_dict["Zw5"] = (Z3t - self.H2) * exp(-1j * hsp)
+        point_dict["Zc"] = (Rbo - self.R1) * np.exp(1j * (np.pi / self.Zs))
+        point_dict["Zw5"] = (Z3t - self.H2) * np.exp(-1j * hsp)
         point_dict["Zw5s"] = point_dict["Zw5"].conjugate()
         point_dict["Zw1"] = Zw1
         point_dict["Zw2"] = Zw2
@@ -356,7 +355,7 @@ class SlotW60(Slot):
 
         """
 
-        return 2 * pi / self.Zs
+        return 2 * np.pi / self.Zs
 
     # cf Methods.Slot.SlotW60.comp_height
     def comp_height(self):
@@ -403,8 +402,8 @@ class SlotW60(Slot):
         Z5 = point_dict["Z5"]
 
         # Compute the point in the tooth ref
-        hsp = pi / self.Zs
-        Z4t = Z4 * exp(1j * hsp)
+        hsp = np.pi / self.Zs
+        Z4t = Z4 * np.exp(1j * hsp)
         Zw4t = Z4t - self.H3 + 1j * ((self.W1 - self.W2) / 2 - self.W3)
 
         return abs(Zw4t) - abs(Z5)
@@ -435,7 +434,7 @@ class SlotW60(Slot):
         Rint = abs(Z5)
 
         # Surface of a slot pitch
-        Sring = (pi * Rext**2 - pi * Rint**2) * 1 / self.Zs
+        Sring = (np.pi * Rext**2 - np.pi * Rint**2) * 1 / self.Zs
 
         # Surface of the isocele triangle Z5 Z6 Z7
         D75 = abs(Z7 - Z5)
@@ -446,14 +445,14 @@ class SlotW60(Slot):
         # Tooth surface
         St = self.H1 * self.W1 + self.H2 * self.W2
 
-        alpha_top = 2 * arcsin(self.W1 / (2 * self.R1))
-        Sarc_top = (self.R1**2.0) / 2.0 * (alpha_top - sin(alpha_top))
+        alpha_top = 2 * np.arcsin(self.W1 / (2 * self.R1))
+        Sarc_top = (self.R1**2.0) / 2.0 * (alpha_top - np.sin(alpha_top))
 
-        alpha_bot1 = 2 * arcsin(self.W2 / (2 * Rint))
-        Sarc_bot1 = (Rint**2.0) / 2.0 * (alpha_bot1 - sin(alpha_bot1))
+        alpha_bot1 = 2 * np.arcsin(self.W2 / (2 * Rint))
+        Sarc_bot1 = (Rint**2.0) / 2.0 * (alpha_bot1 - np.sin(alpha_bot1))
 
-        alpha_bot2 = 2 * arcsin(D75 / (2 * Rint))
-        Sarc_bot2 = (Rint**2.0) / 2.0 * (alpha_bot2 - sin(alpha_bot2))
+        alpha_bot2 = 2 * np.arcsin(D75 / (2 * Rint))
+        Sarc_bot2 = (Rint**2.0) / 2.0 * (alpha_bot2 - np.sin(alpha_bot2))
 
         return Sring - (St + Sarc_top + Stri - Sarc_bot1 - Sarc_bot2)
 
@@ -663,12 +662,14 @@ class SlotW60(Slot):
             point_dict = dict()
             point_dict_temp = self._comp_point_coordinate()
             for key in point_dict_temp:
-                point_dict[key] = point_dict_temp[key] * exp(
-                    1j * (pi / self.Zs + 4 * pi / self.Zs)
+                point_dict[key] = point_dict_temp[key] * np.exp(
+                    1j * (np.pi / self.Zs + 4 * np.pi / self.Zs)
                 )
-                point_dict[key + "d"] = point_dict[key] * exp(1j * (2 * pi / self.Zs))
-                point_dict[key + "dd"] = point_dict[key + "d"] * exp(
-                    1j * (2 * pi / self.Zs)
+                point_dict[key + "d"] = point_dict[key] * np.exp(
+                    1j * (2 * np.pi / self.Zs)
+                )
+                point_dict[key + "dd"] = point_dict[key + "d"] * np.exp(
+                    1j * (2 * np.pi / self.Zs)
                 )
 
             if self.is_outwards():
@@ -864,7 +865,7 @@ class SlotW60(Slot):
                     is_show_fig=False,
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
-                    alpha=pi / self.Zs + 2 * pi / self.Zs,
+                    alpha=np.pi / self.Zs + 2 * np.pi / self.Zs,
                 )
                 self.plot_active(
                     fig=fig,
@@ -872,7 +873,7 @@ class SlotW60(Slot):
                     is_show_fig=False,
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
-                    alpha=pi / self.Zs + 4 * pi / self.Zs,
+                    alpha=np.pi / self.Zs + 4 * np.pi / self.Zs,
                 )
                 self.plot_active(
                     fig=fig,
@@ -880,7 +881,7 @@ class SlotW60(Slot):
                     is_show_fig=False,
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
-                    alpha=pi / self.Zs + 6 * pi / self.Zs,
+                    alpha=np.pi / self.Zs + 6 * np.pi / self.Zs,
                 )
                 self.plot_active(
                     fig=fig,
@@ -888,7 +889,7 @@ class SlotW60(Slot):
                     is_show_fig=False,
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
-                    alpha=pi / self.Zs + 8 * pi / self.Zs,
+                    alpha=np.pi / self.Zs + 8 * np.pi / self.Zs,
                 )
 
             elif type_add_active == 2:  # Magnet
@@ -1052,8 +1053,8 @@ class SlotW60(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -1065,8 +1066,8 @@ class SlotW60(Slot):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:
@@ -1078,8 +1079,8 @@ class SlotW60(Slot):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:
@@ -1091,8 +1092,8 @@ class SlotW60(Slot):
         if (
             other._H2 is not None
             and self._H2 is not None
-            and isnan(other._H2)
-            and isnan(self._H2)
+            and np.isnan(other._H2)
+            and np.isnan(self._H2)
         ):
             pass
         elif other._H2 != self._H2:
@@ -1104,8 +1105,8 @@ class SlotW60(Slot):
         if (
             other._R1 is not None
             and self._R1 is not None
-            and isnan(other._R1)
-            and isnan(self._R1)
+            and np.isnan(other._R1)
+            and np.isnan(self._R1)
         ):
             pass
         elif other._R1 != self._R1:
@@ -1117,8 +1118,8 @@ class SlotW60(Slot):
         if (
             other._H3 is not None
             and self._H3 is not None
-            and isnan(other._H3)
-            and isnan(self._H3)
+            and np.isnan(other._H3)
+            and np.isnan(self._H3)
         ):
             pass
         elif other._H3 != self._H3:
@@ -1130,8 +1131,8 @@ class SlotW60(Slot):
         if (
             other._H4 is not None
             and self._H4 is not None
-            and isnan(other._H4)
-            and isnan(self._H4)
+            and np.isnan(other._H4)
+            and np.isnan(self._H4)
         ):
             pass
         elif other._H4 != self._H4:
@@ -1143,8 +1144,8 @@ class SlotW60(Slot):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:

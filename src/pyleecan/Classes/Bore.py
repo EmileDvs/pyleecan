@@ -20,13 +20,12 @@ from pyleecan.Classes._frozen import FrozenClass
 import numpy as np
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods import ParentMissingError
-from numpy import pi, exp
 from pyleecan.Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Methods.Machine.Bore.plot import ROTOR_COLOR, STATOR_COLOR
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -201,7 +200,7 @@ class Bore(FrozenClass):
         if sym != 1 and radius_desc_list[0]["label"] == "Radius":
             radius_desc_list[0]["begin_angle"] = 0
         if sym != 1 and radius_desc_list[-1]["label"] == "Radius":
-            radius_desc_list[-1]["end_angle"] = 2 * pi / sym
+            radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
 
         # Replace Arc radius from desc by lines from shape
         for desc_dict in radius_desc_list:
@@ -221,12 +220,12 @@ class Bore(FrozenClass):
                 radius_desc_list[0]["begin_angle"] = 0
                 radius_desc_list[0]["lines"] = lines
             # Cut last desc (if needed)
-            if radius_desc_list[-1]["end_angle"] > 2 * pi / sym:
+            if radius_desc_list[-1]["end_angle"] > 2 * np.pi / sym:
                 lines = list()
                 for line in radius_desc_list[-1]["lines"]:
-                    _, bot_split_list = line.split_line(0, exp(1j * 2 * pi / sym))
+                    _, bot_split_list = line.split_line(0, np.exp(1j * 2 * np.pi / sym))
                     lines.extend(bot_split_list)
-                radius_desc_list[-1]["end_angle"] = 2 * pi / sym
+                radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
                 radius_desc_list[-1]["lines"] = lines
 
         # Apply merge strategy on slot/notch
@@ -298,7 +297,7 @@ class Bore(FrozenClass):
         if sym != 1 and radius_desc_list[0]["label"] == "Radius":
             radius_desc_list[0]["begin_angle"] = 0
         if sym != 1 and radius_desc_list[-1]["label"] == "Radius":
-            radius_desc_list[-1]["end_angle"] = 2 * pi / sym
+            radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
 
         # Replace Arc radius from desc by lines from shape
         for ii, desc_dict in enumerate(radius_desc_list):
@@ -333,12 +332,12 @@ class Bore(FrozenClass):
                 radius_desc_list[0]["begin_angle"] = 0
                 radius_desc_list[0]["lines"] = lines
             # Cut last desc (if needed)
-            if radius_desc_list[-1]["end_angle"] > 2 * pi / sym:
+            if radius_desc_list[-1]["end_angle"] > 2 * np.pi / sym:
                 lines = list()
                 for line in radius_desc_list[-1]["lines"]:
-                    _, bot_split_list = line.split_line(0, exp(1j * 2 * pi / sym))
+                    _, bot_split_list = line.split_line(0, np.exp(1j * 2 * np.pi / sym))
                     lines.extend(bot_split_list)
-                radius_desc_list[-1]["end_angle"] = 2 * pi / sym
+                radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
                 radius_desc_list[-1]["lines"] = lines
 
         # Apply merge strategy on slot/notch
@@ -567,8 +566,8 @@ class Bore(FrozenClass):
         if (
             other._alpha is not None
             and self._alpha is not None
-            and isnan(other._alpha)
-            and isnan(self._alpha)
+            and np.isnan(other._alpha)
+            and np.isnan(self._alpha)
         ):
             pass
         elif other._alpha != self._alpha:

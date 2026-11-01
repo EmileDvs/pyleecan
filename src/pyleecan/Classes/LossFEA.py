@@ -23,7 +23,7 @@ from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
 from pyleecan.Classes.LossModelJoule import LossModelJoule
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -197,8 +197,8 @@ class LossFEA(Loss):
         if (
             other._k_ed is not None
             and self._k_ed is not None
-            and isnan(other._k_ed)
-            and isnan(self._k_ed)
+            and np.isnan(other._k_ed)
+            and np.isnan(self._k_ed)
         ):
             pass
         elif other._k_ed != self._k_ed:
@@ -212,8 +212,8 @@ class LossFEA(Loss):
         if (
             other._k_hy is not None
             and self._k_hy is not None
-            and isnan(other._k_hy)
-            and isnan(self._k_hy)
+            and np.isnan(other._k_hy)
+            and np.isnan(self._k_hy)
         ):
             pass
         elif other._k_hy != self._k_hy:
@@ -227,8 +227,8 @@ class LossFEA(Loss):
         if (
             other._k_p is not None
             and self._k_p is not None
-            and isnan(other._k_p)
-            and isnan(self._k_p)
+            and np.isnan(other._k_p)
+            and np.isnan(self._k_p)
         ):
             pass
         elif other._k_p != self._k_p:

@@ -20,20 +20,10 @@ from pyleecan.Classes.Magnetics import Magnetics
 from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
 from pyleecan.Classes.OutMagElmer import OutMagElmer
 from pyleecan.Methods.Simulation.MagElmer import MagElmer_BP_dict
-import subprocess, os, numpy as np
+import subprocess, numpy as np, os
 from pyleecan.Functions.get_path_binary import get_path_binary
 from os.path import join
 from meshio import read
-from numpy import (
-    append as np_append,
-    arange,
-    angle as np_angle,
-    floor_divide,
-    loadtxt,
-    pi,
-    sign,
-    zeros,
-)
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.MeshSolution import MeshSolution
@@ -66,7 +56,7 @@ from pyleecan.Functions.labels import (
 from pyleecan.Functions.Winding.find_wind_phase_color import get_phase_id
 from pyleecan.Methods import NotImplementedYetError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -270,7 +260,7 @@ class MagElmer(Magnetics):
         cell_data = meshsolvtu.cell_data
 
         # indices = arange(meshsolvtu.points.shape[0])
-        indices = arange(
+        indices = np.arange(
             meshsolvtu.cells[0].data.shape[0] + meshsolvtu.cells[1].data.shape[0]
         )
 
@@ -339,7 +329,7 @@ class MagElmer(Magnetics):
                     siz = 3
                 components = []
                 comp_name = []
-                values = np_append(value[0], value[1], axis=0)
+                values = np.append(value[0], value[1], axis=0)
                 for i in range(siz):
                     if siz == 1:
                         ext = ""
@@ -602,11 +592,12 @@ class MagElmer(Magnetics):
                         Zh = hole.Zh
                         alpha_p = 360 / Zh
                         mag_0 = (
-                            floor_divide(np_angle(point_ref, deg=True), alpha_p) + 0.5
+                            np.floor_divide(np.angle(point_ref, deg=True), alpha_p)
+                            + 0.5
                         ) * alpha_p
 
                         mag_dict = hole.comp_magnetization_dict()
-                        mag = mag_0 + mag_dict["magnet_" + str(T_id)] * 180 / pi
+                        mag = mag_0 + mag_dict["magnet_" + str(T_id)] * 180 / np.pi
                         # modifiy magnetisation of south poles
                         if (label_dict["S_id"] % 2) == 1:
                             mag = mag + 180
@@ -636,10 +627,12 @@ class MagElmer(Magnetics):
                         mag_obj.type_magnetization == 1
                         and (label_dict["S_id"] % 2) == 0
                     ):
-                        mag = np_angle(point_ref) * 180 / pi  # North pole magnet
+                        mag = np.angle(point_ref) * 180 / np.pi  # North pole magnet
                         magnetization_type = "parallel"
                     elif mag_obj.type_magnetization == 1:
-                        mag = np_angle(point_ref) * 180 / pi + 180  # South pole magnet
+                        mag = (
+                            np.angle(point_ref) * 180 / np.pi + 180
+                        )  # South pole magnet
                         magnetization_type = "parallel"
                     elif mag_obj.type_magnetization == 2:
                         Zs = mag_obj.parent.slot.Zs
@@ -663,7 +656,7 @@ class MagElmer(Magnetics):
                     # Get the phase value in the correct slot zone
                     q_id = get_phase_id(wind_mat, Nrad_id, Ntan_id, Zs_id)
                     Ncond = wind_mat[Nrad_id, Ntan_id, Zs_id, q_id]
-                    s = sign(Ncond)
+                    s = np.sign(Ncond)
                     if bodies.get(label, None) is not None:
                         bodies[label]["mat"] = 5
                         bodies[label]["eq"] = 1
@@ -755,7 +748,7 @@ class MagElmer(Magnetics):
             current_angle = 0 - pp * degrees_step * skip_steps
             angle_shift = self.angle_rotor_shift - self.angle_stator_shift
             rotor_init_pos = machine.comp_angle_rotor_initial() + angle_shift
-            rotor_d_axis = machine.rotor.comp_angle_d_axis() * 180.0 / pi
+            rotor_d_axis = machine.rotor.comp_angle_d_axis() * 180.0 / np.pi
             Ncond = 1  # Fixed for Now
             Cp = 1  # Fixed for Now
             qs = len(machine.stator.get_name_phase())
@@ -783,7 +776,7 @@ class MagElmer(Magnetics):
             fo.write(f"$ Nsteps = {2}            !\n")
             fo.write(f"$ StepDegrees = {degrees_step}       !\n")
             fo.write("$ DegreesPerSec = WM*180.0/pi  !\n")
-            fo.write(f"$ RotorInitPos = {round(rotor_init_pos * 180.0 / pi, 2)}!\n")
+            fo.write(f"$ RotorInitPos = {round(rotor_init_pos * 180.0 / np.pi, 2)}!\n")
 
             fo.write(
                 "\nHeader\n"
@@ -937,7 +930,7 @@ class MagElmer(Magnetics):
                 "\t\t0.0\t\t0.0\n"
             )
             fo.writelines(
-                f"\t\t{time[tt]:.2e}\t\t{angle_rotor[tt - 1] * 180.0 / pi:.3f}\n"
+                f"\t\t{time[tt]:.2e}\t\t{angle_rotor[tt - 1] * 180.0 / np.pi:.3f}\n"
                 for tt in range(1, timelen + 1)
             )
             fo.write("\tEnd\nEnd\n")
@@ -1330,7 +1323,7 @@ class MagElmer(Magnetics):
         save_path = self.get_path_save(output)
 
         scalars_file = join(elmermesh_folder, "scalars.dat")
-        ecp, mfe, agt, iv, im, tq = loadtxt(
+        ecp, mfe, agt, iv, im, tq = np.loadtxt(
             scalars_file, unpack=True, usecols=(0, 1, 2, 3, 4, 5)
         )
         # ecp: eddy current power
@@ -1349,14 +1342,14 @@ class MagElmer(Magnetics):
             and output.simu.machine.stator.winding is not None
         ):
             qs = output.simu.machine.stator.winding.qs  # Winding phase number
-            Phi_wind_stator = zeros((Nt, qs))
+            Phi_wind_stator = np.zeros((Nt, qs))
         else:
             Phi_wind_stator = None
 
         # Initialize results matrix
-        Br = zeros((Nt, Na))
-        Bt = zeros((Nt, Na))
-        Bz = zeros((Nt, Na))
+        Br = np.zeros((Nt, Na))
+        Bt = np.zeros((Nt, Na))
+        Bz = np.zeros((Nt, Na))
         Tem = tq * sym * L1
 
         # Phi_wind_stator = zeros((Nt, qs))
@@ -1628,8 +1621,8 @@ class MagElmer(Magnetics):
         if (
             other._Kmesh_fineness is not None
             and self._Kmesh_fineness is not None
-            and isnan(other._Kmesh_fineness)
-            and isnan(self._Kmesh_fineness)
+            and np.isnan(other._Kmesh_fineness)
+            and np.isnan(self._Kmesh_fineness)
         ):
             pass
         elif other._Kmesh_fineness != self._Kmesh_fineness:
@@ -1647,8 +1640,8 @@ class MagElmer(Magnetics):
         if (
             other._Kgeo_fineness is not None
             and self._Kgeo_fineness is not None
-            and isnan(other._Kgeo_fineness)
-            and isnan(self._Kgeo_fineness)
+            and np.isnan(other._Kgeo_fineness)
+            and np.isnan(self._Kgeo_fineness)
         ):
             pass
         elif other._Kgeo_fineness != self._Kgeo_fineness:

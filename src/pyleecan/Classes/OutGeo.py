@@ -15,7 +15,7 @@ from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
 from pyleecan.Classes._frozen import FrozenClass
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -235,8 +235,8 @@ class OutGeo(FrozenClass):
         if (
             other._Wgap_mec is not None
             and self._Wgap_mec is not None
-            and isnan(other._Wgap_mec)
-            and isnan(self._Wgap_mec)
+            and np.isnan(other._Wgap_mec)
+            and np.isnan(self._Wgap_mec)
         ):
             pass
         elif other._Wgap_mec != self._Wgap_mec:
@@ -254,8 +254,8 @@ class OutGeo(FrozenClass):
         if (
             other._Wgap_mag is not None
             and self._Wgap_mag is not None
-            and isnan(other._Wgap_mag)
-            and isnan(self._Wgap_mag)
+            and np.isnan(other._Wgap_mag)
+            and np.isnan(self._Wgap_mag)
         ):
             pass
         elif other._Wgap_mag != self._Wgap_mag:
@@ -273,8 +273,8 @@ class OutGeo(FrozenClass):
         if (
             other._Rgap_mec is not None
             and self._Rgap_mec is not None
-            and isnan(other._Rgap_mec)
-            and isnan(self._Rgap_mec)
+            and np.isnan(other._Rgap_mec)
+            and np.isnan(self._Rgap_mec)
         ):
             pass
         elif other._Rgap_mec != self._Rgap_mec:
@@ -292,8 +292,8 @@ class OutGeo(FrozenClass):
         if (
             other._Lgap is not None
             and self._Lgap is not None
-            and isnan(other._Lgap)
-            and isnan(self._Lgap)
+            and np.isnan(other._Lgap)
+            and np.isnan(self._Lgap)
         ):
             pass
         elif other._Lgap != self._Lgap:
@@ -319,8 +319,8 @@ class OutGeo(FrozenClass):
         if (
             other._angle_rotor_initial is not None
             and self._angle_rotor_initial is not None
-            and isnan(other._angle_rotor_initial)
-            and isnan(self._angle_rotor_initial)
+            and np.isnan(other._angle_rotor_initial)
+            and np.isnan(self._angle_rotor_initial)
         ):
             pass
         elif other._angle_rotor_initial != self._angle_rotor_initial:

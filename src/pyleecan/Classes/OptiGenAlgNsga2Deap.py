@@ -55,9 +55,9 @@ from pyleecan.Functions.Optimization.tournamentDCD import tournamentDCD
 from ntpath import basename
 from os.path import isfile
 from pyleecan.Classes._check import CheckTypeError
-import numpy as np
+
 import random
-from numpy import isnan
+
 from cloudpickle import dumps, loads
 from pyleecan.Classes._check import CheckTypeError
 

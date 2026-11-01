@@ -24,8 +24,7 @@ from pyleecan.Classes.Hole import Hole
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.VentilationPolar.build_geometry import build_geometry
 from pyleecan.Methods.Slot.VentilationPolar.check import check
-from numpy import exp, pi, angle as np_angle
-import matplotlib.pyplot as plt
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
@@ -41,7 +40,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -65,11 +64,11 @@ class VentilationPolar(Hole):
             A dict of the slot point coordinates
         """
 
-        Z1 = (self.H0) * exp(1j * (self.Alpha0 - self.W1 / 2))
-        Z2 = (self.H0 + self.D0) * exp(1j * (self.Alpha0 - self.W1 / 2))
-        Z3 = (self.H0 + self.D0) * exp(1j * (self.Alpha0 + self.W1 / 2))
-        Z4 = (self.H0) * exp(1j * (self.Alpha0 + self.W1 / 2))
-        Zc = (self.H0 + (self.D0 / 2)) * exp(1j * self.Alpha0)
+        Z1 = (self.H0) * np.exp(1j * (self.Alpha0 - self.W1 / 2))
+        Z2 = (self.H0 + self.D0) * np.exp(1j * (self.Alpha0 - self.W1 / 2))
+        Z3 = (self.H0 + self.D0) * np.exp(1j * (self.Alpha0 + self.W1 / 2))
+        Z4 = (self.H0) * np.exp(1j * (self.Alpha0 + self.W1 / 2))
+        Zc = (self.H0 + (self.D0 / 2)) * np.exp(1j * self.Alpha0)
 
         point_dict = dict()
         # symetry
@@ -127,7 +126,7 @@ class VentilationPolar(Hole):
 
         self.check()
 
-        return pi * ((self.H0 + self.D0) ** 2 - self.H0**2) / (2 * pi / self.W1)
+        return np.pi * ((self.H0 + self.D0) ** 2 - self.H0**2) / (2 * np.pi / self.W1)
 
     # cf Methods.Slot.VentilationPolar.get_center
     def get_center(self):
@@ -148,8 +147,8 @@ class VentilationPolar(Hole):
         Zc_list = list()
 
         for ii in range(self.Zh):
-            Zc = self.H0 + (self.D0 / 2.0) * exp(1j * self.Alpha0) * exp(
-                1j * 2 * pi / self.Zh
+            Zc = self.H0 + (self.D0 / 2.0) * np.exp(1j * self.Alpha0) * np.exp(
+                1j * 2 * np.pi / self.Zh
             )
             Zc_list.append(Zc)
 
@@ -215,7 +214,7 @@ class VentilationPolar(Hole):
                 Zh=8,
                 Alpha0=0.3,
                 D0=0.05,
-                W1=2 * pi / 16,
+                W1=2 * np.pi / 16,
             )
             lam = LamHole(
                 Rint=0.1, Rext=0.2, is_internal=True, is_stator=False, hole=[hole]
@@ -276,8 +275,8 @@ class VentilationPolar(Hole):
                 )
                 # D0
                 line = Segment(
-                    point_dict["Z1"] * exp(1j * 2 * pi / self.Zh),
-                    point_dict["Z2"] * exp(1j * 2 * pi / self.Zh),
+                    point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
                 )
                 line.plot(
                     fig=fig,
@@ -309,8 +308,8 @@ class VentilationPolar(Hole):
                 Rtop = self.H0 + self.D0
                 Rarc = (Rtop + lam.Rext) / 2
                 line = Arc1(
-                    begin=Rarc * exp(1j * (self.Alpha0 - self.W1 / 2)),
-                    end=Rarc * exp(1j * (self.Alpha0 + self.W1 / 2)),
+                    begin=Rarc * np.exp(1j * (self.Alpha0 - self.W1 / 2)),
+                    end=Rarc * np.exp(1j * (self.Alpha0 + self.W1 / 2)),
                     radius=Rarc,
                     is_trigo_direction=True,
                 )
@@ -335,7 +334,7 @@ class VentilationPolar(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Center axis
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * self.Alpha0))
+                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -345,8 +344,8 @@ class VentilationPolar(Hole):
                 )
                 # H0 radius
                 line = Arc1(
-                    begin=self.H0 * exp(-1j * pi / 2 * 0.9),
-                    end=self.H0 * exp(1j * pi / 2 * 0.9),
+                    begin=self.H0 * np.exp(-1j * np.pi / 2 * 0.9),
+                    end=self.H0 * np.exp(1j * np.pi / 2 * 0.9),
                     radius=self.H0,
                     is_trigo_direction=True,
                 )
@@ -359,8 +358,8 @@ class VentilationPolar(Hole):
                 )
                 # H0+D0 radius
                 line = Arc1(
-                    begin=(self.H0 + self.D0) * exp(-1j * pi / 2 * 0.9),
-                    end=(self.H0 + self.D0) * exp(1j * pi / 2 * 0.9),
+                    begin=(self.H0 + self.D0) * np.exp(-1j * np.pi / 2 * 0.9),
+                    end=(self.H0 + self.D0) * np.exp(1j * np.pi / 2 * 0.9),
                     radius=(self.H0 + self.D0),
                     is_trigo_direction=True,
                 )
@@ -372,7 +371,9 @@ class VentilationPolar(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Vent side 1 axis
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * np_angle(point_dict["Z1"])))
+                line = Segment(
+                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z1"]))
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -381,7 +382,9 @@ class VentilationPolar(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Vent side 2 axis
-                line = Segment(0, lam.Rext * 1.5 * exp(1j * np_angle(point_dict["Z3"])))
+                line = Segment(
+                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z3"]))
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -521,8 +524,8 @@ class VentilationPolar(Hole):
         if (
             other._D0 is not None
             and self._D0 is not None
-            and isnan(other._D0)
-            and isnan(self._D0)
+            and np.isnan(other._D0)
+            and np.isnan(self._D0)
         ):
             pass
         elif other._D0 != self._D0:
@@ -534,8 +537,8 @@ class VentilationPolar(Hole):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -547,8 +550,8 @@ class VentilationPolar(Hole):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:

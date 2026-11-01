@@ -19,12 +19,10 @@ from pyleecan.Classes.LUT import LUT
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, scipy.interpolate as scp_int
 from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
-from numpy import array, zeros
 from pyleecan.Classes.EEC_PMSM import EEC_PMSM
 from pyleecan.Classes.Electrical import Electrical
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -195,7 +193,7 @@ class LUTdq(LUT):
         eec = self.get_eec()
 
         if eec is not None and eec.Phid_mag is not None and eec.Phiq_mag is not None:
-            Phi_dqh_mag_mean = array([eec.Phid_mag, eec.Phiq_mag, 0])
+            Phi_dqh_mag_mean = np.array([eec.Phid_mag, eec.Phiq_mag, 0])
         else:
             # Get stator winding flux due to magnets
             Phi_dqh_mag = self.get_Phi_dqh_mag()
@@ -237,7 +235,7 @@ class LUTdq(LUT):
         if self.Phi_dqh_mean is None:
             N_OP = len(self.output_list)
 
-            Phi_dqh_mean = zeros((N_OP, 3))
+            Phi_dqh_mean = np.zeros((N_OP, 3))
 
             stator_label = self.simu.machine.stator.get_label()
 
@@ -252,7 +250,7 @@ class LUTdq(LUT):
                     and eec_i.Phiq is not None
                 ):
                     # Get values from eec
-                    Phi_dqh_mean[ii, :] = array([eec_i.Phid, eec_i.Phiq, 0])
+                    Phi_dqh_mean[ii, :] = np.array([eec_i.Phid, eec_i.Phiq, 0])
 
                 else:
                     # Integrate stator winding flux contained in LUT over z
@@ -732,7 +730,7 @@ class LUTdq(LUT):
         # Check the properties inherited from LUT
         if not super(LUTdq, self).__eq__(other):
             return False
-        if not array_equal(other.Phi_dqh_mean, self.Phi_dqh_mean):
+        if not np.array_equal(other.Phi_dqh_mean, self.Phi_dqh_mean):
             return False
         if other.Phi_dqh_mag != self.Phi_dqh_mag:
             return False
@@ -753,7 +751,7 @@ class LUTdq(LUT):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not array_equal(other.Phi_dqh_mean, self.Phi_dqh_mean):
+        if not np.array_equal(other.Phi_dqh_mean, self.Phi_dqh_mean):
             diff_list.append(name + ".Phi_dqh_mean")
         if (other.Phi_dqh_mag is None and self.Phi_dqh_mag is not None) or (
             other.Phi_dqh_mag is not None and self.Phi_dqh_mag is None
@@ -935,10 +933,10 @@ class LUTdq(LUT):
     def _set_Phi_dqh_mean(self, value):
         """setter of Phi_dqh_mean"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("Phi_dqh_mean", value, "ndarray")

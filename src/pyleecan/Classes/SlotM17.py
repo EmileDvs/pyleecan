@@ -18,12 +18,11 @@ from pyleecan.Classes.Slot import Slot
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.Slot import SlotCheckError
-from numpy import pi, exp
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotM17.plot_schematics import MAGNET_COLOR
-import matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -35,7 +34,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -101,7 +100,7 @@ class SlotM17(Slot):
 
         """
 
-        return pi
+        return np.pi
 
     # cf Methods.Slot.SlotM17.comp_height
     def comp_height(self):
@@ -157,7 +156,7 @@ class SlotM17(Slot):
 
         """
 
-        return pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
+        return np.pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
 
     # cf Methods.Slot.SlotM17.comp_surface_active
     def comp_surface_active(self):
@@ -175,7 +174,7 @@ class SlotM17(Slot):
 
         """
 
-        return pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
+        return np.pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
 
     # cf Methods.Slot.SlotM17.get_surface_active
     def get_surface_active(self, alpha=0, delta=0):
@@ -346,13 +345,13 @@ class SlotM17(Slot):
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
             lam = self.parent
             fig, ax = lam.plot(
-                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
 
             # Adding schematics
             if is_add_schematics:
                 # Rext
-                line = Segment(0, lam.Rext * exp(1j * pi / 4))
+                line = Segment(0, lam.Rext * np.exp(1j * np.pi / 4))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -364,7 +363,7 @@ class SlotM17(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # Rint
-                line = Segment(0, lam.Rint * exp(1j * 7 * pi / 4))
+                line = Segment(0, lam.Rint * np.exp(1j * 7 * np.pi / 4))
                 line.plot(
                     fig=fig,
                     ax=ax,

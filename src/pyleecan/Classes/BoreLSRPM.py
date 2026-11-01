@@ -20,9 +20,9 @@ from pyleecan.Classes.Bore import Bore
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Methods import ParentMissingError
-from numpy import pi, sqrt, exp
+import numpy as np
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -79,18 +79,18 @@ class BoreLSRPM(Bore):
 
         # Compute the shape
 
-        alpha1 = pi / self.N
+        alpha1 = np.pi / self.N
 
         # Z1
-        Z1 = R * exp(-1j * alpha1)
+        Z1 = R * np.exp(-1j * alpha1)
 
         # ZC1
-        ZC1 = (R - self.Rarc) * exp(-1j * alpha1)
+        ZC1 = (R - self.Rarc) * np.exp(-1j * alpha1)
         XC1 = ZC1.real
         YC1 = ZC1.imag
 
         # Z2
-        X2 = sqrt(self.Rarc**2 - (self.W1 + YC1) ** 2) + XC1
+        X2 = np.sqrt(self.Rarc**2 - (self.W1 + YC1) ** 2) + XC1
         Y2 = -self.W1
         Z2 = X2 + 1j * Y2
 
@@ -102,8 +102,9 @@ class BoreLSRPM(Bore):
         for ii in range(self.N):
             bore_list.append(
                 Arc1(
-                    begin=Z1 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
-                    end=Z2 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
+                    begin=Z1
+                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    end=Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
                     radius=self.Rarc,
                     is_trigo_direction=True,
                     prop_dict=prop_dict,
@@ -112,16 +113,17 @@ class BoreLSRPM(Bore):
 
             bore_list.append(
                 Segment(
-                    Z2 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
-                    Z3 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
+                    Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    Z3 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
                     prop_dict=prop_dict,
                 )
             )
 
             bore_list.append(
                 Arc1(
-                    begin=Z3 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
-                    end=Z4 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
+                    begin=Z3
+                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    end=Z4 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
                     radius=self.Rarc,
                     is_trigo_direction=True,
                     prop_dict=prop_dict,
@@ -231,8 +233,8 @@ class BoreLSRPM(Bore):
         if (
             other._Rarc is not None
             and self._Rarc is not None
-            and isnan(other._Rarc)
-            and isnan(self._Rarc)
+            and np.isnan(other._Rarc)
+            and np.isnan(self._Rarc)
         ):
             pass
         elif other._Rarc != self._Rarc:
@@ -246,8 +248,8 @@ class BoreLSRPM(Bore):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:

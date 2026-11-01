@@ -18,7 +18,7 @@ from pyleecan.Classes.Lamination import Lamination
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.LamSlotMulti import LamSlotMultiAlphaError
-from numpy import pi
+import numpy as np
 from pyleecan.Classes.Lamination import Lamination
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
@@ -26,8 +26,7 @@ from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -72,7 +71,7 @@ class LamSlotMulti(Lamination):
                 raise LamSlotMultiAlphaError(
                     "Alpha should be an ordered array with values between 0 and 2*pi"
                 )
-        if self.alpha[-1] > 2 * pi:
+        if self.alpha[-1] > 2 * np.pi:
             raise LamSlotMultiAlphaError(
                 "Alpha should be an ordered array with values between 0 and 2*pi"
             )
@@ -506,7 +505,7 @@ class LamSlotMulti(Lamination):
             return False
         if other.slot_list != self.slot_list:
             return False
-        if not array_equal(other.alpha, self.alpha):
+        if not np.array_equal(other.alpha, self.alpha):
             return False
         if other.sym_dict_enforced != self.sym_dict_enforced:
             return False
@@ -545,7 +544,7 @@ class LamSlotMulti(Lamination):
                         is_add_value=is_add_value,
                     )
                 )
-        if not array_equal(other.alpha, self.alpha):
+        if not np.array_equal(other.alpha, self.alpha):
             diff_list.append(name + ".alpha")
         if other._sym_dict_enforced != self._sym_dict_enforced:
             if is_add_value:
@@ -768,10 +767,10 @@ class LamSlotMulti(Lamination):
     def _set_alpha(self, value):
         """setter of alpha"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("alpha", value, "ndarray")

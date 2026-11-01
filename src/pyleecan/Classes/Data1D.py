@@ -37,8 +37,8 @@ from pyleecan.Methods.SciDataTool.Data1D.get_values import get_values
 from pyleecan.Methods.SciDataTool.Data1D.has_period import has_period
 from pyleecan.Methods.SciDataTool.Data1D.to_linspace import to_linspace
 
-from numpy import array, array_equal
-from numpy import isnan
+import numpy as np
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -181,7 +181,7 @@ class Data1D(Data):
         # Check the properties inherited from Data
         if not super(Data1D, self).__eq__(other):
             return False
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             return False
         if other.is_components != self.is_components:
             return False
@@ -214,7 +214,7 @@ class Data1D(Data):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not array_equal(other.values, self.values):
+        if not np.array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._is_components != self._is_components:
             if is_add_value:
@@ -451,10 +451,10 @@ class Data1D(Data):
     def _set_values(self, value):
         """setter of values"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("values", value, "ndarray")

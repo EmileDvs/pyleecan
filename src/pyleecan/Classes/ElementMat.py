@@ -19,10 +19,8 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from typing import Union, Optional
-from numpy.typing import ArrayLike
 
-from numpy import array, array_equal
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -32,7 +30,9 @@ class ElementMat(FrozenClass):
     VERSION = 1
 
     # cf Methods.Mesh.ElementMat.add_element
-    def add_element(self, node_indices: Union[ArrayLike, int], new_index: int) -> bool:
+    def add_element(
+        self, node_indices: Union[np.typing.ArrayLike, int], new_index: int
+    ) -> bool:
         """Add a new element defined by node indices
 
         Parameters
@@ -325,13 +325,13 @@ class ElementMat(FrozenClass):
 
         if type(other) != type(self):
             return False
-        if not array_equal(other.connectivity, self.connectivity):
+        if not np.array_equal(other.connectivity, self.connectivity):
             return False
         if other.nb_element != self.nb_element:
             return False
         if other.nb_node_per_element != self.nb_node_per_element:
             return False
-        if not array_equal(other.indice, self.indice):
+        if not np.array_equal(other.indice, self.indice):
             return False
         if other.ref_element != self.ref_element:
             return False
@@ -349,7 +349,7 @@ class ElementMat(FrozenClass):
         if type(other) != type(self):
             return ["type(" + name + ")"]
         diff_list = list()
-        if not array_equal(other.connectivity, self.connectivity):
+        if not np.array_equal(other.connectivity, self.connectivity):
             diff_list.append(name + ".connectivity")
         if other._nb_element != self._nb_element:
             if is_add_value:
@@ -375,7 +375,7 @@ class ElementMat(FrozenClass):
                 diff_list.append(name + ".nb_node_per_element" + val_str)
             else:
                 diff_list.append(name + ".nb_node_per_element")
-        if not array_equal(other.indice, self.indice):
+        if not np.array_equal(other.indice, self.indice):
             diff_list.append(name + ".indice")
         if (other.ref_element is None and self.ref_element is not None) or (
             other.ref_element is not None and self.ref_element is None
@@ -560,10 +560,10 @@ class ElementMat(FrozenClass):
     def _set_connectivity(self, value):
         """setter of connectivity"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("connectivity", value, "ndarray")
@@ -621,10 +621,10 @@ class ElementMat(FrozenClass):
     def _set_indice(self, value):
         """setter of indice"""
         if type(value) is int and value == -1:
-            value = array([])
+            value = np.array([])
         elif type(value) is list:
             try:
-                value = array(value)
+                value = np.array(value)
             except:
                 pass
         check_var("indice", value, "ndarray")

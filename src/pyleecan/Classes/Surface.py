@@ -37,7 +37,7 @@ from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Methods.Geometry.Surface.split_line import join_surf_line
 from pyleecan.definitions import PACKAGE_NAME
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 

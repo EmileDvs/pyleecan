@@ -17,17 +17,16 @@ from pyleecan.Classes.Lamination import Lamination
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Classes.Hole import Hole
-import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -55,7 +54,7 @@ class LamH(Lamination):
 
         p = self.get_pole_pair_number()
         if self.has_magnet():
-            return pi / p / 2
+            return np.pi / p / 2
         else:
             return 0
 
@@ -178,9 +177,13 @@ class LamH(Lamination):
         Ryoke = self.get_Ryoke()
         Hyoke = self.comp_height_yoke()
         if self.is_internal:
-            S_dict["Syoke"] = pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
+            S_dict["Syoke"] = (
+                np.pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
+            )
         else:
-            S_dict["Syoke"] = pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
+            S_dict["Syoke"] = (
+                np.pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
+            )
 
         S_dict["Smag"] = Smag
         S_dict["Shole"] = Shole

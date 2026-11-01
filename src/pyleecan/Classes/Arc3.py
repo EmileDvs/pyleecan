@@ -22,7 +22,7 @@ from pyleecan.Classes.Arc import Arc
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Geometry.Arc3.check import check
-from numpy import pi, abs as np_abs, angle as np_angle, exp, linspace
+import numpy as np
 from pyleecan.Methods.Machine import ARC_NPOINT_D
 from pyleecan.Methods.Geometry.Arc3 import (
     NbPointArc3DError,
@@ -32,7 +32,7 @@ from pyleecan.Methods.Geometry.Arc3 import (
 from pyleecan.Classes.Arc2 import Arc2
 from pyleecan.Classes.Arc1 import Arc1
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -64,7 +64,7 @@ class Arc3(Arc):
         R = self.comp_radius()
 
         # Half circle
-        return float(pi * R)
+        return float(np.pi * R)
 
     # cf Methods.Geometry.Arc3.comp_radius
     def comp_radius(self):
@@ -87,7 +87,7 @@ class Arc3(Arc):
         z1 = self.begin
         z2 = self.end
 
-        return np_abs(z1 - z2) / 2.0  # Radius of the arc
+        return np.abs(z1 - z2) / 2.0  # Radius of the arc
 
     # cf Methods.Geometry.Arc3.discretize
     def discretize(self, nb_point=ARC_NPOINT_D):
@@ -126,13 +126,13 @@ class Arc3(Arc):
 
         # Generation of the point by rotation
         if self.is_trigo_direction:  # Top
-            t = linspace(0, pi, nb_point + 2)
+            t = np.linspace(0, np.pi, nb_point + 2)
         else:  # Bottom
-            t = linspace(0, -pi, nb_point + 2)
-        list_point = R * exp(1j * t)
+            t = np.linspace(0, -np.pi, nb_point + 2)
+        list_point = R * np.exp(1j * t)
 
         # Geometric transformation : return to the main axis
-        list_point = list_point * exp(1j * np_angle(z1 - zc)) + zc
+        list_point = list_point * np.exp(1j * np.angle(z1 - zc)) + zc
 
         return list_point
 
@@ -161,7 +161,7 @@ class Arc3(Arc):
         if is_deg:
             return sign * 180
         else:
-            return sign * pi
+            return sign * np.pi
 
     # cf Methods.Geometry.Arc3.get_begin
     def get_begin(self):
@@ -204,7 +204,7 @@ class Arc3(Arc):
         Zc = (z1 + z2) / 2.0
 
         # Return (0,0) if the point is too close from 0
-        if np_abs(Zc) < 1e-6:
+        if np.abs(Zc) < 1e-6:
             Zc = 0
 
         return Zc
@@ -248,15 +248,15 @@ class Arc3(Arc):
 
         # Generation of the point by rotation
         if self.is_trigo_direction:  # Top
-            Zmid = R * exp(1j * pi / 2.0)
+            Zmid = R * np.exp(1j * np.pi / 2.0)
         else:  # Bottom
-            Zmid = R * exp(-1j * pi / 2.0)
+            Zmid = R * np.exp(-1j * np.pi / 2.0)
 
         # Geometric transformation : return to the main axis
-        Zmid = Zmid * exp(1j * np_angle(z1 - zc)) + zc
+        Zmid = Zmid * np.exp(1j * np.angle(z1 - zc)) + zc
 
         # Return (0,0) if the point is too close from 0
-        if np_abs(Zmid) < 1e-6:
+        if np.abs(Zmid) < 1e-6:
             Zmid = 0
 
         return Zmid
@@ -303,8 +303,8 @@ class Arc3(Arc):
         self.check()
 
         # Modification from the rotation  of the object
-        self.begin = self.begin * exp(1j * angle)
-        self.end = self.end * exp(1j * angle)
+        self.begin = self.begin * np.exp(1j * angle)
+        self.end = self.end * np.exp(1j * angle)
 
     # cf Methods.Geometry.Arc3.scale
     def scale(self, scale_factor):
@@ -346,10 +346,14 @@ class Arc3(Arc):
             sign = -1
 
         if is_begin:
-            arc = Arc2(begin=self.begin, center=self.get_center(), angle=sign * pi / 2)
+            arc = Arc2(
+                begin=self.begin, center=self.get_center(), angle=sign * np.pi / 2
+            )
         else:
             arc = Arc2(
-                begin=self.get_middle(), center=self.get_center(), angle=sign * pi / 2
+                begin=self.get_middle(),
+                center=self.get_center(),
+                angle=sign * np.pi / 2,
             )
         # Change the object type from Arc3 => Arc2
         self.__class__ = Arc2
@@ -375,7 +379,7 @@ class Arc3(Arc):
         # Check if the point is on the circle
         Zc = self.get_center()
         R = self.comp_radius()
-        if abs(np_abs(Z1 - Zc) - R) > 1e-6:
+        if abs(np.abs(Z1 - Zc) - R) > 1e-6:
             raise Exception("Point is not on the line")
 
         if is_begin:
@@ -393,7 +397,7 @@ class Arc3(Arc):
                 is_trigo_direction=self.is_trigo_direction,
             )
         # Correct radius sign if needed
-        if arc.get_angle() > pi:
+        if arc.get_angle() > np.pi:
             arc.radius *= -1
 
         # Change the object type from Arc3 => Arc1

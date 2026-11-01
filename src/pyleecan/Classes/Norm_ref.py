@@ -18,7 +18,7 @@ from pyleecan.Classes.Normalization import Normalization
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 
-from numpy import isnan
+import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -117,8 +117,8 @@ class Norm_ref(Normalization):
         if (
             other._ref is not None
             and self._ref is not None
-            and isnan(other._ref)
-            and isnan(self._ref)
+            and np.isnan(other._ref)
+            and np.isnan(self._ref)
         ):
             pass
         elif other._ref != self._ref:

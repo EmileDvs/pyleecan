@@ -17,10 +17,10 @@ from pyleecan.Classes.Force import Force
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from numpy import pi
+import numpy as np
 from pyleecan.Methods import NotImplementedYetError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -95,7 +95,7 @@ class ForceMT(Force):
         Br = Brphiz["radial"]
 
         # Magnetic void permeability
-        mu_0 = 4 * pi * 1e-7
+        mu_0 = 4 * np.pi * 1e-7
 
         # Get flux density component lists
         comp_list = list(output.mag.B.components.keys())

@@ -19,11 +19,10 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Classes.OutLossModel import OutLossModel
-from numpy import concatenate, unique
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Methods.Simulation.Input import InputError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -110,7 +109,7 @@ class Loss(FrozenClass):
             freqs_per = Time_per.get_values(
                 is_oneperiod=True, operation="time_to_freqs"
             )
-            freqs = unique(concatenate((freqs, freqs_per)))
+            freqs = np.unique(np.concatenate((freqs, freqs_per)))
 
         Freqs = Data1D(
             name="freqs",
@@ -277,8 +276,8 @@ class Loss(FrozenClass):
         if (
             other._Tsta is not None
             and self._Tsta is not None
-            and isnan(other._Tsta)
-            and isnan(self._Tsta)
+            and np.isnan(other._Tsta)
+            and np.isnan(self._Tsta)
         ):
             pass
         elif other._Tsta != self._Tsta:
@@ -292,8 +291,8 @@ class Loss(FrozenClass):
         if (
             other._Trot is not None
             and self._Trot is not None
-            and isnan(other._Trot)
-            and isnan(self._Trot)
+            and np.isnan(other._Trot)
+            and np.isnan(self._Trot)
         ):
             pass
         elif other._Trot != self._Trot:

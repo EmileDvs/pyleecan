@@ -22,12 +22,11 @@ from pyleecan.Classes.HoleMag import HoleMag
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.HoleM60.check import check
-from numpy import exp, pi, cos, sin, tan, angle, sqrt, abs as np_abs
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
-import matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
@@ -42,7 +41,7 @@ from pyleecan.Functions.Plot import (
 )
 from pyleecan.Methods import ParentMissingError
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -71,12 +70,12 @@ class HoleM60(HoleMag):
 
         # comp point coordinate (in complex)
         # Draw the left side with center P
-        Z0 = 1j * self.H0 / (2 * sin(self.W0 / 2))
-        Z1 = -self.W3 / 2 + 1j * (Z0.imag + (self.W3 / 2) / tan(self.W0 / 2))
+        Z0 = 1j * self.H0 / (2 * np.sin(self.W0 / 2))
+        Z1 = -self.W3 / 2 + 1j * (Z0.imag + (self.W3 / 2) / np.tan(self.W0 / 2))
         Z2 = (
             Z1.real
-            - sin(self.W0 / 2) * (self.W2 - self.H0)
-            + 1j * (Z1.imag + cos(self.W0 / 2) * (self.W2 - self.H0))
+            - np.sin(self.W0 / 2) * (self.W2 - self.H0)
+            + 1j * (Z1.imag + np.cos(self.W0 / 2) * (self.W2 - self.H0))
         )
 
         # Draw the left hole with center P2
@@ -91,17 +90,17 @@ class HoleM60(HoleMag):
         ZM3h = (w - self.W1) / 2 - 1j * self.H0
 
         # Revert translation and rotation to center left hole in P
-        Z3 = Z3h * exp(1j * angle(Z1 - Z2)) + Z2
-        Z4 = Z4h * exp(1j * angle(Z1 - Z2)) + Z2
-        Z5 = Z5h * exp(1j * angle(Z1 - Z2)) + Z2
-        Z6 = Z6h * exp(1j * angle(Z1 - Z2)) + Z2
-        ZM1 = ZM1h * exp(1j * angle(Z1 - Z2)) + Z2
-        ZM2 = ZM2h * exp(1j * angle(Z1 - Z2)) + Z2
-        ZM3 = ZM3h * exp(1j * angle(Z1 - Z2)) + Z2
-        ZM4 = ZM4h * exp(1j * angle(Z1 - Z2)) + Z2
+        Z3 = Z3h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+        Z4 = Z4h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+        Z5 = Z5h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+        Z6 = Z6h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+        ZM1 = ZM1h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+        ZM2 = ZM2h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+        ZM3 = ZM3h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+        ZM4 = ZM4h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
 
         # Revert translation to center left hole in machine's center
-        Z = 1j * (sqrt((Rbo - self.H1) ** 2 - Z3.real**2) - Z3.imag)
+        Z = 1j * (np.sqrt((Rbo - self.H1) ** 2 - Z3.real**2) - Z3.imag)
         Z0 += Z
         Z1 += Z
         Z2 += Z
@@ -115,18 +114,18 @@ class HoleM60(HoleMag):
         ZM4 += Z
 
         # Rotation of angle -pi / 2 to respect slot conventions
-        Z *= exp(-1j * pi / 2)
-        Z0 *= exp(-1j * pi / 2)
-        Z1 *= exp(-1j * pi / 2)
-        Z2 *= exp(-1j * pi / 2)
-        Z3 *= exp(-1j * pi / 2)
-        Z4 *= exp(-1j * pi / 2)
-        Z5 *= exp(-1j * pi / 2)
-        Z6 *= exp(-1j * pi / 2)
-        ZM1 *= exp(-1j * pi / 2)
-        ZM2 *= exp(-1j * pi / 2)
-        ZM3 *= exp(-1j * pi / 2)
-        ZM4 *= exp(-1j * pi / 2)
+        Z *= np.exp(-1j * np.pi / 2)
+        Z0 *= np.exp(-1j * np.pi / 2)
+        Z1 *= np.exp(-1j * np.pi / 2)
+        Z2 *= np.exp(-1j * np.pi / 2)
+        Z3 *= np.exp(-1j * np.pi / 2)
+        Z4 *= np.exp(-1j * np.pi / 2)
+        Z5 *= np.exp(-1j * np.pi / 2)
+        Z6 *= np.exp(-1j * np.pi / 2)
+        ZM1 *= np.exp(-1j * np.pi / 2)
+        ZM2 *= np.exp(-1j * np.pi / 2)
+        ZM3 *= np.exp(-1j * np.pi / 2)
+        ZM4 *= np.exp(-1j * np.pi / 2)
 
         # Draw the right hole by symmetry
         Z1s = Z1.conjugate()
@@ -358,8 +357,8 @@ class HoleM60(HoleMag):
         mag_dict["magnet_1"] = S1.comp_normal()
 
         if not is_north:
-            mag_dict["magnet_0"] += pi
-            mag_dict["magnet_1"] += pi
+            mag_dict["magnet_0"] += np.pi
+            mag_dict["magnet_1"] += np.pi
 
         if self.magnetization_dict_offset is not None:
             for key, value in self.magnetization_dict_offset:
@@ -394,7 +393,7 @@ class HoleM60(HoleMag):
         )
         point_list.extend(curve.discretize())
 
-        abs_list = [np_abs(point) for point in point_list]
+        abs_list = [np.abs(point) for point in point_list]
         Rmax = max(abs_list)
         Rmin = min(abs_list)
 
@@ -496,7 +495,7 @@ class HoleM60(HoleMag):
         if is_default:
             hole = type(self)(
                 Zh=4,
-                W0=pi * 0.5,
+                W0=np.pi * 0.5,
                 W1=2e-2,
                 W2=7e-2,
                 W3=8e-3,
@@ -530,22 +529,22 @@ class HoleM60(HoleMag):
         if type_add_active == 0:
             lam.hole[0].remove_magnet()
 
-        alpha = pi / 2  # To rotate the schematics
+        alpha = np.pi / 2  # To rotate the schematics
         fig, ax = lam.plot(
-            alpha=pi / self.Zh + alpha,
+            alpha=np.pi / self.Zh + alpha,
             is_show_fig=False,
             is_lam_only=type_add_active == 0,
             fig=fig,
             ax=ax,
         )  # center hole on Ox axis
-        sp = 2 * pi / self.Zh
+        sp = 2 * np.pi / self.Zh
         Rbo = self.get_Rbo()
         point_dict = self._comp_point_coordinate()
 
         # Adding point label
         if is_add_point_label:
             for name, Z in point_dict.items():
-                Z = Z * exp(1j * alpha)
+                Z = Z * np.exp(1j * alpha)
                 ax.text(
                     Z.real,
                     Z.imag,
@@ -558,8 +557,8 @@ class HoleM60(HoleMag):
         if is_add_schematics:
             # W0
             line = Arc1(
-                begin=point_dict["ZM1s"] * exp(1j * alpha),
-                end=point_dict["ZM1"] * exp(1j * alpha),
+                begin=point_dict["ZM1s"] * np.exp(1j * alpha),
+                end=point_dict["ZM1"] * np.exp(1j * alpha),
                 radius=abs(
                     (point_dict["ZM1"] + point_dict["Z1"]) / 2
                     - (point_dict["ZM1s"] + point_dict["Z1s"]) / 2
@@ -578,8 +577,8 @@ class HoleM60(HoleMag):
             # W1, magnet width only if magnet is visible
             if type_add_active == 2:
                 line = Segment(
-                    point_dict["ZM1"] * exp(1j * alpha),
-                    point_dict["ZM2"] * exp(1j * alpha),
+                    point_dict["ZM1"] * np.exp(1j * alpha),
+                    point_dict["ZM2"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -593,8 +592,8 @@ class HoleM60(HoleMag):
                 )
             # W2
             line = Segment(
-                point_dict["Z3s"] * exp(1j * alpha),
-                point_dict["Z6s"] * exp(1j * alpha),
+                point_dict["Z3s"] * np.exp(1j * alpha),
+                point_dict["Z6s"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -608,8 +607,8 @@ class HoleM60(HoleMag):
             )
             # W3
             line = Segment(
-                point_dict["Z1"] * exp(1j * alpha),
-                point_dict["Z1s"] * exp(1j * alpha),
+                point_dict["Z1"] * np.exp(1j * alpha),
+                point_dict["Z1s"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -623,8 +622,8 @@ class HoleM60(HoleMag):
             )
             # H0
             line = Segment(
-                point_dict["Z2s"] * exp(1j * alpha),
-                point_dict["Z4s"] * exp(1j * alpha),
+                point_dict["Z2s"] * np.exp(1j * alpha),
+                point_dict["Z4s"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -637,10 +636,10 @@ class HoleM60(HoleMag):
                 fontsize=SC_FONT_SIZE,
             )
             # H1
-            A = angle(point_dict["Z3"])
+            A = np.angle(point_dict["Z3"])
             line = Segment(
-                Rbo * exp(1j * A) * exp(1j * alpha),
-                (Rbo - self.H1) * exp(1j * A) * exp(1j * alpha),
+                Rbo * np.exp(1j * A) * np.exp(1j * alpha),
+                (Rbo - self.H1) * np.exp(1j * A) * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -655,7 +654,7 @@ class HoleM60(HoleMag):
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5 * exp(1j * alpha))
+            line = Segment(0, lam.Rext * 1.5 * np.exp(1j * alpha))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -664,7 +663,7 @@ class HoleM60(HoleMag):
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Tooth axis
-            line = Segment(0, lam.Rext * 1.5 * exp(1j * sp / 2) * exp(1j * alpha))
+            line = Segment(0, lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -672,7 +671,9 @@ class HoleM60(HoleMag):
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(0, lam.Rext * 1.5 * exp(-1j * sp / 2) * exp(1j * alpha))
+            line = Segment(
+                0, lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha)
+            )
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -681,8 +682,8 @@ class HoleM60(HoleMag):
                 linewidth=MAIN_LINE_WIDTH,
             )
             # H1 radius
-            A = angle(point_dict["Z3"])
-            line = Segment(0, Rbo * exp(1j * A) * exp(1j * alpha))
+            A = np.angle(point_dict["Z3"])
+            line = Segment(0, Rbo * np.exp(1j * A) * np.exp(1j * alpha))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -691,8 +692,10 @@ class HoleM60(HoleMag):
                 linewidth=MAIN_LINE_WIDTH,
             )
             line = Arc1(
-                begin=(Rbo - self.H1) * exp(-1j * pi / 2 * 0.9) * exp(1j * alpha),
-                end=(Rbo - self.H1) * exp(1j * pi / 2 * 0.9) * exp(1j * alpha),
+                begin=(Rbo - self.H1)
+                * np.exp(-1j * np.pi / 2 * 0.9)
+                * np.exp(1j * alpha),
+                end=(Rbo - self.H1) * np.exp(1j * np.pi / 2 * 0.9) * np.exp(1j * alpha),
                 radius=Rbo - self.H1,
                 is_trigo_direction=True,
             )
@@ -705,7 +708,8 @@ class HoleM60(HoleMag):
             )
             # H0 lines
             line = Segment(
-                point_dict["Z2"] * exp(1j * alpha), point_dict["Z4"] * exp(1j * alpha)
+                point_dict["Z2"] * np.exp(1j * alpha),
+                point_dict["Z4"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -715,7 +719,8 @@ class HoleM60(HoleMag):
                 linewidth=MAIN_LINE_WIDTH,
             )
             line = Segment(
-                point_dict["Z1"] * exp(1j * alpha), point_dict["Z5"] * exp(1j * alpha)
+                point_dict["Z1"] * np.exp(1j * alpha),
+                point_dict["Z5"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -725,7 +730,8 @@ class HoleM60(HoleMag):
                 linewidth=MAIN_LINE_WIDTH,
             )
             line = Segment(
-                point_dict["Z1s"] * exp(1j * alpha), point_dict["Z5s"] * exp(1j * alpha)
+                point_dict["Z1s"] * np.exp(1j * alpha),
+                point_dict["Z5s"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -736,7 +742,7 @@ class HoleM60(HoleMag):
             )
 
         # Zooming and cleaning
-        W = (point_dict["Z"] * exp(1j * sp)).imag
+        W = (point_dict["Z"] * np.exp(1j * sp)).imag
         Rint = self.parent.Rint
         Rext = self.parent.Rext
 
@@ -922,8 +928,8 @@ class HoleM60(HoleMag):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and isnan(other._W0)
-            and isnan(self._W0)
+            and np.isnan(other._W0)
+            and np.isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -935,8 +941,8 @@ class HoleM60(HoleMag):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and isnan(other._W1)
-            and isnan(self._W1)
+            and np.isnan(other._W1)
+            and np.isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -948,8 +954,8 @@ class HoleM60(HoleMag):
         if (
             other._W2 is not None
             and self._W2 is not None
-            and isnan(other._W2)
-            and isnan(self._W2)
+            and np.isnan(other._W2)
+            and np.isnan(self._W2)
         ):
             pass
         elif other._W2 != self._W2:
@@ -961,8 +967,8 @@ class HoleM60(HoleMag):
         if (
             other._W3 is not None
             and self._W3 is not None
-            and isnan(other._W3)
-            and isnan(self._W3)
+            and np.isnan(other._W3)
+            and np.isnan(self._W3)
         ):
             pass
         elif other._W3 != self._W3:
@@ -974,8 +980,8 @@ class HoleM60(HoleMag):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and isnan(other._H0)
-            and isnan(self._H0)
+            and np.isnan(other._H0)
+            and np.isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -987,8 +993,8 @@ class HoleM60(HoleMag):
         if (
             other._H1 is not None
             and self._H1 is not None
-            and isnan(other._H1)
-            and isnan(self._H1)
+            and np.isnan(other._H1)
+            and np.isnan(self._H1)
         ):
             pass
         elif other._H1 != self._H1:

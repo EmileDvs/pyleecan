@@ -22,7 +22,7 @@ from pyleecan.Classes._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Slot.Slot.plot_active import plot_active
-from numpy import linspace, abs as np_abs, imag, pi, exp, angle, array
+import numpy as np
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Functions.labels import (
     BORE_LAB,
@@ -43,7 +43,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Methods.Slot.Slot.plot import ROTOR_COLOR, STATOR_COLOR
 from pyleecan.Functions.init_fig import init_fig
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -129,7 +129,7 @@ class Slot(FrozenClass):
 
         # Rad split
         surf_list = list()
-        X_list = linspace(Ztan1, Ztan2, Nrad + 1, True).tolist()[1:-1]
+        X_list = np.linspace(Ztan1, Ztan2, Nrad + 1, True).tolist()[1:-1]
         for ii in range(Ntan):
             surf = tan_list[ii]
             if Nrad > 1:
@@ -196,9 +196,9 @@ class Slot(FrozenClass):
             Zbegin = line.get_begin()
             Zend = line.get_end()
             # append line
-            if imag(Zbegin) <= 0 and imag(Zend) <= 0:
+            if np.imag(Zbegin) <= 0 and np.imag(Zend) <= 0:
                 top_list.append(line)
-            elif imag(Zbegin) >= 0 and imag(Zend) >= 0:
+            elif np.imag(Zbegin) >= 0 and np.imag(Zend) >= 0:
                 bot_list.append(line)
             else:  # The line cross the X axis => split
                 # Copy the line (split_half modify the object)
@@ -206,7 +206,7 @@ class Slot(FrozenClass):
                 # Split the lines
                 line.split_half(is_begin=True)
                 line2.split_half(is_begin=False)
-                if imag(Zbegin) < 0:
+                if np.imag(Zbegin) < 0:
                     top_list.append(line)
                     bot_list.append(line2)
                 else:
@@ -214,8 +214,8 @@ class Slot(FrozenClass):
                     bot_list.append(line)
 
         # add bore lines
-        Zbo = Rbo * exp(-1j * pi / Zs)
-        if np_abs(Zbo - top_list[0].get_begin()) > 1e-6:
+        Zbo = Rbo * np.exp(-1j * np.pi / Zs)
+        if np.abs(Zbo - top_list[0].get_begin()) > 1e-6:
             top_list.insert(
                 0,
                 Arc1(
@@ -225,8 +225,8 @@ class Slot(FrozenClass):
                     prop_dict={BOUNDARY_PROP_LAB: BORE_LAB},
                 ),
             )
-        Zbo = Rbo * exp(1j * pi / Zs)
-        if np_abs(Zbo - bot_list[-1].get_end()) > 1e-6:
+        Zbo = Rbo * np.exp(1j * np.pi / Zs)
+        if np.abs(Zbo - bot_list[-1].get_end()) > 1e-6:
             bot_list.append(
                 Arc1(
                     bot_list[-1].get_end(),
@@ -239,10 +239,10 @@ class Slot(FrozenClass):
         # Select the lines to return
         if is_top:
             tooth_list = top_list
-            T_angle = pi / Zs
+            T_angle = np.pi / Zs
         else:
             tooth_list = bot_list
-            T_angle = -pi / Zs
+            T_angle = -np.pi / Zs
 
         # rotate
         for line in tooth_list:
@@ -292,7 +292,7 @@ class Slot(FrozenClass):
         Rext = Rmw + Hwind / 2
         Rint = Rmw - Hwind / 2
 
-        return Swind * 2 * pi / (pi * Rext**2 - pi * Rint**2)
+        return Swind * 2 * np.pi / (np.pi * Rext**2 - np.pi * Rint**2)
 
     # cf Methods.Slot.Slot.comp_angle_opening
     def comp_angle_opening(self):
@@ -314,7 +314,7 @@ class Slot(FrozenClass):
         Z1 = line_list[0].get_begin()
         Z2 = line_list[-1].get_end()
 
-        return angle(Z2) - angle(Z1)
+        return np.angle(Z2) - np.angle(Z1)
 
     # cf Methods.Slot.Slot.comp_height
     def comp_height(self, Ndisc=200):
@@ -340,7 +340,7 @@ class Slot(FrozenClass):
         surf = self.get_surface()
 
         point_list = surf.discretize(Ndisc)
-        point_list = array(point_list)
+        point_list = np.array(point_list)
         if self.is_outwards():
             return max(abs(point_list)) - Rbo
         else:
@@ -367,7 +367,7 @@ class Slot(FrozenClass):
         surf = self.get_surface_active()
 
         point_list = surf.discretize(Ndisc)
-        point_list = abs(array(point_list))
+        point_list = abs(np.array(point_list))
 
         return max(point_list) - min(point_list)
 
@@ -585,7 +585,7 @@ class Slot(FrozenClass):
             R = self.get_Rbo()
             alpha = self.comp_angle_opening()
             Zs = self.parent.get_Zs()
-            return 2 * pi * R / Zs - alpha * R
+            return 2 * np.pi * R / Zs - alpha * R
         else:
             line_list = self.build_geometry()
             Z1 = line_list[0].get_begin()
@@ -740,8 +740,8 @@ class Slot(FrozenClass):
         top_list = self.build_geometry_half_tooth(is_top=True)
         bot_list = self.build_geometry_half_tooth(is_top=False)
         # Yoke lines
-        Z1 = Ryoke * exp(1j * pi / self.Zs)
-        Z2 = Ryoke * exp(-1j * pi / self.Zs)
+        Z1 = Ryoke * np.exp(1j * np.pi / self.Zs)
+        Z2 = Ryoke * np.exp(-1j * np.pi / self.Zs)
         curve_list.append(
             Segment(top_list[-1].get_end(), Z1, prop_dict={BOUNDARY_PROP_LAB: YSL_LAB})
         )

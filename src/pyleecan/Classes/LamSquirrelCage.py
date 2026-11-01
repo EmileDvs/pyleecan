@@ -26,13 +26,12 @@ from pyleecan.Methods.Machine.LamSquirrelCage.check import check
 from pyleecan.Methods.Machine.LamSquirrelCage.plot_side import plot_side
 from pyleecan.Functions.labels import WIND_LAB, BAR_LAB
 from pyleecan.Classes.LamSlotWind import LamSlotWind
-from numpy import pi, sin
+import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.load import import_class
 from pyleecan.Methods.Machine.LamSquirrelCage.plot import SCR_COLOR
 from matplotlib.patches import Patch, Wedge
 from pyleecan.Functions.init_fig import init_fig
-import matplotlib.pyplot as plt
 from pyleecan.Classes.SlotW22 import SlotW22
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import (
@@ -45,7 +44,7 @@ from pyleecan.Functions.Plot import (
     plot_quote,
 )
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -132,7 +131,7 @@ class LamSquirrelCage(LamSlotWind):
         # calculation of the average radius of the center of the end-ring (distance to z-axis of the electrical machine)
         Rmw = self.slot.comp_radius_mid_active()
 
-        return 2 * pi * Rmw
+        return 2 * np.pi * Rmw
 
     # cf Methods.Machine.LamSquirrelCage.comp_masses
     def comp_masses(self):
@@ -276,7 +275,7 @@ class LamSquirrelCage(LamSlotWind):
         Rrod = rho * lrod / Srod
 
         # average physical resistance per rotor bar (not yet transfered on stator side, per stator phase)
-        Rtot = Rrod + Rring / Zr / (2 * sin(pi * P / Zr) ** 2)
+        Rtot = Rrod + Rring / Zr / (2 * np.sin(np.pi * P / Zr) ** 2)
 
         return Rtot
 
@@ -780,8 +779,8 @@ class LamSquirrelCage(LamSlotWind):
         if (
             other._Hscr is not None
             and self._Hscr is not None
-            and isnan(other._Hscr)
-            and isnan(self._Hscr)
+            and np.isnan(other._Hscr)
+            and np.isnan(self._Hscr)
         ):
             pass
         elif other._Hscr != self._Hscr:
@@ -795,8 +794,8 @@ class LamSquirrelCage(LamSlotWind):
         if (
             other._Lscr is not None
             and self._Lscr is not None
-            and isnan(other._Lscr)
-            and isnan(self._Lscr)
+            and np.isnan(other._Lscr)
+            and np.isnan(self._Lscr)
         ):
             pass
         elif other._Lscr != self._Lscr:

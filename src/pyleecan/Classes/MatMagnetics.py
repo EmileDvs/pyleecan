@@ -18,13 +18,12 @@ from pyleecan.Classes._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Material.MatMagnetics.get_BH import BHShapeError
-from numpy import pi
+import numpy as np
 from pyleecan.Functions.init_fig import init_fig
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
-from numpy import ndarray
-from numpy import array, array_equal
-from numpy import isnan
+
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
@@ -137,7 +136,7 @@ class MatMagnetics(FrozenClass):
             raise Exception("Cannot calculate Hc if Brm20 or mur_lin is None")
 
         # Magnet coercitivity
-        Hc20 = self.Brm20 / (4 * pi * 1e-7 * self.mur_lin)
+        Hc20 = self.Brm20 / (4 * np.pi * 1e-7 * self.mur_lin)
 
         # Update magnetic coercitivity
         Hc = Hc20 * (1 + self.alpha_Br * (T_op - T_ref))
@@ -305,8 +304,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._mur_lin is not None
             and self._mur_lin is not None
-            and isnan(other._mur_lin)
-            and isnan(self._mur_lin)
+            and np.isnan(other._mur_lin)
+            and np.isnan(self._mur_lin)
         ):
             pass
         elif other._mur_lin != self._mur_lin:
@@ -324,8 +323,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._Brm20 is not None
             and self._Brm20 is not None
-            and isnan(other._Brm20)
-            and isnan(self._Brm20)
+            and np.isnan(other._Brm20)
+            and np.isnan(self._Brm20)
         ):
             pass
         elif other._Brm20 != self._Brm20:
@@ -339,8 +338,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._alpha_Br is not None
             and self._alpha_Br is not None
-            and isnan(other._alpha_Br)
-            and isnan(self._alpha_Br)
+            and np.isnan(other._alpha_Br)
+            and np.isnan(self._alpha_Br)
         ):
             pass
         elif other._alpha_Br != self._alpha_Br:
@@ -358,8 +357,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._Wlam is not None
             and self._Wlam is not None
-            and isnan(other._Wlam)
-            and isnan(self._Wlam)
+            and np.isnan(other._Wlam)
+            and np.isnan(self._Wlam)
         ):
             pass
         elif other._Wlam != self._Wlam:
@@ -619,10 +618,10 @@ class MatMagnetics(FrozenClass):
         )
         if isinstance(value, str):  # Load from file
             value = load_init_dict(value)[1]
-        if isinstance(value, ndarray):
+        if isinstance(value, np.ndarray):
             value = ImportMatrixVal(value=value)
         elif isinstance(value, list):
-            value = ImportMatrixVal(value=array(value))
+            value = ImportMatrixVal(value=np.array(value))
         elif value == -1:
             value = ImportMatrix()
         elif isinstance(value, dict):
@@ -657,10 +656,10 @@ class MatMagnetics(FrozenClass):
         )
         if isinstance(value, str):  # Load from file
             value = load_init_dict(value)[1]
-        if isinstance(value, ndarray):
+        if isinstance(value, np.ndarray):
             value = ImportMatrixVal(value=value)
         elif isinstance(value, list):
-            value = ImportMatrixVal(value=array(value))
+            value = ImportMatrixVal(value=np.array(value))
         elif value == -1:
             value = ImportMatrix()
         elif isinstance(value, dict):

@@ -20,7 +20,7 @@ from pyleecan.Classes.Solution import Solution
 import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 
-from numpy import isnan
+
 from pyleecan.Classes._check import InitUnKnowClassError
 
 
