@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/Slot19
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,10 +17,10 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.Slot19.check import check
 import numpy as np
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
+from pyleecan.Methods.Slot.Slot19 import S19_W1CheckError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -102,7 +98,28 @@ class Slot19(Slot):
         return curve_list
 
     # cf Methods.Slot.Slot19.check
-    check = check
+    def check(self):
+        """Check that the Slot19 object is correct
+
+        Parameters
+        ----------
+        self : Slot19
+            A Slot19 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S19_H2CheckError
+            H1 must be > 0
+
+        S19_W1CheckError
+            W1 must be > 0
+        """
+        if self.W1 < 0:
+            raise S19_W1CheckError("W1 must be larger than zero")
 
     # cf Methods.Slot.Slot19.comp_angle_bottom
     def comp_angle_bottom(self):

@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM50
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,13 +17,21 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM50.check import check
 import numpy as np, matplotlib.pyplot as plt
 from scipy.optimize import fsolve
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB, MAGNET_PROP_LAB
+from pyleecan.Methods.Slot.HoleM50 import (
+    S50_H01CheckError,
+    S50_W5CheckError,
+    S50_W3CheckError,
+    S50_SpCheckError,
+    S50_W01CheckError,
+    S50_NoneError,
+    S50_H23CheckError,
+)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -553,7 +557,83 @@ class HoleM50(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM50.check
-    check = check
+    def check(self):
+        """Check that the HoleM50 object is correct
+
+        Parameters
+        ----------
+        self : HoleM50
+            A HoleM50 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        S50_W01CheckError
+            You must have W1 < W0
+        S50_H23CheckError
+            You must have H2 < H3
+        S50_H01CheckError
+            You must have H1 < H0
+        S50_W5CheckError
+            You must have W5 >=0
+        S50_SpCheckError
+            Slot pitch too small for the slot, reduce Zh, W3 or W0
+        """
+        Rext = self.get_Rext()
+
+        # Check that everything is set
+        if self.W0 is None:
+            raise S50_NoneError("You must set W0 !")
+        elif self.W1 is None:
+            raise S50_NoneError("You must set W1 !")
+        elif self.W2 is None:
+            raise S50_NoneError("You must set W2 !")
+        elif self.W3 is None:
+            raise S50_NoneError("You must set W3 !")
+        elif self.W4 is None:
+            raise S50_NoneError("You must set W4 !")
+        elif self.H0 is None:
+            raise S50_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S50_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S50_NoneError("You must set H2 !")
+        elif self.H3 is None:
+            raise S50_NoneError("You must set H3 !")
+        elif self.H4 is None:
+            raise S50_NoneError("You must set H4 !")
+
+        if self.W0 <= self.W1:
+            raise S50_W01CheckError("You must have W1 < W0")
+
+        if self.H3 <= self.H2:
+            raise S50_H23CheckError("You must have H2 < H3")
+
+        if self.H0 <= self.H1:
+            raise S50_H01CheckError("You must have H1 < H0")
+
+        if self.comp_W5() < 0:
+            raise S50_W5CheckError("You must have W5 >=0")
+
+        alpha_0 = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # W0 in rad
+        alpha_3 = 2 * np.arcsin(self.W3 / (2 * (Rext - self.H1)))  # W3 in rad
+        if alpha_0 + alpha_3 > 2 * np.pi / self.Zh:
+            raise S50_SpCheckError(
+                "Slot pitch too small for the slot, reduce Zh, W3 or W0"
+            )
+
+        point_dict = self._comp_point_coordinate()
+        if abs(point_dict["Z1"]) > abs(point_dict["Z11"]):
+            raise S50_W3CheckError(
+                "Points are colliding: unable to fulfill W3 constraints, for instance try increasing W3"
+            )
+        if abs(point_dict["Z2"]) > abs(point_dict["Z1"]):
+            raise S50_W3CheckError(
+                "Points are colliding: unable to fulfill W3 constraints, for instance try increasing W3"
+            )
 
     # cf Methods.Slot.HoleM50.comp_alpha
     def comp_alpha(self):

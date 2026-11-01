@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW27
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,10 +17,14 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW27.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Methods.Slot.SlotW27 import (
+    S27_W01CheckError,
+    S27_W12CheckError,
+    S27_W03CheckError,
+)
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
@@ -183,7 +183,36 @@ class SlotW27(Slot):
         return [line for line in curve_list if line is not None]
 
     # cf Methods.Slot.SlotW27.check
-    check = check
+    def check(self):
+        """Check that the SlotW27 object is correct
+
+        Parameters
+        ----------
+        self : SlotW27
+            A SlotW27 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S27_W01CheckError
+            You must have W0 <= W1
+        S27_W12CheckError
+            You must have W1 <= W2
+        S27_W03CheckError
+            You must have W0 <= W3
+
+        """
+        if self.W1 < self.W0:
+            raise S27_W01CheckError("You must have W0 <= W1")
+
+        if self.W2 < self.W1:
+            raise S27_W12CheckError("You must have W1 <= W2")
+
+        if self.W3 < self.W0:
+            raise S27_W03CheckError("You must have W0 <= W3")
 
     # cf Methods.Slot.SlotW27.comp_angle_opening
     def comp_angle_opening(self):

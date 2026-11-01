@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM52R
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,17 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM52R.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM52R import (
+    S52R_NoneError,
+    S52R_R0CheckError,
+    S52R_widthCheckError,
+    S52R_H12CheckError,
+)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -228,7 +229,59 @@ class HoleM52R(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM52R.check
-    check = check
+    def check(self):
+        """Check that the HoleM52 object is correct
+
+        Parameters
+        ----------
+        self : HoleM52R
+            A HoleM52R object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S52R_H12CheckError
+            You must have H2 < H1
+        S52R_alphaCheckError
+            The teeth are too wide for the lamination (reduce W3 or H0)
+        S52R_W1CheckError
+            W1 is <=0, you must reduce W0 or W3
+        """
+
+        # Check that everything is set
+        if self.W0 is None:
+            raise S52R_NoneError("You must set W0 !")
+        elif self.W1 is None:
+            raise S52R_NoneError("You must set W1 !")
+        elif self.H0 is None:
+            raise S52R_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S52R_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S52R_NoneError("You must set H2 !")
+        elif self.R0 is None:
+            raise S52R_NoneError("You must set R0 !")
+
+        if self.H2 >= self.H1:
+            raise S52R_H12CheckError("You must have H2 < H1")
+
+        if self.R0 >= self.H1:
+            raise S52R_R0CheckError("You must have R0 < H1")
+
+        if self.R0 >= self.H1 - self.H2:
+            raise S52R_R0CheckError("You must have R0 < H1")
+
+        h = self.H1 - self.H2
+        w = self.W0 + self.W1
+        Z2 = np.sqrt((self.get_Rext() - self.H0) ** 2 - h**2) - h + 1j * w / 2
+
+        if np.angle(Z2) >= np.pi / self.Zh:
+            raise S52R_widthCheckError(
+                "The hole is too wide for the lamination (reduce W1, H0 or W0)"
+            )
 
     # cf Methods.Slot.HoleM52R.comp_alpha
     def comp_alpha(self):

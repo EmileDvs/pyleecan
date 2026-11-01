@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW61
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,13 +17,18 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW61.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotW61 import S61_WindError
 from pyleecan.Functions.labels import WIND_LAB, SOP_LAB, DRAW_PROP_LAB
+from pyleecan.Methods.Slot.SlotW61 import (
+    S61_InnerCheckError,
+    S61_W21CheckError,
+    S61_WindHError,
+    S61_WindWError,
+)
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -321,7 +322,40 @@ class SlotW61(Slot):
         return surf_list
 
     # cf Methods.Slot.SlotW61.check
-    check = check
+    def check(self):
+        """Check that the SlotW61 object is correct
+
+        Parameters
+        ----------
+        self : SlotW61
+            A SlotW61 object
+
+        Returns
+        -------
+        None
+        Raises
+        -------
+        S61_InnerCheckError
+           Slot 61 is for inner lamination only
+        S61_W21CheckError
+            You must have W2 < W1
+        S61_WindHError
+            You must have W3+W4 < H2
+        S61_WindWError
+            You must have W3 < (W1-W2)/2
+        """
+
+        if self.is_outwards():
+            raise S61_InnerCheckError("Slot 61 is for inner lamination only")
+
+        if self.W1 <= self.W2:
+            raise S61_W21CheckError("You must have W2 < W1")
+
+        if self.H3 + self.H4 >= self.H2:
+            raise S61_WindHError("You must have W3+W4 < H2")
+
+        if self.W3 >= (self.W1 - self.W2) / 2:
+            raise S61_WindWError("You must have W3 < (W1-W2)/2")
 
     # cf Methods.Slot.SlotW61.comp_angle_opening
     def comp_angle_opening(self):

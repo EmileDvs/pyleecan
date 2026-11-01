@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW11_2
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,6 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW11_2.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
@@ -29,6 +24,13 @@ import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Classes._check import check_var
+from pyleecan.Methods.Slot.SlotW11_2 import (
+    S11_2_H1rCheckError,
+    S11_2_R1CheckError,
+    S11_2_W01CheckError,
+    S11_2_RWCheckError,
+    S11_2_RHCheckError,
+)
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.LamSlot import LamSlot
@@ -356,7 +358,68 @@ class SlotW11_2(Slot):
         return [line for line in curve_list if line is not None]
 
     # cf Methods.Slot.SlotW11_2.check
-    check = check
+    def check(self):
+        """Check that the SlotW11_2 object is correct
+
+        Parameters
+        ----------
+        self : SlotW11_2
+            A SlotW11_2 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S11_W01CheckError
+            You must have W0 <= W1
+        S11_RWCheckError
+            You must have 2*R1 <= W2
+        S11_RHCheckError
+            You must have R1 <= H2
+        S11_H1rCheckError
+            With H1 in radian, you must have H1 < pi/2"""
+
+        if self.W0 is None:
+            return "You must set W0 !"
+        if self.W1 is None and not self.is_cstt_tooth:
+            return "You must set W1 !"
+        if self.W2 is None and not self.is_cstt_tooth:
+            return "You must set W2 !"
+        elif self.H0 is None:
+            return "You must set H0 !"
+        elif self.H1 is None:
+            return "You must set H1 !"
+        elif self.H2 is None:
+            return "You must set H2 !"
+        elif self.R1 is None:
+            return "You must set R1 !"
+        elif self.is_cstt_tooth and self.W3 is None:
+            return "In constant tooth mode, you must set W3 !"
+
+        if self.R1 <= 0:
+            raise S11_2_R1CheckError("You must have R1 > 0")
+
+        if self.H1_is_rad and self.H1 >= np.pi / 2:
+            raise S11_2_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            # return "With H1 in radian, you must have H1 < pi/2"
+
+        if self.W1 is None or self.W0 is None:
+            pass
+        else:
+            if self.W1 < self.W0:
+                raise S11_2_W01CheckError("You must have W0 <= W1")
+
+        if not self.W1 is None or not self.W2 is None:
+            if 2 * self.R1 >= self.W2 and (not self.W2 is None or not self.R1 is None):
+                raise S11_2_RWCheckError("You must have 2*R1 <= W2")
+
+        if self.R1 > self.H2:
+            raise S11_2_RHCheckError("You must have R1 <= H2")
+
+        if self.H1_is_rad and self.H1 >= np.pi / 2:
+            raise S11_2_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # cf Methods.Slot.SlotW11_2.comp_angle_opening
     def comp_angle_opening(self):

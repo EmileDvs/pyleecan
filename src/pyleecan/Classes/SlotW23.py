@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW23
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,11 +17,11 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW23.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes._check import check_var
+from pyleecan.Methods.Slot.SlotW23 import S23_W01CheckError, S23_H1rCheckError
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
@@ -246,7 +242,32 @@ class SlotW23(Slot):
         return [line for line in curve_list if line is not None]
 
     # cf Methods.Slot.SlotW23.check
-    check = check
+    def check(self):
+        """Check that the SlotW23 object is correct
+
+        Parameters
+        ----------
+        self : SlotW23
+            A SlotW23 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S23_W01CheckError
+            You must have W0 <= W1
+        S23_H1rCheckError
+            With H1 in radian, you must have H1 < pi/2
+
+        """
+
+        if self.H1_is_rad and self.H1 >= np.pi / 2:
+            raise S23_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+
+        if self.W1 is not None and self.W1 < self.W0:
+            raise S23_W01CheckError("You must have W0 <= W1")
 
     # cf Methods.Slot.SlotW23.comp_angle_opening
     def comp_angle_opening(self):

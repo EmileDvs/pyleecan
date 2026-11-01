@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW12
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,11 +17,11 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW12.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Methods.Slot.SlotW12 import S12_RboCheckError, S12_R20CheckError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.LamSlot import LamSlot
@@ -209,7 +205,33 @@ class SlotW12(Slot):
         return [line for line in curve_list if line is not None]
 
     # cf Methods.Slot.SlotW12.check
-    check = check
+    def check(self):
+        """Check that the SlotW12 object is correct
+
+        Parameters
+        ----------
+        self : SlotW12
+            A SlotW12 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S12_R20CheckError
+            You must have R2 > 0
+        S12_RboCheckError
+            You must have R2 < Rbo
+        """
+
+        Rbo = self.get_Rbo()
+
+        if self.R2 <= 0:
+            raise S12_R20CheckError("You must have R2 > 0")
+
+        if self.R2 / Rbo >= 1:
+            raise S12_RboCheckError("You must have R2 < Rbo")
 
     # cf Methods.Slot.SlotW12.comp_angle_opening
     def comp_angle_opening(self):

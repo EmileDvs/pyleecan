@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW62
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,13 +17,21 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW62.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods.Slot.SlotW62 import S62_WindError
 from pyleecan.Functions.labels import WIND_LAB, SOP_LAB, DRAW_PROP_LAB
+from pyleecan.Methods.Slot.SlotW62 import (
+    S62_W0Error,
+    S62_H2Error,
+    S62_W1Error,
+    S62_H1Error,
+    S62_W2Error,
+    S62_WindHError,
+    S62_InnerCheckError,
+)
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -311,7 +315,43 @@ class SlotW62(Slot):
         return surf_list
 
     # cf Methods.Slot.SlotW62.check
-    check = check
+    def check(self):
+        """Check that the SlotW62 object is correct
+
+        Parameters
+        ----------
+        self : SlotW62
+            A SlotW62 object
+
+        Returns
+        -------
+        None
+        Raises
+        -------
+        S62_InnerCheckError
+            Slot 62 is for inner lamination only
+
+        """
+        if self.is_outwards():
+            raise S62_InnerCheckError("Slot 62 is for inner lamination only")
+
+        if self.H3 + self.H2 > self.H0:
+            raise S62_WindHError("You must have H3+H2 < H0")
+
+        if self.W0 == 0:
+            raise S62_W0Error("You must have W0 > 0")
+
+        if self.W1 == 0:
+            raise S62_W1Error("You must have W1 > 0")
+
+        if self.H1 == 0:
+            raise S62_H1Error("You must have H1 > 0")
+
+        if self.W2 == 0:
+            raise S62_W2Error("You must have W2 > 0")
+
+        if self.H2 == 0:
+            raise S62_H2Error("You must have H2 > 0")
 
     # cf Methods.Slot.SlotW62.comp_angle_opening
     def comp_angle_opening(self):

@@ -4,11 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/VentilationTrap
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - build_geometry: module uses a wildcard import whose names cannot be resolved safely
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -22,9 +17,12 @@ from pyleecan.Classes.Hole import Hole
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.VentilationTrap.build_geometry import build_geometry
-from pyleecan.Methods.Slot.VentilationTrap.check import check
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Classes.Trapeze import Trapeze
+from pyleecan.Methods.Slot.VentilationTrap import (
+    TrapezeBuildGeometryError,
+    VentilationTrapInstanceError,
+)
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
@@ -84,9 +82,72 @@ class VentilationTrap(Hole):
         return point_dict
 
     # cf Methods.Slot.VentilationTrap.build_geometry
-    build_geometry = build_geometry
+    def build_geometry(self, alpha=0, delta=0):
+        """Compute the curve needed to plot the ventilations
+
+        Parameters
+        ----------
+        self : VentilationTrap
+            A VentilationTrap object
+        alpha : float
+            Angle for rotation (Default value = 0) [rad]
+        delta : complex
+            Complex for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list: list
+            A list of Trapeze
+        """
+
+        lam_label = self.parent.get_label()
+        R_id, surf_type = self.get_R_id()
+        RTS_id = "R" + str(R_id) + "-T0-S0"
+        vent_label = lam_label + "_" + surf_type + "_" + RTS_id
+
+        # checking if the param have good type
+        if type(alpha) not in [int, float]:
+            raise TrapezeBuildGeometryError(
+                "The parameter 'alpha' must be an int or float"
+            )
+        if type(delta) not in [complex, int, float]:
+            raise TrapezeBuildGeometryError(
+                "The parameter 'delta' must be a complex or float or int number"
+            )
+
+        surf_list = list()
+        # Modulo on Alpha for sym
+        Alpha0 = self.Alpha0 % (2 * np.pi / self.Zh)
+        Zc = (self.H0 + (self.D0 / 2)) * np.exp(1j * Alpha0)
+        surf_list.append(
+            Trapeze(
+                point_ref=Zc,
+                label=vent_label,
+                height=self.D0,
+                W1=self.W1,
+                W2=self.W2,
+            )
+        )
+        return surf_list
+
     # cf Methods.Slot.VentilationTrap.check
-    check = check
+    def check(self):
+        """Make sure that the ventialtion parameters are correctly set
+
+        Parameters
+        ----------
+        self : VentilationTrap
+            A VentilationTrap object
+        """
+
+        if not isinstance(self.Zh, int):
+            raise VentilationTrapInstanceError("Zh must be a integer")
+        if not isinstance(self.H0, float) and not isinstance(self.H0, int):
+            raise VentilationTrapInstanceError("H0 must be a float or int")
+        if not isinstance(self.D0, float) and not isinstance(self.D0, int):
+            raise VentilationTrapInstanceError("D0 must be a float or int")
+        if not isinstance(self.Alpha0, float) and not isinstance(self.Alpha0, int):
+            raise VentilationTrapInstanceError("Alpha0 must be a float or int")
 
     # cf Methods.Slot.VentilationTrap.comp_radius
     def comp_radius(self):

@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Circle
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,7 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Circle.check import check
+from pyleecan.Methods.Geometry.Circle import RadiusCircleError
 import numpy as np
 from pyleecan.Classes.Arc3 import Arc3
 from matplotlib.patches import Circle
@@ -45,7 +41,26 @@ class Circle(Surface):
     PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
     # cf Methods.Geometry.Circle.check
-    check = check
+    def check(self):
+        """assert the Circle is correct (the radius > 0)
+
+        Parameters
+        ----------
+        self : Circle
+            A Circle object
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        RadiusCircleError
+            The radius of a circle must be >=  0
+
+        """
+        if self.radius < 0:
+            raise RadiusCircleError("The radius of a circle must be >= 0")
 
     # cf Methods.Geometry.Circle.comp_length
     def comp_length(self):

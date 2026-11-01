@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW24
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,12 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW24.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB
+from pyleecan.Methods.Slot.SlotW24 import S24_W3CheckError, S24_HWCheckError
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -254,7 +250,35 @@ class SlotW24(Slot):
         return surf_list
 
     # cf Methods.Slot.SlotW24.check
-    check = check
+    def check(self):
+        """Check that the SlotW24 object is correct
+
+        Parameters
+        ----------
+        self : SlotW24
+            A SlotW24 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S24_W3CheckError
+            The teeth are too wide, reduce Zs or W3
+        S24_HWCheckError
+            The teeth are too wide, reduce Zs, H2 or W3
+        """
+        Rbo = self.get_Rbo()
+
+        if 2 * np.arcsin(self.W3 / (2 * Rbo)) > 2 * np.pi / self.Zs:
+            raise S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
+
+        if (
+            not self.is_outwards()
+            and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2)) > 2 * np.pi / self.Zs
+        ):
+            raise S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
 
     # cf Methods.Slot.SlotW24.comp_angle_opening
     def comp_angle_opening(self):

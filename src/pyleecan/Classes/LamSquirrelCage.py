@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSquirrelCage
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,9 +17,10 @@ from pyleecan.Classes.LamSlotWind import LamSlotWind
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.LamSquirrelCage.check import check
 from pyleecan.Functions.labels import WIND_LAB, BAR_LAB
 from pyleecan.Classes.LamSlotWind import LamSlotWind
+from pyleecan.Classes.CondType21 import CondType21
+from pyleecan.Methods.Machine.LamSquirrelCage import SCC_NotARotor, SCC_WrongCond
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.load import import_class
@@ -94,7 +91,33 @@ class LamSquirrelCage(LamSlotWind):
         return surf_list
 
     # cf Methods.Machine.LamSquirrelCage.check
-    check = check
+    def check(self):
+        """Check that the Lamination object is correct
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        SCC_NotARotor
+            A LamSquirrelCage Lamination can't be a stator
+        SCC_WrongCond
+            A LamSquirrelCage's conductor must be a type 2_1
+        """
+
+        LamSlotWind.check(self)
+
+        if self.is_stator:
+            raise SCC_NotARotor("A LamSquirrelCage Lamination can't be " "a stator")
+
+        if not isinstance(self.winding.conductor, CondType21):
+            raise SCC_WrongCond("A LamSquirrelCage's conductor must be " "a type 2_1")
 
     # cf Methods.Machine.LamSquirrelCage.comp_angle_d_axis
     def comp_angle_d_axis(self):

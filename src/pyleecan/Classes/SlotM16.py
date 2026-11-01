@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotM16
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,9 +17,9 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotM16.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
+from pyleecan.Methods.Slot.SlotM16 import S16_W01CheckError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamSlot import LamSlot
@@ -139,7 +135,26 @@ class SlotM16(Slot):
         return curve_list
 
     # cf Methods.Slot.SlotM16.check
-    check = check
+    def check(self):
+        """Check that the SlotM16 object is correct
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S29_W01CheckError
+            You must have W0 < W1
+
+        """
+        if self.W1 <= self.W0:
+            raise S16_W01CheckError("You must have W0 < W1")
 
     # cf Methods.Slot.SlotM16.comp_angle_opening
     def comp_angle_opening(self):

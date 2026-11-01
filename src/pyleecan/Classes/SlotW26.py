@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW26
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,12 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW26.check import check
 from pyleecan.Methods.Slot.SlotW26._comp_line_dict import Slot26_H1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Methods.Slot.SlotW26 import S26_WCheckError
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
@@ -212,7 +208,25 @@ class SlotW26(Slot):
         return [line for line in curve_list if line is not None]
 
     # cf Methods.Slot.SlotW26.check
-    check = check
+    def check(self):
+        """Check that the SlotW26 object is correct
+
+        Parameters
+        ----------
+        self : SlotW26
+            A SlotW26 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S26_WCheckError
+            You must have W0 < 2*R1
+        """
+        if self.R1 * 2 <= self.W0:
+            raise S26_WCheckError("You must have W0 < 2*R1")
 
     # cf Methods.Slot.SlotW26.comp_angle_opening
     def comp_angle_opening(self):

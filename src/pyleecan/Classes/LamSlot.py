@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlot
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,7 @@ from pyleecan.Classes.Lamination import Lamination
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.LamSlot.check import check
+from pyleecan.Methods.Machine.LamSlot import LSC_SlotTooLong
 import numpy as np
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.labels import update_RTS_index
@@ -41,7 +37,43 @@ class LamSlot(Lamination):
     VERSION = 1
 
     # cf Methods.Machine.LamSlot.check
-    check = check
+    def check(self):
+        """Check that the Lamination object is correct
+
+        Parameters
+        ----------
+        self : LamSlot
+            A LamSlot object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        LSC_SlotTooLong
+            The Slot is too long for the lamination (HYoke <0)
+
+        LSC_OverlappingSlot
+            The Lamination has overlapping slot
+
+        """
+
+        super(type(self), self).check()
+
+        self.slot.check()
+
+        if self.comp_height_yoke() < 0:
+            raise LSC_SlotTooLong(
+                "The Slot is too long for the lamination " "(HYoke <0)"
+            )
+
+        """
+        Wt = self.slot.comp_tooth_widths()["WTooth_min"]
+
+        if Wt < 0:
+            raise LSC_OverlappingSlot("The Lamination has overlapping slot")
+        """
 
     # cf Methods.Machine.LamSlot.comp_angle_d_axis
     def comp_angle_d_axis(self):

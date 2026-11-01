@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW28
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,11 +17,16 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW28.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Methods.Slot.SlotW28 import (
+    S28_RboW0CheckError,
+    S28_ZsCheckError,
+    S28_R1R1CheckError,
+    S28_R1W3CheckError,
+)
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
@@ -228,7 +229,55 @@ class SlotW28(Slot):
         return [line for line in curve_list if line is not None]
 
     # cf Methods.Slot.SlotW28.check
-    check = check
+    def check(self):
+        """Check that the SlotW28 object is correct
+
+        Parameters
+        ----------
+        self : SlotW28
+            A SlotW28 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S28_RboW0CheckError
+            You must have W0/2 < Rbo
+        S28_R1W3CheckError
+            W3 is too high comparing to the lamination bore radius (Rbo)
+        S28_ZsCheckError
+            There are too many slots to match W3 and R1
+        """
+
+        Rbo = self.get_Rbo()
+
+        #    if self.R1 * 2 <= self.W0:
+        #        raise S28_WCheckError("You must have W0 < 2*R1")
+
+        if self.W0 * 0.5 / Rbo >= 1:
+            raise S28_RboW0CheckError("You must have W0/2 < Rbo")
+
+        if self.is_outwards():
+            R1 = Rbo + self.H0 + self.R1
+        else:
+            R1 = Rbo - self.H0
+
+        if self.W3 * 0.5 / R1 >= 1:
+            raise S28_R1W3CheckError(
+                "W3 is too high comparing to the lamination bore radius (Rbo)"
+            )
+
+        if self.R1 / R1 >= 1:
+            raise S28_R1R1CheckError(
+                "R1 is too high comparing to the lamination bore radius (Rbo)"
+            )
+
+        alpha = 2 * np.arcsin((2 * self.R1 + self.W3) * 0.5 / R1)
+
+        if alpha > 2 * np.pi / self.Zs:
+            raise S28_ZsCheckError("There are too many slots to match W3 and R1")
 
     # cf Methods.Slot.SlotW28.comp_angle_opening
     def comp_angle_opening(self):

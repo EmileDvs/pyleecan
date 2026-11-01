@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW13
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,16 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW13.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
+from pyleecan.Methods.Slot.SlotW13 import (
+    S13_H1rCheckError,
+    S13_W01CheckError,
+    S13_W12CheckError,
+)
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -308,7 +308,35 @@ class SlotW13(Slot):
         return surf_list
 
     # cf Methods.Slot.SlotW13.check
-    check = check
+    def check(self):
+        """Check that the SlotW13 object is correct
+
+        Parameters
+        ----------
+        self : SlotW13
+            A SlotW13 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S13_W01CheckError
+            You must have W0 <= W1
+        S13_W12CheckError
+            You must have W2 <= W1
+        S13_H1rCheckError
+            With H1 in radian, you must have H1 < pi/2
+        """
+        if self.W1 < self.W0:
+            raise S13_W01CheckError("You must have W0 <= W1")
+
+        if self.W1 < self.W2:
+            raise S13_W12CheckError("You must have W2 <= W1")
+
+        if self.H1_is_rad and self.H1 >= np.pi / 2:
+            raise S13_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # cf Methods.Slot.SlotW13.comp_angle_opening
     def comp_angle_opening(self):

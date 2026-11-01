@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc2
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,8 +17,8 @@ from pyleecan.Classes.Arc import Arc
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Arc2.check import check
 import numpy as np
+from pyleecan.Methods.Geometry.Arc2 import AngleArc2Error, PointArc2Error
 from pyleecan.Methods.Machine import ARC_NPOINT_D
 from pyleecan.Methods.Geometry.Arc2 import (
     NbPointArc2DError,
@@ -40,7 +36,36 @@ class Arc2(Arc):
     VERSION = 1
 
     # cf Methods.Geometry.Arc2.check
-    check = check
+    def check(self):
+        """assert that the arc is correct (begin != center)
+
+        Parameters
+        ----------
+        self : Arc2
+            An Arc2 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        PointArc2Error
+            The beginning point and the ending point of an Arc2
+            can't be the same
+        AngleArc2Error
+            An Arc2 can't have a null opening angle
+        """
+
+        if self.begin == self.center or (
+            abs(self.begin) == 0 and abs(self.center) == 0
+        ):
+            raise PointArc2Error
+            ("The beginning point and the center of an Arc2 can't be the same")
+        if self.angle == 0:
+            raise AngleArc2Error("An arc can't have a null opening angle")
+        if self.angle == 2 * np.pi:
+            raise AngleArc2Error("You can't draw a circle with an Arc2")
 
     # cf Methods.Geometry.Arc2.comp_length
     def comp_length(self):

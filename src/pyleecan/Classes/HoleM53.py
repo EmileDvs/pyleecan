@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM53
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,6 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM53.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Methods.Slot.HoleM53 import Slot53InterError
@@ -29,6 +24,13 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM53 import (
+    S53_W4CheckError,
+    S53_Rext0CheckError,
+    S53_W5CheckError,
+    S53_Rext1CheckError,
+    S53_NoneError,
+)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -425,7 +427,64 @@ class HoleM53(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM53.check
-    check = check
+    def check(self):
+        """Check that the HoleM53 object is correct
+
+        Parameters
+        ----------
+        self : HoleM53
+            A HoleM53 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S53_Rext0CheckError
+            You must have H0 < Rext
+        S53_Rext1CheckError
+            You must have H1 < Rext
+        S53_W4CheckError
+            You must have W4 < pi/2
+        S53_W5CheckError
+            You must have W5 >=0
+        """
+
+        # Check that everything is set
+        if self.W1 is None:
+            raise S53_NoneError("You must set W1 !")
+        elif self.W2 is None:
+            raise S53_NoneError("You must set W2 !")
+        elif self.W3 is None:
+            raise S53_NoneError("You must set W3 !")
+        elif self.W4 is None:
+            raise S53_NoneError("You must set W4 !")
+        elif self.H0 is None:
+            raise S53_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S53_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S53_NoneError("You must set H2 !")
+        elif self.H3 is None:
+            raise S53_NoneError("You must set H3 !")
+
+        Rext = self.get_Rext()
+
+        if Rext <= self.H0:
+            raise S53_Rext0CheckError("You must have H0 < Rext")
+
+        if Rext <= self.H1:
+            raise S53_Rext1CheckError("You must have H1 < Rext")
+
+        if np.pi / 2 <= self.W4:
+            raise S53_W4CheckError("You must have W4 < pi/2")
+
+        if self.comp_W5() < 0:
+            raise S53_W5CheckError("You must have W5 >=0")
+
+        if self.H2 < self.H3:
+            raise S53_W5CheckError("You must have H3 < H2")
 
     # cf Methods.Slot.HoleM53.comp_alpha
     def comp_alpha(self):

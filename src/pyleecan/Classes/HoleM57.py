@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM57
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,12 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM57.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM57 import S57_NoneError
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
@@ -387,7 +383,36 @@ class HoleM57(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM57.check
-    check = check
+    def check(self):
+        """Check that the HoleM57 object is correct
+
+        Parameters
+        ----------
+        self : HoleM57
+            A HoleM57 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        """
+        # Check that everything is set
+        if self.W0 is None:
+            raise S57_NoneError("You must set W0 !")
+        elif self.W1 is None:
+            raise S57_NoneError("You must set W1 !")
+        elif self.W2 is None:
+            raise S57_NoneError("You must set W2 !")
+        elif self.W3 is None:
+            raise S57_NoneError("You must set W3 !")
+        elif self.W4 is None:
+            raise S57_NoneError("You must set W4 !")
+        elif self.H1 is None:
+            raise S57_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S57_NoneError("You must set H2 !")
 
     # cf Methods.Slot.HoleM57.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):

@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotWind
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,6 @@ from pyleecan.Classes.LamSlot import LamSlot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.LamSlotWind.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.labels import (
@@ -34,6 +29,8 @@ from pyleecan.Functions.labels import (
     decode_label,
     BAR_LAB,
 )
+from pyleecan.Classes.Lamination import Lamination
+from pyleecan.Methods.Machine.LamSlotWind import LWC_SlotTooLong
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
@@ -45,7 +42,6 @@ from pyleecan.Methods.Simulation.Input import (
     PHASE_DIR_REF,
     ROT_DIR_REF,
 )
-from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
 from pyleecan.Classes.SlotW22 import SlotW22
 from pyleecan.Methods.Machine.LamSlotWind.plot import PHASE_COLORS
@@ -207,7 +203,44 @@ class LamSlotWind(LamSlot):
         return surf_list
 
     # cf Methods.Machine.LamSlotWind.check
-    check = check
+    def check(self):
+        """Check that the Lamination object is correct
+
+        Parameters
+        ----------
+        self :
+            A LamSlotWind object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        LWC_SlotTooLong
+            The Slot is too long for the lamination (HYoke <0)
+        LWC_MismatchPhase
+            The Winding and the Converter don't have the same number of phase
+        LWC_OverlappingSlot
+            The Lamination has overlapping slot
+        """
+
+        Lamination.check(self)
+
+        self.winding.conductor.check()
+        self.slot.check()
+
+        if self.comp_height_yoke() < 0:
+            raise LWC_SlotTooLong(
+                "The Slot is too long for the lamination " "(HYoke <0)"
+            )
+
+        """
+        Wt = self.slot.comp_tooth_widths()["WTooth_min"]
+
+        if Wt < 0:
+            raise LWC_OverlappingSlot("The Lamination has overlapping slot")
+        """
 
     # cf Methods.Machine.LamSlotWind.comp_angle_d_axis
     def comp_angle_d_axis(self, is_plot=False):

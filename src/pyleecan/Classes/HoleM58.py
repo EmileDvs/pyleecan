@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM58
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,12 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM58.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM58 import S58_NoneError, S58_WCheckError
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -310,7 +306,45 @@ class HoleM58(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM58.check
-    check = check
+    def check(self):
+        """Check that the HoleM58 object is correct
+
+        Parameters
+        ----------
+        self : HoleM58
+            A HoleM58 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        S58_WCheckError
+            You must have W1+W2 <= W0
+        """
+        # Check that everything is set
+        if self.W0 is None:
+            raise S58_NoneError("You must set W0 !")
+        elif self.W1 is None:
+            raise S58_NoneError("You must set W1 !")
+        elif self.W2 is None:
+            raise S58_NoneError("You must set W2 !")
+        elif self.W3 is None:
+            raise S58_NoneError("You must set W3 !")
+        elif self.R0 is None:
+            raise S58_NoneError("You must set R0 !")
+        elif self.H0 is None:
+            raise S58_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S58_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S58_NoneError("You must set H2 !")
+
+        Rext = self.get_Rext()
+
+        if self.W0 < self.W1 + self.W2:
+            raise S58_WCheckError("You must have W1+W2 <= W0")
 
     # cf Methods.Slot.HoleM58.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):

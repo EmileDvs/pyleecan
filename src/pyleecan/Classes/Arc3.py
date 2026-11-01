@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc3
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,7 @@ from pyleecan.Classes.Arc import Arc
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Arc3.check import check
+from pyleecan.Methods.Geometry.Arc3 import PointArc3Error
 import numpy as np
 from pyleecan.Methods.Machine import ARC_NPOINT_D
 from pyleecan.Methods.Geometry.Arc3 import (
@@ -42,7 +38,31 @@ class Arc3(Arc):
     VERSION = 1
 
     # cf Methods.Geometry.Arc3.check
-    check = check
+    def check(self):
+        """assert that the arc is correct (begin != end)
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        PointArc3Error
+            The beginning point and the ending point of an Arc3
+            can't be the same
+
+        """
+
+        if self.begin == self.end or (abs(self.begin) == 0 and abs(self.end) == 0):
+            raise PointArc3Error(
+                "The beginning point and the ending point of an "
+                "Arc3 can't be the same"
+            )
 
     # cf Methods.Geometry.Arc3.comp_length
     def comp_length(self):

@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW14
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,10 +17,10 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW14.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Methods.Slot.SlotW14 import S14_Rbo0CheckError, S14_Rbo1CheckError
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
@@ -208,7 +204,41 @@ class SlotW14(Slot):
         return [line for line in curve_list if line is not None]
 
     # cf Methods.Slot.SlotW14.check
-    check = check
+    def check(self):
+        """Check that the SlotW14 object is correct
+
+        Parameters
+        ----------
+        self : SlotW14
+            A SlotW14 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S14_Rbo0CheckError
+            You must have W0/2 < Rbo
+        S14_Rbo1CheckError
+            W3 is too high comparing to the lamination bore radius (Rbo)
+        """
+
+        Rbo = self.get_Rbo()
+        H1 = self.get_H1()
+
+        if self.W0 * 0.5 / Rbo >= 1:
+            raise S14_Rbo0CheckError("You must have W0/2 < Rbo")
+
+        if self.is_outwards():
+            R1 = Rbo + self.H0 + H1
+        else:
+            R1 = Rbo - self.H0 - H1
+
+        if self.W3 * 0.5 / R1 >= 1:
+            raise S14_Rbo1CheckError(
+                "W3 is too high comparing to the lamination bore radius (Rbo)"
+            )
 
     # cf Methods.Slot.SlotW14.comp_angle_opening
     def comp_angle_opening(self):

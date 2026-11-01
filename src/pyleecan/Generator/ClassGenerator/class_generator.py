@@ -1,4 +1,5 @@
 import ast
+import builtins
 import warnings
 from os.path import dirname, join
 from textwrap import indent
@@ -18,6 +19,223 @@ from ...Generator.ClassGenerator.str_method_generator import generate_str
 from ...Generator.read_fct import (
     find_import_type,
 )
+
+
+def _get_exception_classes(module):
+    """Return exception classes declared directly in a module."""
+    classes = {
+        node.name: node for node in module.body if isinstance(node, ast.ClassDef)
+    }
+
+    def is_exception_class(node, visited=()):
+        if node.name in visited:
+            return False
+        for base in node.bases:
+            base_name = (
+                base.id
+                if isinstance(base, ast.Name)
+                else base.attr if isinstance(base, ast.Attribute) else None
+            )
+            if base_name in {"Exception", "BaseException"} or (
+                base_name is not None and "Error" in base_name
+            ):
+                return True
+            if base_name in classes and is_exception_class(
+                classes[base_name], visited + (node.name,)
+            ):
+                return True
+        return False
+
+    return {name: node for name, node in classes.items() if is_exception_class(node)}
+
+
+def _get_error_class_fingerprint(path_to_gen, module_name, class_name, visited=()):
+    """Return the definition of an exported exception class, if available."""
+    if module_name in visited:
+        return None
+    module_parts = module_name.split(".")
+    if len(module_parts) < 3 or module_parts[1] != "Methods":
+        return None
+    init_path = join(dirname(path_to_gen), *module_parts[1:], "__init__.py")
+    try:
+        with open(init_path, encoding="utf-8") as init_file:
+            module = ast.parse(init_file.read(), filename=init_path)
+    except FileNotFoundError:
+        return None
+    class_node = _get_exception_classes(module).get(class_name)
+    if class_node is not None:
+        return ast.dump(class_node, include_attributes=False)
+
+    for node in module.body:
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        for alias in node.names:
+            if (alias.asname or alias.name) != class_name or alias.name == "*":
+                continue
+            imported_module = ".".join(_get_absolute_import_module(node, module_parts))
+            return _get_error_class_fingerprint(
+                path_to_gen,
+                imported_module,
+                alias.name,
+                visited + (module_name,),
+            )
+    return None
+
+
+def _same_error_class_import(path_to_gen, first_identity, second_identity):
+    """Check whether two imports refer to identically defined exception classes."""
+    if (
+        first_identity[0] != "ImportFrom"
+        or second_identity[0] != "ImportFrom"
+        or first_identity[3] != second_identity[3]
+        or first_identity[4] != second_identity[4]
+    ):
+        return False
+    first_fingerprint = _get_error_class_fingerprint(
+        path_to_gen, first_identity[2], first_identity[3]
+    )
+    return first_fingerprint is not None and first_fingerprint == (
+        _get_error_class_fingerprint(
+            path_to_gen, second_identity[2], second_identity[3]
+        )
+    )
+
+
+def _expand_error_wildcard_imports(
+    module, method_node, used_names, path_to_gen, source_package
+):
+    """Resolve wildcard imports whose used names are package exception classes."""
+    method_local_names = {
+        node.id
+        for node in ast.walk(method_node)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del))
+    }
+    method_local_names.update(
+        argument.arg
+        for argument in (
+            method_node.args.posonlyargs
+            + method_node.args.args
+            + method_node.args.kwonlyargs
+        )
+    )
+    module_bindings = set()
+    wildcard_nodes = []
+    for node in module.body:
+        if isinstance(node, ast.Import):
+            module_bindings.update(
+                alias.asname or alias.name.split(".")[0] for alias in node.names
+            )
+        elif isinstance(node, ast.ImportFrom):
+            if any(alias.name == "*" for alias in node.names):
+                wildcard_nodes.append(node)
+            else:
+                module_bindings.update(
+                    alias.asname or alias.name for alias in node.names
+                )
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            module_bindings.add(node.name)
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            module_bindings.update(
+                child.id
+                for target in targets
+                for child in ast.walk(target)
+                if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Store)
+            )
+
+    unresolved_names = (
+        used_names - method_local_names - module_bindings - set(dir(builtins))
+    )
+    if not wildcard_nodes:
+        return module.body, None
+
+    providers = {}
+    package_exports = {}
+    for node in wildcard_nodes:
+        module_parts = _get_absolute_import_module(node, source_package)
+        if len(module_parts) < 3 or module_parts[1] != "Methods":
+            return (
+                None,
+                "module uses a wildcard import whose names cannot be resolved safely",
+            )
+        init_path = join(dirname(path_to_gen), *module_parts[1:], "__init__.py")
+        try:
+            with open(init_path, encoding="utf-8") as init_file:
+                package_module = ast.parse(init_file.read(), filename=init_path)
+        except FileNotFoundError:
+            return None, "wildcard import package initializer is missing"
+
+        exception_classes = _get_exception_classes(package_module)
+        error_fingerprints = {
+            name: ast.dump(node, include_attributes=False)
+            for name, node in exception_classes.items()
+        }
+        for statement in package_module.body:
+            if isinstance(statement, ast.ImportFrom):
+                for alias in statement.names:
+                    name = alias.asname or alias.name
+                    if alias.name != "*" and "Error" in name:
+                        error_fingerprints[name] = _get_error_class_fingerprint(
+                            path_to_gen, ".".join(module_parts), name
+                        )
+            elif isinstance(statement, ast.Import):
+                for alias in statement.names:
+                    name = alias.asname or alias.name.split(".")[0]
+                    if "Error" in name:
+                        error_fingerprints[name] = None
+        package_name = ".".join(module_parts)
+        package_exports[package_name] = error_fingerprints
+        for name in unresolved_names.intersection(error_fingerprints):
+            providers.setdefault(name, []).append(package_name)
+
+    unresolved_names.difference_update(providers)
+    if unresolved_names:
+        return (
+            None,
+            "module uses a wildcard import whose names cannot be resolved safely",
+        )
+
+    imports_by_package = {}
+    for name, package_names in providers.items():
+        package_names = list(dict.fromkeys(package_names))
+        canonical_package = package_names[0]
+        canonical_fingerprint = package_exports[canonical_package].get(name)
+        for package_name in package_names[1:]:
+            candidate_fingerprint = package_exports[package_name].get(name)
+            if (
+                canonical_fingerprint is None
+                or candidate_fingerprint is None
+                or canonical_fingerprint != candidate_fingerprint
+            ):
+                return (
+                    None,
+                    "wildcard import name '"
+                    + name
+                    + "' refers to different class errors",
+                )
+        imports_by_package.setdefault(canonical_package, []).append(
+            ast.alias(name=name)
+        )
+
+    replacement_nodes = []
+    for package_name, aliases in imports_by_package.items():
+        replacement_nodes.append(
+            ast.ImportFrom(
+                module=package_name,
+                names=aliases,
+                level=0,
+            )
+        )
+    body = []
+    inserted_imports = False
+    for node in module.body:
+        if node in wildcard_nodes:
+            if not inserted_imports:
+                body.extend(replacement_nodes)
+                inserted_imports = True
+        else:
+            body.append(node)
+    return body, None
 
 
 def _get_method_source(
@@ -53,11 +271,23 @@ def _get_method_source(
     ):
         return None, [], [], [], "module has a __future__ import"
 
+    source_package = [
+        soft_name,
+        "Methods",
+        *[part for part in (class_pack or "").split(".") if part],
+        class_name,
+        *meth.split(".")[:-1],
+    ]
     used_names = {
         node.id
         for node in ast.walk(method_node)
         if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
     }
+    module.body, wildcard_reason = _expand_error_wildcard_imports(
+        module, method_node, used_names, path_to_gen, source_package
+    )
+    if wildcard_reason is not None:
+        return None, [], [], [], wildcard_reason
     if any(isinstance(node, ast.Global) for node in ast.walk(method_node)):
         return None, [], [], [], "method declares module globals"
 
@@ -229,13 +459,6 @@ def _get_method_source(
         for node in ast.walk(assignment.value)
         if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
     } - hoisted_names
-    source_package = [
-        soft_name,
-        "Methods",
-        *[part for part in (class_pack or "").split(".") if part],
-        class_name,
-        *meth.split(".")[:-1],
-    ]
     target_package = [soft_name, "Classes"]
     method_imports = []
     import_used_names = used_names | extra_used_names
@@ -526,20 +749,18 @@ def _prepare_class_methods(
                 )
                 identity = _get_import_identity(import_node, alias, target_package)
                 existing = import_bindings.get(binding)
-                if (existing is not None and existing != identity) or (
-                    binding in candidate_bindings
-                    and candidate_bindings[binding] != identity
-                ):
-                    conflict = True
-                    conflict_name = binding
-                    conflict_imports = (
-                        (
-                            existing
-                            if existing is not None
-                            else candidate_bindings[binding]
-                        ),
-                        identity,
-                    )
+                candidate = candidate_bindings.get(binding)
+                for previous in (existing, candidate):
+                    if previous is None or previous == identity:
+                        continue
+                    if _same_error_class_import(path_to_gen, previous, identity):
+                        identity = previous
+                    else:
+                        conflict = True
+                        conflict_name = binding
+                        conflict_imports = (previous, identity)
+                        break
+                if conflict:
                     break
                 candidate_bindings[binding] = identity
             if conflict:

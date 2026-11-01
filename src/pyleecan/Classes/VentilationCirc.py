@@ -4,11 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/VentilationCirc
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - build_geometry: module uses a wildcard import whose names cannot be resolved safely
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -22,9 +17,12 @@ from pyleecan.Classes.Hole import Hole
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.VentilationCirc.build_geometry import build_geometry
-from pyleecan.Methods.Slot.VentilationCirc.check import check
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Methods.Slot.VentilationCirc import (
+    CircleBuildGeometryError,
+    VentilationCircInstanceError,
+)
+from pyleecan.Classes.Circle import Circle
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
@@ -77,9 +75,87 @@ class VentilationCirc(Hole):
         return point_dict
 
     # cf Methods.Slot.VentilationCirc.build_geometry
-    build_geometry = build_geometry
+    def build_geometry(self, alpha=0, delta=0):
+        """Compute the curve needed to plot the ventilations
+
+        Parameters
+        ----------
+        self : VentilationCirc
+            A VentilationCirc object
+        alpha : float
+            Angle for rotation (Default value = 0) [rad]
+        delta : complex
+            Complex for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list: list
+            A list of Circle
+
+        """
+        lam_label = self.parent.get_label()
+        R_id, surf_type = self.get_R_id()
+        RTS_id = "R" + str(R_id) + "-T0-S0"
+        vent_label = lam_label + "_" + surf_type + "_" + RTS_id
+
+        # checking if the param have good type
+        if type(alpha) not in [int, float]:
+            raise CircleBuildGeometryError(
+                "The parameter 'alpha' must be an int or float"
+            )
+        if type(delta) not in [complex, int, float]:
+            raise CircleBuildGeometryError(
+                "The parameter 'delta' must be a complex or float or int number"
+            )
+
+        surf_list = list()
+        # Modulo on Alpha0 for sym
+        Alpha0 = self.Alpha0 % (2 * np.pi / self.Zh)
+        # The center
+        Zc = self.H0 * np.exp(1j * Alpha0)
+        # the radius of the circle on the VentilationCirc
+        R = self.D0 / 2
+        surf_list.append(
+            Circle(
+                point_ref=Zc,
+                label=vent_label,
+                radius=R,
+                center=Zc,
+            )
+        )
+
+        return surf_list
+
     # cf Methods.Slot.VentilationCirc.check
-    check = check
+    def check(self):
+        """Make sure that the ventilation parameters are correctly set
+
+        Parameters
+        ----------
+        self : VentilationCirc
+            A VentilationCirc object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        VentilationCircInstanceError
+            Zh must be an integer
+            H0 must be a float ot int
+            D0 must be a float or int
+            Alpha0 must be a float ot int
+        """
+
+        if not isinstance(self.Zh, (int, np.int32)):
+            raise VentilationCircInstanceError("Zh must be an integer")
+        if not isinstance(self.H0, (float, int)):
+            raise VentilationCircInstanceError("H0 must be a float ot int ")
+        if not isinstance(self.D0, (float, int)):
+            raise VentilationCircInstanceError("D0 must be a float or int ")
+        if not isinstance(self.Alpha0, (float, int)):
+            raise VentilationCircInstanceError("Alpha0 must be a float ot int")
 
     # cf Methods.Slot.VentilationCirc.comp_radius
     def comp_radius(self):

@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM51
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,13 +17,18 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM51.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM51 import (
+    S51_NoneError,
+    S51_WCheckError,
+    S51_RHCheckError,
+    S51_AlphaCheckError,
+)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -411,7 +412,54 @@ class HoleM51(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM51.check
-    check = check
+    def check(self):
+        """Check that the HoleM51 object is correct
+
+        Parameters
+        ----------
+        self : HoleM51
+            A HoleM51 object
+
+        Returns
+        -------
+        None
+        """
+
+        # Check that everything is set
+        if self.W0 is None:
+            raise S51_NoneError("You must set W0 !")
+        elif self.W1 is None:
+            raise S51_NoneError("You must set W1 !")
+        elif self.W2 is None:
+            raise S51_NoneError("You must set W2 !")
+        elif self.W3 is None:
+            raise S51_NoneError("You must set W3 !")
+        elif self.W4 is None:
+            raise S51_NoneError("You must set W4 !")
+        elif self.W5 is None:
+            raise S51_NoneError("You must set W5 !")
+        elif self.W6 is None:
+            raise S51_NoneError("You must set W6 !")
+        elif self.W7 is None:
+            raise S51_NoneError("You must set W7 !")
+        elif self.H0 is None:
+            raise S51_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S51_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S51_NoneError("You must set H2 !")
+
+        Rext = self.get_Rext()
+        alpha = self.comp_alpha()
+
+        if self.W0 < (self.W2 + self.W3):
+            raise S51_WCheckError("You must have W2+W3 < W0")
+
+        if Rext < self.H0 + self.H2:
+            raise S51_RHCheckError("You must have H0+H2 < Rext")
+
+        if alpha > np.pi / 2:
+            raise S51_AlphaCheckError("You must have alpha < pi/2")
 
     # cf Methods.Slot.HoleM51.comp_alpha
     def comp_alpha(self):

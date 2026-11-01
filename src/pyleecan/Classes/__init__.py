@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-from os.path import dirname, join
 from json import load
+from os.path import dirname, join
 
 
 def get_class_dict():
@@ -11,3 +10,11 @@ def get_class_dict():
         class_dict = load(class_dict_file)
 
     return class_dict
+
+
+class NotImplementedYetError(Exception):
+    """NotImplementedYetError"""
+
+
+class ParentMissingError(Exception):
+    """ParentMissingError"""

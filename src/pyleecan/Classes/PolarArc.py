@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/PolarArc
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,7 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.PolarArc.check import check
+from pyleecan.Methods.Geometry.PolarArc import AnglePolarArcError
 import numpy as np
 from pyleecan.Methods.Geometry.PolarArc.discretize import NbPointPolarArcError
 from pyleecan.Classes.Arc1 import Arc1
@@ -43,7 +39,26 @@ class PolarArc(Surface):
     PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
     # cf Methods.Geometry.PolarArc.check
-    check = check
+    def check(self):
+        """check if the PolarArc object is correct
+
+        Parameters
+        ----------
+        self : PolarArc
+            a PolarArc Object
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        AnglePolarArcError
+            The angle of a polar arc must be different to 0
+
+        """
+        if self.angle == 0:
+            raise AnglePolarArcError("The angle of a polar arc must be different to 0")
 
     # cf Methods.Geometry.PolarArc.comp_length
     # -*-- coding: utf-8 -*

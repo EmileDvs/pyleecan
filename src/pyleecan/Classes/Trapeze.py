@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Trapeze
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,7 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Trapeze.check import check
+from pyleecan.Methods.Geometry.Trapeze import TrapezeError
 import numpy as np
 from pyleecan.Classes.Segment import Segment
 from matplotlib.patches import Polygon
@@ -41,7 +37,32 @@ class Trapeze(Surface):
     PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
     # cf Methods.Geometry.Trapeze.check
-    check = check
+    def check(self):
+        """Check if the Trapeze object is correct
+
+        Parameters
+        ----------
+        self : Trapeze
+            a Trapeze Object
+
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        TrapezeError
+            the W1 base of Trapeze must be greater than 0
+        TrapezeError
+            the W2 base of Trapeze must be greater than 0
+
+        """
+        if self.W1 <= 0:
+            raise TrapezeError("the W1 base of Trapeze must be greater than 0")
+
+        if self.W2 <= 0:
+            raise TrapezeError("the W2 base of Trapeze must be greater than 0")
 
     # cf Methods.Geometry.Trapeze.comp_length
     # -*-- coding: utf-8 -*

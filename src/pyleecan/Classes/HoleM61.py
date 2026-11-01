@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM61
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,6 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM61.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
@@ -29,6 +24,7 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM61 import S61_NoneError, S61_WCheckError
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -527,7 +523,47 @@ class HoleM61(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM61.check
-    check = check
+    def check(self):
+        """Check that the HoleM61 object is correct
+
+        Parameters
+        ----------
+        self : HoleM61
+            A HoleM61 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        S61_WCheckError
+            You must have H1 < H0
+            You must have H2 < H0
+        """
+        # Check that everything is set
+        if self.W0 is None:
+            raise S61_NoneError("You must set W0 !")
+
+        # add possibility to create hole without magnet
+        # elif self.W1 is None:
+        #    raise S61_NoneError("You must set W1 !")
+        # elif self.W2 is None:
+        #    raise S61_NoneError("You must set W2 !")
+        elif self.W3 is None:
+            raise S61_NoneError("You must set W3 !")
+        elif self.H0 is None:
+            raise S61_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S61_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S61_NoneError("You must set H2 !")
+
+        if self.H1 > self.H0:
+            raise S61_WCheckError("You must have H1 < H0")
+
+        if self.H2 > self.H0:
+            raise S61_WCheckError("You must have H2 < H0")
 
     # cf Methods.Slot.HoleM61.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):

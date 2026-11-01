@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Lamination
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,6 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.Lamination.check import check
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.SurfRing import SurfRing
 from pyleecan.Functions.labels import (
@@ -45,6 +40,11 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
 from pyleecan.Methods.Machine.Lamination.build_yoke_side_line import merge_line_list
+from pyleecan.Methods.Machine.Lamination import (
+    LC_RadiusError,
+    LC_VentYokeIn,
+    LC_VentYokeOut,
+)
 from pyleecan.Classes.OutGeoLam import OutGeoLam
 from math import gcd
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
@@ -596,7 +596,57 @@ class Lamination(FrozenClass):
         return right_list, left_list
 
     # cf Methods.Machine.Lamination.check
-    check = check
+    def check(self):
+        """Check that the Lamination object is correct
+
+        Parameters
+        ----------
+        self :
+            A Lamination object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        LC_VentYokeIn
+            The ventilation ducts cross the yoke internal radius
+        LC_VentYokeOut
+            The ventilation ducts cross the yoke external radius
+        LC_RadiusError
+            The internal radius is greater than the external one
+
+
+        """
+
+        if self.Rint > self.Rext:
+            raise LC_RadiusError(
+                "The internal radius is greater than the " "external one"
+            )
+
+        for vent in self.axial_vent:
+            vent.check()
+
+            # The ventilation duct must be on the yoke
+            if vent.Zh > 0:
+                if self.is_internal:
+                    Rin = self.Rint
+                    Rout = self.Rint + self.comp_height_yoke()
+                else:
+                    Rin = self.Rint + self.comp_height_yoke()
+                    Rout = self.Rext
+
+                (Rmin, Rmax) = vent.comp_radius()
+
+                if Rmin < Rin:
+                    raise LC_VentYokeIn(
+                        "The ventilation ducts cross the yoke " "internal radius"
+                    )
+                if Rmax > Rout:
+                    raise LC_VentYokeOut(
+                        "The ventilation ducts cross the yoke " "external radius"
+                    )
 
     # cf Methods.Machine.Lamination.comp_angle_q_axis
     def comp_angle_q_axis(self):

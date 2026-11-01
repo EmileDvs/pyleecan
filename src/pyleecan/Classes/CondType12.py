@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType12
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,8 +17,8 @@ from pyleecan.Classes.Conductor import Conductor
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.CondType12.check import check
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Methods.Machine.CondType12 import C12_WireDontFit
 from pyleecan.Methods.Machine.CondType12.plot import NotPlotableError
 from matplotlib.patches import Circle, Patch
 from pyleecan.Functions.init_fig import init_fig
@@ -43,7 +39,36 @@ class CondType12(Conductor):
     COND_INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][2].copy()
 
     # cf Methods.Machine.CondType12.check
-    check = check
+    def check(self):
+        """Check that the Conductor object is correct
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        C12_WireDontFit
+            The wire is too big to fit in the conductor
+        C12_WireDontFit
+            The wires are too big to fit in the conductor
+        """
+
+        Swire = (
+            np.power((self.Wwire + 2 * self.Wins_wire) / 2.0, 2) * np.pi * self.Nwppc
+        )
+        Scond = self.comp_surface()
+
+        if Swire > Scond:
+            if self.Nwppc == 1:
+                raise C12_WireDontFit("The wire is too big to fit in the conductor")
+            else:
+                raise C12_WireDontFit("The wires are too big to fit in the conductor")
 
     # cf Methods.Machine.CondType12.comp_height
     def comp_height(self):

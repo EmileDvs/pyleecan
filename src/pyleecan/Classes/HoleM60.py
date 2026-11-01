@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM60
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,12 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM60.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM60 import S60_WCheckError, S60_NoneError
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
@@ -327,7 +323,39 @@ class HoleM60(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM60.check
-    check = check
+    def check(self):
+        """Check that the HoleM60 object is correct
+
+        Parameters
+        ----------
+        self : HoleM60
+            A HoleM60 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        S60_WCheckError
+            You must have W1+H0 <= W2
+        """
+        # Check that everything is set
+        if self.W0 is None:
+            raise S60_NoneError("You must set W0 !")
+        elif self.W1 is None:
+            raise S60_NoneError("You must set W1 !")
+        elif self.W2 is None:
+            raise S60_NoneError("You must set W2 !")
+        elif self.W3 is None:
+            raise S60_NoneError("You must set W3 !")
+        elif self.H0 is None:
+            raise S60_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S60_NoneError("You must set H1 !")
+
+        if (self.W1 + self.H0) > self.W2:
+            raise S60_WCheckError("You must have (W1 + H0) <= W2")
 
     # cf Methods.Slot.HoleM60.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):

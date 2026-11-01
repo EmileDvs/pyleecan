@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW25
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,12 +17,12 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW25.check import check
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
+from pyleecan.Methods.Slot.SlotW25 import S25_HWCheckError, S25_W4CheckError
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -297,7 +293,44 @@ class SlotW25(Slot):
         return surf_list
 
     # cf Methods.Slot.SlotW25.check
-    check = check
+    def check(self):
+        """Check that the SlotW25 object is correct
+
+        Parameters
+        ----------
+        self : SlotW25
+            A SlotW25 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S25_W4CheckError
+            The teeth are too wide, reduce Zs or W4
+        S25_HWCheckError
+            The teeth are too wide, reduce Zs, H2 or W3
+
+        """
+        Rbo = self.get_Rbo()
+
+        if self.H1 == 0:
+            raise S25_W4CheckError("You must have H1>0 (use Slot 24 for H1=0)")
+        if self.H2 == 0:
+            raise S25_W4CheckError("You must have H2>0 (use Slot 24 for H2=0)")
+        if self.W4 == self.W3:
+            raise S25_W4CheckError("You must have W4 != W3 (use Slot 24 for W4=W3)")
+
+        if 2 * np.arcsin(self.W4 / (2 * Rbo)) > 2 * np.pi / self.Zs:
+            raise S25_W4CheckError("The teeth are too wide, reduce Zs or W4")
+
+        if (
+            not self.is_outwards()
+            and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2 - self.H1))
+            > 2 * np.pi / self.Zs
+        ):
+            raise S25_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
 
     # cf Methods.Slot.SlotW25.comp_angle_opening
     def comp_angle_opening(self):

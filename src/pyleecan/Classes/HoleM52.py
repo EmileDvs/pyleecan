@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM52
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,11 +17,16 @@ from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.HoleM52.check import check
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Methods.Slot.HoleM52 import (
+    S52_NoneError,
+    S52_alphaCheckError,
+    S52_H12CheckError,
+    S52_W1CheckError,
+)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -207,7 +208,52 @@ class HoleM52(HoleMag):
         return surf_list
 
     # cf Methods.Slot.HoleM52.check
-    check = check
+    def check(self):
+        """Check that the HoleM52 object is correct
+
+        Parameters
+        ----------
+        self : HoleM52
+            A HoleM52 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S52_H12CheckError
+            You must have H2 < H1
+        S52_alphaCheckError
+            The teeth are too wide for the lamination (reduce W3 or H0)
+        S52_W1CheckError
+            W1 is <=0, you must reduce W0 or W3
+        """
+
+        # Check that everything is set
+        if self.W0 is None:
+            raise S52_NoneError("You must set W0 !")
+        elif self.W3 is None:
+            raise S52_NoneError("You must set W3 !")
+        elif self.H0 is None:
+            raise S52_NoneError("You must set H0 !")
+        elif self.H1 is None:
+            raise S52_NoneError("You must set H1 !")
+        elif self.H2 is None:
+            raise S52_NoneError("You must set H2 !")
+
+        if self.H2 >= self.H1:
+            raise S52_H12CheckError("You must have H2 < H1")
+
+        alpha = self.comp_alpha()
+        if alpha <= 0:
+            raise S52_alphaCheckError(
+                "The teeth are too wide for the lamination (reduce W3 or H0)"
+            )
+
+        W1 = self.comp_W1()
+        if W1 <= 0:
+            raise S52_W1CheckError("W1 is <=0, you must reduce W0 or W3")
 
     # cf Methods.Slot.HoleM52.comp_alpha
     def comp_alpha(self):

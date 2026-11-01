@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Segment
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,7 @@ from pyleecan.Classes.Line import Line
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Segment.check import check
+from pyleecan.Methods.Geometry.Segment import PointSegmentError
 from pyleecan.Methods.Geometry.Segment.comp_distance import distance_numpy
 import numpy as np
 from pyleecan.Methods.Machine import LINE_NPOINT_D
@@ -45,7 +41,30 @@ class Segment(Line):
     VERSION = 1
 
     # cf Methods.Geometry.Segment.check
-    check = check
+    def check(self):
+        """assert that the line is correct (begin != end)
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        PointSegmentError
+            The beginning point and the ending point of an Segment
+            can't be the same
+
+        """
+        if self.begin == self.end or (abs(self.begin) == 0 and abs(self.end) == 0):
+            raise PointSegmentError(
+                "The beginning point and the ending point of "
+                "a Segment can't be the same"
+            )
 
     # cf Methods.Geometry.Segment.comp_distance
     def comp_distance(self, Z):

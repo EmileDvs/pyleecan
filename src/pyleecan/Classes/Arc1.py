@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc1
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - check: module uses a wildcard import whose names cannot be resolved safely
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,7 +17,7 @@ from pyleecan.Classes.Arc import Arc
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Arc1.check import check
+from pyleecan.Methods.Geometry.Arc1 import RadiusArc1Error, PointArc1Error
 import numpy as np
 from pyleecan.Methods.Machine import ARC_NPOINT_D
 from pyleecan.Methods.Geometry.Arc1 import (
@@ -40,7 +36,36 @@ class Arc1(Arc):
     VERSION = 1
 
     # cf Methods.Geometry.Arc1.check
-    check = check
+    def check(self):
+        """assert that the arc is correct (begin != end; radius !=0)
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        PointArc1Error
+            The beginning point and the ending point of an Arc1
+            can't be the same
+        RadiusArc1Error
+            An Arc1 can't have a null radius
+
+        """
+
+        if self.begin == self.end or (abs(self.begin) == 0 and abs(self.end) == 0):
+            raise PointArc1Error(
+                "The beginning point and the ending "
+                + "point of an Arc1 can't be "
+                + "the same"
+            )
+        if self.radius == 0:
+            raise RadiusArc1Error("An Arc1 can't have a null radius")
 
     # cf Methods.Geometry.Arc1.comp_length
     def comp_length(self):
