@@ -7,7 +7,6 @@
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
 # - check: module uses a wildcard import whose names cannot be resolved safely
-# - plot_side: import name 'SCR_COLOR' refers to different sources (pyleecan.Methods.Machine.LamSquirrelCage.plot.SCR_COLOR and pyleecan.Methods.Machine.LamSquirrelCage.plot_side.SCR_COLOR)
 
 from os import linesep
 from sys import getsizeof
@@ -23,15 +22,14 @@ from pyleecan.Classes.LamSlotWind import LamSlotWind
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.LamSquirrelCage.check import check
-from pyleecan.Methods.Machine.LamSquirrelCage.plot_side import plot_side
 from pyleecan.Functions.labels import WIND_LAB, BAR_LAB
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.load import import_class
-from pyleecan.Methods.Machine.LamSquirrelCage.plot import SCR_COLOR
-from matplotlib.patches import Patch, Wedge
+from matplotlib.patches import Patch, Wedge, Rectangle
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 from pyleecan.Classes.SlotW22 import SlotW22
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import (
@@ -52,6 +50,10 @@ class LamSquirrelCage(LamSlotWind):
     """squirrel cages lamination"""
 
     VERSION = 1
+    SCR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SCR_COLOR"]
+    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
+    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
+    BAR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["BAR_COLOR"]
 
     # cf Methods.Machine.LamSquirrelCage.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
@@ -405,7 +407,7 @@ class LamSquirrelCage(LamSlotWind):
                         0,
                         360 / sym,
                         width=self.Hscr,
-                        color=SCR_COLOR,
+                        color=self.SCR_COLOR,
                     )
                 )  # Full ring
             except:
@@ -430,7 +432,7 @@ class LamSquirrelCage(LamSlotWind):
             for patch in patches:
                 ax.add_patch(patch)
             if "Short Circuit Ring" not in label_leg:
-                patch_leg.append(Patch(color=SCR_COLOR))
+                patch_leg.append(Patch(color=self.SCR_COLOR))
                 label_leg.append("Short Circuit Ring")
 
             ax.legend(patch_leg, label_leg)
@@ -616,7 +618,170 @@ class LamSquirrelCage(LamSlotWind):
             return fig, ax
 
     # cf Methods.Machine.LamSquirrelCage.plot_side
-    plot_side = plot_side
+    def plot_side(self, fig=None, ax=None, is_show_fig=True, save_path=None):
+        """Plot the side view of the Lamination in a matplotlib fig
+        (Z axis left to right)
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+        is_show_fig : bool
+            To call show at the end of the method
+        save_path : str
+            full path including folder, name and extension of the file to save if save_path is not None
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+        """
+
+        # Lamination and ventilation ducts patches
+        (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax)
+
+        patches = list()  # List of patches to draw the lamination
+        if self.is_stator:
+            lam_color = self.STATOR_COLOR
+        else:
+            lam_color = self.ROTOR_COLOR
+
+        # Comp all dimensions
+        Lt = self.comp_length()
+        Hs = self.slot.comp_height()
+        Ha = self.slot.comp_height_active()
+        Ho = Hs - Ha
+        Le = self.winding.Lewout
+        Lscr = self.Lscr
+        Hscr = self.Hscr
+
+        # Comp point coordinates
+        ZLamExt = -Lt / 2 - 1j * self.Rext  # Bottom Lamination Ext
+        ZLamInt = -Lt / 2 + 1j * self.Rint  # Bottom Lamination Int
+        ZBarTopR = Lt / 2 + 1j * (self.Rext - Hs)  # Top bar right
+        ZBarBotR = Lt / 2 + 1j * (-self.Rext + Ho)  # Bottom bar right
+        ZBarTopL = -Lt / 2 - Le + 1j * (self.Rext - Hs)  # Top bar left
+        ZBarBotL = -Lt / 2 - Le + 1j * (-self.Rext + Ho)  # Bottom bar left
+        ZscrRight = (
+            Lt / 2 + Le + 1j * (-self.Rext + Ho + Ha / 2 - Hscr / 2)
+        )  # Short Circuit Ring Right
+        ZscrLeft = (
+            -Lt / 2 - Le - Lscr + 1j * (-self.Rext + Ho + Ha / 2 - Hscr / 2)
+        )  # Short Circuit Ring Right
+
+        # Draw Lamination rectangle(s)
+        if self.Rint == 0:
+            patches.append(
+                Rectangle(
+                    xy=(ZLamExt.real, ZLamExt.imag),
+                    width=Lt,
+                    height=2 * self.Rext,
+                    color=lam_color,
+                )
+            )
+        else:
+            patches.append(  # Left
+                Rectangle(
+                    xy=(ZLamExt.real, ZLamExt.imag),
+                    width=Lt,
+                    height=self.Rext - self.Rint,
+                    color=lam_color,
+                )
+            )
+            patches.append(  # Right
+                Rectangle(
+                    xy=(ZLamInt.real, ZLamInt.imag),
+                    width=Lt,
+                    height=self.Rext - self.Rint,
+                    color=lam_color,
+                )
+            )
+
+        # Add Lewout rectangles
+        patches.append(  # Top Right
+            Rectangle(
+                xy=(ZBarTopR.real, ZBarTopR.imag),
+                width=Le,
+                height=Ha,
+                color=self.BAR_COLOR,
+            )
+        )
+        patches.append(  # Bot Right
+            Rectangle(
+                xy=(ZBarBotR.real, ZBarBotR.imag),
+                width=Le,
+                height=Ha,
+                color=self.BAR_COLOR,
+            )
+        )
+        patches.append(  # Top Left
+            Rectangle(
+                xy=(ZBarTopL.real, ZBarTopL.imag),
+                width=Le,
+                height=Ha,
+                color=self.BAR_COLOR,
+            )
+        )
+        patches.append(  # Bot Left
+            Rectangle(
+                xy=(ZBarBotL.real, ZBarBotL.imag),
+                width=Le,
+                height=Ha,
+                color=self.BAR_COLOR,
+            )
+        )
+        # Add short circuit ring rectangles
+        patches.append(
+            Rectangle(
+                xy=(ZscrRight.real, ZscrRight.imag),
+                width=Lscr,
+                height=abs(2 * ZscrRight.imag),
+                color=self.SCR_COLOR,
+            )
+        )
+        patches.append(
+            Rectangle(
+                xy=(ZscrLeft.real, ZscrLeft.imag),
+                width=Lscr,
+                height=abs(2 * ZscrLeft.imag),
+                color=self.SCR_COLOR,
+            )
+        )
+
+        # Display the result
+        ax.set_xlabel("[m]")
+        ax.set_ylabel("[m]")
+        for patch in patches:
+            ax.add_patch(patch)
+
+        # Axis Setup
+        ax.axis("equal")
+        ax.set_title("Squirrel Cage Rotor side view")
+        # Set legend
+        if self.is_stator:
+            patch_leg.append(Patch(color=self.STATOR_COLOR))
+            label_leg.append("Stator")
+        elif not self.is_stator and "Rotor" not in label_leg:
+            patch_leg.append(Patch(color=self.ROTOR_COLOR))
+            label_leg.append("Rotor")
+        patch_leg.append(Patch(color=self.BAR_COLOR))
+        label_leg.append("Bar")
+        patch_leg.append(Patch(color=self.SCR_COLOR))
+        label_leg.append("Short Circuit Ring")
+        ax.legend(patch_leg, label_leg)
+        if is_show_fig:
+            fig.show()
+        if save_path is not None:
+            fig.savefig(save_path)
+            plt.close(fig=fig)
+        return fig, ax
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

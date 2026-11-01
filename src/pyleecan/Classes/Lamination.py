@@ -55,12 +55,8 @@ from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
-from pyleecan.Methods.Machine.Lamination.plot_preview_notch import (
-    PATCH_COLOR_ALPHA,
-    ROTOR_COLOR,
-    STATOR_COLOR,
-)
 from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.definitions import config_dict
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -70,6 +66,9 @@ class Lamination(FrozenClass):
     """abstract class for lamination"""
 
     VERSION = 1
+    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
+    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
+    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
     # cf Methods.Machine.Lamination.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
@@ -1515,13 +1514,13 @@ class Lamination(FrozenClass):
         # Setup legend
         if self.is_stator:
             name = "Stator"
-            color = STATOR_COLOR
+            color = self.STATOR_COLOR
         else:
             name = "Rotor"
-            color = ROTOR_COLOR
+            color = self.ROTOR_COLOR
         patch_leg = [
             Patch(facecolor=color, edgecolor="k"),
-            Patch(facecolor=PATCH_COLOR_ALPHA, edgecolor="r", linestyle="--"),
+            Patch(facecolor=self.PATCH_COLOR_ALPHA, edgecolor="r", linestyle="--"),
         ]
         label_leg = ["Current " + name, "Notches"]
         ax.set_axis_off()

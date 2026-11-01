@@ -22,8 +22,8 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Methods.Slot.Slot import SlotCheckError
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Methods.Slot.SlotM11.plot_schematics import KEY_COLOR, MAGNET_COLOR
 from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -45,6 +45,8 @@ class SlotM11(Slot):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
+    KEY_COLOR = config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"]
 
     # cf Methods.Slot.SlotM11._comp_point_coordinate
     def _comp_point_coordinate(self):
@@ -607,11 +609,14 @@ class SlotM11(Slot):
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
-                    enforced_default_color=MAGNET_COLOR,
+                    enforced_default_color=self.MAGNET_COLOR,
                 )
             elif type_add_active == 5:
                 self.plot_active(
-                    fig=fig, ax=ax, is_show_fig=False, enforced_default_color=KEY_COLOR
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    enforced_default_color=self.KEY_COLOR,
                 )
 
             # Zooming and cleaning

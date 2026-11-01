@@ -23,14 +23,10 @@ from pyleecan.Classes.Conductor import Conductor
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Machine.CondType12.check import check
 import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Methods.Machine.CondType12.plot import (
-    COND_COLOR,
-    COND_INS_COLOR,
-    INS_COLOR,
-    NotPlotableError,
-)
+from pyleecan.Methods.Machine.CondType12.plot import NotPlotableError
 from matplotlib.patches import Circle, Patch
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 
@@ -42,6 +38,9 @@ class CondType12(Conductor):
     """parallel stranded conductor consisting of at least a single round wire"""
 
     VERSION = 1
+    COND_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
+    INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
+    COND_INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][2].copy()
 
     # cf Methods.Machine.CondType12.check
     check = check
@@ -250,7 +249,9 @@ class CondType12(Conductor):
         patches_list = []
 
         # Conductor insultation
-        patches_list.append(Circle((0, 0), self.Wins_cond / 2, color=COND_INS_COLOR))
+        patches_list.append(
+            Circle((0, 0), self.Wins_cond / 2, color=self.COND_INS_COLOR)
+        )
 
         # Computation of the center of the wire
         center_list = []
@@ -285,10 +286,10 @@ class CondType12(Conductor):
         for center in center_list:
             # Wire insulation
             patches_list.append(
-                Circle(center, self.Wwire / 2 + self.Wins_wire, color=INS_COLOR)
+                Circle(center, self.Wwire / 2 + self.Wins_wire, color=self.INS_COLOR)
             )
             # Wire conductor
-            patches_list.append(Circle(center, self.Wwire / 2, color=COND_COLOR))
+            patches_list.append(Circle(center, self.Wwire / 2, color=self.COND_COLOR))
 
         # Display
         (fig, ax, _, _) = init_fig(fig=fig, ax=ax)
@@ -306,11 +307,11 @@ class CondType12(Conductor):
         # Legend
         patch_leg = list()  # Symbol
         label_leg = list()  # Text
-        patch_leg.append(Patch(color=COND_INS_COLOR))
+        patch_leg.append(Patch(color=self.COND_INS_COLOR))
         label_leg.append("Coil insulation")
-        patch_leg.append(Patch(color=INS_COLOR))
+        patch_leg.append(Patch(color=self.INS_COLOR))
         label_leg.append("Wire insulation")
-        patch_leg.append(Patch(color=COND_COLOR))
+        patch_leg.append(Patch(color=self.COND_COLOR))
         label_leg.append("Active wire section")
 
         ax.legend(patch_leg, label_leg)

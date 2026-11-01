@@ -35,9 +35,9 @@ from pyleecan.Methods.Machine.Machine.get_lam_by_label import LabelInputError
 from pyleecan.Functions.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
 from pyleecan.Methods.Machine.Machine.get_lam_list import KeyInputError
 from pyleecan.Methods.Machine.Machine.get_material_dict import get_material
-from pyleecan.Methods.Machine.Machine.plot import PATCH_COLOR_ALPHA
 from pyleecan.Functions.init_fig import init_fig
 from matplotlib.patches import Patch, Polygon
+from pyleecan.definitions import config_dict
 from matplotlib.pyplot import subplots
 
 
@@ -48,6 +48,7 @@ class Machine(FrozenClass):
     """Abstract class for machines"""
 
     VERSION = 1
+    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
 
     # cf Methods.Machine.Machine.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):
@@ -1069,8 +1070,8 @@ class Machine(FrozenClass):
                 is_show_fig=is_show_fig,
             )
             patch_leg = [
-                Patch(facecolor=PATCH_COLOR_ALPHA, edgecolor="k"),
-                Patch(facecolor=PATCH_COLOR_ALPHA, edgecolor="r", linestyle="--"),
+                Patch(facecolor=self.PATCH_COLOR_ALPHA, edgecolor="k"),
+                Patch(facecolor=self.PATCH_COLOR_ALPHA, edgecolor="r", linestyle="--"),
             ]
             if comp_legend is None:
                 comp_legend = "Compared machine"

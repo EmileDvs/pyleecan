@@ -19,13 +19,8 @@ from pyleecan.Classes.Surface import Surface
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Functions.Geometry.comp_surface_num import comp_surface_num
-from pyleecan.Methods.Geometry.SurfLine.get_patches import (
-    PATCH_COLOR,
-    PATCH_COLOR_ALPHA,
-    PATCH_EDGE,
-    PATCH_EDGE_ALPHA,
-)
 from matplotlib.patches import Polygon
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.init_fig import init_fig
 
 
@@ -36,6 +31,10 @@ class SurfLine(Surface):
     """SurfLine defined by list of lines that delimit it, label and point reference."""
 
     VERSION = 1
+    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
+    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
+    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
+    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
     # cf Methods.Geometry.SurfLine.check
     # -*- coding: utf-8 -*-
@@ -200,7 +199,7 @@ class SurfLine(Surface):
     # cf Methods.Geometry.SurfLine.get_patches
     def get_patches(
         self,
-        color=PATCH_COLOR,
+        color=None,
         edgecolor=None,
         is_edge_only=False,
         linestyle=None,
@@ -232,11 +231,11 @@ class SurfLine(Surface):
 
         # Set default color
         if edgecolor is None and not is_edge_only:
-            edgecolor = PATCH_EDGE
+            edgecolor = self.PATCH_EDGE
         elif edgecolor is None and is_edge_only:
-            edgecolor = PATCH_EDGE_ALPHA
+            edgecolor = self.PATCH_EDGE_ALPHA
         if is_edge_only:
-            color = PATCH_COLOR_ALPHA
+            color = self.PATCH_COLOR_ALPHA
         if "--" in edgecolor:
             edgecolor = edgecolor.replace("-", "")
             linestyle = "--"
@@ -271,6 +270,10 @@ class SurfLine(Surface):
                 hatch=hatch,
             )
         ]
+
+    get_patches.__defaults__ = (
+        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+    )
 
     # cf Methods.Geometry.SurfLine.plot_lines
     def plot_lines(self, fig=None, ax=None, is_show_fig=True):

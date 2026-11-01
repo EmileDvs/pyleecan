@@ -17,9 +17,9 @@ from pyleecan.Classes.Conductor import Conductor
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.CondType11.plot import COND_COLOR, INS_COLOR
 from matplotlib.patches import Patch, Rectangle
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 import matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import (
@@ -40,6 +40,8 @@ class CondType11(Conductor):
     """parallel stranded conductor consisting of at least a single rectangular wire"""
 
     VERSION = 1
+    COND_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
+    INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
 
     # cf Methods.Machine.CondType11.comp_height
     def comp_height(self):
@@ -235,7 +237,7 @@ class CondType11(Conductor):
         # Conductor insulation
         Wcond = self.comp_width()
         Hcond = self.comp_height()
-        patches_list.append(Rectangle((0, 0), Wcond, Hcond, color=INS_COLOR))
+        patches_list.append(Rectangle((0, 0), Wcond, Hcond, color=self.INS_COLOR))
 
         # Wire conductor
         for ii in range(self.Nwppc_tan):
@@ -244,7 +246,7 @@ class CondType11(Conductor):
                 x = self.Wins_wire + ii * (self.Wwire + 2 * self.Wins_wire)
                 y = self.Wins_wire + jj * (self.Hwire + 2 * self.Wins_wire)
                 patches_list.append(
-                    Rectangle((x, y), self.Wwire, self.Hwire, color=COND_COLOR)
+                    Rectangle((x, y), self.Wwire, self.Hwire, color=self.COND_COLOR)
                 )
 
         # Display
@@ -263,10 +265,10 @@ class CondType11(Conductor):
         patch_leg = list()  # Symbol
         label_leg = list()  # Text
         if self.Wins_wire > 0:
-            patch_leg.append(Patch(color=INS_COLOR))
+            patch_leg.append(Patch(color=self.INS_COLOR))
             label_leg.append("Wire insulation")
 
-        patch_leg.append(Patch(color=COND_COLOR))
+        patch_leg.append(Patch(color=self.COND_COLOR))
         label_leg.append("Active wire section")
 
         ax.legend(patch_leg, label_leg)

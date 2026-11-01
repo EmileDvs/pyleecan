@@ -20,7 +20,9 @@ from ...Generator.read_fct import (
 )
 
 
-def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
+def _get_method_source(
+    path_to_gen, class_pack, class_name, meth, soft_name, hoist_names=()
+):
     """Return a method definition and the imports it needs."""
     method_parts = [part for part in (class_pack or "").split(".") if part]
     method_parts.extend([class_name, *meth.split(".")])
@@ -30,7 +32,7 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
         with open(method_path, encoding="utf-8") as method_file:
             source = method_file.read()
     except FileNotFoundError:
-        return None, [], "method source file is missing"
+        return None, [], [], [], "method source file is missing"
 
     module = ast.parse(source, filename=method_path)
     method_name = meth.split(".")[-1]
@@ -44,12 +46,12 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
         None,
     )
     if method_node is None:
-        return None, [], "method function is missing"
+        return None, [], [], [], "method function is missing"
     if any(
         isinstance(node, ast.ImportFrom) and node.module == "__future__"
         for node in module.body
     ):
-        return None, [], "module has a __future__ import"
+        return None, [], [], [], "module has a __future__ import"
 
     used_names = {
         node.id
@@ -57,7 +59,7 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
         if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
     }
     if any(isinstance(node, ast.Global) for node in ast.walk(method_node)):
-        return None, [], "method declares module globals"
+        return None, [], [], [], "method declares module globals"
 
     signature_nodes = (
         method_node.decorator_list
@@ -99,6 +101,8 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
                 return (
                     None,
                     [],
+                    [],
+                    [],
                     "module uses a wildcard import whose names cannot be resolved safely",
                 )
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
@@ -126,6 +130,8 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
             return (
                 None,
                 [],
+                [],
+                [],
                 "module contains unsupported top-level "
                 + type(node).__name__
                 + " statements",
@@ -136,6 +142,93 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
         for name, value in literal_defaults.items()
         if name not in signature_names
     }
+    method_local_names = {
+        node.id
+        for node in ast.walk(method_node)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del))
+    }
+    method_local_names.update(
+        argument.arg
+        for argument in (
+            method_node.args.posonlyargs
+            + method_node.args.args
+            + method_node.args.kwonlyargs
+        )
+    )
+    module_assignments = {}
+    for node in module.body:
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+        if len(targets) != 1 or not isinstance(targets[0], ast.Name):
+            continue
+        name = targets[0].id
+        if name in literal_defaults:
+            continue
+        module_assignments[name] = node.value
+
+    signature_non_defaults = method_node.decorator_list + [
+        argument.annotation
+        for argument in (
+            method_node.args.posonlyargs
+            + method_node.args.args
+            + method_node.args.kwonlyargs
+        )
+        if argument.annotation is not None
+    ]
+    if method_node.returns is not None:
+        signature_non_defaults.append(method_node.returns)
+    signature_default_names = {
+        node.id
+        for default in method_node.args.defaults
+        + [node for node in method_node.args.kw_defaults if node is not None]
+        for node in ast.walk(default)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
+    direct_default_names = {
+        default.id
+        for default in method_node.args.defaults
+        + [node for node in method_node.args.kw_defaults if node is not None]
+        if isinstance(default, ast.Name)
+    }
+    signature_non_default_names = {
+        node.id
+        for root_node in signature_non_defaults
+        for node in ast.walk(root_node)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
+    hoisted_names = {
+        name
+        for name in used_names.intersection(module_assignments, hoist_names)
+        if name not in method_local_names
+        and name not in signature_non_default_names
+        and (name not in signature_default_names or name in direct_default_names)
+    }
+    if hoisted_names and not method_node.args.args:
+        return (
+            None,
+            [],
+            [],
+            [],
+            "cannot hoist module assignments for a method without an instance argument",
+        )
+
+    class_attributes = [
+        ast.fix_missing_locations(
+            ast.Assign(
+                targets=[ast.Name(id=name, ctx=ast.Store())],
+                value=value,
+            )
+        )
+        for name, value in module_assignments.items()
+        if name in hoisted_names
+    ]
+    extra_used_names = {
+        node.id
+        for assignment in class_attributes
+        for node in ast.walk(assignment.value)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    } - hoisted_names
     source_package = [
         soft_name,
         "Methods",
@@ -145,10 +238,13 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
     ]
     target_package = [soft_name, "Classes"]
     method_imports = []
+    import_used_names = used_names | extra_used_names
 
     if has_module_helpers:
         helper_names = sorted(
-            used_names.intersection(helper_bindings - inline_literal_defaults.keys())
+            import_used_names.intersection(
+                helper_bindings - inline_literal_defaults.keys() - hoisted_names
+            )
         )
         if helper_names:
             helper_module = source_package + [method_name]
@@ -172,7 +268,7 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
             aliases = [
                 alias
                 for alias in node.names
-                if (alias.asname or alias.name.split(".")[0]) in used_names
+                if (alias.asname or alias.name.split(".")[0]) in import_used_names
             ]
             if aliases:
                 method_imports.append(ast.Import(names=aliases))
@@ -180,7 +276,8 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
             aliases = [
                 alias
                 for alias in node.names
-                if alias.name == "*" or (alias.asname or alias.name) in used_names
+                if alias.name == "*"
+                or (alias.asname or alias.name) in import_used_names
             ]
             if not aliases:
                 continue
@@ -221,6 +318,16 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
     method_source = _add_literal_keyword_defaults(
         method_source, inline_literal_defaults, used_names
     )
+    method_source, default_overrides = _rewrite_hoisted_method_names(
+        method_source,
+        hoisted_names,
+        method_name,
+        (
+            method_node.args.posonlyargs[0].arg
+            if method_node.args.posonlyargs
+            else method_node.args.args[0].arg if method_node.args.args else None
+        ),
+    )
     method_tree = ast.parse(method_source)
     if any(
         _is_numpy_import(node) for node in method_imports + list(ast.walk(method_tree))
@@ -228,10 +335,116 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
         method_source, method_imports = _normalize_method_numpy_imports(
             method_source, method_imports
         )
-    return method_source, method_imports, None
+    return (
+        method_source,
+        method_imports,
+        class_attributes,
+        default_overrides,
+        None,
+    )
 
 
-def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_name):
+def _find_repeated_method_assignments(path_to_gen, class_pack, class_name, methods):
+    """Find computed module assignments that are shared or used as defaults."""
+    assignment_methods = {}
+    method_assignments = {}
+    default_assignments = {}
+    configured_plot_assignments = set()
+
+    for meth in methods:
+        method_parts = [part for part in (class_pack or "").split(".") if part]
+        method_parts.extend([class_name, *meth.split(".")])
+        method_path = join(dirname(path_to_gen), "Methods", *method_parts) + ".py"
+        try:
+            with open(method_path, encoding="utf-8") as method_file:
+                module = ast.parse(method_file.read(), filename=method_path)
+        except FileNotFoundError:
+            continue
+
+        method_name = meth.split(".")[-1]
+        method_node = next(
+            (
+                node
+                for node in module.body
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name == method_name
+            ),
+            None,
+        )
+        if method_node is None:
+            continue
+
+        used_names = {
+            node.id
+            for node in ast.walk(method_node)
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+        }
+        local_names = {
+            node.id
+            for node in ast.walk(method_node)
+            if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del))
+        }
+        local_names.update(
+            argument.arg
+            for argument in (
+                method_node.args.posonlyargs
+                + method_node.args.args
+                + method_node.args.kwonlyargs
+            )
+        )
+        direct_default_names = {
+            default.id
+            for default in method_node.args.defaults
+            + [node for node in method_node.args.kw_defaults if node is not None]
+            if isinstance(default, ast.Name)
+        }
+        assigned_names = set()
+        for node in module.body:
+            if isinstance(node, ast.Assign):
+                if len(node.targets) != 1 or not isinstance(node.targets[0], ast.Name):
+                    continue
+                name = node.targets[0].id
+                value = node.value
+            elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+                name = node.target.id
+                value = node.value
+            else:
+                continue
+            if value is None or name not in used_names or name in local_names:
+                continue
+            try:
+                ast.literal_eval(value)
+            except (ValueError, TypeError, SyntaxError):
+                assigned_names.add(name)
+                assignment_methods.setdefault(name, set()).add(meth)
+                if name in direct_default_names:
+                    default_assignments.setdefault(meth, set()).add(name)
+                if (
+                    name.endswith("_COLOR")
+                    or name in {"PATCH_COLOR_ALPHA", "PATCH_EDGE", "PATCH_EDGE_ALPHA"}
+                ) and any(
+                    isinstance(node, ast.Name) and node.id == "config_dict"
+                    for node in ast.walk(value)
+                ):
+                    configured_plot_assignments.add(name)
+        method_assignments[meth] = assigned_names
+
+    hoisted_names = {
+        name
+        for name, methods_using_name in assignment_methods.items()
+        if len(methods_using_name) > 1
+    } | configured_plot_assignments
+    return {
+        meth: names.intersection(hoisted_names).union(
+            default_assignments.get(meth, set())
+        )
+        for meth, names in method_assignments.items()
+    }
+
+
+def _prepare_class_methods(
+    path_to_gen, class_pack, class_name, methods, soft_name, reserved_names=()
+):
     """Inline methods and collect their imports without name conflicts."""
     prepared = {}
     fallback_reasons = {}
@@ -240,10 +453,26 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
     import_bindings = {}
     import_keys = set()
     target_package = [soft_name, "Classes"]
+    class_attributes = {}
+    method_default_overrides = {}
+    repeated_assignments = _find_repeated_method_assignments(
+        path_to_gen, class_pack, class_name, methods
+    )
 
     for meth in methods:
-        method_source, method_imports, reason = _get_method_source(
-            path_to_gen, class_pack, class_name, meth, soft_name
+        (
+            method_source,
+            method_imports,
+            candidate_class_attributes,
+            candidate_default_overrides,
+            reason,
+        ) = _get_method_source(
+            path_to_gen,
+            class_pack,
+            class_name,
+            meth,
+            soft_name,
+            repeated_assignments.get(meth, set()),
         )
         if reason is not None:
             warnings.warn(
@@ -264,7 +493,31 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
         conflict = False
         conflict_name = None
         conflict_imports = None
+        conflict_reason = None
+        for assignment in candidate_class_attributes:
+            binding = assignment.targets[0].id
+            existing = class_attributes.get(binding)
+            identity = ast.dump(assignment.value, include_attributes=False)
+            if binding in reserved_names:
+                conflict_reason = (
+                    "class attribute '"
+                    + binding
+                    + "' conflicts with an existing class member"
+                )
+                break
+            if (
+                existing is not None
+                and ast.dump(existing, include_attributes=False) != identity
+            ):
+                conflict_reason = (
+                    "class attribute '"
+                    + binding
+                    + "' has different definitions in method modules"
+                )
+                break
         for import_node in method_imports:
+            if conflict_reason is not None:
+                break
             for alias in import_node.names:
                 binding = alias.asname or (
                     alias.name.split(".")[0]
@@ -292,15 +545,19 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
             if conflict:
                 break
 
-        if conflict:
+        if conflict or conflict_reason is not None:
             fallback_reason = (
-                "import name '"
-                + conflict_name
-                + "' refers to different sources ("
-                + _format_import_identity(conflict_imports[0])
-                + " and "
-                + _format_import_identity(conflict_imports[1])
-                + ")"
+                conflict_reason
+                if conflict_reason is not None
+                else (
+                    "import name '"
+                    + conflict_name
+                    + "' refers to different sources ("
+                    + _format_import_identity(conflict_imports[0])
+                    + " and "
+                    + _format_import_identity(conflict_imports[1])
+                    + ")"
+                )
             )
             warnings.warn(
                 "Could not inline "
@@ -318,6 +575,9 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
             continue
 
         prepared[meth] = method_source
+        method_default_overrides[meth] = candidate_default_overrides
+        for assignment in candidate_class_attributes:
+            class_attributes.setdefault(assignment.targets[0].id, assignment.value)
         import_bindings.update(candidate_bindings)
         for import_node in method_imports:
             group_key = (
@@ -349,7 +609,19 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
                 import_keys.add(identity)
                 import_groups[group_key].names.append(alias)
 
-    return prepared, [node for node in imports if node.names], fallback_reasons
+    assignments = [
+        ast.fix_missing_locations(
+            ast.Assign(targets=[ast.Name(id=name, ctx=ast.Store())], value=value)
+        )
+        for name, value in class_attributes.items()
+    ]
+    return (
+        prepared,
+        [node for node in imports if node.names],
+        fallback_reasons,
+        assignments,
+        method_default_overrides,
+    )
 
 
 def _format_import_identity(identity):
@@ -806,6 +1078,85 @@ def _add_literal_keyword_defaults(method_source, literal_defaults, used_names):
     return method_source[:offset] + insertion + method_source[offset:]
 
 
+def _rewrite_hoisted_method_names(
+    method_source, hoisted_names, method_name, instance_argument
+):
+    """Rewrite hoisted module names to instance attributes and restore defaults."""
+    if not hoisted_names:
+        return method_source, []
+    if instance_argument is None:
+        raise ValueError("Hoisted module assignments require an instance argument")
+
+    tree = ast.parse(method_source)
+    method_node = next(
+        node
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    )
+    source_bytes = method_source.encode("utf-8")
+    line_offsets = [0]
+    for index, value in enumerate(source_bytes):
+        if value == ord("\n"):
+            line_offsets.append(index + 1)
+
+    replacements = []
+    default_overrides = []
+
+    def add_replacement(node, replacement):
+        start = line_offsets[node.lineno - 1] + node.col_offset
+        end = start + len(node.id.encode("utf-8"))
+        replacements.append((start, end, replacement.encode("utf-8")))
+
+    for statement in method_node.body:
+        for node in ast.walk(statement):
+            if (
+                isinstance(node, ast.Name)
+                and isinstance(node.ctx, ast.Load)
+                and node.id in hoisted_names
+            ):
+                add_replacement(node, instance_argument + "." + node.id)
+
+    positional_arguments = method_node.args.posonlyargs + method_node.args.args
+    for index, default in enumerate(method_node.args.defaults):
+        if isinstance(default, ast.Name) and default.id in hoisted_names:
+            add_replacement(default, "None")
+            default_index = index
+            default_overrides.append(
+                ast.parse(
+                    method_name
+                    + ".__defaults__ = "
+                    + method_name
+                    + ".__defaults__[:"
+                    + str(default_index)
+                    + "] + ("
+                    + default.id
+                    + ",) + "
+                    + method_name
+                    + ".__defaults__["
+                    + str(default_index + 1)
+                    + ":]"
+                ).body[0]
+            )
+    for argument, default in zip(
+        method_node.args.kwonlyargs, method_node.args.kw_defaults
+    ):
+        if isinstance(default, ast.Name) and default.id in hoisted_names:
+            add_replacement(default, "None")
+            default_overrides.append(
+                ast.parse(
+                    method_name
+                    + ".__kwdefaults__["
+                    + repr(argument.arg)
+                    + "] = "
+                    + default.id
+                ).body[0]
+            )
+
+    for start, end, replacement in sorted(replacements, reverse=True):
+        source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
+    return source_bytes.decode("utf-8"), default_overrides
+
+
 def generate_class(
     gen_dict,
     class_name,
@@ -838,12 +1189,23 @@ def generate_class(
 
     class_dict = gen_dict[class_name]
     class_pack = class_dict["package"]
-    method_sources, method_imports, fallback_reasons = _prepare_class_methods(
+    reserved_names = {constant["name"] for constant in class_dict["constants"]} | {
+        method.split(".")[-1] for method in class_dict["methods"]
+    }
+    reserved_names.update(prop["name"] for prop in class_dict["properties"])
+    (
+        method_sources,
+        method_imports,
+        fallback_reasons,
+        class_attributes,
+        method_default_overrides,
+    ) = _prepare_class_methods(
         path_to_gen,
         class_pack,
         class_name,
         class_dict["methods"],
         soft_name,
+        reserved_names=reserved_names,
     )
 
     # Start of file generation
@@ -1031,6 +1393,9 @@ def generate_class(
         TAB + cst["name"] + " = " + str(cst["value"]) + "\n"
         for cst in class_dict["constants"]
     )
+    class_file.writelines(
+        TAB + ast.unparse(assignment) + "\n" for assignment in class_attributes
+    )
     class_file.write("\n")
 
     # Asign all the Methods of the class
@@ -1056,6 +1421,9 @@ def generate_class(
             class_file.write(TAB + "# cf Methods." + class_name + "." + meth + "\n")
         if method_sources[meth] is not None:
             class_file.write(indent(method_sources[meth], TAB) + "\n\n")
+            for override in method_default_overrides[meth]:
+                class_file.write(TAB + ast.unparse(override) + "\n")
+                class_file.write("\n")
             continue
         # # class_file.write(TAB + "if isinstance(" + meth_name + ", ImportError):\n")
         # # class_file.write(TAB2 + meth_name + " = property(\n")

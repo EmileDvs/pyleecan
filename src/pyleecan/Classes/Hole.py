@@ -22,10 +22,10 @@ from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Methods import ParentMissingError
 from pyleecan.Methods.Slot.Hole import MagnetIndexError
 from pyleecan.Functions.labels import HOLEV_LAB, VENT_LAB, HOLEM_LAB, decode_label
-from pyleecan.Methods.Slot.Hole.plot import ARROW_COLOR, MAGNET_COLOR
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
+from pyleecan.definitions import config_dict
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -35,6 +35,8 @@ class Hole(FrozenClass):
     """Holes for lamination (abstract)"""
 
     VERSION = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
+    ARROW_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
     # cf Methods.Slot.Hole.comp_height
     def comp_height(self):
@@ -367,7 +369,7 @@ class Hole(FrozenClass):
         for surf in surf_hole:
             label_dict = decode_label(surf.label)
             if HOLEM_LAB in label_dict["surf_type"] and display_magnet:
-                patches.extend(surf.get_patches(color=MAGNET_COLOR))
+                patches.extend(surf.get_patches(color=self.MAGNET_COLOR))
             else:
                 patches.extend(surf.get_patches(color=color))
 
@@ -406,7 +408,9 @@ class Hole(FrozenClass):
                     text="",
                     xy=(Z2.real, Z2.imag),
                     xytext=(Z1.real, Z1.imag),
-                    arrowprops=dict(arrowstyle="->", linewidth=1, color=ARROW_COLOR),
+                    arrowprops=dict(
+                        arrowstyle="->", linewidth=1, color=self.ARROW_COLOR
+                    ),
                 )
 
         # Add reference point
@@ -424,7 +428,7 @@ class Hole(FrozenClass):
             pass
 
         if display_magnet and HOLEM_LAB in [surf.label for surf in surf_hole]:
-            patch_leg.append(Patch(color=MAGNET_COLOR))
+            patch_leg.append(Patch(color=self.MAGNET_COLOR))
             label_leg.append("Magnet")
             ax.legend(patch_leg, label_leg)
         if is_show_fig:

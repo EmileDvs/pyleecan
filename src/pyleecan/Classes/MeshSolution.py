@@ -4,11 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshSolution
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - plot_deflection: import name 'FONT_FAMILY_PYVISTA' refers to different sources (pyleecan.Methods.Mesh.MeshSolution.plot_contour.FONT_FAMILY_PYVISTA and pyleecan.Methods.Mesh.MeshSolution.plot_deflection.FONT_FAMILY_PYVISTA)
-# - plot_glyph: import name 'FONT_FAMILY_PYVISTA' refers to different sources (pyleecan.Methods.Mesh.MeshSolution.plot_contour.FONT_FAMILY_PYVISTA and pyleecan.Methods.Mesh.MeshSolution.plot_glyph.FONT_FAMILY_PYVISTA)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -22,8 +17,6 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Mesh.MeshSolution.plot_deflection import plot_deflection
-from pyleecan.Methods.Mesh.MeshSolution.plot_glyph import plot_glyph
 from pyleecan.Classes.Solution import Solution
 from typing import Hashable, Iterator, Optional
 from pyleecan.Methods.Mesh.MeshSolution.export_to_mat import del_value_None
@@ -40,12 +33,11 @@ from pyleecan.Functions.Structural.conversions import DimError
 from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.NodeMat import NodeMat
 from collections.abc import ItemsView, KeysView, ValuesView
-from pyleecan.Methods.Mesh.MeshSolution.plot_contour import (
-    COLOR_MAP,
-    FONT_FAMILY_PYVISTA,
-)
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot
 from pyleecan.Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from pyleecan.Functions.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
+from pyleecan.Functions.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -55,6 +47,8 @@ class MeshSolution(FrozenClass):
     """Abstract class to associate a mesh with one or several solutions"""
 
     VERSION = 1
+    COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
+    FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 
     # cf Methods.Mesh.MeshSolution.__getitem__
     def __getitem__(self, label: Hashable) -> Solution:
@@ -826,7 +820,7 @@ class MeshSolution(FrozenClass):
         is_animated=False,
         title="",
         pv_plotter=None,
-        colormap=COLOR_MAP,
+        colormap=None,
     ):
         """Plot the contour of a field on a mesh using pyvista plotter.
 
@@ -886,7 +880,7 @@ class MeshSolution(FrozenClass):
                 position="upper_edge",
                 color="black",
                 font_size=10,
-                font=FONT_FAMILY_PYVISTA,
+                font=self.FONT_FAMILY_PYVISTA,
             )
 
         # Get the mesh_pv and field
@@ -991,10 +985,339 @@ class MeshSolution(FrozenClass):
             elif save_path is not None:
                 pv_plotter.show(interactive=False, screenshot=save_path)
 
+    plot_contour.__kwdefaults__["colormap"] = COLOR_MAP
+
     # cf Methods.Mesh.MeshSolution.plot_deflection
-    plot_deflection = plot_deflection
+    def plot_deflection(
+        self,
+        *args,
+        label=None,
+        indices=None,
+        clim=None,
+        factor=None,
+        field_name=None,
+        save_path=None,
+        title="",
+        win_title="",
+        is_surf=True,
+        is_show_fig=True,
+        pv_plotter=None,
+        sargs=None,
+        is_animated=False,
+        phase=1,
+        is_return_plot_args=False,
+    ):
+        """Plot the operational deflection shape using pyvista plotter.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            a MeshSolution object
+        label : str
+            solution label
+        indices : list
+            list of the points to extract (optional)
+        clim : list
+            a list of 2 elements for the limits of the colorbar
+        factor : float
+            factor to multiply vector field
+        field_name : str
+            title of the field to display on plot
+        is_show_fig : bool
+            To call show at the end of the method
+        pv_plotter=None,
+        meshsol_list=[],
+        plot_list=[],
+
+        Returns
+        -------
+        """
+        # Init figure
+        if pv_plotter is None:
+            if title != "" and win_title == "":
+                win_title = title
+            elif win_title != "" and title == "":
+                title = win_title
+
+            pv_plotter, sargs = configure_plot(
+                pv_plotter=pv_plotter, win_title=win_title
+            )
+
+            pv_plotter.add_text(
+                title,
+                position="upper_edge",
+                color="black",
+                font_size=10,
+                font=self.FONT_FAMILY_PYVISTA,
+            )
+
+        # Get deflection
+        vect_field, field_normal_amp, field_name, mesh_pv = self.get_deflection(
+            *args,
+            label=label,
+            indices=indices,
+            field_name=field_name,
+        )
+
+        # Compute colorbar boundaries
+        if clim is None:
+            clim = [
+                np.min(np.real(field_normal_amp)),
+                np.max(np.real(field_normal_amp)),
+            ]
+            if (clim[1] - clim[0]) / clim[1] < 0.01:
+                clim[0] = -abs(clim[1])
+                clim[1] = abs(clim[1])
+
+        # Compute deformation factor
+        if factor is None:
+            factor = 0.2 * np.max(np.abs(mesh_pv.bounds)) / np.max(np.abs(vect_field))
+
+        field_name += (
+            " \n(x " + format(factor, ".3g") + " [" + self.get_solution().unit + "])"
+        )
+
+        # # Plot mesh only
+        # pv_plotter.add_mesh(
+        #     mesh_pv, color="grey", opacity=0.7, show_edges=True, edge_color="white"
+        # )
+
+        # Extract surface
+        mesh = MeshVTK(mesh=mesh_pv, is_pyvista_mesh=True)
+        if is_surf:
+            surf_pv = mesh.get_surf()
+        else:
+            surf_pv = mesh.get_mesh_pv()
+
+        # Plot deflection surface
+        plot_surf_deflection(
+            surf_pv=surf_pv,
+            vect_field=vect_field,
+            field=field_normal_amp,
+            field_name=field_name,
+            pv_plotter=pv_plotter,
+            sargs=sargs,
+            clim=clim,
+            factor=factor,
+            phase=phase,
+        )
+
+        # Internal animation (cannot be combined with other plots)
+        if is_animated:
+            pv_plotter.add_text(
+                'Adjust 3D view and press "Q"',
+                position="lower_edge",
+                color="gray",
+                font_size=10,
+                font=self.FONT_FAMILY_PYVISTA,
+            )
+            pv_plotter.show(auto_close=False)
+
+            nframe = 25
+            pv_plotter.open_gif(save_path)
+            pv_plotter.clear()
+            for t in np.linspace(0.0, 1.0, nframe, endpoint=False):
+                phase = np.exp(1j * 2 * np.pi * t)
+
+                # Compute pyvista object
+                plot_surf_deflection(
+                    surf_pv=surf_pv,
+                    vect_field=vect_field,
+                    field=field_normal_amp,
+                    field_name=field_name,
+                    pv_plotter=pv_plotter,
+                    sargs=sargs,
+                    clim=clim,
+                    factor=factor,
+                    phase=phase,
+                )
+
+                pv_plotter.add_text(
+                    title,
+                    position="upper_edge",
+                    color="black",
+                    font_size=10,
+                    font=self.FONT_FAMILY_PYVISTA,
+                )
+                pv_plotter.write_frame()
+                pv_plotter.clear()
+
+            pv_plotter.close()
+
+        else:
+            # Save figure
+            if save_path is None and is_show_fig:
+                pv_plotter.show()
+            elif save_path is not None:
+                pv_plotter.show(interactive=False, screenshot=save_path)
+
+        if is_return_plot_args:
+            return (
+                pv_plotter,
+                sargs,
+                surf_pv,
+                vect_field,
+                field_normal_amp,
+                field_name,
+                clim,
+                factor,
+                phase,
+            )
+        else:
+            return pv_plotter
+
     # cf Methods.Mesh.MeshSolution.plot_glyph
-    plot_glyph = plot_glyph
+    def plot_glyph(
+        self,
+        *args,
+        label=None,
+        indices=None,
+        factor=None,
+        field_name=None,
+        save_path=None,
+        is_point_arrow=False,
+        is_show_fig=True,
+        pv_plotter=None,
+        win_title="",
+        title="",
+        is_animated=False,
+        phase=1,
+        is_return_plot_args=False,
+    ):
+        """Plot the vector field as a glyph (or quiver) over the mesh.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            a MeshSolution object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        label : str
+            label of the solution to plot
+        indices : list
+            list of the points to extract (optional)
+        clim : list
+            a list of 2 elements for the limits of the colorbar
+        factor : float
+            factor to multiply vector field
+        field_name : str
+            title of the field to display on plot
+        save_path : str
+            path to save the plot into an image
+        is_point_arrow : bool
+            to plot a nodal field (point-wise solution required)
+        pv_plotter : pyvista
+            a pyvista object
+        enforced_mesh : Mesh
+            enforced Mesh object
+
+
+        Returns
+        -------
+        """
+        # Init figure
+        if pv_plotter is None:
+            if title != "" and win_title == "":
+                win_title = title
+            elif win_title != "" and title == "":
+                title = win_title
+
+            pv_plotter, _ = configure_plot(pv_plotter=pv_plotter, win_title=win_title)
+
+            pv_plotter.add_text(
+                title,
+                position="upper_edge",
+                color="black",
+                font_size=10,
+                font=self.FONT_FAMILY_PYVISTA,
+            )
+
+        # Get glyph field
+        vect_field, field_name, mesh_pv, is_2D = self.get_glyph(
+            *args,
+            label=label,
+            indices=indices,
+            field_name=field_name,
+        )
+
+        # Compute factor
+        if factor is None:
+            factor = 0.2 * np.max(np.abs(mesh_pv.bounds)) / np.max(np.abs(vect_field))
+
+        # Plot mesh
+        pv_plotter.add_mesh(
+            mesh_pv, color="grey", opacity=0.7, show_edges=True, edge_color="white"
+        )
+
+        # Add field to mesh
+        plot_glyph_pv(
+            pv_plotter=pv_plotter,
+            mesh_pv=mesh_pv,
+            vect_field=vect_field,
+            is_point_arrow=is_point_arrow,
+            factor=factor,
+            phase=phase,
+        )
+
+        if is_2D:
+            pv_plotter.view_xy()
+
+        # Internal animation (cannot be combined with other plots)
+        if is_animated:
+            pv_plotter.add_text(
+                'Adjust 3D view and press "Q"',
+                position="lower_edge",
+                color="gray",
+                font_size=10,
+                font=self.FONT_FAMILY_PYVISTA,
+            )
+            pv_plotter.show(auto_close=False)
+
+            nframe = 25
+            pv_plotter.open_gif(save_path)
+            pv_plotter.clear()
+            for t in np.linspace(0.0, 1.0, nframe, endpoint=False):
+                phase = np.exp(1j * 2 * np.pi * t)
+
+                pv_plotter.add_mesh(
+                    mesh_pv,
+                    color="grey",
+                    opacity=0.7,
+                    show_edges=True,
+                    edge_color="white",
+                )
+
+                # Compute pyvista object
+                plot_glyph_pv(
+                    pv_plotter=pv_plotter,
+                    mesh_pv=mesh_pv,
+                    vect_field=vect_field,
+                    is_point_arrow=is_point_arrow,
+                    factor=factor,
+                    phase=phase,
+                )
+
+                pv_plotter.add_text(
+                    title,
+                    position="upper_edge",
+                    color="black",
+                    font_size=10,
+                    font=self.FONT_FAMILY_PYVISTA,
+                )
+                pv_plotter.write_frame()
+                pv_plotter.clear()
+
+            pv_plotter.close()
+        else:
+            if save_path is None and is_show_fig:
+                pv_plotter.show()
+            elif save_path is not None:
+                pv_plotter.show(interactive=False, screenshot=save_path)
+
+        if is_return_plot_args:
+            return pv_plotter, mesh_pv, vect_field, is_point_arrow, factor, phase
+        else:
+            return pv_plotter
 
     # cf Methods.Mesh.MeshSolution.plot_mesh
     def plot_mesh(

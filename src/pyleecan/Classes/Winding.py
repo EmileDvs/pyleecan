@@ -28,11 +28,7 @@ from pyleecan.Functions.Winding.reverse_wind_mat import (
     permute_B_C,
 )
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
-from pyleecan.Methods.Machine.Winding.plot_linear import (
-    PHASE_COLORS,
-    ROTOR_COLOR,
-    STATOR_COLOR,
-)
+from pyleecan.Methods.Machine.Winding.plot_linear import PHASE_COLORS
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from pyleecan.definitions import config_dict
 from pyleecan.Functions._swat_em.config import config
@@ -49,6 +45,8 @@ class Winding(FrozenClass):
 
     VERSION = 1
     NAME = "Star of slots"
+    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
+    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
     # cf Methods.Machine.Winding.clean
     def clean(self):
@@ -814,7 +812,7 @@ class Winding(FrozenClass):
                 xy=point,
                 width=width_patch,
                 height=height,
-                color=STATOR_COLOR if self.parent.is_stator else ROTOR_COLOR,
+                color=self.STATOR_COLOR if self.parent.is_stator else self.ROTOR_COLOR,
                 linewidth=0,
             )
             patches.append(patch)
@@ -1064,10 +1062,10 @@ class Winding(FrozenClass):
         # Step 3-7: Setting the legend of the figure
         # Adding lamination name in the lamination
         if self.parent.is_stator and "Stator" not in label_leg:
-            patch_leg.append(Patch(color=STATOR_COLOR))
+            patch_leg.append(Patch(color=self.STATOR_COLOR))
             label_leg.append("Stator")
         elif not self.parent.is_stator and "Rotor" not in label_leg:
-            patch_leg.append(Patch(color=ROTOR_COLOR))
+            patch_leg.append(Patch(color=self.ROTOR_COLOR))
             label_leg.append("Rotor")
 
         # Adding each Phase name in the lamination

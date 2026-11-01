@@ -28,8 +28,8 @@ from pyleecan.Functions.labels import (
     YSML_LAB,
     YOKE_LAB,
 )
-from pyleecan.Methods.Slot.SlotM18_2.plot_schematics import MAGNET_COLOR
 from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -51,6 +51,7 @@ class SlotM18_2(Slot):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Slot.SlotM18_2._comp_point_coordinate
     def _comp_point_coordinate(self):
@@ -626,7 +627,7 @@ class SlotM18_2(Slot):
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
-                    enforced_default_color=MAGNET_COLOR,
+                    enforced_default_color=self.MAGNET_COLOR,
                 )
 
             # Zooming and cleaning

@@ -40,8 +40,8 @@ from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Methods import ParentMissingError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods.Slot.Slot.plot import ROTOR_COLOR, STATOR_COLOR
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -51,6 +51,8 @@ class Slot(FrozenClass):
     """Generic class for slot (abstract)"""
 
     VERSION = 1
+    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
+    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
     # cf Methods.Slot.Slot.build_geometry_active
     def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
@@ -909,9 +911,9 @@ class Slot(FrozenClass):
 
         # Add the slot to the fig
         if self.get_is_stator:
-            patches = surf.get_patches(color=STATOR_COLOR)
+            patches = surf.get_patches(color=self.STATOR_COLOR)
         else:
-            patches = surf.get_patch(color=ROTOR_COLOR)
+            patches = surf.get_patch(color=self.ROTOR_COLOR)
         for patch in patches:
             ax.add_patch(patch)
 

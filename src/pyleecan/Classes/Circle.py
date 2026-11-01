@@ -24,13 +24,8 @@ from pyleecan.Classes.Surface import Surface
 from pyleecan.Methods.Geometry.Circle.check import check
 import numpy as np
 from pyleecan.Classes.Arc3 import Arc3
-from pyleecan.Methods.Geometry.Circle.get_patches import (
-    PATCH_COLOR,
-    PATCH_COLOR_ALPHA,
-    PATCH_EDGE,
-    PATCH_EDGE_ALPHA,
-)
 from matplotlib.patches import Circle
+from pyleecan.definitions import config_dict
 from pyleecan.Methods.Geometry.Circle import (
     AngleRotationCircleError,
     PointTranslateCircleError,
@@ -44,6 +39,10 @@ class Circle(Surface):
     """Circle define by  the center of circle(point_ref), the label and the radius"""
 
     VERSION = 1
+    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
+    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
+    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
+    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
     # cf Methods.Geometry.Circle.check
     check = check
@@ -167,7 +166,7 @@ class Circle(Surface):
 
     # cf Methods.Geometry.Circle.get_patches
     def get_patches(
-        self, color=PATCH_COLOR, edgecolor=None, is_edge_only=False, linestyle=None
+        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
     ):
         """Returns the Circle Patch to be display in matplotlib
 
@@ -192,11 +191,11 @@ class Circle(Surface):
 
         # Set default color
         if edgecolor is None and not is_edge_only:
-            edgecolor = PATCH_EDGE
+            edgecolor = self.PATCH_EDGE
         elif edgecolor is None and is_edge_only:
-            edgecolor = PATCH_EDGE_ALPHA
+            edgecolor = self.PATCH_EDGE_ALPHA
         if is_edge_only:
-            color = PATCH_COLOR_ALPHA
+            color = self.PATCH_COLOR_ALPHA
         if "--" in edgecolor:
             edgecolor = edgecolor.replace("-", "")
             linestyle = "--"
@@ -216,6 +215,10 @@ class Circle(Surface):
                 linestyle=linestyle,
             )
         ]
+
+    get_patches.__defaults__ = (
+        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+    )
 
     # cf Methods.Geometry.Circle.rotate
     def rotate(self, angle):

@@ -18,7 +18,7 @@ from pyleecan.Classes.Surface import Surface
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods.Geometry.SurfRing.get_patches import PATCH_COLOR
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.init_fig import init_fig
 
 
@@ -29,6 +29,7 @@ class SurfRing(Surface):
     """SurfRing is a surface between two closed surfaces (lamination surfaces for instance)"""
 
     VERSION = 1
+    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
 
     # cf Methods.Geometry.SurfRing.check
     # -*- coding: utf-8 -*-
@@ -169,7 +170,7 @@ class SurfRing(Surface):
 
     # cf Methods.Geometry.SurfRing.get_patches
     def get_patches(
-        self, color=PATCH_COLOR, edgecolor=None, is_edge_only=False, linestyle=None
+        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
     ):
         """Returns the PolarArc Patch to be display in matplotlib
 
@@ -205,6 +206,10 @@ class SurfRing(Surface):
             )
         )
         return patch_list
+
+    get_patches.__defaults__ = (
+        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+    )
 
     # cf Methods.Geometry.SurfRing.plot_lines
     def plot_lines(self, fig=None, ax=None):

@@ -32,10 +32,9 @@ from pyleecan.Functions.labels import (
     BORE_LAB,
     LAM_LAB,
 )
-from pyleecan.Methods.Geometry.Surface.plot import PATCH_COLOR, PATCH_EDGE
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict, PACKAGE_NAME
 from pyleecan.Methods.Geometry.Surface.split_line import join_surf_line
-from pyleecan.definitions import PACKAGE_NAME
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -45,6 +44,8 @@ class Surface(FrozenClass):
     """SurfLine define by list of lines that delimit it"""
 
     VERSION = 1
+    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
+    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
 
     # cf Methods.Geometry.Surface.comp_mesh_dict
     def comp_mesh_dict(self, element_size, prefix=""):
@@ -291,8 +292,8 @@ class Surface(FrozenClass):
         self,
         fig=None,
         ax=None,
-        color=PATCH_COLOR,
-        edgecolor=PATCH_EDGE,
+        color=None,
+        edgecolor=None,
         is_edge_only=False,
         linestyle=None,
         is_disp_point_ref=False,
@@ -357,6 +358,10 @@ class Surface(FrozenClass):
         if is_show_fig:
             fig.show()
         return fig, ax
+
+    plot.__defaults__ = plot.__defaults__[:2] + (PATCH_COLOR,) + plot.__defaults__[3:]
+
+    plot.__defaults__ = plot.__defaults__[:3] + (PATCH_EDGE,) + plot.__defaults__[4:]
 
     # cf Methods.Geometry.Surface.split_line
     def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):

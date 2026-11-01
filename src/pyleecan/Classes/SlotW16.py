@@ -24,8 +24,8 @@ from pyleecan.Methods.Slot.SlotW16 import S16OutterError, S16AlphaT
 from pyleecan.Functions.Geometry.inter_circle_circle import inter_circle_circle
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Methods.Slot.SlotW16.plot_schematics import MAGNET_COLOR
 from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -46,6 +46,7 @@ class SlotW16(Slot):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Slot.SlotW16._comp_line_dict
     def _comp_line_dict(self):
@@ -727,7 +728,7 @@ class SlotW16(Slot):
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
-                    enforced_default_color=MAGNET_COLOR,
+                    enforced_default_color=self.MAGNET_COLOR,
                 )
 
             # Zooming and cleaning

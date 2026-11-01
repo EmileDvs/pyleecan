@@ -23,8 +23,8 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB
 from pyleecan.Methods.Slot.SlotWLSRPM import SLSRPMOutterError
-from pyleecan.Methods.Slot.SlotWLSRPM.plot_schematics import MAGNET_COLOR
 from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -46,6 +46,7 @@ class SlotWLSRPM(Slot):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Slot.SlotWLSRPM._comp_point_coordinate
     def _comp_point_coordinate(self):
@@ -707,7 +708,7 @@ class SlotWLSRPM(Slot):
                 self.plot_active(fig=fig, is_show_fig=False)
             elif type_add_active == 2:
                 self.plot_active(
-                    fig=fig, is_show_fig=False, enforced_default_color=MAGNET_COLOR
+                    fig=fig, is_show_fig=False, enforced_default_color=self.MAGNET_COLOR
                 )
 
             # Zooming and cleaning

@@ -28,8 +28,8 @@ from pyleecan.Classes.Segment import Segment
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
-from pyleecan.Methods.Slot.SlotW22.plot_schematics import MAGNET_COLOR
 from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -51,6 +51,7 @@ class SlotW22(Slot):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
+    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
     # cf Methods.Slot.SlotW22._comp_line_dict
     def _comp_line_dict(self):
@@ -838,7 +839,7 @@ class SlotW22(Slot):
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
-                    enforced_default_color=MAGNET_COLOR,
+                    enforced_default_color=self.MAGNET_COLOR,
                 )
 
             # Zooming and cleaning

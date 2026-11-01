@@ -22,8 +22,8 @@ from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Methods import ParentMissingError
 from pyleecan.Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods.Machine.Bore.plot import ROTOR_COLOR, STATOR_COLOR
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -33,6 +33,8 @@ class Bore(FrozenClass):
     """Abstract class for Bore shape"""
 
     VERSION = 1
+    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
+    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
     # cf Methods.Machine.Bore.comp_Rmax
     def comp_Rmax(self):
@@ -476,9 +478,9 @@ class Bore(FrozenClass):
 
         # Add the Bore to the fig
         if self.get_is_stator:
-            patches = surf.get_patches(color=STATOR_COLOR)
+            patches = surf.get_patches(color=self.STATOR_COLOR)
         else:
-            patches = surf.get_patch(color=ROTOR_COLOR)
+            patches = surf.get_patch(color=self.ROTOR_COLOR)
         for patch in patches:
             ax.add_patch(patch)
 

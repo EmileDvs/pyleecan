@@ -26,13 +26,8 @@ import numpy as np
 from pyleecan.Methods.Geometry.PolarArc.discretize import NbPointPolarArcError
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods.Geometry.PolarArc.get_patches import (
-    PATCH_COLOR,
-    PATCH_COLOR_ALPHA,
-    PATCH_EDGE,
-    PATCH_EDGE_ALPHA,
-)
 from matplotlib.patches import Polygon
+from pyleecan.definitions import config_dict
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -42,6 +37,10 @@ class PolarArc(Surface):
     """PolarArc defined by  the center of object(point_ref), the label, the angle and the height"""
 
     VERSION = 1
+    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
+    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
+    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
+    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
     # cf Methods.Geometry.PolarArc.check
     check = check
@@ -184,7 +183,7 @@ class PolarArc(Surface):
 
     # cf Methods.Geometry.PolarArc.get_patches
     def get_patches(
-        self, color=PATCH_COLOR, edgecolor=None, is_edge_only=False, linestyle=None
+        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
     ):
         """Returns the PolarArc Patch to be display in matplotlib
         Parameters
@@ -208,11 +207,11 @@ class PolarArc(Surface):
 
         # Set default color
         if edgecolor is None and not is_edge_only:
-            edgecolor = PATCH_EDGE
+            edgecolor = self.PATCH_EDGE
         elif edgecolor is None and is_edge_only:
-            edgecolor = PATCH_EDGE_ALPHA
+            edgecolor = self.PATCH_EDGE_ALPHA
         if is_edge_only:
-            color = PATCH_COLOR_ALPHA
+            color = self.PATCH_COLOR_ALPHA
         if "--" in edgecolor:
             edgecolor = edgecolor.replace("-", "")
             linestyle = "--"
@@ -240,6 +239,10 @@ class PolarArc(Surface):
                 point_list, facecolor=color, edgecolor=edgecolor, linestyle=linestyle
             )
         ]
+
+    get_patches.__defaults__ = (
+        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+    )
 
     # cf Methods.Geometry.PolarArc.rotate
     def rotate(self, angle):

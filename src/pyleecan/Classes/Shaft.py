@@ -30,9 +30,9 @@ from pyleecan.Functions.labels import (
     SHAFTSL_LAB,
     SHAFTR_LAB,
 )
-from pyleecan.Methods.Machine.Shaft.plot import SHAFT_COLOR
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -42,6 +42,7 @@ class Shaft(FrozenClass):
     """machine shaft"""
 
     VERSION = 1
+    SHAFT_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SHAFT_COLOR"]
 
     # cf Methods.Machine.Shaft.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):
@@ -170,7 +171,9 @@ class Shaft(FrozenClass):
         for surf in surf_list:
             patches.extend(
                 surf.get_patches(
-                    color=SHAFT_COLOR, is_edge_only=is_edge_only, edgecolor=edgecolor
+                    color=self.SHAFT_COLOR,
+                    is_edge_only=is_edge_only,
+                    edgecolor=edgecolor,
                 )
             )
         ax.set_xlabel("(m)")
@@ -187,7 +190,7 @@ class Shaft(FrozenClass):
 
         # Add legend
         if not is_edge_only:
-            patch_leg.append(Patch(color=SHAFT_COLOR))
+            patch_leg.append(Patch(color=self.SHAFT_COLOR))
             label_leg.append("Shaft")
 
             ax.legend(patch_leg, label_leg)

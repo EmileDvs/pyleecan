@@ -23,9 +23,9 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.SurfRing import SurfRing
 import numpy as np
-from pyleecan.Methods.Machine.Frame.plot import FRAME_COLOR
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
+from pyleecan.definitions import config_dict
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -35,6 +35,7 @@ class Frame(FrozenClass):
     """machine frame"""
 
     VERSION = 1
+    FRAME_COLOR = config_dict["PLOT"]["COLOR_DICT"]["FRAME_COLOR"]
 
     # cf Methods.Machine.Frame.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):
@@ -263,7 +264,7 @@ class Frame(FrozenClass):
             for surf in surf_list:
                 patches.extend(
                     surf.get_patches(
-                        color=FRAME_COLOR,
+                        color=self.FRAME_COLOR,
                         is_edge_only=is_edge_only,
                         edgecolor=edgecolor,
                     )
@@ -282,7 +283,7 @@ class Frame(FrozenClass):
             ax.set_ylim(-Lim, Lim, auto=True)
 
             if not is_edge_only:
-                patch_leg.append(Patch(color=FRAME_COLOR))
+                patch_leg.append(Patch(color=self.FRAME_COLOR))
                 label_leg.append("Frame")
                 ax.legend(patch_leg, label_leg)
             if is_show_fig:
