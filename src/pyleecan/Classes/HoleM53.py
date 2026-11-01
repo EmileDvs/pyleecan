@@ -1690,7 +1690,7 @@ class HoleM53(HoleMag):
 
         pass
 
-    class S53_W4CheckError(SlotCheckError):
+    class S53_W5CheckError(SlotCheckError):
         """ """
 
         pass

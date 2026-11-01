@@ -6,7 +6,6 @@ import itertools
 
 from pyleecan.Classes.ParamExplorerSet import ParamExplorerSet
 from pyleecan.Classes.VarParam import VarParam
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

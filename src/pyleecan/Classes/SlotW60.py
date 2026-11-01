@@ -1466,7 +1466,7 @@ class SlotW60(Slot):
 
         pass
 
-    class S60_WindHError(SlotCheckError):
+    class S60_InnerCheckError(SlotCheckError):
         """ """
 
         pass

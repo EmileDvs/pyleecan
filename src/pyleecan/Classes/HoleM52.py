@@ -1246,6 +1246,8 @@ SlotCheckError = HoleM52.SlotCheckError
 
 S52_NoneError = HoleM52.S52_NoneError
 
+S52_H12CheckError = HoleM52.S52_H12CheckError
+
 S52_W1CheckError = HoleM52.S52_W1CheckError
 
 S52_H12CheckError = HoleM52.S52_H12CheckError

@@ -5,7 +5,6 @@
 import numpy as np
 
 from pyleecan.Classes.ScalarProduct import ScalarProduct
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

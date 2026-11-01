@@ -3,7 +3,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/RefQuad4"""
 
 from pyleecan.Classes.RefElement import RefElement
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

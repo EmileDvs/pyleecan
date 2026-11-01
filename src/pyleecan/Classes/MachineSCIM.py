@@ -5,7 +5,6 @@
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 from pyleecan.Classes.LamSquirrelCage import LamSquirrelCage
 from pyleecan.Classes.MachineDFIM import MachineDFIM
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

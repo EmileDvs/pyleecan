@@ -1359,7 +1359,7 @@ class SlotW13(Slot):
 
         pass
 
-    class S13_H1rCheckError(SlotCheckError):
+    class S13_W01CheckError(SlotCheckError):
         """ """
 
         pass

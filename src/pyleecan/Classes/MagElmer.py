@@ -57,6 +57,8 @@ from pyleecan.Functions.labels import (
     SHAFTSL_LAB,
     SHAFTSR_LAB,
     SHAFT_LAB,
+    SHAFTSL_LAB,
+    SHAFTSR_LAB,
     SLID_LAB,
     STATOR_LAB,
     STATOR_LAB_S,

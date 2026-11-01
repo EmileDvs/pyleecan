@@ -10,6 +10,12 @@ from os import linesep
 from sys import getsizeof
 
 import numpy as np
+from pyleecan.Classes.Norm_affine import Norm_affine
+from pyleecan.Classes.Norm_indices import Norm_indices
+from pyleecan.Classes.Norm_ref import Norm_ref
+
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataLinspace import DataLinspace
 from pyleecan.Classes.Norm_affine import Norm_affine

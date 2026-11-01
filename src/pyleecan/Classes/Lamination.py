@@ -2572,7 +2572,7 @@ class Lamination(FrozenClass):
 
         pass
 
-    class LC_VentYokeOut(LaminationCheckError):
+    class LC_RadiusError(LaminationCheckError):
         """ """
 
         pass

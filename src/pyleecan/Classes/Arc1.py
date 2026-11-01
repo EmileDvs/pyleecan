@@ -762,12 +762,12 @@ class Arc1(Arc):
         """,
     )
 
-    class RadiusArc1Error(Exception):
+    class PointArc1Error(Exception):
         """ """
 
         pass
 
-    class PointArc1Error(Exception):
+    class RadiusArc1Error(Exception):
         """ """
 
         pass
@@ -788,9 +788,9 @@ class Arc1(Arc):
         pass
 
 
-RadiusArc1Error = Arc1.RadiusArc1Error
-
 PointArc1Error = Arc1.PointArc1Error
+
+RadiusArc1Error = Arc1.RadiusArc1Error
 
 NbPointArc1DError = Arc1.NbPointArc1DError
 

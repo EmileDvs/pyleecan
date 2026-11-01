@@ -75,7 +75,6 @@ from pyleecan.Functions.SciDataTool.sum_mean import (
     root_sum_square,
 )
 from pyleecan.Functions.SciDataTool.symmetries import (
-    rebuild_symmetries,
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 from pyleecan.Functions.get_logger import get_logger

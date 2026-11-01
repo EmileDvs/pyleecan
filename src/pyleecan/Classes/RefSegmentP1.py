@@ -7,7 +7,6 @@ from typing import Optional, Tuple
 import numpy as np
 
 from pyleecan.Classes.RefElement import RefElement
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict
 from pyleecan.Functions.save import save

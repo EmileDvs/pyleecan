@@ -1986,6 +1986,11 @@ class SlotW11_2(Slot):
 
         pass
 
+    class S11_2_RHCheckError(SlotCheckError):
+        """ """
+
+        pass
+
     class S11_2_W01CheckError(SlotCheckError):
         """ """
 
@@ -2012,6 +2017,8 @@ MachineCheckError = SlotW11_2.MachineCheckError
 LaminationCheckError = SlotW11_2.LaminationCheckError
 
 SlotCheckError = SlotW11_2.SlotCheckError
+
+S11_2_RHCheckError = SlotW11_2.S11_2_RHCheckError
 
 S11_2_RHCheckError = SlotW11_2.S11_2_RHCheckError
 

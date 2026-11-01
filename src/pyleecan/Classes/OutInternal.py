@@ -5,7 +5,6 @@
 from os import linesep
 
 from pyleecan.Classes._frozen import FrozenClass
-
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.save import save
 

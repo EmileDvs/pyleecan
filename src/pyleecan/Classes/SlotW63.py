@@ -1379,7 +1379,7 @@ class SlotW63(Slot):
 
         pass
 
-    class S63_W0CheckError(SlotCheckError):
+    class S63_InnerCheckError(SlotCheckError):
         """ """
 
         pass

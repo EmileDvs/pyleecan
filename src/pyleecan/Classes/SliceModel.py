@@ -14,6 +14,7 @@ from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
 
 from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions.save import save
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.load import load_init_dict

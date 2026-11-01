@@ -1766,12 +1766,12 @@ class SlotW23(Slot):
 
         pass
 
-    class S23_H1rCheckError(SlotCheckError):
+    class S23_W01CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S23_W01CheckError(SlotCheckError):
+    class S23_H1rCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1783,6 +1783,6 @@ LaminationCheckError = SlotW23.LaminationCheckError
 
 SlotCheckError = SlotW23.SlotCheckError
 
-S23_H1rCheckError = SlotW23.S23_H1rCheckError
-
 S23_W01CheckError = SlotW23.S23_W01CheckError
+
+S23_H1rCheckError = SlotW23.S23_H1rCheckError

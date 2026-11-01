@@ -1809,12 +1809,7 @@ class HoleM50(HoleMag):
 
         pass
 
-    class S50_W3CheckError(SlotCheckError):
-        """ """
-
-        pass
-
-    class S50_SpCheckError(SlotCheckError):
+    class S50_W01CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1845,9 +1840,7 @@ S50_NoneError = HoleM50.S50_NoneError
 
 S50_W5CheckError = HoleM50.S50_W5CheckError
 
-S50_W3CheckError = HoleM50.S50_W3CheckError
-
-S50_SpCheckError = HoleM50.S50_SpCheckError
+S50_W01CheckError = HoleM50.S50_W01CheckError
 
 S50_H23CheckError = HoleM50.S50_H23CheckError
 
