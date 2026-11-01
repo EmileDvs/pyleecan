@@ -1,11 +1,12 @@
-# -*- coding: utf-8 -*-
 """
 Provides functions for analyzing windings
 """
-import numpy as np
+
 import fractions
 import math
 from collections import Counter, deque
+
+import numpy as np
 
 
 def calc_q(Q, p, m):
@@ -49,7 +50,7 @@ def double_linked_leakage(kw, nu, p):
              ordinal number with respect to the mechanical winding factor.
     p  :     integer
              number of pole pairs
-             
+
     Returns
     -------
     return : float
@@ -62,13 +63,13 @@ def double_linked_leakage(kw, nu, p):
 
     sigma_d = np.sum((kw / (nu / p)) ** 2)
     sigma_d -= (kw1) ** 2
-    sigma_d /= kw1 ** 2
+    sigma_d /= kw1**2
     return sigma_d
 
 
 def wdg_get_periodic(Ei, S):
     """
-    Returns the symmetry factor for the winding 
+    Returns the symmetry factor for the winding
 
     Parameters
     ----------
@@ -77,11 +78,11 @@ def wdg_get_periodic(Ei, S):
              Ei[nu][phase][slot]
     S :      list of lists
              winding layout
-             
+
     Returns
     -------
     return : list
-             symmetry factor for each phase. 
+             symmetry factor for each phase.
              1 if there is no periodicity
              2 if half of the machine is smallest symmetric part and so on...
     """
@@ -118,16 +119,15 @@ def wdg_get_periodic(Ei, S):
                 angles = np.round(angles, 4)
                 c = Counter(angles)
                 a = min(c.values())
-                if a > a_max:
-                    a_max = a
+                a_max = max(a_max, a)
             periodic.append(a_max)
     return periodic
 
 
 def wdg_is_symmetric(Ei, m):
     """
-    Test if the winding ist symmetric -> phase shift between every 
-    phase is 360°/m. 
+    Test if the winding ist symmetric -> phase shift between every
+    phase is 360°/m.
 
     Parameters
     ----------
@@ -135,8 +135,8 @@ def wdg_is_symmetric(Ei, m):
              voltage vectors for every phase and every slot
              Ei[nu][phase][slot]
     m  :     integer
-             number of phases     
-             
+             number of phases
+
     Returns
     -------
     return : bool
@@ -191,29 +191,27 @@ def check_number_of_coilsides(S):
             elif w < 0:
                 neg += 1
         if pos != neg:
-            error += "Phase {} has {} postive and {} negative coil sides".format(
-                k + 1, pos, neg
-            )
+            error += f"Phase {k + 1} has {pos} postive and {neg} negative coil sides"
             valid = False
 
     l = [len(s) for s in S2]
     if len(set(l)) != 1:
         error = "Not all phases have the same number of coil sides:<br>"
         for k in range(len(S)):
-            error += "Phase {} hat {} coilsides<br>".format(k + 1, l[k])
+            error += f"Phase {k + 1} hat {l[k]} coilsides<br>"
     return valid, error
 
 
 def calc_phaseangle_starvoltage(Ei):
     """
-    Calculates the phaseangle based on the slot voltage vectors. 
+    Calculates the phaseangle based on the slot voltage vectors.
 
     Parameters
     ----------
     Ei :     list of lists of lists
              voltage vectors for every phase and every slot
              Ei[nu][phase][slot]
-             
+
     Returns
     -------
     return phaseangle: list
@@ -248,7 +246,7 @@ def calc_phaseangle_starvoltage(Ei):
 
 def calc_kw(Q, S, turns, p, N_nu, config):
     """
-    Calculates the windingfactor, the slot voltage vectors. The 
+    Calculates the windingfactor, the slot voltage vectors. The
     harmonic numbers are generated automatically.
 
     Parameters
@@ -264,7 +262,7 @@ def calc_kw(Q, S, turns, p, N_nu, config):
              number of pole pairs
     N_nu:    integer
              length of the harmonic number vector
-             
+
     Returns
     -------
     return nu: list
@@ -326,7 +324,7 @@ def calc_kw_by_nu(Q, S, turns, p, nu):
              number of pole pairs
     nu:      integer
              harmonic number
-             
+
     Returns
     -------
     return nu: list
@@ -379,7 +377,7 @@ def test_phases(S):
 
 def calc_star(Q, S, turns, p, nu):
     """
-    Calculates the slot voltage vectors for the given winding layout 
+    Calculates the slot voltage vectors for the given winding layout
 
     Parameters
     ----------
@@ -394,7 +392,7 @@ def calc_star(Q, S, turns, p, nu):
              number of pole pairs
     nu:      integer
              harmonic number for calculation
-             
+
     Returns
     -------
     return Ei: list
@@ -421,7 +419,7 @@ def calc_star(Q, S, turns, p, nu):
 
 def calc_MMK(Q, m, S, turns=1, N=3601, angle=0):
     """
-    Calculates the magneto-motoric force (MMK) 
+    Calculates the magneto-motoric force (MMK)
 
     Parameters
     ----------
@@ -438,7 +436,7 @@ def calc_MMK(Q, m, S, turns=1, N=3601, angle=0):
              number of values for the MMK curve
     angle:   float
              actual phase of the current system in deg
-             
+
     Returns
     -------
     return MMK:   list
@@ -487,10 +485,10 @@ def calc_MMK(Q, m, S, turns=1, N=3601, angle=0):
 
 def calc_radial_force_modes(MMK, m, num_modes=4):
     """
-    Calculates the radial force modes based on the 
+    Calculates the radial force modes based on the
     magneto-motoric force (MMK). The results includes also the modes
     with a multiple of the phase-number (which aren't there if the
-    machine is star-connected). 
+    machine is star-connected).
 
     Parameters
     ----------
@@ -498,7 +496,7 @@ def calc_radial_force_modes(MMK, m, num_modes=4):
              waveform of the magneto-motoric foce
     m :      integer
              number of phases
-             
+
     Returns
     -------
     return MMK:   list
@@ -530,12 +528,12 @@ def calc_radial_force_modes(MMK, m, num_modes=4):
 def DFT(vect):
     """
     Harmonic Analyses
-    
+
     Parameters
     ----------
     vect  : array_like
             curve (time signal)
-             
+
     Returns
     -------
     return : complex ndarray
@@ -551,12 +549,12 @@ def DFT(vect):
 def _get_float(txt):
     """
     returns the floating point number from string
-    
+
     Parameters
     ----------
     txt  : string
            string of the number
-             
+
     Returns
     -------
     return : float or None-type
@@ -618,13 +616,13 @@ class create_wdg_overhang:
                 Coil side 1
         end   : integer
                 Coil side 2 which is connected to coil side 1
-                 
+
         Returns
         -------
-        diff : integer 
+        diff : integer
                distance between S1 and S2 in slot count
         direct : integer
-                 Direction of the coil 
+                 Direction of the coil
                  +1 means coil from left to right
                  -1 means coil from right to left
         """
@@ -651,7 +649,7 @@ class create_wdg_overhang:
     def get_pos_neg_coil_sides(self, S, S2=None):
         """
         Returns the the position of the positive and negative
-        coil sides from list. The coil sides are extracted from 'S'. 
+        coil sides from list. The coil sides are extracted from 'S'.
         If 'S2' is given, than the positive coil sides are extracted
         from 'S' and the negative ones from 'S2'
 
@@ -661,12 +659,12 @@ class create_wdg_overhang:
             Coil sides
         S2 : list
              Coil sides
-                 
+
         Returns
         -------
-        Sp : list 
+        Sp : list
              Position of the positive coil sides
-        Sn : list 
+        Sn : list
              Position of the negatuve coil sides
         """
         if S2 is None:
@@ -687,10 +685,10 @@ class create_wdg_overhang:
              Coil side
         S2 : Array
              Coil sides
-                 
+
         Returns
         -------
-        return : array 
+        return : array
                  distance between S1 and S2 in slot count
         """
         dist_slots = []
@@ -710,17 +708,17 @@ class create_wdg_overhang:
         w     : integer or list of integers
                 Coil span to apply. If not given the winding
                 overhang gets minimized with different coil spans.
-                 
+
         Returns
         -------
-        return : list 
+        return : list
                  Winding connections for all phases, len = num_phases,
                  format: [[(from_slot, to_slot), stepwidth, direction, (from_layer, to_layer)], [(), ()], ...]
                  from_slot: slot with positive coil side of the coil
                  to_slot:   slot with negative coil side of the coil
                  stepwidth: distance between from_slot to to_slot
                  direction: winding direction (1: from left to right, -1: from right to left)
-                 layer: tuple of the layer of 'from_slot' and 'to_slot' 
+                 layer: tuple of the layer of 'from_slot' and 'to_slot'
         """
         self.w = w
         if w is not None:

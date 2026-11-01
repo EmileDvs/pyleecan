@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
-
 # Functions for creating windings
 
 import fractions
 
 #  from collections import deque
 import math
+
 import numpy as np
+
 from . import analyse
 
 
@@ -40,7 +40,7 @@ def genwdg(Q, P, m, w, layers, empty_slots=0):
                     0: No empty slots
                     >0: Manual defined number of empty slots
 
-             
+
     Returns
     -------
     return : list
@@ -53,9 +53,7 @@ def genwdg(Q, P, m, w, layers, empty_slots=0):
         if not ret["valid"]:
             ret = None
     elif empty_slots == -1:
-        if layers == 1 and Q % (2 * m) == 0:
-            ret = winding_from_star_of_slot(Q, P, m, w, layers)
-        elif layers == 2 and Q % (m) == 0:
+        if layers == 1 and Q % (2 * m) == 0 or layers == 2 and Q % (m) == 0:
             ret = winding_from_star_of_slot(Q, P, m, w, layers)
         else:
             ret = winding_from_general_equation(Q, P, m, w, layers, empty_slots)
@@ -278,7 +276,7 @@ def winding_from_star_of_slot(Q, P, m, w=-1, layers=2):
 def winding_from_general_equation(Q, P, m, w=-1, layers=2, n_es=0):
     """
     Based on:
-    Caruso, Massimo & Di Tommaso, Antonino & Marignetti, Fabrizio & Miceli, Rosario & Galluzzo, Giuseppe. (2018). A General Mathematical Formulation for Winding Layout Arrangement of Electrical Machines. Energies. 11. 446. 10.3390/en11020446. 
+    Caruso, Massimo & Di Tommaso, Antonino & Marignetti, Fabrizio & Miceli, Rosario & Galluzzo, Giuseppe. (2018). A General Mathematical Formulation for Winding Layout Arrangement of Electrical Machines. Energies. 11. 446. 10.3390/en11020446.
     """
     error = ""
     info = ""

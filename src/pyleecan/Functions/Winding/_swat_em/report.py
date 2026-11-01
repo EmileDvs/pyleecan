@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 """
 Provides functions for reports
 """
+
 import os
 import re
 import tempfile
@@ -30,7 +30,7 @@ def table_header(data):
 
 def table_row(data, col=None):
     if col:
-        txt = ['<tr bgcolor="{}">'.format(col)]
+        txt = [f'<tr bgcolor="{col}">']
     else:
         txt = ["<tr>"]
     for d in data:
@@ -80,11 +80,11 @@ def num2str(number, maxlen=8):
              Number to convert
     maxlen : integer
              Max. length to convert
-           
+
     Returns
     -------
     return : string / list of strings / ndarray of strings
-             string with the number           
+             string with the number
     """
     if number > 0:
         maxlen -= 1
@@ -105,7 +105,7 @@ def num2str(number, maxlen=8):
 def ascii_table2(head, dat, space=3):
     """
     Returns a formatted table as a string including end of line
-    
+
     Parameters
     ----------
     head  : list of strings
@@ -114,7 +114,7 @@ def ascii_table2(head, dat, space=3):
             data for the table
     space : integer
             Distance between columens
-    
+
     Returns
     -------
     return : string
@@ -128,8 +128,7 @@ def ascii_table2(head, dat, space=3):
     for k in range(Ncol):
         maxlen = 0
         for s in range(len(dat[0])):
-            if maxlen < len(dat[k][s]):
-                maxlen = len(dat[k][s])
+            maxlen = max(maxlen, len(dat[k][s]))
         len_col.append(max(maxlen, len(head[k])))
 
     out = ""
@@ -164,7 +163,7 @@ class HtmlReport:
     def _create_figures(self, tmpdir):
         """
         Creates all figures for the winding
-        
+
         Parameters
         ----------
         tmpdir : string
@@ -486,19 +485,11 @@ class TextReport:
 
         self._txt.append("MACHINE DATA")
         self._txt.append("============")
-        self._txt.append(
-            "Number of slots        Q: {}".format(self.data.get_num_slots())
-        )
-        self._txt.append(
-            "Number of pole pairs   p: {}".format(self.data.get_num_polepairs())
-        )
-        self._txt.append(
-            "Number of phases       m: {}".format(self.data.get_num_phases())
-        )
-        self._txt.append(
-            "Number of layers      NL: {}".format(self.data.get_num_layers())
-        )
-        self._txt.append("Number of slots/phase  q: {}".format(self.data.get_q()))
+        self._txt.append(f"Number of slots        Q: {self.data.get_num_slots()}")
+        self._txt.append(f"Number of pole pairs   p: {self.data.get_num_polepairs()}")
+        self._txt.append(f"Number of phases       m: {self.data.get_num_phases()}")
+        self._txt.append(f"Number of layers      NL: {self.data.get_num_layers()}")
+        self._txt.append(f"Number of slots/phase  q: {self.data.get_q()}")
         self._txt.append("\n")
 
         _, ls, _ = self.data.get_layers()
@@ -599,9 +590,7 @@ class TextReport:
             "Harmonic content of the MMF (airgap field caused by the winding)"
         )
         self._txt.append(
-            "Harmonics lower than {}% of the max. amplitude are not shown".format(
-                threshold * 100
-            )
+            f"Harmonics lower than {threshold * 100}% of the max. amplitude are not shown"
         )
         self._txt.append("nu_mech\tA^\tArel in %\tphase in °")
 

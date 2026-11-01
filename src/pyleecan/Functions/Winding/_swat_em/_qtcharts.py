@@ -5,7 +5,6 @@ import os
 
 from PySide6 import QtCharts, QtCore, QtGui, QtSvg, QtWidgets
 
-
 _app = None
 
 
@@ -67,7 +66,9 @@ class _ArrowItem(QtWidgets.QGraphicsPolygonItem):
         self._head_len = headLen
         self._data_pos = QtCore.QPointF()
         self.setPen(pen if isinstance(pen, QtGui.QPen) else mkPen(pen or "k"))
-        self.setBrush(brush if isinstance(brush, QtGui.QBrush) else mkBrush(brush or "k"))
+        self.setBrush(
+            brush if isinstance(brush, QtGui.QBrush) else mkBrush(brush or "k")
+        )
 
     def setPos(self, x, y=None):
         if y is None:
@@ -93,8 +94,12 @@ class _AreaPolygonItem(QtWidgets.QGraphicsPolygonItem):
     def __init__(self, points, brush=None, pen=None):
         super().__init__()
         self.data_points = [QtCore.QPointF(x, y) for x, y in points]
-        self.setBrush(brush if isinstance(brush, QtGui.QBrush) else mkBrush(brush or "k"))
-        self.setPen(pen if isinstance(pen, QtGui.QPen) else QtGui.QPen(self.brush().color()))
+        self.setBrush(
+            brush if isinstance(brush, QtGui.QBrush) else mkBrush(brush or "k")
+        )
+        self.setPen(
+            pen if isinstance(pen, QtGui.QPen) else QtGui.QPen(self.brush().color())
+        )
 
     def update_chart_position(self, chart, series):
         points = [chart.mapToPosition(point, series) for point in self.data_points]
@@ -105,9 +110,7 @@ class _AreaPolygonItem(QtWidgets.QGraphicsPolygonItem):
 class _AreaSeries:
     def __init__(self, upper, lower, brush=None):
         points = [(point.x(), point.y()) for point in upper.points()]
-        points.extend(
-            (point.x(), point.y()) for point in reversed(lower.points())
-        )
+        points.extend((point.x(), point.y()) for point in reversed(lower.points()))
         self.graphic = _AreaPolygonItem(points, brush=brush)
 
 

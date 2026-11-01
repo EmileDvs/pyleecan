@@ -1,20 +1,24 @@
-# -*- coding: utf-8 -*-
 """
 Provides functions for plotting
 """
 
-from PySide6 import QtCore
-from PySide6.QtCore import QRegularExpression
-from PySide6.QtGui import QColor, QFont, QSyntaxHighlighter, QTextCharFormat, QTextCursor
-from PySide6.QtWidgets import QApplication, QTableWidgetItem
-
-from .config import get_phase_color, get_line_color, config
-from . import analyse
-from . import _qtcharts as qtcharts
+import re
 
 import numpy as np
-import os
-import re
+from PySide6 import QtCore
+from PySide6.QtCore import QRegularExpression
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QSyntaxHighlighter,
+    QTextCharFormat,
+    QTextCursor,
+)
+from PySide6.QtWidgets import QApplication, QTableWidgetItem
+
+from . import _qtcharts as qtcharts
+from . import analyse
+from .config import config, get_line_color, get_phase_color
 
 
 def gen_coil_lines(w, h1=0.75, h2=1.5, db1=0.1, Np1=21):
@@ -37,7 +41,7 @@ def gen_coil_lines(w, h1=0.75, h2=1.5, db1=0.1, Np1=21):
 
     Returns
     -------
-    x : list 
+    x : list
         x values of the coil for plotting
     y : list
         y values of the coil for plotting
@@ -79,7 +83,7 @@ def gen_slot_lines(Q, bz, hz):
 
     Returns
     -------
-    x : list 
+    x : list
         x values of the slots for plotting
     y : list
         y values of the slots for plotting
@@ -121,7 +125,7 @@ def gen_slot_filling(Q, bz, hz):
 
     Returns
     -------
-    x : list 
+    x : list
         x values of the slots for plotting
     y : list
         y values (upper lines) of the slots for plotting
@@ -160,7 +164,7 @@ def _clear_chart_legend(leg):
     """
     Legends are populated automatically from the active QtCharts series.
     """
-    return None
+    return
 
 
 class _slot_plot:
@@ -328,7 +332,9 @@ class _slot_plot:
                 pen = qtcharts.mkPen(magnet_colors[kpole], width=magnet_linewidth)
 
                 for xtmp, ytmp in zip(*group_on_nan(x1, y1)):
-                    curve = qtcharts.PlotCurveItem(xtmp, ytmp, pen=pen, connect="finite")
+                    curve = qtcharts.PlotCurveItem(
+                        xtmp, ytmp, pen=pen, connect="finite"
+                    )
                     self.fig.addItem(curve)
 
         self.fig.autoRange()
@@ -342,6 +348,7 @@ class _slot_plot:
     def cp2clipboard(self):
         img = self.widget.grab()
         QApplication.clipboard().setImage(img.toImage())
+
 
 class _polar_layout_plot:
     def __init__(self, layout, widget, data):
@@ -595,7 +602,9 @@ class _overhang_plot:
                     arrow.setPos(coil[0][1] - 1 + self.db1, 0)
                 self.fig.addItem(arrow)
 
-            pen = qtcharts.mkPen(color=get_phase_color(i - 1), width=config["plt"]["lw"])
+            pen = qtcharts.mkPen(
+                color=get_phase_color(i - 1), width=config["plt"]["lw"]
+            )
 
             i_name = 0
             for xtmp, ytmp in zip(*group_on_nan(x, y)):
@@ -652,8 +661,7 @@ class _slot_star:
     def plot(self, data, harmonic_idx=0, ForceX=None, show=False):
         self.data = data
         self.show = show
-        if harmonic_idx < 0:
-            harmonic_idx = 0
+        harmonic_idx = max(harmonic_idx, 0)
 
         self.fig.clear()
         _clear_chart_legend(self.leg)
@@ -689,14 +697,10 @@ class _slot_star:
             for k in range(
                 len(vek)
             ):  # find limit manually, because autoscale doesn't work with plt.arrow()
-                if min(v.real) < xlim[0]:
-                    xlim[0] = min(v.real)
-                if max(v.real) > xlim[1]:
-                    xlim[1] = max(v.real)
-                if min(v.imag) < ylim[0]:
-                    ylim[0] = min(v.imag)
-                if max(v.imag) > ylim[1]:
-                    ylim[1] = max(v.imag)
+                xlim[0] = min(xlim[0], min(v.real))
+                xlim[1] = max(xlim[1], max(v.real))
+                ylim[0] = min(ylim[0], min(v.imag))
+                ylim[1] = max(ylim[1], max(v.imag))
 
                 arrow = qtcharts.ArrowItem(
                     angle=180 - np.angle(vek[k]) / np.pi * 180,
@@ -961,7 +965,7 @@ class _mmk:
                 curve = qtcharts.PlotCurveItem(
                     phi,
                     a * np.cos(n * phi / phi[-1] * 2 * np.pi + p),
-                    name="<div>&nu;={}</div>".format(n),
+                    name=f"<div>&nu;={n}</div>",
                     pen=pen,
                 )
                 self.fig1.addItem(curve)
@@ -1016,7 +1020,7 @@ class _Report_Highlighter(QSyntaxHighlighter):
     """
 
     def __init__(self, parent=None):
-        super(_Report_Highlighter, self).__init__(parent)
+        super().__init__(parent)
         self.highlightingRules = []
 
         # headings

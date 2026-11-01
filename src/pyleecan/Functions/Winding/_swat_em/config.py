@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 """
 Provides the config and the handling of it
 """
+
 import copy
+import json
 import os
 import sys
-import json
 
 
 def get_config_dir():
@@ -19,9 +19,7 @@ def get_config_dir():
              LINUX / OSX: ~/.config/swat-em/
              WINSOWS: ../appdata/swat-em/
     """
-    if "linux" in sys.platform:
-        user_config_dir = os.path.join(os.path.expanduser("~"), ".config/swat-em")
-    elif "darwin" in sys.platform:
+    if "linux" in sys.platform or "darwin" in sys.platform:
         user_config_dir = os.path.join(os.path.expanduser("~"), ".config/swat-em")
     else:
         user_config_dir = os.path.join(os.getenv("APPDATA"), "swat-em")
@@ -99,13 +97,13 @@ def get_line_color(num):
 def get_config(default=False):
     """
     Returns the configuration dictionary
-    
+
     Parameters
     ----------
     default : Boolean
               if True:  returns the default config
               if False: returns the config from the home-directory of the user
-             
+
     Returns
     -------
     return : dictionary
@@ -124,7 +122,7 @@ def get_config(default=False):
 def save_config(config):
     """
     Saves the configuration in the home directory of the user
-    
+
     Parameters
     ----------
     config : Dictionary
@@ -140,7 +138,7 @@ def save_config(config):
 def load_config():
     """
     Saves the configuration in the home directory of the user
-    
+
     Returns
     -------
     return : dictionary

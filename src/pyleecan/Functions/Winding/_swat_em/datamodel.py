@@ -1,19 +1,18 @@
-# -*- coding: utf-8 -*-
 """
-Provides a central class for data 
+Provides a central class for data
 """
+
+import copy
+import fractions
+import gc
 import json
 import os
-import fractions
-import math
-import copy
 import string
-import gzip
-import gc
+
 import numpy as np
-from . import analyse
+
+from . import analyse, wdggenerator
 from . import report as rep
-from . import wdggenerator
 from .config import config, get_phase_color
 
 
@@ -50,13 +49,13 @@ class datamodel:
         txt.append("")
         if self.results["kw_el"] != None:
             txt.append("Title: " + self.get_title())
-            txt.append("Number of slots:  {}".format(self.get_num_slots()))
-            txt.append("Number of poles:  {}".format(2 * self.get_num_polepairs()))
-            txt.append("Number of phases: {}".format(self.get_num_phases()))
-            txt.append("Number of layers: {}".format(self.get_num_layers()))
-            txt.append("Coil span       : {}".format(self.get_coilspan()))
+            txt.append(f"Number of slots:  {self.get_num_slots()}")
+            txt.append(f"Number of poles:  {2 * self.get_num_polepairs()}")
+            txt.append(f"Number of phases: {self.get_num_phases()}")
+            txt.append(f"Number of layers: {self.get_num_layers()}")
+            txt.append(f"Coil span       : {self.get_coilspan()}")
 
-            txt.append("Number of slots per pole per phase: {}".format(self.get_q()))
+            txt.append(f"Number of slots per pole per phase: {self.get_q()}")
             wf = [str(round(k, 3)) for k in self.get_fundamental_windingfactor()]
             txt.append("Fundamental winding factor: {}".format(", ".join(wf)))
         else:
@@ -102,7 +101,7 @@ class datamodel:
 
     def set_title(self, title):
         """
-        Set the title of the winding 
+        Set the title of the winding
 
         Parameters
         ----------
@@ -113,7 +112,7 @@ class datamodel:
 
     def get_title(self):
         """
-        Get the title of the winding 
+        Get the title of the winding
 
         Returns
         ----------
@@ -127,7 +126,7 @@ class datamodel:
 
     def get_notes(self):
         """
-        Get notes for the winding 
+        Get notes for the winding
 
         Returns
         ----------
@@ -138,7 +137,7 @@ class datamodel:
 
     def set_notes(self, notes):
         """
-        Set additional notes for the winding 
+        Set additional notes for the winding
 
         Parameters
         ----------
@@ -149,7 +148,7 @@ class datamodel:
 
     def set_machinedata(self, Q=None, p=None, m=None, Qes=None):
         """
-        setting the machine data 
+        setting the machine data
 
         Parameters
         ----------
@@ -172,17 +171,17 @@ class datamodel:
     def set_phases(self, S, turns=1, w=None):
         """
         setting the winding layout
-        
+
         Parameters
         ----------
         S : list of lists
             winding layout for every phase, for example:
             S = [[1,-2], [3,-4], [5,-6]]. This means there are 3 phases
-            with phase 1 in in slot 1 and in slot 2 with negativ winding direction. 
+            with phase 1 in in slot 1 and in slot 2 with negativ winding direction.
             For double layer windings there must be additional lists:
             S = [[[1, -4], [-3, 6]], [[3, -6], [-5, 2]], [[-2, 5], [4, -1]]]
             Hint: [[[first layer], [second layer]], ... ]
-                     
+
         w : integer
             coil span (slots as unit)
         """
@@ -223,7 +222,7 @@ class datamodel:
         w :      integer
                  coil span (1 for tooth coils)
         layers : integer
-                 number of coil sides per slot    
+                 number of coil sides per slot
         turns  : integer
                  number of turns per coil
         analyse : Bool
@@ -260,7 +259,7 @@ class datamodel:
 
     def get_basic_characteristics(self):
         """
-        Returns the basic charactericits of the winding as 
+        Returns the basic charactericits of the winding as
         dictionary and a html string
         """
         if not "basic_char" in self.results.keys():
@@ -299,7 +298,7 @@ class datamodel:
         for i, k in enumerate(bc["kw1"]):
             dat.append(
                 [
-                    "winding factor (m={}) ".format(i + 1),
+                    f"winding factor (m={i + 1}) ",
                     rep.italic("kw1: "),
                     str(round(k, 3)),
                 ]
@@ -343,8 +342,8 @@ class datamodel:
     def get_radial_force_modes(self, num_modes=None):
         """
         Returns the radial force modes caused by the winding.
-        The results includes also the modes with a multiple of the 
-        phase-number (which aren't there if the machine is star-connected). 
+        The results includes also the modes with a multiple of the
+        phase-number (which aren't there if the machine is star-connected).
 
         Parameters
         ----------
@@ -396,14 +395,14 @@ class datamodel:
 
     def get_MMF_harmonics(self, threshold=False):
         """
-        Returns the harmonics of the MMF curve 
-        
+        Returns the harmonics of the MMF curve
+
         Parameters
         ----------
         threshold: float
                    Relative threshold for cutting off small amplit>udes
                    0 < threshold <= 1.0
-               
+
         Returns
         -------
         nu: 1D numpy array
@@ -429,7 +428,7 @@ class datamodel:
     def get_double_linked_leakage(self):
         """
         Returns the coefficient of the double linkead leakage flux.
-        This number is a measure of the harmonic content of the 
+        This number is a measure of the harmonic content of the
         MMF in the airgap caused by the winding. As higher the number
         as higher the harmonics.
 
@@ -495,7 +494,7 @@ class datamodel:
 
     def set_num_slots(self, Q):
         """
-        Sets the number of slots Q 
+        Sets the number of slots Q
 
         Parameters
         ----------
@@ -517,7 +516,7 @@ class datamodel:
 
     def set_num_polepairs(self, p):
         """
-        Sets the number of pole pairs p 
+        Sets the number of pole pairs p
 
         Parameters
         ----------
@@ -528,7 +527,7 @@ class datamodel:
 
     def get_num_phases(self):
         """
-        Returns the number of phases m 
+        Returns the number of phases m
 
         Returns
         -------
@@ -539,7 +538,7 @@ class datamodel:
 
     def set_num_phases(self, m):
         """
-        Sets the number of phases m 
+        Sets the number of phases m
 
         Parameters
         ----------
@@ -582,7 +581,7 @@ class datamodel:
     def get_phases(self, flatten=False):
         """
         Returns the definition of the winding layout. For every phase
-        there is a sublist which contains the slot number which are 
+        there is a sublist which contains the slot number which are
         allocated to the phase.
         phases
 
@@ -605,7 +604,7 @@ class datamodel:
         Returns the definition of the winding layout alternative to the
         'get_phases' function. For every layer (with the length of the
         number of slots) there is a sublist which contains the phase-number.
-        
+
         layers[0][0] contains the phase number for first layer and first slot
         layers[0][1] contains the phase number for first layer and second slot
         layers[0][Q-1] contains the phase number for first layer and last slot
@@ -613,11 +612,11 @@ class datamodel:
 
         Returns
         -------
-        layers:     numpy array 
+        layers:     numpy array
                     winding layout
-        slayers:    numpy array 
+        slayers:    numpy array
                     same as 'layers' but as string
-        layers_col: numpy array 
+        layers_col: numpy array
                     phase colors
         """
         N = self.get_num_layers()
@@ -645,7 +644,7 @@ class datamodel:
         """
         Returns the names of the phases as a series of characters
         'A', 'B', 'C', ... with length of the number of phases
-        
+
         Returns
         -------
         phasenames: list
@@ -663,7 +662,7 @@ class datamodel:
         """
         Returns the windings factors with respect to the electrical
         ordinal numbers
-        
+
         Returns
         -------
         nu: numpy array
@@ -677,12 +676,12 @@ class datamodel:
         """
         Returns the windings factors with respect to the electrical
         ordinal numbers for the given ordinal number
-        
+
         Parameters
         ----------
         nu: integer
-            ordinal number 
-               
+            ordinal number
+
         Returns
         -------
         kw: 1D numpy array
@@ -701,7 +700,7 @@ class datamodel:
         """
         Returns the windings factors with respect to the mechanicl
         ordinal numbers
-        
+
         Returns
         -------
         nu: numpy array
@@ -715,12 +714,12 @@ class datamodel:
         """
         Returns the windings factors with respect to the mechanical
         ordinal numbers for the given ordinal number
-        
+
         Parameters
         ----------
         nu: integer
-            ordinal number 
-               
+            ordinal number
+
         Returns
         -------
         kw: 1D numpy array
@@ -734,7 +733,7 @@ class datamodel:
     def get_fundamental_windingfactor(self):
         """
         Returns the fundamental winding factors for each phase
-        
+
         Returns
         -------
         kw: list
@@ -754,31 +753,31 @@ class datamodel:
         side has an individual number of turns, the return value
         consists of lists with the same shape as the winding layout
         (phases)
-        
+
         Returns
         -------
         turns: integer, float or list of lists
-               number of turns 
+               number of turns
         """
         return self.machinedata["turns"]
 
     def get_is_symmetric(self):
         """
         Returns the symmetry of the winding
-        
+
         Returns
         -------
         is_symmetric: Boolean
                       True if the winding is symmetric
-                      False if the winding is not symmetric 
+                      False if the winding is not symmetric
         """
         return self.results["wdg_is_symmetric"]
 
     def get_periodicity_t(self):
         """
-        Returns the periodicity of the winding. In most cases 
+        Returns the periodicity of the winding. In most cases
         t = gcd(Q,p). For user defined windings this may be different.
-        
+
         Returns
         -------
         t: integer
@@ -794,7 +793,7 @@ class datamodel:
     def get_parallel_connections(self):
         """
         Returns all possible parallel connections of the winding.
-        
+
         Returns
         -------
         a: list
@@ -807,7 +806,7 @@ class datamodel:
         Returns the lowest common multiple of the slot number Q and
         the number of Poles. For permanent-magnet machines this value
         represents the first ordinal number for the cogging torque.
-        
+
         Returns
         -------
         lcmQP: integer
@@ -822,11 +821,11 @@ class datamodel:
         side has an individual number of turns, the parameter value
         have to consist of lists with the same shape as the winding layout
         (phases)
-        
+
         Parameters
         ----------
         turns: integer, float or list of lists
-               number of turns 
+               number of turns
         """
         self.machinedata["turns"] = turns
 
@@ -849,7 +848,7 @@ class datamodel:
 
     def _set_q(self, q):
         """
-        Sets the number of slots per pole per phase q 
+        Sets the number of slots per pole per phase q
 
         Parameters
         ----------
@@ -861,8 +860,8 @@ class datamodel:
     def analyse_wdg(self):
         """
         Do a detailled analyses of the winding. This includes
-        winding factors, detection of periodicity and symmetry, 
-        radial force modes and so on. Use the get_* functions for 
+        winding factors, detection of periodicity and symmetry,
+        radial force modes and so on. Use the get_* functions for
         getting the results.
         """
         self.reset_results()
@@ -947,12 +946,12 @@ class datamodel:
     # def plot_layout(self, filename, res=None, show=False):
     #     """
     #     Generates a figure of the winding layout
-        
+
     #     Parameters
     #     -------
     #     filename: string
     #               file-name with extension to save the figure
-    #     res: list 
+    #     res: list
     #          Resolution for the figure in pixes for x and y direction
     #          example: res = [800, 600]
     #     show: Bool
@@ -968,12 +967,12 @@ class datamodel:
     # def plot_overhang(self, filename, res=None, show=False, optimize_overhang=False):
     #     """
     #     Generates a figure of the winding layout
-        
+
     #     Parameters
     #     -------
     #     filename: string
     #               file-name with extension to save the figure
-    #     res: list 
+    #     res: list
     #          Resolution for the figure in pixes for x and y direction
     #          example: res = [800, 600]
     #     show: Bool
@@ -990,17 +989,17 @@ class datamodel:
     # def plot_star(self, filename, res=None, ForceX=True, show=False):
     #     """
     #     Generates a figure of the star voltage phasors
-        
+
     #     Parameters
     #     -------
     #     filename: string
     #               file-name with extension to save the figure
-    #     res: list 
+    #     res: list
     #          Resolution for the figure in pixes for x and y direction
     #          example: res = [800, 600]
     #     ForceX: Bool
     #             If true the voltage phasors are rotated in such way, that
-    #             the resulting phasor of the first phase matches the 
+    #             the resulting phasor of the first phase matches the
     #             x-axis
     #     show: Bool
     #           If true the window pops up for interactive usage
@@ -1014,17 +1013,17 @@ class datamodel:
     # def plot_windingfactor(self, filename, res=None, mechanical=True, show=False):
     #     """
     #     Generates a figure of the winding layout
-        
+
     #     Parameters
     #     -------
     #     filename: string
     #               file-name with extension to save the figure
-    #     m: list 
+    #     m: list
     #          Resolution for the figure in pixes for x and y direction
     #          example: res = [800, 600]
     #     mechanical: Bool
     #                 If true the winding factor is plotted with respect to the
-    #                 mechanical ordinal numbers. If false the electrical 
+    #                 mechanical ordinal numbers. If false the electrical
     #                 ordinal numbers are used
     #     show: Bool
     #           If true the window pops up for interactive usage
@@ -1038,12 +1037,12 @@ class datamodel:
     # def plot_MMK(self, filename, res=None, phase=0, show=False):
     #     """
     #     Generates a figure of the winding layout
-        
+
     #     Parameters
     #     -------
     #     filename: string
     #               file-name with extension to save the figure
-    #     res: list 
+    #     res: list
     #          Resolution for the figure in pixes for x and y direction
     #          example: res = [800, 600]
     #     phase: float
@@ -1063,12 +1062,12 @@ class datamodel:
     # ):
     #     """
     #     Generates a figure of the winding layout
-        
+
     #     Parameters
     #     -------
     #     filename: string
     #               file-name with extension to save the figure
-    #     res: list 
+    #     res: list
     #          Resolution for the figure in pixes for x and y direction
     #          example: res = [800, 600]
     #     optimize_overhang: Bool
@@ -1088,7 +1087,7 @@ class datamodel:
 
     def save_to_file(self, fname):
         """
-        Saves the data to file. 
+        Saves the data to file.
 
         Parameters
         ----------
@@ -1099,7 +1098,7 @@ class datamodel:
 
     def load_from_file(self, fname, idx_in_file=0):
         """
-        Load data from file. 
+        Load data from file.
 
         Parameters
         ----------
@@ -1118,7 +1117,7 @@ class datamodel:
 
     def export_xlsx(self, fname):
         """
-        Export the results to Excel xlsx file. 
+        Export the results to Excel xlsx file.
 
         Parameters
         ----------
@@ -1129,7 +1128,7 @@ class datamodel:
 
     def export_text_report(self, fname):
         """
-        Export winding report as a text file. 
+        Export winding report as a text file.
 
         Parameters
         ----------
@@ -1141,15 +1140,15 @@ class datamodel:
 
     def export_html_report(self, fname=None):
         """
-        Returns a winding report. 
-        
+        Returns a winding report.
+
         Parameters
         ----------
         fname :  string
                  file name for html file. If not given a file is created
                  in the temp dir of the file system (the file name ist
                  returned by this function)
-                 
+
         Returns
         -------
         filnename : string
@@ -1160,7 +1159,7 @@ class datamodel:
 
     def get_text_report(self):
         """
-        Returns a winding report. 
+        Returns a winding report.
 
         Return
         ----------
@@ -1176,18 +1175,18 @@ class datamodel:
 
         Parameters
         ----------
-        optimize_overhang : Bool 
+        optimize_overhang : Bool
                             Optimize for short winding connection (experimental!)
-                 
+
         Returns
         -------
-        return : list 
+        return : list
                  Winding connections for all phases, len = num_phases,
                  format: [[(from_slot, to_slot), stepwidth, direction, (from_layer, to_layer)], [(), ()], ...]
                  from_to_slot: tuple of (from_slot (positive coil side), to_slot (negative coil side))
                  stepwidth: distance between from_slot to to_slot
                  direction: winding direction (1: from left to right, -1: from right to left)
-                 layer: tuple of the layer of 'from_slot' and 'to_slot' 
+                 layer: tuple of the layer of 'from_slot' and 'to_slot'
         """
         S = self.get_phases()
         Q = self.get_num_slots()
@@ -1310,11 +1309,11 @@ class project:
         return len(self.models)
 
     def get_model_by_index(self, idx):
-        """returns the model with the index 'idx' """
+        """returns the model with the index 'idx'"""
         return self.models[idx]
 
     def delete_model_by_index(self, idx):
-        """deletes the model with the index 'idx' """
+        """deletes the model with the index 'idx'"""
         del self.models[idx]
 
     def move_model(self, idx_from, idx_to):
@@ -1322,18 +1321,18 @@ class project:
         self.models.insert(idx_to, mod)
 
     def clone_by_index(self, idx):
-        """duplicates the model with the index 'idx' """
+        """duplicates the model with the index 'idx'"""
         data = copy.deepcopy(self.models[idx])
         data.set_title(data.get_title() + "_copy")
         self.add_model(data)
 
     def rename_by_index(self, idx, newname):
-        """change the title of the model with the index 'idx' 
-        with name 'newname' """
+        """change the title of the model with the index 'idx'
+        with name 'newname'"""
         self.models[idx].set_title(newname)
 
     def replace_model_by_index(self, newmodel, idx):
-        """replaces the model of index 'idx' with 'newmodel' """
+        """replaces the model of index 'idx' with 'newmodel'"""
         self.models[idx] = newmodel
 
     def analyse_all_models(self):
@@ -1343,11 +1342,11 @@ class project:
 
     def save_to_file(self, fname):
         """
-        Saves the data to file. 
+        Saves the data to file.
 
         Parameters
         ----------
-                 
+
         fname :  string
                  file name
         """
@@ -1357,7 +1356,7 @@ class project:
 
     def load_from_file(self, fname):
         """
-        Load data from file. 
+        Load data from file.
 
         Parameters
         ----------
@@ -1378,14 +1377,14 @@ class project:
 
 def save_models_to_file(models, fname, file_format=2):
     """
-    Saves winding models to file. 
+    Saves winding models to file.
     The data is stored as a json file.
 
     Parameters
     ----------
     models:  datamodel object or list of datamodel objects
              models to save
-             
+
     fname :  string
              file name
     """
@@ -1410,7 +1409,7 @@ def save_models_to_file(models, fname, file_format=2):
 
 def load_models_from_file(fname):
     """
-    Load winding models from file. 
+    Load winding models from file.
 
     Parameters
     ----------
@@ -1445,7 +1444,7 @@ def load_models_from_file(fname):
             data = datamodel()
             for key, value in m["machinedata"].items():
                 data.machinedata[key] = value
-            if type(data.get_coilspan()) == type(""):
+            if type(data.get_coilspan()) == str:
                 data.set_coilspan(fractions.Fraction(data.get_coilspan()))
             data.set_title(m["title"])
             data.set_notes(m["notes"])
