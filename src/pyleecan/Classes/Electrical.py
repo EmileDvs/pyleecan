@@ -25,7 +25,6 @@ from pyleecan.Classes.EEC_PMSM import EEC_PMSM
 from pyleecan.Classes.MachineSCIM import MachineSCIM
 from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
 from pyleecan.Classes.MachineIPMSM import MachineIPMSM
-from pyleecan.Methods.Simulation.Input import InputError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -783,3 +782,11 @@ class Electrical(FrozenClass):
         :Type: bool
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = Electrical.InputError

@@ -40,16 +40,11 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
 from pyleecan.Methods.Machine.Lamination.build_yoke_side_line import merge_line_list
-from pyleecan.Methods.Machine.Lamination import (
-    LC_RadiusError,
-    LC_VentYokeIn,
-    LC_VentYokeOut,
-)
 from pyleecan.Classes.OutGeoLam import OutGeoLam
 from math import gcd
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 from pyleecan.Classes.NotchEvenDist import NotchEvenDist
-from pyleecan.Methods import NotImplementedYetError
+from pyleecan.Classes import NotImplementedYetError
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
@@ -2522,3 +2517,39 @@ class Lamination(FrozenClass):
         :Type: Bore
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class LC_VentYokeIn(LaminationCheckError):
+        """ """
+
+        pass
+
+    class LC_RadiusError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class LC_VentYokeOut(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = Lamination.MachineCheckError
+
+LaminationCheckError = Lamination.LaminationCheckError
+
+LC_VentYokeIn = Lamination.LC_VentYokeIn
+
+LC_RadiusError = Lamination.LC_RadiusError
+
+LC_VentYokeOut = Lamination.LC_VentYokeOut

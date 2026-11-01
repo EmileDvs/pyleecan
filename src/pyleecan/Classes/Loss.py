@@ -20,7 +20,6 @@ from pyleecan.Classes._frozen import FrozenClass
 import numpy as np
 from pyleecan.Classes.OutLossModel import OutLossModel
 from pyleecan.Classes.Data1D import Data1D
-from pyleecan.Methods.Simulation.Input import InputError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -509,3 +508,11 @@ class Loss(FrozenClass):
         :Type: bool
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = Loss.InputError

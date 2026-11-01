@@ -18,7 +18,6 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pandas import read_excel, ExcelFile
-from pyleecan.Methods.Import.ImportMatrixXls import XlsFileError
 from os.path import isfile
 from pyleecan.Functions.path_tools import abs_file_path
 
@@ -529,3 +528,18 @@ class ImportMatrixXls(ImportMatrix):
         :Type: bool
         """,
     )
+
+    class ImportError(Exception):
+        """Raised when the data import or generation is not possible"""
+
+        pass
+
+    class XlsFileError(ImportError):
+        """Raised when the file_path is wrong"""
+
+        pass
+
+
+ImportError = ImportMatrixXls.ImportError
+
+XlsFileError = ImportMatrixXls.XlsFileError

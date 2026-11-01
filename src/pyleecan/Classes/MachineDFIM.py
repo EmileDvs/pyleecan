@@ -17,11 +17,6 @@ from pyleecan.Classes.MachineAsync import MachineAsync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.MachineDFIM.check import (
-    M4C_PError,
-    M4C_WrongRotor,
-    M4C_WrongStator,
-)
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
 import numpy as np
@@ -420,3 +415,71 @@ class MachineDFIM(MachineAsync):
         :Type: LamSlotWind
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class M4C_PError(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        different
+            p value
+
+        """
+
+        pass
+
+    class M4C_WrongRotor(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Winding
+
+        """
+
+        pass
+
+    class M4C_WrongStator(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Winding
+
+        """
+
+        pass
+
+
+MachineCheckError = MachineDFIM.MachineCheckError
+
+M4C_PError = MachineDFIM.M4C_PError
+
+M4C_WrongRotor = MachineDFIM.M4C_WrongRotor
+
+M4C_WrongStator = MachineDFIM.M4C_WrongStator

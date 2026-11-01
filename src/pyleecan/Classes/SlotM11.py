@@ -20,7 +20,6 @@ from pyleecan.Classes.Slot import Slot
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Methods.Slot.Slot import SlotCheckError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
@@ -34,7 +33,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -954,3 +953,25 @@ class SlotM11(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotM11.MachineCheckError
+
+LaminationCheckError = SlotM11.LaminationCheckError
+
+SlotCheckError = SlotM11.SlotCheckError

@@ -17,7 +17,6 @@ from pyleecan.Classes.Lamination import Lamination
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.LamSlotMulti import LamSlotMultiAlphaError
 import numpy as np
 from pyleecan.Classes.Lamination import Lamination
 from matplotlib.patches import Patch
@@ -804,3 +803,25 @@ class LamSlotMulti(Lamination):
         :Type: dict
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class LamSlotMultiAlphaError(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = LamSlotMulti.MachineCheckError
+
+LaminationCheckError = LamSlotMulti.LaminationCheckError
+
+LamSlotMultiAlphaError = LamSlotMulti.LamSlotMultiAlphaError

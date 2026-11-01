@@ -1,7 +1,7 @@
 import ast
 import builtins
 import warnings
-from os.path import dirname, join
+from os.path import dirname, isfile, join
 from textwrap import indent
 
 from ...Generator import TAB
@@ -19,6 +19,26 @@ from ...Generator.ClassGenerator.str_method_generator import generate_str
 from ...Generator.read_fct import (
     find_import_type,
 )
+
+CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
+
+
+def _load_method_error_module(path_to_gen, module_name):
+    """Load a Methods module or package initializer for error-class lookup."""
+    module_parts = module_name.split(".")
+    if len(module_parts) < 2 or module_parts[1] != "Methods":
+        return None, None
+    methods_path = join(dirname(path_to_gen), *module_parts[1:])
+    module_path = methods_path + ".py"
+    package_parts = module_parts[:-1]
+    if not isfile(module_path):
+        module_path = join(methods_path, "__init__.py")
+        package_parts = module_parts
+    try:
+        with open(module_path, encoding="utf-8") as source_file:
+            return ast.parse(source_file.read(), filename=module_path), package_parts
+    except FileNotFoundError:
+        return None, None
 
 
 def _get_exception_classes(module):
@@ -53,14 +73,8 @@ def _get_error_class_fingerprint(path_to_gen, module_name, class_name, visited=(
     """Return the definition of an exported exception class, if available."""
     if module_name in visited:
         return None
-    module_parts = module_name.split(".")
-    if len(module_parts) < 3 or module_parts[1] != "Methods":
-        return None
-    init_path = join(dirname(path_to_gen), *module_parts[1:], "__init__.py")
-    try:
-        with open(init_path, encoding="utf-8") as init_file:
-            module = ast.parse(init_file.read(), filename=init_path)
-    except FileNotFoundError:
+    module, package_parts = _load_method_error_module(path_to_gen, module_name)
+    if module is None:
         return None
     class_node = _get_exception_classes(module).get(class_name)
     if class_node is not None:
@@ -72,7 +86,7 @@ def _get_error_class_fingerprint(path_to_gen, module_name, class_name, visited=(
         for alias in node.names:
             if (alias.asname or alias.name) != class_name or alias.name == "*":
                 continue
-            imported_module = ".".join(_get_absolute_import_module(node, module_parts))
+            imported_module = ".".join(_get_absolute_import_module(node, package_parts))
             return _get_error_class_fingerprint(
                 path_to_gen,
                 imported_module,
@@ -80,6 +94,76 @@ def _get_error_class_fingerprint(path_to_gen, module_name, class_name, visited=(
                 visited + (module_name,),
             )
     return None
+
+
+def _get_error_class_definitions(path_to_gen, module_name, class_name, visited=()):
+    """Return exception definitions and their exception bases in dependency order."""
+    if module_name in visited:
+        return []
+    module, package_parts = _load_method_error_module(path_to_gen, module_name)
+    if module is None:
+        return []
+
+    classes = {
+        node.name: node for node in module.body if isinstance(node, ast.ClassDef)
+    }
+    imports = {}
+    for node in module.body:
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        imported_module = ".".join(_get_absolute_import_module(node, package_parts))
+        for alias in node.names:
+            if alias.name != "*":
+                imports[alias.asname or alias.name] = (imported_module, alias.name)
+
+    class_node = classes.get(class_name)
+    if class_node is None:
+        imported = imports.get(class_name)
+        if imported is None:
+            return []
+        return _get_error_class_definitions(
+            path_to_gen, imported[0], imported[1], visited + (module_name,)
+        )
+    if class_name not in _get_exception_classes(module):
+        return []
+
+    dependencies = []
+    for base in class_node.bases:
+        if not isinstance(base, ast.Name):
+            continue
+        if base.id in classes:
+            dependencies.extend(
+                _get_error_class_definitions(path_to_gen, module_name, base.id, visited)
+            )
+        elif base.id in imports:
+            imported_module, imported_name = imports[base.id]
+            dependencies.extend(
+                _get_error_class_definitions(
+                    path_to_gen,
+                    imported_module,
+                    imported_name,
+                    visited + (module_name,),
+                )
+            )
+
+    definition = ast.parse(ast.unparse(class_node)).body[0]
+    definitions = []
+    seen = set()
+    for dependency in dependencies + [definition]:
+        existing = next(
+            (node for node in definitions if node.name == dependency.name),
+            None,
+        )
+        if existing is not None:
+            if ast.dump(existing, include_attributes=False) != ast.dump(
+                dependency, include_attributes=False
+            ):
+                return []
+            continue
+        if dependency.name not in seen:
+            definitions.append(dependency)
+            seen.add(dependency.name)
+    return definitions
 
 
 def _same_error_class_import(path_to_gen, first_identity, second_identity):
@@ -528,7 +612,28 @@ def _get_method_source(
                     names=aliases,
                     level=0,
                 )
-            method_imports.append(node)
+            class_error_aliases = [
+                alias for alias in aliases if alias.name in CLASS_ERROR_NAMES
+            ]
+            method_aliases = [
+                alias for alias in aliases if alias.name not in CLASS_ERROR_NAMES
+            ]
+            if method_aliases:
+                method_imports.append(
+                    ast.ImportFrom(
+                        module=node.module,
+                        names=method_aliases,
+                        level=node.level,
+                    )
+                )
+            if class_error_aliases:
+                method_imports.append(
+                    ast.ImportFrom(
+                        module=soft_name + ".Classes",
+                        names=class_error_aliases,
+                        level=0,
+                    )
+                )
 
     source_lines = source.splitlines()
     start_line = min(
@@ -677,6 +782,7 @@ def _prepare_class_methods(
     import_keys = set()
     target_package = [soft_name, "Classes"]
     class_attributes = {}
+    class_error_definitions = {}
     method_default_overrides = {}
     repeated_assignments = _find_repeated_method_assignments(
         path_to_gen, class_pack, class_name, methods
@@ -766,6 +872,40 @@ def _prepare_class_methods(
             if conflict:
                 break
 
+        candidate_error_definitions = {}
+        if not conflict and conflict_reason is None:
+            for import_node in method_imports:
+                if not isinstance(import_node, ast.ImportFrom):
+                    continue
+                module_name = ".".join(
+                    _get_absolute_import_module(import_node, target_package)
+                )
+                if not module_name.startswith(soft_name + ".Methods."):
+                    continue
+                for alias in import_node.names:
+                    definitions = _get_error_class_definitions(
+                        path_to_gen, module_name, alias.name
+                    )
+                    for definition in definitions:
+                        existing = candidate_error_definitions.get(
+                            definition.name,
+                            class_error_definitions.get(definition.name),
+                        )
+                        if existing is not None and ast.dump(
+                            existing, include_attributes=False
+                        ) != ast.dump(definition, include_attributes=False):
+                            conflict_reason = (
+                                "class error '"
+                                + definition.name
+                                + "' has different definitions"
+                            )
+                            break
+                        candidate_error_definitions[definition.name] = definition
+                    if conflict_reason is not None:
+                        break
+                if conflict_reason is not None:
+                    break
+
         if conflict or conflict_reason is not None:
             fallback_reason = (
                 conflict_reason
@@ -797,10 +937,30 @@ def _prepare_class_methods(
 
         prepared[meth] = method_source
         method_default_overrides[meth] = candidate_default_overrides
+        class_error_definitions.update(candidate_error_definitions)
         for assignment in candidate_class_attributes:
             class_attributes.setdefault(assignment.targets[0].id, assignment.value)
         import_bindings.update(candidate_bindings)
         for import_node in method_imports:
+            if isinstance(import_node, ast.ImportFrom):
+                module_name = ".".join(
+                    _get_absolute_import_module(import_node, target_package)
+                )
+                if module_name.startswith(soft_name + ".Methods."):
+                    retained_aliases = [
+                        alias
+                        for alias in import_node.names
+                        if not _get_error_class_definitions(
+                            path_to_gen, module_name, alias.name
+                        )
+                    ]
+                    if not retained_aliases:
+                        continue
+                    import_node = ast.ImportFrom(
+                        module=import_node.module,
+                        names=retained_aliases,
+                        level=import_node.level,
+                    )
             group_key = (
                 type(import_node).__name__,
                 getattr(import_node, "level", 0),
@@ -842,6 +1002,7 @@ def _prepare_class_methods(
         fallback_reasons,
         assignments,
         method_default_overrides,
+        list(class_error_definitions.values()),
     )
 
 
@@ -1420,6 +1581,7 @@ def generate_class(
         fallback_reasons,
         class_attributes,
         method_default_overrides,
+        class_error_definitions,
     ) = _prepare_class_methods(
         path_to_gen,
         class_pack,
@@ -1732,9 +1894,26 @@ def generate_class(
             "\n" + generate_properties(gen_dict, class_dict, soft_name=soft_name) + "\n"
         )
 
+    for definition in class_error_definitions:
+        class_file.write(
+            TAB + ast.unparse(definition).replace("\n", "\n" + TAB) + "\n\n"
+        )
+
     # End of class generation
     class_file.close()
     class_path = join(path_to_gen, class_name + ".py")
+    if class_error_definitions:
+        with open(class_path, "a", encoding="utf-8") as generated_file:
+            for definition in class_error_definitions:
+                generated_file.write(
+                    "\n"
+                    + definition.name
+                    + " = "
+                    + class_name
+                    + "."
+                    + definition.name
+                    + "\n"
+                )
     with open(class_path, encoding="utf-8") as generated_file:
         source = generated_file.read()
     source = _apply_numpy_import_style(source)

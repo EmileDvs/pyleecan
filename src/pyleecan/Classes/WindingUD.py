@@ -20,13 +20,8 @@ from pyleecan.Classes.Winding import Winding
 from os.path import isfile
 from csv import reader
 import numpy as np
-from pyleecan.Methods.Machine.WindingUD.init_as_CW1L import WindingT2DefNtError
-from pyleecan.Methods.Machine.Winding import WindingError
 from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
-from pyleecan.Methods.Machine.WindingUD.init_as_CW2LR import WindingT5DefMsError
-from pyleecan.Methods.Machine.WindingUD.init_as_CW2LT import WindingT1DefMsError
-from pyleecan.Methods.Machine.WindingUD.init_as_DWL import WindingDefMsError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -733,3 +728,78 @@ class WindingUD(Winding):
 
         # Set to None the properties inherited from Winding
         super(WindingUD, self)._set_None()
+
+    class WindingError(Exception):
+        """ """
+
+        pass
+
+    class WindingT2DefNtError(WindingError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        must
+            be 0
+
+        """
+
+        pass
+
+    class WindingT5DefMsError(WindingError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        must
+            be 0
+
+        """
+
+        pass
+
+    class WindingT1DefMsError(WindingError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        must
+            be 0
+
+        """
+
+        pass
+
+    class WindingDefMsError(WindingError):
+        """ """
+
+        pass
+
+
+WindingError = WindingUD.WindingError
+
+WindingT2DefNtError = WindingUD.WindingT2DefNtError
+
+WindingT5DefMsError = WindingUD.WindingT5DefMsError
+
+WindingT1DefMsError = WindingUD.WindingT1DefMsError
+
+WindingDefMsError = WindingUD.WindingDefMsError

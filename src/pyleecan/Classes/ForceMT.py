@@ -18,7 +18,7 @@ from pyleecan.Classes.Force import Force
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods import NotImplementedYetError
+from pyleecan.Classes import NotImplementedYetError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError

@@ -17,11 +17,6 @@ from pyleecan.Classes.MachineSync import MachineSync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.MachineSyRM.check import (
-    MSy_PError,
-    MSy_WrongRotor,
-    MSy_WrongStator,
-)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
@@ -418,3 +413,71 @@ class MachineSyRM(MachineSync):
         :Type: LamSlotWind
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class MSy_PError(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        values
+
+
+        """
+
+        pass
+
+    class MSy_WrongRotor(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Magnet
+
+        """
+
+        pass
+
+    class MSy_WrongStator(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Winding
+
+        """
+
+        pass
+
+
+MachineCheckError = MachineSyRM.MachineCheckError
+
+MSy_PError = MachineSyRM.MSy_PError
+
+MSy_WrongRotor = MachineSyRM.MSy_WrongRotor
+
+MSy_WrongStator = MachineSyRM.MSy_WrongStator

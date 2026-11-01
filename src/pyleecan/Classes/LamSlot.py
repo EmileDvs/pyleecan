@@ -17,7 +17,6 @@ from pyleecan.Classes.Lamination import Lamination
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.LamSlot import LSC_SlotTooLong
 import numpy as np
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Functions.labels import update_RTS_index
@@ -771,3 +770,32 @@ class LamSlot(Lamination):
         :Type: Slot
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class Lam_SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class LSC_SlotTooLong(Lam_SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = LamSlot.MachineCheckError
+
+LaminationCheckError = LamSlot.LaminationCheckError
+
+Lam_SlotCheckError = LamSlot.Lam_SlotCheckError
+
+LSC_SlotTooLong = LamSlot.LSC_SlotTooLong

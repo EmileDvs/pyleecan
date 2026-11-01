@@ -17,14 +17,6 @@ from pyleecan.Classes.VarParam import VarParam
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.VarOpti.check import (
-    VarOptiConstraintError,
-    VarOptiDataKeeperError,
-    VarOptiDesignVarError,
-    VarOptiError,
-    VarOptiObjectiveError,
-    VarOptiSolverError,
-)
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Classes.OptiProblem import OptiProblem
 
@@ -684,3 +676,34 @@ class VarOpti(VarParam):
         :Type: OptiSolver
         """,
     )
+
+    class VarOptiConstraintError(Exception):
+        pass
+
+    class VarOptiDataKeeperError(Exception):
+        pass
+
+    class VarOptiDesignVarError(Exception):
+        pass
+
+    class VarOptiError(Exception):
+        pass
+
+    class VarOptiObjectiveError(Exception):
+        pass
+
+    class VarOptiSolverError(Exception):
+        pass
+
+
+VarOptiConstraintError = VarOpti.VarOptiConstraintError
+
+VarOptiDataKeeperError = VarOpti.VarOptiDataKeeperError
+
+VarOptiDesignVarError = VarOpti.VarOptiDesignVarError
+
+VarOptiError = VarOpti.VarOptiError
+
+VarOptiObjectiveError = VarOpti.VarOptiObjectiveError
+
+VarOptiSolverError = VarOpti.VarOptiSolverError

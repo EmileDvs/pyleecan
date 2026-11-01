@@ -17,7 +17,6 @@ from pyleecan.Classes.MachineSync import MachineSync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.MachineSRM.check import SRM_WrongRotor, SRM_WrongStator
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
@@ -446,3 +445,21 @@ class MachineSRM(MachineSync):
         :Type: LamSlotWind
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class SRM_WrongRotor(MachineCheckError):
+        pass
+
+    class SRM_WrongStator(MachineCheckError):
+        pass
+
+
+MachineCheckError = MachineSRM.MachineCheckError
+
+SRM_WrongRotor = MachineSRM.SRM_WrongRotor
+
+SRM_WrongStator = MachineSRM.SRM_WrongStator

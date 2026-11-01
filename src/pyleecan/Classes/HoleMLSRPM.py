@@ -22,7 +22,6 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Functions.labels import HOLEM_LAB, update_RTS_index
-from pyleecan.Methods.Slot.HoleMLSRPM.check import SLSRPM_NoneError
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -34,7 +33,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1374,3 +1373,32 @@ class HoleMLSRPM(HoleMag):
         :Type: Magnet
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class SLSRPM_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM52 is None"""
+
+        pass
+
+
+MachineCheckError = HoleMLSRPM.MachineCheckError
+
+LaminationCheckError = HoleMLSRPM.LaminationCheckError
+
+SlotCheckError = HoleMLSRPM.SlotCheckError
+
+SLSRPM_NoneError = HoleMLSRPM.SLSRPM_NoneError

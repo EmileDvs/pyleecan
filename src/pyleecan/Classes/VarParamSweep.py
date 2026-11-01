@@ -17,10 +17,6 @@ from pyleecan.Classes.VarParam import VarParam
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.VarParamSweep.check_param import (
-    DataKeeperError,
-    ParamExplorerError,
-)
 from pyleecan.Classes.ParamExplorerSet import ParamExplorerSet
 import itertools
 
@@ -394,3 +390,14 @@ class VarParamSweep(VarParam):
 
         # Set to None the properties inherited from VarParam
         super(VarParamSweep, self)._set_None()
+
+    class DataKeeperError(Exception):
+        pass
+
+    class ParamExplorerError(Exception):
+        pass
+
+
+DataKeeperError = VarParamSweep.DataKeeperError
+
+ParamExplorerError = VarParamSweep.ParamExplorerError

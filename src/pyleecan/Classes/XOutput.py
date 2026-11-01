@@ -17,10 +17,10 @@ from pyleecan.Classes.Output import Output
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Output.XOutput import XOutputError, _get_symbol_data_
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.OptiObjective import OptiObjective
 from matplotlib.colors import LinearSegmentedColormap
+from pyleecan.Methods.Output.XOutput import _get_symbol_data_
 from pyleecan.Methods.Output.XOutput.plot_multi import (
     COLORMAP,
     COLORS,
@@ -28,7 +28,6 @@ from pyleecan.Methods.Output.XOutput.plot_multi import (
     FONT_SIZE_LABEL,
     FONT_SIZE_LEGEND,
     FONT_SIZE_TITLE,
-    PlotError,
 )
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
@@ -1237,3 +1236,14 @@ class XOutput(Output):
         :Type: int
         """,
     )
+
+    class XOutputError(Exception):
+        pass
+
+    class PlotError(Exception):
+        pass
+
+
+XOutputError = XOutput.XOutputError
+
+PlotError = XOutput.PlotError

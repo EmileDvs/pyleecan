@@ -19,7 +19,7 @@ from pyleecan.Classes.Bore import Bore
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 import numpy as np
 
 

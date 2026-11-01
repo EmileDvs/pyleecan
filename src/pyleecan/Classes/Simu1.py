@@ -17,7 +17,6 @@ from pyleecan.Classes.Simulation import Simulation
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.Input import InputError
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -646,3 +645,11 @@ class Simu1(Simulation):
         :Type: Loss
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = Simu1.InputError

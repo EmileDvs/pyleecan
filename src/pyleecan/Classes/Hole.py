@@ -19,8 +19,7 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Methods import ParentMissingError
-from pyleecan.Methods.Slot.Hole import MagnetIndexError
+from pyleecan.Classes import ParentMissingError
 from pyleecan.Functions.labels import HOLEV_LAB, VENT_LAB, HOLEM_LAB, decode_label
 from matplotlib.patches import Patch
 from pyleecan.Functions.init_fig import init_fig
@@ -776,3 +775,11 @@ class Hole(FrozenClass):
         :max: 6.29
         """,
     )
+
+    class MagnetIndexError(Exception):
+        """Raise when trying to access a non existing magnet"""
+
+        pass
+
+
+MagnetIndexError = Hole.MagnetIndexError

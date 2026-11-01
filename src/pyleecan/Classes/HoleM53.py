@@ -19,18 +19,10 @@ from pyleecan.Classes.HoleMag import HoleMag
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
-from pyleecan.Methods.Slot.HoleM53 import Slot53InterError
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
-from pyleecan.Methods.Slot.HoleM53 import (
-    S53_W4CheckError,
-    S53_Rext0CheckError,
-    S53_W5CheckError,
-    S53_Rext1CheckError,
-    S53_NoneError,
-)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -42,7 +34,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1661,3 +1653,67 @@ class HoleM53(HoleMag):
         :Type: Magnet
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class Slot53InterError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S53_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM53 is None"""
+
+        pass
+
+    class S53_Rext0CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S53_W4CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S53_Rext1CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S53_W5CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = HoleM53.MachineCheckError
+
+LaminationCheckError = HoleM53.LaminationCheckError
+
+SlotCheckError = HoleM53.SlotCheckError
+
+Slot53InterError = HoleM53.Slot53InterError
+
+S53_NoneError = HoleM53.S53_NoneError
+
+S53_Rext0CheckError = HoleM53.S53_Rext0CheckError
+
+S53_W4CheckError = HoleM53.S53_W4CheckError
+
+S53_Rext1CheckError = HoleM53.S53_Rext1CheckError
+
+S53_W5CheckError = HoleM53.S53_W5CheckError

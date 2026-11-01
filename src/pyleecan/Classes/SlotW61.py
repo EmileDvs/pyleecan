@@ -21,14 +21,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Methods.Slot.SlotW61 import S61_WindError
 from pyleecan.Functions.labels import WIND_LAB, SOP_LAB, DRAW_PROP_LAB
-from pyleecan.Methods.Slot.SlotW61 import (
-    S61_InnerCheckError,
-    S61_W21CheckError,
-    S61_WindHError,
-    S61_WindWError,
-)
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -42,7 +35,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1473,3 +1466,73 @@ class SlotW61(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S61_WindError(SlotCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        winding
+
+
+        """
+
+        pass
+
+    class S61_W21CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S61_InnerCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S61_WindHError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S61_WindWError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW61.MachineCheckError
+
+LaminationCheckError = SlotW61.LaminationCheckError
+
+SlotCheckError = SlotW61.SlotCheckError
+
+S61_WindError = SlotW61.S61_WindError
+
+S61_W21CheckError = SlotW61.S61_W21CheckError
+
+S61_InnerCheckError = SlotW61.S61_InnerCheckError
+
+S61_WindHError = SlotW61.S61_WindHError
+
+S61_WindWError = SlotW61.S61_WindWError

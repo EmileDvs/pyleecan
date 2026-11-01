@@ -17,14 +17,8 @@ from pyleecan.Classes.Arc import Arc
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Arc3 import PointArc3Error
 import numpy as np
 from pyleecan.Methods.Machine import ARC_NPOINT_D
-from pyleecan.Methods.Geometry.Arc3 import (
-    NbPointArc3DError,
-    AngleRotationArc3Error,
-    PointTranslateArc3Error,
-)
 from pyleecan.Classes.Arc2 import Arc2
 from pyleecan.Classes.Arc1 import Arc1
 
@@ -712,3 +706,32 @@ class Arc3(Arc):
         :Type: bool
         """,
     )
+
+    class PointArc3Error(Exception):
+        """ """
+
+        pass
+
+    class NbPointArc3DError(Exception):
+        """ """
+
+        pass
+
+    class AngleRotationArc3Error(Exception):
+        """ """
+
+        pass
+
+    class PointTranslateArc3Error(Exception):
+        """ """
+
+        pass
+
+
+PointArc3Error = Arc3.PointArc3Error
+
+NbPointArc3DError = Arc3.NbPointArc3DError
+
+AngleRotationArc3Error = Arc3.AngleRotationArc3Error
+
+PointTranslateArc3Error = Arc3.PointTranslateArc3Error

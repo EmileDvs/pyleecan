@@ -17,11 +17,6 @@ from pyleecan.Classes.MachineSync import MachineSync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.MachineIPMSM.check import (
-    M3C_PError,
-    M3C_WrongRotor,
-    M3C_WrongStator,
-)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
@@ -418,3 +413,71 @@ class MachineIPMSM(MachineSync):
         :Type: Lamination
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class M3C_PError(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        values
+
+
+        """
+
+        pass
+
+    class M3C_WrongRotor(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Magnet
+
+        """
+
+        pass
+
+    class M3C_WrongStator(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Winding
+
+        """
+
+        pass
+
+
+MachineCheckError = MachineIPMSM.MachineCheckError
+
+M3C_PError = MachineIPMSM.M3C_PError
+
+M3C_WrongRotor = MachineIPMSM.M3C_WrongRotor
+
+M3C_WrongStator = MachineIPMSM.M3C_WrongStator

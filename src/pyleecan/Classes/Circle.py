@@ -17,15 +17,10 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Circle import RadiusCircleError
 import numpy as np
 from pyleecan.Classes.Arc3 import Arc3
 from matplotlib.patches import Circle
 from pyleecan.definitions import config_dict
-from pyleecan.Methods.Geometry.Circle import (
-    AngleRotationCircleError,
-    PointTranslateCircleError,
-)
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -586,3 +581,25 @@ class Circle(Surface):
         :Type: dict
         """,
     )
+
+    class RadiusCircleError(Exception):
+        """ """
+
+        pass
+
+    class AngleRotationCircleError(Exception):
+        """ """
+
+        pass
+
+    class PointTranslateCircleError(Exception):
+        """ """
+
+        pass
+
+
+RadiusCircleError = Circle.RadiusCircleError
+
+AngleRotationCircleError = Circle.AngleRotationCircleError
+
+PointTranslateCircleError = Circle.PointTranslateCircleError

@@ -21,11 +21,6 @@ import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Methods.Slot.HoleM54 import (
-    H54_R1CheckError,
-    S54_NoneError,
-    H54_W0CheckError,
-)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.Plot import (
@@ -38,7 +33,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -826,3 +821,46 @@ class HoleM54(Hole):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class H54_R1CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class H54_W0CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S54_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM54 is None"""
+
+        pass
+
+
+MachineCheckError = HoleM54.MachineCheckError
+
+LaminationCheckError = HoleM54.LaminationCheckError
+
+SlotCheckError = HoleM54.SlotCheckError
+
+H54_R1CheckError = HoleM54.H54_R1CheckError
+
+H54_W0CheckError = HoleM54.H54_W0CheckError
+
+S54_NoneError = HoleM54.S54_NoneError

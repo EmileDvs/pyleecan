@@ -19,7 +19,6 @@ from pyleecan.Classes.HoleMag import HoleMag
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Functions.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
-from pyleecan.Methods.Slot.Slot import SlotCheckError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -557,3 +556,25 @@ class HoleUD(HoleMag):
         :Type: str
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = HoleUD.MachineCheckError
+
+LaminationCheckError = HoleUD.LaminationCheckError
+
+SlotCheckError = HoleUD.SlotCheckError

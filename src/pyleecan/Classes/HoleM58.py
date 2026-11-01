@@ -22,7 +22,6 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
-from pyleecan.Methods.Slot.HoleM58 import S58_NoneError, S58_WCheckError
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -35,7 +34,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1391,3 +1390,39 @@ class HoleM58(HoleMag):
         :Type: Magnet
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S58_WCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S58_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM58 is None"""
+
+        pass
+
+
+MachineCheckError = HoleM58.MachineCheckError
+
+LaminationCheckError = HoleM58.LaminationCheckError
+
+SlotCheckError = HoleM58.SlotCheckError
+
+S58_WCheckError = HoleM58.S58_WCheckError
+
+S58_NoneError = HoleM58.S58_NoneError

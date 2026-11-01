@@ -17,7 +17,6 @@ from pyleecan.Classes.Elmer import Elmer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Elmer.Section import ElmerSectionError
 from pyleecan.Methods.Elmer.Section.write import INDENT, _convert
 from io import StringIO
 
@@ -473,3 +472,9 @@ class Section(Elmer):
         :Type: dict
         """,
     )
+
+    class ElmerSectionError(Exception):
+        pass
+
+
+ElmerSectionError = Section.ElmerSectionError

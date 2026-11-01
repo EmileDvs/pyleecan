@@ -23,15 +23,6 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB, MAGNET_PROP_LAB
-from pyleecan.Methods.Slot.HoleM50 import (
-    S50_H01CheckError,
-    S50_W5CheckError,
-    S50_W3CheckError,
-    S50_SpCheckError,
-    S50_W01CheckError,
-    S50_NoneError,
-    S50_H23CheckError,
-)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -43,7 +34,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1796,3 +1787,74 @@ class HoleM50(HoleMag):
         :Type: Magnet
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S50_H23CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S50_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM50 is None"""
+
+        pass
+
+    class S50_W01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S50_W3CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S50_SpCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S50_H01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S50_W5CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = HoleM50.MachineCheckError
+
+LaminationCheckError = HoleM50.LaminationCheckError
+
+SlotCheckError = HoleM50.SlotCheckError
+
+S50_H23CheckError = HoleM50.S50_H23CheckError
+
+S50_NoneError = HoleM50.S50_NoneError
+
+S50_W01CheckError = HoleM50.S50_W01CheckError
+
+S50_W3CheckError = HoleM50.S50_W3CheckError
+
+S50_SpCheckError = HoleM50.S50_SpCheckError
+
+S50_H01CheckError = HoleM50.S50_H01CheckError
+
+S50_W5CheckError = HoleM50.S50_W5CheckError

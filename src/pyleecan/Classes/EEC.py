@@ -20,7 +20,6 @@ from pyleecan.Classes._frozen import FrozenClass
 from os.path import join
 from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
 from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Methods.Simulation.EEC import AbstractClassError
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -913,3 +912,9 @@ class EEC(FrozenClass):
         :Type: Magnetics
         """,
     )
+
+    class AbstractClassError(Exception):
+        pass
+
+
+AbstractClassError = EEC.AbstractClassError

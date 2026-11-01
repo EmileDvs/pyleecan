@@ -17,7 +17,6 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.Slot import SlotCheckError
 from pyleecan.Functions.labels import WIND_LAB, SOP_LAB
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
@@ -622,3 +621,25 @@ class SlotUD(Slot):
         :Type: str
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotUD.MachineCheckError
+
+LaminationCheckError = SlotUD.LaminationCheckError
+
+SlotCheckError = SlotUD.SlotCheckError

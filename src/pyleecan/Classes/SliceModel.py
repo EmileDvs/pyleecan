@@ -20,7 +20,6 @@ from pyleecan.Classes._frozen import FrozenClass
 import numpy as np
 from pyleecan.Classes.DataPattern import DataPattern
 from pyleecan.Classes.Norm_ref import Norm_ref
-from pyleecan.Methods.Simulation.Input import InputError
 from scipy.stats import norm
 from pyleecan.Functions.Plot import dict_2D
 from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
@@ -669,3 +668,11 @@ class SliceModel(FrozenClass):
         :Type: bool
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = SliceModel.InputError

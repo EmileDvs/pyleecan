@@ -20,7 +20,6 @@ from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Methods.Slot.SlotW16 import S16OutterError, S16AlphaT
 from pyleecan.Functions.Geometry.inter_circle_circle import inter_circle_circle
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
@@ -36,7 +35,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1108,3 +1107,39 @@ class SlotW16(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S16OutterError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S16AlphaT(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW16.MachineCheckError
+
+LaminationCheckError = SlotW16.LaminationCheckError
+
+SlotCheckError = SlotW16.SlotCheckError
+
+S16OutterError = SlotW16.S16OutterError
+
+S16AlphaT = SlotW16.S16AlphaT

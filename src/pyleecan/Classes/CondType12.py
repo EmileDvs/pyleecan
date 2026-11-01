@@ -18,8 +18,6 @@ from pyleecan.Classes.Conductor import Conductor
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Methods.Machine.CondType12 import C12_WireDontFit
-from pyleecan.Methods.Machine.CondType12.plot import NotPlotableError
 from matplotlib.patches import Circle, Patch
 from pyleecan.Functions.init_fig import init_fig
 from pyleecan.definitions import config_dict
@@ -882,3 +880,53 @@ class CondType12(Conductor):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class Lam_WindCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class CondCheckError(Lam_WindCheckError):
+        """ """
+
+        pass
+
+    class Cond12CheckError(CondCheckError):
+        """ """
+
+        pass
+
+    class C12_WireDontFit(Cond12CheckError):
+        """ """
+
+        pass
+
+    class NotPlotableError(Exception):
+        """ """
+
+        pass
+
+
+MachineCheckError = CondType12.MachineCheckError
+
+LaminationCheckError = CondType12.LaminationCheckError
+
+Lam_WindCheckError = CondType12.Lam_WindCheckError
+
+CondCheckError = CondType12.CondCheckError
+
+Cond12CheckError = CondType12.Cond12CheckError
+
+C12_WireDontFit = CondType12.C12_WireDontFit
+
+NotPlotableError = CondType12.NotPlotableError

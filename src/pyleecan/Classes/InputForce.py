@@ -18,7 +18,6 @@ from pyleecan.Classes.Input import Input
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Classes.OutForce import OutForce
-from pyleecan.Methods.Simulation.Input import InputError
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 import numpy as np
@@ -316,3 +315,11 @@ class InputForce(Input):
         :Type: ImportVectorField
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = InputForce.InputError

@@ -21,7 +21,6 @@ from pyleecan.Classes.LossModelMagnet import LossModelMagnet
 from pyleecan.Classes.LossModelProximity import LossModelProximity
 from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
 from pyleecan.Classes.LossModelJoule import LossModelJoule
-from pyleecan.Methods.Simulation.Input import InputError
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -407,3 +406,11 @@ class LossFEA(Loss):
         :Type: int
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = LossFEA.InputError

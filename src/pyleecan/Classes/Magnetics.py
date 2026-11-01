@@ -20,7 +20,6 @@ from pyleecan.Classes._frozen import FrozenClass
 import numpy as np
 from pyleecan.Classes.SliceModel import SliceModel
 from pyleecan.Classes.MeshSolution import MeshSolution
-from pyleecan.Methods.Simulation.Input import InputError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1415,3 +1414,11 @@ class Magnetics(FrozenClass):
         :Type: bool
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = Magnetics.InputError

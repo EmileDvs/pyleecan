@@ -22,11 +22,6 @@ from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
-from pyleecan.Methods.Slot.SlotW10 import (
-    S10_H1rCheckError,
-    S10_W02CheckError,
-    S10_W01CheckError,
-)
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -40,7 +35,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1288,3 +1283,46 @@ class SlotW10(Slot):
         :Type: bool
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S10_W02CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S10_H1rCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S10_W01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW10.MachineCheckError
+
+LaminationCheckError = SlotW10.LaminationCheckError
+
+SlotCheckError = SlotW10.SlotCheckError
+
+S10_W02CheckError = SlotW10.S10_W02CheckError
+
+S10_H1rCheckError = SlotW10.S10_H1rCheckError
+
+S10_W01CheckError = SlotW10.S10_W01CheckError

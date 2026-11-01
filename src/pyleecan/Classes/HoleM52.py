@@ -21,12 +21,6 @@ import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
-from pyleecan.Methods.Slot.HoleM52 import (
-    S52_NoneError,
-    S52_alphaCheckError,
-    S52_H12CheckError,
-    S52_W1CheckError,
-)
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
@@ -39,7 +33,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1211,3 +1205,53 @@ class HoleM52(HoleMag):
         :Type: Magnet
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S52_alphaCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S52_H12CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S52_W1CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S52_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM52 is None"""
+
+        pass
+
+
+MachineCheckError = HoleM52.MachineCheckError
+
+LaminationCheckError = HoleM52.LaminationCheckError
+
+SlotCheckError = HoleM52.SlotCheckError
+
+S52_alphaCheckError = HoleM52.S52_alphaCheckError
+
+S52_H12CheckError = HoleM52.S52_H12CheckError
+
+S52_W1CheckError = HoleM52.S52_W1CheckError
+
+S52_NoneError = HoleM52.S52_NoneError

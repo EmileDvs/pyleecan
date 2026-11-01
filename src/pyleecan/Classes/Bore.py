@@ -19,7 +19,7 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 from pyleecan.Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.init_fig import init_fig

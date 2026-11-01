@@ -21,7 +21,6 @@ import numpy as np
 from pyleecan.Classes.Norm_affine import Norm_affine
 from pyleecan.Classes.Norm_vector import Norm_vector
 from scipy.io import savemat
-from pyleecan.Methods.Output.Output.getter import GetOutError
 from pyleecan.Classes.OutGeoLam import OutGeoLam
 from pyleecan.Functions.Plot import fft_dict
 from os.path import join, abspath, isdir
@@ -1592,3 +1591,11 @@ class Output(FrozenClass):
         :Type: OutLoss
         """,
     )
+
+    class GetOutError(Exception):
+        """Raised when an output can't be returned"""
+
+        pass
+
+
+GetOutError = Output.GetOutError

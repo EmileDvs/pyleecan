@@ -18,7 +18,6 @@ from pyleecan.Classes._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods.Simulation.OPMatrix import OPMatrixException
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -525,3 +524,11 @@ class OP(FrozenClass):
         :Type: float
         """,
     )
+
+    class OPMatrixException(Exception):
+        """Raise when OP_matrix was wrongly defined"""
+
+        pass
+
+
+OPMatrixException = OP.OPMatrixException

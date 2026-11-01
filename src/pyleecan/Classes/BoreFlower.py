@@ -19,7 +19,7 @@ from pyleecan.Classes.Bore import Bore
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Functions.Geometry.comp_flower_arc import comp_flower_arc
 from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Classes.Segment import Segment

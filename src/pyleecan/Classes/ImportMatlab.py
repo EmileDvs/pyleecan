@@ -18,7 +18,6 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from scipy.io import loadmat
-from pyleecan.Methods.Import.ImportMatlab import MatFileError
 from os.path import isfile
 import numpy as np
 
@@ -265,3 +264,18 @@ class ImportMatlab(ImportMatrix):
         :Type: str
         """,
     )
+
+    class ImportError(Exception):
+        """Raised when the data import or generation is not possible"""
+
+        pass
+
+    class MatFileError(ImportError):
+        """Raised when the file_path is wrong or the variable is missing"""
+
+        pass
+
+
+ImportError = ImportMatlab.ImportError
+
+MatFileError = ImportMatlab.MatFileError

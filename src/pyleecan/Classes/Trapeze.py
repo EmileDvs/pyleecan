@@ -17,7 +17,6 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Trapeze import TrapezeError
 import numpy as np
 from pyleecan.Classes.Segment import Segment
 from matplotlib.patches import Polygon
@@ -562,3 +561,11 @@ class Trapeze(Surface):
         :min: 0
         """,
     )
+
+    class TrapezeError(Exception):
+        """ """
+
+        pass
+
+
+TrapezeError = Trapeze.TrapezeError

@@ -54,7 +54,7 @@ from pyleecan.Functions.labels import (
     short_label,
 )
 from pyleecan.Functions.Winding.find_wind_phase_color import get_phase_id
-from pyleecan.Methods import NotImplementedYetError
+from pyleecan.Classes import NotImplementedYetError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError

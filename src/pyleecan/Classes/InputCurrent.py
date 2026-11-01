@@ -27,7 +27,6 @@ from pyleecan.Functions.Electrical.dqh_transformation import (
     get_phase_dir,
     n2dqh_DataTime,
 )
-from pyleecan.Methods.Simulation.Input import InputError
 
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 
@@ -721,3 +720,11 @@ class InputCurrent(InputVoltage):
         :Type: ImportData
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = InputCurrent.InputError

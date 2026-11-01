@@ -30,7 +30,6 @@ from pyleecan.Functions.labels import (
     YOKE_LAB,
     decode_label,
 )
-from pyleecan.Methods.Machine.LamSlotMag import LMC_SlotTooLong
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -703,3 +702,25 @@ class LamSlotMag(LamSlotM):
         :Type: Magnet
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class LMC_SlotTooLong(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = LamSlotMag.MachineCheckError
+
+LaminationCheckError = LamSlotMag.LaminationCheckError
+
+LMC_SlotTooLong = LamSlotMag.LMC_SlotTooLong

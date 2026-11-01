@@ -22,13 +22,7 @@ from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Methods.Slot.SlotW63 import S63_WindError
 from pyleecan.Functions.labels import WIND_LAB, SOP_LAB, DRAW_PROP_LAB
-from pyleecan.Methods.Slot.SlotW63 import (
-    S63_W0CheckError,
-    S63_InnerCheckError,
-    S63_H0CheckError,
-)
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -42,7 +36,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1348,3 +1342,66 @@ class SlotW63(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S63_WindError(SlotCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        winding
+
+
+        """
+
+        pass
+
+    class S63_H0CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S63_InnerCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S63_W0CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW63.MachineCheckError
+
+LaminationCheckError = SlotW63.LaminationCheckError
+
+SlotCheckError = SlotW63.SlotCheckError
+
+S63_WindError = SlotW63.S63_WindError
+
+S63_H0CheckError = SlotW63.S63_H0CheckError
+
+S63_InnerCheckError = SlotW63.S63_InnerCheckError
+
+S63_W0CheckError = SlotW63.S63_W0CheckError

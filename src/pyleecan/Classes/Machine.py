@@ -17,23 +17,9 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.Machine.check import (
-    MC_AbstractError,
-    MC_BothExternal,
-    MC_BothInternal,
-    MC_MecAirgapError,
-    MC_RotorDontFit,
-    MC_RotorIsStator,
-    MC_ShaftTooBig,
-    MC_ShaftTooSmall,
-    MC_StatorDontFit,
-    MC_StatorNotStator,
-)
 from pyleecan.Classes.OutGeo import OutGeo
 import numpy as np, matplotlib.pyplot as plt, matplotlib.animation as animation
-from pyleecan.Methods.Machine.Machine.get_lam_by_label import LabelInputError
 from pyleecan.Functions.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
-from pyleecan.Methods.Machine.Machine.get_lam_list import KeyInputError
 from pyleecan.Methods.Machine.Machine.get_material_dict import get_material
 from pyleecan.Functions.init_fig import init_fig
 from matplotlib.patches import Patch, Polygon
@@ -1629,3 +1615,147 @@ class Machine(FrozenClass):
         :Type: str
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class MC_AbstractError(MachineCheckError):
+        """ """
+
+        pass
+
+    class MC_BothExternal(MachineCheckError):
+        """ """
+
+        pass
+
+    class MC_BothInternal(MachineCheckError):
+        """ """
+
+        pass
+
+    class MC_MecAirgapError(MachineCheckError):
+        """ """
+
+        pass
+
+    class MC_RotorDontFit(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        stator
+
+
+        """
+
+        pass
+
+    class MC_RotorIsStator(MachineCheckError):
+        """ """
+
+        pass
+
+    class MC_ShaftTooBig(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        rotor
+
+
+        """
+
+        pass
+
+    class MC_ShaftTooSmall(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        rotor
+
+
+        """
+
+        pass
+
+    class MC_StatorDontFit(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        rotor
+
+
+        """
+
+        pass
+
+    class MC_StatorNotStator(MachineCheckError):
+        """ """
+
+        pass
+
+    class LabelInputError(Exception):
+        """ """
+
+        pass
+
+    class KeyInputError(Exception):
+        """ """
+
+        pass
+
+
+MachineCheckError = Machine.MachineCheckError
+
+MC_AbstractError = Machine.MC_AbstractError
+
+MC_BothExternal = Machine.MC_BothExternal
+
+MC_BothInternal = Machine.MC_BothInternal
+
+MC_MecAirgapError = Machine.MC_MecAirgapError
+
+MC_RotorDontFit = Machine.MC_RotorDontFit
+
+MC_RotorIsStator = Machine.MC_RotorIsStator
+
+MC_ShaftTooBig = Machine.MC_ShaftTooBig
+
+MC_ShaftTooSmall = Machine.MC_ShaftTooSmall
+
+MC_StatorDontFit = Machine.MC_StatorDontFit
+
+MC_StatorNotStator = Machine.MC_StatorNotStator
+
+LabelInputError = Machine.LabelInputError
+
+KeyInputError = Machine.KeyInputError

@@ -4,10 +4,6 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/VarSimu
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - generate_simulation_list: import name 'VarSimuError' refers to different sources (pyleecan.Methods.Simulation.VarSimu.check_param.VarSimuError and pyleecan.Methods.Simulation.VarSimu.generate_simulation_list.VarSimuError)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -21,10 +17,6 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.VarSimu.generate_simulation_list import (
-    generate_simulation_list,
-)
-from pyleecan.Methods.Simulation.VarSimu.check_param import VarSimuError
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Classes.DataKeeper import DataKeeper
 from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
@@ -100,7 +92,24 @@ class VarSimu(FrozenClass):
         self.datakeeper_list.extend(datakeeper_list)
 
     # cf Methods.Simulation.VarSimu.generate_simulation_list
-    generate_simulation_list = generate_simulation_list
+    def generate_simulation_list(self, ref_simu=None):
+        """Generate all the simulation for the multi-simulation
+
+        Parameters
+        ----------
+        self : VarSimu
+            A VarSimu object
+        ref_simu : Simulation
+            Reference simulation to copy / update
+
+        Returns
+        -------
+        multisim_dict : dict
+            dictionary containing the simulation and paramexplorer list
+        """
+        raise VarSimuError(
+            "VarSimu is an abstract class, please create one of its daughters."
+        )
 
     # cf Methods.Simulation.VarSimu.get_elec_datakeeper
     def get_elec_datakeeper(self, symbol_list, is_multi=False):
@@ -1358,3 +1367,9 @@ class VarSimu(FrozenClass):
         :Type: bool
         """,
     )
+
+    class VarSimuError(Exception):
+        pass
+
+
+VarSimuError = VarSimu.VarSimuError

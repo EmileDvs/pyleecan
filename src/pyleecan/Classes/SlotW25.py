@@ -22,7 +22,6 @@ from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
-from pyleecan.Methods.Slot.SlotW25 import S25_HWCheckError, S25_W4CheckError
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -35,7 +34,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1172,3 +1171,39 @@ class SlotW25(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S25_W4CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S25_HWCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW25.MachineCheckError
+
+LaminationCheckError = SlotW25.LaminationCheckError
+
+SlotCheckError = SlotW25.SlotCheckError
+
+S25_W4CheckError = SlotW25.S25_W4CheckError
+
+S25_HWCheckError = SlotW25.S25_HWCheckError

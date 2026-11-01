@@ -19,7 +19,6 @@ from pyleecan.Classes.Slot import Slot
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Classes._check import check_var
-from pyleecan.Methods.Slot.Slot import SlotCheckError
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -565,3 +564,25 @@ class SlotUD2(Slot):
         :Type: str
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotUD2.MachineCheckError
+
+LaminationCheckError = SlotUD2.LaminationCheckError
+
+SlotCheckError = SlotUD2.SlotCheckError

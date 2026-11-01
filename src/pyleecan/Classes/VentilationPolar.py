@@ -19,10 +19,6 @@ from pyleecan.Classes.Hole import Hole
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.PolarArc import PolarArc
-from pyleecan.Methods.Slot.VentilationPolar import (
-    PolarArcBuildGeometryError,
-    VentilationPolarInstanceError,
-)
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
@@ -36,7 +32,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -776,3 +772,18 @@ class VentilationPolar(Hole):
         :max: 6.29
         """,
     )
+
+    class PolarArcBuildGeometryError(Exception):
+        """ """
+
+        pass
+
+    class VentilationPolarInstanceError(Exception):
+        """ """
+
+        pass
+
+
+PolarArcBuildGeometryError = VentilationPolar.PolarArcBuildGeometryError
+
+VentilationPolarInstanceError = VentilationPolar.VentilationPolarInstanceError

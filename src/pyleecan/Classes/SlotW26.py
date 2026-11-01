@@ -17,12 +17,10 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.SlotW26._comp_line_dict import Slot26_H1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Methods.Slot.SlotW26 import S26_WCheckError
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
@@ -38,7 +36,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1118,3 +1116,39 @@ class SlotW26(Slot):
         :min: 0
         """,
     )
+
+    class Slot26_H1(Exception):
+        """ """
+
+        pass
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S26_WCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+Slot26_H1 = SlotW26.Slot26_H1
+
+MachineCheckError = SlotW26.MachineCheckError
+
+LaminationCheckError = SlotW26.LaminationCheckError
+
+SlotCheckError = SlotW26.SlotCheckError
+
+S26_WCheckError = SlotW26.S26_WCheckError

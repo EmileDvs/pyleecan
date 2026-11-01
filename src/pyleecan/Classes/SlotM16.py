@@ -19,7 +19,6 @@ from pyleecan.Classes.Slot import Slot
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods.Slot.SlotM16 import S16_W01CheckError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamSlot import LamSlot
@@ -35,7 +34,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -839,3 +838,32 @@ class SlotM16(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S16_W01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotM16.MachineCheckError
+
+LaminationCheckError = SlotM16.LaminationCheckError
+
+SlotCheckError = SlotM16.SlotCheckError
+
+S16_W01CheckError = SlotM16.S16_W01CheckError

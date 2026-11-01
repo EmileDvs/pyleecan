@@ -17,12 +17,6 @@ from pyleecan.Classes.MachineSync import MachineSync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.MachineSIPMSM.check import (
-    M2C_MagnetTooLarge,
-    M2C_PError,
-    M2C_WrongRotor,
-    M2C_WrongStator,
-)
 from pyleecan.Classes.LamSlotM import LamSlotM
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 
@@ -427,3 +421,78 @@ class MachineSIPMSM(MachineSync):
         :Type: Lamination
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class M2C_MagnetTooLarge(MachineCheckError):
+        """ """
+
+        pass
+
+    class M2C_PError(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        values
+
+
+        """
+
+        pass
+
+    class M2C_WrongRotor(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        Magnet
+
+
+        """
+
+        pass
+
+    class M2C_WrongStator(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Winding
+
+        """
+
+        pass
+
+
+MachineCheckError = MachineSIPMSM.MachineCheckError
+
+M2C_MagnetTooLarge = MachineSIPMSM.M2C_MagnetTooLarge
+
+M2C_PError = MachineSIPMSM.M2C_PError
+
+M2C_WrongRotor = MachineSIPMSM.M2C_WrongRotor
+
+M2C_WrongStator = MachineSIPMSM.M2C_WrongStator

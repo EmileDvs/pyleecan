@@ -20,7 +20,6 @@ from pyleecan.Classes.Slot import Slot
 import numpy as np
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods.Slot.Slot import SlotCheckError
 from pyleecan.Classes.SurfLine import SurfLine
 
 
@@ -884,3 +883,25 @@ class SlotDC(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotDC.MachineCheckError
+
+LaminationCheckError = SlotDC.LaminationCheckError
+
+SlotCheckError = SlotDC.SlotCheckError

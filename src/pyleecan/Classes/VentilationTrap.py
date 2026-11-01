@@ -19,10 +19,6 @@ from pyleecan.Classes.Hole import Hole
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Trapeze import Trapeze
-from pyleecan.Methods.Slot.VentilationTrap import (
-    TrapezeBuildGeometryError,
-    VentilationTrapInstanceError,
-)
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
@@ -36,7 +32,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -761,3 +757,18 @@ class VentilationTrap(Hole):
         :min: 0
         """,
     )
+
+    class TrapezeBuildGeometryError(Exception):
+        """raised when the parameter have not good type"""
+
+        pass
+
+    class VentilationTrapInstanceError(Exception):
+        """Raised when a Ventilation Trap parameter is not int or float"""
+
+        pass
+
+
+TrapezeBuildGeometryError = VentilationTrap.TrapezeBuildGeometryError
+
+VentilationTrapInstanceError = VentilationTrap.VentilationTrapInstanceError

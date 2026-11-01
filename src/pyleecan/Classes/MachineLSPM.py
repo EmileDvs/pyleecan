@@ -17,7 +17,6 @@ from pyleecan.Classes.MachineSync import MachineSync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine import MachineCheckError
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -412,3 +411,11 @@ class MachineLSPM(MachineSync):
         :Type: LamSlotWind
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+
+MachineCheckError = MachineLSPM.MachineCheckError

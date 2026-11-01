@@ -30,7 +30,6 @@ from pyleecan.Functions.labels import (
     BAR_LAB,
 )
 from pyleecan.Classes.Lamination import Lamination
-from pyleecan.Methods.Machine.LamSlotWind import LWC_SlotTooLong
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
@@ -1989,3 +1988,32 @@ class LamSlotWind(LamSlot):
         :Type: Winding
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class Lam_WindCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class LWC_SlotTooLong(Lam_WindCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = LamSlotWind.MachineCheckError
+
+LaminationCheckError = LamSlotWind.LaminationCheckError
+
+Lam_WindCheckError = LamSlotWind.Lam_WindCheckError
+
+LWC_SlotTooLong = LamSlotWind.LWC_SlotTooLong

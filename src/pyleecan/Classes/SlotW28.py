@@ -21,12 +21,6 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Methods.Slot.SlotW28 import (
-    S28_RboW0CheckError,
-    S28_ZsCheckError,
-    S28_R1R1CheckError,
-    S28_R1W3CheckError,
-)
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
@@ -41,7 +35,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1149,3 +1143,53 @@ class SlotW28(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S28_R1R1CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S28_R1W3CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S28_ZsCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S28_RboW0CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW28.MachineCheckError
+
+LaminationCheckError = SlotW28.LaminationCheckError
+
+SlotCheckError = SlotW28.SlotCheckError
+
+S28_R1R1CheckError = SlotW28.S28_R1R1CheckError
+
+S28_R1W3CheckError = SlotW28.S28_R1W3CheckError
+
+S28_ZsCheckError = SlotW28.S28_ZsCheckError
+
+S28_RboW0CheckError = SlotW28.S28_RboW0CheckError

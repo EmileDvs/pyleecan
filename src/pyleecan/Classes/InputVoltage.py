@@ -22,7 +22,6 @@ from pyleecan.Classes.OutElec import OutElec
 from pyleecan.Methods.Simulation.Input import (
     CURRENT_DIR_REF,
     ROT_DIR_REF,
-    InputError,
     PHASE_DIR_REF,
 )
 
@@ -753,3 +752,11 @@ class InputVoltage(Input):
         :Type: bool
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = InputVoltage.InputError

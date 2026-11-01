@@ -17,7 +17,6 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.OPMatrix import OPMatrixException
 from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.OPdqf import OPdqf
 from pyleecan.Classes.OPslip import OPslip
@@ -1155,3 +1154,11 @@ class OPMatrix(FrozenClass):
         :Type: list
         """,
     )
+
+    class OPMatrixException(Exception):
+        """Raise when OP_matrix was wrongly defined"""
+
+        pass
+
+
+OPMatrixException = OPMatrix.OPMatrixException

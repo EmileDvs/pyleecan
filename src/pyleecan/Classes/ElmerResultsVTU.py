@@ -28,7 +28,6 @@ from pyleecan.Classes.Norm_ref import Norm_ref
 from pyleecan.Classes.SolutionData import SolutionData
 from pyleecan.Classes.SolutionVector import SolutionVector
 from pyleecan.Classes.VectorField import VectorField
-from pyleecan.Methods.Elmer.ElmerResultsVTU import ElmerResultsVTUError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -400,3 +399,9 @@ class ElmerResultsVTU(Elmer):
         :Type: dict
         """,
     )
+
+    class ElmerResultsVTUError(Exception):
+        pass
+
+
+ElmerResultsVTUError = ElmerResultsVTU.ElmerResultsVTUError

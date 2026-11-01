@@ -20,7 +20,6 @@ from pyleecan.Classes.Slot import Slot
 import numpy as np
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods.Slot.Slot19 import S19_W1CheckError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -534,3 +533,32 @@ class Slot19(Slot):
         :Type: bool
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S19_W1CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = Slot19.MachineCheckError
+
+LaminationCheckError = Slot19.LaminationCheckError
+
+SlotCheckError = Slot19.SlotCheckError
+
+S19_W1CheckError = Slot19.S19_W1CheckError

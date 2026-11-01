@@ -22,7 +22,6 @@ from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
-from pyleecan.Methods.Slot.SlotW29 import S29_W01CheckError, S29_H2CheckError
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -36,7 +35,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1442,3 +1441,39 @@ class SlotW29(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S29_H2CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S29_W01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW29.MachineCheckError
+
+LaminationCheckError = SlotW29.LaminationCheckError
+
+SlotCheckError = SlotW29.SlotCheckError
+
+S29_H2CheckError = SlotW29.S29_H2CheckError
+
+S29_W01CheckError = SlotW29.S29_W01CheckError

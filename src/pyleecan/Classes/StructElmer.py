@@ -41,7 +41,6 @@ from pyleecan.Functions.labels import (
     LAM_LAB_S,
     WIND_LAB_S,
 )
-from pyleecan.Methods.Simulation.Input import InputError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1257,3 +1256,11 @@ class StructElmer(Structural):
         :Type: bool
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = StructElmer.InputError

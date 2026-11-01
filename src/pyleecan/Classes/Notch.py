@@ -17,7 +17,7 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 import numpy as np
 from pyleecan.Classes._check import InitUnKnowClassError

@@ -22,7 +22,6 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB
-from pyleecan.Methods.Slot.SlotWLSRPM import SLSRPMOutterError
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -35,7 +34,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1088,3 +1087,32 @@ class SlotWLSRPM(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class SLSRPMOutterError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotWLSRPM.MachineCheckError
+
+LaminationCheckError = SlotWLSRPM.LaminationCheckError
+
+SlotCheckError = SlotWLSRPM.SlotCheckError
+
+SLSRPMOutterError = SlotWLSRPM.SLSRPMOutterError

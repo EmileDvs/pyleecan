@@ -17,7 +17,6 @@ from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Slot.Slot import SlotCheckError
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
@@ -32,7 +31,7 @@ from pyleecan.Functions.Plot import (
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -543,3 +542,25 @@ class SlotM17(Slot):
 
         # Set to None the properties inherited from Slot
         super(SlotM17, self)._set_None()
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotM17.MachineCheckError
+
+LaminationCheckError = SlotM17.LaminationCheckError
+
+SlotCheckError = SlotM17.SlotCheckError

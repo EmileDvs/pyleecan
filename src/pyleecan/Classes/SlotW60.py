@@ -21,15 +21,7 @@ from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Methods.Slot.SlotW60 import S60_WindError
 from pyleecan.Functions.labels import WIND_LAB, SOP_LAB, DRAW_PROP_LAB
-from pyleecan.Methods.Slot.SlotW60 import (
-    S60_RCheckError,
-    S60_WindHError,
-    S60_InnerCheckError,
-    S60_W21CheckError,
-    S60_WindWError,
-)
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.definitions import config_dict
 from pyleecan.Functions.Plot import (
@@ -43,7 +35,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1447,3 +1439,80 @@ class SlotW60(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S60_WindError(SlotCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        winding
+
+
+        """
+
+        pass
+
+    class S60_RCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S60_W21CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S60_WindWError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S60_WindHError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S60_InnerCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW60.MachineCheckError
+
+LaminationCheckError = SlotW60.LaminationCheckError
+
+SlotCheckError = SlotW60.SlotCheckError
+
+S60_WindError = SlotW60.S60_WindError
+
+S60_RCheckError = SlotW60.S60_RCheckError
+
+S60_W21CheckError = SlotW60.S60_W21CheckError
+
+S60_WindWError = SlotW60.S60_WindWError
+
+S60_WindHError = SlotW60.S60_WindHError
+
+S60_InnerCheckError = SlotW60.S60_InnerCheckError

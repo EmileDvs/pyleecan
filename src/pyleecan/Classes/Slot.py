@@ -37,7 +37,7 @@ from pyleecan.Functions.labels import (
     WIND_LAB,
 )
 from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Functions.init_fig import init_fig

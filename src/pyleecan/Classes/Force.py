@@ -21,7 +21,6 @@ import numpy as np
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.VectorField import VectorField
-from pyleecan.Methods.Simulation.Input import InputError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -594,3 +593,11 @@ class Force(FrozenClass):
         :Type: str
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = Force.InputError

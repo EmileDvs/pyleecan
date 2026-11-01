@@ -18,12 +18,6 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods.Import.ImportGenMatrixSin import (
-    GenSinEmptyError,
-    GenSinDimError,
-    GenSinTransposeError,
-    InitSinMatDimError,
-)
 from pyleecan.Classes.ImportGenVectSin import ImportGenVectSin
 
 
@@ -324,3 +318,39 @@ class ImportGenMatrixSin(ImportMatrix):
         :Type: [ImportGenVectSin]
         """,
     )
+
+    class ImportError(Exception):
+        """Raised when the data import or generation is not possible"""
+
+        pass
+
+    class GenSinEmptyError(ImportError):
+        """Raised when the sin_list is empty"""
+
+        pass
+
+    class GenSinDimError(ImportError):
+        """Raised when the ImportGenVectSin of the sin_list has different size (N)"""
+
+        pass
+
+    class GenSinTransposeError(ImportError):
+        """Raised when the ImportGenVectSin of the sin_list has different is_transpose"""
+
+        pass
+
+    class InitSinMatDimError(ImportError):
+        """Raised when the init_vector is called with wrong arguments"""
+
+        pass
+
+
+ImportError = ImportGenMatrixSin.ImportError
+
+GenSinEmptyError = ImportGenMatrixSin.GenSinEmptyError
+
+GenSinDimError = ImportGenMatrixSin.GenSinDimError
+
+GenSinTransposeError = ImportGenMatrixSin.GenSinTransposeError
+
+InitSinMatDimError = ImportGenMatrixSin.InitSinMatDimError

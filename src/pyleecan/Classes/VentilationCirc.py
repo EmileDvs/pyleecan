@@ -18,10 +18,6 @@ from pyleecan.Classes.Hole import Hole
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Methods.Slot.VentilationCirc import (
-    CircleBuildGeometryError,
-    VentilationCircInstanceError,
-)
 from pyleecan.Classes.Circle import Circle
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
@@ -36,7 +32,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -673,3 +669,18 @@ class VentilationCirc(Hole):
         :min: 0
         """,
     )
+
+    class CircleBuildGeometryError(Exception):
+        """ """
+
+        pass
+
+    class VentilationCircInstanceError(Exception):
+        """ """
+
+        pass
+
+
+CircleBuildGeometryError = VentilationCirc.CircleBuildGeometryError
+
+VentilationCircInstanceError = VentilationCirc.VentilationCircInstanceError

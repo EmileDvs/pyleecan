@@ -20,11 +20,6 @@ from pyleecan.Classes.Slot import Slot
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.Arc1 import Arc1
 import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Methods.Slot.SlotW27 import (
-    S27_W01CheckError,
-    S27_W12CheckError,
-    S27_W03CheckError,
-)
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
@@ -40,7 +35,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1196,3 +1191,46 @@ class SlotW27(Slot):
         :Type: bool
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S27_W03CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S27_W01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S27_W12CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW27.MachineCheckError
+
+LaminationCheckError = SlotW27.LaminationCheckError
+
+SlotCheckError = SlotW27.SlotCheckError
+
+S27_W03CheckError = SlotW27.S27_W03CheckError
+
+S27_W01CheckError = SlotW27.S27_W01CheckError
+
+S27_W12CheckError = SlotW27.S27_W12CheckError

@@ -22,12 +22,6 @@ from pyleecan.Classes.Segment import Segment
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
-from pyleecan.Methods.Slot.SlotW30 import (
-    S30_W0Error,
-    S30_W3Error,
-    S30_R1Error,
-    S30_R2Error,
-)
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Classes.LamSlot import LamSlot
@@ -42,7 +36,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1536,3 +1530,53 @@ class SlotW30(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S30_W0Error(SlotCheckError):
+        """ """
+
+        pass
+
+    class S30_W3Error(SlotCheckError):
+        """ """
+
+        pass
+
+    class S30_R1Error(SlotCheckError):
+        """ """
+
+        pass
+
+    class S30_R2Error(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW30.MachineCheckError
+
+LaminationCheckError = SlotW30.LaminationCheckError
+
+SlotCheckError = SlotW30.SlotCheckError
+
+S30_W0Error = SlotW30.S30_W0Error
+
+S30_W3Error = SlotW30.S30_W3Error
+
+S30_R1Error = SlotW30.S30_R1Error
+
+S30_R2Error = SlotW30.S30_R2Error

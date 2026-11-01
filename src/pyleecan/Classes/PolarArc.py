@@ -17,9 +17,7 @@ from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.PolarArc import AnglePolarArcError
 import numpy as np
-from pyleecan.Methods.Geometry.PolarArc.discretize import NbPointPolarArcError
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Segment import Segment
 from matplotlib.patches import Polygon
@@ -513,3 +511,18 @@ class PolarArc(Surface):
         :min: 0
         """,
     )
+
+    class AnglePolarArcError(Exception):
+        """ """
+
+        pass
+
+    class NbPointPolarArcError(Exception):
+        """ """
+
+        pass
+
+
+AnglePolarArcError = PolarArc.AnglePolarArcError
+
+NbPointPolarArcError = PolarArc.NbPointPolarArcError

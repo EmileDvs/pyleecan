@@ -17,15 +17,9 @@ from pyleecan.Classes.Line import Line
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Geometry.Segment import PointSegmentError
 from pyleecan.Methods.Geometry.Segment.comp_distance import distance_numpy
 import numpy as np
 from pyleecan.Methods.Machine import LINE_NPOINT_D
-from pyleecan.Methods.Geometry.Segment import (
-    NbPointSegmentDError,
-    AngleRotationSegmentError,
-    PointTranslateSegmentError,
-)
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
 from pyleecan.Functions.init_fig import init_fig
@@ -906,3 +900,32 @@ class Segment(Line):
         :Type: complex
         """,
     )
+
+    class PointSegmentError(Exception):
+        """ """
+
+        pass
+
+    class NbPointSegmentDError(Exception):
+        """ """
+
+        pass
+
+    class AngleRotationSegmentError(Exception):
+        """ """
+
+        pass
+
+    class PointTranslateSegmentError(Exception):
+        """ """
+
+        pass
+
+
+PointSegmentError = Segment.PointSegmentError
+
+NbPointSegmentDError = Segment.NbPointSegmentDError
+
+AngleRotationSegmentError = Segment.AngleRotationSegmentError
+
+PointTranslateSegmentError = Segment.PointTranslateSegmentError

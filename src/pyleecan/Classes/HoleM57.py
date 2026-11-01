@@ -22,7 +22,6 @@ from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import HOLEM_LAB
-from pyleecan.Methods.Slot.HoleM57 import S57_NoneError
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Functions.Plot import (
@@ -35,7 +34,7 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1486,3 +1485,32 @@ class HoleM57(HoleMag):
         :Type: Magnet
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S57_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM57 is None"""
+
+        pass
+
+
+MachineCheckError = HoleM57.MachineCheckError
+
+LaminationCheckError = HoleM57.LaminationCheckError
+
+SlotCheckError = HoleM57.SlotCheckError
+
+S57_NoneError = HoleM57.S57_NoneError

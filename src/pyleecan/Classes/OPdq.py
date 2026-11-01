@@ -17,7 +17,6 @@ from pyleecan.Classes.OP import OP
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Simulation.Input import InputError
 import numpy as np
 
 
@@ -615,3 +614,11 @@ class OPdq(OP):
         :Type: float
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = OPdq.InputError

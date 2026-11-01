@@ -21,7 +21,6 @@ import numpy as np
 from pyleecan.Classes.LUTdq import LUTdq
 from pyleecan.Classes.EEC_PMSM import EEC_PMSM
 from pyleecan.Classes.OutLoss import OutLoss
-from pyleecan.Methods.Simulation.Input import InputError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1544,3 +1543,11 @@ class ElecLUTdq(Electrical):
         :max: 1
         """,
     )
+
+    class InputError(Exception):
+        """Raised when the input data are incomplete or incorrect"""
+
+        pass
+
+
+InputError = ElecLUTdq.InputError

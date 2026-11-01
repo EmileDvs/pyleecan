@@ -19,7 +19,6 @@ from pyleecan.Classes._frozen import FrozenClass
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes._swat_em import datamodel
-from pyleecan.Methods.Machine.Winding import WindingError
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 from pyleecan.Functions.Winding.reverse_wind_mat import (
     reverse_wind_mat,
@@ -2170,3 +2169,11 @@ class Winding(FrozenClass):
         :Type: bool
         """,
     )
+
+    class WindingError(Exception):
+        """ """
+
+        pass
+
+
+WindingError = Winding.WindingError

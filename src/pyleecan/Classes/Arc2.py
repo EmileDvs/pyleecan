@@ -18,13 +18,7 @@ from pyleecan.Classes.Arc import Arc
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Methods.Geometry.Arc2 import AngleArc2Error, PointArc2Error
 from pyleecan.Methods.Machine import ARC_NPOINT_D
-from pyleecan.Methods.Geometry.Arc2 import (
-    NbPointArc2DError,
-    AngleRotationArc2Error,
-    PointTranslateArc2Error,
-)
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -680,3 +674,39 @@ class Arc2(Arc):
         :max: 6.283185308
         """,
     )
+
+    class PointArc2Error(Exception):
+        """ """
+
+        pass
+
+    class AngleArc2Error(Exception):
+        """ """
+
+        pass
+
+    class NbPointArc2DError(Exception):
+        """ """
+
+        pass
+
+    class AngleRotationArc2Error(Exception):
+        """ """
+
+        pass
+
+    class PointTranslateArc2Error(Exception):
+        """ """
+
+        pass
+
+
+PointArc2Error = Arc2.PointArc2Error
+
+AngleArc2Error = Arc2.AngleArc2Error
+
+NbPointArc2DError = Arc2.NbPointArc2DError
+
+AngleRotationArc2Error = Arc2.AngleRotationArc2Error
+
+PointTranslateArc2Error = Arc2.PointTranslateArc2Error

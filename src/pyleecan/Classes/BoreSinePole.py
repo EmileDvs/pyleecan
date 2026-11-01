@@ -22,7 +22,7 @@ from pyleecan.Methods.Machine.BoreSinePole.get_bore_line import (
     _get_pole_width_max,
 )
 from pyleecan.Classes.Segment import Segment
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Lamination import Lamination

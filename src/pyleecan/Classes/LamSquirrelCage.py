@@ -20,7 +20,6 @@ from pyleecan.Classes.LamSlotWind import LamSlotWind
 from pyleecan.Functions.labels import WIND_LAB, BAR_LAB
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 from pyleecan.Classes.CondType21 import CondType21
-from pyleecan.Methods.Machine.LamSquirrelCage import SCC_NotARotor, SCC_WrongCond
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes.LamSlot import LamSlot
 from pyleecan.Functions.load import import_class
@@ -1219,3 +1218,46 @@ class LamSquirrelCage(LamSlotWind):
         :Type: Material
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class Lam_WindCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class SquirrelCageCheckError(Lam_WindCheckError):
+        """ """
+
+        pass
+
+    class SCC_NotARotor(SquirrelCageCheckError):
+        """ """
+
+        pass
+
+    class SCC_WrongCond(SquirrelCageCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = LamSquirrelCage.MachineCheckError
+
+LaminationCheckError = LamSquirrelCage.LaminationCheckError
+
+Lam_WindCheckError = LamSquirrelCage.Lam_WindCheckError
+
+SquirrelCageCheckError = LamSquirrelCage.SquirrelCageCheckError
+
+SCC_NotARotor = LamSquirrelCage.SCC_NotARotor
+
+SCC_WrongCond = LamSquirrelCage.SCC_WrongCond

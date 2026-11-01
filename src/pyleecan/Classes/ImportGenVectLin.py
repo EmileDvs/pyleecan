@@ -17,7 +17,6 @@ from pyleecan.Classes.ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Import import ImportError
 import numpy as np
 
 
@@ -369,3 +368,11 @@ class ImportGenVectLin(ImportMatrix):
         :Type: bool
         """,
     )
+
+    class ImportError(Exception):
+        """Raised when the data import or generation is not possible"""
+
+        pass
+
+
+ImportError = ImportGenVectLin.ImportError

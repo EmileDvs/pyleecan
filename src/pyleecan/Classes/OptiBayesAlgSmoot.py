@@ -17,9 +17,6 @@ from pyleecan.Classes.OptiBayesAlg import OptiBayesAlg
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Optimization.OptiBayesAlgSmoot.check_optimization_input import (
-    OptimizationAttributeError,
-)
 from pyleecan.Classes.OptiObjective import OptiObjective
 from pyleecan.Classes.OptiDesignVarSet import OptiDesignVarSet
 from pyleecan.Classes.OptiDesignVarInterval import OptiDesignVarInterval
@@ -672,3 +669,12 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
         :min: 1
         """,
     )
+
+    class OptimizationAttributeError(Exception):
+        """Class to Raise an error"""
+
+        def __init__(self, message):
+            self.message = message
+
+
+OptimizationAttributeError = OptiBayesAlgSmoot.OptimizationAttributeError

@@ -17,12 +17,6 @@ from pyleecan.Classes.MachineDFIM import MachineDFIM
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.MachineSCIM.check import (
-    M1C_RingTooLarge,
-    M1C_SquirrelCagePError,
-    M1C_WrongRotor,
-    M1C_WrongStator,
-)
 from pyleecan.Classes.LamSlotWind import LamSlotWind
 from pyleecan.Classes.LamSquirrelCage import LamSquirrelCage
 
@@ -297,3 +291,65 @@ class MachineSCIM(MachineDFIM):
 
         # Set to None the properties inherited from MachineDFIM
         super(MachineSCIM, self)._set_None()
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class M1C_RingTooLarge(MachineCheckError):
+        """ """
+
+        pass
+
+    class M1C_SquirrelCagePError(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        winding
+            have a different p value as the rotor one
+
+        """
+
+        pass
+
+    class M1C_WrongRotor(MachineCheckError):
+        """ """
+
+        pass
+
+    class M1C_WrongStator(MachineCheckError):
+        """
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Raises
+        ------
+        with
+            Winding
+
+        """
+
+        pass
+
+
+MachineCheckError = MachineSCIM.MachineCheckError
+
+M1C_RingTooLarge = MachineSCIM.M1C_RingTooLarge
+
+M1C_SquirrelCagePError = MachineSCIM.M1C_SquirrelCagePError
+
+M1C_WrongRotor = MachineSCIM.M1C_WrongRotor
+
+M1C_WrongStator = MachineSCIM.M1C_WrongStator

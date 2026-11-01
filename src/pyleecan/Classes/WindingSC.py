@@ -17,9 +17,7 @@ from pyleecan.Classes.Winding import Winding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Machine.WindingSC.comp_connection_mat import WindingT10DefQsError
 import numpy as np
-from pyleecan.Methods.Machine.Winding import WindingError
 from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
 from pyleecan.Classes.Lamination import Lamination
@@ -408,3 +406,18 @@ class WindingSC(Winding):
 
         # Set to None the properties inherited from Winding
         super(WindingSC, self)._set_None()
+
+    class WindingError(Exception):
+        """ """
+
+        pass
+
+    class WindingT10DefQsError(WindingError):
+        """ """
+
+        pass
+
+
+WindingError = WindingSC.WindingError
+
+WindingT10DefQsError = WindingSC.WindingT10DefQsError

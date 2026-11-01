@@ -22,13 +22,6 @@ from pyleecan.Classes.Arc1 import Arc1
 from pyleecan.Classes.Arc3 import Arc3
 import numpy as np, matplotlib.pyplot as plt
 from pyleecan.Classes._check import check_var
-from pyleecan.Methods.Slot.SlotW11 import (
-    S11_W01CheckError,
-    S11_R1CheckError,
-    S11_RHCheckError,
-    S11_RWCheckError,
-    S11_H1rCheckError,
-)
 from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Classes.SurfLine import SurfLine
 from pyleecan.Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
@@ -45,7 +38,7 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Methods import ParentMissingError
+from pyleecan.Classes import ParentMissingError
 
 
 from pyleecan.Classes._check import InitUnKnowClassError
@@ -1961,3 +1954,60 @@ class SlotW11(Slot):
         :min: 0
         """,
     )
+
+    class MachineCheckError(Exception):
+        """ """
+
+        pass
+
+    class LaminationCheckError(MachineCheckError):
+        """ """
+
+        pass
+
+    class SlotCheckError(LaminationCheckError):
+        """ """
+
+        pass
+
+    class S11_W01CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S11_H1rCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S11_RHCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S11_RWCheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S11_R1CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+
+MachineCheckError = SlotW11.MachineCheckError
+
+LaminationCheckError = SlotW11.LaminationCheckError
+
+SlotCheckError = SlotW11.SlotCheckError
+
+S11_W01CheckError = SlotW11.S11_W01CheckError
+
+S11_H1rCheckError = SlotW11.S11_H1rCheckError
+
+S11_RHCheckError = SlotW11.S11_RHCheckError
+
+S11_RWCheckError = SlotW11.S11_RWCheckError
+
+S11_R1CheckError = SlotW11.S11_R1CheckError

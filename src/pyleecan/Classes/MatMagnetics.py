@@ -17,7 +17,6 @@ from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Methods.Material.MatMagnetics.get_BH import BHShapeError
 import numpy as np
 from pyleecan.Functions.init_fig import init_fig
 
@@ -736,3 +735,11 @@ class MatMagnetics(FrozenClass):
         :Type: bool
         """,
     )
+
+    class BHShapeError(Exception):
+        """Raised when the BH curve has not the expected shape"""
+
+        pass
+
+
+BHShapeError = MatMagnetics.BHShapeError

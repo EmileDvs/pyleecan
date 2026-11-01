@@ -22,9 +22,6 @@ from pyleecan.Classes.OptiGenAlg import OptiGenAlg
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from pyleecan.Methods.Optimization.OptiGenAlgNsga2Deap.cross import cross
-from pyleecan.Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input import (
-    OptimizationAttributeError,
-)
 from pyleecan.Classes.OptiObjective import OptiObjective
 from pyleecan.Classes.OptiDesignVarSet import OptiDesignVarSet
 from pyleecan.Classes.OptiDesignVarInterval import OptiDesignVarInterval
@@ -1000,3 +997,12 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         :Type: deap.base.Toolbox
         """,
     )
+
+    class OptimizationAttributeError(Exception):
+        """Class to Raise an error"""
+
+        def __init__(self, message):
+            self.message = message
+
+
+OptimizationAttributeError = OptiGenAlgNsga2Deap.OptimizationAttributeError
