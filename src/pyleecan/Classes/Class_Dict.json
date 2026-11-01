@@ -2673,7 +2673,7 @@
                 "name": "Jrms_max",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00c3\u0192\u00c6\u2019\u00c3\u00a2\u00e2\u201a\u00ac\u00c5\u00a1\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00b2",
+                "unit": "A/m2",
                 "value": null
             },
             {
@@ -12069,7 +12069,7 @@
                 "name": "Jrms",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00c3\u0192\u00c6\u2019\u00c3\u00a2\u00e2\u201a\u00ac\u00c5\u00a1\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00b2",
+                "unit": "A/m2",
                 "value": null
             },
             {

@@ -14,7 +14,7 @@ current_dir,-,"Rotation direction of the stator currents (current_dir*2*pi*felec
 PWM,,Object to generate PWM signal,,ImportGenPWM,None,,,
 eec,,Electric Equivalent Circuit used for OP resolution,,EEC,None,,,
 P_out,W,Output power,1,float,None,,,
-Jrms,A/mÃƒâ€šÃ‚Â²,RMS current density in slots,,float,None,0,,
+Jrms,A/m2,RMS current density in slots,,float,None,0,,
 P_in,W,Input power,1,float,None,,,
 Arms,A/m,RMS linear current density along airgap,,float,None,,,
 Erms,V,RMS back-emf,,float,None,,,
