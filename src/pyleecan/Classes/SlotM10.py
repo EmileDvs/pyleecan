@@ -63,14 +63,14 @@ except ImportError as error:
     get_surface_active = error
 
 try:
-    from ..Methods.Slot.SlotM10.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
-try:
     from ..Methods.Slot.SlotM10.is_airgap_active import is_airgap_active
 except ImportError as error:
     is_airgap_active = error
+
+try:
+    from ..Methods.Slot.SlotM10.plot_schematics import plot_schematics
+except ImportError as error:
+    plot_schematics = error
 
 
 from numpy import isnan
@@ -184,17 +184,6 @@ class SlotM10(Slot):
         )
     else:
         get_surface_active = get_surface_active
-    # cf Methods.Slot.SlotM10.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM10 method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
     # cf Methods.Slot.SlotM10.is_airgap_active
     if isinstance(is_airgap_active, ImportError):
         is_airgap_active = property(
@@ -207,6 +196,17 @@ class SlotM10(Slot):
         )
     else:
         is_airgap_active = is_airgap_active
+    # cf Methods.Slot.SlotM10.plot_schematics
+    if isinstance(plot_schematics, ImportError):
+        plot_schematics = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM10 method plot_schematics: " + str(plot_schematics)
+                )
+            )
+        )
+    else:
+        plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

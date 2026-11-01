@@ -58,6 +58,11 @@ except ImportError as error:
     get_magnet_dict = error
 
 try:
+    from ..Methods.Slot.Hole.get_R_id import get_R_id
+except ImportError as error:
+    get_R_id = error
+
+try:
     from ..Methods.Slot.Hole.get_Rbo import get_Rbo
 except ImportError as error:
     get_Rbo = error
@@ -81,11 +86,6 @@ try:
     from ..Methods.Slot.Hole.set_magnet_by_id import set_magnet_by_id
 except ImportError as error:
     set_magnet_by_id = error
-
-try:
-    from ..Methods.Slot.Hole.get_R_id import get_R_id
-except ImportError as error:
-    get_R_id = error
 
 
 from numpy import isnan
@@ -181,6 +181,15 @@ class Hole(FrozenClass):
         )
     else:
         get_magnet_dict = get_magnet_dict
+    # cf Methods.Slot.Hole.get_R_id
+    if isinstance(get_R_id, ImportError):
+        get_R_id = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method get_R_id: " + str(get_R_id))
+            )
+        )
+    else:
+        get_R_id = get_R_id
     # cf Methods.Slot.Hole.get_Rbo
     if isinstance(get_Rbo, ImportError):
         get_Rbo = property(
@@ -228,15 +237,6 @@ class Hole(FrozenClass):
         )
     else:
         set_magnet_by_id = set_magnet_by_id
-    # cf Methods.Slot.Hole.get_R_id
-    if isinstance(get_R_id, ImportError):
-        get_R_id = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Hole method get_R_id: " + str(get_R_id))
-            )
-        )
-    else:
-        get_R_id = get_R_id
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

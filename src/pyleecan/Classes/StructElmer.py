@@ -18,9 +18,14 @@ from .Structural import Structural
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.StructElmer.run import run
+    from ..Methods.Simulation.StructElmer.gen_case import gen_case
 except ImportError as error:
-    run = error
+    gen_case = error
+
+try:
+    from ..Methods.Simulation.StructElmer.gen_mesh import gen_mesh
+except ImportError as error:
+    gen_mesh = error
 
 try:
     from ..Methods.Simulation.StructElmer.get_meshsolution import get_meshsolution
@@ -33,24 +38,19 @@ except ImportError as error:
     get_path_save_fea = error
 
 try:
-    from ..Methods.Simulation.StructElmer.solve_FEA import solve_FEA
-except ImportError as error:
-    solve_FEA = error
-
-try:
-    from ..Methods.Simulation.StructElmer.gen_mesh import gen_mesh
-except ImportError as error:
-    gen_mesh = error
-
-try:
-    from ..Methods.Simulation.StructElmer.gen_case import gen_case
-except ImportError as error:
-    gen_case = error
-
-try:
     from ..Methods.Simulation.StructElmer.process_mesh import process_mesh
 except ImportError as error:
     process_mesh = error
+
+try:
+    from ..Methods.Simulation.StructElmer.run import run
+except ImportError as error:
+    run = error
+
+try:
+    from ..Methods.Simulation.StructElmer.solve_FEA import solve_FEA
+except ImportError as error:
+    solve_FEA = error
 
 
 from numpy import isnan
@@ -63,15 +63,24 @@ class StructElmer(Structural):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.StructElmer.run
-    if isinstance(run, ImportError):
-        run = property(
+    # cf Methods.Simulation.StructElmer.gen_case
+    if isinstance(gen_case, ImportError):
+        gen_case = property(
             fget=lambda x: raise_(
-                ImportError("Can't use StructElmer method run: " + str(run))
+                ImportError("Can't use StructElmer method gen_case: " + str(gen_case))
             )
         )
     else:
-        run = run
+        gen_case = gen_case
+    # cf Methods.Simulation.StructElmer.gen_mesh
+    if isinstance(gen_mesh, ImportError):
+        gen_mesh = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use StructElmer method gen_mesh: " + str(gen_mesh))
+            )
+        )
+    else:
+        gen_mesh = gen_mesh
     # cf Methods.Simulation.StructElmer.get_meshsolution
     if isinstance(get_meshsolution, ImportError):
         get_meshsolution = property(
@@ -96,33 +105,6 @@ class StructElmer(Structural):
         )
     else:
         get_path_save_fea = get_path_save_fea
-    # cf Methods.Simulation.StructElmer.solve_FEA
-    if isinstance(solve_FEA, ImportError):
-        solve_FEA = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use StructElmer method solve_FEA: " + str(solve_FEA))
-            )
-        )
-    else:
-        solve_FEA = solve_FEA
-    # cf Methods.Simulation.StructElmer.gen_mesh
-    if isinstance(gen_mesh, ImportError):
-        gen_mesh = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use StructElmer method gen_mesh: " + str(gen_mesh))
-            )
-        )
-    else:
-        gen_mesh = gen_mesh
-    # cf Methods.Simulation.StructElmer.gen_case
-    if isinstance(gen_case, ImportError):
-        gen_case = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use StructElmer method gen_case: " + str(gen_case))
-            )
-        )
-    else:
-        gen_case = gen_case
     # cf Methods.Simulation.StructElmer.process_mesh
     if isinstance(process_mesh, ImportError):
         process_mesh = property(
@@ -134,6 +116,24 @@ class StructElmer(Structural):
         )
     else:
         process_mesh = process_mesh
+    # cf Methods.Simulation.StructElmer.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use StructElmer method run: " + str(run))
+            )
+        )
+    else:
+        run = run
+    # cf Methods.Simulation.StructElmer.solve_FEA
+    if isinstance(solve_FEA, ImportError):
+        solve_FEA = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use StructElmer method solve_FEA: " + str(solve_FEA))
+            )
+        )
+    else:
+        solve_FEA = solve_FEA
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

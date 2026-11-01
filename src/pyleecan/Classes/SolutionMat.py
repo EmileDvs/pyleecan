@@ -18,14 +18,14 @@ from .Solution import Solution
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Mesh.SolutionMat.get_field import get_field
-except ImportError as error:
-    get_field = error
-
-try:
     from ..Methods.Mesh.SolutionMat.get_axes_list import get_axes_list
 except ImportError as error:
     get_axes_list = error
+
+try:
+    from ..Methods.Mesh.SolutionMat.get_field import get_field
+except ImportError as error:
+    get_field = error
 
 try:
     from ..Methods.Mesh.SolutionMat.get_solution import get_solution
@@ -44,15 +44,6 @@ class SolutionMat(Solution):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Mesh.SolutionMat.get_field
-    if isinstance(get_field, ImportError):
-        get_field = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SolutionMat method get_field: " + str(get_field))
-            )
-        )
-    else:
-        get_field = get_field
     # cf Methods.Mesh.SolutionMat.get_axes_list
     if isinstance(get_axes_list, ImportError):
         get_axes_list = property(
@@ -64,6 +55,15 @@ class SolutionMat(Solution):
         )
     else:
         get_axes_list = get_axes_list
+    # cf Methods.Mesh.SolutionMat.get_field
+    if isinstance(get_field, ImportError):
+        get_field = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SolutionMat method get_field: " + str(get_field))
+            )
+        )
+    else:
+        get_field = get_field
     # cf Methods.Mesh.SolutionMat.get_solution
     if isinstance(get_solution, ImportError):
         get_solution = property(

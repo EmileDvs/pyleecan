@@ -18,14 +18,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Mesh.RefElement.interpolation import interpolation
-except ImportError as error:
-    interpolation = error
-
-try:
     from ..Methods.Mesh.RefElement.get_element_area import get_element_area
 except ImportError as error:
     get_element_area = error
+
+try:
+    from ..Methods.Mesh.RefElement.interpolation import interpolation
+except ImportError as error:
+    interpolation = error
 
 
 from numpy import isnan
@@ -38,17 +38,6 @@ class RefElement(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Mesh.RefElement.interpolation
-    if isinstance(interpolation, ImportError):
-        interpolation = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RefElement method interpolation: " + str(interpolation)
-                )
-            )
-        )
-    else:
-        interpolation = interpolation
     # cf Methods.Mesh.RefElement.get_element_area
     if isinstance(get_element_area, ImportError):
         get_element_area = property(
@@ -61,6 +50,17 @@ class RefElement(FrozenClass):
         )
     else:
         get_element_area = get_element_area
+    # cf Methods.Mesh.RefElement.interpolation
+    if isinstance(interpolation, ImportError):
+        interpolation = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefElement method interpolation: " + str(interpolation)
+                )
+            )
+        )
+    else:
+        interpolation = interpolation
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

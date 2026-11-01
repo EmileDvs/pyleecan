@@ -18,21 +18,6 @@ from .Surface import Surface
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Geometry.PolarArc.get_lines import get_lines
-except ImportError as error:
-    get_lines = error
-
-try:
-    from ..Methods.Geometry.PolarArc.rotate import rotate
-except ImportError as error:
-    rotate = error
-
-try:
-    from ..Methods.Geometry.PolarArc.translate import translate
-except ImportError as error:
-    translate = error
-
-try:
     from ..Methods.Geometry.PolarArc.check import check
 except ImportError as error:
     check = error
@@ -43,14 +28,9 @@ except ImportError as error:
     comp_length = error
 
 try:
-    from ..Methods.Geometry.PolarArc.discretize import discretize
+    from ..Methods.Geometry.PolarArc.comp_point_ref import comp_point_ref
 except ImportError as error:
-    discretize = error
-
-try:
-    from ..Methods.Geometry.PolarArc.get_patches import get_patches
-except ImportError as error:
-    get_patches = error
+    comp_point_ref = error
 
 try:
     from ..Methods.Geometry.PolarArc.comp_surface import comp_surface
@@ -58,9 +38,29 @@ except ImportError as error:
     comp_surface = error
 
 try:
-    from ..Methods.Geometry.PolarArc.comp_point_ref import comp_point_ref
+    from ..Methods.Geometry.PolarArc.discretize import discretize
 except ImportError as error:
-    comp_point_ref = error
+    discretize = error
+
+try:
+    from ..Methods.Geometry.PolarArc.get_lines import get_lines
+except ImportError as error:
+    get_lines = error
+
+try:
+    from ..Methods.Geometry.PolarArc.get_patches import get_patches
+except ImportError as error:
+    get_patches = error
+
+try:
+    from ..Methods.Geometry.PolarArc.rotate import rotate
+except ImportError as error:
+    rotate = error
+
+try:
+    from ..Methods.Geometry.PolarArc.translate import translate
+except ImportError as error:
+    translate = error
 
 
 from numpy import isnan
@@ -73,33 +73,6 @@ class PolarArc(Surface):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Geometry.PolarArc.get_lines
-    if isinstance(get_lines, ImportError):
-        get_lines = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use PolarArc method get_lines: " + str(get_lines))
-            )
-        )
-    else:
-        get_lines = get_lines
-    # cf Methods.Geometry.PolarArc.rotate
-    if isinstance(rotate, ImportError):
-        rotate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use PolarArc method rotate: " + str(rotate))
-            )
-        )
-    else:
-        rotate = rotate
-    # cf Methods.Geometry.PolarArc.translate
-    if isinstance(translate, ImportError):
-        translate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use PolarArc method translate: " + str(translate))
-            )
-        )
-    else:
-        translate = translate
     # cf Methods.Geometry.PolarArc.check
     if isinstance(check, ImportError):
         check = property(
@@ -120,37 +93,6 @@ class PolarArc(Surface):
         )
     else:
         comp_length = comp_length
-    # cf Methods.Geometry.PolarArc.discretize
-    if isinstance(discretize, ImportError):
-        discretize = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use PolarArc method discretize: " + str(discretize))
-            )
-        )
-    else:
-        discretize = discretize
-    # cf Methods.Geometry.PolarArc.get_patches
-    if isinstance(get_patches, ImportError):
-        get_patches = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use PolarArc method get_patches: " + str(get_patches)
-                )
-            )
-        )
-    else:
-        get_patches = get_patches
-    # cf Methods.Geometry.PolarArc.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use PolarArc method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
     # cf Methods.Geometry.PolarArc.comp_point_ref
     if isinstance(comp_point_ref, ImportError):
         comp_point_ref = property(
@@ -162,6 +104,64 @@ class PolarArc(Surface):
         )
     else:
         comp_point_ref = comp_point_ref
+    # cf Methods.Geometry.PolarArc.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use PolarArc method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
+    # cf Methods.Geometry.PolarArc.discretize
+    if isinstance(discretize, ImportError):
+        discretize = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use PolarArc method discretize: " + str(discretize))
+            )
+        )
+    else:
+        discretize = discretize
+    # cf Methods.Geometry.PolarArc.get_lines
+    if isinstance(get_lines, ImportError):
+        get_lines = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use PolarArc method get_lines: " + str(get_lines))
+            )
+        )
+    else:
+        get_lines = get_lines
+    # cf Methods.Geometry.PolarArc.get_patches
+    if isinstance(get_patches, ImportError):
+        get_patches = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use PolarArc method get_patches: " + str(get_patches)
+                )
+            )
+        )
+    else:
+        get_patches = get_patches
+    # cf Methods.Geometry.PolarArc.rotate
+    if isinstance(rotate, ImportError):
+        rotate = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use PolarArc method rotate: " + str(rotate))
+            )
+        )
+    else:
+        rotate = rotate
+    # cf Methods.Geometry.PolarArc.translate
+    if isinstance(translate, ImportError):
+        translate = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use PolarArc method translate: " + str(translate))
+            )
+        )
+    else:
+        translate = translate
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

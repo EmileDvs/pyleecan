@@ -18,14 +18,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.SliceModel.get_distribution import get_distribution
-except ImportError as error:
-    get_distribution = error
-
-try:
     from ..Methods.Simulation.SliceModel.get_data import get_data
 except ImportError as error:
     get_data = error
+
+try:
+    from ..Methods.Simulation.SliceModel.get_distribution import get_distribution
+except ImportError as error:
+    get_distribution = error
 
 try:
     from ..Methods.Simulation.SliceModel.plot import plot
@@ -44,6 +44,15 @@ class SliceModel(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.SliceModel.get_data
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SliceModel method get_data: " + str(get_data))
+            )
+        )
+    else:
+        get_data = get_data
     # cf Methods.Simulation.SliceModel.get_distribution
     if isinstance(get_distribution, ImportError):
         get_distribution = property(
@@ -56,15 +65,6 @@ class SliceModel(FrozenClass):
         )
     else:
         get_distribution = get_distribution
-    # cf Methods.Simulation.SliceModel.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SliceModel method get_data: " + str(get_data))
-            )
-        )
-    else:
-        get_data = get_data
     # cf Methods.Simulation.SliceModel.plot
     if isinstance(plot, ImportError):
         plot = property(

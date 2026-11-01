@@ -18,11 +18,6 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.Electrical.run import run
-except ImportError as error:
-    run = error
-
-try:
     from ..Methods.Simulation.Electrical.comp_power import comp_power
 except ImportError as error:
     comp_power = error
@@ -37,6 +32,11 @@ try:
 except ImportError as error:
     gen_drive = error
 
+try:
+    from ..Methods.Simulation.Electrical.run import run
+except ImportError as error:
+    run = error
+
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -48,15 +48,6 @@ class Electrical(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.Electrical.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Electrical method run: " + str(run))
-            )
-        )
-    else:
-        run = run
     # cf Methods.Simulation.Electrical.comp_power
     if isinstance(comp_power, ImportError):
         comp_power = property(
@@ -88,6 +79,15 @@ class Electrical(FrozenClass):
         )
     else:
         gen_drive = gen_drive
+    # cf Methods.Simulation.Electrical.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Electrical method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -23,6 +23,18 @@ except ImportError as error:
     check = error
 
 try:
+    from ..Methods.Machine.LamSlotMulti.comp_height_yoke import comp_height_yoke
+except ImportError as error:
+    comp_height_yoke = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.comp_periodicity_spatial import (
+        comp_periodicity_spatial,
+    )
+except ImportError as error:
+    comp_periodicity_spatial = error
+
+try:
     from ..Methods.Machine.LamSlotMulti.comp_surfaces import comp_surfaces
 except ImportError as error:
     comp_surfaces = error
@@ -33,14 +45,9 @@ except ImportError as error:
     get_pole_pair_number = error
 
 try:
-    from ..Methods.Machine.LamSlotMulti.plot import plot
+    from ..Methods.Machine.LamSlotMulti.get_slot_desc_list import get_slot_desc_list
 except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Machine.LamSlotMulti.comp_height_yoke import comp_height_yoke
-except ImportError as error:
-    comp_height_yoke = error
+    get_slot_desc_list = error
 
 try:
     from ..Methods.Machine.LamSlotMulti.get_Zs import get_Zs
@@ -48,21 +55,14 @@ except ImportError as error:
     get_Zs = error
 
 try:
-    from ..Methods.Machine.LamSlotMulti.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
-
-try:
-    from ..Methods.Machine.LamSlotMulti.get_slot_desc_list import get_slot_desc_list
-except ImportError as error:
-    get_slot_desc_list = error
-
-try:
     from ..Methods.Machine.LamSlotMulti.has_slot import has_slot
 except ImportError as error:
     has_slot = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.plot import plot
+except ImportError as error:
+    plot = error
 
 
 from numpy import array, array_equal
@@ -85,6 +85,30 @@ class LamSlotMulti(Lamination):
         )
     else:
         check = check
+    # cf Methods.Machine.LamSlotMulti.comp_height_yoke
+    if isinstance(comp_height_yoke, ImportError):
+        comp_height_yoke = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMulti method comp_height_yoke: "
+                    + str(comp_height_yoke)
+                )
+            )
+        )
+    else:
+        comp_height_yoke = comp_height_yoke
+    # cf Methods.Machine.LamSlotMulti.comp_periodicity_spatial
+    if isinstance(comp_periodicity_spatial, ImportError):
+        comp_periodicity_spatial = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMulti method comp_periodicity_spatial: "
+                    + str(comp_periodicity_spatial)
+                )
+            )
+        )
+    else:
+        comp_periodicity_spatial = comp_periodicity_spatial
     # cf Methods.Machine.LamSlotMulti.comp_surfaces
     if isinstance(comp_surfaces, ImportError):
         comp_surfaces = property(
@@ -108,48 +132,6 @@ class LamSlotMulti(Lamination):
         )
     else:
         get_pole_pair_number = get_pole_pair_number
-    # cf Methods.Machine.LamSlotMulti.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSlotMulti method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
-    # cf Methods.Machine.LamSlotMulti.comp_height_yoke
-    if isinstance(comp_height_yoke, ImportError):
-        comp_height_yoke = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotMulti method comp_height_yoke: "
-                    + str(comp_height_yoke)
-                )
-            )
-        )
-    else:
-        comp_height_yoke = comp_height_yoke
-    # cf Methods.Machine.LamSlotMulti.get_Zs
-    if isinstance(get_Zs, ImportError):
-        get_Zs = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSlotMulti method get_Zs: " + str(get_Zs))
-            )
-        )
-    else:
-        get_Zs = get_Zs
-    # cf Methods.Machine.LamSlotMulti.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotMulti method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
     # cf Methods.Machine.LamSlotMulti.get_slot_desc_list
     if isinstance(get_slot_desc_list, ImportError):
         get_slot_desc_list = property(
@@ -162,6 +144,15 @@ class LamSlotMulti(Lamination):
         )
     else:
         get_slot_desc_list = get_slot_desc_list
+    # cf Methods.Machine.LamSlotMulti.get_Zs
+    if isinstance(get_Zs, ImportError):
+        get_Zs = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlotMulti method get_Zs: " + str(get_Zs))
+            )
+        )
+    else:
+        get_Zs = get_Zs
     # cf Methods.Machine.LamSlotMulti.has_slot
     if isinstance(has_slot, ImportError):
         has_slot = property(
@@ -171,6 +162,15 @@ class LamSlotMulti(Lamination):
         )
     else:
         has_slot = has_slot
+    # cf Methods.Machine.LamSlotMulti.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlotMulti method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

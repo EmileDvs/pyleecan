@@ -18,14 +18,24 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Output.OutElec.get_Nr import get_Nr
+    from ..Methods.Output.OutElec.get_electrical import get_electrical
 except ImportError as error:
-    get_Nr = error
+    get_electrical = error
 
 try:
     from ..Methods.Output.OutElec.get_Is import get_Is
 except ImportError as error:
     get_Is = error
+
+try:
+    from ..Methods.Output.OutElec.get_Jrms import get_Jrms
+except ImportError as error:
+    get_Jrms = error
+
+try:
+    from ..Methods.Output.OutElec.get_Nr import get_Nr
+except ImportError as error:
+    get_Nr = error
 
 try:
     from ..Methods.Output.OutElec.get_Us import get_Us
@@ -36,16 +46,6 @@ try:
     from ..Methods.Output.OutElec.store import store
 except ImportError as error:
     store = error
-
-try:
-    from ..Methods.Output.OutElec.get_electrical import get_electrical
-except ImportError as error:
-    get_electrical = error
-
-try:
-    from ..Methods.Output.OutElec.get_Jrms import get_Jrms
-except ImportError as error:
-    get_Jrms = error
 
 
 from numpy import isnan
@@ -58,15 +58,17 @@ class OutElec(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Output.OutElec.get_Nr
-    if isinstance(get_Nr, ImportError):
-        get_Nr = property(
+    # cf Methods.Output.OutElec.get_electrical
+    if isinstance(get_electrical, ImportError):
+        get_electrical = property(
             fget=lambda x: raise_(
-                ImportError("Can't use OutElec method get_Nr: " + str(get_Nr))
+                ImportError(
+                    "Can't use OutElec method get_electrical: " + str(get_electrical)
+                )
             )
         )
     else:
-        get_Nr = get_Nr
+        get_electrical = get_electrical
     # cf Methods.Output.OutElec.get_Is
     if isinstance(get_Is, ImportError):
         get_Is = property(
@@ -76,6 +78,24 @@ class OutElec(FrozenClass):
         )
     else:
         get_Is = get_Is
+    # cf Methods.Output.OutElec.get_Jrms
+    if isinstance(get_Jrms, ImportError):
+        get_Jrms = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutElec method get_Jrms: " + str(get_Jrms))
+            )
+        )
+    else:
+        get_Jrms = get_Jrms
+    # cf Methods.Output.OutElec.get_Nr
+    if isinstance(get_Nr, ImportError):
+        get_Nr = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutElec method get_Nr: " + str(get_Nr))
+            )
+        )
+    else:
+        get_Nr = get_Nr
     # cf Methods.Output.OutElec.get_Us
     if isinstance(get_Us, ImportError):
         get_Us = property(
@@ -94,26 +114,6 @@ class OutElec(FrozenClass):
         )
     else:
         store = store
-    # cf Methods.Output.OutElec.get_electrical
-    if isinstance(get_electrical, ImportError):
-        get_electrical = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OutElec method get_electrical: " + str(get_electrical)
-                )
-            )
-        )
-    else:
-        get_electrical = get_electrical
-    # cf Methods.Output.OutElec.get_Jrms
-    if isinstance(get_Jrms, ImportError):
-        get_Jrms = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OutElec method get_Jrms: " + str(get_Jrms))
-            )
-        )
-    else:
-        get_Jrms = get_Jrms
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

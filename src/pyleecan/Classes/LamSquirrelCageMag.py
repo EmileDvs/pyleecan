@@ -33,9 +33,9 @@ except ImportError as error:
     comp_surfaces = error
 
 try:
-    from ..Methods.Machine.LamSquirrelCageMag.plot import plot
+    from ..Methods.Machine.LamSquirrelCageMag.get_hole_list import get_hole_list
 except ImportError as error:
-    plot = error
+    get_hole_list = error
 
 try:
     from ..Methods.Machine.LamSquirrelCageMag.get_pole_pair_number import (
@@ -45,16 +45,16 @@ except ImportError as error:
     get_pole_pair_number = error
 
 try:
+    from ..Methods.Machine.LamSquirrelCageMag.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
     from ..Methods.Machine.LamSquirrelCageMag.set_pole_pair_number import (
         set_pole_pair_number,
     )
 except ImportError as error:
     set_pole_pair_number = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCageMag.get_hole_list import get_hole_list
-except ImportError as error:
-    get_hole_list = error
 
 
 from numpy import isnan
@@ -100,39 +100,6 @@ class LamSquirrelCageMag(LamSquirrelCage):
         )
     else:
         comp_surfaces = comp_surfaces
-    # cf Methods.Machine.LamSquirrelCageMag.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSquirrelCageMag method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
-    # cf Methods.Machine.LamSquirrelCageMag.get_pole_pair_number
-    if isinstance(get_pole_pair_number, ImportError):
-        get_pole_pair_number = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCageMag method get_pole_pair_number: "
-                    + str(get_pole_pair_number)
-                )
-            )
-        )
-    else:
-        get_pole_pair_number = get_pole_pair_number
-    # cf Methods.Machine.LamSquirrelCageMag.set_pole_pair_number
-    if isinstance(set_pole_pair_number, ImportError):
-        set_pole_pair_number = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCageMag method set_pole_pair_number: "
-                    + str(set_pole_pair_number)
-                )
-            )
-        )
-    else:
-        set_pole_pair_number = set_pole_pair_number
     # cf Methods.Machine.LamSquirrelCageMag.get_hole_list
     if isinstance(get_hole_list, ImportError):
         get_hole_list = property(
@@ -145,6 +112,39 @@ class LamSquirrelCageMag(LamSquirrelCage):
         )
     else:
         get_hole_list = get_hole_list
+    # cf Methods.Machine.LamSquirrelCageMag.get_pole_pair_number
+    if isinstance(get_pole_pair_number, ImportError):
+        get_pole_pair_number = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSquirrelCageMag method get_pole_pair_number: "
+                    + str(get_pole_pair_number)
+                )
+            )
+        )
+    else:
+        get_pole_pair_number = get_pole_pair_number
+    # cf Methods.Machine.LamSquirrelCageMag.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSquirrelCageMag method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
+    # cf Methods.Machine.LamSquirrelCageMag.set_pole_pair_number
+    if isinstance(set_pole_pair_number, ImportError):
+        set_pole_pair_number = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSquirrelCageMag method set_pole_pair_number: "
+                    + str(set_pole_pair_number)
+                )
+            )
+        )
+    else:
+        set_pole_pair_number = set_pole_pair_number
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

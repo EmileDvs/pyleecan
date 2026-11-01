@@ -18,31 +18,19 @@ from .LamSlotMulti import LamSlotMulti
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.LamSlotMultiWind.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
     from ..Methods.Machine.LamSlotMultiWind.build_geometry import build_geometry
 except ImportError as error:
     build_geometry = error
 
 try:
-    from ..Methods.Machine.LamSlotMultiWind.get_pole_pair_number import (
-        get_pole_pair_number,
-    )
+    from ..Methods.Machine.LamSlotMultiWind.comp_angle_d_axis import comp_angle_d_axis
 except ImportError as error:
-    get_pole_pair_number = error
+    comp_angle_d_axis = error
 
 try:
     from ..Methods.Machine.LamSlotMultiWind.comp_mmf_dir import comp_mmf_dir
 except ImportError as error:
     comp_mmf_dir = error
-
-try:
-    from ..Methods.Machine.LamSlotMultiWind.plot_mmf_unit import plot_mmf_unit
-except ImportError as error:
-    plot_mmf_unit = error
 
 try:
     from ..Methods.Machine.LamSlotMultiWind.comp_mmf_unit import comp_mmf_unit
@@ -55,9 +43,21 @@ except ImportError as error:
     comp_wind_function = error
 
 try:
-    from ..Methods.Machine.LamSlotMultiWind.comp_angle_d_axis import comp_angle_d_axis
+    from ..Methods.Machine.LamSlotMultiWind.get_pole_pair_number import (
+        get_pole_pair_number,
+    )
 except ImportError as error:
-    comp_angle_d_axis = error
+    get_pole_pair_number = error
+
+try:
+    from ..Methods.Machine.LamSlotMultiWind.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
+    from ..Methods.Machine.LamSlotMultiWind.plot_mmf_unit import plot_mmf_unit
+except ImportError as error:
+    plot_mmf_unit = error
 
 
 from numpy import array, array_equal
@@ -71,15 +71,6 @@ class LamSlotMultiWind(LamSlotMulti):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.LamSlotMultiWind.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSlotMultiWind method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
     # cf Methods.Machine.LamSlotMultiWind.build_geometry
     if isinstance(build_geometry, ImportError):
         build_geometry = property(
@@ -92,18 +83,18 @@ class LamSlotMultiWind(LamSlotMulti):
         )
     else:
         build_geometry = build_geometry
-    # cf Methods.Machine.LamSlotMultiWind.get_pole_pair_number
-    if isinstance(get_pole_pair_number, ImportError):
-        get_pole_pair_number = property(
+    # cf Methods.Machine.LamSlotMultiWind.comp_angle_d_axis
+    if isinstance(comp_angle_d_axis, ImportError):
+        comp_angle_d_axis = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use LamSlotMultiWind method get_pole_pair_number: "
-                    + str(get_pole_pair_number)
+                    "Can't use LamSlotMultiWind method comp_angle_d_axis: "
+                    + str(comp_angle_d_axis)
                 )
             )
         )
     else:
-        get_pole_pair_number = get_pole_pair_number
+        comp_angle_d_axis = comp_angle_d_axis
     # cf Methods.Machine.LamSlotMultiWind.comp_mmf_dir
     if isinstance(comp_mmf_dir, ImportError):
         comp_mmf_dir = property(
@@ -116,18 +107,6 @@ class LamSlotMultiWind(LamSlotMulti):
         )
     else:
         comp_mmf_dir = comp_mmf_dir
-    # cf Methods.Machine.LamSlotMultiWind.plot_mmf_unit
-    if isinstance(plot_mmf_unit, ImportError):
-        plot_mmf_unit = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotMultiWind method plot_mmf_unit: "
-                    + str(plot_mmf_unit)
-                )
-            )
-        )
-    else:
-        plot_mmf_unit = plot_mmf_unit
     # cf Methods.Machine.LamSlotMultiWind.comp_mmf_unit
     if isinstance(comp_mmf_unit, ImportError):
         comp_mmf_unit = property(
@@ -152,18 +131,39 @@ class LamSlotMultiWind(LamSlotMulti):
         )
     else:
         comp_wind_function = comp_wind_function
-    # cf Methods.Machine.LamSlotMultiWind.comp_angle_d_axis
-    if isinstance(comp_angle_d_axis, ImportError):
-        comp_angle_d_axis = property(
+    # cf Methods.Machine.LamSlotMultiWind.get_pole_pair_number
+    if isinstance(get_pole_pair_number, ImportError):
+        get_pole_pair_number = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use LamSlotMultiWind method comp_angle_d_axis: "
-                    + str(comp_angle_d_axis)
+                    "Can't use LamSlotMultiWind method get_pole_pair_number: "
+                    + str(get_pole_pair_number)
                 )
             )
         )
     else:
-        comp_angle_d_axis = comp_angle_d_axis
+        get_pole_pair_number = get_pole_pair_number
+    # cf Methods.Machine.LamSlotMultiWind.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlotMultiWind method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
+    # cf Methods.Machine.LamSlotMultiWind.plot_mmf_unit
+    if isinstance(plot_mmf_unit, ImportError):
+        plot_mmf_unit = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMultiWind method plot_mmf_unit: "
+                    + str(plot_mmf_unit)
+                )
+            )
+        )
+    else:
+        plot_mmf_unit = plot_mmf_unit
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -18,6 +18,16 @@ from .Line import Line
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Geometry.Arc.comp_distance import comp_distance
+except ImportError as error:
+    comp_distance = error
+
+try:
+    from ..Methods.Geometry.Arc.comp_maxseg import comp_maxseg
+except ImportError as error:
+    comp_maxseg = error
+
+try:
     from ..Methods.Geometry.Arc.draw_FEMM import draw_FEMM
 except ImportError as error:
     draw_FEMM = error
@@ -28,31 +38,6 @@ except ImportError as error:
     intersect_line = error
 
 try:
-    from ..Methods.Geometry.Arc.is_on_line import is_on_line
-except ImportError as error:
-    is_on_line = error
-
-try:
-    from ..Methods.Geometry.Arc.split_line import split_line
-except ImportError as error:
-    split_line = error
-
-try:
-    from ..Methods.Geometry.Arc.comp_distance import comp_distance
-except ImportError as error:
-    comp_distance = error
-
-try:
-    from ..Methods.Geometry.Arc.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Geometry.Arc.comp_maxseg import comp_maxseg
-except ImportError as error:
-    comp_maxseg = error
-
-try:
     from ..Methods.Geometry.Arc.intersect_obj import intersect_obj
 except ImportError as error:
     intersect_obj = error
@@ -61,6 +46,21 @@ try:
     from ..Methods.Geometry.Arc.is_arc import is_arc
 except ImportError as error:
     is_arc = error
+
+try:
+    from ..Methods.Geometry.Arc.is_on_line import is_on_line
+except ImportError as error:
+    is_on_line = error
+
+try:
+    from ..Methods.Geometry.Arc.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
+    from ..Methods.Geometry.Arc.split_line import split_line
+except ImportError as error:
+    split_line = error
 
 
 from numpy import isnan
@@ -73,6 +73,24 @@ class Arc(Line):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Geometry.Arc.comp_distance
+    if isinstance(comp_distance, ImportError):
+        comp_distance = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Arc method comp_distance: " + str(comp_distance))
+            )
+        )
+    else:
+        comp_distance = comp_distance
+    # cf Methods.Geometry.Arc.comp_maxseg
+    if isinstance(comp_maxseg, ImportError):
+        comp_maxseg = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Arc method comp_maxseg: " + str(comp_maxseg))
+            )
+        )
+    else:
+        comp_maxseg = comp_maxseg
     # cf Methods.Geometry.Arc.draw_FEMM
     if isinstance(draw_FEMM, ImportError):
         draw_FEMM = property(
@@ -93,51 +111,6 @@ class Arc(Line):
         )
     else:
         intersect_line = intersect_line
-    # cf Methods.Geometry.Arc.is_on_line
-    if isinstance(is_on_line, ImportError):
-        is_on_line = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc method is_on_line: " + str(is_on_line))
-            )
-        )
-    else:
-        is_on_line = is_on_line
-    # cf Methods.Geometry.Arc.split_line
-    if isinstance(split_line, ImportError):
-        split_line = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc method split_line: " + str(split_line))
-            )
-        )
-    else:
-        split_line = split_line
-    # cf Methods.Geometry.Arc.comp_distance
-    if isinstance(comp_distance, ImportError):
-        comp_distance = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc method comp_distance: " + str(comp_distance))
-            )
-        )
-    else:
-        comp_distance = comp_distance
-    # cf Methods.Geometry.Arc.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
-    # cf Methods.Geometry.Arc.comp_maxseg
-    if isinstance(comp_maxseg, ImportError):
-        comp_maxseg = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc method comp_maxseg: " + str(comp_maxseg))
-            )
-        )
-    else:
-        comp_maxseg = comp_maxseg
     # cf Methods.Geometry.Arc.intersect_obj
     if isinstance(intersect_obj, ImportError):
         intersect_obj = property(
@@ -156,6 +129,33 @@ class Arc(Line):
         )
     else:
         is_arc = is_arc
+    # cf Methods.Geometry.Arc.is_on_line
+    if isinstance(is_on_line, ImportError):
+        is_on_line = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Arc method is_on_line: " + str(is_on_line))
+            )
+        )
+    else:
+        is_on_line = is_on_line
+    # cf Methods.Geometry.Arc.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Arc method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
+    # cf Methods.Geometry.Arc.split_line
+    if isinstance(split_line, ImportError):
+        split_line = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Arc method split_line: " + str(split_line))
+            )
+        )
+    else:
+        split_line = split_line
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

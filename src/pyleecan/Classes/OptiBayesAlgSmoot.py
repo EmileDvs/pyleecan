@@ -18,16 +18,16 @@ from .OptiBayesAlg import OptiBayesAlg
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Optimization.OptiBayesAlgSmoot.solve import solve
-except ImportError as error:
-    solve = error
-
-try:
     from ..Methods.Optimization.OptiBayesAlgSmoot.check_optimization_input import (
         check_optimization_input,
     )
 except ImportError as error:
     check_optimization_input = error
+
+try:
+    from ..Methods.Optimization.OptiBayesAlgSmoot.eval_const import eval_const
+except ImportError as error:
+    eval_const = error
 
 try:
     from ..Methods.Optimization.OptiBayesAlgSmoot.evaluate import evaluate
@@ -40,9 +40,9 @@ except ImportError as error:
     plot_pareto = error
 
 try:
-    from ..Methods.Optimization.OptiBayesAlgSmoot.eval_const import eval_const
+    from ..Methods.Optimization.OptiBayesAlgSmoot.solve import solve
 except ImportError as error:
-    eval_const = error
+    solve = error
 
 
 from numpy import isnan
@@ -55,15 +55,6 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Optimization.OptiBayesAlgSmoot.solve
-    if isinstance(solve, ImportError):
-        solve = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OptiBayesAlgSmoot method solve: " + str(solve))
-            )
-        )
-    else:
-        solve = solve
     # cf Methods.Optimization.OptiBayesAlgSmoot.check_optimization_input
     if isinstance(check_optimization_input, ImportError):
         check_optimization_input = property(
@@ -76,6 +67,17 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
         )
     else:
         check_optimization_input = check_optimization_input
+    # cf Methods.Optimization.OptiBayesAlgSmoot.eval_const
+    if isinstance(eval_const, ImportError):
+        eval_const = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OptiBayesAlgSmoot method eval_const: " + str(eval_const)
+                )
+            )
+        )
+    else:
+        eval_const = eval_const
     # cf Methods.Optimization.OptiBayesAlgSmoot.evaluate
     if isinstance(evaluate, ImportError):
         evaluate = property(
@@ -99,17 +101,15 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
         )
     else:
         plot_pareto = plot_pareto
-    # cf Methods.Optimization.OptiBayesAlgSmoot.eval_const
-    if isinstance(eval_const, ImportError):
-        eval_const = property(
+    # cf Methods.Optimization.OptiBayesAlgSmoot.solve
+    if isinstance(solve, ImportError):
+        solve = property(
             fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiBayesAlgSmoot method eval_const: " + str(eval_const)
-                )
+                ImportError("Can't use OptiBayesAlgSmoot method solve: " + str(solve))
             )
         )
     else:
-        eval_const = eval_const
+        solve = solve
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -18,9 +18,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Converter.Rule.set_P import set_P
+    from ..Methods.Converter.Rule.get_name import get_name
 except ImportError as error:
-    set_P = error
+    get_name = error
+
+try:
+    from ..Methods.Converter.Rule.get_other import get_other
+except ImportError as error:
+    get_other = error
 
 try:
     from ..Methods.Converter.Rule.get_P import get_P
@@ -33,14 +38,9 @@ except ImportError as error:
     set_other = error
 
 try:
-    from ..Methods.Converter.Rule.get_other import get_other
+    from ..Methods.Converter.Rule.set_P import set_P
 except ImportError as error:
-    get_other = error
-
-try:
-    from ..Methods.Converter.Rule.get_name import get_name
-except ImportError as error:
-    get_name = error
+    set_P = error
 
 
 from numpy import isnan
@@ -53,15 +53,24 @@ class Rule(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Converter.Rule.set_P
-    if isinstance(set_P, ImportError):
-        set_P = property(
+    # cf Methods.Converter.Rule.get_name
+    if isinstance(get_name, ImportError):
+        get_name = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Rule method set_P: " + str(set_P))
+                ImportError("Can't use Rule method get_name: " + str(get_name))
             )
         )
     else:
-        set_P = set_P
+        get_name = get_name
+    # cf Methods.Converter.Rule.get_other
+    if isinstance(get_other, ImportError):
+        get_other = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Rule method get_other: " + str(get_other))
+            )
+        )
+    else:
+        get_other = get_other
     # cf Methods.Converter.Rule.get_P
     if isinstance(get_P, ImportError):
         get_P = property(
@@ -80,24 +89,15 @@ class Rule(FrozenClass):
         )
     else:
         set_other = set_other
-    # cf Methods.Converter.Rule.get_other
-    if isinstance(get_other, ImportError):
-        get_other = property(
+    # cf Methods.Converter.Rule.set_P
+    if isinstance(set_P, ImportError):
+        set_P = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Rule method get_other: " + str(get_other))
+                ImportError("Can't use Rule method set_P: " + str(set_P))
             )
         )
     else:
-        get_other = get_other
-    # cf Methods.Converter.Rule.get_name
-    if isinstance(get_name, ImportError):
-        get_name = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Rule method get_name: " + str(get_name))
-            )
-        )
-    else:
-        get_name = get_name
+        set_P = set_P
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

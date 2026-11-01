@@ -18,16 +18,16 @@ from .Bore import Bore
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.BoreFlower.get_bore_line import get_bore_line
-except ImportError as error:
-    get_bore_line = error
-
-try:
     from ..Methods.Machine.BoreFlower.comp_periodicity_spatial import (
         comp_periodicity_spatial,
     )
 except ImportError as error:
     comp_periodicity_spatial = error
+
+try:
+    from ..Methods.Machine.BoreFlower.get_bore_line import get_bore_line
+except ImportError as error:
+    get_bore_line = error
 
 try:
     from ..Methods.Machine.BoreFlower.plot_schematics import plot_schematics
@@ -45,17 +45,6 @@ class BoreFlower(Bore):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.BoreFlower.get_bore_line
-    if isinstance(get_bore_line, ImportError):
-        get_bore_line = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreFlower method get_bore_line: " + str(get_bore_line)
-                )
-            )
-        )
-    else:
-        get_bore_line = get_bore_line
     # cf Methods.Machine.BoreFlower.comp_periodicity_spatial
     if isinstance(comp_periodicity_spatial, ImportError):
         comp_periodicity_spatial = property(
@@ -68,6 +57,17 @@ class BoreFlower(Bore):
         )
     else:
         comp_periodicity_spatial = comp_periodicity_spatial
+    # cf Methods.Machine.BoreFlower.get_bore_line
+    if isinstance(get_bore_line, ImportError):
+        get_bore_line = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use BoreFlower method get_bore_line: " + str(get_bore_line)
+                )
+            )
+        )
+    else:
+        get_bore_line = get_bore_line
     # cf Methods.Machine.BoreFlower.plot_schematics
     if isinstance(plot_schematics, ImportError):
         plot_schematics = property(

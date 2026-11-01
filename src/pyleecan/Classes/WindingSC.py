@@ -23,14 +23,14 @@ except ImportError as error:
     comp_connection_mat = error
 
 try:
-    from ..Methods.Machine.WindingSC.get_dim_wind import get_dim_wind
-except ImportError as error:
-    get_dim_wind = error
-
-try:
     from ..Methods.Machine.WindingSC.comp_periodicity import comp_periodicity
 except ImportError as error:
     comp_periodicity = error
+
+try:
+    from ..Methods.Machine.WindingSC.get_dim_wind import get_dim_wind
+except ImportError as error:
+    get_dim_wind = error
 
 
 from numpy import array, array_equal
@@ -57,17 +57,6 @@ class WindingSC(Winding):
         )
     else:
         comp_connection_mat = comp_connection_mat
-    # cf Methods.Machine.WindingSC.get_dim_wind
-    if isinstance(get_dim_wind, ImportError):
-        get_dim_wind = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use WindingSC method get_dim_wind: " + str(get_dim_wind)
-                )
-            )
-        )
-    else:
-        get_dim_wind = get_dim_wind
     # cf Methods.Machine.WindingSC.comp_periodicity
     if isinstance(comp_periodicity, ImportError):
         comp_periodicity = property(
@@ -80,6 +69,17 @@ class WindingSC(Winding):
         )
     else:
         comp_periodicity = comp_periodicity
+    # cf Methods.Machine.WindingSC.get_dim_wind
+    if isinstance(get_dim_wind, ImportError):
+        get_dim_wind = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use WindingSC method get_dim_wind: " + str(get_dim_wind)
+                )
+            )
+        )
+    else:
+        get_dim_wind = get_dim_wind
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

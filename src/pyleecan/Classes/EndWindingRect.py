@@ -18,14 +18,14 @@ from .EndWinding import EndWinding
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.EndWindingRect.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
-try:
     from ..Methods.Machine.EndWindingRect.comp_inductance import comp_inductance
 except ImportError as error:
     comp_inductance = error
+
+try:
+    from ..Methods.Machine.EndWindingRect.comp_length import comp_length
+except ImportError as error:
+    comp_length = error
 
 
 from numpy import isnan
@@ -38,17 +38,6 @@ class EndWindingRect(EndWinding):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.EndWindingRect.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EndWindingRect method comp_length: " + str(comp_length)
-                )
-            )
-        )
-    else:
-        comp_length = comp_length
     # cf Methods.Machine.EndWindingRect.comp_inductance
     if isinstance(comp_inductance, ImportError):
         comp_inductance = property(
@@ -61,6 +50,17 @@ class EndWindingRect(EndWinding):
         )
     else:
         comp_inductance = comp_inductance
+    # cf Methods.Machine.EndWindingRect.comp_length
+    if isinstance(comp_length, ImportError):
+        comp_length = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use EndWindingRect method comp_length: " + str(comp_length)
+                )
+            )
+        )
+    else:
+        comp_length = comp_length
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

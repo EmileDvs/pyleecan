@@ -18,6 +18,13 @@ from .Bore import Bore
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Machine.BoreSinePole.comp_periodicity_spatial import (
+        comp_periodicity_spatial,
+    )
+except ImportError as error:
+    comp_periodicity_spatial = error
+
+try:
     from ..Methods.Machine.BoreSinePole.get_bore_line import get_bore_line
 except ImportError as error:
     get_bore_line = error
@@ -26,13 +33,6 @@ try:
     from ..Methods.Machine.BoreSinePole.get_pole_shape import get_pole_shape
 except ImportError as error:
     get_pole_shape = error
-
-try:
-    from ..Methods.Machine.BoreSinePole.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
 
 try:
     from ..Methods.Machine.BoreSinePole.plot_schematics import plot_schematics
@@ -50,6 +50,18 @@ class BoreSinePole(Bore):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Machine.BoreSinePole.comp_periodicity_spatial
+    if isinstance(comp_periodicity_spatial, ImportError):
+        comp_periodicity_spatial = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use BoreSinePole method comp_periodicity_spatial: "
+                    + str(comp_periodicity_spatial)
+                )
+            )
+        )
+    else:
+        comp_periodicity_spatial = comp_periodicity_spatial
     # cf Methods.Machine.BoreSinePole.get_bore_line
     if isinstance(get_bore_line, ImportError):
         get_bore_line = property(
@@ -73,18 +85,6 @@ class BoreSinePole(Bore):
         )
     else:
         get_pole_shape = get_pole_shape
-    # cf Methods.Machine.BoreSinePole.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreSinePole method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
     # cf Methods.Machine.BoreSinePole.plot_schematics
     if isinstance(plot_schematics, ImportError):
         plot_schematics = property(

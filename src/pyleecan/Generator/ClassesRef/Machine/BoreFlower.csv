@@ -1,8 +1,8 @@
-﻿Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
 N,-,Number of flower arc,,int,8,0,,
-Rarc,m,Radius of the flower arc,,float,1.00E-02,0,,
-,
-Package,Inherit,Methods,Constant Name,Constant Value,Class description
-Machine,Bore,get_bore_line,VERSION,1,Class for Bore flower shape
-,,comp_periodicity_spatial,,,
-,,plot_schematics,,,
+Rarc,m,Radius of the flower arc,,float,0.01,0,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+Machine,Bore,comp_periodicity_spatial,VERSION,1,Class for Bore flower shape,,,
+,,get_bore_line,,,,,,
+,,plot_schematics,,,,,,

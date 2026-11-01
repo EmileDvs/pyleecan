@@ -18,14 +18,14 @@ from .Machine import Machine
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.MachineAsync.is_synchronous import is_synchronous
-except ImportError as error:
-    is_synchronous = error
-
-try:
     from ..Methods.Machine.MachineAsync.comp_desc_dict import comp_desc_dict
 except ImportError as error:
     comp_desc_dict = error
+
+try:
+    from ..Methods.Machine.MachineAsync.is_synchronous import is_synchronous
+except ImportError as error:
+    is_synchronous = error
 
 
 from numpy import isnan
@@ -38,18 +38,6 @@ class MachineAsync(Machine):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.MachineAsync.is_synchronous
-    if isinstance(is_synchronous, ImportError):
-        is_synchronous = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MachineAsync method is_synchronous: "
-                    + str(is_synchronous)
-                )
-            )
-        )
-    else:
-        is_synchronous = is_synchronous
     # cf Methods.Machine.MachineAsync.comp_desc_dict
     if isinstance(comp_desc_dict, ImportError):
         comp_desc_dict = property(
@@ -62,6 +50,18 @@ class MachineAsync(Machine):
         )
     else:
         comp_desc_dict = comp_desc_dict
+    # cf Methods.Machine.MachineAsync.is_synchronous
+    if isinstance(is_synchronous, ImportError):
+        is_synchronous = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineAsync method is_synchronous: "
+                    + str(is_synchronous)
+                )
+            )
+        )
+    else:
+        is_synchronous = is_synchronous
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

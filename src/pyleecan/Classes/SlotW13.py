@@ -73,6 +73,11 @@ except ImportError as error:
     comp_surface_opening = error
 
 try:
+    from ..Methods.Slot.SlotW13.get_H1 import get_H1
+except ImportError as error:
+    get_H1 = error
+
+try:
     from ..Methods.Slot.SlotW13.get_surface_active import get_surface_active
 except ImportError as error:
     get_surface_active = error
@@ -81,11 +86,6 @@ try:
     from ..Methods.Slot.SlotW13.get_surface_opening import get_surface_opening
 except ImportError as error:
     get_surface_opening = error
-
-try:
-    from ..Methods.Slot.SlotW13.get_H1 import get_H1
-except ImportError as error:
-    get_H1 = error
 
 try:
     from ..Methods.Slot.SlotW13.plot_schematics import plot_schematics
@@ -227,6 +227,15 @@ class SlotW13(Slot):
         )
     else:
         comp_surface_opening = comp_surface_opening
+    # cf Methods.Slot.SlotW13.get_H1
+    if isinstance(get_H1, ImportError):
+        get_H1 = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotW13 method get_H1: " + str(get_H1))
+            )
+        )
+    else:
+        get_H1 = get_H1
     # cf Methods.Slot.SlotW13.get_surface_active
     if isinstance(get_surface_active, ImportError):
         get_surface_active = property(
@@ -251,15 +260,6 @@ class SlotW13(Slot):
         )
     else:
         get_surface_opening = get_surface_opening
-    # cf Methods.Slot.SlotW13.get_H1
-    if isinstance(get_H1, ImportError):
-        get_H1 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotW13 method get_H1: " + str(get_H1))
-            )
-        )
-    else:
-        get_H1 = get_H1
     # cf Methods.Slot.SlotW13.plot_schematics
     if isinstance(plot_schematics, ImportError):
         plot_schematics = property(

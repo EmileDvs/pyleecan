@@ -28,19 +28,14 @@ except ImportError as error:
     get_OP = error
 
 try:
-    from ..Methods.Simulation.OPMatrix.get_OP_list import get_OP_list
-except ImportError as error:
-    get_OP_list = error
-
-try:
     from ..Methods.Simulation.OPMatrix.get_OP_array import get_OP_array
 except ImportError as error:
     get_OP_array = error
 
 try:
-    from ..Methods.Simulation.OPMatrix.set_OP_array import set_OP_array
+    from ..Methods.Simulation.OPMatrix.get_OP_list import get_OP_list
 except ImportError as error:
-    set_OP_array = error
+    get_OP_list = error
 
 try:
     from ..Methods.Simulation.OPMatrix.has_Pem import has_Pem
@@ -48,14 +43,19 @@ except ImportError as error:
     has_Pem = error
 
 try:
+    from ..Methods.Simulation.OPMatrix.has_slip import has_slip
+except ImportError as error:
+    has_slip = error
+
+try:
     from ..Methods.Simulation.OPMatrix.has_Tem import has_Tem
 except ImportError as error:
     has_Tem = error
 
 try:
-    from ..Methods.Simulation.OPMatrix.has_slip import has_slip
+    from ..Methods.Simulation.OPMatrix.set_OP_array import set_OP_array
 except ImportError as error:
-    has_slip = error
+    set_OP_array = error
 
 
 from numpy import array, array_equal
@@ -87,17 +87,6 @@ class OPMatrix(FrozenClass):
         )
     else:
         get_OP = get_OP
-    # cf Methods.Simulation.OPMatrix.get_OP_list
-    if isinstance(get_OP_list, ImportError):
-        get_OP_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OPMatrix method get_OP_list: " + str(get_OP_list)
-                )
-            )
-        )
-    else:
-        get_OP_list = get_OP_list
     # cf Methods.Simulation.OPMatrix.get_OP_array
     if isinstance(get_OP_array, ImportError):
         get_OP_array = property(
@@ -109,6 +98,44 @@ class OPMatrix(FrozenClass):
         )
     else:
         get_OP_array = get_OP_array
+    # cf Methods.Simulation.OPMatrix.get_OP_list
+    if isinstance(get_OP_list, ImportError):
+        get_OP_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OPMatrix method get_OP_list: " + str(get_OP_list)
+                )
+            )
+        )
+    else:
+        get_OP_list = get_OP_list
+    # cf Methods.Simulation.OPMatrix.has_Pem
+    if isinstance(has_Pem, ImportError):
+        has_Pem = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPMatrix method has_Pem: " + str(has_Pem))
+            )
+        )
+    else:
+        has_Pem = has_Pem
+    # cf Methods.Simulation.OPMatrix.has_slip
+    if isinstance(has_slip, ImportError):
+        has_slip = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPMatrix method has_slip: " + str(has_slip))
+            )
+        )
+    else:
+        has_slip = has_slip
+    # cf Methods.Simulation.OPMatrix.has_Tem
+    if isinstance(has_Tem, ImportError):
+        has_Tem = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPMatrix method has_Tem: " + str(has_Tem))
+            )
+        )
+    else:
+        has_Tem = has_Tem
     # cf Methods.Simulation.OPMatrix.set_OP_array
     if isinstance(set_OP_array, ImportError):
         set_OP_array = property(
@@ -120,33 +147,6 @@ class OPMatrix(FrozenClass):
         )
     else:
         set_OP_array = set_OP_array
-    # cf Methods.Simulation.OPMatrix.has_Pem
-    if isinstance(has_Pem, ImportError):
-        has_Pem = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method has_Pem: " + str(has_Pem))
-            )
-        )
-    else:
-        has_Pem = has_Pem
-    # cf Methods.Simulation.OPMatrix.has_Tem
-    if isinstance(has_Tem, ImportError):
-        has_Tem = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method has_Tem: " + str(has_Tem))
-            )
-        )
-    else:
-        has_Tem = has_Tem
-    # cf Methods.Simulation.OPMatrix.has_slip
-    if isinstance(has_slip, ImportError):
-        has_slip = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method has_slip: " + str(has_slip))
-            )
-        )
-    else:
-        has_slip = has_slip
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

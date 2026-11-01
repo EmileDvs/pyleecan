@@ -68,14 +68,14 @@ except ImportError as error:
     comp_surface_active = error
 
 try:
-    from ..Methods.Slot.SlotW29.comp_surface_wedge import comp_surface_wedge
-except ImportError as error:
-    comp_surface_wedge = error
-
-try:
     from ..Methods.Slot.SlotW29.comp_surface_opening import comp_surface_opening
 except ImportError as error:
     comp_surface_opening = error
+
+try:
+    from ..Methods.Slot.SlotW29.comp_surface_wedge import comp_surface_wedge
+except ImportError as error:
+    comp_surface_wedge = error
 
 try:
     from ..Methods.Slot.SlotW29.get_surface_active import get_surface_active
@@ -83,14 +83,14 @@ except ImportError as error:
     get_surface_active = error
 
 try:
-    from ..Methods.Slot.SlotW29.get_surface_wedge import get_surface_wedge
-except ImportError as error:
-    get_surface_wedge = error
-
-try:
     from ..Methods.Slot.SlotW29.get_surface_opening import get_surface_opening
 except ImportError as error:
     get_surface_opening = error
+
+try:
+    from ..Methods.Slot.SlotW29.get_surface_wedge import get_surface_wedge
+except ImportError as error:
+    get_surface_wedge = error
 
 try:
     from ..Methods.Slot.SlotW29.plot_schematics import plot_schematics
@@ -219,18 +219,6 @@ class SlotW29(Slot):
         )
     else:
         comp_surface_active = comp_surface_active
-    # cf Methods.Slot.SlotW29.comp_surface_wedge
-    if isinstance(comp_surface_wedge, ImportError):
-        comp_surface_wedge = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW29 method comp_surface_wedge: "
-                    + str(comp_surface_wedge)
-                )
-            )
-        )
-    else:
-        comp_surface_wedge = comp_surface_wedge
     # cf Methods.Slot.SlotW29.comp_surface_opening
     if isinstance(comp_surface_opening, ImportError):
         comp_surface_opening = property(
@@ -243,6 +231,18 @@ class SlotW29(Slot):
         )
     else:
         comp_surface_opening = comp_surface_opening
+    # cf Methods.Slot.SlotW29.comp_surface_wedge
+    if isinstance(comp_surface_wedge, ImportError):
+        comp_surface_wedge = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotW29 method comp_surface_wedge: "
+                    + str(comp_surface_wedge)
+                )
+            )
+        )
+    else:
+        comp_surface_wedge = comp_surface_wedge
     # cf Methods.Slot.SlotW29.get_surface_active
     if isinstance(get_surface_active, ImportError):
         get_surface_active = property(
@@ -255,18 +255,6 @@ class SlotW29(Slot):
         )
     else:
         get_surface_active = get_surface_active
-    # cf Methods.Slot.SlotW29.get_surface_wedge
-    if isinstance(get_surface_wedge, ImportError):
-        get_surface_wedge = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW29 method get_surface_wedge: "
-                    + str(get_surface_wedge)
-                )
-            )
-        )
-    else:
-        get_surface_wedge = get_surface_wedge
     # cf Methods.Slot.SlotW29.get_surface_opening
     if isinstance(get_surface_opening, ImportError):
         get_surface_opening = property(
@@ -279,6 +267,18 @@ class SlotW29(Slot):
         )
     else:
         get_surface_opening = get_surface_opening
+    # cf Methods.Slot.SlotW29.get_surface_wedge
+    if isinstance(get_surface_wedge, ImportError):
+        get_surface_wedge = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotW29 method get_surface_wedge: "
+                    + str(get_surface_wedge)
+                )
+            )
+        )
+    else:
+        get_surface_wedge = get_surface_wedge
     # cf Methods.Slot.SlotW29.plot_schematics
     if isinstance(plot_schematics, ImportError):
         plot_schematics = property(

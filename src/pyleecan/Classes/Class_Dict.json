@@ -14,15 +14,15 @@
         "desc": "Abstract class for arc",
         "is_internal": false,
         "methods": [
+            "comp_distance",
+            "comp_maxseg",
             "draw_FEMM",
             "intersect_line",
-            "is_on_line",
-            "split_line",
-            "comp_distance",
-            "plot",
-            "comp_maxseg",
             "intersect_obj",
-            "is_arc"
+            "is_arc",
+            "is_on_line",
+            "plot",
+            "split_line"
         ],
         "mother": "Line",
         "name": "Arc",
@@ -54,8 +54,8 @@
             "rotate",
             "scale",
             "split_half",
-            "translate",
-            "split_point"
+            "split_point",
+            "translate"
         ],
         "mother": "Arc",
         "name": "Arc1",
@@ -132,8 +132,8 @@
             "rotate",
             "scale",
             "split_half",
-            "translate",
-            "split_point"
+            "split_point",
+            "translate"
         ],
         "mother": "Arc",
         "name": "Arc2",
@@ -199,8 +199,8 @@
             "rotate",
             "scale",
             "split_half",
-            "translate",
-            "split_point"
+            "split_point",
+            "translate"
         ],
         "mother": "Arc",
         "name": "Arc3",
@@ -258,16 +258,16 @@
         "desc": "Abstract class for Bore shape",
         "is_internal": false,
         "methods": [
-            "merge_slot",
-            "is_yoke",
-            "merge_slot_connect",
-            "merge_slot_intersect",
-            "merge_slot_translate",
+            "comp_Rmax",
             "comp_Rmin",
             "comp_surface",
             "get_surface",
-            "plot",
-            "comp_Rmax"
+            "is_yoke",
+            "merge_slot",
+            "merge_slot_connect",
+            "merge_slot_intersect",
+            "merge_slot_translate",
+            "plot"
         ],
         "mother": "",
         "name": "Bore",
@@ -309,8 +309,8 @@
         "desc": "Class for Bore flower shape",
         "is_internal": false,
         "methods": [
-            "get_bore_line",
             "comp_periodicity_spatial",
+            "get_bore_line",
             "plot_schematics"
         ],
         "mother": "Bore",
@@ -353,8 +353,8 @@
         "desc": "Class for Bore LSRPM",
         "is_internal": false,
         "methods": [
-            "get_bore_line",
-            "comp_periodicity_spatial"
+            "comp_periodicity_spatial",
+            "get_bore_line"
         ],
         "mother": "Bore",
         "name": "BoreLSRPM",
@@ -407,9 +407,9 @@
         "desc": "Class for Sine Field Pole Bore shape adapted from 'Muller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008.'",
         "is_internal": false,
         "methods": [
+            "comp_periodicity_spatial",
             "get_bore_line",
             "get_pole_shape",
-            "comp_periodicity_spatial",
             "plot_schematics"
         ],
         "mother": "Bore",
@@ -485,8 +485,8 @@
         "desc": "User Defined Bore shape",
         "is_internal": false,
         "methods": [
-            "get_bore_line",
-            "comp_periodicity_spatial"
+            "comp_periodicity_spatial",
+            "get_bore_line"
         ],
         "mother": "Bore",
         "name": "BoreUD",
@@ -541,13 +541,13 @@
         "methods": [
             "check",
             "comp_length",
+            "comp_point_ref",
             "comp_surface",
             "discretize",
             "get_lines",
             "get_patches",
             "rotate",
-            "translate",
-            "comp_point_ref"
+            "translate"
         ],
         "mother": "Surface",
         "name": "Circle",
@@ -600,17 +600,17 @@
         "desc": "parallel stranded conductor consisting of at least a single rectangular wire",
         "is_internal": false,
         "methods": [
-            "comp_surface_active",
             "comp_height",
-            "comp_surface",
-            "comp_width",
-            "plot",
-            "plot_schematics",
-            "comp_width_wire",
             "comp_height_wire",
             "comp_nb_circumferential_wire",
             "comp_nb_radial_wire",
-            "is_round_wire"
+            "comp_surface",
+            "comp_surface_active",
+            "comp_width",
+            "comp_width_wire",
+            "is_round_wire",
+            "plot",
+            "plot_schematics"
         ],
         "mother": "Conductor",
         "name": "CondType11",
@@ -719,17 +719,17 @@
         "is_internal": false,
         "methods": [
             "check",
-            "comp_surface_active",
             "comp_height",
-            "comp_surface",
-            "comp_width",
-            "plot",
-            "plot_schematics",
-            "comp_width_wire",
             "comp_height_wire",
             "comp_nb_circumferential_wire",
             "comp_nb_radial_wire",
-            "is_round_wire"
+            "comp_surface",
+            "comp_surface_active",
+            "comp_width",
+            "comp_width_wire",
+            "is_round_wire",
+            "plot",
+            "plot_schematics"
         ],
         "mother": "Conductor",
         "name": "CondType12",
@@ -804,17 +804,17 @@
         "desc": "parallel stranded conductor consisting of at least a single round wire",
         "is_internal": false,
         "methods": [
-            "comp_surface_active",
             "comp_height",
-            "comp_surface",
-            "comp_width",
-            "plot",
-            "plot_schematics",
-            "comp_width_wire",
             "comp_height_wire",
             "comp_nb_circumferential_wire",
             "comp_nb_radial_wire",
-            "is_round_wire"
+            "comp_surface",
+            "comp_surface_active",
+            "comp_width",
+            "comp_width_wire",
+            "is_round_wire",
+            "plot",
+            "plot_schematics"
         ],
         "mother": "Conductor",
         "name": "CondType13",
@@ -900,16 +900,16 @@
         "desc": "single rectangular conductor \\nhas to be used for LamSquirrelCages's conductor",
         "is_internal": false,
         "methods": [
-            "comp_surface_active",
             "comp_height",
-            "comp_surface",
-            "comp_width",
-            "plot",
-            "comp_width_wire",
             "comp_height_wire",
             "comp_nb_circumferential_wire",
             "comp_nb_radial_wire",
-            "is_round_wire"
+            "comp_surface",
+            "comp_surface_active",
+            "comp_width",
+            "comp_width_wire",
+            "is_round_wire",
+            "plot"
         ],
         "mother": "Conductor",
         "name": "CondType21",
@@ -962,12 +962,12 @@
         "desc": "conductor with only surface definition without specifc shape nor isolation",
         "is_internal": false,
         "methods": [
-            "comp_surface_active",
-            "comp_surface",
-            "comp_width_wire",
             "comp_height_wire",
             "comp_nb_circumferential_wire",
             "comp_nb_radial_wire",
+            "comp_surface",
+            "comp_surface_active",
+            "comp_width_wire",
             "is_round_wire"
         ],
         "mother": "Conductor",
@@ -1006,8 +1006,8 @@
         "is_internal": false,
         "methods": [
             "check",
-            "comp_skin_effect_resistance",
             "comp_skin_effect_inductance",
+            "comp_skin_effect_resistance",
             "comp_temperature_effect"
         ],
         "mother": "",
@@ -1054,25 +1054,25 @@
         "methods": [
             "convert_to_other",
             "convert_to_P",
-            "select_LamSlotWind_rules",
-            "select_machine_rules",
-            "Step.select_slot_rotor_rules",
-            "Step.select_slot_rules",
-            "Step.select_lamination_rules",
-            "Step.select_winding_rules",
-            "Step.select_conductor_rules",
-            "Step.select_hole_rules",
-            "Step.select_pole_rules",
-            "Step.select_magnet_rules",
-            "Step.select_skew_rules",
-            "Step.select_bar_rules",
-            "Step.select_duct_rules",
-            "Step.select_notch_rules",
-            "Step.select_material_rules",
-            "machine_type.select_SIPMSM_rules",
             "machine_type.select_IPMSM_rules",
             "machine_type.select_SCIM_rules",
-            "machine_type.select_WRSM_rules"
+            "machine_type.select_SIPMSM_rules",
+            "machine_type.select_WRSM_rules",
+            "select_LamSlotWind_rules",
+            "select_machine_rules",
+            "Step.select_bar_rules",
+            "Step.select_conductor_rules",
+            "Step.select_duct_rules",
+            "Step.select_hole_rules",
+            "Step.select_lamination_rules",
+            "Step.select_magnet_rules",
+            "Step.select_material_rules",
+            "Step.select_notch_rules",
+            "Step.select_pole_rules",
+            "Step.select_skew_rules",
+            "Step.select_slot_rotor_rules",
+            "Step.select_slot_rules",
+            "Step.select_winding_rules"
         ],
         "mother": "",
         "name": "Convert",
@@ -1147,70 +1147,70 @@
         "desc": "convertorMC abstract",
         "is_internal": false,
         "methods": [
-            "convert_to_P.convert_other_to_dict",
-            "convert_to_P.convert_slot_to_P",
-            "convert_to_P.convert_slot_rotor_to_P",
-            "convert_to_P.convert_machine_to_P",
-            "convert_to_P.convert_magnet_to_P",
-            "convert_to_P.convert_hole_to_P",
-            "convert_to_P.convert_pole_to_P",
-            "convert_to_P.convert_duct_to_P",
-            "convert_to_P.convert_notch_to_P",
-            "convert_to_P.convert_conductor_to_P",
-            "convert_to_P.convert_material_to_P",
-            "convert_to_P.convert_skew_to_P",
-            "convert_to_other.convert_slot_rotor_to_other",
-            "convert_to_other.init_other_unit",
-            "convert_to_other.convert_slot_to_other",
+            "convert_to_other.convert_conductor_to_other",
+            "convert_to_other.convert_duct_to_other",
+            "convert_to_other.convert_hole_to_other",
             "convert_to_other.convert_machine_to_other",
             "convert_to_other.convert_magnet_to_other",
-            "convert_to_other.convert_hole_to_other",
-            "convert_to_other.convert_duct_to_other",
+            "convert_to_other.convert_material_to_other",
             "convert_to_other.convert_notch_to_other",
             "convert_to_other.convert_pole_to_other",
-            "convert_to_other.convert_conductor_to_other",
-            "convert_to_other.convert_material_to_other",
             "convert_to_other.convert_skew_to_other",
+            "convert_to_other.convert_slot_rotor_to_other",
+            "convert_to_other.convert_slot_to_other",
+            "convert_to_other.init_other_unit",
+            "convert_to_P.convert_conductor_to_P",
+            "convert_to_P.convert_duct_to_P",
+            "convert_to_P.convert_hole_to_P",
+            "convert_to_P.convert_machine_to_P",
+            "convert_to_P.convert_magnet_to_P",
+            "convert_to_P.convert_material_to_P",
+            "convert_to_P.convert_notch_to_P",
+            "convert_to_P.convert_other_to_dict",
+            "convert_to_P.convert_pole_to_P",
+            "convert_to_P.convert_skew_to_P",
+            "convert_to_P.convert_slot_rotor_to_P",
+            "convert_to_P.convert_slot_to_P",
             "Rules.add_rule_machine_dimension",
             "Rules.add_rule_machine_dimension_surface_magnet",
             "Rules.add_rule_machine_type",
-            "Rules.Slot.add_rule_slotW11",
-            "Rules.Slot.add_rule_slotW29",
-            "Rules.Slot.add_rule_slotW21",
-            "Rules.Slot.add_rule_slotW14",
-            "Rules.Slot.add_rule_slotW23",
-            "Rules.Slot.rotor.add_rule_rotor_slotW30",
-            "Rules.Slot.rotor.add_rule_rotor_slotW23",
-            "Rules.Slot.rotor.add_rule_rotor_slotW11_2",
-            "Rules.Slot.rotor.add_rule_rotor_slotW26",
+            "Rules.add_rule_material",
+            "Rules.add_rule_material_magnetics",
+            "Rules.add_rule_skew",
+            "Rules.Hole.add_rule_holeM52",
+            "Rules.Hole.add_rule_holeM57",
+            "Rules.Hole.add_rule_holeM60",
+            "Rules.Hole.add_rule_holeM61",
+            "Rules.Hole.add_rule_holeM62",
+            "Rules.Hole.add_rule_holeM63",
+            "Rules.Lamination.add_rule_lamination",
+            "Rules.Lamination.add_rule_notch_slotM19",
             "Rules.Lamination.add_rule_ventilationCirc",
             "Rules.Lamination.add_rule_ventilationPolar",
             "Rules.Lamination.add_rule_ventilationTrap",
-            "Rules.Lamination.add_rule_notch_slotM19",
-            "Rules.Lamination.add_rule_lamination",
-            "Rules.Rotor_Magnet.add_rule_slotM14",
-            "Rules.Rotor_Magnet.add_rule_slotM13",
-            "Rules.Rotor_Magnet.add_rule_slotM16",
-            "Rules.Rotor_Magnet.add_rule_slotM11",
-            "Rules.Rotor_Magnet.add_rule_slotM15",
-            "Rules.Rotor_Magnet.add_rule_slotM12",
-            "select_SIPMSM_machine_dimension",
-            "Rules.Hole.add_rule_holeM61",
-            "Rules.Hole.add_rule_holeM57",
-            "Rules.Hole.add_rule_holeM60",
-            "Rules.Hole.add_rule_holeM63",
-            "Rules.Hole.add_rule_holeM52",
-            "Rules.Hole.add_rule_holeM62",
+            "Rules.Pole.add_rule_parallel_slot_slotW29",
             "Rules.Pole.add_rule_parallel_tooth_slotW63",
             "Rules.Pole.add_rule_salient_pole_slotW62",
-            "Rules.Pole.add_rule_parallel_slot_slotW29",
-            "Rules.Winding.add_rule_winding",
+            "Rules.Rotor_Magnet.add_rule_slotM11",
+            "Rules.Rotor_Magnet.add_rule_slotM12",
+            "Rules.Rotor_Magnet.add_rule_slotM13",
+            "Rules.Rotor_Magnet.add_rule_slotM14",
+            "Rules.Rotor_Magnet.add_rule_slotM15",
+            "Rules.Rotor_Magnet.add_rule_slotM16",
+            "Rules.Slot.add_rule_slotW11",
+            "Rules.Slot.add_rule_slotW14",
+            "Rules.Slot.add_rule_slotW21",
+            "Rules.Slot.add_rule_slotW23",
+            "Rules.Slot.add_rule_slotW29",
+            "Rules.Slot.rotor.add_rule_rotor_slotW11_2",
+            "Rules.Slot.rotor.add_rule_rotor_slotW23",
+            "Rules.Slot.rotor.add_rule_rotor_slotW26",
+            "Rules.Slot.rotor.add_rule_rotor_slotW30",
             "Rules.Winding.add_rule_condtype11",
             "Rules.Winding.add_rule_condtype12",
             "Rules.Winding.add_rule_rotor_bar",
-            "Rules.add_rule_material_magnetics",
-            "Rules.add_rule_material",
-            "Rules.add_rule_skew"
+            "Rules.Winding.add_rule_winding",
+            "select_SIPMSM_machine_dimension"
         ],
         "mother": "Convert",
         "name": "ConvertMC",
@@ -2092,15 +2092,15 @@
         "desc": "Equivalent Electrical Circuit abstract class",
         "is_internal": false,
         "methods": [
-            "get_machine_from_parent",
+            "comp_fluxlinkage",
+            "comp_joule_losses",
+            "comp_parameters",
             "comp_R1",
             "comp_skin_effect",
-            "comp_parameters",
-            "update_from_ref",
+            "get_machine_from_parent",
             "solve",
             "solve_PWM",
-            "comp_joule_losses",
-            "comp_fluxlinkage"
+            "update_from_ref"
         ],
         "mother": "",
         "name": "EEC",
@@ -2230,9 +2230,9 @@
         "desc": "Electrical Equivalent Circuit for LSRPM",
         "is_internal": false,
         "methods": [
+            "comp_joule_losses",
             "comp_parameters",
-            "solve",
-            "comp_joule_losses"
+            "solve"
         ],
         "mother": "EEC",
         "name": "EEC_LSRPM",
@@ -2545,10 +2545,10 @@
         "desc": "Electric module object for electrical equivalent circuit simulation",
         "is_internal": false,
         "methods": [
-            "run",
             "comp_LUTdq",
-            "solve_power",
-            "solve_MTPA"
+            "run",
+            "solve_MTPA",
+            "solve_power"
         ],
         "mother": "Electrical",
         "name": "ElecLUTdq",
@@ -2673,7 +2673,7 @@
                 "name": "Jrms_max",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00c2\u00b2",
+                "unit": "A/m\u00c3\u0192\u00c6\u2019\u00c3\u00a2\u00e2\u201a\u00ac\u00c5\u00a1\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00b2",
                 "value": null
             },
             {
@@ -2713,10 +2713,10 @@
         "desc": "Electric module object for electrical equivalent circuit simulation",
         "is_internal": false,
         "methods": [
-            "run",
             "comp_power",
             "comp_torque",
-            "gen_drive"
+            "gen_drive",
+            "run"
         ],
         "mother": "",
         "name": "Electrical",
@@ -2827,8 +2827,8 @@
             "add_element",
             "get_connectivity",
             "get_node2element",
-            "is_exist",
-            "interpolate"
+            "interpolate",
+            "is_exist"
         ],
         "mother": "",
         "name": "ElementMat",
@@ -2959,9 +2959,9 @@
         "desc": "Class to get 'SaveScalars' and 'SaveLine' data",
         "is_internal": false,
         "methods": [
-            "load_data",
+            "get_data",
             "load_columns",
-            "get_data"
+            "load_data"
         ],
         "mother": "Elmer",
         "name": "ElmerResults",
@@ -3092,8 +3092,8 @@
         "desc": "Abstract Class of the machine's end winding",
         "is_internal": false,
         "methods": [
-            "comp_length",
-            "comp_inductance"
+            "comp_inductance",
+            "comp_length"
         ],
         "mother": "",
         "name": "EndWinding",
@@ -3124,8 +3124,8 @@
         "desc": "Class of the machine's end winding assuming a circular shape",
         "is_internal": false,
         "methods": [
-            "comp_length",
-            "comp_inductance"
+            "comp_inductance",
+            "comp_length"
         ],
         "mother": "EndWinding",
         "name": "EndWindingCirc",
@@ -3156,8 +3156,8 @@
         "desc": "Class of the machine's end winding assuming a rectangular shape",
         "is_internal": false,
         "methods": [
-            "comp_length",
-            "comp_inductance"
+            "comp_inductance",
+            "comp_length"
         ],
         "mother": "EndWinding",
         "name": "EndWindingRect",
@@ -3275,9 +3275,9 @@
         "desc": "Forces module abstract object",
         "is_internal": false,
         "methods": [
-            "run",
+            "comp_AGSF_transfer",
             "comp_axes",
-            "comp_AGSF_transfer"
+            "run"
         ],
         "mother": "",
         "name": "Force",
@@ -3501,9 +3501,9 @@
         "is_internal": false,
         "methods": [
             "build_geometry",
-            "comp_surface",
-            "comp_height_gap",
             "build_geometry_bar",
+            "comp_height_gap",
+            "comp_surface",
             "comp_surface_bar",
             "comp_surface_gap"
         ],
@@ -3623,12 +3623,12 @@
             "get_is_stator",
             "get_magnet_by_id",
             "get_magnet_dict",
+            "get_R_id",
             "get_Rbo",
             "get_Rext",
             "has_magnet",
             "plot",
-            "set_magnet_by_id",
-            "get_R_id"
+            "set_magnet_by_id"
         ],
         "mother": "",
         "name": "Hole",
@@ -4159,10 +4159,10 @@
             "comp_radius",
             "comp_surface",
             "comp_surface_magnet_id",
+            "get_height_magnet_id",
             "has_magnet",
             "plot_schematics",
-            "remove_magnet",
-            "get_height_magnet_id"
+            "remove_magnet"
         ],
         "mother": "HoleMag",
         "name": "HoleM52R",
@@ -4745,13 +4745,13 @@
         "methods": [
             "_comp_point_coordinate",
             "build_geometry",
-            "plot_schematics",
-            "remove_magnet",
-            "comp_surface_magnet_id",
-            "comp_radius",
-            "has_magnet",
             "check",
-            "comp_magnetization_dict"
+            "comp_magnetization_dict",
+            "comp_radius",
+            "comp_surface_magnet_id",
+            "has_magnet",
+            "plot_schematics",
+            "remove_magnet"
         ],
         "mother": "HoleMag",
         "name": "HoleM60",
@@ -4865,13 +4865,13 @@
         "methods": [
             "_comp_point_coordinate",
             "build_geometry",
-            "plot_schematics",
-            "remove_magnet",
-            "comp_surface_magnet_id",
-            "comp_radius",
-            "has_magnet",
             "check",
-            "comp_magnetization_dict"
+            "comp_magnetization_dict",
+            "comp_radius",
+            "comp_surface_magnet_id",
+            "has_magnet",
+            "plot_schematics",
+            "remove_magnet"
         ],
         "mother": "HoleMag",
         "name": "HoleM61",
@@ -5018,15 +5018,15 @@
         "methods": [
             "_comp_point_coordinate",
             "build_geometry",
-            "plot_schematics",
-            "plot_schematics_radial",
-            "remove_magnet",
-            "comp_radius",
-            "has_magnet",
             "check",
             "comp_magnetization_dict",
+            "comp_radius",
+            "comp_surface",
             "comp_surface_magnet_id",
-            "comp_surface"
+            "has_magnet",
+            "plot_schematics",
+            "plot_schematics_radial",
+            "remove_magnet"
         ],
         "mother": "HoleMag",
         "name": "HoleM62",
@@ -5107,15 +5107,15 @@
         "methods": [
             "_comp_point_coordinate",
             "build_geometry",
-            "plot_schematics",
-            "plot_schematics_top_flat",
-            "remove_magnet",
-            "comp_radius",
-            "has_magnet",
             "check",
             "comp_magnetization_dict",
+            "comp_radius",
+            "comp_surface",
             "comp_surface_magnet_id",
-            "comp_surface"
+            "has_magnet",
+            "plot_schematics",
+            "plot_schematics_top_flat",
+            "remove_magnet"
         ],
         "mother": "HoleMag",
         "name": "HoleM63",
@@ -5201,9 +5201,9 @@
             "comp_mass_magnet",
             "comp_surface_magnet",
             "comp_volume_magnet",
+            "has_magnet",
             "plot_schematics",
-            "remove_magnet",
-            "has_magnet"
+            "remove_magnet"
         ],
         "mother": "HoleMag",
         "name": "HoleMLSRPM",
@@ -5568,10 +5568,10 @@
         "desc": "To generate a PWM voltage matrix",
         "is_internal": false,
         "methods": [
-            "get_data",
+            "comp_carrier",
             "comp_voltage",
-            "get_modulation_index",
-            "comp_carrier"
+            "get_data",
+            "get_modulation_index"
         ],
         "mother": "ImportMatrix",
         "name": "ImportGenPWM",
@@ -6336,9 +6336,9 @@
         "is_internal": false,
         "methods": [
             "comp_axes",
-            "comp_axis_time",
             "comp_axis_angle",
-            "comp_axis_phase"
+            "comp_axis_phase",
+            "comp_axis_time"
         ],
         "mother": "",
         "name": "Input",
@@ -6746,10 +6746,10 @@
         "is_internal": false,
         "methods": [
             "get_eec",
-            "get_OP_matrix_obj",
             "get_OP_array",
-            "set_default_simulation",
-            "get_phase_dir"
+            "get_OP_matrix_obj",
+            "get_phase_dir",
+            "set_default_simulation"
         ],
         "mother": "XOutput",
         "name": "LUT",
@@ -6848,8 +6848,8 @@
             "get_Zs",
             "has_magnet",
             "plot",
-            "set_pole_pair_number",
-            "set_Lmag"
+            "set_Lmag",
+            "set_pole_pair_number"
         ],
         "mother": "Lamination",
         "name": "LamH",
@@ -6960,18 +6960,18 @@
         "is_internal": false,
         "methods": [
             "check",
+            "comp_angle_d_axis",
+            "comp_height_yoke",
             "comp_radius_mec",
             "comp_surfaces",
             "get_pole_pair_number",
-            "plot",
-            "comp_height_yoke",
-            "get_Zs",
-            "set_pole_pair_number",
-            "comp_angle_d_axis",
-            "get_surfaces_closing",
-            "has_magnet",
             "get_slot_desc_list",
-            "has_slot"
+            "get_surfaces_closing",
+            "get_Zs",
+            "has_magnet",
+            "has_slot",
+            "plot",
+            "set_pole_pair_number"
         ],
         "mother": "Lamination",
         "name": "LamSlot",
@@ -7154,14 +7154,14 @@
         "is_internal": false,
         "methods": [
             "check",
+            "comp_height_yoke",
+            "comp_periodicity_spatial",
             "comp_surfaces",
             "get_pole_pair_number",
-            "plot",
-            "comp_height_yoke",
-            "get_Zs",
-            "comp_periodicity_spatial",
             "get_slot_desc_list",
-            "has_slot"
+            "get_Zs",
+            "has_slot",
+            "plot"
         ],
         "mother": "Lamination",
         "name": "LamSlotMulti",
@@ -7214,14 +7214,14 @@
         "desc": "Lamination with list of Slot filled with winding",
         "is_internal": false,
         "methods": [
-            "plot",
             "build_geometry",
-            "get_pole_pair_number",
+            "comp_angle_d_axis",
             "comp_mmf_dir",
-            "plot_mmf_unit",
             "comp_mmf_unit",
             "comp_wind_function",
-            "comp_angle_d_axis"
+            "get_pole_pair_number",
+            "plot",
+            "plot_mmf_unit"
         ],
         "mother": "LamSlotMulti",
         "name": "LamSlotMultiWind",
@@ -7268,24 +7268,24 @@
         "methods": [
             "build_geometry",
             "check",
+            "comp_angle_d_axis",
+            "comp_fill_factor",
+            "comp_lengths_winding",
             "comp_masses",
+            "comp_mmf_dir",
+            "comp_mmf_unit",
+            "comp_number_phase_eq",
+            "comp_output_geo",
+            "comp_periodicity_spatial",
+            "comp_resistance_wind",
             "comp_surfaces",
             "comp_volumes",
+            "comp_wind_function",
+            "get_polar_eq",
             "get_pole_pair_number",
             "plot",
-            "plot_winding",
-            "comp_fill_factor",
-            "comp_output_geo",
-            "get_polar_eq",
-            "comp_wind_function",
             "plot_mmf_unit",
-            "comp_resistance_wind",
-            "comp_angle_d_axis",
-            "comp_mmf_unit",
-            "comp_mmf_dir",
-            "comp_lengths_winding",
-            "comp_number_phase_eq",
-            "comp_periodicity_spatial",
+            "plot_winding",
             "set_pole_pair_number"
         ],
         "mother": "LamSlot",
@@ -7332,15 +7332,15 @@
         "methods": [
             "build_geometry",
             "check",
-            "comp_length_ring",
-            "plot",
-            "comp_number_phase_eq",
-            "comp_surface_ring",
-            "comp_resistance_wind",
-            "get_name_phase",
             "comp_angle_d_axis",
-            "comp_periodicity_spatial",
+            "comp_length_ring",
             "comp_masses",
+            "comp_number_phase_eq",
+            "comp_periodicity_spatial",
+            "comp_resistance_wind",
+            "comp_surface_ring",
+            "get_name_phase",
+            "plot",
             "plot_schematics_scr",
             "plot_side"
         ],
@@ -7398,10 +7398,10 @@
             "build_geometry",
             "check",
             "comp_surfaces",
-            "plot",
+            "get_hole_list",
             "get_pole_pair_number",
-            "set_pole_pair_number",
-            "get_hole_list"
+            "plot",
+            "set_pole_pair_number"
         ],
         "mother": "LamSquirrelCage",
         "name": "LamSquirrelCageMag",
@@ -7446,37 +7446,37 @@
         "is_internal": false,
         "methods": [
             "build_geometry",
+            "build_radius_desc",
+            "build_radius_lines",
+            "build_yoke_side_line",
             "check",
+            "comp_angle_q_axis",
+            "comp_height_yoke",
             "comp_length",
             "comp_masses",
+            "comp_output_geo",
+            "comp_periodicity_duct_spatial",
+            "comp_periodicity_geo",
+            "comp_periodicity_spatial",
+            "comp_point_ref",
             "comp_radius_mec",
+            "comp_radius_mid_yoke",
             "comp_surface_axial_vent",
             "comp_surfaces",
             "comp_volumes",
+            "get_label",
+            "get_name_phase",
+            "get_notches_surf",
+            "get_polar_eq",
             "get_Rbo",
             "get_Ryoke",
-            "get_name_phase",
-            "plot",
-            "comp_output_geo",
-            "get_polar_eq",
-            "is_outwards",
-            "comp_height_yoke",
-            "comp_angle_q_axis",
-            "comp_radius_mid_yoke",
-            "comp_point_ref",
-            "comp_periodicity_spatial",
-            "get_label",
-            "build_yoke_side_line",
-            "get_notches_surf",
-            "comp_periodicity_duct_spatial",
             "get_surfaces_closing",
-            "comp_periodicity_geo",
+            "has_key",
             "has_notch",
-            "build_radius_lines",
-            "build_radius_desc",
             "has_slot",
-            "plot_preview_notch",
-            "has_key"
+            "is_outwards",
+            "plot",
+            "plot_preview_notch"
         ],
         "mother": "",
         "name": "Lamination",
@@ -7689,9 +7689,9 @@
         "desc": "Loss module object that contain the loss models.",
         "is_internal": false,
         "methods": [
-            "run",
+            "comp_all_losses",
             "comp_axes",
-            "comp_all_losses"
+            "run"
         ],
         "mother": "",
         "name": "Loss",
@@ -7954,8 +7954,8 @@
         "desc": "Joule loss model",
         "is_internal": false,
         "methods": [
-            "comp_loss",
-            "comp_coeff"
+            "comp_coeff",
+            "comp_loss"
         ],
         "mother": "LossModel",
         "name": "LossModelJoule",
@@ -8121,8 +8121,8 @@
         "desc": "Winding loss model",
         "is_internal": false,
         "methods": [
-            "comp_loss",
-            "comp_coeff"
+            "comp_coeff",
+            "comp_loss"
         ],
         "mother": "LossModel",
         "name": "LossModelWinding",
@@ -8172,21 +8172,21 @@
             "comp_length_airgap_active",
             "comp_masses",
             "comp_output_geo",
-            "comp_Rgap_mec",
             "comp_periodicity_spatial",
+            "comp_periodicity_time",
+            "comp_Rgap_mec",
             "comp_width_airgap_mag",
             "comp_width_airgap_mec",
-            "get_material_dict",
-            "get_polar_eq",
-            "plot",
-            "plot_anim_rotor",
-            "get_lam_list",
-            "get_lam_list_label",
             "get_lam_by_label",
             "get_lam_index",
+            "get_lam_list",
+            "get_lam_list_label",
+            "get_material_dict",
+            "get_polar_eq",
             "get_pole_pair_number",
-            "set_pole_pair_number",
-            "comp_periodicity_time"
+            "plot",
+            "plot_anim_rotor",
+            "set_pole_pair_number"
         ],
         "mother": "",
         "name": "Machine",
@@ -8275,8 +8275,8 @@
         "desc": "Abstract class for asynchronous machines",
         "is_internal": false,
         "methods": [
-            "is_synchronous",
-            "comp_desc_dict"
+            "comp_desc_dict",
+            "is_synchronous"
         ],
         "mother": "Machine",
         "name": "MachineAsync",
@@ -8584,8 +8584,8 @@
         "desc": "Abstract class for synchronous machine",
         "is_internal": false,
         "methods": [
-            "is_synchronous",
-            "comp_angle_rotor_initial"
+            "comp_angle_rotor_initial",
+            "is_synchronous"
         ],
         "mother": "Machine",
         "name": "MachineSync",
@@ -8691,11 +8691,11 @@
         "is_internal": false,
         "methods": [
             "comp_flux_airgap",
-            "solve_FEA",
+            "gen_elmer_mesh",
             "get_meshsolution",
-            "get_path_save_fea",
             "get_path_save",
-            "gen_elmer_mesh"
+            "get_path_save_fea",
+            "solve_FEA"
         ],
         "mother": "Magnetics",
         "name": "MagElmer",
@@ -8836,13 +8836,13 @@
         "desc": "Magnetic module: Finite Element model with FEMM",
         "is_internal": false,
         "methods": [
+            "build_MS_sliced",
             "comp_flux_airgap",
-            "get_path_save",
-            "solve_FEMM",
             "get_meshsolution",
+            "get_path_save",
             "get_path_save_fem",
-            "solve_FEMM_parallel",
-            "build_MS_sliced"
+            "solve_FEMM",
+            "solve_FEMM_parallel"
         ],
         "mother": "Magnetics",
         "name": "MagFEMM",
@@ -9125,10 +9125,10 @@
         "desc": "Magnetic module abstract object",
         "is_internal": false,
         "methods": [
-            "run",
             "comp_axes",
+            "comp_I_mag",
             "get_slice_model",
-            "comp_I_mag"
+            "run"
         ],
         "mother": "",
         "name": "Magnetics",
@@ -9525,9 +9525,9 @@
         "is_internal": false,
         "methods": [
             "get_BH",
-            "plot_BH",
+            "get_Brm",
             "get_Hc",
-            "get_Brm"
+            "plot_BH"
         ],
         "mother": "",
         "name": "MatMagnetics",
@@ -9914,21 +9914,21 @@
         "desc": "Gather the mesh storage format",
         "is_internal": false,
         "methods": [
-            "get_node_coordinate",
-            "get_node_indice",
+            "add_element",
+            "clear_element",
+            "clear_node",
+            "convert",
+            "find_element",
             "get_element",
-            "get_mesh_pv",
             "get_element_area",
             "get_element_coordinate",
-            "get_node2element",
-            "add_element",
-            "renum",
-            "find_element",
-            "interface",
-            "clear_node",
-            "clear_element",
             "get_element_nb",
-            "convert",
+            "get_mesh_pv",
+            "get_node2element",
+            "get_node_coordinate",
+            "get_node_indice",
+            "interface",
+            "renum",
             "save_vtk"
         ],
         "mother": "Mesh",
@@ -10004,27 +10004,27 @@
         "desc": "Abstract class to associate a mesh with one or several solutions",
         "is_internal": false,
         "methods": [
-            "get_solution",
+            "__getitem__",
+            "__iter__",
+            "__setitem__",
+            "add_solution",
+            "export_to_mat",
+            "get_deflection",
             "get_field",
+            "get_glyph",
             "get_group",
             "get_mesh_field_pv",
-            "plot_mesh",
+            "get_solution",
+            "items",
+            "keys",
+            "perm_coord",
             "plot_contour",
             "plot_deflection",
             "plot_glyph",
-            "perm_coord",
-            "get_deflection",
-            "get_glyph",
-            "add_solution",
-            "replace_solution",
+            "plot_mesh",
             "pop_solution",
-            "keys",
-            "items",
-            "values",
-            "__getitem__",
-            "__setitem__",
-            "__iter__",
-            "export_to_mat"
+            "replace_solution",
+            "values"
         ],
         "mother": "",
         "name": "MeshSolution",
@@ -10110,15 +10110,15 @@
         "desc": "Gather the mesh storage format",
         "is_internal": false,
         "methods": [
+            "convert",
+            "get_element",
+            "get_element_area",
             "get_mesh_pv",
             "get_node_coordinate",
-            "get_element",
             "get_normals",
-            "get_surf",
-            "get_element_area",
-            "convert",
-            "perm_coord",
             "get_path",
+            "get_surf",
+            "perm_coord",
             "save_vtk"
         ],
         "mother": "Mesh",
@@ -10249,10 +10249,10 @@
         "desc": "Structural module: Mode object",
         "is_internal": false,
         "methods": [
-            "plot",
-            "plot_animated",
+            "get_shape_pol",
             "get_shape_xyz",
-            "get_shape_pol"
+            "plot",
+            "plot_animated"
         ],
         "mother": "SolutionMat",
         "name": "Mode",
@@ -10309,8 +10309,8 @@
         "desc": "Abstract class for BH curve model ",
         "is_internal": false,
         "methods": [
-            "get_BH",
-            "fit_model"
+            "fit_model",
+            "get_BH"
         ],
         "mother": "",
         "name": "ModelBH",
@@ -10363,8 +10363,8 @@
         "desc": "Abstract class for BH curve model ",
         "is_internal": false,
         "methods": [
-            "get_BH",
-            "BH_func"
+            "BH_func",
+            "get_BH"
         ],
         "mother": "ModelBH",
         "name": "ModelBH_Langevin",
@@ -10508,8 +10508,8 @@
         "desc": "Abstract class for BH curve model ",
         "is_internal": false,
         "methods": [
-            "get_BH",
-            "BH_func"
+            "BH_func",
+            "get_BH"
         ],
         "mother": "ModelBH",
         "name": "ModelBH_linear_sat",
@@ -10575,8 +10575,8 @@
         "methods": [
             "add_node",
             "get_coord",
-            "is_exist",
-            "get_indice"
+            "get_indice",
+            "is_exist"
         ],
         "mother": "",
         "name": "NodeMat",
@@ -10831,11 +10831,11 @@
         "desc": "",
         "is_internal": false,
         "methods": [
+            "get_label",
             "get_Rbo",
             "get_Ryoke",
-            "is_outwards",
             "has_key",
-            "get_label"
+            "is_outwards"
         ],
         "mother": "",
         "name": "Notch",
@@ -10866,11 +10866,11 @@
         "desc": "Class for evenly distributed notches (according to Zs)",
         "is_internal": false,
         "methods": [
-            "comp_surface",
-            "comp_periodicity_spatial",
-            "get_notch_desc_list",
             "build_geometry_key",
-            "get_key_Ox_radius"
+            "comp_periodicity_spatial",
+            "comp_surface",
+            "get_key_Ox_radius",
+            "get_notch_desc_list"
         ],
         "mother": "Notch",
         "name": "NotchEvenDist",
@@ -11005,12 +11005,12 @@
         "methods": [
             "get_N_OP",
             "get_OP",
-            "get_OP_list",
             "get_OP_array",
-            "set_OP_array",
+            "get_OP_list",
             "has_Pem",
+            "has_slip",
             "has_Tem",
-            "has_slip"
+            "set_OP_array"
         ],
         "mother": "",
         "name": "OPMatrix",
@@ -11153,17 +11153,17 @@
         "desc": "Operating Point defined in DQH frame",
         "is_internal": false,
         "methods": [
-            "get_Id_Iq",
             "get_felec",
+            "get_I0_Phi0",
+            "get_Id_Iq",
             "get_N0",
             "get_slip",
-            "get_Ud_Uq",
-            "set_Id_Iq",
-            "get_I0_Phi0",
-            "set_Ud_Uq",
-            "set_I0_Phi0",
             "get_U0_UPhi0",
-            "set_U0_UPhi0"
+            "get_Ud_Uq",
+            "set_I0_Phi0",
+            "set_Id_Iq",
+            "set_U0_UPhi0",
+            "set_Ud_Uq"
         ],
         "mother": "OP",
         "name": "OPdq",
@@ -11256,17 +11256,17 @@
         "desc": "Operating Point defined with slip, I0",
         "is_internal": false,
         "methods": [
-            "get_Id_Iq",
             "get_felec",
-            "get_N0",
-            "get_Ud_Uq",
-            "set_Id_Iq",
             "get_I0_Phi0",
+            "get_Id_Iq",
+            "get_N0",
             "get_slip",
-            "set_I0_Phi0",
-            "set_Ud_Uq",
             "get_U0_UPhi0",
-            "set_U0_UPhi0"
+            "get_Ud_Uq",
+            "set_I0_Phi0",
+            "set_Id_Iq",
+            "set_U0_UPhi0",
+            "set_Ud_Uq"
         ],
         "mother": "OP",
         "name": "OPslip",
@@ -11405,11 +11405,11 @@
         "desc": "Multi-objectives optimization problem with some constraints",
         "is_internal": false,
         "methods": [
-            "solve",
             "check_optimization_input",
+            "eval_const",
             "evaluate",
             "plot_pareto",
-            "eval_const"
+            "solve"
         ],
         "mother": "OptiBayesAlg",
         "name": "OptiBayesAlgSmoot",
@@ -11668,13 +11668,13 @@
         "desc": "Multi-objectives optimization problem with some constraints",
         "is_internal": false,
         "methods": [
-            "solve",
-            "mutate",
-            "cross",
-            "create_toolbox",
             "check_optimization_input",
+            "create_toolbox",
+            "cross",
             "delete_toolbox",
-            "plot_pareto"
+            "mutate",
+            "plot_pareto",
+            "solve"
         ],
         "mother": "OptiGenAlg",
         "name": "OptiGenAlgNsga2Deap",
@@ -11884,12 +11884,12 @@
         "desc": "Gather the electric module outputs",
         "is_internal": false,
         "methods": [
-            "get_Nr",
-            "get_Is",
-            "get_Us",
-            "store",
             "get_electrical",
-            "get_Jrms"
+            "get_Is",
+            "get_Jrms",
+            "get_Nr",
+            "get_Us",
+            "store"
         ],
         "mother": "",
         "name": "OutElec",
@@ -12069,7 +12069,7 @@
                 "name": "Jrms",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00c2\u00b2",
+                "unit": "A/m\u00c3\u0192\u00c6\u2019\u00c3\u00a2\u00e2\u201a\u00ac\u00c5\u00a1\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00b2",
                 "value": null
             },
             {
@@ -12535,12 +12535,12 @@
         "desc": "Gather the loss module outputs",
         "is_internal": false,
         "methods": [
+            "__getitem__",
+            "__len__",
             "get_loss_density_ag",
             "get_loss_overall",
             "get_power_dict",
-            "plot_losses",
-            "__getitem__",
-            "__len__"
+            "plot_losses"
         ],
         "mother": "",
         "name": "OutLoss",
@@ -12593,12 +12593,12 @@
         "desc": "Gather the loss module outputs",
         "is_internal": false,
         "methods": [
-            "get_mesh_solution",
-            "get_loss_scalar",
             "__add__",
             "__radd__",
-            "__sub__",
             "__rsub__",
+            "__sub__",
+            "get_loss_scalar",
+            "get_mesh_solution",
             "plot_mesh"
         ],
         "mother": "",
@@ -12688,9 +12688,9 @@
             "clean",
             "comp_emf",
             "comp_power",
+            "comp_torque_MT",
             "get_demag",
-            "store",
-            "comp_torque_MT"
+            "store"
         ],
         "mother": "",
         "name": "OutMag",
@@ -13089,15 +13089,15 @@
         "is_internal": false,
         "methods": [
             "getter.comp_angle_rotor",
-            "getter.get_angle_rotor_initial",
+            "getter.export_to_mat",
             "getter.get_angle_rotor",
+            "getter.get_angle_rotor_initial",
             "getter.get_BH_rotor",
             "getter.get_BH_stator",
-            "getter.get_path_result",
-            "getter.get_machine_periodicity",
-            "getter.get_fund_harm",
             "getter.get_data_from_str",
-            "getter.export_to_mat",
+            "getter.get_fund_harm",
+            "getter.get_machine_periodicity",
+            "getter.get_path_result",
             "plot.Magnetic.plot_B_mesh",
             "print_memory"
         ],
@@ -13235,8 +13235,8 @@
         "desc": "Abstract class for the multi-simulation",
         "is_internal": false,
         "methods": [
-            "_set_setter",
             "_set_getter",
+            "_set_setter",
             "get_desc"
         ],
         "mother": "",
@@ -13312,10 +13312,10 @@
         "desc": "Define a set of value (for parameter sweep) on interval",
         "is_internal": false,
         "methods": [
-            "get_value",
-            "get_min",
             "get_max",
-            "get_N"
+            "get_min",
+            "get_N",
+            "get_value"
         ],
         "mother": "ParamExplorer",
         "name": "ParamExplorerInterval",
@@ -13390,10 +13390,10 @@
         "desc": "Define a parameter set (for parameter sweep) from a list",
         "is_internal": false,
         "methods": [
-            "get_value",
-            "get_min",
             "get_max",
-            "get_N"
+            "get_min",
+            "get_N",
+            "get_value"
         ],
         "mother": "ParamExplorer",
         "name": "ParamExplorerSet",
@@ -13424,15 +13424,15 @@
         "desc": "PolarArc defined by  the center of object(point_ref), the label, the angle and the height",
         "is_internal": false,
         "methods": [
-            "get_lines",
-            "rotate",
-            "translate",
             "check",
             "comp_length",
-            "discretize",
-            "get_patches",
+            "comp_point_ref",
             "comp_surface",
-            "comp_point_ref"
+            "discretize",
+            "get_lines",
+            "get_patches",
+            "rotate",
+            "translate"
         ],
         "mother": "Surface",
         "name": "PolarArc",
@@ -13682,8 +13682,8 @@
         "desc": "Store shape functions definition in the reference element",
         "is_internal": false,
         "methods": [
-            "interpolation",
-            "get_element_area"
+            "get_element_area",
+            "interpolation"
         ],
         "mother": "",
         "name": "RefElement",
@@ -13714,12 +13714,12 @@
         "desc": "Store line elements for 2D mesh",
         "is_internal": false,
         "methods": [
-            "shape_function",
-            "jacobian",
-            "grad_shape_function",
             "get_real_point",
             "get_ref_point",
-            "is_inside"
+            "grad_shape_function",
+            "is_inside",
+            "jacobian",
+            "shape_function"
         ],
         "mother": "RefElement",
         "name": "RefLine3",
@@ -13738,12 +13738,12 @@
         "desc": "Store quadrangel elements for 2D mesh",
         "is_internal": false,
         "methods": [
-            "shape_function",
-            "jacobian",
-            "grad_shape_function",
             "get_real_point",
             "get_ref_point",
-            "is_inside"
+            "grad_shape_function",
+            "is_inside",
+            "jacobian",
+            "shape_function"
         ],
         "mother": "RefElement",
         "name": "RefQuad4",
@@ -13762,12 +13762,12 @@
         "desc": "Store quadrangel elements for 2D mesh",
         "is_internal": false,
         "methods": [
-            "shape_function",
-            "jacobian",
-            "grad_shape_function",
             "get_real_point",
             "get_ref_point",
-            "is_inside"
+            "grad_shape_function",
+            "is_inside",
+            "jacobian",
+            "shape_function"
         ],
         "mother": "RefElement",
         "name": "RefQuad9",
@@ -13786,13 +13786,13 @@
         "desc": "Store segment elements for 2D mesh",
         "is_internal": false,
         "methods": [
-            "shape_function",
-            "jacobian",
-            "grad_shape_function",
+            "get_normal",
             "get_real_point",
-            "is_inside",
             "get_ref_point",
-            "get_normal"
+            "grad_shape_function",
+            "is_inside",
+            "jacobian",
+            "shape_function"
         ],
         "mother": "RefElement",
         "name": "RefSegmentP1",
@@ -13811,14 +13811,14 @@
         "desc": "Store triangle elements for 2D mesh",
         "is_internal": false,
         "methods": [
-            "shape_function",
-            "jacobian",
-            "grad_shape_function",
+            "get_element_area",
+            "get_normal",
             "get_real_point",
             "get_ref_point",
+            "grad_shape_function",
             "is_inside",
-            "get_element_area",
-            "get_normal"
+            "jacobian",
+            "shape_function"
         ],
         "mother": "RefElement",
         "name": "RefTriangle3",
@@ -13837,12 +13837,12 @@
         "desc": "Store triangle elements for 2D mesh",
         "is_internal": false,
         "methods": [
-            "shape_function",
-            "jacobian",
-            "grad_shape_function",
             "get_real_point",
             "get_ref_point",
-            "is_inside"
+            "grad_shape_function",
+            "is_inside",
+            "jacobian",
+            "shape_function"
         ],
         "mother": "RefElement",
         "name": "RefTriangle6",
@@ -14072,11 +14072,11 @@
         "desc": "abstract class for rules",
         "is_internal": false,
         "methods": [
-            "set_P",
+            "get_name",
+            "get_other",
             "get_P",
             "set_other",
-            "get_other",
-            "get_name"
+            "set_P"
         ],
         "mother": "",
         "name": "Rule",
@@ -14107,9 +14107,9 @@
         "desc": "complex rules",
         "is_internal": false,
         "methods": [
-            "convert_to_P",
+            "_set_fct_name",
             "convert_to_other",
-            "_set_fct_name"
+            "convert_to_P"
         ],
         "mother": "Rule",
         "name": "RuleComplex",
@@ -14162,8 +14162,8 @@
         "desc": "simple rules",
         "is_internal": false,
         "methods": [
-            "convert_to_P",
             "convert_to_other",
+            "convert_to_P",
             "solve_equation"
         ],
         "mother": "Rule",
@@ -14217,8 +14217,8 @@
         "desc": "simple rules",
         "is_internal": false,
         "methods": [
-            "convert_to_P",
-            "convert_to_other"
+            "convert_to_other",
+            "convert_to_P"
         ],
         "mother": "Rule",
         "name": "RuleSimple",
@@ -14327,8 +14327,8 @@
             "__missing__",
             "__reversed__",
             "__setitem__",
-            "pop",
             "keys",
+            "pop",
             "write"
         ],
         "mother": "Elmer",
@@ -14413,6 +14413,8 @@
             "get_end",
             "get_middle",
             "intersect_line",
+            "intersect_obj",
+            "is_arc",
             "is_on_line",
             "plot",
             "reverse",
@@ -14420,10 +14422,8 @@
             "scale",
             "split_half",
             "split_line",
-            "translate",
             "split_point",
-            "intersect_obj",
-            "is_arc"
+            "translate"
         ],
         "mother": "Line",
         "name": "Segment",
@@ -14597,10 +14597,10 @@
         "desc": "Abstract class for the simulation",
         "is_internal": false,
         "methods": [
-            "run",
-            "init_logger",
+            "get_OP_array",
             "get_var_load",
-            "get_OP_array"
+            "init_logger",
+            "run"
         ],
         "mother": "",
         "name": "Simulation",
@@ -14851,8 +14851,8 @@
         "desc": "Class to hande slices in magnetics model",
         "is_internal": false,
         "methods": [
-            "get_distribution",
             "get_data",
+            "get_distribution",
             "plot"
         ],
         "mother": "",
@@ -15024,12 +15024,12 @@
             "get_surface",
             "get_surface_tooth",
             "get_surface_wedges",
+            "is_airgap_active",
+            "is_full_pitch_active",
             "is_outwards",
             "plot",
             "plot_active",
-            "set_label",
-            "is_airgap_active",
-            "is_full_pitch_active"
+            "set_label"
         ],
         "mother": "",
         "name": "Slot",
@@ -15089,8 +15089,8 @@
             "_comp_point_coordinate",
             "build_geometry",
             "check",
-            "comp_angle_opening",
             "comp_angle_bottom",
+            "comp_angle_opening",
             "comp_height",
             "comp_surface"
         ],
@@ -15171,10 +15171,10 @@
             "comp_surface",
             "comp_surface_active",
             "comp_surface_opening",
+            "convert_to_H0_bore",
             "get_surface_active",
             "get_surface_opening",
-            "plot_schematics",
-            "convert_to_H0_bore"
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotCirc",
@@ -15233,13 +15233,13 @@
         "methods": [
             "_comp_point_coordinate",
             "build_geometry",
-            "get_surface_active",
             "check",
             "comp_angle_opening",
             "comp_height",
             "comp_height_active",
             "comp_surface",
-            "comp_surface_active"
+            "comp_surface_active",
+            "get_surface_active"
         ],
         "mother": "Slot",
         "name": "SlotDC",
@@ -15360,8 +15360,8 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
-            "is_airgap_active"
+            "is_airgap_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM10",
@@ -15438,9 +15438,9 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
             "is_airgap_active",
-            "is_full_pitch_active"
+            "is_full_pitch_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM11",
@@ -15517,8 +15517,8 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
-            "is_airgap_active"
+            "is_airgap_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM12",
@@ -15595,8 +15595,8 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
-            "is_airgap_active"
+            "is_airgap_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM13",
@@ -15684,9 +15684,9 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
             "is_airgap_active",
-            "is_full_pitch_active"
+            "is_full_pitch_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM14",
@@ -15774,8 +15774,8 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
-            "is_airgap_active"
+            "is_airgap_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM15",
@@ -15939,9 +15939,9 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
             "is_airgap_active",
-            "is_full_pitch_active"
+            "is_full_pitch_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM17",
@@ -15973,9 +15973,9 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
             "is_airgap_active",
-            "is_full_pitch_active"
+            "is_full_pitch_active",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM18",
@@ -16012,6 +16012,7 @@
         "methods": [
             "_comp_point_coordinate",
             "build_geometry",
+            "build_geometry_active",
             "check",
             "comp_angle_opening",
             "comp_height",
@@ -16019,10 +16020,9 @@
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
             "is_airgap_active",
             "is_full_pitch_active",
-            "build_geometry_active"
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM18_2",
@@ -16070,14 +16070,14 @@
         "methods": [
             "_comp_point_coordinate",
             "build_geometry",
+            "check",
             "comp_angle_opening",
             "comp_height",
             "comp_height_active",
             "comp_surface",
             "comp_surface_active",
             "get_surface_active",
-            "plot_schematics",
-            "check"
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotM19",
@@ -16209,11 +16209,11 @@
         "desc": "\"User defined\" Slot from a line list and a surface",
         "is_internal": false,
         "methods": [
+            "_set_split_active_surf_dict",
             "build_geometry",
             "build_geometry_active",
-            "get_surface_active",
             "check",
-            "_set_split_active_surf_dict"
+            "get_surface_active"
         ],
         "mother": "Slot",
         "name": "SlotUD2",
@@ -16292,9 +16292,9 @@
             "comp_surface",
             "comp_surface_active",
             "comp_surface_opening",
+            "get_H1",
             "get_surface_active",
             "get_surface_opening",
-            "get_H1",
             "plot_schematics"
         ],
         "mother": "Slot",
@@ -16398,8 +16398,8 @@
         "methods": [
             "_comp_line_dict",
             "_comp_point_coordinate",
-            "_set_W3",
             "_comp_W",
+            "_set_W3",
             "build_geometry",
             "check",
             "comp_angle_opening",
@@ -16548,8 +16548,8 @@
         "methods": [
             "_comp_line_dict",
             "_comp_point_coordinate",
-            "_set_W3",
             "_comp_W",
+            "_set_W3",
             "build_geometry",
             "check",
             "comp_angle_opening",
@@ -16786,9 +16786,9 @@
             "comp_surface",
             "comp_surface_active",
             "comp_surface_opening",
+            "get_H1",
             "get_surface_active",
             "get_surface_opening",
-            "get_H1",
             "plot_schematics"
         ],
         "mother": "Slot",
@@ -16912,11 +16912,11 @@
             "comp_surface_active",
             "comp_surface_opening",
             "comp_surface_wedge",
+            "get_H1",
             "get_surface_active",
-            "get_surface_wedge",
             "get_surface_opening",
-            "plot_schematics",
-            "get_H1"
+            "get_surface_wedge",
+            "plot_schematics"
         ],
         "mother": "Slot",
         "name": "SlotW14",
@@ -17417,8 +17417,8 @@
         "methods": [
             "_comp_line_dict",
             "_comp_point_coordinate",
-            "_set_W3",
             "_comp_W",
+            "_set_W3",
             "build_geometry",
             "check",
             "comp_angle_opening",
@@ -17427,10 +17427,10 @@
             "comp_surface",
             "comp_surface_active",
             "comp_surface_opening",
+            "get_H1",
             "get_surface_active",
             "get_surface_opening",
             "plot_schematics",
-            "get_H1",
             "plot_schematics_constant_tooth"
         ],
         "mother": "Slot",
@@ -18009,11 +18009,11 @@
             "comp_height_active",
             "comp_surface",
             "comp_surface_active",
-            "comp_surface_wedge",
             "comp_surface_opening",
+            "comp_surface_wedge",
             "get_surface_active",
-            "get_surface_wedge",
             "get_surface_opening",
+            "get_surface_wedge",
             "plot_schematics"
         ],
         "mother": "Slot",
@@ -18706,9 +18706,9 @@
             "build_geometry_active",
             "check",
             "comp_angle_opening",
+            "comp_height",
             "comp_height_damper",
             "comp_height_wind",
-            "comp_height",
             "get_surface_active",
             "plot_schematics"
         ],
@@ -18852,8 +18852,8 @@
         "desc": "Define a Solution with SciDataTool objects.",
         "is_internal": false,
         "methods": [
-            "get_field",
             "get_axes_list",
+            "get_field",
             "get_solution"
         ],
         "mother": "Solution",
@@ -18887,8 +18887,8 @@
         "desc": "Define a Solution with ndarray object.",
         "is_internal": false,
         "methods": [
-            "get_field",
             "get_axes_list",
+            "get_field",
             "get_solution"
         ],
         "mother": "Solution",
@@ -18953,8 +18953,8 @@
         "desc": "Define a Solution with SciDataTool objects.",
         "is_internal": false,
         "methods": [
-            "get_field",
             "get_axes_list",
+            "get_field",
             "get_solution"
         ],
         "mother": "Solution",
@@ -19017,13 +19017,13 @@
         "desc": "Structural module: FEA model with Elmer",
         "is_internal": false,
         "methods": [
-            "run",
+            "gen_case",
+            "gen_mesh",
             "get_meshsolution",
             "get_path_save_fea",
-            "solve_FEA",
-            "gen_mesh",
-            "gen_case",
-            "process_mesh"
+            "process_mesh",
+            "run",
+            "solve_FEA"
         ],
         "mother": "Structural",
         "name": "StructElmer",
@@ -19122,8 +19122,8 @@
         "desc": "Structural module abstract object",
         "is_internal": false,
         "methods": [
-            "run",
-            "comp_axes"
+            "comp_axes",
+            "run"
         ],
         "mother": "",
         "name": "Structural",
@@ -19195,16 +19195,16 @@
         "desc": "SurfRing is a surface between two closed surfaces (lamination surfaces for instance)",
         "is_internal": false,
         "methods": [
-            "get_lines",
-            "rotate",
-            "translate",
             "check",
             "comp_length",
-            "get_patches",
-            "discretize",
+            "comp_point_ref",
             "comp_surface",
+            "discretize",
+            "get_lines",
+            "get_patches",
             "plot_lines",
-            "comp_point_ref"
+            "rotate",
+            "translate"
         ],
         "mother": "Surface",
         "name": "SurfRing",
@@ -19254,10 +19254,10 @@
         "methods": [
             "comp_mesh_dict",
             "draw_FEMM",
-            "plot",
-            "split_line",
+            "intersect_line",
             "is_inside",
-            "intersect_line"
+            "plot",
+            "split_line"
         ],
         "mother": "",
         "name": "Surface",
@@ -19301,13 +19301,13 @@
         "methods": [
             "check",
             "comp_length",
+            "comp_point_ref",
             "comp_surface",
             "discretize",
             "get_lines",
             "get_patches",
             "rotate",
-            "translate",
-            "comp_point_ref"
+            "translate"
         ],
         "mother": "Surface",
         "name": "Trapeze",
@@ -19362,8 +19362,8 @@
         "methods": [
             "get_m",
             "get_m2",
-            "get_m_name",
             "get_m2_name",
+            "get_m_name",
             "set_m",
             "set_m2"
         ],
@@ -19425,10 +19425,10 @@
         "desc": "Abstract class to generate multi-simulation by changing the operating point",
         "is_internal": false,
         "methods": [
-            "get_ref_simu_index",
+            "_set_OP_matrix",
             "get_OP_array",
-            "set_OP_array",
-            "_set_OP_matrix"
+            "get_ref_simu_index",
+            "set_OP_array"
         ],
         "mother": "VarSimu",
         "name": "VarLoad",
@@ -19506,8 +19506,8 @@
         "is_internal": false,
         "methods": [
             "check",
-            "run",
-            "get_full_solver"
+            "get_full_solver",
+            "run"
         ],
         "mother": "VarParam",
         "name": "VarOpti",
@@ -19628,15 +19628,15 @@
         "desc": "Abstract class for the multi-simulation",
         "is_internal": false,
         "methods": [
-            "run",
-            "set_reused_data",
             "check_param",
-            "generate_simulation_list",
             "gen_datakeeper_list",
+            "generate_simulation_list",
             "get_elec_datakeeper",
-            "get_mag_datakeeper",
             "get_force_datakeeper",
-            "get_ref_simu_index"
+            "get_mag_datakeeper",
+            "get_ref_simu_index",
+            "run",
+            "set_reused_data"
         ],
         "mother": "",
         "name": "VarSimu",
@@ -19858,12 +19858,12 @@
         "desc": "Circular axial ventilation duct",
         "is_internal": false,
         "methods": [
+            "_comp_point_coordinate",
             "build_geometry",
             "check",
             "comp_radius",
             "comp_surface",
             "get_center",
-            "_comp_point_coordinate",
             "plot_schematics"
         ],
         "mother": "Hole",
@@ -19906,12 +19906,12 @@
         "desc": "Polar axial ventilation duct",
         "is_internal": false,
         "methods": [
+            "_comp_point_coordinate",
             "build_geometry",
             "check",
             "comp_radius",
             "comp_surface",
             "get_center",
-            "_comp_point_coordinate",
             "plot_schematics"
         ],
         "mother": "Hole",
@@ -19965,12 +19965,12 @@
         "desc": "Trapezoidal axial ventilation ducts",
         "is_internal": false,
         "methods": [
+            "_comp_point_coordinate",
             "build_geometry",
             "check",
             "comp_radius",
             "comp_surface",
             "get_center",
-            "_comp_point_coordinate",
             "plot_schematics"
         ],
         "mother": "Hole",
@@ -20042,21 +20042,21 @@
         "desc": "Winding class generating connection matrix using Star of slots method (coupling with SWAT-EM)",
         "is_internal": false,
         "methods": [
+            "clean",
             "comp_connection_mat",
             "comp_length_endwinding",
+            "comp_Ncps",
             "comp_Ncspc",
             "comp_Ntsp",
             "comp_periodicity",
             "comp_phasor_angle",
             "comp_winding_factor",
+            "export_to_csv",
             "get_connection_mat",
             "get_dim_wind",
             "get_periodicity",
-            "export_to_csv",
-            "clean",
-            "plot_radial",
             "plot_linear",
-            "comp_Ncps"
+            "plot_radial"
         ],
         "mother": "",
         "name": "Winding",
@@ -20301,8 +20301,8 @@
         "is_internal": false,
         "methods": [
             "comp_connection_mat",
-            "get_dim_wind",
-            "comp_periodicity"
+            "comp_periodicity",
+            "get_dim_wind"
         ],
         "mother": "Winding",
         "name": "WindingSC",
@@ -20325,11 +20325,11 @@
         "desc": "User defined winding",
         "is_internal": false,
         "methods": [
+            "import_from_csv",
             "init_as_CW1L",
             "init_as_CW2LR",
             "init_as_CW2LT",
-            "init_as_DWL",
-            "import_from_csv"
+            "init_as_DWL"
         ],
         "mother": "Winding",
         "name": "WindingUD",

@@ -18,14 +18,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.Magnetics.run import run
-except ImportError as error:
-    run = error
-
-try:
     from ..Methods.Simulation.Magnetics.comp_axes import comp_axes
 except ImportError as error:
     comp_axes = error
+
+try:
+    from ..Methods.Simulation.Magnetics.comp_I_mag import comp_I_mag
+except ImportError as error:
+    comp_I_mag = error
 
 try:
     from ..Methods.Simulation.Magnetics.get_slice_model import get_slice_model
@@ -33,9 +33,9 @@ except ImportError as error:
     get_slice_model = error
 
 try:
-    from ..Methods.Simulation.Magnetics.comp_I_mag import comp_I_mag
+    from ..Methods.Simulation.Magnetics.run import run
 except ImportError as error:
-    comp_I_mag = error
+    run = error
 
 
 from numpy import isnan
@@ -48,15 +48,6 @@ class Magnetics(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.Magnetics.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Magnetics method run: " + str(run))
-            )
-        )
-    else:
-        run = run
     # cf Methods.Simulation.Magnetics.comp_axes
     if isinstance(comp_axes, ImportError):
         comp_axes = property(
@@ -66,6 +57,15 @@ class Magnetics(FrozenClass):
         )
     else:
         comp_axes = comp_axes
+    # cf Methods.Simulation.Magnetics.comp_I_mag
+    if isinstance(comp_I_mag, ImportError):
+        comp_I_mag = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Magnetics method comp_I_mag: " + str(comp_I_mag))
+            )
+        )
+    else:
+        comp_I_mag = comp_I_mag
     # cf Methods.Simulation.Magnetics.get_slice_model
     if isinstance(get_slice_model, ImportError):
         get_slice_model = property(
@@ -78,15 +78,15 @@ class Magnetics(FrozenClass):
         )
     else:
         get_slice_model = get_slice_model
-    # cf Methods.Simulation.Magnetics.comp_I_mag
-    if isinstance(comp_I_mag, ImportError):
-        comp_I_mag = property(
+    # cf Methods.Simulation.Magnetics.run
+    if isinstance(run, ImportError):
+        run = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Magnetics method comp_I_mag: " + str(comp_I_mag))
+                ImportError("Can't use Magnetics method run: " + str(run))
             )
         )
     else:
-        comp_I_mag = comp_I_mag
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

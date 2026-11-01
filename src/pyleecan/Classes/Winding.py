@@ -18,6 +18,11 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Machine.Winding.clean import clean
+except ImportError as error:
+    clean = error
+
+try:
     from ..Methods.Machine.Winding.comp_connection_mat import comp_connection_mat
 except ImportError as error:
     comp_connection_mat = error
@@ -26,6 +31,11 @@ try:
     from ..Methods.Machine.Winding.comp_length_endwinding import comp_length_endwinding
 except ImportError as error:
     comp_length_endwinding = error
+
+try:
+    from ..Methods.Machine.Winding.comp_Ncps import comp_Ncps
+except ImportError as error:
+    comp_Ncps = error
 
 try:
     from ..Methods.Machine.Winding.comp_Ncspc import comp_Ncspc
@@ -53,6 +63,11 @@ except ImportError as error:
     comp_winding_factor = error
 
 try:
+    from ..Methods.Machine.Winding.export_to_csv import export_to_csv
+except ImportError as error:
+    export_to_csv = error
+
+try:
     from ..Methods.Machine.Winding.get_connection_mat import get_connection_mat
 except ImportError as error:
     get_connection_mat = error
@@ -68,29 +83,14 @@ except ImportError as error:
     get_periodicity = error
 
 try:
-    from ..Methods.Machine.Winding.export_to_csv import export_to_csv
-except ImportError as error:
-    export_to_csv = error
-
-try:
-    from ..Methods.Machine.Winding.clean import clean
-except ImportError as error:
-    clean = error
-
-try:
-    from ..Methods.Machine.Winding.plot_radial import plot_radial
-except ImportError as error:
-    plot_radial = error
-
-try:
     from ..Methods.Machine.Winding.plot_linear import plot_linear
 except ImportError as error:
     plot_linear = error
 
 try:
-    from ..Methods.Machine.Winding.comp_Ncps import comp_Ncps
+    from ..Methods.Machine.Winding.plot_radial import plot_radial
 except ImportError as error:
-    comp_Ncps = error
+    plot_radial = error
 
 
 from numpy import array, array_equal
@@ -105,6 +105,15 @@ class Winding(FrozenClass):
     NAME = "Star of slots"
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Machine.Winding.clean
+    if isinstance(clean, ImportError):
+        clean = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Winding method clean: " + str(clean))
+            )
+        )
+    else:
+        clean = clean
     # cf Methods.Machine.Winding.comp_connection_mat
     if isinstance(comp_connection_mat, ImportError):
         comp_connection_mat = property(
@@ -129,6 +138,15 @@ class Winding(FrozenClass):
         )
     else:
         comp_length_endwinding = comp_length_endwinding
+    # cf Methods.Machine.Winding.comp_Ncps
+    if isinstance(comp_Ncps, ImportError):
+        comp_Ncps = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Winding method comp_Ncps: " + str(comp_Ncps))
+            )
+        )
+    else:
+        comp_Ncps = comp_Ncps
     # cf Methods.Machine.Winding.comp_Ncspc
     if isinstance(comp_Ncspc, ImportError):
         comp_Ncspc = property(
@@ -183,6 +201,17 @@ class Winding(FrozenClass):
         )
     else:
         comp_winding_factor = comp_winding_factor
+    # cf Methods.Machine.Winding.export_to_csv
+    if isinstance(export_to_csv, ImportError):
+        export_to_csv = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Winding method export_to_csv: " + str(export_to_csv)
+                )
+            )
+        )
+    else:
+        export_to_csv = export_to_csv
     # cf Methods.Machine.Winding.get_connection_mat
     if isinstance(get_connection_mat, ImportError):
         get_connection_mat = property(
@@ -217,35 +246,6 @@ class Winding(FrozenClass):
         )
     else:
         get_periodicity = get_periodicity
-    # cf Methods.Machine.Winding.export_to_csv
-    if isinstance(export_to_csv, ImportError):
-        export_to_csv = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Winding method export_to_csv: " + str(export_to_csv)
-                )
-            )
-        )
-    else:
-        export_to_csv = export_to_csv
-    # cf Methods.Machine.Winding.clean
-    if isinstance(clean, ImportError):
-        clean = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Winding method clean: " + str(clean))
-            )
-        )
-    else:
-        clean = clean
-    # cf Methods.Machine.Winding.plot_radial
-    if isinstance(plot_radial, ImportError):
-        plot_radial = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Winding method plot_radial: " + str(plot_radial))
-            )
-        )
-    else:
-        plot_radial = plot_radial
     # cf Methods.Machine.Winding.plot_linear
     if isinstance(plot_linear, ImportError):
         plot_linear = property(
@@ -255,15 +255,15 @@ class Winding(FrozenClass):
         )
     else:
         plot_linear = plot_linear
-    # cf Methods.Machine.Winding.comp_Ncps
-    if isinstance(comp_Ncps, ImportError):
-        comp_Ncps = property(
+    # cf Methods.Machine.Winding.plot_radial
+    if isinstance(plot_radial, ImportError):
+        plot_radial = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Winding method comp_Ncps: " + str(comp_Ncps))
+                ImportError("Can't use Winding method plot_radial: " + str(plot_radial))
             )
         )
     else:
-        comp_Ncps = comp_Ncps
+        plot_radial = plot_radial
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

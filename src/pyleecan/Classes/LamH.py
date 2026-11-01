@@ -68,14 +68,14 @@ except ImportError as error:
     plot = error
 
 try:
-    from ..Methods.Machine.LamH.set_pole_pair_number import set_pole_pair_number
-except ImportError as error:
-    set_pole_pair_number = error
-
-try:
     from ..Methods.Machine.LamH.set_Lmag import set_Lmag
 except ImportError as error:
     set_Lmag = error
+
+try:
+    from ..Methods.Machine.LamH.set_pole_pair_number import set_pole_pair_number
+except ImportError as error:
+    set_pole_pair_number = error
 
 
 from numpy import isnan
@@ -190,6 +190,15 @@ class LamH(Lamination):
         )
     else:
         plot = plot
+    # cf Methods.Machine.LamH.set_Lmag
+    if isinstance(set_Lmag, ImportError):
+        set_Lmag = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamH method set_Lmag: " + str(set_Lmag))
+            )
+        )
+    else:
+        set_Lmag = set_Lmag
     # cf Methods.Machine.LamH.set_pole_pair_number
     if isinstance(set_pole_pair_number, ImportError):
         set_pole_pair_number = property(
@@ -202,15 +211,6 @@ class LamH(Lamination):
         )
     else:
         set_pole_pair_number = set_pole_pair_number
-    # cf Methods.Machine.LamH.set_Lmag
-    if isinstance(set_Lmag, ImportError):
-        set_Lmag = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamH method set_Lmag: " + str(set_Lmag))
-            )
-        )
-    else:
-        set_Lmag = set_Lmag
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

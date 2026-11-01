@@ -1,5 +1,5 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-run,,Post-processing that takes an output in argument,,function,None,,
-,
-Package,Inherit,Methods,Constant Name,Constant Value,Class description
-Post,Post,,VERSION,1,Post-processing from a user-defined function
+run,,Post-processing that takes an output in argument,,function,None,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+Post,Post,,VERSION,1,Post-processing from a user-defined function,,,

@@ -23,18 +23,18 @@ except ImportError as error:
     check = error
 
 try:
-    from ..Methods.Machine.Conductor.comp_skin_effect_resistance import (
-        comp_skin_effect_resistance,
-    )
-except ImportError as error:
-    comp_skin_effect_resistance = error
-
-try:
     from ..Methods.Machine.Conductor.comp_skin_effect_inductance import (
         comp_skin_effect_inductance,
     )
 except ImportError as error:
     comp_skin_effect_inductance = error
+
+try:
+    from ..Methods.Machine.Conductor.comp_skin_effect_resistance import (
+        comp_skin_effect_resistance,
+    )
+except ImportError as error:
+    comp_skin_effect_resistance = error
 
 try:
     from ..Methods.Machine.Conductor.comp_temperature_effect import (
@@ -63,18 +63,6 @@ class Conductor(FrozenClass):
         )
     else:
         check = check
-    # cf Methods.Machine.Conductor.comp_skin_effect_resistance
-    if isinstance(comp_skin_effect_resistance, ImportError):
-        comp_skin_effect_resistance = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Conductor method comp_skin_effect_resistance: "
-                    + str(comp_skin_effect_resistance)
-                )
-            )
-        )
-    else:
-        comp_skin_effect_resistance = comp_skin_effect_resistance
     # cf Methods.Machine.Conductor.comp_skin_effect_inductance
     if isinstance(comp_skin_effect_inductance, ImportError):
         comp_skin_effect_inductance = property(
@@ -87,6 +75,18 @@ class Conductor(FrozenClass):
         )
     else:
         comp_skin_effect_inductance = comp_skin_effect_inductance
+    # cf Methods.Machine.Conductor.comp_skin_effect_resistance
+    if isinstance(comp_skin_effect_resistance, ImportError):
+        comp_skin_effect_resistance = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Conductor method comp_skin_effect_resistance: "
+                    + str(comp_skin_effect_resistance)
+                )
+            )
+        )
+    else:
+        comp_skin_effect_resistance = comp_skin_effect_resistance
     # cf Methods.Machine.Conductor.comp_temperature_effect
     if isinstance(comp_temperature_effect, ImportError):
         comp_temperature_effect = property(

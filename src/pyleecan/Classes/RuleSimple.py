@@ -18,14 +18,14 @@ from .Rule import Rule
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Converter.RuleSimple.convert_to_P import convert_to_P
-except ImportError as error:
-    convert_to_P = error
-
-try:
     from ..Methods.Converter.RuleSimple.convert_to_other import convert_to_other
 except ImportError as error:
     convert_to_other = error
+
+try:
+    from ..Methods.Converter.RuleSimple.convert_to_P import convert_to_P
+except ImportError as error:
+    convert_to_P = error
 
 
 from numpy import isnan
@@ -38,17 +38,6 @@ class RuleSimple(Rule):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Converter.RuleSimple.convert_to_P
-    if isinstance(convert_to_P, ImportError):
-        convert_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RuleSimple method convert_to_P: " + str(convert_to_P)
-                )
-            )
-        )
-    else:
-        convert_to_P = convert_to_P
     # cf Methods.Converter.RuleSimple.convert_to_other
     if isinstance(convert_to_other, ImportError):
         convert_to_other = property(
@@ -61,6 +50,17 @@ class RuleSimple(Rule):
         )
     else:
         convert_to_other = convert_to_other
+    # cf Methods.Converter.RuleSimple.convert_to_P
+    if isinstance(convert_to_P, ImportError):
+        convert_to_P = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RuleSimple method convert_to_P: " + str(convert_to_P)
+                )
+            )
+        )
+    else:
+        convert_to_P = convert_to_P
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

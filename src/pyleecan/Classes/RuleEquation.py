@@ -18,14 +18,14 @@ from .Rule import Rule
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Converter.RuleEquation.convert_to_P import convert_to_P
-except ImportError as error:
-    convert_to_P = error
-
-try:
     from ..Methods.Converter.RuleEquation.convert_to_other import convert_to_other
 except ImportError as error:
     convert_to_other = error
+
+try:
+    from ..Methods.Converter.RuleEquation.convert_to_P import convert_to_P
+except ImportError as error:
+    convert_to_P = error
 
 try:
     from ..Methods.Converter.RuleEquation.solve_equation import solve_equation
@@ -43,17 +43,6 @@ class RuleEquation(Rule):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Converter.RuleEquation.convert_to_P
-    if isinstance(convert_to_P, ImportError):
-        convert_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RuleEquation method convert_to_P: " + str(convert_to_P)
-                )
-            )
-        )
-    else:
-        convert_to_P = convert_to_P
     # cf Methods.Converter.RuleEquation.convert_to_other
     if isinstance(convert_to_other, ImportError):
         convert_to_other = property(
@@ -66,6 +55,17 @@ class RuleEquation(Rule):
         )
     else:
         convert_to_other = convert_to_other
+    # cf Methods.Converter.RuleEquation.convert_to_P
+    if isinstance(convert_to_P, ImportError):
+        convert_to_P = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RuleEquation method convert_to_P: " + str(convert_to_P)
+                )
+            )
+        )
+    else:
+        convert_to_P = convert_to_P
     # cf Methods.Converter.RuleEquation.solve_equation
     if isinstance(solve_equation, ImportError):
         solve_equation = property(

@@ -28,14 +28,19 @@ except ImportError as error:
     check = error
 
 try:
+    from ..Methods.Machine.LamSquirrelCage.comp_angle_d_axis import comp_angle_d_axis
+except ImportError as error:
+    comp_angle_d_axis = error
+
+try:
     from ..Methods.Machine.LamSquirrelCage.comp_length_ring import comp_length_ring
 except ImportError as error:
     comp_length_ring = error
 
 try:
-    from ..Methods.Machine.LamSquirrelCage.plot import plot
+    from ..Methods.Machine.LamSquirrelCage.comp_masses import comp_masses
 except ImportError as error:
-    plot = error
+    comp_masses = error
 
 try:
     from ..Methods.Machine.LamSquirrelCage.comp_number_phase_eq import (
@@ -45,9 +50,11 @@ except ImportError as error:
     comp_number_phase_eq = error
 
 try:
-    from ..Methods.Machine.LamSquirrelCage.comp_surface_ring import comp_surface_ring
+    from ..Methods.Machine.LamSquirrelCage.comp_periodicity_spatial import (
+        comp_periodicity_spatial,
+    )
 except ImportError as error:
-    comp_surface_ring = error
+    comp_periodicity_spatial = error
 
 try:
     from ..Methods.Machine.LamSquirrelCage.comp_resistance_wind import (
@@ -57,26 +64,19 @@ except ImportError as error:
     comp_resistance_wind = error
 
 try:
+    from ..Methods.Machine.LamSquirrelCage.comp_surface_ring import comp_surface_ring
+except ImportError as error:
+    comp_surface_ring = error
+
+try:
     from ..Methods.Machine.LamSquirrelCage.get_name_phase import get_name_phase
 except ImportError as error:
     get_name_phase = error
 
 try:
-    from ..Methods.Machine.LamSquirrelCage.comp_angle_d_axis import comp_angle_d_axis
+    from ..Methods.Machine.LamSquirrelCage.plot import plot
 except ImportError as error:
-    comp_angle_d_axis = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_masses import comp_masses
-except ImportError as error:
-    comp_masses = error
+    plot = error
 
 try:
     from ..Methods.Machine.LamSquirrelCage.plot_schematics_scr import (
@@ -122,75 +122,6 @@ class LamSquirrelCage(LamSlotWind):
         )
     else:
         check = check
-    # cf Methods.Machine.LamSquirrelCage.comp_length_ring
-    if isinstance(comp_length_ring, ImportError):
-        comp_length_ring = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_length_ring: "
-                    + str(comp_length_ring)
-                )
-            )
-        )
-    else:
-        comp_length_ring = comp_length_ring
-    # cf Methods.Machine.LamSquirrelCage.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSquirrelCage method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
-    # cf Methods.Machine.LamSquirrelCage.comp_number_phase_eq
-    if isinstance(comp_number_phase_eq, ImportError):
-        comp_number_phase_eq = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_number_phase_eq: "
-                    + str(comp_number_phase_eq)
-                )
-            )
-        )
-    else:
-        comp_number_phase_eq = comp_number_phase_eq
-    # cf Methods.Machine.LamSquirrelCage.comp_surface_ring
-    if isinstance(comp_surface_ring, ImportError):
-        comp_surface_ring = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_surface_ring: "
-                    + str(comp_surface_ring)
-                )
-            )
-        )
-    else:
-        comp_surface_ring = comp_surface_ring
-    # cf Methods.Machine.LamSquirrelCage.comp_resistance_wind
-    if isinstance(comp_resistance_wind, ImportError):
-        comp_resistance_wind = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_resistance_wind: "
-                    + str(comp_resistance_wind)
-                )
-            )
-        )
-    else:
-        comp_resistance_wind = comp_resistance_wind
-    # cf Methods.Machine.LamSquirrelCage.get_name_phase
-    if isinstance(get_name_phase, ImportError):
-        get_name_phase = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method get_name_phase: "
-                    + str(get_name_phase)
-                )
-            )
-        )
-    else:
-        get_name_phase = get_name_phase
     # cf Methods.Machine.LamSquirrelCage.comp_angle_d_axis
     if isinstance(comp_angle_d_axis, ImportError):
         comp_angle_d_axis = property(
@@ -203,6 +134,41 @@ class LamSquirrelCage(LamSlotWind):
         )
     else:
         comp_angle_d_axis = comp_angle_d_axis
+    # cf Methods.Machine.LamSquirrelCage.comp_length_ring
+    if isinstance(comp_length_ring, ImportError):
+        comp_length_ring = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSquirrelCage method comp_length_ring: "
+                    + str(comp_length_ring)
+                )
+            )
+        )
+    else:
+        comp_length_ring = comp_length_ring
+    # cf Methods.Machine.LamSquirrelCage.comp_masses
+    if isinstance(comp_masses, ImportError):
+        comp_masses = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSquirrelCage method comp_masses: " + str(comp_masses)
+                )
+            )
+        )
+    else:
+        comp_masses = comp_masses
+    # cf Methods.Machine.LamSquirrelCage.comp_number_phase_eq
+    if isinstance(comp_number_phase_eq, ImportError):
+        comp_number_phase_eq = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSquirrelCage method comp_number_phase_eq: "
+                    + str(comp_number_phase_eq)
+                )
+            )
+        )
+    else:
+        comp_number_phase_eq = comp_number_phase_eq
     # cf Methods.Machine.LamSquirrelCage.comp_periodicity_spatial
     if isinstance(comp_periodicity_spatial, ImportError):
         comp_periodicity_spatial = property(
@@ -215,17 +181,51 @@ class LamSquirrelCage(LamSlotWind):
         )
     else:
         comp_periodicity_spatial = comp_periodicity_spatial
-    # cf Methods.Machine.LamSquirrelCage.comp_masses
-    if isinstance(comp_masses, ImportError):
-        comp_masses = property(
+    # cf Methods.Machine.LamSquirrelCage.comp_resistance_wind
+    if isinstance(comp_resistance_wind, ImportError):
+        comp_resistance_wind = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use LamSquirrelCage method comp_masses: " + str(comp_masses)
+                    "Can't use LamSquirrelCage method comp_resistance_wind: "
+                    + str(comp_resistance_wind)
                 )
             )
         )
     else:
-        comp_masses = comp_masses
+        comp_resistance_wind = comp_resistance_wind
+    # cf Methods.Machine.LamSquirrelCage.comp_surface_ring
+    if isinstance(comp_surface_ring, ImportError):
+        comp_surface_ring = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSquirrelCage method comp_surface_ring: "
+                    + str(comp_surface_ring)
+                )
+            )
+        )
+    else:
+        comp_surface_ring = comp_surface_ring
+    # cf Methods.Machine.LamSquirrelCage.get_name_phase
+    if isinstance(get_name_phase, ImportError):
+        get_name_phase = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSquirrelCage method get_name_phase: "
+                    + str(get_name_phase)
+                )
+            )
+        )
+    else:
+        get_name_phase = get_name_phase
+    # cf Methods.Machine.LamSquirrelCage.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSquirrelCage method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # cf Methods.Machine.LamSquirrelCage.plot_schematics_scr
     if isinstance(plot_schematics_scr, ImportError):
         plot_schematics_scr = property(

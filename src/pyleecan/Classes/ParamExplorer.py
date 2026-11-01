@@ -18,14 +18,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.ParamExplorer._set_setter import _set_setter
-except ImportError as error:
-    _set_setter = error
-
-try:
     from ..Methods.Simulation.ParamExplorer._set_getter import _set_getter
 except ImportError as error:
     _set_getter = error
+
+try:
+    from ..Methods.Simulation.ParamExplorer._set_setter import _set_setter
+except ImportError as error:
+    _set_setter = error
 
 try:
     from ..Methods.Simulation.ParamExplorer.get_desc import get_desc
@@ -48,17 +48,6 @@ class ParamExplorer(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.ParamExplorer._set_setter
-    if isinstance(_set_setter, ImportError):
-        _set_setter = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorer method _set_setter: " + str(_set_setter)
-                )
-            )
-        )
-    else:
-        _set_setter = _set_setter
     # cf Methods.Simulation.ParamExplorer._set_getter
     if isinstance(_set_getter, ImportError):
         _set_getter = property(
@@ -70,6 +59,17 @@ class ParamExplorer(FrozenClass):
         )
     else:
         _set_getter = _set_getter
+    # cf Methods.Simulation.ParamExplorer._set_setter
+    if isinstance(_set_setter, ImportError):
+        _set_setter = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorer method _set_setter: " + str(_set_setter)
+                )
+            )
+        )
+    else:
+        _set_setter = _set_setter
     # cf Methods.Simulation.ParamExplorer.get_desc
     if isinstance(get_desc, ImportError):
         get_desc = property(

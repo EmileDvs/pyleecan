@@ -18,9 +18,9 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Loss.Loss.run import run
+    from ..Methods.Loss.Loss.comp_all_losses import comp_all_losses
 except ImportError as error:
-    run = error
+    comp_all_losses = error
 
 try:
     from ..Methods.Loss.Loss.comp_axes import comp_axes
@@ -28,9 +28,9 @@ except ImportError as error:
     comp_axes = error
 
 try:
-    from ..Methods.Loss.Loss.comp_all_losses import comp_all_losses
+    from ..Methods.Loss.Loss.run import run
 except ImportError as error:
-    comp_all_losses = error
+    run = error
 
 
 from numpy import isnan
@@ -43,22 +43,6 @@ class Loss(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Loss.Loss.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(ImportError("Can't use Loss method run: " + str(run)))
-        )
-    else:
-        run = run
-    # cf Methods.Loss.Loss.comp_axes
-    if isinstance(comp_axes, ImportError):
-        comp_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Loss method comp_axes: " + str(comp_axes))
-            )
-        )
-    else:
-        comp_axes = comp_axes
     # cf Methods.Loss.Loss.comp_all_losses
     if isinstance(comp_all_losses, ImportError):
         comp_all_losses = property(
@@ -70,6 +54,22 @@ class Loss(FrozenClass):
         )
     else:
         comp_all_losses = comp_all_losses
+    # cf Methods.Loss.Loss.comp_axes
+    if isinstance(comp_axes, ImportError):
+        comp_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Loss method comp_axes: " + str(comp_axes))
+            )
+        )
+    else:
+        comp_axes = comp_axes
+    # cf Methods.Loss.Loss.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(ImportError("Can't use Loss method run: " + str(run)))
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

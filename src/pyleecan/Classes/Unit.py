@@ -28,14 +28,14 @@ except ImportError as error:
     get_m2 = error
 
 try:
-    from ..Methods.GUI_Option.Unit.get_m_name import get_m_name
-except ImportError as error:
-    get_m_name = error
-
-try:
     from ..Methods.GUI_Option.Unit.get_m2_name import get_m2_name
 except ImportError as error:
     get_m2_name = error
+
+try:
+    from ..Methods.GUI_Option.Unit.get_m_name import get_m_name
+except ImportError as error:
+    get_m_name = error
 
 try:
     from ..Methods.GUI_Option.Unit.set_m import set_m
@@ -75,15 +75,6 @@ class Unit(FrozenClass):
         )
     else:
         get_m2 = get_m2
-    # cf Methods.GUI_Option.Unit.get_m_name
-    if isinstance(get_m_name, ImportError):
-        get_m_name = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Unit method get_m_name: " + str(get_m_name))
-            )
-        )
-    else:
-        get_m_name = get_m_name
     # cf Methods.GUI_Option.Unit.get_m2_name
     if isinstance(get_m2_name, ImportError):
         get_m2_name = property(
@@ -93,6 +84,15 @@ class Unit(FrozenClass):
         )
     else:
         get_m2_name = get_m2_name
+    # cf Methods.GUI_Option.Unit.get_m_name
+    if isinstance(get_m_name, ImportError):
+        get_m_name = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Unit method get_m_name: " + str(get_m_name))
+            )
+        )
+    else:
+        get_m_name = get_m_name
     # cf Methods.GUI_Option.Unit.set_m
     if isinstance(set_m, ImportError):
         set_m = property(

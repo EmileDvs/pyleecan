@@ -18,6 +18,13 @@ from .Hole import Hole
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Slot.VentilationCirc._comp_point_coordinate import (
+        _comp_point_coordinate,
+    )
+except ImportError as error:
+    _comp_point_coordinate = error
+
+try:
     from ..Methods.Slot.VentilationCirc.build_geometry import build_geometry
 except ImportError as error:
     build_geometry = error
@@ -43,13 +50,6 @@ except ImportError as error:
     get_center = error
 
 try:
-    from ..Methods.Slot.VentilationCirc._comp_point_coordinate import (
-        _comp_point_coordinate,
-    )
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
     from ..Methods.Slot.VentilationCirc.plot_schematics import plot_schematics
 except ImportError as error:
     plot_schematics = error
@@ -65,6 +65,18 @@ class VentilationCirc(Hole):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Slot.VentilationCirc._comp_point_coordinate
+    if isinstance(_comp_point_coordinate, ImportError):
+        _comp_point_coordinate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VentilationCirc method _comp_point_coordinate: "
+                    + str(_comp_point_coordinate)
+                )
+            )
+        )
+    else:
+        _comp_point_coordinate = _comp_point_coordinate
     # cf Methods.Slot.VentilationCirc.build_geometry
     if isinstance(build_geometry, ImportError):
         build_geometry = property(
@@ -120,18 +132,6 @@ class VentilationCirc(Hole):
         )
     else:
         get_center = get_center
-    # cf Methods.Slot.VentilationCirc._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VentilationCirc method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
     # cf Methods.Slot.VentilationCirc.plot_schematics
     if isinstance(plot_schematics, ImportError):
         plot_schematics = property(

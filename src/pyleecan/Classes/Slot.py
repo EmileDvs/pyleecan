@@ -133,6 +133,16 @@ except ImportError as error:
     get_surface_wedges = error
 
 try:
+    from ..Methods.Slot.Slot.is_airgap_active import is_airgap_active
+except ImportError as error:
+    is_airgap_active = error
+
+try:
+    from ..Methods.Slot.Slot.is_full_pitch_active import is_full_pitch_active
+except ImportError as error:
+    is_full_pitch_active = error
+
+try:
     from ..Methods.Slot.Slot.is_outwards import is_outwards
 except ImportError as error:
     is_outwards = error
@@ -151,16 +161,6 @@ try:
     from ..Methods.Slot.Slot.set_label import set_label
 except ImportError as error:
     set_label = error
-
-try:
-    from ..Methods.Slot.Slot.is_airgap_active import is_airgap_active
-except ImportError as error:
-    is_airgap_active = error
-
-try:
-    from ..Methods.Slot.Slot.is_full_pitch_active import is_full_pitch_active
-except ImportError as error:
-    is_full_pitch_active = error
 
 
 from numpy import isnan
@@ -423,6 +423,29 @@ class Slot(FrozenClass):
         )
     else:
         get_surface_wedges = get_surface_wedges
+    # cf Methods.Slot.Slot.is_airgap_active
+    if isinstance(is_airgap_active, ImportError):
+        is_airgap_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot method is_airgap_active: " + str(is_airgap_active)
+                )
+            )
+        )
+    else:
+        is_airgap_active = is_airgap_active
+    # cf Methods.Slot.Slot.is_full_pitch_active
+    if isinstance(is_full_pitch_active, ImportError):
+        is_full_pitch_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot method is_full_pitch_active: "
+                    + str(is_full_pitch_active)
+                )
+            )
+        )
+    else:
+        is_full_pitch_active = is_full_pitch_active
     # cf Methods.Slot.Slot.is_outwards
     if isinstance(is_outwards, ImportError):
         is_outwards = property(
@@ -459,29 +482,6 @@ class Slot(FrozenClass):
         )
     else:
         set_label = set_label
-    # cf Methods.Slot.Slot.is_airgap_active
-    if isinstance(is_airgap_active, ImportError):
-        is_airgap_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Slot method is_airgap_active: " + str(is_airgap_active)
-                )
-            )
-        )
-    else:
-        is_airgap_active = is_airgap_active
-    # cf Methods.Slot.Slot.is_full_pitch_active
-    if isinstance(is_full_pitch_active, ImportError):
-        is_full_pitch_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Slot method is_full_pitch_active: "
-                    + str(is_full_pitch_active)
-                )
-            )
-        )
-    else:
-        is_full_pitch_active = is_full_pitch_active
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

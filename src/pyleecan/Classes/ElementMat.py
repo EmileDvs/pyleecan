@@ -33,14 +33,14 @@ except ImportError as error:
     get_node2element = error
 
 try:
-    from ..Methods.Mesh.ElementMat.is_exist import is_exist
-except ImportError as error:
-    is_exist = error
-
-try:
     from ..Methods.Mesh.ElementMat.interpolate import interpolate
 except ImportError as error:
     interpolate = error
+
+try:
+    from ..Methods.Mesh.ElementMat.is_exist import is_exist
+except ImportError as error:
+    is_exist = error
 
 
 from numpy import array, array_equal
@@ -89,15 +89,6 @@ class ElementMat(FrozenClass):
         )
     else:
         get_node2element = get_node2element
-    # cf Methods.Mesh.ElementMat.is_exist
-    if isinstance(is_exist, ImportError):
-        is_exist = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ElementMat method is_exist: " + str(is_exist))
-            )
-        )
-    else:
-        is_exist = is_exist
     # cf Methods.Mesh.ElementMat.interpolate
     if isinstance(interpolate, ImportError):
         interpolate = property(
@@ -109,6 +100,15 @@ class ElementMat(FrozenClass):
         )
     else:
         interpolate = interpolate
+    # cf Methods.Mesh.ElementMat.is_exist
+    if isinstance(is_exist, ImportError):
+        is_exist = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ElementMat method is_exist: " + str(is_exist))
+            )
+        )
+    else:
+        is_exist = is_exist
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -18,9 +18,9 @@ from .Rule import Rule
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Converter.RuleComplex.convert_to_P import convert_to_P
+    from ..Methods.Converter.RuleComplex._set_fct_name import _set_fct_name
 except ImportError as error:
-    convert_to_P = error
+    _set_fct_name = error
 
 try:
     from ..Methods.Converter.RuleComplex.convert_to_other import convert_to_other
@@ -28,9 +28,9 @@ except ImportError as error:
     convert_to_other = error
 
 try:
-    from ..Methods.Converter.RuleComplex._set_fct_name import _set_fct_name
+    from ..Methods.Converter.RuleComplex.convert_to_P import convert_to_P
 except ImportError as error:
-    _set_fct_name = error
+    convert_to_P = error
 
 
 from numpy import isnan
@@ -43,17 +43,17 @@ class RuleComplex(Rule):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Converter.RuleComplex.convert_to_P
-    if isinstance(convert_to_P, ImportError):
-        convert_to_P = property(
+    # cf Methods.Converter.RuleComplex._set_fct_name
+    if isinstance(_set_fct_name, ImportError):
+        _set_fct_name = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use RuleComplex method convert_to_P: " + str(convert_to_P)
+                    "Can't use RuleComplex method _set_fct_name: " + str(_set_fct_name)
                 )
             )
         )
     else:
-        convert_to_P = convert_to_P
+        _set_fct_name = _set_fct_name
     # cf Methods.Converter.RuleComplex.convert_to_other
     if isinstance(convert_to_other, ImportError):
         convert_to_other = property(
@@ -66,17 +66,17 @@ class RuleComplex(Rule):
         )
     else:
         convert_to_other = convert_to_other
-    # cf Methods.Converter.RuleComplex._set_fct_name
-    if isinstance(_set_fct_name, ImportError):
-        _set_fct_name = property(
+    # cf Methods.Converter.RuleComplex.convert_to_P
+    if isinstance(convert_to_P, ImportError):
+        convert_to_P = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use RuleComplex method _set_fct_name: " + str(_set_fct_name)
+                    "Can't use RuleComplex method convert_to_P: " + str(convert_to_P)
                 )
             )
         )
     else:
-        _set_fct_name = _set_fct_name
+        convert_to_P = convert_to_P
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

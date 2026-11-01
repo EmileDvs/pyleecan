@@ -18,26 +18,6 @@ from .OptiGenAlg import OptiGenAlg
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.solve import solve
-except ImportError as error:
-    solve = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.mutate import mutate
-except ImportError as error:
-    mutate = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.cross import cross
-except ImportError as error:
-    cross = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox import create_toolbox
-except ImportError as error:
-    create_toolbox = error
-
-try:
     from ..Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input import (
         check_optimization_input,
     )
@@ -45,14 +25,34 @@ except ImportError as error:
     check_optimization_input = error
 
 try:
+    from ..Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox import create_toolbox
+except ImportError as error:
+    create_toolbox = error
+
+try:
+    from ..Methods.Optimization.OptiGenAlgNsga2Deap.cross import cross
+except ImportError as error:
+    cross = error
+
+try:
     from ..Methods.Optimization.OptiGenAlgNsga2Deap.delete_toolbox import delete_toolbox
 except ImportError as error:
     delete_toolbox = error
 
 try:
+    from ..Methods.Optimization.OptiGenAlgNsga2Deap.mutate import mutate
+except ImportError as error:
+    mutate = error
+
+try:
     from ..Methods.Optimization.OptiGenAlgNsga2Deap.plot_pareto import plot_pareto
 except ImportError as error:
     plot_pareto = error
+
+try:
+    from ..Methods.Optimization.OptiGenAlgNsga2Deap.solve import solve
+except ImportError as error:
+    solve = error
 
 
 from ntpath import basename
@@ -77,47 +77,6 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Optimization.OptiGenAlgNsga2Deap.solve
-    if isinstance(solve, ImportError):
-        solve = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OptiGenAlgNsga2Deap method solve: " + str(solve))
-            )
-        )
-    else:
-        solve = solve
-    # cf Methods.Optimization.OptiGenAlgNsga2Deap.mutate
-    if isinstance(mutate, ImportError):
-        mutate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiGenAlgNsga2Deap method mutate: " + str(mutate)
-                )
-            )
-        )
-    else:
-        mutate = mutate
-    # cf Methods.Optimization.OptiGenAlgNsga2Deap.cross
-    if isinstance(cross, ImportError):
-        cross = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OptiGenAlgNsga2Deap method cross: " + str(cross))
-            )
-        )
-    else:
-        cross = cross
-    # cf Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox
-    if isinstance(create_toolbox, ImportError):
-        create_toolbox = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiGenAlgNsga2Deap method create_toolbox: "
-                    + str(create_toolbox)
-                )
-            )
-        )
-    else:
-        create_toolbox = create_toolbox
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input
     if isinstance(check_optimization_input, ImportError):
         check_optimization_input = property(
@@ -130,6 +89,27 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         )
     else:
         check_optimization_input = check_optimization_input
+    # cf Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox
+    if isinstance(create_toolbox, ImportError):
+        create_toolbox = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OptiGenAlgNsga2Deap method create_toolbox: "
+                    + str(create_toolbox)
+                )
+            )
+        )
+    else:
+        create_toolbox = create_toolbox
+    # cf Methods.Optimization.OptiGenAlgNsga2Deap.cross
+    if isinstance(cross, ImportError):
+        cross = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OptiGenAlgNsga2Deap method cross: " + str(cross))
+            )
+        )
+    else:
+        cross = cross
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.delete_toolbox
     if isinstance(delete_toolbox, ImportError):
         delete_toolbox = property(
@@ -142,6 +122,17 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         )
     else:
         delete_toolbox = delete_toolbox
+    # cf Methods.Optimization.OptiGenAlgNsga2Deap.mutate
+    if isinstance(mutate, ImportError):
+        mutate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OptiGenAlgNsga2Deap method mutate: " + str(mutate)
+                )
+            )
+        )
+    else:
+        mutate = mutate
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.plot_pareto
     if isinstance(plot_pareto, ImportError):
         plot_pareto = property(
@@ -154,6 +145,15 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         )
     else:
         plot_pareto = plot_pareto
+    # cf Methods.Optimization.OptiGenAlgNsga2Deap.solve
+    if isinstance(solve, ImportError):
+        solve = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OptiGenAlgNsga2Deap method solve: " + str(solve))
+            )
+        )
+    else:
+        solve = solve
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

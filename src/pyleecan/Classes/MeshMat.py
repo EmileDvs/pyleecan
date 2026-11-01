@@ -18,24 +18,34 @@ from .Mesh import Mesh
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Mesh.MeshMat.get_node_coordinate import get_node_coordinate
+    from ..Methods.Mesh.MeshMat.add_element import add_element
 except ImportError as error:
-    get_node_coordinate = error
+    add_element = error
 
 try:
-    from ..Methods.Mesh.MeshMat.get_node_indice import get_node_indice
+    from ..Methods.Mesh.MeshMat.clear_element import clear_element
 except ImportError as error:
-    get_node_indice = error
+    clear_element = error
+
+try:
+    from ..Methods.Mesh.MeshMat.clear_node import clear_node
+except ImportError as error:
+    clear_node = error
+
+try:
+    from ..Methods.Mesh.MeshMat.convert import convert
+except ImportError as error:
+    convert = error
+
+try:
+    from ..Methods.Mesh.MeshMat.find_element import find_element
+except ImportError as error:
+    find_element = error
 
 try:
     from ..Methods.Mesh.MeshMat.get_element import get_element
 except ImportError as error:
     get_element = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_mesh_pv import get_mesh_pv
-except ImportError as error:
-    get_mesh_pv = error
 
 try:
     from ..Methods.Mesh.MeshMat.get_element_area import get_element_area
@@ -48,24 +58,29 @@ except ImportError as error:
     get_element_coordinate = error
 
 try:
+    from ..Methods.Mesh.MeshMat.get_element_nb import get_element_nb
+except ImportError as error:
+    get_element_nb = error
+
+try:
+    from ..Methods.Mesh.MeshMat.get_mesh_pv import get_mesh_pv
+except ImportError as error:
+    get_mesh_pv = error
+
+try:
     from ..Methods.Mesh.MeshMat.get_node2element import get_node2element
 except ImportError as error:
     get_node2element = error
 
 try:
-    from ..Methods.Mesh.MeshMat.add_element import add_element
+    from ..Methods.Mesh.MeshMat.get_node_coordinate import get_node_coordinate
 except ImportError as error:
-    add_element = error
+    get_node_coordinate = error
 
 try:
-    from ..Methods.Mesh.MeshMat.renum import renum
+    from ..Methods.Mesh.MeshMat.get_node_indice import get_node_indice
 except ImportError as error:
-    renum = error
-
-try:
-    from ..Methods.Mesh.MeshMat.find_element import find_element
-except ImportError as error:
-    find_element = error
+    get_node_indice = error
 
 try:
     from ..Methods.Mesh.MeshMat.interface import interface
@@ -73,24 +88,9 @@ except ImportError as error:
     interface = error
 
 try:
-    from ..Methods.Mesh.MeshMat.clear_node import clear_node
+    from ..Methods.Mesh.MeshMat.renum import renum
 except ImportError as error:
-    clear_node = error
-
-try:
-    from ..Methods.Mesh.MeshMat.clear_element import clear_element
-except ImportError as error:
-    clear_element = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_element_nb import get_element_nb
-except ImportError as error:
-    get_element_nb = error
-
-try:
-    from ..Methods.Mesh.MeshMat.convert import convert
-except ImportError as error:
-    convert = error
+    renum = error
 
 try:
     from ..Methods.Mesh.MeshMat.save_vtk import save_vtk
@@ -108,29 +108,55 @@ class MeshMat(Mesh):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Mesh.MeshMat.get_node_coordinate
-    if isinstance(get_node_coordinate, ImportError):
-        get_node_coordinate = property(
+    # cf Methods.Mesh.MeshMat.add_element
+    if isinstance(add_element, ImportError):
+        add_element = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshMat method add_element: " + str(add_element))
+            )
+        )
+    else:
+        add_element = add_element
+    # cf Methods.Mesh.MeshMat.clear_element
+    if isinstance(clear_element, ImportError):
+        clear_element = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MeshMat method get_node_coordinate: "
-                    + str(get_node_coordinate)
+                    "Can't use MeshMat method clear_element: " + str(clear_element)
                 )
             )
         )
     else:
-        get_node_coordinate = get_node_coordinate
-    # cf Methods.Mesh.MeshMat.get_node_indice
-    if isinstance(get_node_indice, ImportError):
-        get_node_indice = property(
+        clear_element = clear_element
+    # cf Methods.Mesh.MeshMat.clear_node
+    if isinstance(clear_node, ImportError):
+        clear_node = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshMat method clear_node: " + str(clear_node))
+            )
+        )
+    else:
+        clear_node = clear_node
+    # cf Methods.Mesh.MeshMat.convert
+    if isinstance(convert, ImportError):
+        convert = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshMat method convert: " + str(convert))
+            )
+        )
+    else:
+        convert = convert
+    # cf Methods.Mesh.MeshMat.find_element
+    if isinstance(find_element, ImportError):
+        find_element = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MeshMat method get_node_indice: " + str(get_node_indice)
+                    "Can't use MeshMat method find_element: " + str(find_element)
                 )
             )
         )
     else:
-        get_node_indice = get_node_indice
+        find_element = find_element
     # cf Methods.Mesh.MeshMat.get_element
     if isinstance(get_element, ImportError):
         get_element = property(
@@ -140,15 +166,6 @@ class MeshMat(Mesh):
         )
     else:
         get_element = get_element
-    # cf Methods.Mesh.MeshMat.get_mesh_pv
-    if isinstance(get_mesh_pv, ImportError):
-        get_mesh_pv = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method get_mesh_pv: " + str(get_mesh_pv))
-            )
-        )
-    else:
-        get_mesh_pv = get_mesh_pv
     # cf Methods.Mesh.MeshMat.get_element_area
     if isinstance(get_element_area, ImportError):
         get_element_area = property(
@@ -173,6 +190,26 @@ class MeshMat(Mesh):
         )
     else:
         get_element_coordinate = get_element_coordinate
+    # cf Methods.Mesh.MeshMat.get_element_nb
+    if isinstance(get_element_nb, ImportError):
+        get_element_nb = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshMat method get_element_nb: " + str(get_element_nb)
+                )
+            )
+        )
+    else:
+        get_element_nb = get_element_nb
+    # cf Methods.Mesh.MeshMat.get_mesh_pv
+    if isinstance(get_mesh_pv, ImportError):
+        get_mesh_pv = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshMat method get_mesh_pv: " + str(get_mesh_pv))
+            )
+        )
+    else:
+        get_mesh_pv = get_mesh_pv
     # cf Methods.Mesh.MeshMat.get_node2element
     if isinstance(get_node2element, ImportError):
         get_node2element = property(
@@ -185,35 +222,29 @@ class MeshMat(Mesh):
         )
     else:
         get_node2element = get_node2element
-    # cf Methods.Mesh.MeshMat.add_element
-    if isinstance(add_element, ImportError):
-        add_element = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method add_element: " + str(add_element))
-            )
-        )
-    else:
-        add_element = add_element
-    # cf Methods.Mesh.MeshMat.renum
-    if isinstance(renum, ImportError):
-        renum = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method renum: " + str(renum))
-            )
-        )
-    else:
-        renum = renum
-    # cf Methods.Mesh.MeshMat.find_element
-    if isinstance(find_element, ImportError):
-        find_element = property(
+    # cf Methods.Mesh.MeshMat.get_node_coordinate
+    if isinstance(get_node_coordinate, ImportError):
+        get_node_coordinate = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MeshMat method find_element: " + str(find_element)
+                    "Can't use MeshMat method get_node_coordinate: "
+                    + str(get_node_coordinate)
                 )
             )
         )
     else:
-        find_element = find_element
+        get_node_coordinate = get_node_coordinate
+    # cf Methods.Mesh.MeshMat.get_node_indice
+    if isinstance(get_node_indice, ImportError):
+        get_node_indice = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshMat method get_node_indice: " + str(get_node_indice)
+                )
+            )
+        )
+    else:
+        get_node_indice = get_node_indice
     # cf Methods.Mesh.MeshMat.interface
     if isinstance(interface, ImportError):
         interface = property(
@@ -223,46 +254,15 @@ class MeshMat(Mesh):
         )
     else:
         interface = interface
-    # cf Methods.Mesh.MeshMat.clear_node
-    if isinstance(clear_node, ImportError):
-        clear_node = property(
+    # cf Methods.Mesh.MeshMat.renum
+    if isinstance(renum, ImportError):
+        renum = property(
             fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method clear_node: " + str(clear_node))
+                ImportError("Can't use MeshMat method renum: " + str(renum))
             )
         )
     else:
-        clear_node = clear_node
-    # cf Methods.Mesh.MeshMat.clear_element
-    if isinstance(clear_element, ImportError):
-        clear_element = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method clear_element: " + str(clear_element)
-                )
-            )
-        )
-    else:
-        clear_element = clear_element
-    # cf Methods.Mesh.MeshMat.get_element_nb
-    if isinstance(get_element_nb, ImportError):
-        get_element_nb = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method get_element_nb: " + str(get_element_nb)
-                )
-            )
-        )
-    else:
-        get_element_nb = get_element_nb
-    # cf Methods.Mesh.MeshMat.convert
-    if isinstance(convert, ImportError):
-        convert = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method convert: " + str(convert))
-            )
-        )
-    else:
-        convert = convert
+        renum = renum
     # cf Methods.Mesh.MeshMat.save_vtk
     if isinstance(save_vtk, ImportError):
         save_vtk = property(

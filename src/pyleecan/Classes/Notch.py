@@ -18,6 +18,11 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Machine.Notch.get_label import get_label
+except ImportError as error:
+    get_label = error
+
+try:
     from ..Methods.Machine.Notch.get_Rbo import get_Rbo
 except ImportError as error:
     get_Rbo = error
@@ -28,19 +33,14 @@ except ImportError as error:
     get_Ryoke = error
 
 try:
-    from ..Methods.Machine.Notch.is_outwards import is_outwards
-except ImportError as error:
-    is_outwards = error
-
-try:
     from ..Methods.Machine.Notch.has_key import has_key
 except ImportError as error:
     has_key = error
 
 try:
-    from ..Methods.Machine.Notch.get_label import get_label
+    from ..Methods.Machine.Notch.is_outwards import is_outwards
 except ImportError as error:
-    get_label = error
+    is_outwards = error
 
 
 from numpy import isnan
@@ -52,6 +52,15 @@ class Notch(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Machine.Notch.get_label
+    if isinstance(get_label, ImportError):
+        get_label = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Notch method get_label: " + str(get_label))
+            )
+        )
+    else:
+        get_label = get_label
     # cf Methods.Machine.Notch.get_Rbo
     if isinstance(get_Rbo, ImportError):
         get_Rbo = property(
@@ -70,15 +79,6 @@ class Notch(FrozenClass):
         )
     else:
         get_Ryoke = get_Ryoke
-    # cf Methods.Machine.Notch.is_outwards
-    if isinstance(is_outwards, ImportError):
-        is_outwards = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Notch method is_outwards: " + str(is_outwards))
-            )
-        )
-    else:
-        is_outwards = is_outwards
     # cf Methods.Machine.Notch.has_key
     if isinstance(has_key, ImportError):
         has_key = property(
@@ -88,15 +88,15 @@ class Notch(FrozenClass):
         )
     else:
         has_key = has_key
-    # cf Methods.Machine.Notch.get_label
-    if isinstance(get_label, ImportError):
-        get_label = property(
+    # cf Methods.Machine.Notch.is_outwards
+    if isinstance(is_outwards, ImportError):
+        is_outwards = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Notch method get_label: " + str(get_label))
+                ImportError("Can't use Notch method is_outwards: " + str(is_outwards))
             )
         )
     else:
-        get_label = get_label
+        is_outwards = is_outwards
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

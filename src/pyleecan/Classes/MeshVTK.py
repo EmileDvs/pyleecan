@@ -18,6 +18,21 @@ from .Mesh import Mesh
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Mesh.MeshVTK.convert import convert
+except ImportError as error:
+    convert = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_element import get_element
+except ImportError as error:
+    get_element = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_element_area import get_element_area
+except ImportError as error:
+    get_element_area = error
+
+try:
     from ..Methods.Mesh.MeshVTK.get_mesh_pv import get_mesh_pv
 except ImportError as error:
     get_mesh_pv = error
@@ -28,14 +43,14 @@ except ImportError as error:
     get_node_coordinate = error
 
 try:
-    from ..Methods.Mesh.MeshVTK.get_element import get_element
-except ImportError as error:
-    get_element = error
-
-try:
     from ..Methods.Mesh.MeshVTK.get_normals import get_normals
 except ImportError as error:
     get_normals = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_path import get_path
+except ImportError as error:
+    get_path = error
 
 try:
     from ..Methods.Mesh.MeshVTK.get_surf import get_surf
@@ -43,24 +58,9 @@ except ImportError as error:
     get_surf = error
 
 try:
-    from ..Methods.Mesh.MeshVTK.get_element_area import get_element_area
-except ImportError as error:
-    get_element_area = error
-
-try:
-    from ..Methods.Mesh.MeshVTK.convert import convert
-except ImportError as error:
-    convert = error
-
-try:
     from ..Methods.Mesh.MeshVTK.perm_coord import perm_coord
 except ImportError as error:
     perm_coord = error
-
-try:
-    from ..Methods.Mesh.MeshVTK.get_path import get_path
-except ImportError as error:
-    get_path = error
 
 try:
     from ..Methods.Mesh.MeshVTK.save_vtk import save_vtk
@@ -93,6 +93,36 @@ class MeshVTK(Mesh):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Mesh.MeshVTK.convert
+    if isinstance(convert, ImportError):
+        convert = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method convert: " + str(convert))
+            )
+        )
+    else:
+        convert = convert
+    # cf Methods.Mesh.MeshVTK.get_element
+    if isinstance(get_element, ImportError):
+        get_element = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method get_element: " + str(get_element))
+            )
+        )
+    else:
+        get_element = get_element
+    # cf Methods.Mesh.MeshVTK.get_element_area
+    if isinstance(get_element_area, ImportError):
+        get_element_area = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshVTK method get_element_area: "
+                    + str(get_element_area)
+                )
+            )
+        )
+    else:
+        get_element_area = get_element_area
     # cf Methods.Mesh.MeshVTK.get_mesh_pv
     if isinstance(get_mesh_pv, ImportError):
         get_mesh_pv = property(
@@ -114,15 +144,6 @@ class MeshVTK(Mesh):
         )
     else:
         get_node_coordinate = get_node_coordinate
-    # cf Methods.Mesh.MeshVTK.get_element
-    if isinstance(get_element, ImportError):
-        get_element = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshVTK method get_element: " + str(get_element))
-            )
-        )
-    else:
-        get_element = get_element
     # cf Methods.Mesh.MeshVTK.get_normals
     if isinstance(get_normals, ImportError):
         get_normals = property(
@@ -132,45 +153,6 @@ class MeshVTK(Mesh):
         )
     else:
         get_normals = get_normals
-    # cf Methods.Mesh.MeshVTK.get_surf
-    if isinstance(get_surf, ImportError):
-        get_surf = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshVTK method get_surf: " + str(get_surf))
-            )
-        )
-    else:
-        get_surf = get_surf
-    # cf Methods.Mesh.MeshVTK.get_element_area
-    if isinstance(get_element_area, ImportError):
-        get_element_area = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshVTK method get_element_area: "
-                    + str(get_element_area)
-                )
-            )
-        )
-    else:
-        get_element_area = get_element_area
-    # cf Methods.Mesh.MeshVTK.convert
-    if isinstance(convert, ImportError):
-        convert = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshVTK method convert: " + str(convert))
-            )
-        )
-    else:
-        convert = convert
-    # cf Methods.Mesh.MeshVTK.perm_coord
-    if isinstance(perm_coord, ImportError):
-        perm_coord = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshVTK method perm_coord: " + str(perm_coord))
-            )
-        )
-    else:
-        perm_coord = perm_coord
     # cf Methods.Mesh.MeshVTK.get_path
     if isinstance(get_path, ImportError):
         get_path = property(
@@ -180,6 +162,24 @@ class MeshVTK(Mesh):
         )
     else:
         get_path = get_path
+    # cf Methods.Mesh.MeshVTK.get_surf
+    if isinstance(get_surf, ImportError):
+        get_surf = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method get_surf: " + str(get_surf))
+            )
+        )
+    else:
+        get_surf = get_surf
+    # cf Methods.Mesh.MeshVTK.perm_coord
+    if isinstance(perm_coord, ImportError):
+        perm_coord = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method perm_coord: " + str(perm_coord))
+            )
+        )
+    else:
+        perm_coord = perm_coord
     # cf Methods.Mesh.MeshVTK.save_vtk
     if isinstance(save_vtk, ImportError):
         save_vtk = property(
@@ -548,10 +548,6 @@ class MeshVTK(Mesh):
         """setter of mesh"""
         if value == -1:
             value = vtkPointSet()
-        # this throws an error for now because pyvista.read dows not return vtkPointSet
-        # for a .vtk file but a p..UnstructuredGrid, which can be initialized by a vtkPointSet
-        # FIXME: Need to update type of mesh attribute according to pyvista and vtk
-        # versions in the future.
         check_var("mesh", value, "vtkPointSet")
         self._mesh = value
 

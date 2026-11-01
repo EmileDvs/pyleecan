@@ -18,9 +18,9 @@ from .Notch import Notch
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.NotchEvenDist.comp_surface import comp_surface
+    from ..Methods.Machine.NotchEvenDist.build_geometry_key import build_geometry_key
 except ImportError as error:
-    comp_surface = error
+    build_geometry_key = error
 
 try:
     from ..Methods.Machine.NotchEvenDist.comp_periodicity_spatial import (
@@ -30,19 +30,19 @@ except ImportError as error:
     comp_periodicity_spatial = error
 
 try:
-    from ..Methods.Machine.NotchEvenDist.get_notch_desc_list import get_notch_desc_list
+    from ..Methods.Machine.NotchEvenDist.comp_surface import comp_surface
 except ImportError as error:
-    get_notch_desc_list = error
-
-try:
-    from ..Methods.Machine.NotchEvenDist.build_geometry_key import build_geometry_key
-except ImportError as error:
-    build_geometry_key = error
+    comp_surface = error
 
 try:
     from ..Methods.Machine.NotchEvenDist.get_key_Ox_radius import get_key_Ox_radius
 except ImportError as error:
     get_key_Ox_radius = error
+
+try:
+    from ..Methods.Machine.NotchEvenDist.get_notch_desc_list import get_notch_desc_list
+except ImportError as error:
+    get_notch_desc_list = error
 
 
 from numpy import isnan
@@ -55,41 +55,6 @@ class NotchEvenDist(Notch):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.NotchEvenDist.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use NotchEvenDist method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
-    # cf Methods.Machine.NotchEvenDist.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use NotchEvenDist method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
-    # cf Methods.Machine.NotchEvenDist.get_notch_desc_list
-    if isinstance(get_notch_desc_list, ImportError):
-        get_notch_desc_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use NotchEvenDist method get_notch_desc_list: "
-                    + str(get_notch_desc_list)
-                )
-            )
-        )
-    else:
-        get_notch_desc_list = get_notch_desc_list
     # cf Methods.Machine.NotchEvenDist.build_geometry_key
     if isinstance(build_geometry_key, ImportError):
         build_geometry_key = property(
@@ -102,6 +67,29 @@ class NotchEvenDist(Notch):
         )
     else:
         build_geometry_key = build_geometry_key
+    # cf Methods.Machine.NotchEvenDist.comp_periodicity_spatial
+    if isinstance(comp_periodicity_spatial, ImportError):
+        comp_periodicity_spatial = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method comp_periodicity_spatial: "
+                    + str(comp_periodicity_spatial)
+                )
+            )
+        )
+    else:
+        comp_periodicity_spatial = comp_periodicity_spatial
+    # cf Methods.Machine.NotchEvenDist.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Machine.NotchEvenDist.get_key_Ox_radius
     if isinstance(get_key_Ox_radius, ImportError):
         get_key_Ox_radius = property(
@@ -114,6 +102,18 @@ class NotchEvenDist(Notch):
         )
     else:
         get_key_Ox_radius = get_key_Ox_radius
+    # cf Methods.Machine.NotchEvenDist.get_notch_desc_list
+    if isinstance(get_notch_desc_list, ImportError):
+        get_notch_desc_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method get_notch_desc_list: "
+                    + str(get_notch_desc_list)
+                )
+            )
+        )
+    else:
+        get_notch_desc_list = get_notch_desc_list
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

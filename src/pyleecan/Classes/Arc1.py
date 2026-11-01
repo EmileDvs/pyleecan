@@ -83,14 +83,14 @@ except ImportError as error:
     split_half = error
 
 try:
-    from ..Methods.Geometry.Arc1.translate import translate
-except ImportError as error:
-    translate = error
-
-try:
     from ..Methods.Geometry.Arc1.split_point import split_point
 except ImportError as error:
     split_point = error
+
+try:
+    from ..Methods.Geometry.Arc1.translate import translate
+except ImportError as error:
+    translate = error
 
 
 from numpy import isnan
@@ -220,15 +220,6 @@ class Arc1(Arc):
         )
     else:
         split_half = split_half
-    # cf Methods.Geometry.Arc1.translate
-    if isinstance(translate, ImportError):
-        translate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method translate: " + str(translate))
-            )
-        )
-    else:
-        translate = translate
     # cf Methods.Geometry.Arc1.split_point
     if isinstance(split_point, ImportError):
         split_point = property(
@@ -238,6 +229,15 @@ class Arc1(Arc):
         )
     else:
         split_point = split_point
+    # cf Methods.Geometry.Arc1.translate
+    if isinstance(translate, ImportError):
+        translate = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Arc1 method translate: " + str(translate))
+            )
+        )
+    else:
+        translate = translate
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

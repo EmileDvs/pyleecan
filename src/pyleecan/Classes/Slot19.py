@@ -33,14 +33,14 @@ except ImportError as error:
     check = error
 
 try:
-    from ..Methods.Slot.Slot19.comp_angle_opening import comp_angle_opening
-except ImportError as error:
-    comp_angle_opening = error
-
-try:
     from ..Methods.Slot.Slot19.comp_angle_bottom import comp_angle_bottom
 except ImportError as error:
     comp_angle_bottom = error
+
+try:
+    from ..Methods.Slot.Slot19.comp_angle_opening import comp_angle_opening
+except ImportError as error:
+    comp_angle_opening = error
 
 try:
     from ..Methods.Slot.Slot19.comp_height import comp_height
@@ -96,18 +96,6 @@ class Slot19(Slot):
         )
     else:
         check = check
-    # cf Methods.Slot.Slot19.comp_angle_opening
-    if isinstance(comp_angle_opening, ImportError):
-        comp_angle_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Slot19 method comp_angle_opening: "
-                    + str(comp_angle_opening)
-                )
-            )
-        )
-    else:
-        comp_angle_opening = comp_angle_opening
     # cf Methods.Slot.Slot19.comp_angle_bottom
     if isinstance(comp_angle_bottom, ImportError):
         comp_angle_bottom = property(
@@ -120,6 +108,18 @@ class Slot19(Slot):
         )
     else:
         comp_angle_bottom = comp_angle_bottom
+    # cf Methods.Slot.Slot19.comp_angle_opening
+    if isinstance(comp_angle_opening, ImportError):
+        comp_angle_opening = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot19 method comp_angle_opening: "
+                    + str(comp_angle_opening)
+                )
+            )
+        )
+    else:
+        comp_angle_opening = comp_angle_opening
     # cf Methods.Slot.Slot19.comp_height
     if isinstance(comp_height, ImportError):
         comp_height = property(

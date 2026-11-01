@@ -1,12 +1,12 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-,
-Package,Inherit,Methods,Constant Name,Constant Value,Class description
-Geometry,Line,draw_FEMM,VERSION,1,Abstract class for arc
-,,intersect_line,,,
-,,is_on_line,,,
-,,split_line,,,
-,,comp_distance,,,
-,,plot,,,
-,,comp_maxseg,,,
-,,intersect_obj,,,
-,,is_arc,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+Geometry,Line,comp_distance,VERSION,1,Abstract class for arc,,,
+,,comp_maxseg,,,,,,
+,,draw_FEMM,,,,,,
+,,intersect_line,,,,,,
+,,intersect_obj,,,,,,
+,,is_arc,,,,,,
+,,is_on_line,,,,,,
+,,plot,,,,,,
+,,split_line,,,,,,

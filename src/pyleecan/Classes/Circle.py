@@ -28,6 +28,11 @@ except ImportError as error:
     comp_length = error
 
 try:
+    from ..Methods.Geometry.Circle.comp_point_ref import comp_point_ref
+except ImportError as error:
+    comp_point_ref = error
+
+try:
     from ..Methods.Geometry.Circle.comp_surface import comp_surface
 except ImportError as error:
     comp_surface = error
@@ -56,11 +61,6 @@ try:
     from ..Methods.Geometry.Circle.translate import translate
 except ImportError as error:
     translate = error
-
-try:
-    from ..Methods.Geometry.Circle.comp_point_ref import comp_point_ref
-except ImportError as error:
-    comp_point_ref = error
 
 
 from numpy import isnan
@@ -91,6 +91,17 @@ class Circle(Surface):
         )
     else:
         comp_length = comp_length
+    # cf Methods.Geometry.Circle.comp_point_ref
+    if isinstance(comp_point_ref, ImportError):
+        comp_point_ref = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Circle method comp_point_ref: " + str(comp_point_ref)
+                )
+            )
+        )
+    else:
+        comp_point_ref = comp_point_ref
     # cf Methods.Geometry.Circle.comp_surface
     if isinstance(comp_surface, ImportError):
         comp_surface = property(
@@ -147,17 +158,6 @@ class Circle(Surface):
         )
     else:
         translate = translate
-    # cf Methods.Geometry.Circle.comp_point_ref
-    if isinstance(comp_point_ref, ImportError):
-        comp_point_ref = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Circle method comp_point_ref: " + str(comp_point_ref)
-                )
-            )
-        )
-    else:
-        comp_point_ref = comp_point_ref
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

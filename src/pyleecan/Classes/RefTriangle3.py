@@ -18,19 +18,14 @@ from .RefElement import RefElement
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Mesh.RefTriangle3.shape_function import shape_function
+    from ..Methods.Mesh.RefTriangle3.get_element_area import get_element_area
 except ImportError as error:
-    shape_function = error
+    get_element_area = error
 
 try:
-    from ..Methods.Mesh.RefTriangle3.jacobian import jacobian
+    from ..Methods.Mesh.RefTriangle3.get_normal import get_normal
 except ImportError as error:
-    jacobian = error
-
-try:
-    from ..Methods.Mesh.RefTriangle3.grad_shape_function import grad_shape_function
-except ImportError as error:
-    grad_shape_function = error
+    get_normal = error
 
 try:
     from ..Methods.Mesh.RefTriangle3.get_real_point import get_real_point
@@ -43,19 +38,24 @@ except ImportError as error:
     get_ref_point = error
 
 try:
+    from ..Methods.Mesh.RefTriangle3.grad_shape_function import grad_shape_function
+except ImportError as error:
+    grad_shape_function = error
+
+try:
     from ..Methods.Mesh.RefTriangle3.is_inside import is_inside
 except ImportError as error:
     is_inside = error
 
 try:
-    from ..Methods.Mesh.RefTriangle3.get_element_area import get_element_area
+    from ..Methods.Mesh.RefTriangle3.jacobian import jacobian
 except ImportError as error:
-    get_element_area = error
+    jacobian = error
 
 try:
-    from ..Methods.Mesh.RefTriangle3.get_normal import get_normal
+    from ..Methods.Mesh.RefTriangle3.shape_function import shape_function
 except ImportError as error:
-    get_normal = error
+    shape_function = error
 
 
 from numpy import isnan
@@ -68,73 +68,6 @@ class RefTriangle3(RefElement):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Mesh.RefTriangle3.shape_function
-    if isinstance(shape_function, ImportError):
-        shape_function = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RefTriangle3 method shape_function: "
-                    + str(shape_function)
-                )
-            )
-        )
-    else:
-        shape_function = shape_function
-    # cf Methods.Mesh.RefTriangle3.jacobian
-    if isinstance(jacobian, ImportError):
-        jacobian = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use RefTriangle3 method jacobian: " + str(jacobian))
-            )
-        )
-    else:
-        jacobian = jacobian
-    # cf Methods.Mesh.RefTriangle3.grad_shape_function
-    if isinstance(grad_shape_function, ImportError):
-        grad_shape_function = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RefTriangle3 method grad_shape_function: "
-                    + str(grad_shape_function)
-                )
-            )
-        )
-    else:
-        grad_shape_function = grad_shape_function
-    # cf Methods.Mesh.RefTriangle3.get_real_point
-    if isinstance(get_real_point, ImportError):
-        get_real_point = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RefTriangle3 method get_real_point: "
-                    + str(get_real_point)
-                )
-            )
-        )
-    else:
-        get_real_point = get_real_point
-    # cf Methods.Mesh.RefTriangle3.get_ref_point
-    if isinstance(get_ref_point, ImportError):
-        get_ref_point = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RefTriangle3 method get_ref_point: " + str(get_ref_point)
-                )
-            )
-        )
-    else:
-        get_ref_point = get_ref_point
-    # cf Methods.Mesh.RefTriangle3.is_inside
-    if isinstance(is_inside, ImportError):
-        is_inside = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RefTriangle3 method is_inside: " + str(is_inside)
-                )
-            )
-        )
-    else:
-        is_inside = is_inside
     # cf Methods.Mesh.RefTriangle3.get_element_area
     if isinstance(get_element_area, ImportError):
         get_element_area = property(
@@ -158,6 +91,73 @@ class RefTriangle3(RefElement):
         )
     else:
         get_normal = get_normal
+    # cf Methods.Mesh.RefTriangle3.get_real_point
+    if isinstance(get_real_point, ImportError):
+        get_real_point = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method get_real_point: "
+                    + str(get_real_point)
+                )
+            )
+        )
+    else:
+        get_real_point = get_real_point
+    # cf Methods.Mesh.RefTriangle3.get_ref_point
+    if isinstance(get_ref_point, ImportError):
+        get_ref_point = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method get_ref_point: " + str(get_ref_point)
+                )
+            )
+        )
+    else:
+        get_ref_point = get_ref_point
+    # cf Methods.Mesh.RefTriangle3.grad_shape_function
+    if isinstance(grad_shape_function, ImportError):
+        grad_shape_function = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method grad_shape_function: "
+                    + str(grad_shape_function)
+                )
+            )
+        )
+    else:
+        grad_shape_function = grad_shape_function
+    # cf Methods.Mesh.RefTriangle3.is_inside
+    if isinstance(is_inside, ImportError):
+        is_inside = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method is_inside: " + str(is_inside)
+                )
+            )
+        )
+    else:
+        is_inside = is_inside
+    # cf Methods.Mesh.RefTriangle3.jacobian
+    if isinstance(jacobian, ImportError):
+        jacobian = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use RefTriangle3 method jacobian: " + str(jacobian))
+            )
+        )
+    else:
+        jacobian = jacobian
+    # cf Methods.Mesh.RefTriangle3.shape_function
+    if isinstance(shape_function, ImportError):
+        shape_function = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method shape_function: "
+                    + str(shape_function)
+                )
+            )
+        )
+    else:
+        shape_function = shape_function
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

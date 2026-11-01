@@ -18,9 +18,9 @@ from .ParamExplorer import ParamExplorer
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.ParamExplorerInterval.get_value import get_value
+    from ..Methods.Simulation.ParamExplorerInterval.get_max import get_max
 except ImportError as error:
-    get_value = error
+    get_max = error
 
 try:
     from ..Methods.Simulation.ParamExplorerInterval.get_min import get_min
@@ -28,14 +28,14 @@ except ImportError as error:
     get_min = error
 
 try:
-    from ..Methods.Simulation.ParamExplorerInterval.get_max import get_max
-except ImportError as error:
-    get_max = error
-
-try:
     from ..Methods.Simulation.ParamExplorerInterval.get_N import get_N
 except ImportError as error:
     get_N = error
+
+try:
+    from ..Methods.Simulation.ParamExplorerInterval.get_value import get_value
+except ImportError as error:
+    get_value = error
 
 
 from ntpath import basename
@@ -53,6 +53,39 @@ class ParamExplorerInterval(ParamExplorer):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.ParamExplorerInterval.get_max
+    if isinstance(get_max, ImportError):
+        get_max = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorerInterval method get_max: " + str(get_max)
+                )
+            )
+        )
+    else:
+        get_max = get_max
+    # cf Methods.Simulation.ParamExplorerInterval.get_min
+    if isinstance(get_min, ImportError):
+        get_min = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorerInterval method get_min: " + str(get_min)
+                )
+            )
+        )
+    else:
+        get_min = get_min
+    # cf Methods.Simulation.ParamExplorerInterval.get_N
+    if isinstance(get_N, ImportError):
+        get_N = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorerInterval method get_N: " + str(get_N)
+                )
+            )
+        )
+    else:
+        get_N = get_N
     # cf Methods.Simulation.ParamExplorerInterval.get_value
     if isinstance(get_value, ImportError):
         get_value = property(
@@ -65,39 +98,6 @@ class ParamExplorerInterval(ParamExplorer):
         )
     else:
         get_value = get_value
-    # cf Methods.Simulation.ParamExplorerInterval.get_min
-    if isinstance(get_min, ImportError):
-        get_min = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerInterval method get_min: " + str(get_min)
-                )
-            )
-        )
-    else:
-        get_min = get_min
-    # cf Methods.Simulation.ParamExplorerInterval.get_max
-    if isinstance(get_max, ImportError):
-        get_max = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerInterval method get_max: " + str(get_max)
-                )
-            )
-        )
-    else:
-        get_max = get_max
-    # cf Methods.Simulation.ParamExplorerInterval.get_N
-    if isinstance(get_N, ImportError):
-        get_N = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerInterval method get_N: " + str(get_N)
-                )
-            )
-        )
-    else:
-        get_N = get_N
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -18,9 +18,9 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.Force.run import run
+    from ..Methods.Simulation.Force.comp_AGSF_transfer import comp_AGSF_transfer
 except ImportError as error:
-    run = error
+    comp_AGSF_transfer = error
 
 try:
     from ..Methods.Simulation.Force.comp_axes import comp_axes
@@ -28,9 +28,9 @@ except ImportError as error:
     comp_axes = error
 
 try:
-    from ..Methods.Simulation.Force.comp_AGSF_transfer import comp_AGSF_transfer
+    from ..Methods.Simulation.Force.run import run
 except ImportError as error:
-    comp_AGSF_transfer = error
+    run = error
 
 
 from numpy import isnan
@@ -43,24 +43,6 @@ class Force(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.Force.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Force method run: " + str(run))
-            )
-        )
-    else:
-        run = run
-    # cf Methods.Simulation.Force.comp_axes
-    if isinstance(comp_axes, ImportError):
-        comp_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Force method comp_axes: " + str(comp_axes))
-            )
-        )
-    else:
-        comp_axes = comp_axes
     # cf Methods.Simulation.Force.comp_AGSF_transfer
     if isinstance(comp_AGSF_transfer, ImportError):
         comp_AGSF_transfer = property(
@@ -73,6 +55,24 @@ class Force(FrozenClass):
         )
     else:
         comp_AGSF_transfer = comp_AGSF_transfer
+    # cf Methods.Simulation.Force.comp_axes
+    if isinstance(comp_axes, ImportError):
+        comp_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Force method comp_axes: " + str(comp_axes))
+            )
+        )
+    else:
+        comp_axes = comp_axes
+    # cf Methods.Simulation.Force.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Force method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

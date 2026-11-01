@@ -18,9 +18,19 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.EEC.get_machine_from_parent import get_machine_from_parent
+    from ..Methods.Simulation.EEC.comp_fluxlinkage import comp_fluxlinkage
 except ImportError as error:
-    get_machine_from_parent = error
+    comp_fluxlinkage = error
+
+try:
+    from ..Methods.Simulation.EEC.comp_joule_losses import comp_joule_losses
+except ImportError as error:
+    comp_joule_losses = error
+
+try:
+    from ..Methods.Simulation.EEC.comp_parameters import comp_parameters
+except ImportError as error:
+    comp_parameters = error
 
 try:
     from ..Methods.Simulation.EEC.comp_R1 import comp_R1
@@ -33,14 +43,9 @@ except ImportError as error:
     comp_skin_effect = error
 
 try:
-    from ..Methods.Simulation.EEC.comp_parameters import comp_parameters
+    from ..Methods.Simulation.EEC.get_machine_from_parent import get_machine_from_parent
 except ImportError as error:
-    comp_parameters = error
-
-try:
-    from ..Methods.Simulation.EEC.update_from_ref import update_from_ref
-except ImportError as error:
-    update_from_ref = error
+    get_machine_from_parent = error
 
 try:
     from ..Methods.Simulation.EEC.solve import solve
@@ -53,14 +58,9 @@ except ImportError as error:
     solve_PWM = error
 
 try:
-    from ..Methods.Simulation.EEC.comp_joule_losses import comp_joule_losses
+    from ..Methods.Simulation.EEC.update_from_ref import update_from_ref
 except ImportError as error:
-    comp_joule_losses = error
-
-try:
-    from ..Methods.Simulation.EEC.comp_fluxlinkage import comp_fluxlinkage
-except ImportError as error:
-    comp_fluxlinkage = error
+    update_from_ref = error
 
 
 from numpy import isnan
@@ -73,18 +73,39 @@ class EEC(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.EEC.get_machine_from_parent
-    if isinstance(get_machine_from_parent, ImportError):
-        get_machine_from_parent = property(
+    # cf Methods.Simulation.EEC.comp_fluxlinkage
+    if isinstance(comp_fluxlinkage, ImportError):
+        comp_fluxlinkage = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use EEC method get_machine_from_parent: "
-                    + str(get_machine_from_parent)
+                    "Can't use EEC method comp_fluxlinkage: " + str(comp_fluxlinkage)
                 )
             )
         )
     else:
-        get_machine_from_parent = get_machine_from_parent
+        comp_fluxlinkage = comp_fluxlinkage
+    # cf Methods.Simulation.EEC.comp_joule_losses
+    if isinstance(comp_joule_losses, ImportError):
+        comp_joule_losses = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use EEC method comp_joule_losses: " + str(comp_joule_losses)
+                )
+            )
+        )
+    else:
+        comp_joule_losses = comp_joule_losses
+    # cf Methods.Simulation.EEC.comp_parameters
+    if isinstance(comp_parameters, ImportError):
+        comp_parameters = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use EEC method comp_parameters: " + str(comp_parameters)
+                )
+            )
+        )
+    else:
+        comp_parameters = comp_parameters
     # cf Methods.Simulation.EEC.comp_R1
     if isinstance(comp_R1, ImportError):
         comp_R1 = property(
@@ -105,28 +126,18 @@ class EEC(FrozenClass):
         )
     else:
         comp_skin_effect = comp_skin_effect
-    # cf Methods.Simulation.EEC.comp_parameters
-    if isinstance(comp_parameters, ImportError):
-        comp_parameters = property(
+    # cf Methods.Simulation.EEC.get_machine_from_parent
+    if isinstance(get_machine_from_parent, ImportError):
+        get_machine_from_parent = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use EEC method comp_parameters: " + str(comp_parameters)
+                    "Can't use EEC method get_machine_from_parent: "
+                    + str(get_machine_from_parent)
                 )
             )
         )
     else:
-        comp_parameters = comp_parameters
-    # cf Methods.Simulation.EEC.update_from_ref
-    if isinstance(update_from_ref, ImportError):
-        update_from_ref = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method update_from_ref: " + str(update_from_ref)
-                )
-            )
-        )
-    else:
-        update_from_ref = update_from_ref
+        get_machine_from_parent = get_machine_from_parent
     # cf Methods.Simulation.EEC.solve
     if isinstance(solve, ImportError):
         solve = property(
@@ -145,28 +156,17 @@ class EEC(FrozenClass):
         )
     else:
         solve_PWM = solve_PWM
-    # cf Methods.Simulation.EEC.comp_joule_losses
-    if isinstance(comp_joule_losses, ImportError):
-        comp_joule_losses = property(
+    # cf Methods.Simulation.EEC.update_from_ref
+    if isinstance(update_from_ref, ImportError):
+        update_from_ref = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use EEC method comp_joule_losses: " + str(comp_joule_losses)
+                    "Can't use EEC method update_from_ref: " + str(update_from_ref)
                 )
             )
         )
     else:
-        comp_joule_losses = comp_joule_losses
-    # cf Methods.Simulation.EEC.comp_fluxlinkage
-    if isinstance(comp_fluxlinkage, ImportError):
-        comp_fluxlinkage = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method comp_fluxlinkage: " + str(comp_fluxlinkage)
-                )
-            )
-        )
-    else:
-        comp_fluxlinkage = comp_fluxlinkage
+        update_from_ref = update_from_ref
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

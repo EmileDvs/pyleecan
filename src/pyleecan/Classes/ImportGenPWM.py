@@ -18,9 +18,9 @@ from .ImportMatrix import ImportMatrix
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Import.ImportGenPWM.get_data import get_data
+    from ..Methods.Import.ImportGenPWM.comp_carrier import comp_carrier
 except ImportError as error:
-    get_data = error
+    comp_carrier = error
 
 try:
     from ..Methods.Import.ImportGenPWM.comp_voltage import comp_voltage
@@ -28,14 +28,14 @@ except ImportError as error:
     comp_voltage = error
 
 try:
+    from ..Methods.Import.ImportGenPWM.get_data import get_data
+except ImportError as error:
+    get_data = error
+
+try:
     from ..Methods.Import.ImportGenPWM.get_modulation_index import get_modulation_index
 except ImportError as error:
     get_modulation_index = error
-
-try:
-    from ..Methods.Import.ImportGenPWM.comp_carrier import comp_carrier
-except ImportError as error:
-    comp_carrier = error
 
 
 from numpy import isnan
@@ -48,15 +48,17 @@ class ImportGenPWM(ImportMatrix):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Import.ImportGenPWM.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
+    # cf Methods.Import.ImportGenPWM.comp_carrier
+    if isinstance(comp_carrier, ImportError):
+        comp_carrier = property(
             fget=lambda x: raise_(
-                ImportError("Can't use ImportGenPWM method get_data: " + str(get_data))
+                ImportError(
+                    "Can't use ImportGenPWM method comp_carrier: " + str(comp_carrier)
+                )
             )
         )
     else:
-        get_data = get_data
+        comp_carrier = comp_carrier
     # cf Methods.Import.ImportGenPWM.comp_voltage
     if isinstance(comp_voltage, ImportError):
         comp_voltage = property(
@@ -68,6 +70,15 @@ class ImportGenPWM(ImportMatrix):
         )
     else:
         comp_voltage = comp_voltage
+    # cf Methods.Import.ImportGenPWM.get_data
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ImportGenPWM method get_data: " + str(get_data))
+            )
+        )
+    else:
+        get_data = get_data
     # cf Methods.Import.ImportGenPWM.get_modulation_index
     if isinstance(get_modulation_index, ImportError):
         get_modulation_index = property(
@@ -80,17 +91,6 @@ class ImportGenPWM(ImportMatrix):
         )
     else:
         get_modulation_index = get_modulation_index
-    # cf Methods.Import.ImportGenPWM.comp_carrier
-    if isinstance(comp_carrier, ImportError):
-        comp_carrier = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportGenPWM method comp_carrier: " + str(comp_carrier)
-                )
-            )
-        )
-    else:
-        comp_carrier = comp_carrier
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

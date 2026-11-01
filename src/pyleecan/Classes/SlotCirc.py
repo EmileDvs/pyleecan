@@ -73,6 +73,11 @@ except ImportError as error:
     comp_surface_opening = error
 
 try:
+    from ..Methods.Slot.SlotCirc.convert_to_H0_bore import convert_to_H0_bore
+except ImportError as error:
+    convert_to_H0_bore = error
+
+try:
     from ..Methods.Slot.SlotCirc.get_surface_active import get_surface_active
 except ImportError as error:
     get_surface_active = error
@@ -86,11 +91,6 @@ try:
     from ..Methods.Slot.SlotCirc.plot_schematics import plot_schematics
 except ImportError as error:
     plot_schematics = error
-
-try:
-    from ..Methods.Slot.SlotCirc.convert_to_H0_bore import convert_to_H0_bore
-except ImportError as error:
-    convert_to_H0_bore = error
 
 
 from numpy import isnan
@@ -226,6 +226,18 @@ class SlotCirc(Slot):
         )
     else:
         comp_surface_opening = comp_surface_opening
+    # cf Methods.Slot.SlotCirc.convert_to_H0_bore
+    if isinstance(convert_to_H0_bore, ImportError):
+        convert_to_H0_bore = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotCirc method convert_to_H0_bore: "
+                    + str(convert_to_H0_bore)
+                )
+            )
+        )
+    else:
+        convert_to_H0_bore = convert_to_H0_bore
     # cf Methods.Slot.SlotCirc.get_surface_active
     if isinstance(get_surface_active, ImportError):
         get_surface_active = property(
@@ -261,18 +273,6 @@ class SlotCirc(Slot):
         )
     else:
         plot_schematics = plot_schematics
-    # cf Methods.Slot.SlotCirc.convert_to_H0_bore
-    if isinstance(convert_to_H0_bore, ImportError):
-        convert_to_H0_bore = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method convert_to_H0_bore: "
-                    + str(convert_to_H0_bore)
-                )
-            )
-        )
-    else:
-        convert_to_H0_bore = convert_to_H0_bore
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -53,14 +53,14 @@ except ImportError as error:
     __setitem__ = error
 
 try:
-    from ..Methods.Elmer.Section.pop import pop
-except ImportError as error:
-    pop = error
-
-try:
     from ..Methods.Elmer.Section.keys import keys
 except ImportError as error:
     keys = error
+
+try:
+    from ..Methods.Elmer.Section.pop import pop
+except ImportError as error:
+    pop = error
 
 try:
     from ..Methods.Elmer.Section.write import write
@@ -143,15 +143,6 @@ class Section(Elmer):
         )
     else:
         __setitem__ = __setitem__
-    # cf Methods.Elmer.Section.pop
-    if isinstance(pop, ImportError):
-        pop = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Section method pop: " + str(pop))
-            )
-        )
-    else:
-        pop = pop
     # cf Methods.Elmer.Section.keys
     if isinstance(keys, ImportError):
         keys = property(
@@ -161,6 +152,15 @@ class Section(Elmer):
         )
     else:
         keys = keys
+    # cf Methods.Elmer.Section.pop
+    if isinstance(pop, ImportError):
+        pop = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method pop: " + str(pop))
+            )
+        )
+    else:
+        pop = pop
     # cf Methods.Elmer.Section.write
     if isinstance(write, ImportError):
         write = property(

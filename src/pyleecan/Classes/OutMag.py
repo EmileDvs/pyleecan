@@ -33,6 +33,11 @@ except ImportError as error:
     comp_power = error
 
 try:
+    from ..Methods.Output.OutMag.comp_torque_MT import comp_torque_MT
+except ImportError as error:
+    comp_torque_MT = error
+
+try:
     from ..Methods.Output.OutMag.get_demag import get_demag
 except ImportError as error:
     get_demag = error
@@ -41,11 +46,6 @@ try:
     from ..Methods.Output.OutMag.store import store
 except ImportError as error:
     store = error
-
-try:
-    from ..Methods.Output.OutMag.comp_torque_MT import comp_torque_MT
-except ImportError as error:
-    comp_torque_MT = error
 
 
 from numpy import isnan
@@ -85,6 +85,17 @@ class OutMag(FrozenClass):
         )
     else:
         comp_power = comp_power
+    # cf Methods.Output.OutMag.comp_torque_MT
+    if isinstance(comp_torque_MT, ImportError):
+        comp_torque_MT = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutMag method comp_torque_MT: " + str(comp_torque_MT)
+                )
+            )
+        )
+    else:
+        comp_torque_MT = comp_torque_MT
     # cf Methods.Output.OutMag.get_demag
     if isinstance(get_demag, ImportError):
         get_demag = property(
@@ -103,17 +114,6 @@ class OutMag(FrozenClass):
         )
     else:
         store = store
-    # cf Methods.Output.OutMag.comp_torque_MT
-    if isinstance(comp_torque_MT, ImportError):
-        comp_torque_MT = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OutMag method comp_torque_MT: " + str(comp_torque_MT)
-                )
-            )
-        )
-    else:
-        comp_torque_MT = comp_torque_MT
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

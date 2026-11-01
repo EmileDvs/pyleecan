@@ -18,14 +18,14 @@ from .LossModel import LossModel
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Loss.LossModelWinding.comp_loss import comp_loss
-except ImportError as error:
-    comp_loss = error
-
-try:
     from ..Methods.Loss.LossModelWinding.comp_coeff import comp_coeff
 except ImportError as error:
     comp_coeff = error
+
+try:
+    from ..Methods.Loss.LossModelWinding.comp_loss import comp_loss
+except ImportError as error:
+    comp_loss = error
 
 
 from numpy import isnan
@@ -38,17 +38,6 @@ class LossModelWinding(LossModel):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Loss.LossModelWinding.comp_loss
-    if isinstance(comp_loss, ImportError):
-        comp_loss = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LossModelWinding method comp_loss: " + str(comp_loss)
-                )
-            )
-        )
-    else:
-        comp_loss = comp_loss
     # cf Methods.Loss.LossModelWinding.comp_coeff
     if isinstance(comp_coeff, ImportError):
         comp_coeff = property(
@@ -60,6 +49,17 @@ class LossModelWinding(LossModel):
         )
     else:
         comp_coeff = comp_coeff
+    # cf Methods.Loss.LossModelWinding.comp_loss
+    if isinstance(comp_loss, ImportError):
+        comp_loss = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LossModelWinding method comp_loss: " + str(comp_loss)
+                )
+            )
+        )
+    else:
+        comp_loss = comp_loss
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

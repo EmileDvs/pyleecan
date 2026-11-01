@@ -18,24 +18,24 @@ from .Electrical import Electrical
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.ElecLUTdq.run import run
-except ImportError as error:
-    run = error
-
-try:
     from ..Methods.Simulation.ElecLUTdq.comp_LUTdq import comp_LUTdq
 except ImportError as error:
     comp_LUTdq = error
 
 try:
-    from ..Methods.Simulation.ElecLUTdq.solve_power import solve_power
+    from ..Methods.Simulation.ElecLUTdq.run import run
 except ImportError as error:
-    solve_power = error
+    run = error
 
 try:
     from ..Methods.Simulation.ElecLUTdq.solve_MTPA import solve_MTPA
 except ImportError as error:
     solve_MTPA = error
+
+try:
+    from ..Methods.Simulation.ElecLUTdq.solve_power import solve_power
+except ImportError as error:
+    solve_power = error
 
 
 from numpy import isnan
@@ -48,15 +48,6 @@ class ElecLUTdq(Electrical):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.ElecLUTdq.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ElecLUTdq method run: " + str(run))
-            )
-        )
-    else:
-        run = run
     # cf Methods.Simulation.ElecLUTdq.comp_LUTdq
     if isinstance(comp_LUTdq, ImportError):
         comp_LUTdq = property(
@@ -66,6 +57,24 @@ class ElecLUTdq(Electrical):
         )
     else:
         comp_LUTdq = comp_LUTdq
+    # cf Methods.Simulation.ElecLUTdq.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ElecLUTdq method run: " + str(run))
+            )
+        )
+    else:
+        run = run
+    # cf Methods.Simulation.ElecLUTdq.solve_MTPA
+    if isinstance(solve_MTPA, ImportError):
+        solve_MTPA = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ElecLUTdq method solve_MTPA: " + str(solve_MTPA))
+            )
+        )
+    else:
+        solve_MTPA = solve_MTPA
     # cf Methods.Simulation.ElecLUTdq.solve_power
     if isinstance(solve_power, ImportError):
         solve_power = property(
@@ -77,15 +86,6 @@ class ElecLUTdq(Electrical):
         )
     else:
         solve_power = solve_power
-    # cf Methods.Simulation.ElecLUTdq.solve_MTPA
-    if isinstance(solve_MTPA, ImportError):
-        solve_MTPA = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ElecLUTdq method solve_MTPA: " + str(solve_MTPA))
-            )
-        )
-    else:
-        solve_MTPA = solve_MTPA
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

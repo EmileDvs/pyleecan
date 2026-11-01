@@ -4,6 +4,6 @@ equation,-,conversion paramter to pyleecan (Y are always on other side, X are al
 file_name,-,"use just to debug, give name of file",0,str,None,,,
 ,,,,,,,,
 Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
-Converter,Rule,convert_to_P,VERSION,1,simple rules,,,
-,,convert_to_other,,,,,,
+Converter,Rule,convert_to_other,VERSION,1,simple rules,,,
+,,convert_to_P,,,,,,
 ,,solve_equation,,,,,,

@@ -23,6 +23,16 @@ except ImportError as error:
     check = error
 
 try:
+    from ..Methods.Machine.LamSlot.comp_angle_d_axis import comp_angle_d_axis
+except ImportError as error:
+    comp_angle_d_axis = error
+
+try:
+    from ..Methods.Machine.LamSlot.comp_height_yoke import comp_height_yoke
+except ImportError as error:
+    comp_height_yoke = error
+
+try:
     from ..Methods.Machine.LamSlot.comp_radius_mec import comp_radius_mec
 except ImportError as error:
     comp_radius_mec = error
@@ -38,29 +48,9 @@ except ImportError as error:
     get_pole_pair_number = error
 
 try:
-    from ..Methods.Machine.LamSlot.plot import plot
+    from ..Methods.Machine.LamSlot.get_slot_desc_list import get_slot_desc_list
 except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Machine.LamSlot.comp_height_yoke import comp_height_yoke
-except ImportError as error:
-    comp_height_yoke = error
-
-try:
-    from ..Methods.Machine.LamSlot.get_Zs import get_Zs
-except ImportError as error:
-    get_Zs = error
-
-try:
-    from ..Methods.Machine.LamSlot.set_pole_pair_number import set_pole_pair_number
-except ImportError as error:
-    set_pole_pair_number = error
-
-try:
-    from ..Methods.Machine.LamSlot.comp_angle_d_axis import comp_angle_d_axis
-except ImportError as error:
-    comp_angle_d_axis = error
+    get_slot_desc_list = error
 
 try:
     from ..Methods.Machine.LamSlot.get_surfaces_closing import get_surfaces_closing
@@ -68,19 +58,29 @@ except ImportError as error:
     get_surfaces_closing = error
 
 try:
+    from ..Methods.Machine.LamSlot.get_Zs import get_Zs
+except ImportError as error:
+    get_Zs = error
+
+try:
     from ..Methods.Machine.LamSlot.has_magnet import has_magnet
 except ImportError as error:
     has_magnet = error
 
 try:
-    from ..Methods.Machine.LamSlot.get_slot_desc_list import get_slot_desc_list
-except ImportError as error:
-    get_slot_desc_list = error
-
-try:
     from ..Methods.Machine.LamSlot.has_slot import has_slot
 except ImportError as error:
     has_slot = error
+
+try:
+    from ..Methods.Machine.LamSlot.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
+    from ..Methods.Machine.LamSlot.set_pole_pair_number import set_pole_pair_number
+except ImportError as error:
+    set_pole_pair_number = error
 
 
 from numpy import isnan
@@ -102,6 +102,30 @@ class LamSlot(Lamination):
         )
     else:
         check = check
+    # cf Methods.Machine.LamSlot.comp_angle_d_axis
+    if isinstance(comp_angle_d_axis, ImportError):
+        comp_angle_d_axis = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlot method comp_angle_d_axis: "
+                    + str(comp_angle_d_axis)
+                )
+            )
+        )
+    else:
+        comp_angle_d_axis = comp_angle_d_axis
+    # cf Methods.Machine.LamSlot.comp_height_yoke
+    if isinstance(comp_height_yoke, ImportError):
+        comp_height_yoke = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlot method comp_height_yoke: "
+                    + str(comp_height_yoke)
+                )
+            )
+        )
+    else:
+        comp_height_yoke = comp_height_yoke
     # cf Methods.Machine.LamSlot.comp_radius_mec
     if isinstance(comp_radius_mec, ImportError):
         comp_radius_mec = property(
@@ -136,81 +160,6 @@ class LamSlot(Lamination):
         )
     else:
         get_pole_pair_number = get_pole_pair_number
-    # cf Methods.Machine.LamSlot.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSlot method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
-    # cf Methods.Machine.LamSlot.comp_height_yoke
-    if isinstance(comp_height_yoke, ImportError):
-        comp_height_yoke = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlot method comp_height_yoke: "
-                    + str(comp_height_yoke)
-                )
-            )
-        )
-    else:
-        comp_height_yoke = comp_height_yoke
-    # cf Methods.Machine.LamSlot.get_Zs
-    if isinstance(get_Zs, ImportError):
-        get_Zs = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSlot method get_Zs: " + str(get_Zs))
-            )
-        )
-    else:
-        get_Zs = get_Zs
-    # cf Methods.Machine.LamSlot.set_pole_pair_number
-    if isinstance(set_pole_pair_number, ImportError):
-        set_pole_pair_number = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlot method set_pole_pair_number: "
-                    + str(set_pole_pair_number)
-                )
-            )
-        )
-    else:
-        set_pole_pair_number = set_pole_pair_number
-    # cf Methods.Machine.LamSlot.comp_angle_d_axis
-    if isinstance(comp_angle_d_axis, ImportError):
-        comp_angle_d_axis = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlot method comp_angle_d_axis: "
-                    + str(comp_angle_d_axis)
-                )
-            )
-        )
-    else:
-        comp_angle_d_axis = comp_angle_d_axis
-    # cf Methods.Machine.LamSlot.get_surfaces_closing
-    if isinstance(get_surfaces_closing, ImportError):
-        get_surfaces_closing = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlot method get_surfaces_closing: "
-                    + str(get_surfaces_closing)
-                )
-            )
-        )
-    else:
-        get_surfaces_closing = get_surfaces_closing
-    # cf Methods.Machine.LamSlot.has_magnet
-    if isinstance(has_magnet, ImportError):
-        has_magnet = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSlot method has_magnet: " + str(has_magnet))
-            )
-        )
-    else:
-        has_magnet = has_magnet
     # cf Methods.Machine.LamSlot.get_slot_desc_list
     if isinstance(get_slot_desc_list, ImportError):
         get_slot_desc_list = property(
@@ -223,6 +172,36 @@ class LamSlot(Lamination):
         )
     else:
         get_slot_desc_list = get_slot_desc_list
+    # cf Methods.Machine.LamSlot.get_surfaces_closing
+    if isinstance(get_surfaces_closing, ImportError):
+        get_surfaces_closing = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlot method get_surfaces_closing: "
+                    + str(get_surfaces_closing)
+                )
+            )
+        )
+    else:
+        get_surfaces_closing = get_surfaces_closing
+    # cf Methods.Machine.LamSlot.get_Zs
+    if isinstance(get_Zs, ImportError):
+        get_Zs = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlot method get_Zs: " + str(get_Zs))
+            )
+        )
+    else:
+        get_Zs = get_Zs
+    # cf Methods.Machine.LamSlot.has_magnet
+    if isinstance(has_magnet, ImportError):
+        has_magnet = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlot method has_magnet: " + str(has_magnet))
+            )
+        )
+    else:
+        has_magnet = has_magnet
     # cf Methods.Machine.LamSlot.has_slot
     if isinstance(has_slot, ImportError):
         has_slot = property(
@@ -232,6 +211,27 @@ class LamSlot(Lamination):
         )
     else:
         has_slot = has_slot
+    # cf Methods.Machine.LamSlot.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlot method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
+    # cf Methods.Machine.LamSlot.set_pole_pair_number
+    if isinstance(set_pole_pair_number, ImportError):
+        set_pole_pair_number = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlot method set_pole_pair_number: "
+                    + str(set_pole_pair_number)
+                )
+            )
+        )
+    else:
+        set_pole_pair_number = set_pole_pair_number
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

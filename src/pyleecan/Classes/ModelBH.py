@@ -18,14 +18,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Material.ModelBH.get_BH import get_BH
-except ImportError as error:
-    get_BH = error
-
-try:
     from ..Methods.Material.ModelBH.fit_model import fit_model
 except ImportError as error:
     fit_model = error
+
+try:
+    from ..Methods.Material.ModelBH.get_BH import get_BH
+except ImportError as error:
+    get_BH = error
 
 
 from numpy import isnan
@@ -38,15 +38,6 @@ class ModelBH(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Material.ModelBH.get_BH
-    if isinstance(get_BH, ImportError):
-        get_BH = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ModelBH method get_BH: " + str(get_BH))
-            )
-        )
-    else:
-        get_BH = get_BH
     # cf Methods.Material.ModelBH.fit_model
     if isinstance(fit_model, ImportError):
         fit_model = property(
@@ -56,6 +47,15 @@ class ModelBH(FrozenClass):
         )
     else:
         fit_model = fit_model
+    # cf Methods.Material.ModelBH.get_BH
+    if isinstance(get_BH, ImportError):
+        get_BH = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ModelBH method get_BH: " + str(get_BH))
+            )
+        )
+    else:
+        get_BH = get_BH
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

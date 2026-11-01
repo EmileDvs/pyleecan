@@ -28,9 +28,56 @@ except ImportError as error:
     check = error
 
 try:
+    from ..Methods.Machine.LamSlotWind.comp_angle_d_axis import comp_angle_d_axis
+except ImportError as error:
+    comp_angle_d_axis = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_fill_factor import comp_fill_factor
+except ImportError as error:
+    comp_fill_factor = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_lengths_winding import comp_lengths_winding
+except ImportError as error:
+    comp_lengths_winding = error
+
+try:
     from ..Methods.Machine.LamSlotWind.comp_masses import comp_masses
 except ImportError as error:
     comp_masses = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_mmf_dir import comp_mmf_dir
+except ImportError as error:
+    comp_mmf_dir = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_mmf_unit import comp_mmf_unit
+except ImportError as error:
+    comp_mmf_unit = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_number_phase_eq import comp_number_phase_eq
+except ImportError as error:
+    comp_number_phase_eq = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_output_geo import comp_output_geo
+except ImportError as error:
+    comp_output_geo = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_periodicity_spatial import (
+        comp_periodicity_spatial,
+    )
+except ImportError as error:
+    comp_periodicity_spatial = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.comp_resistance_wind import comp_resistance_wind
+except ImportError as error:
+    comp_resistance_wind = error
 
 try:
     from ..Methods.Machine.LamSlotWind.comp_surfaces import comp_surfaces
@@ -43,6 +90,16 @@ except ImportError as error:
     comp_volumes = error
 
 try:
+    from ..Methods.Machine.LamSlotWind.comp_wind_function import comp_wind_function
+except ImportError as error:
+    comp_wind_function = error
+
+try:
+    from ..Methods.Machine.LamSlotWind.get_polar_eq import get_polar_eq
+except ImportError as error:
+    get_polar_eq = error
+
+try:
     from ..Methods.Machine.LamSlotWind.get_pole_pair_number import get_pole_pair_number
 except ImportError as error:
     get_pole_pair_number = error
@@ -53,71 +110,14 @@ except ImportError as error:
     plot = error
 
 try:
-    from ..Methods.Machine.LamSlotWind.plot_winding import plot_winding
-except ImportError as error:
-    plot_winding = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_fill_factor import comp_fill_factor
-except ImportError as error:
-    comp_fill_factor = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_output_geo import comp_output_geo
-except ImportError as error:
-    comp_output_geo = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.get_polar_eq import get_polar_eq
-except ImportError as error:
-    get_polar_eq = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_wind_function import comp_wind_function
-except ImportError as error:
-    comp_wind_function = error
-
-try:
     from ..Methods.Machine.LamSlotWind.plot_mmf_unit import plot_mmf_unit
 except ImportError as error:
     plot_mmf_unit = error
 
 try:
-    from ..Methods.Machine.LamSlotWind.comp_resistance_wind import comp_resistance_wind
+    from ..Methods.Machine.LamSlotWind.plot_winding import plot_winding
 except ImportError as error:
-    comp_resistance_wind = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_angle_d_axis import comp_angle_d_axis
-except ImportError as error:
-    comp_angle_d_axis = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_mmf_unit import comp_mmf_unit
-except ImportError as error:
-    comp_mmf_unit = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_mmf_dir import comp_mmf_dir
-except ImportError as error:
-    comp_mmf_dir = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_lengths_winding import comp_lengths_winding
-except ImportError as error:
-    comp_lengths_winding = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_number_phase_eq import comp_number_phase_eq
-except ImportError as error:
-    comp_number_phase_eq = error
-
-try:
-    from ..Methods.Machine.LamSlotWind.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
+    plot_winding = error
 
 try:
     from ..Methods.Machine.LamSlotWind.set_pole_pair_number import set_pole_pair_number
@@ -156,6 +156,42 @@ class LamSlotWind(LamSlot):
         )
     else:
         check = check
+    # cf Methods.Machine.LamSlotWind.comp_angle_d_axis
+    if isinstance(comp_angle_d_axis, ImportError):
+        comp_angle_d_axis = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_angle_d_axis: "
+                    + str(comp_angle_d_axis)
+                )
+            )
+        )
+    else:
+        comp_angle_d_axis = comp_angle_d_axis
+    # cf Methods.Machine.LamSlotWind.comp_fill_factor
+    if isinstance(comp_fill_factor, ImportError):
+        comp_fill_factor = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_fill_factor: "
+                    + str(comp_fill_factor)
+                )
+            )
+        )
+    else:
+        comp_fill_factor = comp_fill_factor
+    # cf Methods.Machine.LamSlotWind.comp_lengths_winding
+    if isinstance(comp_lengths_winding, ImportError):
+        comp_lengths_winding = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_lengths_winding: "
+                    + str(comp_lengths_winding)
+                )
+            )
+        )
+    else:
+        comp_lengths_winding = comp_lengths_winding
     # cf Methods.Machine.LamSlotWind.comp_masses
     if isinstance(comp_masses, ImportError):
         comp_masses = property(
@@ -167,6 +203,76 @@ class LamSlotWind(LamSlot):
         )
     else:
         comp_masses = comp_masses
+    # cf Methods.Machine.LamSlotWind.comp_mmf_dir
+    if isinstance(comp_mmf_dir, ImportError):
+        comp_mmf_dir = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_mmf_dir: " + str(comp_mmf_dir)
+                )
+            )
+        )
+    else:
+        comp_mmf_dir = comp_mmf_dir
+    # cf Methods.Machine.LamSlotWind.comp_mmf_unit
+    if isinstance(comp_mmf_unit, ImportError):
+        comp_mmf_unit = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_mmf_unit: " + str(comp_mmf_unit)
+                )
+            )
+        )
+    else:
+        comp_mmf_unit = comp_mmf_unit
+    # cf Methods.Machine.LamSlotWind.comp_number_phase_eq
+    if isinstance(comp_number_phase_eq, ImportError):
+        comp_number_phase_eq = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_number_phase_eq: "
+                    + str(comp_number_phase_eq)
+                )
+            )
+        )
+    else:
+        comp_number_phase_eq = comp_number_phase_eq
+    # cf Methods.Machine.LamSlotWind.comp_output_geo
+    if isinstance(comp_output_geo, ImportError):
+        comp_output_geo = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_output_geo: "
+                    + str(comp_output_geo)
+                )
+            )
+        )
+    else:
+        comp_output_geo = comp_output_geo
+    # cf Methods.Machine.LamSlotWind.comp_periodicity_spatial
+    if isinstance(comp_periodicity_spatial, ImportError):
+        comp_periodicity_spatial = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_periodicity_spatial: "
+                    + str(comp_periodicity_spatial)
+                )
+            )
+        )
+    else:
+        comp_periodicity_spatial = comp_periodicity_spatial
+    # cf Methods.Machine.LamSlotWind.comp_resistance_wind
+    if isinstance(comp_resistance_wind, ImportError):
+        comp_resistance_wind = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_resistance_wind: "
+                    + str(comp_resistance_wind)
+                )
+            )
+        )
+    else:
+        comp_resistance_wind = comp_resistance_wind
     # cf Methods.Machine.LamSlotWind.comp_surfaces
     if isinstance(comp_surfaces, ImportError):
         comp_surfaces = property(
@@ -189,6 +295,29 @@ class LamSlotWind(LamSlot):
         )
     else:
         comp_volumes = comp_volumes
+    # cf Methods.Machine.LamSlotWind.comp_wind_function
+    if isinstance(comp_wind_function, ImportError):
+        comp_wind_function = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method comp_wind_function: "
+                    + str(comp_wind_function)
+                )
+            )
+        )
+    else:
+        comp_wind_function = comp_wind_function
+    # cf Methods.Machine.LamSlotWind.get_polar_eq
+    if isinstance(get_polar_eq, ImportError):
+        get_polar_eq = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotWind method get_polar_eq: " + str(get_polar_eq)
+                )
+            )
+        )
+    else:
+        get_polar_eq = get_polar_eq
     # cf Methods.Machine.LamSlotWind.get_pole_pair_number
     if isinstance(get_pole_pair_number, ImportError):
         get_pole_pair_number = property(
@@ -210,64 +339,6 @@ class LamSlotWind(LamSlot):
         )
     else:
         plot = plot
-    # cf Methods.Machine.LamSlotWind.plot_winding
-    if isinstance(plot_winding, ImportError):
-        plot_winding = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method plot_winding: " + str(plot_winding)
-                )
-            )
-        )
-    else:
-        plot_winding = plot_winding
-    # cf Methods.Machine.LamSlotWind.comp_fill_factor
-    if isinstance(comp_fill_factor, ImportError):
-        comp_fill_factor = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_fill_factor: "
-                    + str(comp_fill_factor)
-                )
-            )
-        )
-    else:
-        comp_fill_factor = comp_fill_factor
-    # cf Methods.Machine.LamSlotWind.comp_output_geo
-    if isinstance(comp_output_geo, ImportError):
-        comp_output_geo = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_output_geo: "
-                    + str(comp_output_geo)
-                )
-            )
-        )
-    else:
-        comp_output_geo = comp_output_geo
-    # cf Methods.Machine.LamSlotWind.get_polar_eq
-    if isinstance(get_polar_eq, ImportError):
-        get_polar_eq = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method get_polar_eq: " + str(get_polar_eq)
-                )
-            )
-        )
-    else:
-        get_polar_eq = get_polar_eq
-    # cf Methods.Machine.LamSlotWind.comp_wind_function
-    if isinstance(comp_wind_function, ImportError):
-        comp_wind_function = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_wind_function: "
-                    + str(comp_wind_function)
-                )
-            )
-        )
-    else:
-        comp_wind_function = comp_wind_function
     # cf Methods.Machine.LamSlotWind.plot_mmf_unit
     if isinstance(plot_mmf_unit, ImportError):
         plot_mmf_unit = property(
@@ -279,88 +350,17 @@ class LamSlotWind(LamSlot):
         )
     else:
         plot_mmf_unit = plot_mmf_unit
-    # cf Methods.Machine.LamSlotWind.comp_resistance_wind
-    if isinstance(comp_resistance_wind, ImportError):
-        comp_resistance_wind = property(
+    # cf Methods.Machine.LamSlotWind.plot_winding
+    if isinstance(plot_winding, ImportError):
+        plot_winding = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use LamSlotWind method comp_resistance_wind: "
-                    + str(comp_resistance_wind)
+                    "Can't use LamSlotWind method plot_winding: " + str(plot_winding)
                 )
             )
         )
     else:
-        comp_resistance_wind = comp_resistance_wind
-    # cf Methods.Machine.LamSlotWind.comp_angle_d_axis
-    if isinstance(comp_angle_d_axis, ImportError):
-        comp_angle_d_axis = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_angle_d_axis: "
-                    + str(comp_angle_d_axis)
-                )
-            )
-        )
-    else:
-        comp_angle_d_axis = comp_angle_d_axis
-    # cf Methods.Machine.LamSlotWind.comp_mmf_unit
-    if isinstance(comp_mmf_unit, ImportError):
-        comp_mmf_unit = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_mmf_unit: " + str(comp_mmf_unit)
-                )
-            )
-        )
-    else:
-        comp_mmf_unit = comp_mmf_unit
-    # cf Methods.Machine.LamSlotWind.comp_mmf_dir
-    if isinstance(comp_mmf_dir, ImportError):
-        comp_mmf_dir = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_mmf_dir: " + str(comp_mmf_dir)
-                )
-            )
-        )
-    else:
-        comp_mmf_dir = comp_mmf_dir
-    # cf Methods.Machine.LamSlotWind.comp_lengths_winding
-    if isinstance(comp_lengths_winding, ImportError):
-        comp_lengths_winding = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_lengths_winding: "
-                    + str(comp_lengths_winding)
-                )
-            )
-        )
-    else:
-        comp_lengths_winding = comp_lengths_winding
-    # cf Methods.Machine.LamSlotWind.comp_number_phase_eq
-    if isinstance(comp_number_phase_eq, ImportError):
-        comp_number_phase_eq = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_number_phase_eq: "
-                    + str(comp_number_phase_eq)
-                )
-            )
-        )
-    else:
-        comp_number_phase_eq = comp_number_phase_eq
-    # cf Methods.Machine.LamSlotWind.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSlotWind method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
+        plot_winding = plot_winding
     # cf Methods.Machine.LamSlotWind.set_pole_pair_number
     if isinstance(set_pole_pair_number, ImportError):
         set_pole_pair_number = property(

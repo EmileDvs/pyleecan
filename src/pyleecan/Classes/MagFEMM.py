@@ -18,19 +18,14 @@ from .Magnetics import Magnetics
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Simulation.MagFEMM.build_MS_sliced import build_MS_sliced
+except ImportError as error:
+    build_MS_sliced = error
+
+try:
     from ..Methods.Simulation.MagFEMM.comp_flux_airgap import comp_flux_airgap
 except ImportError as error:
     comp_flux_airgap = error
-
-try:
-    from ..Methods.Simulation.MagFEMM.get_path_save import get_path_save
-except ImportError as error:
-    get_path_save = error
-
-try:
-    from ..Methods.Simulation.MagFEMM.solve_FEMM import solve_FEMM
-except ImportError as error:
-    solve_FEMM = error
 
 try:
     from ..Methods.Simulation.MagFEMM.get_meshsolution import get_meshsolution
@@ -38,19 +33,24 @@ except ImportError as error:
     get_meshsolution = error
 
 try:
+    from ..Methods.Simulation.MagFEMM.get_path_save import get_path_save
+except ImportError as error:
+    get_path_save = error
+
+try:
     from ..Methods.Simulation.MagFEMM.get_path_save_fem import get_path_save_fem
 except ImportError as error:
     get_path_save_fem = error
 
 try:
+    from ..Methods.Simulation.MagFEMM.solve_FEMM import solve_FEMM
+except ImportError as error:
+    solve_FEMM = error
+
+try:
     from ..Methods.Simulation.MagFEMM.solve_FEMM_parallel import solve_FEMM_parallel
 except ImportError as error:
     solve_FEMM_parallel = error
-
-try:
-    from ..Methods.Simulation.MagFEMM.build_MS_sliced import build_MS_sliced
-except ImportError as error:
-    build_MS_sliced = error
 
 
 from numpy import isnan
@@ -63,6 +63,17 @@ class MagFEMM(Magnetics):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.MagFEMM.build_MS_sliced
+    if isinstance(build_MS_sliced, ImportError):
+        build_MS_sliced = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MagFEMM method build_MS_sliced: " + str(build_MS_sliced)
+                )
+            )
+        )
+    else:
+        build_MS_sliced = build_MS_sliced
     # cf Methods.Simulation.MagFEMM.comp_flux_airgap
     if isinstance(comp_flux_airgap, ImportError):
         comp_flux_airgap = property(
@@ -75,26 +86,6 @@ class MagFEMM(Magnetics):
         )
     else:
         comp_flux_airgap = comp_flux_airgap
-    # cf Methods.Simulation.MagFEMM.get_path_save
-    if isinstance(get_path_save, ImportError):
-        get_path_save = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MagFEMM method get_path_save: " + str(get_path_save)
-                )
-            )
-        )
-    else:
-        get_path_save = get_path_save
-    # cf Methods.Simulation.MagFEMM.solve_FEMM
-    if isinstance(solve_FEMM, ImportError):
-        solve_FEMM = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MagFEMM method solve_FEMM: " + str(solve_FEMM))
-            )
-        )
-    else:
-        solve_FEMM = solve_FEMM
     # cf Methods.Simulation.MagFEMM.get_meshsolution
     if isinstance(get_meshsolution, ImportError):
         get_meshsolution = property(
@@ -107,6 +98,17 @@ class MagFEMM(Magnetics):
         )
     else:
         get_meshsolution = get_meshsolution
+    # cf Methods.Simulation.MagFEMM.get_path_save
+    if isinstance(get_path_save, ImportError):
+        get_path_save = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MagFEMM method get_path_save: " + str(get_path_save)
+                )
+            )
+        )
+    else:
+        get_path_save = get_path_save
     # cf Methods.Simulation.MagFEMM.get_path_save_fem
     if isinstance(get_path_save_fem, ImportError):
         get_path_save_fem = property(
@@ -119,6 +121,15 @@ class MagFEMM(Magnetics):
         )
     else:
         get_path_save_fem = get_path_save_fem
+    # cf Methods.Simulation.MagFEMM.solve_FEMM
+    if isinstance(solve_FEMM, ImportError):
+        solve_FEMM = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MagFEMM method solve_FEMM: " + str(solve_FEMM))
+            )
+        )
+    else:
+        solve_FEMM = solve_FEMM
     # cf Methods.Simulation.MagFEMM.solve_FEMM_parallel
     if isinstance(solve_FEMM_parallel, ImportError):
         solve_FEMM_parallel = property(
@@ -131,17 +142,6 @@ class MagFEMM(Magnetics):
         )
     else:
         solve_FEMM_parallel = solve_FEMM_parallel
-    # cf Methods.Simulation.MagFEMM.build_MS_sliced
-    if isinstance(build_MS_sliced, ImportError):
-        build_MS_sliced = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MagFEMM method build_MS_sliced: " + str(build_MS_sliced)
-                )
-            )
-        )
-    else:
-        build_MS_sliced = build_MS_sliced
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

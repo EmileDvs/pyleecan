@@ -11,5 +11,5 @@ Machine,Lamination,comp_angle_d_axis,VERSION,1,Lamination with Hole (Abstract cl
 ,,get_Zs,,,,,,
 ,,has_magnet,,,,,,
 ,,plot,,,,,,
-,,set_pole_pair_number,,,,,,
 ,,set_Lmag,,,,,,
+,,set_pole_pair_number,,,,,,

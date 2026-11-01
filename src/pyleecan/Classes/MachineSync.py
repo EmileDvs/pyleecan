@@ -18,16 +18,16 @@ from .Machine import Machine
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.MachineSync.is_synchronous import is_synchronous
-except ImportError as error:
-    is_synchronous = error
-
-try:
     from ..Methods.Machine.MachineSync.comp_angle_rotor_initial import (
         comp_angle_rotor_initial,
     )
 except ImportError as error:
     comp_angle_rotor_initial = error
+
+try:
+    from ..Methods.Machine.MachineSync.is_synchronous import is_synchronous
+except ImportError as error:
+    is_synchronous = error
 
 
 from numpy import isnan
@@ -40,18 +40,6 @@ class MachineSync(Machine):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.MachineSync.is_synchronous
-    if isinstance(is_synchronous, ImportError):
-        is_synchronous = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MachineSync method is_synchronous: "
-                    + str(is_synchronous)
-                )
-            )
-        )
-    else:
-        is_synchronous = is_synchronous
     # cf Methods.Machine.MachineSync.comp_angle_rotor_initial
     if isinstance(comp_angle_rotor_initial, ImportError):
         comp_angle_rotor_initial = property(
@@ -64,6 +52,18 @@ class MachineSync(Machine):
         )
     else:
         comp_angle_rotor_initial = comp_angle_rotor_initial
+    # cf Methods.Machine.MachineSync.is_synchronous
+    if isinstance(is_synchronous, ImportError):
+        is_synchronous = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineSync method is_synchronous: "
+                    + str(is_synchronous)
+                )
+            )
+        )
+    else:
+        is_synchronous = is_synchronous
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

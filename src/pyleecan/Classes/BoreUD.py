@@ -18,16 +18,16 @@ from .Bore import Bore
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.BoreUD.get_bore_line import get_bore_line
-except ImportError as error:
-    get_bore_line = error
-
-try:
     from ..Methods.Machine.BoreUD.comp_periodicity_spatial import (
         comp_periodicity_spatial,
     )
 except ImportError as error:
     comp_periodicity_spatial = error
+
+try:
+    from ..Methods.Machine.BoreUD.get_bore_line import get_bore_line
+except ImportError as error:
+    get_bore_line = error
 
 
 from numpy import isnan
@@ -40,17 +40,6 @@ class BoreUD(Bore):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.BoreUD.get_bore_line
-    if isinstance(get_bore_line, ImportError):
-        get_bore_line = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreUD method get_bore_line: " + str(get_bore_line)
-                )
-            )
-        )
-    else:
-        get_bore_line = get_bore_line
     # cf Methods.Machine.BoreUD.comp_periodicity_spatial
     if isinstance(comp_periodicity_spatial, ImportError):
         comp_periodicity_spatial = property(
@@ -63,6 +52,17 @@ class BoreUD(Bore):
         )
     else:
         comp_periodicity_spatial = comp_periodicity_spatial
+    # cf Methods.Machine.BoreUD.get_bore_line
+    if isinstance(get_bore_line, ImportError):
+        get_bore_line = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use BoreUD method get_bore_line: " + str(get_bore_line)
+                )
+            )
+        )
+    else:
+        get_bore_line = get_bore_line
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

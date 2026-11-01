@@ -23,39 +23,9 @@ except ImportError as error:
     check = error
 
 try:
-    from ..Methods.Machine.CondType12.comp_surface_active import comp_surface_active
-except ImportError as error:
-    comp_surface_active = error
-
-try:
     from ..Methods.Machine.CondType12.comp_height import comp_height
 except ImportError as error:
     comp_height = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_width import comp_width
-except ImportError as error:
-    comp_width = error
-
-try:
-    from ..Methods.Machine.CondType12.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Machine.CondType12.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_width_wire import comp_width_wire
-except ImportError as error:
-    comp_width_wire = error
 
 try:
     from ..Methods.Machine.CondType12.comp_height_wire import comp_height_wire
@@ -75,9 +45,39 @@ except ImportError as error:
     comp_nb_radial_wire = error
 
 try:
+    from ..Methods.Machine.CondType12.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Machine.CondType12.comp_surface_active import comp_surface_active
+except ImportError as error:
+    comp_surface_active = error
+
+try:
+    from ..Methods.Machine.CondType12.comp_width import comp_width
+except ImportError as error:
+    comp_width = error
+
+try:
+    from ..Methods.Machine.CondType12.comp_width_wire import comp_width_wire
+except ImportError as error:
+    comp_width_wire = error
+
+try:
     from ..Methods.Machine.CondType12.is_round_wire import is_round_wire
 except ImportError as error:
     is_round_wire = error
+
+try:
+    from ..Methods.Machine.CondType12.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
+    from ..Methods.Machine.CondType12.plot_schematics import plot_schematics
+except ImportError as error:
+    plot_schematics = error
 
 
 from numpy import isnan
@@ -99,18 +99,6 @@ class CondType12(Conductor):
         )
     else:
         check = check
-    # cf Methods.Machine.CondType12.comp_surface_active
-    if isinstance(comp_surface_active, ImportError):
-        comp_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_surface_active: "
-                    + str(comp_surface_active)
-                )
-            )
-        )
-    else:
-        comp_surface_active = comp_surface_active
     # cf Methods.Machine.CondType12.comp_height
     if isinstance(comp_height, ImportError):
         comp_height = property(
@@ -122,61 +110,6 @@ class CondType12(Conductor):
         )
     else:
         comp_height = comp_height
-    # cf Methods.Machine.CondType12.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
-    # cf Methods.Machine.CondType12.comp_width
-    if isinstance(comp_width, ImportError):
-        comp_width = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_width: " + str(comp_width)
-                )
-            )
-        )
-    else:
-        comp_width = comp_width
-    # cf Methods.Machine.CondType12.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use CondType12 method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
-    # cf Methods.Machine.CondType12.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method plot_schematics: "
-                    + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
-    # cf Methods.Machine.CondType12.comp_width_wire
-    if isinstance(comp_width_wire, ImportError):
-        comp_width_wire = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_width_wire: "
-                    + str(comp_width_wire)
-                )
-            )
-        )
-    else:
-        comp_width_wire = comp_width_wire
     # cf Methods.Machine.CondType12.comp_height_wire
     if isinstance(comp_height_wire, ImportError):
         comp_height_wire = property(
@@ -213,6 +146,52 @@ class CondType12(Conductor):
         )
     else:
         comp_nb_radial_wire = comp_nb_radial_wire
+    # cf Methods.Machine.CondType12.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType12 method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
+    # cf Methods.Machine.CondType12.comp_surface_active
+    if isinstance(comp_surface_active, ImportError):
+        comp_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType12 method comp_surface_active: "
+                    + str(comp_surface_active)
+                )
+            )
+        )
+    else:
+        comp_surface_active = comp_surface_active
+    # cf Methods.Machine.CondType12.comp_width
+    if isinstance(comp_width, ImportError):
+        comp_width = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType12 method comp_width: " + str(comp_width)
+                )
+            )
+        )
+    else:
+        comp_width = comp_width
+    # cf Methods.Machine.CondType12.comp_width_wire
+    if isinstance(comp_width_wire, ImportError):
+        comp_width_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType12 method comp_width_wire: "
+                    + str(comp_width_wire)
+                )
+            )
+        )
+    else:
+        comp_width_wire = comp_width_wire
     # cf Methods.Machine.CondType12.is_round_wire
     if isinstance(is_round_wire, ImportError):
         is_round_wire = property(
@@ -224,6 +203,27 @@ class CondType12(Conductor):
         )
     else:
         is_round_wire = is_round_wire
+    # cf Methods.Machine.CondType12.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use CondType12 method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
+    # cf Methods.Machine.CondType12.plot_schematics
+    if isinstance(plot_schematics, ImportError):
+        plot_schematics = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType12 method plot_schematics: "
+                    + str(plot_schematics)
+                )
+            )
+        )
+    else:
+        plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

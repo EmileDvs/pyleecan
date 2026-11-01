@@ -18,14 +18,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.Structural.run import run
-except ImportError as error:
-    run = error
-
-try:
     from ..Methods.Simulation.Structural.comp_axes import comp_axes
 except ImportError as error:
     comp_axes = error
+
+try:
+    from ..Methods.Simulation.Structural.run import run
+except ImportError as error:
+    run = error
 
 
 from numpy import isnan
@@ -38,15 +38,6 @@ class Structural(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.Structural.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Structural method run: " + str(run))
-            )
-        )
-    else:
-        run = run
     # cf Methods.Simulation.Structural.comp_axes
     if isinstance(comp_axes, ImportError):
         comp_axes = property(
@@ -56,6 +47,15 @@ class Structural(FrozenClass):
         )
     else:
         comp_axes = comp_axes
+    # cf Methods.Simulation.Structural.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Structural method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

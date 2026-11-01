@@ -18,14 +18,9 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.Simulation.run import run
+    from ..Methods.Simulation.Simulation.get_OP_array import get_OP_array
 except ImportError as error:
-    run = error
-
-try:
-    from ..Methods.Simulation.Simulation.init_logger import init_logger
-except ImportError as error:
-    init_logger = error
+    get_OP_array = error
 
 try:
     from ..Methods.Simulation.Simulation.get_var_load import get_var_load
@@ -33,9 +28,14 @@ except ImportError as error:
     get_var_load = error
 
 try:
-    from ..Methods.Simulation.Simulation.get_OP_array import get_OP_array
+    from ..Methods.Simulation.Simulation.init_logger import init_logger
 except ImportError as error:
-    get_OP_array = error
+    init_logger = error
+
+try:
+    from ..Methods.Simulation.Simulation.run import run
+except ImportError as error:
+    run = error
 
 
 from numpy import isnan
@@ -48,37 +48,6 @@ class Simulation(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.Simulation.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Simulation method run: " + str(run))
-            )
-        )
-    else:
-        run = run
-    # cf Methods.Simulation.Simulation.init_logger
-    if isinstance(init_logger, ImportError):
-        init_logger = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Simulation method init_logger: " + str(init_logger)
-                )
-            )
-        )
-    else:
-        init_logger = init_logger
-    # cf Methods.Simulation.Simulation.get_var_load
-    if isinstance(get_var_load, ImportError):
-        get_var_load = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Simulation method get_var_load: " + str(get_var_load)
-                )
-            )
-        )
-    else:
-        get_var_load = get_var_load
     # cf Methods.Simulation.Simulation.get_OP_array
     if isinstance(get_OP_array, ImportError):
         get_OP_array = property(
@@ -90,6 +59,37 @@ class Simulation(FrozenClass):
         )
     else:
         get_OP_array = get_OP_array
+    # cf Methods.Simulation.Simulation.get_var_load
+    if isinstance(get_var_load, ImportError):
+        get_var_load = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Simulation method get_var_load: " + str(get_var_load)
+                )
+            )
+        )
+    else:
+        get_var_load = get_var_load
+    # cf Methods.Simulation.Simulation.init_logger
+    if isinstance(init_logger, ImportError):
+        init_logger = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Simulation method init_logger: " + str(init_logger)
+                )
+            )
+        )
+    else:
+        init_logger = init_logger
+    # cf Methods.Simulation.Simulation.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Simulation method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

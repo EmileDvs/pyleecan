@@ -18,29 +18,9 @@ from .OP import OP
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.OPslip.get_Id_Iq import get_Id_Iq
-except ImportError as error:
-    get_Id_Iq = error
-
-try:
     from ..Methods.Simulation.OPslip.get_felec import get_felec
 except ImportError as error:
     get_felec = error
-
-try:
-    from ..Methods.Simulation.OPslip.get_N0 import get_N0
-except ImportError as error:
-    get_N0 = error
-
-try:
-    from ..Methods.Simulation.OPslip.get_Ud_Uq import get_Ud_Uq
-except ImportError as error:
-    get_Ud_Uq = error
-
-try:
-    from ..Methods.Simulation.OPslip.set_Id_Iq import set_Id_Iq
-except ImportError as error:
-    set_Id_Iq = error
 
 try:
     from ..Methods.Simulation.OPslip.get_I0_Phi0 import get_I0_Phi0
@@ -48,19 +28,19 @@ except ImportError as error:
     get_I0_Phi0 = error
 
 try:
+    from ..Methods.Simulation.OPslip.get_Id_Iq import get_Id_Iq
+except ImportError as error:
+    get_Id_Iq = error
+
+try:
+    from ..Methods.Simulation.OPslip.get_N0 import get_N0
+except ImportError as error:
+    get_N0 = error
+
+try:
     from ..Methods.Simulation.OPslip.get_slip import get_slip
 except ImportError as error:
     get_slip = error
-
-try:
-    from ..Methods.Simulation.OPslip.set_I0_Phi0 import set_I0_Phi0
-except ImportError as error:
-    set_I0_Phi0 = error
-
-try:
-    from ..Methods.Simulation.OPslip.set_Ud_Uq import set_Ud_Uq
-except ImportError as error:
-    set_Ud_Uq = error
 
 try:
     from ..Methods.Simulation.OPslip.get_U0_UPhi0 import get_U0_UPhi0
@@ -68,9 +48,29 @@ except ImportError as error:
     get_U0_UPhi0 = error
 
 try:
+    from ..Methods.Simulation.OPslip.get_Ud_Uq import get_Ud_Uq
+except ImportError as error:
+    get_Ud_Uq = error
+
+try:
+    from ..Methods.Simulation.OPslip.set_I0_Phi0 import set_I0_Phi0
+except ImportError as error:
+    set_I0_Phi0 = error
+
+try:
+    from ..Methods.Simulation.OPslip.set_Id_Iq import set_Id_Iq
+except ImportError as error:
+    set_Id_Iq = error
+
+try:
     from ..Methods.Simulation.OPslip.set_U0_UPhi0 import set_U0_UPhi0
 except ImportError as error:
     set_U0_UPhi0 = error
+
+try:
+    from ..Methods.Simulation.OPslip.set_Ud_Uq import set_Ud_Uq
+except ImportError as error:
+    set_Ud_Uq = error
 
 
 from numpy import isnan
@@ -83,15 +83,6 @@ class OPslip(OP):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Simulation.OPslip.get_Id_Iq
-    if isinstance(get_Id_Iq, ImportError):
-        get_Id_Iq = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPslip method get_Id_Iq: " + str(get_Id_Iq))
-            )
-        )
-    else:
-        get_Id_Iq = get_Id_Iq
     # cf Methods.Simulation.OPslip.get_felec
     if isinstance(get_felec, ImportError):
         get_felec = property(
@@ -101,33 +92,6 @@ class OPslip(OP):
         )
     else:
         get_felec = get_felec
-    # cf Methods.Simulation.OPslip.get_N0
-    if isinstance(get_N0, ImportError):
-        get_N0 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPslip method get_N0: " + str(get_N0))
-            )
-        )
-    else:
-        get_N0 = get_N0
-    # cf Methods.Simulation.OPslip.get_Ud_Uq
-    if isinstance(get_Ud_Uq, ImportError):
-        get_Ud_Uq = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPslip method get_Ud_Uq: " + str(get_Ud_Uq))
-            )
-        )
-    else:
-        get_Ud_Uq = get_Ud_Uq
-    # cf Methods.Simulation.OPslip.set_Id_Iq
-    if isinstance(set_Id_Iq, ImportError):
-        set_Id_Iq = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPslip method set_Id_Iq: " + str(set_Id_Iq))
-            )
-        )
-    else:
-        set_Id_Iq = set_Id_Iq
     # cf Methods.Simulation.OPslip.get_I0_Phi0
     if isinstance(get_I0_Phi0, ImportError):
         get_I0_Phi0 = property(
@@ -137,6 +101,24 @@ class OPslip(OP):
         )
     else:
         get_I0_Phi0 = get_I0_Phi0
+    # cf Methods.Simulation.OPslip.get_Id_Iq
+    if isinstance(get_Id_Iq, ImportError):
+        get_Id_Iq = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPslip method get_Id_Iq: " + str(get_Id_Iq))
+            )
+        )
+    else:
+        get_Id_Iq = get_Id_Iq
+    # cf Methods.Simulation.OPslip.get_N0
+    if isinstance(get_N0, ImportError):
+        get_N0 = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPslip method get_N0: " + str(get_N0))
+            )
+        )
+    else:
+        get_N0 = get_N0
     # cf Methods.Simulation.OPslip.get_slip
     if isinstance(get_slip, ImportError):
         get_slip = property(
@@ -146,24 +128,6 @@ class OPslip(OP):
         )
     else:
         get_slip = get_slip
-    # cf Methods.Simulation.OPslip.set_I0_Phi0
-    if isinstance(set_I0_Phi0, ImportError):
-        set_I0_Phi0 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPslip method set_I0_Phi0: " + str(set_I0_Phi0))
-            )
-        )
-    else:
-        set_I0_Phi0 = set_I0_Phi0
-    # cf Methods.Simulation.OPslip.set_Ud_Uq
-    if isinstance(set_Ud_Uq, ImportError):
-        set_Ud_Uq = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPslip method set_Ud_Uq: " + str(set_Ud_Uq))
-            )
-        )
-    else:
-        set_Ud_Uq = set_Ud_Uq
     # cf Methods.Simulation.OPslip.get_U0_UPhi0
     if isinstance(get_U0_UPhi0, ImportError):
         get_U0_UPhi0 = property(
@@ -175,6 +139,33 @@ class OPslip(OP):
         )
     else:
         get_U0_UPhi0 = get_U0_UPhi0
+    # cf Methods.Simulation.OPslip.get_Ud_Uq
+    if isinstance(get_Ud_Uq, ImportError):
+        get_Ud_Uq = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPslip method get_Ud_Uq: " + str(get_Ud_Uq))
+            )
+        )
+    else:
+        get_Ud_Uq = get_Ud_Uq
+    # cf Methods.Simulation.OPslip.set_I0_Phi0
+    if isinstance(set_I0_Phi0, ImportError):
+        set_I0_Phi0 = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPslip method set_I0_Phi0: " + str(set_I0_Phi0))
+            )
+        )
+    else:
+        set_I0_Phi0 = set_I0_Phi0
+    # cf Methods.Simulation.OPslip.set_Id_Iq
+    if isinstance(set_Id_Iq, ImportError):
+        set_Id_Iq = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPslip method set_Id_Iq: " + str(set_Id_Iq))
+            )
+        )
+    else:
+        set_Id_Iq = set_Id_Iq
     # cf Methods.Simulation.OPslip.set_U0_UPhi0
     if isinstance(set_U0_UPhi0, ImportError):
         set_U0_UPhi0 = property(
@@ -186,6 +177,15 @@ class OPslip(OP):
         )
     else:
         set_U0_UPhi0 = set_U0_UPhi0
+    # cf Methods.Simulation.OPslip.set_Ud_Uq
+    if isinstance(set_Ud_Uq, ImportError):
+        set_Ud_Uq = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OPslip method set_Ud_Uq: " + str(set_Ud_Uq))
+            )
+        )
+    else:
+        set_Ud_Uq = set_Ud_Uq
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

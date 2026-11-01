@@ -18,6 +18,11 @@ from .Winding import Winding
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Machine.WindingUD.import_from_csv import import_from_csv
+except ImportError as error:
+    import_from_csv = error
+
+try:
     from ..Methods.Machine.WindingUD.init_as_CW1L import init_as_CW1L
 except ImportError as error:
     init_as_CW1L = error
@@ -37,11 +42,6 @@ try:
 except ImportError as error:
     init_as_DWL = error
 
-try:
-    from ..Methods.Machine.WindingUD.import_from_csv import import_from_csv
-except ImportError as error:
-    import_from_csv = error
-
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -55,6 +55,18 @@ class WindingUD(Winding):
     NAME = "User defined"
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Machine.WindingUD.import_from_csv
+    if isinstance(import_from_csv, ImportError):
+        import_from_csv = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use WindingUD method import_from_csv: "
+                    + str(import_from_csv)
+                )
+            )
+        )
+    else:
+        import_from_csv = import_from_csv
     # cf Methods.Machine.WindingUD.init_as_CW1L
     if isinstance(init_as_CW1L, ImportError):
         init_as_CW1L = property(
@@ -99,18 +111,6 @@ class WindingUD(Winding):
         )
     else:
         init_as_DWL = init_as_DWL
-    # cf Methods.Machine.WindingUD.import_from_csv
-    if isinstance(import_from_csv, ImportError):
-        import_from_csv = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use WindingUD method import_from_csv: "
-                    + str(import_from_csv)
-                )
-            )
-        )
-    else:
-        import_from_csv = import_from_csv
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

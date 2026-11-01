@@ -1,11 +1,11 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-Nbar,m,Number of bars,0,int,8,1,
-wbar,m,Width of bars,0,float,0.01,0,
-,
-Package,Inherit,Methods,Constant Name,Constant Value,Class description
-Machine,Frame,build_geometry,VERSION,1,machine frame with polar structural bars between frame and outer lamination
-,,comp_surface,,,
-,,comp_height_gap,,,
-,,build_geometry_bar,,,
-,,comp_surface_bar,,,
-,,comp_surface_gap,,,
+Nbar,m,Number of bars,0,int,8,1,,
+wbar,m,Width of bars,0,float,0.01,0,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+Machine,Frame,build_geometry,VERSION,1,machine frame with polar structural bars between frame and outer lamination,,,
+,,build_geometry_bar,,,,,,
+,,comp_height_gap,,,,,,
+,,comp_surface,,,,,,
+,,comp_surface_bar,,,,,,
+,,comp_surface_gap,,,,,,

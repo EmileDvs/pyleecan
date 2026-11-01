@@ -58,6 +58,11 @@ except ImportError as error:
     comp_surface_magnet_id = error
 
 try:
+    from ..Methods.Slot.HoleM52R.get_height_magnet_id import get_height_magnet_id
+except ImportError as error:
+    get_height_magnet_id = error
+
+try:
     from ..Methods.Slot.HoleM52R.has_magnet import has_magnet
 except ImportError as error:
     has_magnet = error
@@ -71,11 +76,6 @@ try:
     from ..Methods.Slot.HoleM52R.remove_magnet import remove_magnet
 except ImportError as error:
     remove_magnet = error
-
-try:
-    from ..Methods.Slot.HoleM52R.get_height_magnet_id import get_height_magnet_id
-except ImportError as error:
-    get_height_magnet_id = error
 
 
 from numpy import isnan
@@ -176,6 +176,18 @@ class HoleM52R(HoleMag):
         )
     else:
         comp_surface_magnet_id = comp_surface_magnet_id
+    # cf Methods.Slot.HoleM52R.get_height_magnet_id
+    if isinstance(get_height_magnet_id, ImportError):
+        get_height_magnet_id = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use HoleM52R method get_height_magnet_id: "
+                    + str(get_height_magnet_id)
+                )
+            )
+        )
+    else:
+        get_height_magnet_id = get_height_magnet_id
     # cf Methods.Slot.HoleM52R.has_magnet
     if isinstance(has_magnet, ImportError):
         has_magnet = property(
@@ -207,18 +219,6 @@ class HoleM52R(HoleMag):
         )
     else:
         remove_magnet = remove_magnet
-    # cf Methods.Slot.HoleM52R.get_height_magnet_id
-    if isinstance(get_height_magnet_id, ImportError):
-        get_height_magnet_id = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM52R method get_height_magnet_id: "
-                    + str(get_height_magnet_id)
-                )
-            )
-        )
-    else:
-        get_height_magnet_id = get_height_magnet_id
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

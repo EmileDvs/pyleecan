@@ -1,12 +1,12 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-line_list,-,list of line to draw the edges of the slot,,[Line],,,
-active_surf,-,Active surface of the Slot,,Surface,,,
-split_active_surf_dict,-,"Dictionary to enforced the split active surface (key=""Nrad=1, Ntan=2""). Labels set according to list order (loop on Nrad then Ntan)",,dict,None,,
-name,-,Name of the slot (for save),,str,,,
-,
-Package,Inherit,Methods,Constant Name,Constant Value,Class description
-Slot,Slot,build_geometry,VERSION,1,"""User defined"" Slot from a line list and a surface"
-,,build_geometry_active,,,
-,,get_surface_active,,,
-,,check,,,
-,,_set_split_active_surf_dict,,,
+line_list,-,list of line to draw the edges of the slot,,[Line],,,,
+active_surf,-,Active surface of the Slot,,Surface,,,,
+split_active_surf_dict,-,"Dictionary to enforced the split active surface (key=""Nrad=1, Ntan=2""). Labels set according to list order (loop on Nrad then Ntan)",,dict,None,,,
+name,-,Name of the slot (for save),,str,,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+Slot,Slot,_set_split_active_surf_dict,VERSION,1,"""User defined"" Slot from a line list and a surface",,,
+,,build_geometry,,,,,,
+,,build_geometry_active,,,,,,
+,,check,,,,,,
+,,get_surface_active,,,,,,

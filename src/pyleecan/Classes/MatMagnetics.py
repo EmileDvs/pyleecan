@@ -23,9 +23,9 @@ except ImportError as error:
     get_BH = error
 
 try:
-    from ..Methods.Material.MatMagnetics.plot_BH import plot_BH
+    from ..Methods.Material.MatMagnetics.get_Brm import get_Brm
 except ImportError as error:
-    plot_BH = error
+    get_Brm = error
 
 try:
     from ..Methods.Material.MatMagnetics.get_Hc import get_Hc
@@ -33,9 +33,9 @@ except ImportError as error:
     get_Hc = error
 
 try:
-    from ..Methods.Material.MatMagnetics.get_Brm import get_Brm
+    from ..Methods.Material.MatMagnetics.plot_BH import plot_BH
 except ImportError as error:
-    get_Brm = error
+    plot_BH = error
 
 
 from ..Classes.ImportMatrixVal import ImportMatrixVal
@@ -60,24 +60,6 @@ class MatMagnetics(FrozenClass):
         )
     else:
         get_BH = get_BH
-    # cf Methods.Material.MatMagnetics.plot_BH
-    if isinstance(plot_BH, ImportError):
-        plot_BH = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MatMagnetics method plot_BH: " + str(plot_BH))
-            )
-        )
-    else:
-        plot_BH = plot_BH
-    # cf Methods.Material.MatMagnetics.get_Hc
-    if isinstance(get_Hc, ImportError):
-        get_Hc = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MatMagnetics method get_Hc: " + str(get_Hc))
-            )
-        )
-    else:
-        get_Hc = get_Hc
     # cf Methods.Material.MatMagnetics.get_Brm
     if isinstance(get_Brm, ImportError):
         get_Brm = property(
@@ -87,6 +69,24 @@ class MatMagnetics(FrozenClass):
         )
     else:
         get_Brm = get_Brm
+    # cf Methods.Material.MatMagnetics.get_Hc
+    if isinstance(get_Hc, ImportError):
+        get_Hc = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MatMagnetics method get_Hc: " + str(get_Hc))
+            )
+        )
+    else:
+        get_Hc = get_Hc
+    # cf Methods.Material.MatMagnetics.plot_BH
+    if isinstance(plot_BH, ImportError):
+        plot_BH = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MatMagnetics method plot_BH: " + str(plot_BH))
+            )
+        )
+    else:
+        plot_BH = plot_BH
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

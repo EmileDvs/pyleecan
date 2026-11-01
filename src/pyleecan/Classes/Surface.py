@@ -28,6 +28,16 @@ except ImportError as error:
     draw_FEMM = error
 
 try:
+    from ..Methods.Geometry.Surface.intersect_line import intersect_line
+except ImportError as error:
+    intersect_line = error
+
+try:
+    from ..Methods.Geometry.Surface.is_inside import is_inside
+except ImportError as error:
+    is_inside = error
+
+try:
     from ..Methods.Geometry.Surface.plot import plot
 except ImportError as error:
     plot = error
@@ -36,16 +46,6 @@ try:
     from ..Methods.Geometry.Surface.split_line import split_line
 except ImportError as error:
     split_line = error
-
-try:
-    from ..Methods.Geometry.Surface.is_inside import is_inside
-except ImportError as error:
-    is_inside = error
-
-try:
-    from ..Methods.Geometry.Surface.intersect_line import intersect_line
-except ImportError as error:
-    intersect_line = error
 
 
 from numpy import isnan
@@ -78,6 +78,26 @@ class Surface(FrozenClass):
         )
     else:
         draw_FEMM = draw_FEMM
+    # cf Methods.Geometry.Surface.intersect_line
+    if isinstance(intersect_line, ImportError):
+        intersect_line = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Surface method intersect_line: " + str(intersect_line)
+                )
+            )
+        )
+    else:
+        intersect_line = intersect_line
+    # cf Methods.Geometry.Surface.is_inside
+    if isinstance(is_inside, ImportError):
+        is_inside = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Surface method is_inside: " + str(is_inside))
+            )
+        )
+    else:
+        is_inside = is_inside
     # cf Methods.Geometry.Surface.plot
     if isinstance(plot, ImportError):
         plot = property(
@@ -96,26 +116,6 @@ class Surface(FrozenClass):
         )
     else:
         split_line = split_line
-    # cf Methods.Geometry.Surface.is_inside
-    if isinstance(is_inside, ImportError):
-        is_inside = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Surface method is_inside: " + str(is_inside))
-            )
-        )
-    else:
-        is_inside = is_inside
-    # cf Methods.Geometry.Surface.intersect_line
-    if isinstance(intersect_line, ImportError):
-        intersect_line = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Surface method intersect_line: " + str(intersect_line)
-                )
-            )
-        )
-    else:
-        intersect_line = intersect_line
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

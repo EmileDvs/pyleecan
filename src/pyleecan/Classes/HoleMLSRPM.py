@@ -55,6 +55,11 @@ except ImportError as error:
     comp_volume_magnet = error
 
 try:
+    from ..Methods.Slot.HoleMLSRPM.has_magnet import has_magnet
+except ImportError as error:
+    has_magnet = error
+
+try:
     from ..Methods.Slot.HoleMLSRPM.plot_schematics import plot_schematics
 except ImportError as error:
     plot_schematics = error
@@ -63,11 +68,6 @@ try:
     from ..Methods.Slot.HoleMLSRPM.remove_magnet import remove_magnet
 except ImportError as error:
     remove_magnet = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.has_magnet import has_magnet
-except ImportError as error:
-    has_magnet = error
 
 
 from numpy import isnan
@@ -161,6 +161,17 @@ class HoleMLSRPM(HoleMag):
         )
     else:
         comp_volume_magnet = comp_volume_magnet
+    # cf Methods.Slot.HoleMLSRPM.has_magnet
+    if isinstance(has_magnet, ImportError):
+        has_magnet = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use HoleMLSRPM method has_magnet: " + str(has_magnet)
+                )
+            )
+        )
+    else:
+        has_magnet = has_magnet
     # cf Methods.Slot.HoleMLSRPM.plot_schematics
     if isinstance(plot_schematics, ImportError):
         plot_schematics = property(
@@ -184,17 +195,6 @@ class HoleMLSRPM(HoleMag):
         )
     else:
         remove_magnet = remove_magnet
-    # cf Methods.Slot.HoleMLSRPM.has_magnet
-    if isinstance(has_magnet, ImportError):
-        has_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method has_magnet: " + str(has_magnet)
-                )
-            )
-        )
-    else:
-        has_magnet = has_magnet
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

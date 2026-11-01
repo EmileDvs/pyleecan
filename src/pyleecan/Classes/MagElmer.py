@@ -23,9 +23,9 @@ except ImportError as error:
     comp_flux_airgap = error
 
 try:
-    from ..Methods.Simulation.MagElmer.solve_FEA import solve_FEA
+    from ..Methods.Simulation.MagElmer.gen_elmer_mesh import gen_elmer_mesh
 except ImportError as error:
-    solve_FEA = error
+    gen_elmer_mesh = error
 
 try:
     from ..Methods.Simulation.MagElmer.get_meshsolution import get_meshsolution
@@ -33,19 +33,19 @@ except ImportError as error:
     get_meshsolution = error
 
 try:
-    from ..Methods.Simulation.MagElmer.get_path_save_fea import get_path_save_fea
-except ImportError as error:
-    get_path_save_fea = error
-
-try:
     from ..Methods.Simulation.MagElmer.get_path_save import get_path_save
 except ImportError as error:
     get_path_save = error
 
 try:
-    from ..Methods.Simulation.MagElmer.gen_elmer_mesh import gen_elmer_mesh
+    from ..Methods.Simulation.MagElmer.get_path_save_fea import get_path_save_fea
 except ImportError as error:
-    gen_elmer_mesh = error
+    get_path_save_fea = error
+
+try:
+    from ..Methods.Simulation.MagElmer.solve_FEA import solve_FEA
+except ImportError as error:
+    solve_FEA = error
 
 
 from numpy import isnan
@@ -70,15 +70,17 @@ class MagElmer(Magnetics):
         )
     else:
         comp_flux_airgap = comp_flux_airgap
-    # cf Methods.Simulation.MagElmer.solve_FEA
-    if isinstance(solve_FEA, ImportError):
-        solve_FEA = property(
+    # cf Methods.Simulation.MagElmer.gen_elmer_mesh
+    if isinstance(gen_elmer_mesh, ImportError):
+        gen_elmer_mesh = property(
             fget=lambda x: raise_(
-                ImportError("Can't use MagElmer method solve_FEA: " + str(solve_FEA))
+                ImportError(
+                    "Can't use MagElmer method gen_elmer_mesh: " + str(gen_elmer_mesh)
+                )
             )
         )
     else:
-        solve_FEA = solve_FEA
+        gen_elmer_mesh = gen_elmer_mesh
     # cf Methods.Simulation.MagElmer.get_meshsolution
     if isinstance(get_meshsolution, ImportError):
         get_meshsolution = property(
@@ -91,6 +93,17 @@ class MagElmer(Magnetics):
         )
     else:
         get_meshsolution = get_meshsolution
+    # cf Methods.Simulation.MagElmer.get_path_save
+    if isinstance(get_path_save, ImportError):
+        get_path_save = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MagElmer method get_path_save: " + str(get_path_save)
+                )
+            )
+        )
+    else:
+        get_path_save = get_path_save
     # cf Methods.Simulation.MagElmer.get_path_save_fea
     if isinstance(get_path_save_fea, ImportError):
         get_path_save_fea = property(
@@ -103,28 +116,15 @@ class MagElmer(Magnetics):
         )
     else:
         get_path_save_fea = get_path_save_fea
-    # cf Methods.Simulation.MagElmer.get_path_save
-    if isinstance(get_path_save, ImportError):
-        get_path_save = property(
+    # cf Methods.Simulation.MagElmer.solve_FEA
+    if isinstance(solve_FEA, ImportError):
+        solve_FEA = property(
             fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MagElmer method get_path_save: " + str(get_path_save)
-                )
+                ImportError("Can't use MagElmer method solve_FEA: " + str(solve_FEA))
             )
         )
     else:
-        get_path_save = get_path_save
-    # cf Methods.Simulation.MagElmer.gen_elmer_mesh
-    if isinstance(gen_elmer_mesh, ImportError):
-        gen_elmer_mesh = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MagElmer method gen_elmer_mesh: " + str(gen_elmer_mesh)
-                )
-            )
-        )
-    else:
-        gen_elmer_mesh = gen_elmer_mesh
+        solve_FEA = solve_FEA
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

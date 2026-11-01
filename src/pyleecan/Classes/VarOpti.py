@@ -23,14 +23,14 @@ except ImportError as error:
     check = error
 
 try:
-    from ..Methods.Simulation.VarOpti.run import run
-except ImportError as error:
-    run = error
-
-try:
     from ..Methods.Simulation.VarOpti.get_full_solver import get_full_solver
 except ImportError as error:
     get_full_solver = error
+
+try:
+    from ..Methods.Simulation.VarOpti.run import run
+except ImportError as error:
+    run = error
 
 
 from numpy import isnan
@@ -53,15 +53,6 @@ class VarOpti(VarParam):
         )
     else:
         check = check
-    # cf Methods.Simulation.VarOpti.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use VarOpti method run: " + str(run))
-            )
-        )
-    else:
-        run = run
     # cf Methods.Simulation.VarOpti.get_full_solver
     if isinstance(get_full_solver, ImportError):
         get_full_solver = property(
@@ -73,6 +64,15 @@ class VarOpti(VarParam):
         )
     else:
         get_full_solver = get_full_solver
+    # cf Methods.Simulation.VarOpti.run
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VarOpti method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

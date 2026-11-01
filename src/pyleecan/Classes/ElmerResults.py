@@ -18,9 +18,9 @@ from .Elmer import Elmer
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Elmer.ElmerResults.load_data import load_data
+    from ..Methods.Elmer.ElmerResults.get_data import get_data
 except ImportError as error:
-    load_data = error
+    get_data = error
 
 try:
     from ..Methods.Elmer.ElmerResults.load_columns import load_columns
@@ -28,9 +28,9 @@ except ImportError as error:
     load_columns = error
 
 try:
-    from ..Methods.Elmer.ElmerResults.get_data import get_data
+    from ..Methods.Elmer.ElmerResults.load_data import load_data
 except ImportError as error:
-    get_data = error
+    load_data = error
 
 
 from numpy import isnan
@@ -43,17 +43,15 @@ class ElmerResults(Elmer):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Elmer.ElmerResults.load_data
-    if isinstance(load_data, ImportError):
-        load_data = property(
+    # cf Methods.Elmer.ElmerResults.get_data
+    if isinstance(get_data, ImportError):
+        get_data = property(
             fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ElmerResults method load_data: " + str(load_data)
-                )
+                ImportError("Can't use ElmerResults method get_data: " + str(get_data))
             )
         )
     else:
-        load_data = load_data
+        get_data = get_data
     # cf Methods.Elmer.ElmerResults.load_columns
     if isinstance(load_columns, ImportError):
         load_columns = property(
@@ -65,15 +63,17 @@ class ElmerResults(Elmer):
         )
     else:
         load_columns = load_columns
-    # cf Methods.Elmer.ElmerResults.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
+    # cf Methods.Elmer.ElmerResults.load_data
+    if isinstance(load_data, ImportError):
+        load_data = property(
             fget=lambda x: raise_(
-                ImportError("Can't use ElmerResults method get_data: " + str(get_data))
+                ImportError(
+                    "Can't use ElmerResults method load_data: " + str(load_data)
+                )
             )
         )
     else:
-        get_data = get_data
+        load_data = load_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

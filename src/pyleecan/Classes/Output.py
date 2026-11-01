@@ -23,16 +23,21 @@ except ImportError as error:
     comp_angle_rotor = error
 
 try:
-    from ..Methods.Output.Output.getter.get_angle_rotor_initial import (
-        get_angle_rotor_initial,
-    )
+    from ..Methods.Output.Output.getter.export_to_mat import export_to_mat
 except ImportError as error:
-    get_angle_rotor_initial = error
+    export_to_mat = error
 
 try:
     from ..Methods.Output.Output.getter.get_angle_rotor import get_angle_rotor
 except ImportError as error:
     get_angle_rotor = error
+
+try:
+    from ..Methods.Output.Output.getter.get_angle_rotor_initial import (
+        get_angle_rotor_initial,
+    )
+except ImportError as error:
+    get_angle_rotor_initial = error
 
 try:
     from ..Methods.Output.Output.getter.get_BH_rotor import get_BH_rotor
@@ -45,9 +50,14 @@ except ImportError as error:
     get_BH_stator = error
 
 try:
-    from ..Methods.Output.Output.getter.get_path_result import get_path_result
+    from ..Methods.Output.Output.getter.get_data_from_str import get_data_from_str
 except ImportError as error:
-    get_path_result = error
+    get_data_from_str = error
+
+try:
+    from ..Methods.Output.Output.getter.get_fund_harm import get_fund_harm
+except ImportError as error:
+    get_fund_harm = error
 
 try:
     from ..Methods.Output.Output.getter.get_machine_periodicity import (
@@ -57,19 +67,9 @@ except ImportError as error:
     get_machine_periodicity = error
 
 try:
-    from ..Methods.Output.Output.getter.get_fund_harm import get_fund_harm
+    from ..Methods.Output.Output.getter.get_path_result import get_path_result
 except ImportError as error:
-    get_fund_harm = error
-
-try:
-    from ..Methods.Output.Output.getter.get_data_from_str import get_data_from_str
-except ImportError as error:
-    get_data_from_str = error
-
-try:
-    from ..Methods.Output.Output.getter.export_to_mat import export_to_mat
-except ImportError as error:
-    export_to_mat = error
+    get_path_result = error
 
 try:
     from ..Methods.Output.Output.plot.Magnetic.plot_B_mesh import plot_B_mesh
@@ -103,6 +103,28 @@ class Output(FrozenClass):
         )
     else:
         comp_angle_rotor = comp_angle_rotor
+    # cf Methods.Output.Output.getter.export_to_mat
+    if isinstance(export_to_mat, ImportError):
+        export_to_mat = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Output method export_to_mat: " + str(export_to_mat)
+                )
+            )
+        )
+    else:
+        export_to_mat = export_to_mat
+    # cf Methods.Output.Output.getter.get_angle_rotor
+    if isinstance(get_angle_rotor, ImportError):
+        get_angle_rotor = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Output method get_angle_rotor: " + str(get_angle_rotor)
+                )
+            )
+        )
+    else:
+        get_angle_rotor = get_angle_rotor
     # cf Methods.Output.Output.getter.get_angle_rotor_initial
     if isinstance(get_angle_rotor_initial, ImportError):
         get_angle_rotor_initial = property(
@@ -115,17 +137,6 @@ class Output(FrozenClass):
         )
     else:
         get_angle_rotor_initial = get_angle_rotor_initial
-    # cf Methods.Output.Output.getter.get_angle_rotor
-    if isinstance(get_angle_rotor, ImportError):
-        get_angle_rotor = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Output method get_angle_rotor: " + str(get_angle_rotor)
-                )
-            )
-        )
-    else:
-        get_angle_rotor = get_angle_rotor
     # cf Methods.Output.Output.getter.get_BH_rotor
     if isinstance(get_BH_rotor, ImportError):
         get_BH_rotor = property(
@@ -148,40 +159,6 @@ class Output(FrozenClass):
         )
     else:
         get_BH_stator = get_BH_stator
-    # cf Methods.Output.Output.getter.get_path_result
-    if isinstance(get_path_result, ImportError):
-        get_path_result = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Output method get_path_result: " + str(get_path_result)
-                )
-            )
-        )
-    else:
-        get_path_result = get_path_result
-    # cf Methods.Output.Output.getter.get_machine_periodicity
-    if isinstance(get_machine_periodicity, ImportError):
-        get_machine_periodicity = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Output method get_machine_periodicity: "
-                    + str(get_machine_periodicity)
-                )
-            )
-        )
-    else:
-        get_machine_periodicity = get_machine_periodicity
-    # cf Methods.Output.Output.getter.get_fund_harm
-    if isinstance(get_fund_harm, ImportError):
-        get_fund_harm = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Output method get_fund_harm: " + str(get_fund_harm)
-                )
-            )
-        )
-    else:
-        get_fund_harm = get_fund_harm
     # cf Methods.Output.Output.getter.get_data_from_str
     if isinstance(get_data_from_str, ImportError):
         get_data_from_str = property(
@@ -194,17 +171,40 @@ class Output(FrozenClass):
         )
     else:
         get_data_from_str = get_data_from_str
-    # cf Methods.Output.Output.getter.export_to_mat
-    if isinstance(export_to_mat, ImportError):
-        export_to_mat = property(
+    # cf Methods.Output.Output.getter.get_fund_harm
+    if isinstance(get_fund_harm, ImportError):
+        get_fund_harm = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use Output method export_to_mat: " + str(export_to_mat)
+                    "Can't use Output method get_fund_harm: " + str(get_fund_harm)
                 )
             )
         )
     else:
-        export_to_mat = export_to_mat
+        get_fund_harm = get_fund_harm
+    # cf Methods.Output.Output.getter.get_machine_periodicity
+    if isinstance(get_machine_periodicity, ImportError):
+        get_machine_periodicity = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Output method get_machine_periodicity: "
+                    + str(get_machine_periodicity)
+                )
+            )
+        )
+    else:
+        get_machine_periodicity = get_machine_periodicity
+    # cf Methods.Output.Output.getter.get_path_result
+    if isinstance(get_path_result, ImportError):
+        get_path_result = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Output method get_path_result: " + str(get_path_result)
+                )
+            )
+        )
+    else:
+        get_path_result = get_path_result
     # cf Methods.Output.Output.plot.Magnetic.plot_B_mesh
     if isinstance(plot_B_mesh, ImportError):
         plot_B_mesh = property(

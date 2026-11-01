@@ -18,6 +18,13 @@ from .Slot import Slot
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Slot.SlotUD2._set_split_active_surf_dict import (
+        _set_split_active_surf_dict,
+    )
+except ImportError as error:
+    _set_split_active_surf_dict = error
+
+try:
     from ..Methods.Slot.SlotUD2.build_geometry import build_geometry
 except ImportError as error:
     build_geometry = error
@@ -28,21 +35,14 @@ except ImportError as error:
     build_geometry_active = error
 
 try:
-    from ..Methods.Slot.SlotUD2.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
     from ..Methods.Slot.SlotUD2.check import check
 except ImportError as error:
     check = error
 
 try:
-    from ..Methods.Slot.SlotUD2._set_split_active_surf_dict import (
-        _set_split_active_surf_dict,
-    )
+    from ..Methods.Slot.SlotUD2.get_surface_active import get_surface_active
 except ImportError as error:
-    _set_split_active_surf_dict = error
+    get_surface_active = error
 
 
 from numpy import isnan
@@ -55,6 +55,18 @@ class SlotUD2(Slot):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Slot.SlotUD2._set_split_active_surf_dict
+    if isinstance(_set_split_active_surf_dict, ImportError):
+        _set_split_active_surf_dict = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotUD2 method _set_split_active_surf_dict: "
+                    + str(_set_split_active_surf_dict)
+                )
+            )
+        )
+    else:
+        _set_split_active_surf_dict = _set_split_active_surf_dict
     # cf Methods.Slot.SlotUD2.build_geometry
     if isinstance(build_geometry, ImportError):
         build_geometry = property(
@@ -78,6 +90,15 @@ class SlotUD2(Slot):
         )
     else:
         build_geometry_active = build_geometry_active
+    # cf Methods.Slot.SlotUD2.check
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotUD2 method check: " + str(check))
+            )
+        )
+    else:
+        check = check
     # cf Methods.Slot.SlotUD2.get_surface_active
     if isinstance(get_surface_active, ImportError):
         get_surface_active = property(
@@ -90,27 +111,6 @@ class SlotUD2(Slot):
         )
     else:
         get_surface_active = get_surface_active
-    # cf Methods.Slot.SlotUD2.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotUD2 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
-    # cf Methods.Slot.SlotUD2._set_split_active_surf_dict
-    if isinstance(_set_split_active_surf_dict, ImportError):
-        _set_split_active_surf_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD2 method _set_split_active_surf_dict: "
-                    + str(_set_split_active_surf_dict)
-                )
-            )
-        )
-    else:
-        _set_split_active_surf_dict = _set_split_active_surf_dict
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -14,5 +14,5 @@ Slot,Slot,_comp_point_coordinate,VERSION,1,Rectangular Slot with Rectangular mag
 ,,comp_surface,,,,,,
 ,,comp_surface_active,,,,,,
 ,,get_surface_active,,,,,,
-,,plot_schematics,,,,,,
 ,,is_airgap_active,,,,,,
+,,plot_schematics,,,,,,

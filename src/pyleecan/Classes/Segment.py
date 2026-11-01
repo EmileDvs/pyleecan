@@ -63,6 +63,16 @@ except ImportError as error:
     intersect_line = error
 
 try:
+    from ..Methods.Geometry.Segment.intersect_obj import intersect_obj
+except ImportError as error:
+    intersect_obj = error
+
+try:
+    from ..Methods.Geometry.Segment.is_arc import is_arc
+except ImportError as error:
+    is_arc = error
+
+try:
     from ..Methods.Geometry.Segment.is_on_line import is_on_line
 except ImportError as error:
     is_on_line = error
@@ -98,24 +108,14 @@ except ImportError as error:
     split_line = error
 
 try:
-    from ..Methods.Geometry.Segment.translate import translate
-except ImportError as error:
-    translate = error
-
-try:
     from ..Methods.Geometry.Segment.split_point import split_point
 except ImportError as error:
     split_point = error
 
 try:
-    from ..Methods.Geometry.Segment.intersect_obj import intersect_obj
+    from ..Methods.Geometry.Segment.translate import translate
 except ImportError as error:
-    intersect_obj = error
-
-try:
-    from ..Methods.Geometry.Segment.is_arc import is_arc
-except ImportError as error:
-    is_arc = error
+    translate = error
 
 
 from numpy import isnan
@@ -213,6 +213,26 @@ class Segment(Line):
         )
     else:
         intersect_line = intersect_line
+    # cf Methods.Geometry.Segment.intersect_obj
+    if isinstance(intersect_obj, ImportError):
+        intersect_obj = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Segment method intersect_obj: " + str(intersect_obj)
+                )
+            )
+        )
+    else:
+        intersect_obj = intersect_obj
+    # cf Methods.Geometry.Segment.is_arc
+    if isinstance(is_arc, ImportError):
+        is_arc = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Segment method is_arc: " + str(is_arc))
+            )
+        )
+    else:
+        is_arc = is_arc
     # cf Methods.Geometry.Segment.is_on_line
     if isinstance(is_on_line, ImportError):
         is_on_line = property(
@@ -276,15 +296,6 @@ class Segment(Line):
         )
     else:
         split_line = split_line
-    # cf Methods.Geometry.Segment.translate
-    if isinstance(translate, ImportError):
-        translate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method translate: " + str(translate))
-            )
-        )
-    else:
-        translate = translate
     # cf Methods.Geometry.Segment.split_point
     if isinstance(split_point, ImportError):
         split_point = property(
@@ -294,26 +305,15 @@ class Segment(Line):
         )
     else:
         split_point = split_point
-    # cf Methods.Geometry.Segment.intersect_obj
-    if isinstance(intersect_obj, ImportError):
-        intersect_obj = property(
+    # cf Methods.Geometry.Segment.translate
+    if isinstance(translate, ImportError):
+        translate = property(
             fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Segment method intersect_obj: " + str(intersect_obj)
-                )
+                ImportError("Can't use Segment method translate: " + str(translate))
             )
         )
     else:
-        intersect_obj = intersect_obj
-    # cf Methods.Geometry.Segment.is_arc
-    if isinstance(is_arc, ImportError):
-        is_arc = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method is_arc: " + str(is_arc))
-            )
-        )
-    else:
-        is_arc = is_arc
+        translate = translate
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -57,16 +57,21 @@ except ImportError as error:
     comp_output_geo = error
 
 try:
-    from ..Methods.Machine.Machine.comp_Rgap_mec import comp_Rgap_mec
-except ImportError as error:
-    comp_Rgap_mec = error
-
-try:
     from ..Methods.Machine.Machine.comp_periodicity_spatial import (
         comp_periodicity_spatial,
     )
 except ImportError as error:
     comp_periodicity_spatial = error
+
+try:
+    from ..Methods.Machine.Machine.comp_periodicity_time import comp_periodicity_time
+except ImportError as error:
+    comp_periodicity_time = error
+
+try:
+    from ..Methods.Machine.Machine.comp_Rgap_mec import comp_Rgap_mec
+except ImportError as error:
+    comp_Rgap_mec = error
 
 try:
     from ..Methods.Machine.Machine.comp_width_airgap_mag import comp_width_airgap_mag
@@ -79,24 +84,14 @@ except ImportError as error:
     comp_width_airgap_mec = error
 
 try:
-    from ..Methods.Machine.Machine.get_material_dict import get_material_dict
+    from ..Methods.Machine.Machine.get_lam_by_label import get_lam_by_label
 except ImportError as error:
-    get_material_dict = error
+    get_lam_by_label = error
 
 try:
-    from ..Methods.Machine.Machine.get_polar_eq import get_polar_eq
+    from ..Methods.Machine.Machine.get_lam_index import get_lam_index
 except ImportError as error:
-    get_polar_eq = error
-
-try:
-    from ..Methods.Machine.Machine.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Machine.Machine.plot_anim_rotor import plot_anim_rotor
-except ImportError as error:
-    plot_anim_rotor = error
+    get_lam_index = error
 
 try:
     from ..Methods.Machine.Machine.get_lam_list import get_lam_list
@@ -109,14 +104,14 @@ except ImportError as error:
     get_lam_list_label = error
 
 try:
-    from ..Methods.Machine.Machine.get_lam_by_label import get_lam_by_label
+    from ..Methods.Machine.Machine.get_material_dict import get_material_dict
 except ImportError as error:
-    get_lam_by_label = error
+    get_material_dict = error
 
 try:
-    from ..Methods.Machine.Machine.get_lam_index import get_lam_index
+    from ..Methods.Machine.Machine.get_polar_eq import get_polar_eq
 except ImportError as error:
-    get_lam_index = error
+    get_polar_eq = error
 
 try:
     from ..Methods.Machine.Machine.get_pole_pair_number import get_pole_pair_number
@@ -124,14 +119,19 @@ except ImportError as error:
     get_pole_pair_number = error
 
 try:
+    from ..Methods.Machine.Machine.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
+    from ..Methods.Machine.Machine.plot_anim_rotor import plot_anim_rotor
+except ImportError as error:
+    plot_anim_rotor = error
+
+try:
     from ..Methods.Machine.Machine.set_pole_pair_number import set_pole_pair_number
 except ImportError as error:
     set_pole_pair_number = error
-
-try:
-    from ..Methods.Machine.Machine.comp_periodicity_time import comp_periodicity_time
-except ImportError as error:
-    comp_periodicity_time = error
 
 
 from numpy import isnan
@@ -219,17 +219,6 @@ class Machine(FrozenClass):
         )
     else:
         comp_output_geo = comp_output_geo
-    # cf Methods.Machine.Machine.comp_Rgap_mec
-    if isinstance(comp_Rgap_mec, ImportError):
-        comp_Rgap_mec = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Machine method comp_Rgap_mec: " + str(comp_Rgap_mec)
-                )
-            )
-        )
-    else:
-        comp_Rgap_mec = comp_Rgap_mec
     # cf Methods.Machine.Machine.comp_periodicity_spatial
     if isinstance(comp_periodicity_spatial, ImportError):
         comp_periodicity_spatial = property(
@@ -242,6 +231,29 @@ class Machine(FrozenClass):
         )
     else:
         comp_periodicity_spatial = comp_periodicity_spatial
+    # cf Methods.Machine.Machine.comp_periodicity_time
+    if isinstance(comp_periodicity_time, ImportError):
+        comp_periodicity_time = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Machine method comp_periodicity_time: "
+                    + str(comp_periodicity_time)
+                )
+            )
+        )
+    else:
+        comp_periodicity_time = comp_periodicity_time
+    # cf Methods.Machine.Machine.comp_Rgap_mec
+    if isinstance(comp_Rgap_mec, ImportError):
+        comp_Rgap_mec = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Machine method comp_Rgap_mec: " + str(comp_Rgap_mec)
+                )
+            )
+        )
+    else:
+        comp_Rgap_mec = comp_Rgap_mec
     # cf Methods.Machine.Machine.comp_width_airgap_mag
     if isinstance(comp_width_airgap_mag, ImportError):
         comp_width_airgap_mag = property(
@@ -266,72 +278,6 @@ class Machine(FrozenClass):
         )
     else:
         comp_width_airgap_mec = comp_width_airgap_mec
-    # cf Methods.Machine.Machine.get_material_dict
-    if isinstance(get_material_dict, ImportError):
-        get_material_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Machine method get_material_dict: "
-                    + str(get_material_dict)
-                )
-            )
-        )
-    else:
-        get_material_dict = get_material_dict
-    # cf Methods.Machine.Machine.get_polar_eq
-    if isinstance(get_polar_eq, ImportError):
-        get_polar_eq = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Machine method get_polar_eq: " + str(get_polar_eq)
-                )
-            )
-        )
-    else:
-        get_polar_eq = get_polar_eq
-    # cf Methods.Machine.Machine.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Machine method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
-    # cf Methods.Machine.Machine.plot_anim_rotor
-    if isinstance(plot_anim_rotor, ImportError):
-        plot_anim_rotor = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Machine method plot_anim_rotor: " + str(plot_anim_rotor)
-                )
-            )
-        )
-    else:
-        plot_anim_rotor = plot_anim_rotor
-    # cf Methods.Machine.Machine.get_lam_list
-    if isinstance(get_lam_list, ImportError):
-        get_lam_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Machine method get_lam_list: " + str(get_lam_list)
-                )
-            )
-        )
-    else:
-        get_lam_list = get_lam_list
-    # cf Methods.Machine.Machine.get_lam_list_label
-    if isinstance(get_lam_list_label, ImportError):
-        get_lam_list_label = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Machine method get_lam_list_label: "
-                    + str(get_lam_list_label)
-                )
-            )
-        )
-    else:
-        get_lam_list_label = get_lam_list_label
     # cf Methods.Machine.Machine.get_lam_by_label
     if isinstance(get_lam_by_label, ImportError):
         get_lam_by_label = property(
@@ -355,6 +301,52 @@ class Machine(FrozenClass):
         )
     else:
         get_lam_index = get_lam_index
+    # cf Methods.Machine.Machine.get_lam_list
+    if isinstance(get_lam_list, ImportError):
+        get_lam_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Machine method get_lam_list: " + str(get_lam_list)
+                )
+            )
+        )
+    else:
+        get_lam_list = get_lam_list
+    # cf Methods.Machine.Machine.get_lam_list_label
+    if isinstance(get_lam_list_label, ImportError):
+        get_lam_list_label = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Machine method get_lam_list_label: "
+                    + str(get_lam_list_label)
+                )
+            )
+        )
+    else:
+        get_lam_list_label = get_lam_list_label
+    # cf Methods.Machine.Machine.get_material_dict
+    if isinstance(get_material_dict, ImportError):
+        get_material_dict = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Machine method get_material_dict: "
+                    + str(get_material_dict)
+                )
+            )
+        )
+    else:
+        get_material_dict = get_material_dict
+    # cf Methods.Machine.Machine.get_polar_eq
+    if isinstance(get_polar_eq, ImportError):
+        get_polar_eq = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Machine method get_polar_eq: " + str(get_polar_eq)
+                )
+            )
+        )
+    else:
+        get_polar_eq = get_polar_eq
     # cf Methods.Machine.Machine.get_pole_pair_number
     if isinstance(get_pole_pair_number, ImportError):
         get_pole_pair_number = property(
@@ -367,6 +359,26 @@ class Machine(FrozenClass):
         )
     else:
         get_pole_pair_number = get_pole_pair_number
+    # cf Methods.Machine.Machine.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Machine method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
+    # cf Methods.Machine.Machine.plot_anim_rotor
+    if isinstance(plot_anim_rotor, ImportError):
+        plot_anim_rotor = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Machine method plot_anim_rotor: " + str(plot_anim_rotor)
+                )
+            )
+        )
+    else:
+        plot_anim_rotor = plot_anim_rotor
     # cf Methods.Machine.Machine.set_pole_pair_number
     if isinstance(set_pole_pair_number, ImportError):
         set_pole_pair_number = property(
@@ -379,18 +391,6 @@ class Machine(FrozenClass):
         )
     else:
         set_pole_pair_number = set_pole_pair_number
-    # cf Methods.Machine.Machine.comp_periodicity_time
-    if isinstance(comp_periodicity_time, ImportError):
-        comp_periodicity_time = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Machine method comp_periodicity_time: "
-                    + str(comp_periodicity_time)
-                )
-            )
-        )
-    else:
-        comp_periodicity_time = comp_periodicity_time
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

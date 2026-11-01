@@ -23,9 +23,9 @@ except ImportError as error:
     build_geometry = error
 
 try:
-    from ..Methods.Machine.FrameBar.comp_surface import comp_surface
+    from ..Methods.Machine.FrameBar.build_geometry_bar import build_geometry_bar
 except ImportError as error:
-    comp_surface = error
+    build_geometry_bar = error
 
 try:
     from ..Methods.Machine.FrameBar.comp_height_gap import comp_height_gap
@@ -33,9 +33,9 @@ except ImportError as error:
     comp_height_gap = error
 
 try:
-    from ..Methods.Machine.FrameBar.build_geometry_bar import build_geometry_bar
+    from ..Methods.Machine.FrameBar.comp_surface import comp_surface
 except ImportError as error:
-    build_geometry_bar = error
+    comp_surface = error
 
 try:
     from ..Methods.Machine.FrameBar.comp_surface_bar import comp_surface_bar
@@ -69,28 +69,6 @@ class FrameBar(Frame):
         )
     else:
         build_geometry = build_geometry
-    # cf Methods.Machine.FrameBar.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
-    # cf Methods.Machine.FrameBar.comp_height_gap
-    if isinstance(comp_height_gap, ImportError):
-        comp_height_gap = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method comp_height_gap: " + str(comp_height_gap)
-                )
-            )
-        )
-    else:
-        comp_height_gap = comp_height_gap
     # cf Methods.Machine.FrameBar.build_geometry_bar
     if isinstance(build_geometry_bar, ImportError):
         build_geometry_bar = property(
@@ -103,6 +81,28 @@ class FrameBar(Frame):
         )
     else:
         build_geometry_bar = build_geometry_bar
+    # cf Methods.Machine.FrameBar.comp_height_gap
+    if isinstance(comp_height_gap, ImportError):
+        comp_height_gap = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use FrameBar method comp_height_gap: " + str(comp_height_gap)
+                )
+            )
+        )
+    else:
+        comp_height_gap = comp_height_gap
+    # cf Methods.Machine.FrameBar.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use FrameBar method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Machine.FrameBar.comp_surface_bar
     if isinstance(comp_surface_bar, ImportError):
         comp_surface_bar = property(

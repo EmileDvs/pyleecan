@@ -18,14 +18,44 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Mesh.MeshSolution.get_solution import get_solution
+    from ..Methods.Mesh.MeshSolution.__getitem__ import __getitem__
 except ImportError as error:
-    get_solution = error
+    __getitem__ = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.__iter__ import __iter__
+except ImportError as error:
+    __iter__ = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.__setitem__ import __setitem__
+except ImportError as error:
+    __setitem__ = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.add_solution import add_solution
+except ImportError as error:
+    add_solution = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.export_to_mat import export_to_mat
+except ImportError as error:
+    export_to_mat = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.get_deflection import get_deflection
+except ImportError as error:
+    get_deflection = error
 
 try:
     from ..Methods.Mesh.MeshSolution.get_field import get_field
 except ImportError as error:
     get_field = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.get_glyph import get_glyph
+except ImportError as error:
+    get_glyph = error
 
 try:
     from ..Methods.Mesh.MeshSolution.get_group import get_group
@@ -38,9 +68,24 @@ except ImportError as error:
     get_mesh_field_pv = error
 
 try:
-    from ..Methods.Mesh.MeshSolution.plot_mesh import plot_mesh
+    from ..Methods.Mesh.MeshSolution.get_solution import get_solution
 except ImportError as error:
-    plot_mesh = error
+    get_solution = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.items import items
+except ImportError as error:
+    items = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.keys import keys
+except ImportError as error:
+    keys = error
+
+try:
+    from ..Methods.Mesh.MeshSolution.perm_coord import perm_coord
+except ImportError as error:
+    perm_coord = error
 
 try:
     from ..Methods.Mesh.MeshSolution.plot_contour import plot_contour
@@ -58,29 +103,9 @@ except ImportError as error:
     plot_glyph = error
 
 try:
-    from ..Methods.Mesh.MeshSolution.perm_coord import perm_coord
+    from ..Methods.Mesh.MeshSolution.plot_mesh import plot_mesh
 except ImportError as error:
-    perm_coord = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.get_deflection import get_deflection
-except ImportError as error:
-    get_deflection = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.get_glyph import get_glyph
-except ImportError as error:
-    get_glyph = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.add_solution import add_solution
-except ImportError as error:
-    add_solution = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.replace_solution import replace_solution
-except ImportError as error:
-    replace_solution = error
+    plot_mesh = error
 
 try:
     from ..Methods.Mesh.MeshSolution.pop_solution import pop_solution
@@ -88,39 +113,14 @@ except ImportError as error:
     pop_solution = error
 
 try:
-    from ..Methods.Mesh.MeshSolution.keys import keys
+    from ..Methods.Mesh.MeshSolution.replace_solution import replace_solution
 except ImportError as error:
-    keys = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.items import items
-except ImportError as error:
-    items = error
+    replace_solution = error
 
 try:
     from ..Methods.Mesh.MeshSolution.values import values
 except ImportError as error:
     values = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.__getitem__ import __getitem__
-except ImportError as error:
-    __getitem__ = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.__setitem__ import __setitem__
-except ImportError as error:
-    __setitem__ = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.__iter__ import __iter__
-except ImportError as error:
-    __iter__ = error
-
-try:
-    from ..Methods.Mesh.MeshSolution.export_to_mat import export_to_mat
-except ImportError as error:
-    export_to_mat = error
 
 
 from numpy import isnan
@@ -133,17 +133,71 @@ class MeshSolution(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Mesh.MeshSolution.get_solution
-    if isinstance(get_solution, ImportError):
-        get_solution = property(
+    # cf Methods.Mesh.MeshSolution.__getitem__
+    if isinstance(__getitem__, ImportError):
+        __getitem__ = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MeshSolution method get_solution: " + str(get_solution)
+                    "Can't use MeshSolution method __getitem__: " + str(__getitem__)
                 )
             )
         )
     else:
-        get_solution = get_solution
+        __getitem__ = __getitem__
+    # cf Methods.Mesh.MeshSolution.__iter__
+    if isinstance(__iter__, ImportError):
+        __iter__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshSolution method __iter__: " + str(__iter__))
+            )
+        )
+    else:
+        __iter__ = __iter__
+    # cf Methods.Mesh.MeshSolution.__setitem__
+    if isinstance(__setitem__, ImportError):
+        __setitem__ = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshSolution method __setitem__: " + str(__setitem__)
+                )
+            )
+        )
+    else:
+        __setitem__ = __setitem__
+    # cf Methods.Mesh.MeshSolution.add_solution
+    if isinstance(add_solution, ImportError):
+        add_solution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshSolution method add_solution: " + str(add_solution)
+                )
+            )
+        )
+    else:
+        add_solution = add_solution
+    # cf Methods.Mesh.MeshSolution.export_to_mat
+    if isinstance(export_to_mat, ImportError):
+        export_to_mat = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshSolution method export_to_mat: " + str(export_to_mat)
+                )
+            )
+        )
+    else:
+        export_to_mat = export_to_mat
+    # cf Methods.Mesh.MeshSolution.get_deflection
+    if isinstance(get_deflection, ImportError):
+        get_deflection = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshSolution method get_deflection: "
+                    + str(get_deflection)
+                )
+            )
+        )
+    else:
+        get_deflection = get_deflection
     # cf Methods.Mesh.MeshSolution.get_field
     if isinstance(get_field, ImportError):
         get_field = property(
@@ -155,6 +209,17 @@ class MeshSolution(FrozenClass):
         )
     else:
         get_field = get_field
+    # cf Methods.Mesh.MeshSolution.get_glyph
+    if isinstance(get_glyph, ImportError):
+        get_glyph = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshSolution method get_glyph: " + str(get_glyph)
+                )
+            )
+        )
+    else:
+        get_glyph = get_glyph
     # cf Methods.Mesh.MeshSolution.get_group
     if isinstance(get_group, ImportError):
         get_group = property(
@@ -178,17 +243,46 @@ class MeshSolution(FrozenClass):
         )
     else:
         get_mesh_field_pv = get_mesh_field_pv
-    # cf Methods.Mesh.MeshSolution.plot_mesh
-    if isinstance(plot_mesh, ImportError):
-        plot_mesh = property(
+    # cf Methods.Mesh.MeshSolution.get_solution
+    if isinstance(get_solution, ImportError):
+        get_solution = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MeshSolution method plot_mesh: " + str(plot_mesh)
+                    "Can't use MeshSolution method get_solution: " + str(get_solution)
                 )
             )
         )
     else:
-        plot_mesh = plot_mesh
+        get_solution = get_solution
+    # cf Methods.Mesh.MeshSolution.items
+    if isinstance(items, ImportError):
+        items = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshSolution method items: " + str(items))
+            )
+        )
+    else:
+        items = items
+    # cf Methods.Mesh.MeshSolution.keys
+    if isinstance(keys, ImportError):
+        keys = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshSolution method keys: " + str(keys))
+            )
+        )
+    else:
+        keys = keys
+    # cf Methods.Mesh.MeshSolution.perm_coord
+    if isinstance(perm_coord, ImportError):
+        perm_coord = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshSolution method perm_coord: " + str(perm_coord)
+                )
+            )
+        )
+    else:
+        perm_coord = perm_coord
     # cf Methods.Mesh.MeshSolution.plot_contour
     if isinstance(plot_contour, ImportError):
         plot_contour = property(
@@ -223,51 +317,28 @@ class MeshSolution(FrozenClass):
         )
     else:
         plot_glyph = plot_glyph
-    # cf Methods.Mesh.MeshSolution.perm_coord
-    if isinstance(perm_coord, ImportError):
-        perm_coord = property(
+    # cf Methods.Mesh.MeshSolution.plot_mesh
+    if isinstance(plot_mesh, ImportError):
+        plot_mesh = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MeshSolution method perm_coord: " + str(perm_coord)
+                    "Can't use MeshSolution method plot_mesh: " + str(plot_mesh)
                 )
             )
         )
     else:
-        perm_coord = perm_coord
-    # cf Methods.Mesh.MeshSolution.get_deflection
-    if isinstance(get_deflection, ImportError):
-        get_deflection = property(
+        plot_mesh = plot_mesh
+    # cf Methods.Mesh.MeshSolution.pop_solution
+    if isinstance(pop_solution, ImportError):
+        pop_solution = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use MeshSolution method get_deflection: "
-                    + str(get_deflection)
+                    "Can't use MeshSolution method pop_solution: " + str(pop_solution)
                 )
             )
         )
     else:
-        get_deflection = get_deflection
-    # cf Methods.Mesh.MeshSolution.get_glyph
-    if isinstance(get_glyph, ImportError):
-        get_glyph = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshSolution method get_glyph: " + str(get_glyph)
-                )
-            )
-        )
-    else:
-        get_glyph = get_glyph
-    # cf Methods.Mesh.MeshSolution.add_solution
-    if isinstance(add_solution, ImportError):
-        add_solution = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshSolution method add_solution: " + str(add_solution)
-                )
-            )
-        )
-    else:
-        add_solution = add_solution
+        pop_solution = pop_solution
     # cf Methods.Mesh.MeshSolution.replace_solution
     if isinstance(replace_solution, ImportError):
         replace_solution = property(
@@ -280,35 +351,6 @@ class MeshSolution(FrozenClass):
         )
     else:
         replace_solution = replace_solution
-    # cf Methods.Mesh.MeshSolution.pop_solution
-    if isinstance(pop_solution, ImportError):
-        pop_solution = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshSolution method pop_solution: " + str(pop_solution)
-                )
-            )
-        )
-    else:
-        pop_solution = pop_solution
-    # cf Methods.Mesh.MeshSolution.keys
-    if isinstance(keys, ImportError):
-        keys = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshSolution method keys: " + str(keys))
-            )
-        )
-    else:
-        keys = keys
-    # cf Methods.Mesh.MeshSolution.items
-    if isinstance(items, ImportError):
-        items = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshSolution method items: " + str(items))
-            )
-        )
-    else:
-        items = items
     # cf Methods.Mesh.MeshSolution.values
     if isinstance(values, ImportError):
         values = property(
@@ -318,48 +360,6 @@ class MeshSolution(FrozenClass):
         )
     else:
         values = values
-    # cf Methods.Mesh.MeshSolution.__getitem__
-    if isinstance(__getitem__, ImportError):
-        __getitem__ = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshSolution method __getitem__: " + str(__getitem__)
-                )
-            )
-        )
-    else:
-        __getitem__ = __getitem__
-    # cf Methods.Mesh.MeshSolution.__setitem__
-    if isinstance(__setitem__, ImportError):
-        __setitem__ = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshSolution method __setitem__: " + str(__setitem__)
-                )
-            )
-        )
-    else:
-        __setitem__ = __setitem__
-    # cf Methods.Mesh.MeshSolution.__iter__
-    if isinstance(__iter__, ImportError):
-        __iter__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshSolution method __iter__: " + str(__iter__))
-            )
-        )
-    else:
-        __iter__ = __iter__
-    # cf Methods.Mesh.MeshSolution.export_to_mat
-    if isinstance(export_to_mat, ImportError):
-        export_to_mat = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshSolution method export_to_mat: " + str(export_to_mat)
-                )
-            )
-        )
-    else:
-        export_to_mat = export_to_mat
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

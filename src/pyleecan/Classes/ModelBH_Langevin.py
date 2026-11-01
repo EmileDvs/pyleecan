@@ -18,14 +18,14 @@ from .ModelBH import ModelBH
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Material.ModelBH_Langevin.get_BH import get_BH
-except ImportError as error:
-    get_BH = error
-
-try:
     from ..Methods.Material.ModelBH_Langevin.BH_func import BH_func
 except ImportError as error:
     BH_func = error
+
+try:
+    from ..Methods.Material.ModelBH_Langevin.get_BH import get_BH
+except ImportError as error:
+    get_BH = error
 
 
 from numpy import isnan
@@ -38,15 +38,6 @@ class ModelBH_Langevin(ModelBH):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Material.ModelBH_Langevin.get_BH
-    if isinstance(get_BH, ImportError):
-        get_BH = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ModelBH_Langevin method get_BH: " + str(get_BH))
-            )
-        )
-    else:
-        get_BH = get_BH
     # cf Methods.Material.ModelBH_Langevin.BH_func
     if isinstance(BH_func, ImportError):
         BH_func = property(
@@ -58,6 +49,15 @@ class ModelBH_Langevin(ModelBH):
         )
     else:
         BH_func = BH_func
+    # cf Methods.Material.ModelBH_Langevin.get_BH
+    if isinstance(get_BH, ImportError):
+        get_BH = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ModelBH_Langevin method get_BH: " + str(get_BH))
+            )
+        )
+    else:
+        get_BH = get_BH
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

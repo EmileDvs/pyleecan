@@ -18,6 +18,16 @@ from .SolutionMat import SolutionMat
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Simulation.Mode.get_shape_pol import get_shape_pol
+except ImportError as error:
+    get_shape_pol = error
+
+try:
+    from ..Methods.Simulation.Mode.get_shape_xyz import get_shape_xyz
+except ImportError as error:
+    get_shape_xyz = error
+
+try:
     from ..Methods.Simulation.Mode.plot import plot
 except ImportError as error:
     plot = error
@@ -26,16 +36,6 @@ try:
     from ..Methods.Simulation.Mode.plot_animated import plot_animated
 except ImportError as error:
     plot_animated = error
-
-try:
-    from ..Methods.Simulation.Mode.get_shape_xyz import get_shape_xyz
-except ImportError as error:
-    get_shape_xyz = error
-
-try:
-    from ..Methods.Simulation.Mode.get_shape_pol import get_shape_pol
-except ImportError as error:
-    get_shape_pol = error
 
 
 from numpy import array, array_equal
@@ -49,6 +49,28 @@ class Mode(SolutionMat):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.Mode.get_shape_pol
+    if isinstance(get_shape_pol, ImportError):
+        get_shape_pol = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Mode method get_shape_pol: " + str(get_shape_pol)
+                )
+            )
+        )
+    else:
+        get_shape_pol = get_shape_pol
+    # cf Methods.Simulation.Mode.get_shape_xyz
+    if isinstance(get_shape_xyz, ImportError):
+        get_shape_xyz = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Mode method get_shape_xyz: " + str(get_shape_xyz)
+                )
+            )
+        )
+    else:
+        get_shape_xyz = get_shape_xyz
     # cf Methods.Simulation.Mode.plot
     if isinstance(plot, ImportError):
         plot = property(
@@ -69,28 +91,6 @@ class Mode(SolutionMat):
         )
     else:
         plot_animated = plot_animated
-    # cf Methods.Simulation.Mode.get_shape_xyz
-    if isinstance(get_shape_xyz, ImportError):
-        get_shape_xyz = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Mode method get_shape_xyz: " + str(get_shape_xyz)
-                )
-            )
-        )
-    else:
-        get_shape_xyz = get_shape_xyz
-    # cf Methods.Simulation.Mode.get_shape_pol
-    if isinstance(get_shape_pol, ImportError):
-        get_shape_pol = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Mode method get_shape_pol: " + str(get_shape_pol)
-                )
-            )
-        )
-    else:
-        get_shape_pol = get_shape_pol
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

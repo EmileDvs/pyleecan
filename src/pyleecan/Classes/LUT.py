@@ -23,24 +23,24 @@ except ImportError as error:
     get_eec = error
 
 try:
-    from ..Methods.Output.LUT.get_OP_matrix_obj import get_OP_matrix_obj
-except ImportError as error:
-    get_OP_matrix_obj = error
-
-try:
     from ..Methods.Output.LUT.get_OP_array import get_OP_array
 except ImportError as error:
     get_OP_array = error
 
 try:
-    from ..Methods.Output.LUT.set_default_simulation import set_default_simulation
+    from ..Methods.Output.LUT.get_OP_matrix_obj import get_OP_matrix_obj
 except ImportError as error:
-    set_default_simulation = error
+    get_OP_matrix_obj = error
 
 try:
     from ..Methods.Output.LUT.get_phase_dir import get_phase_dir
 except ImportError as error:
     get_phase_dir = error
+
+try:
+    from ..Methods.Output.LUT.set_default_simulation import set_default_simulation
+except ImportError as error:
+    set_default_simulation = error
 
 
 from numpy import isnan
@@ -62,6 +62,15 @@ class LUT(XOutput):
         )
     else:
         get_eec = get_eec
+    # cf Methods.Output.LUT.get_OP_array
+    if isinstance(get_OP_array, ImportError):
+        get_OP_array = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LUT method get_OP_array: " + str(get_OP_array))
+            )
+        )
+    else:
+        get_OP_array = get_OP_array
     # cf Methods.Output.LUT.get_OP_matrix_obj
     if isinstance(get_OP_matrix_obj, ImportError):
         get_OP_matrix_obj = property(
@@ -73,15 +82,15 @@ class LUT(XOutput):
         )
     else:
         get_OP_matrix_obj = get_OP_matrix_obj
-    # cf Methods.Output.LUT.get_OP_array
-    if isinstance(get_OP_array, ImportError):
-        get_OP_array = property(
+    # cf Methods.Output.LUT.get_phase_dir
+    if isinstance(get_phase_dir, ImportError):
+        get_phase_dir = property(
             fget=lambda x: raise_(
-                ImportError("Can't use LUT method get_OP_array: " + str(get_OP_array))
+                ImportError("Can't use LUT method get_phase_dir: " + str(get_phase_dir))
             )
         )
     else:
-        get_OP_array = get_OP_array
+        get_phase_dir = get_phase_dir
     # cf Methods.Output.LUT.set_default_simulation
     if isinstance(set_default_simulation, ImportError):
         set_default_simulation = property(
@@ -94,15 +103,6 @@ class LUT(XOutput):
         )
     else:
         set_default_simulation = set_default_simulation
-    # cf Methods.Output.LUT.get_phase_dir
-    if isinstance(get_phase_dir, ImportError):
-        get_phase_dir = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LUT method get_phase_dir: " + str(get_phase_dir))
-            )
-        )
-    else:
-        get_phase_dir = get_phase_dir
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -18,29 +18,9 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.Bore.merge_slot import merge_slot
+    from ..Methods.Machine.Bore.comp_Rmax import comp_Rmax
 except ImportError as error:
-    merge_slot = error
-
-try:
-    from ..Methods.Machine.Bore.is_yoke import is_yoke
-except ImportError as error:
-    is_yoke = error
-
-try:
-    from ..Methods.Machine.Bore.merge_slot_connect import merge_slot_connect
-except ImportError as error:
-    merge_slot_connect = error
-
-try:
-    from ..Methods.Machine.Bore.merge_slot_intersect import merge_slot_intersect
-except ImportError as error:
-    merge_slot_intersect = error
-
-try:
-    from ..Methods.Machine.Bore.merge_slot_translate import merge_slot_translate
-except ImportError as error:
-    merge_slot_translate = error
+    comp_Rmax = error
 
 try:
     from ..Methods.Machine.Bore.comp_Rmin import comp_Rmin
@@ -58,14 +38,34 @@ except ImportError as error:
     get_surface = error
 
 try:
+    from ..Methods.Machine.Bore.is_yoke import is_yoke
+except ImportError as error:
+    is_yoke = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot import merge_slot
+except ImportError as error:
+    merge_slot = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot_connect import merge_slot_connect
+except ImportError as error:
+    merge_slot_connect = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot_intersect import merge_slot_intersect
+except ImportError as error:
+    merge_slot_intersect = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot_translate import merge_slot_translate
+except ImportError as error:
+    merge_slot_translate = error
+
+try:
     from ..Methods.Machine.Bore.plot import plot
 except ImportError as error:
     plot = error
-
-try:
-    from ..Methods.Machine.Bore.comp_Rmax import comp_Rmax
-except ImportError as error:
-    comp_Rmax = error
 
 
 from numpy import isnan
@@ -78,15 +78,42 @@ class Bore(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.Bore.merge_slot
-    if isinstance(merge_slot, ImportError):
-        merge_slot = property(
+    # cf Methods.Machine.Bore.comp_Rmax
+    if isinstance(comp_Rmax, ImportError):
+        comp_Rmax = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Bore method merge_slot: " + str(merge_slot))
+                ImportError("Can't use Bore method comp_Rmax: " + str(comp_Rmax))
             )
         )
     else:
-        merge_slot = merge_slot
+        comp_Rmax = comp_Rmax
+    # cf Methods.Machine.Bore.comp_Rmin
+    if isinstance(comp_Rmin, ImportError):
+        comp_Rmin = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method comp_Rmin: " + str(comp_Rmin))
+            )
+        )
+    else:
+        comp_Rmin = comp_Rmin
+    # cf Methods.Machine.Bore.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method comp_surface: " + str(comp_surface))
+            )
+        )
+    else:
+        comp_surface = comp_surface
+    # cf Methods.Machine.Bore.get_surface
+    if isinstance(get_surface, ImportError):
+        get_surface = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method get_surface: " + str(get_surface))
+            )
+        )
+    else:
+        get_surface = get_surface
     # cf Methods.Machine.Bore.is_yoke
     if isinstance(is_yoke, ImportError):
         is_yoke = property(
@@ -96,6 +123,15 @@ class Bore(FrozenClass):
         )
     else:
         is_yoke = is_yoke
+    # cf Methods.Machine.Bore.merge_slot
+    if isinstance(merge_slot, ImportError):
+        merge_slot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method merge_slot: " + str(merge_slot))
+            )
+        )
+    else:
+        merge_slot = merge_slot
     # cf Methods.Machine.Bore.merge_slot_connect
     if isinstance(merge_slot_connect, ImportError):
         merge_slot_connect = property(
@@ -132,33 +168,6 @@ class Bore(FrozenClass):
         )
     else:
         merge_slot_translate = merge_slot_translate
-    # cf Methods.Machine.Bore.comp_Rmin
-    if isinstance(comp_Rmin, ImportError):
-        comp_Rmin = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Bore method comp_Rmin: " + str(comp_Rmin))
-            )
-        )
-    else:
-        comp_Rmin = comp_Rmin
-    # cf Methods.Machine.Bore.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Bore method comp_surface: " + str(comp_surface))
-            )
-        )
-    else:
-        comp_surface = comp_surface
-    # cf Methods.Machine.Bore.get_surface
-    if isinstance(get_surface, ImportError):
-        get_surface = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Bore method get_surface: " + str(get_surface))
-            )
-        )
-    else:
-        get_surface = get_surface
     # cf Methods.Machine.Bore.plot
     if isinstance(plot, ImportError):
         plot = property(
@@ -168,15 +177,6 @@ class Bore(FrozenClass):
         )
     else:
         plot = plot
-    # cf Methods.Machine.Bore.comp_Rmax
-    if isinstance(comp_Rmax, ImportError):
-        comp_Rmax = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Bore method comp_Rmax: " + str(comp_Rmax))
-            )
-        )
-    else:
-        comp_Rmax = comp_Rmax
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -18,16 +18,6 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Output.OutLossModel.get_mesh_solution import get_mesh_solution
-except ImportError as error:
-    get_mesh_solution = error
-
-try:
-    from ..Methods.Output.OutLossModel.get_loss_scalar import get_loss_scalar
-except ImportError as error:
-    get_loss_scalar = error
-
-try:
     from ..Methods.Output.OutLossModel.__add__ import __add__
 except ImportError as error:
     __add__ = error
@@ -38,14 +28,24 @@ except ImportError as error:
     __radd__ = error
 
 try:
+    from ..Methods.Output.OutLossModel.__rsub__ import __rsub__
+except ImportError as error:
+    __rsub__ = error
+
+try:
     from ..Methods.Output.OutLossModel.__sub__ import __sub__
 except ImportError as error:
     __sub__ = error
 
 try:
-    from ..Methods.Output.OutLossModel.__rsub__ import __rsub__
+    from ..Methods.Output.OutLossModel.get_loss_scalar import get_loss_scalar
 except ImportError as error:
-    __rsub__ = error
+    get_loss_scalar = error
+
+try:
+    from ..Methods.Output.OutLossModel.get_mesh_solution import get_mesh_solution
+except ImportError as error:
+    get_mesh_solution = error
 
 try:
     from ..Methods.Output.OutLossModel.plot_mesh import plot_mesh
@@ -64,30 +64,6 @@ class OutLossModel(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Output.OutLossModel.get_mesh_solution
-    if isinstance(get_mesh_solution, ImportError):
-        get_mesh_solution = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OutLossModel method get_mesh_solution: "
-                    + str(get_mesh_solution)
-                )
-            )
-        )
-    else:
-        get_mesh_solution = get_mesh_solution
-    # cf Methods.Output.OutLossModel.get_loss_scalar
-    if isinstance(get_loss_scalar, ImportError):
-        get_loss_scalar = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OutLossModel method get_loss_scalar: "
-                    + str(get_loss_scalar)
-                )
-            )
-        )
-    else:
-        get_loss_scalar = get_loss_scalar
     # cf Methods.Output.OutLossModel.__add__
     if isinstance(__add__, ImportError):
         __add__ = property(
@@ -106,15 +82,6 @@ class OutLossModel(FrozenClass):
         )
     else:
         __radd__ = __radd__
-    # cf Methods.Output.OutLossModel.__sub__
-    if isinstance(__sub__, ImportError):
-        __sub__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OutLossModel method __sub__: " + str(__sub__))
-            )
-        )
-    else:
-        __sub__ = __sub__
     # cf Methods.Output.OutLossModel.__rsub__
     if isinstance(__rsub__, ImportError):
         __rsub__ = property(
@@ -124,6 +91,39 @@ class OutLossModel(FrozenClass):
         )
     else:
         __rsub__ = __rsub__
+    # cf Methods.Output.OutLossModel.__sub__
+    if isinstance(__sub__, ImportError):
+        __sub__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutLossModel method __sub__: " + str(__sub__))
+            )
+        )
+    else:
+        __sub__ = __sub__
+    # cf Methods.Output.OutLossModel.get_loss_scalar
+    if isinstance(get_loss_scalar, ImportError):
+        get_loss_scalar = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutLossModel method get_loss_scalar: "
+                    + str(get_loss_scalar)
+                )
+            )
+        )
+    else:
+        get_loss_scalar = get_loss_scalar
+    # cf Methods.Output.OutLossModel.get_mesh_solution
+    if isinstance(get_mesh_solution, ImportError):
+        get_mesh_solution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutLossModel method get_mesh_solution: "
+                    + str(get_mesh_solution)
+                )
+            )
+        )
+    else:
+        get_mesh_solution = get_mesh_solution
     # cf Methods.Output.OutLossModel.plot_mesh
     if isinstance(plot_mesh, ImportError):
         plot_mesh = property(

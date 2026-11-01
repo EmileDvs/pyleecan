@@ -23,11 +23,6 @@ except ImportError as error:
     comp_axes = error
 
 try:
-    from ..Methods.Simulation.Input.comp_axis_time import comp_axis_time
-except ImportError as error:
-    comp_axis_time = error
-
-try:
     from ..Methods.Simulation.Input.comp_axis_angle import comp_axis_angle
 except ImportError as error:
     comp_axis_angle = error
@@ -36,6 +31,11 @@ try:
     from ..Methods.Simulation.Input.comp_axis_phase import comp_axis_phase
 except ImportError as error:
     comp_axis_phase = error
+
+try:
+    from ..Methods.Simulation.Input.comp_axis_time import comp_axis_time
+except ImportError as error:
+    comp_axis_time = error
 
 
 from ..Classes.ImportMatrixVal import ImportMatrixVal
@@ -60,17 +60,6 @@ class Input(FrozenClass):
         )
     else:
         comp_axes = comp_axes
-    # cf Methods.Simulation.Input.comp_axis_time
-    if isinstance(comp_axis_time, ImportError):
-        comp_axis_time = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Input method comp_axis_time: " + str(comp_axis_time)
-                )
-            )
-        )
-    else:
-        comp_axis_time = comp_axis_time
     # cf Methods.Simulation.Input.comp_axis_angle
     if isinstance(comp_axis_angle, ImportError):
         comp_axis_angle = property(
@@ -93,6 +82,17 @@ class Input(FrozenClass):
         )
     else:
         comp_axis_phase = comp_axis_phase
+    # cf Methods.Simulation.Input.comp_axis_time
+    if isinstance(comp_axis_time, ImportError):
+        comp_axis_time = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Input method comp_axis_time: " + str(comp_axis_time)
+                )
+            )
+        )
+    else:
+        comp_axis_time = comp_axis_time
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

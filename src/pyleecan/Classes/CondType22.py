@@ -18,21 +18,6 @@ from .Conductor import Conductor
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Machine.CondType22.comp_surface_active import comp_surface_active
-except ImportError as error:
-    comp_surface_active = error
-
-try:
-    from ..Methods.Machine.CondType22.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Machine.CondType22.comp_width_wire import comp_width_wire
-except ImportError as error:
-    comp_width_wire = error
-
-try:
     from ..Methods.Machine.CondType22.comp_height_wire import comp_height_wire
 except ImportError as error:
     comp_height_wire = error
@@ -50,6 +35,21 @@ except ImportError as error:
     comp_nb_radial_wire = error
 
 try:
+    from ..Methods.Machine.CondType22.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Machine.CondType22.comp_surface_active import comp_surface_active
+except ImportError as error:
+    comp_surface_active = error
+
+try:
+    from ..Methods.Machine.CondType22.comp_width_wire import comp_width_wire
+except ImportError as error:
+    comp_width_wire = error
+
+try:
     from ..Methods.Machine.CondType22.is_round_wire import is_round_wire
 except ImportError as error:
     is_round_wire = error
@@ -65,41 +65,6 @@ class CondType22(Conductor):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Machine.CondType22.comp_surface_active
-    if isinstance(comp_surface_active, ImportError):
-        comp_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType22 method comp_surface_active: "
-                    + str(comp_surface_active)
-                )
-            )
-        )
-    else:
-        comp_surface_active = comp_surface_active
-    # cf Methods.Machine.CondType22.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType22 method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
-    # cf Methods.Machine.CondType22.comp_width_wire
-    if isinstance(comp_width_wire, ImportError):
-        comp_width_wire = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType22 method comp_width_wire: "
-                    + str(comp_width_wire)
-                )
-            )
-        )
-    else:
-        comp_width_wire = comp_width_wire
     # cf Methods.Machine.CondType22.comp_height_wire
     if isinstance(comp_height_wire, ImportError):
         comp_height_wire = property(
@@ -136,6 +101,41 @@ class CondType22(Conductor):
         )
     else:
         comp_nb_radial_wire = comp_nb_radial_wire
+    # cf Methods.Machine.CondType22.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
+    # cf Methods.Machine.CondType22.comp_surface_active
+    if isinstance(comp_surface_active, ImportError):
+        comp_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_surface_active: "
+                    + str(comp_surface_active)
+                )
+            )
+        )
+    else:
+        comp_surface_active = comp_surface_active
+    # cf Methods.Machine.CondType22.comp_width_wire
+    if isinstance(comp_width_wire, ImportError):
+        comp_width_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_width_wire: "
+                    + str(comp_width_wire)
+                )
+            )
+        )
+    else:
+        comp_width_wire = comp_width_wire
     # cf Methods.Machine.CondType22.is_round_wire
     if isinstance(is_round_wire, ImportError):
         is_round_wire = property(

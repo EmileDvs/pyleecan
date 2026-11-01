@@ -28,14 +28,14 @@ except ImportError as error:
     get_coord = error
 
 try:
-    from ..Methods.Mesh.NodeMat.is_exist import is_exist
-except ImportError as error:
-    is_exist = error
-
-try:
     from ..Methods.Mesh.NodeMat.get_indice import get_indice
 except ImportError as error:
     get_indice = error
+
+try:
+    from ..Methods.Mesh.NodeMat.is_exist import is_exist
+except ImportError as error:
+    is_exist = error
 
 
 from numpy import array, array_equal
@@ -67,15 +67,6 @@ class NodeMat(FrozenClass):
         )
     else:
         get_coord = get_coord
-    # cf Methods.Mesh.NodeMat.is_exist
-    if isinstance(is_exist, ImportError):
-        is_exist = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use NodeMat method is_exist: " + str(is_exist))
-            )
-        )
-    else:
-        is_exist = is_exist
     # cf Methods.Mesh.NodeMat.get_indice
     if isinstance(get_indice, ImportError):
         get_indice = property(
@@ -85,6 +76,15 @@ class NodeMat(FrozenClass):
         )
     else:
         get_indice = get_indice
+    # cf Methods.Mesh.NodeMat.is_exist
+    if isinstance(is_exist, ImportError):
+        is_exist = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use NodeMat method is_exist: " + str(is_exist))
+            )
+        )
+    else:
+        is_exist = is_exist
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

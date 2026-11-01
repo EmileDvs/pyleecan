@@ -28,11 +28,6 @@ except ImportError as error:
     build_geometry = error
 
 try:
-    from ..Methods.Slot.SlotDC.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
     from ..Methods.Slot.SlotDC.check import check
 except ImportError as error:
     check = error
@@ -61,6 +56,11 @@ try:
     from ..Methods.Slot.SlotDC.comp_surface_active import comp_surface_active
 except ImportError as error:
     comp_surface_active = error
+
+try:
+    from ..Methods.Slot.SlotDC.get_surface_active import get_surface_active
+except ImportError as error:
+    get_surface_active = error
 
 
 from numpy import isnan
@@ -97,18 +97,6 @@ class SlotDC(Slot):
         )
     else:
         build_geometry = build_geometry
-    # cf Methods.Slot.SlotDC.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method get_surface_active: "
-                    + str(get_surface_active)
-                )
-            )
-        )
-    else:
-        get_surface_active = get_surface_active
     # cf Methods.Slot.SlotDC.check
     if isinstance(check, ImportError):
         check = property(
@@ -174,6 +162,18 @@ class SlotDC(Slot):
         )
     else:
         comp_surface_active = comp_surface_active
+    # cf Methods.Slot.SlotDC.get_surface_active
+    if isinstance(get_surface_active, ImportError):
+        get_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotDC method get_surface_active: "
+                    + str(get_surface_active)
+                )
+            )
+        )
+    else:
+        get_surface_active = get_surface_active
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

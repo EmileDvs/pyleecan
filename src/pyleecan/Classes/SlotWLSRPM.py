@@ -43,6 +43,11 @@ except ImportError as error:
     comp_angle_opening = error
 
 try:
+    from ..Methods.Slot.SlotWLSRPM.comp_height import comp_height
+except ImportError as error:
+    comp_height = error
+
+try:
     from ..Methods.Slot.SlotWLSRPM.comp_height_damper import comp_height_damper
 except ImportError as error:
     comp_height_damper = error
@@ -51,11 +56,6 @@ try:
     from ..Methods.Slot.SlotWLSRPM.comp_height_wind import comp_height_wind
 except ImportError as error:
     comp_height_wind = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
 
 try:
     from ..Methods.Slot.SlotWLSRPM.get_surface_active import get_surface_active
@@ -135,6 +135,17 @@ class SlotWLSRPM(Slot):
         )
     else:
         comp_angle_opening = comp_angle_opening
+    # cf Methods.Slot.SlotWLSRPM.comp_height
+    if isinstance(comp_height, ImportError):
+        comp_height = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotWLSRPM method comp_height: " + str(comp_height)
+                )
+            )
+        )
+    else:
+        comp_height = comp_height
     # cf Methods.Slot.SlotWLSRPM.comp_height_damper
     if isinstance(comp_height_damper, ImportError):
         comp_height_damper = property(
@@ -159,17 +170,6 @@ class SlotWLSRPM(Slot):
         )
     else:
         comp_height_wind = comp_height_wind
-    # cf Methods.Slot.SlotWLSRPM.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method comp_height: " + str(comp_height)
-                )
-            )
-        )
-    else:
-        comp_height = comp_height
     # cf Methods.Slot.SlotWLSRPM.get_surface_active
     if isinstance(get_surface_active, ImportError):
         get_surface_active = property(

@@ -18,9 +18,9 @@ from .VarSimu import VarSimu
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Simulation.VarLoad.get_ref_simu_index import get_ref_simu_index
+    from ..Methods.Simulation.VarLoad._set_OP_matrix import _set_OP_matrix
 except ImportError as error:
-    get_ref_simu_index = error
+    _set_OP_matrix = error
 
 try:
     from ..Methods.Simulation.VarLoad.get_OP_array import get_OP_array
@@ -28,14 +28,14 @@ except ImportError as error:
     get_OP_array = error
 
 try:
+    from ..Methods.Simulation.VarLoad.get_ref_simu_index import get_ref_simu_index
+except ImportError as error:
+    get_ref_simu_index = error
+
+try:
     from ..Methods.Simulation.VarLoad.set_OP_array import set_OP_array
 except ImportError as error:
     set_OP_array = error
-
-try:
-    from ..Methods.Simulation.VarLoad._set_OP_matrix import _set_OP_matrix
-except ImportError as error:
-    _set_OP_matrix = error
 
 
 from numpy import isnan
@@ -49,6 +49,28 @@ class VarLoad(VarSimu):
     NAME = "Variable Load"
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.VarLoad._set_OP_matrix
+    if isinstance(_set_OP_matrix, ImportError):
+        _set_OP_matrix = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VarLoad method _set_OP_matrix: " + str(_set_OP_matrix)
+                )
+            )
+        )
+    else:
+        _set_OP_matrix = _set_OP_matrix
+    # cf Methods.Simulation.VarLoad.get_OP_array
+    if isinstance(get_OP_array, ImportError):
+        get_OP_array = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VarLoad method get_OP_array: " + str(get_OP_array)
+                )
+            )
+        )
+    else:
+        get_OP_array = get_OP_array
     # cf Methods.Simulation.VarLoad.get_ref_simu_index
     if isinstance(get_ref_simu_index, ImportError):
         get_ref_simu_index = property(
@@ -61,17 +83,6 @@ class VarLoad(VarSimu):
         )
     else:
         get_ref_simu_index = get_ref_simu_index
-    # cf Methods.Simulation.VarLoad.get_OP_array
-    if isinstance(get_OP_array, ImportError):
-        get_OP_array = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarLoad method get_OP_array: " + str(get_OP_array)
-                )
-            )
-        )
-    else:
-        get_OP_array = get_OP_array
     # cf Methods.Simulation.VarLoad.set_OP_array
     if isinstance(set_OP_array, ImportError):
         set_OP_array = property(
@@ -83,17 +94,6 @@ class VarLoad(VarSimu):
         )
     else:
         set_OP_array = set_OP_array
-    # cf Methods.Simulation.VarLoad._set_OP_matrix
-    if isinstance(_set_OP_matrix, ImportError):
-        _set_OP_matrix = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarLoad method _set_OP_matrix: " + str(_set_OP_matrix)
-                )
-            )
-        )
-    else:
-        _set_OP_matrix = _set_OP_matrix
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

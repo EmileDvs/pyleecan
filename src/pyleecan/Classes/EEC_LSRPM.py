@@ -18,6 +18,11 @@ from .EEC import EEC
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.Simulation.EEC_LSRPM.comp_joule_losses import comp_joule_losses
+except ImportError as error:
+    comp_joule_losses = error
+
+try:
     from ..Methods.Simulation.EEC_LSRPM.comp_parameters import comp_parameters
 except ImportError as error:
     comp_parameters = error
@@ -26,11 +31,6 @@ try:
     from ..Methods.Simulation.EEC_LSRPM.solve import solve
 except ImportError as error:
     solve = error
-
-try:
-    from ..Methods.Simulation.EEC_LSRPM.comp_joule_losses import comp_joule_losses
-except ImportError as error:
-    comp_joule_losses = error
 
 
 from numpy import isnan
@@ -43,6 +43,18 @@ class EEC_LSRPM(EEC):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.Simulation.EEC_LSRPM.comp_joule_losses
+    if isinstance(comp_joule_losses, ImportError):
+        comp_joule_losses = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use EEC_LSRPM method comp_joule_losses: "
+                    + str(comp_joule_losses)
+                )
+            )
+        )
+    else:
+        comp_joule_losses = comp_joule_losses
     # cf Methods.Simulation.EEC_LSRPM.comp_parameters
     if isinstance(comp_parameters, ImportError):
         comp_parameters = property(
@@ -64,18 +76,6 @@ class EEC_LSRPM(EEC):
         )
     else:
         solve = solve
-    # cf Methods.Simulation.EEC_LSRPM.comp_joule_losses
-    if isinstance(comp_joule_losses, ImportError):
-        comp_joule_losses = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC_LSRPM method comp_joule_losses: "
-                    + str(comp_joule_losses)
-                )
-            )
-        )
-    else:
-        comp_joule_losses = comp_joule_losses
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -28,14 +28,14 @@ except ImportError as error:
     _comp_point_coordinate = error
 
 try:
-    from ..Methods.Slot.SlotW23._set_W3 import _set_W3
-except ImportError as error:
-    _set_W3 = error
-
-try:
     from ..Methods.Slot.SlotW23._comp_W import _comp_W
 except ImportError as error:
     _comp_W = error
+
+try:
+    from ..Methods.Slot.SlotW23._set_W3 import _set_W3
+except ImportError as error:
+    _set_W3 = error
 
 try:
     from ..Methods.Slot.SlotW23.build_geometry import build_geometry
@@ -78,6 +78,11 @@ except ImportError as error:
     comp_surface_opening = error
 
 try:
+    from ..Methods.Slot.SlotW23.get_H1 import get_H1
+except ImportError as error:
+    get_H1 = error
+
+try:
     from ..Methods.Slot.SlotW23.get_surface_active import get_surface_active
 except ImportError as error:
     get_surface_active = error
@@ -91,11 +96,6 @@ try:
     from ..Methods.Slot.SlotW23.plot_schematics import plot_schematics
 except ImportError as error:
     plot_schematics = error
-
-try:
-    from ..Methods.Slot.SlotW23.get_H1 import get_H1
-except ImportError as error:
-    get_H1 = error
 
 try:
     from ..Methods.Slot.SlotW23.plot_schematics_constant_tooth import (
@@ -139,15 +139,6 @@ class SlotW23(Slot):
         )
     else:
         _comp_point_coordinate = _comp_point_coordinate
-    # cf Methods.Slot.SlotW23._set_W3
-    if isinstance(_set_W3, ImportError):
-        _set_W3 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotW23 method _set_W3: " + str(_set_W3))
-            )
-        )
-    else:
-        _set_W3 = _set_W3
     # cf Methods.Slot.SlotW23._comp_W
     if isinstance(_comp_W, ImportError):
         _comp_W = property(
@@ -157,6 +148,15 @@ class SlotW23(Slot):
         )
     else:
         _comp_W = _comp_W
+    # cf Methods.Slot.SlotW23._set_W3
+    if isinstance(_set_W3, ImportError):
+        _set_W3 = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotW23 method _set_W3: " + str(_set_W3))
+            )
+        )
+    else:
+        _set_W3 = _set_W3
     # cf Methods.Slot.SlotW23.build_geometry
     if isinstance(build_geometry, ImportError):
         build_geometry = property(
@@ -245,6 +245,15 @@ class SlotW23(Slot):
         )
     else:
         comp_surface_opening = comp_surface_opening
+    # cf Methods.Slot.SlotW23.get_H1
+    if isinstance(get_H1, ImportError):
+        get_H1 = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotW23 method get_H1: " + str(get_H1))
+            )
+        )
+    else:
+        get_H1 = get_H1
     # cf Methods.Slot.SlotW23.get_surface_active
     if isinstance(get_surface_active, ImportError):
         get_surface_active = property(
@@ -280,15 +289,6 @@ class SlotW23(Slot):
         )
     else:
         plot_schematics = plot_schematics
-    # cf Methods.Slot.SlotW23.get_H1
-    if isinstance(get_H1, ImportError):
-        get_H1 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotW23 method get_H1: " + str(get_H1))
-            )
-        )
-    else:
-        get_H1 = get_H1
     # cf Methods.Slot.SlotW23.plot_schematics_constant_tooth
     if isinstance(plot_schematics_constant_tooth, ImportError):
         plot_schematics_constant_tooth = property(

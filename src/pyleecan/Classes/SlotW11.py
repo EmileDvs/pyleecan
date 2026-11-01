@@ -28,14 +28,14 @@ except ImportError as error:
     _comp_point_coordinate = error
 
 try:
-    from ..Methods.Slot.SlotW11._set_W3 import _set_W3
-except ImportError as error:
-    _set_W3 = error
-
-try:
     from ..Methods.Slot.SlotW11._comp_W import _comp_W
 except ImportError as error:
     _comp_W = error
+
+try:
+    from ..Methods.Slot.SlotW11._set_W3 import _set_W3
+except ImportError as error:
+    _set_W3 = error
 
 try:
     from ..Methods.Slot.SlotW11.build_geometry import build_geometry
@@ -138,15 +138,6 @@ class SlotW11(Slot):
         )
     else:
         _comp_point_coordinate = _comp_point_coordinate
-    # cf Methods.Slot.SlotW11._set_W3
-    if isinstance(_set_W3, ImportError):
-        _set_W3 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotW11 method _set_W3: " + str(_set_W3))
-            )
-        )
-    else:
-        _set_W3 = _set_W3
     # cf Methods.Slot.SlotW11._comp_W
     if isinstance(_comp_W, ImportError):
         _comp_W = property(
@@ -156,6 +147,15 @@ class SlotW11(Slot):
         )
     else:
         _comp_W = _comp_W
+    # cf Methods.Slot.SlotW11._set_W3
+    if isinstance(_set_W3, ImportError):
+        _set_W3 = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotW11 method _set_W3: " + str(_set_W3))
+            )
+        )
+    else:
+        _set_W3 = _set_W3
     # cf Methods.Slot.SlotW11.build_geometry
     if isinstance(build_geometry, ImportError):
         build_geometry = property(

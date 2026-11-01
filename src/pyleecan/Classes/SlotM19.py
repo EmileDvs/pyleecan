@@ -28,6 +28,11 @@ except ImportError as error:
     build_geometry = error
 
 try:
+    from ..Methods.Slot.SlotM19.check import check
+except ImportError as error:
+    check = error
+
+try:
     from ..Methods.Slot.SlotM19.comp_angle_opening import comp_angle_opening
 except ImportError as error:
     comp_angle_opening = error
@@ -61,11 +66,6 @@ try:
     from ..Methods.Slot.SlotM19.plot_schematics import plot_schematics
 except ImportError as error:
     plot_schematics = error
-
-try:
-    from ..Methods.Slot.SlotM19.check import check
-except ImportError as error:
-    check = error
 
 
 from numpy import isnan
@@ -102,6 +102,15 @@ class SlotM19(Slot):
         )
     else:
         build_geometry = build_geometry
+    # cf Methods.Slot.SlotM19.check
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotM19 method check: " + str(check))
+            )
+        )
+    else:
+        check = check
     # cf Methods.Slot.SlotM19.comp_angle_opening
     if isinstance(comp_angle_opening, ImportError):
         comp_angle_opening = property(
@@ -181,15 +190,6 @@ class SlotM19(Slot):
         )
     else:
         plot_schematics = plot_schematics
-    # cf Methods.Slot.SlotM19.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotM19 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
