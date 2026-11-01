@@ -1,3 +1,4 @@
+from pyleecan.Generator.write_fct import write_file
 import json
 import shutil
 import subprocess
