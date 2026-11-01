@@ -17,36 +17,13 @@ from .Frame import Frame
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.FrameBar.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Machine.FrameBar.build_geometry_bar import build_geometry_bar
-except ImportError as error:
-    build_geometry_bar = error
-
-try:
-    from ..Methods.Machine.FrameBar.comp_height_gap import comp_height_gap
-except ImportError as error:
-    comp_height_gap = error
-
-try:
-    from ..Methods.Machine.FrameBar.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Machine.FrameBar.comp_surface_bar import comp_surface_bar
-except ImportError as error:
-    comp_surface_bar = error
-
-try:
-    from ..Methods.Machine.FrameBar.comp_surface_gap import comp_surface_gap
-except ImportError as error:
-    comp_surface_gap = error
-
+from .Frame import Frame
+from .Arc1 import Arc1
+from .Arc2 import Arc2
+from .Segment import Segment
+from .SurfLine import SurfLine
+from numpy import exp, pi, arcsin
+from copy import deepcopy
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -57,76 +34,211 @@ class FrameBar(Frame):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.FrameBar.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self, sym=1, alpha=0, delta=0):
+        """Build the geometry of the Frame with structural Bars
+
+        Parameters
+        ----------
+        self : FrameBar
+            FrameBar Object
+        sym : int
+            symmetry factor (1= full machine, 2= half of the machine...)
+        alpha : float
+            Angle for rotation [rad]
+        delta : complex
+            Complex value for translation
+
+        Returns
+        -------
+        surf_list : list
+            list of surface
+
+        """
+
+        # Build Frame Geometry
+        surf_list_frame = Frame.build_geometry(self, sym, alpha, delta)
+        # Build Bar Geometry
+        surf_list_bar = self.build_geometry_bar(sym, alpha, delta)
+
+        surf_list = surf_list_frame + surf_list_bar
+        return surf_list
+
     # cf Methods.Machine.FrameBar.build_geometry_bar
-    if isinstance(build_geometry_bar, ImportError):
-        build_geometry_bar = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method build_geometry_bar: "
-                    + str(build_geometry_bar)
-                )
+    def build_geometry_bar(self, sym=1, alpha=0, delta=0):
+        """Build the geometry of the structural bars
+
+        Parameters
+        ----------
+        self : FrameBar
+            FrameBar Object
+        sym : int
+            symmetry factor (1= full machine, 2= half of the machine...)
+        alpha : float
+            Angle for rotation [rad]
+        delta : complex
+            Complex value for translation
+
+        Returns
+        -------
+        surf_list : list
+            list of surface
+
+        """
+        surf_list = list()
+        h_gap = self.comp_height_gap()
+        if h_gap > 0:
+            lam_outer = self.parent.get_lam_list()[-1]
+            ###Rectangular Shape
+            # #Define Points
+            # Z0 = lam_outer.Rext
+            # Z1 = Z0 + self.wbar * 1j / 2.0
+            # Z2 = Z1 + h_gap
+            # Z3 = Z2 - self.wbar * 1j
+            # Z4 = Z0 - self.wbar * 1j / 2.0
+            # #Define Lines
+            # curve_list = list()
+            # curve_list.append(Segment(Z1, Z2))
+            # curve_list.append(Segment(Z2, Z3))
+            # curve_list.append(Segment(Z3, Z4))
+            # curve_list.append(Segment(Z4, Z1))
+
+            ###Circular Shape
+            # Define Points
+            Z0 = lam_outer.Rext
+            rot_angle = arcsin(self.wbar / 2.0 / Z0)
+            Z1 = Z0 * exp(rot_angle * -1j)
+            Z2 = (Z0 + h_gap) * exp(rot_angle * -1j)
+            Z3 = (Z0 + h_gap) * exp(rot_angle * 1j)
+            Z4 = Z0 * exp(rot_angle * 1j)
+            # Define Lines
+            curve_list = list()
+            curve_list.append(Segment(Z1, Z2))
+            curve_list.append(Arc1(Z2, Z3, self.Rint))
+            curve_list.append(Segment(Z3, Z4))
+            curve_list.append(Arc2(Z4, 0, angle=-rot_angle))
+            # Define Surface
+            surf_bar = SurfLine(
+                line_list=curve_list,
+                label="Bar",
+                point_ref=self.Rext - h_gap / 2,
             )
-        )
-    else:
-        build_geometry_bar = build_geometry_bar
+            # Rotate surface so bars are evenly distributed
+            surf_list.append(deepcopy(surf_bar))
+            bar_angle = 2 * pi / self.Nbar
+            for i in range(1, self.Nbar):
+                surf_bar.rotate(bar_angle)
+                surf_list.append(deepcopy(surf_bar))
+
+        # Apply the transformations
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+
+        return surf_list
+
     # cf Methods.Machine.FrameBar.comp_height_gap
-    if isinstance(comp_height_gap, ImportError):
-        comp_height_gap = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method comp_height_gap: " + str(comp_height_gap)
-                )
-            )
-        )
-    else:
-        comp_height_gap = comp_height_gap
+    def comp_height_gap(self):
+        """Computation of the Height of the gap between the Frame and Outer Lamination
+
+        Parameters
+        ----------
+        self : FrameBar
+            A FrameBar object
+
+        Returns
+        -------
+        Hgap: float
+            Height of the Gap [m]
+
+        """
+        lam_outer = self.parent.get_lam_list()[-1]
+
+        return self.Rint - lam_outer.Rext
+
     # cf Methods.Machine.FrameBar.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the surface of the Frame including the structural bars
+
+        Parameters
+        ----------
+        self : FrameBar
+            A FrameBar object
+
+        Returns
+        -------
+        Sfra: float
+            Surface of the Frame [m**2]
+
+        """
+
+        # Outer Frame Surface
+        S_ext = (self.Rext**2) * pi
+        S_int = (self.Rint**2) * pi
+        S_outer = S_ext - S_int
+
+        # Bar Surface
+        S_bar = self.comp_surface_bar()
+
+        return S_outer + S_bar
+
     # cf Methods.Machine.FrameBar.comp_surface_bar
-    if isinstance(comp_surface_bar, ImportError):
-        comp_surface_bar = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method comp_surface_bar: "
-                    + str(comp_surface_bar)
-                )
-            )
-        )
-    else:
-        comp_surface_bar = comp_surface_bar
+    def comp_surface_bar(self):
+        """Compute the surface of the structural Bars
+
+        Parameters
+        ----------
+        self : FrameBar
+            A FrameBar object
+
+        Returns
+        -------
+        Sbar: float
+            Surface of the structural Bars [m**2]
+
+        """
+        # #Calculation for rectangular shape
+        # n_bar = self._get_Nbar()
+        # w_bar = self._get_wbar()
+        # h_gap = self.comp_height_gap()
+        # Sbar = n_bar * w_bar * h_gap
+
+        # Calculation for circular shape
+        r_out = self._get_Rint()
+        h_gap = self.comp_height_gap()
+        r_in = r_out - h_gap
+        rot_angle = 2 * arcsin(self.wbar / 2.0 / r_in)
+        Sbar = self.Nbar * pi * (r_out**2 - r_in**2) * rot_angle / (2 * pi)
+
+        return Sbar
+
     # cf Methods.Machine.FrameBar.comp_surface_gap
-    if isinstance(comp_surface_gap, ImportError):
-        comp_surface_gap = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FrameBar method comp_surface_gap: "
-                    + str(comp_surface_gap)
-                )
-            )
-        )
-    else:
-        comp_surface_gap = comp_surface_gap
+    def comp_surface_gap(self):
+        """Compute the surface of the Gap between the Frame and outer Lamination
+
+        Parameters
+        ----------
+        self : FrameBar
+            A FrameBar object
+
+        Returns
+        -------
+        Sgap: float
+            Surface of the Gap [m**2]
+
+        """
+
+        # Surface of the external disk
+        S_ext = (self.Rext**2) * pi
+        # Surface of the internal disk
+        S_int = (self.Rint**2) * pi
+        # Surface of the bars
+        S_bar = self.comp_surface_bar()
+
+        Sgap = S_ext - S_int - S_bar
+
+        return Sgap
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

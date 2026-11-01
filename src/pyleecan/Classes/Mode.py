@@ -17,26 +17,8 @@ from .SolutionMat import SolutionMat
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.Mode.get_shape_pol import get_shape_pol
-except ImportError as error:
-    get_shape_pol = error
-
-try:
-    from ..Methods.Simulation.Mode.get_shape_xyz import get_shape_xyz
-except ImportError as error:
-    get_shape_xyz = error
-
-try:
-    from ..Methods.Simulation.Mode.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Simulation.Mode.plot_animated import plot_animated
-except ImportError as error:
-    plot_animated = error
-
+from ..Functions.Structural.conversions import cart2pol, pol2cart
+from numpy import max as np_max, min as np_min
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -48,49 +30,101 @@ class Mode(SolutionMat):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.Mode.get_shape_pol
-    if isinstance(get_shape_pol, ImportError):
-        get_shape_pol = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Mode method get_shape_pol: " + str(get_shape_pol)
-                )
-            )
-        )
-    else:
-        get_shape_pol = get_shape_pol
+    def get_shape_pol(self):
+        """Return the mode shape in cartesian coordinates.
+
+        Parameters
+        ----------
+        self : Mode
+            a Mode object
+
+        Returns
+        -------
+        shape : ndarray
+            ndarray of the shape (Nnodes*Ndof)
+        """
+
+        if self.shape_pol is not None and self.shape_pol.size != 0:
+            return self.shape_pol
+        else:
+            shape_xyz = self.shape_xyz
+            points = self.parent.mesh.get_points()
+            return cart2pol(shape_xyz, points)
+
     # cf Methods.Simulation.Mode.get_shape_xyz
-    if isinstance(get_shape_xyz, ImportError):
-        get_shape_xyz = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Mode method get_shape_xyz: " + str(get_shape_xyz)
-                )
-            )
-        )
-    else:
-        get_shape_xyz = get_shape_xyz
+    def get_shape_xyz(self):
+        """Return the mode shape in cartesian coordinates.
+
+        Parameters
+        ----------
+        self : Mode
+            a Mode object
+
+        Returns
+        -------
+        shape : ndarray
+            ndarray of the shape (Nnodes*Ndof)
+        """
+
+        if self.shape_xyz is not None and self.shape_xyz.size != 0:
+            return self.shape_xyz
+        else:
+            shape_pol = self.shape_pol
+            points = self.parent.mesh.get_points()
+            return pol2cart(shape_pol, points)
+
     # cf Methods.Simulation.Mode.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Mode method plot: " + str(plot))
-            )
+    def plot(self, i):
+        """Return the pyvista mesh object.
+
+        Parameters
+        ----------
+        self : Mode
+            a Mode object
+        i : int
+            index of the mode to plot
+
+        Returns
+        -------
+        mesh : pyvista.core.pointset.StructuredGrid
+            a pyvista StructuredGrid object
+        """
+
+        radial_shape = self.get_shape_pol()[:, 0]
+        clim = [np_min(radial_shape), np_max(radial_shape)]
+        self.parent.mesh.plot_contour(
+            radial_shape, field_name="Radial displacement", clim=clim
         )
-    else:
-        plot = plot
+
     # cf Methods.Simulation.Mode.plot_animated
-    if isinstance(plot_animated, ImportError):
-        plot_animated = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Mode method plot_animated: " + str(plot_animated)
-                )
-            )
+    def plot_animated(self, i):
+        """Return the pyvista mesh object.
+
+        Parameters
+        ----------
+        self : Mode
+            a Mode object
+        i : int
+            index of the mode to plot
+
+        Returns
+        -------
+        mesh : pyvista.core.pointset.StructuredGrid
+            a pyvista StructuredGrid object
+        """
+
+        radial_shape = self.get_shape_pol()[:, 0]
+        shape_xyz = self.get_shape_xyz()
+        clim = [np_min(radial_shape), np_max(radial_shape)]
+        self.parent.mesh.plot_deformation_animated(
+            shape_xyz,
+            radial_shape,
+            factor=0.05,
+            field_name="Radial displacement",
+            clim=clim,
         )
-    else:
-        plot_animated = plot_animated
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,11 +17,7 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportVectorField.get_data import get_data
-except ImportError as error:
-    get_data = error
-
+from .VectorField import VectorField
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,16 +29,31 @@ class ImportVectorField(FrozenClass):
     VERSION = 1
 
     # cf Methods.Import.ImportVectorField.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportVectorField method get_data: " + str(get_data)
-                )
-            )
+    def get_data(self):
+        """Generate VectorField object
+
+        Parameters
+        ----------
+        self : ImportVectorField
+            An ImportVectorField object
+
+        Returns
+        -------
+        VectField: VectorField
+            The generated VectorField object
+
+        """
+
+        comp_dict = {}
+        for key, component in self.components.items():
+            comp_dict[key] = component.get_data()
+
+        VectField = VectorField(
+            name=self.name, symbol=self.symbol, components=comp_dict
         )
-    else:
-        get_data = get_data
+
+        return VectField
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,11 +17,6 @@ from .OutInternal import OutInternal
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Output.OutMagFEMM.clean import clean
-except ImportError as error:
-    clean = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +28,25 @@ class OutMagFEMM(OutInternal):
     VERSION = 1
 
     # cf Methods.Output.OutMagFEMM.clean
-    if isinstance(clean, ImportError):
-        clean = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OutMagFEMM method clean: " + str(clean))
-            )
-        )
-    else:
-        clean = clean
+    def clean(self, clean_level=1):
+        """Clean MagFEMM outputs depending on cleaning level
+
+        Parameters
+        ----------
+        self : OutMagFEMM
+            the OutMagFEMM object to update
+        clean_level : int
+            Value to indicate which fields to clean in OutMagFEMM (default=1/min=0/max=4)
+
+        """
+
+        # if clean_level = 0:
+        # keep all internal outputs
+
+        if clean_level > 0:
+            # clean FEMM_dict
+            self.FEMM_dict = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

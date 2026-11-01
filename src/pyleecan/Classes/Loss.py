@@ -17,21 +17,11 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Loss.Loss.comp_all_losses import comp_all_losses
-except ImportError as error:
-    comp_all_losses = error
-
-try:
-    from ..Methods.Loss.Loss.comp_axes import comp_axes
-except ImportError as error:
-    comp_axes = error
-
-try:
-    from ..Methods.Loss.Loss.run import run
-except ImportError as error:
-    run = error
-
+import numpy as np
+from .OutLossModel import OutLossModel
+from numpy import concatenate, unique
+from .Data1D import Data1D
+from ..Methods.Simulation.Input import InputError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -42,34 +32,120 @@ class Loss(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Loss.Loss.comp_all_losses
-    if isinstance(comp_all_losses, ImportError):
-        comp_all_losses = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Loss method comp_all_losses: " + str(comp_all_losses)
-                )
+    def comp_all_losses(
+        self,
+        axes_dict=None,
+    ):
+        """Compute all the losses models set in model_dict
+
+        Parameters
+        ----------
+        self : Loss
+            A Loss object
+        axes_dict : dict
+            Dict containing axes for loss calculation
+        """
+
+        output = self.parent.parent
+        out_loss = output.loss
+        # Store dict of axes
+        if axes_dict is not None:
+            out_loss.axes_dict = axes_dict
+
+        meshsol = output.mag.meshsolution
+        group = meshsol.group
+        freqs = axes_dict["freqs"].get_values()
+        Nelem = meshsol.mesh.element_dict["triangle"].nb_element
+
+        out_loss.loss_dict = dict()
+        for key, model in self.model_dict.items():
+            # Compute losses for each model
+            P_density, f_array = model.comp_loss()
+            if self.is_get_meshsolution:
+                loss_density = np.zeros((freqs.size, Nelem))
+                If = np.argmin(np.abs(freqs[:, None] - f_array[None, :]), axis=0)[
+                    :, None
+                ]
+                Ie = np.array(group[model.group])[None, :]
+                loss_density[If, Ie] += P_density
+            else:
+                loss_density = None
+            # Store results of each model in a different object
+            out_loss_model = OutLossModel(
+                name=key,
+                loss_density=loss_density,
+                scalar_value=None,
+                coeff_dict=model.coeff_dict,
+                group=model.group,
+                loss_model=type(model).__name__,
             )
-        )
-    else:
-        comp_all_losses = comp_all_losses
+            out_loss.loss_dict[key] = out_loss_model
+
     # cf Methods.Loss.Loss.comp_axes
-    if isinstance(comp_axes, ImportError):
-        comp_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Loss method comp_axes: " + str(comp_axes))
+    def comp_axes(self, output):
+        """Compute the axes required in Loss module
+
+        Parameters
+        ----------
+        self : Loss
+            a Loss object
+        output : Output
+            an Output object (to update)
+
+        Returns
+        -------
+        axes_dict: {Data}
+            Dict containing Time and Angle axes including (anti-)periodicties used in any Force module
+        """
+
+        axes_list = output.mag.meshsolution.get_solution().field.get_axes()
+        Time = axes_list[0]
+
+        freqs = Time.get_values(is_oneperiod=True, operation="time_to_freqs")
+
+        if "antiperiod" in Time.symmetries:
+            Time_per = Time.copy()
+            Time_per.symmetries = {"period": Time.symmetries["antiperiod"]}
+            freqs_per = Time_per.get_values(
+                is_oneperiod=True, operation="time_to_freqs"
             )
+            freqs = unique(concatenate((freqs, freqs_per)))
+
+        Freqs = Data1D(
+            name="freqs",
+            unit="Hz",
+            values=freqs,
+            normalizations=Time.normalizations.copy(),
         )
-    else:
-        comp_axes = comp_axes
+
+        axes_dict = {"freqs": Freqs, "indice": axes_list[1]}
+
+        return axes_dict
+
     # cf Methods.Loss.Loss.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(ImportError("Can't use Loss method run: " + str(run)))
-        )
-    else:
-        run = run
+    def run(self):
+        """Run the Loss module
+
+        Parameters
+        ----------
+        self : Loss
+            A Loss model
+        """
+        if self.parent is None:
+            raise InputError("The Loss object must be in a Simulation object to run")
+        if self.parent.parent is None:
+            raise InputError("The Loss object must be in an Output object to run")
+
+        self.get_logger().info("Running Loss module")
+
+        # get output
+        output = self.parent.parent
+
+        axes_dict = self.comp_axes(output)
+        # Comp and store in output
+        self.comp_all_losses(axes_dict)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

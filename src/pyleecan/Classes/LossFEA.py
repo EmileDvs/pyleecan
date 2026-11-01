@@ -17,11 +17,11 @@ from .Loss import Loss
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Loss.LossFEA.run import run
-except ImportError as error:
-    run = error
-
+from .LossModelMagnet import LossModelMagnet
+from .LossModelProximity import LossModelProximity
+from .LossModelSteinmetz import LossModelSteinmetz
+from .LossModelJoule import LossModelJoule
+from ..Methods.Simulation.Input import InputError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +33,53 @@ class LossFEA(Loss):
     VERSION = 1
 
     # cf Methods.Loss.LossFEA.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LossFEA method run: " + str(run))
-            )
-        )
-    else:
-        run = run
+    def run(self):
+        """Run the LossFEA module
+
+        Paramaters
+        ----------
+        self : LossFEA
+            A LossFEA object
+        """
+        if self.parent is None:
+            raise InputError("The Loss object must be in a Simulation object to run")
+        if self.parent.parent is None:
+            raise InputError("The Loss object must be in an Output object to run")
+
+        self.get_logger().info("Running LossFEA module")
+
+        # get output
+        output = self.parent.parent
+        machine = output.simu.machine
+        axes_dict = self.comp_axes(output)
+
+        # Define all relevant loss models
+        self.model_dict = {
+            "stator core": LossModelSteinmetz(
+                group="stator core",
+                k_hy=self.k_hy,
+                k_ed=self.k_ed,
+                alpha_f=1,
+                alpha_B=2,
+            ),
+            "rotor core": LossModelSteinmetz(
+                group="rotor core", k_hy=self.k_hy, k_ed=self.k_ed, alpha_f=1, alpha_B=2
+            ),
+            "joule": LossModelJoule(
+                group="stator winding", type_skin_effect=self.type_skin_effect
+            ),
+            "proximity": LossModelProximity(group="stator winding", k_p=self.k_p),
+        }
+        if machine.is_synchronous() and machine.rotor.has_magnet():
+            self.model_dict["magnets"] = LossModelMagnet(group="rotor magnets")
+
+        self.comp_all_losses(axes_dict)
+
+        # Add overall by adding all losses sources
+        overall = sum(output.loss.loss_dict.values())
+        overall.name = "overall"
+        output.loss.loss_dict["overall"] = overall
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

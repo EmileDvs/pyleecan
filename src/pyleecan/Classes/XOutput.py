@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/XOutput
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - plot_multi: import name '_get_symbol_data_' refers to different sources (..Methods.Output.XOutput._get_symbol_data_ and ..Methods.Output.XOutput.plot_multi._get_symbol_data_)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,131 +21,12 @@ from .Output import Output
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Output.XOutput.__delitem__ import __delitem__
-except ImportError as error:
-    __delitem__ = error
-
-try:
-    from ..Methods.Output.XOutput.__getitem__ import __getitem__
-except ImportError as error:
-    __getitem__ = error
-
-try:
-    from ..Methods.Output.XOutput.__iter__ import __iter__
-except ImportError as error:
-    __iter__ = error
-
-try:
-    from ..Methods.Output.XOutput.__len__ import __len__
-except ImportError as error:
-    __len__ = error
-
-try:
-    from ..Methods.Output.XOutput.__missing__ import __missing__
-except ImportError as error:
-    __missing__ = error
-
-try:
-    from ..Methods.Output.XOutput.__next__ import __next__
-except ImportError as error:
-    __next__ = error
-
-try:
-    from ..Methods.Output.XOutput.__reversed__ import __reversed__
-except ImportError as error:
-    __reversed__ = error
-
-try:
-    from ..Methods.Output.XOutput.__setitem__ import __setitem__
-except ImportError as error:
-    __setitem__ = error
-
-try:
-    from ..Methods.Output.XOutput.append import append
-except ImportError as error:
-    append = error
-
-try:
-    from ..Methods.Output.XOutput.count import count
-except ImportError as error:
-    count = error
-
-try:
-    from ..Methods.Output.XOutput.get_param_simu import get_param_simu
-except ImportError as error:
-    get_param_simu = error
-
-try:
-    from ..Methods.Output.XOutput.get_paramexplorer import get_paramexplorer
-except ImportError as error:
-    get_paramexplorer = error
-
-try:
-    from ..Methods.Output.XOutput.get_pareto_index import get_pareto_index
-except ImportError as error:
-    get_pareto_index = error
-
-try:
-    from ..Methods.Output.XOutput.get_simu import get_simu
-except ImportError as error:
-    get_simu = error
-
-try:
-    from ..Methods.Output.XOutput.get_symbol_list import get_symbol_list
-except ImportError as error:
-    get_symbol_list = error
-
-try:
-    from ..Methods.Output.XOutput.get_xoutput_ref import get_xoutput_ref
-except ImportError as error:
-    get_xoutput_ref = error
-
-try:
-    from ..Methods.Output.XOutput.insert import insert
-except ImportError as error:
-    insert = error
-
-try:
-    from ..Methods.Output.XOutput.items import items
-except ImportError as error:
-    items = error
-
-try:
-    from ..Methods.Output.XOutput.keys import keys
-except ImportError as error:
-    keys = error
-
-try:
-    from ..Methods.Output.XOutput.plot_generation import plot_generation
-except ImportError as error:
-    plot_generation = error
-
-try:
-    from ..Methods.Output.XOutput.plot_multi import plot_multi
-except ImportError as error:
-    plot_multi = error
-
-try:
-    from ..Methods.Output.XOutput.plot_pareto import plot_pareto
-except ImportError as error:
-    plot_pareto = error
-
-try:
-    from ..Methods.Output.XOutput.pop import pop
-except ImportError as error:
-    pop = error
-
-try:
-    from ..Methods.Output.XOutput.print_memory import print_memory
-except ImportError as error:
-    print_memory = error
-
-try:
-    from ..Methods.Output.XOutput.remove import remove
-except ImportError as error:
-    remove = error
-
+from ..Methods.Output.XOutput.plot_multi import plot_multi
+from ..Methods.Output.XOutput import XOutputError, _get_symbol_data_
+import numpy as np, matplotlib.pyplot as plt
+from .OptiObjective import OptiObjective
+from matplotlib.colors import LinearSegmentedColormap
+from sys import getsizeof
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -152,250 +37,432 @@ class XOutput(Output):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Output.XOutput.__delitem__
-    if isinstance(__delitem__, ImportError):
-        __delitem__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method __delitem__: " + str(__delitem__))
-            )
-        )
-    else:
-        __delitem__ = __delitem__
+    def __delitem__(self, key):
+        """Called to implement deletion of self[key]."""
+        return self.xoutput_dict.__delitem__(key)
+
     # cf Methods.Output.XOutput.__getitem__
-    if isinstance(__getitem__, ImportError):
-        __getitem__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method __getitem__: " + str(__getitem__))
-            )
-        )
-    else:
-        __getitem__ = __getitem__
+    def __getitem__(self, idx):
+        """Method to behave like a list or a dict and iterate in the object"""
+        if isinstance(idx, int) or isinstance(idx, slice):
+            return self.output_list.__getitem__(idx)
+        else:
+            return self.xoutput_dict.__getitem__(idx)
+
     # cf Methods.Output.XOutput.__iter__
-    if isinstance(__iter__, ImportError):
-        __iter__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method __iter__: " + str(__iter__))
-            )
-        )
-    else:
-        __iter__ = __iter__
+    def __iter__(self):
+        """Method to behave like a list and iterate in the object"""
+        return iter(self.output_list)
+
     # cf Methods.Output.XOutput.__len__
-    if isinstance(__len__, ImportError):
-        __len__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method __len__: " + str(__len__))
-            )
-        )
-    else:
-        __len__ = __len__
+    def __len__(self):
+        """Method to behave like a list and iterate in the object"""
+        if self.nb_simu != None:
+            return self.nb_simu
+        else:
+            return len(self.output_list)
+
     # cf Methods.Output.XOutput.__missing__
-    if isinstance(__missing__, ImportError):
-        __missing__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method __missing__: " + str(__missing__))
-            )
-        )
-    else:
-        __missing__ = __missing__
+    def __missing__(self, key):
+        """
+        Called by XOutput.__getitem__() to implement self[key]
+        for dict subclasses when key is not in the dictionary.
+        """
+        return self.xoutput_dict.__missing__(key)
+
     # cf Methods.Output.XOutput.__next__
-    if isinstance(__next__, ImportError):
-        __next__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method __next__: " + str(__next__))
-            )
-        )
-    else:
-        __next__ = __next__
+    def __next__(self):
+        """Method to behave like a list and iterate in the object"""
+        return next(self.output_list)
+
     # cf Methods.Output.XOutput.__reversed__
-    if isinstance(__reversed__, ImportError):
-        __reversed__ = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method __reversed__: " + str(__reversed__)
-                )
-            )
-        )
-    else:
-        __reversed__ = __reversed__
+    def __reversed__(self):
+        """Built-in to implement reverse iteration"""
+        return reversed(self.output_list)
+
     # cf Methods.Output.XOutput.__setitem__
-    if isinstance(__setitem__, ImportError):
-        __setitem__ = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method __setitem__: " + str(__setitem__))
-            )
-        )
-    else:
-        __setitem__ = __setitem__
+    def __setitem__(self, key, value):
+        """Called to implement assignment to self[key]."""
+        if isinstance(key, int) or isinstance(key, slice):
+            return self.output_list.__setitem__(key, value)
+        else:
+            return self.xoutput_dict.__setitem__(key, value)
+
     # cf Methods.Output.XOutput.append
-    if isinstance(append, ImportError):
-        append = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method append: " + str(append))
-            )
-        )
-    else:
-        append = append
+    def append(self, elem):
+        """Method to behave like a list and access quickly to output_list"""
+        return self.output_list.append(elem)
+
     # cf Methods.Output.XOutput.count
-    if isinstance(count, ImportError):
-        count = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method count: " + str(count))
-            )
-        )
-    else:
-        count = count
+    def count(self, x):
+        """
+        Return the number of times x appears in the list.
+        """
+
+        return self.output_list.count(x)
+
     # cf Methods.Output.XOutput.get_param_simu
-    if isinstance(get_param_simu, ImportError):
-        get_param_simu = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method get_param_simu: " + str(get_param_simu)
-                )
-            )
-        )
-    else:
-        get_param_simu = get_param_simu
+    def get_param_simu(self, idx):
+        """
+        Return the list of parameter values for a specific simulation
+        """
+        assert len(idx) == len(self.shape)
+
+        # Create a list to store values
+        param_value = []
+        for pe in self.paramexplorer_list:
+            param_value.append(pe.value[idx])
+
+        return param_value
+
     # cf Methods.Output.XOutput.get_paramexplorer
-    if isinstance(get_paramexplorer, ImportError):
-        get_paramexplorer = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method get_paramexplorer: "
-                    + str(get_paramexplorer)
-                )
-            )
-        )
-    else:
-        get_paramexplorer = get_paramexplorer
+    def get_paramexplorer(self, symbol):
+        """Get the ParamExplorer with symbol
+        Parameters
+        ----------
+        symbol: str
+            ParamExplorer symbol
+        """
+        for paramexplorer in self.paramexplorer_list:
+            if paramexplorer.symbol == symbol:
+                return paramexplorer
+
+        raise XOutputError("Unknown symbol {}".format(symbol))
+
     # cf Methods.Output.XOutput.get_pareto_index
-    if isinstance(get_pareto_index, ImportError):
-        get_pareto_index = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method get_pareto_index: "
-                    + str(get_pareto_index)
-                )
-            )
-        )
-    else:
-        get_pareto_index = get_pareto_index
+    def get_pareto_index(self):
+        """Return index of individuals in the pareto
+
+        Parameters
+        ----------
+        self: XOutput
+
+        Returns
+        -------
+        idx_non_dom: list
+            list of index of non dominated individuals
+        """
+
+        # Gather fitness results
+        data = [
+            val.result
+            for _, val in self.xoutput_dict.items()
+            if isinstance(val, OptiObjective)
+        ]
+        fitness = np.array(data).T
+
+        # Get fitness values and ngen
+        is_valid = np.array(self["is_valid"])
+
+        # Keep only valid values
+        indx = np.where(is_valid)
+        fitness = fitness[indx]
+
+        # Get pareto front
+        pareto = fitness
+
+        # Get dominated values
+        idx_non_dom = list(range(len(pareto)))
+        N = len(pareto)
+        for i in range(N):
+            for j in idx_non_dom:
+                if all(pareto[j] <= pareto[i]) and any(pareto[j] < pareto[i]):
+                    idx_non_dom.remove(i)
+                    break
+
+        return idx_non_dom
+
     # cf Methods.Output.XOutput.get_simu
-    if isinstance(get_simu, ImportError):
-        get_simu = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method get_simu: " + str(get_simu))
-            )
-        )
-    else:
-        get_simu = get_simu
+    def get_simu(self, index):
+        """
+        Generate a simulation according to index
+
+        Parameters
+        ----------
+        index: int
+            simulation index
+
+        Returns
+        -------
+        simu : Simulation
+            simulation generated
+        """
+
+        # Get reference simulation
+        ref_simu = self.simu
+
+        # Construct the simulation
+        simu = ref_simu.copy()
+        simu.var_simu = None
+
+        # Run setters
+        for paramexplorer in self.paramexplorer_list:
+            paramexplorer.setter(simu, paramexplorer.value[index])
+
+        return simu
+
     # cf Methods.Output.XOutput.get_symbol_list
-    if isinstance(get_symbol_list, ImportError):
-        get_symbol_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method get_symbol_list: " + str(get_symbol_list)
-                )
-            )
-        )
-    else:
-        get_symbol_list = get_symbol_list
+    def get_symbol_list(self):
+        """
+        Return the list of the symobl of the DataKeeper and ParamExplorer
+        """
+        symbol_list = list(self.keys())  # DataKeeper or OptiObjective
+        symbol_list.extend([pe.symbol for pe in self.paramexplorer_list])
+
+        return symbol_list
+
     # cf Methods.Output.XOutput.get_xoutput_ref
-    if isinstance(get_xoutput_ref, ImportError):
-        get_xoutput_ref = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method get_xoutput_ref: " + str(get_xoutput_ref)
-                )
-            )
-        )
-    else:
-        get_xoutput_ref = get_xoutput_ref
+    def get_xoutput_ref(self):
+        """Return the reference XOutput (or Output) either from xoutput_ref or output_list
+
+        Parameters
+        ----------
+        self : XOutput
+            A XOutput object
+        Returns
+        -------
+        xoutput_ref: XOutput
+            reference XOutput (or Output) (if defined)
+        """
+
+        if self.xoutput_ref_index is not None:
+            return self.output_list[self.xoutput_ref_index]
+        else:
+            return self.xoutput_ref
+
     # cf Methods.Output.XOutput.insert
-    if isinstance(insert, ImportError):
-        insert = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method insert: " + str(insert))
-            )
-        )
-    else:
-        insert = insert
+    def insert(self, i, x):
+        """
+        Insert an item at a given position.
+        The first argument is the index of the element before which to insert,
+        so a.insert(0, x) inserts at the front of the list, and a.insert(len(a), x) is equivalent to a.append(x).
+        """
+        return self.output_list.insert(i, x)
+
     # cf Methods.Output.XOutput.items
-    if isinstance(items, ImportError):
-        items = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method items: " + str(items))
-            )
-        )
-    else:
-        items = items
+    def items(self):
+        """Returns self.xoutput_dict.items to behave like a dict"""
+
+        return self.xoutput_dict.items()
+
     # cf Methods.Output.XOutput.keys
-    if isinstance(keys, ImportError):
-        keys = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method keys: " + str(keys))
-            )
-        )
-    else:
-        keys = keys
+    def keys(self):
+        """Return xoutput_dict keys to behave like a dict"""
+        if self.xoutput_dict is None:
+            return list()
+        else:
+            return self.xoutput_dict.keys()
+
     # cf Methods.Output.XOutput.plot_generation
-    if isinstance(plot_generation, ImportError):
-        plot_generation = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method plot_generation: " + str(plot_generation)
-                )
-            )
+    def plot_generation(self, x_symbol, y_symbol, ax=None):
+        """Plot every fitness values according to the two fitness
+
+        Parameters
+        ----------
+        self : XOutput
+        obj1 : str
+            symbol of the ParamExplorer, the OptiObjective or the DataKeeper
+        obj2 : str
+            symbol of the ParamExplorer, the OptiObjective or the DataKeeper
+        """
+
+        # TODO define the colormap according to Pyleecan graphical chart
+        # Colormap definition
+        cm = LinearSegmentedColormap.from_list(
+            "colormap",
+            [(35 / 255, 89 / 255, 133 / 255), (250 / 255, 202 / 255, 56 / 255)],
+            N=max(self["ngen"].result) + 1,
         )
-    else:
-        plot_generation = plot_generation
+
+        # Get fitness and ngen
+        is_valid = np.array(self["is_valid"].result)
+        ngen = np.array(self["ngen"].result)
+
+        # Keep only valid values
+        indx = np.where(is_valid)[0]
+
+        ngen = ngen[indx]
+
+        # get data and labels
+        x_values, x_label = _get_symbol_data_(self, x_symbol, indx)
+        y_values, y_label = _get_symbol_data_(self, y_symbol, indx)
+
+        if ax is None:
+            fig, ax = plt.subplots()
+
+            # Plot fitness values
+            scatter = ax.scatter(x_values, y_values, s=8, c=ngen, cmap=cm)
+
+            # Add legend
+            legend1 = ax.legend(
+                *scatter.legend_elements(), loc="upper right", title="Generation"
+            )
+            ax.add_artist(legend1)
+
+            # Extend xlim to give some space to the legend
+            left, right = ax.get_xlim()
+            ax.set_xlim(left, right + 0.2 * abs(right - left))
+
+            ax.set_xlabel(x_label)
+            ax.set_ylabel(y_label)
+            ax.set_title("Fitness values for each individual")
+            fig.show()
+
+        else:
+            # Plot fitness values
+            scatter = ax.scatter(x_values, y_values, s=8, c=ngen, cmap=cm)
+
+            # Add legend
+            legend1 = ax.legend(
+                *scatter.legend_elements(), loc="upper right", title="Generation"
+            )
+            ax.add_artist(legend1)
+
+            # Extend xlim to give some space to the legend
+            left, right = ax.get_xlim()
+            ax.set_xlim(left, right + 0.2 * abs(right - left))
+
+            ax.set_xlabel(x_label)
+            ax.set_ylabel(y_label)
+            ax.set_title("Fitness values for each individual")
+
+            return ax
+
     # cf Methods.Output.XOutput.plot_multi
-    if isinstance(plot_multi, ImportError):
-        plot_multi = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method plot_multi: " + str(plot_multi))
-            )
-        )
-    else:
-        plot_multi = plot_multi
+    plot_multi = plot_multi
+
     # cf Methods.Output.XOutput.plot_pareto
-    if isinstance(plot_pareto, ImportError):
-        plot_pareto = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method plot_pareto: " + str(plot_pareto))
-            )
+    def plot_pareto(
+        self,
+        x_symbol,
+        y_symbol,
+        c_symbol=None,
+        cmap=None,
+        ax=None,
+        title=None,
+        grid=False,
+        is_show_fig=True,
+        save_path=None,
+    ):
+        """Plot the pareto front for 2 objective functions
+
+        Parameters
+        ----------
+        self : XOutput
+        x_symbol : str
+            symbol of the first objective function
+        y_symbol: str
+            symbol of the second objective function
+        c_symbol: str
+            optional symbol to set the plot colors
+        cmap: colormap
+            optional colormap
+        is_show_fig : bool
+            True to show figure after plot
+        save_path : str
+            full path of the png file where the figure is saved if save_path is not None
+        """
+
+        return self.parent.plot_pareto(
+            x_symbol,
+            y_symbol,
+            c_symbol,
+            cmap,
+            ax,
+            title,
+            grid,
+            is_show_fig,
+            save_path,
         )
-    else:
-        plot_pareto = plot_pareto
+
     # cf Methods.Output.XOutput.pop
-    if isinstance(pop, ImportError):
-        pop = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method pop: " + str(pop))
-            )
-        )
-    else:
-        pop = pop
+    def pop(self, i):
+        """
+        Remove the item at the given position in the list, and return it.
+        If no index is specified, a.pop() removes and returns the last item in the list.
+        """
+        return self.list_output.pop(i)
+
     # cf Methods.Output.XOutput.print_memory
-    if isinstance(print_memory, ImportError):
-        print_memory = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use XOutput method print_memory: " + str(print_memory)
+    def print_memory(self, tab_level=0, detail_level=1, is_print=True):
+        """Print an estimation of the memory usage for each property of the object
+
+        Parameters
+        ----------
+        self : XOutput
+            An XOutput object
+        tab_level : int
+            Number of tab ("    ") to add before each line
+        detail_level : int
+            Select how many data to display (0: only object size, 1: object + properties, 2:object + detailed properties)
+        is_print: bool
+            True print, else return str
+
+        Returns
+        -------
+        mem_str: str
+            if is_print == False, return the string that descibe the memory usage of the object
+        """
+
+        tab = ""
+        for _ in range(tab_level):
+            tab += "    "
+
+        mem_str = tab + "Total XOutput size: " + str(getsizeof(self)) + " o\n"
+        if detail_level == 0:
+            print(mem_str)
+            return
+
+        mem_str += tab + "Reference simulation:\n"
+        mem_str += super(type(self), self).print_memory(
+            tab_level=tab_level + 1, detail_level=detail_level, is_print=False
+        )
+
+        mem_str += "\nXOutput Data:\n"
+        # Paramexplorer_list
+        S1 = 0
+        if self.paramexplorer_list is not None:
+            for obj in self.paramexplorer_list:
+                S1 += getsizeof(obj)
+        mem_str += tab + "    paramexplorer_list: " + str(S1) + " o\n"
+        # output_list
+        S2 = 0
+        out_list_str = ""
+        if self.output_list is not None:
+            for ii, obj in enumerate(self.output_list):
+                S = getsizeof(obj)
+                S2 += S
+                out_list_str += (
+                    tab + "        output_list[" + str(ii) + "]: " + str(S) + " o\n"
                 )
-            )
-        )
-    else:
-        print_memory = print_memory
+                if detail_level > 2:
+                    out_list_str += self.output_list[ii].print_memory(
+                        tab_level=3, detail_level=detail_level - 2, is_print=False
+                    )
+        mem_str += tab + "    output_list: " + str(S2) + " o\n"
+        mem_str += out_list_str
+        # xoutput_dict
+        S3 = 0
+        if self.xoutput_dict is not None:
+            for key, value in self.xoutput_dict.items():
+                S3 += getsizeof(key) + getsizeof(value)
+        mem_str += tab + "    xoutput_dict: " + str(S3) + " o\n"
+        mem_str += tab + "    nb_simu: " + str(getsizeof(self.nb_simu)) + " o\n"
+
+        if is_print:
+            print(mem_str)
+        else:
+            return mem_str
+
     # cf Methods.Output.XOutput.remove
-    if isinstance(remove, ImportError):
-        remove = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use XOutput method remove: " + str(remove))
-            )
-        )
-    else:
-        remove = remove
+    def remove(self, x):
+        """
+        Remove the first item from the list whose value is equal to x.
+        It raises a ValueError if there is no such item.
+        """
+        return self.output_list.remove(x)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

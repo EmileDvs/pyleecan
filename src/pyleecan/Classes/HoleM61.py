@@ -4,6 +4,12 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM61
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - comp_magnetization_dict: import name 'Segment' refers to different sources (pyleecan.Classes.Segment.Segment and .Segment.Segment)
+# - plot_schematics: import name 'Arc1' refers to different sources (pyleecan.Classes.Arc1.Arc1 and ..Methods.Slot.HoleM61.plot_schematics.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,51 +23,16 @@ from .HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.HoleM61._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.HoleM61.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.HoleM61.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.HoleM61.comp_magnetization_dict import comp_magnetization_dict
-except ImportError as error:
-    comp_magnetization_dict = error
-
-try:
-    from ..Methods.Slot.HoleM61.comp_radius import comp_radius
-except ImportError as error:
-    comp_radius = error
-
-try:
-    from ..Methods.Slot.HoleM61.comp_surface_magnet_id import comp_surface_magnet_id
-except ImportError as error:
-    comp_surface_magnet_id = error
-
-try:
-    from ..Methods.Slot.HoleM61.has_magnet import has_magnet
-except ImportError as error:
-    has_magnet = error
-
-try:
-    from ..Methods.Slot.HoleM61.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
-try:
-    from ..Methods.Slot.HoleM61.remove_magnet import remove_magnet
-except ImportError as error:
-    remove_magnet = error
-
+from ..Methods.Slot.HoleM61.check import check
+from ..Methods.Slot.HoleM61.comp_magnetization_dict import comp_magnetization_dict
+from ..Methods.Slot.HoleM61.plot_schematics import plot_schematics
+from numpy import exp, pi, abs
+from ..Functions.Geometry.inter_line_circle import inter_line_circle
+from ..Functions.Geometry.inter_line_line import inter_line_line
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes.SurfLine import SurfLine
+from pyleecan.Functions.labels import HOLEM_LAB
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -73,103 +44,572 @@ class HoleM61(HoleMag):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.HoleM61._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM61 method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : HoleM61
+            A HoleM61 object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+
+        Rbo = self.get_Rbo()
+
+        # comp point coordinate (in complex)
+
+        Z1 = (Rbo - self.H0) + 1j * self.W0 / 2
+        Z2 = Z1 + self.H1
+
+        Zc61 = -1j * self.W3 / 2 * exp(1j * pi / self.Zh)
+        Zc62 = (1 - 1j * self.W3 / 2) * exp(1j * pi / self.Zh)
+
+        Zc63 = Z1 + 1j
+        Z6 = inter_line_line(Z1, Zc63, Zc61, Zc62)
+        Z6 = Z6[0]
+
+        Zc31 = -1j * (self.W3 / 2 + self.H1) * exp(1j * pi / self.Zh)
+        Zc32 = (1 - 1j * (self.W3 / 2 + self.H1)) * exp(1j * pi / self.Zh)
+
+        Zc33 = Z2 + 1j
+        Z3 = inter_line_line(Z2, Zc33, Zc31, Zc32)
+        Z3 = Z3[0]
+
+        # radius Rbo - H2
+        Zint5 = inter_line_circle(Z6, Zc61, Rbo - self.H2)
+        # Select the point with Re(Z) > 0 and Im(z) >0
+        if Zint5[0].real > 0 and Zint5[0].imag > 0:
+            Z5 = Zint5[0]
+        else:
+            Z5 = Zint5[1]
+
+        # radius Rbo - H2
+        Zint4 = inter_line_circle(Z3, Zc31, Rbo - self.H2)
+        # Select the point with Re(Z) > 0 and Im(z) >0
+        if Zint4[0].real > 0 and Zint4[0].imag > 0:
+            Z4 = Zint4[0]
+        else:
+            Z4 = Zint4[1]
+
+        # add possibility to create hole without magnet
+        if self.W1 != None and self.W2 != None:
+            # draw magnet
+            Zm1 = Z1
+            Zm2 = Z2
+            Zm3 = Z2 + 1j * self.W1
+            Zm4 = Z1 + 1j * self.W1
+
+            Zcm1 = ((Z3 + Z4) / 2) * exp(-1j * pi / self.Zh)
+            Zcm2 = Zcm1 + 1j * self.H1
+
+            Zm5 = (Zcm1 - self.W2 / 2) * exp(1j * pi / self.Zh)
+            Zm6 = (Zcm1 + self.W2 / 2) * exp(1j * pi / self.Zh)
+            Zm7 = (Zcm2 + self.W2 / 2) * exp(1j * pi / self.Zh)
+            Zm8 = (Zcm2 - self.W2 / 2) * exp(1j * pi / self.Zh)
+
+        point_dict = dict()
+        point_dict["Z1"] = Z1
+        point_dict["Z2"] = Z2
+        point_dict["Z3"] = Z3
+        point_dict["Z4"] = Z4
+        point_dict["Z5"] = Z5
+        point_dict["Z6"] = Z6
+
+        # add possibility to create hole without magnet
+        if self.W1 != None and self.W2 != None:
+            point_dict["ZM1"] = Zm1
+            point_dict["ZM2"] = Zm2
+            point_dict["ZM3"] = Zm3
+            point_dict["ZM4"] = Zm4
+            point_dict["ZM5"] = Zm5
+            point_dict["ZM6"] = Zm6
+            point_dict["ZM7"] = Zm7
+            point_dict["ZM8"] = Zm8
+
+        # Draw the right hole by symmetry
+        point_dict["Z7"] = Z1.conjugate()
+        point_dict["Z8"] = Z2.conjugate()
+        point_dict["Z9"] = Z3.conjugate()
+        point_dict["Z10"] = Z4.conjugate()
+        point_dict["Z11"] = Z5.conjugate()
+        point_dict["Z12"] = Z6.conjugate()
+
+        # add possibility to create hole without magnet
+        if self.W1 != None and self.W2 != None:
+            point_dict["ZM9"] = Zm1.conjugate()
+            point_dict["ZM10"] = Zm2.conjugate()
+            point_dict["ZM11"] = Zm3.conjugate()
+            point_dict["ZM12"] = Zm4.conjugate()
+            point_dict["ZM13"] = Zm5.conjugate()
+            point_dict["ZM14"] = Zm6.conjugate()
+            point_dict["ZM15"] = Zm7.conjugate()
+            point_dict["ZM16"] = Zm8.conjugate()
+
+        return point_dict
+
     # cf Methods.Slot.HoleM61.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM61 method build_geometry: " + str(build_geometry)
-                )
+    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+        """Compute the curve (Segment) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : HoleM61
+            A HoleM61 object
+        alpha : float
+            Angle to rotate the slot (Default value = 0) [rad]
+        delta : complex
+            Complex to translate the slot (Default value = 0)
+        is_simplified : bool
+            True to avoid line superposition
+
+        Returns
+        -------
+        surf_list: list
+            List of SurfLine needed to draw the HoleM58
+
+        """
+        Rbo = self.get_Rbo()
+
+        # Get correct label for surfaces
+        lam_label = self.parent.get_label()
+        R_id, surf_type = self.get_R_id()
+        vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
+        mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
+
+        # Get all the points
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+        Z6 = point_dict["Z6"]
+
+        Z7 = point_dict["Z7"]
+        Z8 = point_dict["Z8"]
+        Z9 = point_dict["Z9"]
+        Z10 = point_dict["Z10"]
+        Z11 = point_dict["Z11"]
+        Z12 = point_dict["Z12"]
+
+        # add possibility to create hole without magnet
+        if self.W1 != None and self.W2 != None:
+            ZM1 = point_dict["ZM1"]
+            ZM2 = point_dict["ZM2"]
+            ZM3 = point_dict["ZM3"]
+            ZM4 = point_dict["ZM4"]
+            ZM5 = point_dict["ZM5"]
+            ZM6 = point_dict["ZM6"]
+            ZM7 = point_dict["ZM7"]
+            ZM8 = point_dict["ZM8"]
+            ZM9 = point_dict["ZM9"]
+            ZM10 = point_dict["ZM10"]
+            ZM11 = point_dict["ZM11"]
+            ZM12 = point_dict["ZM12"]
+            ZM13 = point_dict["ZM13"]
+            ZM14 = point_dict["ZM14"]
+            ZM15 = point_dict["ZM15"]
+            ZM16 = point_dict["ZM16"]
+
+        surf_list = list()
+        # Create all the surfaces for all the cases
+
+        # surface Hole without magnet
+        curve_list = list()
+        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(Segment(Z2, Z3))
+        curve_list.append(Segment(Z3, Z4))
+        curve_list.append(
+            Arc1(
+                begin=Z4,
+                end=Z5,
+                radius=Rbo - self.H2,
+                is_trigo_direction=True,
             )
         )
-    else:
-        build_geometry = build_geometry
+        curve_list.append(Segment(Z5, Z6))
+        curve_list.append(Segment(Z6, Z1))
+        point_ref = (Z3 + Z6) / 2
+        S2 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # surface Hole without magnet
+        curve_list = list()
+        curve_list.append(Segment(Z7, Z8))
+        curve_list.append(Segment(Z8, Z9))
+        curve_list.append(Segment(Z9, Z10))
+        curve_list.append(
+            Arc1(
+                begin=Z10,
+                end=Z11,
+                radius=Rbo - self.H2,
+                is_trigo_direction=True,
+            )
+        )
+        curve_list.append(Segment(Z11, Z12))
+        curve_list.append(Segment(Z12, Z7))
+
+        point_ref = (Z9 + Z12) / 2
+        S1 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # add possibility to create hole without magnet
+        if self.W1 != None and self.W2 != None:
+            # Magnet_2 surface
+            curve_list = list()
+            curve_list.append(Segment(ZM1, ZM2))
+            curve_list.append(Segment(ZM2, ZM3))
+            curve_list.append(Segment(ZM3, ZM4))
+            curve_list.append(Segment(ZM4, ZM1))
+            point_ref = (ZM1 + ZM3) / 2
+            SM2 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface between magnet_2 and magnet_3
+            curve_list = list()
+            curve_list.append(Segment(ZM4, ZM3))
+            curve_list.append(Segment(ZM3, Z3))
+            curve_list.append(Segment(Z3, ZM5))
+            curve_list.append(Segment(ZM5, ZM8))
+            curve_list.append(Segment(ZM8, Z6))
+            curve_list.append(Segment(Z6, ZM4))
+            point_ref = (Z3 + ZM4) / 2
+            S23 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Surface for magnet_3
+            curve_list = list()
+            curve_list.append(Segment(ZM5, ZM6))
+            curve_list.append(Segment(ZM6, ZM7))
+            curve_list.append(Segment(ZM7, ZM8))
+            curve_list.append(Segment(ZM8, ZM5))
+
+            point_ref = (ZM5 + ZM7) / 2
+            SM3 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface between magnet_3 and top of slot
+            curve_list = list()
+            curve_list.append(Segment(ZM6, Z4))
+            curve_list.append(
+                Arc1(begin=Z4, end=Z5, radius=Rbo - self.H2, is_trigo_direction=True)
+            )
+            curve_list.append(Segment(Z5, ZM7))
+            curve_list.append(Segment(ZM7, ZM6))
+
+            point_ref = (Z5 + ZM6) / 2
+            S3T = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface without magnet_2 but with magnet_3
+            curve_list = list()
+            curve_list.append(Segment(Z1, Z2))
+            curve_list.append(Segment(Z2, Z3))
+            curve_list.append(Segment(Z3, ZM5))
+            curve_list.append(Segment(ZM5, ZM8))
+            curve_list.append(Segment(ZM8, Z6))
+            curve_list.append(Segment(Z6, Z1))
+            point_ref = (Z1 + Z3) / 2
+            SW02 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface without magnet_3 but with magnet_2
+            curve_list = list()
+            curve_list.append(Segment(ZM3, Z3))
+            curve_list.append(Segment(Z3, Z4))
+            curve_list.append(
+                Arc1(begin=Z4, end=Z5, radius=Rbo - self.H2, is_trigo_direction=True)
+            )
+            curve_list.append(Segment(Z5, Z6))
+            curve_list.append(Segment(Z6, ZM4))
+            curve_list.append(Segment(ZM4, ZM3))
+
+            point_ref = (Z5 + Z3) / 2
+            SW03 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Magnet_1 surface
+            curve_list = list()
+            curve_list.append(Segment(ZM9, ZM10))
+            curve_list.append(Segment(ZM10, ZM11))
+            curve_list.append(Segment(ZM11, ZM12))
+            curve_list.append(Segment(ZM12, ZM9))
+            point_ref = (ZM10 + ZM12) / 2
+            SM1 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface between magnet_1 and magnet_0
+            curve_list = list()
+            curve_list.append(Segment(ZM11, ZM12))
+            curve_list.append(Segment(ZM12, Z12))
+            curve_list.append(Segment(Z12, ZM16))
+            curve_list.append(Segment(ZM16, ZM13))
+            curve_list.append(Segment(ZM13, Z9))
+            curve_list.append(Segment(Z9, ZM11))
+            point_ref = (Z9 + ZM12) / 2
+            S10 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Surface for magnet_0
+            curve_list = list()
+            curve_list.append(Segment(ZM13, ZM14))
+            curve_list.append(Segment(ZM14, ZM15))
+            curve_list.append(Segment(ZM15, ZM16))
+            curve_list.append(Segment(ZM16, ZM13))
+
+            point_ref = (ZM13 + ZM15) / 2
+            SM0 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface between magnet_0 and top of slot
+            curve_list = list()
+            curve_list.append(Segment(ZM15, Z11))
+            curve_list.append(
+                Arc1(begin=Z11, end=Z10, radius=Rbo - self.H2, is_trigo_direction=True)
+            )
+            curve_list.append(Segment(Z10, ZM14))
+            curve_list.append(Segment(ZM14, ZM15))
+
+            point_ref = (Z10 + ZM15) / 2
+            S0T = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface without magnet_1 but with magnet_0
+            curve_list = list()
+            curve_list.append(Segment(Z7, Z8))
+            curve_list.append(Segment(Z8, Z9))
+            curve_list.append(Segment(Z9, ZM13))
+            curve_list.append(Segment(ZM13, ZM16))
+            curve_list.append(Segment(ZM16, Z12))
+            curve_list.append(Segment(Z12, Z7))
+            point_ref = (Z12 + Z8) / 2
+            SW01 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+            # Air surface without magnet_0 but with magnet_1
+            curve_list = list()
+            curve_list.append(Segment(ZM11, Z9))
+            curve_list.append(Segment(Z9, Z10))
+            curve_list.append(
+                Arc1(begin=Z10, end=Z11, radius=Rbo - self.H2, is_trigo_direction=True)
+            )
+            curve_list.append(Segment(Z11, Z12))
+            curve_list.append(Segment(Z12, ZM12))
+            curve_list.append(Segment(ZM12, ZM11))
+
+            point_ref = (Z10 + Z12) / 2
+            SW00 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Create the surface list by selecting the correct ones
+
+        # add possibility to create hole without magnet
+        surf_list = list()
+        if self.W1 != None and self.W2 != None:
+            if self.magnet_0:
+                SM0.label = mag_label + "T0-S0"
+                S0T.label = vent_label + "T0-S0"
+                surf_list += [SM0, S0T]
+                if self.magnet_1:
+                    SM1.label = mag_label + "T1-S0"
+                    S10.label = vent_label + "T1-S0"
+                    surf_list += [
+                        S10,
+                        SM1,
+                    ]
+                    if self.magnet_2:
+                        SM2.label = mag_label + "T2-S0"
+                        surf_list += [SM2]
+                        if self.magnet_3:
+                            SM3.label = mag_label + "T3-S0"
+                            S23.label = vent_label + "T2-S0"
+                            S3T.label = vent_label + "T3-S0"
+                            surf_list += [S23, SM3, S3T]
+                        else:
+                            SW03.label = vent_label + "T2-S0"
+                            surf_list += [SW03]
+                    else:
+                        if self.magnet_3:
+                            SW02.label = vent_label + "T2-S0"
+                            SM3.label = mag_label + "T2-S0"
+                            S3T.label = vent_label + "T3-S0"
+                            surf_list += [SW02, SM3, S3T]
+                        else:
+                            S2.label = vent_label + "T2-S0"
+                            surf_list += [S2]
+
+                else:
+                    SW01.label = vent_label + "T1-S0"
+                    surf_list += [SW01]
+                    if self.magnet_2:
+                        SM2.label = mag_label + "T1-S0"
+                        surf_list += [SM2]
+                        if self.magnet_3:
+                            SM3.label = mag_label + "T2-S0"
+                            S23.label = vent_label + "T1-S0"
+                            S3T.label = vent_label + "T3-S0"
+                            surf_list += [S23, SM3, S3T]
+                        else:
+                            SW03.label = vent_label + "T2-S0"
+                            surf_list += [SW03]
+                    else:
+                        if self.magnet_3:
+                            SW02.label = vent_label + "T2-S0"
+                            SM3.label = mag_label + "T1-S0"
+                            S3T.label = vent_label + "T3-S0"
+                            surf_list += [SW02, SM3, S3T]
+                        else:
+                            S2.label = vent_label + "T1-S0"
+                            surf_list += [S2]
+            else:
+                if self.magnet_1:
+                    SW00.label = vent_label + "T0-S0"
+                    SM1.label = mag_label + "T0-S0"
+                    surf_list += [SW00, SM1]
+                    if self.magnet_2:
+                        SM2.label = mag_label + "T1-S0"
+                        surf_list += [SM2]
+                        if self.magnet_3:
+                            SM3.label = mag_label + "T2-S0"
+                            S23.label = vent_label + "T1-S0"
+                            S3T.label = vent_label + "T2-S0"
+                            surf_list += [S23, SM3, S3T]
+                        else:
+                            SW03.label = vent_label + "T1-S0"
+                            surf_list += [SW03]
+                    else:
+                        if self.magnet_3:
+                            SW02.label = vent_label + "T1-S0"
+                            SM3.label = mag_label + "T1-S0"
+                            S3T.label = vent_label + "T2-S0"
+                            surf_list += [SW02, SM3, S3T]
+                        else:
+                            S2.label = vent_label + "T1-S0"
+                            surf_list += [S2]
+                else:
+                    S1.label = vent_label + "T0-S0"
+                    surf_list += [S1]
+                    if self.magnet_2:
+                        SM2.label = mag_label + "T0-S0"
+                        surf_list += [SM2]
+                        if self.magnet_3:
+                            SM3.label = mag_label + "T1-S0"
+                            S23.label = vent_label + "T1-S0"
+                            S3T.label = vent_label + "T2-S0"
+                            surf_list += [S23, SM3, S3T]
+                        else:
+                            SW03.label = vent_label + "T1-S0"
+                            surf_list += [SW03]
+                    else:
+                        if self.magnet_3:
+                            SW02.label = vent_label + "T1-S0"
+                            SM3.label = mag_label + "T1-S0"
+                            S3T.label = vent_label + "T2-S0"
+                            surf_list += [SW02, SM3, S3T]
+                        else:
+                            S2.label = vent_label + "T1-S0"
+                            surf_list += [S2]
+
+        else:
+            S1.label = vent_label + "T0-S0"
+            surf_list += [S1]
+            S2.label = vent_label + "T1-S0"
+            surf_list += [S2]
+
+        # Apply the transformations
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+
+        return surf_list
+
     # cf Methods.Slot.HoleM61.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM61 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
     # cf Methods.Slot.HoleM61.comp_magnetization_dict
-    if isinstance(comp_magnetization_dict, ImportError):
-        comp_magnetization_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM61 method comp_magnetization_dict: "
-                    + str(comp_magnetization_dict)
-                )
-            )
-        )
-    else:
-        comp_magnetization_dict = comp_magnetization_dict
+    comp_magnetization_dict = comp_magnetization_dict
+
     # cf Methods.Slot.HoleM61.comp_radius
-    if isinstance(comp_radius, ImportError):
-        comp_radius = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM61 method comp_radius: " + str(comp_radius))
-            )
-        )
-    else:
-        comp_radius = comp_radius
+    def comp_radius(self):
+        """Compute the radius of the min and max circle that contains the slot
+
+        Parameters
+        ----------
+        self : HoleM61
+            A HoleM61 object
+
+        Returns
+        -------
+        (Rmin,Rmax): tuple
+            Radius of the circle that contains the slot [m]
+        """
+
+        Rbo = self.get_Rbo()
+
+        Rmax = Rbo - self.H2
+        Rmin = abs((Rbo - self.H0) + 1j * self.W0 / 2)
+
+        return (Rmin, Rmax)
+
     # cf Methods.Slot.HoleM61.comp_surface_magnet_id
-    if isinstance(comp_surface_magnet_id, ImportError):
-        comp_surface_magnet_id = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM61 method comp_surface_magnet_id: "
-                    + str(comp_surface_magnet_id)
-                )
-            )
-        )
-    else:
-        comp_surface_magnet_id = comp_surface_magnet_id
+    def comp_surface_magnet_id(self, index):
+        """Compute the surface of the hole magnet of the corresponding index
+
+        Parameters
+        ----------
+        self : HoleM61
+            A HoleM61 object
+        index : int
+            Index of the magnet to compute the surface
+
+        Returns
+        -------
+        Smag: float
+            Surface of the Magnet [m**2]
+        """
+        # define sum all surface
+        label = "magnet_" + str(index)
+
+        if index in [1, 2] and getattr(self, label) is not None:
+            return self.W1 * self.H1
+        if index in [0, 3] and getattr(self, label) is not None:
+            return self.W2 * self.H1
+        if index not in [0, 1, 2, 3]:
+            raise Exception("Error index isn't equal at 0, 1, 2 or 3")
+        return 0
+
     # cf Methods.Slot.HoleM61.has_magnet
-    if isinstance(has_magnet, ImportError):
-        has_magnet = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM61 method has_magnet: " + str(has_magnet))
-            )
+    def has_magnet(self):
+        """Return if the Hole has magnets
+
+        Parameters
+        ----------
+        self : HoleM61
+            A HoleM61 object
+
+        Returns
+        -------
+        has_magnet : bool
+            True if the magnets are not None
+        """
+
+        return (
+            self.magnet_0 is not None
+            or self.magnet_1 is not None
+            or self.magnet_2 is not None
+            or self.magnet_3 is not None
         )
-    else:
-        has_magnet = has_magnet
+
     # cf Methods.Slot.HoleM61.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM61 method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
+
     # cf Methods.Slot.HoleM61.remove_magnet
-    if isinstance(remove_magnet, ImportError):
-        remove_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM61 method remove_magnet: " + str(remove_magnet)
-                )
-            )
-        )
-    else:
-        remove_magnet = remove_magnet
+    def remove_magnet(self):
+        """Remove the magnet (set to None) of the Hole
+
+        Parameters
+        ----------
+        self : HoleM61
+            a HoleM61 object
+        """
+
+        self.magnet_0 = None
+        self.magnet_1 = None
+        self.magnet_2 = None
+        self.magnet_3 = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

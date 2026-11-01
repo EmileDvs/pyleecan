@@ -17,31 +17,9 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Mesh.ElementMat.add_element import add_element
-except ImportError as error:
-    add_element = error
-
-try:
-    from ..Methods.Mesh.ElementMat.get_connectivity import get_connectivity
-except ImportError as error:
-    get_connectivity = error
-
-try:
-    from ..Methods.Mesh.ElementMat.get_node2element import get_node2element
-except ImportError as error:
-    get_node2element = error
-
-try:
-    from ..Methods.Mesh.ElementMat.interpolate import interpolate
-except ImportError as error:
-    interpolate = error
-
-try:
-    from ..Methods.Mesh.ElementMat.is_exist import is_exist
-except ImportError as error:
-    is_exist = error
-
+import numpy as np
+from typing import Union, Optional
+from numpy.typing import ArrayLike
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -53,62 +31,185 @@ class ElementMat(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Mesh.ElementMat.add_element
-    if isinstance(add_element, ImportError):
-        add_element = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ElementMat method add_element: " + str(add_element)
-                )
-            )
-        )
-    else:
-        add_element = add_element
+    def add_element(self, node_indices: Union[ArrayLike, int], new_index: int) -> bool:
+        """Add a new element defined by node indices
+
+        Parameters
+        ----------
+        self : ElementMat
+            a ElementMat object
+        node_indices : ndarray or list of int
+            a ndarray of nodes indices (length must match self.nb_node_per_element)
+        new_index : int
+            Index of the new element to use
+
+        Returns
+        -------
+        is_created : bool
+            False if the element already exist or if it is not possible to add the element
+        """
+
+        # Check that there is the correct number of nodes
+        if len(np.unique(node_indices)) != self.nb_node_per_element:
+            return False
+
+        # Check if the Element with these nodes already exist (The order of nodes indices does not matter)
+        if self.is_exist(node_indices):
+            return False
+
+        # Create/Add the new element
+        if self.nb_element == 0:  # First element
+
+            # Force connectivity to have shape nb_element × nb_node_per_element
+            if isinstance(node_indices, int):
+                self.connectivity = np.array([[node_indices]])
+            else:
+                self.connectivity = np.array([node_indices])
+
+            self.indice = np.array([new_index])
+        else:
+            self.connectivity = np.vstack([self.connectivity, node_indices])
+            self.indice = np.concatenate([self.indice, np.array([new_index])])
+
+        self.nb_element += 1
+
+        return True
+
     # cf Methods.Mesh.ElementMat.get_connectivity
-    if isinstance(get_connectivity, ImportError):
-        get_connectivity = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ElementMat method get_connectivity: "
-                    + str(get_connectivity)
-                )
-            )
-        )
-    else:
-        get_connectivity = get_connectivity
+    def get_connectivity(
+        self, element_index: Optional[int] = None
+    ) -> Union[np.ndarray, None]:
+        """_summary_
+
+        Parameters
+        ----------
+        self : ElementMat
+            an ElementMat object
+        element_index : Optional[int], optional
+           the indice of a element, by default None. If None, return all elements.
+
+        Returns
+        -------
+        Union[np.ndarray, None]
+            Selected element connectivity. Return None if the index does not exist
+        """
+
+        connectivity = self.connectivity
+        indices = self.indice
+        nb_element = self.nb_element
+
+        if element_index is None:  # Return all elements
+            return connectivity
+
+        if nb_element == 0:  # No element
+            return np.array([[]])
+
+        connectivity_index = (indices == element_index).nonzero()[0]
+        if connectivity_index.size > 0:
+            return connectivity[connectivity_index[0], :]
+        else:
+            return np.array([[]])
+
     # cf Methods.Mesh.ElementMat.get_node2element
-    if isinstance(get_node2element, ImportError):
-        get_node2element = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ElementMat method get_node2element: "
-                    + str(get_node2element)
-                )
-            )
-        )
-    else:
-        get_node2element = get_node2element
+    def get_node2element(self, node_indice: int) -> np.ndarray:
+        """Return all indices of elements containing a node.
+
+        Parameters
+        ----------
+        self : ElementMat
+            an ElementMat object
+        node_indice : int
+            a node indice
+
+        Returns
+        -------
+        node_to_element: ndarray
+            Indices of elements containing the node
+
+        """
+
+        node_to_element = np.array([], dtype=int)
+        connect = self.connectivity
+
+        if connect is None:
+            return node_to_element
+
+        if len(connect.shape) > 1:  # If there is more than 1 element
+            idx_elem = (connect == node_indice).nonzero()[0]
+            node_to_element = self.indice[idx_elem]
+
+        elif sum(connect == node_indice) > 0:
+            node_to_element = self.indice
+
+        return node_to_element
+
     # cf Methods.Mesh.ElementMat.interpolate
-    if isinstance(interpolate, ImportError):
-        interpolate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ElementMat method interpolate: " + str(interpolate)
-                )
-            )
+    def interpolate(
+        self, point: np.ndarray, node_coord: np.ndarray, field: np.ndarray
+    ) -> np.ndarray:
+        """Return interpolated value of the field in a element
+
+        Parameters
+        ----------
+        self : ElementMat
+             an ElementMat object
+        points : ndarray
+            evaluation points
+        node_coord : ndarray
+            coordinates of the element nodes
+        field : ndarray
+            field to interpolate
+
+        Returns
+        -------
+        value: array
+            interpolated field
+
+        """
+        return self.ref_element.interpolation(
+            point=point, node_coord=node_coord, field=field
         )
-    else:
-        interpolate = interpolate
+
     # cf Methods.Mesh.ElementMat.is_exist
-    if isinstance(is_exist, ImportError):
-        is_exist = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ElementMat method is_exist: " + str(is_exist))
+    def is_exist(self, connectivity: np.ndarray) -> bool:
+        """Check the existence of a element defined by a connectivity (vector of points indices).
+        The order of points indices does not matter.
+
+        Parameters
+        ----------
+        self : ElementMat
+            an ElementMat object
+        connectivity : ndarray
+            an array of node tags
+
+        Returns
+        -------
+            bool
+                True if the element already exist
+        """
+        if self.nb_node_per_element > 3:
+            self.get_logger().warning(
+                "ElementMat.is_exist doesn't take into account quad node permutations."
             )
+
+        # Check if the element connectivity provided has the good size
+        if self.nb_node_per_element != len(connectivity):
+            return False
+
+        # Get the element index for each node of the connectivity
+        node_element = np.concatenate(
+            [self.get_node2element(node_index) for node_index in connectivity],
         )
-    else:
-        is_exist = is_exist
+
+        # Count how many nodes of each element are present in the connectivity
+        _, unique_counts = np.unique(node_element, return_counts=True)
+
+        # The element already exist if all its node are present in the given connectivity
+        result = np.any(unique_counts == self.nb_node_per_element)
+
+        return result
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

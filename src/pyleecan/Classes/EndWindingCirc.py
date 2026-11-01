@@ -17,16 +17,8 @@ from .EndWinding import EndWinding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.EndWindingCirc.comp_inductance import comp_inductance
-except ImportError as error:
-    comp_inductance = error
-
-try:
-    from ..Methods.Machine.EndWindingCirc.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
+from numpy import log, pi, sqrt
+from .LamSlotWind import LamSlotWind
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,30 +29,120 @@ class EndWindingCirc(EndWinding):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.EndWindingCirc.comp_inductance
-    if isinstance(comp_inductance, ImportError):
-        comp_inductance = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EndWindingCirc method comp_inductance: "
-                    + str(comp_inductance)
-                )
+    def comp_inductance(self):
+        """Compute the end winding inductance from "Design of Brushless Permanent-Magnet Machines", J.R Henderson, 2010
+
+        Parameters
+        ----------
+        self: EndWinding
+            A EndWinding object
+
+        Returns
+        -------
+        Lew : float
+            end winding inductance [H].
+        """
+
+        # ckeck that Endwinding is in Winding of a Lamination with slots
+        if (
+            self.parent is None
+            or self.parent.parent is None
+            or not isinstance(self.parent.parent, LamSlotWind)
+            or self.parent.parent.slot is None
+        ):
+            self.get_logger.warning(
+                "EndWindingCirc.comp_inductance(): "
+                + "EndWindingCirc has to be in a lamination with slot winding to calculate "
+                + "the end winding inductance. Returning zero inductance."
             )
-        )
-    else:
-        comp_inductance = comp_inductance
+            return 0
+
+        # get the middle radius of the slots active area
+        Rmid = self.parent.parent.slot.comp_radius_mid_active()
+        Zs = self.parent.parent.slot.Zs
+        p = self.parent.p
+
+        # get the coil pitch (with some fall backs), first from the user definition
+        # TODO utilize swat_em coil pitch calc.
+        coil_pitch = self.coil_pitch
+        if coil_pitch is None:
+            # try to get coil_pitch of winding
+            coil_pitch = getattr(self.parent, "coil_pitch", None)
+            if coil_pitch is None:
+                coil_pitch = Zs / p / 2
+                self.get_logger().warning(
+                    "EndWindingCirc.comp_inductance():"
+                    + "Using a coil pitch of one pole pitch for EW inductance calculation."
+                )
+
+        # End winding is a circle whose radius is half the coil pitch distance
+        Re = pi / Zs * Rmid * coil_pitch
+
+        # Eq(5.49) p.234
+        Scond = self.parent.conductor.comp_surface()
+        R = 0.4394 * sqrt(Scond)
+
+        # Eq (5.48) p 233
+        Ntcoil = self.parent.Ntcoil
+        mu0 = 4 * pi * 1e-7
+        Lw = mu0 * Re * Ntcoil**2 * (log(8 * Re / R) - 2)
+
+        return Lw
+
     # cf Methods.Machine.EndWindingCirc.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EndWindingCirc method comp_length: " + str(comp_length)
-                )
+    def comp_length(self):
+        """Compute the end winding conductor length on one side for a half-turn
+        excluding the straight conductor length outside of the lamination (winding.Lewout).
+
+        Parameters
+        ----------
+        self: EndWindingCirc
+            A EndWindingCirc object
+        Returns
+        -------
+        end_wind_length : float
+            End-winding length on one side for a half-turn [m].
+        """
+        # ckeck that Endwinding is in Winding of a Lamination with slots
+        if (
+            self.parent is None
+            or self.parent.parent is None
+            or not isinstance(self.parent.parent, LamSlotWind)
+            or self.parent.parent.slot is None
+        ):
+            self.get_logger.warning(
+                "EndWindingCirc.comp_length(): "
+                + "EndWindingCirc has to be in a lamination with slot winding to calculate "
+                + "the end winding length. Returning zero lenght."
             )
-        )
-    else:
-        comp_length = comp_length
+            return 0
+
+        # get the middle radius of the slots active area
+        Rmid = self.parent.parent.slot.comp_radius_mid_active()
+        Zs = self.parent.parent.slot.Zs
+        p = self.parent.p
+
+        # get the coil pitch (with some fall backs), first from the user definition
+        # TODO utilize swat_em coil pitch calc.
+        coil_pitch = self.coil_pitch
+        if coil_pitch is None:
+            # try to get coil_pitch of winding
+            coil_pitch = getattr(self.parent, "coil_pitch", None)
+            if coil_pitch is None:
+                coil_pitch = Zs / p / 2
+                self.get_logger().warning(
+                    "EndWindingCirc.comp_length():"
+                    + "Using a coil pitch of one pole pitch for EW length calculation."
+                )
+
+        # calculate the EW length as a quarter circle base on the circumferential length
+        # TODO do better aprox. based on tooth width / slot width for tooth coil winding
+        circ_length = 2 * pi * Rmid * coil_pitch / Zs
+        end_wind_length = pi * circ_length / 4
+
+        return end_wind_length
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

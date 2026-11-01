@@ -17,21 +17,8 @@ from .Elmer import Elmer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Elmer.ElmerResults.get_data import get_data
-except ImportError as error:
-    get_data = error
-
-try:
-    from ..Methods.Elmer.ElmerResults.load_columns import load_columns
-except ImportError as error:
-    load_columns = error
-
-try:
-    from ..Methods.Elmer.ElmerResults.load_data import load_data
-except ImportError as error:
-    load_data = error
-
+from os.path import exists
+from numpy import loadtxt
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -42,38 +29,134 @@ class ElmerResults(Elmer):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Elmer.ElmerResults.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ElmerResults method get_data: " + str(get_data))
-            )
-        )
-    else:
-        get_data = get_data
+    def get_data(self):
+        """Method to return the Elmer simulation results
+
+        Parameters
+        ----------
+        self : ElmerResults
+            An ElmerResults object
+
+        Returns
+        -------
+        data : list
+            list of data
+
+        """
+        # check if data are loaded
+        if not self.data:
+            self.load_data()
+
     # cf Methods.Elmer.ElmerResults.load_columns
-    if isinstance(load_columns, ImportError):
-        load_columns = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ElmerResults method load_columns: " + str(load_columns)
-                )
-            )
-        )
-    else:
-        load_columns = load_columns
+    def load_columns(self):
+        """Method to load the names of the columns data of the Elmer simulation results
+
+        Parameters
+        ----------
+        self : ElmerResults
+            An ElmerResults object
+
+        """
+        pass
+
     # cf Methods.Elmer.ElmerResults.load_data
-    if isinstance(load_data, ImportError):
-        load_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ElmerResults method load_data: " + str(load_data)
-                )
+    def load_data(self):
+        """Method to load the Elmer simulation results (as an alternative for direct input)
+
+        Parameters
+        ----------
+        self : ElmerResults
+            An ElmerResults object
+
+        Returns
+        -------
+        data : list
+            list of data
+
+        """
+        # TODO allow relative path
+        filename = self.file
+
+        # some first checks
+        logger = self.get_logger()
+        if filename is None:
+            logger.warning("Filename (self.file) not defined.")
+            return False
+        if not exists(filename):
+            logger.warning(f"Filename '{filename}' not found.")
+            return False
+
+        # load raw data
+        usecols = self.usecols if self.usecols else None
+        data = loadtxt(filename, unpack=False, usecols=usecols)
+        data_size = data.shape[1]
+
+        # check if columns names are avialable and get names in case
+        if not self.columns:
+            # TODO try to load names first
+            logger.warning(f"Columns names not defined. Setting integers as names.")
+            if not self.usecols:
+                self.columns = [x + 1 for x in range(data_size)]
+                self.usecols = self.columns
+            else:
+                self.columns = self.usecols
+
+        # set data dict
+        for k in range(min(len(self.columns), len(self.usecols))):
+            i = self.usecols[k] - 1  # self.usecols starts with 1
+            key = self.columns[k]
+            if i < data_size and i >= 0:  # check index range
+                self.data[key] = data[:, i]
+            else:
+                self.data[key] = None
+
+        """
+        # This order must match lines.dat.names
+        # 1: Time step
+        # 2: Iteration step
+        # 3: Boundary condition
+        # 4: Node index
+        # 5: coordinate 1
+        # 6: coordinate 2
+        # 7: coordinate 3
+
+        # 8: magnetic flux density 1
+        # 9: magnetic flux density 2
+        # 10: magnetic flux density 3
+        # 11: magnetic flux density e 1
+        # 12: magnetic flux density e 2
+        # 13: magnetic flux density e 3
+        Br_list = []
+        Bt_list = []
+        theta_list = []
+
+        for i in range(skip_steps, steps + 1):
+            index = np.where(data == i)
+            data_step = data[index[0]]
+            rho = np.sqrt(data_step[:, 1] ** 2 + data_step[:, 2] ** 2)
+            theta = np.arctan2(data_step[:, 2], data_step[:, 1])
+            Br1 = np.multiply(data_step[:, 3], np.cos(theta)) + np.multiply(
+                data_step[:, 4], np.sin(theta)
             )
-        )
-    else:
-        load_data = load_data
+            Bt1 = -np.multiply(data_step[:, 3], np.sin(theta)) + np.multiply(
+                data_step[:, 4], np.cos(theta)
+            )
+            max_theta = np.max(theta)
+            min_theta = np.min(theta)
+            data_step_polar = np.stack((rho, theta, Br1, Bt1), axis=-1)
+            data_step_polar = data_step_polar[data_step_polar[:, 1].argsort()]
+            cs_r = CubicSpline(data_step_polar[:, 1], data_step_polar[:, 2])
+            cs_t = CubicSpline(data_step_polar[:, 1], data_step_polar[:, 3])
+            theta_fine = np.linspace(min_theta, max_theta, num=int(2880 / fractions))
+            Br_list.append(cs_r(theta_fine))
+            Bt_list.append(cs_t(theta_fine))
+            theta_list.append(theta_fine)
+
+    
+        """
+        return True
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -278,7 +361,7 @@ class ElmerResults(Elmer):
         ElmerResults_dict = super(ElmerResults, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         ElmerResults_dict["data"] = self.data.copy() if self.data is not None else None
         ElmerResults_dict["file"] = self.file

@@ -4,6 +4,12 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSquirrelCage
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - plot: import name 'LamSlotWind' refers to different sources (.LamSlotWind.LamSlotWind and ..Methods.Machine.LamSquirrelCage.plot.LamSlotWind)
+# - plot_side: import name 'plt' refers to different sources (..Methods.Machine.LamSquirrelCage.plot_schematics_scr.plt and ..Methods.Machine.LamSquirrelCage.plot_side.plt)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,79 +23,26 @@ from .LamSlotWind import LamSlotWind
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.LamSquirrelCage.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_angle_d_axis import comp_angle_d_axis
-except ImportError as error:
-    comp_angle_d_axis = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_length_ring import comp_length_ring
-except ImportError as error:
-    comp_length_ring = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_masses import comp_masses
-except ImportError as error:
-    comp_masses = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_number_phase_eq import (
-        comp_number_phase_eq,
-    )
-except ImportError as error:
-    comp_number_phase_eq = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_resistance_wind import (
-        comp_resistance_wind,
-    )
-except ImportError as error:
-    comp_resistance_wind = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.comp_surface_ring import comp_surface_ring
-except ImportError as error:
-    comp_surface_ring = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.get_name_phase import get_name_phase
-except ImportError as error:
-    get_name_phase = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.plot_schematics_scr import (
-        plot_schematics_scr,
-    )
-except ImportError as error:
-    plot_schematics_scr = error
-
-try:
-    from ..Methods.Machine.LamSquirrelCage.plot_side import plot_side
-except ImportError as error:
-    plot_side = error
-
+from ..Methods.Machine.LamSquirrelCage.check import check
+from ..Methods.Machine.LamSquirrelCage.plot import plot
+from ..Methods.Machine.LamSquirrelCage.plot_side import plot_side
+from ..Functions.labels import WIND_LAB, BAR_LAB
+from .LamSlotWind import LamSlotWind
+from numpy import pi, sin
+from .LamSlot import LamSlot
+from ..Functions.load import import_class
+from ..Methods.Machine.LamSquirrelCage.plot_schematics_scr import (
+    ARROW_COLOR,
+    ARROW_WIDTH,
+    MAIN_LINE_COLOR,
+    MAIN_LINE_STYLE,
+    MAIN_LINE_WIDTH,
+    SC_FONT_SIZE,
+    Segment,
+    SlotW22,
+    plot_quote,
+    plt,
+)
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -100,155 +53,459 @@ class LamSquirrelCage(LamSlotWind):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.LamSquirrelCage.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method build_geometry: "
-                    + str(build_geometry)
-                )
-            )
+    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+        """Build geometry of the LamSquirrelCage
+
+        Parameters
+        ----------
+        self :
+            LamSquirrelCage Object
+        sym : int
+            Symmetry factor (1= full machine, 2= half of the machine...)
+        alpha : float
+            Angle for rotation [rad]
+        delta : complex
+            Complex value for translation
+        is_circular_radius : bool
+            True to add surfaces to "close" the Lamination radii
+
+        Returns
+        -------
+        surf_list: list
+            list of surfaces
+
+        """
+        surf_list = LamSlotWind.build_geometry(
+            self,
+            sym=sym,
+            is_circular_radius=is_circular_radius,
+            alpha=alpha,
+            delta=delta,
         )
-    else:
-        build_geometry = build_geometry
+
+        # Adapt the label
+        for surf in surf_list:
+            if WIND_LAB in surf.label:
+                surf.label = surf.label.replace(WIND_LAB, BAR_LAB)
+
+        return surf_list
+
     # cf Methods.Machine.LamSquirrelCage.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSquirrelCage method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Machine.LamSquirrelCage.comp_angle_d_axis
-    if isinstance(comp_angle_d_axis, ImportError):
-        comp_angle_d_axis = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_angle_d_axis: "
-                    + str(comp_angle_d_axis)
-                )
-            )
-        )
-    else:
-        comp_angle_d_axis = comp_angle_d_axis
+    def comp_angle_d_axis(self):
+        """Compute the angle between the X axis and the first d+ axis
+        By convention a "Tooth" is centered on the X axis
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        d_angle : float
+            angle between the X axis and the first d+ axis
+        """
+
+        return 0
+
     # cf Methods.Machine.LamSquirrelCage.comp_length_ring
-    if isinstance(comp_length_ring, ImportError):
-        comp_length_ring = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_length_ring: "
-                    + str(comp_length_ring)
-                )
-            )
-        )
-    else:
-        comp_length_ring = comp_length_ring
+    def comp_length_ring(self):
+        """Computation of the squirrel cage end-ring average perimeter (circumferential length)
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        Lring: float
+            Length of the ring [m]
+
+        """
+
+        # calculation of the average radius of the center of the end-ring (distance to z-axis of the electrical machine)
+        Rmw = self.slot.comp_radius_mid_active()
+
+        return 2 * pi * Rmw
+
     # cf Methods.Machine.LamSquirrelCage.comp_masses
-    if isinstance(comp_masses, ImportError):
-        comp_masses = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_masses: " + str(comp_masses)
+    def comp_masses(self):
+        """Compute the Lamination masses
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        M_dict: dict
+            Lamination mass dictionary (Mtot, Mlam, Mwind, Mring) [kg]
+        """
+
+        if self.is_stator:
+            lam_name = "Stator"
+        else:
+            lam_name = "Rotor"
+        M_dict = LamSlot.comp_masses(self)
+
+        if self.winding is not None:
+            # Check
+            if self.winding.conductor.cond_mat.struct.rho is None:
+                mat_name = str(self.winding.conductor.cond_mat.name)
+                raise Exception(
+                    "Error: The "
+                    + lam_name
+                    + " winding conductor material ("
+                    + mat_name
+                    + ") is not fully defined. Please set struct.rho"
                 )
+            # Compute
+            L_dict = self.comp_lengths_winding()
+            Mwind = (
+                self.winding.conductor.comp_surface_active()
+                * self.get_Zs()
+                * self.winding.conductor.cond_mat.struct.rho
+                * L_dict["Lwht"]
             )
-        )
-    else:
-        comp_masses = comp_masses
+        else:
+            Mwind = 0
+
+        # Adding Short circuit ring
+        # Check
+        if self.ring_mat.struct.rho is None:
+            mat_name = str(self.ring_mat.name)
+            raise Exception(
+                "Error: The "
+                + lam_name
+                + " Short circuit ring material ("
+                + mat_name
+                + ") is not fully defined. Please set struct.rho"
+            )
+        Sring = self.comp_surface_ring()
+        Lring = self.comp_length_ring()
+        Mring = Sring * Lring * self.ring_mat.struct.rho
+
+        M_dict["Mtot"] += Mwind + Mring
+        M_dict["Mwind"] = Mwind + Mring
+        M_dict["Mring"] = Mring
+
+        return M_dict
+
     # cf Methods.Machine.LamSquirrelCage.comp_number_phase_eq
-    if isinstance(comp_number_phase_eq, ImportError):
-        comp_number_phase_eq = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_number_phase_eq: "
-                    + str(comp_number_phase_eq)
-                )
-            )
-        )
-    else:
-        comp_number_phase_eq = comp_number_phase_eq
+    def comp_number_phase_eq(self):
+        """Compute the equivalent number of phase
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        qb: float
+            Zs/p
+        """
+
+        return self.slot.Zs / float(self.winding.p)
+
     # cf Methods.Machine.LamSquirrelCage.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
+    def comp_periodicity_spatial(self):
+        """Compute the periodicity factor of the lamination
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        per_a : int
+            Number of spatial periodicities of the lamination
+        is_antiper_a : bool
+            True if an spatial anti-periodicity is possible after the periodicities
+        """
+
+        # Reuse method from Lamination instead of LamSlotWind since winding periodicity is given by lamination periodicity
+        Lamination = import_class("pyleecan.Classes", "Lamination")
+
+        per_a, is_antiper_a = Lamination.comp_periodicity_spatial(self)
+
+        return per_a, is_antiper_a
+
     # cf Methods.Machine.LamSquirrelCage.comp_resistance_wind
-    if isinstance(comp_resistance_wind, ImportError):
-        comp_resistance_wind = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_resistance_wind: "
-                    + str(comp_resistance_wind)
-                )
-            )
-        )
-    else:
-        comp_resistance_wind = comp_resistance_wind
+    def comp_resistance_wind(self, T=20):
+        """Computation of the equivalent rotor resistance per phase of a cage winding with 'qs' number of phases
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+        T : float
+            mean winding temperature [°C], default value is 20°C
+
+        Returns
+        -------
+        Rrot: float
+            resistance of the rotor [Ohm]
+        """
+        # calculate resistance ring at T degC
+        rho = self.ring_mat.elec.get_resistivity(T_op=T, T_ref=20)
+
+        Sring = self.comp_surface_ring()
+        lring = self.comp_length_ring()
+        Zr = self.get_Zs()
+        P = self.get_pole_pair_number()
+        # total ring resistance (not yet divided by Zr to take average resistance seen by one bar)
+        Rring = rho * lring / Sring
+
+        # calculate resistance rod at T degC
+        rho = self.winding.conductor.cond_mat.elec.get_resistivity(T_op=T, T_ref=20)
+
+        # active surface inside slot
+        Srod = self.winding.conductor.comp_surface_active()
+        # total bar length inside lamination + outside lamination before end ring (#TODO Lewout should be 0 for molded cage, #TODO comp_length() should account for skew shape)
+        lrod = self.comp_length() + 2 * self.winding.Lewout
+        # bar resistance
+        Rrod = rho * lrod / Srod
+
+        # average physical resistance per rotor bar (not yet transfered on stator side, per stator phase)
+        Rtot = Rrod + Rring / Zr / (2 * sin(pi * P / Zr) ** 2)
+
+        return Rtot
+
     # cf Methods.Machine.LamSquirrelCage.comp_surface_ring
-    if isinstance(comp_surface_ring, ImportError):
-        comp_surface_ring = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method comp_surface_ring: "
-                    + str(comp_surface_ring)
-                )
-            )
-        )
-    else:
-        comp_surface_ring = comp_surface_ring
+    def comp_surface_ring(self):
+        """Computation of the ring cross-section surface area
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        Lring: float
+            Surface area of the cross-section of the ring [m^2]
+
+        """
+        Hscr = self.Hscr
+        Lscr = self.Lscr
+
+        return Lscr * Hscr
+
     # cf Methods.Machine.LamSquirrelCage.get_name_phase
-    if isinstance(get_name_phase, ImportError):
-        get_name_phase = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method get_name_phase: "
-                    + str(get_name_phase)
-                )
-            )
-        )
-    else:
-        get_name_phase = get_name_phase
+    def get_name_phase(self):
+        """Return the name of the winding phases
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+
+        Returns
+        -------
+        name_phase: list
+            Empty list
+
+        """
+        if (
+            not hasattr(self, "winding")
+            or self.winding is None
+            # or self.winding.conductor is None
+        ):
+            return list()
+        qs = 3 if self.winding.qs is None else self.winding.qs
+
+        return ["Bar " + str(ii + 1) for ii in range(qs)]
+
     # cf Methods.Machine.LamSquirrelCage.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use LamSquirrelCage method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
+    plot = plot
+
     # cf Methods.Machine.LamSquirrelCage.plot_schematics_scr
-    if isinstance(plot_schematics_scr, ImportError):
-        plot_schematics_scr = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method plot_schematics_scr: "
-                    + str(plot_schematics_scr)
-                )
+    def plot_schematics_scr(
+        self,
+        is_default=False,
+        is_add_schematics=True,
+        is_add_main_line=True,
+        save_path=None,
+        is_show_fig=True,
+        fig=None,
+        ax=None,
+    ):
+        """Plot the schematics of the short circuit ring
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+        is_default : bool
+            True: plot default schematics, else use current lamination values
+        is_add_schematics : bool
+            True to display the schematics information (Hscr, Lscr...)
+        is_add_main_line : bool
+            True to display "main lines" (dotted lines and Z axis)
+        save_path : str
+            full path including folder, name and extension of the file to save if save_path is not None
+        is_show_fig : bool
+            To call show at the end of the method
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+        """
+
+        # Use some default parameter
+        if is_default:
+            lam = type(self)(
+                is_stator=False,
+                is_internal=True,
+                Rint=0,
+                Rext=0.25,
+                L1=1,
+                Hscr=0.15,
+                Lscr=0.1,
             )
-        )
-    else:
-        plot_schematics_scr = plot_schematics_scr
+            lam.slot = SlotW22(Zs=12, H0=0.02, H2=0.05)
+            lam.winding.Lewout = 0.1
+            lam.plot_schematics_scr(
+                is_default=False,
+                is_add_schematics=is_add_schematics,
+                is_add_main_line=is_add_main_line,
+                save_path=save_path,
+                is_show_fig=is_show_fig,
+                fig=fig,
+                ax=ax,
+            )
+        else:
+            # Getting the main plot
+            fig, ax = self.plot_side(is_show_fig=False, fig=fig, ax=ax)
+            Lt = self.comp_length()
+            Hs = self.slot.comp_height()
+            Ha = self.slot.comp_height_active()
+            Ho = Hs - Ha
+            Le = self.winding.Lewout
+            Lscr = self.Lscr
+            Hscr = self.Hscr
+
+            # Adding schematics
+            if is_add_schematics:
+                # Rext
+                line = Segment(Lt / 2 - Lt / 5, Lt / 2 - Lt / 5 + 1j * self.Rext)
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=ARROW_COLOR,
+                    linewidth=ARROW_WIDTH,
+                    label="Rext",
+                    offset_label=-Le * 1.05,
+                    is_arrow=True,
+                    fontsize=SC_FONT_SIZE,
+                )
+                # Lewout
+                Zbar1 = Lt / 2 + 1j * (self.Rext - Hs + Ha)
+                Zbar2 = Lt / 2 + Le + 1j * (self.Rext - Hs + Ha)
+                Zlim1 = Zbar1 + 1j * Hs
+                Zlim2 = Zbar2 + 1j * Hs
+                plot_quote(
+                    Zbar1,
+                    Zlim1,
+                    Zlim2,
+                    Zbar2,
+                    offset_label=1j * Le * 0.4 - Le * 0.7,
+                    fig=fig,
+                    ax=ax,
+                    label="Lewout",
+                )
+                # Lscr
+                ZL1 = Lt / 2 + Le + 1j * (self.Rext - Hs + Ha / 2 + Hscr / 2)
+                ZL2 = Lt / 2 + Le + Lscr + 1j * (self.Rext - Hs + Ha / 2 + Hscr / 2)
+                Zlim1 = ZL1 + 1j * Hs
+                Zlim2 = ZL2 + 1j * Hs
+                plot_quote(
+                    ZL1,
+                    Zlim1,
+                    Zlim2,
+                    ZL2,
+                    offset_label=1j * Le * 0.4 - Le * 0.3,
+                    fig=fig,
+                    ax=ax,
+                    label="Lscr",
+                )
+                # Hscr
+                line = Segment(ZL2, ZL2 - 1j * Hscr)
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=ARROW_COLOR,
+                    linewidth=ARROW_WIDTH,
+                    label="Hscr",
+                    offset_label=Le * 0.3,
+                    is_arrow=True,
+                    fontsize=SC_FONT_SIZE,
+                )
+
+            if is_add_main_line:
+                # Ox axis
+                line = Segment(0, Lt + Le + Lscr)
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+                # Hscr lines
+                line = Segment(ZL1 - 1j * Hscr, ZL2 - 1j * Hscr)
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+                line = Segment(ZL1.conjugate() + 1j * Hscr, ZL2.conjugate() + 1j * Hscr)
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+
+            ax.axis("equal")
+            ax.set_xlim(Lt / 4, (Lt / 2 + Le + Lscr) * 1.1)
+            # ax.set_ylim(-self.Rext, self.Rext)
+            manager = plt.get_current_fig_manager()
+            if manager is not None:
+                manager.set_window_title(type(self).__name__ + " Schematics")
+            ax.set_title("")
+            ax.get_legend().remove()
+            ax.set_axis_off()
+
+            # Save / Show
+            if save_path is not None:
+                fig.savefig(save_path)
+                plt.close(fig=fig)
+
+            if is_show_fig:
+                fig.show()
+            return fig, ax
+
     # cf Methods.Machine.LamSquirrelCage.plot_side
-    if isinstance(plot_side, ImportError):
-        plot_side = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use LamSquirrelCage method plot_side: " + str(plot_side)
-                )
-            )
-        )
-    else:
-        plot_side = plot_side
+    plot_side = plot_side
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

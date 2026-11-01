@@ -4,6 +4,13 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/WindingUD
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - init_as_CW1L: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_CW1L.zeros)
+# - init_as_CW2LR: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_CW2LR.zeros)
+# - init_as_CW2LT: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_CW2LT.zeros)
+# - init_as_DWL: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_DWL.zeros)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,31 +24,21 @@ from .Winding import Winding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.WindingUD.import_from_csv import import_from_csv
-except ImportError as error:
-    import_from_csv = error
-
-try:
-    from ..Methods.Machine.WindingUD.init_as_CW1L import init_as_CW1L
-except ImportError as error:
-    init_as_CW1L = error
-
-try:
-    from ..Methods.Machine.WindingUD.init_as_CW2LR import init_as_CW2LR
-except ImportError as error:
-    init_as_CW2LR = error
-
-try:
-    from ..Methods.Machine.WindingUD.init_as_CW2LT import init_as_CW2LT
-except ImportError as error:
-    init_as_CW2LT = error
-
-try:
-    from ..Methods.Machine.WindingUD.init_as_DWL import init_as_DWL
-except ImportError as error:
-    init_as_DWL = error
-
+from ..Methods.Machine.WindingUD.init_as_CW1L import init_as_CW1L
+from ..Methods.Machine.WindingUD.init_as_CW2LR import init_as_CW2LR
+from ..Methods.Machine.WindingUD.init_as_CW2LT import init_as_CW2LT
+from ..Methods.Machine.WindingUD.init_as_DWL import init_as_DWL
+from ..Methods.Machine.WindingUD.import_from_csv import (
+    COIL_COL,
+    RAD_COL,
+    TAN_COL,
+    ZS_COL,
+    amax,
+    isfile,
+    reader,
+    tile,
+    zeros,
+)
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -54,63 +51,88 @@ class WindingUD(Winding):
     VERSION = 1
     NAME = "User defined"
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.WindingUD.import_from_csv
-    if isinstance(import_from_csv, ImportError):
-        import_from_csv = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use WindingUD method import_from_csv: "
-                    + str(import_from_csv)
+    def import_from_csv(self, file_path=None):
+        """Import the winding matrix from a csv file.
+        One matrix for each phase
+        Column Slot id, Ntcoil, Rad id, Tan id
+
+        Parameters
+        ----------
+        self : WindingUD
+            A: WindingUD object
+        file_path : str
+            Path to the file to load
+        """
+
+        # parse file_path
+        if file_path[-4:] != ".csv":
+            file_path += ".csv"
+        if not isfile(file_path):
+            raise FileNotFoundError(file_path + " is not a csv winding file")
+
+        with open(file_path, "r") as csv_file:
+            line_list = list(reader(csv_file))
+            # Get matrix size
+            if "(" in line_list[0][0] and ")" in line_list[0][0]:
+                is_header, offset = True, 1
+                wind_shape = eval(line_list[0][0])
+            else:  # No Header
+                is_header, offset = False, 0
+                Nrad, Ntan, Zs, qs = -1, -1, -1, 0
+                for line in line_list:
+                    if len(line) == 0:
+                        qs += 1
+                    else:
+                        Nrad = max(Nrad, int(line[RAD_COL]))
+                        Ntan = max(Ntan, int(line[TAN_COL]))
+                        Zs = max(Zs, int(line[ZS_COL]))
+                wind_shape = (Nrad + 1, Ntan + 1, Zs + 1, qs)
+
+            if self.parent is not None and self.parent.slot is not None:
+                assert self.parent.slot.Zs % wind_shape[2] == 0, (
+                    "Mismatch between Lamination Zs ("
+                    + str(self.parent.slot.Zs)
+                    + ") and imported winding Zs ("
+                    + str(wind_shape[2])
+                    + ")"
                 )
-            )
-        )
-    else:
-        import_from_csv = import_from_csv
+            wind_mat = zeros(wind_shape)
+
+            # Load matrix
+            qs_id = 0
+            if is_header:  # Remove first line
+                line_list.pop(0)
+            for line in line_list:
+                if len(line) == 0 or line[ZS_COL + offset] == "":
+                    qs_id += 1
+                else:
+                    Rad_id = int(float(line[RAD_COL + offset]))
+                    Tan_id = int(float(line[TAN_COL + offset]))
+                    Zs_id = int(float(line[ZS_COL + offset]))
+                    wind_mat[Rad_id, Tan_id, Zs_id, qs_id] = line[COIL_COL + offset]
+
+        # complete partial winding matrix
+        if self.parent is not None and self.parent.slot is not None:
+            Zs = self.parent.slot.Zs
+            if wind_mat.shape[2] < Zs:
+                wind_mat = tile(wind_mat, (1, 1, Zs // wind_mat.shape[2], 1))
+
+        # Update property
+        self.clean()  # Remove periodicity
+        self.wind_mat = wind_mat
+        self.Nlayer = wind_shape[0] * wind_shape[1]
+        self.qs = wind_shape[3]
+        self.Ntcoil = amax(self.wind_mat)
+
     # cf Methods.Machine.WindingUD.init_as_CW1L
-    if isinstance(init_as_CW1L, ImportError):
-        init_as_CW1L = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use WindingUD method init_as_CW1L: " + str(init_as_CW1L)
-                )
-            )
-        )
-    else:
-        init_as_CW1L = init_as_CW1L
+    init_as_CW1L = init_as_CW1L
     # cf Methods.Machine.WindingUD.init_as_CW2LR
-    if isinstance(init_as_CW2LR, ImportError):
-        init_as_CW2LR = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use WindingUD method init_as_CW2LR: " + str(init_as_CW2LR)
-                )
-            )
-        )
-    else:
-        init_as_CW2LR = init_as_CW2LR
+    init_as_CW2LR = init_as_CW2LR
     # cf Methods.Machine.WindingUD.init_as_CW2LT
-    if isinstance(init_as_CW2LT, ImportError):
-        init_as_CW2LT = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use WindingUD method init_as_CW2LT: " + str(init_as_CW2LT)
-                )
-            )
-        )
-    else:
-        init_as_CW2LT = init_as_CW2LT
+    init_as_CW2LT = init_as_CW2LT
     # cf Methods.Machine.WindingUD.init_as_DWL
-    if isinstance(init_as_DWL, ImportError):
-        init_as_DWL = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use WindingUD method init_as_DWL: " + str(init_as_DWL)
-                )
-            )
-        )
-    else:
-        init_as_DWL = init_as_DWL
+    init_as_DWL = init_as_DWL
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW15
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - plot_schematics: import name 'Arc1' refers to different sources (.Arc1.Arc1 and ..Methods.Slot.SlotW15.plot_schematics.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,66 +21,13 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotW15._comp_line_dict import _comp_line_dict
-except ImportError as error:
-    _comp_line_dict = error
-
-try:
-    from ..Methods.Slot.SlotW15._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.SlotW15.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotW15.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotW15.comp_angle_opening import comp_angle_opening
-except ImportError as error:
-    comp_angle_opening = error
-
-try:
-    from ..Methods.Slot.SlotW15.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
-
-try:
-    from ..Methods.Slot.SlotW15.comp_height_active import comp_height_active
-except ImportError as error:
-    comp_height_active = error
-
-try:
-    from ..Methods.Slot.SlotW15.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Slot.SlotW15.comp_surface_opening import comp_surface_opening
-except ImportError as error:
-    comp_surface_opening = error
-
-try:
-    from ..Methods.Slot.SlotW15.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotW15.get_surface_opening import get_surface_opening
-except ImportError as error:
-    get_surface_opening = error
-
-try:
-    from ..Methods.Slot.SlotW15.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Slot.SlotW15.plot_schematics import plot_schematics
+from .Arc1 import Arc1
+from .Segment import Segment
+from numpy import angle, arcsin, arctan, cos, exp, pi, sin, sqrt
+from ..Methods.Slot.SlotW15 import S15InnerError
+from ..Functions.labels import WIND_LAB, DRAW_PROP_LAB, SOP_LAB
+from .SurfLine import SurfLine
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -87,141 +38,407 @@ class SlotW15(Slot):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotW15._comp_line_dict
-    if isinstance(_comp_line_dict, ImportError):
-        _comp_line_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method _comp_line_dict: " + str(_comp_line_dict)
-                )
-            )
-        )
-    else:
-        _comp_line_dict = _comp_line_dict
+    def _comp_line_dict(self):
+        """Define a dictionnary of the lines to draw the slot
+        If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        line_dict: dict
+            Dictionnary of the slot lines (key: line name, value: line object)
+        """
+
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+        Z6 = point_dict["Z6"]
+        Z7 = point_dict["Z7"]
+        Z8 = point_dict["Z8"]
+        Z9 = point_dict["Z9"]
+        Z10 = point_dict["Z10"]
+        Z11 = point_dict["Z11"]
+        Z12 = point_dict["Z12"]
+        Z13 = point_dict["Z13"]
+
+        # Creation of curve
+        line_dict = dict()
+        line_dict["1-2"] = Segment(Z1, Z2)
+        line_dict["2-3"] = Segment(Z2, Z3)
+        line_dict["3-4"] = Arc1(Z3, Z4, self.R1)
+        line_dict["4-5"] = Segment(Z4, Z5)
+        line_dict["5-6"] = Arc1(Z5, Z6, self.R2)
+        line_dict["6-8"] = Arc1(Z6, Z8, abs(Z7))
+        line_dict["8-9"] = Arc1(Z8, Z9, self.R2)
+        line_dict["9-10"] = Segment(Z9, Z10)
+        line_dict["10-11"] = Arc1(Z10, Z11, self.R1)
+        line_dict["11-12"] = Segment(Z11, Z12)
+        line_dict["12-13"] = Segment(Z12, Z13)
+
+        # Closing Arc (Rbo)
+        line_dict["13-1"] = Arc1(Z13, Z1, -self.get_Rbo(), is_trigo_direction=False)
+
+        # Closing Active part
+        line_dict["2-12"] = Segment(Z2, Z12)
+        line_dict["12-2"] = Segment(Z12, Z2)
+
+        return line_dict
+
     # cf Methods.Slot.SlotW15._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot point coordinates
+        """
+        Rbo = self.get_Rbo()
+
+        # alpha is the angle to rotate Z0 so ||Z1,Z13|| = W0
+        alpha = arcsin(self.W0 / (2 * Rbo))
+        hsp = pi / self.Zs  # Half slot pitch
+
+        Z0 = Rbo * exp(1j * 0)
+        Z13 = Z0 * exp(1j * alpha)
+        if self.is_outwards():
+            Z12 = Z0 + self.H0 + 1j * Z13.imag
+            Z7 = Z0 + self.H0 + self.H1 + self.H2
+
+            # Zc3, Z8 and (0,0) are align (tangent) => abs(Zc3)=Rbo+H0+H1+H2-R2
+            # In tooth ref: Im(Zc3') = -W3/2 - R2
+            A = Rbo + self.H0 + self.H1 + self.H2 - self.R2
+            B = -self.W3 / 2 - self.R2
+            xc2 = B * sin(-hsp) + sqrt(-(B**2) + A**2) * cos(-hsp)
+            yc2 = B * cos(-hsp) - sqrt(-(B**2) + A**2) * sin(-hsp)
+            Zc3 = xc2 + 1j * yc2
+            Z9 = (Zc3 * exp(1j * -hsp) + self.R2 * 1j) * exp(1j * hsp)
+
+            # Zc3, Z8 and (0,0) are align, |Zc3, Z8| = R2
+            Z8 = (Zc3 * exp(1j * -angle(Zc3)) + self.R2) * exp(1j * angle(Zc3))
+
+            # Real(Zc4) = Rbo+H0+H1
+            # In tooth ref: Im(Zc4') = -W3/2 - R1
+            xc1 = Rbo + self.H0 + self.H1
+            yc1 = (-self.W3 / 2 - self.R1 - xc1 * sin(-hsp)) / cos(-hsp)
+            Zc4 = xc1 + 1j * yc1
+            Z10 = (Zc4 * exp(1j * -hsp) + self.R1 * 1j) * exp(1j * hsp)
+
+            # Ref center at Zc4, (Z11,Z12) and (Z11,Zc4) are orthogonal
+            # Z11 = R1*exp(1i*theta)
+            # (R1*cos(theta)-x2)*R1*cos(theta)+(R1*sin(theta)-y2)*R1*sin(theta) = 0
+            R1 = self.R1
+            y2 = (Z12 - Zc4).imag
+            x2 = (Z12 - Zc4).real
+            theta = 2 * arctan((y2 - sqrt(-(R1**2) + x2**2 + y2**2)) / (R1 + x2))
+            Z11 = R1 * exp(1j * theta) + Zc4
+        else:
+            raise S15InnerError("Slot Type 15 can't be used on inner lamination")
+
+        point_dict = dict()
+        # symetry
+        point_dict["Z13"] = Z13
+        point_dict["Z12"] = Z12
+        point_dict["Z11"] = Z11
+        point_dict["Z10"] = Z10
+        point_dict["Z9"] = Z9
+        point_dict["Z8"] = Z8
+        point_dict["Z7"] = Z7
+        point_dict["Z6"] = Z8.conjugate()
+        point_dict["Z5"] = Z9.conjugate()
+        point_dict["Z4"] = Z10.conjugate()
+        point_dict["Z3"] = Z11.conjugate()
+        point_dict["Z2"] = Z12.conjugate()
+        point_dict["Z1"] = Z13.conjugate()
+        point_dict["Zc4"] = Zc4
+        point_dict["Zc3"] = Zc3
+        point_dict["Zc2"] = Zc3.conjugate()
+        point_dict["Zc1"] = Zc4.conjugate()
+        return point_dict
+
     # cf Methods.Slot.SlotW15.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        curve_list: list
+            A list of 6 Segment and 5 Arc
+
+        """
+
+        line_dict = self._comp_line_dict()
+
+        curve_list = [
+            line_dict["1-2"],
+            line_dict["2-3"],
+            line_dict["3-4"],
+            line_dict["4-5"],
+            line_dict["5-6"],
+            line_dict["6-8"],
+            line_dict["8-9"],
+            line_dict["9-10"],
+            line_dict["10-11"],
+            line_dict["11-12"],
+            line_dict["12-13"],
+        ]
+        return [line for line in curve_list if line is not None]
+
     # cf Methods.Slot.SlotW15.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotW15 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the SlotW15 object is correct
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        S15InnerError
+            Slot Type 15 can't be used on inner lamination
+        """
+
+        if not self.is_outwards():
+            raise S15InnerError("Slot Type 15 can't be used on inner lamination")
+
     # cf Methods.Slot.SlotW15.comp_angle_opening
-    if isinstance(comp_angle_opening, ImportError):
-        comp_angle_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method comp_angle_opening: "
-                    + str(comp_angle_opening)
-                )
-            )
-        )
-    else:
-        comp_angle_opening = comp_angle_opening
+    def comp_angle_opening(self):
+        """Compute the average opening angle of the Slot
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        alpha: float
+            Average opening angle of the slot [rad]
+
+        """
+
+        Rbo = self.get_Rbo()
+
+        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+
     # cf Methods.Slot.SlotW15.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotW15 method comp_height: " + str(comp_height))
-            )
-        )
-    else:
-        comp_height = comp_height
+    def comp_height(self):
+        """Compute the height of the Slot.
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        Htot: float
+            Height of the slot [m]
+
+        """
+
+        return self.H0 + self.H1 + self.H2
+
     # cf Methods.Slot.SlotW15.comp_height_active
-    if isinstance(comp_height_active, ImportError):
-        comp_height_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method comp_height_active: "
-                    + str(comp_height_active)
-                )
-            )
-        )
-    else:
-        comp_height_active = comp_height_active
+    def comp_height_active(self):
+        """Compute the height of the winding area
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        Hwind: float
+            Height of the winding area [m]
+
+        """
+        return self.H1 + self.H2
+
     # cf Methods.Slot.SlotW15.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the Slot total surface (by analytical computation).
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        S: float
+            Slot total surface [m**2]
+
+        """
+        return self.comp_surface_active() + self.comp_surface_opening()
+
     # cf Methods.Slot.SlotW15.comp_surface_opening
-    if isinstance(comp_surface_opening, ImportError):
-        comp_surface_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method comp_surface_opening: "
-                    + str(comp_surface_opening)
-                )
-            )
-        )
-    else:
-        comp_surface_opening = comp_surface_opening
+    def comp_surface_opening(self):
+        """Compute the Slot opening surface (by analytical computation).
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+
+        Returns
+        -------
+        S: float
+            Slot opening surface [m**2]
+
+        """
+
+        Rbo = self.get_Rbo()
+
+        # The bottom is an arc
+        alpha = self.comp_angle_opening()
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+        Harc = float(Rbo * (1 - cos(alpha / 2)))
+        S1 = (self.H0 + Harc) * self.W0
+
+        # Because Slamination = S - Zs * Sslot
+        if self.is_outwards():
+            return S1 - Sarc
+
     # cf Methods.Slot.SlotW15.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method get_surface_active: "
-                    + str(get_surface_active)
-                )
-            )
-        )
-    else:
-        get_surface_active = get_surface_active
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full winding surface
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_wind: Surface
+            Surface corresponding to the Winding Area
+        """
+
+        # Create curve list
+        line_dict = self._comp_line_dict()
+        curve_list = [
+            line_dict["2-3"],
+            line_dict["3-4"],
+            line_dict["4-5"],
+            line_dict["5-6"],
+            line_dict["6-8"],
+            line_dict["8-9"],
+            line_dict["9-10"],
+            line_dict["10-11"],
+            line_dict["11-12"],
+            line_dict["12-2"],
+        ]
+        curve_list = [line for line in curve_list if line is not None]
+
+        # Only the closing arc (12-2) needs to be drawn (in FEMM)
+        for curve in curve_list[:-1]:
+            if curve.prop_dict is None:
+                curve.prop_dict = dict()
+            curve.prop_dict.update({DRAW_PROP_LAB: False})
+
+        # Creating surface
+        label = self.parent.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        if self.is_outwards():
+            Zmid = self.get_Rbo() + self.H0 + self.H1 + self.H2 / 2
+        else:
+            Zmid = self.get_Rbo() - self.H0 - self.H1 - self.H2 / 2
+        surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return surface
+
     # cf Methods.Slot.SlotW15.get_surface_opening
-    if isinstance(get_surface_opening, ImportError):
-        get_surface_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method get_surface_opening: "
-                    + str(get_surface_opening)
-                )
-            )
-        )
-    else:
-        get_surface_opening = get_surface_opening
+    def get_surface_opening(self, alpha=0, delta=0):
+        """Return the list of surfaces defining the opening area of the Slot
+
+        Parameters
+        ----------
+        self : SlotW15
+            A SlotW15 object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list : list
+            list of surfaces objects
+        """
+
+        # H0=0 no opening
+        if self.H0 == 0:
+            return []
+
+        # Create curve list
+        line_dict = self._comp_line_dict()
+        curve_list = [
+            line_dict["1-2"],
+            line_dict["2-12"],
+            line_dict["12-13"],
+            line_dict["13-1"],
+        ]
+        curve_list = [line for line in curve_list if line is not None]
+
+        # Only the closing arc (13-1) needs to be drawn (in FEMM)
+        for curve in curve_list[:-1]:
+            if curve.prop_dict is None:
+                curve.prop_dict = dict()
+            curve.prop_dict.update({DRAW_PROP_LAB: False})
+
+        # Create surface
+        if self.is_outwards():
+            Zmid = self.get_Rbo() + self.H0 / 2
+        else:
+            Zmid = self.get_Rbo() - self.H0 / 2
+        label = self.parent.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return [surface]
+
     # cf Methods.Slot.SlotW15.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotW15 method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

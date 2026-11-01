@@ -17,16 +17,12 @@ from .MachineAsync import MachineAsync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.MachineDFIM.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Machine.MachineDFIM.get_machine_type import get_machine_type
-except ImportError as error:
-    get_machine_type = error
-
+from ..Methods.Machine.MachineDFIM.check import (
+    LamSlotWind,
+    M4C_PError,
+    M4C_WrongRotor,
+    M4C_WrongStator,
+)
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,28 +33,82 @@ class MachineDFIM(MachineAsync):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineDFIM.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MachineDFIM method check: " + str(check))
+    def check(self):
+        """Check that the Machine object is correct
+
+        Parameters
+        ----------
+        self : MachineDFIM
+            A MachineDFIM object
+
+        Returns
+        -------
+        None
+
+        Raises
+        _______
+        M4C_WrongRotor
+            The Rotor of a MachineDFIM must be a LamSlotWind
+        M4C_WrongStator
+            The Stator of a MachineDFIM must be a LamSlotWind
+        M4C_PError
+            The stator and the rotor winding must have the same value for p
+        """
+
+        super(type(self), self).check()
+
+        if not isinstance(self.rotor, LamSlotWind):
+            raise M4C_WrongRotor("The Rotor of a MachineDFIM must be a LamSlotWind")
+        if not isinstance(self.stator, LamSlotWind):
+            raise M4C_WrongStator(
+                "The Stator of a MachineDFIM must be a " "LamSlotWind"
             )
-        )
-    else:
-        check = check
+        if self.rotor.winding.p != self.stator.winding.p:
+            raise M4C_PError(
+                "The stator and the rotor winding must have the " "same value for p"
+            )
+
     # cf Methods.Machine.MachineDFIM.get_machine_type
-    if isinstance(get_machine_type, ImportError):
-        get_machine_type = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MachineDFIM method get_machine_type: "
-                    + str(get_machine_type)
-                )
-            )
-        )
-    else:
-        get_machine_type = get_machine_type
+    def get_machine_type(self):
+        """Return a string with the may information about the machine architecture
+
+        Parameters
+        ----------
+        self : MachineDFIM
+            A MachineDFIM object
+
+        Returns
+        -------
+        type_str: str
+            DFIM Zs/Zr/p (int/ext rotor)
+
+        """
+
+        type_str = "DFIM "
+
+        if self.stator.slot.Zs is not None:
+            type_str += str(self.stator.slot.Zs) + "s / "
+        else:
+            type_str += "?s / "
+
+        if self.rotor.slot.Zs is not None:
+            type_str += str(self.rotor.slot.Zs) + "r / "
+        else:
+            type_str += "?r / "
+
+        if self.stator.winding.p is not None:
+            type_str += str(self.stator.winding.p) + "p"
+        else:
+            type_str += "?p"
+
+        if self.stator.is_internal:
+            type_str += " (ext rotor)"
+        else:
+            type_str += " (int rotor)"
+
+        return type_str
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

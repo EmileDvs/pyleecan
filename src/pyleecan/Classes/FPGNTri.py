@@ -17,11 +17,6 @@ from .GaussPoint import GaussPoint
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Mesh.FPGNTri.get_gauss_points import get_gauss_points
-except ImportError as error:
-    get_gauss_points = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,17 +28,19 @@ class FPGNTri(GaussPoint):
     VERSION = 1
 
     # cf Methods.Mesh.FPGNTri.get_gauss_points
-    if isinstance(get_gauss_points, ImportError):
-        get_gauss_points = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FPGNTri method get_gauss_points: "
-                    + str(get_gauss_points)
-                )
-            )
+    def get_gauss_points(self):
+        """Return the gauss points and weights for Triangle3 element"""
+
+        raise NotImplementedError(
+            "Quadpy is not possible to use anymore, need to rewrite this method"
         )
-    else:
-        get_gauss_points = get_gauss_points
+        nb_gauss_points = self.nb_gauss_point
+        scheme = quadpy.tn.grundmann_moeller(2, nb_gauss_points)
+        gauss_pts = scheme.points
+        weights = scheme.weights
+
+        return gauss_pts, weights, nb_gauss_points
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

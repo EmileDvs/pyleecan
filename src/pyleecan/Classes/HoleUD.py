@@ -17,31 +17,9 @@ from .HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.HoleUD.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.HoleUD.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.HoleUD.comp_surface_magnet_id import comp_surface_magnet_id
-except ImportError as error:
-    comp_surface_magnet_id = error
-
-try:
-    from ..Methods.Slot.HoleUD.has_magnet import has_magnet
-except ImportError as error:
-    has_magnet = error
-
-try:
-    from ..Methods.Slot.HoleUD.remove_magnet import remove_magnet
-except ImportError as error:
-    remove_magnet = error
-
+from numpy import pi
+from ..Functions.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
+from ..Methods.Slot.Slot import SlotCheckError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -53,59 +31,154 @@ class HoleUD(HoleMag):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.HoleUD.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleUD method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+        """Compute the curve (Segment) needed to plot the Hole.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : HoleUD
+            A HoleUD object
+        alpha : float
+            Angle to rotate the slot (Default value = 0) [rad]
+        delta : complex
+            Complex to translate the slot (Default value = 0)
+        is_simplified : bool
+            True to avoid line superposition (not used)
+
+        Returns
+        -------
+        surf_list: list
+            List of SurfLine needed to draw the Hole
+        """
+
+        surf_list = [surf.copy() for surf in self.surf_list]
+
+        # Get correct label for surfaces
+        if self.parent is not None:
+            lam_label = self.parent.get_label()
+        else:
+            lam_label = LAM_LAB
+        R_id, surf_type = self.get_R_id()
+        vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-T"
+        mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-T"
+
+        # Update surface labels
+        hole_id = 0
+        mag_id = 0
+        for surf in surf_list:
+            if HOLEM_LAB in surf.label:
+                key = "magnet_" + str(mag_id)
+                if key in self.magnet_dict and self.magnet_dict[key] is not None:
+                    surf.label = mag_label + str(mag_id) + "-S0"
+                    mag_id += 1
+                else:  # Magnet disabled or not defined
+                    surf.label = vent_label + str(hole_id) + "-S0"
+                    hole_id += 1
+            elif HOLEV_LAB in surf.label:
+                surf.label = vent_label + str(hole_id) + "-S0"
+                hole_id += 1
+
+        # Apply the transformations
+        # Modulo on Alpha0 for sym
+        Alpha0 = self.Alpha0 % (2 * pi / self.Zh)
+        for surf in surf_list:
+            surf.rotate(alpha + Alpha0)
+            surf.translate(delta)
+
+        return surf_list
+
     # cf Methods.Slot.HoleUD.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleUD method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the HoleUD is correctly defined"""
+        if self.surf_list is None:
+            self.surf_list = list()
+        if self.magnet_dict is None:
+            self.magnet_dict = dict()
+        if len(self.surf_list) == 0:
+            raise SlotCheckError("HoleUD must have at least one surface")
+        for key in self.magnet_dict:
+            if key[:7] != "magnet_":
+                raise SlotCheckError(
+                    "HoleUD magnet_dict must use key like 'magnet_X' with X the index of the magnet. Found: "
+                    + key
+                )
+
     # cf Methods.Slot.HoleUD.comp_surface_magnet_id
-    if isinstance(comp_surface_magnet_id, ImportError):
-        comp_surface_magnet_id = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleUD method comp_surface_magnet_id: "
-                    + str(comp_surface_magnet_id)
-                )
-            )
-        )
-    else:
-        comp_surface_magnet_id = comp_surface_magnet_id
+    def comp_surface_magnet_id(self, index):
+        """Compute the surface of the hole magnet of the corresponding index
+
+        Parameters
+        ----------
+        self : HoleUD
+            A HoleUD object
+        index : int
+            Index of the magnet to compute the surface
+
+        Returns
+        -------
+        Smag: float
+            Surface of the Magnet [m**2]
+        """
+
+        if self.magnet_dict is None:
+            self.magnet_dict = dict()
+
+        label = "magnet_" + str(index)
+        if label in self.magnet_dict:
+            if self.magnet_dict[label] is None:  # Magnet disabled
+                return 0
+            else:
+                # Find the corresponding surface
+                mag_id = 0
+                for surf in self.surf_list:
+                    if HOLEM_LAB in surf.label and mag_id == index:
+                        return surf.comp_surface()
+                    elif HOLEM_LAB in surf.label:
+                        mag_id += 1
+                return 0
+
     # cf Methods.Slot.HoleUD.has_magnet
-    if isinstance(has_magnet, ImportError):
-        has_magnet = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleUD method has_magnet: " + str(has_magnet))
-            )
-        )
-    else:
-        has_magnet = has_magnet
+    def has_magnet(self):
+        """Return if the Hole has magnets
+
+        Parameters
+        ----------
+        self : HoleUD
+            A HoleUD object
+
+        Returns
+        -------
+        has_magnet : bool
+            True if the magnets are not None
+        """
+
+        has_mag = False
+        if self.magnet_dict is None:
+            self.magnet_dict = dict()
+            return False
+        for value in self.magnet_dict.values():
+            if value is not None:
+                has_mag = True
+        return has_mag
+
     # cf Methods.Slot.HoleUD.remove_magnet
-    if isinstance(remove_magnet, ImportError):
-        remove_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleUD method remove_magnet: " + str(remove_magnet)
-                )
-            )
-        )
-    else:
-        remove_magnet = remove_magnet
+    def remove_magnet(self):
+        """Remove the magnet (set to None) of the Hole
+
+        Parameters
+        ----------
+        self : HoleUD
+            a HoleUD object
+        """
+
+        if self.magnet_dict is None:
+            self.magnet_dict = dict()
+        for key in self.magnet_dict.keys():
+            self.magnet_dict[key] = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

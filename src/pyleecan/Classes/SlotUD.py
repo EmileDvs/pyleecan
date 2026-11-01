@@ -17,31 +17,11 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotUD.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotUD.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotUD.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotUD.get_surface_opening import get_surface_opening
-except ImportError as error:
-    get_surface_opening = error
-
-try:
-    from ..Methods.Slot.SlotUD.set_from_point_list import set_from_point_list
-except ImportError as error:
-    set_from_point_list = error
-
+from ..Methods.Slot.Slot import SlotCheckError
+from ..Functions.labels import WIND_LAB, SOP_LAB
+from .Segment import Segment
+from .Arc1 import Arc1
+from .SurfLine import SurfLine
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -52,63 +32,199 @@ class SlotUD(Slot):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotUD.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the object.
+        The ending point of a curve is the starting point of the next curve
+        in the list
+
+        Parameters
+        ----------
+        self : SlotUD
+            A SlotUD object
+
+        Returns
+        -------
+        curve_list: list
+            A list of Segments
+
+        """
+
+        return [line.copy() for line in self.line_list]
+
     # cf Methods.Slot.SlotUD.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotUD method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the SlotUD is correctly defined"""
+
+        if self.line_list is None:
+            self.line_list = list()
+
+        if len(self.line_list) == 0:
+            raise SlotCheckError("SlotUD must have at least one line")
+
+        for ii in range(len(self.line_list) - 1):
+            if (
+                abs(self.line_list[ii].get_end() - self.line_list[ii + 1].get_begin())
+                > 1e-6
+            ):
+                raise SlotCheckError(
+                    "SlotUD line "
+                    + str(ii)
+                    + " and line "
+                    + str(ii + 1)
+                    + " doesn't match"
+                )
+
+        begin_id = self.wind_begin_index
+        end_id = self.wind_end_index
+        if begin_id is not None and end_id is not None:
+            if begin_id > len(self.line_list):
+                raise SlotCheckError(
+                    "SlotUD wind_begin_index is greater than line_list length"
+                )
+            if end_id > len(self.line_list):
+                raise SlotCheckError(
+                    "SlotUD wind_end_index is greater than line_list length"
+                )
+            if begin_id > end_id:
+                raise SlotCheckError(
+                    "SlotUD wind_begin_index is greater than wind_end_index"
+                )
+
     # cf Methods.Slot.SlotUD.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD method get_surface_active: "
-                    + str(get_surface_active)
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full winding surface
+
+        Parameters
+        ----------
+        self : SlotUD
+            A SlotUD object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_wind: Surface
+            Surface corresponding to the Winding Area
+        """
+        # get curve_list
+        type_line_wind = self.type_line_wind
+        if self.wind_begin_index is None and self.wind_end_index is None:
+            # Winding not define, use complete surface
+            line_list = self.build_geometry()
+            type_line_wind = 1  # Enforce Arc1
+        else:
+            line_list = self.build_geometry()[
+                self.wind_begin_index : self.wind_end_index
+            ]
+
+        # Add closing line
+        if type_line_wind == 0:
+            line_list.append(
+                Segment(begin=line_list[-1].get_end(), end=line_list[0].get_begin())
+            )
+        else:
+            line_list.append(
+                Arc1(
+                    begin=line_list[-1].get_end(),
+                    end=line_list[0].get_begin(),
+                    radius=-abs(line_list[-1].get_end()),
+                    is_trigo_direction=False,
                 )
             )
-        )
-    else:
-        get_surface_active = get_surface_active
+
+        label = self.parent.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        surface = SurfLine(line_list=line_list, label=label)
+        surface.comp_point_ref(is_set=True)
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return surface
+
     # cf Methods.Slot.SlotUD.get_surface_opening
-    if isinstance(get_surface_opening, ImportError):
-        get_surface_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD method get_surface_opening: "
-                    + str(get_surface_opening)
-                )
+    def get_surface_opening(self, alpha=0, delta=0):
+        """Return the list of surfaces defining the opening area of the Slot
+
+        Parameters
+        ----------
+        self : SlotUD
+            A SlotUD object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list : list
+            list of surfaces objects
+        """
+
+        # get curve_list
+        line_list = self.build_geometry()
+        curve_list_start = line_list[: self.wind_begin_index]
+        curve_list_end = line_list[self.wind_end_index :]
+        # Active Line
+        Zb = curve_list_start[-1].get_end()
+        Ze = curve_list_end[0].get_begin()
+        if self.type_line_wind == 0:
+            act_line = Segment(begin=Zb, end=Ze)
+        else:
+            act_line = Arc1(
+                begin=Zb,
+                end=Ze,
+                radius=abs(Zb),
+                is_trigo_direction=True,
             )
+        bot_line = Arc1(
+            curve_list_end[-1].get_end(),
+            curve_list_start[0].get_begin(),
+            -self.get_Rbo(),
+            is_trigo_direction=False,
         )
-    else:
-        get_surface_opening = get_surface_opening
+
+        curve_list = curve_list_start + [act_line] + curve_list_end + [bot_line]
+        label = self.parent.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        surface = SurfLine(line_list=curve_list, label=label)
+        surface.comp_point_ref(is_set=True)
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return [surface]
+
     # cf Methods.Slot.SlotUD.set_from_point_list
-    if isinstance(set_from_point_list, ImportError):
-        set_from_point_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD method set_from_point_list: "
-                    + str(set_from_point_list)
-                )
-            )
-        )
-    else:
-        set_from_point_list = set_from_point_list
+    def set_from_point_list(self, point_list, is_sym=False):
+        """Set the line_list from a point list (connected by Segments)
+
+        Parameters
+        ----------
+        self : SlotUD
+            A SlotUD object
+        point_list : [complex]
+            List of complex coordinates
+        is_sym : bool
+            True to duplicate the point by symmetries
+        """
+
+        # Apply symmetry if needed
+        Z_list = point_list.copy()
+        if is_sym:
+            for point in point_list[::-1]:
+                Z_list.append(point.conjugate())
+
+        # Creation of curve
+        line_list = list()
+        for ii in range(len(Z_list) - 1):
+            line_list.append(Segment(Z_list[ii], Z_list[ii + 1]))
+
+        self.line_list = line_list
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

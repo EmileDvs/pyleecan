@@ -17,11 +17,7 @@ from .Normalization import Normalization
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.SciDataTool.Norm_indices.normalize import normalize
-except ImportError as error:
-    normalize = error
-
+from numpy import array
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,16 +29,23 @@ class Norm_indices(Normalization):
     VERSION = 1
 
     # cf Methods.SciDataTool.Norm_indices.normalize
-    if isinstance(normalize, ImportError):
-        normalize = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Norm_indices method normalize: " + str(normalize)
-                )
-            )
-        )
-    else:
-        normalize = normalize
+    def normalize(
+        self,
+        values,
+    ):
+        """Normalizes axis values
+        Parameters
+        ----------
+        self: Norm_indices
+            a Norm_indices object
+        values: ndarray
+            axis values
+        Returns
+        -------
+        Vector of axis values
+        """
+        return array([i for i in range(len(values))])
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

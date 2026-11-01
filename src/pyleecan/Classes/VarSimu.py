@@ -4,6 +4,12 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/VarSimu
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - gen_datakeeper_list: import name 'import_class' refers to different sources (..Methods.Simulation.VarSimu.check_param.import_class and ..Functions.Load.import_class.import_class)
+# - generate_simulation_list: import name 'VarSimuError' refers to different sources (..Methods.Simulation.VarSimu.check_param.VarSimuError and ..Methods.Simulation.VarSimu.generate_simulation_list.VarSimuError)
+# - run: import name 'import_class' refers to different sources (..Methods.Simulation.VarSimu.check_param.import_class and ..Methods.Simulation.VarSimu.run.import_class)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,53 +23,18 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.VarSimu.check_param import check_param
-except ImportError as error:
-    check_param = error
-
-try:
-    from ..Methods.Simulation.VarSimu.gen_datakeeper_list import gen_datakeeper_list
-except ImportError as error:
-    gen_datakeeper_list = error
-
-try:
-    from ..Methods.Simulation.VarSimu.generate_simulation_list import (
-        generate_simulation_list,
-    )
-except ImportError as error:
-    generate_simulation_list = error
-
-try:
-    from ..Methods.Simulation.VarSimu.get_elec_datakeeper import get_elec_datakeeper
-except ImportError as error:
-    get_elec_datakeeper = error
-
-try:
-    from ..Methods.Simulation.VarSimu.get_force_datakeeper import get_force_datakeeper
-except ImportError as error:
-    get_force_datakeeper = error
-
-try:
-    from ..Methods.Simulation.VarSimu.get_mag_datakeeper import get_mag_datakeeper
-except ImportError as error:
-    get_mag_datakeeper = error
-
-try:
-    from ..Methods.Simulation.VarSimu.get_ref_simu_index import get_ref_simu_index
-except ImportError as error:
-    get_ref_simu_index = error
-
-try:
-    from ..Methods.Simulation.VarSimu.run import run
-except ImportError as error:
-    run = error
-
-try:
-    from ..Methods.Simulation.VarSimu.set_reused_data import set_reused_data
-except ImportError as error:
-    set_reused_data = error
-
+from ..Methods.Simulation.VarSimu.gen_datakeeper_list import gen_datakeeper_list
+from ..Methods.Simulation.VarSimu.generate_simulation_list import (
+    generate_simulation_list,
+)
+from ..Methods.Simulation.VarSimu.run import run
+from ..Methods.Simulation.VarSimu.check_param import VarSimuError, import_class
+from ..Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
+    get_elec_datakeeper_dict,
+)
+from .DataKeeper import DataKeeper
+from .MagFEMM import MagFEMM
+from .ElecLUTdq import ElecLUTdq
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -74,108 +45,253 @@ class VarSimu(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.VarSimu.check_param
-    if isinstance(check_param, ImportError):
-        check_param = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use VarSimu method check_param: " + str(check_param))
+    def check_param(self):
+        """Check VarParamSweep parameters validity"""
+        if type(self).__name__ == "VarSimu":
+            raise VarSimuError(
+                "VarSimu is an abstract class, please create one of its daughters."
             )
-        )
-    else:
-        check_param = check_param
+
+        Simulation = import_class("pyleecan.Classes", "Simulation")
+        # Check for simulation or VarSimu
+        if self.parent is None or not isinstance(self.parent, Simulation):
+            raise VarSimuError("VarSimu object must be inside a Simulation object")
+
     # cf Methods.Simulation.VarSimu.gen_datakeeper_list
-    if isinstance(gen_datakeeper_list, ImportError):
-        gen_datakeeper_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarSimu method gen_datakeeper_list: "
-                    + str(gen_datakeeper_list)
-                )
-            )
-        )
-    else:
-        gen_datakeeper_list = gen_datakeeper_list
+    gen_datakeeper_list = gen_datakeeper_list
     # cf Methods.Simulation.VarSimu.generate_simulation_list
-    if isinstance(generate_simulation_list, ImportError):
-        generate_simulation_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarSimu method generate_simulation_list: "
-                    + str(generate_simulation_list)
-                )
-            )
-        )
-    else:
-        generate_simulation_list = generate_simulation_list
+    generate_simulation_list = generate_simulation_list
+
     # cf Methods.Simulation.VarSimu.get_elec_datakeeper
-    if isinstance(get_elec_datakeeper, ImportError):
-        get_elec_datakeeper = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarSimu method get_elec_datakeeper: "
-                    + str(get_elec_datakeeper)
-                )
-            )
-        )
-    else:
-        get_elec_datakeeper = get_elec_datakeeper
+    def get_elec_datakeeper(self, symbol_list, is_multi=False):
+        """Generate DataKeepers to store by default results from electric module
+        Parameters
+        ----------
+        self: VarLoad
+            A VarLoad object
+        symbol_list : list
+            List of the existing datakeeper (to avoid duplicate)
+        is_multi : bool
+            True for multi-simulation of multi-simulation
+        Returns
+        -------
+        dk_list: list
+            list of DataKeeper
+        """
+
+        dk_dict = get_elec_datakeeper_dict()
+        dk_list = []
+        quantity_list = ["Id", "Iq", "Ud", "Uq"]
+
+        # Save Id
+        if not is_multi:
+            for key in quantity_list:
+                if key not in symbol_list:
+                    dk_list.append(dk_dict[key])
+
+        return dk_list
+
     # cf Methods.Simulation.VarSimu.get_force_datakeeper
-    if isinstance(get_force_datakeeper, ImportError):
-        get_force_datakeeper = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarSimu method get_force_datakeeper: "
-                    + str(get_force_datakeeper)
-                )
-            )
-        )
-    else:
-        get_force_datakeeper = get_force_datakeeper
+    def get_force_datakeeper(self, symbol_list, is_multi=False):
+        """
+        Generate DataKeepers to store by default results from force module
+
+        Parameters
+        ----------
+        self: VarLoad
+            A VarLoad object
+        symbol_list : list
+            List of the existing datakeeper (to avoid duplicate)
+        is_multi : bool
+            True for multi-simulation of multi-simulation
+
+        Returns
+        -------
+        dk_list: list
+            list of DataKeeper
+        """
+        dk_list = []
+
+        return dk_list
+
     # cf Methods.Simulation.VarSimu.get_mag_datakeeper
-    if isinstance(get_mag_datakeeper, ImportError):
-        get_mag_datakeeper = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarSimu method get_mag_datakeeper: "
-                    + str(get_mag_datakeeper)
+    def get_mag_datakeeper(self, symbol_list, is_multi=False):
+        """
+        Generate DataKeepers to store by default results from magnetic module
+
+        Parameters
+        ----------
+        self: VarLoad
+            A VarLoad object
+        symbol_list : list
+            List of the existing datakeeper (to avoid duplicate)
+        is_multi : bool
+            True for multi-simulation of multi-simulation
+
+        Returns
+        -------
+        dk_list: list
+            list of DataKeeper
+        """
+        dk_list = []
+        error_nan = "lambda simu: np.nan"
+        if is_multi:
+            # Max Average torque Datakeeper
+            if "Max_Tem_av" not in symbol_list:
+                dk_list.append(
+                    DataKeeper(
+                        name="Max Average Torque",
+                        symbol="Max_Tem_av",
+                        unit="N.m",
+                        keeper="lambda output: max([val for val in output.xoutput_dict['Tem_av'].result if val is not None]) if output.xoutput_dict['Tem_av'].result[0] is not None else None",
+                        error_keeper=error_nan,
+                    )
                 )
-            )
-        )
-    else:
-        get_mag_datakeeper = get_mag_datakeeper
+            # Max Peak to Peak Torque ripple
+            if "Max_Tem_rip_pp" not in symbol_list:
+                dk_list.append(
+                    DataKeeper(
+                        name="Max Peak to Peak Torque ripple",
+                        symbol="Max_Tem_rip_pp",
+                        unit="N.m",
+                        keeper="lambda output: max([val for val in output.xoutput_dict['Tem_rip_pp'].result if val is not None]) if output.xoutput_dict['Tem_rip_pp'].result[0] is not None else None",
+                        error_keeper=error_nan,
+                    )
+                )
+            # Max Peak to Peak Torque ripple normalized
+            if "Max_Tem_rip_norm" not in symbol_list:
+                dk_list.append(
+                    DataKeeper(
+                        name="Max Peak to Peak Torque ripple normalized",
+                        symbol="Max_Tem_rip_norm",
+                        unit="-",
+                        keeper="lambda output: max([val for val in output.xoutput_dict['Tem_rip_norm'].result if val is not None]) if output.xoutput_dict['Tem_rip_norm'].result[0] is not None else None",
+                        error_keeper=error_nan,
+                    )
+                )
+        else:
+            # Average torque Datakeeper
+            if "Tem_av" not in symbol_list:
+                dk_list.append(
+                    DataKeeper(
+                        name="Average Torque",
+                        symbol="Tem_av",
+                        unit="N.m",
+                        keeper="lambda out: out.mag.Tem_av",
+                        error_keeper=error_nan,
+                    )
+                )
+            # Peak to Peak Torque ripple
+            if "Tem_rip_pp" not in symbol_list:
+                dk_list.append(
+                    DataKeeper(
+                        name="Peak to Peak Torque ripple",
+                        symbol="Tem_rip_pp",
+                        unit="N.m",
+                        keeper="lambda out: out.mag.Tem_rip_pp",
+                        error_keeper=error_nan,
+                    )
+                )
+            # Peak to Peak Torque ripple normalized
+            if "Tem_rip_norm" not in symbol_list:
+                dk_list.append(
+                    DataKeeper(
+                        name="Peak to Peak Torque ripple normalized",
+                        symbol="Tem_rip_norm",
+                        unit="-",
+                        keeper="lambda out: out.mag.Tem_rip_norm",
+                        error_keeper=error_nan,
+                    )
+                )
+            # Output Power Datakeeper
+            if "Pem_av" not in symbol_list:
+                dk_list.append(
+                    DataKeeper(
+                        name="Output Power",
+                        symbol="Pem_av",
+                        unit="W",
+                        keeper="lambda out: out.mag.Pem_av",
+                        error_keeper=error_nan,
+                    )
+                )
+        return dk_list
+
     # cf Methods.Simulation.VarSimu.get_ref_simu_index
-    if isinstance(get_ref_simu_index, ImportError):
-        get_ref_simu_index = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarSimu method get_ref_simu_index: "
-                    + str(get_ref_simu_index)
-                )
-            )
-        )
-    else:
-        get_ref_simu_index = get_ref_simu_index
+    def get_ref_simu_index(self, ref_simu, simu_dict):
+        """Get the index of the reference simulation (None if must be computed)
+
+        Parameters
+        ----------
+        self : VarSimu
+            A VarSimu object
+        ref_simu : Simulation
+            A Simulation object (reference simulation)
+        simu_dict : dict
+            Dict of simulations
+
+        Returns
+        -------
+        ref_simu_index : int
+            index of the reference simulation (None if must be computed)
+        """
+        ref_simu_index = None
+        for ii, simu in enumerate(simu_dict["simulation_list"]):
+            diff_list = simu.compare(ref_simu, name="simu")
+            # Remove not meaningfull differences
+            if "simu.mag.file_name" in diff_list:
+                diff_list.remove("simu.mag.file_name")
+            if len(diff_list) == 0:
+                ref_simu_index = ii
+                break
+
+        return ref_simu_index
+
     # cf Methods.Simulation.VarSimu.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use VarSimu method run: " + str(run))
-            )
-        )
-    else:
-        run = run
+    run = run
+
     # cf Methods.Simulation.VarSimu.set_reused_data
-    if isinstance(set_reused_data, ImportError):
-        set_reused_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarSimu method set_reused_data: " + str(set_reused_data)
+    def set_reused_data(self, simu, output, is_log=True, simu_type="VarSimu"):
+        """Resuse some data from the reference simulation to skip computation
+
+        Parameters
+        ----------
+        self : VarSimu
+            a VarSimu object
+        simu : Simulation
+            The simulation to update
+        output : Output
+            Output from the reference simulation to enforce
+        is_log : bool
+            True to log the changes
+        simu_type : str
+            Name of the multi-simulation kind
+        """
+
+        if simu.layer == 2:
+            TAB = "    "
+        else:
+            TAB = ""
+
+        if self.is_reuse_femm_file and isinstance(simu.mag, MagFEMM):
+            if is_log:
+                self.get_logger().info(
+                    TAB
+                    + simu_type
+                    + ": Using same FEMM file for all simulations ("
+                    + output.mag.internal.FEMM_dict["path_save"]
+                    + ")"
                 )
-            )
-        )
-    else:
-        set_reused_data = set_reused_data
+            simu.mag.import_file = output.mag.internal.FEMM_dict["path_save"]
+            simu.mag.FEMM_dict_enforced = output.mag.internal.FEMM_dict
+
+        if self.is_reuse_LUT and isinstance(simu.elec, ElecLUTdq):
+            if is_log:
+                self.get_logger().info(
+                    TAB + simu_type + ": Using same LUT for all simulations"
+                )
+            simu.elec.LUT_enforced = output.simu.elec.LUT_enforced
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

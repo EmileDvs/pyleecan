@@ -4,6 +4,11 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/BoreSinePole
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - get_pole_shape: import name 'ParentMissingError' refers to different sources (..Methods.Machine.BoreSinePole.get_bore_line.ParentMissingError and ..Methods.ParentMissingError)
+# - plot_schematics: import name 'ParentMissingError' refers to different sources (..Methods.Machine.BoreSinePole.get_bore_line.ParentMissingError and ..Methods.Machine.BoreSinePole.plot_schematics.ParentMissingError)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,28 +22,18 @@ from .Bore import Bore
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.BoreSinePole.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
-
-try:
-    from ..Methods.Machine.BoreSinePole.get_bore_line import get_bore_line
-except ImportError as error:
-    get_bore_line = error
-
-try:
-    from ..Methods.Machine.BoreSinePole.get_pole_shape import get_pole_shape
-except ImportError as error:
-    get_pole_shape = error
-
-try:
-    from ..Methods.Machine.BoreSinePole.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Machine.BoreSinePole.get_pole_shape import get_pole_shape
+from ..Methods.Machine.BoreSinePole.plot_schematics import plot_schematics
+from ..Methods.Machine.BoreSinePole.get_bore_line import (
+    NN,
+    ParentMissingError,
+    Segment,
+    _get_phi,
+    _get_pole_width_max,
+    exp,
+    linspace,
+    pi,
+)
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -49,54 +44,115 @@ class BoreSinePole(Bore):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.BoreSinePole.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreSinePole method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
+    def comp_periodicity_spatial(self):
+        """Compute the periodicity factor of the Bore
+
+        Parameters
+        ----------
+        self : BoreSinePole
+            A BoreSinePole object
+
+        Returns
+        -------
+        per_a : int
+            Number of spatial periodicities of the bore
+        is_antiper_a : bool
+            True if an spatial anti-periodicity is possible after the periodicities
+        """
+
+        return self.N, False
+
     # cf Methods.Machine.BoreSinePole.get_bore_line
-    if isinstance(get_bore_line, ImportError):
-        get_bore_line = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreSinePole method get_bore_line: " + str(get_bore_line)
+    def get_bore_line(self, prop_dict=None):
+        """Return the bore line description
+        adapted sine field pole geometry from the text book:
+        "Müller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008."
+        ("Calculation of electric machines")
+
+        Parameters
+        ----------
+        self : BoreSinePole
+            A BoreSinePole object
+        prop_dict : dict
+            Property dictionary to apply on the lines
+
+        Returns
+        -------
+        bore_list : list
+            List of bore lines
+        """
+
+        if self.parent is not None:
+            Rbo = self.parent.get_Rbo()
+        else:
+            raise ParentMissingError("Error: The slot is not inside a Lamination")
+
+        logger = self.get_logger()
+
+        # Compute the shape
+        alpha1 = pi / self.N  # Half bore pitch [rad]
+
+        # Checking max width and W0
+        w_max = _get_pole_width_max(self)  # [m]
+        if self.W0 is not None and self.W0 < w_max:
+            w_max = self.W0
+        elif self.W0 is not None and self.W0 > w_max:
+            logger.warning("Enforcing permissible pole width (W0).")
+
+        phi_max = _get_phi(self, w_max)
+        phi = linspace(-phi_max, phi_max, 2 * NN + 1)
+
+        Zedge = self.get_pole_shape(-phi_max)
+        xedge = (Zedge * exp(1j * alpha1)).real
+        Rq = Rbo + self.delta_d - self.delta_q
+
+        # Create the first pole bore line
+        Z = [self.get_pole_shape(p) for p in phi]
+
+        if self.delta_q is not None and Rq < xedge:
+            line = Segment(Zedge * exp(1j * alpha1), 1j * Zedge.imag * exp(1j * alpha1))
+            inter = line.intersect_line(Rq, Rq + 1j * Rq)
+            if len(inter) != 1:
+                raise ()  # TODO
+
+            if inter[0].imag <= 0:
+                inter = line.intersect_line(0, Rq)
+                if len(inter) != 1:
+                    raise ()  # TODO
+
+                logger.warning("Enforcing permissible q axis air gap (delta_q).")
+                Z.insert(0, inter[0] * exp(-1j * alpha1))
+                Z.append(Z[0].conjugate())
+
+            else:
+                Z.insert(0, inter[0] * exp(-1j * alpha1))
+                Z.append(Z[0].conjugate())
+                Z.insert(0, Rq * exp(-1j * alpha1))
+                Z.append(Z[0].conjugate())
+
+        else:
+            Z.append(xedge * exp(1j * alpha1))
+            Z.insert(0, Z[-1].conjugate())
+
+        # Create the lines
+        bore_list = list()
+        for ii in range(self.N):
+            for jj in range(len(Z) - 1):
+                bore_list.append(
+                    Segment(
+                        Z[jj] * exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
+                        Z[jj + 1] * exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
+                        prop_dict=prop_dict,
+                    )
                 )
-            )
-        )
-    else:
-        get_bore_line = get_bore_line
+
+        return bore_list
+
     # cf Methods.Machine.BoreSinePole.get_pole_shape
-    if isinstance(get_pole_shape, ImportError):
-        get_pole_shape = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreSinePole method get_pole_shape: "
-                    + str(get_pole_shape)
-                )
-            )
-        )
-    else:
-        get_pole_shape = get_pole_shape
+    get_pole_shape = get_pole_shape
     # cf Methods.Machine.BoreSinePole.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreSinePole method plot_schematics: "
-                    + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

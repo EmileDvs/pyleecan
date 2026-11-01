@@ -17,16 +17,6 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.EndWinding.comp_inductance import comp_inductance
-except ImportError as error:
-    comp_inductance = error
-
-try:
-    from ..Methods.Machine.EndWinding.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,30 +27,41 @@ class EndWinding(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.EndWinding.comp_inductance
-    if isinstance(comp_inductance, ImportError):
-        comp_inductance = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EndWinding method comp_inductance: "
-                    + str(comp_inductance)
-                )
-            )
-        )
-    else:
-        comp_inductance = comp_inductance
+    def comp_inductance(self):
+        """Return the enforced end winding inductance
+
+        Parameters
+        ----------
+        self: EndWinding
+            A EndWinding object
+
+        Returns
+        -------
+        Lew : float
+            end winding inductance [H]
+        """
+
+        return self.Lew_enforced
+
     # cf Methods.Machine.EndWinding.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EndWinding method comp_length: " + str(comp_length)
-                )
-            )
-        )
-    else:
-        comp_length = comp_length
+    def comp_length(self):
+        """Compute the end winding conductor length on one side for a half-turn
+        excluding the straight conductor length outside of the lamination (winding.Lewout).
+        Since this is the abstract class method the actual length returned will be zero.
+
+        Parameters
+        ----------
+        self: EndWinding
+            A EndWinding object
+        Returns
+        -------
+        end_wind_length : float
+            End-winding length on one side for a half-turn [m].
+        """
+
+        return 0
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -4,6 +4,12 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataND
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - export_along: import name 'np' refers to different sources (numpy as np and ..Methods.SciDataTool.DataND.export_along.np)
+# - plot_2D_Data: import name 'axes_dict' refers to different sources (..Functions.SciDataTool.axes_dict and ..Functions.SciDataTool.Plot.axes_dict)
+# - plot_3D_Data: import name 'axes_dict' refers to different sources (..Functions.SciDataTool.axes_dict and ..Functions.SciDataTool.Plot.axes_dict)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,150 +23,79 @@ from .Data import Data
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.SciDataTool.DataND._apply_operations import _apply_operations
-except ImportError as error:
-    _apply_operations = error
-
-try:
-    from ..Methods.SciDataTool.DataND._comp_axes import _comp_axes
-except ImportError as error:
-    _comp_axes = error
-
-try:
-    from ..Methods.SciDataTool.DataND._convert import _convert
-except ImportError as error:
-    _convert = error
-
-try:
-    from ..Methods.SciDataTool.DataND._extract_slices import _extract_slices
-except ImportError as error:
-    _extract_slices = error
-
-try:
-    from ..Methods.SciDataTool.DataND._extract_slices_fft import _extract_slices_fft
-except ImportError as error:
-    _extract_slices_fft = error
-
-try:
-    from ..Methods.SciDataTool.DataND._get_field import _get_field
-except ImportError as error:
-    _get_field = error
-
-try:
-    from ..Methods.SciDataTool.DataND._get_freqs import _get_freqs
-except ImportError as error:
-    _get_freqs = error
-
-try:
-    from ..Methods.SciDataTool.DataND._interpolate import _interpolate
-except ImportError as error:
-    _interpolate = error
-
-try:
-    from ..Methods.SciDataTool.DataND._rebuild_symmetries import _rebuild_symmetries
-except ImportError as error:
-    _rebuild_symmetries = error
-
-try:
-    from ..Methods.SciDataTool.DataND._set_values import _set_values
-except ImportError as error:
-    _set_values = error
-
-try:
-    from ..Methods.SciDataTool.DataND.change_referential import change_referential
-except ImportError as error:
-    change_referential = error
-
-try:
-    from ..Methods.SciDataTool.DataND.compare_along import compare_along
-except ImportError as error:
-    compare_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.compare_magnitude_along import (
-        compare_magnitude_along,
-    )
-except ImportError as error:
-    compare_magnitude_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.compare_phase_along import compare_phase_along
-except ImportError as error:
-    compare_phase_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.export_along import export_along
-except ImportError as error:
-    export_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.filter_spectral_leakage import (
-        filter_spectral_leakage,
-    )
-except ImportError as error:
-    filter_spectral_leakage = error
-
-try:
-    from ..Methods.SciDataTool.DataND.get_along import get_along
-except ImportError as error:
-    get_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.get_axes import get_axes
-except ImportError as error:
-    get_axes = error
-
-try:
-    from ..Methods.SciDataTool.DataND.get_data_along import get_data_along
-except ImportError as error:
-    get_data_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.get_harmonics import get_harmonics
-except ImportError as error:
-    get_harmonics = error
-
-try:
-    from ..Methods.SciDataTool.DataND.get_magnitude_along import get_magnitude_along
-except ImportError as error:
-    get_magnitude_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.get_phase_along import get_phase_along
-except ImportError as error:
-    get_phase_along = error
-
-try:
-    from ..Methods.SciDataTool.DataND.has_period import has_period
-except ImportError as error:
-    has_period = error
-
-try:
-    from ..Methods.SciDataTool.DataND.orthogonal_mp import orthogonal_mp
-except ImportError as error:
-    orthogonal_mp = error
-
-try:
-    from ..Methods.SciDataTool.DataND.plot_2D_Data import plot_2D_Data
-except ImportError as error:
-    plot_2D_Data = error
-
-try:
-    from ..Methods.SciDataTool.DataND.plot_2D_Data_Animated import plot_2D_Data_Animated
-except ImportError as error:
-    plot_2D_Data_Animated = error
-
-try:
-    from ..Methods.SciDataTool.DataND.plot_3D_Data import plot_3D_Data
-except ImportError as error:
-    plot_3D_Data = error
-
-try:
-    from ..Methods.SciDataTool.DataND.plot_3D_Data_Animated import plot_3D_Data_Animated
-except ImportError as error:
-    plot_3D_Data_Animated = error
-
+from ..Methods.SciDataTool.DataND.export_along import export_along
+from ..Methods.SciDataTool.DataND.plot_2D_Data import plot_2D_Data
+from ..Methods.SciDataTool.DataND.plot_3D_Data import plot_3D_Data
+from numpy import (
+    abs as np_abs,
+    nanmax,
+    nanmin,
+    take,
+    array,
+    meshgrid,
+    squeeze,
+    argsort,
+    negative,
+    add,
+    apply_along_axis,
+    angle as np_angle,
+    arange,
+    frombuffer,
+)
+from ..Functions.SciDataTool.derivation_integration import (
+    antiderivate,
+    derivate,
+    integrate,
+    integrate_local,
+    integrate_local_pattern,
+)
+from ..Functions.SciDataTool.sum_mean import (
+    my_mean,
+    my_sum,
+    root_mean_square,
+    root_sum_square,
+)
+from ..Functions.SciDataTool import (
+    axes_dict,
+    rev_axes_dict,
+    NormError,
+    UnitError,
+    AxisError,
+)
+import numpy as np, imageio, matplotlib.pyplot as plt
+from ..Functions.SciDataTool.conversions import (
+    convert as convert_unit,
+    to_dB,
+    to_dBA,
+    get_unit_derivate,
+    get_unit_integrate,
+    convert,
+    to_noct,
+)
+from ..Functions.SciDataTool.symmetries import (
+    rebuild_symmetries,
+    rebuild_symmetries as rebuild_symmetries_fct,
+)
+from ..Functions.SciDataTool.interpolations import (
+    get_interpolation,
+    get_interpolation_step,
+    get_common_base,
+)
+from ._check import check_dimensions, check_var
+from ..Functions.Load.import_class import import_class
+from ..Functions.SciDataTool.change_referential import (
+    change_referential_spectrum,
+    change_referential_waveform,
+)
+from ..Functions.SciDataTool.filter_spectral_leakage import (
+    filter_spectral_leakage as filter_spectral_leakage_fct,
+)
+from ..Functions.SciDataTool.fft_functions import comp_fftn, comp_ifftn
+from ..Functions.SciDataTool.fix_axes_order import fix_axes_order
+from ..Functions.SciDataTool.parser import read_input_strings
+from .Data1D import Data1D
+from ..Functions.SciDataTool.omp import comp_undersampled_axe, omp
+from ..Functions.SciDataTool.Plot import PARAM_3D, fft_dict, ifft_dict, PARAM_2D
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -172,309 +107,2171 @@ class DataND(Data):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.SciDataTool.DataND._apply_operations
-    if isinstance(_apply_operations, ImportError):
-        _apply_operations = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method _apply_operations: "
-                    + str(_apply_operations)
+    def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
+        """Returns the values of the field transformed or converted
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        values: ndarray
+            array of the field
+        Returns
+        -------
+        values: ndarray
+            values of the field
+        """
+
+        # Take magnitude before summing
+        if is_magnitude and "dB" not in unit:
+            values = np_abs(values)
+
+        # Apply sums, means, etc
+        for axis_requested in axes_list:
+            # Get axis data
+            ax_val = axis_requested.values
+            extension = axis_requested.extension
+            index = axis_requested.index
+            if axis_requested.is_pattern:
+                Nper, is_aper = None, None
+            else:
+                Nper, is_aper = self.axes[index].get_periodicity()
+            if axis_requested.name in ["time", "angle", "z"]:
+                is_phys = True
+                is_freqs = False
+            elif axis_requested.name in ["freqs", "frequency"]:
+                is_phys = False
+                is_freqs = True
+            else:
+                is_phys = False
+                is_freqs = False
+            if axis_requested.name in ["freqs", "frequency", "wavenumber"]:
+                is_fft = True
+            else:
+                is_fft = False
+            # max over max axes
+            if extension in "max":
+                values = nanmax(values, axis=index)
+            # min over max axes
+            elif extension in "min":
+                values = nanmin(values, axis=index)
+            # sum over sum axes
+            elif extension in "sum":
+                values = my_sum(
+                    values, index, Nper, is_aper, unit, is_fft, corr_unit=corr_unit
                 )
-            )
-        )
-    else:
-        _apply_operations = _apply_operations
+            # root sum square over rss axes
+            elif extension == "rss":
+                values = root_sum_square(
+                    values,
+                    ax_val,
+                    index,
+                    Nper,
+                    is_aper,
+                    is_phys,
+                    unit,
+                    is_fft,
+                    corr_unit=corr_unit,
+                )
+            # mean value over mean axes
+            elif extension == "mean":
+                values = my_mean(values, ax_val, index, Nper, is_aper, is_phys, is_fft)
+            # RMS over rms axes
+            elif extension == "rms":
+                values = root_mean_square(
+                    values, ax_val, index, Nper, is_aper, is_phys, is_fft
+                )
+            # integration over integration axes
+            elif extension == "integrate":
+                values = integrate(values, ax_val, index, Nper, is_aper, is_phys)
+            # local integration over integration axes
+            elif extension == "integrate_local":
+                if axis_requested.name == "z":
+                    values, ax_val = integrate_local_pattern(values, ax_val, index)
+                    axis_requested.values = ax_val
+                else:
+                    values = integrate_local(
+                        values, ax_val, index, Nper, is_aper, is_phys, is_freqs
+                    )
+            # antiderivation over antiderivation axes
+            elif extension == "antiderivate":
+                values = antiderivate(
+                    values, ax_val, index, Nper, is_aper, is_phys, is_freqs
+                )
+            # derivation over derivation axes
+            elif extension == "derivate":
+                values = derivate(
+                    values, ax_val, index, Nper, is_aper, is_phys, is_freqs
+                )
+
+        if is_magnitude and "dB" in unit:  # Correction for negative/small dB/dBA
+            values[values < 2] = 0
+            values = np_abs(values)
+
+        return values
+
     # cf Methods.SciDataTool.DataND._comp_axes
-    if isinstance(_comp_axes, ImportError):
-        _comp_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method _comp_axes: " + str(_comp_axes))
+    def _comp_axes(self, axes_list):
+        """Completes the RequestedAxis objects in axes_list.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        axes_list: list
+            a list of RequestedAxis objects
+        Returns
+        -------
+        list of RequestedAxis objects + transformations
+        """
+
+        transforms = []
+        # Check if the requested axis is defined in the Data object
+        for axis_requested in axes_list[:]:
+            axis_name = axis_requested.name
+            for index, axis in enumerate(self.axes):
+                if axis.name == axis_name:
+                    axis_requested.index = index
+                    axis_requested.corr_name = axis_name
+                    axis_requested.corr_unit = axis.unit
+                    axis_requested.is_components = axis.is_components
+                    if axis_name in rev_axes_dict.keys():
+                        axis_requested.transform = "fft_axis"
+                        transforms.append("fft")
+            if axis_requested.index is None:
+                # Check if requested axis is in correspondance dicts
+                if axis_name in axes_dict.keys():
+                    for index, axis in enumerate(self.axes):
+                        if axis.name == axes_dict[axis_name][0]:
+                            axis_requested.corr_name = axes_dict[axis_name][0]
+                            axis_requested.corr_unit = axes_dict[axis_name][2]
+                            axis_requested.is_components = axis.is_components
+                            axis_requested.operation = (
+                                axes_dict[axis_name][0] + "_to_" + axis_name
+                            )
+                            axis_requested.transform = axes_dict[axis_name][1]
+                            transforms.append(axes_dict[axis_name][1])
+                            axis_requested.index = index
+                    if axis_requested.index is None:
+                        # Axis does not exist and is ignored
+                        axes_list.remove(axis_requested)
+                elif axis_name in rev_axes_dict.keys():
+                    for index, axis in enumerate(self.axes):
+                        if axis.name == rev_axes_dict[axis_name][0]:
+                            axis_requested.corr_name = rev_axes_dict[axis_name][0]
+                            axis_requested.corr_unit = rev_axes_dict[axis_name][2]
+                            axis_requested.is_components = axis.is_components
+                            axis_requested.operation = (
+                                rev_axes_dict[axis_name][0] + "_to_" + axis_name
+                            )
+                            axis_requested.transform = rev_axes_dict[axis_name][1]
+                            transforms.append(rev_axes_dict[axis_name][1])
+                            axis_requested.index = index
+                    if axis_requested.index is None:
+                        # Axis does not exist and is ignored
+                        axes_list.remove(axis_requested)
+                else:
+                    # Axis does not exist and is ignored
+                    axes_list.remove(axis_requested)
+        # Extract the requested axes (symmetries + unit)
+        for axis_requested in axes_list:
+            axis_requested.get_axis(
+                self.axes[axis_requested.index], is_real=self.is_real
             )
-        )
-    else:
-        _comp_axes = _comp_axes
+        return axes_list, transforms
+
     # cf Methods.SciDataTool.DataND._convert
-    if isinstance(_convert, ImportError):
-        _convert = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method _convert: " + str(_convert))
-            )
-        )
-    else:
-        _convert = _convert
+    def _convert(self, values, unit, is_norm, is_squeeze, axes_list):
+        """Returns the values of the field transformed or converted.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        values: ndarray
+            array of the field
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        Returns
+        -------
+        values: ndarray
+            values of the field
+        """
+
+        if is_squeeze:
+            values = np.squeeze(values)
+
+        if unit == self.unit or unit == "SI":
+            if is_norm:
+                try:
+                    values = self.normalizations["ref"].normalize(values)
+                except Exception:
+                    raise NormError("Reference value not specified for normalization")
+        elif unit == "dB":
+            ref_value = 1.0
+            if "ref" in self.normalizations:
+                ref_value *= self.normalizations["ref"].ref
+            values = to_dB(np.abs(values), self.unit, ref_value)
+        elif unit == "dBA":
+            ref_value = 1.0
+            if "ref" in self.normalizations:
+                ref_value *= self.normalizations["ref"].ref
+            is_match = False
+            for axis in axes_list:
+                if axis.name == "freqs" or axis.corr_name == "freqs":
+                    if axis.corr_values is not None and axis.unit not in [
+                        "SI",
+                        axis.corr_unit,
+                    ]:
+                        axis_values = axis.corr_values
+                    else:
+                        axis_values = axis.values
+                    index = axis.index
+                    values = np.apply_along_axis(
+                        to_dBA, index, values, axis_values, self.unit, ref_value
+                    )
+                    is_match = True
+                elif axis.name == "frequency":
+                    if axis.corr_values is None:
+                        axis_values = axis.values
+                    else:
+                        axis_values = axis.corr_values
+                    index = axis.index
+                    values = np.apply_along_axis(
+                        to_dBA, index, values, axis_values, self.unit, ref_value
+                    )
+                    is_match = True
+            if not is_match:
+                axis_names = [axis.name for axis in self.axes]
+                if "speed" in axis_names and "order" in axis_names:
+                    freqs = self._get_freqs()
+                    freqs = freqs.ravel("C")
+                    shape = values.shape
+                    values = values.reshape(freqs.shape + shape[2:])
+                    values = np.apply_along_axis(
+                        to_dBA, 0, values, freqs, self.unit, ref_value
+                    )
+                    values = values.reshape(shape)
+                else:
+                    raise UnitError(
+                        "dBA conversion only available for fft with frequencies"
+                    )
+        elif unit in self.normalizations:
+            values = self.normalizations.get(unit).normalize(values)
+        else:
+            values = convert_unit(values, self.unit, unit)
+
+        return values
+
     # cf Methods.SciDataTool.DataND._extract_slices
-    if isinstance(_extract_slices, ImportError):
-        _extract_slices = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method _extract_slices: " + str(_extract_slices)
-                )
-            )
-        )
-    else:
-        _extract_slices = _extract_slices
+    def _extract_slices(self, values, axes_list):
+        """Returns the values of the field (with symmetries and transformations).
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        values: ndarray
+            array of the field
+        axes_list: list
+            a list of RequestedAxis objects
+        Returns
+        -------
+        values: ndarray
+            values of the field
+        """
+
+        axes_dict_other = {}
+
+        # Extract the slices of the field
+        for index, axis in enumerate(self.axes):
+            is_match = False
+            for axis_requested in axes_list:
+                if axis.name == axis_requested.corr_name:
+                    is_match = True
+                    if (
+                        axis_requested.indices is not None
+                        and axis_requested.transform != "fft"
+                    ):
+                        values = take(values, axis_requested.indices, axis=index)
+            if not is_match:  # Axis was not specified -> take slice at the first value
+                axes_dict_other[axis.name] = [axis.get_values()[0], axis.unit]
+                values = take(values, [0], axis=index)
+        return values, axes_dict_other
+
     # cf Methods.SciDataTool.DataND._extract_slices_fft
-    if isinstance(_extract_slices_fft, ImportError):
-        _extract_slices_fft = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method _extract_slices_fft: "
-                    + str(_extract_slices_fft)
-                )
-            )
-        )
-    else:
-        _extract_slices_fft = _extract_slices_fft
+    def _extract_slices_fft(self, values, axes_list):
+        """Returns the values of the field (with symmetries and transformations).
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        values: ndarray
+            array of the field
+        axes_list: list
+            a list of RequestedAxis objects
+        Returns
+        -------
+        values: ndarray
+            values of the field
+        """
+
+        # Extract the slices of the field
+        for index, axis in enumerate(self.axes):
+            is_match = False
+            for axis_requested in axes_list:
+                if axis.name == axis_requested.corr_name:
+                    is_match = True
+                    if (
+                        axis_requested.indices is not None
+                        and axis_requested.transform == "fft"
+                    ):
+                        values = take(values, axis_requested.indices, axis=index)
+            if not is_match:  # Axis was not specified -> take slice at the first value
+                values = take(values, [0], axis=index)
+        return values
+
     # cf Methods.SciDataTool.DataND._get_field
-    if isinstance(_get_field, ImportError):
-        _get_field = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method _get_field: " + str(_get_field))
-            )
-        )
-    else:
-        _get_field = _get_field
+    def _get_field(self, axes_list):
+        """Returns the values of the field (with symmetries and sums).
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        axes_list: list
+            a list of RequestedAxis objects
+        Returns
+        -------
+        values: ndarray
+            values of the field
+        """
+
+        values = self.values
+        for axis_requested in axes_list:
+            # Rebuild symmetries when needed
+            axis_symmetries = self.axes[axis_requested.index].symmetries
+
+            if axis_requested.is_pattern and (
+                axis_requested.transform == "fft"
+                or axis_requested.extension
+                in [
+                    "max",
+                    "min",
+                    "sum",
+                    "rss",
+                    "mean",
+                    "rms",
+                    "integrate",
+                    "integrate_local",
+                    "derivate",
+                    "antiderivate",
+                ]
+                or axis_requested.indices not in [None, []]
+                and max(axis_requested.indices) >= values.shape[axis_requested.index]
+            ):
+                # DataPattern case where all values are requested
+                values = take(
+                    values, axis_requested.rebuild_indices, axis_requested.index
+                )
+            elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
+                # FFT case if axis is anti-periodic
+                nper = axis_symmetries["antiperiod"]
+                axis_symmetries["antiperiod"] = 2
+                values = rebuild_symmetries(
+                    values, axis_requested.index, axis_symmetries
+                )
+                axis_symmetries["antiperiod"] = nper
+            elif (
+                axis_requested.indices is not None
+                and max(axis_requested.indices) > values.shape[axis_requested.index]
+            ):
+                # Slicing case where requested indices are among other periods
+                values = rebuild_symmetries(
+                    values, axis_requested.index, axis_symmetries
+                )
+                self.axes[axis_requested.index].symmetries = dict()
+
+        return values
+
     # cf Methods.SciDataTool.DataND._get_freqs
-    if isinstance(_get_freqs, ImportError):
-        _get_freqs = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method _get_freqs: " + str(_get_freqs))
+    def _get_freqs(self):
+        """Returns the frequency vector or array, if available.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        Returns
+        -------
+        freqs : frequency vector or array
+        """
+
+        axis_names = [axis.name for axis in self.axes]
+        axis_norm = [list(axis.normalizations.keys()) for axis in self.axes]
+
+        index = None
+        operation = None
+        index_speed = None
+        index_order = None
+
+        if "freqs" in axis_names:
+            index = axis_names.index("freqs")
+        elif "frequency" in axis_names:
+            index = axis_names.index("frequency")
+        elif "time" in axis_names:
+            index = axis_names.index("frequency")
+            operation = "time_to_freqs"
+        elif "speed" in axis_names and "order" in axis_names:
+            index_speed = axis_names.index("speed")
+            index_order = axis_names.index("order")
+            is_norm = False
+        else:
+            for i, norm in enumerate(axis_norm):
+                if "speed" in norm:
+                    index_speed = i
+                    is_norm = True
+            if index_speed is not None and "order" in axis_names:
+                index_order = axis_names.index("order")
+            else:
+                raise AxisError("Cannot compute frequencies from available axes")
+
+        if index is not None:
+            freqs = self.get_axes()[index].get_values(operation=operation)
+        else:  # f = speed * 60 / order
+            if is_norm:
+                normalization = "speed"
+            else:
+                normalization = None
+            speed = self.get_axes()[index_speed].get_values(normalization=normalization)
+            order_strings = self.get_axes()[index_order].get_values().tolist()
+            orders = array(
+                [int(s.split(";")[0].replace("H", "")) for s in order_strings]
             )
-        )
-    else:
-        _get_freqs = _get_freqs
+            os, so = meshgrid(orders, speed)
+            freqs = so * 60 / os
+
+        return freqs
+
     # cf Methods.SciDataTool.DataND._interpolate
-    if isinstance(_interpolate, ImportError):
-        _interpolate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method _interpolate: " + str(_interpolate)
-                )
-            )
-        )
-    else:
-        _interpolate = _interpolate
+    def _interpolate(self, values, axes_list):
+        """Returns the values of the field interpolated over the axes values.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        values: ndarray
+            array of the field
+        axes_list: list
+            a list of RequestedAxis objects
+        Returns
+        -------
+        values: ndarray
+            values of the field
+        """
+
+        # Interpolate over axis values
+        for axis_requested in axes_list:
+            if axis_requested.input_data is not None:
+                if axis_requested.is_step:
+                    values = get_interpolation_step(
+                        values,
+                        axis_requested.values,
+                        axis_requested.input_data,
+                        axis_requested.index,
+                    )
+                else:
+                    values = get_interpolation(
+                        values,
+                        axis_requested.values,
+                        axis_requested.input_data,
+                        axis_requested.index,
+                    )
+                # Store new axis data into axis_requested.values
+                axis_requested.values = axis_requested.input_data
+        return values
+
     # cf Methods.SciDataTool.DataND._rebuild_symmetries
-    if isinstance(_rebuild_symmetries, ImportError):
-        _rebuild_symmetries = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method _rebuild_symmetries: "
-                    + str(_rebuild_symmetries)
+    def _rebuild_symmetries(
+        self,
+        values,
+        axes_list,
+    ):
+        """Reconstructs the field of a Data object taking symmetries into account
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        values: ndarray
+            ndarray of a field
+        axes_list: list
+            a list of RequestedAxis objects
+        Returns
+        -------
+        ndarray of the reconstructed field
+        """
+
+        for axis in axes_list:
+            if (
+                axis.transform != "fft"
+                and axis.is_pattern
+                and (
+                    axis.extension
+                    not in [
+                        "max",
+                        "min",
+                        "sum",
+                        "rss",
+                        "mean",
+                        "rms",
+                        "integrate",
+                        "integrate_local",
+                        "derivate",
+                        "smallestperiod",
+                    ]
+                    and axis.indices is None
                 )
-            )
-        )
-    else:
-        _rebuild_symmetries = _rebuild_symmetries
+            ):
+                values = take(values, axis.rebuild_indices, axis.index)
+            elif axis.transform != "fft" and axis.extension in [
+                "whole",
+                "interval",
+                "oneperiod",
+                "antiperiod",
+                "smallestperiod",
+            ]:
+                if axis.extension == "smallestperiod":
+                    is_smallestperiod = True
+                    is_oneperiod = False
+                    is_antiperiod = False
+                elif axis.extension == "antiperiod":
+                    is_smallestperiod = False
+                    is_oneperiod = False
+                    is_antiperiod = True
+                elif axis.extension == "oneperiod":
+                    is_smallestperiod = False
+                    is_oneperiod = True
+                    is_antiperiod = False
+                # Ignore symmetries if fft axis
+                elif axis.name in ["freqs", "wavenumber"] or (
+                    axis.transform == "ifft"
+                    # and len(axis.values) != len(axis.corr_values)
+                    and len(axis.values) == values.shape[axis.index]
+                ):
+                    is_smallestperiod = True
+                    is_oneperiod = False
+                    is_antiperiod = False
+                else:
+                    is_smallestperiod = False
+                    is_oneperiod = False
+                    is_antiperiod = False
+
+                # Rebuild symmetries
+                axis_symmetries = self.axes[axis.index].symmetries
+                if is_oneperiod:
+                    if "antiperiod" in axis_symmetries:
+                        nper = axis_symmetries["antiperiod"]
+                        axis_symmetries["antiperiod"] = 2
+                        values = rebuild_symmetries_fct(
+                            values, axis.index, axis_symmetries
+                        )
+                        axis_symmetries["antiperiod"] = nper
+                elif not is_smallestperiod and not is_antiperiod:
+                    values = rebuild_symmetries_fct(values, axis.index, axis_symmetries)
+        return values
+
     # cf Methods.SciDataTool.DataND._set_values
-    if isinstance(_set_values, ImportError):
-        _set_values = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method _set_values: " + str(_set_values))
-            )
-        )
-    else:
-        _set_values = _set_values
+    def _set_values(self, value):
+        """setter of values"""
+        if type(value) is int and value == -1:
+            value = array([])
+        elif type(value) is list:
+            try:
+                value = array(value)
+            except:
+                pass
+        check_var("values", value, "ndarray")
+
+        # Check dimensions
+        if value is not None:
+            value = squeeze(value)
+        value = check_dimensions(value, self.axes)
+        self._values = value
+
     # cf Methods.SciDataTool.DataND.change_referential
-    if isinstance(change_referential, ImportError):
-        change_referential = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method change_referential: "
-                    + str(change_referential)
-                )
+    def change_referential(
+        self,
+        rotation_speed,
+        is_waveform,
+        atol=1e-9,
+        axes_list_change=list(),
+        arg_list=list(),
+        freqs_new=np.array([]),
+        I1=np.array([]),
+        Irf_un=np.array([]),
+        sym_t_new=dict(),
+        ta_in=tuple(),
+        ta_out=tuple(),
+        atol_freq=1e-6,
+    ):
+        """Change referential of a SciDataTool DataND object
+
+        Parameters
+        ----------
+        self : DataND
+            a DataND object
+        rotation_speed : float
+            rotation speed [rpm]
+        is_waveform: bool
+            True to perform referential change in waveform domain (time/space) otherwise perform it in spectral domain (freqs/wavenumber)
+        atol: float
+            Absolute tolerance under which amplitudes are assumed to be 0
+        axes_list_change : [Data]
+            Axes list to be stored in referential changed DataFreq
+        arg_list: list
+            List of strings to call get_along
+        freqs_new : ndarray
+            frequencies vector in the new rotating referential
+        I1 : ndarray
+            Array of component indices in new spectrum
+        Irf_un: ndarray
+            Array of indices of unique frequency/wavenumber couples
+        ta_in: tuple
+            Tuple of input time/angle meshgrids
+        ta_out: tuple
+            Tuple of output time/angle meshgrids
+        atol_freq: float
+            Absolute tolerance under which frequencies are assumed to be equal
+
+        Returns
+        -------
+        data_new : DataND
+            a DataND object in new referential
+        axes_list_change : [Data]
+            Axes list to be stored in changed DataND
+        arg_list: list
+            List of strings to call get_along
+        freqs_new : ndarray
+            frequencies vector in the new rotating referential
+        I1 : ndarray
+            Array of component indices in new spectrum
+        Irf_un: ndarray
+            Array of indices of unique frequency/wavenumber couples
+        ta_in: tuple
+            Tuple of input time/angle meshgrids
+        ta_out: tuple
+            Tuple of output time/angle meshgrids
+
+        """
+
+        Data1D = import_class("pyleecan.Classes", "Data1D")
+        DataLinspace = import_class("pyleecan.Classes", "DataLinspace")
+        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+
+        if is_waveform:
+            DataClass = import_class("pyleecan.Classes", "DataTime")
+        else:
+            DataClass = import_class("pyleecan.Classes", "DataFreq")
+
+        # Get axes list
+        axes_list = self.get_axes()
+        axes_name = [axis.name for axis in axes_list]
+
+        if len(arg_list) == 0:
+            # Get fft along frequency axis (keep other axes)
+            arg_list = list()
+            for axis in axes_list:
+                if axis.name == "time":
+                    if is_waveform:
+                        arg_list.append("time[oneperiod]")
+                    else:
+                        arg_list.append("freqs")
+                elif axis.name == "angle":
+                    if is_waveform:
+                        arg_list.append("angle[oneperiod]")
+                    else:
+                        arg_list.append("wavenumber")
+                elif axis.name == "z" and isinstance(axis, DataPattern):
+                    arg_list.append("z[smallestpattern]")
+                else:
+                    arg_list.append(axis.name)
+
+        # Referential changed is requested in waveform domain if time is in arg_list
+        is_waveform = "time[oneperiod]" in arg_list
+
+        if not is_waveform and hasattr(self, "is_real"):
+            # Force non real data to get all spectrum
+            is_real = self.is_real
+            self.is_real = False
+        else:
+            is_real = True
+
+        # Extract data from vectorfield on one period
+        result = self.get_along(*arg_list, is_squeeze=False)
+        values = result[self.symbol]
+
+        if is_waveform:
+            # Get axes values
+            time0 = result["time"]
+            angle0 = result["angle"]
+
+            # Check requested time anti-periodicity
+            is_aper_t = "antiperiod" in sym_t_new
+
+            # Get angle periodicity on one period
+            per_a, is_aper_a = axes_list[1].get_periodicity()
+            per_a = int(per_a / 2) if is_aper_a else per_a
+
+            val_new, time_new, angle_new, ta_in, ta_out = change_referential_waveform(
+                values,
+                time0,
+                angle0,
+                rotation_speed,
+                is_aper_a,
+                is_aper_t,
+                ta_in,
+                ta_out,
             )
+        else:
+            freqs = result["freqs"]
+            wavenumber = result["wavenumber"]
+
+            val_new, freqs_new, I1, Irf_un = change_referential_spectrum(
+                freqs,
+                wavenumber,
+                rotation_speed,
+                values,
+                atol=atol,
+                freqs_new=freqs_new,
+                I1=I1,
+                Irf_un=Irf_un,
+                is_double_f0=is_real and "freqs" in axes_name,
+                atol_freq=atol_freq,
+            )
+
+            if is_real:
+                # Adapt spectrum amplitude
+                if "time" in axes_name:
+                    # Input data is DataTime, FFT has just been performed in four quadrants
+                    # so all amplitudes are multiplied by 2 after restriction to positive frequencies
+                    coeff = 2
+                else:
+                    # Input data is DataFreq, since data is a real spectrum no need to multiply again
+                    # all harmonics by two
+                    coeff = 1
+
+                # Restrict spectrum to positive frequencies only and multiply amplitudes by coeff
+                Ifreq_pos = freqs_new >= 0
+                freqs_store = freqs_new[Ifreq_pos]
+                val_new = val_new[Ifreq_pos] * coeff
+                val_new[0] = val_new[0] / coeff
+            else:
+                freqs_store = freqs_new
+
+        if len(axes_list_change) == 0:
+            axes_list_change = list()
+            for axis in axes_list:
+                if axis.name == "time" and is_waveform:
+                    axis_new = axis.copy()
+                    axis_new.symmetries = sym_t_new
+                    axis_new.number = time_new.size
+                    if isinstance(axis_new, DataLinspace):
+                        axis_new.final = time_new[-1]
+                        axis_new.include_endpoint = True
+                    else:
+                        axis_new.values = time0
+
+                elif axis.name == "angle" and is_waveform:
+                    axis_new = axis.copy()
+                    if is_aper_a:
+                        axis_new.symmetries = {"antiperiod": int(2 * per_a)}
+                    else:
+                        axis_new.symmetries = {"period": per_a}
+                    axis_new.number = angle_new.size
+                    if isinstance(axis_new, DataLinspace):
+                        axis_new.final = angle_new[-1]
+                        axis_new.include_endpoint = True
+                    else:
+                        axis_new.values = angle_new
+
+                elif axis.name == "freqs" or (axis.name == "time" and not is_waveform):
+                    axis_new = Data1D(
+                        name="freqs",
+                        unit="Hz",
+                        values=freqs_store,
+                        normalizations=axis.normalizations.copy(),
+                        symmetries=dict(),  # Don't keep time symmetries, FFT inverse requests axis_data
+                    )
+
+                elif axis.name == "wavenumber" or (
+                    axis.name == "angle" and not is_waveform
+                ):
+                    axis_new = Data1D(
+                        name="wavenumber",
+                        unit="dimless",
+                        values=wavenumber,
+                        normalizations=axis.normalizations.copy(),
+                        symmetries=axis.symmetries.copy(),
+                    )
+
+                else:
+                    axis_new = axis.copy()
+
+                axes_list_change.append(axis_new)
+
+        data_new = DataClass(
+            name=self.name,
+            symbol=self.symbol,
+            unit=self.unit,
+            axes=axes_list_change,
+            values=val_new,
+            normalizations=self.normalizations.copy(),
+            is_real=is_real,
         )
-    else:
-        change_referential = change_referential
+
+        if not is_waveform and hasattr(self, "is_real"):
+            # Reset data
+            self.is_real = is_real
+
+        return (
+            data_new,
+            axes_list_change,
+            arg_list,
+            freqs_new,
+            I1,
+            Irf_un,
+            ta_in,
+            ta_out,
+        )
+
     # cf Methods.SciDataTool.DataND.compare_along
-    if isinstance(compare_along, ImportError):
-        compare_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method compare_along: " + str(compare_along)
-                )
-            )
-        )
-    else:
-        compare_along = compare_along
+    def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):
+        """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        data_list: list
+            list of Data objects to compare
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        Returns
+        -------
+        list of 1Darray of axis values, ndarrays of fields
+        """
+        if data_list == []:
+            return self.get_along(args, unit=unit, is_norm=is_norm)
+        else:
+            # Extract requested axes + field values
+            results = self.get_along(args, unit=unit, is_norm=is_norm)
+            values = results.pop(self.symbol)
+            axes_list = results.pop("axes_list")
+            axes_dict_other = results.pop("axes_dict_other")
+            axes = results
+            data_axis_values = []
+            data_values = []
+            return_dict = {}
+            for data in data_list:
+                results = data.get_along(args, unit=unit, is_norm=is_norm)
+                data_values.append(results.pop(data.symbol))
+                data_axis_values.append(results)
+            # Get the common bases
+            common_axis_values = {}
+            for axis in axes.keys():
+                common_axis_values[axis] = axes[axis]
+                for i, data in enumerate(data_list):
+                    common_axis_values[axis] = get_common_base(
+                        common_axis_values[axis], data_axis_values[i][axis]
+                    )
+                # Interpolate over common axis values
+                values = get_interpolation(values, axes[axis], common_axis_values[axis])
+                for i, data in enumerate(data_list):
+                    data_values[i] = get_interpolation(
+                        data_values[i],
+                        data_axis_values[i][axis],
+                        common_axis_values[axis],
+                    )
+                return_dict[axis] = common_axis_values[axis]
+            # Return axis and values
+            return_dict[self.symbol] = values
+            return_dict["axes_list"] = axes_list
+            return_dict["axes_dict_other"] = axes_dict_other
+            for i, data in enumerate(data_list):
+                return_dict[data.symbol + "_" + str(i)] = data_values[i]
+            return return_dict
+
     # cf Methods.SciDataTool.DataND.compare_magnitude_along
-    if isinstance(compare_magnitude_along, ImportError):
-        compare_magnitude_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method compare_magnitude_along: "
-                    + str(compare_magnitude_along)
-                )
-            )
-        )
-    else:
-        compare_magnitude_along = compare_magnitude_along
+    def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False):
+        """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        data_list: list
+            list of Data objects to compare
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        Returns
+        -------
+        list of 1Darray of axis values, ndarrays of fields
+        """
+        if data_list == []:
+            return self.get_magnitude_along(args, unit=unit, is_norm=is_norm)
+        else:
+            # Extract requested axes + field values
+            results = self.get_magnitude_along(args, unit=unit, is_norm=is_norm)
+            values = results.pop(self.symbol)
+            axes_list = results.pop("axes_list")
+            axes_dict_other = results.pop("axes_dict_other")
+            axes = results
+            data_axis_values = []
+            data_values = []
+            return_dict = {}
+            for data in data_list:
+                results = data.get_magnitude_along(args, unit=unit, is_norm=is_norm)
+                data_values.append(results.pop(data.symbol))
+                data_axis_values.append(results)
+            # Get the common bases
+            common_axis_values = {}
+            for axis in axes.keys():
+                common_axis_values[axis] = axes[axis]
+                for i, data in enumerate(data_list):
+                    common_axis_values[axis] = get_common_base(
+                        common_axis_values[axis], data_axis_values[i][axis]
+                    )
+                # Interpolate over common axis values
+                values = get_interpolation(values, axes[axis], common_axis_values[axis])
+                for i, data in enumerate(data_list):
+                    data_values[i] = get_interpolation(
+                        data_values[i],
+                        data_axis_values[i][axis],
+                        common_axis_values[axis],
+                    )
+                return_dict[axis] = common_axis_values[axis]
+            # Return axis and values
+            return_dict[self.symbol] = values
+            return_dict["axes_list"] = axes_list
+            return_dict["axes_dict_other"] = axes_dict_other
+            for i, data in enumerate(data_list):
+                return_dict[data.symbol + "_" + str(i)] = data_values[i]
+            return return_dict
+
     # cf Methods.SciDataTool.DataND.compare_phase_along
-    if isinstance(compare_phase_along, ImportError):
-        compare_phase_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method compare_phase_along: "
-                    + str(compare_phase_along)
-                )
-            )
-        )
-    else:
-        compare_phase_along = compare_phase_along
+    def compare_phase_along(self, *args, unit="SI", data_list=[], is_norm=False):
+        """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        data_list: list
+            list of Data objects to compare
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        Returns
+        -------
+        list of 1Darray of axis values, ndarrays of fields
+        """
+        if data_list == []:
+            return self.get_phase_along(args, unit=unit, is_norm=is_norm)
+        else:
+            # Extract requested axes + field values
+            results = self.get_phase_along(args, unit=unit, is_norm=is_norm)
+            values = results.pop(self.symbol)
+            axes_list = results.pop("axes_list")
+            axes_dict_other = results.pop("axes_dict_other")
+            axes = results
+            data_axis_values = []
+            data_values = []
+            return_dict = {}
+            for data in data_list:
+                results = data.get_phase_along(args, unit=unit, is_norm=is_norm)
+                data_values.append(results.pop(data.symbol))
+                data_axis_values.append(results)
+            # Get the common bases
+            common_axis_values = {}
+            for axis in axes.keys():
+                common_axis_values[axis] = axes[axis]
+                for i, data in enumerate(data_list):
+                    common_axis_values[axis] = get_common_base(
+                        common_axis_values[axis], data_axis_values[i][axis]
+                    )
+                # Interpolate over common axis values
+                values = get_interpolation(values, axes[axis], common_axis_values[axis])
+                for i, data in enumerate(data_list):
+                    data_values[i] = get_interpolation(
+                        data_values[i],
+                        data_axis_values[i][axis],
+                        common_axis_values[axis],
+                    )
+                return_dict[axis] = common_axis_values[axis]
+            # Return axis and values
+            return_dict[self.symbol] = values
+            return_dict["axes_list"] = axes_list
+            return_dict["axes_dict_other"] = axes_dict_other
+            for i, data in enumerate(data_list):
+                return_dict[data.symbol + "_" + str(i)] = data_values[i]
+            return return_dict
+
     # cf Methods.SciDataTool.DataND.export_along
-    if isinstance(export_along, ImportError):
-        export_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method export_along: " + str(export_along)
-                )
-            )
-        )
-    else:
-        export_along = export_along
+    export_along = export_along
+
     # cf Methods.SciDataTool.DataND.filter_spectral_leakage
-    if isinstance(filter_spectral_leakage, ImportError):
-        filter_spectral_leakage = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method filter_spectral_leakage: "
-                    + str(filter_spectral_leakage)
+    def filter_spectral_leakage(
+        self,
+        freqs_th,
+        axes_list_filt=list(),
+        arg_list=list(),
+        Wmatf=np.array([]),
+        If=np.array([]),
+        is_return_calc_data=False,
+    ):
+        """Filter spectral leakage from a SciDataTool DataND object
+
+        Parameters
+        ----------
+        self : DataND
+            a DataND object
+        freqs_th : ndarray
+            theoretical frequencies
+        axes_list_filt : [Data]
+            Axes list to be stored in filtered DataFreq
+        arg_list : list
+            List of axes arguments to call SciDataTool get_along()
+        Wmatf : ndarray
+            Filtering matrix
+        If: ndarray
+            Index of FFT harmonics components used to calculate Wmatf
+        is_return_all_args: bool
+            True to return all data that can be used to speed calculation for further use
+
+        Returns
+        -------
+        data_filt : DataND
+            a DataND object
+        axes_list_filt : [Data]
+            Axes list to be stored in filtered DataFreq
+        arg_list : list
+            List of axes arguments to call SciDataTool get_along()
+        Wmatf : ndarray
+            Filtering matrix
+        If: ndarray
+            Index of FFT harmonics components used to calculate Wmatf
+        freqs_th : ndarray
+            theoretical frequencies
+        """
+
+        module = __import__("pyleecan.Classes.DataFreq", fromlist=["DataFreq"])
+        DataFreq = module.DataFreq
+
+        module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
+        DataPattern = module.DataPattern
+
+        module = __import__("pyleecan.Classes.Data1D", fromlist=["Data1D"])
+        Data1D = module.Data1D
+
+        if len(axes_list_filt) == 0 or len(arg_list) == 0:
+            # Get fft along frequency axis (keep other axes)
+            arg_list = list()  # Reinstantiate a different list
+            axes_list = self.get_axes()
+            for axis in axes_list:
+                if axis.name == "time":
+                    arg_list.append("freqs")
+                elif axis.name == "angle":
+                    arg_list.append("wavenumber")
+                elif axis.name == "z" and isinstance(axis, DataPattern):
+                    arg_list.append("z[smallestpattern]")
+                else:
+                    arg_list.append(axis.name)
+
+        is_real = self.is_real
+        self.is_real = False  # To have negative frequencies
+        result = self.get_along(*arg_list, is_squeeze=False)
+        freqs = result["freqs"]
+        spectrum = result[self.symbol]
+
+        if Wmatf.size == 0:
+            # Get time step
+            Time = self.get_axes("time")
+            if len(Time) > 0:
+                time = Time[0].get_values()
+            else:
+                result_time = self.get_along("time")
+                time = result_time["time"]
+            dt = time[1] - time[0]
+            Nt = time.size
+        else:
+            Nt, dt = None, None
+
+        if is_real and np.where(freqs < 0)[0].size == 0:
+            # Mirror values to negative frequencies
+            If0 = freqs != 0
+            spectrum[If0, ...] *= 0.5
+            If0[-1] = bool(np.mod(freqs.size, 2) == 0)
+            freqs = np.concatenate((-np.flip(freqs), freqs[If0]))
+            spectrum = np.concatenate(
+                (
+                    np.flip(np.conj(spectrum)),
+                    spectrum[If0, ...],
+                ),
+                axis=0,
+            )
+
+        # Restrict filtering to negative wavenumber only
+        if is_real and "wavenumber" in result:
+            wavenumber = result["wavenumber"]
+            Irn = wavenumber <= 0
+            spectrum = spectrum[:, Irn, ...]
+
+        spectrum_filt, freqs_th, Wmatf, If = filter_spectral_leakage_fct(
+            spectrum, freqs, freqs_th, Nt, dt, is_freq_pos=False, Wmatf=Wmatf, If=If
+        )
+
+        if is_real:
+            # Multiply all components by two except zero frequency component
+            spectrum_filt *= 2
+            I0 = freqs_th == 0
+            spectrum_filt[I0, ...] = 0.5 * spectrum_filt[I0, ...]
+
+            # Keep only positive frequencies
+            Ifp = freqs_th >= 0
+            freqs_th_store = freqs_th[Ifp]
+
+            # Mirror spectrum
+            if "wavenumber" in result:
+                # Mirror negative frequencies to negative wavenumbers
+                Ifn = ~Ifp
+                if freqs_th_store[0] == 0:
+                    Ifn[I0] = True
+                spectrum_filt = np.concatenate(
+                    (
+                        spectrum_filt[Ifp, ...],
+                        np.flip(np.conj(spectrum_filt[Ifn, 1:-1, ...])),
+                    ),
+                    axis=1,
+                )
+            else:
+                spectrum_filt = spectrum_filt[Ifp, ...]
+
+        else:
+            freqs_th_store = np.array(freqs_th)
+
+        if len(axes_list_filt) == 0:
+            axes_list_filt = list()  # Reinstantiate a different list
+            axes_list_filt.append(
+                Data1D(
+                    name="freqs",
+                    unit="Hz",
+                    values=freqs_th_store,
+                    normalizations=axes_list[0].normalizations,
+                    symmetries=dict(),
                 )
             )
+
+            if "wavenumber" in result:
+                axes_list_filt.append(
+                    Data1D(
+                        name="wavenumber",
+                        unit="dimless",
+                        values=result["wavenumber"],
+                        normalizations=axes_list[1].normalizations,
+                        symmetries=dict(),
+                    )
+                )
+
+            # Copy other axes
+            if "angle" in [axis.name for axis in self.axes] or "wavenumber" in [
+                axis.name for axis in self.axes
+            ]:
+                n = 2
+            else:
+                n = 1
+            for axis in axes_list[n:]:
+                axes_list_filt.append(axis.copy())
+
+        data_filt = DataFreq(
+            name=self.name,
+            symbol=self.symbol,
+            unit=self.unit,
+            axes=axes_list_filt,
+            values=spectrum_filt,
+            normalizations=self.normalizations,
+            is_real=True,
         )
-    else:
-        filter_spectral_leakage = filter_spectral_leakage
+
+        self.is_real = is_real
+
+        if is_return_calc_data:
+            return data_filt, axes_list_filt, arg_list, Wmatf, If, freqs_th
+
+        else:
+            return data_filt
+
     # cf Methods.SciDataTool.DataND.get_along
-    if isinstance(get_along, ImportError):
-        get_along = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method get_along: " + str(get_along))
+    def get_along(
+        self,
+        *args,
+        unit="SI",
+        is_norm=False,
+        axis_data=[],
+        is_squeeze=True,
+        is_magnitude=False,
+        corr_unit=None,
+    ):
+        """Returns the ndarray of the field, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        axis_data: list
+            list of ndarray corresponding to user-input data
+        Returns
+        -------
+        list of 1Darray of axes values, ndarray of field values
+        """
+        # Read the axes input in args
+        if len(args) == 1 and type(args[0]) == tuple:
+            args = args[0]  # if called from another script with *args
+
+        # Fix axes order
+        args = fix_axes_order([axis.name for axis in self.get_axes()], args)
+
+        axes_list = read_input_strings(args, axis_data)
+        # Extract the requested axes (symmetries + unit)
+        axes_list, transforms = self._comp_axes(axes_list)
+        # Get the field
+        values = self._get_field(axes_list)
+        # If DataFreq + 1 ifft axis + 1 fft axis: perform ifft on all axes then fft
+        save_transforms = None
+        save_names = None
+        if "ifft" in transforms and "fft" in transforms:
+            save_transforms = [axis.transform for axis in axes_list]
+            save_names = [axis.name for axis in axes_list]
+            for axis in axes_list:
+                if axis.name == "freqs":
+                    axis.transform = "ifft"
+                    axis.name = "time"
+                elif axis.name == "wavenumber":
+                    axis.transform = "ifft"
+                    axis.name = "angle"
+        # Inverse fft
+        if "ifft" in transforms:
+            values = comp_ifftn(
+                values, axes_list, is_real=self.is_real, axes_list=self.axes
             )
+        # Prepare fft in ifft/fft case
+        if save_transforms is not None:
+            for i, transform in enumerate(save_transforms):
+                axes_list[i].name = save_names[i]
+                if transform == "fft_axis":
+                    axes_list[i].transform = "fft"
+                    save_transforms[i] = "fft"
+                else:
+                    axes_list[i].transform = transform
+        # Slices along time/space axes
+        values, axes_dict_other = self._extract_slices(values, axes_list)
+        # fft
+        if "fft" in transforms:
+            values = comp_fftn(values, axes_list, is_real=self.is_real)
+        # Slices along fft axes
+        values = self._extract_slices_fft(values, axes_list)
+        # Rebuild symmetries
+        values = self._rebuild_symmetries(values, axes_list)
+        # Interpolate over axis values
+        values = self._interpolate(values, axes_list)
+        # Apply operations such as sum, integration, derivations etc.
+        values = self._apply_operations(
+            values, axes_list, is_magnitude, unit=self.unit, corr_unit=corr_unit
         )
-    else:
-        get_along = get_along
+        # Conversions
+        values = self._convert(values, unit, is_norm, is_squeeze, axes_list)
+        # Return axes and values
+        return_dict = {}
+        for axis_requested in axes_list:
+            if axis_requested.extension in [
+                "max",
+                "min",
+                "sum",
+                "rss",
+                "mean",
+                "rms",
+                "integrate",
+            ]:
+                return_dict[axis_requested.name] = axis_requested.extension
+            else:
+                return_dict[axis_requested.name] = axis_requested.values
+        return_dict[self.symbol] = values
+        return_dict["axes_list"] = axes_list
+        return_dict["axes_dict_other"] = axes_dict_other
+        return return_dict
+
     # cf Methods.SciDataTool.DataND.get_axes
-    if isinstance(get_axes, ImportError):
-        get_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method get_axes: " + str(get_axes))
-            )
-        )
-    else:
-        get_axes = get_axes
+    def get_axes(self, *args):
+        """Returns the list of axes.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        args : list
+            list of axes names
+        Returns
+        -------
+        axes_list : list of axes (Data)
+        """
+
+        axes = self.axes
+
+        if len(args) > 0:
+            axes_list = []
+            for name in args:
+                for axis in axes:
+                    if axis.name == name:
+                        axes_list.append(axis)
+        else:
+            axes_list = axes
+
+        return axes_list
+
     # cf Methods.SciDataTool.DataND.get_data_along
-    if isinstance(get_data_along, ImportError):
-        get_data_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method get_data_along: " + str(get_data_along)
-                )
+    def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+        """Returns the sliced or interpolated version of the data, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        axis_data: list
+            list of ndarray corresponding to user-input data
+        Returns
+        -------
+        a DataND object
+        """
+
+        if "dB" in unit:
+            results = self.get_magnitude_along(
+                *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
+        else:
+            results = self.get_along(
+                *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
+            )
+        values = results.pop(self.symbol)
+        del results["axes_dict_other"]
+        axes_list = results.pop("axes_list")
+        Axes = []
+
+        axes_name_new = list(results.keys())
+        if "time" in axes_name_new:
+            Data_type = "DataTime"
+        elif "freqs" in axes_name_new:
+            Data_type = "DataFreq"
+        else:
+            Data_type = "DataND"
+
+        # Dynamic import to avoid loop
+        module = __import__("pyleecan.Classes." + Data_type, fromlist=[Data_type])
+        DataClass = getattr(module, Data_type)
+
+        for axis_name in axes_name_new:
+            if not isinstance(results[axis_name], str):
+                for i, axis in enumerate(self.axes):
+                    if axis.name == axis_name:
+                        index = i
+                        name = axis.name
+                        is_components = axis.is_components
+                        axis_values = results[axis_name]
+                        ax_unit = axis.unit
+                    elif axis_name in axes_dict:
+                        if axes_dict[axis_name][0] == axis.name:
+                            index = i
+                            name = axis_name
+                            is_components = axis.is_components
+                            axis_values = results[axis_name]
+                            ax_unit = axes_dict[axis_name][2]
+                    elif axis_name in rev_axes_dict:
+                        if rev_axes_dict[axis_name][0] == axis.name:
+                            index = i
+                            name = axis_name
+                            is_components = axis.is_components
+                            axis_values = results[axis_name]
+                            ax_unit = rev_axes_dict[axis_name][2]
+                # Update symmetries
+                if (
+                    "smallestperiod" in args[index]
+                    or args[index]
+                    in [
+                        "freqs",
+                        "wavenumber",
+                    ]
+                    or "antiderivate" in args[index]
+                    or "derivate" in args[index]
+                ):
+                    symmetries = self.axes[index].symmetries.copy()
+                else:
+                    symmetries = dict()
+                Axis = Data1D(
+                    name=name,
+                    unit=ax_unit,
+                    values=axis_values,
+                    is_components=is_components,
+                    normalizations=self.axes[index].normalizations.copy(),
+                    symmetries=symmetries,
+                ).to_linspace()
+                if hasattr(self.axes[index], "sort_indices") and hasattr(
+                    Axis, "sort_indices"
+                ):
+                    Axis.sort_indices = self.axes[index].sort_indices
+                Axes.append(Axis)
+
+        # Update unit if dB/dBA conversion
+        if "dB" in unit:
+            unit = unit
+        else:
+            # Update unit if derivation or integration
+            unit = self.unit
+            for axis in axes_list:
+                if axis.extension in ["antiderivate", "integrate", "integrate_local"]:
+                    unit = get_unit_integrate(unit, axis.corr_unit)
+                elif axis.extension == "derivate":
+                    unit = get_unit_derivate(unit, axis.corr_unit)
+
+        return DataClass(
+            name=self.name,
+            unit=unit,
+            symbol=self.symbol,
+            axes=Axes,
+            values=values,
+            normalizations=self.normalizations.copy(),
+            is_real=self.is_real,
         )
-    else:
-        get_data_along = get_data_along
+
     # cf Methods.SciDataTool.DataND.get_harmonics
-    if isinstance(get_harmonics, ImportError):
-        get_harmonics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method get_harmonics: " + str(get_harmonics)
-                )
-            )
+    def get_harmonics(
+        self, N_harm, *args, unit="SI", is_norm=False, axis_data=None, is_flat=False
+    ):
+        """Returns the complex Fourier Transform of the field, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        N_harm: int
+            Number of largest harmonics to be extracted
+        args: list
+            Axes names, ranges and units
+        unit: str
+            Unit demanded by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        is_flat: bool
+            Boolean if the output data remains flattened (for 2D cases)
+        Returns
+        -------
+        list of 1Darray of axes values, ndarray of magnitude of FT
+        """
+        if len(args) == 1 and type(args[0]) == tuple:
+            args = args[0]  # if called from another script with *args
+        return_dict = self.get_magnitude_along(
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-    else:
-        get_harmonics = get_harmonics
+        values = return_dict[self.symbol]
+
+        # 2D case
+        if "freqs" in return_dict and "wavenumber" in return_dict:
+            r = return_dict["wavenumber"]
+            f = return_dict["freqs"]
+            # Flatten the data
+            values_flat = values.flatten()
+            R, F = meshgrid(r, f)
+            f = F.flatten()
+            r = R.flatten()
+            # Get the N_harm largest peaks
+            indices = argsort(negative(values_flat))
+            indices = indices[:N_harm]
+            values = values_flat[indices]
+            f = f[indices]
+            r = r[indices]
+            if len(values.shape) == 2 and not is_flat:
+                f.reshape((N_harm, N_harm))
+                r.reshape((N_harm, N_harm))
+                values.reshape((N_harm, N_harm))
+            return_dict["freqs"] = f
+            return_dict["wavenumber"] = r
+            return_dict[self.symbol] = values
+
+        # 1D cases
+        elif "freqs" in return_dict:
+            f = return_dict["freqs"]
+            indices = argsort(negative(values))
+            indices = indices[:N_harm]
+            f = f[indices]
+            values = values[indices]
+            return_dict["freqs"] = f
+            return_dict[self.symbol] = values
+        elif "wavenumber" in return_dict:
+            r = return_dict["wavenumber"]
+            indices = argsort(negative(values))
+            indices = indices[:N_harm]
+            r = r[indices]
+            values = values[indices]
+            return_dict["wavenumber"] = r
+            return_dict[self.symbol] = values
+
+        return return_dict
+
     # cf Methods.SciDataTool.DataND.get_magnitude_along
-    if isinstance(get_magnitude_along, ImportError):
-        get_magnitude_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method get_magnitude_along: "
-                    + str(get_magnitude_along)
-                )
+    def get_magnitude_along(
+        self,
+        *args,
+        unit="SI",
+        is_norm=False,
+        axis_data=[],
+        is_squeeze=True,
+        is_sum=True,
+        corr_unit=None,
+    ):
+        """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        axis_data: list
+            list of ndarray corresponding to user-input data
+        Returns
+        -------
+        list of 1Darray of axes values, ndarray of magnitude values
+        """
+        if len(args) == 1 and type(args[0]) == tuple:
+            args = args[0]  # if called from another script with *args
+
+        # Fix axes order
+        args = fix_axes_order([axis.name for axis in self.get_axes()], args)
+
+        # For dB/dBA conversions, first extraction with freqs axis
+        if "dB" in unit and unit != self.unit and is_sum:
+            new_args = list(args).copy()
+            freq_name = None
+            index_freq = None
+            index_speed = None
+            index_order = None
+            args_freqs = ["freqs", "frequency", "time"]
+            for i, axis in enumerate(self.axes):  # Find frequency axis
+                if axis.name in args_freqs:
+                    freq_name = axis.name
+            if freq_name is not None:
+                for i, arg in enumerate(args):
+                    if freq_name in arg:
+                        if "sum" in arg or "rss" in arg:
+                            new_args[i] = freq_name
+                            index_freq = i
+                if index_freq is None:  # No sum on freqs axis -> can extract directly
+                    return self.get_magnitude_along(
+                        *args,
+                        axis_data=axis_data,
+                        unit=unit,
+                        is_squeeze=is_squeeze,
+                        is_sum=False,
+                    )
+                else:
+                    data = self.get_data_along(
+                        *new_args, axis_data=axis_data, unit=unit
+                    )  # Extract first along freqs axis
+                    return data.get_magnitude_along(
+                        *[args[index_freq]],
+                        axis_data=axis_data,
+                        unit=unit,
+                        is_squeeze=is_squeeze,
+                        is_sum=False,
+                        corr_unit=self.unit,
+                    )  # Then sum on freqs axis
+            else:  # Try speed/order
+                is_match = 0
+                for i, axis in enumerate(self.axes):  # Find frequency axis
+                    if axis.name == "speed":
+                        is_match += 1
+                        arg_speed = "speed"
+                    elif axis.name == "order":
+                        is_match += 1
+                    elif "speed" in axis.normalizations:
+                        is_match += 1
+                        arg_speed = axis.name + "->speed"
+                if is_match == 2:
+                    for i, arg in enumerate(args):
+                        if "speed" in arg:
+                            if arg.split("{")[0] != arg_speed:
+                                new_args[i] = arg_speed
+                                index_speed = i
+                        elif "order" in arg:
+                            if arg.split("{")[0] != "order":
+                                new_args[i] = "order"
+                                index_order = i
+                elif is_match == 1:
+                    for i, arg in enumerate(args):
+                        if "speed" in arg:
+                            if arg.split("{")[0] != arg_speed:
+                                new_args[i] = arg_speed
+                                index_speed = i
+                elif unit == "dB" or "A-weight" in self.normalizations:
+                    self.get_magnitude_along(
+                        *args,
+                        axis_data=axis_data,
+                        unit=unit,
+                        is_squeeze=is_squeeze,
+                        is_sum=False,
+                    )
+                else:
+                    raise AxisError(
+                        "Cannot convert to " + unit + " without a frequency axis"
+                    )
+                if (
+                    index_speed is None and index_order is None
+                ):  # No sum on freqs axis -> can extract directly
+                    return self.get_magnitude_along(
+                        *args,
+                        axis_data=axis_data,
+                        unit=unit,
+                        is_squeeze=is_squeeze,
+                        is_sum=False,
+                    )
+                elif index_speed is None:  # Sum on order axis
+                    if "[" in args[-1]:
+                        new_args[-1] = args[-1].split("[")[0]
+                    data = self.get_data_along(
+                        *new_args, axis_data=axis_data, unit=unit
+                    )  # Extract first along order axis
+                    return data.get_magnitude_along(
+                        *[arg_speed, args[index_order]] + args[2:],
+                        axis_data=axis_data,
+                        unit=unit,
+                        is_squeeze=is_squeeze,
+                        is_sum=False,
+                        corr_unit=self.unit,
+                    )  # Then sum on order axis
+                elif index_order is None:  # Sum on speed axis
+                    data = self.get_data_along(
+                        *new_args, axis_data=axis_data, unit=unit
+                    )  # Extract first along speed axis
+                    return data.get_magnitude_along(
+                        *args,
+                        axis_data=axis_data,
+                        unit=unit,
+                        is_squeeze=is_squeeze,
+                        is_sum=False,
+                        corr_unit=self.unit,
+                    )  # Then sum on speed axis
+                else:  # Sum on speed and order axes
+                    data = self.get_data_along(
+                        *new_args, axis_data=axis_data, unit=unit
+                    )  # Extract first along speed and order axes
+                    return data.get_magnitude_along(
+                        *[args[index_speed], args[index_order]],
+                        axis_data=axis_data,
+                        unit=unit,
+                        is_squeeze=is_squeeze,
+                        is_sum=False,
+                        corr_unit=self.unit,
+                    )  # Then sum on speed and order axes
+
+        else:
+            return_dict = self.get_along(
+                *args,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
+                is_magnitude=True,
+                corr_unit=corr_unit,
             )
-        )
-    else:
-        get_magnitude_along = get_magnitude_along
+            values = return_dict[self.symbol]
+
+            # 1/nth octave band
+            for axis in return_dict["axes_list"]:
+                if axis.name == "freqs" or axis.corr_name == "freqs":
+                    index = axis.index
+                    if axis.noct is not None:
+                        (values, foct) = apply_along_axis(
+                            to_noct, index, values, return_dict["freqs"], noct=axis.noct
+                        )
+                        return_dict[axis.name] = foct
+            # Convert into right unit (apart because of dBA conversion)
+            if unit == self.unit or unit == "SI":
+                if is_norm:
+                    try:
+                        values = self.normalizations["ref"].normalize(values)
+                    except:
+                        raise NormError(
+                            "Reference value not specified for normalization"
+                        )
+            elif unit == "dB":
+                ref_value = 1.0
+                if "ref" in self.normalizations:
+                    ref_value *= self.normalizations["ref"].ref
+                values = to_dB(values, self.unit, ref_value)
+            elif unit == "dBA":
+                ref_value = 1.0
+                if "ref" in self.normalizations:
+                    ref_value *= self.normalizations["ref"].ref
+                if "A-weight" in self.normalizations:
+                    values = to_dB(values, self.unit, ref_value)
+                    # Extract requested indices from A-weight
+                    axes_list = return_dict["axes_list"]
+                    index_list = []
+                    for ii, axis in enumerate(axes_list):
+                        if (
+                            axis.indices is not None
+                            and len(axis.indices) > 1
+                            and len(axis.indices) < len(axis.values)
+                        ):
+                            index_list.append(ii)
+                    A_weight = self.normalizations["A-weight"].vector
+                    for index in index_list:
+                        A_weight = take(
+                            A_weight,
+                            axes_list[index].indices,
+                            axis=index,
+                        )
+                    # Flatten to apply A-weighting
+                    A_weight = A_weight.ravel("C")
+                    shape = values.shape
+                    values = values.reshape(
+                        A_weight.shape
+                        + shape[len(self.normalizations["A-weight"].vector.shape) :]
+                    )
+                    values = apply_along_axis(add, 0, values, A_weight)
+                    values = values.reshape(shape)
+                elif "freqs" in return_dict.keys():
+                    for axis in return_dict["axes_list"]:
+                        if axis.name == "freqs" or axis.corr_name == "freqs":
+                            index = axis.index
+                    if return_dict["axes_list"][
+                        index
+                    ].corr_values is not None and return_dict["axes_list"][
+                        index
+                    ].unit not in [
+                        "SI",
+                        return_dict["axes_list"][index].corr_unit,
+                    ]:
+                        freqs = return_dict["axes_list"][index].corr_values
+                    else:
+                        freqs = return_dict["freqs"]
+                    values = apply_along_axis(
+                        to_dBA, index, values, freqs, self.unit, ref_value
+                    )
+                elif "frequency" in return_dict.keys():
+                    for axis in return_dict["axes_list"]:
+                        if axis.name == "frequency" or axis.corr_name == "frequency":
+                            index = axis.index
+                    if return_dict["axes_list"][
+                        index
+                    ].corr_values is not None and return_dict["axes_list"][
+                        index
+                    ].unit not in [
+                        "SI",
+                        return_dict["axes_list"][index].corr_unit,
+                    ]:
+                        freqs = return_dict["axes_list"][index].corr_values
+                    else:
+                        freqs = return_dict["frequency"]
+                    values = apply_along_axis(
+                        to_dBA, index, values, freqs, self.unit, ref_value
+                    )
+                elif "order" in return_dict:
+                    freqs = self._get_freqs()
+                    freqs = freqs.ravel("C")
+                    shape = values.shape
+                    values = values.reshape(freqs.shape + shape[2:])
+                    values = apply_along_axis(
+                        to_dBA, 0, values, freqs, self.unit, ref_value
+                    )
+                    values = values.reshape(shape)
+                else:
+                    raise UnitError(
+                        "dBA conversion only available for fft with frequencies"
+                    )
+
+            elif unit in self.normalizations:
+                values = self.normalizations.get(unit).normalize(values)
+            else:
+                values = convert(values, self.unit, unit)
+            return_dict[self.symbol] = values
+            return return_dict
+
     # cf Methods.SciDataTool.DataND.get_phase_along
-    if isinstance(get_phase_along, ImportError):
-        get_phase_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method get_phase_along: " + str(get_phase_along)
-                )
-            )
-        )
-    else:
-        get_phase_along = get_phase_along
+    def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+        """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        axis_data: list
+            list of ndarray corresponding to user-input data
+        Returns
+        -------
+        list of 1Darray of axes values, ndarray of magnitude values
+        """
+        if len(args) == 1 and type(args[0]) == tuple:
+            args = args[0]  # if called from another script with *args
+        return_dict = self.get_along(args, axis_data=axis_data)
+        values = return_dict[self.symbol]
+        # Compute magnitude
+        values = np_angle(values)
+        # Convert into right unit (apart because of degree conversion)
+        if unit == self.unit or unit == "SI":
+            if is_norm:
+                try:
+                    values = self.normalizations["ref"].normalize(values)
+                except:
+                    raise NormError("Reference value not specified for normalization")
+        elif unit == "°":
+            values = convert(values, "rad", "°")
+        elif unit in self.normalizations:
+            values = self.normalizations.get(unit).normalize(values)
+        else:
+            values = convert(values, self.unit, unit)
+        return_dict[self.symbol] = values
+        return return_dict
+
     # cf Methods.SciDataTool.DataND.has_period
-    if isinstance(has_period, ImportError):
-        has_period = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method has_period: " + str(has_period))
-            )
-        )
-    else:
-        has_period = has_period
+    def has_period(self):
+        """Indicates if a field has symmetries.
+        Parameters
+        ----------
+        self: DataND
+            a DataND object
+        Returns
+        -------
+        Boolean
+        """
+        answer = False
+
+        for axis in self.axes:
+
+            if axis.symmetries != {}:
+                answer = True
+
+        return answer
+
     # cf Methods.SciDataTool.DataND.orthogonal_mp
-    if isinstance(orthogonal_mp, ImportError):
-        orthogonal_mp = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method orthogonal_mp: " + str(orthogonal_mp)
-                )
-            )
+    def orthogonal_mp(
+        self,
+        Time: Data1D,
+        n_coefs: int = None,
+        precompute: bool = True,
+        dictionary=None,
+    ):
+        """
+        Execute the Orthogonal Matching Pursuit, this method returns a DataND object with the Time axe,
+        self is the DataND undersampled object.
+
+        Parameters
+        ----------
+        Time: The time axe on which the signals are recovered
+        M: The undersampling indices, Time.values[M] is the time axe of self
+        n_coefs: The number of atoms of the dictionary used to recover the signal,
+        if None set to 10 % of len(M)
+        dictionary: A special dictionary which is pass to the backend
+
+        Returns
+        recovered_dataND: A new dataND object composed of the recovered components
+        """
+
+        # This method should only be used for 1D or 2D field, where the
+        # undersampling is in the time's direction
+        nombre_axes = len(self.axes)
+        assert (
+            nombre_axes == 2 or nombre_axes == 1
+        ), "Dimension error: {} not in {1,2}".format(nombre_axes)
+
+        axes_name = [self.axes[i].name for i in range(nombre_axes)]
+        assert "time" in axes_name, "There is no time axe"
+        axes_name.remove("time")
+
+        # Extract the axes
+        if nombre_axes == 2:
+            [Angle] = self.get_axes(axes_name[0])
+        [Time_undersampled] = self.get_axes("time")
+
+        M = comp_undersampled_axe(Time, Time_undersampled)
+
+        n = len(Time.values)
+
+        # Stack the signals into the columns of the matrix Y (n,n_targets)
+        Y = self.values
+
+        # Compute the OMP
+        Y_full = omp(
+            Y, M, n, n_coefs=n_coefs, precompute=precompute, dictionary=dictionary
         )
-    else:
-        orthogonal_mp = orthogonal_mp
+
+        # Build the DataND object
+        if nombre_axes == 1:
+            recovered_dataND = type(self)(
+                name=self.name,
+                symbol=self.symbol,
+                unit=self.unit,
+                values=Y_full,
+                axes=[Time],
+                is_real=self.is_real,
+            )
+        if nombre_axes == 2:
+            recovered_dataND = type(self)(
+                name=self.name,
+                symbol=self.symbol,
+                unit=self.unit,
+                axes=[Time, Angle],
+                values=Y_full,
+                is_real=self.is_real,
+            )
+
+        return recovered_dataND
+
     # cf Methods.SciDataTool.DataND.plot_2D_Data
-    if isinstance(plot_2D_Data, ImportError):
-        plot_2D_Data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method plot_2D_Data: " + str(plot_2D_Data)
-                )
-            )
-        )
-    else:
-        plot_2D_Data = plot_2D_Data
+    plot_2D_Data = plot_2D_Data
+
     # cf Methods.SciDataTool.DataND.plot_2D_Data_Animated
-    if isinstance(plot_2D_Data_Animated, ImportError):
-        plot_2D_Data_Animated = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method plot_2D_Data_Animated: "
-                    + str(plot_2D_Data_Animated)
-                )
+    def plot_2D_Data_Animated(
+        self,
+        animated_axis,
+        suptitle_ref,
+        *param_list,
+        nb_frames=50,
+        fps=10,
+        **param_dict,
+    ):
+        """Gen
+
+        Parameters
+        ----------
+        animated_axis : str
+            The field will be animated along this axis
+        nb_frames : int
+            number of frames used to build the gif
+        fps: int
+            frames displayed per second
+        """
+        # Relative import of DataPattern to prevent circular import
+        module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
+        DataPattern = module.DataPattern
+
+        # Making sure that we have the right argument for a plot2D
+        plot_options = param_dict.copy()
+        for param in PARAM_3D:
+            if param in plot_options:
+                del plot_options[param]
+
+        # Detecting if animated axis is a DataPattern, if true changing the input given to the function
+        for ax_obj in self.get_axes():
+            if (
+                ax_obj.name == animated_axis.split("[")[0]
+                or animated_axis.split("[")[0] in fft_dict
+                and fft_dict[animated_axis.split("[")[0]] == ax_obj.name
+                or animated_axis.split("[")[0] in ifft_dict
+                and ifft_dict[animated_axis.split("[")[0]] == ax_obj.name
+            ):
+                animated_axis_obj = ax_obj
+                break
+
+        if isinstance(animated_axis_obj, DataPattern):
+            # Removing "[one_period]" as it is not available with a DataPattern
+            animated_axis_unit = "{" + animated_axis.split("{")[1]
+            animated_axis = animated_axis.split("[")[0] + animated_axis_unit
+
+        if "freqs" in param_list or "wavenumber" in param_list:
+            result = self.get_magnitude_along(
+                animated_axis, *param_list, unit=param_dict["unit"]
             )
-        )
-    else:
-        plot_2D_Data_Animated = plot_2D_Data_Animated
+        else:
+            result = self.get_along(animated_axis, *param_list, unit=param_dict["unit"])
+
+        animated_axis_unit = "{" + animated_axis.split("{")[1]
+        animated_axis = animated_axis.split("{")[0].split("[")[0]
+
+        # Creating a list of frames that will need to create the animation
+        if isinstance(animated_axis_obj, DataPattern):
+            frames_list = animated_axis_obj.get_values()
+            frames_list = [
+                "[" + str(idx_frame) + "]" for idx_frame in range(len(frames_list))
+            ]
+            fps = 1
+        else:
+            value_max = nanmax(result[animated_axis])
+            value_min = nanmin(result[animated_axis])
+            variation_step = (value_max - value_min) / nb_frames
+
+            frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+            frames_list = ["=" + str(frame) for frame in frames_list]
+
+        # detecting if we are animating a regular plot (=> computing limit for y) or a "fft" plot (=> limit already set)
+        if plot_options["y_min"] == None or plot_options["y_max"] == None:
+            # Setting the options of the plot
+            y_max = nanmax(result[self.symbol])
+            y_min = nanmin(result[self.symbol])
+            marge = (
+                y_max - y_min
+            ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
+            plot_options["y_min"] = nanmin(result[self.symbol]) - abs(marge)
+            plot_options["y_max"] = nanmax(result[self.symbol]) + abs(marge)
+
+        plot_options["is_show_fig"] = False
+
+        # Getting the name of the gif
+        save_path = plot_options["save_path"].replace(".png", ".gif")
+        plot_options["save_path"] = None
+
+        images = list()  # List of images used to build the gif
+        for val in frames_list:
+            # plotting image
+            self.plot_2D_Data(
+                *param_list, animated_axis + val + animated_axis_unit, **plot_options
+            )
+            # Getting the figure generated with plot_2D_DATA
+            fig = plt.gcf()
+
+            # Adding the suptitle of the figure if there is one
+            if suptitle_ref != "":
+                fig.suptitle(suptitle_ref)
+
+            fig.canvas.draw()
+            image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+            images.append(image)
+
+            # Creating the gif
+            plt.close(fig)
+
+        imageio.mimsave(save_path, images, format="GIF-PIL", fps=fps)
+
     # cf Methods.SciDataTool.DataND.plot_3D_Data
-    if isinstance(plot_3D_Data, ImportError):
-        plot_3D_Data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method plot_3D_Data: " + str(plot_3D_Data)
-                )
-            )
-        )
-    else:
-        plot_3D_Data = plot_3D_Data
+    plot_3D_Data = plot_3D_Data
+
     # cf Methods.SciDataTool.DataND.plot_3D_Data_Animated
-    if isinstance(plot_3D_Data_Animated, ImportError):
-        plot_3D_Data_Animated = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method plot_3D_Data_Animated: "
-                    + str(plot_3D_Data_Animated)
-                )
+    def plot_3D_Data_Animated(
+        self,
+        animated_axis,
+        suptitle_ref,
+        *param_list,
+        nb_frames=50,
+        fps=10,
+        **param_dict,
+    ):
+        """Gen
+
+        Parameters
+        ----------
+        animated_axis : str
+            The field will be animated along this axis
+        nb_frames : int
+            number of frames used to build the gif
+        fps: int
+            frames displayed per second
+        """
+
+        # Relative import of DataPattern to prevent circular import
+        module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
+        DataPattern = module.DataPattern
+
+        # Making sure that we have the right argument for a plot3D
+        plot_options = param_dict.copy()
+        for param in PARAM_2D:
+            if param in plot_options:
+                del plot_options[param]
+
+        # Detecting if animated axis is a DataPattern, if true changing the input given to the function
+        for ax_obj in self.get_axes():
+            if ax_obj.name in ifft_dict:
+                if ifft_dict[ax_obj.name] == animated_axis.split("[")[0]:
+                    animated_axis_obj = ax_obj
+                    break
+            else:
+                if ax_obj.name == animated_axis.split("[")[0]:
+                    animated_axis_obj = ax_obj
+                    break
+
+        if isinstance(animated_axis_obj, DataPattern):
+            # Removing one_period as it is not available with a DataPattern
+            animated_axis_unit = "{" + animated_axis.split("{")[1]
+            animated_axis = animated_axis.split("[")[0] + animated_axis_unit
+
+        if "freqs" in param_list or "wavenumber" in param_list:
+            result = self.get_magnitude_along(animated_axis, *param_list)
+        else:
+            result = self.get_along(animated_axis, *param_list)
+
+        animated_axis_unit = "{" + animated_axis.split("{")[1]
+        animated_axis = animated_axis.split("{")[0].split("[")[0]
+
+        # Creating a list of frames that will need to create the animation
+        if isinstance(animated_axis_obj, DataPattern):
+            frames_list = animated_axis_obj.get_values()
+            frames_list = [
+                "[" + str(idx_frame) + "]" for idx_frame in range(len(frames_list))
+            ]
+            fps = 1
+        else:
+            value_max = nanmax(result[animated_axis])
+            value_min = nanmin(result[animated_axis])
+            variation_step = (value_max - value_min) / nb_frames
+
+            frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+            frames_list = ["=" + str(frame) for frame in frames_list]
+
+        plot_options["is_show_fig"] = False
+
+        # Getting the name of the gif
+        save_path = plot_options["save_path"].replace(".png", ".gif")
+        plot_options["save_path"] = None
+
+        images = list()  # List of images used to build the gif
+        for val in frames_list:
+            # plotting image
+            self.plot_3D_Data(
+                *param_list, animated_axis + val + animated_axis_unit, **plot_options
             )
-        )
-    else:
-        plot_3D_Data_Animated = plot_3D_Data_Animated
+            # Getting the figure generated with plot_2D_DATA
+            fig = plt.gcf()
+
+            # Adding the suptitle of the figure if there is one
+            if suptitle_ref != "":
+                fig.suptitle(suptitle_ref)
+
+            fig.canvas.draw()
+            image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+            images.append(image)
+
+            # Creating the gif
+            plt.close(fig)
+
+        imageio.mimsave(save_path, images, format="GIF-PIL", fps=fps)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -672,7 +2469,7 @@ class DataND(Data):
         DataND_dict = super(DataND, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         if self.axes is None:
             DataND_dict["axes"] = None
@@ -684,7 +2481,7 @@ class DataND(Data):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs
+                            **kwargs,
                         )
                     )
                 else:

@@ -4,6 +4,11 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType12
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - plot: import name 'pi' refers to different sources (numpy.pi and ..Methods.Machine.CondType12.plot.pi)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,68 +22,12 @@ from .Conductor import Conductor
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.CondType12.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_height_wire import comp_height_wire
-except ImportError as error:
-    comp_height_wire = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_nb_circumferential_wire import (
-        comp_nb_circumferential_wire,
-    )
-except ImportError as error:
-    comp_nb_circumferential_wire = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_nb_radial_wire import comp_nb_radial_wire
-except ImportError as error:
-    comp_nb_radial_wire = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_surface_active import comp_surface_active
-except ImportError as error:
-    comp_surface_active = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_width import comp_width
-except ImportError as error:
-    comp_width = error
-
-try:
-    from ..Methods.Machine.CondType12.comp_width_wire import comp_width_wire
-except ImportError as error:
-    comp_width_wire = error
-
-try:
-    from ..Methods.Machine.CondType12.is_round_wire import is_round_wire
-except ImportError as error:
-    is_round_wire = error
-
-try:
-    from ..Methods.Machine.CondType12.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Machine.CondType12.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Machine.CondType12.check import check
+from ..Methods.Machine.CondType12.plot import plot
+from numpy import sqrt, pi
+import matplotlib.pyplot as plt
+from .Segment import Segment
+from ..Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -89,141 +38,362 @@ class CondType12(Conductor):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.CondType12.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use CondType12 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Machine.CondType12.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_height: " + str(comp_height)
-                )
-            )
-        )
-    else:
-        comp_height = comp_height
+    def comp_height(self):
+        """Compute the height of the conductor
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        H: float
+            Height of the conductor [m]
+
+        """
+
+        return self.comp_width()
+
     # cf Methods.Machine.CondType12.comp_height_wire
-    if isinstance(comp_height_wire, ImportError):
-        comp_height_wire = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_height_wire: "
-                    + str(comp_height_wire)
-                )
-            )
-        )
-    else:
-        comp_height_wire = comp_height_wire
+    def comp_height_wire(self):
+        """Return wire diameter
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        W: float
+            Wire diameter [m]
+
+        """
+
+        return self.Wwire
+
     # cf Methods.Machine.CondType12.comp_nb_circumferential_wire
-    if isinstance(comp_nb_circumferential_wire, ImportError):
-        comp_nb_circumferential_wire = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_nb_circumferential_wire: "
-                    + str(comp_nb_circumferential_wire)
-                )
-            )
-        )
-    else:
-        comp_nb_circumferential_wire = comp_nb_circumferential_wire
+    def comp_nb_circumferential_wire(self):
+        """Return number of adjacent wires in circumferential direction
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        Nwppc_tan: int
+            Number of adjacent wires in circumferential direction
+
+        """
+
+        return int(sqrt(self.Nwppc))
+
     # cf Methods.Machine.CondType12.comp_nb_radial_wire
-    if isinstance(comp_nb_radial_wire, ImportError):
-        comp_nb_radial_wire = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_nb_radial_wire: "
-                    + str(comp_nb_radial_wire)
-                )
-            )
-        )
-    else:
-        comp_nb_radial_wire = comp_nb_radial_wire
+    def comp_nb_radial_wire(self):
+        """Return number of adjacent wires in radial direction
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        Nwppc_rad: int
+            Number of adjacent wires in radial direction
+
+        """
+
+        return int(sqrt(self.Nwppc))
+
     # cf Methods.Machine.CondType12.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the surface of the conductor
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        S: float
+            Surface of the conductor (with insulation) [m**2]
+
+        """
+
+        return pi * ((self.comp_width() / 2.0) ** 2)
+
     # cf Methods.Machine.CondType12.comp_surface_active
-    if isinstance(comp_surface_active, ImportError):
-        comp_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_surface_active: "
-                    + str(comp_surface_active)
-                )
-            )
-        )
-    else:
-        comp_surface_active = comp_surface_active
+    def comp_surface_active(self):
+        """Compute the active surface of the conductor
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        Sact: float
+            Surface without insulation [m**2]
+
+        """
+
+        Sact = ((self.Wwire / 2.0) ** 2) * pi * self.Nwppc
+
+        return Sact
+
     # cf Methods.Machine.CondType12.comp_width
-    if isinstance(comp_width, ImportError):
-        comp_width = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_width: " + str(comp_width)
-                )
-            )
-        )
-    else:
-        comp_width = comp_width
+    def comp_width(self):
+        """Compute the width of the conductor
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        W: float
+            Width of the conductor [m]
+
+        """
+
+        if self.Wins_cond is None:
+            if self.Nwppc == 1:
+                Wins_wire = self.Wins_wire if self.Wins_wire is not None else 0
+                width = self.Wwire + 2 * Wins_wire
+            else:
+                raise Exception("Conductor diameter not set")
+        else:
+            width = self.Wins_cond
+
+        return width
+
     # cf Methods.Machine.CondType12.comp_width_wire
-    if isinstance(comp_width_wire, ImportError):
-        comp_width_wire = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method comp_width_wire: "
-                    + str(comp_width_wire)
-                )
-            )
-        )
-    else:
-        comp_width_wire = comp_width_wire
+    def comp_width_wire(self):
+        """Return wire diameter
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+
+        Returns
+        -------
+        W: float
+            Wire diameter [m]
+
+        """
+
+        return self.Wwire
+
     # cf Methods.Machine.CondType12.is_round_wire
-    if isinstance(is_round_wire, ImportError):
-        is_round_wire = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method is_round_wire: " + str(is_round_wire)
-                )
-            )
-        )
-    else:
-        is_round_wire = is_round_wire
+    def is_round_wire(self):
+        """Return if wire is round
+
+        Parameters
+        ----------
+        self : CondType11
+            A CondType11 object
+
+        Returns
+        -------
+        is_round_wire: bool
+            is_round_wire is always False since wire is rectangular
+
+        """
+
+        return True
+
     # cf Methods.Machine.CondType12.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use CondType12 method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
+    plot = plot
+
     # cf Methods.Machine.CondType12.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use CondType12 method plot_schematics: "
-                    + str(plot_schematics)
-                )
+    def plot_schematics(
+        self,
+        is_default=False,
+        is_add_schematics=True,
+        is_add_main_line=True,
+        save_path=None,
+        is_show_fig=True,
+        fig=None,
+        ax=None,
+        is_single=False,
+    ):
+        """Plot the schematics of the slot
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+        is_default : bool
+            True: plot default schematics, else use current slot values
+        is_add_schematics : bool
+            True to display the schematics information (W0, H0...)
+        is_add_main_line : bool
+            True to display "main lines" (slot opening and 0x axis)
+        save_path : str
+            full path including folder, name and extension of the file to save if save_path is not None
+        is_show_fig : bool
+            To call show at the end of the method
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+        """
+
+        # Use some default parameter
+        if is_default and is_single:
+            cond = type(self)(Wins_cond=40e-3, Wwire=35e-3, Wins_wire=5e-3, Nwppc=1)
+            return cond.plot_schematics(
+                is_default=False,
+                is_add_schematics=is_add_schematics,
+                is_add_main_line=is_add_main_line,
+                save_path=save_path,
+                is_show_fig=is_show_fig,
+                fig=fig,
+                ax=ax,
+                is_single=is_single,
             )
-        )
-    else:
-        plot_schematics = plot_schematics
+        elif is_default:
+            cond = type(self)(Wins_cond=40e-3, Wwire=10e-3, Wins_wire=2e-3, Nwppc=4)
+            return cond.plot_schematics(
+                is_default=False,
+                is_add_schematics=is_add_schematics,
+                is_add_main_line=is_add_main_line,
+                save_path=save_path,
+                is_show_fig=is_show_fig,
+                fig=fig,
+                ax=ax,
+            )
+        else:
+            # Getting the main plot
+            fig, ax = self.plot(
+                is_show_fig=False, fig=fig, ax=ax
+            )  # center slot on Ox axis
+            a = self.Wwire / 2 + self.Wins_wire
+
+            # Adding schematics
+            if is_add_schematics:
+                if is_single:
+                    # Wwire
+                    line = Segment(-self.Wwire / 2, self.Wwire / 2)
+                    line.plot(
+                        fig=fig,
+                        ax=ax,
+                        color=ARROW_COLOR,
+                        linewidth=ARROW_WIDTH,
+                        label="Conductor diameter",
+                        offset_label=1j * self.Wins_wire / 2,
+                        is_arrow=True,
+                        fontsize=SC_FONT_SIZE,
+                    )
+                    # Wins_wire
+                    line = Segment(
+                        1j * (self.Wwire / 2 + self.Wins_wire), 1j * self.Wwire / 2
+                    )
+                    line.plot(
+                        fig=fig,
+                        ax=ax,
+                        color=ARROW_COLOR,
+                        linewidth=ARROW_WIDTH,
+                        label="Insulator thickness",
+                        offset_label=self.Wins_wire / 2,
+                        is_arrow=True,
+                        fontsize=SC_FONT_SIZE,
+                    )
+                else:
+                    # Wwire
+                    line = Segment(
+                        a - self.Wwire / 2 + 1j * a, a + self.Wwire / 2 + 1j * a
+                    )
+                    line.plot(
+                        fig=fig,
+                        ax=ax,
+                        color=ARROW_COLOR,
+                        linewidth=ARROW_WIDTH,
+                        label="Strand diameter",
+                        offset_label=1j * self.Wins_wire,
+                        is_arrow=True,
+                        fontsize=SC_FONT_SIZE,
+                    )
+                    # Wins_wire
+                    line = Segment(
+                        -self.Wwire / 2 - self.Wins_wire + 1j * self.Wins_wire,
+                        -self.Wwire / 2 - self.Wins_wire,
+                    )
+                    line.plot(
+                        fig=fig,
+                        ax=ax,
+                        color=ARROW_COLOR,
+                        linewidth=ARROW_WIDTH,
+                        label="Insulator thickness",
+                        offset_label=-8 * self.Wins_wire,
+                        is_arrow=True,
+                        fontsize=SC_FONT_SIZE,
+                    )
+                    # Wins_cond
+                    line = Segment(-1j * self.Wins_cond / 2, 1j * self.Wins_cond / 2)
+                    line.plot(
+                        fig=fig,
+                        ax=ax,
+                        color=ARROW_COLOR,
+                        linewidth=ARROW_WIDTH,
+                        label="Overall diameter",
+                        offset_label=-1j * self.Wins_cond * 0.25 + self.Wins_wire / 2,
+                        is_arrow=True,
+                        fontsize=SC_FONT_SIZE,
+                    )
+                    # Nwppc_rad
+                    ax.text(
+                        -a - 2 * self.Wwire,
+                        2.5 * a,
+                        "Strands in hand: 4",
+                        fontsize=SC_FONT_SIZE,
+                        bbox=TEXT_BOX,
+                    )
+
+            # Zooming and cleaning
+            if is_single:
+                W = self.comp_width() * 1.2
+            else:
+                W = self.comp_width() * 1.05
+
+            ax.axis("equal")
+            ax.set_xlim(-W / 2, W / 2)
+            ax.set_ylim(-W / 2, W / 2)
+            manager = plt.get_current_fig_manager()
+            if manager is not None:
+                manager.set_window_title(type(self).__name__ + " Schematics")
+            ax.set_title("")
+            ax.get_legend().remove()
+            ax.set_axis_off()
+
+            # Save / Show
+            if save_path is not None:
+                fig.savefig(save_path)
+                plt.close(fig=fig)
+
+            if is_show_fig:
+                fig.show()
+            return fig, ax
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

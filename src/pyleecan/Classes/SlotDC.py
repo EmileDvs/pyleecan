@@ -17,51 +17,11 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotDC._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.SlotDC.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotDC.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotDC.comp_angle_opening import comp_angle_opening
-except ImportError as error:
-    comp_angle_opening = error
-
-try:
-    from ..Methods.Slot.SlotDC.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
-
-try:
-    from ..Methods.Slot.SlotDC.comp_height_active import comp_height_active
-except ImportError as error:
-    comp_height_active = error
-
-try:
-    from ..Methods.Slot.SlotDC.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Slot.SlotDC.comp_surface_active import comp_surface_active
-except ImportError as error:
-    comp_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotDC.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
+from numpy import arcsin, exp, sqrt, cos, sin, pi, abs as np_abs
+from .Arc1 import Arc1
+from .Segment import Segment
+from ..Methods.Slot.Slot import SlotCheckError
+from .SurfLine import SurfLine
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -73,107 +33,370 @@ class SlotDC(Slot):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotDC._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        point_list: list
+            A list of 15 Point
+
+        """
+
+        Rbo = self.get_Rbo()
+
+        # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W1
+        # alpha = self.comp_angle_opening()
+        alpha = 2 * float(arcsin(self.W1 / (2 * Rbo)))
+
+        # Compute all points coordinates
+        Z0 = Rbo * exp(1j * 0)
+        Z1 = Rbo * exp(-1j * alpha / 2)
+        if self.is_outwards():
+            sign = +1
+        else:
+            sign = -1
+
+        Zc1 = Z1.real + sign * self.H1
+        Zc2 = Zc1 + sign * self.H2
+        Zc3 = Zc2 + sign * self.H3
+
+        Z2 = (
+            Zc1
+            - sign * sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)
+            - 1j * (self.W1 / 2)
         )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+        Z3 = (
+            Zc1
+            + sign * sqrt((self.D1 / 2) ** 2 - (self.W2 / 2) ** 2)
+            - 1j * (self.W2 / 2)
+        )
+        Z4 = (
+            Zc2
+            - sign * sqrt((self.D2 / 2) ** 2 - (self.W2 / 2) ** 2)
+            - 1j * (self.W2 / 2)
+        )
+
+        Z5 = Zc2.real - 1j * self.D2 / 2
+        Z6 = Zc3.real - 1j * self.R3
+
+        # Symmetries
+        Z7 = Z6.conjugate()
+        Z8 = Z5.conjugate()
+        Z9 = Z4.conjugate()
+        Z10 = Z3.conjugate()
+        Z11 = Z2.conjugate()
+        Z12 = Z1.conjugate()
+
+        return [Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, Z11, Z12, Zc1, Zc2, Zc3]
+
     # cf Methods.Slot.SlotDC.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        curve_list: list
+            A list of 6 Segment and 5 Arc
+
+        """
+
+        [
+            Z1,
+            Z2,
+            Z3,
+            Z4,
+            Z5,
+            Z6,
+            Z7,
+            Z8,
+            Z9,
+            Z10,
+            Z11,
+            Z12,
+            _,
+            _,
+            _,
+        ] = self._comp_point_coordinate()
+
+        # Adapt the lines according to the lamination
+        if self.is_outwards():
+            sign = 1
+            direc = True
+        else:
+            sign = -1
+            direc = False
+
+        # Creation of curve
+        curve_list = list()
+        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(Arc1(Z2, Z3, sign * self.D1 / 2, is_trigo_direction=direc))
+        curve_list.append(Segment(Z3, Z4))
+        curve_list.append(Arc1(Z4, Z5, sign * self.D2 / 2, is_trigo_direction=direc))
+        curve_list.append(Segment(Z5, Z6))
+
+        curve_list.append(Arc1(Z6, Z7, sign * self.R3, is_trigo_direction=direc))
+
+        curve_list.append(Segment(Z7, Z8))
+        curve_list.append(Arc1(Z8, Z9, sign * self.D2 / 2, is_trigo_direction=direc))
+        curve_list.append(Segment(Z9, Z10))
+        curve_list.append(Arc1(Z10, Z11, sign * self.D1 / 2, is_trigo_direction=direc))
+        curve_list.append(Segment(Z11, Z12))
+
+        return curve_list
+
     # cf Methods.Slot.SlotDC.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotDC method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the SlotDC object is correct
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        None
+        """
+        if self.W1 >= self.D1:
+            raise SlotCheckError("Slot 17 must have W1 < D1")
+        if self.W2 >= self.D1:
+            raise SlotCheckError("Slot 17 must have W2 < D1")
+        if self.W2 >= self.D2:
+            raise SlotCheckError("Slot 17 must have W2 < D2")
+        if self.H2 <= (self.D1 / 2 + self.D2 / 2):
+            raise SlotCheckError("Slot 17 must have D1/2 + D2/2 < H2")
+
     # cf Methods.Slot.SlotDC.comp_angle_opening
-    if isinstance(comp_angle_opening, ImportError):
-        comp_angle_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method comp_angle_opening: "
-                    + str(comp_angle_opening)
-                )
-            )
-        )
-    else:
-        comp_angle_opening = comp_angle_opening
+    def comp_angle_opening(self):
+        """Compute the average opening angle of the Slot
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        alpha: float
+            Average opening angle of the slot [rad]
+
+        """
+
+        Rbo = self.get_Rbo()
+
+        return float(2 * arcsin(self.W1 / (2 * Rbo)))
+
     # cf Methods.Slot.SlotDC.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotDC method comp_height: " + str(comp_height))
-            )
-        )
-    else:
-        comp_height = comp_height
+    def comp_height(self):
+        """Compute the height of the Slot.
+        Caution, the top of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        Htot: float
+            Height of the slot [m]
+
+        """
+
+        H = self.R3 + self.H3 + self.H2 + self.H1
+
+        # Computation of the arc height
+        Rbo = self.get_Rbo()
+        alpha = self.comp_angle_opening() / 2
+        Harc = float(Rbo * (1 - cos(alpha)))
+
+        if self.is_outwards():
+            return H - Harc
+        else:
+            return H + Harc
+
     # cf Methods.Slot.SlotDC.comp_height_active
-    if isinstance(comp_height_active, ImportError):
-        comp_height_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method comp_height_active: "
-                    + str(comp_height_active)
-                )
-            )
+    def comp_height_active(self):
+        """Compute the height of the winding area
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        Hwind: float
+            Height of the winding area [m]
+
+        """
+
+        return (
+            self.R3 + self.H3 + self.H2 + sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)
         )
-    else:
-        comp_height_active = comp_height_active
+
     # cf Methods.Slot.SlotDC.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the Slot total surface (by analytical computation).
+        Caution, the top of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        S: float
+            Slot total surface [m**2]
+
+        """
+
+        [
+            Z1,
+            Z2,
+            Z3,
+            Z4,
+            Z5,
+            Z6,
+            Z7,
+            Z8,
+            Z9,
+            Z10,
+            Z11,
+            Z12,
+            _,
+            _,
+            _,
+        ] = self._comp_point_coordinate()
+
+        Rbo = self.get_Rbo()
+
+        Swind = self.comp_surface_active()
+        # Rectangle Z12,Z11,Z2,Z1
+        S6 = self.W1 * abs(Z12.real - Z11.real)
+        # Top arc of the slot (on bore radius)
+        alpha = self.comp_angle_opening()
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+
+        if self.is_outwards():
+            return Swind + S6 - Sarc
+        else:
+            return Swind + S6 + Sarc
+
     # cf Methods.Slot.SlotDC.comp_surface_active
-    if isinstance(comp_surface_active, ImportError):
-        comp_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method comp_surface_active: "
-                    + str(comp_surface_active)
-                )
-            )
-        )
-    else:
-        comp_surface_active = comp_surface_active
+    def comp_surface_active(self):
+        """Compute the Slot inner surface for winding (by analytical computation)
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+
+        Returns
+        -------
+        Swind: float
+            Slot inner surface for winding [m**2]
+
+        """
+
+        [
+            Z1,
+            Z2,
+            Z3,
+            Z4,
+            Z5,
+            Z6,
+            Z7,
+            Z8,
+            Z9,
+            Z10,
+            Z11,
+            Z12,
+            _,
+            _,
+            _,
+        ] = self._comp_point_coordinate()
+
+        # Half circle R3
+        S1 = self.R3**2 * pi / 2
+        # Tapeze H3
+        S2 = self.H3 * (self.R3 * 2 + self.D2) / 2
+        # Half circle D2
+        S3 = (self.D2 / 2) ** 2 * pi / 2
+        # Remove arc from Half Circle D2
+        alpha1 = float(2 * arcsin(self.W2 / (2 * self.D2 / 2)))
+        Sarc1 = ((self.D2 / 2) ** 2.0) / 2.0 * (alpha1 - sin(alpha1))
+        # Rectangle Z10,Z9,Z4,Z3
+        S4 = self.W2 * np_abs(Z10.real - Z9.real)
+        # Circle D1
+        S5 = (self.D1 / 2) ** 2 * pi
+        # Remove arc from Circle D1 from rectangle Z10,Z9,Z4,Z3
+        alpha2 = float(2 * arcsin(self.W2 / (2 * self.D1 / 2)))
+        Sarc2 = ((self.D1 / 2) ** 2.0) / 2.0 * (alpha2 - sin(alpha2))
+        # Remove arc from Circle D1 from W1 rectangle
+        alpha3 = float(2 * arcsin(self.W1 / (2 * self.D1 / 2)))
+        Sarc3 = ((self.D1 / 2) ** 2.0) / 2.0 * (alpha3 - sin(alpha3))
+
+        return S1 + S2 + S3 - Sarc1 + S4 + S5 - Sarc2 - Sarc3
+
     # cf Methods.Slot.SlotDC.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotDC method get_surface_active: "
-                    + str(get_surface_active)
-                )
-            )
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full winding surface
+
+        Parameters
+        ----------
+        self : SlotDC
+            A SlotDC object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_wind: Surface
+            Surface corresponding to the Winding Area
+        """
+
+        # get the name of the lamination
+        st = self.get_name_lam()
+
+        # Create curve list
+        curve_list = self.build_geometry()[1:-1]
+        curve_list.append(
+            Segment(begin=curve_list[-1].get_end(), end=curve_list[0].get_begin())
         )
-    else:
-        get_surface_active = get_surface_active
+
+        # Create surface
+        if self.is_outwards():
+            Zmid = self.get_Rbo() + self.H1 + self.H2
+        else:
+            Zmid = self.get_Rbo() - self.H1 - self.H2
+        surface = SurfLine(
+            line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
+        )
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return surface
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

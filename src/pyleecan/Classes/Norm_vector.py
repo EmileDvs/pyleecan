@@ -17,11 +17,7 @@ from .Normalization import Normalization
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.SciDataTool.Norm_vector.normalize import normalize
-except ImportError as error:
-    normalize = error
-
+from ..Functions.SciDataTool import NormError
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -34,14 +30,28 @@ class Norm_vector(Normalization):
     VERSION = 1
 
     # cf Methods.SciDataTool.Norm_vector.normalize
-    if isinstance(normalize, ImportError):
-        normalize = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Norm_vector method normalize: " + str(normalize))
+    def normalize(
+        self,
+        values,
+    ):
+        """Normalizes axis values
+        Parameters
+        ----------
+        self: Norm_vector
+            a Norm_vector object
+        values: ndarray
+            axis values
+        Returns
+        -------
+        Vector of axis values
+        """
+        if len(values) != len(self.vector):
+            raise NormError(
+                "Normalization vector is not the same length as axis, cannot normalize"
             )
-        )
-    else:
-        normalize = normalize
+        else:
+            return self.vector
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,18 +17,6 @@ from .Machine import Machine
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.MachineSync.comp_angle_rotor_initial import (
-        comp_angle_rotor_initial,
-    )
-except ImportError as error:
-    comp_angle_rotor_initial = error
-
-try:
-    from ..Methods.Machine.MachineSync.is_synchronous import is_synchronous
-except ImportError as error:
-    is_synchronous = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -39,31 +27,38 @@ class MachineSync(Machine):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineSync.comp_angle_rotor_initial
-    if isinstance(comp_angle_rotor_initial, ImportError):
-        comp_angle_rotor_initial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MachineSync method comp_angle_rotor_initial: "
-                    + str(comp_angle_rotor_initial)
-                )
-            )
-        )
-    else:
-        comp_angle_rotor_initial = comp_angle_rotor_initial
+    def comp_angle_rotor_initial(self):
+        """Compute rotor initial angle between rotor and stator d-axes
+        Parameters
+        ----------
+        self : MachineSync
+            A: MachineSync object
+        Returns
+        -------
+        angle_rotor_initial: float
+            rotor initial angle given by the difference of rotor and stator d-axes [rad]
+        """
+
+        return self.stator.comp_angle_d_axis() - self.rotor.comp_angle_d_axis()
+
     # cf Methods.Machine.MachineSync.is_synchronous
-    if isinstance(is_synchronous, ImportError):
-        is_synchronous = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MachineSync method is_synchronous: "
-                    + str(is_synchronous)
-                )
-            )
-        )
-    else:
-        is_synchronous = is_synchronous
+    def is_synchronous(self):
+        """Return if a machine is synchronous or not
+
+        Parameters
+        ----------
+        self : MachineSync
+            A MachineSync
+
+        Returns
+        -------
+        is_synchronous: bool
+            A MachineSync is synchronous
+
+        """
+        return True
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -4,6 +4,11 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM54
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - plot_schematics: import name 'Arc1' refers to different sources (.Arc1.Arc1 and ..Methods.Slot.HoleM54.plot_schematics.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,41 +22,12 @@ from .Hole import Hole
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.HoleM54._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.HoleM54.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.HoleM54.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.HoleM54.comp_magnetization_dict import comp_magnetization_dict
-except ImportError as error:
-    comp_magnetization_dict = error
-
-try:
-    from ..Methods.Slot.HoleM54.comp_radius import comp_radius
-except ImportError as error:
-    comp_radius = error
-
-try:
-    from ..Methods.Slot.HoleM54.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Slot.HoleM54.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Slot.HoleM54.check import check
+from ..Methods.Slot.HoleM54.plot_schematics import plot_schematics
+from numpy import pi, exp, abs as np_abs
+from .Arc1 import Arc1
+from .Arc3 import Arc3
+from .SurfLine import SurfLine
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -63,82 +39,175 @@ class HoleM54(Hole):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.HoleM54._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM54 method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : HoleM54
+            A HoleM54 object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+
+        Rext = self.get_Rext()
+
+        # Compute point coordinates
+        Zc0 = Rext - self.H0 + self.R1
+        Z0 = Rext - self.H0
+        Z1 = (self.R1 * exp(1j * (-pi + self.W0 / 2))) + Zc0
+        Z2 = (self.R1 * exp(1j * (pi - self.W0 / 2))) + Zc0
+        Z4 = ((self.R1 + self.H1) * exp(1j * (-pi + self.W0 / 2))) + Zc0
+        Z3 = ((self.R1 + self.H1) * exp(1j * (pi - self.W0 / 2))) + Zc0
+
+        point_dict = dict()
+        point_dict["Z0"] = Z0
+        point_dict["Z1"] = Z1
+        point_dict["Z2"] = Z2
+        point_dict["Z3"] = Z3
+        point_dict["Z4"] = Z4
+        point_dict["Zc0"] = Zc0
+
+        return point_dict
+
     # cf Methods.Slot.HoleM54.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM54 method build_geometry: " + str(build_geometry)
-                )
-            )
+    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+        """Compute the curve (Arc) needed to plot the Hole.
+        The ending point of a curve is the starting point of the next curve in the
+        list
+
+        Parameters
+        ----------
+        self : HoleM54
+            A HoleM54 object
+        alpha : float
+            Angle to rotate the slot (Default value = 0) [rad]
+        delta : complex
+            Complex to translate the slot (Default value = 0)
+        is_simplified : bool
+           True to avoid line superposition
+
+        Returns
+        -------
+        surf_list : list
+            List of Air Surface on the slot
+
+        """
+
+        # Get correct label for surfaces
+        lam_label = self.parent.get_label()
+        R_id, surf_type = self.get_R_id()
+        vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
+
+        Rext = self.get_Rext()
+        # Get all the points
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+
+        surf_list = list()
+        curve_list = list()
+        curve_list.append(
+            Arc1(begin=Z1, end=Z2, radius=-self.R1, is_trigo_direction=False)
         )
-    else:
-        build_geometry = build_geometry
+        curve_list.append(Arc3(begin=Z2, end=Z3, is_trigo_direction=True))
+        curve_list.append(Arc1(begin=Z3, end=Z4, radius=self.R1 + self.H1))
+        curve_list.append(Arc3(begin=Z4, end=Z1, is_trigo_direction=True))
+
+        Zref = Rext - self.H0 - self.H1 / 2
+        surf_list.append(
+            SurfLine(line_list=curve_list, label=vent_label + "T0-S0", point_ref=Zref)
+        )
+
+        # Apply the transformations
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+
+        return surf_list
+
     # cf Methods.Slot.HoleM54.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM54 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Slot.HoleM54.comp_magnetization_dict
-    if isinstance(comp_magnetization_dict, ImportError):
-        comp_magnetization_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM54 method comp_magnetization_dict: "
-                    + str(comp_magnetization_dict)
-                )
-            )
-        )
-    else:
-        comp_magnetization_dict = comp_magnetization_dict
+    def comp_magnetization_dict(self, is_north=True):
+        """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
+        Mangetization angle with Hole centered on Ox axis
+
+        Parameters
+        ----------
+        self : HoleM54
+            a HoleM54 object
+        is_north: True
+            True: comp north magnetization, else add pi [rad]
+
+        Returns
+        -------
+        mag_dict: dict
+            magnetization dictionary (key=magnet_X, value=angle[rad])
+        """
+
+        mag_dict = dict()
+
+        return mag_dict
+
     # cf Methods.Slot.HoleM54.comp_radius
-    if isinstance(comp_radius, ImportError):
-        comp_radius = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM54 method comp_radius: " + str(comp_radius))
-            )
-        )
-    else:
-        comp_radius = comp_radius
+    def comp_radius(self):
+        """Compute the radius of the min and max circle that contains the hole
+
+        Parameters
+        ----------
+        self : HoleM54
+            A HoleM54 object
+
+        Returns
+        -------
+        (Rmin,Rmax): tuple
+            Radius of the circle that contains the hole [m]
+
+        """
+
+        Rext = self.get_Rext()
+
+        surf_list = self.build_geometry()
+        point_list = list()
+        for curve in surf_list[0].line_list:
+            point_list.extend(curve.discretize())
+
+        Rmax = max([np_abs(point) for point in point_list])
+        Rmin = Rext - self.H0 - self.H1
+        return (Rmin, Rmax)
+
     # cf Methods.Slot.HoleM54.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM54 method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the complete surface of the Hole
+
+        Parameters
+        ----------
+        self : HoleM54
+            A HoleM54 object
+
+        Returns
+        -------
+        S: float
+            Surface of the Hole [m**2]
+
+        """
+
+        Sint = pi * self.R1**2
+        Sext = pi * (self.R1 + self.H1) ** 2
+        Sarc = (Sext - Sint) * (self.W0 / (2 * pi))
+
+        return Sarc + pi * (self.H1 / 2) ** 2
+
     # cf Methods.Slot.HoleM54.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM54 method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -4,6 +4,12 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM60
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - comp_magnetization_dict: import name 'Segment' refers to different sources (pyleecan.Classes.Segment.Segment and .Segment.Segment)
+# - plot_schematics: import name 'Segment' refers to different sources (pyleecan.Classes.Segment.Segment and ..Methods.Slot.HoleM60.plot_schematics.Segment)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,51 +23,14 @@ from .HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.HoleM60._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.HoleM60.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.HoleM60.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.HoleM60.comp_magnetization_dict import comp_magnetization_dict
-except ImportError as error:
-    comp_magnetization_dict = error
-
-try:
-    from ..Methods.Slot.HoleM60.comp_radius import comp_radius
-except ImportError as error:
-    comp_radius = error
-
-try:
-    from ..Methods.Slot.HoleM60.comp_surface_magnet_id import comp_surface_magnet_id
-except ImportError as error:
-    comp_surface_magnet_id = error
-
-try:
-    from ..Methods.Slot.HoleM60.has_magnet import has_magnet
-except ImportError as error:
-    has_magnet = error
-
-try:
-    from ..Methods.Slot.HoleM60.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
-try:
-    from ..Methods.Slot.HoleM60.remove_magnet import remove_magnet
-except ImportError as error:
-    remove_magnet = error
-
+from ..Methods.Slot.HoleM60.check import check
+from ..Methods.Slot.HoleM60.comp_magnetization_dict import comp_magnetization_dict
+from ..Methods.Slot.HoleM60.plot_schematics import plot_schematics
+from numpy import exp, pi, cos, sin, tan, angle, sqrt, abs as np_abs
+from pyleecan.Classes.Arc3 import Arc3
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes.SurfLine import SurfLine
+from pyleecan.Functions.labels import HOLEM_LAB
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -73,103 +42,375 @@ class HoleM60(HoleMag):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.HoleM60._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM60 method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : HoleM60
+            A HoleM60 object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+
+        Rbo = self.get_Rbo()
+
+        # comp point coordinate (in complex)
+        # Draw the left side with center P
+        Z0 = 1j * self.H0 / (2 * sin(self.W0 / 2))
+        Z1 = -self.W3 / 2 + 1j * (Z0.imag + (self.W3 / 2) / tan(self.W0 / 2))
+        Z2 = (
+            Z1.real
+            - sin(self.W0 / 2) * (self.W2 - self.H0)
+            + 1j * (Z1.imag + cos(self.W0 / 2) * (self.W2 - self.H0))
         )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+
+        # Draw the left hole with center P2
+        Z3h = -self.H0 / 2 - 1j * self.H0 / 2
+        Z4h = -1j * self.H0
+        Z5h = self.W2 - self.H0 - 1j * self.H0
+        Z6h = self.W2 - self.H0 / 2 - 1j * (self.H0 / 2)
+        w = self.W2 - self.H0
+        ZM1h = (w - self.W1) / 2 + self.W1
+        ZM2h = (w - self.W1) / 2
+        ZM4h = (w - self.W1) / 2 + self.W1 - 1j * self.H0
+        ZM3h = (w - self.W1) / 2 - 1j * self.H0
+
+        # Revert translation and rotation to center left hole in P
+        Z3 = Z3h * exp(1j * angle(Z1 - Z2)) + Z2
+        Z4 = Z4h * exp(1j * angle(Z1 - Z2)) + Z2
+        Z5 = Z5h * exp(1j * angle(Z1 - Z2)) + Z2
+        Z6 = Z6h * exp(1j * angle(Z1 - Z2)) + Z2
+        ZM1 = ZM1h * exp(1j * angle(Z1 - Z2)) + Z2
+        ZM2 = ZM2h * exp(1j * angle(Z1 - Z2)) + Z2
+        ZM3 = ZM3h * exp(1j * angle(Z1 - Z2)) + Z2
+        ZM4 = ZM4h * exp(1j * angle(Z1 - Z2)) + Z2
+
+        # Revert translation to center left hole in machine's center
+        Z = 1j * (sqrt((Rbo - self.H1) ** 2 - Z3.real**2) - Z3.imag)
+        Z0 += Z
+        Z1 += Z
+        Z2 += Z
+        Z3 += Z
+        Z4 += Z
+        Z5 += Z
+        Z6 += Z
+        ZM1 += Z
+        ZM2 += Z
+        ZM3 += Z
+        ZM4 += Z
+
+        # Rotation of angle -pi / 2 to respect slot conventions
+        Z *= exp(-1j * pi / 2)
+        Z0 *= exp(-1j * pi / 2)
+        Z1 *= exp(-1j * pi / 2)
+        Z2 *= exp(-1j * pi / 2)
+        Z3 *= exp(-1j * pi / 2)
+        Z4 *= exp(-1j * pi / 2)
+        Z5 *= exp(-1j * pi / 2)
+        Z6 *= exp(-1j * pi / 2)
+        ZM1 *= exp(-1j * pi / 2)
+        ZM2 *= exp(-1j * pi / 2)
+        ZM3 *= exp(-1j * pi / 2)
+        ZM4 *= exp(-1j * pi / 2)
+
+        # Draw the right hole by symmetry
+        Z1s = Z1.conjugate()
+        Z2s = Z2.conjugate()
+        Z3s = Z3.conjugate()
+        Z4s = Z4.conjugate()
+        Z5s = Z5.conjugate()
+        Z6s = Z6.conjugate()
+        ZM1s = ZM1.conjugate()
+        ZM2s = ZM2.conjugate()
+        ZM3s = ZM3.conjugate()
+        ZM4s = ZM4.conjugate()
+
+        point_dict = dict()
+        point_dict["Z"] = Z
+        point_dict["Z0"] = Z0
+        point_dict["Z1"] = Z1
+        point_dict["Z2"] = Z2
+        point_dict["Z3"] = Z3
+        point_dict["Z4"] = Z4
+        point_dict["Z5"] = Z5
+        point_dict["Z6"] = Z6
+        point_dict["ZM1"] = ZM1
+        point_dict["ZM2"] = ZM2
+        point_dict["ZM3"] = ZM3
+        point_dict["ZM4"] = ZM4
+        point_dict["Z1s"] = Z1s
+        point_dict["Z2s"] = Z2s
+        point_dict["Z3s"] = Z3s
+        point_dict["Z4s"] = Z4s
+        point_dict["Z5s"] = Z5s
+        point_dict["Z6s"] = Z6s
+        point_dict["ZM1s"] = ZM1s
+        point_dict["ZM2s"] = ZM2s
+        point_dict["ZM3s"] = ZM3s
+        point_dict["ZM4s"] = ZM4s
+
+        return point_dict
+
     # cf Methods.Slot.HoleM60.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM60 method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+        """Compute the curve (Segment) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : HoleM60
+            A HoleM60 object
+        alpha : float
+            Angle to rotate the slot (Default value = 0) [rad]
+        delta : complex
+            Complex to translate the slot (Default value = 0)
+        is_simplified : bool
+           True to avoid line superposition
+
+        Returns
+        -------
+        surf_list: list
+            List of SurfLine needed to draw the HoleM58
+
+        """
+
+        # Get correct label for surfaces
+        lam_label = self.parent.get_label()
+        R_id, surf_type = self.get_R_id()
+        vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
+        mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
+
+        # Get all the points
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        # Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+        # Z6 = point_dict["Z6"]
+        Z1s = point_dict["Z1s"]
+        Z2s = point_dict["Z2s"]
+        # Z3s = point_dict["Z3s"]
+        Z4s = point_dict["Z4s"]
+        Z5s = point_dict["Z5s"]
+        # Z6s = point_dict["Z6s"]
+        ZM1 = point_dict["ZM1"]
+        ZM2 = point_dict["ZM2"]
+        ZM3 = point_dict["ZM3"]
+        ZM4 = point_dict["ZM4"]
+        ZM1s = point_dict["ZM1s"]
+        ZM2s = point_dict["ZM2s"]
+        ZM3s = point_dict["ZM3s"]
+        ZM4s = point_dict["ZM4s"]
+
+        surf_list = list()
+        # Create all the surfaces for all the cases
+        # Upper surface without magnet_1
+        curve_list = list()
+        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(Arc3(begin=Z2, end=Z4, is_trigo_direction=True))
+        curve_list.append(Segment(Z4, Z5))
+        curve_list.append(Arc3(begin=Z5, end=Z1, is_trigo_direction=True))
+        point_ref = (Z1 + Z4) / 2
+        S1 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Lower surface without magnet_0
+        curve_list = list()
+        curve_list.append(Arc3(begin=Z1s, end=Z5s, is_trigo_direction=True))
+        curve_list.append(Segment(Z5s, Z4s))
+        curve_list.append(Arc3(begin=Z4s, end=Z2s, is_trigo_direction=True))
+        curve_list.append(Segment(Z2s, Z1s))
+        point_ref = (Z1s + Z4s) / 2
+        S0 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Air surface 1 with magnet_1
+        curve_list = list()
+        curve_list.append(Segment(Z1, ZM1))
+        curve_list.append(Segment(ZM1, ZM4))
+        curve_list.append(Segment(ZM4, Z5))
+        curve_list.append(Arc3(begin=Z5, end=Z1, is_trigo_direction=True))
+        point_ref = (ZM1 + Z5) / 2
+        SM11 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Air surface 2 with magnet_1
+        curve_list = list()
+        curve_list.append(Segment(ZM2, Z2))
+        curve_list.append(Arc3(begin=Z2, end=Z4, is_trigo_direction=True))
+        curve_list.append(Segment(Z4, ZM3))
+        curve_list.append(Segment(ZM3, ZM2))
+        point_ref = (Z2 + ZM3) / 2
+        SM12 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Magnet_1 surface
+        curve_list = list()
+        curve_list.append(Segment(ZM1, ZM2))
+        curve_list.append(Segment(ZM2, ZM3))
+        curve_list.append(Segment(ZM3, ZM4))
+        curve_list.append(Segment(ZM4, ZM1))
+        point_ref = (ZM1 + ZM3) / 2
+        SM1 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Air surface 1 with magnet_0
+        curve_list = list()
+        curve_list.append(Segment(Z1s, ZM1s))
+        curve_list.append(Segment(ZM1s, ZM4s))
+        curve_list.append(Segment(ZM4s, Z5s))
+        curve_list.append(Arc3(begin=Z5s, end=Z1s, is_trigo_direction=False))
+        point_ref = (ZM1s + Z5s) / 2
+        SM01 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Air surface 2 with magnet_0
+        curve_list = list()
+        curve_list.append(Segment(ZM2s, Z2s))
+        curve_list.append(Arc3(begin=Z2s, end=Z4s, is_trigo_direction=False))
+        curve_list.append(Segment(Z4s, ZM3s))
+        curve_list.append(Segment(ZM3s, ZM2s))
+        point_ref = (Z2s + ZM3s) / 2
+        SM02 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Magnet_0 surface
+        curve_list = list()
+        curve_list.append(Segment(ZM1s, ZM4s))
+        curve_list.append(Segment(ZM4s, ZM3s))
+        curve_list.append(Segment(ZM3s, ZM2s))
+        curve_list.append(Segment(ZM2s, ZM1s))
+        point_ref = (ZM1s + ZM3s) / 2
+        SM0 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Create the surface list by selecting the correct ones
+        surf_list = list()
+        if self.magnet_0:
+            SM01.label = vent_label + "T0-S0"
+            SM0.label = mag_label + "T0-S0"
+            SM02.label = vent_label + "T1-S0"
+            surf_list += [SM0, SM01, SM02]
+            if self.magnet_1:
+                SM11.label = vent_label + "T2-S0"
+                SM1.label = mag_label + "T1-S0"
+                SM12.label = vent_label + "T3-S0"
+                surf_list += [SM1, SM11, SM12]
+            else:
+                S1.label = vent_label + "T2-S0"
+                surf_list += [S1]
+        else:
+            S0.label = vent_label + "T0-S0"
+            surf_list += [S0]
+            if self.magnet_1:
+                SM11.label = vent_label + "T1-S0"
+                SM1.label = mag_label + "T1-S0"
+                SM12.label = vent_label + "T2-S0"
+                surf_list += [SM1, SM11, SM12]
+            else:
+                S1.label = vent_label + "T1-S0"
+                surf_list += [S1]
+
+        # Apply the transformations
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+
+        return surf_list
+
     # cf Methods.Slot.HoleM60.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM60 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
     # cf Methods.Slot.HoleM60.comp_magnetization_dict
-    if isinstance(comp_magnetization_dict, ImportError):
-        comp_magnetization_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM60 method comp_magnetization_dict: "
-                    + str(comp_magnetization_dict)
-                )
-            )
-        )
-    else:
-        comp_magnetization_dict = comp_magnetization_dict
+    comp_magnetization_dict = comp_magnetization_dict
+
     # cf Methods.Slot.HoleM60.comp_radius
-    if isinstance(comp_radius, ImportError):
-        comp_radius = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM60 method comp_radius: " + str(comp_radius))
-            )
+    def comp_radius(self):
+        """Compute the radius of the min and max circle that contains the slot
+
+        Parameters
+        ----------
+        self : HoleM60
+            A HoleM60 object
+
+        Returns
+        -------
+        (Rmin,Rmax): tuple
+            Radius of the circle that contains the slot [m]
+        """
+        point_dict = self._comp_point_coordinate()
+
+        point_list = list()
+        # Discretize arcs to get the higher point and the lower point
+        curve = Arc3(
+            begin=point_dict["Z2"], end=point_dict["Z4"], is_trigo_direction=True
         )
-    else:
-        comp_radius = comp_radius
+        point_list.extend(curve.discretize())
+        curve = Arc3(
+            begin=point_dict["Z5"], end=point_dict["Z1"], is_trigo_direction=True
+        )
+        point_list.extend(curve.discretize())
+
+        abs_list = [np_abs(point) for point in point_list]
+        Rmax = max(abs_list)
+        Rmin = min(abs_list)
+
+        return (Rmin, Rmax)
+
     # cf Methods.Slot.HoleM60.comp_surface_magnet_id
-    if isinstance(comp_surface_magnet_id, ImportError):
-        comp_surface_magnet_id = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM60 method comp_surface_magnet_id: "
-                    + str(comp_surface_magnet_id)
-                )
-            )
-        )
-    else:
-        comp_surface_magnet_id = comp_surface_magnet_id
+    def comp_surface_magnet_id(self, index):
+        """Compute the surface of the hole magnet of the corresponding index
+
+        Parameters
+        ----------
+        self : HoleM60
+            A HoleM60 object
+        index : int
+            Index of the magnet to compute the surface
+
+        Returns
+        -------
+        Smag: float
+            Surface of the Magnet [m**2]
+        """
+
+        # all magnet has the same surface
+        label = "magnet_" + str(index)
+        if index in [0, 1] and getattr(self, label) is not None:
+            return self.W1 * self.H0
+        return 0
+
     # cf Methods.Slot.HoleM60.has_magnet
-    if isinstance(has_magnet, ImportError):
-        has_magnet = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM60 method has_magnet: " + str(has_magnet))
-            )
-        )
-    else:
-        has_magnet = has_magnet
+    def has_magnet(self):
+        """Return if the Hole has magnets
+
+        Parameters
+        ----------
+        self : HoleM60
+            A HoleM60 object
+
+        Returns
+        -------
+        has_magnet : bool
+            True if the magnets are not None
+        """
+
+        return self.magnet_0 is not None or self.magnet_1 is not None
+
     # cf Methods.Slot.HoleM60.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM60 method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
+
     # cf Methods.Slot.HoleM60.remove_magnet
-    if isinstance(remove_magnet, ImportError):
-        remove_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM60 method remove_magnet: " + str(remove_magnet)
-                )
-            )
-        )
-    else:
-        remove_magnet = remove_magnet
+    def remove_magnet(self):
+        """Remove the magnet (set to None) of the Hole
+
+        Parameters
+        ----------
+        self : HoleM60
+            a HoleM60 object
+        """
+
+        self.magnet_0 = None
+        self.magnet_1 = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,11 +17,7 @@ from .GaussPoint import GaussPoint
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Mesh.FPGNSeg.get_gauss_points import get_gauss_points
-except ImportError as error:
-    get_gauss_points = error
-
+import numpy as np
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,17 +29,18 @@ class FPGNSeg(GaussPoint):
     VERSION = 1
 
     # cf Methods.Mesh.FPGNSeg.get_gauss_points
-    if isinstance(get_gauss_points, ImportError):
-        get_gauss_points = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use FPGNSeg method get_gauss_points: "
-                    + str(get_gauss_points)
-                )
-            )
-        )
-    else:
-        get_gauss_points = get_gauss_points
+    def get_gauss_points(self):
+        """Return the gauss points and weights for Segments"""
+
+        nb_gauss_points = self.nb_gauss_point
+        gauss_pts = np.zeros([nb_gauss_points, 2], dtype=float)
+
+        gauss_pts[:, 0] = np.polynomial.legendre.leggauss(nb_gauss_points)[0]
+
+        weights = np.polynomial.legendre.leggauss(nb_gauss_points)[1]
+
+        return gauss_pts, weights, nb_gauss_points
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,16 +17,7 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Material.MatElectrical.get_conductivity import get_conductivity
-except ImportError as error:
-    get_conductivity = error
-
-try:
-    from ..Methods.Material.MatElectrical.get_resistivity import get_resistivity
-except ImportError as error:
-    get_resistivity = error
-
+from numpy import inf
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,31 +28,70 @@ class MatElectrical(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Material.MatElectrical.get_conductivity
-    if isinstance(get_conductivity, ImportError):
-        get_conductivity = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MatElectrical method get_conductivity: "
-                    + str(get_conductivity)
-                )
-            )
-        )
-    else:
-        get_conductivity = get_conductivity
+    def get_conductivity(self, T_op=None, T_ref=20):
+        """Get conductivity for given temperature T_op
+
+        Parameters
+        ----------
+        self : MatElectrical
+            a MatElectrical object
+        T_op: float
+            Material operational temperature [degC]
+        T_ref: float
+            Material reference temperature [degC]
+
+        Returns
+        -------
+        sigma: float
+            Electric conductivity [S]
+        """
+
+        if T_op is None:
+            T_op = T_ref
+
+        if self.rho is None:
+            raise Exception("Cannot calculate conductivity if rh0 is None")
+
+        if self.rho == 0:
+            sigma = inf
+
+        else:
+            rho = self.get_resistivity(T_op, T_ref)
+            sigma = 1 / rho
+
+        return sigma
+
     # cf Methods.Material.MatElectrical.get_resistivity
-    if isinstance(get_resistivity, ImportError):
-        get_resistivity = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MatElectrical method get_resistivity: "
-                    + str(get_resistivity)
-                )
-            )
-        )
-    else:
-        get_resistivity = get_resistivity
+    def get_resistivity(self, T_op=None, T_ref=20):
+        """Get resistivity for given temperature T_op
+
+        Parameters
+        ----------
+        self : MatElectrical
+            a MatElectrical object
+        T_op: float
+            Material operational temperature [degC]
+        T_ref: float
+            Material reference temperature [degC]
+
+        Returns
+        -------
+        rho: float
+            Electric resistivity [ohm.m]
+        """
+
+        if T_op is None:
+            T_op = T_ref
+
+        if self.rho is None:
+            raise Exception("Cannot calculate resistivity if rho is None")
+
+        # Update resistivity
+        rho = self.rho * (1 + self.alpha * (T_op - T_ref))
+
+        return rho
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

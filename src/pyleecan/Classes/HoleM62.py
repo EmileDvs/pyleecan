@@ -4,6 +4,12 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM62
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - plot_schematics: import name 'Segment' refers to different sources (pyleecan.Classes.Segment.Segment and ..Methods.Slot.HoleM62.plot_schematics.Segment)
+# - plot_schematics_radial: import name 'Arc1' refers to different sources (pyleecan.Classes.Arc1.Arc1 and ..Methods.Slot.HoleM62.plot_schematics_radial.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,61 +23,14 @@ from .HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.HoleM62._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.HoleM62.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.HoleM62.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.HoleM62.comp_magnetization_dict import comp_magnetization_dict
-except ImportError as error:
-    comp_magnetization_dict = error
-
-try:
-    from ..Methods.Slot.HoleM62.comp_radius import comp_radius
-except ImportError as error:
-    comp_radius = error
-
-try:
-    from ..Methods.Slot.HoleM62.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Slot.HoleM62.comp_surface_magnet_id import comp_surface_magnet_id
-except ImportError as error:
-    comp_surface_magnet_id = error
-
-try:
-    from ..Methods.Slot.HoleM62.has_magnet import has_magnet
-except ImportError as error:
-    has_magnet = error
-
-try:
-    from ..Methods.Slot.HoleM62.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
-try:
-    from ..Methods.Slot.HoleM62.plot_schematics_radial import plot_schematics_radial
-except ImportError as error:
-    plot_schematics_radial = error
-
-try:
-    from ..Methods.Slot.HoleM62.remove_magnet import remove_magnet
-except ImportError as error:
-    remove_magnet = error
-
+from ..Methods.Slot.HoleM62.check import check
+from ..Methods.Slot.HoleM62.plot_schematics import plot_schematics
+from ..Methods.Slot.HoleM62.plot_schematics_radial import plot_schematics_radial
+from numpy import exp, sqrt, pi, abs, sin, arcsin
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes.SurfLine import SurfLine
+from pyleecan.Functions.labels import HOLEM_LAB
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -83,126 +42,293 @@ class HoleM62(HoleMag):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.HoleM62._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : HoleM62
+            A HoleM62 object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+
+        Rbo = self.get_Rbo()
+        point_dict = dict()
+        # comp point coordinate (in complex)
+        if self.W0_is_rad:
+            Z1 = (Rbo - self.H1 - self.H0) * exp(-1j * self.W0 / 2)
+            Z2 = (Rbo - self.H1) * exp(-1j * self.W0 / 2)
+            Z3 = (Rbo - self.H1) * exp(1j * self.W0 / 2)
+            Z4 = (Rbo - self.H1 - self.H0) * exp(1j * self.W0 / 2)
+            point_dict["Z1"] = Z1
+            point_dict["Z2"] = Z2
+            point_dict["Z3"] = Z3
+            point_dict["Z4"] = Z4
+
+        else:
+            Zc1 = ((Rbo - self.H1) ** 2) - ((self.W0 / 2) ** 2)
+            Zc = sqrt(Zc1)
+
+            Z7 = Zc + 1j * self.W0 / 2
+            Z6 = Zc - 1j * self.W0 / 2
+            Z8 = Z7 - self.H0
+            Z5 = Z6 - self.H0
+            point_dict["Z1"] = Z5
+            point_dict["Z2"] = Z6
+            point_dict["Z3"] = Z7
+            point_dict["Z4"] = Z8
+
+        return point_dict
+
     # cf Methods.Slot.HoleM62.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method build_geometry: " + str(build_geometry)
-                )
+    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+        """Compute the curve (Segment) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : HoleM62
+            A HoleM62 object
+        alpha : float
+            Angle to rotate the slot (Default value = 0) [rad]
+        delta : complex
+            Complex to translate the slot (Default value = 0)
+        is_simplified : bool
+            True to avoid line superposition
+
+        Returns
+        -------
+        surf_list: list
+            List of SurfLine needed to draw the HoleM58
+
+        """
+        Rbo = self.get_Rbo()
+
+        # Get correct label for surfaces
+        lam_label = self.parent.get_label()
+        R_id, surf_type = self.get_R_id()
+        mag_label = f"{lam_label}_{HOLEM_LAB}_R{R_id}-"
+        vent_label = f"{lam_label}_{surf_type}_R{R_id}-"
+        point_dict = self._comp_point_coordinate()
+
+        surf_list = list()
+        # Create all the surfaces for all the case
+
+        # Get all the points
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+
+        # surface Hole Radial
+        curve_list = list()
+        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(
+            Arc1(
+                begin=Z2,
+                end=Z3,
+                radius=Rbo - self.H1,
+                is_trigo_direction=True,
             )
         )
-    else:
-        build_geometry = build_geometry
+        curve_list.append(Segment(Z3, Z4))
+        curve_list.append(
+            Arc1(
+                begin=Z4,
+                end=Z1,
+                radius=-(abs(Z1)),
+                is_trigo_direction=False,
+            )
+        )
+        point_ref = (Z3 + Z1) / 2
+        S1 = SurfLine(line_list=curve_list, point_ref=point_ref)
+
+        # Create the surface list by selecting the correct ones
+        if self.magnet_0 is None:
+            S1.label = vent_label + "T0-S0"
+            surf_list = [S1]
+        else:
+            S1.label = mag_label + "T0-S0"
+            surf_list = [S1]
+
+        # Apply the transformations
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+
+        return surf_list
+
     # cf Methods.Slot.HoleM62.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM62 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Slot.HoleM62.comp_magnetization_dict
-    if isinstance(comp_magnetization_dict, ImportError):
-        comp_magnetization_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method comp_magnetization_dict: "
-                    + str(comp_magnetization_dict)
-                )
-            )
+    def comp_magnetization_dict(self, is_north=True):
+        """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
+        Mangetization angle with Hole centered on Ox axis
+
+        Parameters
+        ----------
+        self : HoleM62
+            a HoleM62 object
+        is_north: True
+            True: comp north magnetization, else add pi [rad]
+
+        Returns
+        -------
+        mag_dict: dict
+            magnetization dictionary (key=magnet_X, value=angle[rad])
+        """
+
+        # Comp magnet
+        point_dict = self._comp_point_coordinate()
+        Rbo = self.get_Rbo()
+
+        mag_dict = dict()
+
+        S0 = Arc1(
+            begin=point_dict["Z2"],
+            end=point_dict["Z3"],
+            radius=Rbo - self.H1,
+            is_trigo_direction=True,
         )
-    else:
-        comp_magnetization_dict = comp_magnetization_dict
+        mag_dict["magnet_0"] = S0.comp_normal()
+
+        if not is_north:
+            mag_dict["magnet_0"] += pi
+
+        if self.magnetization_dict_offset is not None:
+            for key, value in self.magnetization_dict_offset:
+                mag_dict[key] += value
+
+        return mag_dict
+
     # cf Methods.Slot.HoleM62.comp_radius
-    if isinstance(comp_radius, ImportError):
-        comp_radius = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM62 method comp_radius: " + str(comp_radius))
-            )
-        )
-    else:
-        comp_radius = comp_radius
+    def comp_radius(self):
+        """Compute the radius of the min and max circle that contains the slot
+
+        Parameters
+        ----------
+        self : HoleM62
+            A HoleM62 object
+
+        Returns
+        -------
+        (Rmin,Rmax): tuple
+            Radius of the circle that contains the slot [m]
+        """
+
+        Rbo = self.get_Rbo()
+
+        Rmax = Rbo - self.H1
+
+        if not self.W0_is_rad:
+            point_dict = self._comp_point_coordinate()
+            Rmin = abs(point_dict["Z1"])
+        else:
+            Rmin = Rbo - self.H1 - self.H0
+
+        return (Rmin, Rmax)
+
     # cf Methods.Slot.HoleM62.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method comp_surface: " + str(comp_surface)
-                )
+    def comp_surface(self):
+        """Compute the surface of the Hole
+
+        Parameters
+        ----------
+        self : HoleM62
+            A HoleM62 object
+
+        Returns
+        -------
+        S: float
+            Surface of the Hole. [m**2]
+
+        """
+        Rbo = self.get_Rbo()
+        if self.W0_is_rad:  # Polar Arc
+            return (
+                self.W0 * (Rbo - self.H1) ** 2 / 2
+                - self.W0 * (Rbo - self.H1 - self.H0) ** 2 / 2
             )
-        )
-    else:
-        comp_surface = comp_surface
+
+        else:  # Parallel side
+            Rbo = self.get_Rbo()
+            # Top surface
+            alpha = 2 * arcsin((self.W0 / 2) / (Rbo - self.H1))
+            Stop = ((Rbo - self.H1) ** 2) * (alpha - sin(alpha)) / 2
+
+            # Bottom surface
+            point_dict = self._comp_point_coordinate()
+            Z1 = point_dict["Z1"]
+            R1 = abs(Z1)
+            alpha = 2 * arcsin((self.W0 / 2) / R1)
+            Sbot = R1**2 * (alpha - sin(alpha)) / 2
+
+            return self.H0 * self.W0 + Stop - Sbot
+
     # cf Methods.Slot.HoleM62.comp_surface_magnet_id
-    if isinstance(comp_surface_magnet_id, ImportError):
-        comp_surface_magnet_id = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method comp_surface_magnet_id: "
-                    + str(comp_surface_magnet_id)
-                )
-            )
-        )
-    else:
-        comp_surface_magnet_id = comp_surface_magnet_id
+    def comp_surface_magnet_id(self, index):
+        """Compute the surface of the hole magnet of the corresponding index
+
+        Parameters
+        ----------
+        self : HoleM62
+            A HoleM62 object
+        index : int
+            Index of the magnet to compute the surface
+
+        Returns
+        -------
+        Smag: float
+            Surface of the Magnet [m**2]
+        """
+
+        if index != 0:
+            raise Exception("Only one magnet for HoleM62")
+        if self.magnet_0 is not None:
+            return self.comp_surface()  # Full magnet, no air
+        return 0
+
     # cf Methods.Slot.HoleM62.has_magnet
-    if isinstance(has_magnet, ImportError):
-        has_magnet = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleM62 method has_magnet: " + str(has_magnet))
-            )
-        )
-    else:
-        has_magnet = has_magnet
+    def has_magnet(self):
+        """Return if the Hole has magnets
+
+        Parameters
+        ----------
+        self : HoleM62
+            A HoleM62 object
+
+        Returns
+        -------
+        has_magnet : bool
+            True if the magnets are not None
+        """
+
+        return self.magnet_0 is not None
+
     # cf Methods.Slot.HoleM62.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # cf Methods.Slot.HoleM62.plot_schematics_radial
-    if isinstance(plot_schematics_radial, ImportError):
-        plot_schematics_radial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method plot_schematics_radial: "
-                    + str(plot_schematics_radial)
-                )
-            )
-        )
-    else:
-        plot_schematics_radial = plot_schematics_radial
+    plot_schematics_radial = plot_schematics_radial
+
     # cf Methods.Slot.HoleM62.remove_magnet
-    if isinstance(remove_magnet, ImportError):
-        remove_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleM62 method remove_magnet: " + str(remove_magnet)
-                )
-            )
-        )
-    else:
-        remove_magnet = remove_magnet
+    def remove_magnet(self):
+        """Remove the magnet (set to None) of the Hole
+
+        Parameters
+        ----------
+        self : HoleM62
+            a HoleM62 object
+        """
+
+        self.magnet_0 = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -421,7 +547,7 @@ class HoleM62(HoleMag):
         HoleM62_dict = super(HoleM62, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         HoleM62_dict["W0"] = self.W0
         HoleM62_dict["H0"] = self.H0
@@ -433,7 +559,7 @@ class HoleM62(HoleMag):
             HoleM62_dict["magnet_0"] = self.magnet_0.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name

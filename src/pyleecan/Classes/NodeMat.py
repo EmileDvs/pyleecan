@@ -17,26 +17,9 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Mesh.NodeMat.add_node import add_node
-except ImportError as error:
-    add_node = error
-
-try:
-    from ..Methods.Mesh.NodeMat.get_coord import get_coord
-except ImportError as error:
-    get_coord = error
-
-try:
-    from ..Methods.Mesh.NodeMat.get_indice import get_indice
-except ImportError as error:
-    get_indice = error
-
-try:
-    from ..Methods.Mesh.NodeMat.is_exist import is_exist
-except ImportError as error:
-    is_exist = error
-
+import numpy as np
+from numpy.typing import ArrayLike
+from typing import Union, Optional
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -48,43 +31,122 @@ class NodeMat(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Mesh.NodeMat.add_node
-    if isinstance(add_node, ImportError):
-        add_node = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use NodeMat method add_node: " + str(add_node))
-            )
-        )
-    else:
-        add_node = add_node
+    def add_node(self, coordinate: ArrayLike) -> Union[None, int]:
+        """Add a new node defined by its coordinates to the NodeMat
+        (if a node of this coordinate already exist, do nothing)
+
+        Parameters
+        ----------
+        self : NodeMat
+            an NodeMat object
+        coordinate : ArrayLike
+            The list of coordinates (length must match mesh dimension)
+
+        Returns
+        -------
+        Union[None,int]
+            Index of the new node or None if the node already exists
+        """
+        if self.is_exist(coordinate):
+            return None
+
+        # Empty coordinate case
+        if self.coordinate is None or self.coordinate.size == 0:
+            self.coordinate = np.array([coordinate])
+            self.nb_node = 1
+            self.indice = np.array([0], dtype=np.int32)
+
+            return 0
+
+        # Add node only if it doesn't already exist
+        self.coordinate = np.vstack((self.coordinate, coordinate))
+        new_index = np.max(self.indice) + 1
+        self.indice = np.concatenate((self.indice, np.array([new_index])))
+        self.nb_node += 1
+
+        return new_index
+
     # cf Methods.Mesh.NodeMat.get_coord
-    if isinstance(get_coord, ImportError):
-        get_coord = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use NodeMat method get_coord: " + str(get_coord))
-            )
-        )
-    else:
-        get_coord = get_coord
+    def get_coord(self, node_indices: ArrayLike) -> np.ndarray:
+        """Return the coordinates of node(s).
+
+        Parameters
+        ----------
+        node_indices : ArrayLike
+            Array of node indices
+
+        Returns
+        -------
+        np.ndarray
+            Array of node coordinates
+        """
+
+        # Extract position of the given node indices in the index vector
+        coord_indices = [
+            (self.indice == index).nonzero()[0][0] for index in node_indices
+        ]
+
+        return self.coordinate[coord_indices]
+
     # cf Methods.Mesh.NodeMat.get_indice
-    if isinstance(get_indice, ImportError):
-        get_indice = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use NodeMat method get_indice: " + str(get_indice))
+    def get_indice(
+        self, coordinate: Optional[np.ndarray] = None
+    ) -> Union[np.ndarray, int]:
+        """Return the coordinates of node(s).
+
+        Parameters
+        ----------
+        self : NodeMat
+            an NodeMat object
+        coordinate : Optional[np.ndarray]
+            a node coordinate
+
+        Returns
+        -------
+        Union[np.ndarray, int]
+            Index of the provided node coordinates or every indices
+        """
+
+        if coordinate is None:
+            return self.indice
+
+        # The distance-based method is more time-consuming, but could provide a tolerance in the search of the node.
+        # Compute the distance between nodes coordinates and the given ones
+        dist_node = np.linalg.norm(self.coordinate - coordinate, axis=1)
+        index_min = np.argmin(dist_node)
+        if dist_node[index_min] < self.delta:
+            return self.indice[index_min]
+        else:
+            raise ValueError(
+                f"The node with coordinate {coordinate} has not been retrieved with tolerance {self.delta}, increasing the tolerance value may solve the issue."
             )
-        )
-    else:
-        get_indice = get_indice
+
     # cf Methods.Mesh.NodeMat.is_exist
-    if isinstance(is_exist, ImportError):
-        is_exist = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use NodeMat method is_exist: " + str(is_exist))
-            )
-        )
-    else:
-        is_exist = is_exist
+    def is_exist(self, coordinate: np.ndarray) -> bool:
+        """Check the existence of a node defined by its coordinates
+
+        Parameters
+        ----------
+        self : NodeMat
+            an NodeMat object
+        coordinate : ndarray
+            coordinate of the node
+
+        Returns
+        -------
+        bool
+            True if the element already exist
+        """
+
+        if self.nb_node == 0:
+            return False
+
+        # Compute the distance between the node coordinates and the provided coordinate
+        dist_node = np.linalg.norm(self.coordinate - coordinate, axis=1)
+
+        return np.any(dist_node < self.delta)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

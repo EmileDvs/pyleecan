@@ -4,6 +4,11 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotM16
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - plot_schematics: import name 'Segment' refers to different sources (.Segment.Segment and ..Methods.Slot.SlotM16.plot_schematics.Segment)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,56 +22,11 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotM16._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.SlotM16.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotM16.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotM16.comp_angle_opening import comp_angle_opening
-except ImportError as error:
-    comp_angle_opening = error
-
-try:
-    from ..Methods.Slot.SlotM16.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
-
-try:
-    from ..Methods.Slot.SlotM16.comp_height_active import comp_height_active
-except ImportError as error:
-    comp_height_active = error
-
-try:
-    from ..Methods.Slot.SlotM16.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Slot.SlotM16.comp_surface_active import comp_surface_active
-except ImportError as error:
-    comp_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotM16.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotM16.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Slot.SlotM16.check import check
+from ..Methods.Slot.SlotM16.plot_schematics import plot_schematics
+from numpy import arcsin, exp, sin
+from .Segment import Segment
+from .SurfLine import SurfLine
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -78,118 +38,265 @@ class SlotM16(Slot):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotM16._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+
+        """
+        Rbo = self.get_Rbo()
+
+        # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W0
+        alpha = arcsin(self.W0 / (2 * Rbo))
+
+        Z0 = Rbo * exp(1j * 0)
+        Z1 = Z0 * exp(1j * -alpha)
+
+        if self.is_outwards():
+            Z2 = Z1 + self.H0
+            Z3 = Z2 - (self.W1 - self.W0) * 1j / 2.0
+            Z4 = Z3 + self.H1
+        else:
+            Z2 = Z1 - self.H0
+            Z3 = Z2 - (self.W1 - self.W0) * 1j / 2.0
+            Z4 = Z3 - self.H1
+
+        # symetry
+        Z5 = Z4.conjugate()
+        Z6 = Z3.conjugate()
+        Z7 = Z2.conjugate()
+        Z8 = Z1.conjugate()
+
+        point_dict = dict()
+        point_dict["Z1"] = Z1
+        point_dict["Z2"] = Z2
+        point_dict["Z3"] = Z3
+        point_dict["Z4"] = Z4
+        point_dict["Z5"] = Z5
+        point_dict["Z6"] = Z6
+        point_dict["Z7"] = Z7
+        point_dict["Z8"] = Z8
+
+        return point_dict
+
     # cf Methods.Slot.SlotM16.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        curve_list: list
+            A list of 11 Segment
+
+        """
+
+        point_dict = self._comp_point_coordinate()
+
+        # Creation of curve
+        curve_list = list()
+        if self.H0 > 0:
+            curve_list.append(Segment(point_dict["Z1"], point_dict["Z2"]))
+        curve_list.append(Segment(point_dict["Z2"], point_dict["Z3"]))
+        if self.H1 > 0:
+            curve_list.append(Segment(point_dict["Z3"], point_dict["Z4"]))
+        curve_list.append(Segment(point_dict["Z4"], point_dict["Z5"]))
+        if self.H1 > 0:
+            curve_list.append(Segment(point_dict["Z5"], point_dict["Z6"]))
+        curve_list.append(Segment(point_dict["Z6"], point_dict["Z7"]))
+        if self.H0 > 0:
+            curve_list.append(Segment(point_dict["Z7"], point_dict["Z8"]))
+
+        return curve_list
+
     # cf Methods.Slot.SlotM16.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotM16 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Slot.SlotM16.comp_angle_opening
-    if isinstance(comp_angle_opening, ImportError):
-        comp_angle_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method comp_angle_opening: "
-                    + str(comp_angle_opening)
-                )
-            )
-        )
-    else:
-        comp_angle_opening = comp_angle_opening
+    def comp_angle_opening(self):
+        """Compute the average opening angle of the Slot
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        alpha: float
+            Average opening angle of the slot [rad]
+
+        """
+        Rbo = self.get_Rbo()
+
+        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+
     # cf Methods.Slot.SlotM16.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotM16 method comp_height: " + str(comp_height))
-            )
-        )
-    else:
-        comp_height = comp_height
+    def comp_height(self):
+        """Compute the height of the Slot.
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        Htot: float
+            Height of the slot [m]
+
+        """
+        point_dict = self._comp_point_coordinate()
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+
+        Rbo = self.get_Rbo()
+
+        if self.is_outwards():
+            return abs(Z4) - Rbo
+        else:
+            return Rbo - abs((Z4 + Z5) / 2)
+
     # cf Methods.Slot.SlotM16.comp_height_active
-    if isinstance(comp_height_active, ImportError):
-        comp_height_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method comp_height_active: "
-                    + str(comp_height_active)
-                )
-            )
-        )
-    else:
-        comp_height_active = comp_height_active
+    def comp_height_active(self):
+        """Compute the height of the winding area
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        Hwind: float
+            Height of the winding area [m]
+
+        """
+
+        point_dict = self._comp_point_coordinate()
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+        Z6 = point_dict["Z6"]
+
+        if self.is_outwards():
+            R1 = abs((Z3 + Z6) / 2)
+            R2 = abs(Z4)
+        else:
+            R1 = abs((Z4 + Z5) / 2)
+            R2 = abs(Z3)
+        return R2 - R1
+
     # cf Methods.Slot.SlotM16.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the Slot total surface (by analytical computation).
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        S: float
+            Slot total surface [m**2]
+
+        """
+        Rbo = self.get_Rbo()
+
+        S0 = self.H0 * self.W0
+        S1 = self.H1 * self.W1
+
+        # The bottom is an arc
+        alpha = self.comp_angle_opening()
+        Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+
+        # Because Slamination = S - Zs * Sslot
+        if self.is_outwards():
+            return S0 + S1 - Sarc
+        else:
+            return S0 + S1 + Sarc
+
     # cf Methods.Slot.SlotM16.comp_surface_active
-    if isinstance(comp_surface_active, ImportError):
-        comp_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method comp_surface_active: "
-                    + str(comp_surface_active)
-                )
-            )
-        )
-    else:
-        comp_surface_active = comp_surface_active
+    def comp_surface_active(self):
+        """Compute the Slot inner surface for winding (by analytical computation)
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+
+        Returns
+        -------
+        Swind: float
+            Slot inner surface for winding [m**2]
+
+        """
+
+        return self.W1 * self.H1
+
     # cf Methods.Slot.SlotM16.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method get_surface_active: "
-                    + str(get_surface_active)
-                )
-            )
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full winding surface
+
+        Parameters
+        ----------
+        self : SlotM16
+            A SlotM16 object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_wind: Surface
+            Surface corresponding to the Winding Area
+        """
+
+        # get the name of the lamination
+        st = self.get_name_lam()
+
+        # Create curve list
+        curve_list = self.build_geometry()[1:-1]
+        curve_list.append(
+            Segment(begin=curve_list[-1].get_end(), end=curve_list[0].get_begin())
         )
-    else:
-        get_surface_active = get_surface_active
+
+        # Create surface
+        if self.is_outwards():
+            Zmid = self.get_Rbo() + self.H0 + self.H1 / 2
+        else:
+            Zmid = self.get_Rbo() - self.H0 - self.H1 / 2
+        surface = SurfLine(
+            line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
+        )
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return surface
+
     # cf Methods.Slot.SlotM16.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM16 method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,21 +17,7 @@ from .Rule import Rule
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Converter.RuleEquation.convert_to_other import convert_to_other
-except ImportError as error:
-    convert_to_other = error
-
-try:
-    from ..Methods.Converter.RuleEquation.convert_to_P import convert_to_P
-except ImportError as error:
-    convert_to_P = error
-
-try:
-    from ..Methods.Converter.RuleEquation.solve_equation import solve_equation
-except ImportError as error:
-    solve_equation = error
-
+from sympy.solvers import solve
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -42,42 +28,100 @@ class RuleEquation(Rule):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Converter.RuleEquation.convert_to_other
-    if isinstance(convert_to_other, ImportError):
-        convert_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RuleEquation method convert_to_other: "
-                    + str(convert_to_other)
-                )
-            )
+    def convert_to_other(self, other_dict, machine, other_unit_dict):
+        """Selects value in machine and implements it in other_dict
+
+        Parameters
+        ----------
+        self : RuleEquation
+            A RuleEquation object
+        other_dict : dict
+            dict created from the machine to be converted
+        machine : Machine
+            A pyleecan machine
+        other_unit_dict : dict
+            dict with unit to make conversion (key: unit family, value: factor)
+        """
+
+        value = self.solve_equation(
+            other_dict, machine, other_unit_dict, is_P_to_other=False
         )
-    else:
-        convert_to_other = convert_to_other
+
+        # adding value in other_dict
+        for variable in self.param:
+            if variable["variable"] == "y":
+                list_path = variable["path"]
+                other_dict = self.set_other(
+                    other_dict, value, other_unit_dict, list_path
+                )
+
+        return other_dict
+
     # cf Methods.Converter.RuleEquation.convert_to_P
-    if isinstance(convert_to_P, ImportError):
-        convert_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RuleEquation method convert_to_P: " + str(convert_to_P)
-                )
-            )
+    def convert_to_P(self, other_dict, machine, other_unit_dict):
+        """Selects value in other_dict and implements it in machine
+
+        Parameters
+        ----------
+        self : RulesEquation
+            A RuleEquation object
+        other_dict : dict
+            dict created from the file to be converted
+        machine : Machine
+            A pyleecan machine
+        other_unit_dict : dict
+            dict with unit to make conversion (key: unit family, value: factor)
+
+        """
+
+        value = self.solve_equation(
+            other_dict, machine, other_unit_dict, is_P_to_other=True
         )
-    else:
-        convert_to_P = convert_to_P
+
+        for param in self.param:
+            if param["variable"] == "x":
+                self.set_P(machine, value, param["path"])
+
+        return machine
+
     # cf Methods.Converter.RuleEquation.solve_equation
-    if isinstance(solve_equation, ImportError):
-        solve_equation = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use RuleEquation method solve_equation: "
-                    + str(solve_equation)
-                )
-            )
-        )
-    else:
-        solve_equation = solve_equation
+    def solve_equation(self, other_dict, machine, other_unit_dict, is_P_to_other):
+        if is_P_to_other:
+            name_var = "x"
+        else:
+            name_var = "y"
+
+        # we must have the same unit for all parameters used in equation
+        equation = self.equation
+
+        for param in self.param:
+            if param["src"] == "other":
+                if (
+                    param["src"] == "other"
+                    and not param["variable"].lower() == name_var
+                ):
+                    other_value = self.get_other(
+                        other_dict, param["path"], other_unit_dict
+                    )
+                    equation = equation.replace(param["variable"], str(other_value))
+
+        for param in self.param:
+            if param["src"] == "pyleecan":
+                if not param["variable"] == name_var:
+                    P_value = self.get_P(param["path"], machine)
+                    equation = equation.replace(param["variable"], str(P_value))
+
+        # equation cleaning, delete space and replace + and - to delete =
+        equation = equation.replace(" ", "")
+        equation = equation.split("=")
+
+        equation = equation[0] + "-(" + equation[1] + ")"
+
+        value = solve(equation)
+        # value return a list of equation, all equations are first order so have only one solution
+        return float(value[0])
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

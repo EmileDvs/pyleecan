@@ -17,51 +17,10 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.EEC.comp_fluxlinkage import comp_fluxlinkage
-except ImportError as error:
-    comp_fluxlinkage = error
-
-try:
-    from ..Methods.Simulation.EEC.comp_joule_losses import comp_joule_losses
-except ImportError as error:
-    comp_joule_losses = error
-
-try:
-    from ..Methods.Simulation.EEC.comp_parameters import comp_parameters
-except ImportError as error:
-    comp_parameters = error
-
-try:
-    from ..Methods.Simulation.EEC.comp_R1 import comp_R1
-except ImportError as error:
-    comp_R1 = error
-
-try:
-    from ..Methods.Simulation.EEC.comp_skin_effect import comp_skin_effect
-except ImportError as error:
-    comp_skin_effect = error
-
-try:
-    from ..Methods.Simulation.EEC.get_machine_from_parent import get_machine_from_parent
-except ImportError as error:
-    get_machine_from_parent = error
-
-try:
-    from ..Methods.Simulation.EEC.solve import solve
-except ImportError as error:
-    solve = error
-
-try:
-    from ..Methods.Simulation.EEC.solve_PWM import solve_PWM
-except ImportError as error:
-    solve_PWM = error
-
-try:
-    from ..Methods.Simulation.EEC.update_from_ref import update_from_ref
-except ImportError as error:
-    update_from_ref = error
-
+from os.path import join
+from ..Functions.Electrical.dqh_transformation import n2dqh_DataTime
+from ..Functions.Load.import_class import import_class
+from ..Methods.Simulation.EEC import AbstractClassError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -72,101 +31,271 @@ class EEC(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.EEC.comp_fluxlinkage
-    if isinstance(comp_fluxlinkage, ImportError):
-        comp_fluxlinkage = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method comp_fluxlinkage: " + str(comp_fluxlinkage)
-                )
+    def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):
+        """Compute flux linkage using magnetic model in self.fluxlink
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+        machine: Machine
+            a Machine object
+        OP: OP
+            an OP object
+        Nt_tot:
+            Number of time steps for magnetic calculation
+
+        Returns
+        ----------
+        Phi_dqh_mean: ndarray
+            Flux linkage in dqh frame
+        Phi_wind: DataND
+            Stator flux linkage Data object
+        """
+
+        Simu1 = import_class("pyleecan.Classes", "Simu1")
+        InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
+        MagFEMM = import_class("pyleecan.Classes", "MagFEMM")
+
+        if self.fluxlink is None:
+            mag_model = MagFEMM()
+        else:
+            mag_model = self.fluxlink.copy()
+
+        self.get_logger().info("Compute flux linkage with FEMM")
+
+        if machine is None:
+            machine = self.get_machine_from_parent()
+
+        # Get simulation name and result path
+        if isinstance(machine.parent, Simu1) and machine.parent.name not in [None, ""]:
+            simu_name = machine.parent.name + "_FluxLinkFEMM"
+            path_result = (
+                join(machine.parent.path_result, "FluxLinkFEMM")
+                if machine.parent.path_result not in [None, ""]
+                else None
             )
+        elif machine.name not in [None, ""]:
+            simu_name = machine.name + "_FluxLinkFEMM"
+            path_result = None
+        else:
+            simu_name = "FluxLinkFEMM"
+            path_result = None
+
+        # Define simulation
+        p = machine.get_pole_pair_number()
+        simu = Simu1(
+            elec=None, name=simu_name, path_result=path_result, machine=machine
         )
-    else:
-        comp_fluxlinkage = comp_fluxlinkage
+
+        simu.input = InputCurrent(OP=OP, Na_tot=200 * p)
+        simu.mag = mag_model
+        if Nt_tot is not None:
+            simu.input.Nt_tot = Nt_tot
+        else:
+            simu.input.Nt_tot = int(max(simu.mag.nb_worker * 5, 10) * p)
+
+        # Run Simulation
+        out = simu.run()
+
+        # Post-Process
+        stator_label = machine.stator.get_label()
+
+        Phi_wind = out.mag.Phi_wind[stator_label]
+
+        Phidqh = n2dqh_DataTime(Phi_wind, phase_dir=out.elec.phase_dir)
+        Phi_dqh_mean = Phidqh.get_along("time=mean", "phase")[Phidqh.symbol]
+
+        return Phi_dqh_mean, Phi_wind
+
     # cf Methods.Simulation.EEC.comp_joule_losses
-    if isinstance(comp_joule_losses, ImportError):
-        comp_joule_losses = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method comp_joule_losses: " + str(comp_joule_losses)
-                )
-            )
+    def comp_joule_losses(self, out_dict, machine):
+        """Compute the electrical Joule losses
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+        out_dict : dict
+            Dict containing all magnetic quantities that have been calculated in comp_parameters of EEC
+        machine : Machine
+            a Machine object
+
+        Returns
+        ------
+        out_dict : dict
+            Dict containing all magnetic quantities that have been calculated in EEC
+        """
+
+        raise AbstractClassError(
+            "EEC is an abstract class, please create one of its daughters."
         )
-    else:
-        comp_joule_losses = comp_joule_losses
+
     # cf Methods.Simulation.EEC.comp_parameters
-    if isinstance(comp_parameters, ImportError):
-        comp_parameters = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method comp_parameters: " + str(comp_parameters)
-                )
-            )
+    def comp_parameters(self):
+        """Compute and set the parameter attributes of the EEC that are not set.
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+
+        """
+
+        raise AbstractClassError(
+            "EEC is an abstract class, please create one of its daughters."
         )
-    else:
-        comp_parameters = comp_parameters
+
     # cf Methods.Simulation.EEC.comp_R1
-    if isinstance(comp_R1, ImportError):
-        comp_R1 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use EEC method comp_R1: " + str(comp_R1))
-            )
-        )
-    else:
-        comp_R1 = comp_R1
+    def comp_R1(self, R1_ref=None, T_ref=None):
+        """Compute the stator phase resistance for the equivalent electrical circuit
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+        R1_ref : float
+            reference resistance
+        T_ref : float
+            reference temperature
+
+        """
+
+        if R1_ref is None:
+            # Compute at correct temperature
+            machine = self.get_machine_from_parent()
+            R1_ref = machine.stator.comp_resistance_wind(T=self.Tsta)
+        elif T_ref is None:
+            # Assume that the reference match EEC temperature (should not happend)
+            pass
+        else:  # Adpat the temperature
+            # Get stator conductor
+            machine = self.get_machine_from_parent()
+            CondS = machine.stator.winding.conductor
+
+            # Compute temperature effect on stator side
+            Tfact1 = CondS.comp_temperature_effect(T_op=self.Tsta, T_ref=T_ref)
+            R1_ref = R1_ref * Tfact1
+        # Stator resistance
+        self.R1 = R1_ref * self.Xkr_skinS
+
     # cf Methods.Simulation.EEC.comp_skin_effect
-    if isinstance(comp_skin_effect, ImportError):
-        comp_skin_effect = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method comp_skin_effect: " + str(comp_skin_effect)
-                )
-            )
+    def comp_skin_effect(self):
+        """Compute the skin effect factors (update value in object)
+
+        Parameters
+        ----------
+        self : EEC
+            An EEC objects
+        """
+
+        assert self.OP is not None
+        assert self.Tsta is not None
+        assert self.Trot is not None
+        machine = self.get_machine_from_parent()
+        CondS = machine.stator.winding.conductor
+        felec = self.OP.get_felec()
+
+        # compute skin_effect on stator side
+        self.Xkr_skinS = CondS.comp_skin_effect_resistance(
+            freq=felec, T_op=self.Tsta, T_ref=20
         )
-    else:
-        comp_skin_effect = comp_skin_effect
+
+        self.Xke_skinS = CondS.comp_skin_effect_inductance(
+            freq=felec, T_op=self.Tsta, T_ref=20
+        )
+
     # cf Methods.Simulation.EEC.get_machine_from_parent
-    if isinstance(get_machine_from_parent, ImportError):
-        get_machine_from_parent = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method get_machine_from_parent: "
-                    + str(get_machine_from_parent)
-                )
-            )
-        )
-    else:
-        get_machine_from_parent = get_machine_from_parent
+    def get_machine_from_parent(self):
+        """Get machine object from parent
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+
+        Returns
+        ----------
+        machine : Machine
+            a Machine object
+        """
+
+        parent = self.parent
+        # Try to find simulation parent (output.simu.elec.eec)
+        while parent is not None and not hasattr(parent, "machine"):
+            parent = parent.parent
+
+        if parent is not None and hasattr(parent, "machine"):
+            return parent.machine
+        else:
+            # Try to find output parent (output.elec.eec)
+            parent = self.parent
+            while parent is not None and not hasattr(parent, "simu"):
+                parent = parent.parent
+            if parent is not None:
+                return parent.simu.machine
+            else:
+                return None
+
     # cf Methods.Simulation.EEC.solve
-    if isinstance(solve, ImportError):
-        solve = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use EEC method solve: " + str(solve))
-            )
+    def solve(self):
+        """Compute the parameters dict for the equivalent electrical circuit
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+
+        Returns
+        ------
+        out_dict : dict
+            Dict containing all magnetic quantities that have been calculated in EEC
+        """
+
+        raise AbstractClassError(
+            "EEC is an abstract class, please create one of its daughters."
         )
-    else:
-        solve = solve
+
     # cf Methods.Simulation.EEC.solve_PWM
-    if isinstance(solve_PWM, ImportError):
-        solve_PWM = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use EEC method solve_PWM: " + str(solve_PWM))
-            )
+    def solve_PWM(self, output):
+        """Get stator current harmonics due to PWM harmonics
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+        output: Output
+            An Output object
+        is_dqh_freq: bool
+            True to consider frequencies in dqh frame
+
+        Returns
+        ------
+        Is_PWM : DataFreq
+            Stator current harmonics as DataFreq
+        """
+        raise AbstractClassError(
+            "EEC is an abstract class, please create one of its daughters."
         )
-    else:
-        solve_PWM = solve_PWM
+
     # cf Methods.Simulation.EEC.update_from_ref
-    if isinstance(update_from_ref, ImportError):
-        update_from_ref = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EEC method update_from_ref: " + str(update_from_ref)
-                )
-            )
+    def update_from_ref(self, LUT_ref):
+        """Compute and set the parameter attributes of the EEC from a reference LUT
+
+        Parameters
+        ----------
+        self : EEC
+            an EEC object
+        LUT_ref : LUTdq
+            a LUTdq object
+
+        """
+
+        raise AbstractClassError(
+            "EEC is an abstract class, please create one of its daughters."
         )
-    else:
-        update_from_ref = update_from_ref
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

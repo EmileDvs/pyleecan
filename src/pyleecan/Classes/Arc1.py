@@ -4,6 +4,11 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc1
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - split_point: import name 'np_abs' refers to different sources (numpy.abs as np_abs and ..Methods.Geometry.Arc1.split_point.np_abs)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,81 +22,15 @@ from .Arc import Arc
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Geometry.Arc1.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Geometry.Arc1.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
-try:
-    from ..Methods.Geometry.Arc1.comp_radius import comp_radius
-except ImportError as error:
-    comp_radius = error
-
-try:
-    from ..Methods.Geometry.Arc1.discretize import discretize
-except ImportError as error:
-    discretize = error
-
-try:
-    from ..Methods.Geometry.Arc1.get_angle import get_angle
-except ImportError as error:
-    get_angle = error
-
-try:
-    from ..Methods.Geometry.Arc1.get_begin import get_begin
-except ImportError as error:
-    get_begin = error
-
-try:
-    from ..Methods.Geometry.Arc1.get_center import get_center
-except ImportError as error:
-    get_center = error
-
-try:
-    from ..Methods.Geometry.Arc1.get_end import get_end
-except ImportError as error:
-    get_end = error
-
-try:
-    from ..Methods.Geometry.Arc1.get_middle import get_middle
-except ImportError as error:
-    get_middle = error
-
-try:
-    from ..Methods.Geometry.Arc1.reverse import reverse
-except ImportError as error:
-    reverse = error
-
-try:
-    from ..Methods.Geometry.Arc1.rotate import rotate
-except ImportError as error:
-    rotate = error
-
-try:
-    from ..Methods.Geometry.Arc1.scale import scale
-except ImportError as error:
-    scale = error
-
-try:
-    from ..Methods.Geometry.Arc1.split_half import split_half
-except ImportError as error:
-    split_half = error
-
-try:
-    from ..Methods.Geometry.Arc1.split_point import split_point
-except ImportError as error:
-    split_point = error
-
-try:
-    from ..Methods.Geometry.Arc1.translate import translate
-except ImportError as error:
-    translate = error
-
+from ..Methods.Geometry.Arc1.check import check
+from ..Methods.Geometry.Arc1.split_point import split_point
+from numpy import pi, angle as np_angle, exp, linspace, angle, abs as np_abs, sqrt
+from ..Methods.Machine import ARC_NPOINT_D
+from ..Methods.Geometry.Arc1 import (
+    NbPointArc1DError,
+    AngleRotationArc1Error,
+    PointTranslateArc1Error,
+)
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -102,142 +41,385 @@ class Arc1(Arc):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Geometry.Arc1.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Geometry.Arc1.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method comp_length: " + str(comp_length))
-            )
-        )
-    else:
-        comp_length = comp_length
+    def comp_length(self):
+        """Compute the length of the arc
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        length: float
+            length of the arc
+        """
+
+        self.check()
+
+        R = abs(self.radius)
+
+        # alpha is the opening angle
+        alpha = abs(self.get_angle())
+
+        # 2*pi*R is the length of the total circle
+        # The arc is an alpha / 2pi portion of the cercle
+        return float(2 * pi * R * (alpha / (2 * pi)))
+
     # cf Methods.Geometry.Arc1.comp_radius
-    if isinstance(comp_radius, ImportError):
-        comp_radius = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method comp_radius: " + str(comp_radius))
-            )
-        )
-    else:
-        comp_radius = comp_radius
+    def comp_radius(self):
+        """Compute the Radius of the Arc1 (for unification with other arc objects)
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        radius: float
+            radius of the arc
+        """
+
+        self.check()
+
+        return abs(self.radius)  # Radius of the arc
+
     # cf Methods.Geometry.Arc1.discretize
-    if isinstance(discretize, ImportError):
-        discretize = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method discretize: " + str(discretize))
-            )
-        )
-    else:
-        discretize = discretize
+    def discretize(self, nb_point=ARC_NPOINT_D):
+        """Return the discretize version of the Arc.
+        Begin and end are always returned
+
+        Parameters
+        ----------
+        self : Arc1
+            The Arc1 object to discretize
+        nb_point :
+            Number of points to add to discretize the arc (Default value = ARC_NPOINT_D)
+
+        Returns
+        -------
+        list_point: list
+            list of complex coordinate of the points
+
+        Raises
+        ------
+        NbPointArc1DError
+            nb_point must be an integer >=0
+        """
+
+        # Check that the Arc is correct
+        self.check()
+        if not isinstance(nb_point, int):
+            raise NbPointArc1DError("discretize : nb_point must be an integer")
+        if nb_point < 0:
+            raise NbPointArc1DError("nb_point must be >=0")
+
+        # We use the complex representation of the point
+        z1 = self.begin
+        z2 = self.end
+        zc = self.get_center()
+
+        # Geometric transformation : center is the origin, angle(begin) = 0
+        Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
+        Zend = (z2 - zc) * exp(-1j * np_angle(z1 - zc))
+
+        # Generation of the point by rotation
+        if self.is_trigo_direction:
+            sign = 1
+        else:
+            sign = -1
+        t = linspace(0, self.get_angle(), nb_point + 2)
+        list_point = Zstart * exp(1j * t)
+
+        # Geometric transformation : return to the main axis
+        list_point = list_point * exp(1j * np_angle(z1 - zc)) + zc
+
+        return list_point
+
     # cf Methods.Geometry.Arc1.get_angle
-    if isinstance(get_angle, ImportError):
-        get_angle = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method get_angle: " + str(get_angle))
-            )
-        )
-    else:
-        get_angle = get_angle
+    def get_angle(self, is_deg=False):
+        """Return the angle of the arc
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+        is_deg: bool
+            True to convert to degree
+
+        Returns
+        -------
+        angle: float
+            Angle of the arc
+        """
+        # Go to center ref with begin on the X > 0 axis
+        Zc = self.get_center()
+        Z2 = (self.end - Zc) * exp(-1j * angle(self.begin - Zc))
+
+        if Z2.imag > 0 and self.is_trigo_direction:
+            alpha = angle(Z2)
+        elif Z2.imag > 0 and not self.is_trigo_direction:
+            alpha = -(2 * pi - angle(Z2))
+        elif Z2.imag < 0 and self.is_trigo_direction:
+            alpha = 2 * pi - abs(angle(Z2))
+        elif Z2.imag < 0 and not self.is_trigo_direction:
+            alpha = angle(Z2)
+        elif Z2.imag == 0 and self.is_trigo_direction:
+            alpha = abs(angle(Z2))
+        elif Z2.imag == 0 and not self.is_trigo_direction:
+            alpha = -abs(angle(Z2))
+        else:
+            alpha = 0
+
+        if is_deg:
+            return alpha * 180 / pi
+        else:
+            return alpha
+
     # cf Methods.Geometry.Arc1.get_begin
-    if isinstance(get_begin, ImportError):
-        get_begin = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method get_begin: " + str(get_begin))
-            )
-        )
-    else:
-        get_begin = get_begin
+    def get_begin(self):
+        """Return the begin point of the arc
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        begin: complex
+            Complex coordinates of the begin point of the Arc1
+        """
+
+        return self.begin
+
     # cf Methods.Geometry.Arc1.get_center
-    if isinstance(get_center, ImportError):
-        get_center = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method get_center: " + str(get_center))
-            )
-        )
-    else:
-        get_center = get_center
+    def get_center(self):
+        """Return the center of the arc
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        Zc: complex
+            Complex coordinates of the center of the Arc1
+        """
+
+        self.check()
+
+        # The center is on the bisection of [begin, end]
+        z1 = self.begin
+        z2 = self.end
+        R = self.radius
+        D12 = np_abs(z2 - z1)  # length of segment [begin,end]
+
+        # Centre at the middle of begin and end (distance(Z1, Z2) = diameter )
+        if np_abs(D12 - np_abs(2 * R)) < 1e-6:
+            Zc = (z2 + z1) / 2.0
+        else:
+            # In the coordinate system begin on center and end on X > 0 axis
+            if R > 0:  # Center is above the segment
+                Zc = D12 / 2 + 1j * sqrt(R**2 - (D12 / 2) ** 2)
+            else:
+                Zc = D12 / 2 - 1j * sqrt(R**2 - (D12 / 2) ** 2)
+            # Go back to the original coordinate system
+            Zc = Zc * exp(1j * np_angle(z2 - z1)) + z1
+
+        # Return (0,0) if the point is too close from 0
+        if np_abs(Zc) < 1e-6:
+            Zc = 0
+
+        return Zc
+
     # cf Methods.Geometry.Arc1.get_end
-    if isinstance(get_end, ImportError):
-        get_end = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method get_end: " + str(get_end))
-            )
-        )
-    else:
-        get_end = get_end
+    def get_end(self):
+        """Return the end point of the arc
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        end: complex
+            Complex coordinates of the end point of the Arc1
+        """
+
+        return self.end
+
     # cf Methods.Geometry.Arc1.get_middle
-    if isinstance(get_middle, ImportError):
-        get_middle = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method get_middle: " + str(get_middle))
-            )
-        )
-    else:
-        get_middle = get_middle
+    def get_middle(self):
+        """Return the point at the middle of the arc
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        Zmid: complex
+            Complex coordinates of the middle of the Arc1
+        """
+
+        # We use the complex representation of the point
+        z1 = self.begin
+        z2 = self.end
+        zc = self.get_center()
+
+        # Geometric transformation : center is the origine, angle(begin) = 0
+        Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
+
+        # Generation of the point by rotation
+        alpha = self.get_angle()
+        Zmid = Zstart * exp(1j * alpha / 2)
+
+        # Geometric transformation : return to the main axis
+        Zmid = Zmid * exp(1j * np_angle(z1 - zc)) + zc
+
+        # Return (0,0) if the point is too close from 0
+        if np_abs(Zmid) < 1e-6:
+            Zmid = 0
+
+        return Zmid
+
     # cf Methods.Geometry.Arc1.reverse
-    if isinstance(reverse, ImportError):
-        reverse = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method reverse: " + str(reverse))
-            )
-        )
-    else:
-        reverse = reverse
+    def reverse(self):
+        """Reverse the begin and end point of the Line
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Returns
+        -------
+        """
+
+        end = self.end
+        self.end = self.begin
+        self.begin = end
+        self.radius = -self.radius
+        self.is_trigo_direction = not self.is_trigo_direction
+
     # cf Methods.Geometry.Arc1.rotate
-    if isinstance(rotate, ImportError):
-        rotate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method rotate: " + str(rotate))
-            )
-        )
-    else:
-        rotate = rotate
+    def rotate(self, angle):
+        """Rotation of the Arc1 of <angle> rad with 0 as the center
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 Object
+
+        angle : float
+            the angle of rotation [rad]
+
+        Returns
+        -------
+        None
+        """
+        if not isinstance(angle, float) and not isinstance(angle, int):
+            raise AngleRotationArc1Error("The angle must be a float or int ")
+
+        # check if Arc1 is correct"
+        self.check()
+
+        # Modification from the rotation  of the object
+        self.begin = self.begin * exp(1j * angle)
+        self.end = self.end * exp(1j * angle)
+
     # cf Methods.Geometry.Arc1.scale
-    if isinstance(scale, ImportError):
-        scale = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method scale: " + str(scale))
-            )
-        )
-    else:
-        scale = scale
+    def scale(self, scale_factor):
+        """Scale the coordinates of the begin/end
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 Object
+        scale_factor : float
+            the Scale factor [-]
+
+        Returns
+        -------
+        None
+        """
+
+        self.begin = self.begin * scale_factor
+        self.end = self.end * scale_factor
+        self.radius = self.radius * scale_factor
+
     # cf Methods.Geometry.Arc1.split_half
-    if isinstance(split_half, ImportError):
-        split_half = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method split_half: " + str(split_half))
-            )
-        )
-    else:
-        split_half = split_half
+    def split_half(self, is_begin=True):
+        """Cut the line in half (modify the object)
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+        is_begin : bool
+            True to keep the part begin=>middle, False for the part middle=>end
+
+        Returns
+        -------
+        """
+
+        # Check that the center is the same
+        Zc = self.get_center()
+
+        if is_begin:
+            self.end = self.get_middle()
+        else:
+            self.begin = self.get_middle()
+
+        # Correct center if needed
+        if abs(Zc - self.get_center()) > 1e-6:
+            self.radius = -1 * self.radius
+
     # cf Methods.Geometry.Arc1.split_point
-    if isinstance(split_point, ImportError):
-        split_point = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method split_point: " + str(split_point))
-            )
-        )
-    else:
-        split_point = split_point
+    split_point = split_point
+
     # cf Methods.Geometry.Arc1.translate
-    if isinstance(translate, ImportError):
-        translate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc1 method translate: " + str(translate))
+    def translate(self, Zt):
+        """Translate the Arc1 object
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+
+        Zt : complex
+            Complex value for translation
+
+
+        Returns
+        -------
+        None
+        """
+        if (
+            not isinstance(Zt, complex)
+            and not isinstance(Zt, int)
+            and not isinstance(Zt, float)
+        ):
+            raise PointTranslateArc1Error(
+                "The point must be a complex number or int or float"
             )
-        )
-    else:
-        translate = translate
+
+        # check if the Arc1 is correct
+        self.check()
+
+        # Modification from the translation of Arc1
+        self.begin = self.begin + Zt
+        self.end = self.end + Zt
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

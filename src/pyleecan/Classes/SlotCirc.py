@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotCirc
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - plot_schematics: import name 'Arc1' refers to different sources (.Arc1.Arc1 and ..Methods.Slot.SlotCirc.plot_schematics.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,81 +21,12 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotCirc._comp_line_dict import _comp_line_dict
-except ImportError as error:
-    _comp_line_dict = error
-
-try:
-    from ..Methods.Slot.SlotCirc._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.SlotCirc._comp_R0 import _comp_R0
-except ImportError as error:
-    _comp_R0 = error
-
-try:
-    from ..Methods.Slot.SlotCirc.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotCirc.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotCirc.comp_angle_opening import comp_angle_opening
-except ImportError as error:
-    comp_angle_opening = error
-
-try:
-    from ..Methods.Slot.SlotCirc.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
-
-try:
-    from ..Methods.Slot.SlotCirc.comp_height_active import comp_height_active
-except ImportError as error:
-    comp_height_active = error
-
-try:
-    from ..Methods.Slot.SlotCirc.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Slot.SlotCirc.comp_surface_active import comp_surface_active
-except ImportError as error:
-    comp_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotCirc.comp_surface_opening import comp_surface_opening
-except ImportError as error:
-    comp_surface_opening = error
-
-try:
-    from ..Methods.Slot.SlotCirc.convert_to_H0_bore import convert_to_H0_bore
-except ImportError as error:
-    convert_to_H0_bore = error
-
-try:
-    from ..Methods.Slot.SlotCirc.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotCirc.get_surface_opening import get_surface_opening
-except ImportError as error:
-    get_surface_opening = error
-
-try:
-    from ..Methods.Slot.SlotCirc.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Slot.SlotCirc.plot_schematics import plot_schematics
+from .Arc1 import Arc1
+from numpy import exp, arcsin, pi, sin
+from ..Functions.Geometry.circle_from_3_points import circle_from_3_points
+from .SurfLine import SurfLine
+from ..Functions.labels import WIND_LAB, DRAW_PROP_LAB
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -103,176 +38,401 @@ class SlotCirc(Slot):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotCirc._comp_line_dict
-    if isinstance(_comp_line_dict, ImportError):
-        _comp_line_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method _comp_line_dict: " + str(_comp_line_dict)
-                )
+    def _comp_line_dict(self):
+        """Define a dictionnary of the lines to draw the slot
+        If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        line_dict: dict
+            Dictionnary of the slot lines (key: line name, value: line object)
+        """
+
+        point_dict = self._comp_point_coordinate()
+        R0 = self._comp_R0()
+
+        if self.H0 < self.W0 / 2:
+            sign = -1
+        else:
+            sign = 1
+        # Creation of curve
+        if self.is_outwards():
+            full_arc = Arc1(
+                begin=point_dict["Z1"],
+                end=point_dict["Z2"],
+                radius=-R0 * sign,
+                is_trigo_direction=True,
             )
+        else:
+            full_arc = Arc1(
+                begin=point_dict["Z1"],
+                end=point_dict["Z2"],
+                radius=R0 * sign,
+                is_trigo_direction=False,
+            )
+
+        line_dict = dict()
+        line_dict["1-2"] = full_arc
+        # Split arc to avoid angle > 180 deg (for FEMM)
+        line_dict["1-M"] = full_arc.copy()
+        line_dict["1-M"].split_half(is_begin=True)
+        line_dict["M-2"] = full_arc.copy()
+        line_dict["M-2"].split_half(is_begin=False)
+        # Closing arc
+        line_dict["2-1"] = Arc1(
+            point_dict["Z2"],
+            point_dict["Z1"],
+            -self.get_Rbo(),
+            is_trigo_direction=False,
         )
-    else:
-        _comp_line_dict = _comp_line_dict
+
+        return line_dict
+
     # cf Methods.Slot.SlotCirc._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+
+        if self.is_H0_bore is None:
+            self.is_H0_bore = True  # Set default value
+        Rbo = self.get_Rbo()
+        alpha = self.comp_angle_opening()
+
+        Z1 = Rbo * exp(-1j * alpha / 2)
+        Z2 = Rbo * exp(1j * alpha / 2)
+        if self.is_H0_bore:
+            if self.is_outwards():
+                ZM = Rbo + self.H0
+            else:
+                ZM = Rbo - self.H0
+            R0, _ = circle_from_3_points(Z1, Z2, ZM)
+            ZH = Rbo
+        else:
+            if self.is_outwards():
+                ZM = (Z1 + Z2) / 2 + self.H0
+            else:
+                ZM = (Z1 + Z2) / 2 - self.H0
+            ZH = (Z1 + Z2) / 2
+            R0 = None
+
+        point_dict = dict()
+        # symetry
+        point_dict["Z1"] = Z1
+        point_dict["Z2"] = Z2
+        point_dict["ZM"] = ZM
+        point_dict["ZH"] = ZH  # For H0 schematics
+        # Store R0 for _comp_R0
+        if R0 is not None:
+            point_dict["R0"] = R0
+        return point_dict
+
     # cf Methods.Slot.SlotCirc._comp_R0
-    if isinstance(_comp_R0, ImportError):
-        _comp_R0 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotCirc method _comp_R0: " + str(_comp_R0))
-            )
-        )
-    else:
-        _comp_R0 = _comp_R0
+    def _comp_R0(self):
+        """Compute the radius of the circle
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        R0 : float
+            Radius of the circle [m]
+        """
+
+        if self.is_H0_bore is None:
+            self.is_H0_bore = True  # Set default value
+
+        if self.is_H0_bore:
+            return self._comp_point_coordinate()["R0"]
+        else:
+            # R0 is the radius of the circle
+            # Pythagore in Triangle: Center, Z2, middle(Z1,Z2)
+            # R0**2 = (W0/2)**2 + (H0-R0)**2
+
+            return ((self.W0 / 2) ** 2 + self.H0**2) / (2 * self.H0)
+
     # cf Methods.Slot.SlotCirc.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        curve_list: list
+            A list of one Arc
+        """
+
+        line_dict = self._comp_line_dict()
+
+        curve_list = [
+            line_dict["1-M"],
+            line_dict["M-2"],
+        ]
+        return [line for line in curve_list if line is not None]
+
     # cf Methods.Slot.SlotCirc.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotCirc method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the SlotCirc object is correct
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        None
+        """
+        pass
+
     # cf Methods.Slot.SlotCirc.comp_angle_opening
-    if isinstance(comp_angle_opening, ImportError):
-        comp_angle_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method comp_angle_opening: "
-                    + str(comp_angle_opening)
-                )
-            )
-        )
-    else:
-        comp_angle_opening = comp_angle_opening
+    def comp_angle_opening(self):
+        """Compute the average opening angle of the Slot
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        alpha: float
+            Average opening angle of the slot [rad]
+        """
+
+        Rbo = self.get_Rbo()
+
+        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+
     # cf Methods.Slot.SlotCirc.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method comp_height: " + str(comp_height)
-                )
-            )
-        )
-    else:
-        comp_height = comp_height
+    def comp_height(self):
+        """Compute the height of the Slot.
+        Caution, the top of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        Htot: float
+            Height of the slot [m]
+        """
+
+        return self.comp_height_active()
+
     # cf Methods.Slot.SlotCirc.comp_height_active
-    if isinstance(comp_height_active, ImportError):
-        comp_height_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method comp_height_active: "
-                    + str(comp_height_active)
-                )
-            )
-        )
-    else:
-        comp_height_active = comp_height_active
+    def comp_height_active(self):
+        """Compute the height of the winding area
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        Hwind: float
+            Height of the winding area [m]
+        """
+
+        if self.is_H0_bore is None:
+            self.is_H0_bore = True  # Set default value
+
+        if self.is_H0_bore:
+            return self.H0
+        else:
+            point_dict = self._comp_point_coordinate()
+            ZM = point_dict["ZM"]
+            Rbo = self.get_Rbo()
+            return abs(Rbo - abs(ZM))
+
     # cf Methods.Slot.SlotCirc.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the Slot total surface (by analytical computation).
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        S: float
+            Slot total surface [m**2]
+
+        """
+
+        return self.comp_surface_active()
+
     # cf Methods.Slot.SlotCirc.comp_surface_active
-    if isinstance(comp_surface_active, ImportError):
-        comp_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method comp_surface_active: "
-                    + str(comp_surface_active)
-                )
-            )
-        )
-    else:
-        comp_surface_active = comp_surface_active
+    def comp_surface_active(self):
+        """Compute the Slot inner surface for winding (by analytical computation)
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        Swind: float
+            Slot inner surface for winding [m**2]
+        """
+
+        R0 = self._comp_R0()
+        alpha = float(2 * arcsin(self.W0 / (2 * R0)))
+        # Area of the full circle
+        S1 = pi * (R0**2)
+        # Area of the top Arc
+        S2 = (R0**2.0) / 2.0 * (alpha - sin(alpha))
+        # Arc of the bore
+        alpha_op = self.comp_angle_opening()
+        S3 = (self.get_Rbo() ** 2.0) / 2.0 * (alpha_op - sin(alpha_op))
+
+        if self.H0 < self.W0 / 2:
+            # Center is in airgap
+            if self.is_outwards():
+                return S2 - S3
+            else:
+                return S2 + S3
+        else:  # Center is in the Lamination
+            if self.is_outwards():
+                return S1 - S2 - S3
+            else:
+                return S1 - S2 + S3
+
     # cf Methods.Slot.SlotCirc.comp_surface_opening
-    if isinstance(comp_surface_opening, ImportError):
-        comp_surface_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method comp_surface_opening: "
-                    + str(comp_surface_opening)
-                )
-            )
-        )
-    else:
-        comp_surface_opening = comp_surface_opening
+    def comp_surface_opening(self):
+        """Compute the Slot opening surface (by analytical computation).
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+
+        Returns
+        -------
+        S: float
+            Slot opening surface [m**2]
+
+        """
+
+        return 0
+
     # cf Methods.Slot.SlotCirc.convert_to_H0_bore
-    if isinstance(convert_to_H0_bore, ImportError):
-        convert_to_H0_bore = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method convert_to_H0_bore: "
-                    + str(convert_to_H0_bore)
-                )
-            )
-        )
-    else:
-        convert_to_H0_bore = convert_to_H0_bore
+    def convert_to_H0_bore(self):
+        """Convert the slot to the other definition of H0
+
+        Parameters:
+        -----------
+        self : SlotCirc
+            A SlotCirc objec with is_H0_bore==False
+        """
+
+        if self.is_H0_bore:
+            raise Exception("Error, slot is already H0 bore type!")
+
+        self.H0 = self.comp_height()
+        self.is_H0_bore = True
+
     # cf Methods.Slot.SlotCirc.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method get_surface_active: "
-                    + str(get_surface_active)
-                )
-            )
-        )
-    else:
-        get_surface_active = get_surface_active
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full active surface
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_wind: Surface
+            Surface corresponding to the Active Area
+        """
+
+        # Create curve list
+        line_dict = self._comp_line_dict()
+        curve_list = [
+            line_dict["1-M"],
+            line_dict["M-2"],
+            line_dict["2-1"],
+        ]
+        curve_list = [line for line in curve_list if line is not None]
+
+        # Only the closing arc (2-1) needs to be drawn (in FEMM)
+        for curve in curve_list[:-1]:
+            if curve.prop_dict is None:
+                curve.prop_dict = dict()
+            curve.prop_dict.update({DRAW_PROP_LAB: False})
+
+        # Create surface
+        ZM = line_dict["M-2"].get_begin()
+        Zmid = (self.get_Rbo() + ZM) / 2
+        label = self.parent.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return surface
+
     # cf Methods.Slot.SlotCirc.get_surface_opening
-    if isinstance(get_surface_opening, ImportError):
-        get_surface_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method get_surface_opening: "
-                    + str(get_surface_opening)
-                )
-            )
-        )
-    else:
-        get_surface_opening = get_surface_opening
+    def get_surface_opening(self, alpha=0, delta=0):
+        """Return the list of surfaces defining the opening area of the Slot
+
+        Parameters
+        ----------
+        self : SlotCirc
+            A SlotCirc object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list : list
+            list of surfaces objects
+        """
+
+        # No opening surface in SlotCirc
+        return []
+
     # cf Methods.Slot.SlotCirc.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotCirc method plot_schematics: " + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

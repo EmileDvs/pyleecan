@@ -4,6 +4,14 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlgNsga2Deap
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - cross: module contains unsupported top-level Try statements
+# - delete_toolbox: import name 'creator' refers to different sources (..Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox.creator and deap.creator)
+# - mutate: import name 'OptiDesignVarInterval' refers to different sources (..Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input.OptiDesignVarInterval and .OptiDesignVarInterval.OptiDesignVarInterval)
+# - plot_pareto: import name 'OptiObjective' refers to different sources (..Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input.OptiObjective and .OptiObjective.OptiObjective)
+# - solve: import name 'XOutput' refers to different sources (..Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox.XOutput and ..Methods.Optimization.OptiGenAlgNsga2Deap.solve.XOutput)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,43 +25,26 @@ from .OptiGenAlg import OptiGenAlg
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input import (
-        check_optimization_input,
-    )
-except ImportError as error:
-    check_optimization_input = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox import create_toolbox
-except ImportError as error:
-    create_toolbox = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.cross import cross
-except ImportError as error:
-    cross = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.delete_toolbox import delete_toolbox
-except ImportError as error:
-    delete_toolbox = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.mutate import mutate
-except ImportError as error:
-    mutate = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.plot_pareto import plot_pareto
-except ImportError as error:
-    plot_pareto = error
-
-try:
-    from ..Methods.Optimization.OptiGenAlgNsga2Deap.solve import solve
-except ImportError as error:
-    solve = error
-
+from ..Methods.Optimization.OptiGenAlgNsga2Deap.cross import cross
+from ..Methods.Optimization.OptiGenAlgNsga2Deap.delete_toolbox import delete_toolbox
+from ..Methods.Optimization.OptiGenAlgNsga2Deap.mutate import mutate
+from ..Methods.Optimization.OptiGenAlgNsga2Deap.plot_pareto import plot_pareto
+from ..Methods.Optimization.OptiGenAlgNsga2Deap.solve import solve
+from ..Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input import (
+    OptiDesignVarInterval,
+    OptiDesignVarSet,
+    OptiObjective,
+    OptimizationAttributeError,
+)
+from ..Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox import (
+    Output,
+    VarSimu,
+    XOutput,
+    base,
+    create_indiv,
+    creator,
+    tools,
+)
 
 from ntpath import basename
 from os.path import isfile
@@ -76,84 +67,177 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input
-    if isinstance(check_optimization_input, ImportError):
-        check_optimization_input = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiGenAlgNsga2Deap method check_optimization_input: "
-                    + str(check_optimization_input)
-                )
+    def check_optimization_input(self):
+        """Check optimization parameters before solving the problem
+
+        Parameters
+        ----------
+        solver : Solver
+            solver to perform the genetic algorithm with DEAP
+        """
+
+        logger = self.get_logger()
+
+        # Check problem existence
+        if self.problem == None:
+            raise OptimizationAttributeError(
+                "The problem has not been defined, please add a problem to OptiGenAlgNsga2Deap."
             )
-        )
-    else:
-        check_optimization_input = check_optimization_input
+
+        # Check population size
+        if self.size_pop % 4 > 0:
+            mess = "Change population size from {} to {} to fit with the tournament selection".format(
+                self.size_pop, self.size_pop + (self.size_pop % 4)
+            )
+            self.size_pop += self.size_pop % 4
+
+            logger.warning(mess)
+
+        # Check the problem contains at least one design variable
+        if self.problem.obj_func == None or (
+            isinstance(self.problem.obj_func, dict) and len(self.problem.obj_func) == 0
+        ):
+            raise OptimizationAttributeError(
+                "Optimization problem must contain at least one objective function"
+            )
+
+        else:
+            for obj_func in self.problem.obj_func:
+                if not isinstance(obj_func, OptiObjective):
+                    raise TypeError(
+                        "Wrong obj_func type: OptiObjective expected, got {}".format(
+                            type(obj_func).__name__
+                        )
+                    )
+                elif not callable(obj_func.keeper):
+                    mess = "The objective function '{}' is not callable, please define the attribute 'keeper'.".format(
+                        obj_func.name
+                    )
+                    raise OptimizationAttributeError(mess)
+
+            # Check if objectives and other datakeepers have different symbol
+            if isinstance(self.problem.datakeeper_list, list):
+                symbol_list = [of.symbol for of in self.problem.obj_func] + [
+                    dk.symbol for dk in self.problem.datakeeper_list
+                ]
+            else:
+                symbol_list = [of.symbol for of in self.problem.obj_func]
+
+            if len(symbol_list) != len(set(symbol_list)):
+                mess = (
+                    "Every objective function and datakeeper must have a unique symbol."
+                )
+                raise OptimizationAttributeError(mess)
+
+        # Check the problem contains at least one objective function
+        if self.problem.design_var == None or (
+            isinstance(self.problem.design_var, list)
+            and len(self.problem.design_var) == 0
+        ):
+            raise OptimizationAttributeError(
+                "Optimization problem must contain at least one design variable"
+            )
+        else:
+            for design_var in self.problem.design_var:
+                if not isinstance(design_var, OptiDesignVarInterval) and not isinstance(
+                    design_var, OptiDesignVarSet
+                ):
+                    mess = "The design variable '{}' is expected to be an OptiDesignVarSet or an OptiDesignVarInterval.".format(
+                        design_var.name
+                    )
+                    raise OptimizationAttributeError(mess)
+                elif design_var.symbol in [None, ""]:
+                    mess = "The design variable '{}' has no symbol.".format(
+                        design_var.name
+                    )
+                    raise OptimizationAttributeError(mess)
+                elif not callable(design_var.get_value):
+                    mess = "OptiDesignVar '{}' get_value is not callable.".format(
+                        design_var.name
+                    )
+                    raise OptimizationAttributeError(mess)
+                elif not callable(design_var.setter):
+                    mess = "OptiDesignVar '{}' setter is not callable.".format(
+                        design_var.name
+                    )
+                    raise OptimizationAttributeError(mess)
+
+        # Check constraints type
+        if self.problem.constraint != None:
+            for cstr in self.problem.constraint:
+                # Check type of constraint
+                if cstr.type_const not in ["<=", "<", "==", "=", ">=", ">"]:
+                    mess = "The constraint '{}' has a wrong type: expected one of {} received '{}'.".format(
+                        cstr.name, ["<=", "<", "==", "=", ">=", ">"], cstr.type_const
+                    )
+                    raise OptimizationAttributeError(mess)
+                # Check getter
+                elif not callable(cstr.keeper):
+                    mess = (
+                        "The constraint '{}' function keeper is not callable.".format(
+                            cstr.name
+                        )
+                    )
+                    raise OptimizationAttributeError(mess)
+
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox
-    if isinstance(create_toolbox, ImportError):
-        create_toolbox = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiGenAlgNsga2Deap method create_toolbox: "
-                    + str(create_toolbox)
-                )
-            )
+    def create_toolbox(self):
+        """OptiGenAlgNsga2Deap method to create DEAP toolbox
+        Parameters
+        ----------
+        self : OptiGenAlgNsga2Deap
+
+        Returns
+        -------
+        self : OptiGenAlgNsga2Deap
+            OptiGenAlgNsga2Deap with toolbox created
+        """
+
+        # Create toolbox
+        self.toolbox = base.Toolbox()
+
+        # Create Fitness and individual
+        creator.create(
+            "FitnessMin", base.Fitness, weights=[-1 for _ in self.problem.obj_func]
         )
-    else:
-        create_toolbox = create_toolbox
+        creator.create("Individual", list, typecode="d", fitness=creator.FitnessMin)
+
+        self.toolbox.register("creator", creator.Individual)
+
+        # Create default output
+        if isinstance(self.problem.simu.parent, Output):
+            output = self.problem.simu.parent
+        elif isinstance(
+            self.problem.simu.var_simu, VarSimu
+        ):  # Optimization of a multi-simulation
+            output = XOutput(simu=self.problem.simu.copy())
+        else:
+            output = Output(simu=self.problem.simu.copy())
+
+        # Register individual and population
+        self.toolbox.register(
+            "individual",
+            create_indiv,
+            self.toolbox.creator,
+            output,
+            self.problem.design_var,
+        )
+
+        self.toolbox.register(
+            "population", tools.initRepeat, list, self.toolbox.individual
+        )
+
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.cross
-    if isinstance(cross, ImportError):
-        cross = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OptiGenAlgNsga2Deap method cross: " + str(cross))
-            )
-        )
-    else:
-        cross = cross
+    cross = cross
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.delete_toolbox
-    if isinstance(delete_toolbox, ImportError):
-        delete_toolbox = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiGenAlgNsga2Deap method delete_toolbox: "
-                    + str(delete_toolbox)
-                )
-            )
-        )
-    else:
-        delete_toolbox = delete_toolbox
+    delete_toolbox = delete_toolbox
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.mutate
-    if isinstance(mutate, ImportError):
-        mutate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiGenAlgNsga2Deap method mutate: " + str(mutate)
-                )
-            )
-        )
-    else:
-        mutate = mutate
+    mutate = mutate
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.plot_pareto
-    if isinstance(plot_pareto, ImportError):
-        plot_pareto = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OptiGenAlgNsga2Deap method plot_pareto: "
-                    + str(plot_pareto)
-                )
-            )
-        )
-    else:
-        plot_pareto = plot_pareto
+    plot_pareto = plot_pareto
     # cf Methods.Optimization.OptiGenAlgNsga2Deap.solve
-    if isinstance(solve, ImportError):
-        solve = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OptiGenAlgNsga2Deap method solve: " + str(solve))
-            )
-        )
-    else:
-        solve = solve
+    solve = solve
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

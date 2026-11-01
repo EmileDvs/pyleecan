@@ -17,33 +17,9 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotUD2._set_split_active_surf_dict import (
-        _set_split_active_surf_dict,
-    )
-except ImportError as error:
-    _set_split_active_surf_dict = error
-
-try:
-    from ..Methods.Slot.SlotUD2.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotUD2.build_geometry_active import build_geometry_active
-except ImportError as error:
-    build_geometry_active = error
-
-try:
-    from ..Methods.Slot.SlotUD2.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotUD2.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
+from ..Functions.Load.import_class import import_class
+from ._check import check_var
+from ..Methods.Slot.Slot import SlotCheckError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -54,63 +30,145 @@ class SlotUD2(Slot):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotUD2._set_split_active_surf_dict
-    if isinstance(_set_split_active_surf_dict, ImportError):
-        _set_split_active_surf_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD2 method _set_split_active_surf_dict: "
-                    + str(_set_split_active_surf_dict)
-                )
-            )
-        )
-    else:
-        _set_split_active_surf_dict = _set_split_active_surf_dict
+    def _set_split_active_surf_dict(self, value):
+        """setter of split_active_surf_dict"""
+        if type(value) is dict:
+            for key, obj_list in value.items():
+                if type(obj_list) is list:
+                    for ii, obj in enumerate(obj_list):
+                        if type(obj) is dict and "__class__" in obj:
+                            class_obj = import_class(
+                                "pyleecan.Classes",
+                                obj["__class__"],
+                                "split_active_surf_dict",
+                            )
+                            value[key][ii] = class_obj(init_dict=obj)
+        if value == -1:
+            value = dict()
+        check_var("split_active_surf_dict", value, "dict")
+        self._split_active_surf_dict = value
+
     # cf Methods.Slot.SlotUD2.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD2 method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the object.
+        The ending point of a curve is the starting point of the next curve
+        in the list
+
+        Parameters
+        ----------
+        self : SlotUD2
+            A SlotUD2 object
+
+        Returns
+        -------
+        curve_list: list
+            A list of Segments
+
+        """
+
+        return [line.copy() for line in self.line_list]
+
     # cf Methods.Slot.SlotUD2.build_geometry_active
-    if isinstance(build_geometry_active, ImportError):
-        build_geometry_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD2 method build_geometry_active: "
-                    + str(build_geometry_active)
-                )
+    def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):
+        """Split the slot active area in several zone
+        This method assume that the active area is centered on X axis and symetrical
+        Otherwise a dedicated build_geometry_active method must be provided
+
+        Parameters
+        ----------
+        self : SlotUD2
+            A SlotUD2 object
+        Nrad : int
+            Number of radial layer
+        Ntan : int
+            Number of tangentiel layer
+        is_simplified : bool
+            boolean to specify if coincident lines are considered as one or different lines (Default value = False)
+        alpha : float
+            Angle for rotation (Default value = 0) [rad]
+        delta : Complex
+            complex for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list:
+            List of surface delimiting the active zone
+        """
+
+        Slot = import_class("pyleecan.Classes", "Slot")
+
+        key = "Nrad=" + str(Nrad) + ", Ntan=" + str(Ntan)
+
+        if (
+            self.split_active_surf_dict is not None
+            and key in self.split_active_surf_dict
+        ):
+            surf_list = [surf.copy() for surf in self.split_active_surf_dict[key]]
+            self.set_label(surf_list, Nrad, Ntan, self.get_name_lam())
+            return surf_list
+        else:
+            return Slot.build_geometry_active(
+                self,
+                Nrad=Nrad,
+                Ntan=Ntan,
+                is_simplified=is_simplified,
+                alpha=alpha,
+                delta=delta,
             )
-        )
-    else:
-        build_geometry_active = build_geometry_active
+
     # cf Methods.Slot.SlotUD2.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotUD2 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
-    # cf Methods.Slot.SlotUD2.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotUD2 method get_surface_active: "
-                    + str(get_surface_active)
+    def check(self):
+        """Check that the SlotUD2 is correctly defined"""
+
+        if self.line_list is None:
+            self.line_list = list()
+
+        if len(self.line_list) == 0:
+            raise SlotCheckError("SlotUD2 must have at least one line")
+
+        for ii in range(len(self.line_list) - 1):
+            if (
+                abs(self.line_list[ii].get_end() - self.line_list[ii + 1].get_begin())
+                > 1e-6
+            ):
+                raise SlotCheckError(
+                    "SlotUD line "
+                    + str(ii)
+                    + " and line "
+                    + str(ii + 1)
+                    + " doesn't match"
                 )
-            )
-        )
-    else:
-        get_surface_active = get_surface_active
+
+    # cf Methods.Slot.SlotUD2.get_surface_active
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full winding surface
+
+        Parameters
+        ----------
+        self : SlotUD2
+            A SlotUD2 object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_wind: Surface
+            Surface corresponding to the Winding Area
+        """
+        st = self.get_name_lam()
+        surface = self.active_surf.copy()
+
+        surface.label = "Wind_" + st + "_R0_T0_S0"
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return surface
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

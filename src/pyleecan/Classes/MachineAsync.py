@@ -17,16 +17,7 @@ from .Machine import Machine
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.MachineAsync.comp_desc_dict import comp_desc_dict
-except ImportError as error:
-    comp_desc_dict = error
-
-try:
-    from ..Methods.Machine.MachineAsync.is_synchronous import is_synchronous
-except ImportError as error:
-    is_synchronous = error
-
+from .Machine import Machine
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,31 +28,54 @@ class MachineAsync(Machine):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineAsync.comp_desc_dict
-    if isinstance(comp_desc_dict, ImportError):
-        comp_desc_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MachineAsync method comp_desc_dict: "
-                    + str(comp_desc_dict)
-                )
-            )
+    def comp_desc_dict(self):
+        """Compute a dictionary with the main parameters/output of the machine
+
+        Parameters
+        ----------
+        self : Machine
+            A Machine object
+
+        Returns
+        -------
+        desc_dict: list
+            list of dictionary containing the main parameters of the machine
+        """
+
+        desc_dict = Machine.comp_desc_dict(self)
+
+        Zr_dict = dict(
+            {
+                "name": "Zr",
+                "path": "machine.rotor.slot.Zs",
+                "verbose": "Rotor slot number",
+                "type": int,
+                "unit": "",
+                "is_input": True,
+                "value": self.rotor.slot.Zs,
+            }
         )
-    else:
-        comp_desc_dict = comp_desc_dict
+        desc_dict.insert(2, Zr_dict)
+        return desc_dict
+
     # cf Methods.Machine.MachineAsync.is_synchronous
-    if isinstance(is_synchronous, ImportError):
-        is_synchronous = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MachineAsync method is_synchronous: "
-                    + str(is_synchronous)
-                )
-            )
-        )
-    else:
-        is_synchronous = is_synchronous
+    def is_synchronous(self):
+        """Return if a machine is synchronous or not
+
+        Parameters
+        ----------
+        self : MachineAsync
+            A MachineAsync
+
+        Returns
+        -------
+        is_synchronous: bool
+            Asynchronous machines are not synchronous
+
+        """
+        return False
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

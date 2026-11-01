@@ -17,11 +17,7 @@ from .ScalarProduct import ScalarProduct
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Mesh.ScalarProductL2.scalar_product import scalar_product
-except ImportError as error:
-    scalar_product = error
-
+import numpy as np
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,17 +29,42 @@ class ScalarProductL2(ScalarProduct):
     VERSION = 1
 
     # cf Methods.Mesh.ScalarProductL2.scalar_product
-    if isinstance(scalar_product, ImportError):
-        scalar_product = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ScalarProductL2 method scalar_product: "
-                    + str(scalar_product)
-                )
-            )
-        )
-    else:
-        scalar_product = scalar_product
+    def scalar_product(self, funca, funcb, detJ, weights, nb_gauss_points):
+        """Scalar product of shape functions with L2 gauss integration
+
+        Parameters
+        ----------
+        self : ScalarProductL2
+            a ScalarProductL2 object
+        funca : ndarray
+            coordinates of the element
+        nba : ndarray
+            coordinates of a point
+        funcb : ndarray
+            coordinates of the element
+        nbb : ndarray
+            coordinates of a point
+        detJ : ndarray
+            jacobian determinant evaluated for each gauss point
+        weights : ndarray
+            gauss weights
+        nb_gauss_points : int
+            number of gauss points
+
+        Returns
+        -------
+        l2_scal : ndarray
+            a L2 scalar product
+        """
+
+        func_a_w_dJ = np.zeros(funca.shape)
+        for i in range(nb_gauss_points):
+            func_a_w_dJ[i, :] = funca[i, :] * weights[i] * detJ[i]
+
+        l2_scal_mat = np.squeeze(np.tensordot(func_a_w_dJ, funcb, axes=([0], [0])))
+
+        return l2_scal_mat
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

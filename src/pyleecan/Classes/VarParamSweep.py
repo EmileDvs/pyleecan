@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/VarParamSweep
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - generate_simulation_list: import name 'ParamExplorerSet' refers to different sources (..Methods.Simulation.VarParamSweep.check_param.ParamExplorerSet and .ParamExplorerSet.ParamExplorerSet)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,23 +21,14 @@ from .VarParam import VarParam
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.VarParamSweep.check_param import check_param
-except ImportError as error:
-    check_param = error
-
-try:
-    from ..Methods.Simulation.VarParamSweep.generate_simulation_list import (
-        generate_simulation_list,
-    )
-except ImportError as error:
-    generate_simulation_list = error
-
-try:
-    from ..Methods.Simulation.VarParamSweep.get_simu_number import get_simu_number
-except ImportError as error:
-    get_simu_number = error
-
+from ..Methods.Simulation.VarParamSweep.generate_simulation_list import (
+    generate_simulation_list,
+)
+from ..Methods.Simulation.VarParamSweep.check_param import (
+    DataKeeperError,
+    ParamExplorerError,
+    ParamExplorerSet,
+)
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -45,42 +40,73 @@ class VarParamSweep(VarParam):
     VERSION = 1
     NAME = "Parameter Sweep"
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.VarParamSweep.check_param
-    if isinstance(check_param, ImportError):
-        check_param = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarParamSweep method check_param: " + str(check_param)
-                )
+    def check_param(self):
+        """Check VarParamSweep parameters validity
+
+        Raises
+        ------
+        ParamExplorerError: Error in ParamExplorer setting
+        VarParamSweepError: Error in VarParamSweep general setting
+        DataKeeperError: Error in DataKeeper setting
+        """
+        # run the base class check first
+        super(type(self), self).check_param()
+
+        # Check ParamExplorers
+        for paramexplorer in self.paramexplorer_list:
+            if paramexplorer.setter is None:
+                raise ParamExplorerError("ParamExplorer.setter must be defined")
+            elif len(paramexplorer.symbol) == 0:
+                raise ParamExplorerError("ParamExplorer.symbol cannot be empty")
+            elif (
+                isinstance(paramexplorer, ParamExplorerSet)
+                and len(paramexplorer.value) == 0
+            ):
+                raise ParamExplorerError("ParamExplorer.value_list cannot be empty")
+
+        # Default simulation index
+        N_simu = self.get_simu_number()
+
+        # Keep every output if there is no DataKeeper defined
+        if len(self.datakeeper_list) == 0 and self.is_keep_all_output is False:
+            logger = self.get_logger()
+            logger.warning(
+                "No datakeeper has been define in VarParamSweep, setting is_keep_all_output as True."
             )
-        )
-    else:
-        check_param = check_param
+            self.is_keep_all_output = True
+
+        # Check DataKeepers
+        for datakeeper in self.datakeeper_list:
+            if datakeeper.symbol in ["", None]:
+                raise DataKeeperError("DataKeeper.symbol cannot be empty")
+            elif datakeeper.keeper is None:
+                raise DataKeeperError("DataKeeper.keeper must be defined")
+
     # cf Methods.Simulation.VarParamSweep.generate_simulation_list
-    if isinstance(generate_simulation_list, ImportError):
-        generate_simulation_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarParamSweep method generate_simulation_list: "
-                    + str(generate_simulation_list)
-                )
-            )
-        )
-    else:
-        generate_simulation_list = generate_simulation_list
+    generate_simulation_list = generate_simulation_list
+
     # cf Methods.Simulation.VarParamSweep.get_simu_number
-    if isinstance(get_simu_number, ImportError):
-        get_simu_number = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarParamSweep method get_simu_number: "
-                    + str(get_simu_number)
-                )
-            )
-        )
-    else:
-        get_simu_number = get_simu_number
+    def get_simu_number(self):
+        """Return the number of simulation defined by the Param Explorer
+
+        Parameters
+        ----------
+        self : VarParamSweep
+            A VarParamSweep object
+
+        Returns
+        -------
+        nb_simu : int
+            number of simulation
+        """
+
+        nb_simu = 1
+        for paramexplorer in self.paramexplorer_list:
+            nb_simu *= paramexplorer.get_N()
+
+        return nb_simu
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

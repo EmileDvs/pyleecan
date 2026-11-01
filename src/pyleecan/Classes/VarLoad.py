@@ -17,26 +17,11 @@ from .VarSimu import VarSimu
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.VarLoad._set_OP_matrix import _set_OP_matrix
-except ImportError as error:
-    _set_OP_matrix = error
-
-try:
-    from ..Methods.Simulation.VarLoad.get_OP_array import get_OP_array
-except ImportError as error:
-    get_OP_array = error
-
-try:
-    from ..Methods.Simulation.VarLoad.get_ref_simu_index import get_ref_simu_index
-except ImportError as error:
-    get_ref_simu_index = error
-
-try:
-    from ..Methods.Simulation.VarLoad.set_OP_array import set_OP_array
-except ImportError as error:
-    set_OP_array = error
-
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from ._check import check_var
+from numpy import ndarray, array
+from .OPMatrix import OPMatrix
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -48,52 +33,153 @@ class VarLoad(VarSimu):
     VERSION = 1
     NAME = "Variable Load"
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.VarLoad._set_OP_matrix
-    if isinstance(_set_OP_matrix, ImportError):
-        _set_OP_matrix = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarLoad method _set_OP_matrix: " + str(_set_OP_matrix)
+    def _set_OP_matrix(self, value):
+        """setter of OP_matrix"""
+        if isinstance(value, list):
+            value = array(value)
+        if isinstance(value, str):  # Load from file
+            try:
+                value = load_init_dict(value)[1]
+            except Exception as e:
+                self.get_logger().error(
+                    "Error while loading " + value + ", setting None instead"
                 )
+                value = None
+        if isinstance(value, dict) and "__class__" in value:
+            class_obj = import_class(
+                "pyleecan.Classes", value.get("__class__"), "OP_matrix"
             )
-        )
-    else:
-        _set_OP_matrix = _set_OP_matrix
+            value = class_obj(init_dict=value)
+        elif isinstance(value, ndarray):
+            # Conver matrix to OP_matrix object
+            class_obj = import_class("pyleecan.Classes", "OPMatrix", "OP_matrix")
+            value_obj = class_obj()
+            value_obj._set_None()
+            # N0, Id, Iq, Tem, Pem is the most commun OP_matrix format
+            if value.shape[1] == 5:
+                value_obj.set_OP_array(value, "N0", "Id", "Iq", "Tem", "Pem")
+            elif value.shape[1] == 4:
+                value_obj.set_OP_array(value, "N0", "Id", "Iq", "Tem")
+            else:
+                value_obj.set_OP_array(value, "N0", "Id", "Iq")
+            value = value_obj
+        elif type(value) is int and value == -1:  # Default constructor
+            OP_matrix = import_class("pyleecan.Classes", "OPMatrix", "OP_matrix")
+            value = OP_matrix()
+        check_var("OP_matrix", value, "OPMatrix")
+        self._OP_matrix = value
+
+        if self._OP_matrix is not None:
+            self._OP_matrix.parent = self
+
     # cf Methods.Simulation.VarLoad.get_OP_array
-    if isinstance(get_OP_array, ImportError):
-        get_OP_array = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarLoad method get_OP_array: " + str(get_OP_array)
-                )
-            )
-        )
-    else:
-        get_OP_array = get_OP_array
+    def get_OP_array(self, *arg_list):
+        """Return the OP matrix
+
+        Parameters
+        ----------
+        self : VarLoadCurrent
+            A VarLoadCurrent object
+
+        Returns
+        -------
+        OP_matrix : ndarray
+            Operating Points matrix
+        """
+
+        return self.OP_matrix.get_OP_array(*arg_list)
+
     # cf Methods.Simulation.VarLoad.get_ref_simu_index
-    if isinstance(get_ref_simu_index, ImportError):
-        get_ref_simu_index = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarLoad method get_ref_simu_index: "
-                    + str(get_ref_simu_index)
-                )
+    def get_ref_simu_index(self, ref_simu, simu_dict):
+        """Get the index of the reference simulation (None if must be computed)
+
+        Parameters
+        ----------
+        self : VarLoadCurrent
+            A VarLoadCurrent object
+        ref_simu : Simulation
+            A Simulation object (reference simulation)
+        simu_dict : dict
+            Dict of simulations
+
+        Returns
+        -------
+        ref_simu_index : int
+            index of the reference simulation (None if must be computed)
+        """
+        ref_simu_index = None
+        logger = self.get_logger()
+        for ii, simu in enumerate(simu_dict["simulation_list"]):
+            diff_list = simu.input.compare(ref_simu.input, name="input")
+            # # Remove not meaningfull differences
+            # if "simu.mag.file_name" in diff_list:
+            #     diff_list.remove("simu.mag.file_name")
+            if len(diff_list) == 0:
+                ref_simu_index = ii
+                break
+        if ref_simu_index is None:
+            logger.warning(
+                "Reference Operating point is not in OP_matrix, one extra simulation will be computed"
             )
-        )
-    else:
-        get_ref_simu_index = get_ref_simu_index
+
+        return ref_simu_index
+
     # cf Methods.Simulation.VarLoad.set_OP_array
-    if isinstance(set_OP_array, ImportError):
-        set_OP_array = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VarLoad method set_OP_array: " + str(set_OP_array)
-                )
+    def set_OP_array(self, OP_matrix, *arg_list, is_update_input=True, input_index=0):
+        """Set the OP_matrix and update the input if needed
+        (To make sure that ref simu is in the OP_matrix)
+        Ex: set_OP_array(OP_matrix, "N0", "Iq", "Iq", "Tem")
+
+        Parameters
+        ----------
+        self : VarLoad
+            A VarLoad object
+        OP_matrix : ndarray
+            OP_matrix to set
+        *arg_list : several str
+            To specify the OP_matrix column ("N0", "Id", "Iq"...)
+        is_update_input : bool
+            True to update the input
+        input_index : int
+            Index of the OP from the OP_matrix to set in the input (if is_update_input)
+        """
+
+        if isinstance(OP_matrix, ndarray):
+            self.OP_matrix = OPMatrix()
+            self.OP_matrix.set_OP_array(OP_matrix, *arg_list)
+        else:
+            self.OP_matrix = OP_matrix
+
+        if not is_update_input or OP_matrix is None:
+            return
+
+        # Scan parent to find the input
+        Sinput = None
+        if self.parent is not None and hasattr(self.parent, "input"):
+            Sinput = self.parent.input
+        elif (
+            self.parent is not None
+            and self.parent.parent is not None
+            and hasattr(self.parent.parent, "input")
+        ):
+            Sinput = self.parent.parent.input
+        if Sinput is None:
+            self.get_logger().warning("Can't find input when setting OP_matrix")
+            return
+
+        # Set the input OP
+        if input_index >= self.OP_matrix.get_N_OP():
+            self.get_logger.warning(
+                "Index "
+                + str(input_index)
+                + " is not in the OP_matrix with "
+                + str(self.OP_matrix.get_N_OP())
+                + " OP(s)"
             )
-        )
-    else:
-        set_OP_array = set_OP_array
+            input_index = 0
+        Sinput.OP = self.OP_matrix.get_OP(input_index)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

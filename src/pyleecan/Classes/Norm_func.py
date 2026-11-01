@@ -17,11 +17,6 @@ from .Normalization import Normalization
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.SciDataTool.Norm_func.normalize import normalize
-except ImportError as error:
-    normalize = error
-
 
 from ntpath import basename
 from os.path import isfile
@@ -38,14 +33,23 @@ class Norm_func(Normalization):
     VERSION = 1
 
     # cf Methods.SciDataTool.Norm_func.normalize
-    if isinstance(normalize, ImportError):
-        normalize = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Norm_func method normalize: " + str(normalize))
-            )
-        )
-    else:
-        normalize = normalize
+    def normalize(
+        self,
+        values,
+    ):
+        """Normalizes axis values
+        Parameters
+        ----------
+        self: Norm_func
+            a Norm_func object
+        values: ndarray
+            axis values
+        Returns
+        -------
+        Vector of axis values
+        """
+        return self.function(values)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

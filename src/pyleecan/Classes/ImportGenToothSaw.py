@@ -17,11 +17,7 @@ from .ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportGenToothSaw.get_data import get_data
-except ImportError as error:
-    get_data = error
-
+from numpy import linspace, where
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,16 +29,50 @@ class ImportGenToothSaw(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportGenToothSaw.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportGenToothSaw method get_data: " + str(get_data)
-                )
+    def get_data(self):
+        """Generate the toothsaw vector
+
+        Parameters
+        ----------
+        self : ImportGenToothSaw
+            An ImportGenToothSaw object
+
+        Returns
+        -------
+        vect: ndarray
+            The generated toothsaw vector
+
+        """
+
+        time = linspace(start=0, stop=self.Tf, num=self.N, endpoint=False)
+
+        T = 1 / self.f
+        time = (time + self.Dt) % T
+
+        if self.type_signal == 0:  # forward toothsaw carrier
+            Y = (
+                where(time <= 0.5 * T, 1, 0) * time
+                + where(time > 0.5 * T, 1, 0) * (time - T)
+            ) / (0.5 * T)
+        elif self.type_signal == 1:  # backwards toothsaw carrier
+            Y = -(
+                where(time <= 0.5 * T, 1, 0) * time
+                + where(time > 0.5 * T, 1, 0) * (time - T)
+            ) / (0.5 * T)
+        elif self.type_signal == 2:  # symmetrical toothsaw carrier
+            t1 = T / 4
+            t2 = T - t1
+            Y = (
+                where(time <= t1, 1, 0) * time / t1
+                + where(time > t1, 1, 0)
+                * where(time < t2, 1, 0)
+                * (-time + 0.5 * T)
+                / (-t1 + 0.5 * T)
+                + where(time >= t2, 1, 0) * (time - T) / (T - t2)
             )
-        )
-    else:
-        get_data = get_data
+
+        return self.edit_matrix(self.A * Y)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

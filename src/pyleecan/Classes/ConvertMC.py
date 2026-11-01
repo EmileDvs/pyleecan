@@ -4,6 +4,32 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/ConvertMC
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - convert_to_other.convert_magnet_to_other: import name 'SlotM16' refers to different sources (.SlotM16.SlotM16 and pyleecan.Classes.SlotM16.SlotM16)
+# - convert_to_P.convert_other_to_dict: import name 'pi' refers to different sources (numpy.pi and ..Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict.pi)
+# - Rules.add_rule_material: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.add_rule_material_magnetics: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.add_rule_skew: import name 'RuleComplex' refers to different sources (pyleecan.Classes.RuleComplex.RuleComplex and .RuleComplex.RuleComplex)
+# - Rules.Hole.add_rule_holeM52: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Hole.add_rule_holeM57: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Hole.add_rule_holeM60: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Hole.add_rule_holeM61: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Hole.add_rule_holeM62: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Hole.add_rule_holeM63: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Lamination.add_rule_lamination: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Lamination.add_rule_notch_slotM19: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Lamination.add_rule_ventilationPolar: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Lamination.add_rule_ventilationTrap: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Pole.add_rule_parallel_slot_slotW29: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Pole.add_rule_parallel_tooth_slotW63: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Pole.add_rule_salient_pole_slotW62: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Rotor_Magnet.add_rule_slotM15: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Winding.add_rule_condtype11: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Winding.add_rule_condtype12: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+# - Rules.Winding.add_rule_rotor_bar: import name 'RuleComplex' refers to different sources (pyleecan.Classes.RuleComplex.RuleComplex and .RuleComplex.RuleComplex)
+# - Rules.Winding.add_rule_winding: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,450 +43,104 @@ from .Convert import Convert
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_conductor_to_other import (
-        convert_conductor_to_other,
-    )
-except ImportError as error:
-    convert_conductor_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_duct_to_other import (
-        convert_duct_to_other,
-    )
-except ImportError as error:
-    convert_duct_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_hole_to_other import (
-        convert_hole_to_other,
-    )
-except ImportError as error:
-    convert_hole_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_machine_to_other import (
-        convert_machine_to_other,
-    )
-except ImportError as error:
-    convert_machine_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_magnet_to_other import (
-        convert_magnet_to_other,
-    )
-except ImportError as error:
-    convert_magnet_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_material_to_other import (
-        convert_material_to_other,
-    )
-except ImportError as error:
-    convert_material_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_notch_to_other import (
-        convert_notch_to_other,
-    )
-except ImportError as error:
-    convert_notch_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_pole_to_other import (
-        convert_pole_to_other,
-    )
-except ImportError as error:
-    convert_pole_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_skew_to_other import (
-        convert_skew_to_other,
-    )
-except ImportError as error:
-    convert_skew_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_slot_rotor_to_other import (
-        convert_slot_rotor_to_other,
-    )
-except ImportError as error:
-    convert_slot_rotor_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.convert_slot_to_other import (
-        convert_slot_to_other,
-    )
-except ImportError as error:
-    convert_slot_to_other = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_other.init_other_unit import (
-        init_other_unit,
-    )
-except ImportError as error:
-    init_other_unit = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_conductor_to_P import (
-        convert_conductor_to_P,
-    )
-except ImportError as error:
-    convert_conductor_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_duct_to_P import (
-        convert_duct_to_P,
-    )
-except ImportError as error:
-    convert_duct_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_hole_to_P import (
-        convert_hole_to_P,
-    )
-except ImportError as error:
-    convert_hole_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_machine_to_P import (
-        convert_machine_to_P,
-    )
-except ImportError as error:
-    convert_machine_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_magnet_to_P import (
-        convert_magnet_to_P,
-    )
-except ImportError as error:
-    convert_magnet_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_material_to_P import (
-        convert_material_to_P,
-    )
-except ImportError as error:
-    convert_material_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_notch_to_P import (
-        convert_notch_to_P,
-    )
-except ImportError as error:
-    convert_notch_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict import (
-        convert_other_to_dict,
-    )
-except ImportError as error:
-    convert_other_to_dict = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_pole_to_P import (
-        convert_pole_to_P,
-    )
-except ImportError as error:
-    convert_pole_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_skew_to_P import (
-        convert_skew_to_P,
-    )
-except ImportError as error:
-    convert_skew_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_slot_rotor_to_P import (
-        convert_slot_rotor_to_P,
-    )
-except ImportError as error:
-    convert_slot_rotor_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.convert_to_P.convert_slot_to_P import (
-        convert_slot_to_P,
-    )
-except ImportError as error:
-    convert_slot_to_P = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.add_rule_machine_dimension import (
-        add_rule_machine_dimension,
-    )
-except ImportError as error:
-    add_rule_machine_dimension = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.add_rule_machine_dimension_surface_magnet import (
-        add_rule_machine_dimension_surface_magnet,
-    )
-except ImportError as error:
-    add_rule_machine_dimension_surface_magnet = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.add_rule_machine_type import (
-        add_rule_machine_type,
-    )
-except ImportError as error:
-    add_rule_machine_type = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.add_rule_material import add_rule_material
-except ImportError as error:
-    add_rule_material = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.add_rule_material_magnetics import (
-        add_rule_material_magnetics,
-    )
-except ImportError as error:
-    add_rule_material_magnetics = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.add_rule_skew import add_rule_skew
-except ImportError as error:
-    add_rule_skew = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM52 import (
-        add_rule_holeM52,
-    )
-except ImportError as error:
-    add_rule_holeM52 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM57 import (
-        add_rule_holeM57,
-    )
-except ImportError as error:
-    add_rule_holeM57 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM60 import (
-        add_rule_holeM60,
-    )
-except ImportError as error:
-    add_rule_holeM60 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM61 import (
-        add_rule_holeM61,
-    )
-except ImportError as error:
-    add_rule_holeM61 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM62 import (
-        add_rule_holeM62,
-    )
-except ImportError as error:
-    add_rule_holeM62 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM63 import (
-        add_rule_holeM63,
-    )
-except ImportError as error:
-    add_rule_holeM63 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_lamination import (
-        add_rule_lamination,
-    )
-except ImportError as error:
-    add_rule_lamination = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_notch_slotM19 import (
-        add_rule_notch_slotM19,
-    )
-except ImportError as error:
-    add_rule_notch_slotM19 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationCirc import (
-        add_rule_ventilationCirc,
-    )
-except ImportError as error:
-    add_rule_ventilationCirc = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationPolar import (
-        add_rule_ventilationPolar,
-    )
-except ImportError as error:
-    add_rule_ventilationPolar = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationTrap import (
-        add_rule_ventilationTrap,
-    )
-except ImportError as error:
-    add_rule_ventilationTrap = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_slot_slotW29 import (
-        add_rule_parallel_slot_slotW29,
-    )
-except ImportError as error:
-    add_rule_parallel_slot_slotW29 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_tooth_slotW63 import (
-        add_rule_parallel_tooth_slotW63,
-    )
-except ImportError as error:
-    add_rule_parallel_tooth_slotW63 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_salient_pole_slotW62 import (
-        add_rule_salient_pole_slotW62,
-    )
-except ImportError as error:
-    add_rule_salient_pole_slotW62 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM11 import (
-        add_rule_slotM11,
-    )
-except ImportError as error:
-    add_rule_slotM11 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM12 import (
-        add_rule_slotM12,
-    )
-except ImportError as error:
-    add_rule_slotM12 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM13 import (
-        add_rule_slotM13,
-    )
-except ImportError as error:
-    add_rule_slotM13 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM14 import (
-        add_rule_slotM14,
-    )
-except ImportError as error:
-    add_rule_slotM14 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM15 import (
-        add_rule_slotM15,
-    )
-except ImportError as error:
-    add_rule_slotM15 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM16 import (
-        add_rule_slotM16,
-    )
-except ImportError as error:
-    add_rule_slotM16 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW11 import (
-        add_rule_slotW11,
-    )
-except ImportError as error:
-    add_rule_slotW11 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW14 import (
-        add_rule_slotW14,
-    )
-except ImportError as error:
-    add_rule_slotW14 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW21 import (
-        add_rule_slotW21,
-    )
-except ImportError as error:
-    add_rule_slotW21 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW23 import (
-        add_rule_slotW23,
-    )
-except ImportError as error:
-    add_rule_slotW23 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW29 import (
-        add_rule_slotW29,
-    )
-except ImportError as error:
-    add_rule_slotW29 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW11_2 import (
-        add_rule_rotor_slotW11_2,
-    )
-except ImportError as error:
-    add_rule_rotor_slotW11_2 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW23 import (
-        add_rule_rotor_slotW23,
-    )
-except ImportError as error:
-    add_rule_rotor_slotW23 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW26 import (
-        add_rule_rotor_slotW26,
-    )
-except ImportError as error:
-    add_rule_rotor_slotW26 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW30 import (
-        add_rule_rotor_slotW30,
-    )
-except ImportError as error:
-    add_rule_rotor_slotW30 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype11 import (
-        add_rule_condtype11,
-    )
-except ImportError as error:
-    add_rule_condtype11 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype12 import (
-        add_rule_condtype12,
-    )
-except ImportError as error:
-    add_rule_condtype12 = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_rotor_bar import (
-        add_rule_rotor_bar,
-    )
-except ImportError as error:
-    add_rule_rotor_bar = error
-
-try:
-    from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_winding import (
-        add_rule_winding,
-    )
-except ImportError as error:
-    add_rule_winding = error
-
-try:
-    from ..Methods.Converter.ConvertMC.select_SIPMSM_machine_dimension import (
-        select_SIPMSM_machine_dimension,
-    )
-except ImportError as error:
-    select_SIPMSM_machine_dimension = error
-
+from ..Methods.Converter.ConvertMC.convert_to_other.convert_magnet_to_other import (
+    convert_magnet_to_other,
+)
+from ..Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict import (
+    convert_other_to_dict,
+)
+from ..Methods.Converter.ConvertMC.Rules.add_rule_material import add_rule_material
+from ..Methods.Converter.ConvertMC.Rules.add_rule_material_magnetics import (
+    add_rule_material_magnetics,
+)
+from ..Methods.Converter.ConvertMC.Rules.add_rule_skew import add_rule_skew
+from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM52 import add_rule_holeM52
+from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM57 import add_rule_holeM57
+from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM60 import add_rule_holeM60
+from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM61 import add_rule_holeM61
+from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM62 import add_rule_holeM62
+from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM63 import add_rule_holeM63
+from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_lamination import (
+    add_rule_lamination,
+)
+from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_notch_slotM19 import (
+    add_rule_notch_slotM19,
+)
+from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationPolar import (
+    add_rule_ventilationPolar,
+)
+from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationTrap import (
+    add_rule_ventilationTrap,
+)
+from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_slot_slotW29 import (
+    add_rule_parallel_slot_slotW29,
+)
+from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_tooth_slotW63 import (
+    add_rule_parallel_tooth_slotW63,
+)
+from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_salient_pole_slotW62 import (
+    add_rule_salient_pole_slotW62,
+)
+from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM15 import (
+    add_rule_slotM15,
+)
+from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype11 import (
+    add_rule_condtype11,
+)
+from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype12 import (
+    add_rule_condtype12,
+)
+from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_rotor_bar import (
+    add_rule_rotor_bar,
+)
+from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_winding import (
+    add_rule_winding,
+)
+from .CondType12 import CondType12
+from .CondType13 import CondType13
+from .VentilationCirc import VentilationCirc
+from .VentilationPolar import VentilationPolar
+from .VentilationTrap import VentilationTrap
+from .HoleM52 import HoleM52
+from .HoleM57 import HoleM57
+from .HoleM60 import HoleM60
+from .HoleM61 import HoleM61
+from .HoleM62 import HoleM62
+from .HoleM63 import HoleM63
+from .MachineSIPMSM import MachineSIPMSM
+from .MachineIPMSM import MachineIPMSM
+from .MachineSCIM import MachineSCIM
+from .MachineWRSM import MachineWRSM
+from .SlotM19 import SlotM19
+from .SlotW61 import SlotW61
+from .SlotW62 import SlotW62
+from .SlotW29 import SlotW29
+from .Skew import Skew
+from .SlotW11_2 import SlotW11_2
+from .SlotW23 import SlotW23
+from .SlotW26 import SlotW26
+from .SlotW30 import SlotW30
+from .SlotW11 import SlotW11
+from .SlotW14 import SlotW14
+from .SlotW21 import SlotW21
+from numpy import pi
+from .CondType11 import CondType11
+from .LamHole import LamHole
+from .LamSlotMag import LamSlotMag
+from .SlotM11 import SlotM11
+from .SlotM12 import SlotM12
+from .SlotM13 import SlotM13
+from .SlotM14 import SlotM14
+from .SlotM15 import SlotM15
+from .SlotM16 import SlotM16
+from .NotchEvenDist import NotchEvenDist
+from .LamSlotWind import LamSlotWind
+from .SlotW63 import SlotW63
+from .LamSquirrelCage import LamSquirrelCage
+from .Material import Material
+from pyleecan.Classes.RuleSimple import RuleSimple
+from pyleecan.Classes.RuleEquation import RuleEquation
+from pyleecan.Classes.RuleComplex import RuleComplex
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -471,776 +151,2792 @@ class ConvertMC(Convert):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_conductor_to_other
-    if isinstance(convert_conductor_to_other, ImportError):
-        convert_conductor_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_conductor_to_other: "
-                    + str(convert_conductor_to_other)
-                )
+    def convert_conductor_to_other(self, is_stator):
+        """selects step to add rules for conductor
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        # selection if conductor is in stator or rotor
+        if is_stator:
+            conductor_type = self.machine.stator.winding.conductor
+        else:
+            conductor_type = self.machine.rotor.winding.conductor
+
+        if isinstance(conductor_type, CondType12):
+            conductor_name = "AWG_Table"
+
+        elif isinstance(conductor_type, CondType13):
+            conductor_name = "Rectangular"
+        else:
+            raise NotImplementedError(
+                f"Type of conductor {conductor_type.__class__.__name__} has not equivalent or has not implement"
             )
+
+        # writting in dict
+        if "[Winding_Design]" not in self.other_dict:
+            self.other_dict["[Winding_Design]"] = {"Wire_Type": conductor_name}
+        else:
+            self.other_dict["[Winding_Design]"]["Wire_Type"] = conductor_name
+
+        self.get_logger().info(
+            f"Conversion {conductor_type.__class__.__name__} into {conductor_name}"
         )
-    else:
-        convert_conductor_to_other = convert_conductor_to_other
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_duct_to_other
-    if isinstance(convert_duct_to_other, ImportError):
-        convert_duct_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_duct_to_other: "
-                    + str(convert_duct_to_other)
-                )
+    def convert_duct_to_other(self, is_stator):
+        """selects step to add rules for duct
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : bool
+            True slot is in stator, False slot is in rotor
+        """
+        # Single type
+        # Multi set
+
+        if is_stator:
+            lam_name_MC = "Stator"
+            axial_vent = self.machine.stator.axial_vent
+
+        else:
+            lam_name_MC = "Rotor"
+            axial_vent = self.machine.rotor.axial_vent
+
+        # If there is any axial_vent, then do nothing
+        if len(axial_vent) == 0:
+            return
+
+        elif len(axial_vent) > 1:
+            for duct in axial_vent:
+                if isinstance(duct, axial_vent[0].__class__):
+                    self.get_logger().error(
+                        "A Motor-cad machine can only have one type of axial duct"
+                    )
+                    break
+
+        # selection type duct, single type in Motor-CAD
+        if isinstance(axial_vent[0], VentilationCirc):
+            # CircularDuct
+            duct_MC_name = "Rotor_Circular_Ducts"
+
+        elif isinstance(axial_vent[0], VentilationPolar):
+            # Arcduct
+            duct_MC_name = "Rotor_Arc_Ducts"
+
+        elif isinstance(axial_vent[0], VentilationTrap):
+            # RectangularDuct
+            duct_MC_name = "Rotor_Rectangular_Ducts"
+        else:
+            raise NotImplementedError(
+                f"Type of duct {axial_vent[0].__name__} has not equivalent or has not been implementated"
             )
+
+        # writting in dict
+        if "[Through_Vent]" not in self.other_dict:
+            self.other_dict["[Through_Vent]"] = {
+                f"{lam_name_MC}_Duct_Type": duct_MC_name
+            }
+        else:
+            self.other_dict["[Through_Vent]"][f"{lam_name_MC}_Duct_Type"] = duct_MC_name
+
+        self.get_logger().info(
+            f"Conversion {axial_vent[0].__name__} into {duct_MC_name}"
         )
-    else:
-        convert_duct_to_other = convert_duct_to_other
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_hole_to_other
-    if isinstance(convert_hole_to_other, ImportError):
-        convert_hole_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_hole_to_other: "
-                    + str(convert_hole_to_other)
+    def convert_hole_to_other(self):
+        """Selects correct hole and implements it in dict
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+
+        Returns
+        ---------
+        len_hole : int
+            The number of hole
+        """
+
+        # conversion to motor-cad
+        hole = self.machine.rotor.hole[0]
+        hole_type = type(hole).__name__
+
+        # Check that every set of hole have the same type
+        for current_hole in self.machine.rotor.hole:
+            if isinstance(current_hole, hole.__class__):
+                self.get_logger().error(
+                    "In motor-cad, we have just the possibility to set the same type of hole, so we select the first hole"
                 )
+
+        # selection type of Slot
+        if isinstance(hole, HoleM52):
+            name_hole = "Interior_Flat(web)"
+
+        elif isinstance(hole, HoleM57):
+            name_hole = "Interior_V(web)"
+
+        elif isinstance(hole, HoleM60):
+            name_hole = "Interior_V(simple)"
+            self.get_logger().warning(f"Approximation for W3, Magnet_Post")
+
+        elif isinstance(hole, HoleM61):
+            name_hole = "Interior_U-Shape"
+
+        elif isinstance(hole, HoleM62):
+            if self.machine.rotor.hole.W0_is_rad == False:
+                name_hole = "Embedded_Parallel"
+            else:
+                name_hole = "Embedded_Radial"
+
+        elif isinstance(hole, HoleM63):
+            if hole.top_flat == False:
+                name_hole = "Embedded_Breadleaof"
+            else:
+                name_hole = "Interior_Flat(simple)"
+
+        else:
+            raise NotImplementedError(
+                f"Type of hole {hole_type} has not equivalent or has not been implementated"
             )
-        )
-    else:
-        convert_hole_to_other = convert_hole_to_other
+
+        # writting in dict
+        if "[Design_Options]" not in self.other_dict:
+            self.other_dict["[Design_Options]"] = {"BPM_Rotor": name_hole}
+        else:
+            self.other_dict["[Design_Options]"]["BPM_Rotor"] = name_hole
+
+        self.get_logger().info(f"Conversion {hole_type} into {name_hole}")
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_machine_to_other
-    if isinstance(convert_machine_to_other, ImportError):
-        convert_machine_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_machine_to_other: "
-                    + str(convert_machine_to_other)
-                )
+    def convert_machine_to_other(self):  # conversion to MotorCAD
+        """Update other_dict with the correct machine type
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        # check the direction of conversion
+        motor_type = type(self.machine).__name__
+
+        # selection type of machine
+
+        if isinstance(self.machine, MachineSIPMSM):
+            name_machine = "BPM"
+
+        elif isinstance(self.machine, MachineIPMSM):
+            name_machine = "BPM"
+
+        elif isinstance(self.machine, MachineSCIM):
+            name_machine = "IM"
+
+        elif isinstance(self.machine, MachineWRSM):
+            name_machine = "SYNC"
+
+        else:
+            raise NotImplementedError(
+                f"Machine {motor_type} has not equivalent or has not been implementated"
             )
-        )
-    else:
-        convert_machine_to_other = convert_machine_to_other
+
+        self.get_logger().info(f"Conversion {motor_type} into {name_machine}")
+
+        # writting in dict
+        if "[Calc_Options]" not in self.other_dict:
+            self.other_dict["[Calc_Options]"] = {"Motor_Type": name_machine}
+        else:
+            self.other_dict["[Calc_Options]"]["Motor_Type"] = name_machine
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_magnet_to_other
-    if isinstance(convert_magnet_to_other, ImportError):
-        convert_magnet_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_magnet_to_other: "
-                    + str(convert_magnet_to_other)
-                )
-            )
-        )
-    else:
-        convert_magnet_to_other = convert_magnet_to_other
+    convert_magnet_to_other = convert_magnet_to_other
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_material_to_other
-    if isinstance(convert_material_to_other, ImportError):
-        convert_material_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_material_to_other: "
-                    + str(convert_material_to_other)
-                )
-            )
-        )
-    else:
-        convert_material_to_other = convert_material_to_other
+    def convert_material_to_other(self, is_stator, name):
+        """Selects correct material and implements it in dict
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        return
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_notch_to_other
-    if isinstance(convert_notch_to_other, ImportError):
-        convert_notch_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_notch_to_other: "
-                    + str(convert_notch_to_other)
+    def convert_notch_to_other(self, is_stator):
+        """selection step to add rules for notch
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : bool
+            True slot is in stator, False slot is in rotor
+        """
+
+        if is_stator:
+            len_nocth = len(self.machine.stator.notch)
+        else:
+            len_nocth = len(self.machine.rotor.notch)
+
+        # If there is any notch, then do nothing
+        if len_nocth == 0:
+            return
+
+        if not is_stator:
+            # A MC machine has the possibility to have a single notch set
+            if len_nocth > 1:
+                self.get_logger().info(
+                    "A Motor-cad machine can only have one notch set"
                 )
-            )
-        )
-    else:
-        convert_notch_to_other = convert_notch_to_other
+                self.get_logger().info("Only the first notch set will be added")
+
+            if isinstance(self.machine.rotor.notch[0].notch_shape, SlotM19):
+                self.add_rule_notch(is_stator)
+                self.get_logger().warning(
+                    "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
+                )
+
+            else:
+                self.get_logger().error("Only the slotM19 can be converted")
+
+        else:
+            self.get_logger().error("Motor-CAD machine can't have stator notch")
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_pole_to_other
-    if isinstance(convert_pole_to_other, ImportError):
-        convert_pole_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_pole_to_other: "
-                    + str(convert_pole_to_other)
-                )
+    def convert_pole_to_other(self):
+        """Selects correct pole and implements it in dict
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        Returns
+        ---------
+        """
+        # conversion to motor-cad
+        pole_type = self.machine.rotor.slot
+
+        # selection type of pole
+        if isinstance(pole_type, SlotW61):
+            name_pole = "Sync_Salient_Pole"
+
+        elif isinstance(pole_type, SlotW62):
+            name_pole = "Sync_Parallel_Tooth"
+
+        elif isinstance(pole_type, SlotW29):
+            name_pole = "Sync_Parallel_Slot"
+
+        else:
+            raise NotImplementedError(
+                f"Type of pole {pole_type.__class__.__name__} has not equivalent or has not been implementated"
             )
+
+        # writting in dict
+        if "[Design_Options]" not in self.other_dict:
+            self.other_dict["[Design_Options]"] = {"Sync_Rotor": name_pole}
+        else:
+            self.other_dict["[Design_Options]"]["Sync_Rotor"] = name_pole
+
+        self.get_logger().info(
+            f"Conversion {pole_type.__class__.__name__} into {name_pole}"
         )
-    else:
-        convert_pole_to_other = convert_pole_to_other
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_skew_to_other
-    if isinstance(convert_skew_to_other, ImportError):
-        convert_skew_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_skew_to_other: "
-                    + str(convert_skew_to_other)
-                )
-            )
-        )
-    else:
-        convert_skew_to_other = convert_skew_to_other
+    def convert_skew_to_other(self):
+        """Selects correct skew and implements it in dict
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        Returns
+        ---------
+        """
+
+        if isinstance(self.machine.rotor.skew, Skew):
+            self.add_rule_skew()
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_slot_rotor_to_other
-    if isinstance(convert_slot_rotor_to_other, ImportError):
-        convert_slot_rotor_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_slot_rotor_to_other: "
-                    + str(convert_slot_rotor_to_other)
-                )
+    def convert_slot_rotor_to_other(self):
+        """Selects correct slot for rotor and implements it in dict
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        # conversion to pyleecan
+        slot = self.machine.rotor.slot
+
+        # selection type of Slot
+        if isinstance(slot, SlotW11_2):
+            name_slot = "Parallel_Tooth"
+
+        elif isinstance(slot, SlotW23):
+            name_slot = "Rectangular"
+
+        elif isinstance(slot, SlotW26):
+            name_slot = "Round"
+
+        elif isinstance(slot, SlotW30):
+            name_slot = "Pear"
+
+        else:
+            raise NotImplementedError(
+                f"Type of slot {name_slot} has not equivalent or has not been implementated"
             )
-        )
-    else:
-        convert_slot_rotor_to_other = convert_slot_rotor_to_other
+
+        self.get_logger().info(f"Conversion {slot.__class__.__name__} into {name_slot}")
+
+        # writting in dict
+        if "[Design_Options]" not in self.other_dict:
+            self.other_dict["[Design_Options]"] = {"Top_Bar": name_slot}
+        else:
+            self.other_dict["[Design_Options]"]["Top_Bar"] = name_slot
+
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_slot_to_other
-    if isinstance(convert_slot_to_other, ImportError):
-        convert_slot_to_other = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_slot_to_other: "
-                    + str(convert_slot_to_other)
-                )
+    def convert_slot_to_other(self):
+        """Selects correct slot and implements it in dict
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        # conversion to pyleecan
+        slot = self.machine.stator.slot
+
+        # selection type of Slot
+        if isinstance(slot, SlotW11):
+            name_slot = "Parallel_Tooth"
+
+        elif isinstance(slot, SlotW14):
+            name_slot = "Parallel_tooth_SqB"
+
+        elif isinstance(slot, SlotW21):
+            name_slot = "Parallel_Slot"
+
+        elif isinstance(slot, SlotW23):
+            name_slot = "Tapered_slot"
+
+        elif isinstance(slot, SlotW29):
+            name_slot = "Form_Wound"
+
+        else:
+            raise NotImplementedError(
+                f"Type of slot {name_slot} has not equivalent or has not been implementated"
             )
-        )
-    else:
-        convert_slot_to_other = convert_slot_to_other
+        self.get_logger().info(f"Conversion {slot.__class__.__name__} into {name_slot}")
+
+        # writting in dict
+        if "[Calc_Options]" not in self.other_dict:
+            self.other_dict["[Calc_Options]"] = {"Slot_Type": name_slot}
+        else:
+            self.other_dict["[Calc_Options]"]["Slot_Type"] = name_slot
+
     # cf Methods.Converter.ConvertMC.convert_to_other.init_other_unit
-    if isinstance(init_other_unit, ImportError):
-        init_other_unit = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method init_other_unit: "
-                    + str(init_other_unit)
-                )
-            )
-        )
-    else:
-        init_other_unit = init_other_unit
+    def init_other_unit(self):
+        """Selects units and creates a dict with all conversion
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.other_unit_dict = {}
+
+        # set length
+        # pyleecan unit=m, MC unit = mm
+        self.other_unit_dict["m"] = 0.001
+
+        self.other_unit_dict["rad"] = 1
+        self.other_unit_dict["deg"] = 180 / pi
+
+        # conversion electrical degree
+        pole_pair_number = self.machine.get_pole_pair_number()
+        self.other_unit_dict["ED"] = (4 / pole_pair_number) * (pi / 180)
+
+        self.other_unit_dict[None] = 1  # No unit => No scale
+        self.other_unit_dict[""] = 1  # No unit => No scale
+        self.other_unit_dict["-"] = 1  # No unit => No scale
+        self.other_unit_dict["[]"] = 1  # No unit => No scale
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_conductor_to_P
-    if isinstance(convert_conductor_to_P, ImportError):
-        convert_conductor_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_conductor_to_P: "
-                    + str(convert_conductor_to_P)
-                )
+    def convert_conductor_to_P(self, is_stator):
+        """selects step to add rules for conductor in stator
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        if is_stator:
+            winding = self.machine.stator.winding
+        else:
+            winding = self.machine.rotor.winding
+
+        conductor_type = self.other_dict["[Winding_Design]"]["Wire_Type"]
+
+        if conductor_type in [
+            "AWG_Table",
+            "Metric_Table",
+            "Diameter_Input",
+            "SWG_Table",
+        ]:
+            winding.conductor = CondType12()
+
+        elif conductor_type == "Rectangular":
+            winding.conductor = CondType11()
+            winding.conductor.Nwppc_rad = 1
+            winding.conductor.Nwppc_tan = 2
+        else:
+            raise NotImplementedError(
+                f"Type of conductor {conductor_type} has not equivalent or has not implement"
             )
+
+        self.get_logger().info(
+            f"Conversion {conductor_type} into {winding.conductor.__class__.__name__}"
         )
-    else:
-        convert_conductor_to_P = convert_conductor_to_P
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_duct_to_P
-    if isinstance(convert_duct_to_P, ImportError):
-        convert_duct_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_duct_to_P: "
-                    + str(convert_duct_to_P)
-                )
-            )
+    def convert_duct_to_P(self, is_stator):
+        """selection step to add rules for duct
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : bool
+            True lam is in stator, False lam is in rotor
+
+        """
+        # selection of lamination
+        if is_stator:
+            lam_name = "Stator"
+            axial_vent = self.machine.stator.axial_vent
+
+            # selection type layers
+            if f"{lam_name}_Duct_Type" in self.other_dict["[Through_Vent]"]:
+                type_duct = self.other_dict["[Through_Vent]"][f"{lam_name}_Duct_Type"]
+            else:
+                type_duct = f"No_{lam_name}_Ducts"
+
+            # Selection type of duct
+            if type_duct == f"No_{lam_name}_Ducts":
+                return
+
+            else:
+                # CircularDuct
+                if type_duct == "Circ_Ducts":
+                    Ventilation_class = VentilationCirc
+
+                # RectangularDuct
+                elif type_duct == "Rect_Ducts":
+                    # Error convert is not Implemented
+                    self.get_logger().info("Rect_Ducts, Not Implemented")
+                    # Ventilation_class = VentilationTrap
+                    return
+
+                else:
+                    raise NotImplementedError(
+                        f"Type of duct {type_duct} has any equivalent in pyleecan or has not been implemented"
+                    )
+
+            number_duct = self.other_dict["[Through_Vent]"]["CircularDuctLayers"]
+
+        else:
+            lam_name = "Rotor"
+            axial_vent = self.machine.rotor.axial_vent
+
+            # selection type layers
+            if f"{lam_name}_Duct_Type" in self.other_dict["[Through_Vent]"]:
+                type_duct = self.other_dict["[Through_Vent]"][f"{lam_name}_Duct_Type"]
+            else:
+                type_duct = f"No_{lam_name}_Ducts"
+
+            # Selection type of duct
+            if type_duct == f"No_{lam_name}_Ducts":
+                self.get_logger().debug(f"No duct to convert at {lam_name}")
+                return
+
+            else:
+                # CircularDuct
+                if type_duct == f"{lam_name}_Circ_Ducts" or type_duct == "Circ_Ducts":
+                    Ventilation_class = VentilationCirc
+
+                # Shaft_spoke
+                elif type_duct == f"{lam_name}_Shaft_Spoke_Ducts":
+                    self.get_logger().info(f"ShaftSpoke ins't define in pyleecan")
+
+                # Arcduct
+                elif type_duct == f"{lam_name}_Arc_Ducts":
+                    Ventilation_class = VentilationPolar
+
+                # RectangularDuct
+                elif type_duct == f"{lam_name}_Rect_Ducts" or type_duct == "Rect_Ducts":
+                    # Error convert is not Implemented
+                    self.get_logger().info("Rect_Ducts, Not Implemented")
+                    return
+                    # Ventilation_class = VentilationTrap
+
+                else:
+                    raise NotImplementedError(
+                        f"Type of duct {type_duct} has any equivalent in pyleecan or has not been implemented"
+                    )
+
+                number_duct = self.other_dict["[Through_Vent]"][
+                    f"{lam_name}CircularDuctLayers"
+                ]
+
+        # Duplication of the sets
+        for duct_id in range(number_duct):
+            axial_vent.append(Ventilation_class())
+
+        self.get_logger().info(
+            f"Conversion {type_duct} into {number_duct} {Ventilation_class.__name__}"
         )
-    else:
-        convert_duct_to_P = convert_duct_to_P
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_hole_to_P
-    if isinstance(convert_hole_to_P, ImportError):
-        convert_hole_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_hole_to_P: "
-                    + str(convert_hole_to_P)
-                )
+    def convert_hole_to_P(self):
+        """Selects correct hole and implements it in obj machine
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+
+        Returns
+        ---------
+        len_hole : int
+            The number of hole
+        """
+
+        hole_type = self.other_dict["[Design_Options]"]["BPM_Rotor"]
+
+        # Motor-CAD cannot have 2 different types of holes
+        # initialisation to set the hole in rotor
+        self.machine.rotor = LamHole()
+        self.machine.rotor.is_stator = False
+        self.machine.rotor.is_internal = True
+
+        # set the hole in obj machine, and add particularity to hole
+        if hole_type == "Embedded_Parallel":
+            self.machine.rotor.hole.append(HoleM62())
+            self.machine.rotor.hole[0].W0_is_rad = False
+
+        elif hole_type == "Embedded_Radial":
+            self.machine.rotor.hole.append(HoleM62())
+            self.machine.rotor.hole[0].W0_is_rad = True
+
+        elif hole_type == "Embedded_Breadloaf":
+            self.machine.rotor.hole.append(HoleM63())
+            self.machine.rotor.hole[0].top_flat = False
+
+        elif hole_type == "Interior_Flat_Simple":
+            self.machine.rotor.hole.append(HoleM63())
+            self.machine.rotor.hole[0].top_flat = True
+            self.get_logger().warning(
+                f"HoleM63 : Approximation for H1, Pole Arc isn't present in Pyleecan"
             )
+
+        elif hole_type == "Interior_Flat_Web":
+            self.machine.rotor.hole.append(HoleM52())
+            self.machine.rotor.hole[0].H2 = 0
+
+        # possibility to have many set for the same Hole
+        elif hole_type == "Interior_VSimple":
+            number_hole = self.other_dict["[Dimensions]"]["VMagnet_Layers"]
+            for hole_id in range(number_hole):
+                self.machine.rotor.hole.append(HoleM60())
+
+        elif hole_type == "Interior_VShape":
+            number_hole = self.other_dict["[Dimensions]"]["VMagnet_Layers"]
+            for hole_id in range(number_hole):
+                self.machine.rotor.hole.append(HoleM57())
+                self.get_logger().warning(
+                    "HoleM57 : Approximation check the settings for HoleM57"
+                )
+
+        elif hole_type == "Interior_UShape":
+            number_hole = self.other_dict["[Dimensions]"]["Magnet_Layers"]
+            for hole_id in range(number_hole):
+                self.machine.rotor.hole.append(HoleM61())
+
+        else:
+            raise NotImplementedError(
+                f"Type of hole {hole_type} has not equivalent in pyleecan or has not been implementated"
+            )
+
+        # writing exception/approximation for Hole
+        if isinstance(self.machine.rotor.hole[0], HoleM60):
+            self.get_logger().warning(f"HoleM60 : Approximation for W3, Magnet_Post")
+
+        if isinstance(self.machine.rotor.hole[0], HoleM63):
+            self.get_logger().warning(f"HoleM63 : Approximation for W0")
+
+        if isinstance(self.machine.rotor.hole[0], HoleM57):
+            self.get_logger().warning(
+                f"HoleM57 : Approximation Pole Arc has not equivalent in pyleecan "
+            )
+
+        self.get_logger().info(
+            f"Conversion {hole_type} into {type(self.machine.rotor.hole[0]).__name__}"
         )
-    else:
-        convert_hole_to_P = convert_hole_to_P
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_machine_to_P
-    if isinstance(convert_machine_to_P, ImportError):
-        convert_machine_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_machine_to_P: "
-                    + str(convert_machine_to_P)
-                )
+    def convert_machine_to_P(self):
+        """Update machine with the correct machine type
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        # conversion to Pyleecan
+        motor_type = self.other_dict["[Calc_Options]"]["Motor_Type"]
+        magnet_type = self.other_dict["[Design_Options]"]["BPM_Rotor"]
+
+        # select machine type abd create it
+        if motor_type == "BPM":
+            if magnet_type in [
+                "Surface_Radial",
+                "Surface_Parallel",
+                "Surface_Breadloaf",
+                "Inset_Radial",
+                "Inset_Parallel",
+                "Inset_Breadloaf",
+            ]:
+                self.machine = MachineSIPMSM()
+            else:
+                # "Embedded_Parallel"
+                # "Embedded_Radial"
+                # "Embedded_Breadleaof"
+                # "Interior_Flat(simple)"
+                # "Interior_Flat(web)"
+                # "Interior_V(simple)"
+                # "Interior_V(web)"
+                # "Interior_U-Shape"
+
+                self.machine = MachineIPMSM()
+
+        elif motor_type == "IM":
+            self.machine = MachineSCIM()
+
+        elif motor_type == "SYNC":
+            self.machine = MachineWRSM()
+
+        else:
+            # exception if machine as not an equivalent in pyleecan
+            raise NotImplementedError(
+                f"Machine {motor_type} has not equivalent in pyleecan or has not been implementated"
             )
+
+        self.get_logger().info(
+            f"Conversion {motor_type} into {type(self.machine).__name__}"
         )
-    else:
-        convert_machine_to_P = convert_machine_to_P
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_magnet_to_P
-    if isinstance(convert_magnet_to_P, ImportError):
-        convert_magnet_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_magnet_to_P: "
-                    + str(convert_magnet_to_P)
-                )
+    def convert_magnet_to_P(self):
+        """Selects correct magnet and implements it in obj machine
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        # conversion to pyleecan
+        magnet_type = self.other_dict["[Design_Options]"]["BPM_Rotor"]
+
+        # initialisation to set the slot in stator
+        self.machine.rotor = LamSlotMag()
+
+        # set the slot in obj machine, and add particularity
+        if magnet_type == "Surface_Radial":
+            self.machine.rotor.slot = SlotM14()
+            self.machine.rotor.slot.H0 = 0  # slot is on surface
+
+        elif magnet_type == "Surface_Parallel":
+            self.machine.rotor.slot = SlotM15()
+            self.machine.rotor.slot.H0 = 0  # slot is on surface
+
+        elif magnet_type == "Surface_Breadloaf":
+            self.machine.rotor.slot = SlotM13()
+            self.machine.rotor.slot.H0 = 0  # slot is on surface
+
+        elif magnet_type == "Inset_Radial":
+            self.machine.rotor.slot = SlotM11()
+
+        elif magnet_type == "Inset_Parallel":
+            self.machine.rotor.slot = SlotM15()
+            self.machine.rotor.slot.H0 = 0.001  # To pass the check for inset parallel
+            self.get_logger().warning(
+                "Approximation for slotM15 hasn't equivalent in Pyleecan"
             )
+
+        elif magnet_type == "Inset_Breadloaf":
+            self.machine.rotor.slot = SlotM12()
+
+        elif magnet_type == "Spoke":
+            self.machine.rotor.slot = SlotM16()
+
+        else:
+            raise NotImplementedError(
+                f"type of magnet {magnet_type} has not equivalent in pyleecan or has not been implementated"
+            )
+
+        self.machine.rotor.is_stator = False
+        self.machine.rotor.is_internal = True
+        other_value = self.other_dict["[Dimensions]"]["Pole_Number"]
+        self.machine.rotor.set_pole_pair_number(other_value // 2)
+
+        self.get_logger().info(
+            f"Conversion {magnet_type} into {type(self.machine.rotor.slot).__name__}"
         )
-    else:
-        convert_magnet_to_P = convert_magnet_to_P
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_material_to_P
-    if isinstance(convert_material_to_P, ImportError):
-        convert_material_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_material_to_P: "
-                    + str(convert_material_to_P)
-                )
-            )
-        )
-    else:
-        convert_material_to_P = convert_material_to_P
+    def convert_material_to_P(self, path_P):
+        """Selects correct material path and return path in file.mot
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+
+        Returns
+        ---------
+        material_path : string
+            Path to select material in file .mot
+        """
+
+        # creation material dict
+        dict_material = {
+            "machine.shaft.mat_type": ("Material_Shaft_[A]"),
+            "machine.frame.mat_type": (""),  # Material_Housing_Active
+            "machine.rotor.slot.wedge_mat": ("Material_RotorWedge"),
+            "machine.rotor.winding.conductor.cond_mat": ("Material_Copper_-_Active"),
+            "machine.rotor.winding.conductor.ins_mat": (""),
+            "machine.rotor.mat_type": ("Material_Rotor_Lam_Tooth"),
+            "machine.rotor.ring_mat": ("Material_Rotor_Cage_Top"),
+            "machine.stator.slot.wedge_mat": ("Material_SlotWedge"),
+            "machine.rotor.magnet.mat_type": ("Material_Magnet"),
+            "machine.stator.mat_type": ("Material_Stator_Lam_Tooth"),
+            "machine.stator.winding.conductor.cond_mat": ("Material_Copper_-_Active"),
+            "machine.stator.winding.conductor.ins_mat": (""),
+        }
+
+        if "[" in path_P:
+            path_P_split = path_P.split("[")
+            # check if material is a hole
+            if path_P_split[0] == "machine.rotor.hole":
+                material_path = "Material_Magnet"
+            else:
+                IndexError("Problem in material path")
+
+        # select the correct position of material into dict
+        else:
+            material_path = dict_material[path_P]
+
+        if material_path != "":
+            try:
+                material_path = self.other_dict["[Material]"][material_path]
+            except:
+                material_path = ""
+
+        return material_path
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_notch_to_P
-    if isinstance(convert_notch_to_P, ImportError):
-        convert_notch_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_notch_to_P: "
-                    + str(convert_notch_to_P)
+    def convert_notch_to_P(self, is_stator):
+        """selects step to add rules for notch
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : bool
+            True slot is in stator, False slot is in rotor
+        """
+        if not is_stator:
+            # In .mot file :
+            #   If the machine have notch => PoleNotchDepth > 1
+            #   If the machine have any notch => PoleNotchDepth do not exist
+            #                                    OR PoleNotchDepth = 0
+            if "PoleNotchDepth" in self.other_dict["[Dimensions]"]:
+                Notch_depth = self.other_dict["[Dimensions]"]["PoleNotchDepth"]
+            else:
+                Notch_depth = 0
+
+            if Notch_depth != 0:
+                # MC has one set of notch and just equivalent of slotM19
+                self.machine.rotor.notch.append(NotchEvenDist())
+                self.machine.rotor.notch[0].notch_shape = SlotM19()
+
+                self.get_logger().info("Add notch for rotor")
+                self.get_logger().warning(
+                    "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
                 )
-            )
-        )
-    else:
-        convert_notch_to_P = convert_notch_to_P
+        else:
+            self.get_logger().error("MC machine can't have notch in stator")
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict
-    if isinstance(convert_other_to_dict, ImportError):
-        convert_other_to_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_other_to_dict: "
-                    + str(convert_other_to_dict)
-                )
-            )
-        )
-    else:
-        convert_other_to_dict = convert_other_to_dict
+    convert_other_to_dict = convert_other_to_dict
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_pole_to_P
-    if isinstance(convert_pole_to_P, ImportError):
-        convert_pole_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_pole_to_P: "
-                    + str(convert_pole_to_P)
-                )
+    def convert_pole_to_P(self):
+        """Selects correct pole and implements it in obj machine
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+
+        """
+
+        pole_type = self.other_dict["[Design_Options]"]["Sync_Rotor"]
+
+        # initialisation to set the pole in rotor
+        self.machine.rotor = LamSlotWind()
+        self.machine.rotor.is_stator = False
+        self.machine.rotor.is_internal = True
+
+        # set the pole in obj machine, and add particularity to pole
+        if pole_type == "Sync_Salient_Pole":
+            self.machine.rotor.slot = SlotW62()
+
+        elif pole_type == "Sync_Parallel_Tooth":
+            self.machine.rotor.slot = SlotW63()
+
+        elif pole_type == "Sync_Parallel_Slot":
+            self.machine.rotor.slot = SlotW29()
+            self.machine.rotor.slot.H1 = 0
+            self.get_logger().info(
+                "Approximation for tip angle, not possible in pyleecan"
             )
+
+        else:
+            raise NotImplementedError(
+                f"Type of pole {pole_type} has not equivalent in pyleecan or has not been implementated"
+            )
+
+        self.get_logger().info(
+            f"Conversion {pole_type} into {type(self.machine.rotor.slot).__name__}"
         )
-    else:
-        convert_pole_to_P = convert_pole_to_P
+
+        if isinstance(pole_type, SlotW63):
+            self.get_logger().warning(
+                f"SlotW62 : Approximation for W2 has not equivalent in Motor-CAD"
+            )
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_skew_to_P
-    if isinstance(convert_skew_to_P, ImportError):
-        convert_skew_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_skew_to_P: "
-                    + str(convert_skew_to_P)
-                )
-            )
-        )
-    else:
-        convert_skew_to_P = convert_skew_to_P
+    def convert_skew_to_P(self):
+        """Selects correct skew and implements it in obj machine
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        # conversion to pyleecan
+        if "SkewType" in self.other_dict["[Magnetics]"]:
+            skew_type = self.other_dict["[Magnetics]"]["SkewType"]
+        else:
+            skew_type = 0
+
+        if skew_type == 2:
+            # initialisation to set the skew in rotor
+            self.machine.rotor.skew = Skew()
+
+            self.get_logger().info(f"Conversion skew ")
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_slot_rotor_to_P
-    if isinstance(convert_slot_rotor_to_P, ImportError):
-        convert_slot_rotor_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_slot_rotor_to_P: "
-                    + str(convert_slot_rotor_to_P)
-                )
+    def convert_slot_rotor_to_P(self):
+        """Selects correct slot for rotor and implements it in obj machine
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        slot_type = self.other_dict["[Design_Options]"]["Top_Bar"]
+
+        # initialisation to set the slot in rotor
+        self.machine.rotor = LamSquirrelCage()
+        self.machine.rotor.is_stator = False
+        self.machine.rotor.is_internal = True
+
+        # set the slot in obj machine, and add particularity
+        if slot_type == "Parallel_Tooth":
+            self.machine.rotor.slot = SlotW11_2()
+            self.machine.rotor.slot.is_cstt_tooth = True
+            self.machine.rotor.slot.H1_is_rad = True
+
+        elif slot_type == "Round":
+            self.machine.rotor.slot = SlotW26()
+            self.machine.rotor.slot.H1 = 0
+            self.machine.rotor.slot.R2 = 0
+
+        elif slot_type == "Rectangular":
+            self.machine.rotor.slot = SlotW23()
+            self.machine.rotor.slot.H1_is_rad = True
+
+        elif slot_type == "Pear":
+            self.machine.rotor.slot = SlotW30()
+
+        else:
+            raise NotImplementedError(
+                f"Type of slot {slot_type} has not equivalent or has not been implementated"
             )
+
+        self.get_logger().info(
+            f"Conversion {slot_type} into {type(self.machine.rotor.slot).__name__}"
         )
-    else:
-        convert_slot_rotor_to_P = convert_slot_rotor_to_P
+
+        # Motor-Cad has possibility to have 2 slots, nested one on top of the other
+        # We have dicided to select just the top_BAR
+        if self.other_dict["[Design_Options]"]["Bottom_Bar"] != None:
+            self.get_logger().error(
+                f"Conversion with 2 slot in rotor is not accept in Pyleecan"
+            )
+
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_slot_to_P
-    if isinstance(convert_slot_to_P, ImportError):
-        convert_slot_to_P = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method convert_slot_to_P: "
-                    + str(convert_slot_to_P)
+    def convert_slot_to_P(self):
+        """Selects correct slot and implements it in obj machine
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        slot_type = self.other_dict["[Calc_Options]"]["Slot_Type"]
+
+        # initialisation to set the slot in stator
+        dict_machine = self.machine.stator.as_dict()
+        self.machine.stator = LamSlotWind(init_dict=dict_machine)
+
+        # set the slot in obj machine, and add particularity
+        if slot_type == "Parallel_Tooth":
+            if self.other_dict["[Dimensions]"]["Slot_Corner_Radius"] == 0:
+                self.machine.stator.slot = SlotW23()
+                self.machine.stator.slot.is_cstt_tooth = True
+                self.machine.stator.slot.H1_is_rad = True
+                self.machine.stator.is_internal = False
+
+            else:
+                self.machine.stator.slot = SlotW11()
+                self.machine.stator.slot.is_cstt_tooth = True
+                self.machine.stator.slot.H1_is_rad = True
+                self.machine.stator.is_internal = False
+                self.get_logger().warning(
+                    "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
                 )
+
+        elif slot_type == "Parallel_Tooth_SqBase":
+            self.machine.stator.slot = SlotW14()
+            self.machine.stator.is_internal = False
+            self.machine.stator.slot.H1_is_rad = True
+            self.machine.stator.slot.wedge_type = 1
+
+        elif slot_type == "Parallel_Slot":
+            self.machine.stator.slot = SlotW21()
+            self.machine.stator.slot.H1_is_rad = True
+            self.machine.stator.is_internal = False
+
+        elif slot_type == "Tapered_Slot":
+            if self.other_dict["[Dimensions]"]["Slot_Corner_Radius"] == 0:
+                self.machine.stator.slot = SlotW23()
+                self.machine.stator.slot.is_cstt_tooth = False
+                self.machine.stator.slot.H1_is_rad = True
+                self.machine.stator.is_internal = False
+
+            else:
+                self.machine.stator.slot = SlotW11()
+                self.machine.stator.slot.is_cstt_tooth = False
+                self.machine.stator.slot.H1_is_rad = True
+                self.machine.stator.is_internal = False
+                self.get_logger().warning(
+                    "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
+                )
+
+        elif slot_type == "Form_Wound":
+            self.machine.stator.slot = SlotW29()
+            self.machine.stator.is_internal = False
+            self.machine.stator.slot.wedge_type = 1
+
+        elif slot_type == "Slotless":
+            self.get_logger().error("Slotless has not equivalent in Pyleecan")
+
+        else:
+            raise NotImplementedError(
+                f"type of slot {slot_type} has not equivalent in pyleecan or has not been implementated"
             )
+
+        self.get_logger().info(
+            f"Conversion {slot_type} into {type(self.machine.stator.slot).__name__}"
         )
-    else:
-        convert_slot_to_P = convert_slot_to_P
+
+        # selection type of wedge
+        if "Wedge_Model" in self.other_dict["[Winding_Design]"]:
+            wedge = self.other_dict["[Winding_Design]"]["Wedge_Model"]
+
+        else:
+            wedge = "Air"
+
+        # set the correct wedge
+        if wedge == "Air":
+            self.machine.stator.slot.wedge_mat = None
+        elif wedge == "Wedge":
+            self.machine.stator.slot.wedge_mat = Material()
+        elif wedge == "Wound_Space":
+            self.machine.stator.slot.wedge_mat = None
+            self.get_logger().info(
+                f"Conversion Wound_Space for {type(self.machine.stator.slot).name} has no equivalent in pyleecan. No wedge defined in the converted slot"
+            )
+
+        else:
+            self.machine.stator.slot.wedge_mat = None
+            self.get_logger().warning(
+                f"Error for conversion of wedge (unknow wedge type: {wedge}). No wedge defined in the converted slot"
+            )
+
     # cf Methods.Converter.ConvertMC.Rules.add_rule_machine_dimension
-    if isinstance(add_rule_machine_dimension, ImportError):
-        add_rule_machine_dimension = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_machine_dimension: "
-                    + str(add_rule_machine_dimension)
-                )
+    def add_rule_machine_dimension(self):
+        """Create and adapt all the rules related to machine dimensions (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Stator_Bore"],
+                P_obj_path="machine.stator.Rint",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_machine_dimension = add_rule_machine_dimension
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Stator_Lam_Dia"],
+                P_obj_path="machine.stator.Rext",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
+        # shaft
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Shaft_Dia"],
+                P_obj_path="machine.rotor.Rint",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Shaft_Dia"],
+                P_obj_path="machine.shaft.Drsh",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if self.is_P_to_other == True:
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Airgap"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.rotor.Rext",
+                            "variable": "a",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.stator.Rint",
+                            "variable": "b",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y= b-a",
+                    file_name=__file__,
+                )
+            )
+
+        else:
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Stator_Bore"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Airgap"],
+                            "variable": "a",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.rotor.Rext",
+                            "variable": "x",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y/2-a= x ",
+                    file_name=__file__,
+                )
+            )
+
+        # frame
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Motor_Length"],
+                P_obj_path="machine.frame.Lfra",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Stator_Lam_Dia"],
+                P_obj_path="machine.frame.Rint",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Housing_Dia"],
+                P_obj_path="machine.frame.Rext",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.add_rule_machine_dimension_surface_magnet
-    if isinstance(add_rule_machine_dimension_surface_magnet, ImportError):
-        add_rule_machine_dimension_surface_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_machine_dimension_surface_magnet: "
-                    + str(add_rule_machine_dimension_surface_magnet)
-                )
+    def add_rule_machine_dimension_surface_magnet(self):
+        """Create and adapt all the rules related to machine dimensions (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Stator_Bore"],
+                P_obj_path="machine.stator.Rint",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_machine_dimension_surface_magnet = (
-            add_rule_machine_dimension_surface_magnet
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Stator_Lam_Dia"],
+                P_obj_path="machine.stator.Rext",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
         )
+
+        # shaft
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Shaft_Dia"],
+                P_obj_path="machine.rotor.Rint",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Shaft_Dia"],
+                P_obj_path="machine.shaft.Drsh",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if self.is_P_to_other == True:
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Airgap"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.rotor.Rext",
+                            "variable": "a",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.stator.Rint",
+                            "variable": "b",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.rotor.slot.H1",
+                            "variable": "c",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y= b-a-c ",
+                    file_name=__file__,
+                )
+            )
+
+        if not self.is_P_to_other:
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Stator_Bore"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Airgap"],
+                            "variable": "a",
+                        },
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Magnet_Thickness"],
+                            "variable": "b",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.rotor.Rext",
+                            "variable": "x",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y/2-a-b= x ",
+                    file_name=__file__,
+                )
+            )
+        else:
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Stator_Bore"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Airgap"],
+                            "variable": "a",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.rotor.slot.H1",
+                            "variable": "b",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": "machine.rotor.Rext",
+                            "variable": "x",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y/2-a-b= x ",
+                    file_name=__file__,
+                )
+            )
+
+        # frame
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Motor_Length"],
+                P_obj_path="machine.frame.Lfra",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Stator_Lam_Dia"],
+                P_obj_path="machine.frame.Rint",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Housing_Dia"],
+                P_obj_path="machine.frame.Rext",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.add_rule_machine_type
-    if isinstance(add_rule_machine_type, ImportError):
-        add_rule_machine_type = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_machine_type: "
-                    + str(add_rule_machine_type)
-                )
-            )
+    def add_rule_machine_type(self):
+        """Create and adapt all the rules related to machine type
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.rules_list.append(
+            RuleComplex(fct_name="set_pole_pair_number", folder="MotorCAD")
         )
-    else:
-        add_rule_machine_type = add_rule_machine_type
+
     # cf Methods.Converter.ConvertMC.Rules.add_rule_material
-    if isinstance(add_rule_material, ImportError):
-        add_rule_material = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_material: "
-                    + str(add_rule_material)
-                )
-            )
-        )
-    else:
-        add_rule_material = add_rule_material
+    add_rule_material = add_rule_material
     # cf Methods.Converter.ConvertMC.Rules.add_rule_material_magnetics
-    if isinstance(add_rule_material_magnetics, ImportError):
-        add_rule_material_magnetics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_material_magnetics: "
-                    + str(add_rule_material_magnetics)
-                )
-            )
-        )
-    else:
-        add_rule_material_magnetics = add_rule_material_magnetics
+    add_rule_material_magnetics = add_rule_material_magnetics
     # cf Methods.Converter.ConvertMC.Rules.add_rule_skew
-    if isinstance(add_rule_skew, ImportError):
-        add_rule_skew = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_skew: " + str(add_rule_skew)
-                )
-            )
-        )
-    else:
-        add_rule_skew = add_rule_skew
+    add_rule_skew = add_rule_skew
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM52
-    if isinstance(add_rule_holeM52, ImportError):
-        add_rule_holeM52 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_holeM52: "
-                    + str(add_rule_holeM52)
-                )
-            )
-        )
-    else:
-        add_rule_holeM52 = add_rule_holeM52
+    add_rule_holeM52 = add_rule_holeM52
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM57
-    if isinstance(add_rule_holeM57, ImportError):
-        add_rule_holeM57 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_holeM57: "
-                    + str(add_rule_holeM57)
-                )
-            )
-        )
-    else:
-        add_rule_holeM57 = add_rule_holeM57
+    add_rule_holeM57 = add_rule_holeM57
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM60
-    if isinstance(add_rule_holeM60, ImportError):
-        add_rule_holeM60 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_holeM60: "
-                    + str(add_rule_holeM60)
-                )
-            )
-        )
-    else:
-        add_rule_holeM60 = add_rule_holeM60
+    add_rule_holeM60 = add_rule_holeM60
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM61
-    if isinstance(add_rule_holeM61, ImportError):
-        add_rule_holeM61 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_holeM61: "
-                    + str(add_rule_holeM61)
-                )
-            )
-        )
-    else:
-        add_rule_holeM61 = add_rule_holeM61
+    add_rule_holeM61 = add_rule_holeM61
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM62
-    if isinstance(add_rule_holeM62, ImportError):
-        add_rule_holeM62 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_holeM62: "
-                    + str(add_rule_holeM62)
-                )
-            )
-        )
-    else:
-        add_rule_holeM62 = add_rule_holeM62
+    add_rule_holeM62 = add_rule_holeM62
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM63
-    if isinstance(add_rule_holeM63, ImportError):
-        add_rule_holeM63 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_holeM63: "
-                    + str(add_rule_holeM63)
-                )
-            )
-        )
-    else:
-        add_rule_holeM63 = add_rule_holeM63
+    add_rule_holeM63 = add_rule_holeM63
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_lamination
-    if isinstance(add_rule_lamination, ImportError):
-        add_rule_lamination = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_lamination: "
-                    + str(add_rule_lamination)
-                )
-            )
-        )
-    else:
-        add_rule_lamination = add_rule_lamination
+    add_rule_lamination = add_rule_lamination
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_notch_slotM19
-    if isinstance(add_rule_notch_slotM19, ImportError):
-        add_rule_notch_slotM19 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_notch_slotM19: "
-                    + str(add_rule_notch_slotM19)
-                )
-            )
-        )
-    else:
-        add_rule_notch_slotM19 = add_rule_notch_slotM19
+    add_rule_notch_slotM19 = add_rule_notch_slotM19
+
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationCirc
-    if isinstance(add_rule_ventilationCirc, ImportError):
-        add_rule_ventilationCirc = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_ventilationCirc: "
-                    + str(add_rule_ventilationCirc)
+    def add_rule_ventilationCirc(self, is_stator, duct_id):
+        """Create and adapt all the rules related to lamination (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        duct_id : int
+            a int to know the number of duct
+        """
+        duct_id_mc = duct_id + 1
+        if is_stator:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"CircularDuctL{duct_id_mc}Channels",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].Zh",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
                 )
             )
-        )
-    else:
-        add_rule_ventilationCirc = add_rule_ventilationCirc
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"iCircularDuctL{duct_id_mc}RadialDiameter",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].H0",
+                    unit_type="m",
+                    scaling_to_P=0.5,
+                    file_name=__file__,
+                )
+            )
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"CircularDuctL{duct_id_mc}OffsetAngle",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].Alpha0",
+                    unit_type="deg",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"CircularDuctL{duct_id_mc}ChannelDiameter",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].D0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            if not self.is_P_to_other:
+                self.rules_list.append(
+                    RuleEquation(
+                        param=[
+                            {
+                                "src": "other",
+                                "path": [
+                                    "[Dimensions]",
+                                    "Pole_Number",
+                                ],
+                                "variable": "a",
+                            },
+                            {
+                                "src": "pyleecan",
+                                "path": f"machine.stator.axial_vent[{duct_id}].Alpha0",
+                                "variable": "b",
+                            },
+                            {
+                                "src": "pyleecan",
+                                "path": f"machine.stator.axial_vent[{duct_id}].Alpha0",
+                                "variable": "x",
+                            },
+                        ],
+                        unit_type="",
+                        equation="(pi/a= x+b)",
+                        file_name=__file__,
+                    )
+                )
+
+        else:
+            lam_name_MC = "Rotor"
+            lam_name_py = "rotor"
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}CircularDuctLayer_Channels[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].Zh",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}CircularDuctLayer_RadialDiameter[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].H0",
+                    unit_type="m",
+                    scaling_to_P=0.5,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}CircularDuctLayer_OffsetAngle[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].Alpha0",
+                    unit_type="deg",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}CircularDuctLayer_ChannelDiameter[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].D0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            if not self.is_P_to_other:
+                self.rules_list.append(
+                    RuleEquation(
+                        param=[
+                            {
+                                "src": "other",
+                                "path": [
+                                    "[Dimensions]",
+                                    "Pole_Number",
+                                ],
+                                "variable": "a",
+                            },
+                            {
+                                "src": "pyleecan",
+                                "path": f"machine.{lam_name_py}.axial_vent[{duct_id}].Alpha0",
+                                "variable": "b",
+                            },
+                            {
+                                "src": "pyleecan",
+                                "path": f"machine.{lam_name_py}.axial_vent[{duct_id}].Alpha0",
+                                "variable": "x",
+                            },
+                        ],
+                        unit_type="",
+                        equation="(pi/a= x+b)",
+                        file_name=__file__,
+                    )
+                )
+
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationPolar
-    if isinstance(add_rule_ventilationPolar, ImportError):
-        add_rule_ventilationPolar = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_ventilationPolar: "
-                    + str(add_rule_ventilationPolar)
-                )
-            )
-        )
-    else:
-        add_rule_ventilationPolar = add_rule_ventilationPolar
+    add_rule_ventilationPolar = add_rule_ventilationPolar
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationTrap
-    if isinstance(add_rule_ventilationTrap, ImportError):
-        add_rule_ventilationTrap = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_ventilationTrap: "
-                    + str(add_rule_ventilationTrap)
-                )
-            )
-        )
-    else:
-        add_rule_ventilationTrap = add_rule_ventilationTrap
+    add_rule_ventilationTrap = add_rule_ventilationTrap
     # cf Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_slot_slotW29
-    if isinstance(add_rule_parallel_slot_slotW29, ImportError):
-        add_rule_parallel_slot_slotW29 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_parallel_slot_slotW29: "
-                    + str(add_rule_parallel_slot_slotW29)
-                )
-            )
-        )
-    else:
-        add_rule_parallel_slot_slotW29 = add_rule_parallel_slot_slotW29
+    add_rule_parallel_slot_slotW29 = add_rule_parallel_slot_slotW29
     # cf Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_tooth_slotW63
-    if isinstance(add_rule_parallel_tooth_slotW63, ImportError):
-        add_rule_parallel_tooth_slotW63 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_parallel_tooth_slotW63: "
-                    + str(add_rule_parallel_tooth_slotW63)
-                )
-            )
-        )
-    else:
-        add_rule_parallel_tooth_slotW63 = add_rule_parallel_tooth_slotW63
+    add_rule_parallel_tooth_slotW63 = add_rule_parallel_tooth_slotW63
     # cf Methods.Converter.ConvertMC.Rules.Pole.add_rule_salient_pole_slotW62
-    if isinstance(add_rule_salient_pole_slotW62, ImportError):
-        add_rule_salient_pole_slotW62 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_salient_pole_slotW62: "
-                    + str(add_rule_salient_pole_slotW62)
-                )
-            )
-        )
-    else:
-        add_rule_salient_pole_slotW62 = add_rule_salient_pole_slotW62
+    add_rule_salient_pole_slotW62 = add_rule_salient_pole_slotW62
+
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM11
-    if isinstance(add_rule_slotM11, ImportError):
-        add_rule_slotM11 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotM11: "
-                    + str(add_rule_slotM11)
-                )
+    def add_rule_slotM11(self):
+        """Create and adapt all the rules related to slotM11
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotM11 = add_rule_slotM11
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Arc_[ED]"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="ED",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Arc_[ED]"],
+                P_obj_path=f"machine.rotor.slot.W1",
+                unit_type="ED",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM12
-    if isinstance(add_rule_slotM12, ImportError):
-        add_rule_slotM12 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotM12: "
-                    + str(add_rule_slotM12)
-                )
+    def add_rule_slotM12(self):
+        """Create and adapt all the rules related to slotM12
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotM12 = add_rule_slotM12
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(fct_name="inset_breadloaf_slotM12", folder="MotorCAD")
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM13
-    if isinstance(add_rule_slotM13, ImportError):
-        add_rule_slotM13 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotM13: "
-                    + str(add_rule_slotM13)
-                )
+    def add_rule_slotM13(self):
+        """Create and adapt all the rules related to slotM13
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotM13 = add_rule_slotM13
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(fct_name="surface_breadloaf_slotM13", folder="MotorCAD")
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM14
-    if isinstance(add_rule_slotM14, ImportError):
-        add_rule_slotM14 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotM14: "
-                    + str(add_rule_slotM14)
-                )
+    def add_rule_slotM14(self):
+        """Create and adapt all the rules related to slotM14
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotM14 = add_rule_slotM14
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Arc_[ED]"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="ED",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Arc_[ED]"],
+                P_obj_path=f"machine.rotor.slot.W1",
+                unit_type="ED",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(fct_name="surface_radial_slotM14", folder="MotorCAD")
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM15
-    if isinstance(add_rule_slotM15, ImportError):
-        add_rule_slotM15 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotM15: "
-                    + str(add_rule_slotM15)
-                )
-            )
-        )
-    else:
-        add_rule_slotM15 = add_rule_slotM15
+    add_rule_slotM15 = add_rule_slotM15
+
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM16
-    if isinstance(add_rule_slotM16, ImportError):
-        add_rule_slotM16 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotM16: "
-                    + str(add_rule_slotM16)
-                )
+    def add_rule_slotM16(self):
+        """Create and adapt all the rules related to slotM16
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotM16 = add_rule_slotM16
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Opening"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.slot.W1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Inset"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Inset"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW11
-    if isinstance(add_rule_slotW11, ImportError):
-        add_rule_slotW11 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotW11: "
-                    + str(add_rule_slotW11)
-                )
+    def add_rule_slotW11(self, is_stator):
+        """Create and adapt all the rules related to slotW11 (lam radius,...)
+        Extend self.rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            True slot is in stator, False slot is in rotor
+        """
+        # definie the correct position in rotor or in stator
+        if is_stator == True:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Number"],
+                P_obj_path=f"machine.{lam_name}.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotW11 = add_rule_slotW11
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Opening"],
+                P_obj_path=f"machine.{lam_name}.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if self.machine.stator.slot.is_cstt_tooth:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Tooth_Width"],
+                    P_obj_path=f"machine.{lam_name}.slot.W3",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        else:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Slot_Width_Top"],
+                    P_obj_path=f"machine.{lam_name}.slot.W1",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Slot_Width_Bottom"],
+                    P_obj_path=f"machine.{lam_name}.slot.W2",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Tip_Depth"],
+                P_obj_path=f"machine.{lam_name}.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Corner_Radius"],
+                P_obj_path=f"machine.{lam_name}.slot.R1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if not self.is_P_to_other:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Tooth_Tip_Angle"],
+                    P_obj_path=f"machine.{lam_name}.slot.H1",
+                    unit_type="deg",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleComplex(fct_name="slotW11_H1", folder="MotorCAD")
+            )
+
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Slot_Depth"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.{lam_name}.slot.H2",
+                            "variable": "x",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.{lam_name}.slot.H1",
+                            "variable": "a",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.{lam_name}.slot.H0",
+                            "variable": "b",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y = b+a+x",
+                    file_name=__file__,
+                )
+            )
+
+        else:
+            raise ValueError(
+                "Conversion of tooth_tip_depth_H1 impossible because it is not in rad"
+            )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW14
-    if isinstance(add_rule_slotW14, ImportError):
-        add_rule_slotW14 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotW14: "
-                    + str(add_rule_slotW14)
-                )
+    def add_rule_slotW14(self, is_stator):
+        """Create and adapt all the rules related to slotW14 (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+        if is_stator == True:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Number"],
+                P_obj_path=f"machine.{lam_name}.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotW14 = add_rule_slotW14
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Opening"],
+                P_obj_path=f"machine.{lam_name}.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Width"],
+                P_obj_path=f"machine.{lam_name}.slot.W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Tip_Depth"],
+                P_obj_path=f"machine.{lam_name}.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Tip_Angle"],
+                P_obj_path=f"machine.{lam_name}.slot.H1",
+                unit_type="deg",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(RuleComplex(fct_name="slotW14_H1", folder="MotorCAD"))
+
+        self.rules_list.append(
+            RuleEquation(
+                param=[
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", "Slot_Depth"],
+                        "variable": "y",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": f"machine.{lam_name}.slot.H3",
+                        "variable": "x",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": f"machine.{lam_name}.slot.H1",
+                        "variable": "a",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": f"machine.{lam_name}.slot.H0",
+                        "variable": "b",
+                    },
+                ],
+                unit_type="m",
+                equation="y = x+a+b",
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW21
-    if isinstance(add_rule_slotW21, ImportError):
-        add_rule_slotW21 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotW21: "
-                    + str(add_rule_slotW21)
-                )
+    def add_rule_slotW21(self, is_stator):
+        """Create and adapt all the rules related to slotW21 (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+        if is_stator == True:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Number"],
+                P_obj_path=f"machine.{lam_name}.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotW21 = add_rule_slotW21
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Opening"],
+                P_obj_path=f"machine.{lam_name}.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Width"],
+                P_obj_path=f"machine.{lam_name}.slot.W1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Width"],
+                P_obj_path=f"machine.{lam_name}.slot.W2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Tip_Depth"],
+                P_obj_path=f"machine.{lam_name}.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if not self.is_P_to_other:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Tooth_Tip_Angle"],
+                    P_obj_path=f"machine.{lam_name}.slot.H1",
+                    unit_type="deg",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleComplex(fct_name="slotW21_H1", folder="MotorCAD")
+            )
+
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Slot_Depth"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.{lam_name}.slot.H2",
+                            "variable": "x",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.{lam_name}.slot.H1",
+                            "variable": "a",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.{lam_name}.slot.H0",
+                            "variable": "b",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y = b+a+x",
+                    file_name=__file__,
+                )
+            )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW23
-    if isinstance(add_rule_slotW23, ImportError):
-        add_rule_slotW23 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotW23: "
-                    + str(add_rule_slotW23)
-                )
+    def add_rule_slotW23(self, is_stator):
+        """Create and adapt all the rules related to slotW23 (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        if is_stator == True:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Number"],
+                P_obj_path=f"machine.{lam_name}.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotW23 = add_rule_slotW23
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Opening"],
+                P_obj_path=f"machine.{lam_name}.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if self.machine.stator.slot.is_cstt_tooth:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Tooth_Width"],
+                    P_obj_path=f"machine.{lam_name}.slot.W3",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+        else:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Slot_Width_Top"],
+                    P_obj_path=f"machine.{lam_name}.slot.W1",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Slot_Width_Bottom"],
+                    P_obj_path=f"machine.{lam_name}.slot.W2",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Tip_Depth"],
+                P_obj_path=f"machine.{lam_name}.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Depth"],
+                P_obj_path=f"machine.{lam_name}.slot.H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Tooth_Tip_Angle"],
+                P_obj_path=f"machine.{lam_name}.slot.H1",
+                unit_type="deg",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW29
-    if isinstance(add_rule_slotW29, ImportError):
-        add_rule_slotW29 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_slotW29: "
-                    + str(add_rule_slotW29)
-                )
+    def add_rule_slotW29(self, is_stator):
+        """Create and adapt all the rules related to slotW29 (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        if is_stator == True:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Number"],
+                P_obj_path=f"machine.{lam_name}.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_slotW29 = add_rule_slotW29
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Width"],
+                P_obj_path=f"machine.{lam_name}.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleEquation(
+                param=[
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", "FormWound_WedgeInset"],
+                        "variable": "y",
+                    },
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", "Slot_Width"],
+                        "variable": "a",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": f"machine.{lam_name}.slot.W1",
+                        "variable": "x",
+                    },
+                ],
+                unit_type="m",
+                equation="y+a = x",
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Width"],
+                P_obj_path=f"machine.{lam_name}.slot.W2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "FormWound_WedgeDepth"],
+                P_obj_path=f"machine.{lam_name}.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "FormWound_WedgeThickness"],
+                P_obj_path=f"machine.{lam_name}.slot.H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Slot_Depth"],
+                P_obj_path=f"machine.{lam_name}.slot.H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW11_2
-    if isinstance(add_rule_rotor_slotW11_2, ImportError):
-        add_rule_rotor_slotW11_2 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_rotor_slotW11_2: "
-                    + str(add_rule_rotor_slotW11_2)
-                )
+    def add_rule_rotor_slotW11_2(self, is_stator):
+        """Create and adapt all the rules related to slotW11 (lam radius,...)
+        Extend rules_list within Converter object
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+        if is_stator:
+            raise KeyError("Those rules are for rotor slot only")
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Bars"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_rotor_slotW11_2 = add_rule_rotor_slotW11_2
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_[T]"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Tooth_Width_T"],
+                P_obj_path=f"machine.rotor.slot.W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_Depth_[T]"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Corner_Radius[T]"],
+                P_obj_path=f"machine.rotor.slot.R1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Tip_Angle_[T]"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="deg",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if not self.is_P_to_other:
+            self.rules_list.append(
+                RuleComplex(fct_name="rotor_slotW11_H1", folder="MotorCAD")
+            )
+
+            self.rules_list.append(
+                RuleEquation(
+                    param=[
+                        {
+                            "src": "other",
+                            "path": ["[Dimensions]", "Bar_Depth_[T]"],
+                            "variable": "y",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.rotor.slot.H2",
+                            "variable": "x",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.rotor.slot.H1",
+                            "variable": "a",
+                        },
+                        {
+                            "src": "pyleecan",
+                            "path": f"machine.rotor.slot.H0",
+                            "variable": "b",
+                        },
+                    ],
+                    unit_type="m",
+                    equation="y = b+a+x",
+                    file_name=__file__,
+                )
+            )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW23
-    if isinstance(add_rule_rotor_slotW23, ImportError):
-        add_rule_rotor_slotW23 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_rotor_slotW23: "
-                    + str(add_rule_rotor_slotW23)
-                )
+    def add_rule_rotor_slotW23(self, is_stator):
+        """Create and adapt all the rules related to slotW23
+        Extend rules_list within Converter object
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+        if is_stator:
+            raise KeyError("Those rules are for rotor slot only")
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Bars"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_rotor_slotW23 = add_rule_rotor_slotW23
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_[T]"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Width_[T]"],
+                P_obj_path=f"machine.rotor.slot.W1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_Depth_[T]"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Tip_Angle_[T]"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="deg",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Depth_[T]"],
+                P_obj_path=f"machine.rotor.slot.H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Width_[T]"],
+                P_obj_path=f"machine.rotor.slot.W2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW26
-    if isinstance(add_rule_rotor_slotW26, ImportError):
-        add_rule_rotor_slotW26 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_rotor_slotW26: "
-                    + str(add_rule_rotor_slotW26)
-                )
+    def add_rule_rotor_slotW26(self, is_stator):
+        """Create and adapt all the rules related to slotW23 (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+        if is_stator:
+            raise KeyError("Those rules are for rotor slot only")
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Bars"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_rotor_slotW26 = add_rule_rotor_slotW26
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_[T]"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_Depth_[T]"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Width_[T]"],
+                P_obj_path=f"machine.rotor.slot.R1",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW30
-    if isinstance(add_rule_rotor_slotW30, ImportError):
-        add_rule_rotor_slotW30 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_rotor_slotW30: "
-                    + str(add_rule_rotor_slotW30)
-                )
+    def add_rule_rotor_slotW30(self, is_stator):
+        """Create and adapt all the rules related to slotW23 (lam radius,...)
+        Extend rules_list within Converter object
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+        if is_stator:
+            raise KeyError("Those rules are for rotor slot only")
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Bars"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
             )
         )
-    else:
-        add_rule_rotor_slotW30 = add_rule_rotor_slotW30
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_[T]"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Opening_Depth_[T]"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Tooth_Width_T"],
+                P_obj_path=f"machine.rotor.slot.W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Bar_Depth_[T]"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "BarT_Opening_Radius"],
+                P_obj_path=f"machine.rotor.slot.R1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "BarT_Opening_Radius"],
+                P_obj_path=f"machine.rotor.slot.R2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype11
-    if isinstance(add_rule_condtype11, ImportError):
-        add_rule_condtype11 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_condtype11: "
-                    + str(add_rule_condtype11)
-                )
-            )
-        )
-    else:
-        add_rule_condtype11 = add_rule_condtype11
+    add_rule_condtype11 = add_rule_condtype11
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype12
-    if isinstance(add_rule_condtype12, ImportError):
-        add_rule_condtype12 = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_condtype12: "
-                    + str(add_rule_condtype12)
-                )
-            )
-        )
-    else:
-        add_rule_condtype12 = add_rule_condtype12
+    add_rule_condtype12 = add_rule_condtype12
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_rotor_bar
-    if isinstance(add_rule_rotor_bar, ImportError):
-        add_rule_rotor_bar = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_rotor_bar: "
-                    + str(add_rule_rotor_bar)
-                )
-            )
-        )
-    else:
-        add_rule_rotor_bar = add_rule_rotor_bar
+    add_rule_rotor_bar = add_rule_rotor_bar
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_winding
-    if isinstance(add_rule_winding, ImportError):
-        add_rule_winding = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method add_rule_winding: "
-                    + str(add_rule_winding)
-                )
-            )
-        )
-    else:
-        add_rule_winding = add_rule_winding
+    add_rule_winding = add_rule_winding
+
     # cf Methods.Converter.ConvertMC.select_SIPMSM_machine_dimension
-    if isinstance(select_SIPMSM_machine_dimension, ImportError):
-        select_SIPMSM_machine_dimension = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ConvertMC method select_SIPMSM_machine_dimension: "
-                    + str(select_SIPMSM_machine_dimension)
-                )
-            )
-        )
-    else:
-        select_SIPMSM_machine_dimension = select_SIPMSM_machine_dimension
+    def select_SIPMSM_machine_dimension(self):
+        """select the correct rule for machine dimension
+        if the slot is in surface conversion to machine dimension is different
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+        if self.is_P_to_other:
+            magnet_name = type(self.machine.rotor.slot).__name__
+            if (
+                magnet_name in ["SlotM11", "SlotM13", "SlotM15"]
+                and self.machine.rotor.slot.H0 == 0
+            ):
+                self.add_rule_machine_dimension_surface_magnet()
+            else:
+                # "HoleM62"
+                # "HoleM63"
+                # "HoleM52"
+                # "HoleM60"
+                # "HoleM57"
+                # "HoleM61"
+                self.add_rule_machine_dimension()
+
+        else:
+            magnet_name = self.other_dict["[Design_Options]"]["BPM_Rotor"]
+            if magnet_name in [
+                "Surface_Radial",
+                "Surface_Parallel",
+                "Surface_Breadloaf",
+            ]:
+                self.add_rule_machine_dimension_surface_magnet()
+            else:
+                # "Embedded_Parallel"
+                # "Embedded_Radial"
+                # "Embedded_Breadleaof"
+                # "Interior_Flat(simple)"
+                # "Interior_Flat(web)"
+                # "Interior_V(simple)"
+                # "Interior_V(web)"
+                # "Interior_U-Shape"
+
+                self.add_rule_machine_dimension()
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -1355,7 +3051,7 @@ class ConvertMC(Convert):
         ConvertMC_dict = super(ConvertMC, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name

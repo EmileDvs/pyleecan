@@ -17,11 +17,6 @@ from .OutInternal import OutInternal
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Output.OutMagElmer.clean import clean
-except ImportError as error:
-    clean = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +28,25 @@ class OutMagElmer(OutInternal):
     VERSION = 1
 
     # cf Methods.Output.OutMagElmer.clean
-    if isinstance(clean, ImportError):
-        clean = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OutMagElmer method clean: " + str(clean))
-            )
-        )
-    else:
-        clean = clean
+    def clean(self, clean_level=1):
+        """Clean MagElmer outputs depending on cleaning level
+
+        Parameters
+        ----------
+        self : OutMagElmer
+            the OutMagElmer object to update
+        clean_level : int
+            Value to indicate which fields to clean in OutMagElmer (default=1/min=0/max=4)
+
+        """
+
+        # if clean_level = 0:
+        # keep all internal outputs
+
+        if clean_level > 0:
+            # clean FEA_dict
+            self.FEA_dict = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

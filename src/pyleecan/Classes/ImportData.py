@@ -17,11 +17,9 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportData.get_data import get_data
-except ImportError as error:
-    get_data = error
-
+from .Data1D import Data1D
+from .DataFreq import DataFreq
+from .DataTime import DataTime
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +31,57 @@ class ImportData(FrozenClass):
     VERSION = 1
 
     # cf Methods.Import.ImportData.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ImportData method get_data: " + str(get_data))
+    def get_data(self):
+        """Generate Data objects
+
+        Parameters
+        ----------
+        self : ImportData
+            An ImportData object
+
+        Returns
+        -------
+        Data: DataND
+            The generated Data object
+
+        """
+
+        axes_list = []
+        is_freq = False
+        for axis in self.axes:
+            if axis.name == "freqs" or axis.name == "wavenumber":
+                is_freq = True
+            axes_list.append(
+                Data1D(
+                    values=axis.field.get_data(),
+                    name=axis.name,
+                    unit=axis.unit,
+                    symmetries=axis.symmetries,
+                    normalizations=axis.normalizations,
+                )
             )
-        )
-    else:
-        get_data = get_data
+
+        if is_freq:
+            Data = DataFreq(
+                axes=axes_list,
+                values=self.field.get_data(),
+                name=self.name,
+                symbol=self.symbol,
+                unit=self.unit,
+                normalizations=self.normalizations,
+            )
+        else:
+            Data = DataTime(
+                axes=axes_list,
+                values=self.field.get_data(),
+                name=self.name,
+                symbol=self.symbol,
+                unit=self.unit,
+                normalizations=self.normalizations,
+            )
+
+        return Data
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

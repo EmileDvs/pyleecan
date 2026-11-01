@@ -17,16 +17,8 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.Structural.comp_axes import comp_axes
-except ImportError as error:
-    comp_axes = error
-
-try:
-    from ..Methods.Simulation.Structural.run import run
-except ImportError as error:
-    run = error
-
+from ..Methods.Simulation.Input import InputError
+from .OutStruct import OutStruct
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,25 +29,57 @@ class Structural(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.Structural.comp_axes
-    if isinstance(comp_axes, ImportError):
-        comp_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Structural method comp_axes: " + str(comp_axes))
+    def comp_axes(self, output):
+        """Compute axes used for the Structural module
+
+        Parameters
+        ----------
+        self : Structural
+            a Structural object
+        output : Output
+            an Output object (to update)
+        """
+        if self.parent is None:
+            raise InputError(
+                "The Structural object must be in a Simulation object to run"
             )
-        )
-    else:
-        comp_axes = comp_axes
+        if self.parent.parent is None:
+            raise InputError("The Simulation object must be in an Output object to run")
+
+        # setup OutStruct if None
+        if self.parent.parent.struct is None:
+            self.parent.parent.struct = OutStruct()
+
+        output.struct.axes_dict = dict()
+
+        for key, val in output.geo.axes_dict.items():
+            output.struct.axes_dict[key] = val
+
     # cf Methods.Simulation.Structural.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Structural method run: " + str(run))
+    def run(self):
+        """Run the Structural module"""
+        if self.parent is None:
+            raise InputError(
+                "ERROR: The Structural object must be in a Simulation object to run"
             )
-        )
-    else:
-        run = run
+        if self.parent.parent is None:
+            raise InputError(
+                "ERROR: The Simulation object must be in an Output object to run"
+            )
+
+        output = self.parent.parent
+
+        self.comp_axes(output)
+
+        group = self.force.group  # Magnetic force target
+
+        # Init model, generate or import mechanical mesh
+        self.init_mechanical_model(output, group)
+
+        # Compute the magnetic force according to the Force model
+        self.force.comp_force(output)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,16 +17,14 @@ from .ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportGenMatrixSin.get_data import get_data
-except ImportError as error:
-    get_data = error
-
-try:
-    from ..Methods.Import.ImportGenMatrixSin.init_vector import init_vector
-except ImportError as error:
-    init_vector = error
-
+from numpy import vstack, column_stack
+from ..Methods.Import.ImportGenMatrixSin import (
+    GenSinEmptyError,
+    GenSinDimError,
+    GenSinTransposeError,
+    InitSinMatDimError,
+)
+from .ImportGenVectSin import ImportGenVectSin
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,30 +35,86 @@ class ImportGenMatrixSin(ImportMatrix):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Import.ImportGenMatrixSin.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportGenMatrixSin method get_data: " + str(get_data)
+    def get_data(self):
+        """Generate the sinus matrix
+
+        Parameters
+        ----------
+        self : ImportGenMatrixSin
+            An ImportGenMatrixSin object
+
+        Returns
+        -------
+        matrix: ndarray
+            The generated sinus matrix
+
+        """
+
+        if len(self.sin_list) == 0:
+            raise GenSinEmptyError("ERROR: The sinus list is empty")
+
+        N = self.sin_list[0].N
+        is_T = self.sin_list[0].is_transpose
+
+        for ii in range(1, len(self.sin_list)):
+            if self.sin_list[ii].N != N:
+                raise GenSinDimError(
+                    "ERROR: Dimension mismatch between ImportGenVectSin 0 (N="
+                    + str(N)
+                    + ") and ImportGenVectSin "
+                    + str(ii)
+                    + " (N="
+                    + str(self.sin_list[ii].N)
+                    + ")"
                 )
-            )
-        )
-    else:
-        get_data = get_data
+            if self.sin_list[ii].is_transpose != is_T:
+                raise GenSinTransposeError(
+                    "ERROR: is_transpose mismatch between ImportGenVectSin 0 ("
+                    + str(is_T)
+                    + ") and ImportGenVectSin "
+                    + str(ii)
+                    + " ("
+                    + str(self.sin_list[ii].is_transpose)
+                    + ")"
+                )
+        if is_T:  # Conctenate the columns
+            matrix = column_stack([sin_obj.get_data() for sin_obj in self.sin_list])
+        else:  # Concatenate the lines
+            matrix = vstack([sin_obj.get_data() for sin_obj in self.sin_list])
+        return self.edit_matrix(matrix)
+
     # cf Methods.Import.ImportGenMatrixSin.init_vector
-    if isinstance(init_vector, ImportError):
-        init_vector = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportGenMatrixSin method init_vector: "
-                    + str(init_vector)
-                )
+    def init_vector(self, f, A, Phi, N, Tf):
+        """Create the sin_list according to the input list
+
+        Parameters
+        ----------
+        self : ImportGenMatrixSin
+            An ImportGenMatrixSin object
+        f: list
+            list of frequency for the sinus
+        A: list
+            list of amplitude for the sinus
+        Phi: list
+            list of phase for the sinus
+        N: int
+            Number of point (same for all the sinus)
+        Tf: float
+            End time (same for all the sinus)
+        """
+
+        if len(f) != len(A):
+            raise InitSinMatDimError("ERROR: f and A have different dimensions")
+        if len(f) != len(Phi):
+            raise InitSinMatDimError("ERROR: f and Phi have different dimensions")
+
+        self.sin_list = list()
+        for ii in range(len(f)):
+            self.sin_list.append(
+                ImportGenVectSin(f=f[ii], A=A[ii], Phi=Phi[ii], N=N, Tf=Tf)
             )
-        )
-    else:
-        init_vector = init_vector
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

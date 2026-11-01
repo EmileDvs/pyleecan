@@ -17,11 +17,7 @@ from .Elmer import Elmer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Elmer.SolverInputFile.write import write
-except ImportError as error:
-    write = error
-
+from ..Methods.Elmer.SolverInputFile.write import StringIO, _write_header
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +29,21 @@ class SolverInputFile(Elmer):
     VERSION = 1
 
     # cf Methods.Elmer.SolverInputFile.write
-    if isinstance(write, ImportError):
-        write = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SolverInputFile method write: " + str(write))
-            )
-        )
-    else:
-        write = write
+    def write(self, stream=None):
+        """Write the Elmer Solver Input File. If no stream is given, the method
+        will return a StringIO.
+        """
+        if not stream:
+            stream = StringIO()
+
+        # write SIF header
+        _write_header(stream)
+
+        for section in self.sections:
+            section.write(stream)
+
+        return stream
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

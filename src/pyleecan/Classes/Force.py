@@ -17,21 +17,11 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.Force.comp_AGSF_transfer import comp_AGSF_transfer
-except ImportError as error:
-    comp_AGSF_transfer = error
-
-try:
-    from ..Methods.Simulation.Force.comp_axes import comp_axes
-except ImportError as error:
-    comp_axes = error
-
-try:
-    from ..Methods.Simulation.Force.run import run
-except ImportError as error:
-    run = error
-
+from numpy import multiply, newaxis, power, repeat, where
+from .Data1D import Data1D
+from .DataFreq import DataFreq
+from .VectorField import VectorField
+from ..Methods.Simulation.Input import InputError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -42,37 +32,203 @@ class Force(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.Force.comp_AGSF_transfer
-    if isinstance(comp_AGSF_transfer, ImportError):
-        comp_AGSF_transfer = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Force method comp_AGSF_transfer: "
-                    + str(comp_AGSF_transfer)
-                )
-            )
+    def comp_AGSF_transfer(self, output, rnoise=None):
+        """Method to compute Air-Gap Surface Force transfer from middle air-gap
+        radius to stator bore radius.
+
+        From publication:
+            PILE, Raphaël, LE BESNERAIS, Jean, PARENT, Guillaume, et al. Analytical
+            study of air-gap surface force–application to electrical machines. Open
+            Physics, 2020, vol. 18, no 1, p. 658-673.
+            https://www.degruyter.com/view/journals/phys/18/1/article-p658.xml
+
+        Parameters
+        ----------
+        self: Force
+            a Force object
+        output : Output
+            an Output object
+
+        """
+
+        # Inputs
+        Rag = output.force.Rag
+
+        if self.Rsbo_enforced_transfer is None:
+            Rsbo = output.simu.machine.stator.Rint
+        else:
+            Rsbo = self.Rsbo_enforced_transfer
+
+        AGSF = output.force.AGSF
+
+        arg_list = ["freqs", "wavenumber"]
+        result_freq = AGSF.get_rphiz_along(*arg_list)
+        Prad_wr = result_freq["radial"]
+        Ptan_wr = result_freq["tangential"]
+        wavenumber = result_freq["wavenumber"]
+        freqs = result_freq["freqs"]
+        Nf = len(freqs)
+
+        Ratio = Rag / Rsbo
+
+        # Transfer coefficients Eq. (46)
+        Sn = (Ratio**2) * (power(Ratio, wavenumber) + power(Ratio, -wavenumber)) / 2
+        Cn = (Ratio**2) * (power(Ratio, wavenumber) - power(Ratio, -wavenumber)) / 2
+
+        # Noise filtering (useful with magnetic FEA)
+        if rnoise is not None:
+            Inoise = where(abs(wavenumber) > rnoise)[0]
+            Sn[Inoise] = 1
+            Cn[Inoise] = 0
+
+        XSn = repeat(Sn[..., newaxis], Nf, axis=1).transpose()
+        XCn = repeat(Cn[..., newaxis], Nf, axis=1).transpose()
+
+        # Transfer law Eq. (45)
+        Prad_wr_TR = multiply(XSn, Prad_wr) + 1j * multiply(XCn, Ptan_wr)
+        Ptan_wr_TR = multiply(XSn, Ptan_wr) - 1j * multiply(XCn, Prad_wr)
+
+        # Save results as Data objects
+        Datafreqs = Data1D(name="freqs", values=freqs)
+        Datawavenumbers = Data1D(name="wavenumber", values=wavenumber)
+
+        axes_list = [Datafreqs, Datawavenumbers]
+
+        AGSF_TR = VectorField(
+            name="Air gap Surface Force",
+            symbol="AGSF",
         )
-    else:
-        comp_AGSF_transfer = comp_AGSF_transfer
+
+        AGSF_TR.components["radial"] = DataFreq(
+            name="Radial AGSF",
+            unit="N/m^2",
+            symbol="AGSF_r",
+            axes=axes_list,
+            values=Prad_wr_TR,
+        )
+
+        AGSF_TR.components["tangential"] = DataFreq(
+            name="Tangential AGSF",
+            unit="N/m^2",
+            symbol="AGSF_t",
+            axes=axes_list,
+            values=Ptan_wr_TR,
+        )
+
+        # Replace original AGSF
+        output.force.AGSF = AGSF_TR
+        output.force.Rag = Rsbo
+
     # cf Methods.Simulation.Force.comp_axes
-    if isinstance(comp_axes, ImportError):
-        comp_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Force method comp_axes: " + str(comp_axes))
-            )
+    def comp_axes(self, output):
+        """Compute the axes required in any Force module
+
+        Parameters
+        ----------
+        self : Force
+            a Force object
+        output : Output
+            an Output object (to update)
+
+        Returns
+        -------
+        axes_dict: {Data}
+            Dict containing Time and Angle axes including (anti-)periodicties used in any Force module
+        """
+
+        # Get geometry output
+        outgeo = output.geo
+
+        # Get axis dict from OutMag
+        axes_dict_mag = output.mag.axes_dict
+
+        # Add periodicities to time and angle axes
+        axes_dict = output.simu.input.comp_axes(
+            axes_list=["time", "angle"],
+            axes_dict_in=axes_dict_mag,
+            is_periodicity_a=self.is_periodicity_a,
+            is_periodicity_t=self.is_periodicity_t,
         )
-    else:
-        comp_axes = comp_axes
+
+        # Remove time anti-periodicity if any
+        if "antiperiod" in axes_dict["time"].symmetries:
+            axes_dict["time"].symmetries["period"] = axes_dict["time"].symmetries.pop(
+                "antiperiod"
+            )
+
+        # Check Time periodicities regarding Force model input
+        per_t0, is_antiper_t0 = axes_dict["time"].get_periodicity()
+        is_periodicity_t0 = per_t0 > 1 or is_antiper_t0
+        if self.is_periodicity_t is None:
+            self.is_periodicity_t = is_periodicity_t0
+        if not is_periodicity_t0 and self.is_periodicity_t:
+            # Remove time periodicity in Force model
+            self.is_periodicity_t = False
+            Nt_tot = axes_dict["time"].get_length(is_oneperiod=False)
+            self.get_logger().warning(
+                "In Force model, Nt_tot="
+                + str(Nt_tot)
+                + " is not divisible by the machine time periodicity ("
+                + str(outgeo.per_t_S)
+                + "). Time periodicity removed"
+            )
+
+        # Remove angular anti-periodicity if any
+        if "antiperiod" in axes_dict["angle"].symmetries:
+            axes_dict["angle"].symmetries["period"] = axes_dict["angle"].symmetries.pop(
+                "antiperiod"
+            )
+
+        # Check Angle periodicities regarding Force model input
+        per_a0, is_antiper_a0 = axes_dict["angle"].get_periodicity()
+        is_periodicity_a0 = per_a0 > 1 or is_antiper_a0
+        if self.is_periodicity_a is None:
+            self.is_periodicity_a = is_periodicity_a0
+        if not is_periodicity_a0 and self.is_periodicity_a:
+            # Remove time periodicity in Magnetic model
+            self.is_periodicity_a = False
+            Na_tot = axes_dict["angle"].get_length(is_oneperiod=False)
+            self.get_logger().warning(
+                "In Force model, Na_tot="
+                + str(Na_tot)
+                + " is not divisible by the machine angular periodicity ("
+                + str(outgeo.per_a)
+                + "). Angular periodicity removed"
+            )
+
+        return axes_dict
+
     # cf Methods.Simulation.Force.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Force method run: " + str(run))
+    def run(self):
+        """Run the Force module"""
+        if self.parent is None:
+            raise InputError(
+                "ERROR: The Force object must be in a Simulation object to run"
             )
-        )
-    else:
-        run = run
+        if self.parent.parent is None:
+            raise InputError(
+                "ERROR: The Force object must be in an Output object to run"
+            )
+
+        self.get_logger().info("Starting Force module")
+
+        output = self.parent.parent
+
+        # Compute and store time and angle axes from previous output
+        # and returns additional axes in axes_dict
+        axes_dict = self.comp_axes(output)
+
+        # Compute the magnetic force according to the Force model
+        out_dict = self.comp_force(output, axes_dict)
+
+        # Store force quantities contained in out_dict in OutForce, as Data object if necessary
+        output.force.store(out_dict, axes_dict)
+
+        # Compute the air-gap surface force transfer if required
+        if self.is_agsf_transfer:
+            self.comp_AGSF_transfer(output, self.max_wavenumber_transfer)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

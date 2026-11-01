@@ -17,36 +17,6 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.GUI_Option.Unit.get_m import get_m
-except ImportError as error:
-    get_m = error
-
-try:
-    from ..Methods.GUI_Option.Unit.get_m2 import get_m2
-except ImportError as error:
-    get_m2 = error
-
-try:
-    from ..Methods.GUI_Option.Unit.get_m2_name import get_m2_name
-except ImportError as error:
-    get_m2_name = error
-
-try:
-    from ..Methods.GUI_Option.Unit.get_m_name import get_m_name
-except ImportError as error:
-    get_m_name = error
-
-try:
-    from ..Methods.GUI_Option.Unit.set_m import set_m
-except ImportError as error:
-    set_m = error
-
-try:
-    from ..Methods.GUI_Option.Unit.set_m2 import set_m2
-except ImportError as error:
-    set_m2 = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -56,61 +26,133 @@ class Unit(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.GUI_Option.Unit.get_m
-    if isinstance(get_m, ImportError):
-        get_m = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Unit method get_m: " + str(get_m))
-            )
-        )
-    else:
-        get_m = get_m
+    def get_m(self, value):
+        """Convert the value the correct m unit (to display in GUI)
+
+        Parameters
+        ----------
+        self : Unit
+            A Unit object
+        value : float
+            Value to convert
+
+        Returns
+        -------
+        value : float
+            Converted value in the current unit
+
+        """
+        if value is None:
+            return None
+        if self.unit_m == 1:  # Convert to mm
+            return value * 1000
+        else:
+            return value
+
     # cf Methods.GUI_Option.Unit.get_m2
-    if isinstance(get_m2, ImportError):
-        get_m2 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Unit method get_m2: " + str(get_m2))
-            )
-        )
-    else:
-        get_m2 = get_m2
+    def get_m2(self, value):
+        """Convert the value the correct m² unit (to display in GUI)
+
+        Parameters
+        ----------
+        self : Unit
+            A Unit object
+        value : float
+            Value to convert
+
+        Returns
+        -------
+        value : float
+            Value in the current unit
+        """
+        if value is None:
+            return None
+        if self.unit_m2 == 1:  # Convert to mm^2
+            return value * 1000000
+        else:
+            return value
+
     # cf Methods.GUI_Option.Unit.get_m2_name
-    if isinstance(get_m2_name, ImportError):
-        get_m2_name = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Unit method get_m2_name: " + str(get_m2_name))
-            )
-        )
-    else:
-        get_m2_name = get_m2_name
+    def get_m2_name(self):
+        """Return the name of the current area unit
+
+        Parameters
+        ----------
+        self : Unit
+            A Unit object
+
+        Returns
+        -------
+        unit_name : str
+            Name of the current unit
+        """
+        if self.unit_m2 == 1:
+            return "mm²"
+        else:
+            return "m²"
+
     # cf Methods.GUI_Option.Unit.get_m_name
-    if isinstance(get_m_name, ImportError):
-        get_m_name = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Unit method get_m_name: " + str(get_m_name))
-            )
-        )
-    else:
-        get_m_name = get_m_name
+    def get_m_name(self):
+        """Return the name of the length unit ([m] by default)
+
+        Parameters
+        ----------
+        self : Unit
+            A Unit object
+
+        Returns
+        -------
+        unit_name: str
+            Name of the current unit
+        """
+        if self.unit_m == 1:
+            return "mm"
+        else:
+            return "m"
+
     # cf Methods.GUI_Option.Unit.set_m
-    if isinstance(set_m, ImportError):
-        set_m = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Unit method set_m: " + str(set_m))
-            )
-        )
-    else:
-        set_m = set_m
+    def set_m(self, value):
+        """Convert the value the correct m unit (to set in the object in m)
+
+        Parameters
+        ----------
+        self : Unit
+            A Unit object
+        value : float
+            Value to convert
+
+        Returns
+        -------
+        value: float
+            value converted in [m]
+        """
+        if self.unit_m == 1:  # Convert to mm
+            return value / 1000
+        else:
+            return value
+
     # cf Methods.GUI_Option.Unit.set_m2
-    if isinstance(set_m2, ImportError):
-        set_m2 = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Unit method set_m2: " + str(set_m2))
-            )
-        )
-    else:
-        set_m2 = set_m2
+    def set_m2(self, value):
+        """Convert the value the correct m² unit (to set in the object in m²)
+
+        Parameters
+        ----------
+        self : Unit
+            A Unit object
+        value : float
+            Value to convert
+
+        Returns
+        -------
+        value : float
+            value converted in [m²]
+        """
+        if self.unit_m2 == 1:  # Convert to mm²
+            return value / 1000000
+        else:
+            return value
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

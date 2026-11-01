@@ -17,26 +17,9 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Material.MatMagnetics.get_BH import get_BH
-except ImportError as error:
-    get_BH = error
-
-try:
-    from ..Methods.Material.MatMagnetics.get_Brm import get_Brm
-except ImportError as error:
-    get_Brm = error
-
-try:
-    from ..Methods.Material.MatMagnetics.get_Hc import get_Hc
-except ImportError as error:
-    get_Hc = error
-
-try:
-    from ..Methods.Material.MatMagnetics.plot_BH import plot_BH
-except ImportError as error:
-    plot_BH = error
-
+from ..Methods.Material.MatMagnetics.get_BH import BHShapeError
+from numpy import pi
+from ..Functions.init_fig import init_fig
 
 from ..Classes.ImportMatrixVal import ImportMatrixVal
 from numpy import ndarray
@@ -50,43 +33,147 @@ class MatMagnetics(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Material.MatMagnetics.get_BH
-    if isinstance(get_BH, ImportError):
-        get_BH = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MatMagnetics method get_BH: " + str(get_BH))
-            )
-        )
-    else:
-        get_BH = get_BH
+    def get_BH(self):
+        """Return the B(H) curve of the material according to the Import object.
+        If there is no B(H) curve linear data are computed from mur_lin.
+
+        Parameters
+        ----------
+        self : MatMagnetics
+            a MatMagnetics object
+
+        Returns
+        -------
+        BH: numpy.ndarray
+            B(H) values (two colums matrix: H and B(H))
+
+        """
+
+        if self.BH_curve is not None:
+            BH = self.BH_curve.get_data()
+
+            if len(BH.shape) != 2:
+                raise BHShapeError(
+                    "BH must be a two colums matrix: H and B(H). Return shape: "
+                    + str(BH.shape)
+                )
+            if BH.shape[1] != 2:
+                raise BHShapeError(
+                    "BH must be a two colums matrix: H and B(H). Return shape: "
+                    + str(BH.shape)
+                )
+
+            if self.is_BH_extrapolate:
+                BH = self.ModelBH.fit_model(BH=BH)
+
+        else:
+            BH = self.ModelBH.get_BH()
+
+        if self.mur_lin is None and BH is None:
+            raise BHShapeError("There are no BH data availible. Check input data.")
+
+        return BH
+
     # cf Methods.Material.MatMagnetics.get_Brm
-    if isinstance(get_Brm, ImportError):
-        get_Brm = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MatMagnetics method get_Brm: " + str(get_Brm))
-            )
-        )
-    else:
-        get_Brm = get_Brm
+    def get_Brm(self, T_op=None, T_ref=20):
+        """Get magnetic remanent flux density
+
+        Parameters
+        ----------
+        self : MatMagnetics
+            a MatMagnetics object
+        T_op: float
+            Material operational temperature [degC]
+        T_ref: float
+            Material reference temperature [degC]
+
+        Returns
+        -------
+        Brm: float
+            Magnetic remanent flux density
+
+        """
+
+        if T_op is None:
+            T_op = T_ref
+
+        # Get magnetic remanent flux density at 20 degC from excitation coercitivity
+        if self.Brm20 is None:
+            raise Exception("Cannot calculate Brm20 if Hc or mur_lin is None")
+        else:
+            Brm20 = self.Brm20
+
+        # Update magnetic remanent flux density
+        Brm = Brm20 * (1 + self.alpha_Br * (T_op - T_ref))
+
+        return Brm
+
     # cf Methods.Material.MatMagnetics.get_Hc
-    if isinstance(get_Hc, ImportError):
-        get_Hc = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MatMagnetics method get_Hc: " + str(get_Hc))
-            )
-        )
-    else:
-        get_Hc = get_Hc
+    def get_Hc(self, T_op=None, T_ref=20):
+        """Get magnetic excitation coercitivity
+
+        Parameters
+        ----------
+        self : MatMagnetics
+            a MatMagnetics object
+        T_op: float
+            Material operational temperature [degC]
+        T_ref: float
+            Material reference temperature [degC]
+
+        Returns
+        -------
+        Hc: float
+            Magnetic excitation coercitivity
+
+        """
+
+        if T_op is None:
+            T_op = T_ref
+
+        # Calculate magnetic coercitivity at 20 degC from remanent flux density
+        if self.Brm20 is None or self.mur_lin is None:
+            raise Exception("Cannot calculate Hc if Brm20 or mur_lin is None")
+
+        # Magnet coercitivity
+        Hc20 = self.Brm20 / (4 * pi * 1e-7 * self.mur_lin)
+
+        # Update magnetic coercitivity
+        Hc = Hc20 * (1 + self.alpha_Br * (T_op - T_ref))
+
+        return Hc
+
     # cf Methods.Material.MatMagnetics.plot_BH
-    if isinstance(plot_BH, ImportError):
-        plot_BH = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MatMagnetics method plot_BH: " + str(plot_BH))
-            )
-        )
-    else:
-        plot_BH = plot_BH
+    def plot_BH(self, fig=None, grid=True, color="r", is_show_fig=True):
+        """Plot the curve B(H) at the specified frequency
+
+        Parameters
+        ----------
+        self : MatMagnetics
+            a MatMagnetics object
+        fig :
+            if None, open a new fig and plot, else add to the gcf (Default value = None)
+
+        Returns
+        -------
+        None
+        """
+        (fig, axes, patch_leg, label_leg) = init_fig(fig)
+
+        BH = self.get_BH()
+
+        if BH is not None:
+            axes.plot(BH[:, 0], BH[:, 1], color=color)
+            axes.grid(visible=True)  # param "b" of grid was removed in MPL 3.7
+            axes.set_xlabel("H [A/m]")
+            axes.set_ylabel("B [T]")
+            axes.set_title("B(H) curve")
+            if is_show_fig:
+                fig.show()
+
+        return fig
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

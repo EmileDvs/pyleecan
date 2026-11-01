@@ -17,11 +17,6 @@ from .ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportMatrixVal.get_data import get_data
-except ImportError as error:
-    get_data = error
-
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -34,16 +29,23 @@ class ImportMatrixVal(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportMatrixVal.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportMatrixVal method get_data: " + str(get_data)
-                )
-            )
-        )
-    else:
-        get_data = get_data
+    def get_data(self):
+        """Return the object's matrix
+
+        Parameters
+        ----------
+        self : ImportMatrixVal
+            An ImportMatrixVal object
+
+        Returns
+        -------
+        matrix: ndarray
+            The object's matrix
+
+        """
+
+        return self.edit_matrix(self.value)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

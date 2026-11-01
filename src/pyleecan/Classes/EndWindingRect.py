@@ -17,16 +17,8 @@ from .EndWinding import EndWinding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.EndWindingRect.comp_inductance import comp_inductance
-except ImportError as error:
-    comp_inductance = error
-
-try:
-    from ..Methods.Machine.EndWindingRect.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
+from numpy import pi
+from .LamSlotWind import LamSlotWind
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,30 +29,100 @@ class EndWindingRect(EndWinding):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.EndWindingRect.comp_inductance
-    if isinstance(comp_inductance, ImportError):
-        comp_inductance = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EndWindingRect method comp_inductance: "
-                    + str(comp_inductance)
-                )
-            )
-        )
-    else:
-        comp_inductance = comp_inductance
+    def comp_inductance(self):
+        """Compute the end winding inductance based on permeance coefficient stored in EndWindingRect object
+        from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
+
+        Parameters
+        ----------
+        self: EndWindingRect
+            A EndWindingRect object
+
+        Returns
+        -------
+        Lew : float
+            end winding inductance [H].
+        """
+
+        if self.parent is not None:
+            winding = self.parent
+        else:
+            return 0
+
+        p = winding.p
+        Ntcoil = winding.Ntcoil
+
+        mu0 = 4 * pi * 1e-7
+
+        if winding.Lewout is not None:
+            l_ew = winding.Lewout
+        else:
+            l_ew = 0
+
+        # Calculate width of end winding
+        w_ew = 2 * self.comp_length()
+
+        # Calculate Eq(4.100)
+        l_lambda = 2 * l_ew * self.lambda_length + w_ew * self.lambda_width
+
+        # Calculate end-winding inductance from Eq (4.98) p.261
+        Lw = 2 / p * Ntcoil**2 * mu0 * l_lambda
+
+        return Lw
+
     # cf Methods.Machine.EndWindingRect.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use EndWindingRect method comp_length: " + str(comp_length)
-                )
+    def comp_length(self):
+        """Compute the end winding conductor length on one side for a half-turn
+        excluding the straight conductor length outside of the lamination (winding.Lewout).
+
+        Parameters
+        ----------
+        self: EndWindingRect
+            A EndWindingRect object
+
+        Returns
+        -------
+        end_wind_length : float
+            End-winding length on one side for a half-turn [m].
+        """
+
+        # check that Endwinding is in Winding of a Lamination with slots
+        if (
+            self.parent is None
+            or self.parent.parent is None
+            or not isinstance(self.parent.parent, LamSlotWind)
+            or self.parent.parent.slot is None
+        ):
+            self.get_logger.warning(
+                "EndWindingRect.comp_length(): "
+                + "EndWindingRect has to be in a lamination with slot winding to calculate "
+                + "the end winding length. Returning zero lenght."
             )
-        )
-    else:
-        comp_length = comp_length
+            return 0
+
+        Rmid = self.parent.parent.slot.comp_radius_mid_active()
+        Zs = self.parent.parent.slot.Zs
+        p = self.parent.p
+
+        # get the coil pitch (with some fall backs), first from the user definition
+        # TODO utilize swat_em coil pitch calc.
+        coil_pitch = self.coil_pitch
+        if coil_pitch is None:
+            # try to get coil_pitch of winding
+            coil_pitch = getattr(self.parent, "coil_pitch", None)
+            if coil_pitch is None:
+                coil_pitch = Zs / p / 2
+                self.get_logger().warning(
+                    "EndWindingCirc.comp_lenght_endwinding():"
+                    + "Using a coil pitch of one pole pitch for EW length calculation."
+                )
+
+        # end winding length is half the distance between two slots separated by the coil pitch
+        end_wind_length = coil_pitch * pi / Zs * Rmid
+
+        return end_wind_length
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

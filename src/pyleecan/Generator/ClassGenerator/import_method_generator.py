@@ -1,6 +1,3 @@
-from ...Generator import TAB
-
-
 def import_method(class_pack, class_name, meth):
     """Method to generate the code to import a method (with import check)
 
@@ -21,14 +18,14 @@ def import_method(class_pack, class_name, meth):
     """
 
     meth_name = meth.split(".")[-1]
-    code = "try:\n"
+    # code = "try:\n"
 
-    code += TAB + "from ..Methods."
+    code = "from ..Methods."
     if class_pack not in ["", None]:
         code += class_pack + "."
 
     code += class_name + "." + meth + " import " + meth_name + "\n"
 
-    code += "except ImportError as error:\n"
-    code += TAB + meth_name + " = error\n\n"
+    # code += "except ImportError as error:\n"
+    # code += TAB + meth_name + " = error\n\n"
     return code

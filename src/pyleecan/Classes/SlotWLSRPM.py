@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotWLSRPM
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - plot_schematics: import name 'Arc1' refers to different sources (.Arc1.Arc1 and ..Methods.Slot.SlotWLSRPM.plot_schematics.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,56 +21,13 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotWLSRPM._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.build_geometry_active import build_geometry_active
-except ImportError as error:
-    build_geometry_active = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.comp_angle_opening import comp_angle_opening
-except ImportError as error:
-    comp_angle_opening = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.comp_height_damper import comp_height_damper
-except ImportError as error:
-    comp_height_damper = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.comp_height_wind import comp_height_wind
-except ImportError as error:
-    comp_height_wind = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotWLSRPM.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Slot.SlotWLSRPM.plot_schematics import plot_schematics
+from numpy import exp, pi, sqrt, sin, cos, arcsin
+from .Arc1 import Arc1
+from .Segment import Segment
+from .SurfLine import SurfLine
+from ..Functions.labels import WIND_LAB
+from ..Methods.Slot.SlotWLSRPM import SLSRPMOutterError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -78,122 +39,457 @@ class SlotWLSRPM(Slot):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotWLSRPM._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+
+        Rbo = self.get_Rbo()
+
+        hsp = pi / self.Zs  # Half slot pitch
+
+        # ZXt => Complex coordinate in the tooth ref
+        # ZX => Complex coordinate in the slot ref
+        y1t = self.W1 + self.W3 / 2
+        # Point Zch slot midium high point
+        Zch = Rbo + self.H2
+        # Point Zcl slot midium low point
+        Zcl = Rbo
+
+        # relation bewteen the axis tooth and the axis slot
+        Zcht = Zch * exp(1j * hsp)
+        xcht = Zch * cos(hsp)
+        ycht = Zch * sin(hsp)
+
+        Zclt = Zcl * exp(1j * hsp)
+        xclt = Zcl * cos(hsp)
+        yclt = Zcl * sin(hsp)
+
+        # Line Zch Zcl
+        # y=-(xcht-xclt)/(ycht-yclt)*x+ycht+xcht*(xcht-xclt)/(ycht-yclt)
+
+        # Z4
+        x4t = (
+            (self.W1 + self.W3 / 2 - ycht - xcht * (xcht - xclt) / (ycht - yclt))
+            * -(ycht - yclt)
+            / (xcht - xclt)
         )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+        y4t = (
+            -(xcht - xclt) / (ycht - yclt) * x4t
+            + ycht
+            + xcht * (xcht - xclt) / (ycht - yclt)
+        )
+        Z4t = x4t + 1j * y4t
+        Z4 = Z4t * exp(-1j * hsp)
+        # Z3
+        x3t = x4t
+        y3t = y4t - self.W1 + self.R1
+        Z3t = x3t + 1j * y3t
+        Z3 = Z3t * exp(-1j * hsp)
+        # Z2
+        x2t = x3t - self.R1
+        y2t = self.W3 / 2
+        Z2t = x2t + 1j * y2t
+        Z2 = Z2t * exp(-1j * hsp)
+        # Z1
+        y1t = self.W3 / 2
+        x1t = sqrt((Rbo) ** 2 - (y1t) ** 2)
+        Z1t = x1t + 1j * y1t
+        Z1 = Z1t * exp(-1j * hsp)
+
+        # Z9 damper winding point
+
+        x9t = x1t + self.H3
+        y9t = self.W3 / 2
+        Z9t = x9t + 1j * y9t
+        Z9 = Z9t * exp(-1j * hsp)
+
+        point_dict = dict()
+        # symetry
+        point_dict["Z1"] = Z1
+        point_dict["Z2"] = Z2
+        point_dict["Z3"] = Z3
+        point_dict["Z4"] = Z4
+        point_dict["Z5"] = Z4.conjugate()
+        point_dict["Z6"] = Z3.conjugate()
+        point_dict["Z7"] = Z2.conjugate()
+        point_dict["Z8"] = Z1.conjugate()
+        point_dict["Z9"] = Z9
+        point_dict["Z10"] = Z9.conjugate()
+        point_dict["Zcl"] = Rbo
+        point_dict["Zcm"] = Rbo + self.H3
+        point_dict["Zch"] = Rbo + self.H2
+        point_dict["Zmid"] = (point_dict["Zcl"] + point_dict["Zch"]) / 2.0
+        # Zc1
+        xc1 = Z2.real
+        yc1 = Z3.imag
+        Zc1 = (xc1 + 1j * yc1).conjugate()
+
+        point_dict["Zc1"] = Zc1
+
+        return point_dict
+
     # cf Methods.Slot.SlotWLSRPM.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+
+        Returns
+        -------
+        curve_list: list
+            A list of 5 Segments and 2 Arcs
+
+        """
+
+        Rbo = self.get_Rbo()
+
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+        Z6 = point_dict["Z6"]
+        Z7 = point_dict["Z7"]
+        Z8 = point_dict["Z8"]
+        Z9 = point_dict["Z9"]
+        Z10 = point_dict["Z10"]
+
+        # Creation of curve
+        curve_list = list()
+        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(Arc1(Z2, Z3, self.R1, is_trigo_direction=True))
+        curve_list.append(Segment(Z3, Z4))
+        curve_list.append(Segment(Z4, Z5))
+        curve_list.append(Segment(Z5, Z6))
+        curve_list.append(Arc1(Z6, Z7, self.R1, is_trigo_direction=True))
+        curve_list.append(Segment(Z7, Z8))
+
+        return curve_list
+
     # cf Methods.Slot.SlotWLSRPM.build_geometry_active
-    if isinstance(build_geometry_active, ImportError):
-        build_geometry_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method build_geometry_active: "
-                    + str(build_geometry_active)
-                )
+    def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):
+        """Split the slot active area in several zone
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+        Nrad : int
+            Number of radial layer
+        Ntan : int
+            Number of tangentiel layer
+        is_simplified : bool
+            boolean to specify if coincident lines are considered as one or different lines (Default value = False)
+        alpha : float
+            Angle for rotation (Default value = 0) [rad]
+        delta : Complex
+            complex for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list:
+            List of surface delimiting the active zone
+
+        """
+
+        lam_label = self.parent.get_label()
+        Rbo = self.get_Rbo()
+
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+        Z6 = point_dict["Z6"]
+        Z7 = point_dict["Z7"]
+        Z8 = point_dict["Z8"]
+        Z9 = point_dict["Z9"]
+        Z10 = point_dict["Z10"]
+
+        Zcl = point_dict["Zcl"]
+        Zcm = point_dict["Zcm"]
+        Zch = point_dict["Zch"]
+        Zmid = point_dict["Zmid"]
+
+        # Creation of curve
+        surf_list = list()
+        if Nrad == 1 and Ntan == 2:
+            # Part 1 (0,0)
+            line1 = Segment(Z3, Z4)
+            line2 = Segment(Z4, Zch)
+            line3 = Segment(Zch, Zcl)
+            line4 = Arc1(Zcl, Z1, -Rbo, is_trigo_direction=False)
+            line5 = Segment(Z1, Z2)
+            line6 = Arc1(Z2, Z3, self.R1, is_trigo_direction=True)
+            point_ref = (Z3 + Z4 + Zch + Zcl + Z1 + Z2) / 6
+
+            surface = SurfLine(
+                line_list=[line1, line2, line3, line4, line5, line6],
+                label=(lam_label + "_" + WIND_LAB + "_R0-T0-S0"),
+                point_ref=point_ref,
             )
-        )
-    else:
-        build_geometry_active = build_geometry_active
+            surf_list.append(surface)
+
+            # Part2 (0,1)
+            line1 = Segment(Zch, Z5)
+            line2 = Segment(Z5, Z6)
+            line3 = Arc1(Z6, Z7, self.R1, is_trigo_direction=True)
+            line4 = Segment(Z7, Z8)
+            line5 = Arc1(Z8, Zcl, -Rbo, is_trigo_direction=False)
+            line6 = Segment(Zcl, Zch)
+            point_ref = (Zch + Z5 + Z6 + Z7 + Z8 + Zcl) / 6
+            surface = SurfLine(
+                line_list=[line1, line2, line3, line4, line5, line6],
+                label=(lam_label + "_" + WIND_LAB + "_R0-T1-S0"),
+                point_ref=point_ref,
+            )
+            surf_list.append(surface)
+
+        if Nrad == 2 and Ntan == 2:
+            # Part 1 (0,0)
+            line1 = Segment(Z3, Z4)
+            line2 = Segment(Z4, Zch)
+            line3 = Segment(Zch, Zcm)
+            line4 = Arc1(Zcm, Z9, -(Rbo + self.H3), is_trigo_direction=False)
+            line5 = Segment(Z9, Z2)
+            line6 = Arc1(Z2, Z3, self.R1, is_trigo_direction=True)
+            point_ref = (Z3 + Z4 + Zch + Zcm + Z9 + Z2) / 6
+
+            surface = SurfLine(
+                line_list=[line1, line2, line3, line4, line5, line6],
+                label=(lam_label + "_" + WIND_LAB + "_R0-T0-S0"),
+                point_ref=point_ref,
+            )
+            surf_list.append(surface)
+
+            # Part2 (0,1)
+            line1 = Segment(Zch, Z5)
+            line2 = Segment(Z5, Z6)
+            line3 = Arc1(Z6, Z7, self.R1, is_trigo_direction=True)
+            line4 = Segment(Z7, Z10)
+            line5 = Arc1(Z10, Zcm, -(Rbo + self.H3), is_trigo_direction=False)
+            line6 = Segment(Zcm, Zch)
+            point_ref = (Zch + Z5 + Z6 + Z7 + Z10 + Zcm) / 6
+            surface = SurfLine(
+                line_list=[line1, line2, line3, line4, line5, line6],
+                label=(lam_label + "_" + WIND_LAB + "_R0-T1-S0"),
+                point_ref=point_ref,
+            )
+            surf_list.append(surface)
+
+            # Part3 (1,1)
+            line1 = Arc1(Zcm, Z10, Rbo + self.H3, is_trigo_direction=True)
+            line2 = Segment(Z10, Z8)
+            line3 = Arc1(Z8, Zcl, -Rbo, is_trigo_direction=False)
+            line4 = Segment(Zcl, Zcm)
+            point_ref = (Zcm + Z10 + Z8 + Zcl) / 4
+            surface = SurfLine(
+                line_list=[line1, line2, line3, line4],
+                label=(lam_label + "_" + WIND_LAB + "_R1-T1-S0"),
+                point_ref=point_ref,
+            )
+            surf_list.append(surface)
+
+            # Part4 (1,0)
+            line1 = Arc1(Z9, Zcm, Rbo + self.H3, is_trigo_direction=True)
+            line2 = Segment(Zcm, Zcl)
+            line3 = Arc1(Zcl, Z1, -Rbo, is_trigo_direction=False)
+            line4 = Segment(Z1, Z9)
+            point_ref = (Z9 + Zcm + Zcl + Z1) / 4
+            surface = SurfLine(
+                line_list=[line1, line2, line3, line4],
+                label=(lam_label + "_" + WIND_LAB + "_R1-T0-S0"),
+                point_ref=point_ref,
+            )
+            surf_list.append(surface)
+
+        else:  # Default : only one zone
+            curve_list = self.build_geometry()
+
+            # Add a line to close the winding area
+            lines = [
+                Arc1(
+                    curve_list[-1].end,
+                    curve_list[0].begin,
+                    -Rbo,
+                    is_trigo_direction=False,
+                )
+            ]
+            lines.extend(curve_list)
+            surface = SurfLine(
+                line_list=lines,
+                label=lam_label + "_" + WIND_LAB + "_R0-T0-S0",
+                point_ref=Zmid,
+            )
+            surf_list.append(surface)
+
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+        return surf_list
+
     # cf Methods.Slot.SlotWLSRPM.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotWLSRPM method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the SlotW16 object is correct
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+
+        """
+
+        if self.is_outwards():
+            raise SLSRPMOutterError("Slot Type LSRPM can’t be used on outer lamination")
+
     # cf Methods.Slot.SlotWLSRPM.comp_angle_opening
-    if isinstance(comp_angle_opening, ImportError):
-        comp_angle_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method comp_angle_opening: "
-                    + str(comp_angle_opening)
-                )
-            )
-        )
-    else:
-        comp_angle_opening = comp_angle_opening
+    def comp_angle_opening(self):
+        """Compute the average opening angle of the Slot
+
+        Parameters
+        ----------
+        self : SlotWLSRPM：
+            A SlotWLSRPM： object
+
+        Returns
+        -------
+        alpha: float
+            Average opening angle of the slot [rad]
+
+        """
+        Rbo = self.get_Rbo()
+        return 2 * (pi / self.Zs - arcsin(self.W3 / 2 / Rbo))
+
     # cf Methods.Slot.SlotWLSRPM.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method comp_height: " + str(comp_height)
-                )
-            )
-        )
-    else:
-        comp_height = comp_height
+    def comp_height(self):
+        """Compute the height of the Slot.
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+
+        Returns
+        -------
+        Htot: float
+            Height of the slot [m]
+
+        """
+
+        return self.H2
+
     # cf Methods.Slot.SlotWLSRPM.comp_height_damper
-    if isinstance(comp_height_damper, ImportError):
-        comp_height_damper = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method comp_height_damper: "
-                    + str(comp_height_damper)
-                )
-            )
-        )
-    else:
-        comp_height_damper = comp_height_damper
+    def comp_height_damper(self):
+        """Compute the height of the damper winding area
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+
+        Returns
+        -------
+        Hwind: float
+            Height of the damper winding area [m]
+
+        """
+
+        return self.H3
+
     # cf Methods.Slot.SlotWLSRPM.comp_height_wind
-    if isinstance(comp_height_wind, ImportError):
-        comp_height_wind = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method comp_height_wind: "
-                    + str(comp_height_wind)
-                )
-            )
-        )
-    else:
-        comp_height_wind = comp_height_wind
+    def comp_height_wind(self):
+        """Compute the height of the winding area
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+
+        Returns
+        -------
+        Hwind: float
+            Height of the winding area [m]
+
+        """
+
+        return self.H2 - self.H3
+
     # cf Methods.Slot.SlotWLSRPM.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method get_surface_active: "
-                    + str(get_surface_active)
-                )
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full winding surface
+
+        Parameters
+        ----------
+        self : SlotWLSRPM
+            A SlotWLSRPM object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_wind: Surface
+            Surface corresponding to the Winding Area
+        """
+
+        # get the name of the lamination
+        st = self.get_name_lam()
+
+        # Create curve list
+        curve_list = self.build_geometry()
+        curve_list.append(
+            Arc1(
+                begin=curve_list[-1].get_end(),
+                end=curve_list[0].get_begin(),
+                radius=-self.get_Rbo(),
+                is_trigo_direction=False,
             )
         )
-    else:
-        get_surface_active = get_surface_active
+
+        # Create surface
+        if self.is_outwards():
+            Zmid = self.get_Rbo() + self.H2 / 2
+        else:
+            Zmid = self.get_Rbo() - self.H2 / 2
+        surface = SurfLine(
+            line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
+        )
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        return surface
+
     # cf Methods.Slot.SlotWLSRPM.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotWLSRPM method plot_schematics: "
-                    + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

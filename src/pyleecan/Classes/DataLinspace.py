@@ -17,31 +17,12 @@ from .Data import Data
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.SciDataTool.DataLinspace.get_axis_periodic import get_axis_periodic
-except ImportError as error:
-    get_axis_periodic = error
-
-try:
-    from ..Methods.SciDataTool.DataLinspace.get_length import get_length
-except ImportError as error:
-    get_length = error
-
-try:
-    from ..Methods.SciDataTool.DataLinspace.get_periodicity import get_periodicity
-except ImportError as error:
-    get_periodicity = error
-
-try:
-    from ..Methods.SciDataTool.DataLinspace.get_values import get_values
-except ImportError as error:
-    get_values = error
-
-try:
-    from ..Methods.SciDataTool.DataLinspace.has_period import has_period
-except ImportError as error:
-    has_period = error
-
+from .Norm_vector import Norm_vector
+from ..Functions.SciDataTool import AxisError, NormError
+from importlib import import_module
+from numpy import array, linspace
+from ..Functions.SciDataTool.conversions import convert
+from ..Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -52,64 +33,296 @@ class DataLinspace(Data):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.SciDataTool.DataLinspace.get_axis_periodic
-    if isinstance(get_axis_periodic, ImportError):
-        get_axis_periodic = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataLinspace method get_axis_periodic: "
-                    + str(get_axis_periodic)
+    def get_axis_periodic(self, Nper, is_aper=False):
+        """Returns the vector 'axis' taking symmetries into account.
+
+        Parameters
+        ----------
+        self: DataLinspace
+            a DataLinspace object
+        Nper: int
+            number of periods
+        is_antiperiod: bool
+            return values on a semi period (only for antiperiodic signals)
+
+        Returns
+        -------
+        New_axis: DataLinspace
+            Axis with requested (anti-)periodicities
+        """
+
+        # Dynamic import to avoid loop
+        module = __import__("pyleecan.Classes.DataLinspace", fromlist=["DataLinspace"])
+        DataLinspace = module.DataLinspace
+
+        try:
+            # Reduce axis to the given periodicity
+            Nper = Nper * 2 if is_aper else Nper
+            values = self.get_values()
+            N = self.get_length()
+
+            if N % Nper != 0:
+                raise AxisError(
+                    "length of axis is not divisible by the number of periods"
                 )
+            values_per = values[: int(N / Nper)]
+            for norm in self.normalizations.values():
+                if isinstance(norm, Norm_vector):
+                    norm.vector = norm.vector[: int(N / Nper)]
+
+            if is_aper:
+                sym = "antiperiod"
+            else:
+                sym = "period"
+
+            if Nper == 1 and sym == "period":
+                symmetries = dict()
+            else:
+                symmetries = {sym: Nper}
+
+            New_axis = DataLinspace(
+                initial=self.initial,
+                final=values_per[-1],
+                number=int(N / Nper),
+                include_endpoint=True,
+                name=self.name,
+                unit=self.unit,
+                symmetries=symmetries,
+                normalizations=self.normalizations.copy(),
+                is_components=self.is_components,
+                symbol=self.symbol,
             )
-        )
-    else:
-        get_axis_periodic = get_axis_periodic
+
+        except AxisError:
+            # Periodicity cannot be applied, return full axis
+            New_axis = self.copy()
+
+        return New_axis
+
     # cf Methods.SciDataTool.DataLinspace.get_length
-    if isinstance(get_length, ImportError):
-        get_length = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataLinspace method get_length: " + str(get_length)
-                )
-            )
-        )
-    else:
-        get_length = get_length
+    def get_length(
+        self, is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False
+    ):
+        """Returns the length of the axis taking symmetries into account.
+        Parameters
+        ----------
+        self: DataLinspace
+            a DataLinspace object
+        is_oneperiod: bool
+            return values on a single period
+        is_antiperiod: bool
+            return values on a semi period (only for antiperiodic signals)
+        Returns
+        -------
+        Length of axis
+        """
+
+        if self.number is None:
+            N = round((self.final - self.initial + self.step) / self.step)
+        else:
+            N = self.number
+
+        # Rebuild symmetries
+        if is_smallestperiod:
+            return N
+        elif is_antiperiod:
+            if "antiperiod" in self.symmetries:
+                return N
+            else:
+                raise AxisError("axis has no antiperiodicity")
+        elif is_oneperiod:
+            if "antiperiod" in self.symmetries:
+                return N * 2
+            elif "period" in self.symmetries:
+                return N
+            else:
+                return N
+        else:
+            if "antiperiod" in self.symmetries:
+                return N * self.symmetries["antiperiod"]
+            elif "period" in self.symmetries:
+                return N * self.symmetries["period"]
+            else:
+                return N
+
     # cf Methods.SciDataTool.DataLinspace.get_periodicity
-    if isinstance(get_periodicity, ImportError):
-        get_periodicity = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataLinspace method get_periodicity: "
-                    + str(get_periodicity)
-                )
-            )
-        )
-    else:
-        get_periodicity = get_periodicity
+    def get_periodicity(self):
+        """Gives periodicity of the axis.
+        Parameters
+        ----------
+        self: DataLinspace
+            a DataLinspace object
+        Returns
+        -------
+        per, is_antiper
+        """
+
+        per = 1
+        is_antiper = False
+
+        if "antiperiod" in self.symmetries:
+            if self.symmetries["antiperiod"] > 1:
+                per = self.symmetries["antiperiod"]
+                is_antiper = True
+        elif "period" in self.symmetries:
+            if self.symmetries["period"] > 1:
+                per = self.symmetries["period"]
+
+        return (per, is_antiper)
+
     # cf Methods.SciDataTool.DataLinspace.get_values
-    if isinstance(get_values, ImportError):
-        get_values = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataLinspace method get_values: " + str(get_values)
+    def get_values(
+        self,
+        unit="SI",
+        is_oneperiod=False,
+        is_antiperiod=False,
+        is_smallestperiod=False,
+        normalization=None,
+        operation=None,
+        is_real=True,
+        corr_unit=None,
+        is_full=False,
+    ):
+        """Returns the vector 'axis' by rebuilding the linspace, symmetries and unit included.
+        Parameters
+        ----------
+        self: DataLinspace
+            a DataLinspace object
+        unit: str
+            requested unit
+        is_oneperiod: bool
+            return values on a single period
+        is_antiperiod: bool
+            return values on a semi period (only for antiperiodic signals)
+        is_smallestperiod: bool
+            return values on smallest available period
+        normalization: str
+            name of normalization to use
+        operation: str
+            name of the operation (e.g. "freqs_to_time")
+        Returns
+        -------
+        Vector of axis values
+        """
+        # Dynamic import to avoid loop
+        module = __import__("pyleecan.Classes.Norm_vector", fromlist=["Norm_vector"])
+        Norm_vector = module.Norm_vector
+
+        if unit != "SI" and unit != self.unit:
+            if unit in self.normalizations and normalization is None:
+                normalization = unit
+                unit = "SI"
+
+        initial = self.initial
+        if self.number == None:
+            final = self.final
+            number = (final - initial + self.step) / self.step
+        elif self.final == None:
+            number = self.number
+            final = self.initial + (number - 1) * self.step
+        else:
+            number = self.number
+            final = self.final
+        values = linspace(initial, final, int(number), endpoint=self.include_endpoint)
+
+        norm_vector = None
+
+        # Ignore symmetries if fft axis
+        if self.name == "freqs" or self.name == "wavenumber":
+            is_smallestperiod = True
+
+        # Rebuild symmetries
+        if is_smallestperiod:
+            pass
+        elif is_antiperiod:
+            if "antiperiod" in self.symmetries:
+                pass
+            else:
+                raise AxisError("axis has no antiperiodicity")
+        elif is_oneperiod:
+            if "antiperiod" in self.symmetries:
+                nper = self.symmetries["antiperiod"]
+                self.symmetries["antiperiod"] = 2
+                values = rebuild_symmetries_axis(values, self.symmetries)
+                self.symmetries["antiperiod"] = nper
+            elif "period" in self.symmetries:
+                pass
+            else:
+                pass
+        else:
+            values = rebuild_symmetries_axis(values, self.symmetries)
+            if (
+                normalization is not None
+                and normalization in self.normalizations
+                and isinstance(self.normalizations[normalization], Norm_vector)
+            ):
+                norm_vector = self.normalizations[normalization].vector.copy()
+                self.normalizations[normalization].vector = rebuild_symmetries_axis(
+                    norm_vector, self.symmetries
                 )
-            )
-        )
-    else:
-        get_values = get_values
+
+        # fft/ifft
+        if operation is not None:
+            module = import_module("pyleecan.Functions.SciDataTool.conversions")
+            func = getattr(module, operation)  # Conversion function
+            values = array(func(values, is_real=is_real))
+            if is_full and (self.name == "freqs" or self.name == "wavenumber"):
+                if "period" in self.symmetries:
+                    if self.name != "time":
+                        values = values * self.symmetries["period"]
+                elif "antiperiod" in self.symmetries:
+                    if self.name != "time":
+                        values = values * self.symmetries["antiperiod"] / 2
+
+        # Normalization
+        if normalization is not None:
+            if normalization in self.normalizations:
+                if (
+                    self.normalizations[normalization].unit == "SI"
+                    or self.normalizations[normalization].unit == self.unit
+                ):
+                    # Axis is in the correct unit for the normalization
+                    values = self.normalizations[normalization].normalize(values)
+                else:
+                    raise NormError("Normalization is not available in this unit")
+            else:
+                raise NormError("Normalization is not available")
+
+        # Unit conversion
+        if unit != "SI" and unit != self.unit:
+            if corr_unit is not None:
+                values = convert(values, corr_unit, unit)
+            else:
+                values = convert(values, self.unit, unit)
+
+        if norm_vector is not None:
+            self.normalizations[normalization].vector = norm_vector
+
+        return values
+
     # cf Methods.SciDataTool.DataLinspace.has_period
-    if isinstance(has_period, ImportError):
-        has_period = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataLinspace method has_period: " + str(has_period)
-                )
-            )
-        )
-    else:
-        has_period = has_period
+    def has_period(self):
+        """Indicates if an axis has symmetries.
+        Parameters
+        ----------
+        self: DataLinspace
+            a DataLinspace object
+        Returns
+        -------
+        Boolean
+        """
+        answer = False
+
+        if "antiperiod" in self.symmetries:
+            if self.symmetries["antiperiod"] > 1:
+                answer = True
+        elif "period" in self.symmetries:
+            if self.symmetries["period"] > 1:
+                answer = True
+
+        return answer
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

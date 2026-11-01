@@ -17,18 +17,6 @@ from .Bore import Bore
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.BoreUD.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
-
-try:
-    from ..Methods.Machine.BoreUD.get_bore_line import get_bore_line
-except ImportError as error:
-    get_bore_line = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -39,30 +27,46 @@ class BoreUD(Bore):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.BoreUD.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreUD method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
+    def comp_periodicity_spatial(self):
+        """Compute the periodicity factor of the Bore
+
+        Parameters
+        ----------
+        self : BoreUD
+            A BoreUD object
+
+        Returns
+        -------
+        per_a : int
+            Number of spatial periodicities of the bore
+        is_antiper_a : bool
+            True if an spatial anti-periodicity is possible after the periodicities
+        """
+
+        return self.sym, False
+
     # cf Methods.Machine.BoreUD.get_bore_line
-    if isinstance(get_bore_line, ImportError):
-        get_bore_line = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreUD method get_bore_line: " + str(get_bore_line)
-                )
-            )
-        )
-    else:
-        get_bore_line = get_bore_line
+    def get_bore_line(self, label=None):
+        """Return the bore line description
+
+        Parameters
+        ----------
+        self : BoreUD
+            A BoreUD object
+
+        Returns
+        -------
+        bore_list : list
+            List of bore lines
+        """
+
+        if label is not None:
+            for line in self.line_list:
+                line.label = label
+
+        return self.line_list
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

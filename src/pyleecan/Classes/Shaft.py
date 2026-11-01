@@ -17,21 +17,20 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.Shaft.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Machine.Shaft.comp_mass import comp_mass
-except ImportError as error:
-    comp_mass = error
-
-try:
-    from ..Methods.Machine.Shaft.plot import plot
-except ImportError as error:
-    plot = error
-
+from .Circle import Circle
+from .Arc1 import Arc1
+from .Segment import Segment
+from .SurfLine import SurfLine
+from numpy import exp, pi
+from ..Functions.labels import (
+    SHAFT_LAB,
+    NO_LAM_LAB,
+    BOUNDARY_PROP_LAB,
+    SHAFTSR_LAB,
+    SHAFTSL_LAB,
+    SHAFTR_LAB,
+)
+from ..Methods.Machine.Shaft.plot import Patch, SHAFT_COLOR, init_fig
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -42,36 +41,156 @@ class Shaft(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.Shaft.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Shaft method build_geometry: " + str(build_geometry)
+    def build_geometry(self, sym=1, alpha=0, delta=0):
+        """Build the geometry of the shaft
+
+        Parameters
+        ----------
+        self : Shaft
+            Shaft Object
+        sym : int
+            Symmetry factor (1= full machine, 2= half of the machine...)
+        alpha : float
+            Angle for rotation [rad]
+        delta : complex
+            Complex value for translation
+
+        Returns
+        -------
+        surf_list : list
+            list of surfaces needed to draw the lamination
+
+        """
+        surf_list = list()
+
+        if sym == 1:
+            surf_list.append(
+                Circle(
+                    radius=self.Drsh / 2,
+                    label=NO_LAM_LAB + "_" + SHAFT_LAB,
+                    center=0,
+                    point_ref=0,
                 )
             )
-        )
-    else:
-        build_geometry = build_geometry
+        else:
+            begin = self.Drsh / 2
+            end = begin * exp(1j * 2 * pi / sym)
+            surface = SurfLine(
+                line_list=[
+                    Segment(0, begin, prop_dict={BOUNDARY_PROP_LAB: SHAFTSR_LAB}),
+                    Arc1(
+                        begin,
+                        end,
+                        self.Drsh / 2,
+                        prop_dict={BOUNDARY_PROP_LAB: SHAFTR_LAB},
+                    ),
+                    Segment(end, 0, prop_dict={BOUNDARY_PROP_LAB: SHAFTSL_LAB}),
+                ],
+                label=NO_LAM_LAB + "_" + SHAFT_LAB,
+                point_ref=0,
+            )
+
+            surf_list.append(surface)
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+        return surf_list
+
     # cf Methods.Machine.Shaft.comp_mass
-    if isinstance(comp_mass, ImportError):
-        comp_mass = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Shaft method comp_mass: " + str(comp_mass))
-            )
-        )
-    else:
-        comp_mass = comp_mass
+    def comp_mass(self):
+        """Computation of the Shaft mass
+
+        Parameters
+        ----------
+        self: Shaft
+            A Shaft object
+        Returns
+        -------
+        M_shaft: float
+            Mass of the Shaft [kg]
+
+        """
+        if self.Lshaft is None:
+            return 0
+        else:
+            return self.Lshaft * pi * ((self.Drsh / 2) ** 2) * self.mat_type.struct.rho
+
     # cf Methods.Machine.Shaft.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Shaft method plot: " + str(plot))
+    def plot(
+        self,
+        fig=None,
+        ax=None,
+        sym=1,
+        alpha=0,
+        delta=0,
+        is_edge_only=False,
+        edgecolor=None,
+        is_show_fig=True,
+    ):
+        """Plot the Shaft in a matplotlib fig
+
+        Parameters
+        ----------
+        self : Shaft
+            A Shaft object
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+        sym : int
+            Symmetry factor (1= full machine, 2= half of the machine...)
+        alpha : float
+            Angle for rotation [rad]
+        delta : complex
+            Complex value for translation
+        is_edge_only: bool
+            To plot transparent Patches
+        edgecolor:
+            Color of the edges if is_edge_only=True
+        is_show_fig : bool
+            To call show at the end of the method
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+        """
+
+        (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
+        # Get the shaft surface(s)
+        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        patches = list()
+        for surf in surf_list:
+            patches.extend(
+                surf.get_patches(
+                    color=SHAFT_COLOR, is_edge_only=is_edge_only, edgecolor=edgecolor
+                )
             )
-        )
-    else:
-        plot = plot
+        ax.set_xlabel("(m)")
+        ax.set_ylabel("(m)")
+        ax.set_title("Shaft")
+        for patch in patches:
+            ax.add_patch(patch)
+        ax.axis("equal")
+
+        # The Lamination is centered in the figure
+        Lim = self.Drsh * 0.6
+        ax.set_xlim(-Lim, Lim)
+        ax.set_ylim(-Lim, Lim)
+
+        # Add legend
+        if not is_edge_only:
+            patch_leg.append(Patch(color=SHAFT_COLOR))
+            label_leg.append("Shaft")
+
+            ax.legend(patch_leg, label_leg)
+        if is_show_fig:
+            fig.show()
+        return fig, ax
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

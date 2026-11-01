@@ -17,11 +17,10 @@ from .ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportMatlab.get_data import get_data
-except ImportError as error:
-    get_data = error
-
+from scipy.io import loadmat
+from ..Methods.Import.ImportMatlab import MatFileError
+from os.path import isfile
+from numpy import squeeze
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +32,36 @@ class ImportMatlab(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportMatlab.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ImportMatlab method get_data: " + str(get_data))
+    def get_data(self):
+        """Return the value from the .mat file
+
+        Parameters
+        ----------
+        self : ImportMatlab
+            An ImportMatlab object
+
+        Returns
+        -------
+        value : ?
+            Loaded data
+        """
+
+        if self.file_path[-4:] != ".mat":
+            self.file_path += ".mat"
+        if not isfile(self.file_path):
+            raise MatFileError("ERROR: The mat file doesn't exist " + self.file_path)
+
+        data_dict = loadmat(self.file_path)
+        if self.var_name not in data_dict:
+            raise MatFileError(
+                "ERROR: The variable "
+                + self.var_name
+                + " is not available in the file "
+                + self.file_path
             )
-        )
-    else:
-        get_data = get_data
+
+        return squeeze(data_dict[self.var_name])
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

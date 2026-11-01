@@ -17,21 +17,8 @@ from .ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportGenVectLin.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Import.ImportGenVectLin.comp_step import comp_step
-except ImportError as error:
-    comp_step = error
-
-try:
-    from ..Methods.Import.ImportGenVectLin.get_data import get_data
-except ImportError as error:
-    get_data = error
-
+from ..Methods.Import import ImportError
+from numpy import linspace
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -42,38 +29,50 @@ class ImportGenVectLin(ImportMatrix):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Import.ImportGenVectLin.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ImportGenVectLin method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the object is correctly set"""
+        if self.start is None:
+            raise ImportError("Start must not be None")
+        if self.stop is None:
+            raise ImportError("Stop must not be None")
+        if self.num is None:
+            raise ImportError("Num must not be None")
+        if self.stop <= self.start:
+            raise ImportError("You must have start < stop")
+        if self.endpoint is None:
+            self.endpoint = True
+
     # cf Methods.Import.ImportGenVectLin.comp_step
-    if isinstance(comp_step, ImportError):
-        comp_step = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportGenVectLin method comp_step: " + str(comp_step)
-                )
-            )
-        )
-    else:
-        comp_step = comp_step
+    def comp_step(self):
+        """Compute the Step between two points of the linspace"""
+
+        self.check()
+        data = self.get_data()
+        return data[1] - data[0]
+
     # cf Methods.Import.ImportGenVectLin.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportGenVectLin method get_data: " + str(get_data)
-                )
-            )
+    def get_data(self):
+        """Generate the linspace vector
+
+        Parameters
+        ----------
+        self : ImportGenVectLin
+            An ImportGenVectLin object
+
+        Returns
+        -------
+        vect: ndarray
+            The generated linspace vector
+
+        """
+
+        vect = linspace(
+            start=self.start, stop=self.stop, num=int(self.num), endpoint=self.endpoint
         )
-    else:
-        get_data = get_data
+
+        return self.edit_matrix(vect)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

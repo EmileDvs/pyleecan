@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Trapeze
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,51 +21,16 @@ from .Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Geometry.Trapeze.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Geometry.Trapeze.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
-try:
-    from ..Methods.Geometry.Trapeze.comp_point_ref import comp_point_ref
-except ImportError as error:
-    comp_point_ref = error
-
-try:
-    from ..Methods.Geometry.Trapeze.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Geometry.Trapeze.discretize import discretize
-except ImportError as error:
-    discretize = error
-
-try:
-    from ..Methods.Geometry.Trapeze.get_lines import get_lines
-except ImportError as error:
-    get_lines = error
-
-try:
-    from ..Methods.Geometry.Trapeze.get_patches import get_patches
-except ImportError as error:
-    get_patches = error
-
-try:
-    from ..Methods.Geometry.Trapeze.rotate import rotate
-except ImportError as error:
-    rotate = error
-
-try:
-    from ..Methods.Geometry.Trapeze.translate import translate
-except ImportError as error:
-    translate = error
-
+from ..Methods.Geometry.Trapeze.check import check
+from numpy import angle, exp
+from .Segment import Segment
+from ..Methods.Geometry.Trapeze.get_patches import (
+    PATCH_COLOR,
+    PATCH_COLOR_ALPHA,
+    PATCH_EDGE,
+    PATCH_EDGE_ALPHA,
+    Polygon,
+)
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -72,92 +41,248 @@ class Trapeze(Surface):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Geometry.Trapeze.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Trapeze method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Geometry.Trapeze.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Trapeze method comp_length: " + str(comp_length))
-            )
-        )
-    else:
-        comp_length = comp_length
+    # -*-- coding: utf-8 -*
+    def comp_length(self):
+        """Returns the length of the Trapeze
+
+        Parameters
+        ----------
+        self : Trapeze
+            a Trapeze object
+
+
+        Returns
+        -------
+        length: float
+            Length of the surface [m]
+
+        """
+        # check if the Trapeze is correct
+        self.check()
+        lines = self.get_lines()
+        length = 0
+        for line in lines:
+            length += line.comp_length()
+        return length
+
     # cf Methods.Geometry.Trapeze.comp_point_ref
-    if isinstance(comp_point_ref, ImportError):
-        comp_point_ref = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Trapeze method comp_point_ref: " + str(comp_point_ref)
-                )
-            )
-        )
-    else:
-        comp_point_ref = comp_point_ref
+    def comp_point_ref(self, is_set=False):
+        """Compute the point ref of the Surface
+
+        Parameters
+        ----------
+        self : Trapeze
+            A Trapeze object
+        is_set: bool
+            True to update the point_ref property
+
+        Returns
+        -------
+        point_ref : complex
+            the reference point of the surface
+        """
+
+        point_ref = self.point_ref
+        if is_set:
+            self.point_ref = point_ref
+        return point_ref
+
     # cf Methods.Geometry.Trapeze.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Trapeze method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the Trapeze surface
+
+        Parameters
+        ----------
+        self : Trapeze
+            A Trapeze object
+
+        Returns
+        -------
+        surf: float
+            The Trapeze surface [m**2]
+
+        """
+
+        return self.height * (self.W2 + self.W1) / 2
+
     # cf Methods.Geometry.Trapeze.discretize
-    if isinstance(discretize, ImportError):
-        discretize = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Trapeze method discretize: " + str(discretize))
-            )
-        )
-    else:
-        discretize = discretize
+    # -*-- coding: utf-8 -*
+    def discretize(self):
+        """It returns the discretize version of the Trapeze
+
+        Parameters
+        ----------
+        self : Trapeze
+            a Trapeze object
+
+        Returns
+        -------
+        point_list : list
+            list of complex coordinate of the points
+        """
+
+        # check if the Trapeze is correct
+        self.check()
+        # getting lines that delimit the Trapeze
+        lines = self.get_lines()
+        point_list = list()
+        for line in lines:
+            point_list.extend(line.discretize())
+            point_list.pop()
+        return point_list
+
     # cf Methods.Geometry.Trapeze.get_lines
-    if isinstance(get_lines, ImportError):
-        get_lines = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Trapeze method get_lines: " + str(get_lines))
-            )
-        )
-    else:
-        get_lines = get_lines
+    def get_lines(self):
+        """Returns the Lines that delimit the Trapeze
+
+        Parameters
+        ----------
+        self : Trapeze
+            a Trapeze object
+
+
+        Returns
+        -------
+        line_list : list
+            list of 4 segments
+
+        """
+        # Check if the Trapeze is correct
+        self.check()
+        Z_ref = self.point_ref
+        H = self.height
+        W1 = self.W1
+        W2 = self.W2
+
+        # The 4 points of the Trapeze object
+        Z1 = (complex(-H / 2, W1 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
+        Z2 = (complex(-H / 2, -W1 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
+        Z3 = (complex(H / 2, -W2 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
+        Z4 = (complex(H / 2, W2 / 2) * exp(1j * (angle(Z_ref)))) + Z_ref
+
+        # The lines that delimit the Trapeze
+        line1 = Segment(Z1, Z2)
+        line2 = Segment(Z2, Z3)
+        line3 = Segment(Z3, Z4)
+        line4 = Segment(Z4, Z1)
+
+        return [line1, line2, line3, line4]
+
     # cf Methods.Geometry.Trapeze.get_patches
-    if isinstance(get_patches, ImportError):
-        get_patches = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Trapeze method get_patches: " + str(get_patches))
+    def get_patches(
+        self, color=PATCH_COLOR, edgecolor=None, is_edge_only=False, linestyle=None
+    ):
+        """Returns the Trapeze Patch to be display in matplotlib
+
+        Parameters
+        ----------
+        self : Trapeze
+            a Trapeze object
+
+        color :
+            the color of the patch (Default value = PATCH_COLOR)
+        edgecolor :
+            the color of the patch's edges (Default value = PATCH_EDGE)
+        is_edge_only: bool
+            To set the transparancy of the face color to 0 and 1 for the edge color
+        linestyle : str
+            Line style of the edge {'-', '--', '-.', ':', '', (offset, on-off-seq), ...}
+
+        Returns
+        -------
+        patch_list : list of matplotlib.patches.Polygon
+            List of patches corresponding to the surface
+
+        """
+
+        # Set default color
+        if edgecolor is None and not is_edge_only:
+            edgecolor = PATCH_EDGE
+        elif edgecolor is None and is_edge_only:
+            edgecolor = PATCH_EDGE_ALPHA
+        if is_edge_only:
+            color = PATCH_COLOR_ALPHA
+        if "--" in edgecolor:
+            edgecolor = edgecolor.replace("-", "")
+            linestyle = "--"
+
+        # check if the Trapeze is correct*
+        self.check()
+
+        line_list = self.get_lines()
+        Z_list = list()
+        # For each Line discretize
+        for line in line_list:
+            Z_list.extend(list(line.discretize()))
+
+        # abscissa coordinate
+        Zr_list = list()
+        # ordinate coordinate
+        Zi_list = list()
+
+        for ii in range(len(Z_list)):
+            Zr_list.append(Z_list[ii].real)
+            Zi_list.append(Z_list[ii].imag)
+        point_list = list(zip(Zr_list, Zi_list))
+        return [
+            Polygon(
+                point_list,
+                closed=True,
+                facecolor=color,
+                edgecolor=edgecolor,
+                linestyle=linestyle,
             )
-        )
-    else:
-        get_patches = get_patches
+        ]
+
     # cf Methods.Geometry.Trapeze.rotate
-    if isinstance(rotate, ImportError):
-        rotate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Trapeze method rotate: " + str(rotate))
-            )
-        )
-    else:
-        rotate = rotate
+    def rotate(self, angle):
+        """Rotate the surface
+
+        Parameters
+        ----------
+        self : Trapeze
+            a Trapeze Object
+
+        angle : float
+            angle for rotation [rad]
+
+
+        Returns
+        -------
+        None
+        """
+        if angle == 0:
+            return  # Nothing to do
+        # check if the Trapeze is correct
+        self.check()
+        self.point_ref = self.point_ref * exp(1j * angle)
+
     # cf Methods.Geometry.Trapeze.translate
-    if isinstance(translate, ImportError):
-        translate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Trapeze method translate: " + str(translate))
-            )
-        )
-    else:
-        translate = translate
+    def translate(self, Zt):
+        """Translate the Trapeze
+
+        Parameters
+        ----------
+        self : Trapeze
+            a Trapeze object
+
+        Zt : complex
+            Complex value for translation
+
+        Returns
+        -------
+        None
+        """
+        if Zt == 0:
+            return  # Nothing to do
+        # check if the Trapeze is correct
+        self.check()
+        self.point_ref += Zt
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

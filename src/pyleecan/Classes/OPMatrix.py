@@ -17,46 +17,11 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.OPMatrix.get_N_OP import get_N_OP
-except ImportError as error:
-    get_N_OP = error
-
-try:
-    from ..Methods.Simulation.OPMatrix.get_OP import get_OP
-except ImportError as error:
-    get_OP = error
-
-try:
-    from ..Methods.Simulation.OPMatrix.get_OP_array import get_OP_array
-except ImportError as error:
-    get_OP_array = error
-
-try:
-    from ..Methods.Simulation.OPMatrix.get_OP_list import get_OP_list
-except ImportError as error:
-    get_OP_list = error
-
-try:
-    from ..Methods.Simulation.OPMatrix.has_Pem import has_Pem
-except ImportError as error:
-    has_Pem = error
-
-try:
-    from ..Methods.Simulation.OPMatrix.has_slip import has_slip
-except ImportError as error:
-    has_slip = error
-
-try:
-    from ..Methods.Simulation.OPMatrix.has_Tem import has_Tem
-except ImportError as error:
-    has_Tem = error
-
-try:
-    from ..Methods.Simulation.OPMatrix.set_OP_array import set_OP_array
-except ImportError as error:
-    set_OP_array = error
-
+from ..Methods.Simulation.OPMatrix import OPMatrixException
+from .OPdq import OPdq
+from .OPdqf import OPdqf
+from .OPslip import OPslip
+from numpy import zeros, angle, exp, hstack
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -68,85 +33,397 @@ class OPMatrix(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.OPMatrix.get_N_OP
-    if isinstance(get_N_OP, ImportError):
-        get_N_OP = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method get_N_OP: " + str(get_N_OP))
+    def get_N_OP(self):
+        """return the number of Operating point in the matrix
+
+        Parameters
+        ----------
+        self : OPMatrix
+            An OPMatrix object
+
+        Returns
+        -------
+        N_OP : int
+            Number of operating point in the OP_matrix
+        """
+
+        if self.N0 is not None:
+            return len(self.N0)
+        elif self.Id_ref is not None:
+            return len(self.Id_ref)
+        elif self.Ud_ref is not None:
+            return len(self.Ud_ref)
+        else:
+            raise OPMatrixException(
+                "Unable to get the size of the Operating Matrix (call set_OP_matrix first)"
             )
-        )
-    else:
-        get_N_OP = get_N_OP
+
     # cf Methods.Simulation.OPMatrix.get_OP
-    if isinstance(get_OP, ImportError):
-        get_OP = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method get_OP: " + str(get_OP))
-            )
-        )
-    else:
-        get_OP = get_OP
+    def get_OP(self, index):
+        """Return the OP at the corresponding index
+
+        Parameters
+        ----------
+        self : OPMatrix
+            OPMatrix object to extrat the OP from
+        index : int
+            Index of the OP to extract
+
+        Returns
+        -------
+        OP : OP
+            OP object
+        """
+
+        if self.has_slip():
+            OP = OPslip()
+        elif self.If_ref is not None:
+            OP = OPdqf()
+        else:
+            OP = OPdq()
+
+        if self.N0 is not None:
+            OP.N0 = self.N0[index]
+        if self.Id_ref is not None and self.Iq_ref is not None:
+            OP.set_Id_Iq(Id=self.Id_ref[index], Iq=self.Iq_ref[index])
+        if self.Ud_ref is not None and self.Uq_ref is not None:
+            OP.set_Ud_Uq(Ud=self.Ud_ref[index], Uq=self.Uq_ref[index])
+        if self.Tem_av_ref is not None:
+            OP.Tem_av_ref = self.Tem_av_ref[index]
+        if self.Pem_av_ref is not None:
+            if self.is_output_power in [None, True]:
+                OP.Pem_av_ref = self.Pem_av_ref[index]
+            else:
+                OP.Pem_av_in = self.Pem_av_ref[index]
+        if self.slip_ref is not None:
+            OP.slip_ref = self.slip_ref[index]
+        if self.If_ref is not None:
+            OP.If_ref = self.If_ref[index]
+
+        return OP
+
     # cf Methods.Simulation.OPMatrix.get_OP_array
-    if isinstance(get_OP_array, ImportError):
-        get_OP_array = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OPMatrix method get_OP_array: " + str(get_OP_array)
-                )
+    def get_OP_array(self, *arg_list):
+        """get the OP_matrix by identifying the columns
+        Ex: get_OP_array("N0", "Iq", "Iq", "Tem")
+        get_OP_array() calls get_OP_array("N0", "Id", "Iq", "Tem", "Pem")
+
+        Parameters
+        ----------
+        self : OPMatrix
+            OPMatrix object to update
+        *arg_list : list of str
+            arguments to select the OP_matrix columns name
+
+        Returns
+        -------
+        OP_matrix : ndarray
+            Operating point matrix with the selected columns (Array (N_OP, len(arg_list)))
+        """
+
+        # Extract arg_list it the function called from another script with *arg_list
+        if len(arg_list) == 1 and type(arg_list[0]) == tuple:
+            arg_list = arg_list[0]
+        arg_list = list(arg_list)
+
+        # "all" returns all the columns set by the latest set_OP_array
+        if len(arg_list) == 1 and arg_list[0].lower() in ["all", "al", "a"]:
+            if self.col_names is not None and len(self.col_names) > 0:
+                arg_list = self.col_names
+            else:
+                arg_list = list()
+                if self.N0 is not None:
+                    arg_list.append("N0")
+                if self.Id_ref is not None:
+                    arg_list.append("Id")
+                if self.Iq_ref is not None:
+                    arg_list.append("Iq_ref")
+                if self.Tem_av_ref is not None:
+                    arg_list.append("Tem")
+                if self.Pem_av_ref is not None:
+                    arg_list.append("Pem")
+
+        # Init OP_matrix
+        N_OP = self.get_N_OP()
+        OP_matrix = zeros((N_OP, len(arg_list)))
+
+        # Setup default argument (N0, Id, Iq, Tem, Pem)
+        if len(arg_list) == 0:
+            if self.N0 is not None:
+                arg_list.append("N0")
+            if self.Id_ref is not None:
+                arg_list.append("Id")
+            if self.Iq_ref is not None:
+                arg_list.append("Iq")
+            if self.Tem_av_ref is not None:
+                arg_list.append("Tem")
+            if self.Pem_av_ref is not None:
+                arg_list.append("Pem")
+
+        arg_list_lower = [arg.lower() for arg in arg_list]
+        # Convertion I0/Phi0 to Id/Iq will be done later
+        is_convert_I0 = False
+        if "i0" in arg_list_lower and (
+            "phi0" in arg_list_lower or "iphi0" in arg_list_lower
+        ):
+            I0_index = arg_list_lower.index("i0")
+            if "phi0" in arg_list_lower:
+                Phi0_index = arg_list_lower.index("phi0")
+            else:
+                Phi0_index = arg_list_lower.index("iphi0")
+            is_convert_I0 = True
+            arg_list[I0_index] = "Id"
+            arg_list[Phi0_index] = "Iq"
+        # Convertion U0/UPhi0 to Ud/Uq
+        is_convert_U0 = False
+        if "u0" in arg_list_lower and "uphi0" in arg_list_lower:
+            U0_index, UPhi0_index = (
+                arg_list_lower.index("u0"),
+                arg_list_lower.index("uphi0"),
             )
-        )
-    else:
-        get_OP_array = get_OP_array
+            U0 = OP_matrix[:, U0_index]
+            UPhi0 = OP_matrix[:, UPhi0_index]
+            is_convert_U0 = True
+            arg_list[U0_index] = "Ud"
+            arg_list[UPhi0_index] = "Uq"
+
+        # Set column by column according to arg_list
+        for ii in range(len(arg_list)):
+            if arg_list[ii].lower() in ["n0", "no", "0n", "on"]:
+                OP_matrix[:, ii] = self.N0[:]
+            elif arg_list[ii].lower() in ["id", "di", "id_ref"]:
+                OP_matrix[:, ii] = self.Id_ref[:]
+            elif arg_list[ii].lower() in ["iq", "qi", "iq_ref"]:
+                OP_matrix[:, ii] = self.Iq_ref[:]
+            elif arg_list[ii].lower() in ["tem", "t", "tem_av", "tem_av_ref"]:
+                OP_matrix[:, ii] = self.Tem_av_ref[:]
+            elif arg_list[ii].lower() in ["pem", "p", "pem_av", "pem_av_ref"]:
+                OP_matrix[:, ii] = self.Pem_av_ref[:]
+            elif arg_list[ii].lower() in ["ud", "du", "ud_ref"]:
+                OP_matrix[:, ii] = self.Ud_ref[:]
+            elif arg_list[ii].lower() in ["uq", "qu", "uq_ref"]:
+                OP_matrix[:, ii] = self.Uq_ref[:]
+            elif arg_list[ii].lower() in ["if", "fi"]:
+                OP_matrix[:, ii] = self.If_ref[:]
+            else:
+                raise OPMatrixException(
+                    "Error in OP_matrix.get_OP_array, unknow column name for index "
+                    + str(ii)
+                    + " in "
+                    + str(arg_list)
+                )
+
+        # Convertion
+        if is_convert_I0:
+            Z = OP_matrix[:, I0_index] + 1j * OP_matrix[:, Phi0_index]
+            OP_matrix[:, I0_index] = abs(Z)
+            OP_matrix[:, Phi0_index] = angle(Z)
+        if is_convert_U0:
+            Z = OP_matrix[:, U0_index] + 1j * OP_matrix[:, UPhi0_index]
+            OP_matrix[:, U0_index] = abs(Z)
+            OP_matrix[:, UPhi0_index] = angle(Z)
+        return OP_matrix
+
     # cf Methods.Simulation.OPMatrix.get_OP_list
-    if isinstance(get_OP_list, ImportError):
-        get_OP_list = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OPMatrix method get_OP_list: " + str(get_OP_list)
-                )
-            )
-        )
-    else:
-        get_OP_list = get_OP_list
+    def get_OP_list(self):
+        """Return the list of Operating Point defined by the matrix
+
+        Parameters
+        ----------
+        self : OPMatrix
+            An OPMatrix object
+
+        Returns
+        -------
+        OP_list : [OP]
+            List of OP objects
+        """
+
+        N_OP = self.get_N_OP()
+
+        OP_list = list()
+        for ii in range(N_OP):
+            OP_list.append(self.get_OP(ii))
+
+        return OP_list
+
     # cf Methods.Simulation.OPMatrix.has_Pem
-    if isinstance(has_Pem, ImportError):
-        has_Pem = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method has_Pem: " + str(has_Pem))
-            )
-        )
-    else:
-        has_Pem = has_Pem
+    def has_Pem(self):
+        """Check if the Power column is set
+
+        Parameters
+        ----------
+        self : OPMatrix
+            OPMatrix object
+
+        Returns
+        -------
+        has_Pem : bool
+            True if the Power column is set
+        """
+
+        return self.Pem_av_ref is not None
+
     # cf Methods.Simulation.OPMatrix.has_slip
-    if isinstance(has_slip, ImportError):
-        has_slip = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method has_slip: " + str(has_slip))
-            )
-        )
-    else:
-        has_slip = has_slip
+    def has_slip(self):
+        """Check if the slip column is set
+
+        Parameters
+        ----------
+        self : OPMatrix
+            OPMatrix object
+
+        Returns
+        -------
+        has_slip : bool
+            True if the slip_ref column is set
+        """
+
+        return self.slip_ref is not None
+
     # cf Methods.Simulation.OPMatrix.has_Tem
-    if isinstance(has_Tem, ImportError):
-        has_Tem = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use OPMatrix method has_Tem: " + str(has_Tem))
-            )
-        )
-    else:
-        has_Tem = has_Tem
+    def has_Tem(self):
+        """Check if the Torque column is set
+
+        Parameters
+        ----------
+        self : OPMatrix
+            OPMatrix object
+
+        Returns
+        -------
+        has_Tem : bool
+            True if the Torque column is set
+        """
+
+        return self.Tem_av_ref is not None
+
     # cf Methods.Simulation.OPMatrix.set_OP_array
-    if isinstance(set_OP_array, ImportError):
-        set_OP_array = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use OPMatrix method set_OP_array: " + str(set_OP_array)
-                )
+    def set_OP_array(self, OP_matrix, *arg_list):
+        """Set the OP_matrix by identifying the columns
+        Ex: set_OP_array(OP_matrix, "N0", "Iq", "Iq", "Tem")
+        set_OP_array(OP_matrix) calls set_OP_array(OP_matrix, "N0", "Id", "Iq", "Tem", "Pem")
+        I0/Phi0 are converted to Id, Iq, U0/UPhi0 are converted to Ud, Uq
+
+        Parameters
+        ----------
+        self : OPMatrix
+            OPMatrix object to update
+        OP_matrix : ndarray
+            OP_matrix to set in the object
+        *arg_list : list of str
+            arguments to specify the OP_matrix columns name
+        """
+
+        # Clean previous data (keep is_output_power)
+        is_output_power = self.is_output_power
+        self._set_None()
+        self.is_output_power = is_output_power
+
+        # Extract arg_list it the function called from another script with *arg_list
+        if len(arg_list) == 1 and type(arg_list[0]) == tuple:
+            arg_list = arg_list[0]
+        arg_list = list(arg_list)
+
+        # Setup default argument (N0, Id, Iq, Tem, Pem)
+        if len(arg_list) == 0:
+            N = OP_matrix.shape[1]
+            if N > 0:
+                arg_list.append("N0")
+            if N > 1:
+                arg_list.append("Id")
+            if N > 2:
+                arg_list.append("Iq")
+            if N > 3:
+                arg_list.append("Tem")
+            if N > 4:
+                arg_list.append("Pem")
+        if len(arg_list) == 3 and OP_matrix.shape[1] >= 4:
+            arg_list.append("Tem")
+        if len(arg_list) == 4 and OP_matrix.shape[1] == 5:
+            arg_list.append("Pem")
+        if len(arg_list) != OP_matrix.shape[1]:
+            raise OPMatrixException(
+                "Error missing column name for OP_matrix.set_OP_array, "
+                + str(OP_matrix.shape[1])
+                + " expected "
+                + str(arg_list)
             )
-        )
-    else:
-        set_OP_array = set_OP_array
+
+        arg_list_lower = [arg.lower() for arg in arg_list]
+        # Convertion I0/Phi0 to Id/Iq
+        if "i0" in arg_list_lower and (
+            "phi0" in arg_list_lower or "iphi0" in arg_list_lower
+        ):
+            I0_index = arg_list_lower.index("i0")
+            if "phi0" in arg_list_lower:
+                Phi0_index = arg_list_lower.index("phi0")
+            else:
+                Phi0_index = arg_list_lower.index("iphi0")
+            I0 = OP_matrix[:, I0_index]
+            Phi0 = OP_matrix[:, Phi0_index]
+            Z = I0 * exp(1j * Phi0)
+            OP_matrix[:, I0_index] = Z.real
+            OP_matrix[:, Phi0_index] = Z.imag
+            arg_list[I0_index] = "Id"
+            arg_list[Phi0_index] = "Iq"
+        # Convertion I0 to Id (assume Phi0=0)
+        elif "i0" in arg_list_lower and "phi0" not in arg_list_lower:
+            OP_matrix = hstack((OP_matrix, zeros((OP_matrix.shape[0], 1))))
+            arg_list[arg_list_lower.index("i0")] = "Id"
+            arg_list.append("Iq")
+
+        # Convertion U0/UPhi0 to Ud/Uq
+        if "u0" in arg_list_lower and "uphi0" in arg_list_lower:
+            U0_index, UPhi0_index = (
+                arg_list_lower.index("u0"),
+                arg_list_lower.index("uphi0"),
+            )
+            U0 = OP_matrix[:, U0_index]
+            UPhi0 = OP_matrix[:, UPhi0_index]
+            Z = U0 * exp(1j * UPhi0)
+            OP_matrix[:, U0_index] = Z.real
+            OP_matrix[:, UPhi0_index] = Z.imag
+            arg_list[U0_index] = "Ud"
+            arg_list[UPhi0_index] = "Uq"
+        # Convertion U0 to Ud (assume UPhi0=0)
+        elif "u0" in arg_list_lower and "uphi0" not in arg_list_lower:
+            OP_matrix = hstack((OP_matrix, zeros((OP_matrix.shape[0], 1))))
+            arg_list[arg_list_lower.index("u0")] = "Ud"
+            arg_list.append("Uq")
+
+        # Set column by column according to arg_list
+        for ii in range(OP_matrix.shape[1]):
+            if arg_list[ii].lower() in ["n0", "no", "0n", "on"]:
+                self.N0 = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["id", "di", "id_ref"]:
+                self.Id_ref = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["iq", "qi", "iq_ref"]:
+                self.Iq_ref = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["tem", "t", "tem_av", "tem_av_ref", "torque"]:
+                self.Tem_av_ref = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["pem", "p", "pem_av", "pem_av_ref", "power"]:
+                self.Pem_av_ref = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["ud", "du", "ud_ref"]:
+                self.Ud_ref = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["uq", "qu", "uq_ref"]:
+                self.Uq_ref = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["slip", "slip_ref"]:
+                self.slip_ref = OP_matrix[:, ii]
+            elif arg_list[ii].lower() in ["if", "fi"]:
+                self.If_ref = OP_matrix[:, ii]
+            else:
+                raise OPMatrixException(
+                    "Error in OP_matrix.set_OP_array, unknow column name for index "
+                    + str(ii)
+                    + " in "
+                    + str(arg_list)
+                )
+
+        # Store column names for get_OP_array("all")
+        self.col_names = arg_list
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

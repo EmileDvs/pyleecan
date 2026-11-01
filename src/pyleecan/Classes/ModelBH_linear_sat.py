@@ -17,16 +17,8 @@ from .ModelBH import ModelBH
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Material.ModelBH_linear_sat.BH_func import BH_func
-except ImportError as error:
-    BH_func = error
-
-try:
-    from ..Methods.Material.ModelBH_linear_sat.get_BH import get_BH
-except ImportError as error:
-    get_BH = error
-
+from numpy import ndarray, argwhere
+import numpy as np
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,29 +29,73 @@ class ModelBH_linear_sat(ModelBH):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Material.ModelBH_linear_sat.BH_func
-    if isinstance(BH_func, ImportError):
-        BH_func = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ModelBH_linear_sat method BH_func: " + str(BH_func)
-                )
-            )
-        )
-    else:
-        BH_func = BH_func
+    def BH_func(self, H, Bs, mu_a):
+        """
+        Return the B from H according to piecewise linear saturated model.
+
+        Parameters
+        ----------
+        self : ModelBH_linear_sat
+            a ModelBH_linear_sat object
+
+        Returns
+        -------
+        B: numpy.ndarray
+            B(H) values
+
+        """
+        B = mu_a * H
+
+        if isinstance(B, ndarray):
+            B[argwhere(B >= Bs)] = Bs
+        elif B >= Bs:
+            B = Bs
+
+        return B
+
     # cf Methods.Material.ModelBH_linear_sat.get_BH
-    if isinstance(get_BH, ImportError):
-        get_BH = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ModelBH_linear_sat method get_BH: " + str(get_BH)
-                )
-            )
-        )
-    else:
-        get_BH = get_BH
+    def get_BH(self):
+        """
+        Return the B(H) curve of the material according to Langevin model.
+
+        Parameters
+        ----------
+        self : ModelBH
+            a ModelBH object
+
+        Returns
+        -------
+        BH: numpy.ndarray
+            B(H) values (two colums matrix: H and B(H))
+
+        """
+
+        H0 = 1
+        Bmax = self.Bmax
+        if self.Bs is not None and self.mu_a is not None:
+            if Bmax is not None:
+                delta = self.delta
+                Hmax = H0
+                iteration = 0
+                new_B = 0
+                while new_B < Bmax and iteration < 1000:
+                    Hmax += delta
+                    iteration += 1
+                    new_B = self.BH_func(Hmax, self.Bs, self.mu_a)
+            else:
+                Hmax = self.Hmax
+
+            if Hmax is not None:
+                H = np.linspace(H0, Hmax, 200)
+                B = self.BH_func(H, self.Bs, self.mu_a)
+
+                BH = np.zeros((len(H), 2))
+                BH[:, 0] = H
+                BH[:, 1] = B
+
+                return BH
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

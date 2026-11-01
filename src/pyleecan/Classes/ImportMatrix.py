@@ -17,11 +17,7 @@ from .Import import Import
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportMatrix.edit_matrix import edit_matrix
-except ImportError as error:
-    edit_matrix = error
-
+from numpy import transpose
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,16 +29,27 @@ class ImportMatrix(Import):
     VERSION = 1
 
     # cf Methods.Import.ImportMatrix.edit_matrix
-    if isinstance(edit_matrix, ImportError):
-        edit_matrix = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportMatrix method edit_matrix: " + str(edit_matrix)
-                )
-            )
-        )
-    else:
-        edit_matrix = edit_matrix
+    def edit_matrix(self, matrix):
+        """To apply transformation on the matrix
+
+        Parameters
+        ----------
+        self : ImportMatrix
+            An ImportMatrix object
+        matrix: ndarray
+            The matrix to edit
+
+        Returns
+        -------
+        matrix: ndarray
+            The edited matrix
+
+        """
+
+        if self.is_transpose:
+            return transpose(matrix)
+        return matrix
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

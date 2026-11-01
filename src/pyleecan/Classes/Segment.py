@@ -4,6 +4,12 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Segment
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - plot: import name 'array' refers to different sources (..Methods.Geometry.Segment.comp_distance.array and numpy.array)
+# - split_line: import name 'exp' refers to different sources (numpy.exp and ..Methods.Geometry.Segment.split_line.exp)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,106 +23,19 @@ from .Line import Line
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Geometry.Segment.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Geometry.Segment.comp_distance import comp_distance
-except ImportError as error:
-    comp_distance = error
-
-try:
-    from ..Methods.Geometry.Segment.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
-try:
-    from ..Methods.Geometry.Segment.discretize import discretize
-except ImportError as error:
-    discretize = error
-
-try:
-    from ..Methods.Geometry.Segment.draw_FEMM import draw_FEMM
-except ImportError as error:
-    draw_FEMM = error
-
-try:
-    from ..Methods.Geometry.Segment.get_begin import get_begin
-except ImportError as error:
-    get_begin = error
-
-try:
-    from ..Methods.Geometry.Segment.get_end import get_end
-except ImportError as error:
-    get_end = error
-
-try:
-    from ..Methods.Geometry.Segment.get_middle import get_middle
-except ImportError as error:
-    get_middle = error
-
-try:
-    from ..Methods.Geometry.Segment.intersect_line import intersect_line
-except ImportError as error:
-    intersect_line = error
-
-try:
-    from ..Methods.Geometry.Segment.intersect_obj import intersect_obj
-except ImportError as error:
-    intersect_obj = error
-
-try:
-    from ..Methods.Geometry.Segment.is_arc import is_arc
-except ImportError as error:
-    is_arc = error
-
-try:
-    from ..Methods.Geometry.Segment.is_on_line import is_on_line
-except ImportError as error:
-    is_on_line = error
-
-try:
-    from ..Methods.Geometry.Segment.plot import plot
-except ImportError as error:
-    plot = error
-
-try:
-    from ..Methods.Geometry.Segment.reverse import reverse
-except ImportError as error:
-    reverse = error
-
-try:
-    from ..Methods.Geometry.Segment.rotate import rotate
-except ImportError as error:
-    rotate = error
-
-try:
-    from ..Methods.Geometry.Segment.scale import scale
-except ImportError as error:
-    scale = error
-
-try:
-    from ..Methods.Geometry.Segment.split_half import split_half
-except ImportError as error:
-    split_half = error
-
-try:
-    from ..Methods.Geometry.Segment.split_line import split_line
-except ImportError as error:
-    split_line = error
-
-try:
-    from ..Methods.Geometry.Segment.split_point import split_point
-except ImportError as error:
-    split_point = error
-
-try:
-    from ..Methods.Geometry.Segment.translate import translate
-except ImportError as error:
-    translate = error
-
+from ..Methods.Geometry.Segment.check import check
+from ..Methods.Geometry.Segment.plot import plot
+from ..Methods.Geometry.Segment.split_line import split_line
+from ..Methods.Geometry.Segment.comp_distance import array, distance_numpy
+from numpy import linspace, abs as np_abs, exp
+from ..Methods.Machine import LINE_NPOINT_D
+from ..Methods.Geometry.Segment import (
+    NbPointSegmentDError,
+    AngleRotationSegmentError,
+    PointTranslateSegmentError,
+)
+from ..Functions.Geometry.inter_line_line import inter_line_line
+from ..Functions.Geometry.inter_line_circle import inter_line_circle
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -127,193 +46,502 @@ class Segment(Line):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Geometry.Segment.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Geometry.Segment.comp_distance
-    if isinstance(comp_distance, ImportError):
-        comp_distance = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Segment method comp_distance: " + str(comp_distance)
-                )
-            )
-        )
-    else:
-        comp_distance = comp_distance
+    def comp_distance(self, Z):
+        """Compute the distance of a point to the Segment
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+        Z : complex
+            Complex coordinate of the point
+
+        Returns
+        -------
+        D : float
+            distance of a point to the Segment
+        """
+
+        Z1 = array([self.begin.real, self.begin.imag, 0])
+        Z2 = array([self.end.real, self.end.imag, 0])
+        Z3 = array([Z.real, Z.imag, 0])
+        return distance_numpy(Z1, Z2, Z3)
+
     # cf Methods.Geometry.Segment.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method comp_length: " + str(comp_length))
-            )
-        )
-    else:
-        comp_length = comp_length
+    def comp_length(self):
+        """Compute the length of the line
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+
+        Returns
+        -------
+        length: float
+            lenght of the line [m]
+
+        Raises
+        ------
+        PointSegmentError
+            Call Segment.check()
+
+        """
+
+        self.check()
+
+        z1 = self.begin
+        z2 = self.end
+
+        return float(abs(z2 - z1))
+
     # cf Methods.Geometry.Segment.discretize
-    if isinstance(discretize, ImportError):
-        discretize = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method discretize: " + str(discretize))
-            )
-        )
-    else:
-        discretize = discretize
+    def discretize(self, nb_point=LINE_NPOINT_D):
+        """Return the discretize version of the Segment.
+        Begin and end are always returned
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+        nb_point : int
+            Number of points to add to discretize the line (Default value = LINE_NPOINT_D)
+
+        Returns
+        -------
+        list_point: list
+            List of complex coordinate of the points
+
+        Raises
+        ------
+        NbPointSegmentDError
+            nb_point must be an integer >=
+        """
+
+        self.check()
+        if not isinstance(nb_point, int):
+            raise NbPointSegmentDError("discretize : nb_point must be an integer")
+        if nb_point < 0:
+            raise NbPointSegmentDError("nb_point must be >=0")
+
+        # t start by 0 (begin) and end by 1 (end)
+        # len(t) = nb_point +2 : begin + end + nb_point between
+        t = linspace(0, 1, nb_point + 2)
+
+        # We use the complex representation of the point
+        z1 = self.begin
+        z2 = self.end
+
+        # Generate the points with the parametric representation of the line
+        return z1 - (z1 - z2) * t
+
     # cf Methods.Geometry.Segment.draw_FEMM
-    if isinstance(draw_FEMM, ImportError):
-        draw_FEMM = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method draw_FEMM: " + str(draw_FEMM))
-            )
-        )
-    else:
-        draw_FEMM = draw_FEMM
+    def draw_FEMM(
+        self,
+        femm,
+        nodeprop=None,
+        propname=None,
+        element_size=None,
+        automesh=None,
+        hide=False,
+        group=None,
+        is_draw=True,
+    ):
+        """<   Draw the segment in FEMM and assign the property
+
+        Parameters
+        ----------
+        femm : FEMMHandler
+            client to send command to a FEMM instance
+        nodeprop :
+            Nodal property
+            (Default value = None)
+        propname :
+            Boundary property ’propname’
+            (Default value = None)
+        element_size :
+            Local element size along segment no greater than element_size
+            (Default value = None)
+        automesh :
+            0 = mesher defers to the element constraint defined by
+            element_size, 1 = mesher automatically chooses mesh size along
+            the selected segments
+            (Default value = None)
+        hide :
+            0 = not hidden in post-processor, 1 == hidden in post processorc
+            (Default value = False)
+        group :
+            group the segment belongs
+            (Default value = None)
+        is_draw : bool
+            1 to draw the list of surfaces given
+
+        Returns
+        -------
+        None
+        """
+
+        # Determine locations of the nodes
+        X1, Y1 = self.begin.real, self.begin.imag
+        X2, Y2 = self.end.real, self.end.imag
+
+        if is_draw:
+            # Adding nodes
+            femm.mi_addnode(X1, Y1)
+            femm.mi_addnode(X2, Y2)
+
+        # Adding property on the node
+        femm.mi_selectnode(X1, Y1)
+        femm.mi_setnodeprop(nodeprop, group)
+        femm.mi_clearselected()
+        femm.mi_selectnode(X2, Y2)
+        femm.mi_setnodeprop(nodeprop, group)
+        femm.mi_clearselected()
+
+        if is_draw:
+            # Adding the segment
+            femm.mi_addsegment(X1, Y1, X2, Y2)
+
+        # Set property of the segment
+        femm.mi_selectsegment((X1 + X2) / 2, (Y1 + Y2) / 2)
+        femm.mi_setsegmentprop(propname, element_size, automesh, hide, group)
+        femm.mi_clearselected()
+
     # cf Methods.Geometry.Segment.get_begin
-    if isinstance(get_begin, ImportError):
-        get_begin = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method get_begin: " + str(get_begin))
-            )
-        )
-    else:
-        get_begin = get_begin
+    def get_begin(self):
+        """Return the begin point of the segment
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+
+        Returns
+        -------
+        begin: complex
+            Begin point of the Segment
+        """
+
+        return self.begin
+
     # cf Methods.Geometry.Segment.get_end
-    if isinstance(get_end, ImportError):
-        get_end = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method get_end: " + str(get_end))
-            )
-        )
-    else:
-        get_end = get_end
+    def get_end(self):
+        """Return the end point of the segment
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+
+        Returns
+        -------
+        end: complex
+            End point of the Segment
+        """
+
+        return self.end
+
     # cf Methods.Geometry.Segment.get_middle
-    if isinstance(get_middle, ImportError):
-        get_middle = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method get_middle: " + str(get_middle))
-            )
-        )
-    else:
-        get_middle = get_middle
+    def get_middle(self):
+        """Return the point at the middle of the Segment
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+
+        Returns
+        -------
+        Zmid: complex
+            Complex coordinates of the middle of the Segment
+        """
+
+        Z1 = self.begin
+        Z2 = self.end
+
+        Zmid = (Z1 + Z2) / 2.0
+        # Return (0,0) if the point is too close from 0
+        if abs(Zmid) < 1e-6:
+            Zmid = 0
+        return Zmid
+
     # cf Methods.Geometry.Segment.intersect_line
-    if isinstance(intersect_line, ImportError):
-        intersect_line = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Segment method intersect_line: " + str(intersect_line)
-                )
-            )
-        )
-    else:
-        intersect_line = intersect_line
+    def intersect_line(self, Z1, Z2):
+        """Return a list (0, 1 or 2 complex) of coordinates of the
+        intersection of the segment with a line defined by two complex
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+
+        Returns
+        -------
+        Z_list: list
+            Complex coordinates of the intersection (if any,
+            return [begin, end] if the segment is part of the line)
+        """
+
+        Z3 = self.begin
+        Z4 = self.end
+
+        Z_list = inter_line_line(Z1, Z2, Z3, Z4)
+        if len(Z_list) == 0:
+            # No intersection
+            return []
+        elif len(Z_list) == 1:
+            # One intersect. Is it between begin and end or not ?
+            Z_int = Z_list[0]
+            Seg_len = self.comp_length()
+            if np_abs(Z_int - Z3) <= Seg_len and np_abs(Z_int - Z4) <= Seg_len:
+                return [Z_int]
+            elif np_abs(Z_int - Z3) <= 1e-6 or np_abs(Z_int - Z4) <= 1e-6:
+                # Zint is begin or end
+                return [Z_int]
+            else:
+                return []
+        elif len(Z_list) == 2:
+            # The segment is on the line
+            return [Z3, Z4]
+
     # cf Methods.Geometry.Segment.intersect_obj
-    if isinstance(intersect_obj, ImportError):
-        intersect_obj = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Segment method intersect_obj: " + str(intersect_obj)
-                )
+    def intersect_obj(self, other, is_on_line=True):
+        """Find the intersection points between this line
+        and another line object
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+        other : Line
+            The other line object to intersect
+        is_on_line : bool
+            True to return only points that are on both Line objects
+
+        Returns
+        -------
+        Z_list: list
+            Complex coordinates of the intersection (if any)
+        """
+
+        if other.is_arc():
+            inter_list = inter_line_circle(
+                Z1=self.begin,
+                Z2=self.end,
+                R=abs(other.comp_radius()),
+                Zc=other.get_center(),
             )
-        )
-    else:
-        intersect_obj = intersect_obj
+        else:
+            inter_list = self.intersect_line(Z1=other.get_begin(), Z2=other.get_end())
+
+        if not is_on_line:
+            return inter_list
+
+        # Keep only points on both lines
+        Z_list = list()
+        for Z in inter_list:
+            if self.is_on_line(Z) and other.is_on_line(Z):
+                Z_list.append(Z)
+
+        return Z_list
+
     # cf Methods.Geometry.Segment.is_arc
-    if isinstance(is_arc, ImportError):
-        is_arc = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method is_arc: " + str(is_arc))
-            )
-        )
-    else:
-        is_arc = is_arc
+    def is_arc(self):
+        """Check if the line is an Arc
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+
+        Returns
+        -------
+        is_arc : bool
+            False for Segment
+        """
+
+        return False
+
     # cf Methods.Geometry.Segment.is_on_line
-    if isinstance(is_on_line, ImportError):
-        is_on_line = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method is_on_line: " + str(is_on_line))
-            )
-        )
-    else:
-        is_on_line = is_on_line
+    def is_on_line(self, Z):
+        """Check is a point defined by its complex coordinate is on the segment
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+        Z : complex
+            Complex coordinate of the point
+
+        Returns
+        -------
+        is_on_line : bool
+            True if the point is on the segment
+        """
+
+        Z1 = self.begin
+        Z2 = self.end
+        Z3 = Z
+        # Check if the points are aligned
+        Z12 = Z1 - Z2
+        Z13 = Z1 - Z3
+        if abs(Z12.real * Z13.imag - Z12.imag * Z13.real) < 1e-10:
+            K13 = Z12.real * Z13.real + Z12.imag * Z13.imag
+            K12 = Z12.real * Z12.real + Z12.imag * Z12.imag
+            if K13 >= 0 and K13 <= K12:
+                return True
+        return False
+
     # cf Methods.Geometry.Segment.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
+    plot = plot
+
     # cf Methods.Geometry.Segment.reverse
-    if isinstance(reverse, ImportError):
-        reverse = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method reverse: " + str(reverse))
-            )
-        )
-    else:
-        reverse = reverse
+    def reverse(self):
+        """Reverse the begin and end point of the Line
+
+        Parameters
+        ----------
+        self : Segment
+            An Segment object
+
+        Returns
+        -------
+        """
+
+        end = self.end
+        self.end = self.begin
+        self.begin = end
+
     # cf Methods.Geometry.Segment.rotate
-    if isinstance(rotate, ImportError):
-        rotate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method rotate: " + str(rotate))
-            )
-        )
-    else:
-        rotate = rotate
+    def rotate(self, angle):
+        """Rotation of the Segment of angle
+
+        Parameters
+        ----------
+        self : Segment
+            An Segment Object
+
+        angle : float
+            the angle of rotation [rad]
+
+        Returns
+        -------
+        None
+
+        """
+        if not isinstance(angle, float) and not isinstance(angle, int):
+            raise AngleRotationSegmentError("The angle must be a float or int ")
+
+        # check if Segment is correct"
+        self.check()
+
+        # Modification from the rotation of the object
+        self.begin = self.begin * exp(1j * angle)
+        self.end = self.end * exp(1j * angle)
+
     # cf Methods.Geometry.Segment.scale
-    if isinstance(scale, ImportError):
-        scale = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method scale: " + str(scale))
-            )
-        )
-    else:
-        scale = scale
+    def scale(self, scale_factor):
+        """Scale the coordinates of the begin/end
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment Object
+        scale_factor : float
+            the Scale factor [-]
+
+        Returns
+        -------
+        None
+        """
+
+        self.begin = self.begin * scale_factor
+        self.end = self.end * scale_factor
+
     # cf Methods.Geometry.Segment.split_half
-    if isinstance(split_half, ImportError):
-        split_half = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method split_half: " + str(split_half))
-            )
-        )
-    else:
-        split_half = split_half
+    def split_half(self, is_begin=True):
+        """Cut the line in half (modify the object)
+
+        Parameters
+        ----------
+        self : Segment
+            An Segment object
+        is_begin : bool
+            True to keep the part begin=>middle, False for the part middle=>end
+
+        Returns
+        -------
+        """
+
+        if is_begin:
+            self.end = self.get_middle()
+        else:
+            self.begin = self.get_middle()
+
     # cf Methods.Geometry.Segment.split_line
-    if isinstance(split_line, ImportError):
-        split_line = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method split_line: " + str(split_line))
-            )
-        )
-    else:
-        split_line = split_line
+    split_line = split_line
+
     # cf Methods.Geometry.Segment.split_point
-    if isinstance(split_point, ImportError):
-        split_point = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method split_point: " + str(split_point))
-            )
-        )
-    else:
-        split_point = split_point
+    def split_point(self, Z1, is_begin=True):
+        """Cut the Segment according to a point on the segment
+
+        Parameters
+        ----------
+        self : Segment
+            An Segment object
+        Z1 : complex
+            Cutting point on the line
+        is_begin : bool
+            True to keep the part begin=>Z1, False for the part Z1=>end
+
+        Returns
+        -------
+        """
+
+        if not self.is_on_line(Z1):
+            raise Exception("Point is not on the line")
+
+        if is_begin:
+            self.end = Z1
+        else:
+            self.begin = Z1
+
     # cf Methods.Geometry.Segment.translate
-    if isinstance(translate, ImportError):
-        translate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Segment method translate: " + str(translate))
+    def translate(self, Zt):
+        """Translate the Segment object
+
+        Parameters
+        ----------
+        self : Segment
+            An Segment object
+
+        Zt : complex
+            Complex value for translation
+
+        Returns
+        -------
+        None
+        """
+        if (
+            not isinstance(Zt, complex)
+            and not isinstance(Zt, int)
+            and not isinstance(Zt, float)
+        ):
+            raise PointTranslateSegmentError(
+                "The point must be a complex number or int or float"
             )
-        )
-    else:
-        translate = translate
+
+        # check if the Segment is correct
+        self.check()
+
+        # Modification from the translation of Segment
+        self.begin = self.begin + Zt
+        self.end = self.end + Zt
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

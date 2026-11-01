@@ -17,26 +17,6 @@ from .ParamExplorer import ParamExplorer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.ParamExplorerSet.get_max import get_max
-except ImportError as error:
-    get_max = error
-
-try:
-    from ..Methods.Simulation.ParamExplorerSet.get_min import get_min
-except ImportError as error:
-    get_min = error
-
-try:
-    from ..Methods.Simulation.ParamExplorerSet.get_N import get_N
-except ImportError as error:
-    get_N = error
-
-try:
-    from ..Methods.Simulation.ParamExplorerSet.get_value import get_value
-except ImportError as error:
-    get_value = error
-
 
 from numpy import array, ndarray
 from ntpath import basename
@@ -53,49 +33,68 @@ class ParamExplorerSet(ParamExplorer):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.ParamExplorerSet.get_max
-    if isinstance(get_max, ImportError):
-        get_max = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerSet method get_max: " + str(get_max)
-                )
-            )
-        )
-    else:
-        get_max = get_max
+    def get_max(self):
+        """Return the maximum value of the ParamExplorer
+
+        Parameters
+        ----------
+        self : ParamExplorerInterval
+            A ParamExplorerInterval object
+
+        Returns
+        -------
+        max_value: float
+            Maximum value of the ParamExplorer
+        """
+
+        if len(self.value) > 0 and isinstance(self.value[0], (int, float)):
+            return max(self.value)
+        else:
+            return None
+
     # cf Methods.Simulation.ParamExplorerSet.get_min
-    if isinstance(get_min, ImportError):
-        get_min = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerSet method get_min: " + str(get_min)
-                )
-            )
-        )
-    else:
-        get_min = get_min
+    def get_min(self):
+        """Return the minimum value of the ParamExplorer
+
+        Parameters
+        ----------
+        self : ParamExplorerInterval
+            A ParamExplorerInterval object
+
+        Returns
+        -------
+        min_value: float
+            Minimum value of the ParamExplorer
+        """
+
+        if len(self.value) > 0 and isinstance(self.value[0], (int, float)):
+            return min(self.value)
+        else:
+            return None
+
     # cf Methods.Simulation.ParamExplorerSet.get_N
-    if isinstance(get_N, ImportError):
-        get_N = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ParamExplorerSet method get_N: " + str(get_N))
-            )
-        )
-    else:
-        get_N = get_N
+    def get_N(self):
+        """Return the number of value of the ParamExplorer
+
+        Parameters
+        ----------
+        self : ParamExplorerInterval
+            A ParamExplorerInterval object
+
+        Returns
+        -------
+        N: int
+            number of value of the ParamExplorer
+        """
+
+        return len(self.value)
+
     # cf Methods.Simulation.ParamExplorerSet.get_value
-    if isinstance(get_value, ImportError):
-        get_value = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerSet method get_value: " + str(get_value)
-                )
-            )
-        )
-    else:
-        get_value = get_value
+    def get_value(self):
+        """Return parameters values"""
+        return self.value
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

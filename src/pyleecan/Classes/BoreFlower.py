@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/BoreFlower
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - plot_schematics: import name 'Arc1' refers to different sources (.Arc1.Arc1 and ..Methods.Machine.BoreFlower.plot_schematics.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,23 +21,11 @@ from .Bore import Bore
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Machine.BoreFlower.comp_periodicity_spatial import (
-        comp_periodicity_spatial,
-    )
-except ImportError as error:
-    comp_periodicity_spatial = error
-
-try:
-    from ..Methods.Machine.BoreFlower.get_bore_line import get_bore_line
-except ImportError as error:
-    get_bore_line = error
-
-try:
-    from ..Methods.Machine.BoreFlower.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Machine.BoreFlower.plot_schematics import plot_schematics
+from ..Functions.Geometry.comp_flower_arc import comp_flower_arc
+from .Arc1 import Arc1
+from ..Methods import ParentMissingError
+from numpy import pi, exp
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -44,42 +36,67 @@ class BoreFlower(Bore):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.BoreFlower.comp_periodicity_spatial
-    if isinstance(comp_periodicity_spatial, ImportError):
-        comp_periodicity_spatial = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreFlower method comp_periodicity_spatial: "
-                    + str(comp_periodicity_spatial)
-                )
-            )
-        )
-    else:
-        comp_periodicity_spatial = comp_periodicity_spatial
+    def comp_periodicity_spatial(self):
+        """Compute the periodicity factor of the Bore
+
+        Parameters
+        ----------
+        self : BoreFlower
+            A BoreFlower object
+
+        Returns
+        -------
+        per_a : int
+            Number of spatial periodicities of the bore
+        is_antiper_a : bool
+            True if an spatial anti-periodicity is possible after the periodicities
+        """
+
+        return self.N, False
+
     # cf Methods.Machine.BoreFlower.get_bore_line
-    if isinstance(get_bore_line, ImportError):
-        get_bore_line = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreFlower method get_bore_line: " + str(get_bore_line)
-                )
+    def get_bore_line(self, prop_dict=None):
+        """Return the bore line description
+
+        Parameters
+        ----------
+        self : BoreFlower
+            A BoreFlower object
+        prop_dict : dict
+            Property dictionary to apply on the lines
+
+        Returns
+        -------
+        bore_list : list
+            List of bore lines
+        """
+
+        if self.parent is not None:
+            if self.is_yoke():
+                R = self.parent.get_Ryoke()
+            else:
+                R = self.parent.get_Rbo()
+        else:
+            raise ParentMissingError(
+                "Error: The Bore object is not inside a Lamination"
             )
-        )
-    else:
-        get_bore_line = get_bore_line
+
+        # Compute the shape
+        (alpha_lim, zL, zR) = comp_flower_arc(2 * pi / self.N, self.Rarc, R)
+
+        # Create the lines
+        bore_list = list()
+        for ii in range(self.N):
+            rot = exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha))
+            arc = Arc1(
+                begin=zR * rot, end=zL * rot, radius=self.Rarc, prop_dict=prop_dict
+            )
+            bore_list.append(arc)
+        return bore_list
+
     # cf Methods.Machine.BoreFlower.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use BoreFlower method plot_schematics: "
-                    + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

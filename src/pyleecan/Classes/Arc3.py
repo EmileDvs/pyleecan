@@ -4,6 +4,11 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc3
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - check: module uses a wildcard import whose names cannot be resolved safely
+# - split_point: import name 'np_abs' refers to different sources (numpy.abs as np_abs and ..Methods.Geometry.Arc3.split_point.np_abs)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,81 +22,16 @@ from .Arc import Arc
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Geometry.Arc3.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Geometry.Arc3.comp_length import comp_length
-except ImportError as error:
-    comp_length = error
-
-try:
-    from ..Methods.Geometry.Arc3.comp_radius import comp_radius
-except ImportError as error:
-    comp_radius = error
-
-try:
-    from ..Methods.Geometry.Arc3.discretize import discretize
-except ImportError as error:
-    discretize = error
-
-try:
-    from ..Methods.Geometry.Arc3.get_angle import get_angle
-except ImportError as error:
-    get_angle = error
-
-try:
-    from ..Methods.Geometry.Arc3.get_begin import get_begin
-except ImportError as error:
-    get_begin = error
-
-try:
-    from ..Methods.Geometry.Arc3.get_center import get_center
-except ImportError as error:
-    get_center = error
-
-try:
-    from ..Methods.Geometry.Arc3.get_end import get_end
-except ImportError as error:
-    get_end = error
-
-try:
-    from ..Methods.Geometry.Arc3.get_middle import get_middle
-except ImportError as error:
-    get_middle = error
-
-try:
-    from ..Methods.Geometry.Arc3.reverse import reverse
-except ImportError as error:
-    reverse = error
-
-try:
-    from ..Methods.Geometry.Arc3.rotate import rotate
-except ImportError as error:
-    rotate = error
-
-try:
-    from ..Methods.Geometry.Arc3.scale import scale
-except ImportError as error:
-    scale = error
-
-try:
-    from ..Methods.Geometry.Arc3.split_half import split_half
-except ImportError as error:
-    split_half = error
-
-try:
-    from ..Methods.Geometry.Arc3.split_point import split_point
-except ImportError as error:
-    split_point = error
-
-try:
-    from ..Methods.Geometry.Arc3.translate import translate
-except ImportError as error:
-    translate = error
-
+from ..Methods.Geometry.Arc3.check import check
+from ..Methods.Geometry.Arc3.split_point import split_point
+from numpy import pi, abs as np_abs, angle as np_angle, exp, linspace
+from ..Methods.Machine import ARC_NPOINT_D
+from ..Methods.Geometry.Arc3 import (
+    NbPointArc3DError,
+    AngleRotationArc3Error,
+    PointTranslateArc3Error,
+)
+from .Arc2 import Arc2
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -102,142 +42,357 @@ class Arc3(Arc):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Geometry.Arc3.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    check = check
+
     # cf Methods.Geometry.Arc3.comp_length
-    if isinstance(comp_length, ImportError):
-        comp_length = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method comp_length: " + str(comp_length))
-            )
-        )
-    else:
-        comp_length = comp_length
+    def comp_length(self):
+        """Compute the length of the arc
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        length: float
+            length of the arc
+        """
+
+        self.check()
+
+        R = self.comp_radius()
+
+        # Half circle
+        return float(pi * R)
+
     # cf Methods.Geometry.Arc3.comp_radius
-    if isinstance(comp_radius, ImportError):
-        comp_radius = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method comp_radius: " + str(comp_radius))
-            )
-        )
-    else:
-        comp_radius = comp_radius
+    def comp_radius(self):
+        """Compute the radius of the arc
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        radius: float
+            radius of the arc
+
+        """
+
+        self.check()
+
+        z1 = self.begin
+        z2 = self.end
+
+        return np_abs(z1 - z2) / 2.0  # Radius of the arc
+
     # cf Methods.Geometry.Arc3.discretize
-    if isinstance(discretize, ImportError):
-        discretize = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method discretize: " + str(discretize))
-            )
-        )
-    else:
-        discretize = discretize
+    def discretize(self, nb_point=ARC_NPOINT_D):
+        """Return the discretize version of the Arc.
+        Begin and end are always return
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+        nb_point : int
+            Number of points to add to discretize the arc (Default value = ARC_NPOINT_D)
+
+        Returns
+        -------
+        list_point: list
+            list of complex coordinate of the points
+
+        Raises
+        ------
+        NbPointArc1DError
+            nb_point must be an integer >=0
+        """
+
+        # Check that the Arc is correct
+        self.check()
+        if not isinstance(nb_point, int):
+            raise NbPointArc3DError("discretize : nb_point must be an integer")
+        if nb_point < 0:
+            raise NbPointArc3DError("nb_point must be >=0")
+
+        # We use the complex representation of the point
+        z1 = self.begin
+        zc = self.get_center()
+        R = self.comp_radius()
+
+        # Generation of the point by rotation
+        if self.is_trigo_direction:  # Top
+            t = linspace(0, pi, nb_point + 2)
+        else:  # Bottom
+            t = linspace(0, -pi, nb_point + 2)
+        list_point = R * exp(1j * t)
+
+        # Geometric transformation : return to the main axis
+        list_point = list_point * exp(1j * np_angle(z1 - zc)) + zc
+
+        return list_point
+
     # cf Methods.Geometry.Arc3.get_angle
-    if isinstance(get_angle, ImportError):
-        get_angle = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method get_angle: " + str(get_angle))
-            )
-        )
-    else:
-        get_angle = get_angle
+    def get_angle(self, is_deg=False):
+        """Return the angle of the arc
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+        is_deg: bool
+            True to convert to degree
+
+        Returns
+        -------
+        angle: float
+            Angle of the arc
+        """
+
+        if self.is_trigo_direction:
+            sign = 1
+        else:
+            sign = -1
+
+        if is_deg:
+            return sign * 180
+        else:
+            return sign * pi
+
     # cf Methods.Geometry.Arc3.get_begin
-    if isinstance(get_begin, ImportError):
-        get_begin = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method get_begin: " + str(get_begin))
-            )
-        )
-    else:
-        get_begin = get_begin
+    def get_begin(self):
+        """Return the begin point of the arc
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        begin: complex
+            Begin point of the Arc3
+        """
+
+        return self.begin
+
     # cf Methods.Geometry.Arc3.get_center
-    if isinstance(get_center, ImportError):
-        get_center = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method get_center: " + str(get_center))
-            )
-        )
-    else:
-        get_center = get_center
+    def get_center(self):
+        """Return the center of the arc
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        Zc: complex
+            Complex coordinates of the center of the Arc3
+        """
+
+        self.check()
+
+        # the center is on the bisection of [begin, end]
+        z1 = self.begin
+        z2 = self.end
+
+        Zc = (z1 + z2) / 2.0
+
+        # Return (0,0) if the point is too close from 0
+        if np_abs(Zc) < 1e-6:
+            Zc = 0
+
+        return Zc
+
     # cf Methods.Geometry.Arc3.get_end
-    if isinstance(get_end, ImportError):
-        get_end = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method get_end: " + str(get_end))
-            )
-        )
-    else:
-        get_end = get_end
+    def get_end(self):
+        """Return the end point of the arc
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        end: complex
+            Complex coordinates of the end point of the Arc3
+        """
+
+        return self.end
+
     # cf Methods.Geometry.Arc3.get_middle
-    if isinstance(get_middle, ImportError):
-        get_middle = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method get_middle: " + str(get_middle))
-            )
-        )
-    else:
-        get_middle = get_middle
+    def get_middle(self):
+        """Return the point at the middle of the arc
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        Zmid: complex
+            Complex coordinates of the middle of the Arc3
+        """
+
+        # We use the complex representation of the point
+        z1 = self.begin
+        zc = self.get_center()
+        R = self.comp_radius()
+
+        # Generation of the point by rotation
+        if self.is_trigo_direction:  # Top
+            Zmid = R * exp(1j * pi / 2.0)
+        else:  # Bottom
+            Zmid = R * exp(-1j * pi / 2.0)
+
+        # Geometric transformation : return to the main axis
+        Zmid = Zmid * exp(1j * np_angle(z1 - zc)) + zc
+
+        # Return (0,0) if the point is too close from 0
+        if np_abs(Zmid) < 1e-6:
+            Zmid = 0
+
+        return Zmid
+
     # cf Methods.Geometry.Arc3.reverse
-    if isinstance(reverse, ImportError):
-        reverse = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method reverse: " + str(reverse))
-            )
-        )
-    else:
-        reverse = reverse
+    def reverse(self):
+        """Reverse the begin and end point of the Line
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Returns
+        -------
+        """
+
+        end = self.end
+        self.end = self.begin
+        self.begin = end
+        self.is_trigo_direction = not self.is_trigo_direction
+
     # cf Methods.Geometry.Arc3.rotate
-    if isinstance(rotate, ImportError):
-        rotate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method rotate: " + str(rotate))
-            )
-        )
-    else:
-        rotate = rotate
+    def rotate(self, angle):
+        """Rotation of the Arc3 of angle
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 Object
+
+        angle : float
+            the angle of rotation [rad]
+
+
+        Returns
+        -------
+        None
+        """
+        if not isinstance(angle, float) and not isinstance(angle, int):
+            raise AngleRotationArc3Error("The angle must be a float or int ")
+
+        # check if Arc3 is correct"
+        self.check()
+
+        # Modification from the rotation  of the object
+        self.begin = self.begin * exp(1j * angle)
+        self.end = self.end * exp(1j * angle)
+
     # cf Methods.Geometry.Arc3.scale
-    if isinstance(scale, ImportError):
-        scale = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method scale: " + str(scale))
-            )
-        )
-    else:
-        scale = scale
+    def scale(self, scale_factor):
+        """Scale the coordinates of the begin/end
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 Object
+        scale_factor : float
+            the Scale factor [-]
+
+        Returns
+        -------
+        None
+        """
+
+        self.begin = self.begin * scale_factor
+        self.end = self.end * scale_factor
+
     # cf Methods.Geometry.Arc3.split_half
-    if isinstance(split_half, ImportError):
-        split_half = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method split_half: " + str(split_half))
+    def split_half(self, is_begin=True):
+        """Cut the line in half (modify the object Arc3 => Arc2)
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+        is_begin : bool
+            True to keep the part begin=>middle, False for the part middle=>end
+
+        Returns
+        -------
+        """
+
+        if self.is_trigo_direction:
+            sign = 1
+        else:
+            sign = -1
+
+        if is_begin:
+            arc = Arc2(begin=self.begin, center=self.get_center(), angle=sign * pi / 2)
+        else:
+            arc = Arc2(
+                begin=self.get_middle(), center=self.get_center(), angle=sign * pi / 2
             )
-        )
-    else:
-        split_half = split_half
+        # Change the object type from Arc3 => Arc2
+        self.__class__ = Arc2
+        self.__dict__.update(arc.__dict__)
+
     # cf Methods.Geometry.Arc3.split_point
-    if isinstance(split_point, ImportError):
-        split_point = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method split_point: " + str(split_point))
-            )
-        )
-    else:
-        split_point = split_point
+    split_point = split_point
+
     # cf Methods.Geometry.Arc3.translate
-    if isinstance(translate, ImportError):
-        translate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Arc3 method translate: " + str(translate))
+    def translate(self, Zt):
+        """Translate the Arc3 object with
+
+        Parameters
+        ----------
+        self : Arc3
+            An Arc3 object
+
+        Zt : complex
+            Complex value for translation
+
+
+        Returns
+        -------
+        None
+
+        """
+        if (
+            not isinstance(Zt, complex)
+            and not isinstance(Zt, int)
+            and not isinstance(Zt, float)
+        ):
+            raise PointTranslateArc3Error(
+                "The point must be a complex number or int or float"
             )
-        )
-    else:
-        translate = translate
+
+        # check if the Arc3 is correct
+        self.check()
+
+        # Modification from the translation of Arc3
+        self.begin = self.begin + Zt
+        self.end = self.end + Zt
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

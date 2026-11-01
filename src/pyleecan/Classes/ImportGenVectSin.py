@@ -17,11 +17,7 @@ from .ImportMatrix import ImportMatrix
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Import.ImportGenVectSin.get_data import get_data
-except ImportError as error:
-    get_data = error
-
+from numpy import linspace, sin, pi
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,16 +29,26 @@ class ImportGenVectSin(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportGenVectSin.get_data
-    if isinstance(get_data, ImportError):
-        get_data = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ImportGenVectSin method get_data: " + str(get_data)
-                )
-            )
-        )
-    else:
-        get_data = get_data
+    def get_data(self):
+        """Generate the sinus vector
+
+        Parameters
+        ----------
+        self : ImportGenVectSin
+            An ImportGenVectSin object
+
+        Returns
+        -------
+        vect: ndarray
+            The generated sinus vector
+
+        """
+
+        time = linspace(start=0, stop=self.Tf, num=self.N, endpoint=False)
+
+        vect = self.A * sin(2 * pi * self.f * time + self.Phi)
+        return self.edit_matrix(vect)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

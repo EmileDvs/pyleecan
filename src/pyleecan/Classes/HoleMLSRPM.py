@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleMLSRPM
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - plot_schematics: import name 'Arc1' refers to different sources (.Arc1.Arc1 and ..Methods.Slot.HoleMLSRPM.plot_schematics.Arc1)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,58 +21,13 @@ from .HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.HoleMLSRPM._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.comp_magnetization_dict import (
-        comp_magnetization_dict,
-    )
-except ImportError as error:
-    comp_magnetization_dict = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.comp_mass_magnet import comp_mass_magnet
-except ImportError as error:
-    comp_mass_magnet = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.comp_surface_magnet import comp_surface_magnet
-except ImportError as error:
-    comp_surface_magnet = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.comp_volume_magnet import comp_volume_magnet
-except ImportError as error:
-    comp_volume_magnet = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.has_magnet import has_magnet
-except ImportError as error:
-    has_magnet = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
-try:
-    from ..Methods.Slot.HoleMLSRPM.remove_magnet import remove_magnet
-except ImportError as error:
-    remove_magnet = error
-
+from ..Methods.Slot.HoleMLSRPM.plot_schematics import plot_schematics
+from numpy import exp, arcsin, tan, cos, sqrt, sin, pi
+from .Segment import Segment
+from .SurfLine import SurfLine
+from .Arc1 import Arc1
+from ..Functions.labels import HOLEM_LAB, update_RTS_index
+from ..Methods.Slot.HoleMLSRPM.check import SLSRPM_NoneError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -80,121 +39,446 @@ class HoleMLSRPM(HoleMag):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.HoleMLSRPM._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            A HoleMLSRPM object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+        Rbo = self.get_Rbo()
+        # Z1
+        delta1 = arcsin((self.R1 + self.W2) / (self.R1 + self.R3))
+        alpha1 = self.W1 - delta1
+        Z1 = self.R3 * exp(-1j * alpha1)
+
+        # Zc1
+        Zc1 = (self.R3 + self.R1) * exp(-1j * alpha1)
+        xc1 = (self.R3 + self.R1) * cos(alpha1)
+        yc1 = -(self.R3 + self.R1) * sin(alpha1)
+
+        # Z2
+        x2 = (-1 / tan(self.W1) * xc1 + yc1 - self.W2 / cos(self.W1)) / -(
+            tan(self.W1) + 1 / tan(self.W1)
         )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+        y2 = -tan(self.W1) * x2 + self.W2 / cos(self.W1)
+        Z2 = x2 + 1j * y2
+
+        # Z3
+        a3 = 1 + tan(self.W1) ** 2
+        b3 = -2 * tan(self.W1) * self.W2 / cos(self.W1)
+        c3 = (self.W2 / cos(self.W1)) ** 2 - self.R2**2
+
+        x3 = (-b3 + sqrt(b3**2 - 4 * a3 * c3)) / (2 * a3)
+        y3 = -tan(self.W1) * x3 + self.W2 / cos(self.W1)
+        Z3 = x3 + 1j * y3
+        # Z5
+        x5 = Rbo - self.H1
+        y5 = -self.W0 / 2
+        Z5 = x5 + 1j * y5
+        # Zc2
+        xc2 = Rbo - self.H1 - self.R1
+        yc2 = -self.W0 / 2
+        Zc2 = xc2 + 1j * yc2
+        # Z4
+        a4 = (xc2 - x3) ** 2 - self.R1**2
+        b4 = 2 * (xc2 - x3) * (y3 - yc2)
+        c4 = (y3 - yc2) ** 2 - self.R1**2
+        alpha2 = (-b4 - sqrt(b4**2 - 4 * a4 * c4)) / (2 * a4)
+        x4 = (xc2 / alpha2 + yc2 + alpha2 * x3 - y3) / (alpha2 + 1 / alpha2)
+        y4 = alpha2 * (x4 - x3) + y3
+        Z4 = x4 + 1j * y4
+        Zw1 = self.R2 * exp(1j * self.W1)
+        Zw2 = Zw1 + self.W2 * exp(1j * -(pi / 2 - self.W1))
+        # symmetry
+        Z6 = Z5.conjugate()
+        Z7 = Z4.conjugate()
+        Z8 = Z3.conjugate()
+        Z9 = Z2.conjugate()
+        Z10 = Z1.conjugate()
+
+        point_dict = dict()
+        point_dict["Z1"] = Z1
+        point_dict["Z2"] = Z2
+        point_dict["Z3"] = Z3
+        point_dict["Z4"] = Z4
+        point_dict["Z5"] = Z5
+        point_dict["Z6"] = Z6
+        point_dict["Z7"] = Z7
+        point_dict["Z8"] = Z8
+        point_dict["Z9"] = Z9
+        point_dict["Z10"] = Z10
+        point_dict["Zc1"] = Zc1
+        point_dict["Zc2"] = Zc2
+        point_dict["Zw1"] = Zw1
+        point_dict["Zw2"] = Zw2
+        return point_dict
+
     # cf Methods.Slot.HoleMLSRPM.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method build_geometry: " + str(build_geometry)
-                )
-            )
+    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+        """Compute the curve (Line) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            A HoleMLSRPM object
+        alpha : float
+            Angle to rotate the slot (Default value = 0) [rad]
+        delta : complex
+            Complex to translate the slot (Default value = 0)
+        is_simplified : bool
+           True to avoid line superposition
+
+        Returns
+        -------
+        surf_list: list
+            List of SurfLine needed to draw the HoleM51
+
+        """
+        # Get correct label for surfaces
+        lam_label = self.parent.get_label()
+        R_id, surf_type = self.get_R_id()
+        vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-T0-S0"
+        mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-T0-S0"
+
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z5 = point_dict["Z5"]
+        Z6 = point_dict["Z6"]
+        Z7 = point_dict["Z7"]
+        Z8 = point_dict["Z8"]
+        Z9 = point_dict["Z9"]
+        Z10 = point_dict["Z10"]
+
+        surf_list = list()
+        curve_list_mag = list()
+        curve_list_mag.append(Segment(Z3, Z4))
+        curve_list_mag.append(Segment(Z4, Z7))
+        curve_list_mag.append(Segment(Z7, Z8))
+        curve_list_mag.append(Segment(Z8, Z3))
+
+        point_ref = (Z3 + Z4 + Z7 + Z8) / 4
+
+        # curve_list_mag = list()
+        # curve_list_mag.append(
+        #     Arc1(begin=Z1, end=Z2, radius=self.R1, is_trigo_direction=True)
+        # )
+        # curve_list_mag.append(Segment(Z2, Z3))
+        # curve_list_mag.append(Segment(Z3, Z4))
+        # curve_list_mag.append(
+        #     Arc1(begin=Z4, end=Z5, radius=self.R1, is_trigo_direction=True)
+        # )
+        # curve_list_mag.append(Segment(Z5, Z6))
+        # curve_list_mag.append(
+        #     Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+        # )
+        # curve_list_mag.append(Segment(Z7, Z8))
+        # curve_list_mag.append(Segment(Z8, Z9))
+        # curve_list_mag.append(
+        #     Arc1(begin=Z9, end=Z10, radius=self.R1, is_trigo_direction=True)
+        # )
+        # curve_list_mag.append(
+        #     Arc1(begin=Z10, end=Z1, radius=-self.R3, is_trigo_direction=False)
+        # )
+        # point_ref = (Z1 + Z2 + Z3 + Z4 + Z5 + Z6 + Z7 + Z8 + Z9 + Z10) / 10
+        # Defining type of magnetization of the magnet
+
+        # if self.magnet_0:
+        #     S1 = SurfLine(line_list=curve_list_mag, label=magnet_label, point_ref=point_ref)
+
+        # else:
+        #     S1 = SurfLine(line_list=curve_list_mag, label="Hole", point_ref=point_ref)
+
+        # surf_list = [S1]
+
+        S1 = SurfLine(line_list=curve_list_mag, label=mag_label, point_ref=point_ref)
+
+        # Creation of the air curve (bottom)
+
+        curve_list_air = list()
+        curve_list_air.append(
+            Arc1(begin=Z1, end=Z2, radius=self.R1, is_trigo_direction=True)
         )
-    else:
-        build_geometry = build_geometry
+        curve_list_air.append(Segment(Z2, Z3))
+        curve_list_air.append(Segment(Z3, Z8))
+        curve_list_air.append(Segment(Z8, Z9))
+        curve_list_air.append(
+            Arc1(begin=Z9, end=Z10, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list_air.append(
+            Arc1(begin=Z10, end=Z1, radius=-self.R3, is_trigo_direction=False)
+        )
+        point_ref = (Z1 + Z2 + Z3 + Z8 + Z9 + Z10) / 6
+
+        S2 = SurfLine(line_list=curve_list_air, label=vent_label, point_ref=point_ref)
+
+        # Creation of the second air curve (top)
+        curve_list_air = list()
+        curve_list_air.append(
+            Arc1(begin=Z4, end=Z5, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list_air.append(Segment(Z5, Z6))
+
+        curve_list_air.append(
+            Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list_air.append(Segment(Z7, Z4))
+
+        point_ref = (Z4 + Z5 + Z6 + Z7) / 4
+
+        S3 = SurfLine(line_list=curve_list_air, label=vent_label, point_ref=point_ref)
+
+        # Air without magnet (S4=S1+S2+S3)
+        curve_list_air = list()
+        curve_list_air.append(
+            Arc1(begin=Z1, end=Z2, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list_air.append(Segment(Z2, Z3))
+        curve_list_air.append(Segment(Z3, Z4))
+        curve_list_air.append(
+            Arc1(begin=Z4, end=Z5, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list_air.append(Segment(Z5, Z6))
+        curve_list_air.append(
+            Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list_air.append(Segment(Z7, Z8))
+        curve_list_air.append(Segment(Z8, Z9))
+        curve_list_air.append(
+            Arc1(begin=Z9, end=Z10, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list_air.append(
+            Arc1(begin=Z10, end=Z1, radius=-self.R3, is_trigo_direction=False)
+        )
+        point_ref = (Z1 + Z2 + Z3 + Z4 + Z5 + Z6 + Z7 + Z8 + Z9 + Z10) / 10
+
+        S4 = SurfLine(line_list=curve_list_air, label=vent_label, point_ref=point_ref)
+
+        if self.magnet_0:
+            S2.label = update_RTS_index(S2.label, T_id=0)
+            S3.label = update_RTS_index(S3.label, T_id=1)
+            surf_list = [S1, S2, S3]
+        else:
+            S4.label = update_RTS_index(S4.label, T_id=0)
+            surf_list = [S4]
+
+        # Apply the transformations
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+
+        return surf_list
+
     # cf Methods.Slot.HoleMLSRPM.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use HoleMLSRPM method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the HoleMLSRPM object is correct
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            A HoleMLSRPM object
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+
+        """
+
+        # Check that everything is set
+        if self.W0 is None:
+            raise SLSRPM_NoneError("You must set W0 !")
+        elif self.W1 is None:
+            raise SLSRPM_NoneError("You must set W1 !")
+        elif self.W2 is None:
+            raise SLSRPM_NoneError("You must set W2 !")
+        elif self.H1 is None:
+            raise SLSRPM_NoneError("You must set H1 !")
+        elif self.R1 is None:
+            raise SLSRPM_NoneError("You must set R1 !")
+        elif self.R2 is None:
+            raise SLSRPM_NoneError("You must set R2 !")
+        elif self.R3 is None:
+            raise SLSRPM_NoneError("You must set R3 !")
+        elif self.magnet_0 is None:
+            raise SLSRPM_NoneError("You must set magnet_0 !")
+
     # cf Methods.Slot.HoleMLSRPM.comp_magnetization_dict
-    if isinstance(comp_magnetization_dict, ImportError):
-        comp_magnetization_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method comp_magnetization_dict: "
-                    + str(comp_magnetization_dict)
-                )
-            )
-        )
-    else:
-        comp_magnetization_dict = comp_magnetization_dict
+    def comp_magnetization_dict(self, is_north=True):
+        """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
+        Mangetization angle with Hole centered on Ox axis
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            a HoleMLSRPM object
+        is_north: True
+            True: comp north magnetization, else add pi [rad]
+
+        Returns
+        -------
+        mag_dict: dict
+            magnetization dictionary (key=magnet_X, value=angle[rad])
+        """
+
+        # Comp magnet
+        point_dict = self._comp_point_coordinate()
+
+        mag_dict = dict()
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z7 = point_dict["Z7"]
+        Z8 = point_dict["Z8"]
+
+        Zch = (Z3 + Z4) / 2
+        Zcl = (Z7 + Z8) / 2
+        S0 = Segment(Zch, Zcl)
+        mag_dict["magnet_0"] = S0.comp_normal()
+
+        ####Comp_normal direction?
+
+        if not is_north:
+            mag_dict["magnet_0"] += pi
+
+        if self.magnetization_dict_offset is not None:
+            for key, value in self.magnetization_dict_offset:
+                mag_dict[key] += value
+
+        return mag_dict
+
     # cf Methods.Slot.HoleMLSRPM.comp_mass_magnet
-    if isinstance(comp_mass_magnet, ImportError):
-        comp_mass_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method comp_mass_magnet: "
-                    + str(comp_mass_magnet)
-                )
-            )
-        )
-    else:
-        comp_mass_magnet = comp_mass_magnet
+    def comp_mass_magnet(self):
+        """Compute the mass of the magnet (if any)
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            A HoleMLSRPM object
+
+        Returns
+        -------
+        Mmag: float
+            mass of the magnet [kg]
+
+        """
+
+        # Simplify the calculate of the magnet surface
+        V_magnet = self.comp_volume_magnet()
+
+        if self.magnet_0:
+            return V_magnet * self.magnet_0.mat_type.struct.rho
+        else:
+            return 0
+
     # cf Methods.Slot.HoleMLSRPM.comp_surface_magnet
-    if isinstance(comp_surface_magnet, ImportError):
-        comp_surface_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method comp_surface_magnet: "
-                    + str(comp_surface_magnet)
-                )
-            )
-        )
-    else:
-        comp_surface_magnet = comp_surface_magnet
+    def comp_surface_magnet(self):
+        """Compute the surface of the Hole
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            A HoleMLSRPM object
+
+        Returns
+        -------
+        S: float
+            Surface of the Magnet. [m**2]
+
+        """
+
+        point_dict = self._comp_point_coordinate()
+        Z3 = point_dict["Z3"]
+        Z4 = point_dict["Z4"]
+        Z7 = point_dict["Z7"]
+        Z8 = point_dict["Z8"]
+
+        # symmetry
+
+        x3 = Z3.real
+        y3 = Z3.imag
+        x4 = Z4.real
+        y4 = Z4.imag
+
+        x7 = Z7.real
+        y7 = Z7.imag
+        x8 = Z8.real
+        y8 = Z8.imag
+
+        S_magnet_1 = x3 * y4 + x4 * y7 + x7 * y8 + x8 * y3
+        S_magnet_2 = x3 * y8 + x4 * y3 + x7 * y4 + x8 * y7
+
+        S_magnet = 0.5 * abs(S_magnet_1 - S_magnet_2)
+
+        return S_magnet
+
     # cf Methods.Slot.HoleMLSRPM.comp_volume_magnet
-    if isinstance(comp_volume_magnet, ImportError):
-        comp_volume_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method comp_volume_magnet: "
-                    + str(comp_volume_magnet)
-                )
-            )
-        )
-    else:
-        comp_volume_magnet = comp_volume_magnet
+    def comp_volume_magnet(self):
+        """Compute the volume of the magnet (if any)
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            A HoleMLSRPM object
+
+        Returns
+        -------
+        Vmag: float
+            Volume of the magnet [m**3]
+
+        """
+        S_magnet = self.comp_surface_magnet()
+
+        if self.magnet_0:
+            return S_magnet * self.magnet_0.Lmag
+        else:
+            return 0
+
     # cf Methods.Slot.HoleMLSRPM.has_magnet
-    if isinstance(has_magnet, ImportError):
-        has_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method has_magnet: " + str(has_magnet)
-                )
-            )
-        )
-    else:
-        has_magnet = has_magnet
+    def has_magnet(self):
+        """Return if the Hole has magnets
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            A HoleMLSRPM object
+
+        Returns
+        -------
+        has_magnet : bool
+            True if the magnets are not None
+        """
+
+        return self.magnet_0 is not None
+
     # cf Methods.Slot.HoleMLSRPM.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method plot_schematics: "
-                    + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
+
     # cf Methods.Slot.HoleMLSRPM.remove_magnet
-    if isinstance(remove_magnet, ImportError):
-        remove_magnet = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use HoleMLSRPM method remove_magnet: " + str(remove_magnet)
-                )
-            )
-        )
-    else:
-        remove_magnet = remove_magnet
+    def remove_magnet(self):
+        """Remove the magnet (set to None) of the Hole
+
+        Parameters
+        ----------
+        self : HoleMLSRPM
+            a HoleMLSRPM object
+        """
+
+        self.magnet_0 = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

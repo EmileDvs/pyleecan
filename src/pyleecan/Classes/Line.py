@@ -17,11 +17,7 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Geometry.Line.comp_normal import comp_normal
-except ImportError as error:
-    comp_normal = error
-
+from numpy import angle, exp
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +29,34 @@ class Line(FrozenClass):
     VERSION = 1
 
     # cf Methods.Geometry.Line.comp_normal
-    if isinstance(comp_normal, ImportError):
-        comp_normal = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Line method comp_normal: " + str(comp_normal))
-            )
-        )
-    else:
-        comp_normal = comp_normal
+    def comp_normal(self):
+        """Compute the normal direction of the Line
+        Normal point is "on top" (begin=O and end on Ox)
+
+        Parameters
+        ----------
+        self : Line
+            a Line object
+
+        Returns
+        -------
+        normal: float
+            Angle of the vector between (Zbegin+Zend)/2 (even for arc) and the normal point [rad]
+        """
+
+        Zb = self.get_begin()
+        Ze = self.get_end()
+        Zm = (Zb + Ze) / 2  # "Middle" of the line
+        L = self.comp_length() / 3
+
+        # In ref begin=O and end on Ox
+        Zm2 = (Zm - Zb) * exp(-1j * angle(Ze - Zb))
+        Zn2 = Zm2 + 1j * L
+
+        Zn = Zn2 * exp(1j * angle(Ze - Zb)) + Zb
+
+        return angle(Zn - Zm)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

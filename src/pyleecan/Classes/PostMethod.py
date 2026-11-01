@@ -17,11 +17,6 @@ from .Post import Post
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Post.PostMethod.run import run
-except ImportError as error:
-    run = error
-
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +28,10 @@ class PostMethod(Post):
     VERSION = 1
 
     # cf Methods.Post.PostMethod.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use PostMethod method run: " + str(run))
-            )
-        )
-    else:
-        run = run
+    def run(self, output):
+        """Method to raise an NotImplementedError"""
+        raise NotImplementedError
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshMat
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - get_element: import name 'Union' refers to different sources (typing.Union and ..Methods.Mesh.MeshMat.get_element.Union)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,86 +21,27 @@ from .Mesh import Mesh
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Mesh.MeshMat.add_element import add_element
-except ImportError as error:
-    add_element = error
-
-try:
-    from ..Methods.Mesh.MeshMat.clear_element import clear_element
-except ImportError as error:
-    clear_element = error
-
-try:
-    from ..Methods.Mesh.MeshMat.clear_node import clear_node
-except ImportError as error:
-    clear_node = error
-
-try:
-    from ..Methods.Mesh.MeshMat.convert import convert
-except ImportError as error:
-    convert = error
-
-try:
-    from ..Methods.Mesh.MeshMat.find_element import find_element
-except ImportError as error:
-    find_element = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_element import get_element
-except ImportError as error:
-    get_element = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_element_area import get_element_area
-except ImportError as error:
-    get_element_area = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_element_coordinate import get_element_coordinate
-except ImportError as error:
-    get_element_coordinate = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_element_nb import get_element_nb
-except ImportError as error:
-    get_element_nb = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_mesh_pv import get_mesh_pv
-except ImportError as error:
-    get_mesh_pv = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_node2element import get_node2element
-except ImportError as error:
-    get_node2element = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_node_coordinate import get_node_coordinate
-except ImportError as error:
-    get_node_coordinate = error
-
-try:
-    from ..Methods.Mesh.MeshMat.get_node_indice import get_node_indice
-except ImportError as error:
-    get_node_indice = error
-
-try:
-    from ..Methods.Mesh.MeshMat.interface import interface
-except ImportError as error:
-    interface = error
-
-try:
-    from ..Methods.Mesh.MeshMat.renum import renum
-except ImportError as error:
-    renum = error
-
-try:
-    from ..Methods.Mesh.MeshMat.save_vtk import save_vtk
-except ImportError as error:
-    save_vtk = error
-
+from ..Methods.Mesh.MeshMat.get_element import get_element
+from typing import Union, Literal, List, Optional, Dict
+from numpy.typing import ArrayLike
+import numpy as np, pyvista as pv, meshio, copy, os
+from .NodeMat import NodeMat
+from itertools import repeat
+from .Mesh import Mesh
+from .RefQuad4 import RefQuad4
+from .RefQuad9 import RefQuad9
+from .RefTriangle3 import RefTriangle3
+from .RefTriangle6 import RefTriangle6
+from numpy import array, ndarray
+from ..Methods.Mesh.MeshMat.get_element import _check_element_name
+from os import makedirs, remove
+from os.path import dirname, isdir
+from pyvista.core.pointset import UnstructuredGrid
+from ..definitions import RESULT_DIR
+from .ElementMat import ElementMat
+from .FPGNSeg import FPGNSeg
+from .RefSegmentP1 import RefSegmentP1
+from ..Functions.GUI.log_error import log_error
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -107,171 +52,677 @@ class MeshMat(Mesh):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Mesh.MeshMat.add_element
-    if isinstance(add_element, ImportError):
-        add_element = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method add_element: " + str(add_element))
-            )
+    def add_element(
+        self, node_indices: ArrayLike, element_type: str
+    ) -> Union[int, None]:
+        """Add a new element defined by node indices and element type.
+
+        Parameters
+        ----------
+        self : MeshMat
+            a MeshMat object
+        node_indices : ndarray or list of int
+            a ndarray of nodes indices (length must match element.nb_node_per_element)
+        element_type : str
+            Define the type of element to add (key of self.element_dict)
+
+        Returns
+        -------
+        new_index : int
+            indice of the newly created element. None if the element already exists.
+        """
+
+        # The element index must be unique for all element type
+        new_index = self.get_element_nb()  # index start at 0 (last index = nb-1)
+
+        is_created = self.element_dict[element_type].add_element(
+            node_indices, new_index
         )
-    else:
-        add_element = add_element
+
+        if is_created:
+            return new_index
+        else:
+            return None
+
     # cf Methods.Mesh.MeshMat.clear_element
-    if isinstance(clear_element, ImportError):
-        clear_element = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method clear_element: " + str(clear_element)
-                )
-            )
-        )
-    else:
-        clear_element = clear_element
+    def clear_element(self):
+        """Remove non-used elements based on node indices.
+
+        Parameters
+        ----------
+        self : MeshMat
+            an Mesh object
+
+        Returns
+        -------
+
+        """
+
+        # TODO
+        raise NotImplementedError("The clear_element method is not yet implemented")
+
     # cf Methods.Mesh.MeshMat.clear_node
-    if isinstance(clear_node, ImportError):
-        clear_node = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method clear_node: " + str(clear_node))
-            )
+    def clear_node(self):
+        """Remove non-used nodes based on elements connectivity.
+
+        Parameters
+        ----------
+        self : MeshMat
+            an Mesh object
+
+        Returns
+        -------
+
+        """
+
+        coord_init = self.get_node_coordinate()
+        node_indice_init = self.get_node_indice()
+        connect_dict, *_ = self.get_element()
+
+        # Extract index of use nodes in elements
+        node_indice = np.unique(
+            [np.unique(connectivity) for connectivity in connect_dict.values()]
         )
-    else:
-        clear_node = clear_node
+
+        common, _, index2 = np.intersect1d(
+            node_indice, node_indice_init, return_indices=True
+        )
+
+        if not np.array_equal(node_indice, common):
+            raise ValueError("")
+
+        self.node = NodeMat(
+            coordinate=coord_init[index2, :],
+            nb_node=len(index2),
+            indice=node_indice,
+        )
+
     # cf Methods.Mesh.MeshMat.convert
-    if isinstance(convert, ImportError):
-        convert = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method convert: " + str(convert))
+    def convert(
+        self,
+        meshtype: Literal["MeshVTK", "MeshMat"] = "MeshMat",
+        scale: float = 1.0,
+    ) -> Mesh:
+        """Convert the MeshMat to another type of Mesh object.
+
+        Parameters
+        ----------
+        self : MeshMat
+            a MeshMat object
+        meshtype : str
+            a type of Mesh object: MeshVTK or MeshMat
+        scale : float
+            scale factor
+
+            Returns
+        -------
+        Mesh
+            a Mesh object
+        """
+
+        if meshtype not in ["MeshMat", "MeshVTK"]:
+            raise ValueError(
+                f"Wrong meshtype value \"{meshtype}\", expected value: {', '.join(['MeshMat', 'MeshVTK'])}."
             )
+
+        if meshtype == "MeshMat":
+            new_mesh = self.copy()
+            new_mesh.node.coordinate *= scale
+            return new_mesh
+
+        # Avoiding cicular import
+        from ....Classes.MeshVTK import MeshVTK
+
+        elements_ = []
+        element_types = []
+
+        # Map between pyleecan and pyvista element type
+        element_types_dict = {
+            RefTriangle3: pv.CellType.TRIANGLE,
+            RefTriangle6: pv.CellType.QUADRATIC_TRIANGLE,
+            RefQuad4: pv.CellType.QUAD,
+            RefQuad9: pv.CellType.QUADRATIC_QUAD,
+        }
+
+        # Construct the element connectivity and element type vector to create the pyvista unstructured grid
+        # https://docs.pyvista.org/version/stable/examples/00-load/create-unstructured-surface.html#creating-an-unstructured-grid
+        for element in self.element_dict.values():
+            connectivity = element.connectivity
+            nb_element = connectivity.shape[0]
+            element_types.extend(
+                list(
+                    repeat(
+                        element_types_dict[type(element.ref_element)],
+                        nb_element,
+                    )
+                )
+            )
+
+            elements_.append(
+                np.hstack(
+                    [
+                        connectivity.shape[1]
+                        * np.ones((nb_element, 1), dtype=np.int32),
+                        connectivity,
+                    ]
+                )
+                .flatten()
+                .astype(np.int32)
+            )
+
+        elements = np.hstack(elements_).astype(np.int32)
+
+        pv_mesh = pv.UnstructuredGrid(
+            elements, element_types, self.node.coordinate * scale
         )
-    else:
-        convert = convert
+        mesh_vtk = MeshVTK(mesh=pv_mesh, is_pyvista_mesh=True)
+
+        return mesh_vtk
+
     # cf Methods.Mesh.MeshMat.find_element
-    if isinstance(find_element, ImportError):
-        find_element = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method find_element: " + str(find_element)
-                )
+    def find_element(self, points, normal_t=None):
+        """Return the elements containing the target point(s)
+
+        Parameters
+        ----------
+        self : MeshMat
+            an MeshMat object
+        points : ndarray
+            2D array containing the coordinates of the target point(s)
+        normal_t normal direction to the target element
+
+        Returns
+        -------
+        element_list: list
+            A list of selected elements
+
+        """
+
+        if points.ndim != 2:
+            raise ValueError(
+                "points must have two dimensions, namely the number of points and the points coordinates."
             )
-        )
-    else:
-        find_element = find_element
+
+        # nmax_search = 3
+        element_list = []
+        element_prop_list = []
+
+        nodes = self.node
+        point_coord = nodes.coordinate
+        nb_mesh_point = nodes.nb_node
+
+        for point in points:
+            # Find the closest node to the given point
+            point_rep = np.tile(
+                point[: self.dimension], (nb_mesh_point, 1)
+            )  # /!\ if the mesh is in 2D, exclude z coordinate
+            dist_node = np.linalg.norm(point_coord - point_rep, axis=1, keepdims=True)
+            idx_closest_node = dist_node.argmin(axis=0)
+
+            for key in self.element_dict:
+                elements = self.element_dict[key]
+                ref_element = elements.ref_element
+                connect = elements.connectivity
+
+                # All selected nodes from the closest to the farthest are tested
+                # get elements that contain the closest node and test if point is inside
+                idx_closest_elements = np.nonzero(connect == idx_closest_node)[0]
+                nb_closest_elem = len(idx_closest_elements)
+                a, b = np.zeros(nb_closest_elem), np.zeros(nb_closest_elem)
+                element_idx = []
+                element_prop = []
+                for k, idx_closest_elem in enumerate(idx_closest_elements):
+                    vert = self.get_element_coordinate(
+                        idx_closest_elem, element_name=key
+                    )[key]
+                    (is_inside, a[k], b[k]) = ref_element.is_inside(
+                        vert, point[: self.dimension], normal_t
+                    )
+                    if is_inside:
+                        # dontstop = False
+                        element_prop.append(key)
+                        element_idx.append(idx_closest_elem)
+
+                # if no element was found, give it a second try
+                # TODO first check if outside mesh
+                if len(element_prop) == 0:
+                    # test all elements (sorted by center, i.e. mean of element vertices coordinate)
+                    element_center = point_coord[connect].mean(axis=1)
+
+                    dist_element_cent = np.linalg.norm(
+                        element_center - point[np.newaxis], axis=1, keepdims=True
+                    )
+
+                    idx_sorted_dist = np.argsort(dist_element_cent, axis=0)[:, 0]
+                    for i in range(elements.nb_element):
+                        vert = self.get_element_coordinate(idx_sorted_dist[i])[key]
+                        is_inside, a, *_ = ref_element.is_inside(
+                            vert, point[: self.dimension], normal_t
+                        )
+                        if is_inside:
+                            element_prop = [key]
+                            element_idx = [idx_sorted_dist[i]]
+                            break
+
+                # No element contain the point atleast (only possible if point is outside mesh)
+                if len(element_prop) == 0:
+                    element_prop_list.append(None)
+                    element_list.append(None)
+
+                # one element found
+                elif len(element_prop) == 1:
+                    element_prop_list.extend(element_prop)
+                    element_list.extend(element_idx)
+                # more than one elements found -> find the closest element
+                elif len(element_prop) > 1:
+                    index = np.nonzero(np.min(a) == a)[0]
+                    if len(index > 1):
+                        logger = self.get_logger()
+                        logger.warning(
+                            f"The target point {point} belongs to more than one element, it may be on an edge. The method returns only one element."
+                        )
+
+                    element_prop_list.append(element_prop[index[0]])
+                    element_list.append(element_idx[index[0]])
+
+        return element_prop_list, element_list
+
     # cf Methods.Mesh.MeshMat.get_element
-    if isinstance(get_element, ImportError):
-        get_element = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method get_element: " + str(get_element))
-            )
-        )
-    else:
-        get_element = get_element
+    get_element = get_element
+
     # cf Methods.Mesh.MeshMat.get_element_area
-    if isinstance(get_element_area, ImportError):
-        get_element_area = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method get_element_area: "
-                    + str(get_element_area)
-                )
-            )
+    def get_element_area(
+        self,
+        element_indices: Optional[List[int]] = None,
+        element_name: Union[List[str], str] = [],
+    ) -> ndarray:
+        """
+        Return the area of the elements on the outer surface.
+        #TODO address multiple element type issue, i.e. distracted indices
+        Parameters
+        ----------
+        self : MeshMat
+            a MeshMat object
+        element_indices : list
+            list of the element indices to extract (optional)
+        element_name : list | str
+            Name(s) of the element to extract
+        Returns
+        -------
+        areas: ndarray
+            Area of the elements
+        """
+        logger = self.get_logger()
+        area = []
+
+        element_name = _check_element_name(
+            element_mat_dict=self.element_dict, element_name=element_name
         )
-    else:
-        get_element_area = get_element_area
+
+        element_coordinate_dict = self.get_element_coordinate(
+            element_indices=element_indices, element_name=element_name
+        )
+
+        for element_name, element_coordinate in element_coordinate_dict.items():
+            if len(element_coordinate) != 0:
+                try:
+                    A = self.element_dict[element_name].ref_element.get_element_area(
+                        element_coordinate
+                    )
+
+                except (AttributeError, NotImplementedError):
+                    logger.warning(
+                        (
+                            f'MeshMat: Reference element for "{element_name}" of type "{type(self.element_dict[element_name])}" not found. ',
+                            "Respective area set to zero.",
+                        )
+                    )
+                    A = repeat(0, element_coordinate.shape[0])
+
+                area.extend(A)
+
+        return array(area)
+
     # cf Methods.Mesh.MeshMat.get_element_coordinate
-    if isinstance(get_element_coordinate, ImportError):
-        get_element_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method get_element_coordinate: "
-                    + str(get_element_coordinate)
-                )
-            )
+    def get_element_coordinate(
+        self,
+        element_indices: Optional[List[int]] = None,
+        element_name: Union[List[str], str] = [],
+    ) -> Dict[str, ndarray]:
+        """Return a connectivity matrix where the nodes indices are replaced by their coordinates.
+
+        Parameters
+        ----------
+        self : MeshMat
+            an MeshMat object
+        element_indices : list
+            list of the element indices to extract (optional)
+        element_name : list | str
+            One or several element names to be returned
+
+        Returns
+        -------
+        node_coordinates: Dict[str, ndarray]
+            Nodes coordinates of each selected element
+
+        """
+
+        element_name = _check_element_name(
+            element_mat_dict=self.element_dict, element_name=element_name
         )
-    else:
-        get_element_coordinate = get_element_coordinate
+
+        element_connectivity_dict, *_ = self.get_element(
+            element_indices=element_indices, element_name=element_name
+        )
+        node_coordinates = {}
+        for key, connectivity in element_connectivity_dict.items():
+            if connectivity.ndim > 1:
+                node_coordinates[key] = array(
+                    [self.get_node_coordinate(nodes) for nodes in connectivity]
+                )
+            else:
+                node_coordinates[key] = self.get_node_coordinate(connectivity)
+
+        return node_coordinates
+
     # cf Methods.Mesh.MeshMat.get_element_nb
-    if isinstance(get_element_nb, ImportError):
-        get_element_nb = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method get_element_nb: " + str(get_element_nb)
-                )
-            )
-        )
-    else:
-        get_element_nb = get_element_nb
+    # -*- coding: utf-8 -*-
+    def get_element_nb(self) -> int:
+        """Return the total number of element of all kind
+
+        Parameters
+        ----------
+        self : MeshMat
+            A MeshMat object
+
+        Returns
+        -------
+        nb_element : int
+            total number of element of all kind
+        """
+
+        nb_element = sum([element.nb_element for element in self.element_dict.values()])
+
+        return nb_element
+
     # cf Methods.Mesh.MeshMat.get_mesh_pv
-    if isinstance(get_mesh_pv, ImportError):
-        get_mesh_pv = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method get_mesh_pv: " + str(get_mesh_pv))
-            )
-        )
-    else:
-        get_mesh_pv = get_mesh_pv
+    def get_mesh_pv(
+        self, path: str = f"{RESULT_DIR}/temp.vtk", indices: Optional[List[int]] = None
+    ) -> UnstructuredGrid:
+        """Return the pyvista mesh object (or submesh).
+
+        Parameters
+        ----------
+        self : MeshMat
+            a MeshMat object
+        indices : list
+            list of the nodes to extract (optional)
+
+        Returns
+        -------
+        mesh : pyvista.core.pointset.UnstructuredGrid
+            a pyvista UnstructuredGrid object
+        """
+
+        # Numbering and indices compatible with pyvista
+        mesh_renum = self.copy()
+        mesh_renum.renum()
+
+        nodes = mesh_renum.get_node_coordinate()
+        cells, _, _ = mesh_renum.get_element()
+
+        cells_meshio = list()
+        for key in cells:
+            cells_meshio.append((key, cells[key]))
+            # Write .vtk file using meshio
+
+        # Make sure that the file exists
+        if not isdir(dirname(path)):
+            makedirs(dirname(path))
+
+        meshio.write_points_cells(filename=path, points=nodes, cells=cells_meshio)
+
+        # Read .vtk file with pyvista
+        mesh = pv.read(path)
+
+        # Extract submesh
+        if indices is not None:
+            mesh = mesh.extract_points(indices)
+
+        remove(path)
+
+        return mesh
+
     # cf Methods.Mesh.MeshMat.get_node2element
-    if isinstance(get_node2element, ImportError):
-        get_node2element = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method get_node2element: "
-                    + str(get_node2element)
-                )
-            )
+    def get_node2element(self, node_indice: int) -> np.ndarray:
+        """Return all element indices of elements containing a node.
+
+        Parameters
+        ----------
+        self : MeshMat
+            an MeshMat object
+        node_indice : int
+            a node indice
+
+        Returns
+        -------
+        element_indices: ndarray
+            Indices of elements containing the node
+
+        """
+        element_indices = np.concatenate(
+            [
+                element.get_node2element(node_indice)
+                for element in self.element_dict.values()
+            ]
         )
-    else:
-        get_node2element = get_node2element
+
+        return element_indices
+
     # cf Methods.Mesh.MeshMat.get_node_coordinate
-    if isinstance(get_node_coordinate, ImportError):
-        get_node_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method get_node_coordinate: "
-                    + str(get_node_coordinate)
-                )
-            )
-        )
-    else:
-        get_node_coordinate = get_node_coordinate
+    def get_node_coordinate(self, indices: Optional[ArrayLike] = None) -> np.ndarray:
+        """Return the coordinates of the node with provided indices.
+        If indices is not specified, returns every node coordinates
+
+        Parameters
+        ----------
+        indices : Optional[ArrayLike], optional
+            Indices of the targeted nodes. If None, return all.
+
+        Returns
+        -------
+        np.ndarray
+            nodes coordinates
+        """
+        if indices is None:
+            return self.node.coordinate
+        else:
+            return self.node.get_coord(indices)
+
     # cf Methods.Mesh.MeshMat.get_node_indice
-    if isinstance(get_node_indice, ImportError):
-        get_node_indice = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MeshMat method get_node_indice: " + str(get_node_indice)
-                )
-            )
-        )
-    else:
-        get_node_indice = get_node_indice
+    def get_node_indice(self, coordinates: Optional[ArrayLike] = None) -> ArrayLike:
+        """Return a matrix of nodes coordinates.
+
+        Parameters
+        ----------
+        self : Mesh
+            an Mesh object
+        coordinates: ndarray
+            nodes coordinates
+
+        Returns
+        -------
+        indices : ndarray
+            nodes indices
+
+        """
+
+        if coordinates is None:
+            return self.node.get_indice()
+        else:
+            raise NotImplementedError("Providing coordinates is not supported yet.")
+
     # cf Methods.Mesh.MeshMat.interface
-    if isinstance(interface, ImportError):
-        interface = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method interface: " + str(interface))
+    def interface(self, other_mesh: "MeshMat") -> "MeshMat":
+        """Define a MeshMat object corresponding to the exact intersection between two meshes (nodes must be in both meshes).
+
+        Parameters
+        ----------
+        self : MeshMat
+            a Mesh object
+        other_mesh : Mesh
+            an other Mesh object
+
+            Returns
+        -------
+        """
+
+        # Dynamic import
+        new_mesh = self.copy()
+        new_mesh._is_renum = True
+
+        new_mesh.element_dict = {
+            "line": ElementMat(
+                nb_node_per_element=2, gauss_point=FPGNSeg(), ref_element=RefSegmentP1()
             )
-        )
-    else:
-        interface = interface
+        }
+
+        for key in self.element_dict:
+            # Developer info: IDK if this code works with other than triangle elements. To be checked.
+            if self.element_dict[key].nb_node_per_element == 3:  # Triangle case
+                connect = self.element_dict[key].get_connectivity()
+                connect2 = other_mesh.element_dict[key].get_connectivity()
+
+                nb_elem_mesh1 = self.element_dict[key].nb_node_per_element
+                nb_elem_mesh2 = other_mesh.element_dict[key].nb_node_per_element
+
+                nodes_tags = np.unique(connect)
+                other_nodes_tags = np.unique(connect2)
+
+                # Find the nodes on the interface (they are in both in and out)
+                interface_nodes_tags = np.intersect1d(nodes_tags, other_nodes_tags)
+
+                # Extract elements which may belong to the interface
+                is_interface_node_mesh1 = np.isin(connect, interface_nodes_tags)
+                is_interface_node_mesh2 = np.isin(connect2, interface_nodes_tags)
+                idx_elem_mesh1 = np.nonzero(is_interface_node_mesh1.sum(axis=1) >= 2)
+                idx_elem_mesh2 = np.nonzero(is_interface_node_mesh2.sum(axis=1) >= 2)
+
+                element_mesh1 = connect[idx_elem_mesh1]
+                element_mesh2 = connect2[idx_elem_mesh2]
+
+                # Compute the edges connectivity of the selected elements by extracting
+                # (node[0],node[1]), (node[1],node[2]), ..., (node[-2],node[-1]), (node[-1], node[0])
+                line_connect_mesh1 = np.vstack(
+                    [
+                        *[
+                            element_mesh1[:, k : k + 2]
+                            for k in range(nb_elem_mesh1 - 1)
+                        ],
+                        element_mesh1[:, (-1, 0)],
+                    ]
+                )
+                line_connect_mesh2 = np.vstack(
+                    [
+                        *[
+                            element_mesh2[:, k : k + 2]
+                            for k in range(nb_elem_mesh2 - 1)
+                        ],
+                        element_mesh2[:, (-1, 0)],
+                    ]
+                )
+
+                # Iterate on mesh1 lines to check if the edge is also in mesh2
+                for line in line_connect_mesh1:
+                    if np.any(np.all(np.isin(line_connect_mesh2, line), axis=1)):
+                        new_mesh.add_element(line, "line")
+
+        return new_mesh
+
     # cf Methods.Mesh.MeshMat.renum
-    if isinstance(renum, ImportError):
-        renum = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method renum: " + str(renum))
-            )
-        )
-    else:
-        renum = renum
+    def renum(self):
+        """Restart point indices from 0, and update connectivity. Indices of elements stay the same.
+
+        Parameters
+        ----------
+        self : MeshMat
+            an Mesh object
+        """
+
+        if self._is_renum:
+            coord_init = self.get_node_coordinate()
+            node_indice = self.get_node_indice()
+            connect_dict, *_ = self.get_element()
+
+            if max(node_indice) != len(node_indice) - 1:
+                connect_dict, *_ = self.get_element()
+
+                nb_node_new = len(node_indice)
+                node_indice_new = np.linspace(
+                    0, nb_node_new - 1, nb_node_new, dtype=int
+                )
+                connect_dict_new = copy.deepcopy(connect_dict)
+                for inode in range(nb_node_new):
+                    for key in connect_dict:
+                        connect_dict_new[key][
+                            connect_dict[key] == node_indice[inode]
+                        ] = node_indice_new[inode]
+
+                self.node.indice = node_indice_new
+
+                for key in connect_dict:
+                    self.element_dict[key] = ElementMat(
+                        connectivity=connect_dict_new[key],
+                        nb_element=len(connect_dict_new[key]),
+                        nb_node_per_element=self.element_dict[key].nb_node_per_element,
+                        indice=self.element_dict[key].indice,
+                        ref_element=self.element_dict[key].ref_element,
+                        gauss_point=self.element_dict[key].gauss_point,
+                        scalar_product=self.element_dict[key].scalar_product,
+                    )
+
+            if len(coord_init) != len(node_indice):
+                self.clear_node()
+
+            self._is_renum = False
+
     # cf Methods.Mesh.MeshMat.save_vtk
-    if isinstance(save_vtk, ImportError):
-        save_vtk = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use MeshMat method save_vtk: " + str(save_vtk))
+    def save_vtk(self, save_path):
+        """Save mesh to a .vtk file
+
+        Parameters
+        ----------
+        self : Mesh
+            an Mesh object
+        save_path : str
+            full path including folder, name and extension of the file to save if save_path is not None
+
+        """
+        # Check if extension file is .vtk
+        save_path_L = save_path.split(".")
+        if len(save_path_L) == 1:
+            save_path = f"{save_path_L[0]}.vtk"
+        else:
+            if save_path_L[-1] != "vtk":
+                err_msg = f"Error save path extension is not .vtk"
+                log_error(
+                    self,
+                    err_msg,
+                    self.get_logger(),
+                    is_popup=False,
+                    is_warning=False,
+                )
+
+        # Check if save_path exist
+        save_path_2 = os.path.dirname(save_path)
+
+        if not os.path.isdir(save_path_2):
+            raise Exception(
+                f"Error while saving mesh to vtk, save path doesn't exist: {save_path}"
             )
-        )
-    else:
-        save_vtk = save_vtk
+        self.get_mesh_pv().save(save_path)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -484,7 +935,7 @@ class MeshMat(Mesh):
         MeshMat_dict = super(MeshMat, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         if self.element_dict is None:
             MeshMat_dict["element_dict"] = None
@@ -495,7 +946,7 @@ class MeshMat(Mesh):
                     MeshMat_dict["element_dict"][key] = obj.as_dict(
                         type_handle_ndarray=type_handle_ndarray,
                         keep_function=keep_function,
-                        **kwargs
+                        **kwargs,
                     )
                 else:
                     MeshMat_dict["element_dict"][key] = None
@@ -505,7 +956,7 @@ class MeshMat(Mesh):
             MeshMat_dict["node"] = self.node.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         MeshMat_dict["_is_renum"] = self._is_renum
         MeshMat_dict["sym"] = self.sym

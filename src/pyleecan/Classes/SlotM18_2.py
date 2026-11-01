@@ -4,6 +4,10 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotM18_2
 """
 
+# Inline fallback report:
+# These methods remain imported because their source or imports cannot be safely moved into this class.
+# - plot_schematics: import name 'Segment' refers to different sources (.Segment.Segment and ..Methods.Slot.SlotM18_2.plot_schematics.Segment)
+
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
@@ -17,71 +21,18 @@ from .Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Slot.SlotM18_2._comp_point_coordinate import _comp_point_coordinate
-except ImportError as error:
-    _comp_point_coordinate = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.build_geometry import build_geometry
-except ImportError as error:
-    build_geometry = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.build_geometry_active import build_geometry_active
-except ImportError as error:
-    build_geometry_active = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.check import check
-except ImportError as error:
-    check = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.comp_angle_opening import comp_angle_opening
-except ImportError as error:
-    comp_angle_opening = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.comp_height import comp_height
-except ImportError as error:
-    comp_height = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.comp_height_active import comp_height_active
-except ImportError as error:
-    comp_height_active = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.comp_surface import comp_surface
-except ImportError as error:
-    comp_surface = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.comp_surface_active import comp_surface_active
-except ImportError as error:
-    comp_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.get_surface_active import get_surface_active
-except ImportError as error:
-    get_surface_active = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.is_airgap_active import is_airgap_active
-except ImportError as error:
-    is_airgap_active = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.is_full_pitch_active import is_full_pitch_active
-except ImportError as error:
-    is_full_pitch_active = error
-
-try:
-    from ..Methods.Slot.SlotM18_2.plot_schematics import plot_schematics
-except ImportError as error:
-    plot_schematics = error
-
+from ..Methods.Slot.SlotM18_2.plot_schematics import plot_schematics
+from numpy import pi, exp
+from .Arc1 import Arc1
+from .Segment import Segment
+from .SurfLine import SurfLine
+from ..Functions.labels import (
+    WIND_LAB,
+    COND_BOUNDARY_PROP_LAB,
+    YSMR_LAB,
+    YSML_LAB,
+    YOKE_LAB,
+)
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -93,157 +44,437 @@ class SlotM18_2(Slot):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotM18_2._comp_point_coordinate
-    if isinstance(_comp_point_coordinate, ImportError):
-        _comp_point_coordinate = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method _comp_point_coordinate: "
-                    + str(_comp_point_coordinate)
-                )
-            )
-        )
-    else:
-        _comp_point_coordinate = _comp_point_coordinate
+    def _comp_point_coordinate(self):
+        """Compute the point coordinates needed to plot the Slot.
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        point_dict: dict
+            A dict of the slot coordinates
+        """
+
+        Rbo = self.get_Rbo()
+
+        sp = 2 * pi / self.Zs
+        Z1 = Rbo * exp(-1j * sp / 2)
+        ZM1 = Rbo * exp(-1j * sp / 2)
+
+        if self.is_outwards():
+            ZM2 = (Rbo - self.H0_bore) * exp(-1j * sp / 2)
+            ZM3 = (Rbo - self.H0_bore - self.H0_gap) * exp(-1j * sp / 2)
+        else:  # inward slot
+            ZM2 = (Rbo + self.H0_bore) * exp(-1j * sp / 2)
+            ZM3 = (Rbo + self.H0_bore + self.H0_gap) * exp(-1j * sp / 2)
+
+        point_dict = dict()
+        point_dict["Z1"] = Z1
+        point_dict["ZM1"] = ZM1
+        point_dict["ZM2"] = ZM2
+        point_dict["ZM3"] = ZM3
+        # symetry
+        point_dict["Z2"] = Z1.conjugate()
+        point_dict["ZM4"] = ZM3.conjugate()
+        point_dict["ZM5"] = ZM2.conjugate()
+        point_dict["ZM6"] = ZM1.conjugate()
+
+        return point_dict
+
     # cf Methods.Slot.SlotM18_2.build_geometry
-    if isinstance(build_geometry, ImportError):
-        build_geometry = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method build_geometry: " + str(build_geometry)
-                )
-            )
-        )
-    else:
-        build_geometry = build_geometry
+    def build_geometry(self):
+        """Compute the curve (Line) needed to plot the Slot.
+        The ending point of a curve is the starting point of the next curve in
+        the list
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        curve_list: list
+            A list of one Arc
+
+        """
+        Rbo = self.get_Rbo()
+        point_dict = self._comp_point_coordinate()
+        Z1 = point_dict["Z1"]
+        Z2 = point_dict["Z2"]
+
+        # Creation of curve
+        curve_list = list()
+        curve_list.append(Arc1(Z1, Z2, Rbo, is_trigo_direction=True))
+
+        return curve_list
+
     # cf Methods.Slot.SlotM18_2.build_geometry_active
-    if isinstance(build_geometry_active, ImportError):
-        build_geometry_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method build_geometry_active: "
-                    + str(build_geometry_active)
+    def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
+        """Split the slot active area in several zone
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+        Nrad : int
+            Number of radial layer
+        Ntan : int
+            Number of tangentiel layer
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_list: list
+            List of surface delimiting the active zone
+
+        """
+
+        # get the name of the lamination
+        lam_label = self.parent.get_label()
+        Rbo = self.get_Rbo()
+
+        if Nrad == 1 and Ntan == 1:
+            surf_list = [self.get_surface_active()]
+            surf_list[0].label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
+        elif Nrad == 2 and Ntan == 1:
+            point_dict = self._comp_point_coordinate()
+            ZM1 = point_dict["ZM1"]
+            ZM2 = point_dict["ZM2"]
+            ZM3 = point_dict["ZM3"]
+            ZM4 = point_dict["ZM4"]
+            ZM5 = point_dict["ZM5"]
+            ZM6 = point_dict["ZM6"]
+
+            # Bore Magnet
+            surf_list = list()
+            curve_list = list()
+            curve_list.append(
+                Segment(ZM1, ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
+            )
+
+            if self.is_outwards():
+                curve_list.append(
+                    Arc1(ZM2, ZM5, (Rbo - self.H0_bore), is_trigo_direction=True)
+                )
+            else:
+                curve_list.append(
+                    Arc1(ZM2, ZM5, (Rbo + self.H0_bore), is_trigo_direction=True)
+                )
+
+            curve_list.append(
+                Segment(ZM5, ZM6, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
+            )
+
+            if self.is_outwards():
+                curve_list.append(Arc1(ZM6, ZM1, -Rbo, is_trigo_direction=False))
+            else:
+                curve_list.append(Arc1(ZM6, ZM1, -Rbo, is_trigo_direction=False))
+            # If no lamination, BC is required on bore
+            curve_list[-1].prop_dict = {COND_BOUNDARY_PROP_LAB: YOKE_LAB}
+
+            Zmid = (abs(ZM1) + abs(ZM2)) / 2
+
+            surf_list.append(
+                SurfLine(
+                    line_list=curve_list,
+                    label=lam_label + "_" + WIND_LAB + "_R0-T0-S0",
+                    point_ref=Zmid,
                 )
             )
-        )
-    else:
-        build_geometry_active = build_geometry_active
+
+            # Airgap magnet
+            curve_list = list()
+            curve_list.append(
+                Segment(ZM2, ZM3, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
+            )
+
+            if self.is_outwards():
+                curve_list.append(
+                    Arc1(
+                        ZM3,
+                        ZM4,
+                        (Rbo - self.H0_bore - self.H0_gap),
+                        is_trigo_direction=True,
+                    )
+                )
+            else:
+                curve_list.append(
+                    Arc1(
+                        ZM3,
+                        ZM4,
+                        (Rbo + self.H0_bore + self.H0_gap),
+                        is_trigo_direction=True,
+                    )
+                )
+
+            curve_list.append(
+                Segment(ZM4, ZM5, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
+            )
+
+            if self.is_outwards():
+                curve_list.append(
+                    Arc1(ZM5, ZM2, -Rbo + self.H0_bore, is_trigo_direction=False)
+                )
+            else:
+                curve_list.append(
+                    Arc1(ZM5, ZM2, -Rbo - self.H0_bore, is_trigo_direction=False)
+                )
+
+            Zmid = (abs(ZM2) + abs(ZM3)) / 2
+
+            surf_list.append(
+                SurfLine(
+                    line_list=curve_list,
+                    label=lam_label + "_" + WIND_LAB + "_R1-T0-S0",
+                    point_ref=Zmid,
+                )
+            )
+        else:
+            raise Exception(
+                "Error Nrad=" + str(Nrad) + ", Ntan=" + str(Ntan) + ", is not available"
+            )
+
+        for surf in surf_list:
+            surf.rotate(alpha)
+            surf.translate(delta)
+        return surf_list
+
     # cf Methods.Slot.SlotM18_2.check
-    if isinstance(check, ImportError):
-        check = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use SlotM18_2 method check: " + str(check))
-            )
-        )
-    else:
-        check = check
+    def check(self):
+        """Check that the SlotM18_2 object is correct
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        None
+        """
+        pass
+
     # cf Methods.Slot.SlotM18_2.comp_angle_opening
-    if isinstance(comp_angle_opening, ImportError):
-        comp_angle_opening = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method comp_angle_opening: "
-                    + str(comp_angle_opening)
-                )
-            )
-        )
-    else:
-        comp_angle_opening = comp_angle_opening
+    def comp_angle_opening(self):
+        """Compute the average opening angle of the Slot
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        alpha: float
+            Average opening angle of the slot [rad]
+
+        """
+
+        return 2 * pi / self.Zs
+
     # cf Methods.Slot.SlotM18_2.comp_height
-    if isinstance(comp_height, ImportError):
-        comp_height = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method comp_height: " + str(comp_height)
-                )
-            )
-        )
-    else:
-        comp_height = comp_height
+    def comp_height(self):
+        """Compute the height of the Slot.
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        Htot: float
+            Height of the slot [m]
+
+        """
+
+        return 0
+
     # cf Methods.Slot.SlotM18_2.comp_height_active
-    if isinstance(comp_height_active, ImportError):
-        comp_height_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method comp_height_active: "
-                    + str(comp_height_active)
-                )
-            )
-        )
-    else:
-        comp_height_active = comp_height_active
+    def comp_height_active(self):
+        """Compute the height of the active area
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        Hwind: float
+            Height of the active area [m]
+        """
+
+        return self.H0_bore + self.H0_gap
+
     # cf Methods.Slot.SlotM18_2.comp_surface
-    if isinstance(comp_surface, ImportError):
-        comp_surface = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method comp_surface: " + str(comp_surface)
-                )
-            )
-        )
-    else:
-        comp_surface = comp_surface
+    def comp_surface(self):
+        """Compute the Slot total surface (by analytical computation).
+        Caution, the bottom of the Slot is an Arc
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        S: float
+            Slot total surface [m**2]
+
+        """
+
+        return 0
+
     # cf Methods.Slot.SlotM18_2.comp_surface_active
-    if isinstance(comp_surface_active, ImportError):
-        comp_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method comp_surface_active: "
-                    + str(comp_surface_active)
-                )
-            )
-        )
-    else:
-        comp_surface_active = comp_surface_active
+    def comp_surface_active(self):
+        """Compute the Slot inner active surface (by analytical computation)
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        Swind: float
+            Slot inner active surface [m**2]
+
+        """
+
+        point_dict = self._comp_point_coordinate()
+        ZM1 = point_dict["ZM1"]
+        ZM3 = point_dict["ZM3"]
+
+        R1 = abs(ZM1)
+        R2 = abs(ZM3)
+
+        S1 = pi * R1**2 / self.Zs
+        S2 = pi * R2**2 / self.Zs
+
+        return abs(S1 - S2)
+
     # cf Methods.Slot.SlotM18_2.get_surface_active
-    if isinstance(get_surface_active, ImportError):
-        get_surface_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method get_surface_active: "
-                    + str(get_surface_active)
+    def get_surface_active(self, alpha=0, delta=0):
+        """Return the full active surface
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+        alpha : float
+            float number for rotation (Default value = 0) [rad]
+        delta : complex
+            complex number for translation (Default value = 0)
+
+        Returns
+        -------
+        surf_act: Surface
+            Surface corresponding to the Active Area
+        """
+
+        # get the name of the lamination
+        st = self.get_name_lam()
+        Rbo = self.get_Rbo()
+
+        point_dict = self._comp_point_coordinate()
+        ZM1 = point_dict["ZM1"]
+        ZM2 = point_dict["ZM3"]
+        ZM3 = point_dict["ZM4"]
+        ZM4 = point_dict["ZM6"]
+
+        curve_list = list()
+        curve_list.append(Segment(ZM1, ZM2))
+
+        if self.is_outwards():
+            curve_list.append(
+                Arc1(
+                    ZM2,
+                    ZM3,
+                    (Rbo - self.H0_bore - self.H0_gap),
+                    is_trigo_direction=True,
                 )
             )
+        else:
+            curve_list.append(
+                Arc1(
+                    ZM2,
+                    ZM3,
+                    (Rbo + self.H0_bore + self.H0_gap),
+                    is_trigo_direction=True,
+                )
+            )
+
+        curve_list.append(Segment(ZM3, ZM4))
+
+        if self.is_outwards():
+            curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
+        else:
+            curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
+
+        Zmid = (abs(ZM1) + abs(ZM3)) / 2
+
+        surface = SurfLine(
+            line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
         )
-    else:
-        get_surface_active = get_surface_active
+
+        # Apply transformation
+        surface.rotate(alpha)
+        surface.translate(delta)
+
+        # init prop_dict
+        for line in surface.line_list:
+            line.prop_dict = dict()
+
+        return surface
+
     # cf Methods.Slot.SlotM18_2.is_airgap_active
-    if isinstance(is_airgap_active, ImportError):
-        is_airgap_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method is_airgap_active: "
-                    + str(is_airgap_active)
-                )
-            )
-        )
-    else:
-        is_airgap_active = is_airgap_active
+    def is_airgap_active(self):
+        """Return True if a part or the full active surface is in the airgap
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        is_airgap_active : bool
+            True if a part or the full active surface is in the airgap
+        """
+
+        return True
+
     # cf Methods.Slot.SlotM18_2.is_full_pitch_active
-    if isinstance(is_full_pitch_active, ImportError):
-        is_full_pitch_active = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method is_full_pitch_active: "
-                    + str(is_full_pitch_active)
-                )
-            )
-        )
-    else:
-        is_full_pitch_active = is_full_pitch_active
+    def is_full_pitch_active(self):
+        """Returns True if the active surface angular width
+        matches the slot pitch (like SlotM17 or SlotM18)
+        (used to set Boundary conditions in FEMM airgap)
+
+        Parameters
+        ----------
+        self : SlotM18_2
+            A SlotM18_2 object
+
+        Returns
+        -------
+        is_full_pitch_active : bool
+            True if the active surface angular width matches the slot pitch
+        """
+
+        return True
+
     # cf Methods.Slot.SlotM18_2.plot_schematics
-    if isinstance(plot_schematics, ImportError):
-        plot_schematics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use SlotM18_2 method plot_schematics: "
-                    + str(plot_schematics)
-                )
-            )
-        )
-    else:
-        plot_schematics = plot_schematics
+    plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

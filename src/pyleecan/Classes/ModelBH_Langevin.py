@@ -17,16 +17,9 @@ from .ModelBH import ModelBH
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Material.ModelBH_Langevin.BH_func import BH_func
-except ImportError as error:
-    BH_func = error
-
-try:
-    from ..Methods.Material.ModelBH_Langevin.get_BH import get_BH
-except ImportError as error:
-    get_BH = error
-
+from numpy import cosh, sinh, ndarray, argwhere, isnan as np_isnan
+from math import isnan
+import numpy as np
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -37,27 +30,77 @@ class ModelBH_Langevin(ModelBH):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Material.ModelBH_Langevin.BH_func
-    if isinstance(BH_func, ImportError):
-        BH_func = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ModelBH_Langevin method BH_func: " + str(BH_func)
-                )
-            )
-        )
-    else:
-        BH_func = BH_func
+    def BH_func(self, H, Bs, a):
+        """
+        Return the B from H according to Langevin model.
+
+        Parameters
+        ----------
+        self : ModelBH_Langevin
+            a ModelBH_Langevin object
+
+        Returns
+        -------
+        B: numpy.ndarray
+            B(H) values
+
+        """
+        B = Bs * (cosh(H / a) / sinh(H / a) - a / H)
+
+        if isinstance(B, ndarray):
+            B[argwhere(np_isnan(B))] = Bs
+            B[argwhere(H == 0)] = 0
+        elif isnan(B):
+            if H == 0:
+                B = 0
+            else:
+                B = Bs
+
+        return B
+
     # cf Methods.Material.ModelBH_Langevin.get_BH
-    if isinstance(get_BH, ImportError):
-        get_BH = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use ModelBH_Langevin method get_BH: " + str(get_BH))
-            )
-        )
-    else:
-        get_BH = get_BH
+    def get_BH(self):
+        """
+        Return the B(H) curve of the material according to Langevin model.
+
+        Parameters
+        ----------
+        self : ModelBH
+            a ModelBH object
+
+        Returns
+        -------
+        BH: numpy.ndarray
+            B(H) values (two colums matrix: H and B(H))
+
+        """
+        H0 = 1
+        Bmax = self.Bmax
+        if self.Bs is not None and self.a is not None:
+            if Bmax is not None:
+                delta = self.delta
+                Hmax = H0
+                iteration = 0
+                new_B = 0
+                while new_B < Bmax and iteration < 1000:
+                    Hmax += delta
+                    iteration += 1
+                    new_B = self.BH_func(Hmax, self.Bs, self.a)
+
+            else:
+                Hmax = self.Hmax
+
+            if Hmax is not None:
+                H = np.linspace(H0, Hmax, 200)
+                B = self.BH_func(H, self.Bs, self.a)
+
+                BH = np.zeros((len(H), 2))
+                BH[:, 0] = H
+                BH[:, 1] = B
+
+                return BH
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -17,26 +17,7 @@ from .ParamExplorer import ParamExplorer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.ParamExplorerInterval.get_max import get_max
-except ImportError as error:
-    get_max = error
-
-try:
-    from ..Methods.Simulation.ParamExplorerInterval.get_min import get_min
-except ImportError as error:
-    get_min = error
-
-try:
-    from ..Methods.Simulation.ParamExplorerInterval.get_N import get_N
-except ImportError as error:
-    get_N = error
-
-try:
-    from ..Methods.Simulation.ParamExplorerInterval.get_value import get_value
-except ImportError as error:
-    get_value = error
-
+from numpy import linspace
 
 from ntpath import basename
 from os.path import isfile
@@ -52,52 +33,83 @@ class ParamExplorerInterval(ParamExplorer):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.ParamExplorerInterval.get_max
-    if isinstance(get_max, ImportError):
-        get_max = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerInterval method get_max: " + str(get_max)
-                )
-            )
-        )
-    else:
-        get_max = get_max
+    def get_max(self):
+        """Return the maximum value of the ParamExplorer
+
+        Parameters
+        ----------
+        self : ParamExplorerInterval
+            A ParamExplorerInterval object
+
+        Returns
+        -------
+        max_value: float
+            Maximum value of the ParamExplorer
+        """
+
+        if self.type_value == 0:  # float
+            return self.max_value
+        else:
+            return int(self.max_value)
+
     # cf Methods.Simulation.ParamExplorerInterval.get_min
-    if isinstance(get_min, ImportError):
-        get_min = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerInterval method get_min: " + str(get_min)
-                )
-            )
-        )
-    else:
-        get_min = get_min
+    def get_min(self):
+        """Return the minimum value of the ParamExplorer
+
+        Parameters
+        ----------
+        self : ParamExplorerInterval
+            A ParamExplorerInterval object
+
+        Returns
+        -------
+        min_value: float
+            Minimum value of the ParamExplorer
+        """
+
+        if self.type_value == 0:  # float
+            return self.min_value
+        else:
+            return int(self.min_value)
+
     # cf Methods.Simulation.ParamExplorerInterval.get_N
-    if isinstance(get_N, ImportError):
-        get_N = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerInterval method get_N: " + str(get_N)
-                )
-            )
-        )
-    else:
-        get_N = get_N
+    def get_N(self):
+        """Return the number of value of the ParamExplorer
+
+        Parameters
+        ----------
+        self : ParamExplorerInterval
+            A ParamExplorerInterval object
+
+        Returns
+        -------
+        N: int
+            number of value of the ParamExplorer
+        """
+
+        return self.N
+
     # cf Methods.Simulation.ParamExplorerInterval.get_value
-    if isinstance(get_value, ImportError):
-        get_value = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use ParamExplorerInterval method get_value: "
-                    + str(get_value)
-                )
+    def get_value(self):
+        """Return parameters values"""
+        assert self.min_value < self.max_value
+
+        if self.type_value_gen == 0:  # linspace
+            if self.type_value == 0:
+                dtype = float
+            elif self.type_value == 1:
+                dtype = int
+            value = linspace(
+                start=self.min_value,
+                stop=self.max_value,
+                num=self.N,
+                endpoint=True,
+                dtype=dtype,
             )
-        )
-    else:
-        get_value = get_value
+            value.tolist()
+        return value
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

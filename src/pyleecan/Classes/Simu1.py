@@ -17,11 +17,7 @@ from .Simulation import Simulation
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.Simu1.run_single import run_single
-except ImportError as error:
-    run_single = error
-
+from ..Methods.Simulation.Input import InputError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -33,14 +29,49 @@ class Simu1(Simulation):
     VERSION = 1
 
     # cf Methods.Simulation.Simu1.run_single
-    if isinstance(run_single, ImportError):
-        run_single = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Simu1 method run_single: " + str(run_single))
-            )
-        )
-    else:
-        run_single = run_single
+    def run_single(self):
+        """Run the simulation
+
+        Parameters
+        ----------
+        self : Simu1
+            A Simu1 object
+
+        """
+        logger = self.get_logger()
+
+        if self.parent is None:
+            raise InputError("ERROR: Simulation object must be inside an Output object")
+        output = self.parent
+        output.geo = self.machine.comp_output_geo()
+
+        # Init the input of the first module
+        self.input.gen_input()
+
+        # Run the modules
+        if self.elec is not None:
+            self.elec.run()
+        if self.mag is not None:
+            self.mag.run()
+
+        if self.force is not None:
+            self.force.run()
+        # if self.HT is not None:
+        #     self.HT.run()
+        if self.struct is not None:
+            self.struct.run()
+        # if self.ac is not None:
+        #     self.ac.run()
+
+        if self.loss is not None:
+            self.loss.run()
+        # Running postprocessings
+
+        if self.postproc_list:
+            logger.info("Running simulation postprocessings...")
+            for postproc in self.postproc_list:
+                postproc.run(output)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

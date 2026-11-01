@@ -17,16 +17,7 @@ from .DataND import DataND
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.SciDataTool.DataDual.get_along import get_along
-except ImportError as error:
-    get_along = error
-
-try:
-    from ..Methods.SciDataTool.DataDual.get_axes import get_axes
-except ImportError as error:
-    get_axes = error
-
+from ..Methods.SciDataTool.DataDual import is_freq
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -38,25 +29,96 @@ class DataDual(DataND):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.SciDataTool.DataDual.get_along
-    if isinstance(get_along, ImportError):
-        get_along = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataDual method get_along: " + str(get_along))
-            )
+    def get_along(
+        self,
+        *args,
+        unit="SI",
+        is_norm=False,
+        axis_data=[],
+        is_squeeze=True,
+        is_magnitude=False,
+        corr_unit=None,
+    ):
+        """Returns the ndarray of the field, using conversions and symmetries if needed.
+        Parameters
+        ----------
+        self: Data
+            a Data object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        unit: str
+            Unit requested by the user ("SI" by default)
+        is_norm: bool
+            Boolean indicating if the field must be normalized (False by default)
+        axis_data: list
+            list of ndarray corresponding to user-input data
+        Returns
+        -------
+        list of 1Darray of axes values, ndarray of field values
+        """
+
+        # Get best attributes (time/space or fourier)
+        if is_freq(*args):
+            if hasattr(self, "values_df") and self.values_df is not None:
+                # Replace axes and values with fourier ones
+                self.axes = self.axes_df
+                self.values = self.values_df
+            else:
+                # Replace axes and values with time/space ones
+                self.axes = self.axes_dt
+                self.values = self.values_dt
+        else:
+            if hasattr(self, "values_dt") and self.values_dt is not None:
+                # Replace axes and values with time/space ones
+                self.axes = self.axes_dt
+                self.values = self.values_dt
+            else:
+                # Replace axes and values with fourier ones
+                self.axes = self.axes_df
+                self.values = self.values_df
+
+        # Call DataND.get_along()
+        return super(type(self), self).get_along(
+            *args,
+            unit=unit,
+            is_norm=is_norm,
+            axis_data=axis_data,
+            is_squeeze=is_squeeze,
+            is_magnitude=is_magnitude,
+            corr_unit=corr_unit,
         )
-    else:
-        get_along = get_along
+
     # cf Methods.SciDataTool.DataDual.get_axes
-    if isinstance(get_axes, ImportError):
-        get_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataDual method get_axes: " + str(get_axes))
-            )
-        )
-    else:
-        get_axes = get_axes
+    def get_axes(self, *args):
+        """Returns the list of axes.
+        Parameters
+        ----------
+        self: DataDual
+            a DataDual object
+        args : list
+            list of axes names
+        Returns
+        -------
+        axes_list : list of axes (Data)
+        """
+
+        if self.axes is None:
+            axes = self.axes_dt + self.axes_df
+        else:
+            axes = self.axes
+
+        if len(args) > 0:
+            axes_list = []
+            for name in args:
+                for axis in axes:
+                    if axis.name == name:
+                        axes_list.append(axis)
+        else:
+            axes_list = axes
+
+        return axes_list
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -279,7 +341,7 @@ class DataDual(DataND):
         DataDual_dict = super(DataDual, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         if self.axes_dt is None:
             DataDual_dict["axes_dt"] = None
@@ -291,7 +353,7 @@ class DataDual(DataND):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs
+                            **kwargs,
                         )
                     )
                 else:
@@ -319,7 +381,7 @@ class DataDual(DataND):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs
+                            **kwargs,
                         )
                     )
                 else:

@@ -17,26 +17,16 @@ from ._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-try:
-    from ..Methods.Simulation.Electrical.comp_power import comp_power
-except ImportError as error:
-    comp_power = error
-
-try:
-    from ..Methods.Simulation.Electrical.comp_torque import comp_torque
-except ImportError as error:
-    comp_torque = error
-
-try:
-    from ..Methods.Simulation.Electrical.gen_drive import gen_drive
-except ImportError as error:
-    gen_drive = error
-
-try:
-    from ..Methods.Simulation.Electrical.run import run
-except ImportError as error:
-    run = error
-
+from numpy import pi, angle
+import numpy as np
+from .Data1D import Data1D
+from .DataTime import DataTime
+from .EEC_SCIM import EEC_SCIM
+from .EEC_PMSM import EEC_PMSM
+from .MachineSCIM import MachineSCIM
+from .MachineSIPMSM import MachineSIPMSM
+from .MachineIPMSM import MachineIPMSM
+from ..Methods.Simulation.Input import InputError
 
 from numpy import isnan
 from ._check import InitUnKnowClassError
@@ -47,47 +37,234 @@ class Electrical(FrozenClass):
 
     VERSION = 1
 
-    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.Electrical.comp_power
-    if isinstance(comp_power, ImportError):
-        comp_power = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Electrical method comp_power: " + str(comp_power)
-                )
-            )
-        )
-    else:
-        comp_power = comp_power
+    def comp_power(self, out_dict, machine):
+        """Compute the electrical average power
+
+        Parameters
+        ----------
+        self : Electrical
+            an Electrical object
+        out_dict : dict
+            Dict containing all magnetic quantities that have been calculated in comp_parameters of EEC
+        """
+
+        qs = machine.stator.winding.qs
+        Id, Iq = out_dict["Id"], out_dict["Iq"]
+        Ud, Uq = out_dict["Ud"], out_dict["Uq"]
+
+        # All quantities are in RMS
+        Pem_av = qs * (Ud * Id + Uq * Iq)
+
+        out_dict["Pem_av"] = Pem_av
+
+        return out_dict
+
     # cf Methods.Simulation.Electrical.comp_torque
-    if isinstance(comp_torque, ImportError):
-        comp_torque = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Electrical method comp_torque: " + str(comp_torque)
-                )
-            )
-        )
-    else:
-        comp_torque = comp_torque
+    def comp_torque(self, out_dict, N0):
+        """Compute the electrical average torque
+
+        Parameters
+        ----------
+        self : Electrical
+            an Electrical object
+        out_dict : dict
+            Dict containing all magnetic quantities that have been calculated in comp_parameters of EEC
+        """
+
+        omega = 2 * pi * N0 / 60
+
+        P = out_dict["Pem_av"]
+
+        Tem_av = (P - out_dict["Pj_losses"]) / omega
+
+        out_dict["Tem_av"] = Tem_av
+
+        return out_dict
+
     # cf Methods.Simulation.Electrical.gen_drive
-    if isinstance(gen_drive, ImportError):
-        gen_drive = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Electrical method gen_drive: " + str(gen_drive))
-            )
+    def gen_drive(self, output):
+        """Generate the drive for the equivalent electrical circuit (only PWM drive for now)
+
+        Parameters
+        ----------
+        self : Electrical
+            an Electrical object
+        output : Output
+            an Output object
+        """
+
+        self.get_logger().info("Calculating PWM voltage")
+
+        p = output.simu.machine.get_pole_pair_number()
+
+        # Get PWM object
+        PWM = output.elec.PWM
+
+        if PWM.U0 in [0, None]:
+            raise Exception("Cannot calculate PWM voltage if PWM.U0 is None or 0")
+
+        # Get operating point
+        OP = output.elec.OP
+
+        if PWM.is_star:
+            # Calculate modulation index to account for quick variations
+            M_I = PWM.get_modulation_index()
+
+            # Number of points depends on modulation index
+            PWM.fs /= max([M_I, 0.05])
+
+        # Number of points depends on modulation index
+        Nt_tot = int(PWM.fs * PWM.duration)
+
+        # Get time axis
+        input_pwm = type(output.simu.input)(
+            OP=OP,
+            Nt_tot=Nt_tot,
+            t_final=PWM.duration,
+            current_dir=output.elec.current_dir,
+            rot_dir=output.geo.rot_dir,
         )
-    else:
-        gen_drive = gen_drive
+        Time_PWM = input_pwm.comp_axis_time(p, per_t=1, is_antiper_t=False)
+
+        # Generate PWM signal
+        Uabc = PWM.get_data(is_norm=False, Time=Time_PWM)[0]
+
+        # Get phase axis
+        stator_label = output.simu.machine.stator.get_label()
+        Phase = output.elec.axes_dict["phase_" + stator_label]
+
+        # Create DataTime object
+        Us_dt = DataTime(
+            name="Stator voltage",
+            symbol="U_s",
+            unit="V",
+            axes=[Time_PWM, Phase],
+            values=Uabc,
+        )
+
+        # Get DataFreq object and frequency axis by taking FFT
+        Us_df = Us_dt.get_data_along("freqs<" + str(self.freq_max), "phase")
+        Freqs = Us_df.axes[0]
+        freqs = Freqs.get_values()
+
+        # Filter frequencies with low amplitude and create new frequency axis
+        Un_norm = np.linalg.norm(Us_df.values, axis=-1)
+        Iamp_n = Un_norm > 1e-2 * Un_norm.max()
+        Us_df.axes[0] = Data1D(
+            name=Freqs.name,
+            unit=Freqs.unit,
+            symbol=Freqs.symbol,
+            values=freqs[Iamp_n],
+            normalizations=Freqs.normalizations,
+            is_components=False,
+            symmetries=Freqs.symmetries,
+        )
+        Us_df.values = Us_df.values[Iamp_n, :]
+
+        # Store voltage spectrum in OutElec
+        output.elec.Us = Us_dt.to_datadual(datafreq=Us_df)
+
+        # Store Time_PWM axis in axes_dict
+        output.elec.axes_dict["time"] = Time_PWM
+
     # cf Methods.Simulation.Electrical.run
-    if isinstance(run, ImportError):
-        run = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use Electrical method run: " + str(run))
+    def run(self):
+        """Run the Electrical module"""
+        if self.parent is None:
+            raise InputError(
+                "The Electrical object must be in a Simulation object to run"
             )
-        )
-    else:
-        run = run
+        if self.parent.parent is None:
+            raise InputError("The Simulation object must be in an Output object to run")
+
+        self.get_logger().info("Starting Electric module")
+
+        output = self.parent.parent
+
+        machine = output.simu.machine
+
+        if self.eec is None:
+            # Init EEC depending on machine type
+            if isinstance(machine, MachineSCIM):
+                self.eec = EEC_SCIM()
+            elif isinstance(machine, (MachineSIPMSM, MachineIPMSM)):
+                self.eec = EEC_PMSM()
+        else:
+            # Check that EEC is consistent with machine type
+            if isinstance(machine, MachineSCIM) and not isinstance(self.eec, EEC_SCIM):
+                raise Exception(
+                    "Cannot run Electrical model if machine is SCIM and eec is not EEC_SCIM"
+                )
+            elif isinstance(machine, (MachineSIPMSM, MachineIPMSM)) and not isinstance(
+                self.eec, EEC_PMSM
+            ):
+                raise Exception(
+                    "Cannot run Electrical model if machine is PMSM and eec is not EEC_PMSM"
+                )
+
+        # Initialize all the parameters of the EEC
+        eec_out = self.eec.copy()  # Keep reference
+        output.elec.eec = eec_out  # For parent setup
+        # EEC will be computed on:
+        eec_out.Tsta = self.Tsta
+        eec_out.Trot = self.Trot
+        eec_out.OP = output.elec.OP
+
+        # LUT should contains a full EEC at given OP/T
+        if self.LUT_enforced is not None:
+            eec_out.clear_parameters()  # Remove eec enforced parameters to use LUT ones
+            eec_out.type_skin_effect = self.LUT_enforced.simu.elec.eec.type_skin_effect
+            eec_out.update_from_ref(self.LUT_enforced)
+        else:
+            # Compute/Enforce parameters of the electrical equivalent circuit
+            eec_out.comp_parameters()
+
+        if output.elec.PWM is None:
+            # Solve the electrical equivalent circuit for fundamental only
+            out_dict = eec_out.solve()
+        else:
+            # Generate voltage signal (PWM signal generation is the only strategy for now)
+            if output.elec.PWM.U0 is None:
+                # Current driven mode
+                # Solve the electrical equivalent circuit for fundamental current
+                # to get fundamental phase voltage
+                out_dict = eec_out.solve()
+                U0c = out_dict["Ud"] + 1j * out_dict["Uq"]
+                output.elec.PWM.U0 = abs(U0c)
+                output.elec.PWM.Phi0 = angle(U0c)
+
+                # Calculate PWM voltage
+                self.gen_drive(output)
+
+            else:
+                # Voltage driven mode
+                # Calculate PWM voltage first
+                self.gen_drive(output)
+
+                # Solve the electrical equivalent circuit for fundamental voltage
+                # to get fundamental current
+                out_dict = eec_out.solve()
+
+            # Solve for each voltage harmonics in case of PWM
+            out_dict["Is_PWM"] = eec_out.solve_PWM(
+                output,
+                is_skin_effect_inductance=self.is_skin_effect_inductance
+                and self.type_skin_effect != 0,
+            )
+
+        # Compute losses due to Joule effects
+        out_dict = eec_out.comp_joule_losses(out_dict, machine)
+
+        # Compute electromagnetic power
+        out_dict = self.comp_power(out_dict, machine)
+
+        # Compute torque
+        self.comp_torque(out_dict, output.elec.OP.get_N0())
+
+        # Store electrical quantities contained in out_dict in OutElec, as Data object if necessary
+        output.elec.store(out_dict)
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
