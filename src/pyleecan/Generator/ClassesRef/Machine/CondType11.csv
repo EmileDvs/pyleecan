@@ -1,6 +1,6 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-Hwire,m,"cf schematics, single strand height without insulation",0,float,1.00E-02,0,,
-Wwire,m,"cf schematics, single strand width without insulation",0,float,1.00E-02,0,,
+Hwire,m,"cf schematics, single strand height without insulation",0,float,0.01,0,,
+Wwire,m,"cf schematics, single strand width without insulation",0,float,0.01,0,,
 Nwppc_rad,-,number of form wound strands in parallel per conductor along radial (vertical) direction,0,int,1,1,,
 Nwppc_tan,-,number of form wound strands in parallel per conductor along tangential (horizontal) direction,0,int,1,1,,
 Wins_wire,m,"(advanced) cf schematics, winding strand insulation thickness",0,float,0,0,,

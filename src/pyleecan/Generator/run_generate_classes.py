@@ -1,3 +1,4 @@
+from pyleecan.Generator.write_fct import write_file
 import json
 import shutil
 import subprocess
@@ -151,6 +152,10 @@ def run_generate_classes(
         doc_dir, is_internal=False, in_path=int_dir, soft_name=soft_name
     )
 
+    for class_name, class_dict in gen_dict.items():
+        # Write class into csv format following latest template
+        write_file(class_dict)
+
     generate_code(
         main_dir, gen_dict, soft_name=soft_name, is_log=is_log, class_list=class_list
     )
@@ -225,7 +230,7 @@ def run_generate_classes(
 
 if __name__ == "__main__":
     # To generate all classes
-    # run_generate_classes()
+    run_generate_classes()
 
     # list_csv = [
     #     "Data.csv",
@@ -246,7 +251,7 @@ if __name__ == "__main__":
     #     "VectorField.csv",
     # ]
 
-    list_csv = ["SolutionData.csv", "LUTdq.csv", "OutElec.csv", "OutMag.csv"]
+    # list_csv = ["SolutionData.csv", "LUTdq.csv", "OutElec.csv", "OutMag.csv"]
 
     # To generate only one class
-    run_generate_classes(class_list=list_csv)
+    # run_generate_classes(class_list=list_csv)

@@ -1,7 +1,7 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-rotor,,Machine's Rotor,,LamHole,,,
-stator,,Machine's Stator,,LamSlotWind,,,
-,
-Package,Inherit,Methods,Constant Name,Constant Value,Class description
-Machine,MachineSync,check,VERSION,1,Synchronous Reluctance Machine
-,,get_machine_type,,,
+rotor,,Machine's Rotor,,LamHole,,,,
+stator,,Machine's Stator,,LamSlotWind,,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+Machine,MachineSync,check,VERSION,1,Synchronous Reluctance Machine,,,
+,,get_machine_type,,,,,,

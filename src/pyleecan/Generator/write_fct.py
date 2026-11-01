@@ -1,7 +1,7 @@
+from os.path import realpath
+
 import numpy as np
 import pandas as pd
-
-from os.path import realpath
 
 MATCH_PROP_DICT = {
     "Variable name": "name",
@@ -96,9 +96,11 @@ def write_file(class_dict):
 
     # Fill next lines with all properties values
     if Nprop > 0:
-        class_array[1 : Nprop + 1, :] = np.array(
-            [list(val.values()) for val in prop_list]
-        )
+        for ii, val in enumerate(prop_list):
+            class_array[ii + 1, :] = np.array(list(val.values()), dtype=object)
+        # class_array[1 : Nprop + 1, :] = np.array(
+        #     [list(val.values()) for val in prop_list]
+        # )
 
     # Empty row between properties and methods/metadata
     class_array[Nprop + 1, :] = empty_row

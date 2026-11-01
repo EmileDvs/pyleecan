@@ -1,7 +1,7 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,as_dict Type
-rotor,,Machine's Rotor,,LamSlotWind,,,
-stator,,Machine's Stator,,LamSlotWind,,,
-,
-Package,Inherit,Methods,Constant Name,Constant Value,Class description
-Machine,MachineAsync,check,VERSION,1,Doubly Fed Induction Machine
-,,get_machine_type,,,
+rotor,,Machine's Rotor,,LamSlotWind,,,,
+stator,,Machine's Stator,,LamSlotWind,,,,
+,,,,,,,,
+Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
+Machine,MachineAsync,check,VERSION,1,Doubly Fed Induction Machine,,,
+,,get_machine_type,,,,,,
