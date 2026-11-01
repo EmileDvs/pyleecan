@@ -1,62 +1,54 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/LamSlotWind.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotWind
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotWind"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.LamSlot import LamSlot
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Classes.LamSlot import LamSlot
-from pyleecan.Functions.labels import (
-    update_RTS_index,
-    BOUNDARY_PROP_LAB,
-    COND_BOUNDARY_PROP_LAB,
-    WIND_LAB,
-    YSMR_LAB,
-    YSML_LAB,
-    decode_label,
-    BAR_LAB,
-)
-from pyleecan.Classes.Lamination import Lamination
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.patches import FancyArrowPatch, Patch
+from matplotlib.pyplot import plot, subplots
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataFreq import DataFreq
 from pyleecan.Classes.DataTime import DataTime
-from pyleecan.Classes.OPdq import OPdq
-from pyleecan.Functions.Electrical.dqh_transformation import dqh2n
-from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Classes.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
-from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
+from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Classes.Lamination import Lamination
+from pyleecan.Classes.OPdq import OPdq
 from pyleecan.Classes.SlotW22 import SlotW22
-from matplotlib.patches import FancyArrowPatch, Patch
-from pyleecan.Classes._swat_em import datamodel
 from pyleecan.Classes.WindingSC import WindingSC
 from pyleecan.Classes.WindingUD import WindingUD
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._swat_em import datamodel
+
 from pyleecan.definitions import config_dict
-from pyleecan.Functions.init_fig import init_fig
+
+from pyleecan.Functions.Electrical.dqh_transformation import dqh2n
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import dict_2D
 from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
-from pyleecan.Functions.Winding.find_wind_phase_color import find_wind_phase_color
-from pyleecan.Functions.Winding.gen_phase_list import gen_name, gen_color
 from pyleecan.Functions.Plot.set_plot_gui_icon import set_plot_gui_icon
-from matplotlib.lines import Line2D
-from matplotlib.pyplot import plot, subplots
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
+from pyleecan.Functions.Winding.find_wind_phase_color import find_wind_phase_color
+from pyleecan.Functions.Winding.gen_phase_list import gen_color, gen_name
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.labels import (
+    BAR_LAB,
+    BOUNDARY_PROP_LAB,
+    COND_BOUNDARY_PROP_LAB,
+    WIND_LAB,
+    YSML_LAB,
+    YSMR_LAB,
+    decode_label,
+    update_RTS_index,
+)
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class LamSlotWind(LamSlot):

@@ -1,29 +1,17 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/WindingSC.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/WindingSC
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/WindingSC"""
 
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
+import numpy as np
+
+from pyleecan.Classes.Lamination import Lamination
 from pyleecan.Classes.Winding import Winding
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np
 from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
-from pyleecan.Classes.Lamination import Lamination
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class WindingSC(Winding):

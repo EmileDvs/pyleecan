@@ -1,28 +1,19 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Post/PostPlot.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostPlot
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostPlot"""
 
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.PostMethod import PostMethod
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
 from inspect import signature
+from os import linesep
 from os.path import join
-from pyleecan.Functions.Plot import dict_2D, dict_3D
+from sys import getsizeof
 
-import numpy as np
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Classes.PostMethod import PostMethod
+from pyleecan.Classes._check import check_var
+
+from pyleecan.Functions.Plot import dict_2D, dict_3D
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class PostPlot(PostMethod):

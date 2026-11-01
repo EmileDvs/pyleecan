@@ -1,41 +1,36 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/Winding.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Winding
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Winding"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
+
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
 from pyleecan.Classes._swat_em import datamodel
+
+from pyleecan.definitions import config_dict
+
+from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Winding.gen_phase_list import gen_name
 from pyleecan.Functions.Winding.reverse_wind_mat import (
-    reverse_wind_mat,
-    reverse_layer,
     change_layer,
     permute_B_C,
+    reverse_layer,
+    reverse_wind_mat,
 )
 from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
-from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
-from pyleecan.definitions import config_dict
-from pyleecan.Functions._swat_em.config import config
-from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
-from pyleecan.Functions.init_fig import init_fig
 from pyleecan.Functions._swat_em import plots
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions._swat_em.config import config
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class Winding(FrozenClass):

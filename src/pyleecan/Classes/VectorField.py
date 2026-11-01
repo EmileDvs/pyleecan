@@ -1,25 +1,23 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/VectorField.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/VectorField
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/VectorField"""
 
+from copy import copy
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
+
+import imageio
+import matplotlib.pyplot as plt
+import numpy as np
+
+from pyleecan.Classes._check import check_var
 from pyleecan.Classes._frozen import FrozenClass
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, imageio, matplotlib.pyplot as plt
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.SciDataTool import AxisError
+from pyleecan.Functions.SciDataTool.Plot import REV_COMP_DICT
+from pyleecan.Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from pyleecan.Functions.SciDataTool.conversions import (
     cart2pol,
     pol2cart,
@@ -27,13 +25,9 @@ from pyleecan.Functions.SciDataTool.conversions import (
     rphiz_to_xyz_field,
     xyz_to_rphiz,
 )
-from pyleecan.Functions.SciDataTool.Plot import REV_COMP_DICT
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
-from copy import copy
-from pyleecan.Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class VectorField(FrozenClass):

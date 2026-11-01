@@ -1,30 +1,23 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/HoleM50.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM50
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM50"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.HoleMag import HoleMag
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
-from scipy.optimize import fsolve
+import matplotlib.pyplot as plt
+import numpy as np
+from pyleecan.Classes import ParentMissingError
 from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.HoleMag import HoleMag
+from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Functions.labels import HOLEM_LAB, MAGNET_PROP_LAB
-from pyleecan.Classes.LamHole import LamHole
+from pyleecan.Classes._check import check_var
+
 from pyleecan.definitions import config_dict
+
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -35,10 +28,11 @@ from pyleecan.Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from pyleecan.Classes import ParentMissingError
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.labels import HOLEM_LAB, MAGNET_PROP_LAB
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
+from scipy.optimize import fsolve
 
 
 class HoleM50(HoleMag):
@@ -1805,7 +1799,12 @@ class HoleM50(HoleMag):
 
         pass
 
-    class S50_H01CheckError(SlotCheckError):
+    class S50_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM50 is None"""
+
+        pass
+
+    class S50_W5CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1825,17 +1824,12 @@ class HoleM50(HoleMag):
 
         pass
 
-    class S50_W5CheckError(SlotCheckError):
+    class S50_W01CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S50_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM50 is None"""
-
-        pass
-
-    class S50_W01CheckError(SlotCheckError):
+    class S50_H01CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1847,7 +1841,9 @@ LaminationCheckError = HoleM50.LaminationCheckError
 
 SlotCheckError = HoleM50.SlotCheckError
 
-S50_H01CheckError = HoleM50.S50_H01CheckError
+S50_NoneError = HoleM50.S50_NoneError
+
+S50_W5CheckError = HoleM50.S50_W5CheckError
 
 S50_W3CheckError = HoleM50.S50_W3CheckError
 
@@ -1855,8 +1851,6 @@ S50_SpCheckError = HoleM50.S50_SpCheckError
 
 S50_H23CheckError = HoleM50.S50_H23CheckError
 
-S50_W5CheckError = HoleM50.S50_W5CheckError
-
-S50_NoneError = HoleM50.S50_NoneError
-
 S50_W01CheckError = HoleM50.S50_W01CheckError
+
+S50_H01CheckError = HoleM50.S50_H01CheckError

@@ -1,42 +1,36 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/MeshSolution.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshSolution
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshSolution"""
 
+import os
+from collections.abc import ItemsView, KeysView, ValuesView
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Classes.Solution import Solution
 from typing import Hashable, Iterator, Optional
-from scipy.io import savemat
-import os, numpy as np
-from pyleecan.Functions.GUI.log_error import log_error
-from pyleecan.Classes.SolutionVector import SolutionVector
+
+import numpy as np
+from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.MeshMat import MeshMat
 from pyleecan.Classes.MeshVTK import MeshVTK
-from pyleecan.Functions.Structural.conversions import DimError, cart2pol, pol2cart
-from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.NodeMat import NodeMat
-from collections.abc import ItemsView, KeysView, ValuesView
+from pyleecan.Classes.Solution import Solution
+from pyleecan.Classes.SolutionVector import SolutionVector
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
+
 from pyleecan.definitions import config_dict
+
+from pyleecan.Functions.GUI.log_error import log_error
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot
+from pyleecan.Functions.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
 from pyleecan.Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 from pyleecan.Functions.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
-from pyleecan.Functions.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.Structural.conversions import DimError, cart2pol, pol2cart
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
+from scipy.io import savemat
 
 
 class MeshSolution(FrozenClass):

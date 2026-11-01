@@ -1,30 +1,23 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/SlotW63.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW63
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotW63"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Slot import Slot
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Classes.Segment import Segment
+import matplotlib.pyplot as plt
+import numpy as np
+from pyleecan.Classes import ParentMissingError
 from pyleecan.Classes.Arc1 import Arc1
-import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
-from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Functions.labels import WIND_LAB, SOP_LAB, DRAW_PROP_LAB
 from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes.Slot import Slot
+from pyleecan.Classes.SurfLine import SurfLine
+from pyleecan.Classes._check import check_var
+
 from pyleecan.definitions import config_dict
+
+from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -36,10 +29,10 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Classes import ParentMissingError
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class SlotW63(Slot):
@@ -1376,12 +1369,12 @@ class SlotW63(Slot):
 
         pass
 
-    class S63_InnerCheckError(SlotCheckError):
+    class S63_H0CheckError(SlotCheckError):
         """ """
 
         pass
 
-    class S63_H0CheckError(SlotCheckError):
+    class S63_InnerCheckError(SlotCheckError):
         """ """
 
         pass
@@ -1400,8 +1393,8 @@ SlotCheckError = SlotW63.SlotCheckError
 
 S63_WindError = SlotW63.S63_WindError
 
-S63_InnerCheckError = SlotW63.S63_InnerCheckError
-
 S63_H0CheckError = SlotW63.S63_H0CheckError
+
+S63_InnerCheckError = SlotW63.S63_InnerCheckError
 
 S63_W0CheckError = SlotW63.S63_W0CheckError

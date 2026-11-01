@@ -1,38 +1,31 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/LamSlotMagNS.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotMagNS
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotMagNS"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.LamSlotM import LamSlotM
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
+
 from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Classes.LamSlotM import LamSlotM
+from pyleecan.Classes._check import check_var
+
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.labels import (
-    update_RTS_index,
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
-    MAG_LAB,
-    YSMR_LAB,
-    YSML_LAB,
     LAM_LAB,
+    MAG_LAB,
     YOKE_LAB,
+    YSML_LAB,
+    YSMR_LAB,
     decode_label,
+    update_RTS_index,
 )
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class LamSlotMagNS(LamSlotM):

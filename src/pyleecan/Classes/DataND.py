@@ -1,23 +1,54 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/DataND.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataND
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataND"""
 
+import csv
 from os import linesep
+from os.path import join
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Data import Data
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, csv, imageio, matplotlib.pyplot as plt
+import imageio
+import matplotlib.pyplot as plt
+import numpy as np
+from pyleecan.Classes.Data import Data
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.Norm_indices import Norm_indices
+from pyleecan.Classes._check import check_dimensions, check_var
+
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.SciDataTool import (
+    AxisError,
+    NormError,
+    UnitError,
+    axes_dict_transformation,
+    rev_axes_dict,
+)
+from pyleecan.Functions.SciDataTool.Plot import (
+    COLORS,
+    PARAM_2D,
+    PARAM_3D,
+    axes_dict,
+    fft_dict,
+    ifft_dict,
+    norm_dict,
+    unit_dict,
+)
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
+from pyleecan.Functions.SciDataTool.Plot.plot_4D import plot_4D
+from pyleecan.Functions.SciDataTool.change_referential import (
+    change_referential_spectrum,
+    change_referential_waveform,
+)
+from pyleecan.Functions.SciDataTool.conversions import (
+    convert,
+    convert as convert_unit,
+    get_unit_derivate,
+    get_unit_integrate,
+    to_dB,
+    to_dBA,
+    to_noct,
+)
 from pyleecan.Functions.SciDataTool.derivation_integration import (
     antiderivate,
     derivate,
@@ -25,69 +56,31 @@ from pyleecan.Functions.SciDataTool.derivation_integration import (
     integrate_local,
     integrate_local_pattern,
 )
+from pyleecan.Functions.SciDataTool.fft_functions import comp_fftn, comp_ifftn
+from pyleecan.Functions.SciDataTool.filter_spectral_leakage import (
+    filter_spectral_leakage as filter_spectral_leakage_fct,
+)
+from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
+from pyleecan.Functions.SciDataTool.interpolations import (
+    get_common_base,
+    get_interpolation,
+    get_interpolation_step,
+)
+from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, omp
+from pyleecan.Functions.SciDataTool.parser import read_input_strings
 from pyleecan.Functions.SciDataTool.sum_mean import (
     my_mean,
     my_sum,
     root_mean_square,
     root_sum_square,
 )
-from pyleecan.Functions.SciDataTool import (
-    axes_dict_transformation,
-    rev_axes_dict,
-    NormError,
-    UnitError,
-    AxisError,
-)
-from pyleecan.Functions.SciDataTool.conversions import (
-    convert as convert_unit,
-    to_dB,
-    to_dBA,
-    get_unit_derivate,
-    get_unit_integrate,
-    convert,
-    to_noct,
-)
 from pyleecan.Functions.SciDataTool.symmetries import (
     rebuild_symmetries,
     rebuild_symmetries as rebuild_symmetries_fct,
 )
-from pyleecan.Functions.SciDataTool.interpolations import (
-    get_interpolation,
-    get_interpolation_step,
-    get_common_base,
-)
-from pyleecan.Classes._check import check_dimensions, check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.SciDataTool.change_referential import (
-    change_referential_spectrum,
-    change_referential_waveform,
-)
-from os.path import join
-from pyleecan.Functions.SciDataTool.Plot import (
-    unit_dict,
-    COLORS,
-    axes_dict,
-    norm_dict,
-    PARAM_3D,
-    fft_dict,
-    ifft_dict,
-    PARAM_2D,
-)
-from pyleecan.Functions.SciDataTool.filter_spectral_leakage import (
-    filter_spectral_leakage as filter_spectral_leakage_fct,
-)
-from pyleecan.Functions.SciDataTool.fft_functions import comp_fftn, comp_ifftn
-from pyleecan.Functions.SciDataTool.fix_axes_order import fix_axes_order
-from pyleecan.Functions.SciDataTool.parser import read_input_strings
-from pyleecan.Classes.Data1D import Data1D
-from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, omp
-from pyleecan.Classes.Norm_indices import Norm_indices
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
-from pyleecan.Functions.SciDataTool.Plot.plot_3D import plot_3D
-from pyleecan.Functions.SciDataTool.Plot.plot_4D import plot_4D
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class DataND(Data):

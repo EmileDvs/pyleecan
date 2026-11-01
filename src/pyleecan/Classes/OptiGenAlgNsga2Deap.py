@@ -1,55 +1,43 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Optimization/OptiGenAlgNsga2Deap.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlgNsga2Deap
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlgNsga2Deap"""
 
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.OptiGenAlg import OptiGenAlg
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Classes.OptiObjective import OptiObjective
-from pyleecan.Classes.OptiDesignVarSet import OptiDesignVarSet
-from pyleecan.Classes.OptiDesignVarInterval import OptiDesignVarInterval
-from deap import base, creator, tools
-from pyleecan.Classes.Output import Output
-from pyleecan.Classes.XOutput import XOutput
-from pyleecan.Classes.VarSimu import VarSimu
-import random, numpy as np, matplotlib.pyplot as plt
-from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
+import random
 from collections.abc import Iterable
 from copy import deepcopy
 from datetime import datetime
+from os import linesep
+from sys import getsizeof
+
+import matplotlib.pyplot as plt
+import numpy as np
+from cloudpickle import dumps
+from deap import base, creator, tools
+from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 from pyleecan.Classes.DataKeeper import DataKeeper
+from pyleecan.Classes.OptiDesignVarInterval import OptiDesignVarInterval
+from pyleecan.Classes.OptiDesignVarSet import OptiDesignVarSet
+from pyleecan.Classes.OptiGenAlg import OptiGenAlg
+from pyleecan.Classes.OptiObjective import OptiObjective
+from pyleecan.Classes.Output import Output
 from pyleecan.Classes.ParamExplorerSet import ParamExplorerSet
-from pyleecan.Functions.Optimization.evaluate import evaluate
-from pyleecan.Functions.Optimization.update import update
+from pyleecan.Classes.VarSimu import VarSimu
+from pyleecan.Classes.XOutput import XOutput
+from pyleecan.Classes._check import check_var
+
 from pyleecan.Functions.Optimization.check_cstr import check_cstr
+from pyleecan.Functions.Optimization.evaluate import evaluate
 from pyleecan.Functions.Optimization.tournamentDCD import tournamentDCD
+from pyleecan.Functions.Optimization.update import update
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
-from ntpath import basename
-from os.path import isfile
-from pyleecan.Classes._check import CheckTypeError
-
-import random
-
-from cloudpickle import dumps, loads
-from pyleecan.Classes._check import CheckTypeError
 
 try:
     from deap.base import Toolbox
 except ImportError:
     Toolbox = ImportError
-from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class OptiGenAlgNsga2Deap(OptiGenAlg):

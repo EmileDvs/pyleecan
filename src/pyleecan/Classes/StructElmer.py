@@ -1,66 +1,57 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/StructElmer.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/StructElmer
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/StructElmer"""
 
-from os import linesep
+import subprocess
+from os import linesep, makedirs, replace
+from os.path import exists, join, split, splitext
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Structural import Structural
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from os.path import join, split, exists, splitext
-import numpy as np, gmsh, subprocess
-from pyleecan.Classes.Section import Section
-from pyleecan.Classes.SolverInputFile import SolverInputFile
-from pyleecan.Classes.Section import File, Variable, MATC
-from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
+import gmsh
+import numpy as np
 from pyleecan.Classes.ElmerResultsVTU import ElmerResultsVTU
-from os import makedirs, replace
+from pyleecan.Classes.Section import File, MATC, Section, Variable
+from pyleecan.Classes.SolverInputFile import SolverInputFile
+from pyleecan.Classes.Structural import Structural
+from pyleecan.Classes._check import check_var
+
+from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.get_path_binary import get_path_binary
 from pyleecan.Functions.labels import (
-    SHAFT_LAB,
-    decode_label,
+    AIRBOX_R_LAB,
+    AIRBOX_SL_LAB,
+    AIRBOX_SR_LAB,
+    AR_T_LAB,
+    AS_BL_LAB,
+    AS_BR_LAB,
+    AS_TL_LAB,
+    AS_TR_LAB,
+    BORE_LAB,
     HOLEM_LAB_S,
     HOLEV_LAB_S,
-    ROTOR_LAB_S,
-    STATOR_LAB_S,
+    LAM_LAB,
     LAM_LAB_S,
-    WIND_LAB_S,
-    AIRBOX_R_LAB,
-    AIRBOX_SR_LAB,
-    SHAFTSR_LAB,
-    SHAFTSL_LAB,
-    YSR_LAB,
-    YSL_LAB,
     ROTOR_LAB,
-    STATOR_LAB,
-    SBS_TR_LAB,
-    SBS_TL_LAB,
-    SBS_BR_LAB,
-    SBS_BL_LAB,
+    ROTOR_LAB_S,
     SBR_B_LAB,
     SBR_T_LAB,
-    AS_TR_LAB,
-    AS_TL_LAB,
-    AS_BR_LAB,
-    AS_BL_LAB,
-    AR_T_LAB,
-    AIRBOX_SL_LAB,
-    LAM_LAB,
-    BORE_LAB,
+    SBS_BL_LAB,
+    SBS_BR_LAB,
+    SBS_TL_LAB,
+    SBS_TR_LAB,
+    SHAFTSL_LAB,
+    SHAFTSR_LAB,
+    SHAFT_LAB,
+    STATOR_LAB,
+    STATOR_LAB_S,
+    WIND_LAB_S,
+    YSL_LAB,
+    YSR_LAB,
+    decode_label,
 )
-from pyleecan.Functions.get_path_binary import get_path_binary
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class StructElmer(Structural):

@@ -1,29 +1,21 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/LamHole.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamHole
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamHole"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.LamH import LamH
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
-from pyleecan.Functions.labels import decode_label, HOLEM_LAB
+from pyleecan.Classes.LamH import LamH
 from pyleecan.Classes.Lamination import Lamination
+from pyleecan.Classes._check import check_var
+
 from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.labels import HOLEM_LAB, decode_label
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class LamHole(LamH):

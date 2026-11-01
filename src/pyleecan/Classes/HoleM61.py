@@ -1,31 +1,25 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/HoleM61.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM61
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM61"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.HoleMag import HoleMag
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
-from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
-from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
+import matplotlib.pyplot as plt
+import numpy as np
+from pyleecan.Classes import ParentMissingError
 from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.HoleMag import HoleMag
+from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Functions.labels import HOLEM_LAB
-from pyleecan.Classes.LamHole import LamHole
+from pyleecan.Classes._check import check_var
+
 from pyleecan.definitions import config_dict
+
+from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
+from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -37,11 +31,10 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Functions.labels import decode_label
-from pyleecan.Classes import ParentMissingError
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.labels import HOLEM_LAB, decode_label
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class HoleM61(HoleMag):
@@ -2007,13 +2000,13 @@ class HoleM61(HoleMag):
 
         pass
 
-    class S61_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM58 is None"""
+    class S61_WCheckError(SlotCheckError):
+        """ """
 
         pass
 
-    class S61_WCheckError(SlotCheckError):
-        """ """
+    class S61_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM58 is None"""
 
         pass
 
@@ -2024,6 +2017,6 @@ LaminationCheckError = HoleM61.LaminationCheckError
 
 SlotCheckError = HoleM61.SlotCheckError
 
-S61_NoneError = HoleM61.S61_NoneError
-
 S61_WCheckError = HoleM61.S61_WCheckError
+
+S61_NoneError = HoleM61.S61_NoneError

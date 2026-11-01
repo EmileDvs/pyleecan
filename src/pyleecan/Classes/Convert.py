@@ -1,40 +1,24 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Converter/Convert.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/Convert
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/Convert"""
 
-from os import linesep
+from os import linesep, path
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Functions.Converter.Utils.ConvertionError import ConvertionError
-from pyleecan import __version__
-from os import path
-from pyleecan.Classes.MachineIPMSM import MachineIPMSM
-from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
-from pyleecan.Classes.MachineSCIM import MachineSCIM
-from pyleecan.Classes.MachineWRSM import MachineWRSM
-from pyleecan.Classes.CondType12 import CondType12
 from pyleecan.Classes.CondType11 import CondType11
-from pyleecan.Classes.VentilationCirc import VentilationCirc
-from pyleecan.Classes.VentilationPolar import VentilationPolar
-from pyleecan.Classes.VentilationTrap import VentilationTrap
+from pyleecan.Classes.CondType12 import CondType12
 from pyleecan.Classes.HoleM52 import HoleM52
 from pyleecan.Classes.HoleM57 import HoleM57
 from pyleecan.Classes.HoleM60 import HoleM60
 from pyleecan.Classes.HoleM61 import HoleM61
 from pyleecan.Classes.HoleM62 import HoleM62
 from pyleecan.Classes.HoleM63 import HoleM63
+from pyleecan.Classes.MachineIPMSM import MachineIPMSM
+from pyleecan.Classes.MachineSCIM import MachineSCIM
+from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
+from pyleecan.Classes.MachineWRSM import MachineWRSM
+from pyleecan.Classes.Material import Material
+from pyleecan.Classes.Skew import Skew
 from pyleecan.Classes.SlotM11 import SlotM11
 from pyleecan.Classes.SlotM12 import SlotM12
 from pyleecan.Classes.SlotM13 import SlotM13
@@ -42,21 +26,29 @@ from pyleecan.Classes.SlotM14 import SlotM14
 from pyleecan.Classes.SlotM15 import SlotM15
 from pyleecan.Classes.SlotM16 import SlotM16
 from pyleecan.Classes.SlotM19 import SlotM19
-from pyleecan.Classes.SlotW63 import SlotW63
-from pyleecan.Classes.SlotW62 import SlotW62
-from pyleecan.Classes.SlotW29 import SlotW29
-from pyleecan.Classes.Skew import Skew
-from pyleecan.Classes.SlotW11_2 import SlotW11_2
-from pyleecan.Classes.SlotW23 import SlotW23
-from pyleecan.Classes.SlotW26 import SlotW26
-from pyleecan.Classes.SlotW30 import SlotW30
 from pyleecan.Classes.SlotW11 import SlotW11
+from pyleecan.Classes.SlotW11_2 import SlotW11_2
 from pyleecan.Classes.SlotW14 import SlotW14
 from pyleecan.Classes.SlotW21 import SlotW21
-from pyleecan.Classes.Material import Material
+from pyleecan.Classes.SlotW23 import SlotW23
+from pyleecan.Classes.SlotW26 import SlotW26
+from pyleecan.Classes.SlotW29 import SlotW29
+from pyleecan.Classes.SlotW30 import SlotW30
+from pyleecan.Classes.SlotW62 import SlotW62
+from pyleecan.Classes.SlotW63 import SlotW63
+from pyleecan.Classes.VentilationCirc import VentilationCirc
+from pyleecan.Classes.VentilationPolar import VentilationPolar
+from pyleecan.Classes.VentilationTrap import VentilationTrap
+from pyleecan.Classes._check import check_var
+from pyleecan.Classes._frozen import FrozenClass
 
-import numpy as np
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.Converter.Utils.ConvertionError import ConvertionError
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
+
+from pyleecan import __version__
 
 
 class Convert(FrozenClass):

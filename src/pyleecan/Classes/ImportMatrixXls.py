@@ -1,28 +1,20 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportMatrixXls.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrixXls
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrixXls"""
 
 from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.ImportMatrix import ImportMatrix
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pandas import read_excel, ExcelFile
 from os.path import isfile
-from pyleecan.Functions.path_tools import abs_file_path
+from sys import getsizeof
 
-import numpy as np
-from pyleecan.Classes._check import InitUnKnowClassError
+from pandas import ExcelFile, read_excel
+
+from pyleecan.Classes.ImportMatrix import ImportMatrix
+from pyleecan.Classes._check import check_var
+
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.path_tools import abs_file_path
+from pyleecan.Functions.save import save
 
 
 class ImportMatrixXls(ImportMatrix):

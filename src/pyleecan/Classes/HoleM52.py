@@ -1,28 +1,22 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/HoleM52.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM52
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleM52"""
 
 from os import linesep
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.HoleMag import HoleMag
 
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-import numpy as np, matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import numpy as np
+from pyleecan.Classes import ParentMissingError
+from pyleecan.Classes.HoleMag import HoleMag
+from pyleecan.Classes.LamHole import LamHole
 from pyleecan.Classes.Segment import Segment
 from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Functions.labels import HOLEM_LAB
-from pyleecan.Classes.LamHole import LamHole
+from pyleecan.Classes._check import check_var
+
 from pyleecan.definitions import config_dict
+
+from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -34,10 +28,10 @@ from pyleecan.Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from pyleecan.Classes import ParentMissingError
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.labels import HOLEM_LAB
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
 
 class HoleM52(HoleMag):
@@ -1223,17 +1217,17 @@ class HoleM52(HoleMag):
 
         pass
 
-    class S52_H12CheckError(SlotCheckError):
-        """ """
-
-        pass
-
     class S52_NoneError(SlotCheckError):
         """Raised when a propery of HoleM52 is None"""
 
         pass
 
     class S52_W1CheckError(SlotCheckError):
+        """ """
+
+        pass
+
+    class S52_H12CheckError(SlotCheckError):
         """ """
 
         pass
@@ -1250,10 +1244,10 @@ LaminationCheckError = HoleM52.LaminationCheckError
 
 SlotCheckError = HoleM52.SlotCheckError
 
-S52_H12CheckError = HoleM52.S52_H12CheckError
-
 S52_NoneError = HoleM52.S52_NoneError
 
 S52_W1CheckError = HoleM52.S52_W1CheckError
+
+S52_H12CheckError = HoleM52.S52_H12CheckError
 
 S52_alphaCheckError = HoleM52.S52_alphaCheckError

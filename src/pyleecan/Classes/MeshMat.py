@@ -1,43 +1,37 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/MeshMat.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshMat
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshMat"""
 
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Mesh import Mesh
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from typing import Union, Literal, Dict, List, Optional, Tuple
-import numpy as np, pyvista as pv, meshio, copy, os
-from pyleecan.Classes.NodeMat import NodeMat
+import copy
+import os
 from itertools import repeat
+from os import linesep, makedirs, remove
+from os.path import dirname, isdir
+from sys import getsizeof
+from typing import Dict, List, Literal, Optional, Tuple, Union
+
+import meshio
+import numpy as np
+import pyvista as pv
+from pyleecan.Classes.ElementMat import ElementMat
+from pyleecan.Classes.FPGNSeg import FPGNSeg
 from pyleecan.Classes.Mesh import Mesh
+from pyleecan.Classes.NodeMat import NodeMat
 from pyleecan.Classes.RefQuad4 import RefQuad4
 from pyleecan.Classes.RefQuad9 import RefQuad9
+from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes.RefTriangle6 import RefTriangle6
-from pyleecan.Classes.MeshVTK import MeshVTK
-from pyleecan.Classes.ElementMat import ElementMat
-from os import makedirs, remove
-from os.path import dirname, isdir
-from pyvista.core.pointset import UnstructuredGrid
+from pyleecan.Classes._check import check_var
+
 from pyleecan.definitions import RESULT_DIR
-from pyleecan.Classes.FPGNSeg import FPGNSeg
-from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
+
 from pyleecan.Functions.GUI.log_error import log_error
-
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
+from pyvista.core.pointset import UnstructuredGrid
 
 
 class MeshMat(Mesh):
@@ -164,7 +158,8 @@ class MeshMat(Mesh):
             new_mesh.node.coordinate *= scale
             return new_mesh
 
-        # Avoiding cicular import
+        # Avoiding circular import
+        from pyleecan.Classes.MeshVTK import MeshVTK
 
         elements_ = []
         element_types = []

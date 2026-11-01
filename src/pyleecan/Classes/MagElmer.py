@@ -1,41 +1,45 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/MagElmer.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/MagElmer
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/MagElmer"""
 
+import os
+import subprocess
 from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Magnetics import Magnetics
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
-from pyleecan.Classes.OutMagElmer import OutMagElmer
-import subprocess, numpy as np, os
-from pyleecan.Functions.get_path_binary import get_path_binary
 from os.path import join
+from sys import getsizeof
+
+import numpy as np
 from meshio import read
+from pyleecan.Classes import NotImplementedYetError
 from pyleecan.Classes.Data1D import Data1D
 from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.MachineIPMSM import MachineIPMSM
+from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
+from pyleecan.Classes.Magnetics import Magnetics
 from pyleecan.Classes.MeshSolution import MeshSolution
 from pyleecan.Classes.MeshVTK import MeshVTK
 from pyleecan.Classes.Norm_ref import Norm_ref
+from pyleecan.Classes.OutMagElmer import OutMagElmer
 from pyleecan.Classes.SolutionData import SolutionData
 from pyleecan.Classes.SolutionVector import SolutionVector
 from pyleecan.Classes.VectorField import VectorField
-from pyleecan import __version__
-from pyleecan.Classes.MachineIPMSM import MachineIPMSM
-from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
+from pyleecan.Classes._check import check_var
+
+from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.Winding.find_wind_phase_color import get_phase_id
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.get_path_binary import get_path_binary
 from pyleecan.Functions.labels import (
+    AIRBOX_R_LAB,
+    AIRBOX_SL_LAB,
+    AIRBOX_SR_LAB,
     AIRGAP_LAB,
+    AR_T_LAB,
+    AS_BL_LAB,
+    AS_BR_LAB,
+    AS_TL_LAB,
+    AS_TR_LAB,
     BOT_LAB,
     HOLEM_LAB_S,
     HOLEV_LAB_S,
@@ -44,38 +48,29 @@ from pyleecan.Functions.labels import (
     NO_LAM_LAB,
     ROTOR_LAB,
     ROTOR_LAB_S,
+    SBR_B_LAB,
+    SBR_T_LAB,
+    SBS_BL_LAB,
+    SBS_BR_LAB,
+    SBS_TL_LAB,
+    SBS_TR_LAB,
+    SHAFTSL_LAB,
+    SHAFTSR_LAB,
     SHAFT_LAB,
     SLID_LAB,
+    STATOR_LAB,
     STATOR_LAB_S,
     WIND_LAB_S,
+    YSL_LAB,
+    YSR_LAB,
     decode_label,
     get_obj_from_label,
     short_label,
-    AIRBOX_R_LAB,
-    AIRBOX_SR_LAB,
-    SHAFTSR_LAB,
-    SHAFTSL_LAB,
-    YSR_LAB,
-    YSL_LAB,
-    STATOR_LAB,
-    SBS_TR_LAB,
-    SBS_TL_LAB,
-    SBS_BR_LAB,
-    SBS_BL_LAB,
-    SBR_B_LAB,
-    SBR_T_LAB,
-    AS_TR_LAB,
-    AS_TL_LAB,
-    AS_BR_LAB,
-    AS_BL_LAB,
-    AR_T_LAB,
-    AIRBOX_SL_LAB,
 )
-from pyleecan.Functions.Winding.find_wind_phase_color import get_phase_id
-from pyleecan.Classes import NotImplementedYetError
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
-
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan import __version__
 
 
 class MagElmer(Magnetics):

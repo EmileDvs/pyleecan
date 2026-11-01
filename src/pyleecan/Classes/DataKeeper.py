@@ -1,35 +1,24 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/DataKeeper.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/DataKeeper
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/DataKeeper"""
 
-from os import linesep
-from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes._frozen import FrozenClass
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
-from pyleecan.Classes._check import CheckTypeError
 from ntpath import basename
-from pyleecan.Functions.path_tools import abs_file_path
-from pyleecan.definitions import PYTHON_DEFAULT_ENCODING
+from os import linesep
+from os.path import isfile
+from sys import getsizeof
 
 import numpy as np
-from ntpath import basename
-from os.path import isfile
-from pyleecan.Classes._check import CheckTypeError
 
-import random
+from pyleecan.Classes._check import CheckTypeError, check_var
+from pyleecan.Classes._frozen import FrozenClass
 
-from pyleecan.Classes._check import InitUnKnowClassError
+from pyleecan.definitions import PYTHON_DEFAULT_ENCODING
+
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.path_tools import abs_file_path
+from pyleecan.Functions.save import save
 
 
 class DataKeeper(FrozenClass):

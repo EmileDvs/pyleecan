@@ -1,56 +1,46 @@
-# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/MeshVTK.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshVTK
-"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshVTK"""
 
+import os
+import shutil
 from os import linesep
+from os.path import join
 from sys import getsizeof
-from logging import getLogger
-from pyleecan.Classes._check import set_array, check_var, raise_
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.Load.import_class import import_class
-from copy import deepcopy
-from pyleecan.Classes.Mesh import Mesh
-
-# Import all class method
-# Try/catch to remove unnecessary dependencies in unused method
 from typing import Literal, Optional
-import numpy as np, pyvista as pv, os, shutil
+
+import numpy as np
+import pyvista as pv
+from meshio import read
 from pyleecan.Classes.ElementMat import ElementMat
 from pyleecan.Classes.FPGNSeg import FPGNSeg
 from pyleecan.Classes.FPGNTri import FPGNTri
 from pyleecan.Classes.Mesh import Mesh
+from pyleecan.Classes.MeshMat import MeshMat
 from pyleecan.Classes.NodeMat import NodeMat
 from pyleecan.Classes.RefLine3 import RefLine3
 from pyleecan.Classes.RefQuad9 import RefQuad9
 from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
 from pyleecan.Classes.RefTriangle3 import RefTriangle3
 from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
-from meshio import read
-from os.path import join
+from pyleecan.Classes._check import check_var
+
 from pyleecan.definitions import RESULT_DIR
-from pyleecan.Classes.MeshMat import MeshMat
+
 from pyleecan.Functions.GUI.log_error import log_error
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.save import save
 
-
-from cloudpickle import dumps, loads
-from pyleecan.Classes._check import CheckTypeError
 
 try:
     from vtk import vtkPointSet
 except ImportError:
     vtkPointSet = ImportError
-from cloudpickle import dumps, loads
-from pyleecan.Classes._check import CheckTypeError
-
 try:
     from pyvista.core.pointset import PolyData
 except ImportError:
     PolyData = ImportError
-from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class MeshVTK(Mesh):

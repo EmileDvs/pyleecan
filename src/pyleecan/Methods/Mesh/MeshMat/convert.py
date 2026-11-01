@@ -44,7 +44,7 @@ def convert(
         new_mesh.node.coordinate *= scale
         return new_mesh
 
-    # Avoiding cicular import
+    # Avoiding circular import
     from ....Classes.MeshVTK import MeshVTK
 
     elements_ = []
