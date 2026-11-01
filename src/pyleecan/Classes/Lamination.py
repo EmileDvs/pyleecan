@@ -6,63 +6,76 @@
 
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
-# - build_yoke_side_line: import name 'BOUNDARY_PROP_LAB' refers to different sources (..Functions.labels.BOUNDARY_PROP_LAB and ..Methods.Machine.Lamination.build_yoke_side_line.BOUNDARY_PROP_LAB)
 # - check: module uses a wildcard import whose names cannot be resolved safely
 # - comp_periodicity_geo: import name 'gcd' refers to different sources (math.gcd and numpy.gcd)
 # - comp_periodicity_spatial: import name 'gcd' refers to different sources (math.gcd and numpy.gcd)
-# - plot_preview_notch: import name 'Patch' refers to different sources (matplotlib.patches.Patch and ..Methods.Machine.Lamination.plot_preview_notch.Patch)
 
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Machine.Lamination.build_yoke_side_line import build_yoke_side_line
-from ..Methods.Machine.Lamination.check import check
-from ..Methods.Machine.Lamination.comp_periodicity_geo import comp_periodicity_geo
-from ..Methods.Machine.Lamination.comp_periodicity_spatial import (
+from pyleecan.Methods.Machine.Lamination.check import check
+from pyleecan.Methods.Machine.Lamination.comp_periodicity_geo import (
+    comp_periodicity_geo,
+)
+from pyleecan.Methods.Machine.Lamination.comp_periodicity_spatial import (
     comp_periodicity_spatial,
 )
-from ..Methods.Machine.Lamination.plot_preview_notch import plot_preview_notch
-from .SurfLine import SurfLine
-from .SurfRing import SurfRing
-from ..Functions.labels import (
+from pyleecan.Classes.SurfLine import SurfLine
+from pyleecan.Classes.SurfRing import SurfRing
+from pyleecan.Functions.labels import (
     LAM_LAB,
     BORE_LAB,
     YOKE_LAB,
     RADIUS_PROP_LAB,
     BOUNDARY_PROP_LAB,
+    YS_LAB,
+    YSR_LAB,
+    YSL_LAB,
     STATOR_LAB,
     ROTOR_LAB,
     NOTCH_LAB,
     YSNR_LAB,
     YSNL_LAB,
 )
-from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
-from numpy import exp, pi
-from .Arc1 import Arc1
-from .Arc3 import Arc3
-from ..Functions.Geometry.merge_notch_list import merge_notch_list
-from .OutGeoLam import OutGeoLam
+from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
+from numpy import exp, pi, angle as np_angle
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Arc3 import Arc3
+from pyleecan.Functions.Geometry.merge_notch_list import merge_notch_list
+from pyleecan.Methods.Machine.Lamination.build_yoke_side_line import (
+    DELTA,
+    merge_line_list,
+)
+from pyleecan.Classes.OutGeoLam import OutGeoLam
 from math import gcd
-from ..Functions.Winding.gen_phase_list import gen_name
-from .NotchEvenDist import NotchEvenDist
-from ..Methods import NotImplementedYetError
+from pyleecan.Functions.Winding.gen_phase_list import gen_name
+from pyleecan.Classes.NotchEvenDist import NotchEvenDist
+from pyleecan.Methods import NotImplementedYetError
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
-from ..Functions.init_fig import init_fig
-from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
+from pyleecan.Methods.Machine.Lamination.plot_preview_notch import (
+    PATCH_COLOR_ALPHA,
+    ROTOR_COLOR,
+    STATOR_COLOR,
+)
+from pyleecan.Functions.Load.import_class import import_class
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Lamination(FrozenClass):
@@ -514,7 +527,75 @@ class Lamination(FrozenClass):
         return radius_lines
 
     # cf Methods.Machine.Lamination.build_yoke_side_line
-    build_yoke_side_line = build_yoke_side_line
+    def build_yoke_side_line(
+        self, sym, vent_surf_list, ZBR=None, ZTR=None, ZBL=None, ZTL=None
+    ):
+        """Define the Yoke Side lines of a Lamination by taking into account sym and vent
+
+        Parameters
+        ----------
+        self: Lamination
+            a Lamination object
+        sym : int
+            Symmetry factor (1= full machine, 2= half of the machine...)
+        vent_surf_list :
+            List of the ventilation surfaces
+        ZBR : Complex
+            Yoke Side Limit point Bottom Right
+        ZTR : Complex
+            Yoke Side Limit point Top Right
+        ZBL : Complex
+            Yoke Side Limit point Bottom Left
+        ZTL : Complex
+            Yoke Side Limit point Top Left
+
+        Returns
+        -------
+        right_list, left_list: ([Line], [Line])
+            List of the lines to draw the left and right side of the yoke
+        """
+
+        # Find the ventilation lines that collide with the Yoke Side
+        inter_line_list_R, inter_line_list_L = list(), list()
+        for surf in vent_surf_list:
+            for line in surf.get_lines():
+                if (
+                    line.prop_dict is not None
+                    and BOUNDARY_PROP_LAB in line.prop_dict
+                    and YS_LAB in line.prop_dict[BOUNDARY_PROP_LAB]
+                ):
+                    # Find if the line collide on right or left
+                    if abs(np_angle(line.get_middle())) < DELTA:
+                        inter_line_list_R.append(line)
+                    else:
+                        inter_line_list_L.append(line)
+
+        # Yoke Limit point
+        if ZBR is None:
+            alpha = 2 * pi / sym
+            ZBR = self.Rint
+            ZTR = self.Rext
+            ZBL = ZBR * exp(1j * alpha)
+            ZTL = ZTR * exp(1j * alpha)
+
+        lam_lab = self.get_label()
+        if self.is_internal:
+            right_list = merge_line_list(
+                ZBR, ZTR, lam_lab + "_" + YSR_LAB, inter_line_list_R
+            )
+            left_list = merge_line_list(
+                ZTL, ZBL, lam_lab + "_" + YSL_LAB, inter_line_list_L
+            )
+        else:
+            left_list = merge_line_list(
+                ZBL, ZTL, lam_lab + "_" + YSL_LAB, inter_line_list_L
+            )
+            right_list = merge_line_list(
+                ZTR, ZBR, lam_lab + "_" + YSR_LAB, inter_line_list_R
+            )
+
+        return right_list, left_list
+
     # cf Methods.Machine.Lamination.check
     check = check
 
@@ -1272,7 +1353,81 @@ class Lamination(FrozenClass):
         return fig, ax
 
     # cf Methods.Machine.Lamination.plot_preview_notch
-    plot_preview_notch = plot_preview_notch
+    def plot_preview_notch(self, index, fig=None, ax=None):
+        """Preview the position/shape of a notch on the lamination
+
+        Parameters
+        ----------
+        self : Lamination
+            Lamination object
+        index : int
+            Index of the notch to preview
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+        """
+
+        if self.notch is None:
+            raise Exception("No notch set")
+        if index > len(self.notch) - 1:
+            raise Exception(
+                "Requested notch index "
+                + str(index)
+                + ", "
+                + str(len(self.notch))
+                + " notches were set"
+            )
+        # Plot the original lamination without notches
+        lam = self.copy()
+        lam.notch = list()
+
+        fig, ax = lam.plot(
+            fig=fig,
+            ax=ax,
+            is_lam_only=True,
+        )
+
+        # Create equivalent LamSlot with notch as slot
+        LamSlot = import_class("pyleecan.Classes", "LamSlot")
+        lam_notch = LamSlot(
+            is_stator=lam.is_stator,
+            is_internal=lam.is_internal,
+            Rint=lam.Rint,
+            Rext=lam.Rext,
+            slot=self.notch[index].notch_shape,
+        )
+        fig, ax = lam_notch.plot(
+            fig=fig,
+            ax=ax,
+            is_edge_only=True,
+            edgecolor="r--",
+            alpha=-pi / self.notch[index].notch_shape.Zs + self.notch[index].alpha,
+        )
+        # Setup legend
+        if self.is_stator:
+            name = "Stator"
+            color = STATOR_COLOR
+        else:
+            name = "Rotor"
+            color = ROTOR_COLOR
+        patch_leg = [
+            Patch(facecolor=color, edgecolor="k"),
+            Patch(facecolor=PATCH_COLOR_ALPHA, edgecolor="r", linestyle="--"),
+        ]
+        label_leg = ["Current " + name, "Notches"]
+        ax.set_axis_off()
+        ax.legend(patch_leg, label_leg)
+
+        return fig, ax
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

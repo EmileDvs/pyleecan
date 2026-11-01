@@ -4,32 +4,42 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotM15
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - plot_schematics: import name 'Arc1' refers to different sources (.Arc1.Arc1 and ..Methods.Slot.SlotM15.plot_schematics.Arc1)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Slot import Slot
+from pyleecan.Classes.Slot import Slot
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Slot.SlotM15.plot_schematics import plot_schematics
 from numpy import arcsin, exp, sin, pi
-from .Segment import Segment
-from .Arc1 import Arc1
-from ..Methods.Slot.Slot import SlotCheckError
-from .SurfLine import SurfLine
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Methods.Slot.Slot import SlotCheckError
+from pyleecan.Classes.SurfLine import SurfLine
+from pyleecan.Methods.Slot.SlotM15.plot_schematics import MAGNET_COLOR
+import matplotlib.pyplot as plt
+from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Functions.Plot import (
+    ARROW_COLOR,
+    ARROW_WIDTH,
+    MAIN_LINE_COLOR,
+    MAIN_LINE_STYLE,
+    MAIN_LINE_WIDTH,
+    P_FONT_SIZE,
+    SC_FONT_SIZE,
+    TEXT_BOX,
+    plot_quote,
+)
+from pyleecan.Methods import ParentMissingError
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class SlotM15(Slot):
@@ -338,7 +348,267 @@ class SlotM15(Slot):
         return self.comp_height_active() > self.H0
 
     # cf Methods.Slot.SlotM15.plot_schematics
-    plot_schematics = plot_schematics
+    def plot_schematics(
+        self,
+        is_default=False,
+        is_return_default=False,
+        is_add_point_label=False,
+        is_add_schematics=True,
+        is_add_main_line=True,
+        type_add_active=True,
+        save_path=None,
+        is_show_fig=True,
+        fig=None,
+        ax=None,
+    ):
+        """Plot the schematics of the slot
+
+        Parameters
+        ----------
+        self : SlotM15
+            A SlotM15 object
+        is_default : bool
+            True: plot default schematics, else use current slot values
+        is_return_default : bool
+            True: return the default lamination used for the schematics (skip plot)
+        is_add_point_label : bool
+            True to display the name of the points (Z1, Z2....)
+        is_add_schematics : bool
+            True to display the schematics information (W0, H0...)
+        is_add_main_line : bool
+            True to display "main lines" (slot opening and 0x axis)
+        type_add_active : int
+            0: No active surface, 1: active surface as winding, 2: active surface as magnet
+        save_path : str
+            full path including folder, name and extension of the file to save if save_path is not None
+        is_show_fig : bool
+            To call show at the end of the method
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the schematics
+        ax : Matplotlib.axes.Axes object
+            Axis containing the schematics
+        -------
+        lam : LamSlot
+            Default lamination used for the schematics
+        """
+
+        # Use some default parameter
+        if is_default:
+            slot = type(self)(
+                Zs=2, W0=60 * pi / 180, H0=0.03, H1=0.02, W1=0.05, Rtopm=0.05
+            )
+            lam = LamSlot(
+                Rint=40e-3, Rext=0.11, is_internal=True, is_stator=False, slot=slot
+            )
+            if is_return_default:
+                return lam
+            else:
+                return slot.plot_schematics(
+                    is_default=False,
+                    is_return_default=False,
+                    is_add_point_label=is_add_point_label,
+                    is_add_schematics=is_add_schematics,
+                    is_add_main_line=is_add_main_line,
+                    type_add_active=type_add_active,
+                    save_path=save_path,
+                    is_show_fig=is_show_fig,
+                    fig=fig,
+                    ax=ax,
+                )
+        else:
+            # Getting the main plot
+            if self.parent is None:
+                raise ParentMissingError("Error: The slot is not inside a Lamination")
+            lam = self.parent
+            fig, ax = lam.plot(
+                alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+            )  # center slot on Ox axis
+            point_dict = self._comp_point_coordinate()
+            if self.is_outwards():
+                sign = +1
+            else:
+                sign = -1
+            Rbo = self.get_Rbo()
+
+            # Adding point label
+            if is_add_point_label:
+                for name, Z in point_dict.items():
+                    ax.text(
+                        Z.real,
+                        Z.imag,
+                        name,
+                        fontsize=P_FONT_SIZE,
+                        bbox=TEXT_BOX,
+                    )
+
+            # Adding schematics
+            if is_add_schematics:
+                # W0
+                R = Rbo + sign * self.H0 * 1.1
+                line = Arc1(
+                    begin=R * exp(-1j * self.W0 / 2),
+                    end=R * exp(1j * self.W0 / 2),
+                    radius=R,
+                    is_trigo_direction=True,
+                )
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=ARROW_COLOR,
+                    linewidth=ARROW_WIDTH,
+                    label="W0",
+                    offset_label=point_dict["Z3"] - line.get_middle(),
+                    fontsize=SC_FONT_SIZE,
+                )
+                # W1
+                plot_quote(
+                    Z1=point_dict["ZM2"],
+                    Zlim1=point_dict["ZM2"] - sign * self.H1,
+                    Zlim2=point_dict["ZM3"] - sign * self.H1,
+                    Z2=point_dict["ZM3"],
+                    offset_label=0.25 * self.H1,
+                    fig=fig,
+                    ax=ax,
+                    label="W1",
+                )
+                # H0
+                line = Segment(point_dict["Z1"], point_dict["Z2"])
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=ARROW_COLOR,
+                    linewidth=ARROW_WIDTH,
+                    label="H0",
+                    offset_label=-1j * point_dict["Z4"].imag * 0.3,
+                    is_arrow=True,
+                    fontsize=SC_FONT_SIZE,
+                )
+                # H1
+                plot_quote(
+                    Z1=point_dict["ZM0"],
+                    Zlim1=point_dict["ZM0"] - 1j * 0.5 * self.W1,
+                    Zlim2=point_dict["ZM0"] + sign * self.H1 - 1j * 0.5 * self.W1,
+                    Z2=point_dict["ZM0"] + sign * self.H1,
+                    offset_label=-1j * 0.2 * self.W1,
+                    fig=fig,
+                    ax=ax,
+                    label="H1",
+                )
+                # Rtopm
+                line = Segment(point_dict["Zc"], point_dict["ZM0"])
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=ARROW_COLOR,
+                    linewidth=ARROW_WIDTH,
+                    label="Rtopm",
+                    offset_label=sign * self.Rtopm * 0.4
+                    + 1j * point_dict["ZM4"].imag * 0.3,
+                    is_arrow=True,
+                    fontsize=SC_FONT_SIZE,
+                )
+
+            if is_add_main_line:
+                # Ox axis
+                line = Segment(0, lam.Rext * 1.5)
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+                # Z1 Line
+                line = Segment(0, Rbo * 2 * exp(-1j * self.W0 / 2))
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+                # Z2 Line
+                line = Segment(0, Rbo * 2 * exp(1j * self.W0 / 2))
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+                # Top arc
+                line = Arc1(
+                    begin=point_dict["Z1"],
+                    end=point_dict["Z4"],
+                    radius=self.get_Rbo(),
+                    is_trigo_direction=True,
+                )
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+                # Magnet Arc
+                line = Segment(point_dict["Zc"], point_dict["ZM2"])
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+                line = Segment(point_dict["Zc"], point_dict["ZM3"])
+                line.plot(
+                    fig=fig,
+                    ax=ax,
+                    color=MAIN_LINE_COLOR,
+                    linestyle=MAIN_LINE_STYLE,
+                    linewidth=MAIN_LINE_WIDTH,
+                )
+
+            if type_add_active == 1:
+                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+            elif type_add_active == 2:
+                self.plot_active(
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    enforced_default_color=MAGNET_COLOR,
+                )
+
+            # Zooming and cleaning
+            W = point_dict["Z4"].imag * 1.2
+            Rint, Rext = self.comp_radius()
+
+            ax.axis("equal")
+            ax.set_xlim(Rint, Rext)
+            ax.set_ylim(-W, W)
+            manager = plt.get_current_fig_manager()
+            if manager is not None:
+                manager.set_window_title(type(self).__name__ + " Schematics")
+            ax.set_title("")
+            ax.get_legend().remove()
+            ax.set_axis_off()
+            fig.tight_layout()
+
+            # Save / Show
+            if save_path is not None:
+                fig.savefig(save_path)
+                plt.close(fig=fig)
+
+            if is_show_fig:
+                fig.show()
+            return fig, ax
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

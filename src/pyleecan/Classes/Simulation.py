@@ -7,23 +7,23 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from .VarLoad import VarLoad
-from ..loggers import gen_logger_config_dict, DEFAULT_LOG_NAME
+from pyleecan.Classes.VarLoad import VarLoad
+from pyleecan.loggers import gen_logger_config_dict, DEFAULT_LOG_NAME
 from logging.config import dictConfig
 from os.path import join
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Simulation(FrozenClass):
@@ -137,8 +137,8 @@ class Simulation(FrozenClass):
             Contains simulation results
         """
         # In-function import to avoid ImportError
-        from ....Classes.XOutput import XOutput
-        from ....Classes.Output import Output
+        from pyleecan.Classes.XOutput import XOutput
+        from pyleecan.Classes.Output import Output
 
         if self.layer is None:
             self.layer = 0  # Top simulation

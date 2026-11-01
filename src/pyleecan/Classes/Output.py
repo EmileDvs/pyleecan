@@ -4,39 +4,49 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/Output
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - getter.get_BH_stator: import name 'GetOutError' refers to different sources (..Methods.Output.Output.getter.get_BH_rotor.GetOutError and ..Methods.Output.Output.getter.get_BH_stator.GetOutError)
-# - plot.Magnetic.plot_B_mesh: import name 'pi' refers to different sources (numpy.pi and ..Methods.Output.Output.plot.Magnetic.plot_B_mesh.pi)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Output.Output.getter.get_BH_stator import get_BH_stator
-from ..Methods.Output.Output.plot.Magnetic.plot_B_mesh import plot_B_mesh
-from numpy import array, cumsum, pi, roll, unique
-from .Norm_affine import Norm_affine
-from .Norm_vector import Norm_vector
+from numpy import (
+    array,
+    cumsum,
+    pi,
+    roll,
+    unique,
+    exp,
+    linspace,
+    max as np_max,
+    min as np_min,
+    real,
+)
+from pyleecan.Classes.Norm_affine import Norm_affine
+from pyleecan.Classes.Norm_vector import Norm_vector
 from scipy.io import savemat
-from ..Methods.Output.Output.getter.get_BH_rotor import GetOutError, OutGeoLam
-from ..Functions.Plot import fft_dict
+from pyleecan.Methods.Output.Output.getter import GetOutError
+from pyleecan.Classes.OutGeoLam import OutGeoLam
+from pyleecan.Functions.Plot import fft_dict
 from os.path import join, abspath, isdir
 from os import makedirs
-from ..definitions import RESULT_DIR
-from ..Methods.Output.Output.print_memory import detail_prop, getsizeof, import_class
+from pyleecan.definitions import RESULT_DIR
+from pyleecan.Methods.Output.Output.plot.Magnetic.plot_B_mesh import FONT_FAMILY_PYVISTA
+from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot
+from pyleecan.Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from pyleecan.Methods.Output.Output.print_memory import detail_prop
+from sys import getsizeof
+from pyleecan.Functions.Load.import_class import import_class
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Output(FrozenClass):
@@ -273,7 +283,51 @@ class Output(FrozenClass):
         return BH
 
     # cf Methods.Output.Output.getter.get_BH_stator
-    get_BH_stator = get_BH_stator
+    def get_BH_stator(self):
+        """Return the B(H) curve of the stator material
+
+        Parameters
+        ----------
+        self : Output
+            an Output object
+
+        Returns
+        -------
+        BH: numpy.ndarray
+            B(H) values (two colums matrix: H and B(H))
+
+        """
+
+        # Already available => Return
+        if (
+            self.geo is not None
+            and self.geo.stator is not None
+            and self.geo.stator.BH_curve is not None
+        ):
+            return self.geo.stator.BH_curve
+
+        # Check if possible to get the BH curve
+        if (
+            self.simu is None
+            or self.simu.machine is None
+            or self.simu.machine.stator is None
+            or self.simu.machine.stator.mat_type is None
+        ):
+            raise GetOutError(
+                "Output.simu.machine.stator.mat_type is not Set, can't get the B(H) curve"
+            )
+        mat_type = self.simu.machine.stator.mat_type
+        if mat_type.mag is None:
+            raise GetOutError("stator materials magnetic property is not set")
+
+        # Compute and store the BH curve
+        BH = mat_type.mag.get_BH()
+        if self.geo.stator is None:
+            self.geo.stator = OutGeoLam()
+            self.geo.stator._set_None()
+        self.geo.stator.BH_curve = BH
+
+        return BH
 
     # cf Methods.Output.Output.getter.get_data_from_str
     def get_data_from_str(self, data_str):
@@ -473,7 +527,230 @@ class Output(FrozenClass):
         return self.path_result
 
     # cf Methods.Output.Output.plot.Magnetic.plot_B_mesh
-    plot_B_mesh = plot_B_mesh
+    def plot_B_mesh(
+        self,
+        *args,
+        indices=None,
+        is_surf=False,
+        is_radial=False,
+        is_center=False,
+        clim=None,
+        field_name=None,
+        group_names=None,
+        save_path=None,
+        is_show_fig=True,
+        win_title=None,
+        is_animated=False,
+        title="",
+        pv_plotter=None,
+        is_contour=True,
+        is_2D=False
+    ):
+        """Plot the contour of a field on a mesh using pyvista plotter.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            a MeshSolution object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        label : str
+            a label
+        index : int
+            an index
+        indices : list
+            list of the points to extract (optional)
+        is_surf : bool
+            field over outer surface
+        is_radial : bool
+            radial component only
+        is_center : bool
+            field at element-centers
+        clim : list
+            a list of 2 elements for the limits of the colorbar
+        field_name : str
+            title of the field to display on plot
+        group_names : list
+            a list of str corresponding to group name(s)
+        save_path : str
+            path to save the figure
+        is_show_fig : bool
+            To call show at the end of the method
+        is_animated : True to animate magnetic flux density
+        is_2D : bool
+            True plot in 2 dimensions (view on XY)
+
+        Returns
+        -------
+
+        """
+        MS_B = self.mag.meshsolution
+
+        if group_names is not None:
+            MS_B_plot = MS_B.get_group(group_names)
+        else:
+            MS_B_plot = MS_B
+
+        # Init figure
+        if pv_plotter is None:
+            if title != "" and win_title == "":
+                win_title = title
+            elif win_title != "" and title == "":
+                title = win_title
+
+            pv_plotter, sargs = configure_plot(
+                pv_plotter=pv_plotter,
+                win_title=win_title,
+            )
+
+            pv_plotter.add_text(
+                title,
+                position="upper_edge",
+                color="black",
+                font_size=10,
+                font=FONT_FAMILY_PYVISTA,
+            )
+
+        # Get the mesh_pv and field
+        mesh_pv, field, field_name = MS_B_plot.get_mesh_field_pv(
+            *args,
+            label="B",
+            indices=indices,
+            is_surf=is_surf,
+            is_radial=is_radial,
+            is_center=is_center,
+            field_name=field_name,
+        )
+
+        # Add field to mesh
+        # if is_surf:
+        #     surf = mesh_pv.get_surf(indices=indices)
+        #     surf[field_name] = real(field)
+        #     mesh_field = surf
+        # else:
+        #     mesh_pv[field_name] = real(field)
+        #     mesh_field = mesh_pv
+        if clim is None:
+            clim = [np_min(real(field)), np_max(real(field))]
+            if (clim[1] - clim[0]) / clim[1] < 0.01:
+                clim[0] = -abs(clim[1])
+                clim[1] = abs(clim[1])
+
+        if is_2D:
+            # 2D view
+            pv_plotter.view_xy()
+
+        plot_mesh_field(
+            pv_plotter,
+            sargs,
+            field_name,
+            clim=clim,
+            mesh_pv=mesh_pv,
+            field=field,
+        )
+
+        if is_contour:
+            if MS_B_plot["A_z"].type_element != "node":
+                raise Exception(
+                    "Cannot field lines if A_z calculated on nodes is not in meshsolution"
+                )
+            mesh_pv_Az, field_A, field_name_A = MS_B_plot.get_mesh_field_pv(
+                *args,
+                label="A_z",
+                indices=indices,
+                is_surf=is_surf,
+                is_radial=is_radial,
+                is_center=is_center,
+                field_name=field_name,
+            )
+            mesh_pv_Az[field_name_A] = field_A
+            contours = mesh_pv_Az.contour()
+            pv_plotter.add_mesh(contours, color="black", line_width=5)
+
+        ###########
+        # Internal animation (cannot be combined with other plots)
+        if is_animated:
+            pv_plotter.add_text(
+                'Adjust 3D view and press "Q"',
+                position="lower_edge",
+                color="gray",
+                font_size=10,
+                font="arial",
+            )
+            pv_plotter.show(auto_close=False)
+
+            pv_plotter.open_gif(save_path)
+            pv_plotter.clear()
+
+            if len(args) == 0 or "time" in args:
+                mesh_pv_B, field_B, field_name_B = MS_B_plot.get_mesh_field_pv(
+                    "time",
+                    label="B",
+                    indices=indices,
+                )
+                nframe = len(field_B)
+                is_time = True
+
+                if is_contour:
+                    mesh_pv_Az, field_A, field_name_A = MS_B_plot.get_mesh_field_pv(
+                        "time",
+                        label="A_z",
+                        indices=indices,
+                    )
+            else:
+                nframe = 25
+                mesh_pv_B, field_B, field_name_B = MS_B_plot.get_mesh_field_pv(args)
+                is_time = False
+                t = linspace(0.0, 1.0, nframe + 1)[:nframe]
+
+            for i in range(nframe):
+                # Compute colorbar boundaries
+
+                if is_time:
+                    field = field_B[i, :]
+                    phase = 1
+                    if is_contour:
+                        field_At = field_A[i, :]
+                else:
+                    field = field_B
+                    phase = exp(1j * 2 * pi * t[i])
+
+                    if is_contour:
+                        field_At = field_A
+                # Compute pyvista object
+                plot_mesh_field(
+                    pv_plotter,
+                    sargs,
+                    field_name_B,
+                    clim=clim,
+                    mesh_pv=mesh_pv_B,
+                    field=field,
+                    phase=phase,
+                )
+
+                if is_contour:
+                    mesh_pv_Az[field_name_A] = real(field_At * phase)
+                    contours = mesh_pv_Az.contour()
+                    pv_plotter.add_mesh(contours, color="black", line_width=5)
+
+                pv_plotter.add_text(
+                    title,
+                    position="upper_edge",
+                    color="black",
+                    font_size=10,
+                    font="arial",
+                )
+                pv_plotter.write_frame()
+                pv_plotter.clear()
+            pv_plotter.close()
+
+        else:
+            # Save figure
+            if save_path is None and is_show_fig:
+                pv_plotter.show()
+            elif save_path is not None:
+                pv_plotter.reset_camera()
+                pv_plotter.show(interactive=False, screenshot=save_path)
 
     # cf Methods.Output.Output.print_memory
     def print_memory(self, tab_level=0, detail_level=1, is_print=True):
@@ -868,7 +1145,7 @@ class Output(FrozenClass):
             Output_dict["simu"] = self.simu.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         Output_dict["path_result"] = self.path_result
         if self.geo is None:
@@ -877,7 +1154,7 @@ class Output(FrozenClass):
             Output_dict["geo"] = self.geo.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         if self.elec is None:
             Output_dict["elec"] = None
@@ -885,7 +1162,7 @@ class Output(FrozenClass):
             Output_dict["elec"] = self.elec.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         if self.mag is None:
             Output_dict["mag"] = None
@@ -893,7 +1170,7 @@ class Output(FrozenClass):
             Output_dict["mag"] = self.mag.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         if self.struct is None:
             Output_dict["struct"] = None
@@ -901,7 +1178,7 @@ class Output(FrozenClass):
             Output_dict["struct"] = self.struct.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         if self.post is None:
             Output_dict["post"] = None
@@ -909,7 +1186,7 @@ class Output(FrozenClass):
             Output_dict["post"] = self.post.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         Output_dict["logger_name"] = self.logger_name
         if self.force is None:
@@ -918,7 +1195,7 @@ class Output(FrozenClass):
             Output_dict["force"] = self.force.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         if self.loss is None:
             Output_dict["loss"] = None
@@ -926,7 +1203,7 @@ class Output(FrozenClass):
             Output_dict["loss"] = self.loss.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         # The class name is added to the dict for deserialisation purpose
         Output_dict["__class__"] = "Output"

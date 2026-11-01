@@ -7,29 +7,29 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import pi, angle
 import numpy as np
-from .Data1D import Data1D
-from .DataTime import DataTime
-from .EEC_SCIM import EEC_SCIM
-from .EEC_PMSM import EEC_PMSM
-from .MachineSCIM import MachineSCIM
-from .MachineSIPMSM import MachineSIPMSM
-from .MachineIPMSM import MachineIPMSM
-from ..Methods.Simulation.Input import InputError
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.EEC_SCIM import EEC_SCIM
+from pyleecan.Classes.EEC_PMSM import EEC_PMSM
+from pyleecan.Classes.MachineSCIM import MachineSCIM
+from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
+from pyleecan.Classes.MachineIPMSM import MachineIPMSM
+from pyleecan.Methods.Simulation.Input import InputError
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Electrical(FrozenClass):

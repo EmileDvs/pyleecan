@@ -7,19 +7,19 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .LamSlotM import LamSlotM
+from pyleecan.Classes.LamSlotM import LamSlotM
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import pi, gcd
-from .LamSlot import LamSlot
-from ..Functions.labels import (
+from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Functions.labels import (
     update_RTS_index,
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
@@ -30,11 +30,11 @@ from ..Functions.labels import (
     YOKE_LAB,
     decode_label,
 )
-from ..Methods.Machine.LamSlotMag import LMC_SlotTooLong
+from pyleecan.Methods.Machine.LamSlotMag import LMC_SlotTooLong
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class LamSlotMagNS(LamSlotM):

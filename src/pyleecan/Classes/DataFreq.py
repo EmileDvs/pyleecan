@@ -7,29 +7,29 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .DataND import DataND
+from pyleecan.Classes.DataND import DataND
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import any as np_any, inf
-from ..Functions.SciDataTool.sum_convolution import (
+from pyleecan.Functions.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
     get_sum_amplitudes,
     get_sum_indices,
 )
-from .Data1D import Data1D
-from ..Functions.SciDataTool import AxisError
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Functions.SciDataTool import AxisError
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class DataFreq(DataND):

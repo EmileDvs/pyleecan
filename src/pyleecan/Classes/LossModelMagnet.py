@@ -7,29 +7,29 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .LossModel import LossModel
+from pyleecan.Classes.LossModel import LossModel
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np
 from numpy import abs as np_abs, matmul, pi, sum as np_sum, zeros
-from .HoleM50 import HoleM50
-from .HoleM51 import HoleM51
-from .HoleM52 import HoleM52
-from .HoleM53 import HoleM53
-from .HoleM57 import HoleM57
-from .HoleM58 import HoleM58
-from .LamHole import LamHole
-from .LamSlotMag import LamSlotMag
+from pyleecan.Classes.HoleM50 import HoleM50
+from pyleecan.Classes.HoleM51 import HoleM51
+from pyleecan.Classes.HoleM52 import HoleM52
+from pyleecan.Classes.HoleM53 import HoleM53
+from pyleecan.Classes.HoleM57 import HoleM57
+from pyleecan.Classes.HoleM58 import HoleM58
+from pyleecan.Classes.LamHole import LamHole
+from pyleecan.Classes.LamSlotMag import LamSlotMag
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class LossModelMagnet(LossModel):

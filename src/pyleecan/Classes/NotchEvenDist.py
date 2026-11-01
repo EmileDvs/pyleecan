@@ -7,22 +7,22 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Notch import Notch
+from pyleecan.Classes.Notch import Notch
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
-from ..Functions.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
+from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
+from pyleecan.Functions.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 from numpy import pi
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class NotchEvenDist(Notch):

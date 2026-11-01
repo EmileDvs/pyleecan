@@ -7,24 +7,24 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Drive import Drive
+from pyleecan.Classes.Drive import Drive
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from .Data1D import Data1D
-from .DataLinspace import DataLinspace
-from .DataTime import DataTime
-from ..Functions.check_parent import check_parent
-from ..Functions.Winding.gen_phase_list import gen_name
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Functions.check_parent import check_parent
+from pyleecan.Functions.Winding.gen_phase_list import gen_name
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class DriveWave(Drive):

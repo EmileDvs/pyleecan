@@ -4,45 +4,39 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/WindingUD
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - init_as_CW1L: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_CW1L.zeros)
-# - init_as_CW2LR: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_CW2LR.zeros)
-# - init_as_CW2LT: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_CW2LT.zeros)
-# - init_as_DWL: import name 'zeros' refers to different sources (..Methods.Machine.WindingUD.import_from_csv.zeros and ..Methods.Machine.WindingUD.init_as_DWL.zeros)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Winding import Winding
+from pyleecan.Classes.Winding import Winding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Machine.WindingUD.init_as_CW1L import init_as_CW1L
-from ..Methods.Machine.WindingUD.init_as_CW2LR import init_as_CW2LR
-from ..Methods.Machine.WindingUD.init_as_CW2LT import init_as_CW2LT
-from ..Methods.Machine.WindingUD.init_as_DWL import init_as_DWL
-from ..Methods.Machine.WindingUD.import_from_csv import (
+from pyleecan.Methods.Machine.WindingUD.import_from_csv import (
     COIL_COL,
     RAD_COL,
     TAN_COL,
     ZS_COL,
-    amax,
-    isfile,
-    reader,
-    tile,
-    zeros,
 )
+from os.path import isfile
+from csv import reader
+from numpy import zeros, amax, tile, array, power, mod, arange, sign
+from pyleecan.Methods.Machine.WindingUD.init_as_CW1L import WindingT2DefNtError
+from pyleecan.Methods.Machine.Winding import WindingError
+from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
+from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
+from pyleecan.Methods.Machine.WindingUD.init_as_CW2LR import WindingT5DefMsError
+from pyleecan.Methods.Machine.WindingUD.init_as_CW2LT import WindingT1DefMsError
+from pyleecan.Methods.Machine.WindingUD.init_as_DWL import WindingDefMsError
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class WindingUD(Winding):
@@ -126,13 +120,376 @@ class WindingUD(Winding):
         self.Ntcoil = amax(self.wind_mat)
 
     # cf Methods.Machine.WindingUD.init_as_CW1L
-    init_as_CW1L = init_as_CW1L
+    def init_as_CW1L(self, Zs=None):
+        """Compute the Winding Matrix (for winding type 2)
+        type 2 : TOOTH WINDING, SINGLE LAYER ALTERNATE TEETH WOUND
+        (Nlay_rad=1,Nlay_tan=1)
+
+        Parameters
+        ----------
+        self : WindingUD
+            A: WindingUD object
+        Zs : int
+            Number of Slot (Integer >0)
+
+        Raises
+        ------
+        WindingT2DefNtError
+            Zs/qs/2 must be an integer
+
+        """
+        if Zs is None:
+            if self.parent is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object."
+                )
+
+            if self.parent.slot is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object with Slot."
+                )
+
+            Zs = self.parent.slot.Zs
+
+        assert Zs > 0, "Zs must be >0"
+        assert Zs % 1 == 0, "Zs must be an integer"
+
+        # non overlapping ALTERNATE TEETH WOUND-> single layer
+        # cf "2D exact analytical model for surface-mounted permanent-magnet motors
+        # with semi-closed slots" -> U motor 10p/18s creates 2p, Zs/2+2p, Zs/2-2p
+
+        qs = self.qs  # Phase Number
+        Nt = Zs / float(qs) / 2.0  # Number of teeth by semi phase
+
+        # Ncspc= Zs/(2.0*qs*self.Npcp/nlay)  # number of coils in series per parallel circuit
+        # Ntspc = self.Ntcoil * Ncspc #Number of turns in series per phase
+        Ntcoil = self.Ntcoil  # number of turns per coils
+
+        if round(Nt) != Nt:  # Nt must be an integer
+            raise WindingT2DefNtError(
+                "wrong winding definition, cannot wind all "
+                "the teeth (Zs/qs/2 is not an integer)!"
+            )
+
+        # first strategy - checked with Umbra_08 motor and Umbra_05: the winding
+        # direction of each tooth is reversed
+        wind_mat = zeros((1, 1, Zs, qs))
+
+        for k in range(0, int(Nt)):  # winding alternatively the teeth
+            for q in range(0, qs):
+                xenc = q * 4 + k * 2 * qs + array([1, 2])
+                wind_mat[0][0][int((xenc[0] - 1) % Zs)][q] = power(-1, xenc[0] + k + 1)
+                wind_mat[0][0][int((xenc[1] - 1) % Zs)][q] = power(-1, xenc[1] + k + 1)
+
+        wind_mat *= Ntcoil
+
+        # Set default values
+        if self.is_reverse_wind is None:
+            self.is_reverse_wind = False
+        if self.Nslot_shift_wind is None:
+            self.Nslot_shift_wind = 0
+        self.Nlayer = 1
+        # Apply the transformations
+        if self.is_reverse_wind:
+            wind_mat = reverse_wind_mat(wind_mat)
+        if self.Nslot_shift_wind > 0:
+            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+
+        self.wind_mat = wind_mat
+        # Matrix changed, compute again periodicity
+        self.per_a = None
+        self.is_aper_a = None
+
     # cf Methods.Machine.WindingUD.init_as_CW2LR
-    init_as_CW2LR = init_as_CW2LR
+    def init_as_CW2LR(self, Zs=None):
+        """Compute the Winding Matrix (for winding type 5) (Nlay_rad=1,Nlay_tan=1)
+        type 5 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, RADIAL SUPERPOSITION
+
+        Parameters
+        ----------
+        self : WindingUD
+            A: WindingUD object
+        Zs : int
+            Number of Slot (Integer >0)
+
+        Raises
+        ------
+        WindingT5DefMsError
+            You must have 0.25< Zs/2/p/qs <= 0.5
+
+        """
+        if Zs is None:
+            if self.parent is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object."
+                )
+
+            if self.parent.slot is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object with Slot."
+                )
+
+            Zs = self.parent.slot.Zs
+
+        assert Zs > 0, "Zs must be >0"
+        assert Zs % 1 == 0, "Zs must be an integer"
+
+        # ex "Effect of Pole and Slot Combination on Noise and Vibration in Permanent
+        # Magnet Synchronous Motor" creates highest harmonic at Zs/2+1 and Zs/2-1
+        nlay = 2.0
+        qs = float(self.qs)
+        p = float(self.p)
+        Ncgr = Zs / nlay / qs
+        ms = Zs / 2.0 / p / qs
+        # Ncspc= Zs/(2.0*qs*self.Npcp/nlay)  # number of coils in series per parallel circuit
+        # Ntspc = self.Ntcoil * Ncspc #Number of turns in series per phase
+        Ntcoil = self.Ntcoil  # Number of turns per coils
+
+        wind_mat = zeros((2, 1, Zs, self.qs))
+        # creates highest harmonic at Zs/2+1 and Zs/2-1
+        if ms == 0.5:  # then Zs/qs is integer
+            # traditional non overlapping all teeth wound winding
+            for q in range(0, self.qs):
+                for k in range(0, Zs // self.qs):  # number of Ncgr coils
+                    xenc = q + array([1, 0]) + k * qs
+                    wind_mat[0, 0, int(mod(xenc[0] - 1, Zs)), q] = (
+                        +Ntcoil
+                    )  # right/top/2
+                    wind_mat[1, 0, int(mod(xenc[1] - 1, Zs)), q] = (
+                        -Ntcoil
+                    )  # left/bottom/1
+        elif (
+            ms != 0.5 and Ncgr % 1 == 0
+        ):  # ms!=0.5 and Ncgr is an integer (ms>0.25 && ms<0.5)
+            # new algorithm to reverse the coils
+            for q in range(0, self.qs):
+                for k in range(0, int((Zs // self.qs) // Ncgr)):  # number of Ncgr coils
+                    for l in range(0, int(Ncgr)):
+                        id0 = int(mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
+                        id1 = int(mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
+                        # left / bottom / 1
+                        wind_mat[1, 0, id0, q] = -((-1) ** (l + q - 1 + k)) * Ntcoil
+                        # right / top / 2
+                        wind_mat[0, 0, id1, q] = +((-1) ** (l + q - 1 + k)) * Ntcoil
+
+            wind_mat = wind_mat[:, :, ::-1, :]
+        else:
+            raise WindingT5DefMsError(
+                "Winding geometry not handled yet, enter "
+                "your own winding matrix with "
+                "type_winding=0 and contact EOMYS"
+            )
+
+        # Set default values
+        if self.is_reverse_wind is None:
+            self.is_reverse_wind = False
+        if self.Nslot_shift_wind is None:
+            self.Nslot_shift_wind = 0
+        self.Nlayer = 2
+        # Apply the transformations
+        if self.is_reverse_wind:
+            wind_mat = reverse_wind_mat(wind_mat)
+        if self.Nslot_shift_wind > 0:
+            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+
+        self.wind_mat = wind_mat
+        # Matrix changed, compute again periodicity
+        self.per_a = None
+        self.is_aper_a = None
+
     # cf Methods.Machine.WindingUD.init_as_CW2LT
-    init_as_CW2LT = init_as_CW2LT
+    def init_as_CW2LT(self, Zs=None):
+        """Compute the Winding Matrix (for winding type 1)
+        type 1 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, ORTHORADIAL
+        SUPERPOSITION  (Nlay_rad=1,Nlay_tan=2)
+
+        Parameters
+        ----------
+        self : WindingUD
+            A: WindingUD object
+        Zs : int
+            Number of Slot (Integer >0)
+
+        Raises
+        ------
+        WindingT1DefMsError
+            You must have 0.25< Zs/2/p/qs <= 0.5
+
+        """
+        if Zs is None:
+            if self.parent is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object."
+                )
+
+            if self.parent.slot is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object with Slot."
+                )
+
+            Zs = self.parent.slot.Zs
+
+        assert Zs > 0, "Zs must be >0"
+        assert Zs % 1 == 0, "Zs must be an integer"
+
+        # ex "Effect of Pole and Slot Combination on Noise and Vibration in Permanent
+        # Magnet Synchronous Motor" creates highest harmonic at Zs/2+1 and Zs/2-1
+        nlay = 2.0
+        qs = float(self.qs)
+        p = float(self.p)
+        Ncgr = Zs / nlay / qs
+        ms = Zs / 2.0 / p / qs
+        # Ncspc= Zs/(2.0*qs*self.Npcp/nlay)  # number of coils in series per parallel circuit
+        # Ntspc = self.Ntcoil * Ncspc #Number of turns in series per phase
+        Ntcoil = self.Ntcoil  # number of turns per coils
+
+        wind_mat = zeros((1, 2, Zs, int(qs)))
+        # creates highest harmonic at Zs/2+1 and Zs/2-1
+        if ms == 0.5:  # then Zs/qs is integer
+            # traditional non overlapping all teeth wound winding
+            for q in range(0, int(qs)):
+                for k in range(0, int(Zs / qs)):  # number of Ncgr coils
+                    xenc = q + array([1, 0]) + k * qs
+                    wind_mat[0, 0, int(mod(xenc[0] - 1, Zs)), q] = (
+                        +Ntcoil
+                    )  # right/top/2
+                    wind_mat[0, 1, int(mod(xenc[1] - 1, Zs)), q] = (
+                        -Ntcoil
+                    )  # left/bottom/1
+        elif ms != 0.5 and Ncgr % 1 == 0:
+            # ms!=0.5 and Ncgr is an integer (ms>0.25 && ms<0.5)
+            # new algorithm to reverse the coils
+            for q in range(0, int(qs)):
+                for k in range(0, int(nlay)):  # number of Ncgr coils
+                    for l in range(0, int(Ncgr)):
+                        id0 = int(mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
+                        id1 = int(mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
+                        # left / bottom / 1
+                        wind_mat[0, 1, id0, q] = -((-1) ** (l + q - 1 + k)) * Ntcoil
+                        # right / top / 2
+                        wind_mat[0, 0, id1, q] = +((-1) ** (l + q - 1 + k)) * Ntcoil
+
+        else:
+            raise WindingT1DefMsError(
+                "Winding geometry not handled yet. Enter "
+                "your own winding matrix with WindingUD"
+                " and contact EOMYS"
+            )
+
+        # Set default values
+        if self.is_reverse_wind is None:
+            self.is_reverse_wind = False
+        if self.Nslot_shift_wind is None:
+            self.Nslot_shift_wind = 0
+        self.Nlayer = 2
+        # Apply the transformations
+        if self.is_reverse_wind:
+            wind_mat = reverse_wind_mat(wind_mat)
+        if self.Nslot_shift_wind > 0:
+            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+
+        self.wind_mat = wind_mat
+        # Matrix changed, compute again periodicity
+        self.per_a = None
+        self.is_aper_a = None
+
     # cf Methods.Machine.WindingUD.init_as_DWL
-    init_as_DWL = init_as_DWL
+    def init_as_DWL(self, Zs=None, nlay=1):
+        """Compute the Winding Matrix (for winding type 3 or 4) (Nlay_rad=1 or 2,Nlay_tan=1)
+        type 3 or 4 : DISTRIBUTED SHORTED PITCH INTEGRAL WINDING
+
+        Parameters
+        ----------
+        self : WindingUD
+            A: WindingUD object
+        Zs : int
+            Number of Slot (Integer >0)
+        nlay: int
+            Number of layers
+
+        Raises
+        ------
+        WindingDefMsError
+            Zs/2/p/qs must be an integer
+
+        """
+        if Zs is None:
+            if self.parent is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object."
+                )
+
+            if self.parent.slot is None:
+                raise WindingError(
+                    "ERROR: The Winding object must be in a Lamination object with Slot."
+                )
+
+            Zs = self.parent.slot.Zs
+
+        assert Zs > 0, "Zs must be >0"
+        assert Zs % 1 == 0, "Zs must be an integer"
+        assert nlay in [1, 2], "Number of layer must be 1 or 2"
+
+        coil_pitch = self.coil_pitch
+        p = self.p
+        qs = self.qs
+        ms = Zs / 2.0 / float(p) / float(qs)
+        tausp = Zs / 2.0 / float(p)
+        Ntcoil = self.Ntcoil  # number of turns per coils
+        wind_mat = zeros((nlay, 1, Zs, qs))
+
+        if qs == 3:
+            phase_order = [1, -3, 2]
+        else:
+            phase_order = range(1, qs + 1)
+        if ms % 1 != 0:  # if ms isn't an integer
+            raise WindingDefMsError(
+                "wrong winding definition, Zs/2/p/qs must " "be an integer !"
+            )
+        ms = int(ms)
+        tausp = int(tausp)  # if ms is an integer, tausp is
+
+        # shorted pitch Nlay-layered integral overlapping windings
+        for nl in range(0, nlay):
+            for i in range(0, p):
+                for k in range(0, qs):
+                    ph = abs(phase_order[k])
+                    # cf Gieras p36
+                    z = (
+                        arange(1, ms + 1)
+                        + i * (Zs / p)
+                        + k * ms
+                        + nl * (coil_pitch - tausp)
+                    )
+
+                    sp = ((z - 1) % Zs).astype(int)  # positive pole
+                    sm = ((z + Zs / 2 / p - 1) % Zs).astype(int)  # negative pole
+                    for s in sp:
+                        wind_mat[nl, 0, s, ph - 1] = Ntcoil * sign(
+                            phase_order[k]
+                        )  # Accumulation for a single slot
+                    for s in sm:
+                        wind_mat[nl, 0, s, ph - 1] = -Ntcoil * sign(
+                            phase_order[k]
+                        )  # Accumulation for a single slot
+
+        # Set default values
+        if self.is_reverse_wind is None:
+            self.is_reverse_wind = False
+        if self.Nslot_shift_wind is None:
+            self.Nslot_shift_wind = 0
+        self.Nlayer = nlay
+        # Apply the transformations
+        if self.is_reverse_wind:
+            wind_mat = reverse_wind_mat(wind_mat)
+        if self.Nslot_shift_wind > 0:
+            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+
+        self.wind_mat = wind_mat
+        # Matrix changed, compute again periodicity
+        self.per_a = None
+        self.is_aper_a = None
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

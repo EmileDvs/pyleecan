@@ -7,28 +7,26 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Winding import Winding
+from pyleecan.Classes.Winding import Winding
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Machine.WindingSC.comp_connection_mat import (
-    WindingError,
-    WindingT10DefQsError,
-    reverse_wind_mat,
-    shift_wind_mat,
-    zeros,
-)
-from .Lamination import Lamination
+from pyleecan.Methods.Machine.WindingSC.comp_connection_mat import WindingT10DefQsError
+from numpy import zeros
+from pyleecan.Methods.Machine.Winding import WindingError
+from pyleecan.Functions.Winding.reverse_wind_mat import reverse_wind_mat
+from pyleecan.Functions.Winding.shift_wind_mat import shift_wind_mat
+from pyleecan.Classes.Lamination import Lamination
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class WindingSC(Winding):

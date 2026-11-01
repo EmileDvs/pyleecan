@@ -7,29 +7,32 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import abs as np_abs, argmin, array, zeros, sqrt, ones
-from .Data1D import Data1D
-from .DataFreq import DataFreq
-from .DataTime import DataTime
-from ..Functions.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
-from ..Functions.Electrical.dqh_transformation_freq import (
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataFreq import DataFreq
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Functions.Electrical.dqh_transformation import (
+    dqh2n_DataTime,
+    n2dqh_DataTime,
+)
+from pyleecan.Functions.Electrical.dqh_transformation_freq import (
     dqh2n_DataFreq,
     n2dqh_DataFreq,
 )
 import numpy as np
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class OutElec(FrozenClass):

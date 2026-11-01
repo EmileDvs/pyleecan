@@ -7,30 +7,36 @@
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
 # - check: module uses a wildcard import whose names cannot be resolved safely
-# - plot: import name 'pi' refers to different sources (numpy.pi and ..Methods.Machine.CondType12.plot.pi)
 
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Conductor import Conductor
+from pyleecan.Classes.Conductor import Conductor
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Machine.CondType12.check import check
-from ..Methods.Machine.CondType12.plot import plot
-from numpy import sqrt, pi
+from pyleecan.Methods.Machine.CondType12.check import check
+from numpy import sqrt, pi, exp
+from pyleecan.Methods.Machine.CondType12.plot import (
+    COND_COLOR,
+    COND_INS_COLOR,
+    INS_COLOR,
+    NotPlotableError,
+)
+from matplotlib.patches import Circle, Patch
+from pyleecan.Functions.init_fig import init_fig
 import matplotlib.pyplot as plt
-from .Segment import Segment
-from ..Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class CondType12(Conductor):
@@ -215,7 +221,103 @@ class CondType12(Conductor):
         return True
 
     # cf Methods.Machine.CondType12.plot
-    plot = plot
+    def plot(self, is_show_fig=True, fig=None, ax=None):
+        """Plot a Conductor in a matplotlib fig
+
+        Parameters
+        ----------
+        self : CondType12
+            A CondType12 object
+        is_show_fig : bool
+            To call show at the end of the method
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+
+        Raises
+        _______
+        NotPlotableError
+            You can't plot a coil with Nwppc>4
+        """
+
+        patches_list = []
+
+        # Conductor insultation
+        patches_list.append(Circle((0, 0), self.Wins_cond / 2, color=COND_INS_COLOR))
+
+        # Computation of the center of the wire
+        center_list = []
+        if self.Nwppc == 1:
+            center_list.append((0, 0))
+        elif self.Nwppc == 2:
+            center_list.append((0, self.Wwire / 2 + self.Wins_wire))
+            center_list.append((0, -self.Wwire / 2 - self.Wins_wire))
+        elif self.Nwppc == 3:
+            # The 3 centers are on the edges of an Equilateral Triangle
+            # (side length : a = Dwire + 2Wins_wire)
+            # The Radius of the circumscribed cercle is : a *sqrt(3)/3
+            R = (self.Wwire + 2 * self.Wins_wire) * sqrt(3) / 3.0
+            center_list.append((0, R))
+            # We found the coordinate of the other center by complex rotation
+            Z2 = R * 1j * exp(1j * 2 * pi / 3)
+            Z3 = R * 1j * exp(-1j * 2 * pi / 3)
+            center_list.append((Z2.real, Z2.imag))
+            center_list.append((Z3.real, Z3.imag))
+        elif self.Nwppc == 4:
+            # The 4 centers are on the edges of a square
+            # (side length : a =Dwire + 2Wins_wire)
+            a = self.Wwire / 2 + self.Wins_wire
+            center_list.append((a, a))
+            center_list.append((a, -a))
+            center_list.append((-a, a))
+            center_list.append((-a, -a))
+        else:
+            raise NotPlotableError("You can't plot a coil with Nwppc>4")
+
+        # Creation of the wires
+        for center in center_list:
+            # Wire insulation
+            patches_list.append(
+                Circle(center, self.Wwire / 2 + self.Wins_wire, color=INS_COLOR)
+            )
+            # Wire conductor
+            patches_list.append(Circle(center, self.Wwire / 2, color=COND_COLOR))
+
+        # Display
+        (fig, ax, _, _) = init_fig(fig=fig, ax=ax)
+        for patch in patches_list:
+            ax.add_patch(patch)
+
+        # Axis Setup
+        ax.axis("equal")
+
+        # The conductor is centered
+        ax_lim = self.Wins_cond / 2 + self.Wins_cond / 10
+        ax.set_xlim(-ax_lim, ax_lim)
+        ax.set_ylim(-ax_lim, ax_lim)
+
+        # Legend
+        patch_leg = list()  # Symbol
+        label_leg = list()  # Text
+        patch_leg.append(Patch(color=COND_INS_COLOR))
+        label_leg.append("Coil insulation")
+        patch_leg.append(Patch(color=INS_COLOR))
+        label_leg.append("Wire insulation")
+        patch_leg.append(Patch(color=COND_COLOR))
+        label_leg.append("Active wire section")
+
+        ax.legend(patch_leg, label_leg)
+        if is_show_fig:
+            fig.show()
+        return fig, ax
 
     # cf Methods.Machine.CondType12.plot_schematics
     def plot_schematics(

@@ -7,31 +7,31 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Elmer import Elmer
+from pyleecan.Classes.Elmer import Elmer
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from os.path import split, splitext
 from meshio import read
 from numpy import arange
-from .Data1D import Data1D
-from .DataTime import DataTime
-from .MeshSolution import MeshSolution
-from .MeshVTK import MeshVTK
-from .Norm_ref import Norm_ref
-from .SolutionData import SolutionData
-from .SolutionVector import SolutionVector
-from .VectorField import VectorField
-from ..Methods.Elmer.ElmerResultsVTU import ElmerResultsVTUError
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.MeshSolution import MeshSolution
+from pyleecan.Classes.MeshVTK import MeshVTK
+from pyleecan.Classes.Norm_ref import Norm_ref
+from pyleecan.Classes.SolutionData import SolutionData
+from pyleecan.Classes.SolutionVector import SolutionVector
+from pyleecan.Classes.VectorField import VectorField
+from pyleecan.Methods.Elmer.ElmerResultsVTU import ElmerResultsVTUError
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class ElmerResultsVTU(Elmer):

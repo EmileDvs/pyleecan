@@ -7,45 +7,46 @@
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
 # - check: module uses a wildcard import whose names cannot be resolved safely
-# - plot: import name 'LamSlotWind' refers to different sources (.LamSlotWind.LamSlotWind and ..Methods.Machine.LamSquirrelCage.plot.LamSlotWind)
-# - plot_side: import name 'plt' refers to different sources (..Methods.Machine.LamSquirrelCage.plot_schematics_scr.plt and ..Methods.Machine.LamSquirrelCage.plot_side.plt)
+# - plot_side: import name 'SCR_COLOR' refers to different sources (pyleecan.Methods.Machine.LamSquirrelCage.plot.SCR_COLOR and pyleecan.Methods.Machine.LamSquirrelCage.plot_side.SCR_COLOR)
 
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .LamSlotWind import LamSlotWind
+from pyleecan.Classes.LamSlotWind import LamSlotWind
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Machine.LamSquirrelCage.check import check
-from ..Methods.Machine.LamSquirrelCage.plot import plot
-from ..Methods.Machine.LamSquirrelCage.plot_side import plot_side
-from ..Functions.labels import WIND_LAB, BAR_LAB
-from .LamSlotWind import LamSlotWind
+from pyleecan.Methods.Machine.LamSquirrelCage.check import check
+from pyleecan.Methods.Machine.LamSquirrelCage.plot_side import plot_side
+from pyleecan.Functions.labels import WIND_LAB, BAR_LAB
+from pyleecan.Classes.LamSlotWind import LamSlotWind
 from numpy import pi, sin
-from .LamSlot import LamSlot
-from ..Functions.load import import_class
-from ..Methods.Machine.LamSquirrelCage.plot_schematics_scr import (
+from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Functions.load import import_class
+from pyleecan.Methods.Machine.LamSquirrelCage.plot import SCR_COLOR
+from matplotlib.patches import Patch, Wedge
+from pyleecan.Functions.init_fig import init_fig
+import matplotlib.pyplot as plt
+from pyleecan.Classes.SlotW22 import SlotW22
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
     MAIN_LINE_STYLE,
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
-    Segment,
-    SlotW22,
     plot_quote,
-    plt,
 )
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class LamSquirrelCage(LamSlotWind):
@@ -325,7 +326,118 @@ class LamSquirrelCage(LamSlotWind):
         return ["Bar " + str(ii + 1) for ii in range(qs)]
 
     # cf Methods.Machine.LamSquirrelCage.plot
-    plot = plot
+    def plot(
+        self,
+        fig=None,
+        ax=None,
+        is_lam_only=False,
+        sym=1,
+        alpha=0,
+        delta=0,
+        is_edge_only=False,
+        edgecolor=None,
+        is_add_arrow=False,
+        is_show_fig=True,
+        is_winding_connection=False,
+    ):
+        """Plot the Lamination in a matplotlib fig
+
+        Parameters
+        ----------
+        self : LamSquirrelCage
+            A LamSquirrelCage object
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+        is_lam_only : bool
+            True to plot only the lamination (remove the bare)
+        sym : int
+            Symmetry factor (1= full machine, 2= half of the machine...)
+        alpha : float
+            Angle for rotation [rad]
+        delta : complex
+            Complex value for translation
+        is_edge_only: bool
+            To plot transparent Patches
+        edgecolor:
+            Color of the edges if is_edge_only=True
+        is_show_fig : bool
+            To call show at the end of the method
+        is_winding_connection : bool
+            True to display winding connections (not used)
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+        """
+
+        # Lamination and ventilation ducts patches
+        (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
+
+        # Plot the lamination
+        LamSlotWind.plot(
+            self,
+            fig=fig,
+            ax=ax,
+            is_lam_only=is_lam_only,
+            sym=sym,
+            alpha=alpha,
+            delta=delta,
+            is_edge_only=is_edge_only,
+            is_show_fig=is_show_fig,
+        )
+
+        # init figure again to get updated label_leg and patch_leg
+        (fig, ax, patch_leg, label_leg) = init_fig(fig, ax=ax)
+
+        # setup the patch of the short circuit ring if needed
+        patches = list()
+        if not is_lam_only:
+            try:
+                Rmw = self.slot.comp_radius_mid_active()
+                patches.append(
+                    Wedge(
+                        (0, 0),
+                        Rmw + self.Hscr / 2.0,
+                        0,
+                        360 / sym,
+                        width=self.Hscr,
+                        color=SCR_COLOR,
+                    )
+                )  # Full ring
+            except:
+                pass
+
+        # Display the result
+        ax.set_xlabel("(m)")
+        ax.set_ylabel("(m)")
+        ax.set_title("Squirrel Cage Rotor")
+
+        # Axis Setup
+        ax.axis("equal")
+        Lim = self.Rext * 1.5
+        ax.set_xlim(-Lim, Lim)
+        if sym == 1:
+            ax.set_ylim(-Lim, Lim)
+        else:
+            ax.set_ylim(-Lim * 0.3, Lim)
+
+        if not is_lam_only:
+            # Add the short ciruit ring to the fig
+            for patch in patches:
+                ax.add_patch(patch)
+            if "Short Circuit Ring" not in label_leg:
+                patch_leg.append(Patch(color=SCR_COLOR))
+                label_leg.append("Short Circuit Ring")
+
+            ax.legend(patch_leg, label_leg)
+        if is_show_fig:
+            fig.show()
+        return fig, ax
 
     # cf Methods.Machine.LamSquirrelCage.plot_schematics_scr
     def plot_schematics_scr(

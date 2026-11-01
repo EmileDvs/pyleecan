@@ -7,39 +7,39 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .LamSlotMulti import LamSlotMulti
+from pyleecan.Classes.LamSlotMulti import LamSlotMulti
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from .LamSlot import LamSlot
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes.LamSlot import LamSlot
+from pyleecan.Functions.Load.import_class import import_class
 from numpy import linspace, meshgrid, pi, repeat, sum as np_sum, zeros, mean
-from ..Functions.Winding.comp_cond_function import comp_cond_function
-from ..Methods.Machine.LamSlotMultiWind.plot import (
-    BAR_LAB,
+from pyleecan.Functions.Winding.comp_cond_function import comp_cond_function
+from pyleecan.Methods.Machine.LamSlotMultiWind.plot import (
     MINUS_HATCH,
     PHASE_COLORS,
     PLUS_HATCH,
-    Patch,
-    WIND_LAB,
-    WindingSC,
-    decode_label,
-    find_wind_phase_color,
-    gen_name,
+)
+from matplotlib.patches import Patch
+import matplotlib.pyplot as plt
+from pyleecan.Functions.labels import decode_label, WIND_LAB, BAR_LAB
+from pyleecan.Functions.Winding.find_wind_phase_color import find_wind_phase_color
+from pyleecan.Functions.Winding.gen_phase_list import gen_name
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Classes.WindingSC import WindingSC
+from pyleecan.Functions.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
-    init_fig,
-    plt,
 )
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class LamSlotMultiWind(LamSlotMulti):

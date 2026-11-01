@@ -4,32 +4,38 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/XOutput
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - plot_multi: import name '_get_symbol_data_' refers to different sources (..Methods.Output.XOutput._get_symbol_data_ and ..Methods.Output.XOutput.plot_multi._get_symbol_data_)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Output import Output
+from pyleecan.Classes.Output import Output
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Output.XOutput.plot_multi import plot_multi
-from ..Methods.Output.XOutput import XOutputError, _get_symbol_data_
+from pyleecan.Methods.Output.XOutput import XOutputError, _get_symbol_data_
 import numpy as np, matplotlib.pyplot as plt
-from .OptiObjective import OptiObjective
+from pyleecan.Classes.OptiObjective import OptiObjective
 from matplotlib.colors import LinearSegmentedColormap
+from pyleecan.Methods.Output.XOutput.plot_multi import (
+    COLORMAP,
+    COLORS,
+    FONT_NAME,
+    FONT_SIZE_LABEL,
+    FONT_SIZE_LEGEND,
+    FONT_SIZE_TITLE,
+    PlotError,
+)
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from sys import getsizeof
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class XOutput(Output):
@@ -330,7 +336,114 @@ class XOutput(Output):
             return ax
 
     # cf Methods.Output.XOutput.plot_multi
-    plot_multi = plot_multi
+    def plot_multi(
+        self,
+        x_symbol,
+        y_symbol,
+        c_symbol=None,
+        cmap=None,
+        plot_type="point",
+        idx=None,
+        fig=None,
+        ax=None,
+        title=None,
+        is_show_fig=True,
+        save_path=None,
+        win_title=None,
+    ):
+        """2D Plot from a DataKeeper / OptiObjective / ParamExplorer as a function of another
+        DataKeeper / OptiObjective / ParamExplorer
+
+        Parameters
+        ----------
+        self : XOutput
+            XOutput object
+        x_symbol: str
+            ParamExplorer or DataKeeper symbol
+        y_symbol: str
+            ParamExplorer or DataKeeper symbol
+        c_symbol: str
+            optional symbol to set the plot colors
+        cmap: colormap
+            optional colormap
+        plot_type: str
+            scatter or plot to chose plot type
+        idx: slice
+            To plot only some data
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            ax on which to plot the data
+        title: str
+            Figure or subfigure title according to ax
+        is_show_fig : bool
+            True to show figure after plot
+        save_path : str
+            full path of the png file where the figure is saved if save_path is not None
+        win_title : str
+            Title of the plot window
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+
+        Raises
+        ------
+        PlotError
+        """
+
+        if idx is None:
+            idx = slice(None)
+
+        if plot_type not in ["point", "curve"]:
+            raise PlotError(f"Unknown plot_type {plot_type}.")
+
+        # get data and labels
+        x_values, x_label = _get_symbol_data_(self, x_symbol, idx)
+        y_values, y_label = _get_symbol_data_(self, y_symbol, idx)
+
+        if c_symbol is None:
+            colors = COLORS[0]
+        else:
+            # get the color data
+            c_values, _ = _get_symbol_data_(self, c_symbol, idx)
+            colors = c_values[:, np.newaxis]
+
+        # add legend
+        if c_symbol is not None:
+            legends = [c_symbol]
+        else:
+            legends = []
+
+        if cmap is None:
+            cmap = COLORMAP
+
+        (fig, ax, _, _) = init_fig(fig=fig, ax=ax, shape="rectangle")
+
+        # call plot_2D function
+        plot_2D(
+            Xdatas=[x_values],
+            Ydatas=[y_values],
+            xlabel=x_label,
+            ylabel=y_label,
+            color_list=[colors],
+            legend_list=legends,
+            title=title,
+            type_plot=plot_type,
+            save_path=save_path,
+            is_show_fig=is_show_fig,
+            win_title=win_title,
+            fig=fig,
+            ax=ax,
+            font_name=FONT_NAME,
+            font_size_title=FONT_SIZE_TITLE,
+            font_size_label=FONT_SIZE_LABEL,
+            font_size_legend=FONT_SIZE_LEGEND,
+        )
+        return fig, ax
 
     # cf Methods.Output.XOutput.plot_pareto
     def plot_pareto(
@@ -771,7 +884,7 @@ class XOutput(Output):
         XOutput_dict = super(XOutput, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         if self.paramexplorer_list is None:
             XOutput_dict["paramexplorer_list"] = None
@@ -783,7 +896,7 @@ class XOutput(Output):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs
+                            **kwargs,
                         )
                     )
                 else:
@@ -798,7 +911,7 @@ class XOutput(Output):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs
+                            **kwargs,
                         )
                     )
                 else:
@@ -812,7 +925,7 @@ class XOutput(Output):
                     XOutput_dict["xoutput_dict"][key] = obj.as_dict(
                         type_handle_ndarray=type_handle_ndarray,
                         keep_function=keep_function,
-                        **kwargs
+                        **kwargs,
                     )
                 else:
                     XOutput_dict["xoutput_dict"][key] = None
@@ -823,7 +936,7 @@ class XOutput(Output):
             XOutput_dict["xoutput_ref"] = self.xoutput_ref.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs
+                **kwargs,
             )
         XOutput_dict["xoutput_ref_index"] = self.xoutput_ref_index
         # The class name is added to the dict for deserialisation purpose

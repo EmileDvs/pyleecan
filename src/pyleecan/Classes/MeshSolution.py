@@ -6,66 +6,61 @@
 
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
-# - get_group: import name 'MeshMat' refers to different sources (..Methods.Mesh.MeshSolution.get_field.MeshMat and .MeshMat.MeshMat)
-# - get_mesh_field_pv: import name 'SolutionVector' refers to different sources (..Methods.Mesh.MeshSolution.get_field.SolutionVector and .SolutionVector.SolutionVector)
-# - get_solution: import name 'Solution' refers to different sources (pyleecan.Classes.Solution.Solution and .Solution.Solution)
-# - plot_deflection: import name 'FONT_FAMILY_PYVISTA' refers to different sources (..Methods.Mesh.MeshSolution.plot_contour.FONT_FAMILY_PYVISTA and ..Methods.Mesh.MeshSolution.plot_deflection.FONT_FAMILY_PYVISTA)
-# - plot_glyph: import name 'FONT_FAMILY_PYVISTA' refers to different sources (..Methods.Mesh.MeshSolution.plot_contour.FONT_FAMILY_PYVISTA and ..Methods.Mesh.MeshSolution.plot_glyph.FONT_FAMILY_PYVISTA)
-# - plot_mesh: import name 'MeshMat' refers to different sources (..Methods.Mesh.MeshSolution.get_field.MeshMat and .MeshMat.MeshMat)
+# - plot_deflection: import name 'FONT_FAMILY_PYVISTA' refers to different sources (pyleecan.Methods.Mesh.MeshSolution.plot_contour.FONT_FAMILY_PYVISTA and pyleecan.Methods.Mesh.MeshSolution.plot_deflection.FONT_FAMILY_PYVISTA)
+# - plot_glyph: import name 'FONT_FAMILY_PYVISTA' refers to different sources (pyleecan.Methods.Mesh.MeshSolution.plot_contour.FONT_FAMILY_PYVISTA and pyleecan.Methods.Mesh.MeshSolution.plot_glyph.FONT_FAMILY_PYVISTA)
 
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Mesh.MeshSolution.get_group import get_group
-from ..Methods.Mesh.MeshSolution.get_mesh_field_pv import get_mesh_field_pv
-from ..Methods.Mesh.MeshSolution.get_solution import get_solution
-from ..Methods.Mesh.MeshSolution.plot_deflection import plot_deflection
-from ..Methods.Mesh.MeshSolution.plot_glyph import plot_glyph
-from ..Methods.Mesh.MeshSolution.plot_mesh import plot_mesh
+from pyleecan.Methods.Mesh.MeshSolution.plot_deflection import plot_deflection
+from pyleecan.Methods.Mesh.MeshSolution.plot_glyph import plot_glyph
 from pyleecan.Classes.Solution import Solution
 from typing import Hashable, Iterator, Optional
-from ..Methods.Mesh.MeshSolution.export_to_mat import (
-    del_value_None,
-    log_error,
-    os,
-    savemat,
-)
-from numpy import zeros, hstack
-from ..Methods.Mesh.MeshSolution.get_field import (
-    DimError,
-    MeshMat,
-    MeshVTK,
-    SolutionVector,
-    apply_normal_center_surf_vectorfield,
+from pyleecan.Methods.Mesh.MeshSolution.export_to_mat import del_value_None
+from scipy.io import savemat
+import os, numpy as np
+from pyleecan.Functions.GUI.log_error import log_error
+from numpy import (
+    zeros,
+    hstack,
     squeeze,
     swapaxes,
-)
-from collections.abc import ItemsView, KeysView, ValuesView
-from ..Methods.Mesh.MeshSolution.plot_contour import (
-    COLOR_MAP,
-    FONT_FAMILY_PYVISTA,
-    configure_plot,
     exp,
     linspace,
-    np_max,
-    np_min,
+    max as np_max,
+    min as np_min,
     pi,
-    plot_mesh_field,
     real,
 )
+from pyleecan.Methods.Mesh.MeshSolution.get_field import (
+    apply_normal_center_surf_vectorfield,
+)
+from pyleecan.Classes.SolutionVector import SolutionVector
+from pyleecan.Classes.MeshMat import MeshMat
+from pyleecan.Classes.MeshVTK import MeshVTK
+from pyleecan.Functions.Structural.conversions import DimError
+from pyleecan.Classes.ElementMat import ElementMat
+from pyleecan.Classes.NodeMat import NodeMat
+from collections.abc import ItemsView, KeysView, ValuesView
+from pyleecan.Methods.Mesh.MeshSolution.plot_contour import (
+    COLOR_MAP,
+    FONT_FAMILY_PYVISTA,
+)
+from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot
+from pyleecan.Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class MeshSolution(FrozenClass):
@@ -544,11 +539,234 @@ class MeshSolution(FrozenClass):
         return vect_field, field_name, mesh_pv, is_2D
 
     # cf Methods.Mesh.MeshSolution.get_group
-    get_group = get_group
+    def get_group(self, group_names):
+        """Return all attributes of a MeshSolution object with only the elements, nodes
+        and corresponding solutions of the group.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            an MeshSolution object
+        group_name : [str]
+            list of the name of the group(s) (e.g. ["stator"])
+
+        Returns
+        -------
+        meshsol_grp: MeshSolution
+            a new MeshSolution object which is subpart of self
+        """
+
+        dimension = self.dimension
+
+        group_indices = list()
+        meshsolution_label = ""
+        is_interface = False
+
+        # 1) get the indices of all targeted element corresponding to group(s)
+        sep_list = list()
+        if isinstance(group_names, list):
+            for grp in group_names:
+                if grp == "/":
+                    # The groups before and after "/" are stored in different lists
+                    # to perform the interface.
+                    is_interface = True
+                    group_indices_init = group_indices.copy()
+                    group_indices = list()
+                    sep_list.append(group_indices_init)
+                else:
+                    group_indices.extend(self.group[grp])
+                    meshsolution_label += f"{grp}_"
+        elif isinstance(group_names, str):
+            if group_names not in self.group:
+                raise KeyError(
+                    group_names
+                    + " group doesn't exist (available groups: "
+                    + str(list(self.group.keys()))
+                    + ")"
+                )
+            group_indices.extend(self.group[group_names])
+            meshsolution_label += group_names
+
+        sep_list.append(np.sort(group_indices))
+
+        # 2) extract the corresponding connectivity and create a new mesh
+        mesh_init = self.mesh
+        mesh_list = list()
+        for sep in sep_list:
+            connect_dict, nb_element, indice_dict = mesh_init.get_element(sep)
+
+            node_indice = list()
+            mesh_new = MeshMat(
+                _is_renum=True, sym=mesh_init.sym, is_antiper_a=mesh_init.is_antiper_a
+            )
+            for key in connect_dict:
+                node_indice.extend(np.unique(connect_dict[key]))
+                mesh_new.element_dict[key] = ElementMat(
+                    connectivity=connect_dict[key],
+                    nb_element=len(connect_dict[key]),
+                    nb_node_per_element=mesh_init.element_dict[key].nb_node_per_element,
+                    indice=indice_dict[key],
+                    ref_element=mesh_init.element_dict[key].ref_element,
+                    gauss_point=mesh_init.element_dict[key].gauss_point,
+                    scalar_product=mesh_init.element_dict[key].scalar_product,
+                )
+            node_indice = np.unique(node_indice)
+
+            mesh_new.node = NodeMat(init_dict=mesh_init.node.as_dict())
+
+            mesh_list.append(mesh_new)
+
+        # 3) if interface, create the corresponding new mesh (e.g. with triangle mesh,
+        #    it creates only segment elements)
+        if is_interface:
+            mesh_interface = mesh_list[0].interface(mesh_list[1])
+            connect_interface, *_ = mesh_interface.get_element()
+
+            node_indice_interf = []
+            for key in connect_interface:
+                node_indice_interf.extend(np.unique(connect_interface[key]))
+
+            node_indice = np.unique(node_indice_interf)
+
+        # 4) select the corresponding solutions
+        solution_dict = {}
+        for key, solution in self.items():
+            type_element_sol = solution.type_element
+
+            new_sol = None
+            if type_element_sol == "node":
+                new_sol = solution.get_solution(indice=node_indice.tolist())
+            elif not is_interface:  # Interface is only available for node solution.
+                new_sol = solution.get_solution(indice=indice_dict[type_element_sol])
+
+            if new_sol is not None:
+                solution_dict[key] = new_sol
+
+        # 5) Create the corresponding MeshSolution object
+        if is_interface:
+            mesh_interface.clear_node()
+            mesh = mesh_interface
+        else:
+            mesh_new.clear_node()
+            mesh = mesh_new
+
+        meshsol_grp = self.copy()
+        meshsol_grp.label = meshsolution_label
+        meshsol_grp.mesh = mesh
+        meshsol_grp.solution_dict = solution_dict
+        meshsol_grp.dimension = dimension
+        meshsol_grp.group = self.group
+
+        return meshsol_grp
+
     # cf Methods.Mesh.MeshSolution.get_mesh_field_pv
-    get_mesh_field_pv = get_mesh_field_pv
+    def get_mesh_field_pv(
+        self,
+        *args,
+        label=None,
+        indices=None,
+        is_surf=False,
+        is_radial=False,
+        is_center=False,
+        is_normal=False,
+        field_name=None,
+        itimefreq=0,
+    ):
+        """Return the mesh and field adapted to pyvista plots.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            an MeshSolution object
+        *args: list of strings
+            List of axes requested by the user, their units and values (optional)
+        label : str
+            label of the solution
+        indices : list
+            list of indices
+        is_radial : bool
+            radial component only
+        is_center : bool
+            field at element centers
+        field_name : str
+            label of the field to return
+        itimefreq : int
+            if the field depends has a time/freqs axis, return the timefreq-th slice.
+
+        Returns
+        -------
+        mesh_pv: vtk.vtkPointSet
+            a pyvista mesh object
+        field : ndarray
+            an extracted field
+        field_name : str
+            name of the extracted field (useful if not specified as input)
+
+        """
+
+        new_mesh = self.mesh.copy()
+
+        if not isinstance(new_mesh, MeshVTK):
+            new_mesh.renum()
+
+        mesh_pv = new_mesh.get_mesh_pv()
+
+        solution = self.get_solution(
+            label=label,
+        )
+
+        args_list = list()
+        if len(args) > 0:
+            for a in args:
+                args_list.append(a)
+        args_list.append("indice")
+        if isinstance(solution, SolutionVector):
+            args_list.append("components")
+
+        field = self.get_field(
+            *args_list,
+            label=label,
+            indices=indices,
+            is_surf=is_surf,
+            is_radial=is_radial,
+            is_center=is_center,
+            is_normal=is_normal,
+        )
+
+        if field_name is None:
+            field_name = label if label is not None else "Field"
+
+        return mesh_pv, field, field_name
+
     # cf Methods.Mesh.MeshSolution.get_solution
-    get_solution = get_solution
+    def get_solution(self, label: Optional[str] = None) -> Solution:
+        """Return the solution corresponding to label or the first solution by default.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            an MeshSolution object
+        label : str
+            solution label
+
+        Returns
+        -------
+        solution: Solution
+            a Solution object
+
+        """
+
+        # Return first solution
+        if label is None:
+            return next(iter(self.values()))
+
+        # Search for the desired solution
+        try:
+            return self[label]
+        except KeyError:
+            raise KeyError(
+                f'Wrong solution label "{label}", please use one of the following values: {list(self.keys())}.'
+            )
 
     # cf Methods.Mesh.MeshSolution.items
     def items(self) -> ItemsView:
@@ -789,8 +1007,95 @@ class MeshSolution(FrozenClass):
     plot_deflection = plot_deflection
     # cf Methods.Mesh.MeshSolution.plot_glyph
     plot_glyph = plot_glyph
+
     # cf Methods.Mesh.MeshSolution.plot_mesh
-    plot_mesh = plot_mesh
+    def plot_mesh(
+        self,
+        pv_plotter=None,
+        indices=None,
+        save_path=None,
+        is_show_axes=False,
+        is_show_fig=True,
+        is_show_grid=False,
+        win_title=None,
+    ):
+        """Plot the mesh using pyvista plotter.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            a MeshSolution object
+        pv_plotter : a pyvista(qt) object, optional
+            a pyvista object which will be used for the plot
+        indices : list
+            list of the nodes to extract (optional)
+        save_path : str
+            Path to a file where to save the figure
+        is_show_axes : bool
+            True to show axes
+        is_show_fig : bool
+            To call show at the end of the method
+        is_show_grid : bool
+            True to show grid
+        win_title : str
+            To set the name of the plot window
+
+        Returns
+        -------
+        """
+
+        if pv_plotter is None:
+            pv_plotter, _ = configure_plot(
+                pv_plotter=pv_plotter, win_title=win_title, is_show_axes=is_show_axes
+            )
+        else:
+            is_show_fig = False
+
+        # Get the mesh
+        mesh_obj = self.mesh
+        if isinstance(mesh_obj, MeshMat):
+            new_mesh = mesh_obj.copy()
+            new_mesh.renum()
+            mesh = new_mesh.get_mesh_pv(indices=indices)
+        else:
+            mesh = mesh_obj.get_mesh_pv(indices=indices)
+
+        pv_plotter.add_mesh(
+            mesh,
+            color="grey",
+            opacity=1,
+            show_edges=True,
+            edge_color="white",
+            line_width=1,
+        )
+
+        if is_show_grid:
+            pv_plotter.show_grid()
+        if self.dimension == 2:
+            # 2D view
+            pv_plotter.view_xy()
+        else:
+            # isometric view with z towards left
+            pv_plotter.view_isometric()
+            pv_plotter.camera_position = [
+                pv_plotter.camera_position[0],
+                (
+                    pv_plotter.camera_position[1][0],
+                    pv_plotter.camera_position[1][2],
+                    pv_plotter.camera_position[1][0],
+                ),
+                (
+                    pv_plotter.camera_position[2][1],
+                    pv_plotter.camera_position[2][2],
+                    pv_plotter.camera_position[2][0],
+                ),
+            ]
+        if save_path is None and is_show_fig:
+            pv_plotter.show()
+        elif save_path is not None:  # and is_show_fig:
+            pv_plotter.show(interactive=False, screenshot=save_path)
+
+        return pv_plotter
 
     # cf Methods.Mesh.MeshSolution.pop_solution
     def pop_solution(self, label: str) -> Solution:

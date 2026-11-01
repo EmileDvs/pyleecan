@@ -4,34 +4,31 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Arc
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - comp_maxseg: import name 'sqrt' refers to different sources (numpy.sqrt and ..Methods.Geometry.Arc.comp_maxseg.sqrt)
-# - split_line: import name 'angle' refers to different sources (numpy.angle and ..Methods.Geometry.Arc.split_line.angle)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Line import Line
+from pyleecan.Classes.Line import Line
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Geometry.Arc.comp_maxseg import comp_maxseg
-from ..Methods.Geometry.Arc.split_line import split_line
-from numpy import sqrt, angle, exp, sign, abs, pi, abs as np_abs
-from ..Functions.Geometry.inter_line_circle import inter_line_circle
-from ..Functions.Geometry.inter_circle_circle import inter_circle_circle
-from ..Functions.init_fig import init_fig
-from ..Functions.Plot import TEXT_BOX
+from numpy import sqrt, angle, exp, sign, abs, pi, sin, abs as np_abs
+from pyleecan.Methods.Geometry.Arc.comp_maxseg import MAXSEG_default
+from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
+from pyleecan.Functions.Geometry.inter_circle_circle import inter_circle_circle
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.Plot import TEXT_BOX
+from pyleecan.Methods.Geometry.Arc.split_line import DELTA
+from pyleecan.Classes.Segment import Segment
+from pyleecan.definitions import PACKAGE_NAME
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Arc(Line):
@@ -73,7 +70,49 @@ class Arc(Line):
             return min([D2, D3, D4])
 
     # cf Methods.Geometry.Arc.comp_maxseg
-    comp_maxseg = comp_maxseg
+    def comp_maxseg(self, elementsize, maxseg_amp):
+        """
+        Computes the number of segments per arc degrees in
+        function of the elementsize of the region
+
+        Parameters
+        ----------
+        self : Arc
+            An Arc object
+        elementsize : float
+            max element size parameter
+        maxseg_amp : float
+            amplifying factor
+
+        Returns
+        -------
+        maxseg : float
+            number of segments per arc degrees
+        """
+
+        if elementsize == 0:
+            # taking default maximum segment value
+            maxseg = MAXSEG_default
+
+        else:
+            angle = self.get_angle(is_deg=True)
+            begin = self.get_begin()
+            end = self.get_end()
+
+            if abs(angle) == 180:
+                l_arc = pi * abs(begin - end) / 2
+            elif abs(angle) == 90:
+                l_arc = pi / 2 * abs(begin - end) / sqrt(2)
+            else:
+                l_arc = abs((begin - end) / (2 * sin(angle / 2 * pi / 180))) * abs(
+                    angle * pi / 180
+                )
+
+            n_seg = l_arc / elementsize
+
+            maxseg = abs(min(MAXSEG_default, abs(angle / n_seg * maxseg_amp)))
+
+        return maxseg
 
     # cf Methods.Geometry.Arc.draw_FEMM
     def draw_FEMM(
@@ -409,7 +448,190 @@ class Arc(Line):
         return fig, ax
 
     # cf Methods.Geometry.Arc.split_line
-    split_line = split_line
+    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
+        """Cut the Arc according to a line defined by two complex
+        "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
+
+        Parameters
+        ----------
+        self : Segment
+            An Segment object
+        Z1 : complex
+            First point of the cutting Line
+        Z2 : complex
+            Second point of the cutting Line
+        is_join : bool
+            True to join the split_list with Segment if there is more that one remaining parts
+        prop_dict_join : dict
+            Property dict to set on the join line
+
+        Returns
+        -------
+        top_split_list, bot_split_list : ([Line], [Line])
+            Both part of the arc
+        """
+
+        # Dynamic import of Arc1 to prevent import loop from code generator
+        module = __import__(PACKAGE_NAME + ".Classes.Arc1", fromlist=["Arc1"])
+        Arc1 = getattr(module, "Arc1")
+
+        # Get the intersection point
+        Z_int = self.intersect_line(Z1, Z2)
+        # Begin and end point in the line coordonate system
+        Zb = (self.get_begin() - Z1) * exp(-1j * angle(Z2 - Z1))
+        Ze = (self.get_end() - Z1) * exp(-1j * angle(Z2 - Z1))
+        # Center of the arc (for later check)
+        Zc = self.get_center()
+
+        if len(Z_int) == 0:
+            # No intersection copy the line
+            line = self.copy()
+            # Begin and end on top
+            if Zb.imag >= 0 and Ze.imag >= 0:
+                return [line], []
+            # Begin and end on bot
+            elif Zb.imag <= 0 and Ze.imag <= 0:
+                return [], [line]
+            else:
+                raise Exception("Split Arc error (case 0 int)")
+        if len(Z_int) == 1:
+            # One intersection => Three possible lines
+            # Begin => Intersection
+            line1 = Arc1(
+                begin=self.get_begin(),
+                end=Z_int[0],
+                radius=self.comp_radius(),
+                is_trigo_direction=bool(self.get_angle() > 0),
+            )
+            # Fix radius if needed
+            if (
+                np_abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
+                and np_abs(line1.get_center() - Zc) > 1e-6
+            ):
+                line1.radius = -1 * line1.radius
+            # Intersection => End
+            line2 = Arc1(
+                begin=Z_int[0],
+                end=self.get_end(),
+                radius=self.comp_radius(),
+                is_trigo_direction=bool(self.get_angle() > 0),
+            )
+            # Fix radius if needed
+            if (
+                np_abs(line2.begin - line2.end) > 1e-6
+                and np_abs(line2.get_center() - Zc) > 1e-6  # Avoid error for center
+            ):
+                line2.radius = -1 * line2.radius
+
+            # Copy of the complete line (begin or end on cutting line, or cutting line is tangent)
+            line3 = self.copy()
+
+            # If the line is tangent, begin and end are on the same side of the line
+            if (Zb.imag > DELTA and Ze.imag > DELTA) or (
+                Zb.imag < -DELTA and Ze.imag < -DELTA
+            ):
+                # Begin (and end) on top
+                if Zb.imag > DELTA:
+                    return [line3], []
+                # Begin (and end) on bot
+                elif Zb.imag < -DELTA:
+                    return [], [line3]
+                else:
+                    raise Exception("Split Arc error (case 1 int-Tangent)")
+            # Return the correct line according to the points position
+            elif Zb.imag > DELTA and abs(Ze.imag) > DELTA:  # Begin on top; End!=Int
+                return [line1], [line2]
+            elif Zb.imag > DELTA:  # Begin on top; End==Int
+                return [line3], []
+            elif Zb.imag < -DELTA and abs(Ze.imag) > DELTA:  # Begin on bot; End!=Int
+                return [line2], [line1]
+            elif Zb.imag < -DELTA:  # Begin on bot; End==Int
+                return [], [line3]
+            # Zb.imag == 0 => begin on cutting line
+            elif Ze.imag > DELTA:  # Begin==Int, End on Top
+                return [line3], []
+            elif Ze.imag < -DELTA:  # Begin==Int, End on Bot
+                return [], [line3]
+            else:
+                raise Exception("Split Arc error (case 1 int-Non Tangent)")
+        elif len(Z_int) == 2:
+            # Two intersection => Three possible lines
+            # Begin => Intersection1 (intersection are ordered along the arc)
+            line1 = Arc1(
+                begin=self.get_begin(),
+                end=Z_int[0],
+                radius=self.comp_radius(),
+                is_trigo_direction=bool(self.get_angle() > 0),
+            )
+            # Fix radius if needed
+            if (
+                np_abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
+                and np_abs(line1.get_center() - Zc) > 1e-6
+            ):
+                line1.radius = -1 * line1.radius
+            # Intersection 1 => Intersection 2
+            line2 = Arc1(
+                begin=Z_int[0],
+                end=Z_int[1],
+                radius=self.comp_radius(),
+                is_trigo_direction=bool(self.get_angle() > 0),
+            )
+            # Fix radius if needed
+            if (
+                np_abs(line2.begin - line2.end) > 1e-6  # Avoid error for center
+                and np_abs(line2.get_center() - Zc) > 1e-6
+            ):
+                line2.radius = -1 * line2.radius
+            # Intersection 2 => End
+            line3 = Arc1(
+                begin=Z_int[1],
+                end=self.get_end(),
+                radius=self.comp_radius(),
+                is_trigo_direction=bool(self.get_angle() > 0),
+            )
+            # Fix radius if needed
+            if (
+                np_abs(line3.begin - line3.end) > 1e-6  # Avoid error for center
+                and np_abs(line3.get_center() - Zc) > 1e-6
+            ):
+                line3.radius = -1 * line3.radius
+            # Line Intersection 1 => Intersection 2 for join
+            seg_join = Segment(begin=Z_int[0], end=Z_int[1], prop_dict=prop_dict_join)
+            # If both intersection are Begin and end
+            line4 = self.copy()
+            if is_join:
+                line_list = [line1, seg_join, line3]
+            else:
+                line_list = [line1, line3]
+            if np_abs(Z_int[0] - self.get_begin()) < DELTA:  # Begin==Int1
+                line_list.pop(0)
+            if np_abs(Z_int[1] - self.get_end()) < DELTA:
+                line_list.pop(-1)
+
+            # If the intersetion points are begin and end
+            if (
+                np_abs(Z_int[0] - self.get_begin()) < DELTA
+                and np_abs(Z_int[1] - self.get_end()) < DELTA
+            ):
+                Zm = (self.get_middle() - Z1) * exp(-1j * angle(Z2 - Z1))
+                # begin and end are on the line => Zm.imag != 0
+                if Zm.imag > 0:
+                    return [line4], []
+                elif Zm.imag < 0:
+                    return [], [line4]
+                else:
+                    raise Exception("Split Arc error (case 2 int-Both)")
+            elif Zb.imag > DELTA:  # Begin on top
+                return line_list, [line2]
+            elif Zb.imag < -DELTA:  # Begin on bot
+                return [line2], line_list
+            elif Ze.imag > DELTA:  # Begin== Int1, End on Top
+                return line_list, [line2]
+            elif Ze.imag < -DELTA:  # Begin== Int1, End on Bot
+                return [line2], line_list
+            else:
+                Exception("Split Arc error (case 2 int)")
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

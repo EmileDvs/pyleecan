@@ -6,38 +6,40 @@
 
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
-# - gen_datakeeper_list: import name 'import_class' refers to different sources (..Methods.Simulation.VarSimu.check_param.import_class and ..Functions.Load.import_class.import_class)
-# - generate_simulation_list: import name 'VarSimuError' refers to different sources (..Methods.Simulation.VarSimu.check_param.VarSimuError and ..Methods.Simulation.VarSimu.generate_simulation_list.VarSimuError)
-# - run: import name 'import_class' refers to different sources (..Methods.Simulation.VarSimu.check_param.import_class and ..Methods.Simulation.VarSimu.run.import_class)
+# - generate_simulation_list: import name 'VarSimuError' refers to different sources (pyleecan.Methods.Simulation.VarSimu.check_param.VarSimuError and pyleecan.Methods.Simulation.VarSimu.generate_simulation_list.VarSimuError)
 
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Simulation.VarSimu.gen_datakeeper_list import gen_datakeeper_list
-from ..Methods.Simulation.VarSimu.generate_simulation_list import (
+from pyleecan.Methods.Simulation.VarSimu.generate_simulation_list import (
     generate_simulation_list,
 )
-from ..Methods.Simulation.VarSimu.run import run
-from ..Methods.Simulation.VarSimu.check_param import VarSimuError, import_class
-from ..Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
+from pyleecan.Methods.Simulation.VarSimu.check_param import VarSimuError
+from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Classes.DataKeeper import DataKeeper
+from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
-from .DataKeeper import DataKeeper
-from .MagFEMM import MagFEMM
-from .ElecLUTdq import ElecLUTdq
+from pyleecan.Methods.Simulation.VarSimu.run import log_step_simu, print_progress_bar
+from pyleecan.Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step
+from pyleecan.Functions.Simulation.VarSimu.log_datakeeper_step_result import (
+    log_datakeeper_step_result,
+)
+from pyleecan.Classes.MagFEMM import MagFEMM
+from pyleecan.Classes.ElecLUTdq import ElecLUTdq
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class VarSimu(FrozenClass):
@@ -59,7 +61,44 @@ class VarSimu(FrozenClass):
             raise VarSimuError("VarSimu object must be inside a Simulation object")
 
     # cf Methods.Simulation.VarSimu.gen_datakeeper_list
-    gen_datakeeper_list = gen_datakeeper_list
+    def gen_datakeeper_list(self, ref_simu):
+        """Generate default DataKeepers according the reference simulation type"""
+        datakeeper_list = []
+
+        # To avoid adding twice a DataKeeper
+        symbol_list = [dk.symbol for dk in self.datakeeper_list]
+        # For multi-simulation of multi-simulation (different DataKeepe<r)
+        is_multi = ref_simu.var_simu is not None
+        # Dynamic import to avoid loop
+        InputCurrent = import_class("pyleecan.Classes", "InputCurrent", "")
+
+        # Save speed
+        if not is_multi and "N0" not in symbol_list:
+            datakeeper_list.append(
+                DataKeeper(
+                    name="Speed",
+                    symbol="N0",
+                    unit="rpm",
+                    keeper="lambda output: output.elec.OP.get_N0()",
+                )
+            )
+
+        # Get default datakeeper
+        if ref_simu.elec or isinstance(ref_simu.input, InputCurrent):
+            datakeeper_list.extend(
+                self.get_elec_datakeeper(symbol_list, is_multi=is_multi)
+            )
+        if ref_simu.mag:
+            datakeeper_list.extend(
+                self.get_mag_datakeeper(symbol_list, is_multi=is_multi)
+            )
+        if ref_simu.force:
+            datakeeper_list.extend(
+                self.get_force_datakeeper(symbol_list, is_multi=is_multi)
+            )
+
+        self.datakeeper_list.extend(datakeeper_list)
+
     # cf Methods.Simulation.VarSimu.generate_simulation_list
     generate_simulation_list = generate_simulation_list
 
@@ -248,7 +287,153 @@ class VarSimu(FrozenClass):
         return ref_simu_index
 
     # cf Methods.Simulation.VarSimu.run
-    run = run
+    def run(self):
+        """Run the multi-simulation
+        The VarSimu object must be in a Simulation object (and not a VarSimu one)
+
+        Parameters
+        ----------
+        self : VarSimu
+            A VarSimu object
+        """
+
+        logger = self.get_logger()
+        Output = import_class("pyleecan.Classes", "Output")
+
+        # Check var_simu parameters
+        self.check_param()  # Check isinstance(self.parent, Simulation)
+
+        # Get xoutput to store results (created in Simulation.run)
+        xoutput = self.parent.parent
+
+        # Create reference simulation
+        ref_simu = self.parent.copy()
+        ref_simu.var_simu = self.var_simu  # var_simu default is None
+        ref_simu.index = None
+        ref_simu.layer = self.parent.layer + 1
+        # None clean-up
+        if xoutput.xoutput_dict is None:
+            xoutput.xoutput_dict = dict()
+
+        # Generate simulation list and ParamExplorerValue list
+        simu_dict = self.generate_simulation_list(ref_simu)
+        # Generate default datakeeper
+        self.gen_datakeeper_list(ref_simu)
+
+        # Check if one of the simulation from the list matches the reference one
+        ref_simu_index = self.get_ref_simu_index(ref_simu, simu_dict)
+
+        # Fill/initialize input/output parameters
+        nb_simu = len(simu_dict["simulation_list"])
+        xoutput.nb_simu = nb_simu
+        self.nb_simu = nb_simu
+        xoutput.paramexplorer_list = simu_dict["paramexplorer_list"]
+        simulation_list = simu_dict["simulation_list"]
+        if self.is_keep_all_output:
+            xoutput.output_list = [None] * self.nb_simu
+        keeper_list = list()  # Copy keeper to store results in xoutput and not in simu
+        for datakeeper in self.datakeeper_list:
+            keeper_list.append(datakeeper.copy())
+            xoutput.xoutput_dict[datakeeper.symbol] = keeper_list[-1]
+            keeper_list[-1].result = [None] * self.nb_simu
+
+        # Run Reference simulation
+        if ref_simu.layer == 2:
+            logger.info("    Computing reference simulation for " + self.NAME)
+        else:
+            logger.info("Computing reference simulation for " + self.NAME)
+
+        if self.NAME == "Parameter Sweep":
+            for param in simu_dict["paramexplorer_list"]:
+                logger.info(param.get_desc(ref_simu))
+
+        progress = 0  # For progress bar
+        nb_simu += 1  # Count reference simulation in progress bar
+
+        # Run the simulation & call DataKeeper and post-proc handling errors
+        xoutput_ref = run_multisim_step(
+            ref_simu,
+            datakeeper_list=keeper_list,  # datakeeper.result will be updated (if needed)
+            stop_if_error=True,  # Reference simulation must be correct
+            post_keeper_postproc_list=self.post_keeper_postproc_list,
+            simu_type=self.NAME,
+        )
+        # Save reference xoutput (if requested)
+        if self.is_keep_all_output:
+            if ref_simu_index is None:
+                xoutput.xoutput_ref = xoutput_ref
+            else:  # Avoid duplicating the XOutput
+                xoutput.xoutput_ref_index = ref_simu_index
+
+        progress += 1
+        print_progress_bar(nb_simu, progress, ref_simu.layer)
+
+        # Store the Ouput part of the xoutput_ref into the main xoutput
+        ref_out_dict = Output.as_dict(xoutput_ref)
+        if "simu" in ref_out_dict:  # Avoid erasing original simulation
+            ref_out_dict.pop("simu")
+        ref_out_dict.pop("__class__")
+        for key, value in ref_out_dict.items():
+            setattr(xoutput, key, value)
+
+        # Reuse some intermediate results from reference simulation (if requested)
+        for ii, simu in enumerate(simulation_list):
+            # Log only for first simulation
+            self.set_reused_data(
+                simu,
+                xoutput_ref,
+                is_log=ii == 0,
+                simu_type=self.NAME,
+            )
+
+        # Update the postprocessing list if needed
+        if self.pre_keeper_postproc_list is not None:
+            # Different post between simu list and ref simu
+            for simu in simulation_list:
+                simu.postproc_list = self.pre_keeper_postproc_list
+
+        # Execute the simulation list
+        for idx, simu_step in enumerate(simulation_list):
+            # Display simulation progress
+            log_step_simu(
+                idx, self.nb_simu, xoutput.paramexplorer_list, logger, simu_step.layer
+            )
+            simu_step.index = idx
+            if idx != ref_simu_index:
+                # Run the simulation & call DataKeeper and post-proc handling errors
+                xoutput_step = run_multisim_step(
+                    simu_step,
+                    keeper_list,  # datakeeper.result will be updated (if needed)
+                    self.stop_if_error,
+                    post_keeper_postproc_list=self.post_keeper_postproc_list,
+                    simu_type=self.NAME,
+                )
+                if self.is_keep_all_output:
+                    xoutput.output_list[idx] = xoutput_step
+            else:
+                if simu_step.layer == 2:
+                    logger.info(
+                        "    Simulation matches reference one: Skipping computation"
+                    )
+                else:
+                    logger.info(
+                        "Simulation matches reference one: Skipping computation"
+                    )
+                # Copy results from reference
+                for keeper in keeper_list:
+                    keeper.result[idx] = keeper.result_ref
+                if self.is_keep_all_output:
+                    xoutput.output_list[idx] = xoutput_ref
+                # Print DataKeeper content
+                log_datakeeper_step_result(simu_step, keeper_list, idx, self.NAME)
+            progress += 1
+            print_progress_bar(nb_simu, progress, simu_step.layer)
+
+        # Running postprocessings
+        if self.postproc_list:
+            logger.info("Running " + self.NAME + " postprocessings...")
+            for postproc in self.postproc_list:
+                postproc.run(xoutput)
 
     # cf Methods.Simulation.VarSimu.set_reused_data
     def set_reused_data(self, simu, output, is_log=True, simu_type="VarSimu"):

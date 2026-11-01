@@ -7,28 +7,28 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .EEC import EEC
+from pyleecan.Classes.EEC import EEC
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import zeros, sqrt, isnan, tile, where, pi, interp, inf, exp
-from ..Functions.Electrical.dqh_transformation import n2abc, abc2n
-from ..Functions.labels import STATOR_LAB, ROTOR_LAB
+from pyleecan.Functions.Electrical.dqh_transformation import n2abc, abc2n
+from pyleecan.Functions.labels import STATOR_LAB, ROTOR_LAB
 from multiprocessing import cpu_count
-from .ImportGenVectLin import ImportGenVectLin
-from .ImportMatrixVal import ImportMatrixVal
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes.ImportGenVectLin import ImportGenVectLin
+from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
+from pyleecan.Functions.Load.import_class import import_class
 import scipy.interpolate as scp_int
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class EEC_SCIM(EEC):

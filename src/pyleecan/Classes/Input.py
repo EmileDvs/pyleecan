@@ -7,28 +7,28 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import pi
-from .Data1D import Data1D
-from .DataLinspace import DataLinspace
-from .Norm_ref import Norm_ref
-from .Norm_indices import Norm_indices
-from .Norm_affine import Norm_affine
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.Norm_ref import Norm_ref
+from pyleecan.Classes.Norm_indices import Norm_indices
+from pyleecan.Classes.Norm_affine import Norm_affine
 
-from ..Classes.ImportMatrixVal import ImportMatrixVal
+from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 from numpy import ndarray
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Input(FrozenClass):

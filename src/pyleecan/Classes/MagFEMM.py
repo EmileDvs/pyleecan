@@ -7,45 +7,45 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Magnetics import Magnetics
+from pyleecan.Classes.Magnetics import Magnetics
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import append, concatenate, zeros, pi, roll, sin, cos, all
-from .Data1D import Data1D
-from ..Functions.MeshSolution.build_meshsolution import build_meshsolution
-from ..Functions.MeshSolution.build_solution_data import build_solution_data
-from ..Functions.MeshSolution.build_solution_vector import build_solution_vector
-from ._FEMMHandler import _FEMMHandler
-from .OutMagFEMM import OutMagFEMM
-from ..Functions.FEMM.draw_FEMM import draw_FEMM
-from ..Functions.labels import STATOR_LAB
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Functions.MeshSolution.build_meshsolution import build_meshsolution
+from pyleecan.Functions.MeshSolution.build_solution_data import build_solution_data
+from pyleecan.Functions.MeshSolution.build_solution_vector import build_solution_vector
+from pyleecan.Classes._FEMMHandler import _FEMMHandler
+from pyleecan.Classes.OutMagFEMM import OutMagFEMM
+from pyleecan.Functions.FEMM.draw_FEMM import draw_FEMM
+from pyleecan.Functions.labels import STATOR_LAB
 import os, numpy as np
 from os.path import join, isfile, splitext
-from .ElementMat import ElementMat
-from .FPGNTri import FPGNTri
-from .MeshMat import MeshMat
-from .NodeMat import NodeMat
-from .RefTriangle3 import RefTriangle3
-from .ScalarProductL2 import ScalarProductL2
-from ..definitions import MAIN_DIR
-from ..Functions.FEMM import FEMM_GROUPS
+from pyleecan.Classes.ElementMat import ElementMat
+from pyleecan.Classes.FPGNTri import FPGNTri
+from pyleecan.Classes.MeshMat import MeshMat
+from pyleecan.Classes.NodeMat import NodeMat
+from pyleecan.Classes.RefTriangle3 import RefTriangle3
+from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
+from pyleecan.definitions import MAIN_DIR
+from pyleecan.Functions.FEMM import FEMM_GROUPS
 from os import remove, rename
-from ..Functions.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
-from ..Functions.FEMM.comp_FEMM_torque import comp_FEMM_torque
-from ..Functions.FEMM.update_FEMM_simulation import update_FEMM_simulation
+from pyleecan.Functions.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
+from pyleecan.Functions.FEMM.comp_FEMM_torque import comp_FEMM_torque
+from pyleecan.Functions.FEMM.update_FEMM_simulation import update_FEMM_simulation
 from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool
 from shutil import copyfile
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class MagFEMM(Magnetics):

@@ -18,28 +18,28 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Data import Data
+from pyleecan.Classes.Data import Data
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.SciDataTool.Data1D.check_filter import check_filter
-from ..Methods.SciDataTool.Data1D.get_axis_periodic import get_axis_periodic
-from ..Methods.SciDataTool.Data1D.get_filter import get_filter
-from ..Methods.SciDataTool.Data1D.get_length import get_length
-from ..Methods.SciDataTool.Data1D.get_periodicity import get_periodicity
-from ..Methods.SciDataTool.Data1D.get_values import get_values
-from ..Methods.SciDataTool.Data1D.has_period import has_period
-from ..Methods.SciDataTool.Data1D.to_linspace import to_linspace
+from pyleecan.Methods.SciDataTool.Data1D.check_filter import check_filter
+from pyleecan.Methods.SciDataTool.Data1D.get_axis_periodic import get_axis_periodic
+from pyleecan.Methods.SciDataTool.Data1D.get_filter import get_filter
+from pyleecan.Methods.SciDataTool.Data1D.get_length import get_length
+from pyleecan.Methods.SciDataTool.Data1D.get_periodicity import get_periodicity
+from pyleecan.Methods.SciDataTool.Data1D.get_values import get_values
+from pyleecan.Methods.SciDataTool.Data1D.has_period import has_period
+from pyleecan.Methods.SciDataTool.Data1D.to_linspace import to_linspace
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Data1D(Data):

@@ -7,24 +7,24 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .LamSquirrelCage import LamSquirrelCage
+from pyleecan.Classes.LamSquirrelCage import LamSquirrelCage
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import pi
-from .LamSquirrelCage import LamSquirrelCage
-from ..Functions.labels import update_RTS_index
-from .LamSlotWind import LamSlotWind
-from ..Functions.init_fig import init_fig
+from pyleecan.Classes.LamSquirrelCage import LamSquirrelCage
+from pyleecan.Functions.labels import update_RTS_index
+from pyleecan.Classes.LamSlotWind import LamSlotWind
+from pyleecan.Functions.init_fig import init_fig
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class LamSquirrelCageMag(LamSquirrelCage):

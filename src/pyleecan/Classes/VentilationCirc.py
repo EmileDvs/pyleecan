@@ -12,24 +12,24 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Hole import Hole
+from pyleecan.Classes.Hole import Hole
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Slot.VentilationCirc.build_geometry import build_geometry
-from ..Methods.Slot.VentilationCirc.check import check
+from pyleecan.Methods.Slot.VentilationCirc.build_geometry import build_geometry
+from pyleecan.Methods.Slot.VentilationCirc.check import check
 from numpy import exp, pi
 import matplotlib.pyplot as plt
-from .Arc1 import Arc1
-from .LamHole import LamHole
-from .Segment import Segment
-from ..Functions.Plot import (
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.LamHole import LamHole
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
@@ -39,10 +39,10 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from ..Methods import ParentMissingError
+from pyleecan.Methods import ParentMissingError
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class VentilationCirc(Hole):

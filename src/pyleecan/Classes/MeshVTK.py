@@ -7,53 +7,53 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Mesh import Mesh
+from pyleecan.Classes.Mesh import Mesh
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from typing import Literal, Optional
 from numpy import arange, array
-from .ElementMat import ElementMat
-from .FPGNSeg import FPGNSeg
-from .FPGNTri import FPGNTri
-from .Mesh import Mesh
-from .NodeMat import NodeMat
-from .RefLine3 import RefLine3
-from .RefQuad9 import RefQuad9
-from .RefSegmentP1 import RefSegmentP1
-from .RefTriangle3 import RefTriangle3
-from .ScalarProductL2 import ScalarProductL2
+from pyleecan.Classes.ElementMat import ElementMat
+from pyleecan.Classes.FPGNSeg import FPGNSeg
+from pyleecan.Classes.FPGNTri import FPGNTri
+from pyleecan.Classes.Mesh import Mesh
+from pyleecan.Classes.NodeMat import NodeMat
+from pyleecan.Classes.RefLine3 import RefLine3
+from pyleecan.Classes.RefQuad9 import RefQuad9
+from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
+from pyleecan.Classes.RefTriangle3 import RefTriangle3
+from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
 import numpy as np, pyvista as pv, os, shutil
 from meshio import read
 from numpy.typing import ArrayLike
 from os.path import join
-from ..definitions import RESULT_DIR
-from .MeshMat import MeshMat
-from ..Functions.GUI.log_error import log_error
+from pyleecan.definitions import RESULT_DIR
+from pyleecan.Classes.MeshMat import MeshMat
+from pyleecan.Functions.GUI.log_error import log_error
 
 from numpy import array, array_equal
 from numpy import isnan
 from cloudpickle import dumps, loads
-from ._check import CheckTypeError
+from pyleecan.Classes._check import CheckTypeError
 
 try:
     from vtk import vtkPointSet
 except ImportError:
     vtkPointSet = ImportError
 from cloudpickle import dumps, loads
-from ._check import CheckTypeError
+from pyleecan.Classes._check import CheckTypeError
 
 try:
     from pyvista.core.pointset import PolyData
 except ImportError:
     PolyData = ImportError
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class MeshVTK(Mesh):
@@ -89,7 +89,7 @@ class MeshVTK(Mesh):
             new_mesh.node.coordinate *= scale
         elif meshtype == "MeshMat":
             # Avoid circular import
-            from ....Classes.MeshMat import MeshMat
+            from pyleecan.Classes.MeshMat import MeshMat
 
             new_mesh = MeshMat(dimension=self.dimension)
 

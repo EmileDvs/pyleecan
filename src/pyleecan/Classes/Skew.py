@@ -7,29 +7,29 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import pi, array, linspace, mean as np_mean, floor, flip, concatenate, arange
-from ..Methods.Machine.Skew import TYPE_SKEW_LIST
-from ..Functions.load import import_class
-from ..Functions.Plot import dict_2D
-from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Methods.Machine.Skew import TYPE_SKEW_LIST
+from pyleecan.Functions.load import import_class
+from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 
 from ntpath import basename
 from os.path import isfile
-from ._check import CheckTypeError
+from pyleecan.Classes._check import CheckTypeError
 import numpy as np
 import random
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Skew(FrozenClass):

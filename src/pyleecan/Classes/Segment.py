@@ -7,38 +7,37 @@
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
 # - check: module uses a wildcard import whose names cannot be resolved safely
-# - plot: import name 'array' refers to different sources (..Methods.Geometry.Segment.comp_distance.array and numpy.array)
-# - split_line: import name 'exp' refers to different sources (numpy.exp and ..Methods.Geometry.Segment.split_line.exp)
 
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Line import Line
+from pyleecan.Classes.Line import Line
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Geometry.Segment.check import check
-from ..Methods.Geometry.Segment.plot import plot
-from ..Methods.Geometry.Segment.split_line import split_line
-from ..Methods.Geometry.Segment.comp_distance import array, distance_numpy
-from numpy import linspace, abs as np_abs, exp
-from ..Methods.Machine import LINE_NPOINT_D
-from ..Methods.Geometry.Segment import (
+from pyleecan.Methods.Geometry.Segment.check import check
+from pyleecan.Methods.Geometry.Segment.comp_distance import distance_numpy
+from numpy import array, linspace, abs as np_abs, exp, angle
+from pyleecan.Methods.Machine import LINE_NPOINT_D
+from pyleecan.Methods.Geometry.Segment import (
     NbPointSegmentDError,
     AngleRotationSegmentError,
     PointTranslateSegmentError,
 )
-from ..Functions.Geometry.inter_line_line import inter_line_line
-from ..Functions.Geometry.inter_line_circle import inter_line_circle
+from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
+from pyleecan.Functions.Geometry.inter_line_circle import inter_line_circle
+from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions.Plot import TEXT_BOX
+from pyleecan.Methods.Geometry.Segment.split_line import DELTA
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Segment(Line):
@@ -397,7 +396,85 @@ class Segment(Line):
         return False
 
     # cf Methods.Geometry.Segment.plot
-    plot = plot
+    def plot(
+        self,
+        fig=None,
+        ax=None,
+        is_arrow=False,
+        linestyle="solid",
+        linewidth=1,
+        color="black",
+        label=None,
+        offset_label=0,
+        fontsize=12,
+    ):
+        """Plot the segment
+
+        Parameters
+        ----------
+        self : Segment
+            A Segment object
+        fig : Matplotlib.figure.Figure
+            existing figure to use if None create a new one
+        ax : Matplotlib.axes.Axes object
+            Axis on which to plot the data
+        is_arrow : bool
+            True to draw a double headed arrow instead of a line
+        linestyle : str
+            Line of the line (solid, dotted...)
+        linewidth : int
+            Line Width
+        color : str
+            Color of the line
+        label : str
+            To add a label at the middle of the line
+        offset_label : complex
+            Complex value to shift the label from the middle
+        fontsize : int
+            Size of the font for the label (if any)
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure containing the plot
+        ax : Matplotlib.axes.Axes object
+            Axis containing the plot
+        """
+        begin = self.get_begin()
+        end = self.get_end()
+
+        # Init fig
+        (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
+
+        if is_arrow:  # Plot as double headed arrow
+            ax.annotate(
+                text="",
+                xy=(end.real, end.imag),
+                xytext=(begin.real, begin.imag),
+                arrowprops=dict(arrowstyle="<->", linewidth=linewidth, color=color),
+            )
+        else:  # Plot as a line
+            points = array([begin, end])
+            ax.plot(
+                points.real,
+                points.imag,
+                linestyle=linestyle,
+                linewidth=linewidth,
+                color=color,
+            )
+
+        # Add the Label
+        if label is not None:
+            Zmid = self.get_middle()
+            ax.text(
+                Zmid.real + offset_label.real,
+                Zmid.imag + offset_label.imag,
+                label,
+                fontsize=fontsize,
+                bbox=TEXT_BOX,
+            )
+
+        return fig, ax
 
     # cf Methods.Geometry.Segment.reverse
     def reverse(self):
@@ -483,7 +560,75 @@ class Segment(Line):
             self.begin = self.get_middle()
 
     # cf Methods.Geometry.Segment.split_line
-    split_line = split_line
+    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
+        """Cut the Segment according to a line defined by two complex
+        "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
+
+        Parameters
+        ----------
+        self : Segment
+            An Segment object
+        Z1 : complex
+            First point of the cutting Line
+        Z2 : complex
+            Second point of the cutting Line
+        is_join : bool
+            True to join the split_list with Segment if there is more that one remaining parts
+        prop_dict_join : dict
+            Property dict to set on the join line
+
+        Returns
+        -------
+        top_split_list, bot_split_list : ([Segment], [Segment])
+            Both part of the Segment (1 or 2 segment depending on cutting point)
+        """
+
+        Z_int = self.intersect_line(Z1, Z2)
+        # Begin and end point in the line coordonate system
+        Zb = (self.begin - Z1) * exp(-1j * angle(Z2 - Z1))
+        Ze = (self.end - Z1) * exp(-1j * angle(Z2 - Z1))
+
+        if len(Z_int) == 0:
+            # No intersection copy the line
+            if Zb.imag >= 0 and Ze.imag >= 0:
+                # Begin and end on top
+                return [self.copy()], []
+            elif Zb.imag <= 0 and Ze.imag <= 0:
+                # Begin and end on bot
+                return [], [self.copy()]
+            else:
+                raise Exception("Split Segment error (case 0 int)")
+            # return [self.copy()], []
+        elif len(Z_int) == 1:
+            # One intersection => Three possible lines
+            # Begin => Intersection
+            line1 = self.copy()
+            line1.end = Z_int[0]
+            # Intersection => End
+            line2 = self.copy()
+            line2.begin = Z_int[0]
+            # begin or end on cutting line
+            line3 = self.copy()
+
+            # Return the correct line according to the points position
+            if Zb.imag > DELTA and abs(Ze.imag) > DELTA:  # begin on top, end != Int
+                return [line1], [line2]
+            elif Zb.imag > DELTA:
+                return [line3], []
+            elif Zb.imag < -DELTA and abs(Ze.imag) > DELTA:  # begin on bot, end != Int
+                return [line2], [line1]
+            elif Zb.imag < -DELTA:
+                return [], [line3]
+            # Zb.imag == 0 => begin on cutting line
+            elif Ze.imag > DELTA:  # End on top
+                return [line3], []
+            elif Ze.imag < -DELTA:  # End on bot
+                return [], [line3]
+            else:
+                raise Exception("Split Segment error (case 1 int)")
+        elif len(Z_int) == 2:
+            # The segment is on the line => Copy the line twice
+            return [self.copy()], [self.copy()]
 
     # cf Methods.Geometry.Segment.split_point
     def split_point(self, Z1, is_begin=True):

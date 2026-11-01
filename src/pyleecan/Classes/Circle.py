@@ -11,33 +11,33 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Surface import Surface
+from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Geometry.Circle.check import check
+from pyleecan.Methods.Geometry.Circle.check import check
 from numpy import pi, exp
-from .Arc3 import Arc3
-from ..Methods.Geometry.Circle.get_patches import (
-    Circle,
+from pyleecan.Classes.Arc3 import Arc3
+from pyleecan.Methods.Geometry.Circle.get_patches import (
     PATCH_COLOR,
     PATCH_COLOR_ALPHA,
     PATCH_EDGE,
     PATCH_EDGE_ALPHA,
 )
-from ..Methods.Geometry.Circle import (
+from matplotlib.patches import Circle
+from pyleecan.Methods.Geometry.Circle import (
     AngleRotationCircleError,
     PointTranslateCircleError,
 )
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Circle(Surface):

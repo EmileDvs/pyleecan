@@ -7,24 +7,24 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Loss import Loss
+from pyleecan.Classes.Loss import Loss
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from .LossModelMagnet import LossModelMagnet
-from .LossModelProximity import LossModelProximity
-from .LossModelSteinmetz import LossModelSteinmetz
-from .LossModelJoule import LossModelJoule
-from ..Methods.Simulation.Input import InputError
+from pyleecan.Classes.LossModelMagnet import LossModelMagnet
+from pyleecan.Classes.LossModelProximity import LossModelProximity
+from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
+from pyleecan.Classes.LossModelJoule import LossModelJoule
+from pyleecan.Methods.Simulation.Input import InputError
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class LossFEA(Loss):

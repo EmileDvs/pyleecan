@@ -7,34 +7,34 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, imageio, matplotlib.pyplot as plt
-from ..Functions.Load.import_class import import_class
+from pyleecan.Functions.Load.import_class import import_class
 from numpy import zeros, array, array2string, column_stack, exp, real, squeeze
-from ..Functions.SciDataTool import AxisError
-from ..Functions.SciDataTool.conversions import (
+from pyleecan.Functions.SciDataTool import AxisError
+from pyleecan.Functions.SciDataTool.conversions import (
     cart2pol,
     pol2cart,
     rphiz_to_xyz,
     rphiz_to_xyz_field,
     xyz_to_rphiz,
 )
-from ..Functions.SciDataTool.Plot import REV_COMP_DICT
-from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Functions.SciDataTool.Plot import REV_COMP_DICT
+from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
 from copy import copy
-from ..Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
+from pyleecan.Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class VectorField(FrozenClass):

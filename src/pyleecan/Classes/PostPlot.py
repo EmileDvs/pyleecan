@@ -7,22 +7,22 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .PostMethod import PostMethod
+from pyleecan.Classes.PostMethod import PostMethod
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from inspect import signature
 from os.path import join
-from ..Functions.Plot import dict_2D, dict_3D
+from pyleecan.Functions.Plot import dict_2D, dict_3D
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class PostPlot(PostMethod):

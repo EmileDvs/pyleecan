@@ -7,33 +7,31 @@
 # Inline fallback report:
 # These methods remain imported because their source or imports cannot be safely moved into this class.
 # - check: module uses a wildcard import whose names cannot be resolved safely
-# - split_point: import name 'np_abs' refers to different sources (numpy.abs as np_abs and ..Methods.Geometry.Arc1.split_point.np_abs)
 
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Arc import Arc
+from pyleecan.Classes.Arc import Arc
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Geometry.Arc1.check import check
-from ..Methods.Geometry.Arc1.split_point import split_point
+from pyleecan.Methods.Geometry.Arc1.check import check
 from numpy import pi, angle as np_angle, exp, linspace, angle, abs as np_abs, sqrt
-from ..Methods.Machine import ARC_NPOINT_D
-from ..Methods.Geometry.Arc1 import (
+from pyleecan.Methods.Machine import ARC_NPOINT_D
+from pyleecan.Methods.Geometry.Arc1 import (
     NbPointArc1DError,
     AngleRotationArc1Error,
     PointTranslateArc1Error,
 )
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Arc1(Arc):
@@ -385,7 +383,37 @@ class Arc1(Arc):
             self.radius = -1 * self.radius
 
     # cf Methods.Geometry.Arc1.split_point
-    split_point = split_point
+    def split_point(self, Z1, is_begin=True):
+        """Cut the Arc according to a point on the arc
+
+        Parameters
+        ----------
+        self : Arc1
+            An Arc1 object
+        Z1 : complex
+            Cutting point on the line
+        is_begin : bool
+            True to keep the part begin=>Z1, False for the part Z1=>end
+
+        Returns
+        -------
+        """
+
+        # Check if the point is on the circle
+        Zc = self.get_center()
+        R = self.comp_radius()
+        if abs(np_abs(Z1 - Zc) - R) > 1e-6:
+            raise Exception("Point is not on the line")
+
+        # Check that the center is the same
+        if is_begin:
+            self.end = Z1
+        else:
+            self.begin = Z1
+
+        # Correct center if needed
+        if abs(Zc - self.get_center()) > 1e-6:
+            self.radius = -1 * self.radius
 
     # cf Methods.Geometry.Arc1.translate
     def translate(self, Zt):

@@ -4,60 +4,49 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/StructElmer
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - gen_mesh: import name 'join' refers to different sources (..Methods.Simulation.StructElmer.gen_case.join and ..Methods.Simulation.StructElmer.gen_mesh.join)
-# - get_meshsolution: import name 'join' refers to different sources (..Methods.Simulation.StructElmer.gen_case.join and os.path.join)
-# - get_path_save_fea: import name 'join' refers to different sources (..Methods.Simulation.StructElmer.gen_case.join and os.path.join)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Structural import Structural
+from pyleecan.Classes.Structural import Structural
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Simulation.StructElmer.gen_mesh import gen_mesh
-from ..Methods.Simulation.StructElmer.get_meshsolution import get_meshsolution
-from ..Methods.Simulation.StructElmer.get_path_save_fea import get_path_save_fea
-from ..Methods.Simulation.StructElmer.gen_case import (
-    File,
-    ID_LAM,
-    ID_MAG,
-    MATC,
-    Section,
-    SolverInputFile,
-    Variable,
-    join,
-    pi,
-    split,
-)
-from ..Methods.Simulation.StructElmer.process_mesh import (
-    HOLEM_LAB_S,
-    HOLEV_LAB_S,
-    LAM_LAB_S,
-    ROTOR_LAB_S,
-    SHAFT_LAB,
-    STATOR_LAB_S,
-    WIND_LAB_S,
+from pyleecan.Methods.Simulation.StructElmer.gen_case import ID_LAM, ID_MAG
+from os.path import join, split, exists, splitext
+from numpy import pi
+from pyleecan.Classes.Section import Section
+from pyleecan.Classes.SolverInputFile import SolverInputFile
+from pyleecan.Methods.Elmer.Section import File, Variable, MATC
+from pyleecan.Methods.Simulation.StructElmer.gen_mesh import _gen_mesh
+from pyleecan.Functions.GMSH.draw_GMSH import draw_GMSH
+from pyleecan.Methods.Simulation.StructElmer import StructElmer_BP_dict, _execute
+from pyleecan.Classes.ElmerResultsVTU import ElmerResultsVTU
+from os import makedirs, replace
+from pyleecan.Methods.Simulation.StructElmer.process_mesh import (
     _get_names_physical,
     _remove_entities,
-    decode_label,
-    gmsh,
-    replace,
-    splitext,
 )
-from ..Methods.Simulation.Input import InputError
-from ..Methods.Simulation.StructElmer import _execute
+import gmsh
+from pyleecan.Functions.labels import (
+    SHAFT_LAB,
+    decode_label,
+    HOLEM_LAB_S,
+    HOLEV_LAB_S,
+    ROTOR_LAB_S,
+    STATOR_LAB_S,
+    LAM_LAB_S,
+    WIND_LAB_S,
+)
+from pyleecan.Methods.Simulation.Input import InputError
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class StructElmer(Structural):
@@ -365,11 +354,147 @@ class StructElmer(Structural):
             sif.write(f)
 
     # cf Methods.Simulation.StructElmer.gen_mesh
-    gen_mesh = gen_mesh
+    def gen_mesh(self, output):
+        """Initialize the FEA simulation model
+
+        Parameters
+        ----------
+        self : StructElmer object
+
+        output : Output
+            Output object that contains the StructElmer simulation
+
+        Return
+        ------
+
+
+        """
+        # readability
+        machine = output.simu.machine
+        sym_r, is_antipert_r = machine.comp_periodicity_spatial()
+
+        sym_r = sym_r * (1 + is_antipert_r)
+
+        # get the save path and file names
+        save_dir = self.get_path_save_fea(output)
+
+        # draw initial gmsh model
+        file_gmsh_geo = join(save_dir, "GMSH_Machine_Model.geo")
+
+        draw_GMSH(
+            output=output,
+            sym=sym_r,  # TODO is it possible to have to use draw_GMSH with sym_r > sym ?
+            boundary_prop=StructElmer_BP_dict,
+            is_lam_only_S=False,
+            is_lam_only_R=False,
+            is_sliding_band=False,
+            user_mesh_dict=self.FEA_dict_enforced,
+            path_save=file_gmsh_geo,
+            is_set_labels=True,
+        )
+
+        # preprocess GMSH model to get rotor lamination and magnet and set boundary names
+        lam_name = "lamination.msh"
+        mag_name = "magnets.msh" if self.include_magnets else None
+
+        names = {}
+        _, _, names["Lamination"] = self.process_mesh(
+            file_gmsh_geo,
+            join(save_dir, lam_name),
+            is_get_lam=True,
+            is_get_magnet=False,
+        )
+
+        if self.include_magnets:
+            _, _, names["Magnets"] = self.process_mesh(
+                file_gmsh_geo,
+                join(save_dir, mag_name),
+                is_get_lam=False,
+                is_get_magnet=True,
+            )
+
+        # convert to ElmerGrid mesh
+        _gen_mesh(save_dir, "Mesh", lam_name, mag_name, self.get_logger())
+
+        return names
+
     # cf Methods.Simulation.StructElmer.get_meshsolution
-    get_meshsolution = get_meshsolution
+    def get_meshsolution(self, output):
+        """Get and set the mesh data and solution data.
+
+        Parameters
+        ----------
+        self : StructElmer
+            a StructElmer object
+        save_path: str
+            Full path to folder in which the results are saved
+
+        Returns
+        -------
+        success: bool
+            Information if meshsolution could be created
+
+        """
+        # logger
+        logger = self.get_logger()
+
+        fea_path = self.get_path_save_fea(output)
+
+        # if meshsoltion is not requested set meshsolution to None
+        if not self.is_get_mesh or not self.is_save_FEA:
+            logger.info("StructElmer: MeshSolution is not stored by request.")
+            output.struct.meshsolution = None
+            return False
+
+        # setup Elmer result helper class
+        ElmerVtu = ElmerResultsVTU()
+
+        ElmerVtu.store_dict = {
+            "displacement": {
+                "name": "Displacement",
+                "unit": "mm",
+                "symbol": "disp",
+                "norm": 1e-3,
+            },
+            "vonmises": {
+                "name": "Von Mises Stress",
+                "unit": "MPa",
+                "symbol": "vonmises",
+                "norm": 1e6,
+            },
+        }
+
+        ElmerVtu.label = "Elmer Structural"
+        ElmerVtu.file_path = join(fea_path, "Results", "case_t0001.vtu")
+
+        output.struct.meshsolution = ElmerVtu.build_meshsolution()
+
+        return True
+
     # cf Methods.Simulation.StructElmer.get_path_save_fea
-    get_path_save_fea = get_path_save_fea
+    def get_path_save_fea(self, output):
+        """Return the path to save the FEA simulation
+
+        Parameters
+        ----------
+        self : MagFEMM
+            a MagFEMM object
+        output : Output
+            an Output object
+
+            Returns
+        -------
+        save_path: str
+            Path to save the .fem file
+
+        """
+        path_res = output.get_path_result()
+
+        save_dir = join(path_res, "Elmer_Elasticity")
+        if not exists(save_dir):
+            makedirs(save_dir)
+
+        return save_dir
 
     # cf Methods.Simulation.StructElmer.process_mesh
     def process_mesh(

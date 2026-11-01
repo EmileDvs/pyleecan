@@ -7,25 +7,25 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Simulation.OPMatrix import OPMatrixException
-from .OPdq import OPdq
-from .OPdqf import OPdqf
-from .OPslip import OPslip
+from pyleecan.Methods.Simulation.OPMatrix import OPMatrixException
+from pyleecan.Classes.OPdq import OPdq
+from pyleecan.Classes.OPdqf import OPdqf
+from pyleecan.Classes.OPslip import OPslip
 from numpy import zeros, angle, exp, hstack
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class OPMatrix(FrozenClass):

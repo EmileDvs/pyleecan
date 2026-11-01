@@ -4,29 +4,20 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Machine
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - get_lam_list: import name 'ROTOR_LAB' refers to different sources (..Methods.Machine.Machine.get_lam_by_label.ROTOR_LAB and ..Methods.Machine.Machine.get_lam_list.ROTOR_LAB)
-# - get_lam_list_label: import name 'STATOR_LAB' refers to different sources (..Methods.Machine.Machine.get_lam_by_label.STATOR_LAB and ..Functions.labels.STATOR_LAB)
-# - plot_anim_rotor: import name 'plt' refers to different sources (..Methods.Machine.Machine.plot.plt and matplotlib.pyplot as plt)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Machine.Machine.get_lam_list import get_lam_list
-from ..Methods.Machine.Machine.get_lam_list_label import get_lam_list_label
-from ..Methods.Machine.Machine.plot_anim_rotor import plot_anim_rotor
-from ..Methods.Machine.Machine.check import (
+from pyleecan.Methods.Machine.Machine.check import (
     MC_AbstractError,
     MC_BothExternal,
     MC_BothInternal,
@@ -38,26 +29,20 @@ from ..Methods.Machine.Machine.check import (
     MC_StatorDontFit,
     MC_StatorNotStator,
 )
-from .OutGeo import OutGeo
-from numpy import gcd
-from ..Methods.Machine.Machine.get_lam_by_label import (
-    LabelInputError,
-    ROTOR_LAB,
-    ROTOR_LAB_S,
-    STATOR_LAB,
-    STATOR_LAB_S,
-)
-from ..Methods.Machine.Machine.get_material_dict import get_material
-from ..Methods.Machine.Machine.plot import (
-    COMP_EDGE_COLOR,
-    PATCH_COLOR_ALPHA,
-    Patch,
-    init_fig,
-    plt,
-)
+from pyleecan.Classes.OutGeo import OutGeo
+from numpy import gcd, pi
+from pyleecan.Methods.Machine.Machine.get_lam_by_label import LabelInputError
+from pyleecan.Functions.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
+from pyleecan.Methods.Machine.Machine.get_lam_list import KeyInputError
+from pyleecan.Methods.Machine.Machine.get_material_dict import get_material
+from pyleecan.Methods.Machine.Machine.plot import COMP_EDGE_COLOR, PATCH_COLOR_ALPHA
+import matplotlib.pyplot as plt, matplotlib.animation as animation
+from pyleecan.Functions.init_fig import init_fig
+from matplotlib.patches import Patch, Polygon
+from matplotlib.pyplot import subplots
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Machine(FrozenClass):
@@ -764,9 +749,82 @@ class Machine(FrozenClass):
             return None
 
     # cf Methods.Machine.Machine.get_lam_list
-    get_lam_list = get_lam_list
+    def get_lam_list(self, is_int_to_ext=True, key=None):
+        """Returns the ordered list of lamination of the machine
+
+        Parameters
+        ----------
+        self : Machine
+            Machine object
+        is_int_to_ext : bool
+            true to order the list from the inner lamination to the extrenal one
+        key : string
+            keyword to return only stator or rotor laminations, accepted values are "Stator" or "Rotor" default None to return all
+
+        Returns
+        -------
+        lam_list : list
+            Ordered lamination list, for abstract Machine objects list will be empty
+        """
+        # Extract all laminations
+        lam_list = []
+        if hasattr(self, "lam_list"):
+            lam_list = self.lam_list
+        else:
+            if hasattr(self, "stator"):
+                lam_list.append(self.stator)
+            if hasattr(self, "rotor"):
+                lam_list.append(self.rotor)
+
+        # Sort all laminations according to Rint by assuming the lamination are not colliding
+        if is_int_to_ext is not None:
+            lam_list = sorted(lam_list, key=lambda x: x.Rint, reverse=not is_int_to_ext)
+
+        # Filter the lamination according to key
+        if key is not None:
+            if key == STATOR_LAB:
+                is_stator = True
+            elif key == ROTOR_LAB:
+                is_stator = False
+            else:
+                raise KeyInputError(
+                    f"'{key}' is not a valid input argument for key (only 'Stator' or 'Rotor' accepted for now)"
+                )
+
+            lam_list = [lam for lam in lam_list if lam.is_stator is is_stator]
+
+        return lam_list
+
     # cf Methods.Machine.Machine.get_lam_list_label
-    get_lam_list_label = get_lam_list_label
+    def get_lam_list_label(self):
+        """Returns the ordered (from internal to external) list of lamination labels
+        corresponding to machine.get_lam_list(is_int_to_ext=True, key=None)
+
+        Parameters
+        ----------
+        self : Machine
+            Machine object
+
+        Returns
+        -------
+        label_list : list
+            Ordered lamination list, for abstract Machine objects list will be empty
+        """
+
+        lam_list = self.get_lam_list(is_int_to_ext=True, key=None)
+
+        label_list = []
+        IDs = 0
+        IDr = 0
+        for lam in lam_list:
+            if lam.is_stator:
+                label_list.append(STATOR_LAB + "-" + str(IDs))
+                IDs += 1
+            else:
+                label_list.append(ROTOR_LAB + "-" + str(IDr))
+                IDr += 1
+
+        return label_list
 
     # cf Methods.Machine.Machine.get_material_dict
     def get_material_dict(self, path="self", is_unique=False):
@@ -1066,7 +1124,76 @@ class Machine(FrozenClass):
         return fig, ax
 
     # cf Methods.Machine.Machine.plot_anim_rotor
-    plot_anim_rotor = plot_anim_rotor
+    def plot_anim_rotor(self, Nframe, Tanim, Nrot=1, is_loop=True):
+        """Plot the machine with an animation of the rotor
+        (Internal Rotor for now ?)
+
+        Parameters
+        ----------
+        self : Machine
+            Machine object
+        Nframe: int
+            Number of frame for the animation
+        Tanim : float
+            Duration of the animation [ms]
+        Nrot : float
+            Number of rotation
+        is_loop : bool
+            True to activate the loop animation
+        """
+
+        # Display
+        fig, axes = subplots()
+        axes.set_xlabel("(m)")
+        axes.set_ylabel("(m)")
+        axes.set_title("Machine")
+
+        # Axis Setup
+        axes.axis("equal")
+
+        # The Lamination is centered in the figure
+        Lim = (self.stator.Rext) * 1.5  # Axes limit for plot
+        Rsurf = self.rotor.build_geometry(sym=1, alpha=0, delta=0)
+
+        # Rotation angle between each frame
+        Dalpha = 2 * pi * Nrot / Nframe
+
+        def init():
+            """Create the patches for the first image"""
+            Spatches = self.stator.plot(is_display=False)
+            Rpatches = self.rotor.plot(is_display=False)
+            for patch in Spatches:
+                axes.add_patch(patch)
+            for patch in Rpatches:
+                axes.add_patch(patch)
+            return []
+
+        def update_rotor(ii):
+            """Rotate and update the rotor patches"""
+            for ii in range(len(Rsurf)):
+                Rsurf[ii].rotate(Dalpha)
+                patches = Rsurf[ii].get_patches()
+                for patch in patches:
+                    if type(patch) is Polygon:
+                        axes.patches[-len(Rsurf) + ii].xy = patch.xy
+                # elif type(patch) is Circle:
+                #     pass
+
+            axes.set_xlim(-Lim, Lim)
+            axes.set_ylim(-Lim, Lim)
+            return []
+
+        # Animation definition
+        anim = animation.FuncAnimation(
+            fig,
+            update_rotor,
+            init_func=init,
+            frames=Nframe,
+            interval=Tanim / Nframe,
+            blit=True,
+            repeat=is_loop,
+        )
+        plt.show()
 
     # cf Methods.Machine.Machine.set_pole_pair_number
     def set_pole_pair_number(self, p):

@@ -59,7 +59,7 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
     if any(isinstance(node, ast.Global) for node in ast.walk(method_node)):
         return None, [], "method declares module globals"
 
-    module_bindings = set()
+    helper_bindings = set()
     has_module_helpers = False
     for node in module.body:
         if node is method_node or (
@@ -69,9 +69,7 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
         ):
             continue
         if isinstance(node, ast.Import):
-            module_bindings.update(
-                alias.asname or alias.name.split(".")[0] for alias in node.names
-            )
+            continue
         elif isinstance(node, ast.ImportFrom):
             if any(alias.name == "*" for alias in node.names):
                 return (
@@ -79,13 +77,12 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
                     [],
                     "module uses a wildcard import whose names cannot be resolved safely",
                 )
-            module_bindings.update(alias.asname or alias.name for alias in node.names)
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-            module_bindings.add(node.name)
+            helper_bindings.add(node.name)
             has_module_helpers = True
         elif isinstance(node, (ast.Assign, ast.AnnAssign)):
             targets = node.targets if isinstance(node, ast.Assign) else [node.target]
-            module_bindings.update(
+            helper_bindings.update(
                 child.id
                 for target in targets
                 for child in ast.walk(target)
@@ -112,7 +109,7 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
     method_imports = []
 
     if has_module_helpers:
-        helper_names = sorted(used_names.intersection(module_bindings))
+        helper_names = sorted(used_names.intersection(helper_bindings))
         if helper_names:
             helper_module = source_package + [method_name]
             common = 0
@@ -129,16 +126,6 @@ def _get_method_source(path_to_gen, class_pack, class_name, meth, soft_name):
                     level=len(target_package) - common + 1,
                 )
             )
-
-        source_lines = source.splitlines()
-        start_line = min(
-            [method_node.lineno]
-            + [decorator.lineno for decorator in method_node.decorator_list]
-        )
-        while start_line > 1 and source_lines[start_line - 2].lstrip().startswith("#"):
-            start_line -= 1
-        method_source = "\n".join(source_lines[start_line - 1 : method_node.end_lineno])
-        return method_source, method_imports, None
 
     for node in module.body:
         if isinstance(node, ast.Import):
@@ -202,6 +189,7 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
     import_groups = {}
     import_bindings = {}
     import_keys = set()
+    target_package = [soft_name, "Classes"]
 
     for meth in methods:
         method_source, method_imports, reason = _get_method_source(
@@ -233,13 +221,7 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
                     if isinstance(import_node, ast.Import)
                     else alias.name
                 )
-                identity = (
-                    type(import_node).__name__,
-                    getattr(import_node, "level", 0),
-                    getattr(import_node, "module", None),
-                    alias.name,
-                    alias.asname,
-                )
+                identity = _get_import_identity(import_node, alias, target_package)
                 existing = import_bindings.get(binding)
                 if (existing is not None and existing != identity) or (
                     binding in candidate_bindings
@@ -317,7 +299,7 @@ def _prepare_class_methods(path_to_gen, class_pack, class_name, methods, soft_na
                 import_keys.add(identity)
                 import_groups[group_key].names.append(alias)
 
-    return prepared, imports, fallback_reasons
+    return prepared, [node for node in imports if node.names], fallback_reasons
 
 
 def _format_import_identity(identity):
@@ -332,8 +314,94 @@ def _format_import_identity(identity):
     return source
 
 
+def _get_import_identity(import_node, alias, target_package):
+    """Return a binding identity with relative imports resolved to package names."""
+    if isinstance(import_node, ast.Import):
+        return (
+            "Import",
+            0,
+            None,
+            alias.name,
+            alias.asname,
+        )
+
+    module_parts = _get_absolute_import_module(import_node, target_package)
+    return (
+        "ImportFrom",
+        0,
+        ".".join(module_parts),
+        alias.name,
+        alias.asname,
+    )
+
+
+def _get_absolute_import_module(import_node, target_package):
+    """Resolve an ImportFrom node to its absolute module path."""
+    module_parts = (import_node.module or "").split(".")
+    if import_node.level:
+        module_parts = target_package[: len(target_package) - import_node.level + 1]
+        if import_node.module:
+            module_parts.extend(import_node.module.split("."))
+    return module_parts
+
+
+def _apply_import_style(source, soft_name, import_style):
+    """Apply the configured Pyleecan import style without rewriting other code."""
+    target_package = [soft_name, "Classes"]
+    lines = source.splitlines()
+    replacements = []
+
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+
+        if import_style == "absolute" and node.level:
+            module_parts = _get_absolute_import_module(node, target_package)
+            replacement = ast.ImportFrom(
+                module=".".join(module_parts) or None,
+                names=node.names,
+                level=0,
+            )
+        elif (
+            import_style == "relative"
+            and not node.level
+            and node.module
+            and (node.module == soft_name or node.module.startswith(soft_name + "."))
+        ):
+            module_parts = node.module.split(".")
+            common = 0
+            while (
+                common < len(target_package)
+                and common < len(module_parts)
+                and target_package[common] == module_parts[common]
+            ):
+                common += 1
+            replacement = ast.ImportFrom(
+                module=".".join(module_parts[common:]) or None,
+                names=node.names,
+                level=len(target_package) - common + 1,
+            )
+        else:
+            continue
+
+        start = node.lineno - 1
+        end = node.end_lineno - 1
+        prefix = lines[start][: node.col_offset]
+        suffix = lines[end][node.end_col_offset :]
+        replacements.append((start, end, prefix + ast.unparse(replacement) + suffix))
+
+    for start, end, replacement in reversed(replacements):
+        lines[start : end + 1] = [replacement]
+    return "\n".join(lines) + ("\n" if source.endswith("\n") else "")
+
+
 def generate_class(
-    gen_dict, class_name, path_to_gen, soft_name="pyleecan", is_log=True
+    gen_dict,
+    class_name,
+    path_to_gen,
+    soft_name="pyleecan",
+    is_log=True,
+    import_style="absolute",
 ):
     """generate the corresponding class file (erase the previous code)
 
@@ -345,12 +413,17 @@ def generate_class(
         name of the class to generate
     path_to_gen : str
         path to the file to save the class code
+    import_style : str
+        "relative" or "absolute" style for imports from the generated Pyleecan package
 
     Returns
     -------
     None
 
     """
+
+    if import_style not in ("relative", "absolute"):
+        raise ValueError("import_style must be 'relative' or 'absolute'")
 
     class_dict = gen_dict[class_name]
     class_pack = class_dict["package"]
@@ -661,3 +734,9 @@ def generate_class(
 
     # End of class generation
     class_file.close()
+    class_path = join(path_to_gen, class_name + ".py")
+    with open(class_path, encoding="utf-8") as generated_file:
+        source = generated_file.read()
+    source = _apply_import_style(source, soft_name, import_style)
+    with open(class_path, "w", encoding="utf-8") as generated_file:
+        generated_file.write(source)

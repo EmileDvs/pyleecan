@@ -7,25 +7,25 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .LUT import LUT
+from pyleecan.Classes.LUT import LUT
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 import numpy as np, scipy.interpolate as scp_int
-from ..Functions.Electrical.dqh_transformation import n2dqh_DataTime
+from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
 from numpy import array, zeros
-from .EEC_PMSM import EEC_PMSM
-from .Electrical import Electrical
+from pyleecan.Classes.EEC_PMSM import EEC_PMSM
+from pyleecan.Classes.Electrical import Electrical
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class LUTdq(LUT):

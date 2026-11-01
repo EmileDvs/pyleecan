@@ -4,47 +4,42 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshMat
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - get_element: import name 'Union' refers to different sources (typing.Union and ..Methods.Mesh.MeshMat.get_element.Union)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Mesh import Mesh
+from pyleecan.Classes.Mesh import Mesh
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Mesh.MeshMat.get_element import get_element
-from typing import Union, Literal, List, Optional, Dict
+from typing import Union, Literal, Dict, List, Optional, Tuple
 from numpy.typing import ArrayLike
 import numpy as np, pyvista as pv, meshio, copy, os
-from .NodeMat import NodeMat
+from pyleecan.Classes.NodeMat import NodeMat
 from itertools import repeat
-from .Mesh import Mesh
-from .RefQuad4 import RefQuad4
-from .RefQuad9 import RefQuad9
-from .RefTriangle3 import RefTriangle3
-from .RefTriangle6 import RefTriangle6
+from pyleecan.Classes.Mesh import Mesh
+from pyleecan.Classes.RefQuad4 import RefQuad4
+from pyleecan.Classes.RefQuad9 import RefQuad9
+from pyleecan.Classes.RefTriangle3 import RefTriangle3
+from pyleecan.Classes.RefTriangle6 import RefTriangle6
+from pyleecan.Methods.Mesh.MeshMat.get_element import _check_element_name
 from numpy import array, ndarray
-from ..Methods.Mesh.MeshMat.get_element import _check_element_name
 from os import makedirs, remove
 from os.path import dirname, isdir
 from pyvista.core.pointset import UnstructuredGrid
-from ..definitions import RESULT_DIR
-from .ElementMat import ElementMat
-from .FPGNSeg import FPGNSeg
-from .RefSegmentP1 import RefSegmentP1
-from ..Functions.GUI.log_error import log_error
+from pyleecan.definitions import RESULT_DIR
+from pyleecan.Classes.ElementMat import ElementMat
+from pyleecan.Classes.FPGNSeg import FPGNSeg
+from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
+from pyleecan.Functions.GUI.log_error import log_error
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class MeshMat(Mesh):
@@ -172,7 +167,7 @@ class MeshMat(Mesh):
             return new_mesh
 
         # Avoiding cicular import
-        from ....Classes.MeshVTK import MeshVTK
+        from pyleecan.Classes.MeshVTK import MeshVTK
 
         elements_ = []
         element_types = []
@@ -329,7 +324,74 @@ class MeshMat(Mesh):
         return element_prop_list, element_list
 
     # cf Methods.Mesh.MeshMat.get_element
-    get_element = get_element
+    def get_element(
+        self,
+        element_indices: Optional[Union[int, List[int]]] = None,
+        element_name: Union[List[str], str] = [],
+    ) -> Tuple[Dict[str, np.ndarray], int, Dict[str, np.ndarray]]:
+        """Return the connectivity for one selected element
+
+        Parameters
+        ----------
+        self : MeshMat
+            an MeshMat object
+        element_indices: list
+            list of element index. If None, return all.
+        element_name : list
+            list of element names to extract the connectivity. If None, return every element_names
+
+        Returns
+        -------
+        dict_connectivity: dict[str, ndarray]
+            Dict of connectivity with element names as keys
+        nb_element: int
+            Number of element in the connectivity
+        dict_index: dict
+            Dict of the element element_indices for each ElementMat
+        """
+
+        if isinstance(element_indices, (int, np.integer)):
+            element_indices = (element_indices,)
+
+        element_name = _check_element_name(
+            element_mat_dict=self.element_dict, element_name=element_name
+        )
+
+        dict_connectivity = {}
+        dict_index = {}
+        nb_element = 0
+        # Extract full connectivity matrix and element element_indices
+        if element_indices is None:
+            for key in element_name:
+                element = self.element_dict[key]
+                dict_connectivity[key] = element.get_connectivity()
+                dict_index[key] = element.indice
+                nb_element += element.nb_element
+
+        # Extract element connectivity and index for each element
+        else:
+            for key in element_name:
+                element = self.element_dict[key]
+                list_connectivity = [
+                    element.get_connectivity(index) for index in element_indices
+                ]
+                # Extract connectivity if the element index is present
+                dict_connectivity[key] = np.array(
+                    [
+                        connectivity
+                        for connectivity in list_connectivity
+                        if connectivity.size
+                    ]
+                ).squeeze()
+
+                # Extract index if the element index is present
+                dict_index[key] = [
+                    index
+                    for index, connectivity in zip(element_indices, list_connectivity)
+                    if connectivity.size
+                ]
+
+        return dict_connectivity, nb_element, dict_index
 
     # cf Methods.Mesh.MeshMat.get_element_area
     def get_element_area(

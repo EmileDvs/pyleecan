@@ -4,34 +4,34 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiBayesAlgSmoot
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - solve: import name 'np' refers to different sources (numpy as np and ..Methods.Optimization.OptiBayesAlgSmoot.solve.np)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .OptiBayesAlg import OptiBayesAlg
+from pyleecan.Classes.OptiBayesAlg import OptiBayesAlg
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Optimization.OptiBayesAlgSmoot.solve import solve
-from ..Methods.Optimization.OptiBayesAlgSmoot.check_optimization_input import (
-    OptiDesignVarInterval,
-    OptiDesignVarSet,
-    OptiObjective,
+from pyleecan.Methods.Optimization.OptiBayesAlgSmoot.check_optimization_input import (
     OptimizationAttributeError,
 )
+from pyleecan.Classes.OptiObjective import OptiObjective
+from pyleecan.Classes.OptiDesignVarSet import OptiDesignVarSet
+from pyleecan.Classes.OptiDesignVarInterval import OptiDesignVarInterval
 import numpy as np, matplotlib.pyplot as plt
+from pyleecan.Classes._smoot.smoot import MOO
+from datetime import datetime
+from pyleecan.Classes.Output import Output
+from pyleecan.Classes.XOutput import XOutput
+from pyleecan.Classes.DataKeeper import DataKeeper
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class OptiBayesAlgSmoot(OptiBayesAlg):
@@ -297,7 +297,126 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
             fig.show()
 
     # cf Methods.Optimization.OptiBayesAlgSmoot.solve
-    solve = solve
+    def solve(self):
+        """Method to perform Bayesian optimization using Smoot tools
+
+        Parameters
+        ----------
+        self : OptiBayesAlgSmoot
+            Solver to perform Bayesian model creation, then use a genetic algorithm
+
+        Returns
+        -------
+        multi_output : OutputMultiOpti
+            class containing the results
+        """
+
+        logger = self.get_logger()
+
+        # Check input parameters
+        self.check_optimization_input()
+
+        # Display information
+        try:
+            filename = self.get_logger().handlers[0].stream.name
+            print(
+                "{} Starting optimization... \n\tLog file: {}\n\tNumber of generations: {}\n\tPopulation size: {}\n".format(
+                    datetime.now().strftime("%H:%M:%S"), filename, self.nb_iter
+                )
+            )
+        except (AttributeError, IndexError):
+            print(
+                "{} Starting optimization...\n\tNumber of iterations: {}\n\t".format(
+                    datetime.now().strftime("%H:%M:%S"), self.nb_iter
+                )
+            )
+
+        try:
+            # Add the reference output to multi_output
+            if isinstance(self.problem.simu.parent, Output):
+                xoutput = XOutput(
+                    init_dict=self.problem.simu.parent.as_dict(keep_function=True)
+                )
+            else:
+                xoutput = XOutput(simu=self.problem.simu)
+
+            self.xoutput = xoutput
+
+            # Set-up output data as list to be changed into ndarray at the end of the optimization
+            paramexplorer_value = []
+            xoutput.xoutput_dict["n_iter"] = DataKeeper(
+                name="Generation number", symbol="n_iter"
+            )
+
+            xoutput.xoutput_dict["x_opt"] = (
+                DataKeeper(  # need to put a better name here
+                    name="x opt", symbol="x_opt"
+                )
+            )
+            xoutput.xoutput_dict["y_opt"] = (
+                DataKeeper(  # need to put a better name here
+                    name="y opt", symbol="y_opt"
+                )
+            )
+
+            # Add datakeeper to XOutput to store additionnal values
+            for dk in self.problem.datakeeper_list:
+                assert dk.symbol not in xoutput.xoutput_dict
+                xoutput.xoutput_dict[dk.symbol] = dk
+
+            # Put objective functions in XOutput
+            for obj_func in self.problem.obj_func:
+                # obj_func is a DataKeeper instance
+                xoutput.xoutput_dict[obj_func.symbol] = obj_func
+
+            n_iter = self.nb_iter
+            xlimits = np.array([var.space for var in self.problem.design_var])
+
+            const = [
+                lambda x, i=i: self.eval_const(self.problem.constraint[i], x)
+                for i in range(len(self.problem.constraint))
+            ]
+
+            time = datetime.now()
+
+            moo = MOO(
+                n_iter=self.nb_iter,
+                criterion=self.criterion,
+                n_start=self.nb_start,
+                xlimits=xlimits,
+                # const=const,
+                verbose=True,
+                n_gen=self.nb_gen,
+                pop_size=self.size_pop,
+            )
+
+            moo.optimize(fun=self.evaluate)
+
+            final_time = datetime.now() - time
+
+            print(
+                "{} End of optimization, solved in {}.\n".format(
+                    datetime.now().strftime("%H:%M:%S"), final_time
+                )
+            )
+            res = moo.result
+
+            xoutput.xoutput_dict["x_opt"].result = res.X.tolist()
+            xoutput.xoutput_dict["y_opt"].result = res.F.tolist()
+
+            return xoutput
+
+        except KeyboardInterrupt:
+            # Except keybord interruption to return the results already computed
+            logger.info("Interrupted by the user.")
+            # Change xoutput variables in ndarray
+
+            return xoutput
+
+        except Exception as err:
+            logger.error("{}: {}".format(type(err).__name__, err))
+            raise err
+
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

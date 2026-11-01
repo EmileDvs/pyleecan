@@ -4,146 +4,72 @@
 """Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/ConvertMC
 """
 
-# Inline fallback report:
-# These methods remain imported because their source or imports cannot be safely moved into this class.
-# - convert_to_other.convert_magnet_to_other: import name 'SlotM16' refers to different sources (.SlotM16.SlotM16 and pyleecan.Classes.SlotM16.SlotM16)
-# - convert_to_P.convert_other_to_dict: import name 'pi' refers to different sources (numpy.pi and ..Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict.pi)
-# - Rules.add_rule_material: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.add_rule_material_magnetics: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.add_rule_skew: import name 'RuleComplex' refers to different sources (pyleecan.Classes.RuleComplex.RuleComplex and .RuleComplex.RuleComplex)
-# - Rules.Hole.add_rule_holeM52: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Hole.add_rule_holeM57: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Hole.add_rule_holeM60: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Hole.add_rule_holeM61: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Hole.add_rule_holeM62: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Hole.add_rule_holeM63: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Lamination.add_rule_lamination: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Lamination.add_rule_notch_slotM19: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Lamination.add_rule_ventilationPolar: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Lamination.add_rule_ventilationTrap: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Pole.add_rule_parallel_slot_slotW29: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Pole.add_rule_parallel_tooth_slotW63: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Pole.add_rule_salient_pole_slotW62: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Rotor_Magnet.add_rule_slotM15: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Winding.add_rule_condtype11: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Winding.add_rule_condtype12: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-# - Rules.Winding.add_rule_rotor_bar: import name 'RuleComplex' refers to different sources (pyleecan.Classes.RuleComplex.RuleComplex and .RuleComplex.RuleComplex)
-# - Rules.Winding.add_rule_winding: import name 'RuleSimple' refers to different sources (pyleecan.Classes.RuleSimple.RuleSimple and .RuleSimple.RuleSimple)
-
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Convert import Convert
+from pyleecan.Classes.Convert import Convert
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Converter.ConvertMC.convert_to_other.convert_magnet_to_other import (
-    convert_magnet_to_other,
-)
-from ..Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict import (
-    convert_other_to_dict,
-)
-from ..Methods.Converter.ConvertMC.Rules.add_rule_material import add_rule_material
-from ..Methods.Converter.ConvertMC.Rules.add_rule_material_magnetics import (
-    add_rule_material_magnetics,
-)
-from ..Methods.Converter.ConvertMC.Rules.add_rule_skew import add_rule_skew
-from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM52 import add_rule_holeM52
-from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM57 import add_rule_holeM57
-from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM60 import add_rule_holeM60
-from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM61 import add_rule_holeM61
-from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM62 import add_rule_holeM62
-from ..Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM63 import add_rule_holeM63
-from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_lamination import (
-    add_rule_lamination,
-)
-from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_notch_slotM19 import (
-    add_rule_notch_slotM19,
-)
-from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationPolar import (
-    add_rule_ventilationPolar,
-)
-from ..Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationTrap import (
-    add_rule_ventilationTrap,
-)
-from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_slot_slotW29 import (
-    add_rule_parallel_slot_slotW29,
-)
-from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_tooth_slotW63 import (
-    add_rule_parallel_tooth_slotW63,
-)
-from ..Methods.Converter.ConvertMC.Rules.Pole.add_rule_salient_pole_slotW62 import (
-    add_rule_salient_pole_slotW62,
-)
-from ..Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM15 import (
-    add_rule_slotM15,
-)
-from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype11 import (
-    add_rule_condtype11,
-)
-from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype12 import (
-    add_rule_condtype12,
-)
-from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_rotor_bar import (
-    add_rule_rotor_bar,
-)
-from ..Methods.Converter.ConvertMC.Rules.Winding.add_rule_winding import (
-    add_rule_winding,
-)
-from .CondType12 import CondType12
-from .CondType13 import CondType13
-from .VentilationCirc import VentilationCirc
-from .VentilationPolar import VentilationPolar
-from .VentilationTrap import VentilationTrap
-from .HoleM52 import HoleM52
-from .HoleM57 import HoleM57
-from .HoleM60 import HoleM60
-from .HoleM61 import HoleM61
-from .HoleM62 import HoleM62
-from .HoleM63 import HoleM63
-from .MachineSIPMSM import MachineSIPMSM
-from .MachineIPMSM import MachineIPMSM
-from .MachineSCIM import MachineSCIM
-from .MachineWRSM import MachineWRSM
-from .SlotM19 import SlotM19
-from .SlotW61 import SlotW61
-from .SlotW62 import SlotW62
-from .SlotW29 import SlotW29
-from .Skew import Skew
-from .SlotW11_2 import SlotW11_2
-from .SlotW23 import SlotW23
-from .SlotW26 import SlotW26
-from .SlotW30 import SlotW30
-from .SlotW11 import SlotW11
-from .SlotW14 import SlotW14
-from .SlotW21 import SlotW21
+from pyleecan.Classes.CondType12 import CondType12
+from pyleecan.Classes.CondType13 import CondType13
+from pyleecan.Classes.VentilationCirc import VentilationCirc
+from pyleecan.Classes.VentilationPolar import VentilationPolar
+from pyleecan.Classes.VentilationTrap import VentilationTrap
+from pyleecan.Classes.HoleM52 import HoleM52
+from pyleecan.Classes.HoleM57 import HoleM57
+from pyleecan.Classes.HoleM60 import HoleM60
+from pyleecan.Classes.HoleM61 import HoleM61
+from pyleecan.Classes.HoleM62 import HoleM62
+from pyleecan.Classes.HoleM63 import HoleM63
+from pyleecan.Classes.MachineSIPMSM import MachineSIPMSM
+from pyleecan.Classes.MachineIPMSM import MachineIPMSM
+from pyleecan.Classes.MachineSCIM import MachineSCIM
+from pyleecan.Classes.MachineWRSM import MachineWRSM
+from pyleecan.Classes.SlotM11 import SlotM11
+from pyleecan.Classes.SlotM12 import SlotM12
+from pyleecan.Classes.SlotM13 import SlotM13
+from pyleecan.Classes.SlotM15 import SlotM15
+from pyleecan.Classes.SlotM16 import SlotM16
+from pyleecan.Classes.SlotM19 import SlotM19
+from pyleecan.Classes.SlotW61 import SlotW61
+from pyleecan.Classes.SlotW62 import SlotW62
+from pyleecan.Classes.SlotW29 import SlotW29
+from pyleecan.Classes.Skew import Skew
+from pyleecan.Classes.SlotW11_2 import SlotW11_2
+from pyleecan.Classes.SlotW23 import SlotW23
+from pyleecan.Classes.SlotW26 import SlotW26
+from pyleecan.Classes.SlotW30 import SlotW30
+from pyleecan.Classes.SlotW11 import SlotW11
+from pyleecan.Classes.SlotW14 import SlotW14
+from pyleecan.Classes.SlotW21 import SlotW21
 from numpy import pi
-from .CondType11 import CondType11
-from .LamHole import LamHole
-from .LamSlotMag import LamSlotMag
-from .SlotM11 import SlotM11
-from .SlotM12 import SlotM12
-from .SlotM13 import SlotM13
-from .SlotM14 import SlotM14
-from .SlotM15 import SlotM15
-from .SlotM16 import SlotM16
-from .NotchEvenDist import NotchEvenDist
-from .LamSlotWind import LamSlotWind
-from .SlotW63 import SlotW63
-from .LamSquirrelCage import LamSquirrelCage
-from .Material import Material
+from pyleecan.Classes.CondType11 import CondType11
+from pyleecan.Classes.LamHole import LamHole
+from pyleecan.Classes.LamSlotMag import LamSlotMag
+from pyleecan.Classes.SlotM14 import SlotM14
+from pyleecan.Classes.NotchEvenDist import NotchEvenDist
+from pyleecan.Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict import (
+    isfloat,
+    isint,
+)
+from os.path import join, isfile
+from pyleecan.Classes.LamSlotWind import LamSlotWind
+from pyleecan.Classes.SlotW63 import SlotW63
+from pyleecan.Classes.LamSquirrelCage import LamSquirrelCage
+from pyleecan.Classes.Material import Material
 from pyleecan.Classes.RuleSimple import RuleSimple
 from pyleecan.Classes.RuleEquation import RuleEquation
 from pyleecan.Classes.RuleComplex import RuleComplex
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class ConvertMC(Convert):
@@ -354,7 +280,55 @@ class ConvertMC(Convert):
             self.other_dict["[Calc_Options]"]["Motor_Type"] = name_machine
 
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_magnet_to_other
-    convert_magnet_to_other = convert_magnet_to_other
+    def convert_magnet_to_other(self):
+        """Selects correct magnet and implements it in dict
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        # conversion to Motor-CAD
+        slot = self.machine.rotor.slot
+        magnet_type = type(slot).__name__
+
+        # selection type of Slot
+        if isinstance(slot, SlotM11) and self.machine.rotor.slot.H0 == 0:
+            if slot.H0 == 0:
+                # magnet is on surface of rotor
+                name_slot = "Surface_Radial"
+            else:
+                name_slot = "Inset_Radial"
+
+        elif isinstance(slot, SlotM15):
+            if slot.H0 == 0:
+                # magnet is on surface of rotor
+                name_slot = "Surface_Parallel"
+            else:
+                name_slot = "Inset_Parallel"
+
+        elif isinstance(slot, SlotM12):
+            name_slot = "Inset_Breadleaof"
+
+        elif isinstance(slot, SlotM13):
+            name_slot = "Surface_Breadleaof"
+
+        elif isinstance(slot, SlotM16):
+            name_slot = "Spoke"
+
+        else:
+            raise NotImplementedError(
+                f"Type of magnet {magnet_type} has not equivalent or has not been implementated"
+            )
+
+        # writting magnet type in other_dict
+        if "[Design_Options]" not in self.other_dict:
+            self.other_dict["[Design_Options]"] = {"BPM_Rotor": name_slot}
+        else:
+            self.other_dict["[Design_Options]"]["BPM_Rotor"] = name_slot
+
+        self.get_logger().info(f"Conversion {magnet_type} into {name_slot}")
 
     # cf Methods.Converter.ConvertMC.convert_to_other.convert_material_to_other
     def convert_material_to_other(self, is_stator, name):
@@ -985,7 +959,119 @@ class ConvertMC(Convert):
             self.get_logger().error("MC machine can't have notch in stator")
 
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict
-    convert_other_to_dict = convert_other_to_dict
+    def convert_other_to_dict(self, file_path):
+        """converts file .mot into dict and creates other_unit_dict
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        file_path : str
+            Path to the file to convert
+
+        Returns
+        ----------
+        other_dict: dict
+            dict with param present in file .mot without unit
+        other_unit_dict : dict
+            dict with unit to make conversion (key: unit family, value: factor)
+        """
+
+        list_path = file_path.split(".")
+        if not list_path[-1] == "mot":
+            raise ValueError("The file is not a .mot, please select a .mot to convert")
+        if not isfile(file_path):
+            raise ValueError(f"Error: This file doesn't exist: {file_path}")
+        else:
+            with open(join(file_path, file_path)) as file:
+                ####
+                # .mot files are organized as follow:
+                # the file is compose different part, with a title into [], and after a list of value, after restart an other part, we have a space
+                # Example :
+                # [Dimensions]
+                # Stator_Lam_Dia=130
+                # Stator_Bore=80
+                # Airgap=1
+
+                # [Design_Options]
+                # BPM_Rotor=Surface_Radial
+                # Top_Bar=Round
+                # Bottom_Bar=Rectangular
+                ####
+
+                ####
+                # other_dict = {
+                #   [Dimensions] = {
+                #        Stator_Lam_Dia : 130
+                #        Stator_Bore : 80
+                #        Airgap : 1
+                #       }
+                #
+                #   [Design_Options] = {
+                #       BPM_Rotor : Surface_Radial
+                #       Top_Bar : Round
+                #       Bottom_Bar : Rectangular
+                #       }
+                # }
+                ####
+
+                other_dict = {}
+                for line in file:
+                    # deleted \n in line
+                    line = line.strip("\n")
+                    # separation different part like .mot
+                    if line == "":
+                        pass
+                    elif line[0] == "[":
+                        temp_dict = {}
+                        other_dict[line] = temp_dict
+
+                    else:
+                        # lb = line before =
+                        lb = line.split("=")
+                        value = lb[1]
+
+                        # changement type after equal (value)
+                        if isint(value):
+                            value = int(value)
+                        elif value == "True":
+                            value = True
+                        elif value == ("False"):
+                            value = False
+                        elif isfloat(value):
+                            value = float(value)
+
+                        if value == (""):
+                            pass
+                        else:
+                            temp_dict[lb[0]] = value
+
+                # Extract unit dict
+                other_unit_dict_temp = other_dict["[Units]"]
+                other_unit_dict = {}
+
+                # set length
+                unit = other_unit_dict_temp["Units_Length"]
+                if unit == "mm":
+                    other_unit_dict["m"] = 0.001
+                    # we want to have m so we need to multiply by 0.001
+                elif unit == "m":
+                    other_unit_dict["m"] = 1
+
+                other_unit_dict["rad"] = 1
+                other_unit_dict["deg"] = pi / 180
+
+                pole_number = other_dict["[Dimensions]"]["Pole_Number"]
+
+                other_unit_dict["ED"] = (2 / pole_number) * (pi / 180)
+                # we want to have rad so we need to multiply by 2/pole_number
+                other_unit_dict[None] = 1  # No unit => No scale
+                other_unit_dict[""] = 1  # No unit => No scale
+                other_unit_dict["-"] = 1  # No unit => No scale
+                other_unit_dict["[]"] = 1  # No unit => No scale
+
+                self.other_dict = other_dict
+                self.other_unit_dict = other_unit_dict
 
     # cf Methods.Converter.ConvertMC.convert_to_P.convert_pole_to_P
     def convert_pole_to_P(self):
@@ -1531,27 +1617,818 @@ class ConvertMC(Convert):
         )
 
     # cf Methods.Converter.ConvertMC.Rules.add_rule_material
-    add_rule_material = add_rule_material
+    def add_rule_material(self, path_P, material):
+        """Create and adapt all the rules related to machine dimensions (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        # elec
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[f"[{material}]", "ElectricalResistivity"],
+                P_obj_path=f"{path_P}.elec.rho",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[f"[{material}]", "TempCoefElectricalResistivity"],
+                P_obj_path=f"{path_P}.elec.alpha",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        # Mechanics
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[f"[{material}]", "Density"],
+                P_obj_path=f"{path_P}.struct.rho",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if "PoissonsRatio" in self.other_dict[f"[{material}]"]:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "PoissonsRatio"],
+                    P_obj_path=f"{path_P}.struct.nu_xy",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "PoissonsRatio"],
+                    P_obj_path=f"{path_P}.struct.nu_xz",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "PoissonsRatio"],
+                    P_obj_path=f"{path_P}.struct.nu_yz",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        if "YoungsCoefficient" in self.other_dict[f"[{material}]"]:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "YoungsCoefficient"],
+                    P_obj_path=f"{path_P}.struct.Ex",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "YoungsCoefficient"],
+                    P_obj_path=f"{path_P}.struct.Ey",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "YoungsCoefficient"],
+                    P_obj_path=f"{path_P}.struct.Ez",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        if self.is_P_to_other == False:
+            if (
+                "YoungsCoefficient" in self.other_dict[f"[{material}]"]
+                and "PoissonsRatio" in self.other_dict[f"[{material}]"]
+            ):
+                # into file .mot
+                # a = YoungsCoefficient
+                # b = PoissonsRatio
+                # into Pyleecan
+                # x = Gxy
+                self.rules_list.append(
+                    RuleEquation(
+                        param=[
+                            {
+                                "src": "other",
+                                "path": [f"[{material}]", "YoungsCoefficient"],
+                                "variable": "a",
+                            },
+                            {
+                                "src": "other",
+                                "path": [f"[{material}]", "PoissonsRatio"],
+                                "variable": "b",
+                            },
+                            {
+                                "src": "pyleecan",
+                                "path": f"{path_P}.struct.Gxy",
+                                "variable": "x",
+                            },
+                        ],
+                        unit_type="",
+                        equation="a/(2*(1+b))=x",
+                        file_name=__file__,
+                    )
+                )
+                # into file .mot
+                # a = YoungsCoefficient
+                # b = PoissonsRatio
+                # into Pyleecan
+                # x = Gxz
+                self.rules_list.append(
+                    RuleEquation(
+                        param=[
+                            {
+                                "src": "other",
+                                "path": [f"[{material}]", "YoungsCoefficient"],
+                                "variable": "a",
+                            },
+                            {
+                                "src": "other",
+                                "path": [f"[{material}]", "PoissonsRatio"],
+                                "variable": "b",
+                            },
+                            {
+                                "src": "pyleecan",
+                                "path": f"{path_P}.struct.Gxz",
+                                "variable": "x",
+                            },
+                        ],
+                        unit_type="",
+                        equation="a/(2*(1+b))=x",
+                        file_name=__file__,
+                    )
+                )
+
+                # into file .mot
+                # a = YoungsCoefficient
+                # b = PoissonsRatio
+                # into Pyleecan
+                # x = Gyz
+                self.rules_list.append(
+                    RuleEquation(
+                        param=[
+                            {
+                                "src": "other",
+                                "path": [f"[{material}]", "YoungsCoefficient"],
+                                "variable": "a",
+                            },
+                            {
+                                "src": "other",
+                                "path": [f"[{material}]", "PoissonsRatio"],
+                                "variable": "b",
+                            },
+                            {
+                                "src": "pyleecan",
+                                "path": f"{path_P}.struct.Gyz",
+                                "variable": "x",
+                            },
+                        ],
+                        unit_type="",
+                        equation="a/(2*(1+b))=x",
+                        file_name=__file__,
+                    )
+                )
+
     # cf Methods.Converter.ConvertMC.Rules.add_rule_material_magnetics
-    add_rule_material_magnetics = add_rule_material_magnetics
+    def add_rule_material_magnetics(self, path_P, material):
+        """Create and adapt all the rules related to machine dimensions (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        if "MagneturValue" in self.other_dict[f"[{material}]"]:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "MagneturValue"],
+                    P_obj_path=f"{path_P}.mag.mur_lin",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        if "MagnetBrValue" in self.other_dict[f"[{material}]"]:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "MagnetBrValue"],
+                    P_obj_path=f"{path_P}.mag.Brm20",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        if "MagnetTempCoefBr" in self.other_dict[f"[{material}]"]:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "MagnetTempCoefBr"],
+                    P_obj_path=f"{path_P}.mag.alpha_Br",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        if "LaminationThickness" in self.other_dict[f"[{material}]"]:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[f"[{material}]", "LaminationThickness"],
+                    P_obj_path=f"{path_P}.mag.Wlam",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        self.rules_list.append(
+            RuleComplex(
+                fct_name="curve_B(H)",
+                folder="MotorCAD",
+                param_dict={"material": material, "path_P": path_P},
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.add_rule_skew
-    add_rule_skew = add_rule_skew
+    def add_rule_skew(self):
+        """Create and adapt all the rules related to skew
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.rules_list.append(
+            RuleComplex(
+                fct_name="skew",
+                folder="MotorCAD",
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM52
-    add_rule_holeM52 = add_rule_holeM52
+    def add_rule_holeM52(self, hole_id):
+        """Create and adapt all the rules related to Hole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        hole_id : int
+            A int to know the number of hole
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].Zh",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Bridge_Thickness"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Width"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Web_Thickness"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM57
-    add_rule_holeM57 = add_rule_holeM57
+    def add_rule_holeM57(self, hole_id):
+        """Create and adapt all the rules related to Hole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        hole_id : int
+            A int to know the number of hole
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].Zh",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"BridgeThickness_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"MagnetThickness_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"PoleVAngle_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W0",
+                unit_type="deg",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"VShapeMagnetPost_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"WebThickness_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"MagnetBarWidth_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W4",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(
+                fct_name="interior_V_web_holeM57",
+                folder="MotorCAD",
+                param_dict={"hole_id": hole_id},
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM60
-    add_rule_holeM60 = add_rule_holeM60
+    def add_rule_holeM60(self, hole_id):
+        """Create and adapt all the rules related to Hole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        hole_id : int
+            A int to know the number of hole
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].Zh",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"MagnetThickness_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"BridgeThickness_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"PoleVAngle_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W0",
+                unit_type="deg",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"MagnetBarWidth_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleEquation(
+                param=[
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", f"VSimpleWidth_Array[{hole_id}]"],
+                        "variable": "y",
+                    },
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", f"MagnetThickness_Array[{hole_id}]"],
+                        "variable": "a",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": f"machine.rotor.hole[{hole_id}].W2",
+                        "variable": "x",
+                    },
+                ],
+                unit_type="m",
+                equation="y+a = x",
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"VSimpleMagnetPost_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM61
-    add_rule_holeM61 = add_rule_holeM61
+    def add_rule_holeM61(self, hole_id):
+        """Create and adapt all the rules related to Hole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        hole_id : int
+            A int to know the number of hole
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].Zh",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"BridgeThickness_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"WebThickness_Array[{hole_id}]"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Magnet_Post"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(
+                fct_name="interior_U_shape_holeM61",
+                folder="MotorCAD",
+                param_dict={"hole_id": hole_id},
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM62
-    add_rule_holeM62 = add_rule_holeM62
+    def add_rule_holeM62(self, hole_id):
+        """Create and adapt all the rules related to Hole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        hole_id : int
+            A int to know the number of hole
+        """
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].Zh",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Magnet_Embed_Depth"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if not self.machine.rotor.hole[hole_id].W0_is_rad:
+            self.rules_list.append(
+                RuleComplex(
+                    fct_name="embedded_parallel_holeM62",
+                    folder="MotorCAD",
+                    param_dict={
+                        "hole_id": hole_id,
+                    },
+                )
+            )
+
+        else:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", f"Magnet_Arc_[ED]"],
+                    P_obj_path=f"machine.rotor.hole[{hole_id}].W0",
+                    unit_type="ED",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
     # cf Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM63
-    add_rule_holeM63 = add_rule_holeM63
+    def add_rule_holeM63(self, hole_id):
+        """Create and adapt all the rules related to Hole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        hole_id : int
+            A int to know the number of hole
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].Zh",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Bridge_Thickness"],
+                P_obj_path=f"machine.rotor.hole[{hole_id}].H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if self.machine.rotor.hole[hole_id].top_flat == False:
+            self.rules_list.append(
+                RuleComplex(
+                    fct_name="embedded_breadloaf_holeM63",
+                    folder="MotorCAD",
+                    param_dict={
+                        "hole_id": hole_id,
+                    },
+                )
+            )
+
+        else:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", f"Magnet_Width"],
+                    P_obj_path=f"machine.rotor.hole[{hole_id}].W0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_lamination
-    add_rule_lamination = add_rule_lamination
+    def add_rule_lamination(self, is_stator):
+        """Create and adapt all the rules related to lamination (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        # definie the correct position in rotor or in stator
+        if is_stator:
+            lam_name = "stator"
+            lam_name_MC = "Stator"
+        else:
+            lam_name = "rotor"
+            lam_name_MC = "Rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"{lam_name_MC}_Lam_Length"],
+                P_obj_path=f"machine.{lam_name}.L1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Miscellaneous]", f"Stacking_Factor_[{lam_name_MC}]"],
+                P_obj_path=f"machine.{lam_name}.Kf1",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_notch_slotM19
-    add_rule_notch_slotM19 = add_rule_notch_slotM19
+    def add_rule_notch_slotM19(self, is_stator, nb_notch):
+        """Create and adapt all the rules related to lamination (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        nb_notch : int
+            number oh notch
+        """
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[
+                    "[Dimensions]",
+                    "PoleNotchDepth",
+                ],
+                P_obj_path=f"machine.rotor.notch[0].notch_shape.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[
+                    "[Dimensions]",
+                    "Pole_Number",
+                ],
+                P_obj_path=f"machine.rotor.notch[0].notch_shape.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(fct_name="add_notch_slotM19", folder="MotorCAD")
+        )
 
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationCirc
     def add_rule_ventilationCirc(self, is_stator, duct_id):
@@ -1735,15 +2612,546 @@ class ConvertMC(Convert):
                 )
 
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationPolar
-    add_rule_ventilationPolar = add_rule_ventilationPolar
+    def add_rule_ventilationPolar(self, is_stator, duct_id):
+        """Create and adapt all the rules related to lamination (lam radius,...)
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        duct_id : int
+            a int to know the number of duct
+        """
+
+        if is_stator:
+            self.get_logger().info("stator_duct, not implemented")
+            return
+        else:
+            lam_name_MC = "Rotor"
+            lam_name_py = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[
+                    "[Through_Vent]",
+                    f"{lam_name_MC}ArcDuctLayer_InnerDiameter[{duct_id}]",
+                ],
+                P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].H0",
+                unit_type="m",
+                scaling_to_P=0.5,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[
+                    "[Through_Vent]",
+                    f"{lam_name_MC}CircularDuctLayer_OffsetAngle[{duct_id}]",
+                ],
+                P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].Alpha0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[
+                    "[Through_Vent]",
+                    f"{lam_name_MC}ArcDuctLayer_Depth[{duct_id}]",
+                ],
+                P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].D0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=[
+                    "[Through_Vent]",
+                    f"{lam_name_MC}CircularDuctLayer_Channels[{duct_id}]",
+                ],
+                P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].Zh",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(
+                fct_name="arc_duct_polar",
+                folder="MotorCAD",
+                param_dict={
+                    "duct_id": duct_id,
+                    "lam_name_py": lam_name_py,
+                    "lam_name_MC": lam_name_MC,
+                },
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationTrap
-    add_rule_ventilationTrap = add_rule_ventilationTrap
+    def add_rule_ventilationTrap(self, is_stator, duct_id):
+        """Create and adapt all the rules related to duct
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        duct_id : int
+            a int to know the number of duct
+        """
+
+        if is_stator:
+            lam_name_MC = "Stator"
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"iCircularDuctL{duct_id}RadialDiameter",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].H0",
+                    unit_type="m",
+                    scaling_to_P=0.5,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_OffsetAngle[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].Alpha0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_ChannelDiameter[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].D0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"CircularDuctL{duct_id}Channels",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].Zh",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_Width[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].W1",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_Width[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.stator.axial_vent[{duct_id}].W2",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+        else:
+            lam_name_MC = "Rotor"
+            lam_name_py = "rotor"
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctlayers_RadialDiameter[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].H0",
+                    unit_type="m",
+                    scaling_to_P=0.5,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_OffsetAngle[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].Alpha0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_ChannelDiameter[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].D0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_Channels[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].Zh",
+                    unit_type="",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_Width[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].W1",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=[
+                        "[Through_Vent]",
+                        f"{lam_name_MC}RectangularDuctLayer_Width[{duct_id}]",
+                    ],
+                    P_obj_path=f"machine.{lam_name_py}.axial_vent[{duct_id}].W2",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+
     # cf Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_slot_slotW29
-    add_rule_parallel_slot_slotW29 = add_rule_parallel_slot_slotW29
+    def add_rule_parallel_slot_slotW29(self):
+        """Create and adapt all the rules related to Pole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Poles"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"PoleTipRadialDepth"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"SyncRotorSlot_Depth"],
+                P_obj_path=f"machine.rotor.slot.H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"SyncRotorSlot_Width"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"SyncRotorSlot_Width"],
+                P_obj_path=f"machine.rotor.slot.W1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"SyncRotorSlot_Width"],
+                P_obj_path=f"machine.rotor.slot.W2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_tooth_slotW63
-    add_rule_parallel_tooth_slotW63 = add_rule_parallel_tooth_slotW63
+    def add_rule_parallel_tooth_slotW63(self):
+        """Create and adapt all the rules related to Pole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Poles"],
+                P_obj_path="machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Pole_Depth"],
+                P_obj_path="machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Pole_Angle"],
+                P_obj_path="machine.rotor.slot.H1",
+                unit_type="deg",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        # W2 has no equivalent in MC
+        # self.rules_list.append(
+        #     RuleSimple(
+        #         other_key_list=["[Dimensions]", f""],
+        #         P_obj_path=f"machine.rotor.slot.W2",
+        #         unit_type="m",
+        #         scaling_to_P=1,
+        #         file_name=__file__,
+        #     )
+        # )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "PoleTipRadialDepth"],
+                P_obj_path="machine.rotor.slot.H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Pole_Width"],
+                P_obj_path="machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleEquation(
+                param=[
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", "Pole_Tip_Width"],
+                        "variable": "y",
+                    },
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", "Pole_Width"],
+                        "variable": "a",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": "machine.rotor.slot.W1",
+                        "variable": "x",
+                    },
+                ],
+                unit_type="m",
+                equation="2*y + a = x",
+                file_name=__file__,
+            )
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Pole.add_rule_salient_pole_slotW62
-    add_rule_salient_pole_slotW62 = add_rule_salient_pole_slotW62
+    def add_rule_salient_pole_slotW62(self):
+        """Create and adapt all the rules related to Pole
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Rotor_Poles"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Depth"],
+                P_obj_path=f"machine.rotor.slot.H0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Rotor_Coil_Width"],
+                P_obj_path=f"machine.rotor.slot.W2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Rotor_Coil_Depth"],
+                P_obj_path=f"machine.rotor.slot.H2",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Width"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Liner_Pole_Tip"],
+                P_obj_path=f"machine.rotor.slot.H3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Liner_Pole_Side"],
+                P_obj_path=f"machine.rotor.slot.W3",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleEquation(
+                param=[
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", "Slot_Depth"],
+                        "variable": "y",
+                    },
+                    {
+                        "src": "other",
+                        "path": ["[Dimensions]", "Pole_Tip_Width"],
+                        "variable": "a",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": f"machine.rotor.slot.W1",
+                        "variable": "x",
+                    },
+                ],
+                unit_type="m",
+                equation="2*y + a = x",
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(fct_name="salient_pole_slotW62", folder="MotorCAD")
+        )
 
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM11
     def add_rule_slotM11(self):
@@ -1938,7 +3346,66 @@ class ConvertMC(Convert):
         )
 
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM15
-    add_rule_slotM15 = add_rule_slotM15
+    def add_rule_slotM15(self):
+        """Create and adapt all the rules related to slotM15
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            A booleen to know, position in lamination
+        """
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", f"Pole_Number"],
+                P_obj_path=f"machine.rotor.slot.Zs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                P_obj_path=f"machine.rotor.slot.H1",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Dimensions]", "Magnet_Arc_[ED]"],
+                P_obj_path=f"machine.rotor.slot.W0",
+                unit_type="ED",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        if self.machine.rotor.slot.H0 != 0:
+            self.rules_list.append(
+                RuleSimple(
+                    other_key_list=["[Dimensions]", "Magnet_Thickness"],
+                    P_obj_path=f"machine.rotor.slot.H0",
+                    unit_type="m",
+                    scaling_to_P=1,
+                    file_name=__file__,
+                )
+            )
+            self.rules_list.append(
+                RuleComplex(fct_name="inset_parallel_slotM15", folder="MotorCAD")
+            )
+
+        else:
+            self.rules_list.append(
+                RuleComplex(fct_name="surface_parallel_slotM15", folder="MotorCAD")
+            )
 
     # cf Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM16
     def add_rule_slotM16(self):
@@ -2883,13 +4350,233 @@ class ConvertMC(Convert):
         )
 
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype11
-    add_rule_condtype11 = add_rule_condtype11
+    def add_rule_condtype11(self, is_stator):
+        """Create and adapt all the rules related to condtype11
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            True slot is in stator, False slot is in rotor
+        """
+        # definie the correct position in rotor or in stator
+        if is_stator == True:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        # conversion problem, possibility of having these rules
+        """
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Magnetics]", "NumberStrandsHand"],
+                P_obj_path=f"machine.{lam_name}.winding.conductor.Nwppc_rad",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Magnetics]", "NumberStrandsHand"],
+                P_obj_path=f"machine.{lam_name}.winding.conductor.Nwppc_tan",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )"""
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Winding_Design]", "Copper_Height"],
+                P_obj_path=f"machine.{lam_name}.winding.conductor.Wwire",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Winding_Design]", "Copper_Width"],
+                P_obj_path=f"machine.{lam_name}.winding.conductor.Hwire",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        # not implemented
+        """
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Calc_Options]", "WireInsThicknessCalculation"],
+                P_obj_path=f"machine.{lam_name}.winding.conductor.Wins_wire",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )"""
+
+        self.rules_list.append(
+            RuleComplex(fct_name="end_winding_lenght", folder="MotorCAD")
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype12
-    add_rule_condtype12 = add_rule_condtype12
+    def add_rule_condtype12(self, is_stator):
+        """Create and adapt all the rules related to condtype12
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            True slot is in stator, False slot is in rotor
+        """
+        # definie the correct position in rotor or in stator
+        if is_stator:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Magnetics]", "NumberStrandsHand"],
+                P_obj_path=f"machine.{lam_name}.winding.conductor.Nwppc",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Winding_Design]", "Copper_Diameter"],
+                P_obj_path=f"machine.{lam_name}.winding.conductor.Wwire",
+                unit_type="m",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        # Not implemented
+        """
+        self.rules_list.append(
+            RuleEquation(
+                param=[
+                    {
+                        "src": "other",
+                        "path": ["[Winding_Design]", "Copper_Diameter"],
+                        "variable": "y",
+                    },
+                    {
+                        "src": "other",
+                        "path": ["[Winding_Design]", "Wire_Diameter"],
+                        "variable": "b",
+                    },
+                    {
+                        "src": "pyleecan",
+                        "path": f"machine.{lam_name}.winding.conductor.Wins_wire",
+                        "variable": "x",
+                    },
+                ],
+                unit_type="m",
+                equation="y/2 + b/2 = x",
+                file_name=__file__,
+            )
+        )
+        """
+        self.rules_list.append(
+            RuleComplex(fct_name="end_winding_lenght", folder="MotorCAD")
+        )
+
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_rotor_bar
-    add_rule_rotor_bar = add_rule_rotor_bar
+    def add_rule_rotor_bar(self, is_stator):
+        """Create and adapt all the rules related to condtype12
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            True slot is in stator, False slot is in rotor
+        """
+        # definie the correct position in rotor or in stator
+        if is_stator:
+            raise KeyError("Those rules are for rotor slot only")
+
+        self.rules_list.append(RuleComplex(fct_name="rotor_bar", folder="MotorCAD"))
+
     # cf Methods.Converter.ConvertMC.Rules.Winding.add_rule_winding
-    add_rule_winding = add_rule_winding
+    def add_rule_winding(self, is_stator):
+        """Create and adapt all the rules related to winding
+        Extend rules_list within Converter object
+
+        Parameters
+        ----------
+        self : ConvertMC
+            A ConvertMC object
+        is_stator : Bool
+            True slot is in stator, False slot is in rotor
+        """
+        # definie the correct position in rotor or in stator
+        if is_stator == True:
+            lam_name = "stator"
+        else:
+            lam_name = "rotor"
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Magnetics]", "MagPhases"],
+                P_obj_path=f"machine.{lam_name}.winding.qs",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Magnetics]", "MagTurnsConductor"],
+                P_obj_path=f"machine.{lam_name}.winding.Ntcoil",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Magnetics]", "MagThrow"],
+                P_obj_path=f"machine.{lam_name}.winding.coil_pitch",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleSimple(
+                other_key_list=["[Magnetics]", "ParallelPaths"],
+                P_obj_path=f"machine.{lam_name}.winding.Npcp",
+                unit_type="",
+                scaling_to_P=1,
+                file_name=__file__,
+            )
+        )
+
+        self.rules_list.append(
+            RuleComplex(
+                fct_name="winding_layer",
+                folder="MotorCAD",
+                param_dict={is_stator: lam_name},
+            )
+        )
 
     # cf Methods.Converter.ConvertMC.select_SIPMSM_machine_dimension
     def select_SIPMSM_machine_dimension(self):

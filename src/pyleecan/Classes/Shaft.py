@@ -7,22 +7,22 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from .Circle import Circle
-from .Arc1 import Arc1
-from .Segment import Segment
-from .SurfLine import SurfLine
+from pyleecan.Classes.Circle import Circle
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes.SurfLine import SurfLine
 from numpy import exp, pi
-from ..Functions.labels import (
+from pyleecan.Functions.labels import (
     SHAFT_LAB,
     NO_LAM_LAB,
     BOUNDARY_PROP_LAB,
@@ -30,10 +30,12 @@ from ..Functions.labels import (
     SHAFTSL_LAB,
     SHAFTR_LAB,
 )
-from ..Methods.Machine.Shaft.plot import Patch, SHAFT_COLOR, init_fig
+from pyleecan.Methods.Machine.Shaft.plot import SHAFT_COLOR
+from matplotlib.patches import Patch
+from pyleecan.Functions.init_fig import init_fig
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class Shaft(FrozenClass):

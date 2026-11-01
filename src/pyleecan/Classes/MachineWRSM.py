@@ -7,25 +7,25 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .MachineSync import MachineSync
+from pyleecan.Classes.MachineSync import MachineSync
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Machine.MachineWRSM.check import (
-    LamSlotWind,
+from pyleecan.Methods.Machine.MachineWRSM.check import (
     M4C_PError,
     M4C_WrongRotor,
     M4C_WrongStator,
 )
+from pyleecan.Classes.LamSlotWind import LamSlotWind
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class MachineWRSM(MachineSync):

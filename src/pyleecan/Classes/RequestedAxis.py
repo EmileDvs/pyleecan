@@ -7,29 +7,26 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import set_array, check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import set_array, check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.SciDataTool.RequestedAxis.get_axis import (
-    AxisError,
-    DataPattern,
-    argsort,
-    array,
-    import_module,
-    operation_list,
-    rebuild_symmetries_axis,
-)
+from pyleecan.Methods.SciDataTool.RequestedAxis.get_axis import operation_list
+from importlib import import_module
+from numpy import argsort, array
+from pyleecan.Classes.DataPattern import DataPattern
+from pyleecan.Functions.SciDataTool import AxisError
+from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
 
 from numpy import array, array_equal
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class RequestedAxis(FrozenClass):

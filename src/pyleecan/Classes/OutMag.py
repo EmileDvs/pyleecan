@@ -7,27 +7,27 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from ._frozen import FrozenClass
+from pyleecan.Classes._frozen import FrozenClass
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import pi, max as np_max, mean as np_mean, min as np_min
-from ..Functions.SciDataTool.derivation_integration import integrate
-from ..Functions.MeshSolution.get_area import get_area
-from ..Functions.MeshSolution.get_indices_limited import get_indices_limited
-from .DataTime import DataTime
-from .Norm_ref import Norm_ref
-from .VectorField import VectorField
-from ..Functions.labels import STATOR_LAB
+from pyleecan.Functions.SciDataTool.derivation_integration import integrate
+from pyleecan.Functions.MeshSolution.get_area import get_area
+from pyleecan.Functions.MeshSolution.get_indices_limited import get_indices_limited
+from pyleecan.Classes.DataTime import DataTime
+from pyleecan.Classes.Norm_ref import Norm_ref
+from pyleecan.Classes.VectorField import VectorField
+from pyleecan.Functions.labels import STATOR_LAB
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class OutMag(FrozenClass):

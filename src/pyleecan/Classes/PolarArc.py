@@ -11,31 +11,31 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .Surface import Surface
+from pyleecan.Classes.Surface import Surface
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
-from ..Methods.Geometry.PolarArc.check import check
+from pyleecan.Methods.Geometry.PolarArc.check import check
 from numpy import pi, angle, exp
-from ..Methods.Geometry.PolarArc.discretize import NbPointPolarArcError
-from .Arc1 import Arc1
-from .Segment import Segment
-from ..Methods.Geometry.PolarArc.get_patches import (
+from pyleecan.Methods.Geometry.PolarArc.discretize import NbPointPolarArcError
+from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes.Segment import Segment
+from pyleecan.Methods.Geometry.PolarArc.get_patches import (
     PATCH_COLOR,
     PATCH_COLOR_ALPHA,
     PATCH_EDGE,
     PATCH_EDGE_ALPHA,
-    Polygon,
 )
+from matplotlib.patches import Polygon
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class PolarArc(Surface):

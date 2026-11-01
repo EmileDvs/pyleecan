@@ -7,22 +7,22 @@
 from os import linesep
 from sys import getsizeof
 from logging import getLogger
-from ._check import check_var, raise_
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
-from ..Functions.load import load_init_dict
-from ..Functions.Load.import_class import import_class
+from pyleecan.Classes._check import check_var, raise_
+from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.save import save
+from pyleecan.Functions.load import load_init_dict
+from pyleecan.Functions.Load.import_class import import_class
 from copy import deepcopy
-from .HoleMag import HoleMag
+from pyleecan.Classes.HoleMag import HoleMag
 
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 from numpy import pi
-from ..Functions.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
-from ..Methods.Slot.Slot import SlotCheckError
+from pyleecan.Functions.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
+from pyleecan.Methods.Slot.Slot import SlotCheckError
 
 from numpy import isnan
-from ._check import InitUnKnowClassError
+from pyleecan.Classes._check import InitUnKnowClassError
 
 
 class HoleUD(HoleMag):
