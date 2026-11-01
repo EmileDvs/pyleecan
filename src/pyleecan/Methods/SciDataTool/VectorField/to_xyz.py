@@ -19,9 +19,11 @@ def to_xyz(self):
     else:
         # Coordinate transform
         arg_list = [
-            axis.name
-            if axis.name in ["freqs", "wavenumber"]
-            else axis.name + "[smallestperiod]"
+            (
+                axis.name
+                if axis.name in ["freqs", "wavenumber"]
+                else axis.name + "[smallestperiod]"
+            )
             for axis in self.components["radial"].axes
         ]
         result = self.get_xyz_along(*arg_list, is_squeeze=False)

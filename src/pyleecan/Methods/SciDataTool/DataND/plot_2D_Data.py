@@ -550,9 +550,11 @@ def plot_2D_Data(
         for i in range(contrib_axis.get_length()):
             if unit == "dBA":
                 arg_list_new = [
-                    axis.name
-                    if axis.name != contribution_name
-                    else contribution_name + "[" + str(i) + "]"
+                    (
+                        axis.name
+                        if axis.name != contribution_name
+                        else contribution_name + "[" + str(i) + "]"
+                    )
                     for axis in self.get_axes()
                 ]
                 contrib = self.get_magnitude_along(*arg_list_new, unit="SI")[
@@ -581,9 +583,11 @@ def plot_2D_Data(
                     )
             elif unit == "dB":
                 arg_list_new = [
-                    arg
-                    if contribution_name not in arg
-                    else contribution_name + "[" + str(i) + "]"
+                    (
+                        arg
+                        if contribution_name not in arg
+                        else contribution_name + "[" + str(i) + "]"
+                    )
                     for arg in arg_list_along
                 ]
                 contrib = self.get_magnitude_along(*arg_list_new, unit="SI")[
