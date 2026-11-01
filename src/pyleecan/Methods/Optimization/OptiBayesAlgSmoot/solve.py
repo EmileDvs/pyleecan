@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from smoot.smoot import MOO
+from ....Classes._smoot.smoot import MOO
 from copy import deepcopy
 from datetime import datetime
 import numpy as np

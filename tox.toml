@@ -12,7 +12,6 @@ deps = [
     "gmsh",
     "pyuff",
     "deap",
-    "smoot",
     "git+https://github.com/mxgnsr/SciDataTool/tree/update-reqs.git",
 ]
 # commands_pre = [""]
@@ -28,7 +27,8 @@ deps = [
     "gmsh",
     "pyuff",
     "deap",
-    "smoot",
+    "smt",
+    "pymoo>=0.6.0",
     "openpyxl",
     "ddt",
     "nbformat",
@@ -50,7 +50,7 @@ commands_pre = [
 commands = [["pytest",{ replace = "posargs", default = ["Tests"], extend = true }]]
 
 [env.3.14]
-description = "Run test under python 3.14 without smoot because smt can not build without MS compilers for 3.14"
+description = "Run test under python 3.14 without smt and pymoo because smt cannot build without MS compilers for 3.14"
 deps = [
     "pytest",
     "mock",
@@ -59,7 +59,7 @@ deps = [
     "gmsh",
     "pyuff",
     "deap",
-    # "smoot", -> fix for smt
+    # "smt", "pymoo>=0.6.0" -> smt cannot build on Python 3.14
     "openpyxl",
     "ddt",
     "nbformat",

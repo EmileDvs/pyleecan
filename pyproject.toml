@@ -29,6 +29,7 @@ dependencies = [
     "openpyxl>=3.1.5",
     "pandas>=1.0.3",
     "pyfemm>=0.1.3",
+    "pymoo>=0.6.2",
     "pyside6>=6.12.0",
     "pytest>=5.4.1",
     "pytest-qt>=3.3.0",
@@ -37,7 +38,7 @@ dependencies = [
     "scikit-learn>=1.9.1",
     "scipy>=1.6.0",
     "setuptools>=84.0.0",
-    "smoot ; python_full_version < '3.14'",
+    "smt>=2.15.0",
     "sympy>=1.14.0",
     "vtk>=9.2.6",
     "xlrd>=1.2.0",
@@ -53,9 +54,6 @@ Issues = "https://github.com/Eomys/pyleecan/issues"
 [build-system]
 requires = ["uv_build>=0.13.0,<0.14.0"]
 build-backend = "uv_build"
-
-[tool.uv.sources]
-smoot = { git = "https://github.com/Eomys/smoot" }
 
 [dependency-groups]
 dev = [
