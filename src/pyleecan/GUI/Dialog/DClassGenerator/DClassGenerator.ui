@@ -65,9 +65,9 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="is_black">
+       <widget class="QCheckBox" name="is_ruff">
         <property name="text">
-         <string>Format with black</string>
+         <string>Format with Ruff</string>
         </property>
        </widget>
       </item>

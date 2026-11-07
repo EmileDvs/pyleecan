@@ -1,12 +1,14 @@
 import ast
 import builtins
+import re
 import subprocess
 import tempfile
 import warnings
+from keyword import iskeyword
 from os.path import basename, dirname, isfile, join
 from textwrap import indent
 
-from ...Generator import TAB
+from ...Generator import PYTHON_TYPE, TAB
 from ...Generator.ClassGenerator.as_dict_method_generator import generate_as_dict
 from ...Generator.ClassGenerator.compare_method_generator import generate_compare
 from ...Generator.ClassGenerator.copy_method_generator import generate_copy
@@ -20,9 +22,40 @@ from ...Generator.ClassGenerator.size_of_method_generator import generate_size_o
 from ...Generator.ClassGenerator.str_method_generator import generate_str
 from ...Generator.read_fct import (
     find_import_type,
+    get_value_str,
+    is_dict_list_pyleecan_type,
+    is_dict_pyleecan_type,
+    is_list_pyleecan_type,
 )
 
 CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
+
+
+def class_module_name(class_name):
+    """Convert a class name to a Python module name, keeping acronyms together."""
+    name = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", class_name)
+    name = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
+    name = re.sub(r"([A-Za-z])([0-9])", r"\1_\2", name).lower()
+    if iskeyword(name):
+        name += "_"
+    if not name.isidentifier():
+        raise ValueError(f"Cannot derive a Python module name from {class_name!r}")
+    return name
+
+
+def validate_class_module_names(gen_dict):
+    """Reject ambiguous experimental output names before writing any classes."""
+    modules = {}
+    for class_name in gen_dict:
+        module = class_module_name(class_name)
+        if module in modules:
+            raise ValueError(
+                f"Classes {modules[module]!r} and {class_name!r} "
+                f"both map to module {module!r}"
+            )
+        modules[module] = class_name
+
+
 METHOD_IMPORT_REDIRECTS = {
     ("Methods.Machine", "ARC_NPOINT_D"): "Machine",
     ("Methods.Machine", "LINE_NPOINT_D"): "Machine",
@@ -1246,6 +1279,40 @@ def _get_method_source(
         method_source, method_imports = _normalize_method_numpy_imports(
             method_source, method_imports
         )
+    if any(
+        _is_package_import(node, "pyvista")
+        for node in method_imports + list(ast.walk(ast.parse(method_source)))
+    ):
+        method_source, method_imports = _normalize_method_package_imports(
+            method_source, method_imports, "pyvista", "pv"
+        )
+    class_attribute_loads = {
+        node.id
+        for assignment in class_attributes
+        for node in ast.walk(assignment.value)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
+    os_import_bindings = {
+        alias.asname
+        or (
+            alias.name.split(".")[0]
+            if isinstance(node, ast.Import)
+            else alias.name
+        )
+        for node in method_imports
+        if _is_package_import(node, "os")
+        for alias in node.names
+        if isinstance(node, ast.ImportFrom)
+        or alias.name == "os"
+        or alias.name.startswith("os.")
+    }
+    if not class_attribute_loads.intersection(os_import_bindings) and any(
+        _is_package_import(node, "os")
+        for node in method_imports + list(ast.walk(ast.parse(method_source)))
+    ):
+        method_source, method_imports = _normalize_method_package_imports(
+            method_source, method_imports, "os", "os"
+        )
     return (
         method_source,
         method_imports,
@@ -1823,9 +1890,9 @@ def _get_absolute_import_module(import_node, target_package):
     return module_parts
 
 
-def _apply_import_style(source, soft_name, import_style):
+def _apply_import_style(source, soft_name, import_style, class_package="Classes"):
     """Apply the configured Pyleecan import style without rewriting other code."""
-    target_package = [soft_name, "Classes"]
+    target_package = [soft_name, class_package]
     lines = source.splitlines()
     replacements = []
 
@@ -1873,10 +1940,10 @@ def _apply_import_style(source, soft_name, import_style):
     return "\n".join(lines) + ("\n" if source.endswith("\n") else "")
 
 
-def _get_numpy_scope_info(scope_body):
-    """Collect names local to a scope and its directly imported NumPy symbols."""
+def _get_import_scope_info(scope_body, package):
+    """Collect names local to a scope and its directly imported package symbols."""
     local_names = set()
-    numpy_names = {}
+    package_names = {}
     global_names = set()
     assigned_names = set()
 
@@ -1903,9 +1970,9 @@ def _get_numpy_scope_info(scope_body):
         def visit_Import(self, node):
             for alias in node.names:
                 local_names.add(alias.asname or alias.name.split(".")[0])
-                if alias.name == "numpy" or alias.name.startswith("numpy."):
-                    module_name = alias.name[len("numpy") :].lstrip(".")
-                    numpy_names[alias.asname or alias.name.split(".")[0]] = (
+                if alias.name == package or alias.name.startswith(package + "."):
+                    module_name = alias.name[len(package) :].lstrip(".")
+                    package_names[alias.asname or alias.name.split(".")[0]] = (
                         (module_name or None) if alias.asname else None
                     )
 
@@ -1914,14 +1981,16 @@ def _get_numpy_scope_info(scope_body):
                 local_names.add(alias.asname or alias.name)
                 if (
                     node.module
-                    and (node.module == "numpy" or node.module.startswith("numpy."))
+                    and (
+                        node.module == package or node.module.startswith(package + ".")
+                    )
                     and alias.name != "*"
                 ):
-                    module_name = node.module[len("numpy") :].lstrip(".")
+                    module_name = node.module[len(package) :].lstrip(".")
                     imported_name = ".".join(
                         part for part in (module_name, alias.name) if part
                     )
-                    numpy_names[alias.asname or alias.name] = imported_name
+                    package_names[alias.asname or alias.name] = imported_name
 
     visitor = ScopeVisitor()
     for statement in scope_body:
@@ -1929,15 +1998,129 @@ def _get_numpy_scope_info(scope_body):
 
     local_names.difference_update(global_names)
     for name in global_names:
-        numpy_names.pop(name, None)
-    shadowed_numpy_names = assigned_names.intersection(numpy_names)
-    return local_names, numpy_names, shadowed_numpy_names
+        package_names.pop(name, None)
+    shadowed_names = assigned_names.intersection(package_names)
+    return local_names, package_names, shadowed_names
 
 
-def _apply_numpy_import_style(source):
-    """Use ``import numpy as np`` for NumPy imports and their references."""
+def _apply_package_import_style(source, package, package_alias):
+    """Normalize package imports and their references to a shared module alias."""
     tree = ast.parse(source)
-    _, module_names, module_shadowed_names = _get_numpy_scope_info(tree.body)
+    if package in ("pyvista", "os"):
+        imported_names = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported_names.update(
+                    alias.asname or alias.name.split(".")[0]
+                    for alias in node.names
+                    if alias.name == package or alias.name.startswith(package + ".")
+                )
+                if package == "os" and any(
+                    alias.name.startswith("os.") for alias in node.names
+                ):
+                    return source
+            elif isinstance(node, ast.ImportFrom) and node.module and (
+                node.module == package or node.module.startswith(package + ".")
+            ):
+                if node.level:
+                    return source
+                if package == "os" and node.module != "os" and node.module != "os.path":
+                    return source
+                imported_names.update(alias.asname or alias.name for alias in node.names)
+        for node in ast.walk(tree):
+            if package == "os" and isinstance(node, (ast.Import, ast.ImportFrom)):
+                aliases = node.names
+                is_os_import = (
+                    isinstance(node, ast.Import)
+                    and any(
+                        item.name == package or item.name.startswith(package + ".")
+                        for item in aliases
+                    )
+                ) or (
+                    isinstance(node, ast.ImportFrom)
+                    and node.module is not None
+                    and (node.module == package or node.module.startswith(package + "."))
+                )
+                if is_os_import:
+                    if any(
+                        isinstance(other, ast.stmt)
+                        and other is not node
+                        and (
+                            other.lineno == node.lineno
+                            and other.col_offset < node.col_offset
+                            or other.lineno == node.end_lineno
+                            and other.col_offset >= node.end_col_offset
+                        )
+                        for other in ast.walk(tree)
+                    ):
+                        return source
+            if (
+                isinstance(node, ast.Name)
+                and node.id == package_alias
+                and isinstance(node.ctx, (ast.Store, ast.Del))
+            ) or (isinstance(node, ast.arg) and node.arg == package_alias):
+                return source
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                if node.name == package_alias:
+                    return source
+            if isinstance(node, ast.ExceptHandler) and node.name == package_alias:
+                return source
+            if isinstance(node, (ast.Global, ast.Nonlocal)) and (
+                set(node.names) & (imported_names | {package_alias})
+            ):
+                return source
+            if isinstance(node, ast.Lambda) and any(
+                argument.arg in imported_names
+                for argument in (
+                    node.args.posonlyargs
+                    + node.args.args
+                    + node.args.kwonlyargs
+                    + ([node.args.vararg] if node.args.vararg else [])
+                    + ([node.args.kwarg] if node.args.kwarg else [])
+                )
+            ):
+                return source
+            if isinstance(node, ast.comprehension) and any(
+                isinstance(target, ast.Name) and target.id in imported_names
+                for target in ast.walk(node.target)
+            ):
+                return source
+            if isinstance(node, ast.ClassDef) and any(
+                isinstance(child, ast.Name)
+                and isinstance(child.ctx, (ast.Store, ast.Del))
+                and child.id in imported_names
+                for statement in node.body
+                if not isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef))
+                for child in ast.walk(statement)
+            ):
+                return source
+            if isinstance(node, ast.Import):
+                if any(
+                    (alias.asname or alias.name.split(".")[0]) == package_alias
+                    and not (
+                        alias.name == package or alias.name.startswith(package + ".")
+                    )
+                    for alias in node.names
+                ):
+                    return source
+            if isinstance(node, ast.ImportFrom):
+                if node.module == package or (
+                    node.module and node.module.startswith(package + ".")
+                ):
+                    if any(alias.name == "*" for alias in node.names):
+                        return source
+                elif any(
+                    (alias.asname or alias.name) == package_alias
+                    for alias in node.names
+                ):
+                    return source
+            if isinstance(
+                node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+            ):
+                _, _, shadowed_names = _get_import_scope_info(node.body, package)
+                if shadowed_names:
+                    return source
+    _, module_names, module_shadowed_names = _get_import_scope_info(tree.body, package)
 
     source_bytes = source.encode("utf-8")
     line_offsets = [0]
@@ -1947,28 +2130,28 @@ def _apply_numpy_import_style(source):
 
     replacements = []
     duplicate_module_imports = set()
-    has_module_numpy_import = False
+    has_module_package_import = False
     for node in tree.body:
         if (
             isinstance(node, ast.ImportFrom)
             and node.module
-            and (node.module == "numpy" or node.module.startswith("numpy."))
+            and (node.module == package or node.module.startswith(package + "."))
         ):
             if any(alias.name == "*" for alias in node.names):
                 continue
-            if has_module_numpy_import:
+            if has_module_package_import:
                 duplicate_module_imports.add(id(node))
-            has_module_numpy_import = True
+            has_module_package_import = True
         elif isinstance(node, ast.Import):
-            numpy_aliases = [
+            package_aliases = [
                 alias
                 for alias in node.names
-                if alias.name == "numpy" or alias.name.startswith("numpy.")
+                if alias.name == package or alias.name.startswith(package + ".")
             ]
-            if numpy_aliases:
-                if has_module_numpy_import:
+            if package_aliases:
+                if has_module_package_import:
                     duplicate_module_imports.add(id(node))
-                has_module_numpy_import = True
+                has_module_package_import = True
 
     def add_statement_replacement(node, replacement):
         start = line_offsets[node.lineno - 1]
@@ -2009,7 +2192,9 @@ def _apply_numpy_import_style(source):
             if node.returns is not None:
                 self.visit(node.returns)
             body = node.body
-            local_names, numpy_names, shadowed_numpy_names = _get_numpy_scope_info(body)
+            local_names, package_names, shadowed_names = _get_import_scope_info(
+                body, package
+            )
             argument_names = {
                 argument.arg
                 for argument in (
@@ -2021,7 +2206,7 @@ def _apply_numpy_import_style(source):
             if node.args.kwarg:
                 argument_names.add(node.args.kwarg.arg)
             local_names.update(argument_names)
-            self.scopes.append((local_names, numpy_names, shadowed_numpy_names))
+            self.scopes.append((local_names, package_names, shadowed_names))
             for statement in body:
                 self.visit(statement)
             self.scopes.pop()
@@ -2041,11 +2226,11 @@ def _apply_numpy_import_style(source):
                 return
 
             imported_name = None
-            for local_names, numpy_names, shadowed_numpy_names in reversed(self.scopes):
-                if node.id in shadowed_numpy_names:
+            for local_names, package_names, shadowed_names in reversed(self.scopes):
+                if node.id in shadowed_names:
                     return
-                if node.id in numpy_names:
-                    imported_name = numpy_names[node.id]
+                if node.id in package_names:
+                    imported_name = package_names[node.id]
                     break
                 if node.id in local_names:
                     return
@@ -2057,9 +2242,9 @@ def _apply_numpy_import_style(source):
                 imported_name = module_names[node.id]
 
             if imported_name is None:
-                replacement = b"np"
+                replacement = package_alias.encode("utf-8")
             else:
-                replacement = ("np." + imported_name).encode("utf-8")
+                replacement = (package_alias + "." + imported_name).encode("utf-8")
             start = line_offsets[node.lineno - 1] + node.col_offset
             end = start + len(node.id.encode("utf-8"))
             replacements.append((start, end, replacement))
@@ -2070,25 +2255,36 @@ def _apply_numpy_import_style(source):
         if (
             isinstance(node, ast.ImportFrom)
             and node.module
-            and (node.module == "numpy" or node.module.startswith("numpy."))
+            and (node.module == package or node.module.startswith(package + "."))
         ):
             if any(alias.name == "*" for alias in node.names):
                 continue
             replacement = (
-                b"" if id(node) in duplicate_module_imports else b"import numpy as np"
+                b""
+                if id(node) in duplicate_module_imports
+                else (
+                    f"import {package}"
+                    if package == package_alias
+                    else f"import {package} as {package_alias}"
+                ).encode("utf-8")
             )
             add_statement_replacement(node, replacement)
         elif isinstance(node, ast.Import):
             aliases = []
             changed = False
-            numpy_seen = False
+            package_seen = False
             for alias in node.names:
-                if alias.name == "numpy" or alias.name.startswith("numpy."):
-                    if id(node) in duplicate_module_imports or numpy_seen:
+                if alias.name == package or alias.name.startswith(package + "."):
+                    if id(node) in duplicate_module_imports or package_seen:
                         changed = True
                         continue
-                    aliases.append(ast.alias(name="numpy", asname="np"))
-                    numpy_seen = True
+                    aliases.append(
+                        ast.alias(
+                            name=package,
+                            asname=package_alias if package != package_alias else None,
+                        )
+                    )
+                    package_seen = True
                     changed = True
                 else:
                     aliases.append(alias)
@@ -2105,6 +2301,21 @@ def _apply_numpy_import_style(source):
     for start, end, replacement in sorted(replacements, reverse=True):
         source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
     return source_bytes.decode("utf-8")
+
+
+def _apply_numpy_import_style(source):
+    """Use ``import numpy as np`` for NumPy imports and their references."""
+    return _apply_package_import_style(source, "numpy", "np")
+
+
+def _apply_pyvista_import_style(source):
+    """Use ``import pyvista as pv`` for PyVista imports and their references."""
+    return _apply_package_import_style(source, "pyvista", "pv")
+
+
+def _apply_os_import_style(source):
+    """Use ``import os`` for os imports and their references."""
+    return _apply_package_import_style(source, "os", "os")
 
 
 def _organize_header_imports(source, class_name, class_path):
@@ -2140,6 +2351,7 @@ def _organize_header_imports(source, class_name, class_path):
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             check=False,
         )
         if result.returncode:
@@ -2153,6 +2365,7 @@ def _organize_header_imports(source, class_name, class_path):
             ["ruff", "format", temp_path],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             check=False,
         )
         if result.returncode:
@@ -2278,6 +2491,7 @@ def _regroup_pyleecan_imports(source, class_name, class_path):
             ["ruff", "format", temp_path],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             check=False,
         )
         if result.returncode:
@@ -2305,20 +2519,33 @@ def _regroup_pyleecan_imports(source, class_name, class_path):
 
 
 def _is_numpy_import(node):
+    return _is_package_import(node, "numpy")
+
+
+def _is_package_import(node, package):
     if isinstance(node, ast.ImportFrom):
         return bool(
-            node.module and (node.module == "numpy" or node.module.startswith("numpy."))
+            node.module
+            and (node.module == package or node.module.startswith(package + "."))
         )
     return isinstance(node, ast.Import) and any(
-        alias.name == "numpy" or alias.name.startswith("numpy.") for alias in node.names
+        alias.name == package or alias.name.startswith(package + ".")
+        for alias in node.names
     )
 
 
 def _normalize_method_numpy_imports(method_source, method_imports):
     """Normalize a method's NumPy imports before checking inter-method conflicts."""
+    return _normalize_method_package_imports(
+        method_source, method_imports, "numpy", "np"
+    )
+
+
+def _normalize_method_package_imports(method_source, method_imports, package, alias):
+    """Normalize a method's package imports before checking inter-method conflicts."""
     import_source = "\n".join(ast.unparse(node) for node in method_imports)
     combined_source = (import_source + "\n\n" if import_source else "") + method_source
-    normalized_source = _apply_numpy_import_style(combined_source)
+    normalized_source = _apply_package_import_style(combined_source, package, alias)
     tree = ast.parse(normalized_source)
     method_nodes = [
         node
@@ -2519,8 +2746,10 @@ def generate_class(
     is_log=True,
     import_style="absolute",
     class_import_graph=None,
+    is_new=False,
+    output_name=None,
 ):
-    """generate the corresponding class file (erase the previous code)
+    """Generate the corresponding class file.
 
     Parameters
     ----------
@@ -2532,18 +2761,34 @@ def generate_class(
         path to the file to save the class code
     import_style : str
         "relative" or "absolute" style for imports from the generated Pyleecan package
+    class_import_graph : dict, optional
+        Snapshot of class imports used to detect circular imports.
+    is_new : bool, optional
+        Generate the experimental dataclass version instead of the legacy class.
+        The dataclass version uses the ``Classes_new`` inheritance hierarchy.
+    output_name : str, optional
+        Output module name for the dataclass version, without the .py extension.
+        Defaults to the snake_case class name.
 
     Returns
     -------
-    None
+    str or None
+        The generated path for the dataclass version; None for the legacy version.
 
     """
 
     if import_style not in ("relative", "absolute"):
         raise ValueError("import_style must be 'relative' or 'absolute'")
+    if not is_new and output_name is not None:
+        raise ValueError("output_name is only supported when is_new=True")
+    if is_new:
+        validate_class_module_names(gen_dict)
 
     class_dict = gen_dict[class_name]
     class_pack = class_dict["package"]
+    if is_new and class_import_graph is None:
+        source_class_dir = join(dirname(path_to_gen), "Classes")
+        class_import_graph = get_class_import_graph(source_class_dir, gen_dict, soft_name)
     reserved_names = {constant["name"] for constant in class_dict["constants"]} | {
         method.split(".")[-1] for method in class_dict["methods"]
     }
@@ -2564,6 +2809,22 @@ def generate_class(
         reserved_names=reserved_names,
         class_import_graph=class_import_graph,
     )
+
+    if is_new:
+        return _generate_dataclass_class(
+            gen_dict,
+            class_name,
+            path_to_gen,
+            soft_name,
+            import_style,
+            output_name,
+            method_sources,
+            method_imports,
+            fallback_reasons,
+            class_attributes,
+            method_default_overrides,
+            class_error_definitions,
+        )
 
     # Start of file generation
     # Create or Erase the file by opening it
@@ -2939,8 +3200,448 @@ def generate_class(
     with open(class_path, encoding="utf-8") as generated_file:
         source = generated_file.read()
     source = _apply_numpy_import_style(source)
+    source = _apply_pyvista_import_style(source)
+    source = _apply_os_import_style(source)
     source = _apply_import_style(source, soft_name, import_style)
     source = _organize_header_imports(source, class_name, class_path)
     source = _regroup_pyleecan_imports(source, class_name, class_path)
     with open(class_path, "w", encoding="utf-8") as generated_file:
         generated_file.write(source)
+
+
+def generate_class_new(
+    gen_dict,
+    class_name,
+    path_to_gen,
+    soft_name="pyleecan",
+    is_log=True,
+    import_style="absolute",
+    output_name=None,
+):
+    """Compatibility wrapper for experimental dataclass generation."""
+    return generate_class(
+        gen_dict,
+        class_name,
+        path_to_gen,
+        soft_name=soft_name,
+        is_log=is_log,
+        import_style=import_style,
+        is_new=True,
+        output_name=output_name,
+    )
+
+
+_BASE_TYPES = {"bool", "complex", "float", "int", "str"}
+
+
+def _is_none_default(value):
+    return value in ("", None, "None")
+
+
+def _field_type(prop_type, default, gen_dict, soft_name):
+    """Return a Python annotation and imports needed for one CSV property."""
+    imports = set()
+
+    def resolve_type(type_name):
+        if type_name in _BASE_TYPES:
+            return type_name
+        if type_name == "ndarray":
+            imports.add("import numpy as np")
+            return "np.ndarray"
+        if type_name == "function":
+            imports.update(("from typing import Any, Callable",))
+            return "Callable[..., Any]"
+        if type_name in ("list", "[]"):
+            imports.add("from typing import Any")
+            return "list[Any]"
+        if type_name == "dict":
+            imports.add("from typing import Any")
+            return "dict[str, Any]"
+        if type_name in ("[ndarray]", "{ndarray}"):
+            imports.add("import numpy as np")
+            return (
+                "list[np.ndarray]"
+                if type_name == "[ndarray]"
+                else "dict[str, np.ndarray]"
+            )
+        if is_list_pyleecan_type(type_name):
+            return f"list[{resolve_type(type_name[1:-1])}]"
+        if is_dict_list_pyleecan_type(type_name):
+            return f"dict[str, list[{resolve_type(type_name[2:-2])}]]"
+        if is_dict_pyleecan_type(type_name):
+            return f"dict[str, {resolve_type(type_name[1:-1])}]"
+
+        if type_name in gen_dict:
+            imports.add(f"from {soft_name}.Classes.{type_name} import {type_name}")
+            return type_name
+        if "." in type_name:
+            module_name, _, symbol = type_name.rpartition(".")
+            imports.add(f"from {module_name} import {symbol}")
+            return symbol
+        imports.add("from typing import Any")
+        return "Any"
+
+    annotation = resolve_type(prop_type) if prop_type else "Any"
+    if _is_none_default(default) and annotation not in ("Any", "None"):
+        annotation = f"{annotation} | None"
+    return annotation, imports
+
+
+def _referenced_classes(prop_type, gen_dict):
+    if prop_type in gen_dict:
+        return {prop_type}
+    if is_list_pyleecan_type(prop_type):
+        return _referenced_classes(prop_type[1:-1], gen_dict)
+    if is_dict_list_pyleecan_type(prop_type):
+        return _referenced_classes(prop_type[2:-2], gen_dict)
+    if is_dict_pyleecan_type(prop_type):
+        return _referenced_classes(prop_type[1:-1], gen_dict)
+    return set()
+
+
+def _parent_type(class_name, gen_dict, soft_name):
+    """Return the highest-level CSV classes that can own this class."""
+    owners = set()
+    for owner_name, owner_dict in gen_dict.items():
+        if owner_name == class_name:
+            continue
+        if any(
+            class_name in _referenced_classes(prop["type"], gen_dict)
+            for prop in owner_dict["properties"]
+        ):
+            owners.add(owner_name)
+
+    highest_owners = set()
+    for owner in owners:
+        seen = set()
+        while (
+            owner in gen_dict
+            and gen_dict[owner]["mother"] in gen_dict
+            and owner not in seen
+        ):
+            seen.add(owner)
+            owner = gen_dict[owner]["mother"]
+        highest_owners.add(owner)
+
+    if not highest_owners:
+        return (), set()
+    parent_names = sorted(highest_owners)
+    imports = {
+        f"from {soft_name}.Classes.{name} import {name}" for name in parent_names
+    }
+    return tuple(parent_names), imports
+
+
+def _field_default(prop):
+    """Format a dataclass default, using field() only when it is required."""
+    prop_type = prop["type"]
+    value = prop["value"]
+    metadata = {}
+    if prop.get("as_dict") not in (None, ""):
+        metadata["as_dict"] = prop["as_dict"]
+
+    requires_field = False
+    if value in ("", None):
+        if prop_type in ("list", "[]", "[ndarray]"):
+            default = "default_factory=list"
+            requires_field = True
+        elif prop_type in ("dict", "{ndarray}"):
+            default = "default_factory=dict"
+            requires_field = True
+        else:
+            default = "None"
+    elif prop_type == "list" and value == -1:
+        default = "default_factory=list"
+        requires_field = True
+    elif prop_type == "dict" and value == -1:
+        default = "default_factory=dict"
+        requires_field = True
+    elif prop_type == "ndarray" and isinstance(value, list):
+        default = f"default_factory=partial(deepcopy, np.array({value!r}))"
+        requires_field = True
+    elif prop_type in ("list", "dict", "[ndarray]", "{ndarray}") and isinstance(
+        value, (list, dict)
+    ):
+        if not value:
+            factory = "dict" if prop_type in ("dict", "{ndarray}") else "list"
+            default = f"default_factory={factory}"
+        else:
+            default = f"default_factory=partial(deepcopy, {value!r})"
+        requires_field = True
+    elif prop_type in PYTHON_TYPE:
+        default = get_value_str(value, prop_type)
+    elif isinstance(value, str) and value.endswith("()"):
+        default = f"default_factory={value[:-2]}"
+        requires_field = True
+    else:
+        default = repr(value)
+
+    if metadata:
+        requires_field = True
+    if not requires_field:
+        return default
+
+    field_args = (
+        default if default.startswith("default_factory=") else f"default={default}"
+    )
+    if metadata:
+        field_args += f", metadata={metadata!r}"
+    return f"field({field_args})"
+
+
+def _attribute_docstring(description):
+    """Format a CSV description as a safe triple-quoted attribute docstring."""
+    escaped_description = repr(description)[1:-1]
+    return f'"""{escaped_description}"""'
+
+
+def _property_description(prop):
+    description = prop.get("desc") or ""
+    if prop.get("type") == "bool":
+        description = re.sub(
+            r"(?<![\w.])([01])(?![\w.])",
+            lambda match: "True" if match.group(1) == "1" else "False",
+            description,
+        )
+    return description
+
+
+def _format_source_with_ruff(source, class_path):
+    result = subprocess.run(
+        ["ruff", "format", "--stdin-filename", class_path, "-"],
+        input=source,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    if result.returncode:
+        raise RuntimeError(
+            "Ruff could not format generated class "
+            + class_path
+            + ": "
+            + (result.stderr or result.stdout).strip()
+        )
+    return result.stdout
+
+
+def _display_default(prop):
+    value = prop["value"]
+    prop_type = prop["type"]
+    if value in ("", None, "None"):
+        if prop_type == "list":
+            return "[]"
+        if prop_type == "dict":
+            return "{}"
+        return "None"
+    if prop_type in PYTHON_TYPE:
+        return get_value_str(value, prop_type)
+    return repr(value)
+
+
+def _class_docstring(class_dict):
+    """Build a NumPy-style class docstring from class and property metadata."""
+    description = class_dict.get("desc") or class_dict["name"]
+    lines = [description, "", "Attributes", "----------"]
+    for prop in class_dict["properties"]:
+        prop_type = prop.get("type") or "Any"
+        property_description = _property_description(prop)
+        if prop.get("value") in ("", None, "None"):
+            prop_type += " or None"
+        lines.extend(
+            [
+                f"{prop['name']} : {prop_type}",
+                *(
+                    [f"    {line}" for line in property_description.splitlines()]
+                    if property_description
+                    else ["    No description provided."]
+                ),
+            ]
+        )
+        details = []
+        if prop.get("unit") and prop["unit"] != "-":
+            details.append(f"Unit: {prop['unit']}")
+        details.append(f"Default: {_display_default(prop)}")
+        if prop.get("min") not in (None, ""):
+            details.append(f"Minimum: {prop['min']}")
+        if prop.get("max") not in (None, ""):
+            details.append(f"Maximum: {prop['max']}")
+        lines.append(f"    {'; '.join(details)}")
+    return '"""' + "\n".join(lines) + '\n"""'
+
+
+def _generate_dataclass_class(
+    gen_dict,
+    class_name,
+    path_to_gen,
+    soft_name,
+    import_style,
+    output_name,
+    method_sources,
+    method_imports,
+    fallback_reasons,
+    class_attributes,
+    method_default_overrides,
+    class_error_definitions,
+):
+    """Write an experimental dataclass using the prepared class methods."""
+    class_dict = gen_dict[class_name]
+    generated_name = class_name
+    output_module_name = output_name or class_module_name(class_name)
+    class_pack = class_dict["package"]
+
+    class_path = join(path_to_gen, output_module_name + ".py")
+    mother = class_dict["mother"]
+    if mother in gen_dict:
+        parent_class = mother
+        parent_module = class_module_name(mother)
+    else:
+        parent_class = "PyleecanClass"
+        parent_module = class_module_name(parent_class)
+    imports = {
+        "from dataclasses import dataclass, field",
+        "from typing import Any, ClassVar",
+        f"from {soft_name}.Classes_new.{parent_module} import {parent_class}",
+    }
+    parent_types = ()
+    if parent_class == "PyleecanClass":
+        parent_types, parent_imports = _parent_type(class_name, gen_dict, soft_name)
+        imports.update(parent_imports)
+
+    for prop in class_dict["properties"]:
+        annotation, type_imports = _field_type(
+            prop["type"], prop["value"], gen_dict, soft_name
+        )
+        imports.update(type_imports)
+    if any(
+        "default_factory=partial(deepcopy" in _field_default(prop)
+        for prop in class_dict["properties"]
+    ):
+        imports.update(("from copy import deepcopy", "from functools import partial"))
+
+    for method in class_dict["methods"]:
+        if method_sources[method] is None:
+            imports.add(import_method(class_pack, class_name, method).strip())
+    imports.update(ast.unparse(node) for node in method_imports)
+    imports.update(
+        f"from {soft_name}.Classes.{name} import {name}"
+        for name in find_import_type(gen_dict, class_dict, [])
+        if name in gen_dict and name != class_name
+    )
+
+    chunks = [
+        "# Experimental dataclass generated from "
+        + class_dict["path"][class_dict["path"].find("Generator") :]
+        + "\n",
+        '"""Generated experimental dataclass; do not edit by hand."""\n\n',
+        "\n".join(sorted(imports)) + "\n\n",
+        f"@dataclass(eq=False)\nclass {generated_name}({parent_class}):\n",
+        indent(_class_docstring(class_dict), TAB) + "\n\n",
+    ]
+
+    body = []
+    body.extend(
+        f"{TAB}{name}: ClassVar = {value!r}\n"
+        for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items()
+        if name != "VERSION"
+    )
+    body.extend(
+        f"{TAB}{name}: ClassVar = {expression}\n"
+        for name, expression in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(
+            class_name, {}
+        ).items()
+        if name != "VERSION"
+    )
+    body.extend(
+        f"{TAB}{name}: ClassVar = {expression}\n"
+        for name, expression in CLASS_BODY_CONSTANTS.get(class_name, {}).items()
+        if name != "VERSION"
+    )
+    body.extend(
+        f"{TAB}{constant['name']}: ClassVar = {constant['value']}\n"
+        for constant in class_dict["constants"]
+        if constant["name"] != "VERSION"
+        if constant["name"] not in CLASS_MODULE_CONSTANTS.get(class_name, {})
+        and constant["name"]
+        not in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(class_name, {})
+    )
+    body.extend(f"{TAB}{ast.unparse(assignment)}\n" for assignment in class_attributes)
+
+    for prop in class_dict["properties"]:
+        annotation, _ = _field_type(prop["type"], prop["value"], gen_dict, soft_name)
+        body.append(f"{TAB}{prop['name']}: {annotation} = {_field_default(prop)}\n")
+        description = _property_description(prop)
+        if description:
+            body.append(f"{TAB}{_attribute_docstring(description)}\n")
+
+    if parent_class == "PyleecanClass":
+        body.append(f"\n{TAB}def __post_init__(self):\n")
+        body.append(f"{TAB}{TAB}super().__post_init__()\n")
+        if parent_types:
+            accepted_types = ", ".join(parent_types)
+            expected_types = " or ".join(parent_types)
+            body.extend(
+                [
+                    f"\n{TAB}def _assert_parent_type(self, parent):\n",
+                    f"{TAB}{TAB}if parent is not None and not isinstance(parent, ({accepted_types},)):\n",
+                    f"{TAB}{TAB}{TAB}raise TypeError(\n",
+                    f'{TAB}{TAB}{TAB}{TAB}"{generated_name} parent must be an instance of {expected_types}, or None; "\n',
+                    f'{TAB}{TAB}{TAB}{TAB}+ f"got {{type(parent).__name__}}"\n',
+                    f"{TAB}{TAB}{TAB})\n",
+                ]
+            )
+
+    for method in class_dict["methods"]:
+        if method_sources[method] is None:
+            body.append(f"\n{TAB}{method.split('.')[-1]} = {method.split('.')[-1]}\n")
+            continue
+        body.append(
+            f"\n{TAB}# Inlined from Methods.{class_pack}.{class_name}.{method}\n"
+        )
+        body.append(indent(method_sources[method], TAB) + "\n")
+        for override in method_default_overrides[method]:
+            body.append(f"{TAB}{ast.unparse(override)}\n")
+    for definition in class_error_definitions:
+        if (
+            isinstance(definition, ast.ClassDef)
+            and len(definition.body) == 2
+            and isinstance(definition.body[0], ast.Expr)
+            and isinstance(definition.body[0].value, ast.Constant)
+            and isinstance(definition.body[0].value.value, str)
+            and isinstance(definition.body[1], ast.Pass)
+        ):
+            definition.body.pop()
+        body.append(
+            f"\n{TAB}{ast.unparse(definition).replace(chr(10), chr(10) + TAB)}\n"
+        )
+    chunks.append("".join(body))
+    if class_error_definitions:
+        chunks.append(
+            "\n"
+            + "".join(
+                f"{definition.name} = {generated_name}.{definition.name}\n"
+                for definition in class_error_definitions
+            )
+        )
+    if fallback_reasons:
+        chunks.append(
+            "\n# Methods retained as imports because they could not be inlined:\n"
+            + "".join(
+                f"# {method}: {reason}\n" for method, reason in fallback_reasons.items()
+            )
+        )
+
+    source = "".join(chunks)
+    source = _apply_numpy_import_style(source)
+    source = _apply_pyvista_import_style(source)
+    source = _apply_os_import_style(source)
+    # Inlined methods and their imports were prepared relative to Classes.
+    source = _apply_import_style(source, soft_name, "absolute")
+    source = _apply_import_style(source, soft_name, import_style, "Classes_new")
+    source = _organize_header_imports(source, generated_name, class_path)
+    source = _regroup_pyleecan_imports(source, generated_name, class_path)
+    source = _organize_header_imports(source, generated_name, class_path)
+    source = _format_source_with_ruff(source, class_path)
+    with open(class_path, "w", encoding="utf-8") as generated_file:
+        generated_file.write(source)
+    return class_path

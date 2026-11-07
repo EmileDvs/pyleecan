@@ -138,7 +138,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
 
         # Connect generate class button
         self.b_genclass.clicked.connect(self.genClass)
-        self.is_black.setChecked(True)
+        self.is_ruff.setChecked(True)
 
     def init_tables_buttons(self):
         """Init all tables and buttons of class properties and methods
@@ -1666,7 +1666,7 @@ class DClassGenerator(Ui_DClassGenerator, QWidget):
 
         # Generate classes in list of modified classes
         run_generate_classes(
-            is_black=self.is_black.isChecked(), class_list=list_class_modified
+            is_ruff=self.is_ruff.isChecked(), class_list=list_class_modified
         )
 
         # Empty the list of modified classes

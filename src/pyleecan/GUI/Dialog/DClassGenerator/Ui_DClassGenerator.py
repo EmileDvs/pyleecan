@@ -90,10 +90,10 @@ class Ui_DClassGenerator(object):
 
         self.gridLayout.addWidget(self.b_genclass, 0, 1, 1, 1)
 
-        self.is_black = QCheckBox(self.layoutWidget)
-        self.is_black.setObjectName("is_black")
+        self.is_ruff = QCheckBox(self.layoutWidget)
+        self.is_ruff.setObjectName("is_ruff")
 
-        self.gridLayout.addWidget(self.is_black, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.is_ruff, 0, 0, 1, 1)
 
         self.horizontalLayout.addLayout(self.gridLayout)
 
@@ -264,8 +264,8 @@ class Ui_DClassGenerator(object):
         self.b_genclass.setText(
             QCoreApplication.translate("DClassGenerator", "Generate classes", None)
         )
-        self.is_black.setText(
-            QCoreApplication.translate("DClassGenerator", "Format with black", None)
+        self.is_ruff.setText(
+            QCoreApplication.translate("DClassGenerator", "Format with Ruff", None)
         )
         self.lab_param.setText(
             QCoreApplication.translate(

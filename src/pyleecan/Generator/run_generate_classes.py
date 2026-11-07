@@ -1,38 +1,26 @@
-from concurrent.futures import ThreadPoolExecutor
 import json
-import shutil
 import subprocess
-import sys
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from os import cpu_count, listdir, remove
-from os.path import abspath, basename, dirname, isfile, join, normpath, realpath
+from os.path import basename, isdir, isfile, join, realpath
 
-import black
-
-from pyleecan.Generator.write_fct import write_file
-
-begin = len(normpath(abspath(join(dirname(__file__), "../.."))))
-end = len(normpath(abspath(join(dirname(__file__), ".."))))
-MAIN_DIR = dirname(realpath(__file__))
-
-soft_name = MAIN_DIR[begin + 1 : end]
-is_log = True  # To add logger related code (get_logger, ...)
-
-# Add the directory to the python path
-sys.path.append(MAIN_DIR[:begin])
-
-exec(
-    "from "
-    + soft_name
-    + ".Generator.ClassGenerator.class_generator import "
-    + "generate_class, get_class_import_graph"
+from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
+from pyleecan.Generator.ClassGenerator.class_generator import (
+    generate_class,
+    get_class_import_graph,
+    validate_class_module_names,
 )
-exec("from " + soft_name + ".Generator.read_fct import read_all")
-exec("from " + soft_name + ".definitions import MAIN_DIR, DOC_DIR, INT_DIR")
-
+from pyleecan.Generator.read_fct import read_all
+from pyleecan.Generator.write_fct import write_file
 
 # List of the main packages (to sort the classes)
 PACKAGE_LIST = ["Geometry", "Machine", "Material", "Slot", "Import"]
+
+
+def _validate_import_style(import_style):
+    if import_style not in ("relative", "absolute"):
+        raise ValueError("import_style must be 'relative' or 'absolute'")
 
 
 def generate_code(
@@ -42,6 +30,8 @@ def generate_code(
     is_log=True,
     class_list=None,
     max_workers=None,
+    is_new=False,
+    import_style="absolute",
 ):
     """Generate the package Classes code according to doc in root_path
 
@@ -59,12 +49,19 @@ def generate_code(
         List of class csv path to generate
     max_workers : int, optional
         Maximum number of classes to generate concurrently. Defaults to at most 8.
+    is_new : bool, optional
+        Generate experimental dataclasses in Classes_new without modifying
+        legacy class files or bookkeeping. Module names use snake_case without
+        the former "_new" suffix.
+    import_style : str, optional
+        "relative" or "absolute" imports from the generated package in class files.
 
     Returns
     -------
     None
     """
-    CLASS_DIR = join(root_path, "Classes")
+    _validate_import_style(import_style)
+    CLASS_DIR = join(root_path, "Classes_new" if is_new else "Classes")
     FUNC_DIR = join(root_path, "Functions")
     DOC_DIR = join(root_path, "Generator", "ClassesRef")
     print("Reading classes csv in: " + DOC_DIR)
@@ -73,13 +70,34 @@ def generate_code(
     # Read all the csv files and snapshot imports before generated files are removed.
     if gen_dict is None:
         gen_dict = read_all(DOC_DIR, soft_name=soft_name)
-    class_import_graph = get_class_import_graph(CLASS_DIR, gen_dict, soft_name)
+    if is_new:
+        validate_class_module_names(gen_dict)
+    class_import_graph = get_class_import_graph(
+        join(root_path, "Classes"), gen_dict, soft_name
+    )
+
+    if is_new:
+        if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, "pyleecan_class.py")):
+            raise FileNotFoundError(
+                "Experimental output requires Classes_new/pyleecan_class.py: "
+                + CLASS_DIR
+            )
+        class_names = (
+            set(basename(csv_path)[:-4] for csv_path in class_list)
+            if class_list is not None
+            else set(gen_dict)
+        )
+        generation_names = sorted(name for name in gen_dict if name in class_names)
+    else:
+        generation_names = None
 
     if class_list is None:
         # Deleting all the previous class
         print("Deleting old class files...")
         for file_name in listdir(CLASS_DIR):
-            if file_name[0] != "_":
+            if file_name[0] != "_" and not (
+                is_new and file_name == "pyleecan_class.py"
+            ):
                 remove(join(CLASS_DIR, file_name))
     else:
         # Deleting only given classes in class_list
@@ -92,15 +110,29 @@ def generate_code(
                 print("Deleting python class file: " + class_path_py)
                 remove(class_path_py)
 
+    if is_new:
+        _generate_classes(
+            gen_dict,
+            generation_names,
+            CLASS_DIR,
+            soft_name,
+            is_log,
+            class_import_graph,
+            max_workers,
+            is_new=True,
+            import_style=import_style,
+        )
+        return
+
     # A file to import every classes quickly
     import_file = open(join(CLASS_DIR, "import_all.py"), "w")
-    import_file.write("# -*- coding: utf-8 -*-\n\n")
+    # import_file.write("# -*- coding: utf-8 -*-\n\n")
     import_file.write('"""File generated by generate_code() - \n')
     import_file.write('WARNING! All changes made in this file will be lost!\n"""\n\n')
 
     # A file to select the constructor according to a string
     load_file = open(join(FUNC_DIR, "load_switch.py"), "w")
-    load_file.write("# -*- coding: utf-8 -*-\n")
+    # load_file.write("# -*- coding: utf-8 -*-\n")
     load_file.write('"""File generated by generate_code() - \n')
     load_file.write('WARNING! All changes made in this file will be lost!\n"""\n\n')
 
@@ -114,9 +146,7 @@ def generate_code(
             "from ..Classes." + class_name + " import " + class_name + "\n"
         )
         load_file.write('    "' + class_name + '": ' + class_name + ",\n")
-        if class_list is None:
-            generation_names.append(class_name)
-        elif class_name in class_name_list:
+        if class_list is None or class_name in class_name_list:
             generation_names.append(class_name)
 
     import_file.close()
@@ -126,12 +156,45 @@ def generate_code(
     print("Generation of load_switch.py")
     print("Generation of import_all.py")
 
+    _generate_classes(
+        gen_dict,
+        generation_names,
+        CLASS_DIR,
+        soft_name,
+        is_log,
+        class_import_graph,
+        max_workers,
+        import_style=import_style,
+    )
+
+    # Save gen_dict
+    class_dict_file = join(CLASS_DIR, "Class_Dict.json")
+    with open(class_dict_file, "w") as json_file:
+        json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
+
+
+def _generate_classes(
+    gen_dict,
+    generation_names,
+    class_dir,
+    soft_name,
+    is_log,
+    class_import_graph,
+    max_workers,
+    is_new=False,
+    import_style="absolute",
+):
     def generate_one_class(class_name, import_graph=None):
         print("Generation of " + class_name + " class")
-        generation_kwargs = {"soft_name": soft_name, "is_log": is_log}
+        generation_kwargs = {
+            "soft_name": soft_name,
+            "is_log": is_log,
+            "is_new": is_new,
+            "import_style": import_style,
+        }
         if import_graph is not None:
             generation_kwargs["class_import_graph"] = import_graph
-        generate_class(gen_dict, class_name, CLASS_DIR, **generation_kwargs)
+        generate_class(gen_dict, class_name, class_dir, **generation_kwargs)
 
     if generation_names and len(class_import_graph) == len(gen_dict):
         if max_workers is None:
@@ -152,45 +215,42 @@ def generate_code(
         for class_name in generation_names:
             generate_one_class(class_name)
 
-    # Save gen_dict
-    class_dict_file = join(CLASS_DIR, "Class_Dict.json")
-    with open(class_dict_file, "w") as json_file:
-        json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
-
 
 def run_generate_classes(
     doc_dir=DOC_DIR,
     int_dir=INT_DIR,
     main_dir=MAIN_DIR,
-    is_black=True,
-    soft_name=soft_name,
-    is_log=is_log,
+    is_ruff=True,
+    soft_name=PACKAGE_NAME,
+    is_log=True,
     class_list=None,
     max_workers=None,
+    is_new=False,
+    import_style="absolute",
 ):
-    """Main function to generate classes"""
+    """Generate legacy classes or experimental dataclasses.
 
-    IS_SDT = False
-    SDT_PATH = ""  # To fill
+    Experimental generation writes only selected modules in ``Classes_new``
+    with snake_case names and does not rewrite CSVs or legacy bookkeeping.
+    ``is_ruff`` controls
+    full-file formatting of generated legacy modules; dataclasses are always
+    formatted by the class generator. ``import_style`` selects "absolute"
+    (the default) or "relative" imports in generated class files.
+    """
 
-    if IS_SDT:
-        main_dir = join(SDT_PATH, "SciDataTool")
-        doc_dir = join(main_dir, "Generator", "ClassesRef")
-        int_dir = join(main_dir, "Generator", "Internal")
-        soft_name = "SciDataTool"
-        is_log = False
-
+    _validate_import_style(import_style)
     gen_dict = read_all(
         doc_dir, is_internal=False, in_path=int_dir, soft_name=soft_name
     )
 
-    for class_name, class_dict in gen_dict.items():
-        # Write class into csv format following latest template
-        write_file(class_dict)
+    if not is_new:
+        for class_dict in gen_dict.values():
+            # Write class into csv format following latest template
+            write_file(class_dict)
 
-    gen_dict = read_all(
-        doc_dir, is_internal=False, in_path=int_dir, soft_name=soft_name
-    )
+        gen_dict = read_all(
+            doc_dir, is_internal=False, in_path=int_dir, soft_name=soft_name
+        )
 
     generate_code(
         main_dir,
@@ -199,79 +259,30 @@ def run_generate_classes(
         is_log=is_log,
         class_list=class_list,
         max_workers=max_workers,
+        is_new=is_new,
+        import_style=import_style,
     )
 
-    if is_black:
-        # Run black
-        try:
-            black_path = shutil.which("black")
-
-            if class_list is None:
-                try:
-                    # Direct call to black executable
-                    result = subprocess.run([black_path, main_dir], check=True)
-
-                    # Call to python executable "sys.executable" doesn't work
-                    # (whereas black is installed in python directory since it is imported in this script)
-
-                    # result = subprocess.run(
-                    #     [sys.executable, "-m", "black", class_path_py],
-                    #     capture_output=True,
-                    #     text=True,
-                    #     check=True,
-                    # )
-                except subprocess.CalledProcessError as e:
-                    print(f"Black failed for {main_dir}: {e.stderr}")
-                except FileNotFoundError:
-                    print("Black is not installed or not in PATH.")
-
-            else:
-                for csv_path in class_list:
-                    class_name = basename(csv_path)[:-4]
-                    class_path_py = realpath(
-                        join(main_dir, "Classes", class_name + ".py")
-                    )
-
-                    try:
-                        # Run black on the file; check=True raises an exception on non-zero exit
-
-                        # Direct call to black executable
-                        result = subprocess.run(
-                            [black_path, "--quiet", class_path_py], check=True
-                        )
-
-                        # Call to python executable "sys.executable" doesn't work
-                        # (whereas black is installed in python directory since it is imported in this script)
-
-                        # result = subprocess.run(
-                        #     [sys.executable, "-m", "black", class_path_py],
-                        #     capture_output=True,
-                        #     text=True,
-                        #     check=True,
-                        # )
-
-                        print(f"Formatted {class_path_py} successfully.")
-
-                    except subprocess.CalledProcessError as e:
-                        print(f"Black failed for {class_path_py}: {e.stderr}")
-                    except FileNotFoundError:
-                        print("Black is not installed or not in PATH.")
-
-            if black.__version__.split(".")[0] != "24":
-                print("\n############################################")
-                print(
-                    "WARNING: The official version of black for pyleecan is 24, please update your black version"
-                )
-                print("############################################\n")
-        except ImportError:
-            print("/!\\ Please install and run black (version 24) /!\\")
+    if is_ruff and not is_new:
+        selected = (
+            set(basename(csv_path)[:-4] for csv_path in class_list)
+            if class_list is not None
+            else set(gen_dict)
+        )
+        class_paths = [
+            join(main_dir, "Classes", name + ".py")
+            for name in sorted(gen_dict)
+            if name in selected
+        ]
+        if class_paths:
+            subprocess.run(["ruff", "format", *class_paths], check=True)
     now = datetime.now()
     print("End at: ", now.strftime("%H:%M:%S"))
 
 
 if __name__ == "__main__":
     # To generate all classes
-    run_generate_classes(max_workers=cpu_count())
+    run_generate_classes(max_workers=cpu_count(), is_new=True, import_style="relative")
 
     # list_csv = [
     #     "Data.csv",
