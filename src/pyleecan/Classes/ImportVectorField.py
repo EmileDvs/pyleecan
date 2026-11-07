@@ -1,17 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportVectorField.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportVectorField"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportVectorField
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes.VectorField import VectorField
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportVectorField.get_data import get_data
+except ImportError as error:
+    get_data = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportVectorField(FrozenClass):
@@ -20,31 +33,16 @@ class ImportVectorField(FrozenClass):
     VERSION = 1
 
     # cf Methods.Import.ImportVectorField.get_data
-    def get_data(self):
-        """Generate VectorField object
-
-        Parameters
-        ----------
-        self : ImportVectorField
-            An ImportVectorField object
-
-        Returns
-        -------
-        VectField: VectorField
-            The generated VectorField object
-
-        """
-
-        comp_dict = {}
-        for key, component in self.components.items():
-            comp_dict[key] = component.get_data()
-
-        VectField = VectorField(
-            name=self.name, symbol=self.symbol, components=comp_dict
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportVectorField method get_data: " + str(get_data)
+                )
+            )
         )
-
-        return VectField
-
+    else:
+        get_data = get_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

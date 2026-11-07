@@ -1,17 +1,41 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/SolutionMat.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/SolutionMat"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/SolutionMat
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Solution import Solution
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Mesh.SolutionMat.get_axes_list import get_axes_list
+except ImportError as error:
+    get_axes_list = error
 
-from pyleecan.Classes.Solution import Solution
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Mesh.SolutionMat.get_field import get_field
+except ImportError as error:
+    get_field = error
+
+try:
+    from ..Methods.Mesh.SolutionMat.get_solution import get_solution
+except ImportError as error:
+    get_solution = error
+
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class SolutionMat(Solution):
@@ -19,163 +43,38 @@ class SolutionMat(Solution):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Mesh.SolutionMat.get_axes_list
-    def get_axes_list(self, *args):
-        """Get the value of variables stored in Solution.
-
-        Parameters
-        ----------
-        self : SolutionMat
-            an SolutionMat object
-
-        Returns
-        -------
-        axis_dict: list
-            a list of axis names containing axis sizes
-
-        """
-
-        if self.axis_name is not None:
-            axis_name = self.axis_name.copy()
-        else:
-            axis_name = None
-
-        if self.axis_size is not None:
-            axis_size = self.axis_size.copy()
-        else:
-            axis_size = None
-
-        return axis_name, axis_size
-
-    # cf Methods.Mesh.SolutionMat.get_field
-    def get_field(self, *args, is_squeeze=False, node=None, is_rthetaz=False):
-        """Get the value of variables stored in Solution.
-
-        Parameters
-        ----------
-        self : Solution
-            an Solution object
-        *args: list of strings
-            List of axes requested by the user, their units and values (optional)
-        is_squeeze : boolean
-            To numpy.squeeze the output ndarray
-
-        Returns
-        -------
-        field_new: ndarray
-            an ndarray of field values sliced according to args.
-
-        """
-        if args is None:
-            args = dict()
-        else:
-            if len(args) == 1 and type(args[0]) == tuple:
-                args = args[0]
-
-        field_new = self.field.copy()
-
-        if len(args) > 0:
-            if self.axis_name is not None:
-                nb_axis = len(self.axis_name)
-                for i in range(nb_axis):
-                    # ax = np.where(np.array(field.shape) == self.axis_size[i])[0][0]
-                    ax_name = self.axis_name[i]
-                    is_found = False
-                    for axis_str in args:
-                        if ax_name in axis_str:
-                            is_found = True
-                            if "[" in axis_str:
-                                elems = axis_str.split("[")
-                                ind_str = elems[1].strip("]")
-
-                                # Range of indices
-                                if ":" in ind_str:
-                                    elems2 = ind_str.split(":")
-                                    indices = [
-                                        i
-                                        for i in range(
-                                            int(elems2[0]), int(elems2[1]) + 1
-                                        )
-                                    ]
-                                # List of indices
-                                elif "," in ind_str:
-                                    indices = [int(x) for x in ind_str.split(",")]
-                                # Single index
-                                else:
-                                    indices = [int(ind_str)]
-
-                                field_new = np.take(field_new, indices=indices, axis=i)
-
-                    if not is_found:
-                        field_new = np.take(field_new, indices=0, axis=i)
-                        field_new = np.expand_dims(field_new, i)
-
-        if is_squeeze:
-            field_new = np.squeeze(field_new)
-
-        return field_new
-
-    # cf Methods.Mesh.SolutionMat.get_solution
-    def get_solution(self, indice=None):
-        """Return a copy of the solution with the option to only include specified indices.
-
-        Parameters
-        ----------
-        self : SolutionMat
-            a SolutionMat object
-        indices : list
-            list of indices, if list is empty or None all indices are included
-
-        Returns
-        -------
-        solution: SolutionMat
-            solution
-
-        """
-        logger = self.get_logger()
-
-        field_sol = self.get_field()
-        axis_name, axis_size = self.get_axes_list()
-        s_indice = self.indice
-
-        Iindice = axis_name.index("indice")
-
-        # create indices of solution if None
-        if s_indice is None:
-            s_indice = [i for i in range(field_sol.shape[Iindice])]
-
-        # check input indices
-        if not indice:
-            indice = s_indice
-
-        if set(indice) - set(s_indice):
-            logger.warning(
-                "At least one input indice is not part of the solution. "
-                + "Respective indice will be skipped."
+    if isinstance(get_axes_list, ImportError):
+        get_axes_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SolutionMat method get_axes_list: " + str(get_axes_list)
+                )
             )
-
-        # skip indice that are not part of the solution
-        new_indice = [ii for ii in indice if ii in s_indice]
-
-        # get array index of new_indice
-        array_indice = [np.where(np.array(s_indice) == ii)[0][0] for ii in new_indice]
-
-        # setup requested solution
-        axis_size[Iindice] = len(new_indice)
-        new_field_sol = np.take(field_sol, array_indice, axis=Iindice)
-
-        solution = type(self)(
-            label=self.label,
-            type_element=self.type_element,
-            field=new_field_sol,
-            indice=indice,
-            axis_name=axis_name,
-            axis_size=axis_size,
-            dimension=self.dimension,
         )
-
-        return solution
-
+    else:
+        get_axes_list = get_axes_list
+    # cf Methods.Mesh.SolutionMat.get_field
+    if isinstance(get_field, ImportError):
+        get_field = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SolutionMat method get_field: " + str(get_field))
+            )
+        )
+    else:
+        get_field = get_field
+    # cf Methods.Mesh.SolutionMat.get_solution
+    if isinstance(get_solution, ImportError):
+        get_solution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SolutionMat method get_solution: " + str(get_solution)
+                )
+            )
+        )
+    else:
+        get_solution = get_solution
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -280,9 +179,9 @@ class SolutionMat(Solution):
         # Check the properties inherited from Solution
         if not super(SolutionMat, self).__eq__(other):
             return False
-        if not np.array_equal(other.field, self.field):
+        if not array_equal(other.field, self.field):
             return False
-        if not np.array_equal(other.indice, self.indice):
+        if not array_equal(other.indice, self.indice):
             return False
         if other.axis_name != self.axis_name:
             return False
@@ -305,9 +204,9 @@ class SolutionMat(Solution):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not np.array_equal(other.field, self.field):
+        if not array_equal(other.field, self.field):
             diff_list.append(name + ".field")
-        if not np.array_equal(other.indice, self.indice):
+        if not array_equal(other.indice, self.indice):
             diff_list.append(name + ".indice")
         if other._axis_name != self._axis_name:
             if is_add_value:
@@ -462,10 +361,10 @@ class SolutionMat(Solution):
     def _set_field(self, value):
         """setter of field"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("field", value, "ndarray")
@@ -487,10 +386,10 @@ class SolutionMat(Solution):
     def _set_indice(self, value):
         """setter of indice"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("indice", value, "ndarray")

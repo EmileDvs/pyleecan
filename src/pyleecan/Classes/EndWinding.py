@@ -1,17 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/EndWinding.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/EndWinding"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/EndWinding
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.EndWinding.comp_inductance import comp_inductance
+except ImportError as error:
+    comp_inductance = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Machine.EndWinding.comp_length import comp_length
+except ImportError as error:
+    comp_length = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class EndWinding(FrozenClass):
@@ -19,41 +37,30 @@ class EndWinding(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.EndWinding.comp_inductance
-    def comp_inductance(self):
-        """Return the enforced end winding inductance
-
-        Parameters
-        ----------
-        self: EndWinding
-            A EndWinding object
-
-        Returns
-        -------
-        Lew : float
-            end winding inductance [H]
-        """
-
-        return self.Lew_enforced
-
+    if isinstance(comp_inductance, ImportError):
+        comp_inductance = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use EndWinding method comp_inductance: "
+                    + str(comp_inductance)
+                )
+            )
+        )
+    else:
+        comp_inductance = comp_inductance
     # cf Methods.Machine.EndWinding.comp_length
-    def comp_length(self):
-        """Compute the end winding conductor length on one side for a half-turn
-        excluding the straight conductor length outside of the lamination (winding.Lewout).
-        Since this is the abstract class method the actual length returned will be zero.
-
-        Parameters
-        ----------
-        self: EndWinding
-            A EndWinding object
-        Returns
-        -------
-        end_wind_length : float
-            End-winding length on one side for a half-turn [m].
-        """
-
-        return 0
-
+    if isinstance(comp_length, ImportError):
+        comp_length = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use EndWinding method comp_length: " + str(comp_length)
+                )
+            )
+        )
+    else:
+        comp_length = comp_length
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -115,8 +122,8 @@ class EndWinding(FrozenClass):
         if (
             other._Lew_enforced is not None
             and self._Lew_enforced is not None
-            and np.isnan(other._Lew_enforced)
-            and np.isnan(self._Lew_enforced)
+            and isnan(other._Lew_enforced)
+            and isnan(self._Lew_enforced)
         ):
             pass
         elif other._Lew_enforced != self._Lew_enforced:

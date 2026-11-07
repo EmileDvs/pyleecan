@@ -1,24 +1,55 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/OutMag.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutMag"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutMag
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from pyleecan.Classes.DataTime import DataTime
-from pyleecan.Classes.Norm_ref import Norm_ref
-from pyleecan.Classes.VectorField import VectorField
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.MeshSolution.get_area import get_area
-from pyleecan.Functions.MeshSolution.get_indices_limited import get_indices_limited
-from pyleecan.Functions.SciDataTool.derivation_integration import integrate
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.labels import STATOR_LAB
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Output.OutMag.clean import clean
+except ImportError as error:
+    clean = error
+
+try:
+    from ..Methods.Output.OutMag.comp_emf import comp_emf
+except ImportError as error:
+    comp_emf = error
+
+try:
+    from ..Methods.Output.OutMag.comp_power import comp_power
+except ImportError as error:
+    comp_power = error
+
+try:
+    from ..Methods.Output.OutMag.comp_torque_MT import comp_torque_MT
+except ImportError as error:
+    comp_torque_MT = error
+
+try:
+    from ..Methods.Output.OutMag.get_demag import get_demag
+except ImportError as error:
+    get_demag = error
+
+try:
+    from ..Methods.Output.OutMag.store import store
+except ImportError as error:
+    store = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OutMag(FrozenClass):
@@ -26,369 +57,63 @@ class OutMag(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Output.OutMag.clean
-    def clean(self, clean_level=1):
-        """Clean Magnetics standard outputs depending on cleaning level
-
-        Parameters
-        ----------
-        self : OutMag
-            the OutMag object to update
-        clean_level : int
-            Value to indicate which fields to clean in OutMag (default=1/min=0/max=4/5=LUT)
-
-        """
-
-        # if clean_level = 0:
-        # keep all outputs
-
-        if clean_level == 5:  # LUT
-            # Keep B, Tem_slice, Phi_wind_slice
-            self.meshsolution = None
-            self.Tem = None
-            self.Phi_wind = None
-            self.Phi_wind_stator = None
-            self.emf = None
-            self.internal = None
-            self.axes_dict = None
-            return
-
-        if clean_level > 0:
-            # clean meshsolution
-            self.meshsolution = None
-
-        if clean_level > 1:
-            # clean airgap flux density
-            self.B = None
-
-        if clean_level > 2:
-            # clean Tem/Phi_wind quantities
-            self.Tem = None
-            self.Tem_slice = None
-            self.Phi_wind_slice = None
-            self.Phi_wind_stator = None
-            self.Phi_wind = None
-            self.emf = None
-
-        if clean_level > 3:
-            # clean all internal outputs
-            self.internal = None
-            self.axes_dict = None
-
-        else:
-            # clean internal depending on log_level
-            self.internal.clean(clean_level)
-
+    if isinstance(clean, ImportError):
+        clean = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutMag method clean: " + str(clean))
+            )
+        )
+    else:
+        clean = clean
     # cf Methods.Output.OutMag.comp_emf
-    def comp_emf(self):
-        """Compute the Electromotive force [V]
-
-        Parameters
-        ----------
-        self : OutMag
-            an OutMag object
-
-        """
-
-        # Get stator winding flux
-        Phi_wind = self.Phi_wind[self.parent.simu.machine.stator.get_label()]
-
-        EMF = Phi_wind.get_data_along("time=derivate", "phase")
-
-        EMF.name = "Stator Winding Electromotive Force"
-        EMF.unit = "V"
-        EMF.symbol = "EMF"
-
-        self.emf = EMF
-
+    if isinstance(comp_emf, ImportError):
+        comp_emf = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutMag method comp_emf: " + str(comp_emf))
+            )
+        )
+    else:
+        comp_emf = comp_emf
     # cf Methods.Output.OutMag.comp_power
-    def comp_power(self):
-        """Compute the Ouput power
-
-        Parameters
-        ----------
-        self : OutMag
-            An OutMag object
-        """
-
-        if (
-            self.parent is not None
-            and self.parent.elec is not None
-            and self.parent.elec.OP.get_N0() is not None
-            and self.Tem_av is not None
-        ):
-            self.Pem_av = 2 * np.pi * self.parent.elec.OP.get_N0() / 60 * self.Tem_av
-        else:
-            self.Pem_av = None
-
+    if isinstance(comp_power, ImportError):
+        comp_power = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutMag method comp_power: " + str(comp_power))
+            )
+        )
+    else:
+        comp_power = comp_power
     # cf Methods.Output.OutMag.comp_torque_MT
-    def comp_torque_MT(self):
-        """Compute the rotor electromagnetic torque from Maxwell Stress Tensor.
-
-        Parameters
-        ----------
-        self : OutMag
-            an OutMag object
-
-        Returns
-        -------
-        Tem_slice : ndarray
-            Rotor electromagnetic torque per slice [N]
-
-        """
-        Tem_slice = None
-        B = self.B
-
-        if (
-            B is not None
-            and "radial" in B.components.keys()
-            and "tangential" in B.components.keys()
-        ):
-            machine = self.parent.simu.machine
-
-            # Load airgap Maxwell Stress Tensor
-            Brphiz = B.get_rphiz_along(
-                "time[smallestperiod]",
-                "angle[smallestperiod]",
-                "z[smallestpattern]",
-                is_squeeze=False,
+    if isinstance(comp_torque_MT, ImportError):
+        comp_torque_MT = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutMag method comp_torque_MT: " + str(comp_torque_MT)
+                )
             )
-
-            Br = Brphiz["radial"]
-            Bt = Brphiz["tangential"]
-
-            if self.Rag is None:
-                R = machine.comp_Rgap_mec()
-            else:
-                R = self.Rag
-
-            # Magnetic void permeability
-            mu_0 = 4 * np.pi * 1e-7
-
-            # Integrate over angle to get the electromagnetic torque per slice
-            Nper, _ = B.get_axes()[1].get_periodicity()
-            Tem_slice = (
-                R**2
-                / mu_0
-                * integrate(
-                    values=Br * Bt,
-                    ax_val=Brphiz["angle"],
-                    index=1,
-                    Nper=Nper,
-                    is_aper=False,
-                    is_phys=True,
-                )[:, 0, :]
-            )
-
-            if Tem_slice.ndim == 1:
-                Tem_slice = Tem_slice[:, None]
-
-        return Tem_slice
-
+        )
+    else:
+        comp_torque_MT = comp_torque_MT
     # cf Methods.Output.OutMag.get_demag
-    def get_demag(self, Hmax, group_name=None):
-        """Get the surface area of the magnets that exceed a given field strenght H
-
-        Parameters
-        ----------
-        Hmax : float
-            demagnetization field strenght
-
-        group_name : str
-            optional name of the group, default group is 'rotor magnets'
-
-        Return
-        ------
-        area : float
-            surface area that exceed the max. field strength
-
-        area_ref : float
-            total magnets surface area as a reference
-
-        indices : list
-            list of elements indices that exceed the max. field strength
-
-        """
-        if group_name is None:
-            group_name = "rotor magnets"
-        if group_name in self.meshsolution.group.keys():
-            inds = get_indices_limited(
-                self.meshsolution, label="H", group_names=group_name, max_value=Hmax
+    if isinstance(get_demag, ImportError):
+        get_demag = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutMag method get_demag: " + str(get_demag))
             )
-
-            area_ref = get_area(self.meshsolution, group_names=group_name)
-            area = get_area(self.meshsolution, group_names=group_name, indices=inds)
-        else:
-            area, area_ref, inds = None, None, []
-
-        return area, area_ref, inds
-
+        )
+    else:
+        get_demag = get_demag
     # cf Methods.Output.OutMag.store
-    def store(self, out_dict, axes_dict):
-        """Store the standard outputs of Magnetics that are temporarily in out_dict as arrays into OutMag as Data object
-
-        Parameters
-        ----------
-        self : OutMag
-            the OutMag object to update
-        out_dict : dict
-            Dict containing all magnetic quantities that have been calculated in comp_flux_airgap
-        axes_dict: {Data}
-            Dict of axes used for magnetic calculation
-
-        """
-
-        # Store axes dict
-        self.axes_dict = axes_dict
-
-        # Get time/frequency axis
-        if "freqs" in axes_dict:
-            ax1 = axes_dict["freqs"]
-            if "freqs_Tem" in axes_dict:
-                ax1_Tem = axes_dict["freqs_Tem"]
-            else:
-                ax1_Tem = None
-        else:
-            ax1 = axes_dict["time"]
-            if "time_Tem" in axes_dict:
-                ax1_Tem = axes_dict["time_Tem"]
-            else:
-                ax1_Tem = None
-
-        # Get angle/wavenumber axis
-        if "wavenumber" in axes_dict:
-            ax2 = axes_dict["wavenumber"]
-        else:
-            ax2 = axes_dict["angle"]
-
-        # Store airgap flux as VectorField object
-        # Axes for each airgap flux component
-        axis_list = [ax1, ax2, axes_dict["z"]]
-
-        # Create VectorField with empty components
-        if "B_{rad}" in out_dict or "B_{circ}" in out_dict or "B_{ax}" in out_dict:
-            self.B = VectorField(
-                name="Air gap flux density",
-                symbol="B",
+    if isinstance(store, ImportError):
+        store = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutMag method store: " + str(store))
             )
-
-        # Radial flux component
-        if "B_{rad}" in out_dict:
-            self.B.components["radial"] = DataTime(
-                name="Air gap radial flux density",
-                unit="T",
-                symbol="B_{rad}",
-                axes=axis_list,
-                values=out_dict.pop("B_{rad}"),
-            )
-        # Tangential flux component
-        if "B_{circ}" in out_dict:
-            self.B.components["tangential"] = DataTime(
-                name="Air gap circumferential flux density",
-                unit="T",
-                symbol="B_{circ}",
-                axes=axis_list,
-                values=out_dict.pop("B_{circ}"),
-            )
-        # Axial flux component
-        if "B_{ax}" in out_dict:
-            self.B.components["axial"] = DataTime(
-                name="Air gap axial flux density",
-                unit="T",
-                symbol="B_{ax}",
-                axes=axis_list,
-                values=out_dict.pop("B_{ax}"),
-            )
-
-        # Store electromagnetic torque over time, and global values: average, peak to peak and ripple
-        if (
-            "Tem" in out_dict
-            or (
-                self.parent is not None
-                and self.parent.simu is not None
-                and self.parent.simu.machine is not None
-                and self.B is not None
-                and "radial" in self.B.components.keys()
-                and "tangential" in self.B.components.keys()
-            )
-            and ax1_Tem is not None
-        ):
-            if "Tem" in out_dict:
-                Tem_slice = out_dict.pop("Tem")
-            else:
-                Tem_slice = self.comp_torque_MT()
-
-            # Store electromagnetic torque per slice (in Newton)
-            self.Tem_slice = DataTime(
-                name="Electromagnetic torque (axial density)",
-                unit="N",
-                symbol="T_{em}",
-                axes=[ax1_Tem, axes_dict["z"]],
-                values=Tem_slice,
-                normalizations={"ref": Norm_ref(ref=self.Tem_norm)},
-            )
-
-            # Integrate over slice axis to get overall torque (in Newton meter)
-            self.Tem = self.Tem_slice.get_data_along(
-                "time[smallestperiod]", "z=integrate"
-            )
-            self.Tem.name = "Electromagnetic torque"
-
-            # Calculate average torque in Nm
-            self.Tem_av = np.mean(self.Tem.values)
-            # self.Tem_av = float(self.Tem.get_along("time=mean")[self.Tem.symbol])
-
-            # Calculate peak to peak torque in absolute value [N.m]
-            self.Tem_rip_pp = abs(np.max(self.Tem.values) - np.min(self.Tem.values))
-
-            # Calculate torque ripple in percentage [%]
-            if self.Tem_av != 0:
-                self.Tem_rip_norm = self.Tem_rip_pp / self.Tem_av
-            else:
-                self.Tem_rip_norm = None
-
-        # Store list of winding flux linkage, stator winding fluxlinkage
-        # and calculate electromotive force
-        if "Phi_wind" in out_dict:
-            machine = self.parent.simu.machine
-            self.Phi_wind_slice = dict()
-            self.Phi_wind = dict()
-            for key, phi_wind in out_dict["Phi_wind"].items():
-                # Store stator winding flux
-                lam = machine.get_lam_by_label(key)
-
-                Phase = self.parent.elec.axes_dict["phase_" + key]
-                prefix = "Stator" if lam.is_stator else "Rotor"
-
-                # Store winding flux linkage per phase and per slice (in Weber per meter)
-                self.Phi_wind_slice[key] = DataTime(
-                    name=prefix + " Winding Flux (axial density)",
-                    unit="Wb/m",
-                    symbol="Phi_{wind}",
-                    axes=[ax1, Phase, axes_dict["z"]],
-                    values=phi_wind,
-                )
-                # Integrate over slice axis to get overall winding flux linkage (in Weber)
-                self.Phi_wind[key] = self.Phi_wind_slice[key].get_data_along(
-                    "time[smallestperiod]", "phase", "z=integrate"
-                )
-                self.Phi_wind[key].name = prefix + " Winding Flux"
-
-            # Particular case: Phi_wind for stator-0 has its own property
-            if STATOR_LAB + "-0" in out_dict["Phi_wind"].keys():
-                # TODO fix for multi stator/lamination
-                self.Phi_wind_stator = self.Phi_wind[STATOR_LAB + "-0"]
-
-            # Electromotive force computation
-            # self.comp_emf()
-
-        # Store MeshSolution object
-        if "meshsolution" in out_dict:
-            self.meshsolution = out_dict.pop("meshsolution")
-
-        if "Rag" in out_dict:
-            self.Rag = out_dict.pop("Rag")
-
+        )
+    else:
+        store = store
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -677,8 +402,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_av is not None
             and self._Tem_av is not None
-            and np.isnan(other._Tem_av)
-            and np.isnan(self._Tem_av)
+            and isnan(other._Tem_av)
+            and isnan(self._Tem_av)
         ):
             pass
         elif other._Tem_av != self._Tem_av:
@@ -696,8 +421,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_rip_norm is not None
             and self._Tem_rip_norm is not None
-            and np.isnan(other._Tem_rip_norm)
-            and np.isnan(self._Tem_rip_norm)
+            and isnan(other._Tem_rip_norm)
+            and isnan(self._Tem_rip_norm)
         ):
             pass
         elif other._Tem_rip_norm != self._Tem_rip_norm:
@@ -715,8 +440,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_rip_pp is not None
             and self._Tem_rip_pp is not None
-            and np.isnan(other._Tem_rip_pp)
-            and np.isnan(self._Tem_rip_pp)
+            and isnan(other._Tem_rip_pp)
+            and isnan(self._Tem_rip_pp)
         ):
             pass
         elif other._Tem_rip_pp != self._Tem_rip_pp:
@@ -816,8 +541,8 @@ class OutMag(FrozenClass):
         if (
             other._Rag is not None
             and self._Rag is not None
-            and np.isnan(other._Rag)
-            and np.isnan(self._Rag)
+            and isnan(other._Rag)
+            and isnan(self._Rag)
         ):
             pass
         elif other._Rag != self._Rag:
@@ -831,8 +556,8 @@ class OutMag(FrozenClass):
         if (
             other._Pem_av is not None
             and self._Pem_av is not None
-            and np.isnan(other._Pem_av)
-            and np.isnan(self._Pem_av)
+            and isnan(other._Pem_av)
+            and isnan(self._Pem_av)
         ):
             pass
         elif other._Pem_av != self._Pem_av:
@@ -894,8 +619,8 @@ class OutMag(FrozenClass):
         if (
             other._Tem_norm is not None
             and self._Tem_norm is not None
-            and np.isnan(other._Tem_norm)
-            and np.isnan(self._Tem_norm)
+            and isnan(other._Tem_norm)
+            and isnan(self._Tem_norm)
         ):
             pass
         elif other._Tem_norm != self._Tem_norm:

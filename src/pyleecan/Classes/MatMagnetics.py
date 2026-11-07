@@ -1,19 +1,48 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Material/MatMagnetics.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/MatMagnetics"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/MatMagnetics
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Material.MatMagnetics.get_BH import get_BH
+except ImportError as error:
+    get_BH = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Material.MatMagnetics.get_Brm import get_Brm
+except ImportError as error:
+    get_Brm = error
+
+try:
+    from ..Methods.Material.MatMagnetics.get_Hc import get_Hc
+except ImportError as error:
+    get_Hc = error
+
+try:
+    from ..Methods.Material.MatMagnetics.plot_BH import plot_BH
+except ImportError as error:
+    plot_BH = error
+
+
+from ..Classes.ImportMatrixVal import ImportMatrixVal
+from numpy import ndarray
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class MatMagnetics(FrozenClass):
@@ -21,147 +50,43 @@ class MatMagnetics(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Material.MatMagnetics.get_BH
-    def get_BH(self):
-        """Return the B(H) curve of the material according to the Import object.
-        If there is no B(H) curve linear data are computed from mur_lin.
-
-        Parameters
-        ----------
-        self : MatMagnetics
-            a MatMagnetics object
-
-        Returns
-        -------
-        BH: numpy.ndarray
-            B(H) values (two colums matrix: H and B(H))
-
-        """
-
-        if self.BH_curve is not None:
-            BH = self.BH_curve.get_data()
-
-            if len(BH.shape) != 2:
-                raise BHShapeError(
-                    "BH must be a two colums matrix: H and B(H). Return shape: "
-                    + str(BH.shape)
-                )
-            if BH.shape[1] != 2:
-                raise BHShapeError(
-                    "BH must be a two colums matrix: H and B(H). Return shape: "
-                    + str(BH.shape)
-                )
-
-            if self.is_BH_extrapolate:
-                BH = self.ModelBH.fit_model(BH=BH)
-
-        else:
-            BH = self.ModelBH.get_BH()
-
-        if self.mur_lin is None and BH is None:
-            raise BHShapeError("There are no BH data availible. Check input data.")
-
-        return BH
-
+    if isinstance(get_BH, ImportError):
+        get_BH = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MatMagnetics method get_BH: " + str(get_BH))
+            )
+        )
+    else:
+        get_BH = get_BH
     # cf Methods.Material.MatMagnetics.get_Brm
-    def get_Brm(self, T_op=None, T_ref=20):
-        """Get magnetic remanent flux density
-
-        Parameters
-        ----------
-        self : MatMagnetics
-            a MatMagnetics object
-        T_op: float
-            Material operational temperature [degC]
-        T_ref: float
-            Material reference temperature [degC]
-
-        Returns
-        -------
-        Brm: float
-            Magnetic remanent flux density
-
-        """
-
-        if T_op is None:
-            T_op = T_ref
-
-        # Get magnetic remanent flux density at 20 degC from excitation coercitivity
-        if self.Brm20 is None:
-            raise Exception("Cannot calculate Brm20 if Hc or mur_lin is None")
-        else:
-            Brm20 = self.Brm20
-
-        # Update magnetic remanent flux density
-        Brm = Brm20 * (1 + self.alpha_Br * (T_op - T_ref))
-
-        return Brm
-
+    if isinstance(get_Brm, ImportError):
+        get_Brm = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MatMagnetics method get_Brm: " + str(get_Brm))
+            )
+        )
+    else:
+        get_Brm = get_Brm
     # cf Methods.Material.MatMagnetics.get_Hc
-    def get_Hc(self, T_op=None, T_ref=20):
-        """Get magnetic excitation coercitivity
-
-        Parameters
-        ----------
-        self : MatMagnetics
-            a MatMagnetics object
-        T_op: float
-            Material operational temperature [degC]
-        T_ref: float
-            Material reference temperature [degC]
-
-        Returns
-        -------
-        Hc: float
-            Magnetic excitation coercitivity
-
-        """
-
-        if T_op is None:
-            T_op = T_ref
-
-        # Calculate magnetic coercitivity at 20 degC from remanent flux density
-        if self.Brm20 is None or self.mur_lin is None:
-            raise Exception("Cannot calculate Hc if Brm20 or mur_lin is None")
-
-        # Magnet coercitivity
-        Hc20 = self.Brm20 / (4 * np.pi * 1e-7 * self.mur_lin)
-
-        # Update magnetic coercitivity
-        Hc = Hc20 * (1 + self.alpha_Br * (T_op - T_ref))
-
-        return Hc
-
+    if isinstance(get_Hc, ImportError):
+        get_Hc = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MatMagnetics method get_Hc: " + str(get_Hc))
+            )
+        )
+    else:
+        get_Hc = get_Hc
     # cf Methods.Material.MatMagnetics.plot_BH
-    def plot_BH(self, fig=None, grid=True, color="r", is_show_fig=True):
-        """Plot the curve B(H) at the specified frequency
-
-        Parameters
-        ----------
-        self : MatMagnetics
-            a MatMagnetics object
-        fig :
-            if None, open a new fig and plot, else add to the gcf (Default value = None)
-
-        Returns
-        -------
-        None
-        """
-        (fig, axes, patch_leg, label_leg) = init_fig(fig)
-
-        BH = self.get_BH()
-
-        if BH is not None:
-            axes.plot(BH[:, 0], BH[:, 1], color=color)
-            axes.grid(visible=True)  # param "b" of grid was removed in MPL 3.7
-            axes.set_xlabel("H [A/m]")
-            axes.set_ylabel("B [T]")
-            axes.set_title("B(H) curve")
-            if is_show_fig:
-                fig.show()
-
-        return fig
-
+    if isinstance(plot_BH, ImportError):
+        plot_BH = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MatMagnetics method plot_BH: " + str(plot_BH))
+            )
+        )
+    else:
+        plot_BH = plot_BH
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -293,8 +218,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._mur_lin is not None
             and self._mur_lin is not None
-            and np.isnan(other._mur_lin)
-            and np.isnan(self._mur_lin)
+            and isnan(other._mur_lin)
+            and isnan(self._mur_lin)
         ):
             pass
         elif other._mur_lin != self._mur_lin:
@@ -312,8 +237,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._Brm20 is not None
             and self._Brm20 is not None
-            and np.isnan(other._Brm20)
-            and np.isnan(self._Brm20)
+            and isnan(other._Brm20)
+            and isnan(self._Brm20)
         ):
             pass
         elif other._Brm20 != self._Brm20:
@@ -327,8 +252,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._alpha_Br is not None
             and self._alpha_Br is not None
-            and np.isnan(other._alpha_Br)
-            and np.isnan(self._alpha_Br)
+            and isnan(other._alpha_Br)
+            and isnan(self._alpha_Br)
         ):
             pass
         elif other._alpha_Br != self._alpha_Br:
@@ -346,8 +271,8 @@ class MatMagnetics(FrozenClass):
         if (
             other._Wlam is not None
             and self._Wlam is not None
-            and np.isnan(other._Wlam)
-            and np.isnan(self._Wlam)
+            and isnan(other._Wlam)
+            and isnan(self._Wlam)
         ):
             pass
         elif other._Wlam != self._Wlam:
@@ -607,10 +532,10 @@ class MatMagnetics(FrozenClass):
         )
         if isinstance(value, str):  # Load from file
             value = load_init_dict(value)[1]
-        if isinstance(value, np.ndarray):
+        if isinstance(value, ndarray):
             value = ImportMatrixVal(value=value)
         elif isinstance(value, list):
-            value = ImportMatrixVal(value=np.array(value))
+            value = ImportMatrixVal(value=array(value))
         elif value == -1:
             value = ImportMatrix()
         elif isinstance(value, dict):
@@ -645,10 +570,10 @@ class MatMagnetics(FrozenClass):
         )
         if isinstance(value, str):  # Load from file
             value = load_init_dict(value)[1]
-        if isinstance(value, np.ndarray):
+        if isinstance(value, ndarray):
             value = ImportMatrixVal(value=value)
         elif isinstance(value, list):
-            value = ImportMatrixVal(value=np.array(value))
+            value = ImportMatrixVal(value=array(value))
         elif value == -1:
             value = ImportMatrix()
         elif isinstance(value, dict):
@@ -725,11 +650,3 @@ class MatMagnetics(FrozenClass):
         :Type: bool
         """,
     )
-
-    class BHShapeError(Exception):
-        """Raised when the BH curve has not the expected shape"""
-
-        pass
-
-
-BHShapeError = MatMagnetics.BHShapeError

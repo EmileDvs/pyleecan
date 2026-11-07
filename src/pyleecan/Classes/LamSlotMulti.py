@@ -1,22 +1,73 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/LamSlotMulti.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotMulti"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/LamSlotMulti
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Lamination import Lamination
 
-import numpy as np
-from matplotlib.patches import Patch
-from pyleecan.Classes.Lamination import Lamination
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.LamSlotMulti.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.comp_height_yoke import comp_height_yoke
+except ImportError as error:
+    comp_height_yoke = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.comp_periodicity_spatial import (
+        comp_periodicity_spatial,
+    )
+except ImportError as error:
+    comp_periodicity_spatial = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.comp_surfaces import comp_surfaces
+except ImportError as error:
+    comp_surfaces = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.get_pole_pair_number import get_pole_pair_number
+except ImportError as error:
+    get_pole_pair_number = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.get_slot_desc_list import get_slot_desc_list
+except ImportError as error:
+    get_slot_desc_list = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.get_Zs import get_Zs
+except ImportError as error:
+    get_Zs = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.has_slot import has_slot
+except ImportError as error:
+    has_slot = error
+
+try:
+    from ..Methods.Machine.LamSlotMulti.plot import plot
+except ImportError as error:
+    plot = error
+
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class LamSlotMulti(Lamination):
@@ -24,340 +75,102 @@ class LamSlotMulti(Lamination):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.LamSlotMulti.check
-    def check(self):
-        """Check that the Lamination object is correct
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-
-        Returns
-        -------
-        None
-        """
-
-        super(type(self), self).check()
-
-        # Check all the slots
-        for slot in self.slot_list:
-            slot.check()
-
-        #
-        if len(self.alpha.shape) > 1:
-            raise LamSlotMultiAlphaError("Alpha should have be a vector (1D array)")
-        if len(self.alpha) != len(self.slot_list):
-            raise LamSlotMultiAlphaError(
-                "Alpha should have the same length as slot_list"
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlotMulti method check: " + str(check))
             )
-        if self.alpha[0] < 0:
-            raise LamSlotMultiAlphaError(
-                "Alpha should be an ordered array with values between 0 and 2*pi"
-            )
-        for ii in range(len(self.alpha) - 1):
-            if self.alpha[ii] > self.alpha[ii + 1]:
-                raise LamSlotMultiAlphaError(
-                    "Alpha should be an ordered array with values between 0 and 2*pi"
-                )
-        if self.alpha[-1] > 2 * np.pi:
-            raise LamSlotMultiAlphaError(
-                "Alpha should be an ordered array with values between 0 and 2*pi"
-            )
-
+        )
+    else:
+        check = check
     # cf Methods.Machine.LamSlotMulti.comp_height_yoke
-    def comp_height_yoke(self):
-        """Compute the yoke height
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-
-        Returns
-        -------
-        Hy: float
-            yoke height [m]
-
-        """
-        H = 0
-        for slot in self.slot_list:
-            H = max(H, slot.comp_height())
-        return self.Rext - self.Rint - H
-
-    # cf Methods.Machine.LamSlotMulti.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
-        """Compute the periodicity factor of the lamination
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-
-        Returns
-        -------
-        per_a : int
-            Number of spatial periodicities of the lamination
-        is_antiper_a : bool
-            True if an spatial anti-periodicity is possible after the periodicities
-        """
-
-        if self.sym_dict_enforced is not None:
-            self.get_logger().debug("Enforcing symmetry for LamSlotMulti")
-            return (
-                self.sym_dict_enforced["per_a"],
-                self.sym_dict_enforced["is_antiper_a"],
-            )
-        else:
-            # Zs = self.get_Zs()
-            is_aper = False
-            # TODO compute it
-            self.get_logger().debug("Symmetry not available yet for LamSlotMulti")
-            return 1, is_aper
-
-    # cf Methods.Machine.LamSlotMulti.comp_surfaces
-    def comp_surfaces(self):
-        """Compute the Lamination surfaces (Lamination, Ventilation, Slot).
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-
-        Returns
-        -------
-        S_dict: dict
-            Lamination surface dictionary (Slam, Svent, Sslot) [m**2]
-
-        """
-
-        S_dict = Lamination.comp_surfaces(self)
-        Sslot = 0
-        for slot in self.slot_list:
-            Sslot += slot.comp_surface()
-
-        S_dict["Sslot"] = Sslot
-        S_dict["Slam"] -= Sslot
-        return S_dict
-
-    # cf Methods.Machine.LamSlotMulti.get_pole_pair_number
-    def get_pole_pair_number(self):
-        """Return the number of pair of pole of the Lamination
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-
-        Returns
-        -------
-        p: int
-            Number of pair of pole
-
-        """
-
-        return self.get_Zs() // 2
-
-    # cf Methods.Machine.LamSlotMulti.get_slot_desc_list
-    def get_slot_desc_list(self, sym=1, is_bore=True):
-        """Returns an ordered description of the slot
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-        sym: int
-            Number of symmetry
-        is_bore : bool
-            True generate desc of bore, else yoke
-
-        Returns
-        -------
-        slot_desc : list
-            trigo ordered list of dictionary with key:
-                "begin_angle" : float [rad]
-                "end_angle" : float [rad]
-                "obj" : Slot / None for Radius
-                "lines : lines corresponding to the radius part
-                "label" : Radius/Notch/Slot
-        """
-
-        slot_list = list()
-        for ii in range(len(self.slot_list) // sym):
-            if self.slot_list[ii].is_bore == is_bore:
-                slot = self.slot_list[ii]
-                op = slot.comp_angle_opening()
-                lines = slot.build_geometry()
-                # Apply rotation
-                for line in lines:
-                    line.rotate(self.alpha[ii])
-                bore_dict = dict()
-                bore_dict["begin_angle"] = self.alpha[ii] - op / 2
-                bore_dict["end_angle"] = self.alpha[ii] + op / 2
-                bore_dict["obj"] = slot
-                bore_dict["lines"] = lines
-                bore_dict["label"] = "Slot"
-                slot_list.append(bore_dict)
-
-        return slot_list
-
-    # cf Methods.Machine.LamSlotMulti.get_Zs
-    def get_Zs(self):
-        """Return the number of Slot of the Lamination
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            a LamSlotMulti object
-
-        Returns
-        -------
-        Zs : float
-            Number of Slot
-
-        """
-
-        return len(self.slot_list)
-
-    # cf Methods.Machine.LamSlotMulti.has_slot
-    def has_slot(self, is_bore=True):
-        """Return if the lamination has slot on the requested radius
-        (notches not taken into account, cf has_notch)
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-        is_bore : bool
-            True check if there are slots on the bore, else yoke
-
-        Returns
-        -------
-        has_slot : bool
-            True if the lamination has slot on the requested radius
-        """
-
-        if self.slot_list is None or len(self.slot_list) == 0:
-            return False
-
-        # notch_shape.is_bore = None => Default is True
-        if is_bore:
-            return any([slot.is_bore in [None, True] for slot in self.slot_list])
-        else:
-            return any([slot.is_bore == False for slot in self.slot_list])
-
-    # cf Methods.Machine.LamSlotMulti.plot
-    def plot(
-        self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_display=True,
-        is_show_fig=True,
-        is_clean_plot=False,
-        is_winding_connection=False,
-    ):
-        """Plot the Lamination with empty Slots in a matplotlib fig
-
-        Parameters
-        ----------
-        self : LamSlotMulti
-            A LamSlotMulti object
-        fig : Matplotlib.figure.Figure
-            existing figure to use if None create a new one
-        ax : Matplotlib.axes.Axes object
-            Axis on which to plot the data
-        is_lam_only: bool
-            True to plot only the lamination
-        sym : int
-            Symmetry factor (1= full machine, 2= half of the machine...)
-        alpha : float
-            Angle for rotation [rad]
-        delta : complex
-            Complex value for translation
-        is_edge_only: bool
-            To plot transparent Patches
-        edgecolor:
-            Color of the edges if is_edge_only=True
-        is_display : bool
-            False to return the patches
-        is_show_fig : bool
-            To call show at the end of the method
-        is_clean_plot : bool
-            True to remove title, legend, axis (only machine on plot with white background)
-        is_winding_connection : bool
-            True to display winding connections (not used)
-
-        Returns
-        -------
-        fig : Matplotlib.figure.Figure
-            Figure containing the plot
-        ax : Matplotlib.axes.Axes object
-            Axis containing the plot
-        """
-
-        (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
-
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
-        patches = list()
-        for surf in surf_list:
-            color, legend = get_color_legend_from_surface(surf, is_lam_only)
-
-            if color is not None:
-                patches.extend(
-                    surf.get_patches(
-                        color=color,
-                        is_edge_only=is_edge_only,
-                        edgecolor=edgecolor,
-                    )
+    if isinstance(comp_height_yoke, ImportError):
+        comp_height_yoke = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMulti method comp_height_yoke: "
+                    + str(comp_height_yoke)
                 )
-            if not is_edge_only and legend is not None and legend not in label_leg:
-                label_leg.append(legend)
-                patch_leg.append(Patch(color=color))
-
-        # Display the result
-        if is_display:
-            (fig, ax, patch_leg, label_leg) = init_fig(fig)
-            ax.set_xlabel("(m)")
-            ax.set_ylabel("(m)")
-            for patch in patches:
-                ax.add_patch(patch)
-
-            # Axis Setup
-            ax.axis("equal")
-
-            # The Lamination is centered in the figure
-            Lim = self.Rext * 1.5
-            ax.set_xlim(-Lim, Lim)
-            ax.set_ylim(-Lim, Lim)
-
-            # Add the legend
-            if not is_edge_only:
-                if self.is_stator:
-                    ax.set_title("Stator with empty slot")
-                else:
-                    ax.set_title("Rotor with empty slot")
-
-                ax.legend(patch_leg, label_leg)
-            # Clean figure
-            if is_clean_plot:
-                ax.set_axis_off()
-                ax.axis("equal")
-                if ax.get_legend() is not None:
-                    ax.get_legend().remove()
-                ax.set_title("")
-            if is_show_fig:
-                fig.show()
-            return fig, ax
-        else:
-            return patches
-
+            )
+        )
+    else:
+        comp_height_yoke = comp_height_yoke
+    # cf Methods.Machine.LamSlotMulti.comp_periodicity_spatial
+    if isinstance(comp_periodicity_spatial, ImportError):
+        comp_periodicity_spatial = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMulti method comp_periodicity_spatial: "
+                    + str(comp_periodicity_spatial)
+                )
+            )
+        )
+    else:
+        comp_periodicity_spatial = comp_periodicity_spatial
+    # cf Methods.Machine.LamSlotMulti.comp_surfaces
+    if isinstance(comp_surfaces, ImportError):
+        comp_surfaces = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMulti method comp_surfaces: " + str(comp_surfaces)
+                )
+            )
+        )
+    else:
+        comp_surfaces = comp_surfaces
+    # cf Methods.Machine.LamSlotMulti.get_pole_pair_number
+    if isinstance(get_pole_pair_number, ImportError):
+        get_pole_pair_number = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMulti method get_pole_pair_number: "
+                    + str(get_pole_pair_number)
+                )
+            )
+        )
+    else:
+        get_pole_pair_number = get_pole_pair_number
+    # cf Methods.Machine.LamSlotMulti.get_slot_desc_list
+    if isinstance(get_slot_desc_list, ImportError):
+        get_slot_desc_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use LamSlotMulti method get_slot_desc_list: "
+                    + str(get_slot_desc_list)
+                )
+            )
+        )
+    else:
+        get_slot_desc_list = get_slot_desc_list
+    # cf Methods.Machine.LamSlotMulti.get_Zs
+    if isinstance(get_Zs, ImportError):
+        get_Zs = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlotMulti method get_Zs: " + str(get_Zs))
+            )
+        )
+    else:
+        get_Zs = get_Zs
+    # cf Methods.Machine.LamSlotMulti.has_slot
+    if isinstance(has_slot, ImportError):
+        has_slot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlotMulti method has_slot: " + str(has_slot))
+            )
+        )
+    else:
+        has_slot = has_slot
+    # cf Methods.Machine.LamSlotMulti.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LamSlotMulti method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -494,7 +307,7 @@ class LamSlotMulti(Lamination):
             return False
         if other.slot_list != self.slot_list:
             return False
-        if not np.array_equal(other.alpha, self.alpha):
+        if not array_equal(other.alpha, self.alpha):
             return False
         if other.sym_dict_enforced != self.sym_dict_enforced:
             return False
@@ -533,7 +346,7 @@ class LamSlotMulti(Lamination):
                         is_add_value=is_add_value,
                     )
                 )
-        if not np.array_equal(other.alpha, self.alpha):
+        if not array_equal(other.alpha, self.alpha):
             diff_list.append(name + ".alpha")
         if other._sym_dict_enforced != self._sym_dict_enforced:
             if is_add_value:
@@ -756,10 +569,10 @@ class LamSlotMulti(Lamination):
     def _set_alpha(self, value):
         """setter of alpha"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("alpha", value, "ndarray")
@@ -793,25 +606,3 @@ class LamSlotMulti(Lamination):
         :Type: dict
         """,
     )
-
-    class MachineCheckError(Exception):
-        """ """
-
-        pass
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-        pass
-
-    class LamSlotMultiAlphaError(LaminationCheckError):
-        """ """
-
-        pass
-
-
-MachineCheckError = LamSlotMulti.MachineCheckError
-
-LaminationCheckError = LamSlotMulti.LaminationCheckError
-
-LamSlotMultiAlphaError = LamSlotMulti.LamSlotMultiAlphaError

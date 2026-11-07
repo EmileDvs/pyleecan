@@ -1,22 +1,41 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/SliceModel.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/SliceModel"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/SliceModel
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from scipy.stats import norm
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.SliceModel.get_data import get_data
+except ImportError as error:
+    get_data = error
 
-from pyleecan.Classes.DataPattern import DataPattern
-from pyleecan.Classes.Norm_ref import Norm_ref
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Plot import dict_2D
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Simulation.SliceModel.get_distribution import get_distribution
+except ImportError as error:
+    get_distribution = error
+
+try:
+    from ..Methods.Simulation.SliceModel.plot import plot
+except ImportError as error:
+    plot = error
+
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class SliceModel(FrozenClass):
@@ -24,158 +43,37 @@ class SliceModel(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.SliceModel.get_data
-    def get_data(self):
-        """Return the slice data object
-
-        Parameters
-        ----------
-        self : SliceModel
-            a SliceModel object
-
-        Returns
-        -------
-        Slice: DataPattern
-            Slice axis
-
-        """
-
-        # Get all z values
-        values_whole = np.array(self.z_list)
-
-        # Keep only unique values of relative skew between stator and rotor
-        (_, unique_indices, rebuild_indices) = np.unique(
-            (self.angle_stator - self.angle_rotor).round(decimals=4),
-            return_index=True,
-            return_inverse=True,
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SliceModel method get_data: " + str(get_data))
+            )
         )
-        values = values_whole[unique_indices]
-        unique_indices = unique_indices.tolist()
-        rebuild_indices = rebuild_indices.tolist()
-
-        # Setup other parameters
-        normalizations = {"x L": Norm_ref(ref=self.L)}
-        is_step = self.is_step
-
-        # Create DataPattern
-        Slice = DataPattern(
-            name="z",
-            unit="m",
-            values=values,
-            rebuild_indices=rebuild_indices,
-            unique_indices=unique_indices,
-            values_whole=values_whole,
-            is_step=is_step,
-            normalizations=normalizations,
-        )
-
-        return Slice
-
+    else:
+        get_data = get_data
     # cf Methods.Simulation.SliceModel.get_distribution
-    def get_distribution(self):
-        """Returns the slice distribution
-
-        Parameters
-        ----------
-        self : SliceModel
-            a SliceModel object
-
-        Returns
-        -------
-        z_list : list
-            list of slice positions (to be multiplied by lamination length)
-        """
-
-        if self.Nslices == 1:
-            z_list = [0]
-
-        else:
-            type_distribution = self.type_distribution
-
-            if type_distribution not in ["uniform", "gauss", "user-defined"]:
-                raise InputError(
-                    "Unknow skew slice distribution: "
-                    + type_distribution
-                    + ". Choose from "
-                    "uniform"
-                    ", "
-                    "gauss"
-                    " or "
-                    "user-defined"
-                    ""
+    if isinstance(get_distribution, ImportError):
+        get_distribution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SliceModel method get_distribution: "
+                    + str(get_distribution)
                 )
-
-            if type_distribution == "uniform":
-                z_list = np.linspace(-0.5, 0.5, self.Nslices).tolist()
-
-            elif type_distribution == "gauss":
-                Npoints = self.Nslices
-                if Npoints % 2 == 0:
-                    x = np.linspace(-1, 0, int(Npoints))
-                    dist = norm.pdf(x, 0, 1)
-                    # Rescale so that max = 0.5
-                    dist = dist / (1 / np.sqrt(2 * np.pi) - dist[0]) * 0.5
-                    dist_list = (dist - dist[-1]).tolist()
-                    z_list = [z for (i, z) in enumerate(dist_list) if i % 2 == 0]
-                    z_list = z_list + [-z for z in reversed(z_list)]
-                else:
-                    x = np.linspace(-1, 0, int((Npoints + 1) / 2))
-                    dist = norm.pdf(x, 0, 1)
-                    # Rescale so that max = 0.5
-                    dist = dist / (1 / np.sqrt(2 * np.pi) - dist[0]) * 0.5
-                    z_list = (dist - dist[-1]).tolist()
-                    z_list = z_list[:-1] + [-z for z in reversed(z_list)]
-
-            elif type_distribution == "user-defined":
-                if self.z_list is None:
-                    raise InputError(
-                        "Missing z_list for skew user-defined slice distribution"
-                    )
-                for z in self.z_list:
-                    if z < -0.5 or z > 0.5:
-                        raise InputError(
-                            "In skew model with user-defined distribution: z_list should be distributed between -0.5 and 0.5"
-                        )
-                z_list = self.z_list
-
-        return z_list
-
-    # cf Methods.Simulation.SliceModel.plot
-    def plot(
-        self,
-        skew_axis=None,
-        fig=None,
-        ax=None,
-        lam_name="",
-        is_show_fig=False,
-        save_path=None,
-        win_title=None,
-    ):
-        """Plots skew angle
-
-        Parameters
-        ----------
-        self : Skew
-            a Skew object
-
-        """
-
-        angle_list, z_list = self.comp_pattern()
-
-        plot_2D(
-            [z_list],
-            [[a * 180 / np.pi for a in angle_list]],
-            xlabel="Axial direction [m]",
-            ylabel=lam_name + " skew angle [°]",
-            type_plot="curve_point",
-            fig=fig,
-            ax=ax,
-            is_show_fig=is_show_fig,
-            save_path=save_path,
-            win_title=win_title,
-            **dict_2D,
+            )
         )
-
+    else:
+        get_distribution = get_distribution
+    # cf Methods.Simulation.SliceModel.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SliceModel method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -287,9 +185,9 @@ class SliceModel(FrozenClass):
             return False
         if other.z_list != self.z_list:
             return False
-        if not np.array_equal(other.angle_rotor, self.angle_rotor):
+        if not array_equal(other.angle_rotor, self.angle_rotor):
             return False
-        if not np.array_equal(other.angle_stator, self.angle_stator):
+        if not array_equal(other.angle_stator, self.angle_stator):
             return False
         if other.L != self.L:
             return False
@@ -343,15 +241,15 @@ class SliceModel(FrozenClass):
                 diff_list.append(name + ".z_list" + val_str)
             else:
                 diff_list.append(name + ".z_list")
-        if not np.array_equal(other.angle_rotor, self.angle_rotor):
+        if not array_equal(other.angle_rotor, self.angle_rotor):
             diff_list.append(name + ".angle_rotor")
-        if not np.array_equal(other.angle_stator, self.angle_stator):
+        if not array_equal(other.angle_stator, self.angle_stator):
             diff_list.append(name + ".angle_stator")
         if (
             other._L is not None
             and self._L is not None
-            and np.isnan(other._L)
-            and np.isnan(self._L)
+            and isnan(other._L)
+            and isnan(self._L)
         ):
             pass
         elif other._L != self._L:
@@ -563,10 +461,10 @@ class SliceModel(FrozenClass):
     def _set_angle_rotor(self, value):
         """setter of angle_rotor"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("angle_rotor", value, "ndarray")
@@ -588,10 +486,10 @@ class SliceModel(FrozenClass):
     def _set_angle_stator(self, value):
         """setter of angle_stator"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("angle_stator", value, "ndarray")
@@ -659,11 +557,3 @@ class SliceModel(FrozenClass):
         :Type: bool
         """,
     )
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-        pass
-
-
-InputError = SliceModel.InputError

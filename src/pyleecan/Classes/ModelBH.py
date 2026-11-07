@@ -1,18 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Material/ModelBH.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/ModelBH"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/ModelBH
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from scipy.optimize import curve_fit
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Material.ModelBH.fit_model import fit_model
+except ImportError as error:
+    fit_model = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Material.ModelBH.get_BH import get_BH
+except ImportError as error:
+    get_BH = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ModelBH(FrozenClass):
@@ -20,98 +37,25 @@ class ModelBH(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Material.ModelBH.fit_model
-    def fit_model(self, BH):
-        """
-        Fit the BH model parameters based on input B(H) curve of the material, and perform extrapolation.
-
-        Parameters
-        ----------
-        self : ModelBH
-            a ModelBH object
-        BH: numpy.ndarray
-            B(H) input values
-        Bmax: float
-            Maximum B value required
-        Hmax: float
-            Maximum H value required
-
-        Returns
-        -------
-        new_BH: numpy.ndarray
-            B(H) values (two colums matrix: H and B(H))
-
-        """
-        Bmax = self.Bmax
-        Hmax = self.Hmax
-
-        H = BH[:, 0]
-        B = BH[:, 1]
-
-        # Find the optimum parameter for curve fitting
-        popt, _ = curve_fit(self.BH_func, H, B, p0=np.array([self.param1, self.param2]))
-
-        param1 = popt[0]
-        param2 = popt[1]
-
-        self.param1 = param1
-        self.param2 = param2
-
-        # Idea to use scipy to find Hmax corresponding to Bmax
-        # def Langevin_root(H):
-        #     B = Bs * (np.cosh(H / a) / np.sinh(H / a) - a / H)
-        #     return B - self.Bmax_extrapolate
-
-        # x1 = BH[-1, 0]*(2 - BH[-2, 0]/BH[-1, 0])
-        # x0 = BH[-1, 0]
-        # Hmax = root_scalar(Langevin_root, x0=x0, x1=x1)
-
-        # Hmax is defined from Bmax if it exists
-        if Bmax is not None:
-            delta = H[-1] * 0.01
-            Hmax = H[-1]
-            iteration = 0
-            new_B = B[-1]
-            while new_B < Bmax and iteration < 1000:
-                Hmax += delta
-                iteration += 1
-                new_B = self.BH_func(Hmax, param1, param2)
-
-        # Either imposed from method call or calculated from Bmax
-        if Hmax is not None:
-            added_H = np.linspace(H[-1], Hmax, iteration)
-            new_H = np.hstack((H, added_H))
-            new_B = self.BH_func(new_H, param1, param2)
-
-            new_BH = np.zeros((len(new_H), 2))
-            new_BH[:, 0] = new_H
-            new_BH[:, 1] = new_B
-
-        # Last special case: the BH curve is recalculated from the initial H values (then it is not an extrapolation, but a smoothing of the data based on the analytical model)
-        else:
-            new_B = self.BH_func(H, Bs, a)
-
-        return new_BH
-
+    if isinstance(fit_model, ImportError):
+        fit_model = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ModelBH method fit_model: " + str(fit_model))
+            )
+        )
+    else:
+        fit_model = fit_model
     # cf Methods.Material.ModelBH.get_BH
-    def get_BH(self):
-        """
-        Return the B(H) curve of the material (by default do nothing).
-
-        Parameters
-        ----------
-        self : ModelBH
-            a ModelBH object
-
-        Returns
-        -------
-        BH: numpy.ndarray
-            B(H) values (two colums matrix: H and B(H))
-
-        """
-
-        return None
-
+    if isinstance(get_BH, ImportError):
+        get_BH = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ModelBH method get_BH: " + str(get_BH))
+            )
+        )
+    else:
+        get_BH = get_BH
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -185,8 +129,8 @@ class ModelBH(FrozenClass):
         if (
             other._Bmax is not None
             and self._Bmax is not None
-            and np.isnan(other._Bmax)
-            and np.isnan(self._Bmax)
+            and isnan(other._Bmax)
+            and isnan(self._Bmax)
         ):
             pass
         elif other._Bmax != self._Bmax:
@@ -200,8 +144,8 @@ class ModelBH(FrozenClass):
         if (
             other._Hmax is not None
             and self._Hmax is not None
-            and np.isnan(other._Hmax)
-            and np.isnan(self._Hmax)
+            and isnan(other._Hmax)
+            and isnan(self._Hmax)
         ):
             pass
         elif other._Hmax != self._Hmax:
@@ -215,8 +159,8 @@ class ModelBH(FrozenClass):
         if (
             other._delta is not None
             and self._delta is not None
-            and np.isnan(other._delta)
-            and np.isnan(self._delta)
+            and isnan(other._delta)
+            and isnan(self._delta)
         ):
             pass
         elif other._delta != self._delta:

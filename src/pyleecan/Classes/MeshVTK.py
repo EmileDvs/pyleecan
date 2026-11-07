@@ -1,44 +1,90 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/MeshVTK.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshVTK"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/MeshVTK
+"""
 
-import os
-import shutil
 from os import linesep
-from os.path import join
 from sys import getsizeof
-from typing import Literal, Optional
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Mesh import Mesh
 
-import numpy as np
-import pyvista as pv
-from meshio import read
-from pyleecan.Classes.ElementMat import ElementMat
-from pyleecan.Classes.FPGNSeg import FPGNSeg
-from pyleecan.Classes.FPGNTri import FPGNTri
-from pyleecan.Classes.Mesh import Mesh
-from pyleecan.Classes.MeshMat import MeshMat
-from pyleecan.Classes.NodeMat import NodeMat
-from pyleecan.Classes.RefLine3 import RefLine3
-from pyleecan.Classes.RefQuad9 import RefQuad9
-from pyleecan.Classes.RefSegmentP1 import RefSegmentP1
-from pyleecan.Classes.RefTriangle3 import RefTriangle3
-from pyleecan.Classes.ScalarProductL2 import ScalarProductL2
-from pyleecan.Classes._check import check_var
-from pyleecan.definitions import RESULT_DIR
-from pyleecan.Functions.GUI.log_error import log_error
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Mesh.MeshVTK.convert import convert
+except ImportError as error:
+    convert = error
 
+try:
+    from ..Methods.Mesh.MeshVTK.get_element import get_element
+except ImportError as error:
+    get_element = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_element_area import get_element_area
+except ImportError as error:
+    get_element_area = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_mesh_pv import get_mesh_pv
+except ImportError as error:
+    get_mesh_pv = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_node_coordinate import get_node_coordinate
+except ImportError as error:
+    get_node_coordinate = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_normals import get_normals
+except ImportError as error:
+    get_normals = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_path import get_path
+except ImportError as error:
+    get_path = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.get_surf import get_surf
+except ImportError as error:
+    get_surf = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.perm_coord import perm_coord
+except ImportError as error:
+    perm_coord = error
+
+try:
+    from ..Methods.Mesh.MeshVTK.save_vtk import save_vtk
+except ImportError as error:
+    save_vtk = error
+
+
+from numpy import array, array_equal
+from numpy import isnan
+from cloudpickle import dumps, loads
+from ._check import CheckTypeError
 
 try:
     from vtk import vtkPointSet
 except ImportError:
     vtkPointSet = ImportError
+from cloudpickle import dumps, loads
+from ._check import CheckTypeError
+
 try:
     from pyvista.core.pointset import PolyData
 except ImportError:
     PolyData = ImportError
+from ._check import InitUnKnowClassError
 
 
 class MeshVTK(Mesh):
@@ -46,455 +92,103 @@ class MeshVTK(Mesh):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Mesh.MeshVTK.convert
-    def convert(
-        self,
-        meshtype: Literal["MeshVTK", "MeshMat"] = "MeshMat",
-        scale: float = 1.0,
-    ) -> Mesh:
-        """Convert this object to another type of Mesh object.
-
-        Parameters
-        ----------
-        self : MeshVTK
-            a MeshVTK object
-        meshtype : str
-            a type of Mesh object: MeshVTK or MeshMat
-        scale : float
-            scale factor
-
-            Returns
-        -------
-        new_mesh : Mesh
-            a Mesh object
-        """
-
-        if meshtype == "MeshVTK":
-            new_mesh = self.copy()
-            new_mesh.node.coordinate *= scale
-        elif meshtype == "MeshMat":
-            # Avoid circular import
-            from pyleecan.Classes.MeshMat import MeshMat
-
-            new_mesh = MeshMat(dimension=self.dimension)
-
-            connect_all = self.get_element()[0]
-            nodes = np.array(self.get_node_coordinate())
-            nb_node = nodes.shape[0]
-
-            new_mesh.node = NodeMat(
-                coordinate=scale * nodes,
-                nb_node=nb_node,
-                indice=np.arange(nb_node),
+    if isinstance(convert, ImportError):
+        convert = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method convert: " + str(convert))
             )
-
-            min_indice = 0
-            for key in connect_all:
-                connect = connect_all[key]
-                nb_element = connect.shape[0]
-                indices = np.arange(min_indice, min_indice + nb_element)
-                min_indice += nb_element
-
-                if key == "line":
-                    new_mesh.element_dict["line"] = ElementMat(
-                        nb_node_per_element=2,
-                        connectivity=connect,
-                        nb_element=nb_element,
-                        indice=indices,
-                        gauss_point=FPGNSeg(),
-                        ref_element=RefSegmentP1(),
-                        scalar_product=ScalarProductL2(),
-                    )
-                elif key == "line3":
-                    new_mesh.element_dict["line3"] = ElementMat(
-                        nb_node_per_element=3,
-                        connectivity=connect,
-                        nb_element=nb_element,
-                        indice=indices,
-                        ref_element=RefLine3(),
-                        gauss_point=None,  # TODO
-                    )
-                elif key == "triangle3":
-                    new_mesh.element_dict["triangle"] = ElementMat(
-                        nb_node_per_element=3,
-                        connectivity=connect,
-                        nb_element=nb_element,
-                        indice=indices,
-                        gauss_point=FPGNTri(),
-                        ref_element=RefTriangle3(),
-                        scalar_product=ScalarProductL2(),
-                    )
-                elif key == "quad9":
-                    new_mesh.element_dict["quad9"] = ElementMat(
-                        nb_node_per_element=9,
-                        connectivity=connect,
-                        nb_element=nb_element,
-                        indice=indices,
-                        ref_element=RefQuad9(),
-                    )
-        else:
-            raise ValueError(
-                f"Wrong meshtype value, expected MeshVTK or MeshMat, got {meshtype}."
-            )
-
-        return new_mesh
-
+        )
+    else:
+        convert = convert
     # cf Methods.Mesh.MeshVTK.get_element
-    def get_element(self, indices=None):
-        """Return the elements (connectivities).
-
-        Parameters
-        ----------
-        self : MeshVTK
-            a MeshVTK object
-        indices : list
-            list of the points to extract (optional)
-
-        Returns
-        -------
-        dict_connectivity: dict[str, ndarray]
-            Dict of connectivity with element names as keys
-        nb_element: int
-            Number of element in the connectivity
-        dict_index: dict
-            When apply get_element on a MeshMat :
-                Dict of the element element_indices for each ElementMat.
-            Not use here, because it as any meanings for a MeshVTK
-
-        """
-        # Extract mesh
-        mesh = self.get_mesh_pv(indices=indices)
-
-        pv_to_str = {
-            pv.CellType.TRIANGLE: "triangle",
-            pv.CellType.QUAD: "quad",
-            pv.CellType.QUADRATIC_EDGE: "line3",
-            pv.CellType.BIQUADRATIC_QUAD: "quad9",
-        }
-
-        # Initialize the element dictionary with the keys
-        elements = {pv_to_str[cell_type]: [] for cell_type in np.unique(mesh.celltypes)}
-
-        # Get the connectivity of each element
-        for cell_type, start_offset, end_offset in zip(
-            mesh.celltypes, mesh.offset[:-1], mesh.offset[1:]
-        ):
-            nodes_indice = mesh.cell_connectivity[start_offset:end_offset]
-            elements[pv_to_str[cell_type]].append(nodes_indice)
-
-        # Convert a list of 1D-ndarray into a 2D-ndarray
-        for key, value in elements.items():
-            elements[key] = np.array(value)
-
-        return elements, mesh.n_cells, {}
-
+    if isinstance(get_element, ImportError):
+        get_element = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method get_element: " + str(get_element))
+            )
+        )
+    else:
+        get_element = get_element
     # cf Methods.Mesh.MeshVTK.get_element_area
-    def get_element_area(self, indices=None):
-        """Return the area of the elements on the outer surface.
-
-        Parameters
-        ----------
-        self : MeshVTK
-            a MeshVTK object
-        indices : list
-            list of the points to extract (optional)
-
-        Returns
-        -------
-        areas: ndarray
-            Area of the elements
-        """
-
-        surf = self.get_surf(indices=indices)
-
-        return surf.compute_element_sizes(area=True)["Area"]
-
+    if isinstance(get_element_area, ImportError):
+        get_element_area = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshVTK method get_element_area: "
+                    + str(get_element_area)
+                )
+            )
+        )
+    else:
+        get_element_area = get_element_area
     # cf Methods.Mesh.MeshVTK.get_mesh_pv
-    def get_mesh_pv(self, indices=None):
-        """Return the pyvista mesh object (or submesh).
-
-        Parameters
-        ----------
-        self : MeshVTK
-            a MeshVTK object
-        indices : list
-            list of the points to extract (optional)
-
-        Returns
-        -------
-        mesh : pyvista.core.pointset.UnstructuredGrid
-            a pyvista UnstructuredGrid object
-        """
-
-        # Already available => Return
-        if self.mesh is not None:
-            # Extract submesh
-            if indices is not None:
-                mesh = self.mesh
-                mesh["mask"] = np.zeros(mesh.points.shape)
-                mesh["mask"][indices] = 1
-                mesh.set_active_scalars("mask")
-                thresh = mesh.threshold(1)
-                mesh = thresh
-            else:
-                mesh = self.mesh
-            return mesh
-
-        # Read mesh file
-        else:
-            if self.format != "vtk" and self.format != "vtu":
-                # Write vtk files with meshio
-                # in case replace whitespace in point data keys since vtk doesn't like it
-                mesh = read(self.get_path(name=self.name, file_format=self.format))
-                mesh.point_data = {
-                    k.replace(" ", "_"): v for k, v in mesh.point_data.items()
-                }
-                mesh.write(self.get_path())
-                use_this_format = "vtk"
-            else:
-                use_this_format = self.format
-
-            # Read .vtk file with pyvista
-            mesh = pv.read(self.get_path(name=self.name, file_format=use_this_format))
-
-            # Extract submesh
-            if indices is not None:
-                mesh = mesh.extract_points(indices)
-
-            if self.is_pyvista_mesh:
-                self.mesh = mesh
-
-            return mesh
-
+    if isinstance(get_mesh_pv, ImportError):
+        get_mesh_pv = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method get_mesh_pv: " + str(get_mesh_pv))
+            )
+        )
+    else:
+        get_mesh_pv = get_mesh_pv
     # cf Methods.Mesh.MeshVTK.get_node_coordinate
-    def get_node_coordinate(
-        self, indices: Optional[np.typing.ArrayLike] = None
-    ) -> np.ndarray:
-        """Return the coordinates of the node with provided indices.
-        If indices is not specified, returns every node coordinates
-
-        Parameters
-        ----------
-        indices : Optional[ArrayLike], optional
-            Indices of the targeted nodes. If None, return all.
-
-        Returns
-        -------
-        np.ndarray
-            nodes coordinates
-        """
-
-        mesh = self.get_mesh_pv(indices=indices)
-
-        return mesh.points
-
+    if isinstance(get_node_coordinate, ImportError):
+        get_node_coordinate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MeshVTK method get_node_coordinate: "
+                    + str(get_node_coordinate)
+                )
+            )
+        )
+    else:
+        get_node_coordinate = get_node_coordinate
     # cf Methods.Mesh.MeshVTK.get_normals
-    def get_normals(self, indices=None, loc="center"):
-        """Return the array of the normals coordinates.
-
-        Parameters
-        ----------
-        self : MeshVTK
-            a MeshVTK object
-        indices : list
-            list of the points to extract (optional)
-        loc : str
-            localization of the normals ("center" or "point")
-
-        Returns
-        -------
-        normals: ndarray
-            Normals coordinates
-        """
-
-        # Get surfaces
-        surf = self.get_surf()
-
-        if loc == "center":
-            normals = surf.cell_normals
-
-        elif loc == "point":
-            if self.node_normals is None:
-                self.surf.compute_normals(
-                    cell_normals=False, point_normals=True, inplace=True
-                )
-
-                self.node_normals = self.surf["Normals"]
-
-            normals = self.node_normals
-
-        if indices is None:
-            return normals
-
-        else:
-            return normals[indices, :]
-
+    if isinstance(get_normals, ImportError):
+        get_normals = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method get_normals: " + str(get_normals))
+            )
+        )
+    else:
+        get_normals = get_normals
     # cf Methods.Mesh.MeshVTK.get_path
-    def get_path(self, name=None, file_format="vtk"):
-        """return the path to the file to save the mesh
-
-        Parameters
-        ----------
-        self : MeshVTK
-            MeshVTK Object
-        name : str
-            Name of the file to use (None: use self.name)
-        file_format : str
-            extension of the file to use
-
-        Returns
-        -------
-        path : str
-            Full path to the mesh file
-        """
-
-        if self.path is None:
-            self.path = RESULT_DIR
-
-        if name is None:
-            filename = self.name + "." + file_format
-        else:
-            filename = name + "." + file_format
-
-        return join(self.path, filename).replace("\\", "/")
-
+    if isinstance(get_path, ImportError):
+        get_path = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method get_path: " + str(get_path))
+            )
+        )
+    else:
+        get_path = get_path
     # cf Methods.Mesh.MeshVTK.get_surf
-    def get_surf(self, indices=None):
-        """Return the surf object if it was already extracted, or extracts it from the mesh.
-
-        Parameters
-        ----------
-        self : MeshVTK
-            a MeshVTK object
-        indices : list
-            list of the points to extract (optional)
-
-        Returns
-        -------
-        surf : pyvista.core.pointset.PolyData
-            a pyvista polydata object
-        """
-
-        # Already available => Return
-        if self.surf is not None:
-            # Extract subsurface
-            if indices is not None:
-                surf = self.surf.extract_geometry(indices)
-            else:
-                surf = self.surf
-            return surf
-
-        # Extract the outer surface of the mesh
-        else:
-            mesh = self.get_mesh_pv(indices=indices)
-            surf = mesh.extract_geometry()
-
-            if self.is_vtk_surf:
-                surf.save(self.surf_path + "/" + self.surf_name + ".vtk")
-
-            self.surf = surf
-
-            return surf
-
+    if isinstance(get_surf, ImportError):
+        get_surf = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method get_surf: " + str(get_surf))
+            )
+        )
+    else:
+        get_surf = get_surf
     # cf Methods.Mesh.MeshVTK.perm_coord
-    def perm_coord(
-        self,
-        perm_coord_list=[0, 1, 2],
-        path_meshVTK=None,
-    ):
-        """Returns the current MeshVTK object with permuted coordinates
-
-        Parameters
-        ----------
-        self : MeshVTK
-            a MeshVTK object
-        perm_coord_list : list
-            list of the coordinates to be permuted
-        path_meshVTK : str
-            full path to the MeshVTK file
-
-        Returns
-        -------
-        mesh: MeshVTK
-            The MeshVTK object with permuted coordinates
-
-        """
-        # convert into MeshMat object
-        mesh_mat = self.convert(meshtype="MeshMat", scale=1)
-
-        # extract nodes en elements
-        mesh_mat_node = mesh_mat.get_node_coordinate()
-        mesh_mat_element = mesh_mat.get_element()
-
-        # swap axis
-        mesh_mat_node = mesh_mat_node.T[perm_coord_list].T
-
-        # create new object
-        # 1. create NodeMat
-        nb_node = len(mesh_mat_node)
-        nodemat = NodeMat(coordinate=mesh_mat_node, nb_node=nb_node)
-
-        # 2. create ElementMat
-        elementMatDict = dict()
-
-        for key in mesh_mat_element[0]:
-            element_mat = ElementMat(
-                connectivity=mesh_mat_element[0][key],
-                nb_element=len(mesh_mat_element[0][key]),
+    if isinstance(perm_coord, ImportError):
+        perm_coord = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method perm_coord: " + str(perm_coord))
             )
-            elementMatDict[key] = element_mat
-
-        # 3. create MeshMat
-        meshmat = MeshMat(element_dict=elementMatDict, node=nodemat)
-
-        # convert and save into vtk
-        mesh_pv = meshmat.get_mesh_pv()
-        if path_meshVTK is not None:
-            mesh_pv.save(path_meshVTK)
-        elif self.path is not None:
-            mesh_pv.save(self.path + "/" + self.name + ".vtk")
-
-        self.mesh = mesh_pv
-
-        return self
-
+        )
+    else:
+        perm_coord = perm_coord
     # cf Methods.Mesh.MeshVTK.save_vtk
-    def save_vtk(self, save_path):
-        """Copy file vtk use for object meshVTK into path give by save_path
-
-        Parameters
-        ----------
-        self : MeshVTK
-            an MeshVTK object
-        save_path : str
-            full path including folder, name and extension of the file to save if save_path is not None
-
-        """
-        # Check if extension file is .vtk
-        save_path_L = save_path.split(".")
-        if len(save_path_L) == 1:
-            save_path = f"{save_path_L[0]}.vtk"
-        else:
-            if save_path_L[-1] != "vtk":
-                err_msg = f"Error save path extension is not .vtk"
-                log_error(
-                    self,
-                    err_msg,
-                    self.get_logger(),
-                    is_popup=False,
-                    is_warning=False,
-                )
-
-        # Check if save_path exist
-        save_path_2 = os.path.dirname(save_path)
-
-        if not os.path.isdir(save_path_2):
-            raise Exception(
-                f"Error while saving mesh to vtk, save path doesn't exist: {save_path}"
+    if isinstance(save_vtk, ImportError):
+        save_vtk = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MeshVTK method save_vtk: " + str(save_vtk))
             )
-
-        shutil.copy(self.path, save_path)
-
+        )
+    else:
+        save_vtk = save_vtk
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -620,7 +314,7 @@ class MeshVTK(Mesh):
             return False
         if other.surf_name != self.surf_name:
             return False
-        if not np.array_equal(other.node_normals, self.node_normals):
+        if not array_equal(other.node_normals, self.node_normals):
             return False
         return True
 
@@ -727,7 +421,7 @@ class MeshVTK(Mesh):
                 diff_list.append(name + ".surf_name" + val_str)
             else:
                 diff_list.append(name + ".surf_name")
-        if not np.array_equal(other.node_normals, self.node_normals):
+        if not array_equal(other.node_normals, self.node_normals):
             diff_list.append(name + ".node_normals")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -767,7 +461,7 @@ class MeshVTK(Mesh):
         MeshVTK_dict = super(MeshVTK, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs,
+            **kwargs
         )
         MeshVTK_dict["mesh"] = None
         MeshVTK_dict["is_pyvista_mesh"] = self.is_pyvista_mesh
@@ -1019,10 +713,10 @@ class MeshVTK(Mesh):
     def _set_node_normals(self, value):
         """setter of node_normals"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("node_normals", value, "ndarray")

@@ -1,455 +1,242 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/Hole.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/Hole"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/Hole
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from matplotlib.patches import Patch
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Slot.Hole.comp_height import comp_height
+except ImportError as error:
+    comp_height = error
 
-from pyleecan.Classes import ParentMissingError
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.definitions import config_dict
-from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Slot.Hole.comp_magnetization_dict import comp_magnetization_dict
+except ImportError as error:
+    comp_magnetization_dict = error
+
+try:
+    from ..Methods.Slot.Hole.comp_radius import comp_radius
+except ImportError as error:
+    comp_radius = error
+
+try:
+    from ..Methods.Slot.Hole.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Slot.Hole.convert_to_UD import convert_to_UD
+except ImportError as error:
+    convert_to_UD = error
+
+try:
+    from ..Methods.Slot.Hole.get_is_stator import get_is_stator
+except ImportError as error:
+    get_is_stator = error
+
+try:
+    from ..Methods.Slot.Hole.get_magnet_by_id import get_magnet_by_id
+except ImportError as error:
+    get_magnet_by_id = error
+
+try:
+    from ..Methods.Slot.Hole.get_magnet_dict import get_magnet_dict
+except ImportError as error:
+    get_magnet_dict = error
+
+try:
+    from ..Methods.Slot.Hole.get_R_id import get_R_id
+except ImportError as error:
+    get_R_id = error
+
+try:
+    from ..Methods.Slot.Hole.get_Rbo import get_Rbo
+except ImportError as error:
+    get_Rbo = error
+
+try:
+    from ..Methods.Slot.Hole.get_Rext import get_Rext
+except ImportError as error:
+    get_Rext = error
+
+try:
+    from ..Methods.Slot.Hole.has_magnet import has_magnet
+except ImportError as error:
+    has_magnet = error
+
+try:
+    from ..Methods.Slot.Hole.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
+    from ..Methods.Slot.Hole.set_magnet_by_id import set_magnet_by_id
+except ImportError as error:
+    set_magnet_by_id = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Hole(FrozenClass):
     """Holes for lamination (abstract)"""
 
     VERSION = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    ARROW_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.Hole.comp_height
-    def comp_height(self):
-        """Compute the height of the Hole (Rmax-Rmin)
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        H : float
-            Height of the hole
-
-        """
-
-        (Rmin, Rmax) = self.comp_radius()
-        return Rmax - Rmin
-
-    # cf Methods.Slot.Hole.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True):
-        """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
-        Mangetization angle with Hole centered on Ox axis
-
-        Parameters
-        ----------
-        self : Hole
-            a Hole object
-        is_north: True
-            True: comp north magnetization, else add pi [rad]
-
-        Returns
-        -------
-        mag_dict: dict
-            magnetization dictionary (key=magnet_X, value=angle[rad])
-        """
-
-        if self.magnetization_dict_offset is not None:
-            mag_dict = self.magnetization_dict_offset.copy()
-            if not is_north:
-                for key in mag_dict.keys():
-                    mag_dict[key] += np.pi
-            return mag_dict
-        else:
-            return dict()
-
-    # cf Methods.Slot.Hole.comp_radius
-    def comp_radius(self):
-        """Compute the radius of the min and max circle that contains the hole
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        (Rmin,Rmax): tuple
-            Radius of the circle that contains the hole
-
-        """
-
-        surf_list = self.build_geometry()
-        point_list = list()
-        for surf in surf_list:
-            for curve in surf.get_lines():
-                point_list.extend(curve.discretize())
-
-        abs_list = [np.abs(point) for point in point_list]
-        Rmax = max(abs_list)
-        Rmin = min(abs_list)
-        return (Rmin, Rmax)
-
-    # cf Methods.Slot.Hole.comp_surface
-    def comp_surface(self):
-        """Compute the Hole total surface (by numerical computation).
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        S : float
-            Slot total surface [m**2]
-
-        """
-
-        surf_list = self.build_geometry()
-        S = 0
-        for surf in surf_list:
-            S += surf.comp_surface()
-
-        return S
-
-    # cf Methods.Slot.Hole.convert_to_UD
-    def convert_to_UD(self):
-        """Convert the hole to HoleUD"""
-        HoleUD = import_class("pyleecan.Classes", "HoleUD")
-        surf_list = self.build_geometry()
-        magnet_dict = self.get_magnet_dict()
-        magnetization_dict = self.comp_magnetization_dict()
-
-        return HoleUD(
-            surf_list=surf_list,
-            magnet_dict=magnet_dict,
-            Zh=self.Zh,
-            mat_void=self.mat_void,
-            magnetization_dict_offset=magnetization_dict,
+    if isinstance(comp_height, ImportError):
+        comp_height = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method comp_height: " + str(comp_height))
+            )
         )
-
-    # cf Methods.Slot.Hole.get_is_stator
-    def get_is_stator(self):
-        """Return True if the parent lamination is stator and False if is a rotor
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        is_stator: bool
-            True if the Lamination is a stator and False if not
-        """
-
-        if self.parent is not None:
-            return self.parent.is_stator
-        else:
-            raise ParentMissingError("Error: The hole is not inside a Lamination")
-
-    # cf Methods.Slot.Hole.get_magnet_by_id
-    def get_magnet_by_id(self, index):
-        """Return the magnet at the corresponding index
-        returns None is the magnet is None
-        Raise error if the hole doesn't have a magnet for the corresponding index
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-        index : int
-            Index of the magnet to return
-        Returns
-        -------
-        magnet : Magnet
-            Magnet object (or None)
-        """
-
-        label = "magnet_" + str(index)
-        if hasattr(self, label):
-            return getattr(self, label)
-        elif hasattr(self, "magnet_dict") and label in self.magnet_dict:
-            return self.magnet_dict[label]
-        else:
-            raise MagnetIndexError(
-                "Hole of type " + str(type(self)) + " has no magnet " + label
-            )
-
-    # cf Methods.Slot.Hole.get_magnet_dict
-    def get_magnet_dict(self):
-        """Return a dictionary with all the magnets of the Hole
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        magnet_dict : {Magnet}
-            Dictionary of magnet (key = magnet_X, value= Magnet or None)
-        """
-
-        if hasattr(self, "magnet_dict"):
-            return self.magnet_dict
-        else:
-            ii = 0
-            magnet_dict = dict()
-            while hasattr(self, "magnet_" + str(ii)):
-                magnet_dict["magnet_" + str(ii)] = getattr(self, "magnet_" + str(ii))
-                ii += 1
-            return magnet_dict
-
-    # cf Methods.Slot.Hole.get_R_id
-    def get_R_id(self):
-        """Return the "Radial" index for label (index in lam.hole or lam.axial_vent)
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        R_id : int
-            "Radial" index of the hole in the lamination
-        surf_type : str
-            Label to use for the surface type (HoleV or Vent)
-        """
-
-        if self.parent is None:  # Compatibility For plotting
-            return (0, HOLEV_LAB)
-        elif (
-            hasattr(self.parent, "get_hole_list")
-            and self in self.parent.get_hole_list()
-        ):
-            return (self.parent.get_hole_list().index(self), HOLEV_LAB)
-        elif self.parent.axial_vent is not None and self in self.parent.axial_vent:
-            return (self.parent.axial_vent.index(self), VENT_LAB)
-        else:
-            raise Exception("Error, impossible to get Hole R-id")
-
-    # cf Methods.Slot.Hole.get_Rbo
-    def get_Rbo(self):
-        """Return the parent lamination bore radius
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        Rbo: float
-            The parent lamination bore radius [m]
-
-        """
-
-        if self.parent is not None:
-            return self.parent.get_Rbo()
-        else:
-            raise ParentMissingError("Error: The hole is not inside a Lamination")
-
-    # cf Methods.Slot.Hole.get_Rext
-    def get_Rext(self):
-        """Return the parent lamination exterior radius
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        Rext: float
-            The parent lamination exterior radius [m]
-
-        """
-
-        if self.parent is not None:
-            return self.parent.Rext
-        else:
-            raise ParentMissingError("Error: The hole is not inside a Lamination")
-
-    # cf Methods.Slot.Hole.has_magnet
-    def has_magnet(self):
-        """Return if the Hole has magnets
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-
-        Returns
-        -------
-        has_magnet : bool
-            False
-
-        """
-
-        return False
-
-    # cf Methods.Slot.Hole.plot
-    def plot(
-        self,
-        fig=None,
-        ax=None,
-        title=None,
-        display_magnet=True,
-        is_add_arrow=False,
-        is_add_ref=False,
-        is_show_fig=True,
-        is_all_hole=False,
-    ):
-        """Plot the Hole in a matplotlib fig
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-        fig :
-            if None, open a new fig and plot, else add to the current
-            one (Default value = None)
-        title: str
-            Figure title
-        display_magnet : bool
-            if True, plot the magnet inside the hole, if there is any (Default value = True)
-        is_add_arrow : bool
-            To add an arrow for the magnetization
-        is_add_ref : bool
-            True to add the reference points of the surfaces
-        is_all_hole : bool
-            True to plot the Zh holes
-
-        Returns
-        -------
-        fig : Matplotlib.figure.Figure
-            Figure containing the plot
-        ax : Matplotlib.axes.Axes object
-            Axis containing the plot
-        """
-
-        display = fig is None
-        if display:
-            color = "k"
-        else:
-            color = "w"
-
-        surf_hole = self.build_geometry()
-        if is_all_hole:
-            # Duplicate the hole surfaces
-            surf_hole = transform_hole_surf(
-                hole_surf_list=surf_hole, Zh=self.Zh, sym=1, alpha=0, delta=0
-            )
-
-        patches = list()
-        for surf in surf_hole:
-            label_dict = decode_label(surf.label)
-            if HOLEM_LAB in label_dict["surf_type"] and display_magnet:
-                patches.extend(surf.get_patches(color=self.MAGNET_COLOR))
-            else:
-                patches.extend(surf.get_patches(color=color))
-
-        # Display the result
-        (fig, ax, patch_leg, label_leg) = init_fig(fig, ax)
-        ax.set_xlabel("(m)")
-        ax.set_ylabel("(m)")
-        if title is None:
-            ax.set_title("Hole")
-        else:
-            ax.set_title(title)
-        # Add all the hole (and magnet) to fig
-        for patch in patches:
-            ax.add_patch(patch)
-
-        # Magnetization
-        if is_add_arrow:
-            H = self.comp_height()
-            mag_dict = self.comp_magnetization_dict()
-            for magnet_name, mag_dir in mag_dict.items():
-                # Get the correct surface
-                mag_surf = None
-                mag_id = int(magnet_name.split("_")[-1])
-                for surf in surf_hole:
-                    label_dict = decode_label(surf.label)
-                    if (
-                        HOLEM_LAB in label_dict["surf_type"]
-                        and label_dict["T_id"] == mag_id
-                    ):
-                        mag_surf = surf
-                        break
-                # Create arrow coordinates
-                Z1 = mag_surf.point_ref
-                Z2 = mag_surf.point_ref + H / 5 * np.exp(1j * mag_dir)
-                ax.annotate(
-                    text="",
-                    xy=(Z2.real, Z2.imag),
-                    xytext=(Z1.real, Z1.imag),
-                    arrowprops=dict(
-                        arrowstyle="->", linewidth=1, color=self.ARROW_COLOR
-                    ),
+    else:
+        comp_height = comp_height
+    # cf Methods.Slot.Hole.comp_magnetization_dict
+    if isinstance(comp_magnetization_dict, ImportError):
+        comp_magnetization_dict = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Hole method comp_magnetization_dict: "
+                    + str(comp_magnetization_dict)
                 )
-
-        # Add reference point
-        if is_add_ref:
-            for surf in self.surf_list:
-                ax.plot(surf.point_ref.real, surf.point_ref.imag, "rx")
-
-        # Axis Setup
-        ax.axis("equal")
-        try:
-            Lim = self.get_Rbo() * 1.2
-            ax.set_xlim(-Lim, Lim)
-            ax.set_ylim(-Lim, Lim)
-        except ParentMissingError:
-            pass
-
-        if display_magnet and HOLEM_LAB in [surf.label for surf in surf_hole]:
-            patch_leg.append(Patch(color=self.MAGNET_COLOR))
-            label_leg.append("Magnet")
-            ax.legend(patch_leg, label_leg)
-        if is_show_fig:
-            fig.show()
-        return fig, ax
-
-    # cf Methods.Slot.Hole.set_magnet_by_id
-    def set_magnet_by_id(self, index, magnet):
-        """Set the magnet at the corresponding index
-        Raise error if the hole doesn't have a magnet for the corresponding index
-
-        Parameters
-        ----------
-        self : Hole
-            A Hole object
-        index : int
-            Index of the magnet to return
-        magnet : Magnet
-            Magnet object to set (or None)
-        """
-
-        label = "magnet_" + str(index)
-        if hasattr(self, label):
-            setattr(self, label, magnet)
-        elif hasattr(self, "magnet_dict") and label in self.magnet_dict:
-            self.magnet_dict[label] = magnet
-        else:
-            raise MagnetIndexError(
-                "Hole of type " + str(type(self)) + " has no magnet " + label
             )
-
+        )
+    else:
+        comp_magnetization_dict = comp_magnetization_dict
+    # cf Methods.Slot.Hole.comp_radius
+    if isinstance(comp_radius, ImportError):
+        comp_radius = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method comp_radius: " + str(comp_radius))
+            )
+        )
+    else:
+        comp_radius = comp_radius
+    # cf Methods.Slot.Hole.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method comp_surface: " + str(comp_surface))
+            )
+        )
+    else:
+        comp_surface = comp_surface
+    # cf Methods.Slot.Hole.convert_to_UD
+    if isinstance(convert_to_UD, ImportError):
+        convert_to_UD = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Hole method convert_to_UD: " + str(convert_to_UD)
+                )
+            )
+        )
+    else:
+        convert_to_UD = convert_to_UD
+    # cf Methods.Slot.Hole.get_is_stator
+    if isinstance(get_is_stator, ImportError):
+        get_is_stator = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Hole method get_is_stator: " + str(get_is_stator)
+                )
+            )
+        )
+    else:
+        get_is_stator = get_is_stator
+    # cf Methods.Slot.Hole.get_magnet_by_id
+    if isinstance(get_magnet_by_id, ImportError):
+        get_magnet_by_id = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Hole method get_magnet_by_id: " + str(get_magnet_by_id)
+                )
+            )
+        )
+    else:
+        get_magnet_by_id = get_magnet_by_id
+    # cf Methods.Slot.Hole.get_magnet_dict
+    if isinstance(get_magnet_dict, ImportError):
+        get_magnet_dict = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Hole method get_magnet_dict: " + str(get_magnet_dict)
+                )
+            )
+        )
+    else:
+        get_magnet_dict = get_magnet_dict
+    # cf Methods.Slot.Hole.get_R_id
+    if isinstance(get_R_id, ImportError):
+        get_R_id = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method get_R_id: " + str(get_R_id))
+            )
+        )
+    else:
+        get_R_id = get_R_id
+    # cf Methods.Slot.Hole.get_Rbo
+    if isinstance(get_Rbo, ImportError):
+        get_Rbo = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method get_Rbo: " + str(get_Rbo))
+            )
+        )
+    else:
+        get_Rbo = get_Rbo
+    # cf Methods.Slot.Hole.get_Rext
+    if isinstance(get_Rext, ImportError):
+        get_Rext = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method get_Rext: " + str(get_Rext))
+            )
+        )
+    else:
+        get_Rext = get_Rext
+    # cf Methods.Slot.Hole.has_magnet
+    if isinstance(has_magnet, ImportError):
+        has_magnet = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method has_magnet: " + str(has_magnet))
+            )
+        )
+    else:
+        has_magnet = has_magnet
+    # cf Methods.Slot.Hole.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Hole method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
+    # cf Methods.Slot.Hole.set_magnet_by_id
+    if isinstance(set_magnet_by_id, ImportError):
+        set_magnet_by_id = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Hole method set_magnet_by_id: " + str(set_magnet_by_id)
+                )
+            )
+        )
+    else:
+        set_magnet_by_id = set_magnet_by_id
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -576,8 +363,8 @@ class Hole(FrozenClass):
         if (
             other._Alpha0 is not None
             and self._Alpha0 is not None
-            and np.isnan(other._Alpha0)
-            and np.isnan(self._Alpha0)
+            and isnan(other._Alpha0)
+            and isnan(self._Alpha0)
         ):
             pass
         elif other._Alpha0 != self._Alpha0:
@@ -766,11 +553,3 @@ class Hole(FrozenClass):
         :max: 6.29
         """,
     )
-
-    class MagnetIndexError(Exception):
-        """Raise when trying to access a non existing magnet"""
-
-        pass
-
-
-MagnetIndexError = Hole.MagnetIndexError

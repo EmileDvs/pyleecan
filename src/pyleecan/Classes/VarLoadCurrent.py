@@ -1,17 +1,44 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/VarLoadCurrent.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/VarLoadCurrent"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/VarLoadCurrent
+"""
 
-from pyleecan.Classes.InputVoltage import InputVoltage
-from pyleecan.Classes.ParamExplorerSet import ParamExplorerSet
-from pyleecan.Classes.Simulation import Simulation
-from pyleecan.Classes.VarLoad import VarLoad
-from pyleecan.Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
-    get_elec_datakeeper_dict,
-)
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .VarLoad import VarLoad
+
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.VarLoadCurrent.generate_simulation_list import (
+        generate_simulation_list,
+    )
+except ImportError as error:
+    generate_simulation_list = error
+
+try:
+    from ..Methods.Simulation.VarLoadCurrent.get_elec_datakeeper import (
+        get_elec_datakeeper,
+    )
+except ImportError as error:
+    get_elec_datakeeper = error
+
+try:
+    from ..Methods.Simulation.VarLoadCurrent.get_input_list import get_input_list
+except ImportError as error:
+    get_input_list = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class VarLoadCurrent(VarLoad):
@@ -19,138 +46,43 @@ class VarLoadCurrent(VarLoad):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.VarLoadCurrent.generate_simulation_list
-    def generate_simulation_list(self, ref_simu=None):
-        """Generate all the simulation for the multi-simulation
-
-        Parameters
-        ----------
-        self : VarLoadCurrent
-            A VarLoadCurrent object
-        ref_simu : Simulation
-            Reference simulation to copy / update
-
-        Returns
-        -------
-        multisim_dict : dict
-            dictionary containing the simulation and paramexplorer list
-        """
-
-        # Get InputCurrent list
-        list_input = self.get_input_list()
-
-        multisim_dict = {
-            "paramexplorer_list": [],  # Setter's values
-            "simulation_list": [],
-        }
-
-        # Create ParamExplorerSet
-        #   This version uses a single ParamExplorerSet to define the simulation
-        #   Other parameters can be stored in a dedicated ParamExplorerSet if needed
-        multisim_dict["paramexplorer_list"].append(
-            ParamExplorerSet(
-                name="InputCurrent",
-                symbol="In",
-                unit="-",
-                setter="simu.input",
-                getter="simu.input",
-                value=list_input,
+    if isinstance(generate_simulation_list, ImportError):
+        generate_simulation_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VarLoadCurrent method generate_simulation_list: "
+                    + str(generate_simulation_list)
+                )
             )
         )
-
-        # Create Simulations 1 per load
-        for input_obj in list_input:
-            # Generate the simulation
-            new_simu = ref_simu.copy()
-
-            # Edit simulation
-            new_simu.input = input_obj
-            # Add simulation to the list
-            multisim_dict["simulation_list"].append(new_simu)
-
-        return multisim_dict
-
+    else:
+        generate_simulation_list = generate_simulation_list
     # cf Methods.Simulation.VarLoadCurrent.get_elec_datakeeper
-    def get_elec_datakeeper(self, symbol_list, is_multi=False):
-        """
-        Generate DataKeepers to store by default results from electric module
-        Parameters
-        ----------
-        self: VarLoadCurrent
-            A VarLoadCurrent object
-        symbol_list : list
-            List of the existing datakeeper (to avoid duplicate)
-        is_multi : bool
-            True for multi-simulation of multi-simulation
-        Returns
-        -------
-        dk_list: list
-            list of DataKeeper
-        """
-
-        dk_dict = get_elec_datakeeper_dict()
-        dk_list = []
-
-        if not is_multi:
-            quantity_list = ["Id", "Iq"]
-            # Add "I0, Phi0" for Async machine
-            if (
-                self.parent is not None
-                and isinstance(self.parent, Simulation)
-                and not self.parent.machine.is_synchronous()
-            ):
-                quantity_list.extend(["I0", "Phi0"])
-            elif (
-                self.parent is not None
-                and self.parent.parent is not None
-                and isinstance(self.parent.parent, Simulation)
-                and not self.parent.parent.machine.is_synchronous()
-            ):
-                quantity_list.extend(["I0", "Phi0"])
-            # Add torque if provided in the OP_matrix
-            if self.OP_matrix is not None and self.OP_matrix.has_Tem():
-                quantity_list.append("Tem_av_ref")
-
-        # Save Id
-        if not is_multi:
-            for key in quantity_list:
-                if key not in symbol_list:
-                    dk_list.append(dk_dict[key])
-
-        return dk_list
-
+    if isinstance(get_elec_datakeeper, ImportError):
+        get_elec_datakeeper = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VarLoadCurrent method get_elec_datakeeper: "
+                    + str(get_elec_datakeeper)
+                )
+            )
+        )
+    else:
+        get_elec_datakeeper = get_elec_datakeeper
     # cf Methods.Simulation.VarLoadCurrent.get_input_list
-    def get_input_list(self):
-        """Return a list of InputCurrent to set the Operating point"""
-
-        # Check that the object has the correct type
-        assert isinstance(self.parent, Simulation)
-        ref_simu = self.parent
-        assert isinstance(ref_simu.input, InputVoltage)
-
-        OP_list = self.OP_matrix.get_OP_list()
-        N_simu = len(OP_list)
-
-        # Generate initial input_list
-        ref_input = ref_simu.input.copy()
-        input_list = [ref_input.copy() for ii in range(N_simu)]
-
-        # Set default time vector (enforce definition Nt_tot, Nrev)
-        if ref_input.Nt_tot is None:
-            Nt_tot = len(ref_input.time.get_data())
-        else:
-            Nt_tot = ref_input.Nt_tot
-        Nrev = ref_input.Nrev
-        # Update OP according to OP_matrix
-        for ii in range(N_simu):
-            input_list[ii].OP = OP_list[ii]
-            # Edit time vector
-            input_list[ii].time = None
-            input_list[ii].Nt_tot = Nt_tot
-            input_list[ii].Nrev = Nrev
-
-        return input_list
-
+    if isinstance(get_input_list, ImportError):
+        get_input_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VarLoadCurrent method get_input_list: "
+                    + str(get_input_list)
+                )
+            )
+        )
+    else:
+        get_input_list = get_input_list
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

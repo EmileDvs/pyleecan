@@ -1,16 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/DXFImport.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/DXFImport"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/DXFImport
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.DXFImport.get_surfaces import get_surfaces
+except ImportError as error:
+    get_surfaces = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class DXFImport(FrozenClass):
@@ -19,16 +33,16 @@ class DXFImport(FrozenClass):
     VERSION = 1
 
     # cf Methods.Simulation.DXFImport.get_surfaces
-    def get_surfaces(self):
-        """Convert surf_dict to a list of surfaces without lines"""
-
-        surf_list = list()
-
-        for key, value in self.surf_dict.items():
-            surf_list.append(SurfLine(line_list=[], point_ref=key, label=value))
-
-        return surf_list
-
+    if isinstance(get_surfaces, ImportError):
+        get_surfaces = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DXFImport method get_surfaces: " + str(get_surfaces)
+                )
+            )
+        )
+    else:
+        get_surfaces = get_surfaces
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

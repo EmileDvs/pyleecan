@@ -1,17 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/MachineDFIM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineDFIM"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineDFIM
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .MachineAsync import MachineAsync
 
-from pyleecan.Classes.LamSlotWind import LamSlotWind
-from pyleecan.Classes.MachineAsync import MachineAsync
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.MachineDFIM.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Machine.MachineDFIM.get_machine_type import get_machine_type
+except ImportError as error:
+    get_machine_type = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class MachineDFIM(MachineAsync):
@@ -19,82 +37,28 @@ class MachineDFIM(MachineAsync):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineDFIM.check
-    def check(self):
-        """Check that the Machine object is correct
-
-        Parameters
-        ----------
-        self : MachineDFIM
-            A MachineDFIM object
-
-        Returns
-        -------
-        None
-
-        Raises
-        _______
-        M4C_WrongRotor
-            The Rotor of a MachineDFIM must be a LamSlotWind
-        M4C_WrongStator
-            The Stator of a MachineDFIM must be a LamSlotWind
-        M4C_PError
-            The stator and the rotor winding must have the same value for p
-        """
-
-        super(type(self), self).check()
-
-        if not isinstance(self.rotor, LamSlotWind):
-            raise M4C_WrongRotor("The Rotor of a MachineDFIM must be a LamSlotWind")
-        if not isinstance(self.stator, LamSlotWind):
-            raise M4C_WrongStator(
-                "The Stator of a MachineDFIM must be a " "LamSlotWind"
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MachineDFIM method check: " + str(check))
             )
-        if self.rotor.winding.p != self.stator.winding.p:
-            raise M4C_PError(
-                "The stator and the rotor winding must have the " "same value for p"
-            )
-
+        )
+    else:
+        check = check
     # cf Methods.Machine.MachineDFIM.get_machine_type
-    def get_machine_type(self):
-        """Return a string with the may information about the machine architecture
-
-        Parameters
-        ----------
-        self : MachineDFIM
-            A MachineDFIM object
-
-        Returns
-        -------
-        type_str: str
-            DFIM Zs/Zr/p (int/ext rotor)
-
-        """
-
-        type_str = "DFIM "
-
-        if self.stator.slot.Zs is not None:
-            type_str += str(self.stator.slot.Zs) + "s / "
-        else:
-            type_str += "?s / "
-
-        if self.rotor.slot.Zs is not None:
-            type_str += str(self.rotor.slot.Zs) + "r / "
-        else:
-            type_str += "?r / "
-
-        if self.stator.winding.p is not None:
-            type_str += str(self.stator.winding.p) + "p"
-        else:
-            type_str += "?p"
-
-        if self.stator.is_internal:
-            type_str += " (ext rotor)"
-        else:
-            type_str += " (int rotor)"
-
-        return type_str
-
+    if isinstance(get_machine_type, ImportError):
+        get_machine_type = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineDFIM method get_machine_type: "
+                    + str(get_machine_type)
+                )
+            )
+        )
+    else:
+        get_machine_type = get_machine_type
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -406,71 +370,3 @@ class MachineDFIM(MachineAsync):
         :Type: LamSlotWind
         """,
     )
-
-    class MachineCheckError(Exception):
-        """ """
-
-        pass
-
-    class M4C_PError(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        different
-            p value
-
-        """
-
-        pass
-
-    class M4C_WrongRotor(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """
-
-        pass
-
-    class M4C_WrongStator(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """
-
-        pass
-
-
-MachineCheckError = MachineDFIM.MachineCheckError
-
-M4C_PError = MachineDFIM.M4C_PError
-
-M4C_WrongRotor = MachineDFIM.M4C_WrongRotor
-
-M4C_WrongStator = MachineDFIM.M4C_WrongStator

@@ -1,17 +1,62 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/CondType22.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType22"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType22
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Conductor import Conductor
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.CondType22.comp_height_wire import comp_height_wire
+except ImportError as error:
+    comp_height_wire = error
 
-from pyleecan.Classes.Conductor import Conductor
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Machine.CondType22.comp_nb_circumferential_wire import (
+        comp_nb_circumferential_wire,
+    )
+except ImportError as error:
+    comp_nb_circumferential_wire = error
+
+try:
+    from ..Methods.Machine.CondType22.comp_nb_radial_wire import comp_nb_radial_wire
+except ImportError as error:
+    comp_nb_radial_wire = error
+
+try:
+    from ..Methods.Machine.CondType22.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Machine.CondType22.comp_surface_active import comp_surface_active
+except ImportError as error:
+    comp_surface_active = error
+
+try:
+    from ..Methods.Machine.CondType22.comp_width_wire import comp_width_wire
+except ImportError as error:
+    comp_width_wire = error
+
+try:
+    from ..Methods.Machine.CondType22.is_round_wire import is_round_wire
+except ImportError as error:
+    is_round_wire = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class CondType22(Conductor):
@@ -19,144 +64,89 @@ class CondType22(Conductor):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.CondType22.comp_height_wire
-    def comp_height_wire(self):
-        """Return wire height
-
-        Parameters
-        ----------
-        self : CondType22
-            A CondType22 object
-
-        Returns
-        -------
-        H: float
-            Height of the bar [m]
-
-        """
-
-        if self.parent is not None and self.parent.parent is not None:
-            Hbar = self.parent.parent.slot.comp_height()
-
-        else:
-            Hbar = np.sqrt(self.Sbar)
-
-        return Hbar
-
+    if isinstance(comp_height_wire, ImportError):
+        comp_height_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_height_wire: "
+                    + str(comp_height_wire)
+                )
+            )
+        )
+    else:
+        comp_height_wire = comp_height_wire
     # cf Methods.Machine.CondType22.comp_nb_circumferential_wire
-    def comp_nb_circumferential_wire(self):
-        """Return number of adjacent wires in circumferential direction
-
-        Parameters
-        ----------
-        self : CondType22
-            A CondType22 object
-
-        Returns
-        -------
-        Nwppc_tan: int
-            Number of adjacent wires in circumferential direction
-
-        """
-
-        return 1
-
+    if isinstance(comp_nb_circumferential_wire, ImportError):
+        comp_nb_circumferential_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_nb_circumferential_wire: "
+                    + str(comp_nb_circumferential_wire)
+                )
+            )
+        )
+    else:
+        comp_nb_circumferential_wire = comp_nb_circumferential_wire
     # cf Methods.Machine.CondType22.comp_nb_radial_wire
-    def comp_nb_radial_wire(self):
-        """Return number of adjacent wires in radial direction
-
-        Parameters
-        ----------
-        self : CondType22
-            A CondType22 object
-
-        Returns
-        -------
-        Nwppc_tan: int
-            Number of adjacent wires in radial direction
-
-        """
-
-        return 1
-
+    if isinstance(comp_nb_radial_wire, ImportError):
+        comp_nb_radial_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_nb_radial_wire: "
+                    + str(comp_nb_radial_wire)
+                )
+            )
+        )
+    else:
+        comp_nb_radial_wire = comp_nb_radial_wire
     # cf Methods.Machine.CondType22.comp_surface
-    def comp_surface(self):
-        """Compute the surface of the conductor
-
-        Parameters
-        ----------
-        self : CondType22
-            A CondType22 object
-
-        Returns
-        -------
-        S: float
-            Surface of the conductor (with insulation) [m**2]
-
-        """
-
-        return self.Sbar
-
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Machine.CondType22.comp_surface_active
-    def comp_surface_active(self):
-        """Compute the active surface of the conductor
-
-        Parameters
-        ----------
-        self : CondType22
-            A CondType22 object
-
-        Returns
-        -------
-        Sact: float
-            Surface without insulation [m**2]
-
-        """
-
-        return self.Sbar
-
+    if isinstance(comp_surface_active, ImportError):
+        comp_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_surface_active: "
+                    + str(comp_surface_active)
+                )
+            )
+        )
+    else:
+        comp_surface_active = comp_surface_active
     # cf Methods.Machine.CondType22.comp_width_wire
-    def comp_width_wire(self):
-        """Return bar width
-
-        Parameters
-        ----------
-        self : CondType22
-            A CondType22 object
-
-        Returns
-        -------
-        W: float
-            Width of the bar [m]
-
-        """
-
-        if self.parent is not None and self.parent.parent is not None:
-            Wbar = self.parent.parent.slot.comp_width()
-
-        else:
-            Wbar = np.sqrt(self.Sbar)
-
-        return Wbar
-
+    if isinstance(comp_width_wire, ImportError):
+        comp_width_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method comp_width_wire: "
+                    + str(comp_width_wire)
+                )
+            )
+        )
+    else:
+        comp_width_wire = comp_width_wire
     # cf Methods.Machine.CondType22.is_round_wire
-    def is_round_wire(self):
-        """Return if wire is round
-
-        Parameters
-        ----------
-        self : CondType22
-            A CondType22 object
-
-        Returns
-        -------
-        is_round_wire: bool
-            is_round_wire is always False since bar shape is unknown
-
-        """
-
-        return False
-
+    if isinstance(is_round_wire, ImportError):
+        is_round_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType22 method is_round_wire: " + str(is_round_wire)
+                )
+            )
+        )
+    else:
+        is_round_wire = is_round_wire
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -233,8 +223,8 @@ class CondType22(Conductor):
         if (
             other._Sbar is not None
             and self._Sbar is not None
-            and np.isnan(other._Sbar)
-            and np.isnan(self._Sbar)
+            and isnan(other._Sbar)
+            and isnan(self._Sbar)
         ):
             pass
         elif other._Sbar != self._Sbar:

@@ -1,19 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/OutForce.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutForce"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutForce
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from pyleecan.Classes.DataTime import DataTime
-from pyleecan.Classes.VectorField import VectorField
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Output.OutForce.store import store
+except ImportError as error:
+    store = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OutForce(FrozenClass):
@@ -22,67 +33,14 @@ class OutForce(FrozenClass):
     VERSION = 1
 
     # cf Methods.Output.OutForce.store
-    def store(self, out_dict, axes_dict):
-        """Store the standard outputs of Force that are temporarily in out_dict as arrays into OutForce as Data object
-
-        Parameters
-        ----------
-        self: OutForce
-            the OutForce object to update
-        out_dict : dict
-            Dict containing all force quantities
-        axes_dict: {Data}
-            Dict of axes used for magnetic calculation
-
-        """
-
-        # Store axes_dict
-        self.axes_dict = axes_dict
-
-        # Store air-gap surface force as VectorField object
-
-        # Axes for each component
-        axis_list = [axes_dict["time"], axes_dict["angle"]]
-
-        # Create VectorField with empty components
-        self.AGSF = VectorField(
-            name="Air gap Surface Force",
-            symbol="AGSF",
+    if isinstance(store, ImportError):
+        store = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutForce method store: " + str(store))
+            )
         )
-        # Radial air-gap surface force component
-        if "AGSF_r" in out_dict:
-            self.AGSF.components["radial"] = DataTime(
-                name="Radial air gap surface force",
-                unit="N/m^2",
-                symbol="AGSF_r",
-                axes=axis_list,
-                values=out_dict.pop("AGSF_r"),
-            )
-        # Tangential air-gap surface force component
-        if "AGSF_t" in out_dict:
-            self.AGSF.components["tangential"] = DataTime(
-                name="Tangential air gap surface force",
-                unit="N/m^2",
-                symbol="AGSF_t",
-                axes=axis_list,
-                values=out_dict.pop("AGSF_t"),
-            )
-        # Axial air-gap surface force component
-        if "AGSF_z" in out_dict:
-            self.AGSF.components["axial"] = DataTime(
-                name="Axial air gap surface force",
-                unit="N/m^2",
-                symbol="AGSF_z",
-                axes=axis_list,
-                values=out_dict.pop("AGSF_z"),
-            )
-
-        if "Rag" in out_dict:
-            self.Rag = out_dict.pop("Rag")
-
-        if "meshsolution" in out_dict:
-            self.meshsolution = out_dict.pop("meshsolution")
-
+    else:
+        store = store
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -238,8 +196,8 @@ class OutForce(FrozenClass):
         if (
             other._Rag is not None
             and self._Rag is not None
-            and np.isnan(other._Rag)
-            and np.isnan(self._Rag)
+            and isnan(other._Rag)
+            and isnan(self._Rag)
         ):
             pass
         elif other._Rag != self._Rag:

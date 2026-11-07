@@ -1,16 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/Structural.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Structural"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Structural
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes.OutStruct import OutStruct
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.Structural.comp_axes import comp_axes
+except ImportError as error:
+    comp_axes = error
+
+try:
+    from ..Methods.Simulation.Structural.run import run
+except ImportError as error:
+    run = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Structural(FrozenClass):
@@ -18,57 +37,25 @@ class Structural(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.Structural.comp_axes
-    def comp_axes(self, output):
-        """Compute axes used for the Structural module
-
-        Parameters
-        ----------
-        self : Structural
-            a Structural object
-        output : Output
-            an Output object (to update)
-        """
-        if self.parent is None:
-            raise InputError(
-                "The Structural object must be in a Simulation object to run"
+    if isinstance(comp_axes, ImportError):
+        comp_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Structural method comp_axes: " + str(comp_axes))
             )
-        if self.parent.parent is None:
-            raise InputError("The Simulation object must be in an Output object to run")
-
-        # setup OutStruct if None
-        if self.parent.parent.struct is None:
-            self.parent.parent.struct = OutStruct()
-
-        output.struct.axes_dict = dict()
-
-        for key, val in output.geo.axes_dict.items():
-            output.struct.axes_dict[key] = val
-
+        )
+    else:
+        comp_axes = comp_axes
     # cf Methods.Simulation.Structural.run
-    def run(self):
-        """Run the Structural module"""
-        if self.parent is None:
-            raise InputError(
-                "ERROR: The Structural object must be in a Simulation object to run"
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Structural method run: " + str(run))
             )
-        if self.parent.parent is None:
-            raise InputError(
-                "ERROR: The Simulation object must be in an Output object to run"
-            )
-
-        output = self.parent.parent
-
-        self.comp_axes(output)
-
-        group = self.force.group  # Magnetic force target
-
-        # Init model, generate or import mechanical mesh
-        self.init_mechanical_model(output, group)
-
-        # Compute the magnetic force according to the Force model
-        self.force.comp_force(output)
-
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -200,11 +187,3 @@ class Structural(FrozenClass):
         :Type: str
         """,
     )
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-        pass
-
-
-InputError = Structural.InputError

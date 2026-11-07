@@ -1,20 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Loss/LossFEA.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Loss/LossFEA"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Loss/LossFEA
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Loss import Loss
 
-import numpy as np
-from pyleecan.Classes.Loss import Loss
-from pyleecan.Classes.LossModelJoule import LossModelJoule
-from pyleecan.Classes.LossModelMagnet import LossModelMagnet
-from pyleecan.Classes.LossModelProximity import LossModelProximity
-from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Loss.LossFEA.run import run
+except ImportError as error:
+    run = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class LossFEA(Loss):
@@ -23,53 +33,14 @@ class LossFEA(Loss):
     VERSION = 1
 
     # cf Methods.Loss.LossFEA.run
-    def run(self):
-        """Run the LossFEA module
-
-        Paramaters
-        ----------
-        self : LossFEA
-            A LossFEA object
-        """
-        if self.parent is None:
-            raise InputError("The Loss object must be in a Simulation object to run")
-        if self.parent.parent is None:
-            raise InputError("The Loss object must be in an Output object to run")
-
-        self.get_logger().info("Running LossFEA module")
-
-        # get output
-        output = self.parent.parent
-        machine = output.simu.machine
-        axes_dict = self.comp_axes(output)
-
-        # Define all relevant loss models
-        self.model_dict = {
-            "stator core": LossModelSteinmetz(
-                group="stator core",
-                k_hy=self.k_hy,
-                k_ed=self.k_ed,
-                alpha_f=1,
-                alpha_B=2,
-            ),
-            "rotor core": LossModelSteinmetz(
-                group="rotor core", k_hy=self.k_hy, k_ed=self.k_ed, alpha_f=1, alpha_B=2
-            ),
-            "joule": LossModelJoule(
-                group="stator winding", type_skin_effect=self.type_skin_effect
-            ),
-            "proximity": LossModelProximity(group="stator winding", k_p=self.k_p),
-        }
-        if machine.is_synchronous() and machine.rotor.has_magnet():
-            self.model_dict["magnets"] = LossModelMagnet(group="rotor magnets")
-
-        self.comp_all_losses(axes_dict)
-
-        # Add overall by adding all losses sources
-        overall = sum(output.loss.loss_dict.values())
-        overall.name = "overall"
-        output.loss.loss_dict["overall"] = overall
-
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use LossFEA method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -187,8 +158,8 @@ class LossFEA(Loss):
         if (
             other._k_ed is not None
             and self._k_ed is not None
-            and np.isnan(other._k_ed)
-            and np.isnan(self._k_ed)
+            and isnan(other._k_ed)
+            and isnan(self._k_ed)
         ):
             pass
         elif other._k_ed != self._k_ed:
@@ -202,8 +173,8 @@ class LossFEA(Loss):
         if (
             other._k_hy is not None
             and self._k_hy is not None
-            and np.isnan(other._k_hy)
-            and np.isnan(self._k_hy)
+            and isnan(other._k_hy)
+            and isnan(self._k_hy)
         ):
             pass
         elif other._k_hy != self._k_hy:
@@ -217,8 +188,8 @@ class LossFEA(Loss):
         if (
             other._k_p is not None
             and self._k_p is not None
-            and np.isnan(other._k_p)
-            and np.isnan(self._k_p)
+            and isnan(other._k_p)
+            and isnan(self._k_p)
         ):
             pass
         elif other._k_p != self._k_p:
@@ -397,11 +368,3 @@ class LossFEA(Loss):
         :Type: int
         """,
     )
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-        pass
-
-
-InputError = LossFEA.InputError

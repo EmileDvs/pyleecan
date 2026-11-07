@@ -1,17 +1,40 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportGenVectLin.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportGenVectLin"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportGenVectLin
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ImportMatrix import ImportMatrix
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportGenVectLin.check import check
+except ImportError as error:
+    check = error
 
-from pyleecan.Classes.ImportMatrix import ImportMatrix
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Import.ImportGenVectLin.comp_step import comp_step
+except ImportError as error:
+    comp_step = error
+
+try:
+    from ..Methods.Import.ImportGenVectLin.get_data import get_data
+except ImportError as error:
+    get_data = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportGenVectLin(ImportMatrix):
@@ -19,50 +42,38 @@ class ImportGenVectLin(ImportMatrix):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Import.ImportGenVectLin.check
-    def check(self):
-        """Check that the object is correctly set"""
-        if self.start is None:
-            raise ImportError("Start must not be None")
-        if self.stop is None:
-            raise ImportError("Stop must not be None")
-        if self.num is None:
-            raise ImportError("Num must not be None")
-        if self.stop <= self.start:
-            raise ImportError("You must have start < stop")
-        if self.endpoint is None:
-            self.endpoint = True
-
-    # cf Methods.Import.ImportGenVectLin.comp_step
-    def comp_step(self):
-        """Compute the Step between two points of the linspace"""
-
-        self.check()
-        data = self.get_data()
-        return data[1] - data[0]
-
-    # cf Methods.Import.ImportGenVectLin.get_data
-    def get_data(self):
-        """Generate the linspace vector
-
-        Parameters
-        ----------
-        self : ImportGenVectLin
-            An ImportGenVectLin object
-
-        Returns
-        -------
-        vect: ndarray
-            The generated linspace vector
-
-        """
-
-        vect = np.linspace(
-            start=self.start, stop=self.stop, num=int(self.num), endpoint=self.endpoint
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ImportGenVectLin method check: " + str(check))
+            )
         )
-
-        return self.edit_matrix(vect)
-
+    else:
+        check = check
+    # cf Methods.Import.ImportGenVectLin.comp_step
+    if isinstance(comp_step, ImportError):
+        comp_step = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportGenVectLin method comp_step: " + str(comp_step)
+                )
+            )
+        )
+    else:
+        comp_step = comp_step
+    # cf Methods.Import.ImportGenVectLin.get_data
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportGenVectLin method get_data: " + str(get_data)
+                )
+            )
+        )
+    else:
+        get_data = get_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -162,8 +173,8 @@ class ImportGenVectLin(ImportMatrix):
         if (
             other._start is not None
             and self._start is not None
-            and np.isnan(other._start)
-            and np.isnan(self._start)
+            and isnan(other._start)
+            and isnan(self._start)
         ):
             pass
         elif other._start != self._start:
@@ -177,8 +188,8 @@ class ImportGenVectLin(ImportMatrix):
         if (
             other._stop is not None
             and self._stop is not None
-            and np.isnan(other._stop)
-            and np.isnan(self._stop)
+            and isnan(other._stop)
+            and isnan(self._stop)
         ):
             pass
         elif other._stop != self._stop:
@@ -192,8 +203,8 @@ class ImportGenVectLin(ImportMatrix):
         if (
             other._num is not None
             and self._num is not None
-            and np.isnan(other._num)
-            and np.isnan(self._num)
+            and isnan(other._num)
+            and isnan(self._num)
         ):
             pass
         elif other._num != self._num:
@@ -359,11 +370,3 @@ class ImportGenVectLin(ImportMatrix):
         :Type: bool
         """,
     )
-
-    class ImportError(Exception):
-        """Raised when the data import or generation is not possible"""
-
-        pass
-
-
-ImportError = ImportGenVectLin.ImportError

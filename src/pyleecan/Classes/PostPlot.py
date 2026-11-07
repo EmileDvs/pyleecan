@@ -1,18 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Post/PostPlot.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostPlot"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostPlot
+"""
 
-from inspect import signature
 from os import linesep
-from os.path import join
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .PostMethod import PostMethod
 
-from pyleecan.Classes.PostMethod import PostMethod
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Plot import dict_2D, dict_3D
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Post.PostPlot.run import run
+except ImportError as error:
+    run = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class PostPlot(PostMethod):
@@ -21,66 +33,14 @@ class PostPlot(PostMethod):
     VERSION = 1
 
     # cf Methods.Post.PostPlot.run
-    def run(self, output):
-        """Execute the plot contained in the PostPlot object and save it to save_path
-
-        Parameters
-        ----------
-        self : PostPlot
-            A PostPlot object
-        output : Output
-            an Output object
-
-        """
-
-        output.get_logger().info("Running Post-processing: " + self.name)
-        try:
-            if self.quantity is not None:
-                obj = output.get_data_from_str(self.quantity)
-            else:
-                obj = output
-
-            # Get plot method
-            plot_method = getattr(obj, self.method)
-
-            # Path to save the figure if save_path is not already in param_dict and is an argument of the plot method
-            if "save_path" not in self.param_dict and "save_path" in str(
-                signature(plot_method)
-            ):
-                # Get path of results folder in the Output
-                result_path = output.get_path_result()
-
-                # Check in case format begins with a "."
-                if self.save_format[0] == ".":
-                    str_format = self.save_format
-                else:
-                    str_format = "." + self.save_format
-
-                # Build save_path of the picture
-                self.param_dict["save_path"] = join(result_path, self.name + str_format)
-            # Disabling the display of the figure when plotting
-            if "is_show_fig" not in self.param_dict:
-                self.param_dict["is_show_fig"] = False
-            # Add window title
-            self.param_dict["win_title"] = self.name
-            # Adding colors and fonts
-            if self.method == "plot_2D_Data":
-                self.param_dict = dict(self.param_dict, **dict_2D)
-                self.param_dict["fund_harm_dict"] = output.get_fund_harm(obj)
-            elif self.method == "plot_3D_Data":
-                self.param_dict = dict(self.param_dict, **dict_3D)
-
-            # Execute plot method
-            plot_method(
-                *self.param_list,
-                **self.param_dict,
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use PostPlot method run: " + str(run))
             )
-
-        except Exception as e:
-            output.get_logger().error(
-                "Error while running Post-processing: " + self.name + "\n" + str(e)
-            )
-
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -299,7 +259,7 @@ class PostPlot(PostMethod):
         PostPlot_dict = super(PostPlot, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs,
+            **kwargs
         )
         PostPlot_dict["method"] = self.method
         PostPlot_dict["name"] = self.name

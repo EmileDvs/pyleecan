@@ -1,19 +1,27 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Optimization/OptiGenAlg.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlg"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiGenAlg
+"""
+
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .OptiSolver import OptiSolver
 
 from ntpath import basename
-from os import linesep
 from os.path import isfile
-from sys import getsizeof
-
+from ._check import CheckTypeError
 import numpy as np
-
-from pyleecan.Classes.OptiSolver import OptiSolver
-from pyleecan.Classes._check import CheckTypeError, check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+import random
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OptiGenAlg(OptiSolver):
@@ -176,8 +184,8 @@ class OptiGenAlg(OptiSolver):
         if (
             other._p_cross is not None
             and self._p_cross is not None
-            and np.isnan(other._p_cross)
-            and np.isnan(self._p_cross)
+            and isnan(other._p_cross)
+            and isnan(self._p_cross)
         ):
             pass
         elif other._p_cross != self._p_cross:
@@ -195,8 +203,8 @@ class OptiGenAlg(OptiSolver):
         if (
             other._p_mutate is not None
             and self._p_mutate is not None
-            and np.isnan(other._p_mutate)
-            and np.isnan(self._p_mutate)
+            and isnan(other._p_mutate)
+            and isnan(self._p_mutate)
         ):
             pass
         elif other._p_mutate != self._p_mutate:

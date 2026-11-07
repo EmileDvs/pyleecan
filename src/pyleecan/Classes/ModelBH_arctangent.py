@@ -1,17 +1,22 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Material/ModelBH_arctangent.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/ModelBH_arctangent"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/ModelBH_arctangent
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ModelBH import ModelBH
 
-import numpy as np
-
-from pyleecan.Classes.ModelBH import ModelBH
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ModelBH_arctangent(ModelBH):
@@ -110,8 +115,8 @@ class ModelBH_arctangent(ModelBH):
         if (
             other._k is not None
             and self._k is not None
-            and np.isnan(other._k)
-            and np.isnan(self._k)
+            and isnan(other._k)
+            and isnan(self._k)
         ):
             pass
         elif other._k != self._k:
@@ -123,8 +128,8 @@ class ModelBH_arctangent(ModelBH):
         if (
             other._mu_a is not None
             and self._mu_a is not None
-            and np.isnan(other._mu_a)
-            and np.isnan(self._mu_a)
+            and isnan(other._mu_a)
+            and isnan(self._mu_a)
         ):
             pass
         elif other._mu_a != self._mu_a:

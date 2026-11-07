@@ -1,39 +1,85 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/SlotM18.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotM18"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/SlotM18
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Slot import Slot
 
-import matplotlib.pyplot as plt
-import numpy as np
-from pyleecan.Classes import ParentMissingError
-from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.LamSlot import LamSlot
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes.Slot import Slot
-from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Classes._check import check_var
-from pyleecan.definitions import config_dict
-from pyleecan.Functions.Plot import (
-    ARROW_COLOR,
-    ARROW_WIDTH,
-    MAIN_LINE_COLOR,
-    MAIN_LINE_STYLE,
-    MAIN_LINE_WIDTH,
-    P_FONT_SIZE,
-    SC_FONT_SIZE,
-    TEXT_BOX,
-)
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.labels import (
-    COND_BOUNDARY_PROP_LAB,
-    YOKE_LAB,
-    YSML_LAB,
-    YSMR_LAB,
-)
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Slot.SlotM18._comp_point_coordinate import _comp_point_coordinate
+except ImportError as error:
+    _comp_point_coordinate = error
+
+try:
+    from ..Methods.Slot.SlotM18.build_geometry import build_geometry
+except ImportError as error:
+    build_geometry = error
+
+try:
+    from ..Methods.Slot.SlotM18.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Slot.SlotM18.comp_angle_opening import comp_angle_opening
+except ImportError as error:
+    comp_angle_opening = error
+
+try:
+    from ..Methods.Slot.SlotM18.comp_height import comp_height
+except ImportError as error:
+    comp_height = error
+
+try:
+    from ..Methods.Slot.SlotM18.comp_height_active import comp_height_active
+except ImportError as error:
+    comp_height_active = error
+
+try:
+    from ..Methods.Slot.SlotM18.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Slot.SlotM18.comp_surface_active import comp_surface_active
+except ImportError as error:
+    comp_surface_active = error
+
+try:
+    from ..Methods.Slot.SlotM18.get_surface_active import get_surface_active
+except ImportError as error:
+    get_surface_active = error
+
+try:
+    from ..Methods.Slot.SlotM18.is_airgap_active import is_airgap_active
+except ImportError as error:
+    is_airgap_active = error
+
+try:
+    from ..Methods.Slot.SlotM18.is_full_pitch_active import is_full_pitch_active
+except ImportError as error:
+    is_full_pitch_active = error
+
+try:
+    from ..Methods.Slot.SlotM18.plot_schematics import plot_schematics
+except ImportError as error:
+    plot_schematics = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class SlotM18(Slot):
@@ -41,460 +87,143 @@ class SlotM18(Slot):
 
     VERSION = 1
     IS_SYMMETRICAL = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.SlotM18._comp_point_coordinate
-    def _comp_point_coordinate(self):
-        """Compute the point coordinates needed to plot the Slot.
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        point_dict: dict
-            A dict of the slot coordinates
-        """
-
-        Rbo = self.get_Rbo()
-
-        sp = 2 * np.pi / self.Zs
-        Z1 = Rbo * np.exp(-1j * sp / 2)
-        ZM1 = Rbo * np.exp(-1j * sp / 2)
-
-        if self.is_outwards():
-            ZM2 = (Rbo - self.H0) * np.exp(-1j * sp / 2)
-        else:  # inward slot
-            ZM2 = (Rbo + self.H0) * np.exp(-1j * sp / 2)
-
-        point_dict = dict()
-        point_dict["Z1"] = Z1
-        point_dict["ZM1"] = ZM1
-        point_dict["ZM2"] = ZM2
-        # symetry
-        point_dict["Z2"] = Z1.conjugate()
-        point_dict["ZM3"] = ZM2.conjugate()
-        point_dict["ZM4"] = ZM1.conjugate()
-
-        return point_dict
-
-    # cf Methods.Slot.SlotM18.build_geometry
-    def build_geometry(self):
-        """Compute the curve (Line) needed to plot the Slot.
-        The ending point of a curve is the starting point of the next curve in
-        the list
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        curve_list: list
-            A list of 3 Segments
-
-        """
-        Rbo = self.get_Rbo()
-        point_dict = self._comp_point_coordinate()
-        Z1 = point_dict["Z1"]
-        Z2 = point_dict["Z2"]
-
-        # Creation of curve
-        curve_list = list()
-        curve_list.append(Arc1(Z1, Z2, Rbo, is_trigo_direction=True))
-
-        return curve_list
-
-    # cf Methods.Slot.SlotM18.check
-    def check(self):
-        """Check that the SlotM18 object is correct
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        None
-        """
-        pass
-
-    # cf Methods.Slot.SlotM18.comp_angle_opening
-    def comp_angle_opening(self):
-        """Compute the average opening angle of the Slot
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        alpha: float
-            Average opening angle of the slot [rad]
-
-        """
-
-        return 2 * np.pi / self.Zs
-
-    # cf Methods.Slot.SlotM18.comp_height
-    def comp_height(self):
-        """Compute the height of the Slot.
-        Caution, the bottom of the Slot is an Arc
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        Htot: float
-            Height of the slot [m]
-
-        """
-
-        return 0
-
-    # cf Methods.Slot.SlotM18.comp_height_active
-    def comp_height_active(self):
-        """Compute the height of the active area
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        Hwind: float
-            Height of the active area [m]
-
-        """
-
-        return self.H0
-
-    # cf Methods.Slot.SlotM18.comp_surface
-    def comp_surface(self):
-        """Compute the Slot total surface (by analytical computation).
-        Caution, the bottom of the Slot is an Arc
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        S: float
-            Slot total surface [m**2]
-
-        """
-
-        return 0
-
-    # cf Methods.Slot.SlotM18.comp_surface_active
-    def comp_surface_active(self):
-        """Compute the Slot inner active surface (by analytical computation)
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        Swind: float
-            Slot inner active surface [m**2]
-
-        """
-
-        point_dict = self._comp_point_coordinate()
-        ZM1 = point_dict["ZM1"]
-        ZM2 = point_dict["ZM2"]
-
-        R1 = abs(ZM1)
-        R2 = abs(ZM2)
-
-        S1 = np.pi * R1**2 / self.Zs
-        S2 = np.pi * R2**2 / self.Zs
-
-        return abs(S1 - S2)
-
-    # cf Methods.Slot.SlotM18.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
-        """Return the full active surface
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-        alpha : float
-            float number for rotation (Default value = 0) [rad]
-        delta : complex
-            complex number for translation (Default value = 0)
-
-        Returns
-        -------
-        surf_act: Surface
-            Surface corresponding to the Active Area
-        """
-
-        # get the name of the lamination
-        st = self.get_name_lam()
-        Rbo = self.get_Rbo()
-
-        point_dict = self._comp_point_coordinate()
-        ZM1 = point_dict["ZM1"]
-        ZM2 = point_dict["ZM2"]
-        ZM3 = point_dict["ZM3"]
-        ZM4 = point_dict["ZM4"]
-
-        curve_list = list()
-        curve_list.append(
-            Segment(ZM1, ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
-        )
-
-        if self.is_outwards():
-            curve_list.append(Arc1(ZM2, ZM3, (Rbo - self.H0), is_trigo_direction=True))
-        else:
-            curve_list.append(Arc1(ZM2, ZM3, (Rbo + self.H0), is_trigo_direction=True))
-
-        curve_list.append(
-            Segment(ZM3, ZM4, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
-        )
-
-        if self.is_outwards():
-            curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
-        else:
-            curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
-        # If no lamination, BC is required on bore
-        curve_list[-1].prop_dict = {COND_BOUNDARY_PROP_LAB: YOKE_LAB}
-
-        Zmid = (abs(ZM1) + abs(ZM3)) / 2
-
-        surface = SurfLine(
-            line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
-        )
-
-        # Apply transformation
-        surface.rotate(alpha)
-        surface.translate(delta)
-
-        return surface
-
-    # cf Methods.Slot.SlotM18.is_airgap_active
-    def is_airgap_active(self):
-        """Return True if a part or the full active surface is in the airgap
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        is_airgap_active : bool
-            True if a part or the full active surface is in the airgap
-        """
-
-        return True
-
-    # cf Methods.Slot.SlotM18.is_full_pitch_active
-    def is_full_pitch_active(self):
-        """Returns True if the active surface angular width
-        matches the slot pitch (like SlotM17 or SlotM18)
-        (used to set Boundary conditions in FEMM airgap)
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-
-        Returns
-        -------
-        is_full_pitch_active : bool
-            True if the active surface angular width matches the slot pitch
-        """
-
-        return True
-
-    # cf Methods.Slot.SlotM18.plot_schematics
-    def plot_schematics(
-        self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
-        """Plot the schematics of the slot
-
-        Parameters
-        ----------
-        self : SlotM18
-            A SlotM18 object
-        is_default : bool
-            True: plot default schematics, else use current slot values
-        is_return_default : bool
-            True: return the default lamination used for the schematics (skip plot)
-        is_add_point_label : bool
-            True to display the name of the points (Z1, Z2....)
-        is_add_schematics : bool
-            True to display the schematics information (W0, H0...)
-        is_add_main_line : bool
-            True to display "main lines" (slot opening and 0x axis)
-        type_add_active : int
-            0: No active surface, 1: active surface as winding, 2: active surface as magnet
-        save_path : str
-            full path including folder, name and extension of the file to save if save_path is not None
-        is_show_fig : bool
-            To call show at the end of the method
-        fig : Matplotlib.figure.Figure
-            existing figure to use if None create a new one
-        ax : Matplotlib.axes.Axes object
-            Axis on which to plot the data
-
-        Returns
-        -------
-        fig : Matplotlib.figure.Figure
-            Figure containing the schematics
-        ax : Matplotlib.axes.Axes object
-            Axis containing the schematics
-        -------
-        lam : LamSlot
-            Default lamination used for the schematics
-        """
-
-        # Use some default parameter
-        if is_default:
-            slot = type(self)(Zs=16, H0=15e-3)
-            lam = LamSlot(
-                Rint=0.1, Rext=0.135, is_internal=True, is_stator=False, slot=slot
+    if isinstance(_comp_point_coordinate, ImportError):
+        _comp_point_coordinate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method _comp_point_coordinate: "
+                    + str(_comp_point_coordinate)
+                )
             )
-            if is_return_default:
-                return lam
-            else:
-                return slot.plot_schematics(
-                    is_default=False,
-                    is_return_default=False,
-                    is_add_point_label=is_add_point_label,
-                    is_add_schematics=is_add_schematics,
-                    is_add_main_line=is_add_main_line,
-                    type_add_active=type_add_active,
-                    save_path=save_path,
-                    is_show_fig=is_show_fig,
-                    fig=fig,
-                    ax=ax,
+        )
+    else:
+        _comp_point_coordinate = _comp_point_coordinate
+    # cf Methods.Slot.SlotM18.build_geometry
+    if isinstance(build_geometry, ImportError):
+        build_geometry = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method build_geometry: " + str(build_geometry)
                 )
-        else:
-            # Getting the main plot
-            if self.parent is None:
-                raise ParentMissingError("Error: The slot is not inside a Lamination")
-            lam = self.parent
-            fig, ax = lam.plot(
-                alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
-            )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
-                sign = +1
-            else:
-                sign = -1
-            Rbo = self.get_Rbo()
-
-            # Adding point label
-            if is_add_point_label:
-                for name, Z in point_dict.items():
-                    ax.text(
-                        Z.real,
-                        Z.imag,
-                        name,
-                        fontsize=P_FONT_SIZE,
-                        bbox=TEXT_BOX,
-                    )
-
-            # Adding schematics
-            if is_add_schematics:
-                # H0
-                line = Segment(point_dict["ZM3"], point_dict["ZM4"])
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=ARROW_COLOR,
-                    linewidth=ARROW_WIDTH,
-                    label="H0",
-                    offset_label=1j * self.H0 * 0.7,
-                    is_arrow=True,
-                    fontsize=SC_FONT_SIZE,
+            )
+        )
+    else:
+        build_geometry = build_geometry
+    # cf Methods.Slot.SlotM18.check
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotM18 method check: " + str(check))
+            )
+        )
+    else:
+        check = check
+    # cf Methods.Slot.SlotM18.comp_angle_opening
+    if isinstance(comp_angle_opening, ImportError):
+        comp_angle_opening = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method comp_angle_opening: "
+                    + str(comp_angle_opening)
                 )
-
-            if is_add_main_line:
-                # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=MAIN_LINE_COLOR,
-                    linestyle=MAIN_LINE_STYLE,
-                    linewidth=MAIN_LINE_WIDTH,
+            )
+        )
+    else:
+        comp_angle_opening = comp_angle_opening
+    # cf Methods.Slot.SlotM18.comp_height
+    if isinstance(comp_height, ImportError):
+        comp_height = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use SlotM18 method comp_height: " + str(comp_height))
+            )
+        )
+    else:
+        comp_height = comp_height
+    # cf Methods.Slot.SlotM18.comp_height_active
+    if isinstance(comp_height_active, ImportError):
+        comp_height_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method comp_height_active: "
+                    + str(comp_height_active)
                 )
-                # Magnet separation lines
-                for ii in range(self.Zs):
-                    line = Segment(
-                        point_dict["ZM1"] * np.exp(1j * 2 * np.pi / self.Zs * ii),
-                        point_dict["ZM2"] * np.exp(1j * 2 * np.pi / self.Zs * ii),
-                    )
-                    line.plot(
-                        fig=fig,
-                        ax=ax,
-                        color="k",
-                        linestyle="-",
-                        linewidth=MAIN_LINE_WIDTH,
-                    )
-
-            if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
-            elif type_add_active == 2:
-                self.plot_active(
-                    fig=fig,
-                    ax=ax,
-                    is_show_fig=False,
-                    enforced_default_color=self.MAGNET_COLOR,
+            )
+        )
+    else:
+        comp_height_active = comp_height_active
+    # cf Methods.Slot.SlotM18.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method comp_surface: " + str(comp_surface)
                 )
-
-            # Zooming and cleaning
-            W = point_dict["ZM3"].imag * 3
-            Rint, Rext = self.comp_radius()
-
-            ax.axis("equal")
-            ax.set_xlim(Rint, Rext)
-            ax.set_ylim(-W, W)
-            manager = plt.get_current_fig_manager()
-            if manager is not None:
-                manager.set_window_title(type(self).__name__ + " Schematics")
-            ax.set_title("")
-            ax.get_legend().remove()
-            ax.set_axis_off()
-            fig.tight_layout()
-
-            # Save / Show
-            if save_path is not None:
-                fig.savefig(save_path)
-                plt.close(fig=fig)
-
-            if is_show_fig:
-                fig.show()
-            return fig, ax
-
+            )
+        )
+    else:
+        comp_surface = comp_surface
+    # cf Methods.Slot.SlotM18.comp_surface_active
+    if isinstance(comp_surface_active, ImportError):
+        comp_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method comp_surface_active: "
+                    + str(comp_surface_active)
+                )
+            )
+        )
+    else:
+        comp_surface_active = comp_surface_active
+    # cf Methods.Slot.SlotM18.get_surface_active
+    if isinstance(get_surface_active, ImportError):
+        get_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method get_surface_active: "
+                    + str(get_surface_active)
+                )
+            )
+        )
+    else:
+        get_surface_active = get_surface_active
+    # cf Methods.Slot.SlotM18.is_airgap_active
+    if isinstance(is_airgap_active, ImportError):
+        is_airgap_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method is_airgap_active: "
+                    + str(is_airgap_active)
+                )
+            )
+        )
+    else:
+        is_airgap_active = is_airgap_active
+    # cf Methods.Slot.SlotM18.is_full_pitch_active
+    if isinstance(is_full_pitch_active, ImportError):
+        is_full_pitch_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method is_full_pitch_active: "
+                    + str(is_full_pitch_active)
+                )
+            )
+        )
+    else:
+        is_full_pitch_active = is_full_pitch_active
+    # cf Methods.Slot.SlotM18.plot_schematics
+    if isinstance(plot_schematics, ImportError):
+        plot_schematics = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use SlotM18 method plot_schematics: " + str(plot_schematics)
+                )
+            )
+        )
+    else:
+        plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -579,8 +308,8 @@ class SlotM18(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and np.isnan(other._H0)
-            and np.isnan(self._H0)
+            and isnan(other._H0)
+            and isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:

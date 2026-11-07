@@ -1,15 +1,65 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/Interpolation/RefTriangle3.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/RefTriangle3"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/RefTriangle3
+"""
 
-from typing import Optional, Tuple
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .RefElement import RefElement
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Mesh.RefTriangle3.get_element_area import get_element_area
+except ImportError as error:
+    get_element_area = error
 
-from pyleecan.Classes.RefElement import RefElement
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Mesh.RefTriangle3.get_normal import get_normal
+except ImportError as error:
+    get_normal = error
+
+try:
+    from ..Methods.Mesh.RefTriangle3.get_real_point import get_real_point
+except ImportError as error:
+    get_real_point = error
+
+try:
+    from ..Methods.Mesh.RefTriangle3.get_ref_point import get_ref_point
+except ImportError as error:
+    get_ref_point = error
+
+try:
+    from ..Methods.Mesh.RefTriangle3.grad_shape_function import grad_shape_function
+except ImportError as error:
+    grad_shape_function = error
+
+try:
+    from ..Methods.Mesh.RefTriangle3.is_inside import is_inside
+except ImportError as error:
+    is_inside = error
+
+try:
+    from ..Methods.Mesh.RefTriangle3.jacobian import jacobian
+except ImportError as error:
+    jacobian = error
+
+try:
+    from ..Methods.Mesh.RefTriangle3.shape_function import shape_function
+except ImportError as error:
+    shape_function = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class RefTriangle3(RefElement):
@@ -17,228 +67,97 @@ class RefTriangle3(RefElement):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Mesh.RefTriangle3.get_element_area
-    def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:
-        """Return the area of the elements.
-        https://en.wikipedia.org/wiki/Shoelace_formula
-
-        Parameters
-        ----------
-        self : RefTriangle3
-            a RefTriangle3 object
-        element_coordinate : list or array
-            the elements coordinates
-
-        Returns
-        -------
-        area: array
-            area of the elements
-        """
-        if isinstance(element_coordinate, list):
-            element_coordinate = np.array(element_coordinate)
-
-        if element_coordinate.shape[-1] == 2:  # 2D - case
-            if (
-                len(element_coordinate.shape) == 2
-            ):  # only one indice -> adapt array shape
-                element_coordinate = element_coordinate[np.newaxis, :, :]
-
-            a = element_coordinate[:, 0, 0] - element_coordinate[:, 1, 0]  # x1 - x2
-            b = element_coordinate[:, 0, 1] - element_coordinate[:, 2, 1]  # y1 - y3
-            c = element_coordinate[:, 0, 0] - element_coordinate[:, 2, 0]  # x1 - x3
-            d = element_coordinate[:, 0, 1] - element_coordinate[:, 1, 1]  # y1 - y2
-
-        area = 1 / 2 * np.abs(a * b - c * d)
-
-        return area
-
+    if isinstance(get_element_area, ImportError):
+        get_element_area = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method get_element_area: "
+                    + str(get_element_area)
+                )
+            )
+        )
+    else:
+        get_element_area = get_element_area
     # cf Methods.Mesh.RefTriangle3.get_normal
-    def get_normal(self, element_coordinate: np.ndarray) -> np.ndarray:
-        """Return the array of the normals coordinates.
-
-        Parameters
-        ----------
-        element_coordinate : ndarray
-            Coordinate of the element
-
-        Returns
-        -------
-        normal : ndarray
-            Normal vectors
-
-        Raises
-        ------
-        NotImplementedError
-            RefTriangle3.get_normal is not implemented.
-        """
-
-        # u1 = element_coordinate[1, :] - element_coordinate[0, :]
-        # u2 = element_coordinate[2, :] - element_coordinate[0, :]
-        # n = np.cross(u1, u2)
-        # n = n / np.linalg.norm(n)
-        raise NotImplementedError("RefTriangle3.get_normal is not implemented.")
-
+    if isinstance(get_normal, ImportError):
+        get_normal = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method get_normal: " + str(get_normal)
+                )
+            )
+        )
+    else:
+        get_normal = get_normal
     # cf Methods.Mesh.RefTriangle3.get_real_point
-    def get_real_point(
-        self, element_coordinate: np.ndarray, ref_pt: np.ndarray, nb_ref_pt: int = 1
-    ) -> np.ndarray:
-        """Return the coordinates in the element of a point in the reference element.
-
-        Parameters
-        ----------
-        self : RefTriangle3
-             an RefElement object
-        element_coordinate : ndarray
-            coordinates of the element
-        ref_pt : ndarray
-            ref point(s)
-        nb_ref_pt : int
-            nb of ref points
-
-        Returns
-        -------
-        real_points : ndarray
-            points coordinate
-
-        """
-
-        vert = element_coordinate[:, 0:2]
-        real_points = np.zeros((nb_ref_pt, 2))
-
-        for ii in range(nb_ref_pt):
-            if nb_ref_pt == 1:
-                pt = ref_pt
-            else:
-                pt = ref_pt[ii, :]
-
-            [jacob, detJ] = self.jacobian(pt, vert)
-            real_points[ii, :] = np.array(vert[0, :] + np.dot(pt, jacob), dtype=float)
-
-        return real_points
-
+    if isinstance(get_real_point, ImportError):
+        get_real_point = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method get_real_point: "
+                    + str(get_real_point)
+                )
+            )
+        )
+    else:
+        get_real_point = get_real_point
     # cf Methods.Mesh.RefTriangle3.get_ref_point
-    def get_ref_point(
-        self, element_coordinate: np.ndarray, point: np.ndarray
-    ) -> np.ndarray:
-        """Return the coordinate of the equivalent point in the ref element
-
-        Parameters
-        ----------
-        self : RefTriangle3
-            a RefTriangle3 object
-        element_coordinate : ndarray
-            coordinates of the element
-        point : ndarray
-            coordinates of a point
-
-            Returns
-        -------
-        pt1_ref : ndarray
-            coordinates of the ref point
-        """
-
-        jacob, _ = self.jacobian(point, element_coordinate)
-        inv_jacob = np.linalg.inv(jacob)
-        point_ref = np.dot((point - element_coordinate[0, :]), inv_jacob)
-
-        return point_ref
-
+    if isinstance(get_ref_point, ImportError):
+        get_ref_point = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method get_ref_point: " + str(get_ref_point)
+                )
+            )
+        )
+    else:
+        get_ref_point = get_ref_point
     # cf Methods.Mesh.RefTriangle3.grad_shape_function
-    def grad_shape_function(self, point: np.ndarray) -> np.ndarray:
-        """Return the gradient of linear shape functions in reference triangle for a given point
-
-        Parameters
-        ----------
-        point : np.ndarray
-            point where to compute the shape functions gradient values
-
-        Returns
-        -------
-        np.ndarray
-            shape function gradient values
-        """
-
-        return np.array([[-1, 1, 0], [-1, 0, 1]], dtype=np.float64)
-
+    if isinstance(grad_shape_function, ImportError):
+        grad_shape_function = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method grad_shape_function: "
+                    + str(grad_shape_function)
+                )
+            )
+        )
+    else:
+        grad_shape_function = grad_shape_function
     # cf Methods.Mesh.RefTriangle3.is_inside
-    def is_inside(
-        self, node: np.ndarray, point: np.ndarray, normal_t: Optional[np.ndarray] = None
-    ) -> Tuple[bool, float, float]:
-        """Check if a point is inside the element defined by the nodes.
-
-        Parameters
-        ----------
-        self : RefTriangle3
-            an RefTriangle3 object
-        node : ndarray
-            nodes of the element
-        point : ndarray
-            coordinates of the checked point
-        normal_t : ndarray
-            (optional) normal of another element
-
-        Returns
-        -------
-        is_inside: bool
-            true if the point is inside the element
-        """
-        point_ref = self.get_ref_point(node, point)
-        s = point_ref[0]
-        t = point_ref[1]
-        a = s
-        b = t
-        c = 1 - s - t
-        is_inside = (a > -self.epsilon) & (b > -self.epsilon) & (c > -self.epsilon)
-
-        # Optional : Check that normals are almost aligned
-        if normal_t is not None:
-            normal_s = self.get_normal(node)
-            scal_st = np.dot(normal_t[0:2], normal_s)
-            is_colinear = abs(scal_st) > 1 - 2 * self.epsilon
-            is_inside = is_inside & is_colinear
-
-        return is_inside, a, b
-
+    if isinstance(is_inside, ImportError):
+        is_inside = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method is_inside: " + str(is_inside)
+                )
+            )
+        )
+    else:
+        is_inside = is_inside
     # cf Methods.Mesh.RefTriangle3.jacobian
-    def jacobian(
-        self, point: np.ndarray, element_coordinate: np.ndarray
-    ) -> Tuple[np.ndarray, float]:
-        """Compute jacobian, jacobian determinant and jacobian derivatives for linear triangle.
-
-        Parameters
-        ----------
-        point: ndarray
-            coordinates of the point where the jabobian is computed
-        element_coordinate: ndarray
-            coordinates of the element
-
-        Returns
-        -------
-
-        """
-
-        grad_func = self.grad_shape_function(point)
-        jacob = np.dot(grad_func, element_coordinate[:, :2])
-        det_jacob = np.linalg.det(jacob)
-
-        return jacob, det_jacob
-
+    if isinstance(jacobian, ImportError):
+        jacobian = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use RefTriangle3 method jacobian: " + str(jacobian))
+            )
+        )
+    else:
+        jacobian = jacobian
     # cf Methods.Mesh.RefTriangle3.shape_function
-    def shape_function(self, points: np.ndarray) -> Tuple[np.ndarray, int]:
-        """Return the values of linear shape functions in reference triangle for a given point"""
-        if points.ndim == 1:
-            points = points.reshape(1, -1)
-
-        nb_shape_func = 3
-        values = np.zeros([points.shape[0], 1, nb_shape_func], dtype=float)
-        # TODO this implementation assumes that the points are contained in the same z plane
-        for i, (x, y) in enumerate(points[:, :2]):
-            values[i, 0, 0] = 1 - x - y
-            values[i, 0, 1] = x
-            values[i, 0, 2] = y
-
-        return values, nb_shape_func
-
+    if isinstance(shape_function, ImportError):
+        shape_function = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefTriangle3 method shape_function: "
+                    + str(shape_function)
+                )
+            )
+        )
+    else:
+        shape_function = shape_function
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

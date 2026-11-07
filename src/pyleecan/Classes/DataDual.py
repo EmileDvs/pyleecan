@@ -1,17 +1,36 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/DataDual.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataDual"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataDual
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .DataND import DataND
 
-import numpy as np
-from pyleecan.Classes.DataND import DataND
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.DataDual.get_along import get_along
+except ImportError as error:
+    get_along = error
+
+try:
+    from ..Methods.SciDataTool.DataDual.get_axes import get_axes
+except ImportError as error:
+    get_axes = error
+
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class DataDual(DataND):
@@ -19,108 +38,25 @@ class DataDual(DataND):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.SciDataTool.DataDual.get_along
-    def get_along(
-        self,
-        *args,
-        unit="SI",
-        is_norm=False,
-        axis_data=[],
-        is_squeeze=True,
-        is_magnitude=False,
-        corr_unit=None,
-    ):
-        """Returns the ndarray of the field, using conversions and symmetries if needed.
-        Parameters
-        ----------
-        self: Data
-            a Data object
-        *args: list of strings
-            List of axes requested by the user, their units and values (optional)
-        unit: str
-            Unit requested by the user ("SI" by default)
-        is_norm: bool
-            Boolean indicating if the field must be normalized (False by default)
-        axis_data: list
-            list of ndarray corresponding to user-input data
-        Returns
-        -------
-        list of 1Darray of axes values, ndarray of field values
-        """
-
-        # Get best attributes (time/space or fourier)
-        if self.is_freq(*args):
-            if hasattr(self, "values_df") and self.values_df is not None:
-                # Replace axes and values with fourier ones
-                self.axes = self.axes_df
-                self.values = self.values_df
-            else:
-                # Replace axes and values with time/space ones
-                self.axes = self.axes_dt
-                self.values = self.values_dt
-        else:
-            if hasattr(self, "values_dt") and self.values_dt is not None:
-                # Replace axes and values with time/space ones
-                self.axes = self.axes_dt
-                self.values = self.values_dt
-            else:
-                # Replace axes and values with fourier ones
-                self.axes = self.axes_df
-                self.values = self.values_df
-
-        # Call DataND.get_along()
-        return super(type(self), self).get_along(
-            *args,
-            unit=unit,
-            is_norm=is_norm,
-            axis_data=axis_data,
-            is_squeeze=is_squeeze,
-            is_magnitude=is_magnitude,
-            corr_unit=corr_unit,
+    if isinstance(get_along, ImportError):
+        get_along = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataDual method get_along: " + str(get_along))
+            )
         )
-
-    @staticmethod
-    def is_freq(*args):
-        """Determine if input args require FreqPart"""
-        is_freq = False
-        if len(args) == 1 and type(args[0]) == tuple:
-            args = args[0]
-        for arg in args:
-            if "freqs" in arg or "wavenumber" in arg:
-                is_freq = True
-                break
-        return is_freq
-
+    else:
+        get_along = get_along
     # cf Methods.SciDataTool.DataDual.get_axes
-    def get_axes(self, *args):
-        """Returns the list of axes.
-        Parameters
-        ----------
-        self: DataDual
-            a DataDual object
-        args : list
-            list of axes names
-        Returns
-        -------
-        axes_list : list of axes (Data)
-        """
-
-        if self.axes is None:
-            axes = self.axes_dt + self.axes_df
-        else:
-            axes = self.axes
-
-        if len(args) > 0:
-            axes_list = []
-            for name in args:
-                for axis in axes:
-                    if axis.name == name:
-                        axes_list.append(axis)
-        else:
-            axes_list = axes
-
-        return axes_list
-
+    if isinstance(get_axes, ImportError):
+        get_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataDual method get_axes: " + str(get_axes))
+            )
+        )
+    else:
+        get_axes = get_axes
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -244,11 +180,11 @@ class DataDual(DataND):
             return False
         if other.axes_dt != self.axes_dt:
             return False
-        if not np.array_equal(other.values_dt, self.values_dt):
+        if not array_equal(other.values_dt, self.values_dt):
             return False
         if other.axes_df != self.axes_df:
             return False
-        if not np.array_equal(other.values_df, self.values_df):
+        if not array_equal(other.values_df, self.values_df):
             return False
         return True
 
@@ -285,7 +221,7 @@ class DataDual(DataND):
                         is_add_value=is_add_value,
                     )
                 )
-        if not np.array_equal(other.values_dt, self.values_dt):
+        if not array_equal(other.values_dt, self.values_dt):
             diff_list.append(name + ".values_dt")
         if (other.axes_df is None and self.axes_df is not None) or (
             other.axes_df is not None and self.axes_df is None
@@ -305,7 +241,7 @@ class DataDual(DataND):
                         is_add_value=is_add_value,
                     )
                 )
-        if not np.array_equal(other.values_df, self.values_df):
+        if not array_equal(other.values_df, self.values_df):
             diff_list.append(name + ".values_df")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -343,7 +279,7 @@ class DataDual(DataND):
         DataDual_dict = super(DataDual, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs,
+            **kwargs
         )
         if self.axes_dt is None:
             DataDual_dict["axes_dt"] = None
@@ -355,7 +291,7 @@ class DataDual(DataND):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs,
+                            **kwargs
                         )
                     )
                 else:
@@ -383,7 +319,7 @@ class DataDual(DataND):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs,
+                            **kwargs
                         )
                     )
                 else:
@@ -530,10 +466,10 @@ class DataDual(DataND):
     def _set_values_dt(self, value):
         """setter of values_dt"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("values_dt", value, "ndarray")
@@ -597,10 +533,10 @@ class DataDual(DataND):
     def _set_values_df(self, value):
         """setter of values_df"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("values_df", value, "ndarray")

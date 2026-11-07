@@ -1,17 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/Norm_ref.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_ref"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_ref
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Normalization import Normalization
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.Norm_ref.normalize import normalize
+except ImportError as error:
+    normalize = error
 
-from pyleecan.Classes.Normalization import Normalization
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Norm_ref(Normalization):
@@ -20,23 +33,14 @@ class Norm_ref(Normalization):
     VERSION = 1
 
     # cf Methods.SciDataTool.Norm_ref.normalize
-    def normalize(
-        self,
-        values,
-    ):
-        """Normalizes axis values
-        Parameters
-        ----------
-        self: Norm_ref
-            a Norm_ref object
-        values: ndarray
-            axis values
-        Returns
-        -------
-        Vector of axis values
-        """
-        return values / self.ref
-
+    if isinstance(normalize, ImportError):
+        normalize = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Norm_ref method normalize: " + str(normalize))
+            )
+        )
+    else:
+        normalize = normalize
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -109,8 +113,8 @@ class Norm_ref(Normalization):
         if (
             other._ref is not None
             and self._ref is not None
-            and np.isnan(other._ref)
-            and np.isnan(self._ref)
+            and isnan(other._ref)
+            and isnan(self._ref)
         ):
             pass
         elif other._ref != self._ref:

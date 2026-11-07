@@ -1,33 +1,62 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/VentilationCirc.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/VentilationCirc"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/VentilationCirc
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Hole import Hole
 
-import matplotlib.pyplot as plt
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Slot.VentilationCirc._comp_point_coordinate import (
+        _comp_point_coordinate,
+    )
+except ImportError as error:
+    _comp_point_coordinate = error
 
-from pyleecan.Classes import ParentMissingError
-from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.Circle import Circle
-from pyleecan.Classes.Hole import Hole
-from pyleecan.Classes.LamHole import LamHole
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Plot import (
-    ARROW_COLOR,
-    ARROW_WIDTH,
-    MAIN_LINE_COLOR,
-    MAIN_LINE_STYLE,
-    MAIN_LINE_WIDTH,
-    P_FONT_SIZE,
-    SC_FONT_SIZE,
-    TEXT_BOX,
-)
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Slot.VentilationCirc.build_geometry import build_geometry
+except ImportError as error:
+    build_geometry = error
+
+try:
+    from ..Methods.Slot.VentilationCirc.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Slot.VentilationCirc.comp_radius import comp_radius
+except ImportError as error:
+    comp_radius = error
+
+try:
+    from ..Methods.Slot.VentilationCirc.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Slot.VentilationCirc.get_center import get_center
+except ImportError as error:
+    get_center = error
+
+try:
+    from ..Methods.Slot.VentilationCirc.plot_schematics import plot_schematics
+except ImportError as error:
+    plot_schematics = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class VentilationCirc(Hole):
@@ -35,399 +64,86 @@ class VentilationCirc(Hole):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.VentilationCirc._comp_point_coordinate
-    def _comp_point_coordinate(self):
-        """Compute the point coordinates needed to plot the Hole.
-
-        Parameters
-        ----------
-        self : VentilationCirc
-            A VentilationCirc object
-
-        Returns
-        -------
-        point_dict: dict
-            A dict of the slot point coordinates
-        """
-        Rbo = self.get_Rbo()
-
-        Z1 = (self.H0 - self.D0 / 2) * np.exp(1j * self.Alpha0)
-        Z2 = (self.H0 + self.D0 / 2) * np.exp(1j * self.Alpha0)
-        Zc = (self.H0) * np.exp(1j * self.Alpha0)
-
-        point_dict = dict()
-        # symetry
-        point_dict["Z1"] = Z1
-        point_dict["Z2"] = Z2
-        point_dict["Zc"] = Zc
-        return point_dict
-
-    # cf Methods.Slot.VentilationCirc.build_geometry
-    def build_geometry(self, alpha=0, delta=0):
-        """Compute the curve needed to plot the ventilations
-
-        Parameters
-        ----------
-        self : VentilationCirc
-            A VentilationCirc object
-        alpha : float
-            Angle for rotation (Default value = 0) [rad]
-        delta : complex
-            Complex for translation (Default value = 0)
-
-        Returns
-        -------
-        surf_list: list
-            A list of Circle
-
-        """
-        lam_label = self.parent.get_label()
-        R_id, surf_type = self.get_R_id()
-        RTS_id = "R" + str(R_id) + "-T0-S0"
-        vent_label = lam_label + "_" + surf_type + "_" + RTS_id
-
-        # checking if the param have good type
-        if type(alpha) not in [int, float]:
-            raise CircleBuildGeometryError(
-                "The parameter 'alpha' must be an int or float"
-            )
-        if type(delta) not in [complex, int, float]:
-            raise CircleBuildGeometryError(
-                "The parameter 'delta' must be a complex or float or int number"
-            )
-
-        surf_list = list()
-        # Modulo on Alpha0 for sym
-        Alpha0 = self.Alpha0 % (2 * np.pi / self.Zh)
-        # The center
-        Zc = self.H0 * np.exp(1j * Alpha0)
-        # the radius of the circle on the VentilationCirc
-        R = self.D0 / 2
-        surf_list.append(
-            Circle(
-                point_ref=Zc,
-                label=vent_label,
-                radius=R,
-                center=Zc,
+    if isinstance(_comp_point_coordinate, ImportError):
+        _comp_point_coordinate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VentilationCirc method _comp_point_coordinate: "
+                    + str(_comp_point_coordinate)
+                )
             )
         )
-
-        return surf_list
-
+    else:
+        _comp_point_coordinate = _comp_point_coordinate
+    # cf Methods.Slot.VentilationCirc.build_geometry
+    if isinstance(build_geometry, ImportError):
+        build_geometry = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VentilationCirc method build_geometry: "
+                    + str(build_geometry)
+                )
+            )
+        )
+    else:
+        build_geometry = build_geometry
     # cf Methods.Slot.VentilationCirc.check
-    def check(self):
-        """Make sure that the ventilation parameters are correctly set
-
-        Parameters
-        ----------
-        self : VentilationCirc
-            A VentilationCirc object
-
-        Returns
-        -------
-        None
-
-        Raises
-        _______
-        VentilationCircInstanceError
-            Zh must be an integer
-            H0 must be a float ot int
-            D0 must be a float or int
-            Alpha0 must be a float ot int
-        """
-
-        if not isinstance(self.Zh, (int, np.int32)):
-            raise VentilationCircInstanceError("Zh must be an integer")
-        if not isinstance(self.H0, (float, int)):
-            raise VentilationCircInstanceError("H0 must be a float ot int ")
-        if not isinstance(self.D0, (float, int)):
-            raise VentilationCircInstanceError("D0 must be a float or int ")
-        if not isinstance(self.Alpha0, (float, int)):
-            raise VentilationCircInstanceError("Alpha0 must be a float ot int")
-
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VentilationCirc method check: " + str(check))
+            )
+        )
+    else:
+        check = check
     # cf Methods.Slot.VentilationCirc.comp_radius
-    def comp_radius(self):
-        """Compute the radius of the two circle that contains all the ventilation
-        ducts
-
-        Parameters
-        ----------
-        self : VentilationCirc
-            A VentilationCirc object
-
-        Returns
-        -------
-        (Rmin, Rmax): tuple
-            Tuple of circle radius [m]
-
-        """
-
-        self.check()
-
-        Rmin = self.H0 - self.D0 / 2.0
-        Rmax = self.H0 + self.D0 / 2.0
-
-        return (Rmin, Rmax)
-
+    if isinstance(comp_radius, ImportError):
+        comp_radius = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VentilationCirc method comp_radius: " + str(comp_radius)
+                )
+            )
+        )
+    else:
+        comp_radius = comp_radius
     # cf Methods.Slot.VentilationCirc.comp_surface
-    def comp_surface(self):
-        """Compute the surface of all the axial ventilation ducts
-
-        Parameters
-        ----------
-        self : VentilationCirc
-            A VentilationCirc object
-
-        Returns
-        -------
-        Svent:
-            Axial ventilation ducts total surface [m**2]
-
-        """
-
-        self.check()
-
-        return np.pi * ((self.D0 / 2.0) ** 2)
-
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VentilationCirc method comp_surface: "
+                    + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Slot.VentilationCirc.get_center
-    def get_center(self):
-        """Return a list of the center of the ventilations
-
-        Parameters
-        ----------
-        self : VentilationCirc
-            A VentilationCirc object
-
-        Returns
-        -------
-        Zc_list: list
-            List of list of center complex coordinates
-
-        """
-
-        Zc_list = list()
-
-        for ii in range(self.Zh):
-            Zc = (
-                self.H0
-                * np.exp(1j * self.Alpha0)
-                * np.exp(ii * 1j * 2 * np.pi / self.Zh)
+    if isinstance(get_center, ImportError):
+        get_center = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VentilationCirc method get_center: " + str(get_center)
+                )
             )
-            Zc_list.append(Zc)
-
-        return Zc_list
-
+        )
+    else:
+        get_center = get_center
     # cf Methods.Slot.VentilationCirc.plot_schematics
-    def plot_schematics(
-        self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
-        """Plot the schematics of the slot
-
-        Parameters
-        ----------
-        self : VentilationCirc
-            A VentilationCirc object
-        is_default : bool
-            True: plot default schematics, else use current slot values
-        is_return_default : bool
-            True: return the default lamination used for the schematics (skip plot)
-        is_add_point_label : bool
-            True to display the name of the points (Z1, Z2....)
-        is_add_schematics : bool
-            True to display the schematics information (W0, H0...)
-        is_add_main_line : bool
-            True to display "main lines" (slot opening and 0x axis)
-        type_add_active : int
-            0: No active surface, 1: active surface as winding, 2: active surface as magnet
-        save_path : str
-            full path including folder, name and extension of the file to save if save_path is not None
-        is_show_fig : bool
-            To call show at the end of the method
-        fig : Matplotlib.figure.Figure
-            existing figure to use if None create a new one
-        ax : Matplotlib.axes.Axes object
-            Axis on which to plot the data
-
-        Returns
-        -------
-        fig : Matplotlib.figure.Figure
-            Figure containing the plot
-        ax : Matplotlib.axes.Axes object
-            Axis containing the plot
-        -------
-        lam : LamSlot
-            Default lamination used for the schematics
-
-        """
-
-        # Use some default parameter
-        if is_default:
-            hole = type(self)(
-                H0=0.15,
-                Zh=8,
-                Alpha0=0.3,
-                D0=0.025,
+    if isinstance(plot_schematics, ImportError):
+        plot_schematics = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VentilationCirc method plot_schematics: "
+                    + str(plot_schematics)
+                )
             )
-            lam = LamHole(
-                Rint=0.1, Rext=0.2, is_internal=True, is_stator=False, hole=[hole]
-            )
-            if is_return_default:
-                return lam
-            else:
-                return hole.plot_schematics(
-                    is_default=False,
-                    is_return_default=False,
-                    is_add_point_label=is_add_point_label,
-                    is_add_schematics=is_add_schematics,
-                    is_add_main_line=is_add_main_line,
-                    type_add_active=type_add_active,
-                    save_path=save_path,
-                    is_show_fig=is_show_fig,
-                    fig=fig,
-                    ax=ax,
-                )
-        else:
-            # Getting the main plot
-            if self.parent is None:
-                raise ParentMissingError("Error: The hole is not inside a Lamination")
-            lam = self.parent
-            fig, ax = lam.plot(
-                alpha=0,
-                is_show_fig=False,
-                is_lam_only=True,  # No magnet
-                fig=fig,
-                ax=ax,
-            )  # center hole on Ox axis
-            sp = 2 * np.pi / self.Zh
-            Rbo = self.get_Rbo()
-            point_dict = self._comp_point_coordinate()
-
-            # Adding point label
-            if is_add_point_label:
-                for name, Z in point_dict.items():
-                    ax.text(
-                        Z.real,
-                        Z.imag,
-                        name,
-                        fontsize=P_FONT_SIZE,
-                        bbox=TEXT_BOX,
-                    )
-
-            # Adding schematics
-            if is_add_schematics:
-                # H0
-                line = Segment(0, point_dict["Zc"])
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=ARROW_COLOR,
-                    linewidth=ARROW_WIDTH,
-                    label="H0",
-                    offset_label=self.D0 / 2 * 1j,
-                    is_arrow=True,
-                    fontsize=SC_FONT_SIZE,
-                )
-                # D0
-                line = Segment(
-                    point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
-                    point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
-                )
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=ARROW_COLOR,
-                    linewidth=ARROW_WIDTH,
-                    label="D0",
-                    offset_label=self.D0 / 2 * (1 + 1j),
-                    is_arrow=True,
-                    fontsize=SC_FONT_SIZE,
-                )
-                # Alpha0
-                line = Arc1(
-                    begin=self.H0,
-                    end=point_dict["Zc"],
-                    radius=self.H0,
-                    is_trigo_direction=True,
-                )
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=ARROW_COLOR,
-                    linewidth=ARROW_WIDTH,
-                    label="Alpha0",
-                    offset_label=self.D0 / 2,
-                    fontsize=SC_FONT_SIZE,
-                )
-
-            if is_add_main_line:
-                # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=MAIN_LINE_COLOR,
-                    linestyle=MAIN_LINE_STYLE,
-                    linewidth=MAIN_LINE_WIDTH,
-                )
-                # Center axis
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=MAIN_LINE_COLOR,
-                    linestyle=MAIN_LINE_STYLE,
-                    linewidth=MAIN_LINE_WIDTH,
-                )
-                # H0 radius
-                line = Arc1(
-                    begin=self.H0 * np.exp(-1j * np.pi / 2 * 0.9),
-                    end=self.H0 * np.exp(1j * np.pi / 2 * 0.9),
-                    radius=self.H0,
-                    is_trigo_direction=True,
-                )
-                line.plot(
-                    fig=fig,
-                    ax=ax,
-                    color=MAIN_LINE_COLOR,
-                    linestyle=MAIN_LINE_STYLE,
-                    linewidth=MAIN_LINE_WIDTH,
-                )
-
-            # Zooming and cleaning
-            W = abs(point_dict["Z2"].imag) * 1.3
-            Rint = self.parent.Rint
-            Rext = self.parent.Rext
-
-            ax.axis("equal")
-            ax.set_ylim(-Rext / 10, Rext * 0.9)
-            ax.set_xlim(Rext / 10, Rext)
-            manager = plt.get_current_fig_manager()
-            if manager is not None:
-                manager.set_window_title(type(self).__name__ + " Schematics")
-            ax.set_title("")
-            ax.get_legend().remove()
-            ax.set_axis_off()
-            fig.tight_layout()
-
-            # Save / Show
-            if save_path is not None:
-                fig.savefig(save_path)
-                plt.close(fig=fig)
-
-            if is_show_fig:
-                fig.show()
-            return fig, ax
-
+        )
+    else:
+        plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -527,8 +243,8 @@ class VentilationCirc(Hole):
         if (
             other._D0 is not None
             and self._D0 is not None
-            and np.isnan(other._D0)
-            and np.isnan(self._D0)
+            and isnan(other._D0)
+            and isnan(self._D0)
         ):
             pass
         elif other._D0 != self._D0:
@@ -540,8 +256,8 @@ class VentilationCirc(Hole):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and np.isnan(other._H0)
-            and np.isnan(self._H0)
+            and isnan(other._H0)
+            and isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -661,18 +377,3 @@ class VentilationCirc(Hole):
         :min: 0
         """,
     )
-
-    class CircleBuildGeometryError(Exception):
-        """ """
-
-        pass
-
-    class VentilationCircInstanceError(Exception):
-        """ """
-
-        pass
-
-
-CircleBuildGeometryError = VentilationCirc.CircleBuildGeometryError
-
-VentilationCircInstanceError = VentilationCirc.VentilationCircInstanceError

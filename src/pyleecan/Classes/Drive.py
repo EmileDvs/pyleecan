@@ -1,17 +1,22 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/Drive.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Drive"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Drive
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Drive(FrozenClass):
@@ -94,8 +99,8 @@ class Drive(FrozenClass):
         if (
             other._Umax is not None
             and self._Umax is not None
-            and np.isnan(other._Umax)
-            and np.isnan(self._Umax)
+            and isnan(other._Umax)
+            and isnan(self._Umax)
         ):
             pass
         elif other._Umax != self._Umax:
@@ -109,8 +114,8 @@ class Drive(FrozenClass):
         if (
             other._Imax is not None
             and self._Imax is not None
-            and np.isnan(other._Imax)
-            and np.isnan(self._Imax)
+            and isnan(other._Imax)
+            and isnan(self._Imax)
         ):
             pass
         elif other._Imax != self._Imax:

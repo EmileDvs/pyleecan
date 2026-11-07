@@ -1,15 +1,50 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Converter/Rule.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/Rule"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/Rule
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Converter.Rule.get_name import get_name
+except ImportError as error:
+    get_name = error
+
+try:
+    from ..Methods.Converter.Rule.get_other import get_other
+except ImportError as error:
+    get_other = error
+
+try:
+    from ..Methods.Converter.Rule.get_P import get_P
+except ImportError as error:
+    get_P = error
+
+try:
+    from ..Methods.Converter.Rule.set_other import set_other
+except ImportError as error:
+    set_other = error
+
+try:
+    from ..Methods.Converter.Rule.set_P import set_P
+except ImportError as error:
+    set_P = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Rule(FrozenClass):
@@ -17,164 +52,52 @@ class Rule(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Converter.Rule.get_name
-    def get_name(self):
-        """Return the name of file or function
-
-        Parameters
-        ----------
-        self : Rule
-            A Rule object
-        """
-        if self.__class__.__name__ == "RuleComplex":
-            return self.fct_name
-        else:
-            return self.file_name
-
-    # cf Methods.Converter.Rule.get_other
-    def get_other(self, other_dict, other_path_list, other_unit_dict):
-        """Select value in other_dict and change the value to be in SI
-
-        Parameters
-        ----------
-        self : Rule
-            A Rule object
-        other_dict : dict
-            dict with all other param
-        other_path_list : list
-            list with path to set value ( ["[Dimensions]", "Pole_Arc"])
-        other_unit_dict : dict
-            dict with unit to make conversion (key: unit family, value: factor)
-
-        Return
-        ----------
-        other_value
-        """
-
-        unit = other_unit_dict[self.unit_type]
-
-        try:
-            # selection correct value in other_dict
-            for temp in other_path_list:
-                other_dict = other_dict[temp]
-        except AttributeError:
-            raise ValueError(
-                f"Value equivalent at {other_path_list} isn't found in other_dict"
+    if isinstance(get_name, ImportError):
+        get_name = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Rule method get_name: " + str(get_name))
             )
-
-        other_value = other_dict * unit
-
-        return other_value  # return in SI
-
-    # cf Methods.Converter.Rule.get_P
-    def get_P(self, path_machine, machine):
-        """Select value in machine
-
-        Parameters
-        ----------
-        self : Rule
-            A Rule object
-        machine : Machine
-            A obj machine
-        path_machine : str
-            str with the path in obj machine
-
-        Return
-        ----------
-        P_value
-        """
-        # select value in object machine
-        value_split = path_machine.split(".")
-
-        path = ".".join(value_split[:-1])
-        # value_split[-1] is the attribut that we want to retrieve ("W1")
-        # path is the attribut chain to get the attribut ("machine.stator.slot")
-
-        try:
-            P_value = getattr(
-                eval(path),
-                value_split[-1],
-            )
-        except AttributeError:
-            raise ValueError(
-                f"Value equivalent at {path_machine} isn't found in obj machine"
-            )
-
-        return P_value
-
-    # cf Methods.Converter.Rule.set_other
-    def set_other(self, other_dict, P_value, other_unit_dict, path_list):
-        """Set P_value value in other_dict
-
-        Parameters
-        ----------
-        self : Rule
-            A Rule object
-        other_dict : dict
-            dict created from the file to be converted
-        P_value :
-            value to set in other_dict
-        other_unit_dict : dict
-            dict with unit to make conversion (key: unit family, value: factor)
-        path_list : list
-            list with path to set the value
-
-
-        Return
-        ----------
-        other_dict
-        """
-        unit = other_unit_dict[self.unit_type]
-
-        P_value = P_value / unit  # set in correct unit
-
-        # Make sure that all the sub-keys exist
-        dict_temp = other_dict
-        for key in path_list[:-1]:
-            if key not in dict_temp:
-                dict_temp[key] = dict()
-            dict_temp = dict_temp[key]
-
-        # Set the value
-        last_key = path_list[-1]
-        dict_temp[last_key] = P_value
-
-        return other_dict
-
-    # cf Methods.Converter.Rule.set_P
-    def set_P(self, machine, other_value, path):
-        """Set value in machine
-
-        Parameters
-        ----------
-        self : Rule
-            A Rule object
-        machine : Machine
-            A pyleecan machine
-        other_value :
-            value to set in other_dict
-        path : str
-            path to set the value
-
-
-        Return
-        ----------
-        machine
-        """
-        # set value in object machine
-        value_split = path.split(".")
-
-        # value_split[-1] is the attribut that we want to set ("W1")
-        # path is the attribut chain to set the attribut ("machine.stator.slot")
-        path = ".".join(value_split[:-1])
-
-        setattr(
-            eval(path),
-            value_split[-1],
-            other_value,
         )
-        return machine
-
+    else:
+        get_name = get_name
+    # cf Methods.Converter.Rule.get_other
+    if isinstance(get_other, ImportError):
+        get_other = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Rule method get_other: " + str(get_other))
+            )
+        )
+    else:
+        get_other = get_other
+    # cf Methods.Converter.Rule.get_P
+    if isinstance(get_P, ImportError):
+        get_P = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Rule method get_P: " + str(get_P))
+            )
+        )
+    else:
+        get_P = get_P
+    # cf Methods.Converter.Rule.set_other
+    if isinstance(set_other, ImportError):
+        set_other = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Rule method set_other: " + str(set_other))
+            )
+        )
+    else:
+        set_other = set_other
+    # cf Methods.Converter.Rule.set_P
+    if isinstance(set_P, ImportError):
+        set_P = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Rule method set_P: " + str(set_P))
+            )
+        )
+    else:
+        set_P = set_P
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

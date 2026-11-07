@@ -1,17 +1,22 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Material/MatHT.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/MatHT"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/MatHT
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class MatHT(FrozenClass):
@@ -113,8 +118,8 @@ class MatHT(FrozenClass):
         if (
             other._lambda_x is not None
             and self._lambda_x is not None
-            and np.isnan(other._lambda_x)
-            and np.isnan(self._lambda_x)
+            and isnan(other._lambda_x)
+            and isnan(self._lambda_x)
         ):
             pass
         elif other._lambda_x != self._lambda_x:
@@ -132,8 +137,8 @@ class MatHT(FrozenClass):
         if (
             other._lambda_y is not None
             and self._lambda_y is not None
-            and np.isnan(other._lambda_y)
-            and np.isnan(self._lambda_y)
+            and isnan(other._lambda_y)
+            and isnan(self._lambda_y)
         ):
             pass
         elif other._lambda_y != self._lambda_y:
@@ -151,8 +156,8 @@ class MatHT(FrozenClass):
         if (
             other._lambda_z is not None
             and self._lambda_z is not None
-            and np.isnan(other._lambda_z)
-            and np.isnan(self._lambda_z)
+            and isnan(other._lambda_z)
+            and isnan(self._lambda_z)
         ):
             pass
         elif other._lambda_z != self._lambda_z:
@@ -170,8 +175,8 @@ class MatHT(FrozenClass):
         if (
             other._Cp is not None
             and self._Cp is not None
-            and np.isnan(other._Cp)
-            and np.isnan(self._Cp)
+            and isnan(other._Cp)
+            and isnan(self._Cp)
         ):
             pass
         elif other._Cp != self._Cp:
@@ -183,8 +188,8 @@ class MatHT(FrozenClass):
         if (
             other._alpha is not None
             and self._alpha is not None
-            and np.isnan(other._alpha)
-            and np.isnan(self._alpha)
+            and isnan(other._alpha)
+            and isnan(self._alpha)
         ):
             pass
         elif other._alpha != self._alpha:

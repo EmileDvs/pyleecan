@@ -1,18 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/Data.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Data"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Data
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.Data._set_normalizations import _set_normalizations
+except ImportError as error:
+    _set_normalizations = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Data(FrozenClass):
@@ -21,32 +33,17 @@ class Data(FrozenClass):
     VERSION = 1
 
     # cf Methods.SciDataTool.Data._set_normalizations
-    def _set_normalizations(self, value):
-        """setter of normalizations"""
-        if type(value) is dict:
-            for key, obj in value.items():
-                if type(obj) is dict:
-                    class_obj = import_class(
-                        "pyleecan.Classes", obj.get("__class__"), "normalizations"
-                    )
-                    value[key] = class_obj(init_dict=obj)
-                elif isinstance(
-                    obj, (float, int, np.int32, np.int64, np.float32, np.float64)
-                ):
-                    Norm_ref = import_class(
-                        "pyleecan.Classes", "Norm_ref", "normalizations"
-                    )
-                    value[key] = Norm_ref(ref=obj)
-                elif isinstance(obj, (np.ndarray, list)):
-                    Norm_vector = import_class(
-                        "pyleecan.Classes", "Norm_vector", "normalizations"
-                    )
-                    value[key] = Norm_vector(vector=obj)
-        if type(value) is int and value == -1:
-            value = dict()
-        check_var("normalizations", value, "{Normalization}")
-        self._normalizations = value
-
+    if isinstance(_set_normalizations, ImportError):
+        _set_normalizations = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Data method _set_normalizations: "
+                    + str(_set_normalizations)
+                )
+            )
+        )
+    else:
+        _set_normalizations = _set_normalizations
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

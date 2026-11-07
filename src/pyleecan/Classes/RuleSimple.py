@@ -1,17 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Converter/RuleSimple.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/RuleSimple"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/RuleSimple
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Rule import Rule
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Converter.RuleSimple.convert_to_other import convert_to_other
+except ImportError as error:
+    convert_to_other = error
 
-from pyleecan.Classes.Rule import Rule
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Converter.RuleSimple.convert_to_P import convert_to_P
+except ImportError as error:
+    convert_to_P = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class RuleSimple(Rule):
@@ -19,65 +37,30 @@ class RuleSimple(Rule):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Converter.RuleSimple.convert_to_other
-    def convert_to_other(self, other_dict, machine, other_unit_dict):
-        """Selects value in machine and implements it in other_dict
-
-        Parameters
-        ----------
-        self : RuleSimple
-            A RuleSimple object
-        other_dict : dict
-            dict created from the file to be converted
-        machine : Machine
-            A pyleecan machine
-        other_unit_dict : dict
-            dict with unit to make conversion (key: unit family, value: factor)
-        """
-
-        P_value = self.get_P(self.P_obj_path, machine)
-
-        # possibility to have str in other_value, if other_value is a str we have an equivalent, and we can't multiply a str.
-        # The "if" here handles this issue
-        if self.scaling_to_P != 1:
-            P_value = P_value / self.scaling_to_P
-
-        # set value in other_dict
-        other_dict = self.set_other(
-            other_dict, P_value, other_unit_dict, self.other_key_list
+    if isinstance(convert_to_other, ImportError):
+        convert_to_other = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RuleSimple method convert_to_other: "
+                    + str(convert_to_other)
+                )
+            )
         )
-
-        return other_dict
-
+    else:
+        convert_to_other = convert_to_other
     # cf Methods.Converter.RuleSimple.convert_to_P
-    def convert_to_P(self, other_dict, machine, other_unit_dict):
-        """Selects value in other_dict and implements it in machine
-
-        Parameters
-        ----------
-        self : RuleSimple
-            A RuleSimple object
-        other_dict : dict
-            dict created from the file to be converted
-        machine : Machine
-            A pyleecan machine
-        other_unit_dict : dict
-            dict with unit to make conversion (key: unit family, value: factor)
-        """
-
-        # select correct value
-        # The value is return in pyleecan unit (SI)
-        other_value = self.get_other(other_dict, self.other_key_list, other_unit_dict)
-
-        # possibility to have str in other_value, if other_value is a str we have an equivalent, and we can't multiply a str.
-        # The "if" here handles this issue
-        if self.scaling_to_P != 1:
-            other_value = other_value * self.scaling_to_P
-
-        machine = self.set_P(machine, other_value, self.P_obj_path)
-
-        return machine
-
+    if isinstance(convert_to_P, ImportError):
+        convert_to_P = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RuleSimple method convert_to_P: " + str(convert_to_P)
+                )
+            )
+        )
+    else:
+        convert_to_P = convert_to_P
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -206,8 +189,8 @@ class RuleSimple(Rule):
         if (
             other._scaling_to_P is not None
             and self._scaling_to_P is not None
-            and np.isnan(other._scaling_to_P)
-            and np.isnan(self._scaling_to_P)
+            and isnan(other._scaling_to_P)
+            and isnan(self._scaling_to_P)
         ):
             pass
         elif other._scaling_to_P != self._scaling_to_P:

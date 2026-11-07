@@ -1,20 +1,61 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/OutLossModel.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutLossModel"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutLossModel
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from pyleecan.Classes.DataFreq import DataFreq
-from pyleecan.Classes.MeshSolution import MeshSolution
-from pyleecan.Classes.SolutionData import SolutionData
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Output.OutLossModel.__add__ import __add__
+except ImportError as error:
+    __add__ = error
+
+try:
+    from ..Methods.Output.OutLossModel.__radd__ import __radd__
+except ImportError as error:
+    __radd__ = error
+
+try:
+    from ..Methods.Output.OutLossModel.__rsub__ import __rsub__
+except ImportError as error:
+    __rsub__ = error
+
+try:
+    from ..Methods.Output.OutLossModel.__sub__ import __sub__
+except ImportError as error:
+    __sub__ = error
+
+try:
+    from ..Methods.Output.OutLossModel.get_loss_scalar import get_loss_scalar
+except ImportError as error:
+    get_loss_scalar = error
+
+try:
+    from ..Methods.Output.OutLossModel.get_mesh_solution import get_mesh_solution
+except ImportError as error:
+    get_mesh_solution = error
+
+try:
+    from ..Methods.Output.OutLossModel.plot_mesh import plot_mesh
+except ImportError as error:
+    plot_mesh = error
+
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OutLossModel(FrozenClass):
@@ -22,298 +63,78 @@ class OutLossModel(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Output.OutLossModel.__add__
-    def __add__(self, other):
-        """Add two loss models output (called for: self + other)
-
-        Parameters
-        ----------
-        self : OutLossModel
-            First loss model to add
-        other : OutLossModel or dict
-            Second loss model to add
-
-        Returns
-        -------
-        loss_tot : OutLossModel
-            Resulting Losses output
-        """
-
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
-            other_loss_density = other["loss_density"]
-            other_coeff_dict = other["coeff_dict"]
-            other_group = other["group"]
-            other_name = other["name"]
-
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
-        new_loss_density = self.loss_density + other_loss_density
-        new_coeff_dict = self.coeff_dict.copy()
-        for key, value in other_coeff_dict.items():
-            if key in new_coeff_dict:
-                new_coeff_dict[key] += value
-            else:
-                new_coeff_dict[key] = value
-        new_group = self.group + " + " + other_group
-        new_name = self.name + " + " + other_name
-        return OutLossModel(
-            name=new_name,
-            loss_density=new_loss_density,
-            coeff_dict=new_coeff_dict,
-            group=new_group,
-        )
-
-    # cf Methods.Output.OutLossModel.__radd__
-    def __radd__(self, other):
-        """Add two loss models output (called for: other + self)
-
-        Parameters
-        ----------
-        self : OutLossModel
-            First loss model to add
-        other : OutLossModel or dict
-            Second loss model to add
-
-        Returns
-        -------
-        loss_tot : OutLossModel
-            Resulting Losses output
-        """
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
-            other_loss_density = other["loss_density"]
-            other_coeff_dict = other["coeff_dict"]
-            other_name = other["name"]
-            other_group = other["group"]
-
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
-        new_loss_density = self.loss_density + other_loss_density
-        new_coeff_dict = self.coeff_dict.copy()
-        for key, value in other_coeff_dict.items():
-            if key in new_coeff_dict:
-                new_coeff_dict[key] += value
-            else:
-                new_coeff_dict[key] = value
-        new_group = self.group + " + " + other_group
-        new_name = self.name + " + " + other_name
-        return OutLossModel(
-            name=new_name,
-            loss_density=new_loss_density,
-            coeff_dict=new_coeff_dict,
-            group=new_group,
-        )
-
-    # cf Methods.Output.OutLossModel.__rsub__
-    def __rsub__(self, other):
-        """Substract two loss models output (called for: other - self)
-
-        Parameters
-        ----------
-        self : OutLossModel
-            First loss model to sub
-        other : OutLossModel or dict
-            Second loss model to sub
-
-        Returns
-        -------
-        loss_tot : OutLossModel
-            Resulting Losses output
-        """
-
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
-            other_loss_density = other["loss_density"]
-            other_coeff_dict = other["coeff_dict"]
-            other_group = other["group"]
-            other_name = other["name"]
-
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
-        new_loss_density = other_loss_density - self.loss_density
-        new_coeff_dict = other_coeff_dict.copy()
-        for key, value in self.coeff_dict.items():
-            if key in new_coeff_dict:
-                new_coeff_dict[key] -= value
-            else:
-                new_coeff_dict[key] = -value
-        new_group = self.group + " - " + other_group
-        new_name = self.name + " - " + other_name
-        return OutLossModel(
-            name=new_name,
-            loss_density=new_loss_density,
-            coeff_dict=new_coeff_dict,
-            group=new_group,
-        )
-
-    # cf Methods.Output.OutLossModel.__sub__
-    def __sub__(self, other):
-        """Substract two loss models output (called for: self - other)
-
-        Parameters
-        ----------
-        self : OutLossModel
-            First loss model to sub
-        other : OutLossModel or dict
-            Second loss model to sub
-
-        Returns
-        -------
-        loss_tot : OutLossModel
-            Resulting Losses output
-        """
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
-            other_loss_density = other["loss_density"]
-            other_coeff_dict = other["coeff_dict"]
-            other_group = other["group"]
-            other_name = other["name"]
-
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
-        new_loss_density = self.loss_density - other_loss_density
-        new_coeff_dict = self.coeff_dict.copy()
-        for key, value in other_coeff_dict.items():
-            if key in new_coeff_dict:
-                new_coeff_dict[key] -= value
-            else:
-                new_coeff_dict[key] = -value
-        new_group = self.group + " - " + other_group
-        new_name = self.name + " - " + other_name
-        return OutLossModel(
-            name=new_name,
-            loss_density=new_loss_density,
-            coeff_dict=new_coeff_dict,
-            group=new_group,
-        )
-
-    # cf Methods.Output.OutLossModel.get_loss_scalar
-    def get_loss_scalar(self, felec=None):
-        """Get loss power from coefficients stored in coeff_dict
-
-        Parameters
-        ----------
-        self : OutLossModel
-            an OutLossModel object
-        felec : float
-            the electrical frequency [Hz]
-
-        Returns
-        -------
-        Ploss : float
-            loss power for the specified frequency [W]
-        """
-
-        if self.coeff_dict is None:
-            return self.scalar_value  # Can be None
-        else:
-            if felec is None:
-                output = self.parent.parent
-                felec = output.elec.OP.felec
-            Ploss = 0
-            for key, value in self.coeff_dict.items():
-                Ploss += value * felec ** float(key)
-            self.scalar_value = Ploss
-        return self.scalar_value
-
-    # cf Methods.Output.OutLossModel.get_mesh_solution
-    def get_mesh_solution(self):
-        """Returns the MeshSolution object corresponding to the losses
-
-        Parameters
-        ----------
-        self : OutLossModel
-            Result of a Loss model computation
-
-        Returns
-        -------
-        MS : MeshSolution
-            Losses as fct(freq) on the machine mesh
-        """
-        output = self.parent.parent
-        # group = meshsol.group
-        axes_dict = self.parent.axes_dict
-        # freqs = axes_dict["freqs"].get_values()
-        # Nelem = meshsol.mesh.element["triangle"].nb_element
-
-        # If = np.argmin(np.abs(freqs[:, None] - self.freqs[None, :]), axis=0)[:, None]
-        # Ie = np.array(group[self.group])[None, :]
-        # global_loss_density = np.zeros((freqs.size, Nelem))
-        # global_loss_density[If, Ie] += self.loss_density
-
-        ms_mag = output.mag.meshsolution
-
-        Loss_density_df = DataFreq(
-            name=f"{self.name} loss density",
-            unit="W/m3",
-            symbol="L",
-            values=self.loss_density,
-            is_real=True,
-            axes=[axes_dict["freqs"], axes_dict["indice"]],
-        )
-
-        Loss_density_sd = SolutionData(
-            label=Loss_density_df.name,
-            field=Loss_density_df,
-            unit=Loss_density_df.unit,
-        )
-
-        ms_loss = MeshSolution(
-            label=Loss_density_sd.label,
-            group=ms_mag.group,
-            mesh=ms_mag.mesh,
-            solution_dict={Loss_density_sd.label: Loss_density_sd},
-            dimension=2,
-        )
-
-        return ms_loss
-
-    # cf Methods.Output.OutLossModel.plot_mesh
-    def plot_mesh(self, group_names=None, save_path=None):
-        """Plot the losses on the mesh solution
-
-        Parameters
-        ----------
-        self : OutLossModel
-            An OutLossModel object
-        group_names : list
-            a list of str corresponding to group name(s)
-        save_path : str
-            path to save the figure
-
-        """
-
-        return (
-            self.get_mesh_solution()
-            .get_group(group_names)
-            .plot_contour(
-                "freqs=sum",
-                label=f"{self.name} loss density",
-                save_path=save_path,
+    if isinstance(__add__, ImportError):
+        __add__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutLossModel method __add__: " + str(__add__))
             )
         )
-
+    else:
+        __add__ = __add__
+    # cf Methods.Output.OutLossModel.__radd__
+    if isinstance(__radd__, ImportError):
+        __radd__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutLossModel method __radd__: " + str(__radd__))
+            )
+        )
+    else:
+        __radd__ = __radd__
+    # cf Methods.Output.OutLossModel.__rsub__
+    if isinstance(__rsub__, ImportError):
+        __rsub__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutLossModel method __rsub__: " + str(__rsub__))
+            )
+        )
+    else:
+        __rsub__ = __rsub__
+    # cf Methods.Output.OutLossModel.__sub__
+    if isinstance(__sub__, ImportError):
+        __sub__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutLossModel method __sub__: " + str(__sub__))
+            )
+        )
+    else:
+        __sub__ = __sub__
+    # cf Methods.Output.OutLossModel.get_loss_scalar
+    if isinstance(get_loss_scalar, ImportError):
+        get_loss_scalar = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutLossModel method get_loss_scalar: "
+                    + str(get_loss_scalar)
+                )
+            )
+        )
+    else:
+        get_loss_scalar = get_loss_scalar
+    # cf Methods.Output.OutLossModel.get_mesh_solution
+    if isinstance(get_mesh_solution, ImportError):
+        get_mesh_solution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutLossModel method get_mesh_solution: "
+                    + str(get_mesh_solution)
+                )
+            )
+        )
+    else:
+        get_mesh_solution = get_mesh_solution
+    # cf Methods.Output.OutLossModel.plot_mesh
+    if isinstance(plot_mesh, ImportError):
+        plot_mesh = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OutLossModel method plot_mesh: " + str(plot_mesh)
+                )
+            )
+        )
+    else:
+        plot_mesh = plot_mesh
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -400,7 +221,7 @@ class OutLossModel(FrozenClass):
             return False
         if other.name != self.name:
             return False
-        if not np.array_equal(other.loss_density, self.loss_density):
+        if not array_equal(other.loss_density, self.loss_density):
             return False
         if other.coeff_dict != self.coeff_dict:
             return False
@@ -428,7 +249,7 @@ class OutLossModel(FrozenClass):
                 diff_list.append(name + ".name" + val_str)
             else:
                 diff_list.append(name + ".name")
-        if not np.array_equal(other.loss_density, self.loss_density):
+        if not array_equal(other.loss_density, self.loss_density):
             diff_list.append(name + ".loss_density")
         if other._coeff_dict != self._coeff_dict:
             if is_add_value:
@@ -465,8 +286,8 @@ class OutLossModel(FrozenClass):
         if (
             other._scalar_value is not None
             and self._scalar_value is not None
-            and np.isnan(other._scalar_value)
-            and np.isnan(self._scalar_value)
+            and isnan(other._scalar_value)
+            and isnan(self._scalar_value)
         ):
             pass
         elif other._scalar_value != self._scalar_value:
@@ -597,10 +418,10 @@ class OutLossModel(FrozenClass):
     def _set_loss_density(self, value):
         """setter of loss_density"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("loss_density", value, "ndarray")

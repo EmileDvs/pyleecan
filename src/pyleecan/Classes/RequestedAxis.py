@@ -1,21 +1,31 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/RequestedAxis.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/RequestedAxis"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/RequestedAxis
+"""
 
-from importlib import import_module
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.RequestedAxis.get_axis import get_axis
+except ImportError as error:
+    get_axis = error
 
-from pyleecan.Classes.DataPattern import DataPattern
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.SciDataTool import AxisError
-from pyleecan.Functions.SciDataTool.symmetries import rebuild_symmetries_axis
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class RequestedAxis(FrozenClass):
@@ -24,247 +34,14 @@ class RequestedAxis(FrozenClass):
     VERSION = 1
 
     # cf Methods.SciDataTool.RequestedAxis.get_axis
-    def get_axis(
-        self,
-        axis,
-        is_real,
-        *,
-        operation_list=[
-            "max",
-            "min",
-            "sum",
-            "rss",
-            "mean",
-            "rms",
-            "integrate",
-            "integrate_local",
-            "derivate",
-            "antiderivate",
-        ]
-    ):
-        """Computes the vector 'axis' in the unit required, using conversions and symmetries if needed.
-        Parameters
-        ----------
-        self: RequestedAxis
-            a RequestedAxis object
-        axis: Axis
-            an Axis object
-        """
-
-        if self.operation is not None:
-            module = import_module("pyleecan.Functions.SciDataTool.conversions")
-            func = getattr(module, self.operation)  # Conversion function
-        if isinstance(axis, DataPattern):
-            self.is_pattern = True
-            self.rebuild_indices = axis.rebuild_indices
-            self.is_step = axis.is_step
-        is_components = getattr(axis, "is_components", False)
-        if (
-            is_components and axis.is_overlay and self.extension == "whole"
-        ):  # To overlay curves in plots
-            self.extension = "list"
-            self.indices = [":"]
-        if is_components:
-            values = axis.get_values(unit=self.unit)
-            if self.indices is not None:
-                if self.indices[0] == ":":
-                    self.values = values
-                    self.indices = list(range(len(values)))
-                elif isinstance(self.indices[0], str):  # N largest
-                    self.extension = "list"
-                    N = int(self.indices[0])
-                    # Sort values
-                    if hasattr(axis, "sort_indices") and axis.sort_indices is not None:
-                        self.indices = axis.sort_indices[:N]
-                        self.values = values[self.indices]
-                    else:
-                        self.indices = np.argsort(values)[::-1][:N].tolist()
-                        self.values = values[self.indices]
-                else:
-                    self.values = values[self.indices]
-                    self.extension = "list"
-            elif self.extension not in operation_list and self.extension != "list":
-                self.values = values
-                self.extension = "whole"
-            else:
-                self.values = values
-
-        else:
-            if self.extension == "pattern":
-                if not self.is_pattern:
-                    raise AxisError(
-                        "[pattern] cannot be called with non DataPattern axis"
-                    )
-                else:
-                    is_smallestperiod = True
-                    is_oneperiod = False
-                    is_antiperiod = False
-                    self.extension = "smallestperiod"
-            elif self.extension == "smallestperiod":
-                # if isinstance(axis, DataPattern):
-                #     raise AxisError(
-                #         "[smallestperiod] cannot be called with DataPattern axis"
-                #     )
-                # else:
-                is_smallestperiod = True
-                is_oneperiod = False
-                is_antiperiod = False
-            elif self.extension == "antiperiod":
-                if isinstance(axis, DataPattern):
-                    raise AxisError(
-                        "[antiperiod] cannot be called with DataPattern axis"
-                    )
-                else:
-                    is_smallestperiod = False
-                    is_oneperiod = False
-                    is_antiperiod = True
-            elif self.extension == "oneperiod" or self.transform == "fft":
-                if isinstance(axis, DataPattern):
-                    raise AxisError(
-                        "[oneperiod] cannot be called with DataPattern axis"
-                    )
-                else:
-                    is_smallestperiod = False
-                    is_oneperiod = True
-                    is_antiperiod = False
-            elif self.extension in operation_list:
-                # Remove periodicities in case of DataPattern otherwise operations can be applied on periodic signals
-                is_smallestperiod = not self.is_pattern
-                is_oneperiod = False
-                is_antiperiod = False
-            # Ignore symmetries if fft axis
-            elif self.name == "freqs" or self.name == "wavenumber":
-                is_smallestperiod = True
-                is_oneperiod = False
-                is_antiperiod = False
-            else:
-                if self.input_data is not None and not self.is_step:
-                    # Check if symmetries need to be reconstructed to match input_data
-                    axis_values = axis.get_values(
-                        is_smallestperiod=True,
-                        operation=self.operation,
-                        is_real=is_real,
-                    )
-                    if min(self.input_data) >= min(axis_values) and max(
-                        self.input_data
-                    ) <= max(axis_values):
-                        is_smallestperiod = True
-                        is_oneperiod = False
-                        is_antiperiod = False
-                    else:
-                        axis_values = axis.get_values(
-                            is_oneperiod=True,
-                            operation=self.operation,
-                            is_real=is_real,
-                        )
-                        if min(self.input_data) >= min(axis_values) and max(
-                            self.input_data
-                        ) <= max(axis_values):
-                            is_smallestperiod = False
-                            is_oneperiod = True
-                            is_antiperiod = False
-                            self.extension = "oneperiod"
-                        else:
-                            is_smallestperiod = False
-                            is_oneperiod = False
-                            is_antiperiod = False
-                            if not self.is_pattern:
-                                self.extension = "interval"
-                elif self.transform == "ifft":  # Ignore symmetries in ifft case
-                    is_smallestperiod = True
-                    is_oneperiod = False
-                    is_antiperiod = False
-                else:
-                    is_smallestperiod = False
-                    is_oneperiod = False
-                    is_antiperiod = False
-            # Get original values of the axis including unit and normalizations
-            # Store before normalization/operation
-            if (
-                self.unit != self.corr_unit
-                and self.unit != "SI"
-                or self.operation is not None
-            ):
-                self.corr_values = np.array(
-                    axis.get_values(
-                        is_oneperiod=is_oneperiod,
-                        is_antiperiod=is_antiperiod,
-                        is_smallestperiod=is_smallestperiod,
-                    )
-                )
-            # Prepare unit
-            # if self.corr_unit is None:
-            #     self.corr_unit = self.unit
-            values = axis.get_values(
-                is_oneperiod=is_oneperiod,
-                is_antiperiod=is_antiperiod,
-                is_smallestperiod=is_smallestperiod,
-                unit=self.unit,
-                operation=self.operation,
-                is_real=is_real,
-                corr_unit=self.corr_unit,
+    if isinstance(get_axis, ImportError):
+        get_axis = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use RequestedAxis method get_axis: " + str(get_axis))
             )
-
-            # Rebuild symmetries in fft case
-            if self.transform == "fft":
-                if "period" in axis.symmetries:
-                    if axis.name != "time":
-                        values = values * axis.symmetries["period"]
-                elif "antiperiod" in axis.symmetries:
-                    if axis.name != "time":
-                        values = values * axis.symmetries["antiperiod"] / 2
-            # Rebuild symmetries in ifft case
-            if self.transform == "ifft":
-                if self.extension not in [
-                    "smallestperiod",
-                    "oneperiod",
-                    "antiperiod",
-                    "max",
-                    "min",
-                    "sum",
-                    "mean",
-                    "rms",
-                    "rss",
-                    "integrate",
-                    "integrate_local",
-                    "derivate",
-                    "antiderivate",
-                    "axis_data",
-                ]:
-                    values = rebuild_symmetries_axis(values, axis.symmetries)
-            # Interpolate axis with input data
-            if self.input_data is None:
-                self.values = values
-            else:
-                if len(self.input_data) == 2 and self.extension != "axis_data":
-                    indices = [
-                        i
-                        for i, x in enumerate(values)
-                        if x >= self.input_data[0] and x <= self.input_data[-1]
-                    ]
-                    if self.indices is None:
-                        self.indices = indices
-                    else:
-                        indices_new = []
-                        for i in self.indices:
-                            if i in indices:
-                                indices_new.append(i)
-                        self.indices = indices_new
-                    self.input_data = None
-                else:
-                    self.values = values
-            if self.indices is not None:
-                if isinstance(self.indices[0], str):  # N largest
-                    N = int(self.indices[0])
-                    # Sort values
-                    if hasattr(axis, "sort_indices") and axis.sort_indices is not None:
-                        self.indices = axis.sort_indices[:N]
-                    else:
-                        self.indices = np.argsort(values)[::-1][:N].tolist()
-                self.values = values[self.indices]
-                if self.extension in operation_list:
-                    self.indices = None
-
+        )
+    else:
+        get_axis = get_axis
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -437,11 +214,11 @@ class RequestedAxis(FrozenClass):
             return False
         if other.extension != self.extension:
             return False
-        if not np.array_equal(other.values, self.values):
+        if not array_equal(other.values, self.values):
             return False
         if other.indices != self.indices:
             return False
-        if not np.array_equal(other.input_data, self.input_data):
+        if not array_equal(other.input_data, self.input_data):
             return False
         if other.operation != self.operation:
             return False
@@ -451,13 +228,13 @@ class RequestedAxis(FrozenClass):
             return False
         if other.is_pattern != self.is_pattern:
             return False
-        if not np.array_equal(other.rebuild_indices, self.rebuild_indices):
+        if not array_equal(other.rebuild_indices, self.rebuild_indices):
             return False
         if other.is_step != self.is_step:
             return False
         if other.noct != self.noct:
             return False
-        if not np.array_equal(other.corr_values, self.corr_values):
+        if not array_equal(other.corr_values, self.corr_values):
             return False
         if other.is_components != self.is_components:
             return False
@@ -523,7 +300,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".extension" + val_str)
             else:
                 diff_list.append(name + ".extension")
-        if not np.array_equal(other.values, self.values):
+        if not array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._indices != self._indices:
             if is_add_value:
@@ -537,7 +314,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".indices" + val_str)
             else:
                 diff_list.append(name + ".indices")
-        if not np.array_equal(other.input_data, self.input_data):
+        if not array_equal(other.input_data, self.input_data):
             diff_list.append(name + ".input_data")
         if other._operation != self._operation:
             if is_add_value:
@@ -583,7 +360,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".is_pattern" + val_str)
             else:
                 diff_list.append(name + ".is_pattern")
-        if not np.array_equal(other.rebuild_indices, self.rebuild_indices):
+        if not array_equal(other.rebuild_indices, self.rebuild_indices):
             diff_list.append(name + ".rebuild_indices")
         if other._is_step != self._is_step:
             if is_add_value:
@@ -605,7 +382,7 @@ class RequestedAxis(FrozenClass):
                 diff_list.append(name + ".noct" + val_str)
             else:
                 diff_list.append(name + ".noct")
-        if not np.array_equal(other.corr_values, self.corr_values):
+        if not array_equal(other.corr_values, self.corr_values):
             diff_list.append(name + ".corr_values")
         if other._is_components != self._is_components:
             if is_add_value:
@@ -907,10 +684,10 @@ class RequestedAxis(FrozenClass):
     def _set_values(self, value):
         """setter of values"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("values", value, "ndarray")
@@ -952,10 +729,10 @@ class RequestedAxis(FrozenClass):
     def _set_input_data(self, value):
         """setter of input_data"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("input_data", value, "ndarray")
@@ -1049,10 +826,10 @@ class RequestedAxis(FrozenClass):
     def _set_rebuild_indices(self, value):
         """setter of rebuild_indices"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("rebuild_indices", value, "ndarray")
@@ -1110,10 +887,10 @@ class RequestedAxis(FrozenClass):
     def _set_corr_values(self, value):
         """setter of corr_values"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("corr_values", value, "ndarray")

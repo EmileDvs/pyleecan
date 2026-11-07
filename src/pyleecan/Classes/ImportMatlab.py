@@ -1,19 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportMatlab.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatlab"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatlab
+"""
 
 from os import linesep
-from os.path import isfile
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ImportMatrix import ImportMatrix
 
-import numpy as np
-from scipy.io import loadmat
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportMatlab.get_data import get_data
+except ImportError as error:
+    get_data = error
 
-from pyleecan.Classes.ImportMatrix import ImportMatrix
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportMatlab(ImportMatrix):
@@ -22,36 +33,14 @@ class ImportMatlab(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportMatlab.get_data
-    def get_data(self):
-        """Return the value from the .mat file
-
-        Parameters
-        ----------
-        self : ImportMatlab
-            An ImportMatlab object
-
-        Returns
-        -------
-        value : ?
-            Loaded data
-        """
-
-        if self.file_path[-4:] != ".mat":
-            self.file_path += ".mat"
-        if not isfile(self.file_path):
-            raise MatFileError("ERROR: The mat file doesn't exist " + self.file_path)
-
-        data_dict = loadmat(self.file_path)
-        if self.var_name not in data_dict:
-            raise MatFileError(
-                "ERROR: The variable "
-                + self.var_name
-                + " is not available in the file "
-                + self.file_path
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ImportMatlab method get_data: " + str(get_data))
             )
-
-        return np.squeeze(data_dict[self.var_name])
-
+        )
+    else:
+        get_data = get_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -255,18 +244,3 @@ class ImportMatlab(ImportMatrix):
         :Type: str
         """,
     )
-
-    class ImportError(Exception):
-        """Raised when the data import or generation is not possible"""
-
-        pass
-
-    class MatFileError(ImportError):
-        """Raised when the file_path is wrong or the variable is missing"""
-
-        pass
-
-
-ImportError = ImportMatlab.ImportError
-
-MatFileError = ImportMatlab.MatFileError

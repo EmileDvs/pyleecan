@@ -1,19 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportData.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportData"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportData
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes.Data1D import Data1D
-from pyleecan.Classes.DataFreq import DataFreq
-from pyleecan.Classes.DataTime import DataTime
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportData.get_data import get_data
+except ImportError as error:
+    get_data = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportData(FrozenClass):
@@ -22,57 +33,14 @@ class ImportData(FrozenClass):
     VERSION = 1
 
     # cf Methods.Import.ImportData.get_data
-    def get_data(self):
-        """Generate Data objects
-
-        Parameters
-        ----------
-        self : ImportData
-            An ImportData object
-
-        Returns
-        -------
-        Data: DataND
-            The generated Data object
-
-        """
-
-        axes_list = []
-        is_freq = False
-        for axis in self.axes:
-            if axis.name == "freqs" or axis.name == "wavenumber":
-                is_freq = True
-            axes_list.append(
-                Data1D(
-                    values=axis.field.get_data(),
-                    name=axis.name,
-                    unit=axis.unit,
-                    symmetries=axis.symmetries,
-                    normalizations=axis.normalizations,
-                )
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ImportData method get_data: " + str(get_data))
             )
-
-        if is_freq:
-            Data = DataFreq(
-                axes=axes_list,
-                values=self.field.get_data(),
-                name=self.name,
-                symbol=self.symbol,
-                unit=self.unit,
-                normalizations=self.normalizations,
-            )
-        else:
-            Data = DataTime(
-                axes=axes_list,
-                values=self.field.get_data(),
-                name=self.name,
-                symbol=self.symbol,
-                unit=self.unit,
-                normalizations=self.normalizations,
-            )
-
-        return Data
-
+        )
+    else:
+        get_data = get_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

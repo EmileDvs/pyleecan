@@ -1,11 +1,22 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/LUTslip.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/LUTslip"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/LUTslip
+"""
 
-from pyleecan.Classes.LUT import LUT
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .LUT import LUT
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class LUTslip(LUT):

@@ -1,17 +1,28 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Optimization/OptiConstraint.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiConstraint"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Optimization/OptiConstraint
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .DataKeeper import DataKeeper
 
+from numpy import array, ndarray
+from ntpath import basename
+from os.path import isfile
+from ._check import CheckTypeError
 import numpy as np
-
-from pyleecan.Classes.DataKeeper import DataKeeper
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+import random
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OptiConstraint(DataKeeper):
@@ -146,8 +157,8 @@ class OptiConstraint(DataKeeper):
         if (
             other._value is not None
             and self._value is not None
-            and np.isnan(other._value)
-            and np.isnan(self._value)
+            and isnan(other._value)
+            and isnan(self._value)
         ):
             pass
         elif other._value != self._value:

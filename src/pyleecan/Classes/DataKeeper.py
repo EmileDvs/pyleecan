@@ -1,22 +1,36 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/DataKeeper.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/DataKeeper"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/DataKeeper
+"""
 
-from ntpath import basename
 from os import linesep
-from os.path import isfile
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.DataKeeper._set_keeper import _set_keeper
+except ImportError as error:
+    _set_keeper = error
+
+
+from numpy import array, ndarray
+from ntpath import basename
+from os.path import isfile
+from ._check import CheckTypeError
 import numpy as np
-
-from pyleecan.Classes._check import CheckTypeError, check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.definitions import PYTHON_DEFAULT_ENCODING
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.path_tools import abs_file_path
-from pyleecan.Functions.save import save
+import random
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class DataKeeper(FrozenClass):
@@ -25,45 +39,16 @@ class DataKeeper(FrozenClass):
     VERSION = 1
 
     # cf Methods.Simulation.DataKeeper._set_keeper
-    def _set_keeper(self, value):
-        """setter of keeper"""
-        # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
-        if isinstance(value, str) and value[:4] == "simu":
-            value_split = value.split(".")
-            value = (
-                "lambda simu, val: setattr(eval('"
-                + ".".join(value_split[:-1])
-                + "'), '"
-                + value_split[-1]
-                + "', val"
-                + ")"
+    if isinstance(_set_keeper, ImportError):
+        _set_keeper = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataKeeper method _set_keeper: " + str(_set_keeper)
+                )
             )
-        if value is None:
-            self._keeper_str = None
-            self._keeper_func = None
-        elif isinstance(value, str) and "lambda" in value:
-            self._keeper_str = value
-            self._keeper_func = eval(value)
-        elif isinstance(value, str) and value[-3:] == ".py":
-            if "<" in value and ">" in value:
-                # path like "<PARAM_DIR>/keeper_rotor.py"
-                self._keeper_str = value
-                value = abs_file_path(value)
-            else:  # Direct path
-                self._keeper_str = value
-            f = open(value, "r", encoding=PYTHON_DEFAULT_ENCODING)
-            exec(f.read(), globals())
-            f.close()
-            self._keeper_func = eval(basename(value[:-3]))
-        elif callable(value):
-            self._keeper_str = None
-            self._keeper_func = value
-        else:
-            raise CheckTypeError(
-                "For property keeper Expected function or str (path to python file or lambda), got: "
-                + str(type(value))
-            )
-
+        )
+    else:
+        _set_keeper = _set_keeper
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -352,7 +337,7 @@ class DataKeeper(FrozenClass):
                             **kwargs,
                         )
                     )
-                elif isinstance(obj, np.ndarray):
+                elif isinstance(obj, ndarray):
                     if type_handle_ndarray == 0:
                         DataKeeper_dict["result"].append(obj.tolist())
                     elif type_handle_ndarray == 1:
@@ -572,7 +557,7 @@ class DataKeeper(FrozenClass):
                     value[ii].parent = self
                 if isinstance(obj, list):
                     try:  # list to array (for list of list use 'list')
-                        value[ii] = np.array(obj)
+                        value[ii] = array(obj)
                     except Exception as e:
                         pass
         if value == -1:

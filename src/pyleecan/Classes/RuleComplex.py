@@ -1,15 +1,40 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Converter/RuleComplex.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/RuleComplex"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Converter/RuleComplex
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Rule import Rule
 
-from pyleecan.Classes.Rule import Rule
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Converter.RuleComplex._set_fct_name import _set_fct_name
+except ImportError as error:
+    _set_fct_name = error
+
+try:
+    from ..Methods.Converter.RuleComplex.convert_to_other import convert_to_other
+except ImportError as error:
+    convert_to_other = error
+
+try:
+    from ..Methods.Converter.RuleComplex.convert_to_P import convert_to_P
+except ImportError as error:
+    convert_to_P = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class RuleComplex(Rule):
@@ -17,71 +42,41 @@ class RuleComplex(Rule):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Converter.RuleComplex._set_fct_name
-    def _set_fct_name(self, value):
-        """find the path of a function
-
-        Parameters
-        ----------
-        self : RuleComplex
-            A RuleComplex object
-        value : str
-            name of file for complex rule
-
-        """
-
-        # Check that value is a str
-        check_var("_fct_name", value, "str")
-
-        self._fct_name = value
-
-        # Load the function
-        if self._fct_name is not None:
-            module = __import__(
-                f"pyleecan.Functions.Converter.MotorCAD.{self.fct_name}",
-                fromlist=(self.fct_name),
+    if isinstance(_set_fct_name, ImportError):
+        _set_fct_name = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RuleComplex method _set_fct_name: " + str(_set_fct_name)
+                )
             )
-            self.other_to_P = getattr(module, "other_to_P")
-            self.P_to_other = getattr(module, "P_to_other")
-
+        )
+    else:
+        _set_fct_name = _set_fct_name
     # cf Methods.Converter.RuleComplex.convert_to_other
-    def convert_to_other(self, other_dict, machine, other_unit_dict):
-        """Selects value in machine and implements it in other_dict
-
-        Parameters
-        ----------
-        self : RulesComplex
-            A RuleComplex object
-        other_dict : dict
-            dict created from the file to be converted
-        machine : Machine
-            A pyleecan machine
-        other_unit_dict : dict
-            dict with unit to make conversion (key: unit family, value: factor)
-        """
-        other_dict = self.P_to_other(self, machine, other_dict)
-
-        return other_dict
-
+    if isinstance(convert_to_other, ImportError):
+        convert_to_other = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RuleComplex method convert_to_other: "
+                    + str(convert_to_other)
+                )
+            )
+        )
+    else:
+        convert_to_other = convert_to_other
     # cf Methods.Converter.RuleComplex.convert_to_P
-    def convert_to_P(self, other_dict, machine, other_unit_dict):
-        """Selects value in other_dict and implements it in machine
-
-        Parameters
-        ----------
-        self : RulesComplex
-            A RuleComplex object
-        other_dict : dict
-            dict created from the file to be converted
-        machine : Machine
-            A pyleecan machine
-        other_unit_dict : dict
-            dict with unit to make conversion (key: unit family, value: factor)
-        """
-        machine = self.other_to_P(self, machine, other_dict, other_unit_dict)
-
-        return machine
-
+    if isinstance(convert_to_P, ImportError):
+        convert_to_P = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RuleComplex method convert_to_P: " + str(convert_to_P)
+                )
+            )
+        )
+    else:
+        convert_to_P = convert_to_P
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -240,7 +235,7 @@ class RuleComplex(Rule):
         RuleComplex_dict = super(RuleComplex, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs,
+            **kwargs
         )
         RuleComplex_dict["fct_name"] = self.fct_name
         RuleComplex_dict["folder"] = self.folder

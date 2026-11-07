@@ -1,18 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/MachineIPMSM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineIPMSM"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineIPMSM
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .MachineSync import MachineSync
 
-from pyleecan.Classes.LamHole import LamHole
-from pyleecan.Classes.LamSlotWind import LamSlotWind
-from pyleecan.Classes.MachineSync import MachineSync
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.MachineIPMSM.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Machine.MachineIPMSM.get_machine_type import get_machine_type
+except ImportError as error:
+    get_machine_type = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class MachineIPMSM(MachineSync):
@@ -20,79 +37,28 @@ class MachineIPMSM(MachineSync):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineIPMSM.check
-    def check(self):
-        """Check that the Machine object is correct
-
-        Parameters
-        ----------
-        self : MachineIPMSM
-            A MachineIPMSM object
-
-        Returns
-        -------
-        None
-
-
-        Raises
-        _______
-        M3C_WrongRotor
-            The Rotor of a Machine_Type_3 must be a LamHole
-        M3C_WrongStator
-            The Stator of a Machine_Type_3 must be a LamSlotWind
-        M3C_PError
-            The stator and the rotor must have the same value for p
-
-        """
-
-        super(type(self), self).check()
-
-        if not isinstance(self.rotor, LamHole):
-            raise M3C_WrongRotor("The Rotor of a Machine_Type_3 must be a " "LamHole")
-        if not isinstance(self.stator, LamSlotWind):
-            raise M3C_WrongStator(
-                "The Stator of a Machine_Type_3 must be a " "LamSlotWind"
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MachineIPMSM method check: " + str(check))
             )
-
-        if self.rotor.get_pole_pair_number() != self.stator.get_pole_pair_number():
-            raise M3C_PError(
-                "The stator and the rotor must have the same " "value for p"
-            )
-
+        )
+    else:
+        check = check
     # cf Methods.Machine.MachineIPMSM.get_machine_type
-    def get_machine_type(self):
-        """Return a string with the may information about the machine architecture
-
-        Parameters
-        ----------
-        self : MachineIPMSM
-            A MachineIPMSM object
-
-        Returns
-        -------
-        type_str: str
-            IPMSM Zs/Zr/p (int/ext rotor)
-
-        """
-
-        type_str = "IPMSM "
-        if self.stator.slot.Zs is not None:
-            type_str += str(self.stator.slot.Zs) + "s / "
-        else:
-            type_str += "?s / "
-
-        if self.stator.winding.p is not None:
-            type_str += str(self.stator.winding.p) + "p"
-        else:
-            type_str += "?p"
-
-        if self.stator.is_internal:
-            type_str += " (ext rotor)"
-        else:
-            type_str += " (int rotor)"
-
-        return type_str
-
+    if isinstance(get_machine_type, ImportError):
+        get_machine_type = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineIPMSM method get_machine_type: "
+                    + str(get_machine_type)
+                )
+            )
+        )
+    else:
+        get_machine_type = get_machine_type
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -404,71 +370,3 @@ class MachineIPMSM(MachineSync):
         :Type: Lamination
         """,
     )
-
-    class MachineCheckError(Exception):
-        """ """
-
-        pass
-
-    class M3C_PError(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        values
-
-
-        """
-
-        pass
-
-    class M3C_WrongRotor(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Magnet
-
-        """
-
-        pass
-
-    class M3C_WrongStator(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """
-
-        pass
-
-
-MachineCheckError = MachineIPMSM.MachineCheckError
-
-M3C_PError = MachineIPMSM.M3C_PError
-
-M3C_WrongRotor = MachineIPMSM.M3C_WrongRotor
-
-M3C_WrongStator = MachineIPMSM.M3C_WrongStator

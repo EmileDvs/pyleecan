@@ -1,17 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/OP.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/OP"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/OP
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.OP.get_machine_from_parent import get_machine_from_parent
+except ImportError as error:
+    get_machine_from_parent = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Simulation.OP.get_OP_array import get_OP_array
+except ImportError as error:
+    get_OP_array = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OP(FrozenClass):
@@ -19,124 +37,28 @@ class OP(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.OP.get_machine_from_parent
-    def get_machine_from_parent(self):
-        """Search in the parent to find the machine
-
-        Parameters
-        ----------
-        self : OP
-            An OP object
-
-        Returns
-        -------
-        machine : Machine
-            Machine from the parent (or None)
-        """
-
-        parent = self.parent
-        while parent is not None and not hasattr(parent, "machine"):
-            parent = parent.parent
-
-        if parent is not None:
-            return parent.machine
-        else:
-            # Try to import machine from simu object
-            parent = self.parent
-            while parent is not None and not hasattr(parent, "simu"):
-                parent = parent.parent
-            if parent is not None:
-                return parent.simu.machine
-            else:
-                return None
-
-    # cf Methods.Simulation.OP.get_OP_array
-    def get_OP_array(self, *arg_list):
-        """get the OP_matrix by identifying the columns
-        Ex: get_OP_array("N0", "Iq", "Iq", "Tem")
-        get_OP_array(OP_matrix) calls get_OP_array("N0", "Id", "Iq", "Tem", "Pem")
-
-        Parameters
-        ----------
-        self : OP
-            Operating Point object to convert to a matrix
-        *arg_list : list of str
-            arguments to specify the OP_matrix columns name
-
-        Returns
-        -------
-        OP_matrix: ndarray
-            Single line OP_matrix with the selected columns
-        """
-
-        # Extract arg_list it the function called from another script with *arg_list
-        if len(arg_list) == 1 and type(arg_list[0]) == tuple:
-            arg_list = arg_list[0]
-
-        # Init OP_matrix
-        OP_matrix = np.zeros((1, len(arg_list)))
-
-        # Setup default argument (N0, Id, Iq, Tem, Pem)
-        Idq_dict = self.get_Id_Iq()
-        if len(arg_list) == 0:
-            if self.N0 is not None:
-                arg_list.append("N0")
-            if Idq_dict["Id"] is not None:
-                arg_list.append("Id")
-            if Idq_dict["Iq"] is not None:
-                arg_list.append("Iq")
-            if self.Tem_av_ref is not None:
-                arg_list.append("Tem")
-            if self.Pem_av_ref is not None:
-                arg_list.append("Pem")
-
-        # Set column by column according to arg_list
-        I0_dict = self.get_I0_Phi0()
-        Udq_dict = self.get_Ud_Uq()
-        U0_dict = self.get_U0_UPhi0()
-        for ii in range(len(arg_list)):
-            # N0
-            if arg_list[ii].lower() in ["n0", "no", "0n", "on"]:
-                OP_matrix[0, ii] = self.N0
-            # Id/Iq
-            elif arg_list[ii].lower() in ["id", "di", "id_ref"]:
-                OP_matrix[0, ii] = Idq_dict["Id"]
-            elif arg_list[ii].lower() in ["iq", "qi", "iq_ref"]:
-                OP_matrix[0, ii] = Idq_dict["Iq"]
-            # I0/Phi0
-            elif arg_list[ii].lower() in ["i0", "0i", "i0_ref"]:
-                OP_matrix[0, ii] = I0_dict["I0"]
-            elif arg_list[ii].lower() in ["iphi0", "phi0", "phio"]:
-                OP_matrix[0, ii] = I0_dict["Phi0"]
-            # Tem
-            elif arg_list[ii].lower() in ["tem", "t", "tem_av", "tem_av_ref"]:
-                OP_matrix[0, ii] = self.Tem_av_ref
-            # Pem
-            elif arg_list[ii].lower() in ["pem", "p", "pem_av", "pem_av_ref"]:
-                OP_matrix[0, ii] = self.Pem_av_ref
-            # Ud/Uq
-            elif arg_list[ii].lower() in ["ud", "du", "ud_ref"]:
-                OP_matrix[0, ii] = Udq_dict["Ud"]
-            elif arg_list[ii].lower() in ["uq", "qu", "uq_ref"]:
-                OP_matrix[0, ii] = Udq_dict["Uq"]
-            # U0/UPhi0
-            elif arg_list[ii].lower() in ["u0", "0u", "u0_ref"]:
-                OP_matrix[0, ii] = U0_dict["U0"]
-            elif arg_list[ii].lower() in ["uphi0", "uphio"]:
-                OP_matrix[0, ii] = U0_dict["UPhi0"]
-            # If
-            elif arg_list[ii].lower() in ["if", "fi"]:
-                OP_matrix[0, ii] = self.If_ref
-            else:
-                raise OPMatrixException(
-                    "Error in OP_matrix.get_OP_array, unknow column name for index "
-                    + str(ii)
-                    + " in "
-                    + str(arg_list)
+    if isinstance(get_machine_from_parent, ImportError):
+        get_machine_from_parent = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use OP method get_machine_from_parent: "
+                    + str(get_machine_from_parent)
                 )
-
-        return OP_matrix
-
+            )
+        )
+    else:
+        get_machine_from_parent = get_machine_from_parent
+    # cf Methods.Simulation.OP.get_OP_array
+    if isinstance(get_OP_array, ImportError):
+        get_OP_array = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OP method get_OP_array: " + str(get_OP_array))
+            )
+        )
+    else:
+        get_OP_array = get_OP_array
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -238,8 +160,8 @@ class OP(FrozenClass):
         if (
             other._N0 is not None
             and self._N0 is not None
-            and np.isnan(other._N0)
-            and np.isnan(self._N0)
+            and isnan(other._N0)
+            and isnan(self._N0)
         ):
             pass
         elif other._N0 != self._N0:
@@ -251,8 +173,8 @@ class OP(FrozenClass):
         if (
             other._felec is not None
             and self._felec is not None
-            and np.isnan(other._felec)
-            and np.isnan(self._felec)
+            and isnan(other._felec)
+            and isnan(self._felec)
         ):
             pass
         elif other._felec != self._felec:
@@ -266,8 +188,8 @@ class OP(FrozenClass):
         if (
             other._Tem_av_ref is not None
             and self._Tem_av_ref is not None
-            and np.isnan(other._Tem_av_ref)
-            and np.isnan(self._Tem_av_ref)
+            and isnan(other._Tem_av_ref)
+            and isnan(self._Tem_av_ref)
         ):
             pass
         elif other._Tem_av_ref != self._Tem_av_ref:
@@ -285,8 +207,8 @@ class OP(FrozenClass):
         if (
             other._Pem_av_ref is not None
             and self._Pem_av_ref is not None
-            and np.isnan(other._Pem_av_ref)
-            and np.isnan(self._Pem_av_ref)
+            and isnan(other._Pem_av_ref)
+            and isnan(self._Pem_av_ref)
         ):
             pass
         elif other._Pem_av_ref != self._Pem_av_ref:
@@ -304,8 +226,8 @@ class OP(FrozenClass):
         if (
             other._Pem_av_in is not None
             and self._Pem_av_in is not None
-            and np.isnan(other._Pem_av_in)
-            and np.isnan(self._Pem_av_in)
+            and isnan(other._Pem_av_in)
+            and isnan(self._Pem_av_in)
         ):
             pass
         elif other._Pem_av_in != self._Pem_av_in:
@@ -323,8 +245,8 @@ class OP(FrozenClass):
         if (
             other._efficiency is not None
             and self._efficiency is not None
-            and np.isnan(other._efficiency)
-            and np.isnan(self._efficiency)
+            and isnan(other._efficiency)
+            and isnan(self._efficiency)
         ):
             pass
         elif other._efficiency != self._efficiency:
@@ -515,11 +437,3 @@ class OP(FrozenClass):
         :Type: float
         """,
     )
-
-    class OPMatrixException(Exception):
-        """Raise when OP_matrix was wrongly defined"""
-
-        pass
-
-
-OPMatrixException = OP.OPMatrixException

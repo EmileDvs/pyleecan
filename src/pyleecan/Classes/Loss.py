@@ -1,19 +1,40 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Loss/Loss.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Loss/Loss"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Loss/Loss
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from pyleecan.Classes.Data1D import Data1D
-from pyleecan.Classes.OutLossModel import OutLossModel
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Loss.Loss.comp_all_losses import comp_all_losses
+except ImportError as error:
+    comp_all_losses = error
+
+try:
+    from ..Methods.Loss.Loss.comp_axes import comp_axes
+except ImportError as error:
+    comp_axes = error
+
+try:
+    from ..Methods.Loss.Loss.run import run
+except ImportError as error:
+    run = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Loss(FrozenClass):
@@ -21,120 +42,34 @@ class Loss(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Loss.Loss.comp_all_losses
-    def comp_all_losses(
-        self,
-        axes_dict=None,
-    ):
-        """Compute all the losses models set in model_dict
-
-        Parameters
-        ----------
-        self : Loss
-            A Loss object
-        axes_dict : dict
-            Dict containing axes for loss calculation
-        """
-
-        output = self.parent.parent
-        out_loss = output.loss
-        # Store dict of axes
-        if axes_dict is not None:
-            out_loss.axes_dict = axes_dict
-
-        meshsol = output.mag.meshsolution
-        group = meshsol.group
-        freqs = axes_dict["freqs"].get_values()
-        Nelem = meshsol.mesh.element_dict["triangle"].nb_element
-
-        out_loss.loss_dict = dict()
-        for key, model in self.model_dict.items():
-            # Compute losses for each model
-            P_density, f_array = model.comp_loss()
-            if self.is_get_meshsolution:
-                loss_density = np.zeros((freqs.size, Nelem))
-                If = np.argmin(np.abs(freqs[:, None] - f_array[None, :]), axis=0)[
-                    :, None
-                ]
-                Ie = np.array(group[model.group])[None, :]
-                loss_density[If, Ie] += P_density
-            else:
-                loss_density = None
-            # Store results of each model in a different object
-            out_loss_model = OutLossModel(
-                name=key,
-                loss_density=loss_density,
-                scalar_value=None,
-                coeff_dict=model.coeff_dict,
-                group=model.group,
-                loss_model=type(model).__name__,
+    if isinstance(comp_all_losses, ImportError):
+        comp_all_losses = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Loss method comp_all_losses: " + str(comp_all_losses)
+                )
             )
-            out_loss.loss_dict[key] = out_loss_model
-
-    # cf Methods.Loss.Loss.comp_axes
-    def comp_axes(self, output):
-        """Compute the axes required in Loss module
-
-        Parameters
-        ----------
-        self : Loss
-            a Loss object
-        output : Output
-            an Output object (to update)
-
-        Returns
-        -------
-        axes_dict: {Data}
-            Dict containing Time and Angle axes including (anti-)periodicties used in any Force module
-        """
-
-        axes_list = output.mag.meshsolution.get_solution().field.get_axes()
-        Time = axes_list[0]
-
-        freqs = Time.get_values(is_oneperiod=True, operation="time_to_freqs")
-
-        if "antiperiod" in Time.symmetries:
-            Time_per = Time.copy()
-            Time_per.symmetries = {"period": Time.symmetries["antiperiod"]}
-            freqs_per = Time_per.get_values(
-                is_oneperiod=True, operation="time_to_freqs"
-            )
-            freqs = np.unique(np.concatenate((freqs, freqs_per)))
-
-        Freqs = Data1D(
-            name="freqs",
-            unit="Hz",
-            values=freqs,
-            normalizations=Time.normalizations.copy(),
         )
-
-        axes_dict = {"freqs": Freqs, "indice": axes_list[1]}
-
-        return axes_dict
-
+    else:
+        comp_all_losses = comp_all_losses
+    # cf Methods.Loss.Loss.comp_axes
+    if isinstance(comp_axes, ImportError):
+        comp_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Loss method comp_axes: " + str(comp_axes))
+            )
+        )
+    else:
+        comp_axes = comp_axes
     # cf Methods.Loss.Loss.run
-    def run(self):
-        """Run the Loss module
-
-        Parameters
-        ----------
-        self : Loss
-            A Loss model
-        """
-        if self.parent is None:
-            raise InputError("The Loss object must be in a Simulation object to run")
-        if self.parent.parent is None:
-            raise InputError("The Loss object must be in an Output object to run")
-
-        self.get_logger().info("Running Loss module")
-
-        # get output
-        output = self.parent.parent
-
-        axes_dict = self.comp_axes(output)
-        # Comp and store in output
-        self.comp_all_losses(axes_dict)
-
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(ImportError("Can't use Loss method run: " + str(run)))
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -266,8 +201,8 @@ class Loss(FrozenClass):
         if (
             other._Tsta is not None
             and self._Tsta is not None
-            and np.isnan(other._Tsta)
-            and np.isnan(self._Tsta)
+            and isnan(other._Tsta)
+            and isnan(self._Tsta)
         ):
             pass
         elif other._Tsta != self._Tsta:
@@ -281,8 +216,8 @@ class Loss(FrozenClass):
         if (
             other._Trot is not None
             and self._Trot is not None
-            and np.isnan(other._Trot)
-            and np.isnan(self._Trot)
+            and isnan(other._Trot)
+            and isnan(self._Trot)
         ):
             pass
         elif other._Trot != self._Trot:
@@ -499,11 +434,3 @@ class Loss(FrozenClass):
         :Type: bool
         """,
     )
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-        pass
-
-
-InputError = Loss.InputError

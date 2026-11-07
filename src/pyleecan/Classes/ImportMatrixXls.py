@@ -1,19 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportMatrixXls.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrixXls"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrixXls
+"""
 
 from os import linesep
-from os.path import isfile
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ImportMatrix import ImportMatrix
 
-from pandas import ExcelFile, read_excel
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportMatrixXls.get_data import get_data
+except ImportError as error:
+    get_data = error
 
-from pyleecan.Classes.ImportMatrix import ImportMatrix
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.path_tools import abs_file_path
-from pyleecan.Functions.save import save
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportMatrixXls(ImportMatrix):
@@ -22,126 +33,16 @@ class ImportMatrixXls(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportMatrixXls.get_data
-    def get_data(self):
-        """Return the object's matrix
-
-        Parameters
-        ----------
-        self : ImportMatrixVal
-            An ImportMatrixVal object
-
-        Returns
-        -------
-        matrix: ndarray
-            The object's matrix
-
-        """
-        file_path = abs_file_path(self.file_path, is_check=False)
-        if not isfile(file_path):
-            raise XlsFileError("ERROR: The xls file doesn't exist " + self.file_path)
-        if self.usecols == "":
-            self.usecols = None
-
-        if self.is_allsheets:
-            xl = ExcelFile("file.xlsx")
-            Nsheets = len(xl.sheet_names)
-            for i in range(Nsheets):
-                df = read_excel(
-                    file_path,
-                    i,
-                    header=None,
-                    usecols=self.usecols,
-                    skiprows=self.skiprows,
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportMatrixXls method get_data: " + str(get_data)
                 )
-                values = df.values
-                # Extract axes
-                if self.axes_colrows is not None:
-                    axes_dict = {}
-                    if len(axes_dict) == 1:
-                        is_first = False
-                    else:
-                        is_first = True
-                    for axis in self.axes_colrows:
-                        if self.axes_colrows[axis] == "1":
-                            if is_first:
-                                axes_dict[axis] = values[0, 1:]
-                                is_first = False
-                            else:
-                                axes_dict[axis] = values[0, :]
-                            values = values[1:, :]
-                        elif self.axes_colrows[axis] == "A":
-                            if is_first:
-                                axes_dict[axis] = values[1:, 0]
-                                is_first = False
-                            else:
-                                axes_dict[axis] = values[:, 0]
-                            values = values[:, 1:]
-                        else:
-                            raise Exception(
-                                "ERROR: axes_colrows should contain either '1' or 'A'"
-                            )
-
-                # Transpose if necessary
-                values = self.edit_matrix(values)
-
-                # Store in 3D matrix
-                if i == 0:
-                    values_3d = values[..., None]
-                else:
-                    values_3d.append(values_3d, values[..., None], axis=-1)
-
-            if self.axes_colrows is not None:
-                return values_3d, axes_dict
-            else:
-                return values_3d
-
-        else:
-            df = read_excel(
-                file_path,
-                self.sheet,
-                header=None,
-                usecols=self.usecols,
-                skiprows=self.skiprows,
             )
-            values = df.values
-
-            # Extract axes
-            if self.axes_colrows is not None:
-                axes_dict = {}
-                if len(axes_dict) == 1:
-                    is_first = False
-                else:
-                    is_first = True
-                for axis in self.axes_colrows:
-                    if self.axes_colrows[axis] == "1":
-                        if is_first:
-                            axes_dict[axis] = values[0, 1:]
-                            is_first = False
-                        else:
-                            axes_dict[axis] = values[0, :]
-                        values = values[1:, :]
-                    elif self.axes_colrows[axis] == "A":
-                        if is_first:
-                            axes_dict[axis] = values[1:, 0]
-                            is_first = False
-                        else:
-                            axes_dict[axis] = values[:, 0]
-                        values = values[:, 1:]
-                    else:
-                        raise Exception(
-                            "ERROR: axes_colrows should contain either '1' or 'A'"
-                        )
-            else:
-                axes_dict = None
-
-            # Transpose if necessary
-            values = self.edit_matrix(values)
-
-            if self.axes_colrows is not None:
-                return values, axes_dict
-            else:
-                return values
-
+        )
+    else:
+        get_data = get_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -519,18 +420,3 @@ class ImportMatrixXls(ImportMatrix):
         :Type: bool
         """,
     )
-
-    class ImportError(Exception):
-        """Raised when the data import or generation is not possible"""
-
-        pass
-
-    class XlsFileError(ImportError):
-        """Raised when the file_path is wrong"""
-
-        pass
-
-
-ImportError = ImportMatrixXls.ImportError
-
-XlsFileError = ImportMatrixXls.XlsFileError

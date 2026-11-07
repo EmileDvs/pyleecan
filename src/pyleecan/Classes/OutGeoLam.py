@@ -1,17 +1,23 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/OutGeoLam.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutGeoLam"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutGeoLam
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OutGeoLam(FrozenClass):
@@ -128,7 +134,7 @@ class OutGeoLam(FrozenClass):
             return False
         if other.name_phase != self.name_phase:
             return False
-        if not np.array_equal(other.BH_curve, self.BH_curve):
+        if not array_equal(other.BH_curve, self.BH_curve):
             return False
         if other.Ksfill != self.Ksfill:
             return False
@@ -168,13 +174,13 @@ class OutGeoLam(FrozenClass):
                 diff_list.append(name + ".name_phase" + val_str)
             else:
                 diff_list.append(name + ".name_phase")
-        if not np.array_equal(other.BH_curve, self.BH_curve):
+        if not array_equal(other.BH_curve, self.BH_curve):
             diff_list.append(name + ".BH_curve")
         if (
             other._Ksfill is not None
             and self._Ksfill is not None
-            and np.isnan(other._Ksfill)
-            and np.isnan(self._Ksfill)
+            and isnan(other._Ksfill)
+            and isnan(self._Ksfill)
         ):
             pass
         elif other._Ksfill != self._Ksfill:
@@ -192,8 +198,8 @@ class OutGeoLam(FrozenClass):
         if (
             other._S_slot is not None
             and self._S_slot is not None
-            and np.isnan(other._S_slot)
-            and np.isnan(self._S_slot)
+            and isnan(other._S_slot)
+            and isnan(self._S_slot)
         ):
             pass
         elif other._S_slot != self._S_slot:
@@ -211,8 +217,8 @@ class OutGeoLam(FrozenClass):
         if (
             other._S_slot_wind is not None
             and self._S_slot_wind is not None
-            and np.isnan(other._S_slot_wind)
-            and np.isnan(self._S_slot_wind)
+            and isnan(other._S_slot_wind)
+            and isnan(self._S_slot_wind)
         ):
             pass
         elif other._S_slot_wind != self._S_slot_wind:
@@ -230,8 +236,8 @@ class OutGeoLam(FrozenClass):
         if (
             other._S_wind_act is not None
             and self._S_wind_act is not None
-            and np.isnan(other._S_wind_act)
-            and np.isnan(self._S_wind_act)
+            and isnan(other._S_wind_act)
+            and isnan(self._S_wind_act)
         ):
             pass
         elif other._S_wind_act != self._S_wind_act:
@@ -424,10 +430,10 @@ class OutGeoLam(FrozenClass):
     def _set_BH_curve(self, value):
         """setter of BH_curve"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("BH_curve", value, "ndarray")

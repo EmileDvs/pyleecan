@@ -1,18 +1,45 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/ParamExplorer.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/ParamExplorer"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/ParamExplorer
+"""
 
-from ntpath import basename
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes._check import CheckTypeError, check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.definitions import PYTHON_DEFAULT_ENCODING
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.path_tools import abs_file_path
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.ParamExplorer._set_getter import _set_getter
+except ImportError as error:
+    _set_getter = error
+
+try:
+    from ..Methods.Simulation.ParamExplorer._set_setter import _set_setter
+except ImportError as error:
+    _set_setter = error
+
+try:
+    from ..Methods.Simulation.ParamExplorer.get_desc import get_desc
+except ImportError as error:
+    get_desc = error
+
+
+from ntpath import basename
+from os.path import isfile
+from ._check import CheckTypeError
+import numpy as np
+import random
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ParamExplorer(FrozenClass):
@@ -20,127 +47,38 @@ class ParamExplorer(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.ParamExplorer._set_getter
-    def _set_getter(self, value):
-        """setter of getter"""
-        # Create the function if getter is defined as a string (e.g. simu.machine.rotor.slot.W0)
-        if isinstance(value, str) and value[:4] == "simu":
-            value_split = value.split(".")
-            value = (
-                "lambda simu: getattr(eval('"
-                + ".".join(value_split[:-1])
-                + "'), '"
-                + value_split[-1]
-                + "')"
+    if isinstance(_set_getter, ImportError):
+        _set_getter = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorer method _set_getter: " + str(_set_getter)
+                )
             )
-        if value is None:
-            self._getter_str = None
-            self._getter_func = None
-        elif isinstance(value, str) and "lambda" in value:
-            self._getter_str = value
-            self._getter_func = eval(value)
-        elif isinstance(value, str) and value[-3:] == ".py":
-            if "<" in value and ">" in value:
-                # path like "<PARAM_DIR>/setter_rotor.py"
-                self._getter_str = value
-                value = abs_file_path(value)
-            else:  # Direct path
-                self._getter_str = value
-            f = open(value, "r", encoding=PYTHON_DEFAULT_ENCODING)
-            exec(f.read(), globals())
-            f.close()
-            self._getter_func = eval(basename(value[:-3]))
-        elif callable(value):
-            self._getter_str = None
-            self._getter_func = value
-        else:
-            raise CheckTypeError(
-                "For property getter Expected function or str (path to python file or lambda), got: "
-                + str(type(value))
-            )
-
+        )
+    else:
+        _set_getter = _set_getter
     # cf Methods.Simulation.ParamExplorer._set_setter
-    def _set_setter(self, value):
-        """setter of setter"""
-        # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
-        if isinstance(value, str) and value[:4] == "simu":
-            value_split = value.split(".")
-            value = (
-                "lambda simu, val: setattr(eval('"
-                + ".".join(value_split[:-1])
-                + "'), '"
-                + value_split[-1]
-                + "', val"
-                + ")"
+    if isinstance(_set_setter, ImportError):
+        _set_setter = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorer method _set_setter: " + str(_set_setter)
+                )
             )
-        if value is None:
-            self._setter_str = None
-            self._setter_func = None
-        elif isinstance(value, str) and "lambda" in value:
-            self._setter_str = value
-            self._setter_func = eval(value)
-        elif isinstance(value, str) and value[-3:] == ".py":
-            if "<" in value and ">" in value:
-                # path like "<PARAM_DIR>/setter_rotor.py"
-                self._setter_str = value
-                value = abs_file_path(value)
-            else:  # Direct path
-                self._setter_str = value
-            f = open(value, "r", encoding=PYTHON_DEFAULT_ENCODING)
-            exec(f.read(), globals())
-            f.close()
-            self._setter_func = eval(basename(value[:-3]))
-        elif callable(value):
-            self._setter_str = None
-            self._setter_func = value
-        else:
-            raise CheckTypeError(
-                "For property setter Expected function or str (path to python file or lambda), got: "
-                + str(type(value))
-            )
-
+        )
+    else:
+        _set_setter = _set_setter
     # cf Methods.Simulation.ParamExplorer.get_desc
-    def get_desc(self, simu=None, is_print=False):
-        """Generate a string description of the ParamExplorer
-
-        Parameters
-        ----------
-        self : ParamExplorer
-            A ParamExplorer object
-        simu : Simulation
-            Optional simulation object to add reference value
-        is_print : bool
-            True to call print on desc
-
-        Returns
-        -------
-        desc: str
-            Description (for instance "W0: N values from 0.001 to 0.01 (ref=0.0015) [m]")
-        """
-
-        desc = ""
-        desc += self.symbol + ": "
-        N = self.get_N()
-        desc += str(N) + " value"
-        if N > 1:
-            desc += "s"
-
-        min_value = self.get_min()
-        max_value = self.get_max()
-        if min_value is not None and max_value is not None and N > 1:
-            desc += (
-                " from " + format(min_value, ".4g") + " to " + format(max_value, ".4g")
+    if isinstance(get_desc, ImportError):
+        get_desc = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ParamExplorer method get_desc: " + str(get_desc))
             )
-        if self.getter is not None and simu is not None:
-            ref = self.getter(simu)
-            desc += " (ref=" + format(ref, ".4g") + ")"
-        if self.unit is not None:
-            desc += " [" + self.unit + "]"
-
-        if is_print:
-            print(desc)
-        return desc
-
+        )
+    else:
+        get_desc = get_desc
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

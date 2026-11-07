@@ -1,18 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/Mesh.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/Mesh"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/Mesh
+"""
 
 from os import linesep
 from sys import getsizeof
-from typing import Optional
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Mesh.Mesh.get_node_coordinate import get_node_coordinate
+except ImportError as error:
+    get_node_coordinate = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Mesh(FrozenClass):
@@ -21,25 +33,17 @@ class Mesh(FrozenClass):
     VERSION = 1
 
     # cf Methods.Mesh.Mesh.get_node_coordinate
-    def get_node_coordinate(
-        self, indices: Optional[np.typing.ArrayLike] = None
-    ) -> np.ndarray:
-        """Return the coordinates of the node with provided indices.
-        If indices is not specified, returns every node coordinates
-
-        Parameters
-        ----------
-        indices : Optional[ArrayLike], optional
-            Indices of the targeted nodes. If None, return all.
-
-        Returns
-        -------
-        np.ndarray
-            nodes coordinates
-        """
-
-        raise NotImplementedError("Mesh is an abstract class")
-
+    if isinstance(get_node_coordinate, ImportError):
+        get_node_coordinate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Mesh method get_node_coordinate: "
+                    + str(get_node_coordinate)
+                )
+            )
+        )
+    else:
+        get_node_coordinate = get_node_coordinate
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

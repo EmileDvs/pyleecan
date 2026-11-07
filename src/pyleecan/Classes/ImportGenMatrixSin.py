@@ -1,19 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportGenMatrixSin.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportGenMatrixSin"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportGenMatrixSin
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ImportMatrix import ImportMatrix
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportGenMatrixSin.get_data import get_data
+except ImportError as error:
+    get_data = error
 
-from pyleecan.Classes.ImportGenVectSin import ImportGenVectSin
-from pyleecan.Classes.ImportMatrix import ImportMatrix
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Import.ImportGenMatrixSin.init_vector import init_vector
+except ImportError as error:
+    init_vector = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportGenMatrixSin(ImportMatrix):
@@ -21,86 +37,30 @@ class ImportGenMatrixSin(ImportMatrix):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Import.ImportGenMatrixSin.get_data
-    def get_data(self):
-        """Generate the sinus matrix
-
-        Parameters
-        ----------
-        self : ImportGenMatrixSin
-            An ImportGenMatrixSin object
-
-        Returns
-        -------
-        matrix: ndarray
-            The generated sinus matrix
-
-        """
-
-        if len(self.sin_list) == 0:
-            raise GenSinEmptyError("ERROR: The sinus list is empty")
-
-        N = self.sin_list[0].N
-        is_T = self.sin_list[0].is_transpose
-
-        for ii in range(1, len(self.sin_list)):
-            if self.sin_list[ii].N != N:
-                raise GenSinDimError(
-                    "ERROR: Dimension mismatch between ImportGenVectSin 0 (N="
-                    + str(N)
-                    + ") and ImportGenVectSin "
-                    + str(ii)
-                    + " (N="
-                    + str(self.sin_list[ii].N)
-                    + ")"
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportGenMatrixSin method get_data: " + str(get_data)
                 )
-            if self.sin_list[ii].is_transpose != is_T:
-                raise GenSinTransposeError(
-                    "ERROR: is_transpose mismatch between ImportGenVectSin 0 ("
-                    + str(is_T)
-                    + ") and ImportGenVectSin "
-                    + str(ii)
-                    + " ("
-                    + str(self.sin_list[ii].is_transpose)
-                    + ")"
-                )
-        if is_T:  # Conctenate the columns
-            matrix = np.column_stack([sin_obj.get_data() for sin_obj in self.sin_list])
-        else:  # Concatenate the lines
-            matrix = np.vstack([sin_obj.get_data() for sin_obj in self.sin_list])
-        return self.edit_matrix(matrix)
-
-    # cf Methods.Import.ImportGenMatrixSin.init_vector
-    def init_vector(self, f, A, Phi, N, Tf):
-        """Create the sin_list according to the input list
-
-        Parameters
-        ----------
-        self : ImportGenMatrixSin
-            An ImportGenMatrixSin object
-        f: list
-            list of frequency for the sinus
-        A: list
-            list of amplitude for the sinus
-        Phi: list
-            list of phase for the sinus
-        N: int
-            Number of point (same for all the sinus)
-        Tf: float
-            End time (same for all the sinus)
-        """
-
-        if len(f) != len(A):
-            raise InitSinMatDimError("ERROR: f and A have different dimensions")
-        if len(f) != len(Phi):
-            raise InitSinMatDimError("ERROR: f and Phi have different dimensions")
-
-        self.sin_list = list()
-        for ii in range(len(f)):
-            self.sin_list.append(
-                ImportGenVectSin(f=f[ii], A=A[ii], Phi=Phi[ii], N=N, Tf=Tf)
             )
-
+        )
+    else:
+        get_data = get_data
+    # cf Methods.Import.ImportGenMatrixSin.init_vector
+    if isinstance(init_vector, ImportError):
+        init_vector = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportGenMatrixSin method init_vector: "
+                    + str(init_vector)
+                )
+            )
+        )
+    else:
+        init_vector = init_vector
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -310,39 +270,3 @@ class ImportGenMatrixSin(ImportMatrix):
         :Type: [ImportGenVectSin]
         """,
     )
-
-    class ImportError(Exception):
-        """Raised when the data import or generation is not possible"""
-
-        pass
-
-    class GenSinEmptyError(ImportError):
-        """Raised when the sin_list is empty"""
-
-        pass
-
-    class GenSinDimError(ImportError):
-        """Raised when the ImportGenVectSin of the sin_list has different size (N)"""
-
-        pass
-
-    class GenSinTransposeError(ImportError):
-        """Raised when the ImportGenVectSin of the sin_list has different is_transpose"""
-
-        pass
-
-    class InitSinMatDimError(ImportError):
-        """Raised when the init_vector is called with wrong arguments"""
-
-        pass
-
-
-ImportError = ImportGenMatrixSin.ImportError
-
-GenSinEmptyError = ImportGenMatrixSin.GenSinEmptyError
-
-GenSinDimError = ImportGenMatrixSin.GenSinDimError
-
-GenSinTransposeError = ImportGenMatrixSin.GenSinTransposeError
-
-InitSinMatDimError = ImportGenMatrixSin.InitSinMatDimError

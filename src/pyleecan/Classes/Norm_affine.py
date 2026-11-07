@@ -1,16 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/Norm_affine.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_affine"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_affine
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Normalization import Normalization
 
-import numpy as np
-from pyleecan.Classes.Normalization import Normalization
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.Norm_affine.normalize import normalize
+except ImportError as error:
+    normalize = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Norm_affine(Normalization):
@@ -19,23 +33,14 @@ class Norm_affine(Normalization):
     VERSION = 1
 
     # cf Methods.SciDataTool.Norm_affine.normalize
-    def normalize(
-        self,
-        values,
-    ):
-        """Normalizes axis values
-        Parameters
-        ----------
-        self: Norm_affine
-            a Norm_affine object
-        values: ndarray
-            axis values
-        Returns
-        -------
-        Vector of axis values
-        """
-        return values * self.slope + self.offset
-
+    if isinstance(normalize, ImportError):
+        normalize = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Norm_affine method normalize: " + str(normalize))
+            )
+        )
+    else:
+        normalize = normalize
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -114,8 +119,8 @@ class Norm_affine(Normalization):
         if (
             other._slope is not None
             and self._slope is not None
-            and np.isnan(other._slope)
-            and np.isnan(self._slope)
+            and isnan(other._slope)
+            and isnan(self._slope)
         ):
             pass
         elif other._slope != self._slope:
@@ -129,8 +134,8 @@ class Norm_affine(Normalization):
         if (
             other._offset is not None
             and self._offset is not None
-            and np.isnan(other._offset)
-            and np.isnan(self._offset)
+            and isnan(other._offset)
+            and isnan(self._offset)
         ):
             pass
         elif other._offset != self._offset:

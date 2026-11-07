@@ -1,16 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/Interpolation/FPGNSeg.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/FPGNSeg"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/FPGNSeg
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .GaussPoint import GaussPoint
 
-import numpy as np
-from pyleecan.Classes.GaussPoint import GaussPoint
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Mesh.FPGNSeg.get_gauss_points import get_gauss_points
+except ImportError as error:
+    get_gauss_points = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class FPGNSeg(GaussPoint):
@@ -19,18 +33,17 @@ class FPGNSeg(GaussPoint):
     VERSION = 1
 
     # cf Methods.Mesh.FPGNSeg.get_gauss_points
-    def get_gauss_points(self):
-        """Return the gauss points and weights for Segments"""
-
-        nb_gauss_points = self.nb_gauss_point
-        gauss_pts = np.zeros([nb_gauss_points, 2], dtype=float)
-
-        gauss_pts[:, 0] = np.polynomial.legendre.leggauss(nb_gauss_points)[0]
-
-        weights = np.polynomial.legendre.leggauss(nb_gauss_points)[1]
-
-        return gauss_pts, weights, nb_gauss_points
-
+    if isinstance(get_gauss_points, ImportError):
+        get_gauss_points = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use FPGNSeg method get_gauss_points: "
+                    + str(get_gauss_points)
+                )
+            )
+        )
+    else:
+        get_gauss_points = get_gauss_points
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

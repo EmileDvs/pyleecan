@@ -1,11 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/MachineAsync.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineAsync"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineAsync
+"""
 
-from pyleecan.Classes.Machine import Machine
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Machine import Machine
+
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.MachineAsync.comp_desc_dict import comp_desc_dict
+except ImportError as error:
+    comp_desc_dict = error
+
+try:
+    from ..Methods.Machine.MachineAsync.is_synchronous import is_synchronous
+except ImportError as error:
+    is_synchronous = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class MachineAsync(Machine):
@@ -13,54 +37,31 @@ class MachineAsync(Machine):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineAsync.comp_desc_dict
-    def comp_desc_dict(self):
-        """Compute a dictionary with the main parameters/output of the machine
-
-        Parameters
-        ----------
-        self : Machine
-            A Machine object
-
-        Returns
-        -------
-        desc_dict: list
-            list of dictionary containing the main parameters of the machine
-        """
-
-        desc_dict = Machine.comp_desc_dict(self)
-
-        Zr_dict = dict(
-            {
-                "name": "Zr",
-                "path": "machine.rotor.slot.Zs",
-                "verbose": "Rotor slot number",
-                "type": int,
-                "unit": "",
-                "is_input": True,
-                "value": self.rotor.slot.Zs,
-            }
+    if isinstance(comp_desc_dict, ImportError):
+        comp_desc_dict = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineAsync method comp_desc_dict: "
+                    + str(comp_desc_dict)
+                )
+            )
         )
-        desc_dict.insert(2, Zr_dict)
-        return desc_dict
-
+    else:
+        comp_desc_dict = comp_desc_dict
     # cf Methods.Machine.MachineAsync.is_synchronous
-    def is_synchronous(self):
-        """Return if a machine is synchronous or not
-
-        Parameters
-        ----------
-        self : MachineAsync
-            A MachineAsync
-
-        Returns
-        -------
-        is_synchronous: bool
-            Asynchronous machines are not synchronous
-
-        """
-        return False
-
+    if isinstance(is_synchronous, ImportError):
+        is_synchronous = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineAsync method is_synchronous: "
+                    + str(is_synchronous)
+                )
+            )
+        )
+    else:
+        is_synchronous = is_synchronous
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

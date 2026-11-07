@@ -1,16 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Output/OutMagFEMM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutMagFEMM"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Output/OutMagFEMM
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .OutInternal import OutInternal
 
-from pyleecan.Classes.OutInternal import OutInternal
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Output.OutMagFEMM.clean import clean
+except ImportError as error:
+    clean = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class OutMagFEMM(OutInternal):
@@ -19,25 +33,14 @@ class OutMagFEMM(OutInternal):
     VERSION = 1
 
     # cf Methods.Output.OutMagFEMM.clean
-    def clean(self, clean_level=1):
-        """Clean MagFEMM outputs depending on cleaning level
-
-        Parameters
-        ----------
-        self : OutMagFEMM
-            the OutMagFEMM object to update
-        clean_level : int
-            Value to indicate which fields to clean in OutMagFEMM (default=1/min=0/max=4)
-
-        """
-
-        # if clean_level = 0:
-        # keep all internal outputs
-
-        if clean_level > 0:
-            # clean FEMM_dict
-            self.FEMM_dict = None
-
+    if isinstance(clean, ImportError):
+        clean = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use OutMagFEMM method clean: " + str(clean))
+            )
+        )
+    else:
+        clean = clean
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -1,19 +1,37 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/BoreLSRPM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/BoreLSRPM"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/BoreLSRPM
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Bore import Bore
 
-import numpy as np
-from pyleecan.Classes import ParentMissingError
-from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.Bore import Bore
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.BoreLSRPM.comp_periodicity_spatial import (
+        comp_periodicity_spatial,
+    )
+except ImportError as error:
+    comp_periodicity_spatial = error
+
+try:
+    from ..Methods.Machine.BoreLSRPM.get_bore_line import get_bore_line
+except ImportError as error:
+    get_bore_line = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class BoreLSRPM(Bore):
@@ -21,107 +39,30 @@ class BoreLSRPM(Bore):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.BoreLSRPM.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
-        """Compute the periodicity factor of the Bore
-
-        Parameters
-        ----------
-        self : BoreLSRPM
-            A BoreLSRPM object
-
-        Returns
-        -------
-        per_a : int
-            Number of spatial periodicities of the bore
-        is_antiper_a : bool
-            True if an spatial anti-periodicity is possible after the periodicities
-        """
-
-        return self.N, False
-
+    if isinstance(comp_periodicity_spatial, ImportError):
+        comp_periodicity_spatial = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use BoreLSRPM method comp_periodicity_spatial: "
+                    + str(comp_periodicity_spatial)
+                )
+            )
+        )
+    else:
+        comp_periodicity_spatial = comp_periodicity_spatial
     # cf Methods.Machine.BoreLSRPM.get_bore_line
-    def get_bore_line(self, prop_dict=None):
-        """Return the bore line description
-
-        Parameters
-        ----------
-        self : BoreLSRPM
-            A BoreLSRPM object
-        prop_dict : dict
-            Property dictionary to apply on the lines
-
-        Returns
-        -------
-        bore_list : list
-            List of bore lines
-        """
-
-        if self.parent is not None:
-            if self.is_yoke():
-                R = self.parent.get_Ryoke()
-            else:
-                R = self.parent.get_Rbo()
-        else:
-            raise ParentMissingError(
-                "Error: The Bore object is not inside a Lamination"
-            )
-
-        # Compute the shape
-
-        alpha1 = np.pi / self.N
-
-        # Z1
-        Z1 = R * np.exp(-1j * alpha1)
-
-        # ZC1
-        ZC1 = (R - self.Rarc) * np.exp(-1j * alpha1)
-        XC1 = ZC1.real
-        YC1 = ZC1.imag
-
-        # Z2
-        X2 = np.sqrt(self.Rarc**2 - (self.W1 + YC1) ** 2) + XC1
-        Y2 = -self.W1
-        Z2 = X2 + 1j * Y2
-
-        Z3 = Z2.conjugate()
-        Z4 = Z1.conjugate()
-
-        # Create the lines
-        bore_list = list()
-        for ii in range(self.N):
-            bore_list.append(
-                Arc1(
-                    begin=Z1
-                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
-                    end=Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
-                    radius=self.Rarc,
-                    is_trigo_direction=True,
-                    prop_dict=prop_dict,
+    if isinstance(get_bore_line, ImportError):
+        get_bore_line = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use BoreLSRPM method get_bore_line: " + str(get_bore_line)
                 )
             )
-
-            bore_list.append(
-                Segment(
-                    Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
-                    Z3 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
-                    prop_dict=prop_dict,
-                )
-            )
-
-            bore_list.append(
-                Arc1(
-                    begin=Z3
-                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
-                    end=Z4 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
-                    radius=self.Rarc,
-                    is_trigo_direction=True,
-                    prop_dict=prop_dict,
-                )
-            )
-
-        return bore_list
-
+        )
+    else:
+        get_bore_line = get_bore_line
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -223,8 +164,8 @@ class BoreLSRPM(Bore):
         if (
             other._Rarc is not None
             and self._Rarc is not None
-            and np.isnan(other._Rarc)
-            and np.isnan(self._Rarc)
+            and isnan(other._Rarc)
+            and isnan(self._Rarc)
         ):
             pass
         elif other._Rarc != self._Rarc:
@@ -238,8 +179,8 @@ class BoreLSRPM(Bore):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and np.isnan(other._W1)
-            and np.isnan(self._W1)
+            and isnan(other._W1)
+            and isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:

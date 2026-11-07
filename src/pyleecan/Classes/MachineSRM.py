@@ -1,18 +1,45 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/MachineSRM.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineSRM"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineSRM
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .MachineSync import MachineSync
 
-from pyleecan.Classes.LamSlot import LamSlot
-from pyleecan.Classes.LamSlotWind import LamSlotWind
-from pyleecan.Classes.MachineSync import MachineSync
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.MachineSRM.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Machine.MachineSRM.get_machine_type import get_machine_type
+except ImportError as error:
+    get_machine_type = error
+
+try:
+    from ..Methods.Machine.MachineSRM.get_pole_pair_number import get_pole_pair_number
+except ImportError as error:
+    get_pole_pair_number = error
+
+try:
+    from ..Methods.Machine.MachineSRM.set_pole_pair_number import set_pole_pair_number
+except ImportError as error:
+    set_pole_pair_number = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class MachineSRM(MachineSync):
@@ -20,111 +47,52 @@ class MachineSRM(MachineSync):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineSRM.check
-    def check(self):
-        """Check that the Machine object is correct
-
-        Parameters
-        ----------
-        self : MachineSRM
-            The machine object to check
-
-        Returns
-        -------
-        None
-
-
-        Raises
-        _______
-        SRM_WrongRotor
-            The Rotor of a MachineSRM must be a LamSlot
-        SRM_WrongStator
-            The Stator of a MachineSRM must be a LamSlotWind
-
-        """
-
-        super(type(self), self).check()
-
-        if not isinstance(self.rotor, LamSlot):
-            raise SRM_WrongRotor("The Rotor of a MachineSRM must be a " "LamSlot")
-        if not isinstance(self.stator, LamSlotWind):
-            raise SRM_WrongStator("The Stator of a MachineSRM must be a " "LamSlotWind")
-
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use MachineSRM method check: " + str(check))
+            )
+        )
+    else:
+        check = check
     # cf Methods.Machine.MachineSRM.get_machine_type
-    def get_machine_type(self):
-        """Return a string with the main information about the machine architecture
-
-        Parameters
-        ----------
-        self : MachineSRM
-            A MachineSRM object
-
-        Returns
-        -------
-        type_str: str
-            SRM Zs/Zr/p (int/ext rotor)
-
-        """
-
-        type_str = "SRM "
-        if self.stator.slot is None:
-            type_str += "0s / "
-        elif self.stator.slot.Zs is not None:
-            type_str += str(self.stator.slot.Zs) + "s / "
-        else:
-            type_str += "?s / "
-
-        if self.rotor.slot is None:
-            type_str += "0r / "
-        elif self.rotor.slot.Zs is not None:
-            type_str += str(self.rotor.slot.Zs) + "r / "
-        else:
-            type_str += "?r / "
-
-        if self.stator.winding.qs is not None:
-            type_str += str(self.stator.winding.qs) + "qs"
-        else:
-            type_str += "?qs"
-
-        if self.stator.is_internal:
-            type_str += " (ext rotor)"
-        else:
-            type_str += " (int rotor)"
-
-        return type_str
-
+    if isinstance(get_machine_type, ImportError):
+        get_machine_type = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineSRM method get_machine_type: "
+                    + str(get_machine_type)
+                )
+            )
+        )
+    else:
+        get_machine_type = get_machine_type
     # cf Methods.Machine.MachineSRM.get_pole_pair_number
-    def get_pole_pair_number(self):
-        """Returns the number of pole pairs of the machine
-
-        Parameters
-        ----------
-        self : MachineSRM
-            MachineSRM object
-
-        Returns
-        -------
-        p: int
-            Pole pair number of the machine
-        """
-
-        return self.rotor.get_Zs()
-
+    if isinstance(get_pole_pair_number, ImportError):
+        get_pole_pair_number = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineSRM method get_pole_pair_number: "
+                    + str(get_pole_pair_number)
+                )
+            )
+        )
+    else:
+        get_pole_pair_number = get_pole_pair_number
     # cf Methods.Machine.MachineSRM.set_pole_pair_number
-    def set_pole_pair_number(self, p):
-        """Set the number of pole pairs of the machine
-
-        Parameters
-        ----------
-        self : MachineSRM
-            MachineSRM object
-        p: int
-            Pole pair number of the machine
-        """
-
-        # Set pole pair number for stator only
-        self.stator.set_pole_pair_number(p)
-
+    if isinstance(set_pole_pair_number, ImportError):
+        set_pole_pair_number = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineSRM method set_pole_pair_number: "
+                    + str(set_pole_pair_number)
+                )
+            )
+        )
+    else:
+        set_pole_pair_number = set_pole_pair_number
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -436,21 +404,3 @@ class MachineSRM(MachineSync):
         :Type: LamSlotWind
         """,
     )
-
-    class MachineCheckError(Exception):
-        """ """
-
-        pass
-
-    class SRM_WrongRotor(MachineCheckError):
-        pass
-
-    class SRM_WrongStator(MachineCheckError):
-        pass
-
-
-MachineCheckError = MachineSRM.MachineCheckError
-
-SRM_WrongRotor = MachineSRM.SRM_WrongRotor
-
-SRM_WrongStator = MachineSRM.SRM_WrongStator

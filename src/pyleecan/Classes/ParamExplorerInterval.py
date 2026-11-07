@@ -1,17 +1,50 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/ParamExplorerInterval.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/ParamExplorerInterval"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/ParamExplorerInterval
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ParamExplorer import ParamExplorer
 
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.ParamExplorerInterval.get_max import get_max
+except ImportError as error:
+    get_max = error
+
+try:
+    from ..Methods.Simulation.ParamExplorerInterval.get_min import get_min
+except ImportError as error:
+    get_min = error
+
+try:
+    from ..Methods.Simulation.ParamExplorerInterval.get_N import get_N
+except ImportError as error:
+    get_N = error
+
+try:
+    from ..Methods.Simulation.ParamExplorerInterval.get_value import get_value
+except ImportError as error:
+    get_value = error
+
+
+from ntpath import basename
+from os.path import isfile
+from ._check import CheckTypeError
 import numpy as np
-
-from pyleecan.Classes.ParamExplorer import ParamExplorer
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+import random
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ParamExplorerInterval(ParamExplorer):
@@ -19,83 +52,52 @@ class ParamExplorerInterval(ParamExplorer):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.ParamExplorerInterval.get_max
-    def get_max(self):
-        """Return the maximum value of the ParamExplorer
-
-        Parameters
-        ----------
-        self : ParamExplorerInterval
-            A ParamExplorerInterval object
-
-        Returns
-        -------
-        max_value: float
-            Maximum value of the ParamExplorer
-        """
-
-        if self.type_value == 0:  # float
-            return self.max_value
-        else:
-            return int(self.max_value)
-
-    # cf Methods.Simulation.ParamExplorerInterval.get_min
-    def get_min(self):
-        """Return the minimum value of the ParamExplorer
-
-        Parameters
-        ----------
-        self : ParamExplorerInterval
-            A ParamExplorerInterval object
-
-        Returns
-        -------
-        min_value: float
-            Minimum value of the ParamExplorer
-        """
-
-        if self.type_value == 0:  # float
-            return self.min_value
-        else:
-            return int(self.min_value)
-
-    # cf Methods.Simulation.ParamExplorerInterval.get_N
-    def get_N(self):
-        """Return the number of value of the ParamExplorer
-
-        Parameters
-        ----------
-        self : ParamExplorerInterval
-            A ParamExplorerInterval object
-
-        Returns
-        -------
-        N: int
-            number of value of the ParamExplorer
-        """
-
-        return self.N
-
-    # cf Methods.Simulation.ParamExplorerInterval.get_value
-    def get_value(self):
-        """Return parameters values"""
-        assert self.min_value < self.max_value
-
-        if self.type_value_gen == 0:  # linspace
-            if self.type_value == 0:
-                dtype = float
-            elif self.type_value == 1:
-                dtype = int
-            value = np.linspace(
-                start=self.min_value,
-                stop=self.max_value,
-                num=self.N,
-                endpoint=True,
-                dtype=dtype,
+    if isinstance(get_max, ImportError):
+        get_max = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorerInterval method get_max: " + str(get_max)
+                )
             )
-            value.tolist()
-        return value
-
+        )
+    else:
+        get_max = get_max
+    # cf Methods.Simulation.ParamExplorerInterval.get_min
+    if isinstance(get_min, ImportError):
+        get_min = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorerInterval method get_min: " + str(get_min)
+                )
+            )
+        )
+    else:
+        get_min = get_min
+    # cf Methods.Simulation.ParamExplorerInterval.get_N
+    if isinstance(get_N, ImportError):
+        get_N = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorerInterval method get_N: " + str(get_N)
+                )
+            )
+        )
+    else:
+        get_N = get_N
+    # cf Methods.Simulation.ParamExplorerInterval.get_value
+    if isinstance(get_value, ImportError):
+        get_value = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ParamExplorerInterval method get_value: "
+                    + str(get_value)
+                )
+            )
+        )
+    else:
+        get_value = get_value
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -218,8 +220,8 @@ class ParamExplorerInterval(ParamExplorer):
         if (
             other._min_value is not None
             and self._min_value is not None
-            and np.isnan(other._min_value)
-            and np.isnan(self._min_value)
+            and isnan(other._min_value)
+            and isnan(self._min_value)
         ):
             pass
         elif other._min_value != self._min_value:
@@ -237,8 +239,8 @@ class ParamExplorerInterval(ParamExplorer):
         if (
             other._max_value is not None
             and self._max_value is not None
-            and np.isnan(other._max_value)
-            and np.isnan(self._max_value)
+            and isnan(other._max_value)
+            and isnan(self._max_value)
         ):
             pass
         elif other._max_value != self._max_value:

@@ -1,254 +1,215 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/CondType13.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType13"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType13
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Conductor import Conductor
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.CondType13.comp_height import comp_height
+except ImportError as error:
+    comp_height = error
 
-from pyleecan.Classes.Conductor import Conductor
-from pyleecan.Classes._check import check_var
-from pyleecan.definitions import config_dict
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Machine.CondType13.comp_height_wire import comp_height_wire
+except ImportError as error:
+    comp_height_wire = error
+
+try:
+    from ..Methods.Machine.CondType13.comp_nb_circumferential_wire import (
+        comp_nb_circumferential_wire,
+    )
+except ImportError as error:
+    comp_nb_circumferential_wire = error
+
+try:
+    from ..Methods.Machine.CondType13.comp_nb_radial_wire import comp_nb_radial_wire
+except ImportError as error:
+    comp_nb_radial_wire = error
+
+try:
+    from ..Methods.Machine.CondType13.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Machine.CondType13.comp_surface_active import comp_surface_active
+except ImportError as error:
+    comp_surface_active = error
+
+try:
+    from ..Methods.Machine.CondType13.comp_width import comp_width
+except ImportError as error:
+    comp_width = error
+
+try:
+    from ..Methods.Machine.CondType13.comp_width_wire import comp_width_wire
+except ImportError as error:
+    comp_width_wire = error
+
+try:
+    from ..Methods.Machine.CondType13.is_round_wire import is_round_wire
+except ImportError as error:
+    is_round_wire = error
+
+try:
+    from ..Methods.Machine.CondType13.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
+    from ..Methods.Machine.CondType13.plot_schematics import plot_schematics
+except ImportError as error:
+    plot_schematics = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class CondType13(Conductor):
     """parallel stranded conductor consisting of at least a single round wire"""
 
     VERSION = 1
-    COND_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
-    INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.CondType13.comp_height
-    def comp_height(self):
-        """Compute the height of the conductor
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        H: float
-            Height of the conductor [m]
-
-        """
-
-        return (2 * self.Wins_wire + self.Wwire) * self.Nwppc_rad
-
+    if isinstance(comp_height, ImportError):
+        comp_height = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_height: " + str(comp_height)
+                )
+            )
+        )
+    else:
+        comp_height = comp_height
     # cf Methods.Machine.CondType13.comp_height_wire
-    def comp_height_wire(self):
-        """Return wire diameter
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        H: float
-            Diameter of the wire [m]
-
-        """
-
-        return self.Wwire
-
+    if isinstance(comp_height_wire, ImportError):
+        comp_height_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_height_wire: "
+                    + str(comp_height_wire)
+                )
+            )
+        )
+    else:
+        comp_height_wire = comp_height_wire
     # cf Methods.Machine.CondType13.comp_nb_circumferential_wire
-    def comp_nb_circumferential_wire(self):
-        """Return number of adjacent wires in circumferential direction
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        Nwppc_tan: int
-            Number of adjacent wires in circumferential direction
-
-        """
-
-        return self.Nwppc_tan
-
+    if isinstance(comp_nb_circumferential_wire, ImportError):
+        comp_nb_circumferential_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_nb_circumferential_wire: "
+                    + str(comp_nb_circumferential_wire)
+                )
+            )
+        )
+    else:
+        comp_nb_circumferential_wire = comp_nb_circumferential_wire
     # cf Methods.Machine.CondType13.comp_nb_radial_wire
-    def comp_nb_radial_wire(self):
-        """Return number of adjacent wires in radial direction
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        Nwppc_tan: int
-            Number of adjacent wires in radial direction
-
-        """
-
-        return self.Nwppc_rad
-
+    if isinstance(comp_nb_radial_wire, ImportError):
+        comp_nb_radial_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_nb_radial_wire: "
+                    + str(comp_nb_radial_wire)
+                )
+            )
+        )
+    else:
+        comp_nb_radial_wire = comp_nb_radial_wire
     # cf Methods.Machine.CondType13.comp_surface
-    def comp_surface(self):
-        """Compute the surface of the conductor
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        S: float
-            Surface of the conductor (with insulation) [m**2]
-
-        """
-
-        S = self.comp_height() * self.comp_width()
-
-        return S
-
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Machine.CondType13.comp_surface_active
-    def comp_surface_active(self):
-        """Compute the active surface of the conductor
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        Sact: float
-            Surface without insulation [m**2]
-
-        """
-
-        Sact = self.Wwire * self.Wwire * self.Nwppc_tan * self.Nwppc_rad
-
-        return Sact
-
+    if isinstance(comp_surface_active, ImportError):
+        comp_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_surface_active: "
+                    + str(comp_surface_active)
+                )
+            )
+        )
+    else:
+        comp_surface_active = comp_surface_active
     # cf Methods.Machine.CondType13.comp_width
-    def comp_width(self):
-        """Compute the width of the conductor
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        W: float
-            Width of the conductor [m]
-
-        """
-
-        return (2 * self.Wins_wire + self.Wwire) * self.Nwppc_tan
-
+    if isinstance(comp_width, ImportError):
+        comp_width = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_width: " + str(comp_width)
+                )
+            )
+        )
+    else:
+        comp_width = comp_width
     # cf Methods.Machine.CondType13.comp_width_wire
-    def comp_width_wire(self):
-        """Return wire diameter
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        H: float
-            Diameter of the wire [m]
-
-        """
-
-        return self.Wwire
-
+    if isinstance(comp_width_wire, ImportError):
+        comp_width_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method comp_width_wire: "
+                    + str(comp_width_wire)
+                )
+            )
+        )
+    else:
+        comp_width_wire = comp_width_wire
     # cf Methods.Machine.CondType13.is_round_wire
-    def is_round_wire(self):
-        """Return if wire is round
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-
-        Returns
-        -------
-        is_round_wire: bool
-            is_round_wire is always True since wire is round
-
-        """
-
-        return True
-
+    if isinstance(is_round_wire, ImportError):
+        is_round_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method is_round_wire: " + str(is_round_wire)
+                )
+            )
+        )
+    else:
+        is_round_wire = is_round_wire
     # cf Methods.Machine.CondType13.plot
-    def plot(self, is_show_fig=True, fig=None, ax=None):
-        """Plot a Conductor in a matplotlib fig
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-        is_show_fig : bool
-            To call show at the end of the method
-        fig : Matplotlib.figure.Figure
-            existing figure to use if None create a new one
-        ax : Matplotlib.axes.Axes object
-            Axis on which to plot the data
-
-        Returns
-        -------
-        None
-        """
-
-        # TODO
-
-        pass
-
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use CondType13 method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # cf Methods.Machine.CondType13.plot_schematics
-    def plot_schematics(
-        self,
-        is_default=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
-        """Plot the schematics of the slot
-
-        Parameters
-        ----------
-        self : CondType13
-            A CondType13 object
-        is_default : bool
-            True: plot default schematics, else use current slot values
-        is_add_schematics : bool
-            True to display the schematics information (W0, H0...)
-        is_add_main_line : bool
-            True to display "main lines" (slot opening and 0x axis)
-        save_path : str
-            full path including folder, name and extension of the file to save if save_path is not None
-        is_show_fig : bool
-            To call show at the end of the method
-        fig : Matplotlib.figure.Figure
-            existing figure to use if None create a new one
-        ax : Matplotlib.axes.Axes object
-            Axis on which to plot the data
-        """
-
-        # TODO
-
-        pass
-
+    if isinstance(plot_schematics, ImportError):
+        plot_schematics = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType13 method plot_schematics: "
+                    + str(plot_schematics)
+                )
+            )
+        )
+    else:
+        plot_schematics = plot_schematics
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -365,8 +326,8 @@ class CondType13(Conductor):
         if (
             other._Wwire is not None
             and self._Wwire is not None
-            and np.isnan(other._Wwire)
-            and np.isnan(self._Wwire)
+            and isnan(other._Wwire)
+            and isnan(self._Wwire)
         ):
             pass
         elif other._Wwire != self._Wwire:
@@ -380,8 +341,8 @@ class CondType13(Conductor):
         if (
             other._Wins_cond is not None
             and self._Wins_cond is not None
-            and np.isnan(other._Wins_cond)
-            and np.isnan(self._Wins_cond)
+            and isnan(other._Wins_cond)
+            and isnan(self._Wins_cond)
         ):
             pass
         elif other._Wins_cond != self._Wins_cond:
@@ -423,8 +384,8 @@ class CondType13(Conductor):
         if (
             other._Wins_wire is not None
             and self._Wins_wire is not None
-            and np.isnan(other._Wins_wire)
-            and np.isnan(self._Wins_wire)
+            and isnan(other._Wins_wire)
+            and isnan(self._Wins_wire)
         ):
             pass
         elif other._Wins_wire != self._Wins_wire:
@@ -442,8 +403,8 @@ class CondType13(Conductor):
         if (
             other._Kwoh is not None
             and self._Kwoh is not None
-            and np.isnan(other._Kwoh)
-            and np.isnan(self._Kwoh)
+            and isnan(other._Kwoh)
+            and isnan(self._Kwoh)
         ):
             pass
         elif other._Kwoh != self._Kwoh:

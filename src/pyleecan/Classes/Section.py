@@ -1,17 +1,75 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Elmer/Section.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Elmer/Section"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Elmer/Section
+"""
 
-from io import StringIO
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Elmer import Elmer
 
-from pyleecan.Classes.Elmer import Elmer
-from pyleecan.Classes.SolverInputFile import INDENT
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Elmer.Section.__delitem__ import __delitem__
+except ImportError as error:
+    __delitem__ = error
+
+try:
+    from ..Methods.Elmer.Section.__getitem__ import __getitem__
+except ImportError as error:
+    __getitem__ = error
+
+try:
+    from ..Methods.Elmer.Section.__iter__ import __iter__
+except ImportError as error:
+    __iter__ = error
+
+try:
+    from ..Methods.Elmer.Section.__len__ import __len__
+except ImportError as error:
+    __len__ = error
+
+try:
+    from ..Methods.Elmer.Section.__missing__ import __missing__
+except ImportError as error:
+    __missing__ = error
+
+try:
+    from ..Methods.Elmer.Section.__reversed__ import __reversed__
+except ImportError as error:
+    __reversed__ = error
+
+try:
+    from ..Methods.Elmer.Section.__setitem__ import __setitem__
+except ImportError as error:
+    __setitem__ = error
+
+try:
+    from ..Methods.Elmer.Section.keys import keys
+except ImportError as error:
+    keys = error
+
+try:
+    from ..Methods.Elmer.Section.pop import pop
+except ImportError as error:
+    pop = error
+
+try:
+    from ..Methods.Elmer.Section.write import write
+except ImportError as error:
+    write = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Section(Elmer):
@@ -19,145 +77,99 @@ class Section(Elmer):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Elmer.Section.__delitem__
-    # -*- coding: utf-8 -*-
-    def __delitem__(self, key):
-        """Called to implement deletion of self[key]."""
-        self._statements.__delitem__(key)
-        self._comments.__delitem__(key)
-
-    # cf Methods.Elmer.Section.__getitem__
-    def __getitem__(self, idx):
-        """Method to behave like a dict and get the value (and comment as a tuple)"""
-        value = self._statements.__getitem__(idx)
-        comment = self._comments.__getitem__(idx)
-        return (value, comment)
-
-    # cf Methods.Elmer.Section.__iter__
-    def __iter__(self):
-        """Method to behave like a dict and iterate the keys"""
-        return self._statements.__iter__()
-
-    # cf Methods.Elmer.Section.__len__
-    def __len__(self):
-        """Method to behave like a dict and the number of keys"""
-        return self._statements.__len__()
-
-    # cf Methods.Elmer.Section.__missing__
-    def __missing__(self, key):
-        """method to implement self[key] for dict subclasses when key is not in the dict."""
-        return self._statements.__missing__(key)
-
-    # cf Methods.Elmer.Section.__reversed__
-    def __reversed__(self):
-        """Built-in to implement reverse iteration"""
-        return self._statements.__reversed__()
-
-    # cf Methods.Elmer.Section.__setitem__
-    def __setitem__(self, key, value):
-        """Called to implement assignment to self[key]."""
-        if isinstance(value, tuple):
-            self._statements.__setitem__(key, value[0])
-            if len(tuple) >= 1:
-                self._comments.__setitem__(key, value[1])
-            else:
-                self._comments.__setitem__(key, None)
-        else:
-            self._statements.__setitem__(key, value)
-            self._comments.__setitem__(key, None)
-
-    # cf Methods.Elmer.Section.keys
-    def keys(self):
-        """Return keys to behave like a dict"""
-        return self._statements.keys()
-
-    # cf Methods.Elmer.Section.pop
-    def pop(self, key):
-        """
-        Remove the item with the given key and return it.
-        """
-        if key not in self.keys():
-            raise ElmerSectionError("Key doesn't exist.")
-
-        value = self._statements.pop(key)
-        comment = self._comments.pop(key)
-
-        return (value, comment)
-
-    # cf Methods.Elmer.Section.write
-    def write(self, stream=None, *, NEWLINE="\n", END="End"):
-        """Write the Elmer SIF section to a stream. If no stream is given, the method
-        will return a StringIO.
-        """
-        if not stream:
-            stream = StringIO()
-
-        # if section has an 'id' write a numbered sections
-        if self.id:
-            nbr = str(self.id)
-        else:
-            nbr = ""
-
-        # write section header
-        stream.write(NEWLINE)
-        if self.comment:
-            stream.write("! " + self.comment)
-            stream.write(NEWLINE)
-        stream.write(self.section + " " + nbr)
-
-        # write section entries
-        for key in self.keys():
-            n = ""
-            value, comment = self[key]
-            if isinstance(value, list) and len(value) > 1:
-                n = "(" + str(len(value)) + ")"
-            stream.write(NEWLINE + INDENT)
-            stream.write(key + n + " = " + self._convert(value))
-            if comment:
-                stream.write(INDENT + "! " + comment)
-
-        # end section
-        stream.write(NEWLINE + END + NEWLINE)
-
-        return stream
-
-    @staticmethod
-    def _convert(value, get_type=True):
-        """internal method to convert the data corresponding to Elmer SIF needs"""
-        if isinstance(value, File):  # check before str due to inheretance
-            return "File " * get_type + f'"{value}"'
-
-        if isinstance(value, str):
-            return "String " * get_type + f'"{value}"'
-
-        if isinstance(value, float):
-            return "Real " * get_type + f"{value}"
-
-        if isinstance(value, bool):
-            return "Logical " * get_type + f"{value}"
-
-        if isinstance(value, int):
-            return "Integer " * get_type + f"{value}"
-
-        if isinstance(value, list):
-            val_str = ""
-            for idx, val in enumerate(value):
-                get_type = True if idx == 0 else False
-                val_str += Section._convert(val, get_type=get_type) + " "
-            return val_str
-
-        if isinstance(value, Variable):
-            return (
-                "Variable "
-                + value.name
-                + NEWLINE
-                + 2 * INDENT
-                + Section._convert(value.value)
+    if isinstance(__delitem__, ImportError):
+        __delitem__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method __delitem__: " + str(__delitem__))
             )
-
-        if isinstance(value, MATC):
-            return f'Real MATC "{value.expr}"'
-
+        )
+    else:
+        __delitem__ = __delitem__
+    # cf Methods.Elmer.Section.__getitem__
+    if isinstance(__getitem__, ImportError):
+        __getitem__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method __getitem__: " + str(__getitem__))
+            )
+        )
+    else:
+        __getitem__ = __getitem__
+    # cf Methods.Elmer.Section.__iter__
+    if isinstance(__iter__, ImportError):
+        __iter__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method __iter__: " + str(__iter__))
+            )
+        )
+    else:
+        __iter__ = __iter__
+    # cf Methods.Elmer.Section.__len__
+    if isinstance(__len__, ImportError):
+        __len__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method __len__: " + str(__len__))
+            )
+        )
+    else:
+        __len__ = __len__
+    # cf Methods.Elmer.Section.__missing__
+    if isinstance(__missing__, ImportError):
+        __missing__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method __missing__: " + str(__missing__))
+            )
+        )
+    else:
+        __missing__ = __missing__
+    # cf Methods.Elmer.Section.__reversed__
+    if isinstance(__reversed__, ImportError):
+        __reversed__ = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Section method __reversed__: " + str(__reversed__)
+                )
+            )
+        )
+    else:
+        __reversed__ = __reversed__
+    # cf Methods.Elmer.Section.__setitem__
+    if isinstance(__setitem__, ImportError):
+        __setitem__ = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method __setitem__: " + str(__setitem__))
+            )
+        )
+    else:
+        __setitem__ = __setitem__
+    # cf Methods.Elmer.Section.keys
+    if isinstance(keys, ImportError):
+        keys = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method keys: " + str(keys))
+            )
+        )
+    else:
+        keys = keys
+    # cf Methods.Elmer.Section.pop
+    if isinstance(pop, ImportError):
+        pop = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method pop: " + str(pop))
+            )
+        )
+    else:
+        pop = pop
+    # cf Methods.Elmer.Section.write
+    if isinstance(write, ImportError):
+        write = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Section method write: " + str(write))
+            )
+        )
+    else:
+        write = write
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -352,7 +364,7 @@ class Section(Elmer):
         Section_dict = super(Section, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs,
+            **kwargs
         )
         Section_dict["section"] = self.section
         Section_dict["id"] = self.id
@@ -499,26 +511,3 @@ class Section(Elmer):
         :Type: dict
         """,
     )
-
-    class ElmerSectionError(Exception):
-        pass
-
-
-ElmerSectionError = Section.ElmerSectionError
-
-
-class File(str):
-    pass
-
-
-class Variable:
-
-    def __init__(self, name=None, value=None):
-        self.name = name
-        self.value = value
-
-
-class MATC:
-
-    def __init__(self, expr=None):
-        self.expr = expr

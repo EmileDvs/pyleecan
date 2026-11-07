@@ -1,17 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportMatrix.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrix"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrix
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Import import Import
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportMatrix.edit_matrix import edit_matrix
+except ImportError as error:
+    edit_matrix = error
 
-from pyleecan.Classes.Import import Import
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportMatrix(Import):
@@ -20,27 +33,16 @@ class ImportMatrix(Import):
     VERSION = 1
 
     # cf Methods.Import.ImportMatrix.edit_matrix
-    def edit_matrix(self, matrix):
-        """To apply transformation on the matrix
-
-        Parameters
-        ----------
-        self : ImportMatrix
-            An ImportMatrix object
-        matrix: ndarray
-            The matrix to edit
-
-        Returns
-        -------
-        matrix: ndarray
-            The edited matrix
-
-        """
-
-        if self.is_transpose:
-            return np.transpose(matrix)
-        return matrix
-
+    if isinstance(edit_matrix, ImportError):
+        edit_matrix = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportMatrix method edit_matrix: " + str(edit_matrix)
+                )
+            )
+        )
+    else:
+        edit_matrix = edit_matrix
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

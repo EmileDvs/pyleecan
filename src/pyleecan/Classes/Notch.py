@@ -1,129 +1,102 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/Notch.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Notch"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Notch
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes import ParentMissingError
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.Notch.get_label import get_label
+except ImportError as error:
+    get_label = error
+
+try:
+    from ..Methods.Machine.Notch.get_Rbo import get_Rbo
+except ImportError as error:
+    get_Rbo = error
+
+try:
+    from ..Methods.Machine.Notch.get_Ryoke import get_Ryoke
+except ImportError as error:
+    get_Ryoke = error
+
+try:
+    from ..Methods.Machine.Notch.has_key import has_key
+except ImportError as error:
+    has_key = error
+
+try:
+    from ..Methods.Machine.Notch.is_outwards import is_outwards
+except ImportError as error:
+    is_outwards = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Notch(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.Notch.get_label
-    def get_label(self, is_add_id=True):
-        """Return the label of the lamination (Stator-0 for instance)
-
-        Parameters
-        ----------
-        self : Notch
-            a Notch object
-        is_add_id : bool
-            True to add the "-X" part
-
-        Returns
-        -------
-        label : str
-            Label of the lamination
-
-        """
-
-        if self.parent is not None:
-            return self.parent.get_label()
-        else:
-            raise ParentMissingError("Error: The notch is not inside a Lamination")
-
+    if isinstance(get_label, ImportError):
+        get_label = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Notch method get_label: " + str(get_label))
+            )
+        )
+    else:
+        get_label = get_label
     # cf Methods.Machine.Notch.get_Rbo
-    def get_Rbo(self):
-        """Return the parent lamination bore radius
-        (to make lam.notch[ii].notch_shape match lam.slot parent)
-
-        Parameters
-        ----------
-        self : Notch
-            A Notch object
-
-        Returns
-        -------
-        Rbo: float
-            The parent lamination bore radius [m]
-
-        """
-
-        if self.parent is not None:
-            return self.parent.get_Rbo()
-        else:
-            raise ParentMissingError("Error: The notch is not inside a Lamination")
-
+    if isinstance(get_Rbo, ImportError):
+        get_Rbo = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Notch method get_Rbo: " + str(get_Rbo))
+            )
+        )
+    else:
+        get_Rbo = get_Rbo
     # cf Methods.Machine.Notch.get_Ryoke
-    def get_Ryoke(self):
-        """Return the parent lamination yoke radius
-        (to make lam.notch[ii].notch_shape match lam.slot parent)
-
-        Parameters
-        ----------
-        self : Notch
-            A Notch object
-
-        Returns
-        -------
-        Ryoke: float
-            The parent lamination yoke radius [m]
-
-        """
-
-        if self.parent is not None:
-            return self.parent.get_Ryoke()
-        else:
-            raise ParentMissingError("Error: The notch is not inside a Lamination")
-
+    if isinstance(get_Ryoke, ImportError):
+        get_Ryoke = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Notch method get_Ryoke: " + str(get_Ryoke))
+            )
+        )
+    else:
+        get_Ryoke = get_Ryoke
     # cf Methods.Machine.Notch.has_key
-    def has_key(self):
-        """Check if a there is key in the notch
-
-        Parameters
-        ----------
-        self : Notch
-            A Notch object
-
-        Returns
-        -------
-        has_key : bool
-            True if the notch has a key
-        """
-
-        return self.key_mat is not None
-
+    if isinstance(has_key, ImportError):
+        has_key = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Notch method has_key: " + str(has_key))
+            )
+        )
+    else:
+        has_key = has_key
     # cf Methods.Machine.Notch.is_outwards
-    def is_outwards(self):
-        """Return if the notch is outwards (on an external lamination) or inwards
-        (on an internal lamination).
-        (to make lam.notch[ii].notch_shape match lam.slot parent)
-
-        Parameters
-        ----------
-        self : Notch
-            A Notch object
-
-        Returns
-        -------
-        is_outwards: bool
-            True if the Lamination is not internal and false if not. For yoke notch,
-            result is negated.
-        """
-        if self.parent is not None:
-            return self.parent.is_outwards()
-        else:
-            raise ParentMissingError("Error: The notch is not inside a Lamination")
-
+    if isinstance(is_outwards, ImportError):
+        is_outwards = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Notch method is_outwards: " + str(is_outwards))
+            )
+        )
+    else:
+        is_outwards = is_outwards
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

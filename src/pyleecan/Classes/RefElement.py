@@ -1,17 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/Interpolation/RefElement.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/RefElement"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/RefElement
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Mesh.RefElement.get_element_area import get_element_area
+except ImportError as error:
+    get_element_area = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Mesh.RefElement.interpolation import interpolation
+except ImportError as error:
+    interpolation = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class RefElement(FrozenClass):
@@ -19,57 +37,30 @@ class RefElement(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Mesh.RefElement.get_element_area
-    def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:
-        """Return the area of the elements.
-
-        Parameters
-        ----------
-        self : RefElement
-        element_coordinate : list or array
-            the elements coordinates
-
-        Returns
-        -------
-        area: array
-            area of the elements
-        """
-
-        raise NotImplementedError(
-            f"{type(self).__name__}.get_element_area is not implemented."
+    if isinstance(get_element_area, ImportError):
+        get_element_area = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefElement method get_element_area: "
+                    + str(get_element_area)
+                )
+            )
         )
-
+    else:
+        get_element_area = get_element_area
     # cf Methods.Mesh.RefElement.interpolation
-    def interpolation(
-        self, point: np.ndarray, node_coord: np.ndarray, field: np.ndarray
-    ) -> np.ndarray:
-        """Return interpolated value of the field in a element
-
-        Parameters
-        ----------
-        self : Interpolation
-             an Interpolation object
-        point : ndarray
-            evaluation point
-        node_coord : ndarray
-            coordinates of the element nodes
-        field : ndarray
-            field to interpolate
-
-        Returns
-        -------
-        value: array
-            interpolated field
-
-        """
-
-        point_ref = self.get_ref_point(node_coord, point)
-        values_ref, _ = self.shape_function(point_ref)
-
-        interp_func = np.tensordot(values_ref, field, axes=([2], [0]))
-
-        return interp_func
-
+    if isinstance(interpolation, ImportError):
+        interpolation = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use RefElement method interpolation: " + str(interpolation)
+                )
+            )
+        )
+    else:
+        interpolation = interpolation
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -131,8 +122,8 @@ class RefElement(FrozenClass):
         if (
             other._epsilon is not None
             and self._epsilon is not None
-            and np.isnan(other._epsilon)
-            and np.isnan(self._epsilon)
+            and isnan(other._epsilon)
+            and isnan(self._epsilon)
         ):
             pass
         elif other._epsilon != self._epsilon:

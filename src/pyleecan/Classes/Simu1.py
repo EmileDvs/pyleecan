@@ -1,16 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/Simu1.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Simu1"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Simu1
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Simulation import Simulation
 
-from pyleecan.Classes.Simulation import Simulation
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.Simu1.run_single import run_single
+except ImportError as error:
+    run_single = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Simu1(Simulation):
@@ -19,49 +33,14 @@ class Simu1(Simulation):
     VERSION = 1
 
     # cf Methods.Simulation.Simu1.run_single
-    def run_single(self):
-        """Run the simulation
-
-        Parameters
-        ----------
-        self : Simu1
-            A Simu1 object
-
-        """
-        logger = self.get_logger()
-
-        if self.parent is None:
-            raise InputError("ERROR: Simulation object must be inside an Output object")
-        output = self.parent
-        output.geo = self.machine.comp_output_geo()
-
-        # Init the input of the first module
-        self.input.gen_input()
-
-        # Run the modules
-        if self.elec is not None:
-            self.elec.run()
-        if self.mag is not None:
-            self.mag.run()
-
-        if self.force is not None:
-            self.force.run()
-        # if self.HT is not None:
-        #     self.HT.run()
-        if self.struct is not None:
-            self.struct.run()
-        # if self.ac is not None:
-        #     self.ac.run()
-
-        if self.loss is not None:
-            self.loss.run()
-        # Running postprocessings
-
-        if self.postproc_list:
-            logger.info("Running simulation postprocessings...")
-            for postproc in self.postproc_list:
-                postproc.run(output)
-
+    if isinstance(run_single, ImportError):
+        run_single = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Simu1 method run_single: " + str(run_single))
+            )
+        )
+    else:
+        run_single = run_single
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -636,11 +615,3 @@ class Simu1(Simulation):
         :Type: Loss
         """,
     )
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-        pass
-
-
-InputError = Simu1.InputError

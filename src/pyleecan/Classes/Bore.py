@@ -1,484 +1,182 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/Bore.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Bore"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/Bore
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
-from pyleecan.Classes import ParentMissingError
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.definitions import config_dict
-from pyleecan.Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.Bore.comp_Rmax import comp_Rmax
+except ImportError as error:
+    comp_Rmax = error
+
+try:
+    from ..Methods.Machine.Bore.comp_Rmin import comp_Rmin
+except ImportError as error:
+    comp_Rmin = error
+
+try:
+    from ..Methods.Machine.Bore.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Machine.Bore.get_surface import get_surface
+except ImportError as error:
+    get_surface = error
+
+try:
+    from ..Methods.Machine.Bore.is_yoke import is_yoke
+except ImportError as error:
+    is_yoke = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot import merge_slot
+except ImportError as error:
+    merge_slot = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot_connect import merge_slot_connect
+except ImportError as error:
+    merge_slot_connect = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot_intersect import merge_slot_intersect
+except ImportError as error:
+    merge_slot_intersect = error
+
+try:
+    from ..Methods.Machine.Bore.merge_slot_translate import merge_slot_translate
+except ImportError as error:
+    merge_slot_translate = error
+
+try:
+    from ..Methods.Machine.Bore.plot import plot
+except ImportError as error:
+    plot = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Bore(FrozenClass):
     """Abstract class for Bore shape"""
 
     VERSION = 1
-    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
-    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.Bore.comp_Rmax
-    def comp_Rmax(self):
-        """Compute the maximum radius of the Bore shape
-
-        Parameters
-        ----------
-        self : Bore
-            A Bore object
-
-        Returns
-        -------
-        Rmax : float
-            Maximum radius of the Bore shape [m]
-        """
-
-        line_list = self.get_bore_line()
-        point_list = list()
-
-        for line in line_list:
-            point_list.extend(line.discretize(100))
-
-        return np.max(np.abs(np.array(point_list)))
-
+    if isinstance(comp_Rmax, ImportError):
+        comp_Rmax = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method comp_Rmax: " + str(comp_Rmax))
+            )
+        )
+    else:
+        comp_Rmax = comp_Rmax
     # cf Methods.Machine.Bore.comp_Rmin
-    def comp_Rmin(self):
-        """Compute the minimum radius of the Bore shape
-
-        Parameters
-        ----------
-        self : Bore
-            A Bore object
-
-        Returns
-        -------
-        Rmin : float
-            Minimum radius of the Bore shape
-        """
-
-        line_list = self.get_bore_line()
-        point_list = list()
-
-        for line in line_list:
-            point_list.extend(line.discretize(100))
-
-        return np.min(np.abs(np.array(point_list)))
-
+    if isinstance(comp_Rmin, ImportError):
+        comp_Rmin = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method comp_Rmin: " + str(comp_Rmin))
+            )
+        )
+    else:
+        comp_Rmin = comp_Rmin
     # cf Methods.Machine.Bore.comp_surface
-    def comp_surface(self):
-        """Returns the area of the shape
-
-        Parameters
-        ----------
-        self : Bore
-            A Bore object
-
-        Returns
-        -------
-        Sbore : float
-            Area of the bore
-        """
-
-        return self.get_surface().comp_surface()
-
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method comp_surface: " + str(comp_surface))
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Machine.Bore.get_surface
-    def get_surface(self):
-        """Returns the bore shape as a Surface object
-
-        Parameters
-        ----------
-        self : Bore
-            A Bore object
-
-        Returns
-        -------
-        Sbore : Surface
-            Surface object to draw the bore
-        """
-
-        line_list = self.get_bore_line()
-
-        return SurfLine(line_list=line_list, point_ref=0, label="Bore")
-
+    if isinstance(get_surface, ImportError):
+        get_surface = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method get_surface: " + str(get_surface))
+            )
+        )
+    else:
+        get_surface = get_surface
     # cf Methods.Machine.Bore.is_yoke
-    def is_yoke(self):
-        """Return if the Shape is for the Bore or Yoke radius
-
-        Parameters
-        ----------
-        self : Bore
-            A Bore object
-
-        Returns
-        -------
-        is_yoke : bool
-            True if the shape is on the yoke
-        """
-
-        if self.parent is not None:
-            return self is self.parent.yoke
-        else:
-            raise ParentMissingError(
-                "Error: The Bore object is not inside a Lamination"
+    if isinstance(is_yoke, ImportError):
+        is_yoke = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method is_yoke: " + str(is_yoke))
             )
-
+        )
+    else:
+        is_yoke = is_yoke
     # cf Methods.Machine.Bore.merge_slot
-    def merge_slot(self, radius_desc_list, prop_dict, sym):
-        """Merge the Bore shape with notches/slot on the bore/yoke
-
-        Parameters
-        ----------
-        radius_desc_list : list
-            List of dict to describe the bore/yoke radius
-        prop_dict : dict
-            Property dictionary to apply on the radius lines (not on slot/notch)
-        sym : int
-            Symmetry factor (1= full machine, 2= half of the machine...)
-
-        Returns
-        -------
-        line_list : list
-            List of lines needed to draw the radius
-        """
-        if self.type_merge_slot == 0:
-            return self.merge_slot_connect(
-                radius_desc_list, prop_dict=prop_dict, sym=sym
+    if isinstance(merge_slot, ImportError):
+        merge_slot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method merge_slot: " + str(merge_slot))
             )
-        if self.type_merge_slot == 1:
-            return self.merge_slot_intersect(
-                radius_desc_list, prop_dict=prop_dict, sym=sym
-            )
-        if self.type_merge_slot == 2:
-            return self.merge_slot_translate(
-                radius_desc_list, prop_dict=prop_dict, sym=sym
-            )
-        else:
-            raise Exception("Not implemented yet")
-
+        )
+    else:
+        merge_slot = merge_slot
     # cf Methods.Machine.Bore.merge_slot_connect
-    def merge_slot_connect(self, radius_desc_list, prop_dict, sym):
-        """Merge the Bore shape with notches/slot on the bore/yoke
-        Connect method: Add lines between radius and notch/slot
-        (To use when the radius shape have circular part matchine the radius
-        or when radius lines are bellow normal radius)
-
-        Parameters
-        ----------
-        radius_desc_list : list
-            List of dict to describe the bore/yoke radius
-        prop_dict : dict
-            Property dictionary to apply on the radius lines (not on slot/notch)
-        sym : int
-            Symmetry factor (1= full machine, 2= half of the machine...)
-
-        Returns
-        -------
-        line_list : list
-            List of lines needed to draw the radius
-        """
-
-        # Get all Radius lines (0 to 2*pi)
-        radius_lines = self.get_bore_line()
-
-        # Update begin and end angle if Radius (next step already cut lines)
-        if sym != 1 and radius_desc_list[0]["label"] == "Radius":
-            radius_desc_list[0]["begin_angle"] = 0
-        if sym != 1 and radius_desc_list[-1]["label"] == "Radius":
-            radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
-
-        # Replace Arc radius from desc by lines from shape
-        for desc_dict in radius_desc_list:
-            if desc_dict["label"] == "Radius":
-                desc_dict["lines"] = cut_lines_between_angles(
-                    radius_lines, desc_dict["begin_angle"], desc_dict["end_angle"]
+    if isinstance(merge_slot_connect, ImportError):
+        merge_slot_connect = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Bore method merge_slot_connect: "
+                    + str(merge_slot_connect)
                 )
-
-        # If slot/notch are coliding with sym lines => Cut
-        if sym != 1:
-            # Cut first desc (if needed)
-            if radius_desc_list[0]["begin_angle"] < 0:
-                lines = list()
-                for line in radius_desc_list[0]["lines"]:
-                    top_split_list, _ = line.split_line(0, 1)
-                    lines.extend(top_split_list)
-                radius_desc_list[0]["begin_angle"] = 0
-                radius_desc_list[0]["lines"] = lines
-            # Cut last desc (if needed)
-            if radius_desc_list[-1]["end_angle"] > 2 * np.pi / sym:
-                lines = list()
-                for line in radius_desc_list[-1]["lines"]:
-                    _, bot_split_list = line.split_line(0, np.exp(1j * 2 * np.pi / sym))
-                    lines.extend(bot_split_list)
-                radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
-                radius_desc_list[-1]["lines"] = lines
-
-        # Apply merge strategy on slot/notch
-        line_list = list()
-        for ii, desc_dict in enumerate(radius_desc_list):
-            if desc_dict["label"] == "Radius":
-                # Add prop_dict on all the Radius Lines
-                if prop_dict is not None:
-                    for line in desc_dict["lines"]:
-                        if line.prop_dict is None:
-                            line.prop_dict = dict()
-                        line.prop_dict.update(prop_dict)
-                line_list.extend(desc_dict["lines"])
-            else:  # Connect and add notch lines
-                if len(line_list) > 0:
-                    # Connect Radius to slot/notch by Segment (if needed)
-                    if (
-                        abs(line_list[-1].get_end() - desc_dict["lines"][0].get_begin())
-                        > 1e-6
-                    ):
-                        line_list.append(
-                            Segment(
-                                line_list[-1].get_end(),
-                                desc_dict["lines"][0].get_begin(),
-                            )
-                        )
-                line_list.extend(desc_dict["lines"])
-                # Connect slot/notch to next radius
-                if (
-                    abs(
-                        radius_desc_list[ii + 1]["lines"][0].get_begin()
-                        - desc_dict["lines"][-1].get_end()
-                    )
-                    > 1e-6
-                ):
-                    line_list.append(
-                        Segment(
-                            desc_dict["lines"][-1].get_end(),
-                            radius_desc_list[ii + 1]["lines"][0].get_begin(),
-                        )
-                    )
-        return line_list
-
+            )
+        )
+    else:
+        merge_slot_connect = merge_slot_connect
     # cf Methods.Machine.Bore.merge_slot_intersect
-    def merge_slot_intersect(self, radius_desc_list, prop_dict, sym):
-        """Merge the Bore shape with notches/slot on the bore/yoke
-        Intersect method: cut lines of notch/slot to make the radius end match notch/slot begin
-        technically reduice slot/notch height without changing yoke height
-
-        Parameters
-        ----------
-        radius_desc_list : list
-            List of dict to describe the bore/yoke radius
-        prop_dict : dict
-            Property dictionary to apply on the radius lines (not on slot/notch)
-        sym : int
-            Symmetry factor (1= full machine, 2= half of the machine...)
-
-        Returns
-        -------
-        line_list : list
-            List of lines needed to draw the radius
-        """
-
-        # Get all Radius lines (0 to 2*pi)
-        radius_lines = self.get_bore_line()
-
-        # Update begin and end angle if Radius (next step already cut lines)
-        if sym != 1 and radius_desc_list[0]["label"] == "Radius":
-            radius_desc_list[0]["begin_angle"] = 0
-        if sym != 1 and radius_desc_list[-1]["label"] == "Radius":
-            radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
-
-        # Replace Arc radius from desc by lines from shape
-        for ii, desc_dict in enumerate(radius_desc_list):
-            if desc_dict["label"] == "Radius":
-                desc_dict["lines"] = cut_lines_between_angles(
-                    radius_lines, desc_dict["begin_angle"], desc_dict["end_angle"]
+    if isinstance(merge_slot_intersect, ImportError):
+        merge_slot_intersect = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Bore method merge_slot_intersect: "
+                    + str(merge_slot_intersect)
                 )
-
-        # # Check that the Radius lines are correct
-        # for ii, desc_dict in enumerate(radius_desc_list):
-        #     if desc_dict["label"] == "Radius":
-        #         print(ii)
-        #         print(
-        #             str(desc_dict["begin_angle"])
-        #             + " and "
-        #             + str(angle(desc_dict["lines"][0].get_begin()) % (2 * pi))
-        #         )
-        #         print(
-        #             str(desc_dict["end_angle"])
-        #             + " and "
-        #             + str(angle(desc_dict["lines"][-1].get_end()) % (2 * pi))
-        #         )
-
-        # If slot/notch are coliding with sym lines => Cut
-        if sym != 1:
-            # Cut first desc (if needed)
-            if radius_desc_list[0]["begin_angle"] < 0:
-                lines = list()
-                for line in radius_desc_list[0]["lines"]:
-                    top_split_list, _ = line.split_line(0, 1)
-                    lines.extend(top_split_list)
-                radius_desc_list[0]["begin_angle"] = 0
-                radius_desc_list[0]["lines"] = lines
-            # Cut last desc (if needed)
-            if radius_desc_list[-1]["end_angle"] > 2 * np.pi / sym:
-                lines = list()
-                for line in radius_desc_list[-1]["lines"]:
-                    _, bot_split_list = line.split_line(0, np.exp(1j * 2 * np.pi / sym))
-                    lines.extend(bot_split_list)
-                radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
-                radius_desc_list[-1]["lines"] = lines
-
-        # Apply merge strategy on slot/notch
-        line_list = list()
-        for ii, desc_dict in enumerate(radius_desc_list):
-            if desc_dict["label"] == "Radius":
-                # Add prop_dict on all the Radius Lines
-                if prop_dict is not None:
-                    for line in desc_dict["lines"]:
-                        if line.prop_dict is None:
-                            line.prop_dict = dict()
-                        line.prop_dict.update(prop_dict)
-                line_list.extend(desc_dict["lines"])
-            else:  # Intersect and add slot/notch lines
-                # Define First cutting line
-                # rad_line = radius_desc_list[ii - 1]["lines"][-1]
-                op = desc_dict["end_angle"] - desc_dict["begin_angle"]
-                if not (ii == 0 and sym != 1):  # No first cut for first notch on Ox
-                    rad_line_list = cut_lines_between_angles(
-                        radius_lines,
-                        desc_dict["begin_angle"] - op / 4,
-                        desc_dict["begin_angle"] + op / 4,
-                    )
-                    # Find first line to intersect with cutting line
-                    for jj in range(len(desc_dict["lines"])):
-                        inter_list = desc_dict["lines"][jj].intersect_obj(
-                            rad_line_list[-1], is_on_line=True
-                        )
-                        if len(inter_list) > 0:
-                            break
-                    if jj < len(desc_dict["lines"]) - 1:
-                        # Slot/notch was cut => Replace lines by cut ones
-                        desc_dict["lines"] = desc_dict["lines"][
-                            jj:
-                        ]  # Keep all lines after cut
-                        # Update lines to start/end at cutting point
-                        desc_dict["lines"][0].split_point(inter_list[0], is_begin=False)
-                        if len(line_list) == 0:  # Slot/notch on Ox
-                            radius_desc_list[-1]["lines"][-1].split_point(
-                                inter_list[0], is_begin=True
-                            )
-                        else:
-                            line_list[-1].split_point(inter_list[0], is_begin=True)
-                    else:  # The slot is above the shape => Use shape lines
-                        desc_dict["lines"] = cut_lines_between_angles(
-                            radius_lines,
-                            desc_dict["begin_angle"],
-                            desc_dict["end_angle"],
-                        )
-                        # Add prop_dict on all the Radius Lines
-                        if prop_dict is not None:
-                            for line in desc_dict["lines"]:
-                                if line.prop_dict is None:
-                                    line.prop_dict = dict()
-                                line.prop_dict.update(prop_dict)
-                        line_list.extend(desc_dict["lines"])
-                        continue  # No need to cut the other side
-                # Second cut
-                if not (ii == len(radius_desc_list) - 1 and sym != 1):
-                    # No second cut for notch on sym line
-                    rad_line_list = cut_lines_between_angles(
-                        radius_lines,
-                        desc_dict["end_angle"] - op / 4,
-                        desc_dict["end_angle"] + op / 4,
-                    )
-                    for jj in range(len(desc_dict["lines"])):
-                        inter_list = desc_dict["lines"][-(jj + 1)].intersect_obj(
-                            rad_line_list[0], is_on_line=True
-                        )
-                        if len(inter_list) > 0:
-                            break
-                    if jj < len(desc_dict["lines"]):
-                        # Slot/notch was cut => Replace lines by cut ones
-                        if jj != 0:  # Keep all the lines if last line is cut
-                            desc_dict["lines"] = desc_dict["lines"][
-                                :-jj
-                            ]  # Keep all lines before cut
-                        # Update lines to start/end at cutting point
-                        desc_dict["lines"][-1].split_point(inter_list[0], is_begin=True)
-                        radius_desc_list[ii + 1]["lines"][0].split_point(
-                            inter_list[0], is_begin=False
-                        )
-                # Add slot/notch lines to final list
-                line_list.extend(desc_dict["lines"])
-        return line_list
-
+            )
+        )
+    else:
+        merge_slot_intersect = merge_slot_intersect
     # cf Methods.Machine.Bore.merge_slot_translate
-    def merge_slot_translate(self, radius_desc_list, prop_dict, sym):
-        """Merge the Bore shape with notches/slot on the bore/yoke
-        Translate method: Translate lines of notch/slot to match the radius of the shape
-        technically Keep the slot/notch height by reduicing the yoke height
-
-        Parameters
-        ----------
-        radius_desc_list : list
-            List of dict to describe the bore/yoke radius
-        prop_dict : dict
-            Property dictionary to apply on the radius lines (not on slot/notch)
-        sym : int
-            Symmetry factor (1= full machine, 2= half of the machine...)
-
-        Returns
-        -------
-        line_list : list
-            List of lines needed to draw the radius
-        """
-
-        raise Exception("Not Implemented Yet")
-
+    if isinstance(merge_slot_translate, ImportError):
+        merge_slot_translate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Bore method merge_slot_translate: "
+                    + str(merge_slot_translate)
+                )
+            )
+        )
+    else:
+        merge_slot_translate = merge_slot_translate
     # cf Methods.Machine.Bore.plot
-    def plot(self, fig=None, ax=None):
-        """Plot the Bore in a matplotlib fig
-
-        Parameters
-        ----------
-        self : Bore
-            A Bore object
-        fig :
-            if None, open a new fig and plot, else add to the current
-            one (Default value = None)
-
-        Returns
-        -------
-        fig : Matplotlib.figure.Figure
-            Figure containing the plot
-        ax : Matplotlib.axes.Axes object
-            Axis containing the plot
-        """
-        surf = self.get_surface()
-
-        # Display the result
-        (fig, ax, patch_leg, label_leg) = init_fig(fig, ax)
-        ax.set_xlabel("(m)")
-        ax.set_ylabel("(m)")
-        ax.set_title("Bore")
-
-        # Add the Bore to the fig
-        if self.get_is_stator:
-            patches = surf.get_patches(color=self.STATOR_COLOR)
-        else:
-            patches = surf.get_patch(color=self.ROTOR_COLOR)
-        for patch in patches:
-            ax.add_patch(patch)
-
-        # Axis Setup
-        ax.axis("equal")
-        fig.show()
-        return fig, ax
-
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Bore method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -558,8 +256,8 @@ class Bore(FrozenClass):
         if (
             other._alpha is not None
             and self._alpha is not None
-            and np.isnan(other._alpha)
-            and np.isnan(self._alpha)
+            and isnan(other._alpha)
+            and isnan(self._alpha)
         ):
             pass
         elif other._alpha != self._alpha:

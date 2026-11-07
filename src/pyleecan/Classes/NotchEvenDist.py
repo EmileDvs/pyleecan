@@ -1,20 +1,52 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/NotchEvenDist.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/NotchEvenDist"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/NotchEvenDist
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Notch import Notch
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.NotchEvenDist.build_geometry_key import build_geometry_key
+except ImportError as error:
+    build_geometry_key = error
 
-from pyleecan.Classes.Notch import Notch
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Geometry.transform_hole_surf import transform_hole_surf
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Machine.NotchEvenDist.comp_periodicity_spatial import (
+        comp_periodicity_spatial,
+    )
+except ImportError as error:
+    comp_periodicity_spatial = error
+
+try:
+    from ..Methods.Machine.NotchEvenDist.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Machine.NotchEvenDist.get_key_Ox_radius import get_key_Ox_radius
+except ImportError as error:
+    get_key_Ox_radius = error
+
+try:
+    from ..Methods.Machine.NotchEvenDist.get_notch_desc_list import get_notch_desc_list
+except ImportError as error:
+    get_notch_desc_list = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class NotchEvenDist(Notch):
@@ -22,189 +54,66 @@ class NotchEvenDist(Notch):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.NotchEvenDist.build_geometry_key
-    def build_geometry_key(self, index=0, sym=1, alpha=0, delta=0):
-        """Build the geometry of the keys inside the notch
-
-        Parameters
-        ----------
-        self : NotchEvenDist
-            The NotchEvenDist to build the key surfaces from
-        index : int
-            Index of the Notch in the list
-        sym : int
-            Symmetry factor (1= full machine, 2= half of the machine...)
-        alpha : float
-            Angle for rotation [rad]
-        delta : complex
-            Complex value for translation
-
-        Returns
-        -------
-        surf_list : list
-            list of surfaces needed to draw the keys
-
-        """
-
-        surf_list = list()
-
-        # Get the original surface
-        Nsurf = self.notch_shape.get_surface_active()
-        Nsurf.label = self.get_label() + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
-        Nsurf.rotate(angle=self.alpha)
-        # Label definition
-        BC_prop_right = self.get_label() + "_" + YSNR_LAB
-        BC_prop_left = self.get_label() + "_" + YSNL_LAB
-        # Generate all the surfaces (handle cut on sym axis)
-        surf_list.extend(
-            transform_hole_surf(
-                hole_surf_list=[Nsurf],
-                Zh=self.notch_shape.Zs,
-                sym=sym,
-                alpha=0,
-                delta=0,
-                is_split=True,
-                BC_prop_right=BC_prop_right,
-                BC_prop_left=BC_prop_left,
+    if isinstance(build_geometry_key, ImportError):
+        build_geometry_key = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method build_geometry_key: "
+                    + str(build_geometry_key)
+                )
             )
         )
-
-        # apply the transformation
-        for surf in surf_list:
-            if alpha != 0:
-                surf.rotate(alpha)
-            if delta != 0:
-                surf.translate(delta)
-
-        return surf_list
-
+    else:
+        build_geometry_key = build_geometry_key
     # cf Methods.Machine.NotchEvenDist.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
-        """Compute the periodicity factor of the notch
-
-        Parameters
-        ----------
-        self : NotchEvenDist
-            A NotchEvenDist object
-
-        Returns
-        -------
-        per_a : int
-            Number of spatial periodicities of the notch
-        is_antiper_a : bool
-            True if an spatial anti-periodicity is possible after the periodicities
-        """
-
-        return self.notch_shape.Zs, False
-
+    if isinstance(comp_periodicity_spatial, ImportError):
+        comp_periodicity_spatial = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method comp_periodicity_spatial: "
+                    + str(comp_periodicity_spatial)
+                )
+            )
+        )
+    else:
+        comp_periodicity_spatial = comp_periodicity_spatial
     # cf Methods.Machine.NotchEvenDist.comp_surface
-    def comp_surface(self):
-        """Compute the surface of ALL THE NOTCHES
-
-        Parameters
-        ----------
-        self : NotchEvenDist
-            A NotchEvenDist object
-
-        Returns
-        -------
-        Snotch : float
-            surface of ALL THE NOTCHES
-        """
-
-        return self.notch_shape.Zs * self.notch_shape.comp_surface()
-
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Machine.NotchEvenDist.get_key_Ox_radius
-    def get_key_Ox_radius(self):
-        """Return the Key max/min radius on Ox to close the sliding band in FEMM
-
-        Parameters
-        ----------
-        self : NotchEvenDist
-            A NotchEvenDist object
-
-        Returns
-        -------
-        ROx : Float
-            Radius to use to close  the sliding band [m] (None=no intersection)
-        """
-
-        # Get all surfaces
-        surf_list = self.build_geometry_key(sym=1)
-
-        # Cut to find a surface on Ox
-        Z_list = list()
-        for surf in surf_list:
-            Z_list.extend(surf.intersect_line(0, 100))
-
-        # No intersection => Return default radius
-        if len(Z_list) == 0:
-            return None
-
-        # Get the min/max intersection on the right of Ox only
-        Rright = [Z.real for Z in Z_list if Z.real > 0]
-        if len(Rright) == 0:
-            return None
-        elif self.is_outwards():  # Outer lamination
-            return min(Rright)
-        else:
-            return max(Rright)
-
+    if isinstance(get_key_Ox_radius, ImportError):
+        get_key_Ox_radius = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method get_key_Ox_radius: "
+                    + str(get_key_Ox_radius)
+                )
+            )
+        )
+    else:
+        get_key_Ox_radius = get_key_Ox_radius
     # cf Methods.Machine.NotchEvenDist.get_notch_desc_list
-    def get_notch_desc_list(self, sym=1):
-        """Returns an ordered description of the notches
-
-        Parameters
-        ----------
-        self : NotchEvenDist
-            A NotchEvenDist object
-        sym: int
-            Number of symmetry
-
-        Returns
-        -------
-        notch_desc : list
-            trigo ordered list of dictionary with key:
-                "begin_angle" : float [rad]
-                "end_angle" : float [rad]
-                "obj" : Slot (for notch_shape) / None for Radius
-                "lines : lines corresponding to the radius part
-                "label" : Radius/Notch/Slot
-        """
-
-        notch_list = list()
-        op = self.notch_shape.comp_angle_opening()
-        Zs = self.notch_shape.Zs
-        # No need to rotate more than a notch pitch
-        alpha = self.alpha % (2 * np.pi / Zs)
-
-        for ii in range(Zs // sym):
-            notch_dict = dict()
-            notch_dict["begin_angle"] = 2 * np.pi / Zs * ii + alpha - op / 2
-            notch_dict["end_angle"] = 2 * np.pi / Zs * ii + alpha + op / 2
-            notch_dict["obj"] = self.notch_shape
-            notch_dict["lines"] = self.notch_shape.build_geometry()
-            # Apply rotation
-            for line in notch_dict["lines"]:
-                line.rotate((notch_dict["begin_angle"] + notch_dict["end_angle"]) / 2)
-            notch_dict["label"] = "Notch"
-            notch_list.append(notch_dict)
-
-        # If first notch is on Ox, then sym+1 notch are required (half on both yoke side)
-        if notch_list[0]["begin_angle"] < 0 and sym != 1:
-            notch_dict = dict()
-            notch_dict["begin_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha - op / 2
-            notch_dict["end_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha + op / 2
-            notch_dict["obj"] = self.notch_shape
-            notch_dict["lines"] = self.notch_shape.build_geometry()
-            # Apply rotation
-            for line in notch_dict["lines"]:
-                line.rotate((notch_dict["begin_angle"] + notch_dict["end_angle"]) / 2)
-            notch_dict["label"] = "Notch"
-            notch_list.append(notch_dict)
-
-        return notch_list
-
+    if isinstance(get_notch_desc_list, ImportError):
+        get_notch_desc_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use NotchEvenDist method get_notch_desc_list: "
+                    + str(get_notch_desc_list)
+                )
+            )
+        )
+    else:
+        get_notch_desc_list = get_notch_desc_list
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -291,8 +200,8 @@ class NotchEvenDist(Notch):
         if (
             other._alpha is not None
             and self._alpha is not None
-            and np.isnan(other._alpha)
-            and np.isnan(self._alpha)
+            and isnan(other._alpha)
+            and isnan(self._alpha)
         ):
             pass
         elif other._alpha != self._alpha:

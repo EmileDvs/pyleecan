@@ -1,21 +1,45 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/Simulation.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Simulation"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/Simulation
+"""
 
-from logging.config import dictConfig
 from os import linesep
-from os.path import join
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-from pyleecan.Classes.VarLoad import VarLoad
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.Simulation.get_OP_array import get_OP_array
+except ImportError as error:
+    get_OP_array = error
 
-from pyleecan.loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
+try:
+    from ..Methods.Simulation.Simulation.get_var_load import get_var_load
+except ImportError as error:
+    get_var_load = error
+
+try:
+    from ..Methods.Simulation.Simulation.init_logger import init_logger
+except ImportError as error:
+    init_logger = error
+
+try:
+    from ..Methods.Simulation.Simulation.run import run
+except ImportError as error:
+    run = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Simulation(FrozenClass):
@@ -23,163 +47,49 @@ class Simulation(FrozenClass):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Simulation.Simulation.get_OP_array
-    def get_OP_array(self, *arg_list):
-        """Return the OP matrix of the simulation
-        Single speed simulation return a single line matrix
-
-        Parameters
-        ----------
-        self : Simulation
-            A Simulation object
-        *arg_list : list of str
-            arguments to select the OP_matrix columns name (N0, Id, Id, Tem...)
-
-        Returns
-        -------
-        OP_matrix : ndarray
-            Operating Points matrix (N_OP, len(arg_list))
-        """
-
-        var_load = self.get_var_load()
-        if var_load is None:  # Single speed
-            return self.input.OP.get_OP_array(arg_list)
-        else:
-            return var_load.get_OP_array(arg_list)
-
+    if isinstance(get_OP_array, ImportError):
+        get_OP_array = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Simulation method get_OP_array: " + str(get_OP_array)
+                )
+            )
+        )
+    else:
+        get_OP_array = get_OP_array
     # cf Methods.Simulation.Simulation.get_var_load
-    def get_var_load(self):
-        """Return the VarLoad object from var_simu or var_simu.var_simu
-
-        Parameters
-        ----------
-        self : Simulation
-            A Simulation object
-        """
-
-        if self.var_simu is None:
-            return None
-        if isinstance(self.var_simu, VarLoad):
-            return self.var_simu
-        if isinstance(self.var_simu.var_simu, VarLoad):
-            return self.var_simu.var_simu
-        return None
-
+    if isinstance(get_var_load, ImportError):
+        get_var_load = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Simulation method get_var_load: " + str(get_var_load)
+                )
+            )
+        )
+    else:
+        get_var_load = get_var_load
     # cf Methods.Simulation.Simulation.init_logger
-    def init_logger(self, output):
-        """Create all the logger for the simulation
-
-        Parameters
-        ----------
-        self : Simulation
-            A Simulation object
-        output : XOuput
-            XOutput or Output object
-        """
-
-        if self.name in [None, ""]:
-            log_name = DEFAULT_LOG_NAME
-        else:
-            log_name = self.name
-
-        if self.layer == 0:  # Create logger only once for top simulation
-            log_dict = gen_logger_config_dict(log_name)
-
-            # Update log file
-            log_path = join(output.get_path_result(), log_name + ".log")
-            log_dict["handlers"]["file_handler"]["filename"] = log_path
-            # Create the loggers
-            dictConfig(log_dict)
-
-        # Set the logger in the simulation
-        self.logger_name = log_name
-        self.machine.logger_name = log_name + ".Machine"
-        if self.elec is not None:
-            self.elec.logger_name = log_name + ".Electrical"
-        if self.mag is not None:
-            self.mag.logger_name = log_name + ".Magnetics"
-        if self.force is not None:
-            self.force.logger_name = log_name + ".Force"
-        if self.struct is not None:
-            self.struct.logger_name = log_name + ".Structural"
-        # Set the logger in the Output
-        output.logger_name = log_name
-        output.elec.logger_name = log_name + ".Electrical"
-        output.mag.logger_name = log_name + ".Magnetics"
-        output.force.logger_name = log_name + ".Force"
-        output.struct.logger_name = log_name + ".Structural"
-
-        if self.layer == 0:
-            # Display start of top simulation
-            msg = "Starting running simulation"
-            if self.name not in ["", None]:
-                msg += " " + self.name
-            if self.machine.name not in ["", None]:
-                msg += " (machine=" + self.machine.name + ")"
-            self.get_logger().debug("###################################")
-            self.get_logger().info(msg)
-
+    if isinstance(init_logger, ImportError):
+        init_logger = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Simulation method init_logger: " + str(init_logger)
+                )
+            )
+        )
+    else:
+        init_logger = init_logger
     # cf Methods.Simulation.Simulation.run
-    def run(self):
-        """Run the simulation and optionnaly its multisimulation
-
-        Returns
-        -------
-        output: Output
-            Contains simulation results
-        """
-        # In-function import to avoid ImportError
-        from pyleecan.Classes.XOutput import XOutput
-        from pyleecan.Classes.Output import Output
-
-        if self.layer is None:
-            self.layer = 0  # Top simulation
-
-        # Multi-simulation
-        if self.var_simu is not None:
-            # make sure simulation output is of class XOutput
-            if self.parent is None:
-                results = XOutput(simu=self)
-            else:
-                if not isinstance(self.parent, XOutput):
-                    msg = (
-                        "Simulation.run: A multisimulation has been defined, "
-                        + "type XOutput expected for simu.parent, "
-                        + f"got {type(self.parent).__name__}. "
-                        + "Setting new parent XOutput for simu."
-                    )
-                    self.get_logger().warning(msg)
-                    results = XOutput(simu=self)
-                else:
-                    results = self.parent
-
-            # Logger setup
-            self.init_logger(results)
-
-            # Compute the multisimulation
-            self.var_simu.run()
-
-        # 'normal' simulation
-        else:
-            # Output initialization
-            if self.parent is None:
-                results = Output(simu=self)
-            else:
-                results = self.parent
-
-            # Logger setup
-            self.init_logger(results)
-
-            # Compute the simulation
-            self.run_single()
-
-        if self.index is None and self.layer == 0:
-            msg = "End of simulation"
-            if self.name not in ["", None]:
-                msg += " " + self.name
-            self.get_logger().info(msg)
-        return results
-
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Simulation method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -502,7 +412,7 @@ class Simulation(FrozenClass):
             Simulation_dict["machine"] = self.machine.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs,
+                **kwargs
             )
         if self.input is None:
             Simulation_dict["input"] = None
@@ -510,7 +420,7 @@ class Simulation(FrozenClass):
             Simulation_dict["input"] = self.input.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs,
+                **kwargs
             )
         Simulation_dict["logger_name"] = self.logger_name
         if self.var_simu is None:
@@ -519,7 +429,7 @@ class Simulation(FrozenClass):
             Simulation_dict["var_simu"] = self.var_simu.as_dict(
                 type_handle_ndarray=type_handle_ndarray,
                 keep_function=keep_function,
-                **kwargs,
+                **kwargs
             )
         if self.postproc_list is None:
             Simulation_dict["postproc_list"] = None
@@ -531,7 +441,7 @@ class Simulation(FrozenClass):
                         obj.as_dict(
                             type_handle_ndarray=type_handle_ndarray,
                             keep_function=keep_function,
-                            **kwargs,
+                            **kwargs
                         )
                     )
                 else:

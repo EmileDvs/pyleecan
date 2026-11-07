@@ -1,11 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Post/PostMethod.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostMethod"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostMethod
+"""
 
-from pyleecan.Classes.Post import Post
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Post import Post
+
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Post.PostMethod.run import run
+except ImportError as error:
+    run = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class PostMethod(Post):
@@ -14,10 +33,14 @@ class PostMethod(Post):
     VERSION = 1
 
     # cf Methods.Post.PostMethod.run
-    def run(self, output):
-        """Method to raise an NotImplementedError"""
-        raise NotImplementedError
-
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use PostMethod method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

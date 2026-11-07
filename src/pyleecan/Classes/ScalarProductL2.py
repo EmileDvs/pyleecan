@@ -1,13 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Mesh/Interpolation/ScalarProductL2.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/ScalarProductL2"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Mesh/ScalarProductL2
+"""
 
-import numpy as np
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ScalarProduct import ScalarProduct
 
-from pyleecan.Classes.ScalarProduct import ScalarProduct
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Mesh.ScalarProductL2.scalar_product import scalar_product
+except ImportError as error:
+    scalar_product = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ScalarProductL2(ScalarProduct):
@@ -16,42 +33,17 @@ class ScalarProductL2(ScalarProduct):
     VERSION = 1
 
     # cf Methods.Mesh.ScalarProductL2.scalar_product
-    def scalar_product(self, funca, funcb, detJ, weights, nb_gauss_points):
-        """Scalar product of shape functions with L2 gauss integration
-
-        Parameters
-        ----------
-        self : ScalarProductL2
-            a ScalarProductL2 object
-        funca : ndarray
-            coordinates of the element
-        nba : ndarray
-            coordinates of a point
-        funcb : ndarray
-            coordinates of the element
-        nbb : ndarray
-            coordinates of a point
-        detJ : ndarray
-            jacobian determinant evaluated for each gauss point
-        weights : ndarray
-            gauss weights
-        nb_gauss_points : int
-            number of gauss points
-
-        Returns
-        -------
-        l2_scal : ndarray
-            a L2 scalar product
-        """
-
-        func_a_w_dJ = np.zeros(funca.shape)
-        for i in range(nb_gauss_points):
-            func_a_w_dJ[i, :] = funca[i, :] * weights[i] * detJ[i]
-
-        l2_scal_mat = np.squeeze(np.tensordot(func_a_w_dJ, funcb, axes=([0], [0])))
-
-        return l2_scal_mat
-
+    if isinstance(scalar_product, ImportError):
+        scalar_product = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ScalarProductL2 method scalar_product: "
+                    + str(scalar_product)
+                )
+            )
+        )
+    else:
+        scalar_product = scalar_product
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

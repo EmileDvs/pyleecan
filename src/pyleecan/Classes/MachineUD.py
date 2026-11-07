@@ -1,16 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/MachineUD.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineUD"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/MachineUD
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Machine import Machine
 
-from pyleecan.Classes.Machine import Machine
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.MachineUD.build_geometry import build_geometry
+except ImportError as error:
+    build_geometry = error
+
+try:
+    from ..Methods.Machine.MachineUD.is_synchronous import is_synchronous
+except ImportError as error:
+    is_synchronous = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class MachineUD(Machine):
@@ -18,61 +37,29 @@ class MachineUD(Machine):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.MachineUD.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0):
-        """Build the geometry of the machine
-
-        Parameters
-        ----------
-        self : MachineUD
-            MachineUD object
-        sym : int
-            Symmetry factor (1= full machine, 2= half of the machine...)
-        alpha : float
-            Angle for rotation [rad]
-        delta : complex
-            Complex value for translation
-
-        Returns
-        -------
-        surf_list : list
-            list of surfaces needed to draw the lamination
-
-        """
-        surf_list = list()
-
-        if self.frame is not None:
-            surf_list.extend(
-                self.frame.build_geometry(sym=sym, alpha=alpha, delta=delta)
+    if isinstance(build_geometry, ImportError):
+        build_geometry = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineUD method build_geometry: " + str(build_geometry)
+                )
             )
-
-        for lam in self.lam_list:
-            surf_list.extend(lam.build_geometry(sym=sym, alpha=alpha, delta=delta))
-
-        if self.shaft is not None:
-            surf_list.extend(
-                self.shaft.build_geometry(sym=sym, alpha=alpha, delta=delta)
-            )
-
-        return surf_list
-
+        )
+    else:
+        build_geometry = build_geometry
     # cf Methods.Machine.MachineUD.is_synchronous
-    def is_synchronous(self):
-        """Return if a machine is synchronous or not
-
-        Parameters
-        ----------
-        self : MachineUD
-            A MachineUD
-
-        Returns
-        -------
-        is_synchronous: bool
-            User Defined machine are synchronous according to is_sync
-
-        """
-        return self.is_sync
-
+    if isinstance(is_synchronous, ImportError):
+        is_synchronous = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use MachineUD method is_synchronous: " + str(is_synchronous)
+                )
+            )
+        )
+    else:
+        is_synchronous = is_synchronous
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

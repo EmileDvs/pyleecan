@@ -1,16 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportGenToothSaw.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportGenToothSaw"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportGenToothSaw
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ImportMatrix import ImportMatrix
 
-import numpy as np
-from pyleecan.Classes.ImportMatrix import ImportMatrix
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportGenToothSaw.get_data import get_data
+except ImportError as error:
+    get_data = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportGenToothSaw(ImportMatrix):
@@ -19,50 +33,16 @@ class ImportGenToothSaw(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportGenToothSaw.get_data
-    def get_data(self):
-        """Generate the toothsaw vector
-
-        Parameters
-        ----------
-        self : ImportGenToothSaw
-            An ImportGenToothSaw object
-
-        Returns
-        -------
-        vect: ndarray
-            The generated toothsaw vector
-
-        """
-
-        time = np.linspace(start=0, stop=self.Tf, num=self.N, endpoint=False)
-
-        T = 1 / self.f
-        time = (time + self.Dt) % T
-
-        if self.type_signal == 0:  # forward toothsaw carrier
-            Y = (
-                np.where(time <= 0.5 * T, 1, 0) * time
-                + np.where(time > 0.5 * T, 1, 0) * (time - T)
-            ) / (0.5 * T)
-        elif self.type_signal == 1:  # backwards toothsaw carrier
-            Y = -(
-                np.where(time <= 0.5 * T, 1, 0) * time
-                + np.where(time > 0.5 * T, 1, 0) * (time - T)
-            ) / (0.5 * T)
-        elif self.type_signal == 2:  # symmetrical toothsaw carrier
-            t1 = T / 4
-            t2 = T - t1
-            Y = (
-                np.where(time <= t1, 1, 0) * time / t1
-                + np.where(time > t1, 1, 0)
-                * np.where(time < t2, 1, 0)
-                * (-time + 0.5 * T)
-                / (-t1 + 0.5 * T)
-                + np.where(time >= t2, 1, 0) * (time - T) / (T - t2)
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportGenToothSaw method get_data: " + str(get_data)
+                )
             )
-
-        return self.edit_matrix(self.A * Y)
-
+        )
+    else:
+        get_data = get_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -188,8 +168,8 @@ class ImportGenToothSaw(ImportMatrix):
         if (
             other._f is not None
             and self._f is not None
-            and np.isnan(other._f)
-            and np.isnan(self._f)
+            and isnan(other._f)
+            and isnan(self._f)
         ):
             pass
         elif other._f != self._f:
@@ -201,8 +181,8 @@ class ImportGenToothSaw(ImportMatrix):
         if (
             other._A is not None
             and self._A is not None
-            and np.isnan(other._A)
-            and np.isnan(self._A)
+            and isnan(other._A)
+            and isnan(self._A)
         ):
             pass
         elif other._A != self._A:
@@ -220,8 +200,8 @@ class ImportGenToothSaw(ImportMatrix):
         if (
             other._Tf is not None
             and self._Tf is not None
-            and np.isnan(other._Tf)
-            and np.isnan(self._Tf)
+            and isnan(other._Tf)
+            and isnan(self._Tf)
         ):
             pass
         elif other._Tf != self._Tf:
@@ -233,8 +213,8 @@ class ImportGenToothSaw(ImportMatrix):
         if (
             other._Dt is not None
             and self._Dt is not None
-            and np.isnan(other._Dt)
-            and np.isnan(self._Dt)
+            and isnan(other._Dt)
+            and isnan(self._Dt)
         ):
             pass
         elif other._Dt != self._Dt:

@@ -1,16 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Post/PostLUT.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostLUT"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Post/PostLUT
+"""
 
 from os import linesep
-from os.path import join
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .PostMethod import PostMethod
 
-from pyleecan.Classes.PostMethod import PostMethod
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Post.PostLUT.run import run
+except ImportError as error:
+    run = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class PostLUT(PostMethod):
@@ -19,41 +33,14 @@ class PostLUT(PostMethod):
     VERSION = 1
 
     # cf Methods.Post.PostLUT.run
-    def run(self, LUT):
-        """PostProcessing to clean a LUT from un-necessary output
-        after the corresponding simulation
-
-        Parameters
-        ----------
-        self : PostLUT
-            A PostLUT object
-        LUT: LUT
-            LUT object coming from LUT calculation workflow to cleanup
-        """
-
-        assert LUT.simu.var_simu.is_keep_all_output is True
-
-        # Clean all reference Output (only use output_list)
-        LUT.elec = None
-        LUT.mag = None
-        LUT.struct = None
-        LUT.force = None
-        LUT.loss = None
-
-        # Clean all un-necessary data from output_list
-        for out in LUT.output_list:
-            # out.elec is not cleaned
-            out.mag.clean(clean_level=5)
-            out.struct = None
-            out.force = None
-            # out.loss = None
-
-        # Save/Store LUT object
-        if self.is_save_LUT:
-            save_path = join(LUT.get_path_result(), self.file_name)
-            self.get_logger().info("Saving LUT at: " + save_path)
-            LUT.save(save_path=save_path)
-
+    if isinstance(run, ImportError):
+        run = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use PostLUT method run: " + str(run))
+            )
+        )
+    else:
+        run = run
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

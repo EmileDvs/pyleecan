@@ -1,26 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Elmer/ElmerResultsVTU.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Elmer/ElmerResultsVTU"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Elmer/ElmerResultsVTU
+"""
 
 from os import linesep
-from os.path import split, splitext
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Elmer import Elmer
 
-import numpy as np
-from meshio import read
-from pyleecan.Classes.Data1D import Data1D
-from pyleecan.Classes.DataTime import DataTime
-from pyleecan.Classes.Elmer import Elmer
-from pyleecan.Classes.MeshSolution import MeshSolution
-from pyleecan.Classes.MeshVTK import MeshVTK
-from pyleecan.Classes.Norm_ref import Norm_ref
-from pyleecan.Classes.SolutionData import SolutionData
-from pyleecan.Classes.SolutionVector import SolutionVector
-from pyleecan.Classes.VectorField import VectorField
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Elmer.ElmerResultsVTU.build_meshsolution import build_meshsolution
+except ImportError as error:
+    build_meshsolution = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ElmerResultsVTU(Elmer):
@@ -29,116 +33,17 @@ class ElmerResultsVTU(Elmer):
     VERSION = 1
 
     # cf Methods.Elmer.ElmerResultsVTU.build_meshsolution
-    def build_meshsolution(self):
-        """Get the mesh and solution data from an Elmer VTU results file
-
-        Parameters
-        ----------
-        self : ElmerResultsVTU
-            a ElmerResultsVTU object
-
-        Returns
-        -------
-        success: bool
-            Information if meshsolution could be created
-
-        """
-        # create meshsolution
-        meshsol = MeshSolution(label=self.label)
-
-        # get the mesh
-        save_path, fn = split(self.file_path)
-        file_name, file_ext = splitext(fn)
-        if file_ext != ".vtu":
-            raise ElmerResultsVTUError(
-                "ElmerResultsVTU: Results file must be of type VTU."
+    if isinstance(build_meshsolution, ImportError):
+        build_meshsolution = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ElmerResultsVTU method build_meshsolution: "
+                    + str(build_meshsolution)
+                )
             )
-
-        meshvtk = MeshVTK(path=save_path, name=file_name, format="vtu")
-        # TODO maybe convert to MeshMat before
-        meshsol.mesh = meshvtk
-
-        # get the solution data on the mesh
-        meshsolvtu = read(self.file_path)
-        pt_data = meshsolvtu.point_data  # point_data is of type dict
-
-        # setup axes
-        indices = np.arange(meshsolvtu.points.shape[0])
-        Indices = Data1D(name="indice", values=indices, is_components=True)
-
-        # store only data from store dict if available
-        comp_ext = ["x", "y", "z"]
-
-        for key, value in pt_data.items():
-            # check if value should be stored
-            if key in self.store_dict.keys():
-                siz = value.shape[1]
-                # only regard max. 3 components
-                if siz > 3:
-                    self.get_logger().warning(
-                        f'ElmerResultsVTU.build_meshsolution(): size of data "{key}" > 3'
-                        + " - "
-                        + "Data will be truncated."
-                    )
-                    siz = 3
-
-                components = []
-                comp_name = []
-
-                # loop though components
-                for i in range(siz):
-                    # setup name, symbol and component name extension
-                    if siz == 1:
-                        ext = ""
-                    else:
-                        ext = comp_ext[i]
-
-                    # setup data object
-                    data = DataTime(
-                        name=self.store_dict[key]["name"] + " " + ext,
-                        unit=self.store_dict[key]["unit"],
-                        symbol=self.store_dict[key]["symbol"] + ext,
-                        axes=[Indices],
-                        values=value[:, i],
-                        normalizations={
-                            "ref": Norm_ref(ref=self.store_dict[key]["norm"])
-                        },
-                    )
-                    components.append(data)
-                    comp_name.append("comp_" + ext)
-
-                # setup solution depending on number of field components
-                if siz == 1:
-                    field = components[0]
-                    solution = SolutionData(
-                        field=field,
-                        type_element="point",
-                        label=self.store_dict[key]["symbol"],
-                    )
-
-                    label = self.store_dict[key]["symbol"]
-                    meshsol.add_solution(solution=solution, label=label)
-
-                else:
-                    comps = {}
-                    for i in range(siz):
-                        comps[comp_name[i]] = components[i]
-                    field = VectorField(
-                        name=self.store_dict[key]["name"],
-                        symbol=self.store_dict[key]["symbol"],
-                        components=comps,
-                    )
-                    solution = SolutionVector(
-                        field=field,
-                        type_element="point",
-                        label=self.store_dict[key]["symbol"],
-                    )
-                    label = self.store_dict[key]["symbol"]
-
-                    meshsol.add_solution(solution=solution, label=label)
-
-        return meshsol
-
+        )
+    else:
+        build_meshsolution = build_meshsolution
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -293,7 +198,7 @@ class ElmerResultsVTU(Elmer):
         ElmerResultsVTU_dict = super(ElmerResultsVTU, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs,
+            **kwargs
         )
         ElmerResultsVTU_dict["label"] = self.label
         ElmerResultsVTU_dict["file_path"] = self.file_path
@@ -389,9 +294,3 @@ class ElmerResultsVTU(Elmer):
         :Type: dict
         """,
     )
-
-    class ElmerResultsVTUError(Exception):
-        pass
-
-
-ElmerResultsVTUError = ElmerResultsVTU.ElmerResultsVTUError

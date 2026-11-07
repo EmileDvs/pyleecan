@@ -1,17 +1,31 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Import/ImportMatrixVal.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrixVal"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Import/ImportMatrixVal
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ImportMatrix import ImportMatrix
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Import.ImportMatrixVal.get_data import get_data
+except ImportError as error:
+    get_data = error
 
-from pyleecan.Classes.ImportMatrix import ImportMatrix
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ImportMatrixVal(ImportMatrix):
@@ -20,23 +34,16 @@ class ImportMatrixVal(ImportMatrix):
     VERSION = 1
 
     # cf Methods.Import.ImportMatrixVal.get_data
-    def get_data(self):
-        """Return the object's matrix
-
-        Parameters
-        ----------
-        self : ImportMatrixVal
-            An ImportMatrixVal object
-
-        Returns
-        -------
-        matrix: ndarray
-            The object's matrix
-
-        """
-
-        return self.edit_matrix(self.value)
-
+    if isinstance(get_data, ImportError):
+        get_data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ImportMatrixVal method get_data: " + str(get_data)
+                )
+            )
+        )
+    else:
+        get_data = get_data
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -93,7 +100,7 @@ class ImportMatrixVal(ImportMatrix):
         # Check the properties inherited from ImportMatrix
         if not super(ImportMatrixVal, self).__eq__(other):
             return False
-        if not np.array_equal(other.value, self.value):
+        if not array_equal(other.value, self.value):
             return False
         return True
 
@@ -112,7 +119,7 @@ class ImportMatrixVal(ImportMatrix):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not np.array_equal(other.value, self.value):
+        if not array_equal(other.value, self.value):
             diff_list.append(name + ".value")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -190,10 +197,10 @@ class ImportMatrixVal(ImportMatrix):
     def _set_value(self, value):
         """setter of value"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("value", value, "ndarray")

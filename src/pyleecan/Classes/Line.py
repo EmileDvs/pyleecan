@@ -1,17 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Geometry/Line.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Line"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Line
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from ._frozen import FrozenClass
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Geometry.Line.comp_normal import comp_normal
+except ImportError as error:
+    comp_normal = error
 
-from pyleecan.Classes._check import check_var
-from pyleecan.Classes._frozen import FrozenClass
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Line(FrozenClass):
@@ -20,34 +33,14 @@ class Line(FrozenClass):
     VERSION = 1
 
     # cf Methods.Geometry.Line.comp_normal
-    def comp_normal(self):
-        """Compute the normal direction of the Line
-        Normal point is "on top" (begin=O and end on Ox)
-
-        Parameters
-        ----------
-        self : Line
-            a Line object
-
-        Returns
-        -------
-        normal: float
-            Angle of the vector between (Zbegin+Zend)/2 (even for arc) and the normal point [rad]
-        """
-
-        Zb = self.get_begin()
-        Ze = self.get_end()
-        Zm = (Zb + Ze) / 2  # "Middle" of the line
-        L = self.comp_length() / 3
-
-        # In ref begin=O and end on Ox
-        Zm2 = (Zm - Zb) * np.exp(-1j * np.angle(Ze - Zb))
-        Zn2 = Zm2 + 1j * L
-
-        Zn = Zn2 * np.exp(1j * np.angle(Ze - Zb)) + Zb
-
-        return np.angle(Zn - Zm)
-
+    if isinstance(comp_normal, ImportError):
+        comp_normal = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Line method comp_normal: " + str(comp_normal))
+            )
+        )
+    else:
+        comp_normal = comp_normal
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

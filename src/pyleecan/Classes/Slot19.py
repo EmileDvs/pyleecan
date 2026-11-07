@@ -1,19 +1,60 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/Slot19.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/Slot19"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/Slot19
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Slot import Slot
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Slot.Slot19._comp_point_coordinate import _comp_point_coordinate
+except ImportError as error:
+    _comp_point_coordinate = error
 
-from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes.Slot import Slot
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Slot.Slot19.build_geometry import build_geometry
+except ImportError as error:
+    build_geometry = error
+
+try:
+    from ..Methods.Slot.Slot19.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Slot.Slot19.comp_angle_bottom import comp_angle_bottom
+except ImportError as error:
+    comp_angle_bottom = error
+
+try:
+    from ..Methods.Slot.Slot19.comp_angle_opening import comp_angle_opening
+except ImportError as error:
+    comp_angle_opening = error
+
+try:
+    from ..Methods.Slot.Slot19.comp_height import comp_height
+except ImportError as error:
+    comp_height = error
+
+try:
+    from ..Methods.Slot.Slot19.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Slot19(Slot):
@@ -22,202 +63,83 @@ class Slot19(Slot):
     VERSION = 1
     IS_SYMMETRICAL = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.Slot19._comp_point_coordinate
-    def _comp_point_coordinate(self):
-        """Compute the point coordinates needed to plot the Slot.
-
-        Parameters
-        ----------
-        self : Slot19
-            A Slot19 object
-
-        Returns
-        -------
-        point_list: list
-            A list of Points
-
-        """
-        Rbo = self.get_Rbo()
-
-        # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
-        alpha0 = self.comp_angle_opening() / 2
-        alpha1 = self.comp_angle_bottom() / 2
-
-        # comp point coordinate (in complex)
-        Z_ = Rbo * np.exp(1j * 0)
-        Z0 = Z_ * np.exp(1j * alpha0)
-
-        if self.is_outwards():
-            Z1 = (Rbo + self.H0) * np.exp(1j * alpha1)
-        else:  # inward slot
-            Z1 = (Rbo - self.H0) * np.exp(1j * alpha1)
-
-        # symetry
-        Z2 = Z1.conjugate()
-        Z3 = Z0.conjugate()
-
-        return [Z3, Z2, Z1, Z0]
-
+    if isinstance(_comp_point_coordinate, ImportError):
+        _comp_point_coordinate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot19 method _comp_point_coordinate: "
+                    + str(_comp_point_coordinate)
+                )
+            )
+        )
+    else:
+        _comp_point_coordinate = _comp_point_coordinate
     # cf Methods.Slot.Slot19.build_geometry
-    def build_geometry(self):
-        """Compute the curve (Line) needed to plot the object.
-        The ending point of a curve is the starting point of the next curve in
-        the list
-
-        Parameters
-        ----------
-        self : Slot19
-            A Slot19 object
-
-        Returns
-        -------
-        curve_list: list
-            A list of 2 Segment and 1 Arc
-
-        """
-
-        [Z1, Z2, Z3, Z4] = self._comp_point_coordinate()
-
-        # Creation of curve
-        curve_list = list()
-        curve_list.append(Segment(Z1, Z2))
-        if self.W1 > 0:
-            curve_list.append(Arc1(Z2, Z3, abs(Z3)))
-        curve_list.append(Segment(Z3, Z4))
-
-        return curve_list
-
+    if isinstance(build_geometry, ImportError):
+        build_geometry = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot19 method build_geometry: " + str(build_geometry)
+                )
+            )
+        )
+    else:
+        build_geometry = build_geometry
     # cf Methods.Slot.Slot19.check
-    def check(self):
-        """Check that the Slot19 object is correct
-
-        Parameters
-        ----------
-        self : Slot19
-            A Slot19 object
-
-        Returns
-        -------
-        None
-
-        Raises
-        -------
-        S19_H2CheckError
-            H1 must be > 0
-
-        S19_W1CheckError
-            W1 must be > 0
-        """
-        if self.W1 < 0:
-            raise S19_W1CheckError("W1 must be larger than zero")
-
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Slot19 method check: " + str(check))
+            )
+        )
+    else:
+        check = check
     # cf Methods.Slot.Slot19.comp_angle_bottom
-    def comp_angle_bottom(self):
-        """Compute the slot bottom angle of the Slot
-
-        Parameters
-        ----------
-        self : Slot19
-            A Slot19 object
-
-        Returns
-        -------
-        alpha: float
-            slot bottom angle [rad]
-
-        """
-
-        Rbo = self.get_Rbo()
-
-        if self.Wx_is_rad:
-            return self.W1
-        else:
-            if self.is_outwards():
-                alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo + 2 * self.H0)))
-            else:  # inward slot
-                alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo - 2 * self.H0)))
-
-        return alpha
-
+    if isinstance(comp_angle_bottom, ImportError):
+        comp_angle_bottom = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot19 method comp_angle_bottom: "
+                    + str(comp_angle_bottom)
+                )
+            )
+        )
+    else:
+        comp_angle_bottom = comp_angle_bottom
     # cf Methods.Slot.Slot19.comp_angle_opening
-    def comp_angle_opening(self):
-        """Compute the slot opening angle of the Slot
-
-        Parameters
-        ----------
-        self : Slot19
-            A Slot19 object
-
-        Returns
-        -------
-        alpha: float
-            Average opening angle of the slot [rad]
-
-        """
-
-        Rbo = self.get_Rbo()
-
-        if self.Wx_is_rad:
-            return self.W0
-        else:
-            return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
-
+    if isinstance(comp_angle_opening, ImportError):
+        comp_angle_opening = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot19 method comp_angle_opening: "
+                    + str(comp_angle_opening)
+                )
+            )
+        )
+    else:
+        comp_angle_opening = comp_angle_opening
     # cf Methods.Slot.Slot19.comp_height
-    def comp_height(self):
-        """Compute the height of the Slot.
-        Caution, the bottom of the Slot is an Arc
-
-        Parameters
-        ----------
-        self : Slot19
-            A Slot19 object
-
-        Returns
-        -------
-        Htot: float
-            Height of the slot [m]
-
-        """
-
-        return self.H0
-
+    if isinstance(comp_height, ImportError):
+        comp_height = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Slot19 method comp_height: " + str(comp_height))
+            )
+        )
+    else:
+        comp_height = comp_height
     # cf Methods.Slot.Slot19.comp_surface
-    def comp_surface(self):
-        """Compute the Slot total surface (by analytical computation).
-        Caution, the bottom of the Slot is an Arc
-
-        Parameters
-        ----------
-        self : Slot19
-            A Slot19 object
-
-        Returns
-        -------
-        S: float
-            Slot total surface [m**2]
-
-        """
-
-        Rbo = self.get_Rbo()
-
-        # Wint is the with at the top of the opening
-        alpha0 = self.comp_angle_opening()
-        alpha1 = self.comp_angle_bottom()
-
-        if self.is_outwards():
-            R1 = Rbo + self.H0
-        else:
-            R1 = Rbo - self.H0
-
-        W0 = 2 * Rbo * np.sin(alpha0 / 2)
-        W1 = 2 * R1 * np.sin(alpha1 / 2)
-
-        Str = 1 / 2 * (W0 + W1) * self.H0
-        S0 = Rbo**2 / 2 * (alpha0 - np.sin(alpha0))
-        S1 = R1**2 / 2 * (alpha1 - np.sin(alpha1))
-
-        return Str + S1 - S0
-
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Slot19 method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -323,8 +245,8 @@ class Slot19(Slot):
         if (
             other._W0 is not None
             and self._W0 is not None
-            and np.isnan(other._W0)
-            and np.isnan(self._W0)
+            and isnan(other._W0)
+            and isnan(self._W0)
         ):
             pass
         elif other._W0 != self._W0:
@@ -336,8 +258,8 @@ class Slot19(Slot):
         if (
             other._H0 is not None
             and self._H0 is not None
-            and np.isnan(other._H0)
-            and np.isnan(self._H0)
+            and isnan(other._H0)
+            and isnan(self._H0)
         ):
             pass
         elif other._H0 != self._H0:
@@ -349,8 +271,8 @@ class Slot19(Slot):
         if (
             other._W1 is not None
             and self._W1 is not None
-            and np.isnan(other._W1)
-            and np.isnan(self._W1)
+            and isnan(other._W1)
+            and isnan(self._W1)
         ):
             pass
         elif other._W1 != self._W1:
@@ -524,32 +446,3 @@ class Slot19(Slot):
         :Type: bool
         """,
     )
-
-    class MachineCheckError(Exception):
-        """ """
-
-        pass
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-        pass
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-        pass
-
-    class S19_W1CheckError(SlotCheckError):
-        """ """
-
-        pass
-
-
-MachineCheckError = Slot19.MachineCheckError
-
-LaminationCheckError = Slot19.LaminationCheckError
-
-SlotCheckError = Slot19.SlotCheckError
-
-S19_W1CheckError = Slot19.S19_W1CheckError

@@ -1,13 +1,30 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/Norm_indices.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_indices"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_indices
+"""
 
-import numpy as np
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Normalization import Normalization
 
-from pyleecan.Classes.Normalization import Normalization
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.Norm_indices.normalize import normalize
+except ImportError as error:
+    normalize = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Norm_indices(Normalization):
@@ -16,23 +33,16 @@ class Norm_indices(Normalization):
     VERSION = 1
 
     # cf Methods.SciDataTool.Norm_indices.normalize
-    def normalize(
-        self,
-        values,
-    ):
-        """Normalizes axis values
-        Parameters
-        ----------
-        self: Norm_indices
-            a Norm_indices object
-        values: ndarray
-            axis values
-        Returns
-        -------
-        Vector of axis values
-        """
-        return np.array([i for i in range(len(values))])
-
+    if isinstance(normalize, ImportError):
+        normalize = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Norm_indices method normalize: " + str(normalize)
+                )
+            )
+        )
+    else:
+        normalize = normalize
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

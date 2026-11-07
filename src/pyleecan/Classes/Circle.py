@@ -1,302 +1,163 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Geometry/Circle.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Circle"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Geometry/Circle
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Surface import Surface
 
-import numpy as np
-from matplotlib.patches import Circle
-from pyleecan.Classes.Arc3 import Arc3
-from pyleecan.Classes.Surface import Surface
-from pyleecan.Classes._check import check_var
-from pyleecan.definitions import config_dict
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Geometry.Circle.check import check
+except ImportError as error:
+    check = error
+
+try:
+    from ..Methods.Geometry.Circle.comp_length import comp_length
+except ImportError as error:
+    comp_length = error
+
+try:
+    from ..Methods.Geometry.Circle.comp_point_ref import comp_point_ref
+except ImportError as error:
+    comp_point_ref = error
+
+try:
+    from ..Methods.Geometry.Circle.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Geometry.Circle.discretize import discretize
+except ImportError as error:
+    discretize = error
+
+try:
+    from ..Methods.Geometry.Circle.get_lines import get_lines
+except ImportError as error:
+    get_lines = error
+
+try:
+    from ..Methods.Geometry.Circle.get_patches import get_patches
+except ImportError as error:
+    get_patches = error
+
+try:
+    from ..Methods.Geometry.Circle.rotate import rotate
+except ImportError as error:
+    rotate = error
+
+try:
+    from ..Methods.Geometry.Circle.translate import translate
+except ImportError as error:
+    translate = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Circle(Surface):
     """Circle define by  the center of circle(point_ref), the label and the radius"""
 
     VERSION = 1
-    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
-    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
-    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Geometry.Circle.check
-    def check(self):
-        """assert the Circle is correct (the radius > 0)
-
-        Parameters
-        ----------
-        self : Circle
-            A Circle object
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        RadiusCircleError
-            The radius of a circle must be >=  0
-
-        """
-        if self.radius < 0:
-            raise RadiusCircleError("The radius of a circle must be >= 0")
-
+    if isinstance(check, ImportError):
+        check = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Circle method check: " + str(check))
+            )
+        )
+    else:
+        check = check
     # cf Methods.Geometry.Circle.comp_length
-    def comp_length(self):
-        """Compute the length of the circle
-
-        Parameters
-        ----------
-        self : Circle
-            A Circle object
-
-        Returns
-        -------
-        length : float
-            the length of the circle [m]
-
-        """
-        # Check if the circle is correct
-        self.check()
-
-        length = self.radius * 2 * np.pi
-
-        return length
-
+    if isinstance(comp_length, ImportError):
+        comp_length = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Circle method comp_length: " + str(comp_length))
+            )
+        )
+    else:
+        comp_length = comp_length
     # cf Methods.Geometry.Circle.comp_point_ref
-    def comp_point_ref(self, is_set=False):
-        """Compute the point ref of the Surface
-
-        Parameters
-        ----------
-        self : Circle
-            A Circle object
-        is_set: bool
-            True to update the point_ref property
-
-        Returns
-        -------
-        point_ref : complex
-            the reference point of the surface
-        """
-
-        point_ref = self.center
-        if is_set:
-            self.point_ref = point_ref
-        return point_ref
-
+    if isinstance(comp_point_ref, ImportError):
+        comp_point_ref = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Circle method comp_point_ref: " + str(comp_point_ref)
+                )
+            )
+        )
+    else:
+        comp_point_ref = comp_point_ref
     # cf Methods.Geometry.Circle.comp_surface
-    def comp_surface(self):
-        """Compute the circle surface
-
-        Parameters
-        ----------
-        self : Circle
-            A Circle object
-
-        Returns
-        -------
-        surf: float
-            The circle surface [m**2]
-
-        """
-
-        return np.pi * self.radius**2
-
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Circle method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
     # cf Methods.Geometry.Circle.discretize
-    def discretize(self):
-        """Return the discretize version of the Circle.
-
-        Parameters
-        ----------
-        self : Circle
-            A Circle Object
-
-        nb_point : int
-            Number of point on the circle
-
-        Returns
-        -------
-        point_list : list
-            List of complex coordinate of the points
-
-        """
-
-        # check if the Circle is correct
-        self.check()
-
-        # getting Arc which delimit the Circle
-        lines = self.get_lines()
-        point_list = list()
-        for line in lines:
-            point_list.extend(line.discretize())
-            point_list.pop()
-        return point_list
-
+    if isinstance(discretize, ImportError):
+        discretize = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Circle method discretize: " + str(discretize))
+            )
+        )
+    else:
+        discretize = discretize
     # cf Methods.Geometry.Circle.get_lines
-    def get_lines(self):
-        """Get the lines needed to draw the surface (2 Arc3)
-
-        Parameters
-        ----------
-        self : Circle
-            A circle Object
-
-        Returns
-        -------
-        line_list: list
-            Two arcs to draw the circle
-
-        """
-        # check if the circle is correct
-        self.check()
-        begin = self.center + self.radius
-        end = self.center - self.radius
-        # first half-circle
-        line1 = Arc3(begin, end, True, prop_dict=self.prop_dict)
-        # second half-circle
-        line2 = Arc3(end, begin, True, prop_dict=self.prop_dict)
-        return [line1, line2]
-
+    if isinstance(get_lines, ImportError):
+        get_lines = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Circle method get_lines: " + str(get_lines))
+            )
+        )
+    else:
+        get_lines = get_lines
     # cf Methods.Geometry.Circle.get_patches
-    def get_patches(
-        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
-    ):
-        """Returns the Circle Patch to be display in matplotlib
-
-        Parameters
-        ----------
-        self : Circle
-            a Circle object
-        color :
-            the color of the Patch (Default value = PATCH_COLOR)
-        edgecolor :
-            edgecolor of the Patch (Default value = PATCH_EDGE)
-        is_edge_only: bool
-            To set the transparancy of the face color to 0 and 1 for the edge color
-        linestyle : str
-            Line style of the edge {'-', '--', '-.', ':', '', (offset, on-off-seq), ...}
-
-        Returns
-        -------
-        patch_list : list of matplotlib.patches.Circle
-            List of patches corresponding to the surface
-        """
-
-        # Set default color
-        if edgecolor is None and not is_edge_only:
-            edgecolor = self.PATCH_EDGE
-        elif edgecolor is None and is_edge_only:
-            edgecolor = self.PATCH_EDGE_ALPHA
-        if is_edge_only:
-            color = self.PATCH_COLOR_ALPHA
-        if "--" in edgecolor:
-            edgecolor = edgecolor.replace("-", "")
-            linestyle = "--"
-
-        # check if the Circle is correct
-        self.check()
-        # the coordinates of the center of the circle
-        Zr = self.center.real
-        Zi = self.center.imag
-
-        return [
-            Circle(
-                xy=(Zr, Zi),
-                radius=self.radius,
-                facecolor=color,
-                edgecolor=edgecolor,
-                linestyle=linestyle,
+    if isinstance(get_patches, ImportError):
+        get_patches = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Circle method get_patches: " + str(get_patches))
             )
-        ]
-
-    get_patches.__defaults__ = (
-        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
-    )
-
+        )
+    else:
+        get_patches = get_patches
     # cf Methods.Geometry.Circle.rotate
-    def rotate(self, angle):
-        """Rotation of the Circle of angle
-
-        Parameters
-        ----------
-        self : Circle
-            An Circle Object
-
-        angle : float
-            the angle of rotation [rad]
-
-        Returns
-        -------
-        None
-
-        Raises
-        -------
-        AngleRotationCircleError
-            The angle must be a float or int
-        """
-        if not isinstance(angle, float) and not isinstance(angle, int):
-            raise AngleRotationCircleError("The angle must be a float or int ")
-
-        if angle == 0:
-            return  # Nothing to do
-        # check if Circle is correct"
-        self.check()
-
-        # Modification of the object from the rotation
-        self.center = self.center * np.exp(1j * angle)
-        if self.point_ref is not None:
-            self.point_ref = self.point_ref * np.exp(1j * angle)
-
-    # cf Methods.Geometry.Circle.translate
-    def translate(self, Zt):
-        """Translate the Circle object
-
-        Parameters
-        ----------
-        self : Circle
-            An Circle object
-
-        Zt : complex
-            Complex value for translation
-
-
-        Returns
-        -------
-        None
-
-        Raises
-        -------
-        PointTranslateCircleError
-            The point must be a complex number or int or float
-
-        """
-        if (
-            not isinstance(Zt, complex)
-            and not isinstance(Zt, int)
-            and not isinstance(Zt, float)
-        ):
-            raise PointTranslateCircleError(
-                "The point must be a complex number or int or float"
+    if isinstance(rotate, ImportError):
+        rotate = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Circle method rotate: " + str(rotate))
             )
-
-        if Zt == 0:
-            return  # Nothing to do
-
-        # check if the Circle is correct
-        self.check()
-
-        # Modification from the translation of Circle
-        if self.point_ref is not None:
-            self.point_ref = self.point_ref + Zt
-        self.center = self.center + Zt
-
+        )
+    else:
+        rotate = rotate
+    # cf Methods.Geometry.Circle.translate
+    if isinstance(translate, ImportError):
+        translate = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Circle method translate: " + str(translate))
+            )
+        )
+    else:
+        translate = translate
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -392,8 +253,8 @@ class Circle(Surface):
         if (
             other._radius is not None
             and self._radius is not None
-            and np.isnan(other._radius)
-            and np.isnan(self._radius)
+            and isnan(other._radius)
+            and isnan(self._radius)
         ):
             pass
         elif other._radius != self._radius:
@@ -571,25 +432,3 @@ class Circle(Surface):
         :Type: dict
         """,
     )
-
-    class RadiusCircleError(Exception):
-        """ """
-
-        pass
-
-    class AngleRotationCircleError(Exception):
-        """ """
-
-        pass
-
-    class PointTranslateCircleError(Exception):
-        """ """
-
-        pass
-
-
-RadiusCircleError = Circle.RadiusCircleError
-
-AngleRotationCircleError = Circle.AngleRotationCircleError
-
-PointTranslateCircleError = Circle.PointTranslateCircleError

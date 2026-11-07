@@ -1,18 +1,31 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/Norm_vector.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_vector"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/Norm_vector
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Normalization import Normalization
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.Norm_vector.normalize import normalize
+except ImportError as error:
+    normalize = error
 
-from pyleecan.Classes.Normalization import Normalization
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.SciDataTool import NormError
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class Norm_vector(Normalization):
@@ -21,28 +34,14 @@ class Norm_vector(Normalization):
     VERSION = 1
 
     # cf Methods.SciDataTool.Norm_vector.normalize
-    def normalize(
-        self,
-        values,
-    ):
-        """Normalizes axis values
-        Parameters
-        ----------
-        self: Norm_vector
-            a Norm_vector object
-        values: ndarray
-            axis values
-        Returns
-        -------
-        Vector of axis values
-        """
-        if len(values) != len(self.vector):
-            raise NormError(
-                "Normalization vector is not the same length as axis, cannot normalize"
+    if isinstance(normalize, ImportError):
+        normalize = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Norm_vector method normalize: " + str(normalize))
             )
-        else:
-            return self.vector
-
+        )
+    else:
+        normalize = normalize
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -99,7 +98,7 @@ class Norm_vector(Normalization):
         # Check the properties inherited from Normalization
         if not super(Norm_vector, self).__eq__(other):
             return False
-        if not np.array_equal(other.vector, self.vector):
+        if not array_equal(other.vector, self.vector):
             return False
         return True
 
@@ -118,7 +117,7 @@ class Norm_vector(Normalization):
                 other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
             )
         )
-        if not np.array_equal(other.vector, self.vector):
+        if not array_equal(other.vector, self.vector):
             diff_list.append(name + ".vector")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
@@ -196,10 +195,10 @@ class Norm_vector(Normalization):
     def _set_vector(self, value):
         """setter of vector"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("vector", value, "ndarray")

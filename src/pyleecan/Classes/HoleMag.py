@@ -1,11 +1,55 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Slot/HoleMag.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleMag"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Slot/HoleMag
+"""
 
-from pyleecan.Classes.Hole import Hole
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+from os import linesep
+from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Hole import Hole
+
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Slot.HoleMag.comp_mass_magnet_id import comp_mass_magnet_id
+except ImportError as error:
+    comp_mass_magnet_id = error
+
+try:
+    from ..Methods.Slot.HoleMag.comp_mass_magnets import comp_mass_magnets
+except ImportError as error:
+    comp_mass_magnets = error
+
+try:
+    from ..Methods.Slot.HoleMag.comp_surface_magnets import comp_surface_magnets
+except ImportError as error:
+    comp_surface_magnets = error
+
+try:
+    from ..Methods.Slot.HoleMag.comp_volume_magnets import comp_volume_magnets
+except ImportError as error:
+    comp_volume_magnets = error
+
+try:
+    from ..Methods.Slot.HoleMag.get_magnet_list import get_magnet_list
+except ImportError as error:
+    get_magnet_list = error
+
+try:
+    from ..Methods.Slot.HoleMag.has_magnet import has_magnet
+except ImportError as error:
+    has_magnet = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class HoleMag(Hole):
@@ -13,162 +57,75 @@ class HoleMag(Hole):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Slot.HoleMag.comp_mass_magnet_id
-    def comp_mass_magnet_id(self, index):
-        """Compute the mass of the hole magnet of the corresponding index
-
-        Parameters
-        ----------
-        self : HoleMag
-            A HoleMag object
-        index : int
-            Index of the magnet to compute the surface
-
-        Returns
-        -------
-        Mmag: float
-            Mass of the Magnet [m**2]
-        """
-
-        mag_list = self.get_magnet_list()
-        if mag_list[index] is None:
-            return 0
-        else:
-            if mag_list[index].Lmag is None:
-                Lmag = self.parent.L1
-            else:
-                Lmag = mag_list[index].Lmag
-            return self.comp_surface_magnet_id(index) * Lmag
-
+    if isinstance(comp_mass_magnet_id, ImportError):
+        comp_mass_magnet_id = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use HoleMag method comp_mass_magnet_id: "
+                    + str(comp_mass_magnet_id)
+                )
+            )
+        )
+    else:
+        comp_mass_magnet_id = comp_mass_magnet_id
     # cf Methods.Slot.HoleMag.comp_mass_magnets
-    def comp_mass_magnets(self):
-        """Compute the mass of the hole magnets (some of them may be missing)
-
-        Parameters
-        ----------
-        self : HoleMag
-            A HoleMag object
-
-        Returns
-        -------
-        Mmag: float
-            mass of the magnets [kg]
-        """
-
-        M = 0
-        mag_list = self.get_magnet_list()
-        for ii, mag in enumerate(mag_list):
-            if mag is not None:
-                Smag = self.comp_surface_magnet_id(ii)
-                if mag.Lmag is None:
-                    Lmag = self.parent.L1
-                else:
-                    Lmag = mag.Lmag
-                # Check material definition
-                if mag.mat_type.struct.rho is None:
-                    raise Exception(
-                        "Error: For magnet material "
-                        + str(mag.mat_type.name)
-                        + " struct.rho is not set"
-                    )
-                M += Smag * Lmag * mag.mat_type.struct.rho
-
-        return M
-
+    if isinstance(comp_mass_magnets, ImportError):
+        comp_mass_magnets = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use HoleMag method comp_mass_magnets: "
+                    + str(comp_mass_magnets)
+                )
+            )
+        )
+    else:
+        comp_mass_magnets = comp_mass_magnets
     # cf Methods.Slot.HoleMag.comp_surface_magnets
-    def comp_surface_magnets(self):
-        """Compute the surface of all the magnet(s)
-
-        Parameters
-        ----------
-        self : HoleMag
-            A HoleMag object
-
-        Returns
-        -------
-        Smag: float
-            Surface of all the Magnet(s) [m**2]
-        """
-
-        mag_list = self.get_magnet_list()
-        Smag = 0
-        for ii in range(len(mag_list)):
-            Smag += self.comp_surface_magnet_id(ii)
-        return Smag
-
+    if isinstance(comp_surface_magnets, ImportError):
+        comp_surface_magnets = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use HoleMag method comp_surface_magnets: "
+                    + str(comp_surface_magnets)
+                )
+            )
+        )
+    else:
+        comp_surface_magnets = comp_surface_magnets
     # cf Methods.Slot.HoleMag.comp_volume_magnets
-    def comp_volume_magnets(self):
-        """Compute the volume of the hole magnets (some of them may be missing)
-
-        Parameters
-        ----------
-        self : HoleMag
-            A HoleMag object
-
-        Returns
-        -------
-        Vmag: float
-            volume of the magnets [m**3]
-        """
-
-        V = 0
-        mag_list = self.get_magnet_list()
-        for ii, mag in enumerate(mag_list):
-            if mag is not None:
-                Smag = self.comp_surface_magnet_id(ii)
-                if mag.Lmag is None:
-                    Lmag = self.parent.L1
-                else:
-                    Lmag = mag.Lmag
-                V += Smag * Lmag
-
-        return V
-
+    if isinstance(comp_volume_magnets, ImportError):
+        comp_volume_magnets = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use HoleMag method comp_volume_magnets: "
+                    + str(comp_volume_magnets)
+                )
+            )
+        )
+    else:
+        comp_volume_magnets = comp_volume_magnets
     # cf Methods.Slot.HoleMag.get_magnet_list
-    def get_magnet_list(self):
-        """Return the list of magnet (including None)
-
-        Parameters
-        ----------
-        self : HoleMag
-            A HoleMag object
-
-        Returns
-        -------
-        magnet_list : list
-            List of Magnet
-
-        """
-
-        magnet_list = list()
-        if hasattr(self, "magnet_dict"):
-            for value in self.magnet_dict.values():
-                magnet_list.append(value)
-        else:
-            mag_id = 0
-            while hasattr(self, "magnet_" + str(mag_id)):
-                magnet_list.append(getattr(self, "magnet_" + str(mag_id)))
-                mag_id += 1
-        return magnet_list
-
+    if isinstance(get_magnet_list, ImportError):
+        get_magnet_list = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use HoleMag method get_magnet_list: " + str(get_magnet_list)
+                )
+            )
+        )
+    else:
+        get_magnet_list = get_magnet_list
     # cf Methods.Slot.HoleMag.has_magnet
-    def has_magnet(self):
-        """Return if the Hole has magnet
-
-        Parameters
-        ----------
-        self : HoleMag
-            A HoleMag object
-
-        Returns
-        -------
-        has_magnet : bool
-            True
-
-        """
-
-        return True
-
+    if isinstance(has_magnet, ImportError):
+        has_magnet = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use HoleMag method has_magnet: " + str(has_magnet))
+            )
+        )
+    else:
+        has_magnet = has_magnet
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object

@@ -1,19 +1,77 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Machine/CondType21.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType21"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Machine/CondType21
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Conductor import Conductor
 
-import numpy as np
-from matplotlib.patches import Patch, Rectangle
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Machine.CondType21.comp_height import comp_height
+except ImportError as error:
+    comp_height = error
 
-from pyleecan.Classes.Conductor import Conductor
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Machine.CondType21.comp_height_wire import comp_height_wire
+except ImportError as error:
+    comp_height_wire = error
+
+try:
+    from ..Methods.Machine.CondType21.comp_nb_circumferential_wire import (
+        comp_nb_circumferential_wire,
+    )
+except ImportError as error:
+    comp_nb_circumferential_wire = error
+
+try:
+    from ..Methods.Machine.CondType21.comp_nb_radial_wire import comp_nb_radial_wire
+except ImportError as error:
+    comp_nb_radial_wire = error
+
+try:
+    from ..Methods.Machine.CondType21.comp_surface import comp_surface
+except ImportError as error:
+    comp_surface = error
+
+try:
+    from ..Methods.Machine.CondType21.comp_surface_active import comp_surface_active
+except ImportError as error:
+    comp_surface_active = error
+
+try:
+    from ..Methods.Machine.CondType21.comp_width import comp_width
+except ImportError as error:
+    comp_width = error
+
+try:
+    from ..Methods.Machine.CondType21.comp_width_wire import comp_width_wire
+except ImportError as error:
+    comp_width_wire = error
+
+try:
+    from ..Methods.Machine.CondType21.is_round_wire import is_round_wire
+except ImportError as error:
+    is_round_wire = error
+
+try:
+    from ..Methods.Machine.CondType21.plot import plot
+except ImportError as error:
+    plot = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class CondType21(Conductor):
@@ -21,230 +79,120 @@ class CondType21(Conductor):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Machine.CondType21.comp_height
-    def comp_height(self):
-        """Compute the height of the conductor
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        H: float
-            Height of the conductor (with insulation) [m]
-
-        """
-
-        return self.Hbar + 2 * self.Wins
-
-    # cf Methods.Machine.CondType21.comp_height_wire
-    def comp_height_wire(self):
-        """Return bar height
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        H: float
-            Height of the bar [m]
-
-        """
-
-        return self.Hbar
-
-    # cf Methods.Machine.CondType21.comp_nb_circumferential_wire
-    def comp_nb_circumferential_wire(self):
-        """Return number of adjacent wires in circumferential direction
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        Nwppc_tan: int
-            Number of adjacent wires in circumferential direction
-
-        """
-
-        return 1
-
-    # cf Methods.Machine.CondType21.comp_nb_radial_wire
-    def comp_nb_radial_wire(self):
-        """Return number of adjacent wires in radial direction
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        Nwppc_tan: int
-            Number of adjacent wires in radial direction
-
-        """
-
-        return 1
-
-    # cf Methods.Machine.CondType21.comp_surface
-    def comp_surface(self):
-        """Compute the surface of the conductor
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        S: float
-            Surface of the conductor (with insulation) [m**2]
-
-        """
-
-        S = self.comp_height() * self.comp_width()
-
-        return S
-
-    # cf Methods.Machine.CondType21.comp_surface_active
-    def comp_surface_active(self):
-        """Compute the active surface of the conductor
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        Sact: float
-            Surface without insulation [m**2]
-
-        """
-
-        Sact = self.Hbar * self.Wbar
-
-        return Sact
-
-    # cf Methods.Machine.CondType21.comp_width
-    def comp_width(self):
-        """Compute the width of the conductor
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        W: float
-            Width of the conductor (with insulation) [m]
-
-        """
-
-        return self.Wbar + 2 * self.Wins
-
-    # cf Methods.Machine.CondType21.comp_width_wire
-    def comp_width_wire(self):
-        """Return bar width
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        W: float
-            Width of the bar [m]
-
-        """
-
-        return self.Wbar
-
-    # cf Methods.Machine.CondType21.is_round_wire
-    def is_round_wire(self):
-        """Return if wire is round
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-
-        Returns
-        -------
-        is_round_wire: bool
-            is_round_wire is always False since bar is rectangular
-
-        """
-
-        return False
-
-    # cf Methods.Machine.CondType21.plot
-    def plot(self, fig=None, ax=None):
-        """Plot a Conductor in a matplotlib fig
-
-        Parameters
-        ----------
-        self : CondType21
-            A CondType21 object
-        fig : Matplotlib.figure.Figure
-            existing figure to use if None create a new one
-        ax : Matplotlib.axes.Axes object
-            Axis on which to plot the data
-
-        Returns
-        -------
-        fig : Matplotlib.figure.Figure
-            Figure containing the plot
-        ax : Matplotlib.axes.Axes object
-            Axis containing the plot
-        """
-
-        patches_list = []
-
-        # Conductor insulation
-        Wcond = self.comp_width()
-        Hcond = self.comp_height()
-        patches_list.append(Rectangle((0, 0), Wcond, Hcond, color="g"))
-
-        # Conductor
-        patches_list.append(
-            Rectangle((self.Wins, self.Wins), self.Wbar, self.Hbar, color="r")
+    if isinstance(comp_height, ImportError):
+        comp_height = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_height: " + str(comp_height)
+                )
+            )
         )
-
-        # Display
-        (fig, ax, _, _) = init_fig(fig=fig, ax=ax)
-        for patch in patches_list:
-            ax.add_patch(patch)
-
-        # Axis Setup
-        ax.axis("equal")
-
-        # The conductor is centered
-        ax.set_xlim(0 - Wcond / 10, Wcond * 11.0 / 10.0)
-        ax.set_ylim(0 - Hcond / 10, Hcond * 11.0 / 10.0)
-
-        # Legend
-        patch_leg = list()  # Symbol
-        label_leg = list()  # Text
-        if self.Wins > 0:
-            patch_leg.append(Patch(color="g"))
-            label_leg.append("Conductor insulation")
-        patch_leg.append(Patch(color="r"))
-        label_leg.append("Active bar section")
-
-        ax.legend(patch_leg, label_leg)
-        fig.show()
-        return fig, ax
-
+    else:
+        comp_height = comp_height
+    # cf Methods.Machine.CondType21.comp_height_wire
+    if isinstance(comp_height_wire, ImportError):
+        comp_height_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_height_wire: "
+                    + str(comp_height_wire)
+                )
+            )
+        )
+    else:
+        comp_height_wire = comp_height_wire
+    # cf Methods.Machine.CondType21.comp_nb_circumferential_wire
+    if isinstance(comp_nb_circumferential_wire, ImportError):
+        comp_nb_circumferential_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_nb_circumferential_wire: "
+                    + str(comp_nb_circumferential_wire)
+                )
+            )
+        )
+    else:
+        comp_nb_circumferential_wire = comp_nb_circumferential_wire
+    # cf Methods.Machine.CondType21.comp_nb_radial_wire
+    if isinstance(comp_nb_radial_wire, ImportError):
+        comp_nb_radial_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_nb_radial_wire: "
+                    + str(comp_nb_radial_wire)
+                )
+            )
+        )
+    else:
+        comp_nb_radial_wire = comp_nb_radial_wire
+    # cf Methods.Machine.CondType21.comp_surface
+    if isinstance(comp_surface, ImportError):
+        comp_surface = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_surface: " + str(comp_surface)
+                )
+            )
+        )
+    else:
+        comp_surface = comp_surface
+    # cf Methods.Machine.CondType21.comp_surface_active
+    if isinstance(comp_surface_active, ImportError):
+        comp_surface_active = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_surface_active: "
+                    + str(comp_surface_active)
+                )
+            )
+        )
+    else:
+        comp_surface_active = comp_surface_active
+    # cf Methods.Machine.CondType21.comp_width
+    if isinstance(comp_width, ImportError):
+        comp_width = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_width: " + str(comp_width)
+                )
+            )
+        )
+    else:
+        comp_width = comp_width
+    # cf Methods.Machine.CondType21.comp_width_wire
+    if isinstance(comp_width_wire, ImportError):
+        comp_width_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method comp_width_wire: "
+                    + str(comp_width_wire)
+                )
+            )
+        )
+    else:
+        comp_width_wire = comp_width_wire
+    # cf Methods.Machine.CondType21.is_round_wire
+    if isinstance(is_round_wire, ImportError):
+        is_round_wire = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use CondType21 method is_round_wire: " + str(is_round_wire)
+                )
+            )
+        )
+    else:
+        is_round_wire = is_round_wire
+    # cf Methods.Machine.CondType21.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use CondType21 method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -340,8 +288,8 @@ class CondType21(Conductor):
         if (
             other._Hbar is not None
             and self._Hbar is not None
-            and np.isnan(other._Hbar)
-            and np.isnan(self._Hbar)
+            and isnan(other._Hbar)
+            and isnan(self._Hbar)
         ):
             pass
         elif other._Hbar != self._Hbar:
@@ -355,8 +303,8 @@ class CondType21(Conductor):
         if (
             other._Wbar is not None
             and self._Wbar is not None
-            and np.isnan(other._Wbar)
-            and np.isnan(self._Wbar)
+            and isnan(other._Wbar)
+            and isnan(self._Wbar)
         ):
             pass
         elif other._Wbar != self._Wbar:
@@ -370,8 +318,8 @@ class CondType21(Conductor):
         if (
             other._Wins is not None
             and self._Wins is not None
-            and np.isnan(other._Wins)
-            and np.isnan(self._Wins)
+            and isnan(other._Wins)
+            and isnan(self._Wins)
         ):
             pass
         elif other._Wins != self._Wins:

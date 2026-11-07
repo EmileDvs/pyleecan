@@ -1,17 +1,33 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Simulation/InputForce.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/InputForce"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Simulation/InputForce
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Input import Input
 
-from pyleecan.Classes.Input import Input
-from pyleecan.Classes.OutForce import OutForce
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Simulation.InputForce.gen_input import gen_input
+except ImportError as error:
+    gen_input = error
+
+
+from ..Classes.ImportMatrixVal import ImportMatrixVal
+from numpy import ndarray
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class InputForce(Input):
@@ -20,46 +36,14 @@ class InputForce(Input):
     VERSION = 1
 
     # cf Methods.Simulation.InputForce.gen_input
-    def gen_input(self):
-        """Generate the input for the structural module (skip force computation)
-
-        Parameters
-        ----------
-        self : InputForce
-            An InputForce object
-        """
-
-        if self.parent.parent is None:
-            raise InputError("The Simulation object must be in an Output object to run")
-
-        if self.AGSF is None and self.AGSF_enforced is None:
-            raise InputError("Input AGSF are missing")
-        else:
-            # generate OutElec from parent InputCurrent
-            super(type(self), self).gen_input()
-
-            # generate OutForce
-            outforce = OutForce()
-
-            if self.AGSF_enforced is not None:
-                outforce.AGSF = self.AGSF_enforced
-            else:
-                if self.AGSF.name is None:
-                    self.AGSF.name = "Magnetic airgap surface force"
-                if self.AGSF.symbol is None:
-                    self.AGSF.symbol = "AGSF"
-                AGSF = self.AGSF.get_data()
-                outforce.AGSF = AGSF
-
-            # Update axes_dict
-            outforce.axes_dict = dict()
-            axes_list = outforce.AGSF.get_axes()
-            for ax in axes_list:
-                outforce.axes_dict[ax.name] = ax
-
-            # Save the Output in the correct place
-            self.parent.parent.force = outforce
-
+    if isinstance(gen_input, ImportError):
+        gen_input = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use InputForce method gen_input: " + str(gen_input))
+            )
+        )
+    else:
+        gen_input = gen_input
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -303,11 +287,3 @@ class InputForce(Input):
         :Type: ImportVectorField
         """,
     )
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-        pass
-
-
-InputError = InputForce.InputError

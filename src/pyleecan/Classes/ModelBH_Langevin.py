@@ -1,17 +1,35 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Material/ModelBH_Langevin.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/ModelBH_Langevin"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/Material/ModelBH_Langevin
+"""
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .ModelBH import ModelBH
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Material.ModelBH_Langevin.BH_func import BH_func
+except ImportError as error:
+    BH_func = error
 
-from pyleecan.Classes.ModelBH import ModelBH
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.Material.ModelBH_Langevin.get_BH import get_BH
+except ImportError as error:
+    get_BH = error
+
+
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class ModelBH_Langevin(ModelBH):
@@ -19,77 +37,27 @@ class ModelBH_Langevin(ModelBH):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Material.ModelBH_Langevin.BH_func
-    def BH_func(self, H, Bs, a):
-        """
-        Return the B from H according to Langevin model.
-
-        Parameters
-        ----------
-        self : ModelBH_Langevin
-            a ModelBH_Langevin object
-
-        Returns
-        -------
-        B: numpy.ndarray
-            B(H) values
-
-        """
-        B = Bs * (np.cosh(H / a) / np.sinh(H / a) - a / H)
-
-        if isinstance(B, np.ndarray):
-            B[np.argwhere(np.isnan(B))] = Bs
-            B[np.argwhere(H == 0)] = 0
-        elif np.isnan(B):
-            if H == 0:
-                B = 0
-            else:
-                B = Bs
-
-        return B
-
+    if isinstance(BH_func, ImportError):
+        BH_func = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use ModelBH_Langevin method BH_func: " + str(BH_func)
+                )
+            )
+        )
+    else:
+        BH_func = BH_func
     # cf Methods.Material.ModelBH_Langevin.get_BH
-    def get_BH(self):
-        """
-        Return the B(H) curve of the material according to Langevin model.
-
-        Parameters
-        ----------
-        self : ModelBH
-            a ModelBH object
-
-        Returns
-        -------
-        BH: numpy.ndarray
-            B(H) values (two colums matrix: H and B(H))
-
-        """
-        H0 = 1
-        Bmax = self.Bmax
-        if self.Bs is not None and self.a is not None:
-            if Bmax is not None:
-                delta = self.delta
-                Hmax = H0
-                iteration = 0
-                new_B = 0
-                while new_B < Bmax and iteration < 1000:
-                    Hmax += delta
-                    iteration += 1
-                    new_B = self.BH_func(Hmax, self.Bs, self.a)
-
-            else:
-                Hmax = self.Hmax
-
-            if Hmax is not None:
-                H = np.linspace(H0, Hmax, 200)
-                B = self.BH_func(H, self.Bs, self.a)
-
-                BH = np.zeros((len(H), 2))
-                BH[:, 0] = H
-                BH[:, 1] = B
-
-                return BH
-
+    if isinstance(get_BH, ImportError):
+        get_BH = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use ModelBH_Langevin method get_BH: " + str(get_BH))
+            )
+        )
+    else:
+        get_BH = get_BH
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -195,8 +163,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._Bs is not None
             and self._Bs is not None
-            and np.isnan(other._Bs)
-            and np.isnan(self._Bs)
+            and isnan(other._Bs)
+            and isnan(self._Bs)
         ):
             pass
         elif other._Bs != self._Bs:
@@ -208,8 +176,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._a is not None
             and self._a is not None
-            and np.isnan(other._a)
-            and np.isnan(self._a)
+            and isnan(other._a)
+            and isnan(self._a)
         ):
             pass
         elif other._a != self._a:
@@ -221,8 +189,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._param1 is not None
             and self._param1 is not None
-            and np.isnan(other._param1)
-            and np.isnan(self._param1)
+            and isnan(other._param1)
+            and isnan(self._param1)
         ):
             pass
         elif other._param1 != self._param1:
@@ -240,8 +208,8 @@ class ModelBH_Langevin(ModelBH):
         if (
             other._param2 is not None
             and self._param2 is not None
-            and np.isnan(other._param2)
-            and np.isnan(self._param2)
+            and isnan(other._param2)
+            and isnan(self._param2)
         ):
             pass
         elif other._param2 != self._param2:

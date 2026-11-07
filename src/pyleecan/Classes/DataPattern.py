@@ -1,20 +1,41 @@
+# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/SciDataTool/DataPattern.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataPattern"""
+"""Method code available at https://github.com/Eomys/pyleecan/tree/master/pyleecan/Methods/SciDataTool/DataPattern
+"""
 
-from importlib import import_module
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
+from ._check import set_array, check_var, raise_
+from ..Functions.get_logger import get_logger
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from copy import deepcopy
+from .Data import Data
 
-import numpy as np
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.SciDataTool.DataPattern.get_length import get_length
+except ImportError as error:
+    get_length = error
 
-from pyleecan.Classes.Data import Data
-from pyleecan.Classes._check import check_var
-from pyleecan.Functions.SciDataTool import NormError
-from pyleecan.Functions.SciDataTool.conversions import convert
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.load import load_init_dict
-from pyleecan.Functions.save import save
+try:
+    from ..Methods.SciDataTool.DataPattern.get_values import get_values
+except ImportError as error:
+    get_values = error
+
+try:
+    from ..Methods.SciDataTool.DataPattern.has_period import has_period
+except ImportError as error:
+    has_period = error
+
+
+from numpy import array, array_equal
+from numpy import isnan
+from ._check import InitUnKnowClassError
 
 
 class DataPattern(Data):
@@ -22,122 +43,40 @@ class DataPattern(Data):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.SciDataTool.DataPattern.get_length
-    def get_length(self, is_pattern=False, is_smallestperiod=False):
-        """Returns the length of the axis taking symmetries into account.
-        Parameters
-        ----------
-        self: DataPattern
-            a DataPattern object
-        is_pattern: bool
-            return length of pattern
-        Returns
-        -------
-        Length of axis
-        """
-        if is_smallestperiod:
-            return len(self.values)
-        elif is_pattern:
-            return len(self.values)
-        else:
-            return len(self.rebuild_indices)
-
+    if isinstance(get_length, ImportError):
+        get_length = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataPattern method get_length: " + str(get_length)
+                )
+            )
+        )
+    else:
+        get_length = get_length
     # cf Methods.SciDataTool.DataPattern.get_values
-    def get_values(
-        self,
-        unit="SI",
-        is_oneperiod=False,
-        is_antiperiod=False,
-        is_smallestperiod=False,
-        is_pattern=False,
-        normalization=None,
-        operation=None,
-        is_real=True,
-        corr_unit=None,
-        is_full=False,
-    ):
-        """Returns the vector 'axis' taking symmetries into account.
-        Parameters
-        ----------
-        self: DataPattern
-            a DataPattern object
-        unit: str
-            requested unit
-        is_oneperiod: bool
-            return values on a single period (unused here)
-        is_antiperiod: bool
-            return values on a semi period (unused here)
-        is_smallestperiod: bool
-            return values on smallest available period (pattern here => is_pattern)
-        is_pattern: bool
-            return values on smallest available pattern
-        normalization: str
-            name of normalization to use
-        operation: str
-            name of the operation (e.g. "freqs_to_time")
-        Returns
-        -------
-        Vector of axis values
-        """
-        values = self.values
-
-        # Rebuild pattern
-        if is_smallestperiod or is_pattern:
-            pass
-        else:
-            if self.values_whole is not None:
-                values = self.values_whole
-            else:
-                values = values[self.rebuild_indices]
-
-        # fft/ifft
-        if operation is not None:
-            module = import_module("pyleecan.Functions.SciDataTool.conversions")
-            func = getattr(module, operation)  # Conversion function
-            values = np.array(func(values, is_real=is_real))
-
-        if unit != "SI" and unit != self.unit:
-            if unit in self.normalizations and normalization is None:
-                normalization = unit
-                unit = "SI"
-
-        # Normalization
-        if normalization is not None:
-            if normalization in self.normalizations:
-                if (
-                    self.normalizations[normalization].unit == "SI"
-                    or self.normalizations[normalization].unit == self.unit
-                ):
-                    # Axis is in the correct unit for the normalization
-                    values = self.normalizations[normalization].normalize(values)
-                else:
-                    raise NormError("Normalization is not available in this unit")
-            else:
-                raise NormError("Normalization is not available")
-
-        # Unit conversion
-        if unit != "SI" and unit != self.unit:
-            if corr_unit is not None:
-                values = convert(values, corr_unit, unit)
-            else:
-                values = convert(values, self.unit, unit)
-
-        return values
-
+    if isinstance(get_values, ImportError):
+        get_values = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataPattern method get_values: " + str(get_values)
+                )
+            )
+        )
+    else:
+        get_values = get_values
     # cf Methods.SciDataTool.DataPattern.has_period
-    def has_period(self):
-        """Indicates if an axis has symmetries.
-        Parameters
-        ----------
-        self: DataPattern
-            a DataPatternobject
-        Returns
-        -------
-        Boolean
-        """
-
-        return False
-
+    if isinstance(has_period, ImportError):
+        has_period = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataPattern method has_period: " + str(has_period)
+                )
+            )
+        )
+    else:
+        has_period = has_period
     # generic save method is available in all object
     save = save
     # get_logger method is available in all object
@@ -268,13 +207,13 @@ class DataPattern(Data):
             return False
         if other.is_step != self.is_step:
             return False
-        if not np.array_equal(other.values, self.values):
+        if not array_equal(other.values, self.values):
             return False
         if other.is_components != self.is_components:
             return False
         if other.symmetries != self.symmetries:
             return False
-        if not np.array_equal(other.values_whole, self.values_whole):
+        if not array_equal(other.values_whole, self.values_whole):
             return False
         if other.is_overlay != self.is_overlay:
             return False
@@ -331,7 +270,7 @@ class DataPattern(Data):
                 diff_list.append(name + ".is_step" + val_str)
             else:
                 diff_list.append(name + ".is_step")
-        if not np.array_equal(other.values, self.values):
+        if not array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._is_components != self._is_components:
             if is_add_value:
@@ -357,7 +296,7 @@ class DataPattern(Data):
                 diff_list.append(name + ".symmetries" + val_str)
             else:
                 diff_list.append(name + ".symmetries")
-        if not np.array_equal(other.values_whole, self.values_whole):
+        if not array_equal(other.values_whole, self.values_whole):
             diff_list.append(name + ".values_whole")
         if other._is_overlay != self._is_overlay:
             if is_add_value:
@@ -590,10 +529,10 @@ class DataPattern(Data):
     def _set_values(self, value):
         """setter of values"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("values", value, "ndarray")
@@ -653,10 +592,10 @@ class DataPattern(Data):
     def _set_values_whole(self, value):
         """setter of values_whole"""
         if type(value) is int and value == -1:
-            value = np.array([])
+            value = array([])
         elif type(value) is list:
             try:
-                value = np.array(value)
+                value = array(value)
             except:
                 pass
         check_var("values_whole", value, "ndarray")
