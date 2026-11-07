@@ -40,6 +40,7 @@ def class_module_name(class_name):
         "OPdqf": "op_dqf",
         "OPslip": "op_slip",
         "ScalarProductL2": "scalar_product_l2",
+        "XOutput": "xoutput",
     }
     if class_name in special_modules:
         return special_modules[class_name]

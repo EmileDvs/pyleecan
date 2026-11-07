@@ -77,6 +77,7 @@ def test_experimental_generator(generator_environment, tmp_path):
         ("PostLUT", "post_lut"),
         ("LUTdqLUTslip", "lut_dq_lut_slip"),
         ("ScalarProductL2", "scalar_product_l2"),
+        ("XOutput", "xoutput"),
         ("Import", "import_"),
         ("OP", "op"),
         ("OPdq", "op_dq"),
@@ -175,6 +176,7 @@ def test_experimental_domain_module_names_in_generated_classes(
         "LUTdq": "lut_dq",
         "LUTslip": "lut_slip",
         "ScalarProductL2": "scalar_product_l2",
+        "XOutput": "xoutput",
     }
     gen_dict = dict(generator_environment)
     output = tmp_path / "Classes_new"
