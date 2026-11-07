@@ -8,11 +8,22 @@ from numpy import array_equal
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions.load import load
 from pyleecan.Functions.Load.retrocompatibility import (
+    convert_init_dict,
     is_before_version,
     convert_Wmag_Hmag,
     is_Wmag_Hmag,
 )
 from Tests import TEST_DATA_DIR
+
+
+def test_legacy_loading_keeps_normalization_class_names():
+    data = {
+        "__class__": "Data",
+        "__version__": "pyleecan_99.0.0",
+        "normalizations": {"axis": {"__class__": "Norm_vector", "vector": [1, 2]}},
+    }
+    convert_init_dict(data)
+    assert data["normalizations"]["axis"]["__class__"] == "Norm_vector"
 
 # 4: OP_matrix convertion (ndarray to object)
 OPM_list = list()

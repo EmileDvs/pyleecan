@@ -10,6 +10,10 @@ import numpy as np
 from dacite import Config, from_dict
 
 from pyleecan.Functions.get_logger import get_logger
+from pyleecan.Functions.Load.retrocompatibility import (
+    construct_experimental_class,
+    load_experimental_normalization_values,
+)
 from pyleecan.Functions.save import save
 
 
@@ -32,15 +36,21 @@ class PyleecanClass(ABC):
     @classmethod
     def from_dict(cls, data):
         """Create this dataclass from a Pyleecan-style dictionary."""
-        values = {key: value for key, value in data.items() if key != "__class__"}
+        values = {
+            key: load_experimental_normalization_values(value)
+            for key, value in data.items()
+            if key != "__class__"
+        }
         hints = get_type_hints(cls)
-        hooks = {}
+        hooks = {np.ndarray: np.asarray}
         for field_info in fields(cls):
             field_type = hints.get(field_info.name)
             for candidate in cls._walk_types(field_type):
                 if isinstance(candidate, type) and hasattr(candidate, "as_dict"):
                     hooks[candidate] = lambda value, target=candidate: (
-                        value if isinstance(value, target) else target(init_dict=value)
+                        value
+                        if isinstance(value, target)
+                        else construct_experimental_class(target, value)
                     )
         instance = from_dict(cls, values, config=Config(type_hooks=hooks))
         instance._set_child_parents()

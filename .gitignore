@@ -29,3 +29,4 @@ node_modules
 /.vscode/settings.json
 /pyleecan.egg-info/
 /.tox/
+/src/pyleecan/Classes_new

@@ -230,6 +230,8 @@ def run_generate_classes(
 
     Experimental generation writes only selected modules in ``Classes_new``
     with snake_case names and does not rewrite CSVs or legacy bookkeeping.
+    The experimental normalization classes use names such as ``NormVector``;
+    their legacy names remain accepted when loading serialized data.
     ``is_ruff`` controls
     full-file formatting of generated legacy modules; dataclasses are always
     formatted by the class generator. ``import_style`` selects "absolute"

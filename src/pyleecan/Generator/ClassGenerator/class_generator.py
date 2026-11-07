@@ -8,6 +8,7 @@ from keyword import iskeyword
 from os.path import basename, dirname, isfile, join
 from textwrap import indent
 
+from ...Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from ...Generator import PYTHON_TYPE, TAB
 from ...Generator.ClassGenerator.as_dict_method_generator import generate_as_dict
 from ...Generator.ClassGenerator.compare_method_generator import generate_compare
@@ -33,9 +34,20 @@ CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
 
 def class_module_name(class_name):
     """Convert a class name to a Python module name, keeping acronyms together."""
+    special_modules = {
+        "Data1D": "data_1d",
+        "OPdq": "op_dq",
+        "OPdqf": "op_dqf",
+        "OPslip": "op_slip",
+        "ScalarProductL2": "scalar_product_l2",
+    }
+    if class_name in special_modules:
+        return special_modules[class_name]
     name = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", class_name)
     name = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
     name = re.sub(r"([A-Za-z])([0-9])", r"\1_\2", name).lower()
+    if "LUT" in class_name:
+        name = re.sub(r"(^|_)lu_t(?=[a-z])", r"\1lut_", name)
     if iskeyword(name):
         name += "_"
     if not name.isidentifier():
@@ -2182,6 +2194,679 @@ def _apply_import_style(source, soft_name, import_style, class_package="Classes"
     return "\n".join(lines) + ("\n" if source.endswith("\n") else "")
 
 
+def _redirect_experimental_class_imports(source, soft_name, gen_dict):
+    """Redirect static imports of generated class modules to Classes_new."""
+    source_bytes = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(source_bytes):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+
+    replacements = []
+    prefix = soft_name + ".Classes."
+    for node in ast.walk(ast.parse(source)):
+        if not (
+            isinstance(node, ast.ImportFrom)
+            and node.level == 0
+            and node.module
+            and node.module.startswith(prefix)
+        ):
+            continue
+        class_name = node.module[len(prefix) :]
+        if class_name not in gen_dict:
+            continue
+        replacement = ast.ImportFrom(
+            module=f"{soft_name}.Classes_new.{class_module_name(class_name)}",
+            names=node.names,
+            level=0,
+        )
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, ast.unparse(replacement).encode("utf-8")))
+
+    for start, end, replacement in sorted(replacements, reverse=True):
+        source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
+    return source_bytes.decode("utf-8")
+
+
+def _remove_experimental_self_imports(source, soft_name, class_name, output_name):
+    """Remove header imports of names already defined in this generated module."""
+    tree = ast.parse(source)
+    defined_names = set()
+    for node in tree.body:
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            defined_names.add(node.name)
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            defined_names.update(
+                target.id for target in targets if isinstance(target, ast.Name)
+            )
+
+    module_names = {
+        f"{soft_name}.Classes_new.{class_module_name(class_name)}",
+        f"{soft_name}.Classes_new.{output_name}",
+    }
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+    for node in tree.body:
+        if not (
+            isinstance(node, ast.ImportFrom)
+            and node.level == 0
+            and node.module in module_names
+        ):
+            continue
+        remaining = [
+            alias
+            for alias in node.names
+            if alias.name not in defined_names
+            or alias.asname not in (None, alias.name)
+        ]
+        if len(remaining) == len(node.names):
+            continue
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacement = (
+            ast.unparse(ast.ImportFrom(module=node.module, names=remaining, level=0))
+            if remaining
+            else ""
+        )
+        replacements.append((start, end, replacement.encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
+
+
+def _quote_experimental_self_annotations(source, class_name):
+    """Make annotations referencing the module's own class forward references."""
+    tree = ast.parse(source)
+    class_node = next(
+        node for node in tree.body
+        if isinstance(node, ast.ClassDef) and node.name == class_name
+    )
+    annotations = []
+    for node in ast.walk(class_node):
+        if isinstance(node, (ast.arg, ast.AnnAssign)):
+            annotations.append(node.annotation)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            annotations.append(node.returns)
+
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+    for annotation in annotations:
+        if annotation is None or not any(
+            isinstance(node, ast.Name) and node.id == class_name
+            for node in ast.walk(annotation)
+        ):
+            continue
+        start = offsets[annotation.lineno - 1] + annotation.col_offset
+        end = offsets[annotation.end_lineno - 1] + annotation.end_col_offset
+        if b"#" in encoded[start:end]:
+            raise ValueError(
+                f"Cannot preserve comments in a self-referencing annotation of {class_name}"
+            )
+        replacements.append((start, end, repr(ast.unparse(annotation)).encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
+
+
+def _rename_experimental_normalizations(source, soft_name, import_style="absolute"):
+    """Rename normalization bindings and direct class loads in generated code."""
+    tree = ast.parse(source)
+    old_names = set(NORMALIZATION_CLASS_NAMES)
+    present_names = {
+        node.id for node in ast.walk(tree) if isinstance(node, ast.Name)
+    }
+    for old_name, new_name in NORMALIZATION_CLASS_NAMES.items():
+        if old_name in present_names and new_name in present_names:
+            raise ValueError(f"Conflicting normalization bindings: {old_name}, {new_name}")
+    if any(isinstance(node, ast.arg) and node.arg in old_names for node in ast.walk(tree)):
+        raise ValueError("Cannot safely rename a normalization-named method parameter")
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.ExceptHandler) and node.name in old_names
+            or isinstance(node, (ast.Global, ast.Nonlocal))
+            and old_names.intersection(node.names)
+            or isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in old_names
+            or isinstance(node, (ast.MatchAs, ast.MatchStar))
+            and node.name in old_names
+            or isinstance(node, ast.MatchMapping)
+            and node.rest in old_names
+        ):
+            raise ValueError("Cannot safely rename a shadowed normalization binding")
+        if isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                if (
+                    (alias.asname or alias.name) in old_names
+                    and not (
+                        alias.name in old_names
+                        and (
+                            node.level == 0
+                            and node.module
+                            == f"{soft_name}.Classes_new.{class_module_name(alias.name)}"
+                            or node.level == 1
+                            and node.module == class_module_name(alias.name)
+                        )
+                    )
+                ):
+                    raise ValueError("Cannot safely rename a non-normalization import")
+
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+    helper_names = set()
+    loader_bindings = set()
+    normalization_setter_calls = {
+        id(child)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef) and node.name == "_set_normalizations"
+        for child in ast.walk(node)
+        if isinstance(child, ast.Call)
+    }
+    dynamic_attributes = set()
+    dynamic_calls = set()
+    for parent in ast.walk(tree):
+        for _, statements in ast.iter_fields(parent):
+            if not isinstance(statements, list):
+                continue
+            for first, second in zip(statements, statements[1:]):
+                if not (
+                    isinstance(first, ast.Assign)
+                    and len(first.targets) == 1
+                    and isinstance(first.targets[0], ast.Name)
+                    and isinstance(first.value, ast.Call)
+                    and isinstance(first.value.func, ast.Name)
+                    and first.value.func.id == "__import__"
+                    and len(first.value.args) == 1
+                    and isinstance(first.value.args[0], ast.Constant)
+                    and isinstance(second, ast.Assign)
+                    and len(second.targets) == 1
+                    and isinstance(second.targets[0], ast.Name)
+                    and second.targets[0].id in old_names
+                    and isinstance(second.value, ast.Attribute)
+                    and isinstance(second.value.value, ast.Name)
+                    and second.value.value.id == first.targets[0].id
+                    and second.value.attr == second.targets[0].id
+                    and first.value.args[0].value
+                    == f"{soft_name}.Classes.{second.targets[0].id}"
+                ):
+                    continue
+                dynamic_attributes.add(id(second.value))
+                dynamic_calls.add(id(first.value))
+    for node in tree.body:
+        if isinstance(node, ast.ImportFrom) and (
+            node.level == 0
+            and node.module == soft_name + ".Functions.Load.import_class"
+            or node.level == 2
+            and node.module == "Functions.Load.import_class"
+        ):
+            loader_bindings.update(
+                alias.asname or alias.name
+                for alias in node.names if alias.name == "import_class"
+            )
+
+    def replace(node, text):
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, text.encode("utf-8")))
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            for alias in node.names:
+                old_name = alias.name
+                if (
+                    old_name in old_names
+                    and (
+                        node.level == 0
+                        and node.module
+                        == f"{soft_name}.Classes_new.{class_module_name(old_name)}"
+                        or node.level == 1
+                        and node.module == class_module_name(old_name)
+                    )
+                ):
+                    new_name = NORMALIZATION_CLASS_NAMES[old_name]
+                    alias_name = alias.asname
+                    if alias_name in (None, old_name):
+                        replace(alias, new_name)
+                    else:
+                        replace(alias, f"{new_name} as {alias_name}")
+        elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            if (
+                node.func.id in loader_bindings
+                and len(node.args) >= 2
+                and isinstance(node.args[0], ast.Constant)
+                and node.args[0].value == soft_name + ".Classes"
+                and (
+                    not isinstance(node.args[1], ast.Constant)
+                    and id(node) in normalization_setter_calls
+                    or isinstance(node.args[1], ast.Constant)
+                    and (
+                        node.args[1].value in old_names
+                        or node.args[1].value in NORMALIZATION_CLASS_NAMES.values()
+                    )
+                )
+            ):
+                replace(node.func, "_import_experimental_class")
+                helper_names.add("import_experimental_class as _import_experimental_class")
+                if (
+                    isinstance(node.args[1], ast.Constant)
+                    and node.args[1].value in old_names
+                ):
+                    replace(node.args[1], repr(NORMALIZATION_CLASS_NAMES[node.args[1].value]))
+            elif (
+                node.func.id == "__import__"
+                and len(node.args) == 1
+                and isinstance(node.args[0], ast.Constant)
+                and isinstance(node.args[0].value, str)
+                and node.args[0].value.startswith(soft_name + ".Classes.")
+            ):
+                old_name = node.args[0].value[len(soft_name + ".Classes.") :]
+                if old_name not in old_names:
+                    continue
+                if id(node) not in dynamic_calls:
+                    raise ValueError(f"Unsupported dynamic normalization import: {old_name}")
+                fromlist = next(
+                    (kw.value for kw in node.keywords if kw.arg == "fromlist"), None
+                )
+                if not (
+                    isinstance(fromlist, (ast.List, ast.Tuple))
+                    and len(fromlist.elts) == 1
+                    and isinstance(fromlist.elts[0], ast.Constant)
+                    and fromlist.elts[0].value == old_name
+                ):
+                    raise ValueError(f"Unsupported dynamic normalization import: {old_name}")
+                replace(
+                    node.args[0],
+                    repr(f"{soft_name}.Classes_new.{class_module_name(old_name)}"),
+                )
+                replace(fromlist.elts[0], repr(NORMALIZATION_CLASS_NAMES[old_name]))
+        elif isinstance(node, ast.ClassDef) and node.name in old_names:
+            start = offsets[node.lineno - 1] + node.col_offset
+            end = start + len("class " + node.name)
+            replacements.append(
+                (start, end, ("class " + NORMALIZATION_CLASS_NAMES[node.name]).encode())
+            )
+
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and node.targets[0].id in old_names
+            and isinstance(node.value, ast.Attribute)
+            and node.value.attr == node.targets[0].id
+            and id(node.value) in dynamic_attributes
+        ):
+            start = offsets[node.value.end_lineno - 1] + node.value.end_col_offset
+            old_name = node.value.attr
+            replacements.append(
+                (
+                    start - len(old_name.encode("utf-8")),
+                    start,
+                    NORMALIZATION_CLASS_NAMES[old_name].encode("utf-8"),
+                )
+            )
+        if (
+            isinstance(node, ast.FunctionDef)
+            and node.name == "_set_normalizations"
+        ):
+            for call in ast.walk(node):
+                if (
+                    isinstance(call, ast.Call)
+                    and isinstance(call.func, ast.Name)
+                    and call.func.id == "class_obj"
+                    and not call.args
+                    and len(call.keywords) == 1
+                    and call.keywords[0].arg == "init_dict"
+                ):
+                    replace(call, f"_construct_experimental_class(class_obj, {ast.unparse(call.keywords[0].value)})")
+                    helper_names.add(
+                        "construct_experimental_class as _construct_experimental_class"
+                    )
+                elif (
+                    isinstance(call, ast.Call)
+                    and isinstance(call.func, ast.Name)
+                    and call.func.id == "Norm_vector"
+                    and not call.args
+                    and len(call.keywords) == 1
+                    and call.keywords[0].arg == "vector"
+                ):
+                    value = ast.unparse(call.keywords[0].value)
+                    replace(call.keywords[0].value, f"np.asarray({value})")
+
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    renamed = _rename_method_references(encoded.decode("utf-8"), NORMALIZATION_CLASS_NAMES)
+    if helper_names:
+        lines = renamed.splitlines(keepends=True)
+        first = ast.parse(renamed).body[0]
+        position = (
+            first.end_lineno
+            if isinstance(first, ast.Expr)
+            and isinstance(first.value, ast.Constant)
+            and isinstance(first.value.value, str)
+            else 0
+        )
+        lines.insert(
+            position,
+            (
+                "from ..Functions.Load.retrocompatibility import "
+                if import_style == "relative"
+                else f"from {soft_name}.Functions.Load.retrocompatibility import "
+            )
+            + ", ".join(sorted(helper_names))
+            + "\n",
+        )
+        renamed = "".join(lines)
+    return renamed
+
+
+def _remove_redundant_experimental_class_imports(source, soft_name, gen_dict):
+    """Reuse unshadowed, already imported experimental classes in methods."""
+    tree = ast.parse(source)
+    prefix = soft_name + ".Classes_new."
+    bindings = {}
+    helper_bindings = set()
+    conflicting = set()
+    rebound_names = set()
+    for node in tree.body:
+        if isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                name = alias.asname or alias.name
+                if (
+                    node.module
+                    and alias.name in gen_dict
+                    and (
+                        node.level == 0
+                        and node.module == prefix + class_module_name(alias.name)
+                        or node.level == 1
+                        and node.module == class_module_name(alias.name)
+                    )
+                    and name == alias.name
+                ):
+                    if name in bindings:
+                        conflicting.add(name)
+                    bindings[name] = node.module
+                else:
+                    conflicting.add(name)
+                    if (
+                        node.level == 0
+                        and node.module == soft_name + ".Functions.Load.import_class"
+                        or node.level == 2
+                        and node.module == "Functions.Load.import_class"
+                    ) and alias.name == "import_class":
+                        helper_bindings.add(name)
+        elif isinstance(node, ast.Import):
+            conflicting.update(
+                alias.asname or alias.name.split(".")[0] for alias in node.names
+            )
+            rebound_names.update(
+                alias.asname or alias.name.split(".")[0] for alias in node.names
+            )
+        elif isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            conflicting.add(node.name)
+            rebound_names.add(node.name)
+        else:
+            assigned = {
+                child.id
+                for child in ast.walk(node)
+                if isinstance(child, ast.Name)
+                and isinstance(child.ctx, (ast.Store, ast.Del))
+            }
+            for child in ast.walk(node):
+                if isinstance(child, (ast.Import, ast.ImportFrom)):
+                    assigned.update(
+                        alias.asname
+                        or (
+                            alias.name.split(".")[0]
+                            if isinstance(child, ast.Import)
+                            else alias.name
+                        )
+                        for alias in child.names
+                    )
+                elif isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    assigned.add(child.name)
+                elif isinstance(child, ast.ExceptHandler) and child.name:
+                    assigned.add(child.name)
+            conflicting.update(assigned)
+            rebound_names.update(assigned)
+    if "*" in conflicting:
+        return source
+    bindings = {name for name in bindings if name not in conflicting}
+    for name in helper_bindings.copy():
+        count = sum(
+            (alias.asname or alias.name) == name
+            for node in tree.body
+            if isinstance(node, ast.ImportFrom)
+            for alias in node.names
+        )
+        if count != 1 or name in rebound_names:
+            helper_bindings.remove(name)
+    if not bindings:
+        return source
+
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+
+    def replace(node, text):
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, text.encode("utf-8")))
+
+    def remove_statement(node, needs_pass, remove_dynamic_comment=False):
+        start = offsets[node.lineno - 1]
+        statement_start = start + node.col_offset
+        statement_end = offsets[node.end_lineno - 1] + node.end_col_offset
+        end = offsets[node.end_lineno] if node.end_lineno < len(offsets) else len(encoded)
+        if (
+            encoded[start:statement_start].strip()
+            or encoded[statement_end:end].strip()
+            or b"#" in encoded[statement_start:statement_end]
+        ):
+            return False
+        if needs_pass:
+            replace(node, "pass")
+        else:
+            if remove_dynamic_comment and node.lineno > 1:
+                previous = offsets[node.lineno - 2]
+                if encoded[previous:start].strip() == b"# Dynamic import to avoid loop":
+                    start = previous
+            replacements.append((start, end, b""))
+        return True
+
+    def local_conflict(function, name, allowed):
+        for node in ast.walk(function):
+            if id(node) in allowed:
+                continue
+            if isinstance(node, ast.Name) and node.id == name and isinstance(
+                node.ctx, (ast.Store, ast.Del)
+            ):
+                return True
+            if isinstance(node, ast.arg) and node.arg == name:
+                return True
+            if isinstance(node, (ast.Global, ast.Nonlocal)) and name in node.names:
+                return True
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                if node is not function and node.name == name:
+                    return True
+            if isinstance(node, ast.ExceptHandler) and node.name == name:
+                return True
+            if isinstance(node, (ast.Import, ast.ImportFrom)) and any(
+                (alias.asname or (alias.name.split(".")[0] if isinstance(node, ast.Import)
+                                  else alias.name)) in (name, "*")
+                for alias in node.names
+            ):
+                return True
+        return False
+
+    def safe_global_reference(function, name, statement):
+        return statement in function.body and not any(
+            isinstance(node, ast.Name)
+            and node.id == name
+            and isinstance(node.ctx, ast.Load)
+            and node.lineno < statement.lineno
+            for node in ast.walk(function)
+        )
+
+    def module_loads_are_reassigned(function, name, initial, allowed_load):
+        parents = {}
+        for parent in ast.walk(function):
+            for child in ast.iter_child_nodes(parent):
+                parents[child] = parent
+        for node in ast.walk(function):
+            if not (
+                isinstance(node, ast.Name)
+                and node.id == name
+                and isinstance(node.ctx, ast.Load)
+                and node is not allowed_load
+            ):
+                continue
+            current = node
+            safe = False
+            while current in parents:
+                parent = parents[current]
+                for _, value in ast.iter_fields(parent):
+                    if not isinstance(value, list) or current not in value:
+                        continue
+                    preceding = value[: value.index(current)]
+                    if any(
+                        isinstance(stmt, ast.Assign)
+                        and len(stmt.targets) == 1
+                        and isinstance(stmt.targets[0], ast.Name)
+                        and stmt.targets[0].id == name
+                        and stmt is not initial
+                        and not any(
+                            isinstance(child, ast.Name)
+                            and child.id == name
+                            and isinstance(child.ctx, ast.Load)
+                            for child in ast.walk(stmt.value)
+                        )
+                        for stmt in preceding
+                    ):
+                        safe = True
+                current = parent
+            if not safe:
+                return False
+        return True
+
+    for cls in (node for node in tree.body if isinstance(node, ast.ClassDef)):
+        for function in (
+            node for node in cls.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        ):
+            if any(
+                node is not function
+                and isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                for node in ast.walk(function)
+            ):
+                continue
+            for parent in ast.walk(function):
+                for _, statements in ast.iter_fields(parent):
+                    if not isinstance(statements, list):
+                        continue
+                    for index, node in enumerate(statements):
+                        if not (
+                            isinstance(node, ast.Assign)
+                            and len(node.targets) == 1
+                            and isinstance(node.targets[0], ast.Name)
+                            and isinstance(node.value, ast.Call)
+                            and isinstance(node.value.func, ast.Name)
+                        ):
+                            continue
+                        call = node.value
+                        if (
+                            call.func.id in helper_bindings
+                            and not local_conflict(function, call.func.id, set())
+                            and len(call.args) in (2, 3)
+                            and not call.keywords
+                            and isinstance(call.args[0], ast.Constant)
+                            and call.args[0].value == soft_name + ".Classes"
+                            and isinstance(call.args[1], ast.Constant)
+                            and call.args[1].value in bindings
+                            and (len(call.args) == 2 or isinstance(call.args[2], ast.Constant))
+                        ):
+                            name = call.args[1].value
+                            if local_conflict(function, name, {id(node.targets[0])}):
+                                continue
+                            if node.targets[0].id == name:
+                                if not safe_global_reference(function, name, node):
+                                    continue
+                                remove_statement(
+                                    node, len(statements) == 1, remove_dynamic_comment=True
+                                )
+                            else:
+                                replace(call, name)
+                        elif (
+                            call.func.id == "__import__"
+                            and "__import__" not in conflicting
+                            and not local_conflict(function, "__import__", set())
+                            and len(call.args) == 1
+                            and isinstance(call.args[0], ast.Constant)
+                            and isinstance(call.args[0].value, str)
+                            and call.args[0].value.startswith(soft_name + ".Classes.")
+                            and len(call.keywords) == 1
+                            and call.keywords[0].arg == "fromlist"
+                            and isinstance(call.keywords[0].value, (ast.List, ast.Tuple))
+                            and len(call.keywords[0].value.elts) == 1
+                            and isinstance(call.keywords[0].value.elts[0], ast.Constant)
+                            and index + 1 < len(statements)
+                        ):
+                            name = call.args[0].value[len(soft_name + ".Classes.") :]
+                            following = statements[index + 1]
+                            if not (
+                                name in bindings
+                                and call.keywords[0].value.elts[0].value == name
+                                and isinstance(following, ast.Assign)
+                                and len(following.targets) == 1
+                                and isinstance(following.targets[0], ast.Name)
+                                and following.targets[0].id == name
+                                and isinstance(following.value, ast.Attribute)
+                                and isinstance(following.value.value, ast.Name)
+                                and following.value.value.id == node.targets[0].id
+                                and following.value.attr == name
+                            ):
+                                continue
+                            if local_conflict(function, name, {id(following.targets[0])}):
+                                continue
+                            if not (
+                                safe_global_reference(function, name, node)
+                                and following in function.body
+                            ):
+                                continue
+                            if not module_loads_are_reassigned(
+                                function, node.targets[0].id, node, following.value.value
+                            ):
+                                continue
+                            saved_count = len(replacements)
+                            if not (
+                                remove_statement(
+                                    node, len(statements) == 2, remove_dynamic_comment=True
+                                )
+                                and remove_statement(following, False)
+                            ):
+                                del replacements[saved_count:]
+
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
+
+
 def _get_import_scope_info(scope_body, package):
     """Collect names local to a scope and its directly imported package symbols."""
     local_names = set()
@@ -3008,6 +3693,10 @@ def generate_class(
     is_new : bool, optional
         Generate the experimental dataclass version instead of the legacy class.
         The dataclass version uses the ``Classes_new`` inheritance hierarchy.
+        Configured module constants remain importable from the generated module;
+        CSV and class-body constants remain class attributes.
+        Static imports of generated class modules target ``Classes_new``; this
+        does not resolve any resulting circular imports.
     output_name : str, optional
         Output module name for the dataclass version, without the .py extension.
         Defaults to the snake_case class name.
@@ -3480,7 +4169,7 @@ def _is_none_default(value):
     return value in ("", None, "None")
 
 
-def _field_type(prop_type, default, gen_dict, soft_name):
+def _field_type(prop_type, default, gen_dict, soft_name, class_name=None):
     """Return a Python annotation and imports needed for one CSV property."""
     imports = set()
 
@@ -3514,7 +4203,8 @@ def _field_type(prop_type, default, gen_dict, soft_name):
             return f"dict[str, {resolve_type(type_name[1:-1])}]"
 
         if type_name in gen_dict:
-            imports.add(f"from {soft_name}.Classes.{type_name} import {type_name}")
+            if type_name != class_name:
+                imports.add(f"from {soft_name}.Classes.{type_name} import {type_name}")
             return type_name
         if "." in type_name:
             module_name, _, symbol = type_name.rpartition(".")
@@ -3526,6 +4216,8 @@ def _field_type(prop_type, default, gen_dict, soft_name):
     annotation = resolve_type(prop_type) if prop_type else "Any"
     if _is_none_default(default) and annotation not in ("Any", "None"):
         annotation = f"{annotation} | None"
+    if class_name and class_name in _referenced_classes(prop_type, gen_dict):
+        annotation = repr(annotation)
     return annotation, imports
 
 
@@ -3569,7 +4261,9 @@ def _parent_type(class_name, gen_dict, soft_name):
         return (), set()
     parent_names = sorted(highest_owners)
     imports = {
-        f"from {soft_name}.Classes.{name} import {name}" for name in parent_names
+        f"from {soft_name}.Classes.{name} import {name}"
+        for name in parent_names
+        if name != class_name
     }
     return tuple(parent_names), imports
 
@@ -3728,14 +4422,14 @@ def _generate_dataclass_class(
 ):
     """Write an experimental dataclass using the prepared class methods."""
     class_dict = gen_dict[class_name]
-    generated_name = class_name
+    generated_name = NORMALIZATION_CLASS_NAMES.get(class_name, class_name)
     output_module_name = output_name or class_module_name(class_name)
     class_pack = class_dict["package"]
 
     class_path = join(path_to_gen, output_module_name + ".py")
     mother = class_dict["mother"]
     if mother in gen_dict:
-        parent_class = mother
+        parent_class = NORMALIZATION_CLASS_NAMES.get(mother, mother)
         parent_module = class_module_name(mother)
     else:
         parent_class = "PyleecanClass"
@@ -3752,7 +4446,7 @@ def _generate_dataclass_class(
 
     for prop in class_dict["properties"]:
         annotation, type_imports = _field_type(
-            prop["type"], prop["value"], gen_dict, soft_name
+            prop["type"], prop["value"], gen_dict, soft_name, class_name
         )
         imports.update(type_imports)
     if any(
@@ -3777,23 +4471,24 @@ def _generate_dataclass_class(
         + "\n",
         '"""Generated experimental dataclass; do not edit by hand."""\n\n',
         "\n".join(sorted(imports)) + "\n\n",
+        "".join(
+            f"{name} = {value!r}\n"
+            for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items()
+            if name != "VERSION"
+        ),
+        "".join(
+            f"{name} = {expression}\n"
+            for name, expression in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(
+                class_name, {}
+            ).items()
+            if name != "VERSION"
+        ),
+        "\n",
         f"@dataclass(eq=False)\nclass {generated_name}({parent_class}):\n",
         indent(_class_docstring(class_dict), TAB) + "\n\n",
     ]
 
     body = []
-    body.extend(
-        f"{TAB}{name}: ClassVar = {value!r}\n"
-        for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items()
-        if name != "VERSION"
-    )
-    body.extend(
-        f"{TAB}{name}: ClassVar = {expression}\n"
-        for name, expression in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(
-            class_name, {}
-        ).items()
-        if name != "VERSION"
-    )
     body.extend(
         f"{TAB}{name}: ClassVar = {expression}\n"
         for name, expression in CLASS_BODY_CONSTANTS.get(class_name, {}).items()
@@ -3810,7 +4505,9 @@ def _generate_dataclass_class(
     body.extend(f"{TAB}{ast.unparse(assignment)}\n" for assignment in class_attributes)
 
     for prop in class_dict["properties"]:
-        annotation, _ = _field_type(prop["type"], prop["value"], gen_dict, soft_name)
+        annotation, _ = _field_type(
+            prop["type"], prop["value"], gen_dict, soft_name, class_name
+        )
         body.append(f"{TAB}{prop['name']}: {annotation} = {_field_default(prop)}\n")
         description = _property_description(prop)
         if description:
@@ -3879,6 +4576,13 @@ def _generate_dataclass_class(
     source = _apply_os_import_style(source)
     # Inlined methods and their imports were prepared relative to Classes.
     source = _apply_import_style(source, soft_name, "absolute")
+    source = _redirect_experimental_class_imports(source, soft_name, gen_dict)
+    source = _remove_experimental_self_imports(
+        source, soft_name, class_name, output_module_name
+    )
+    source = _remove_redundant_experimental_class_imports(source, soft_name, gen_dict)
+    source = _rename_experimental_normalizations(source, soft_name)
+    source = _quote_experimental_self_annotations(source, generated_name)
     source = _apply_import_style(source, soft_name, import_style, "Classes_new")
     source = _organize_header_imports(source, generated_name, class_path)
     source = _regroup_pyleecan_imports(source, generated_name, class_path)
