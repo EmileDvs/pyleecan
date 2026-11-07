@@ -11,7 +11,7 @@ import pytest
 import pyvista as pv
 
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
-from pyleecan.Generator.ClassGenerator.class_generator import (
+from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _apply_numpy_import_style,
     _apply_pyvista_import_style,
     _normalize_method_package_imports,

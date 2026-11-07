@@ -1,0 +1,1 @@
+"""Experimental class generator."""

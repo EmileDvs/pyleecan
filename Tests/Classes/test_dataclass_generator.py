@@ -14,7 +14,7 @@ from typing import get_type_hints
 import pytest
 
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
-from pyleecan.Generator.ClassGenerator import class_generator, class_generator_new
+from pyleecan.Generator.ClassGenerator.New import class_generator
 from pyleecan.Generator.read_fct import read_all
 
 
@@ -29,21 +29,13 @@ def generator_environment(monkeypatch):
     return gen_dict
 
 
-def test_experimental_generator_is_shared(generator_environment, tmp_path):
-    assert class_generator_new.generate_class_new is class_generator.generate_class_new
-    assert class_generator_new._field_default is class_generator._field_default
-
+def test_experimental_generator(generator_environment, tmp_path):
     path = class_generator.generate_class(
         generator_environment, "Magnetics", str(tmp_path), is_new=True
     )
     first = Path(path).read_text(encoding="utf-8")
     assert Path(path).name == "magnetics.py"
     assert "from pyleecan.Classes_new._pyleecan_class import PyleecanClass" in first
-
-    path_from_shim = class_generator_new.generate_class_new(
-        generator_environment, "Magnetics", str(tmp_path)
-    )
-    assert Path(path_from_shim).read_text(encoding="utf-8") == first
 
     module = ast.parse(first)
     generated_class = next(

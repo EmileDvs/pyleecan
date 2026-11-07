@@ -18,13 +18,13 @@ from pyleecan.Classes.Simu1 import Simu1
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
-from pyleecan.Generator.ClassGenerator.class_generator import (
+from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _remove_redundant_experimental_class_imports,
     _rename_experimental_normalizations,
     _replace_dynamic_class_imports,
     generate_class,
 )
-from pyleecan.Generator.ClassGenerator.init_method_generator import (
+from pyleecan.Generator.ClassGenerator.New.init_method_generator import (
     generate_set_class_by_dict,
     generate_set_class_by_dict_dict,
     generate_set_class_by_dict_list,

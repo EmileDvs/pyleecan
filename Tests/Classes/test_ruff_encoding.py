@@ -9,7 +9,7 @@ from pathlib import Path
 def test_ruff_formats_unicode_with_non_utf8_default(tmp_path):
     source = (
         "import locale\n"
-        "from pyleecan.Generator.ClassGenerator.class_generator "
+        "from pyleecan.Generator.ClassGenerator.New.class_generator "
         "import _format_source_with_ruff\n"
         'print("DEFAULT_ENCODING", locale.getencoding(), flush=True)\n'
         'result = _format_source_with_ruff("value = \'\\uff1a\'\\n", "sample.py")\n'

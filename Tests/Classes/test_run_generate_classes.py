@@ -12,9 +12,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyleecan.Generator.ClassGenerator.class_generator import class_module_name
+from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
 
-runner = importlib.import_module("pyleecan.Generator.run_generate_classes")
+runner = importlib.import_module("pyleecan.Generator.ClassGenerator.New.run_generate_classes")
 
 
 @pytest.fixture
