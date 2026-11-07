@@ -394,6 +394,12 @@ def test_renamed_normalizations_and_legacy_serialization(
     data_source = Path(data_path).read_text(encoding="utf-8")
     assert "Functions.Load.retrocompatibility import" in data_source
     assert "_pyleecan_class import construct_experimental_class" not in data_source
+    expected_check = (
+        "from ._check import check_var"
+        if import_style == "relative"
+        else "from pyleecan.Classes_new._check import check_var"
+    )
+    assert expected_check in data_source
     for name in names:
         original = Path(MAIN_DIR) / "Methods" / "SciDataTool" / name
         if original.is_dir():
@@ -479,7 +485,7 @@ def test_renamed_normalizations_and_legacy_serialization(
                 holder.as_dict()["normalizations"]["axis"]["__class__"] == "NormVector"
             )
 
-        from pyleecan.Classes._check import check_var
+        from pyleecan.Classes_new._check import check_var
         tree = ast.parse(Path(data_path).read_text(encoding="utf-8"))
         data_class = next(node for node in tree.body if isinstance(node, ast.ClassDef))
         setter = next(

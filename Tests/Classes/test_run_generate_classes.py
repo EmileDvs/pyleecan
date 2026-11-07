@@ -1,6 +1,8 @@
 """Tests for legacy and experimental class generation orchestration."""
 
 import importlib
+import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -57,6 +59,28 @@ def test_experimental_generation_leaves_legacy_files_untouched(
     assert (generation_root / "Classes_new" / "a.py").is_file()
     assert generator_calls[0][2]["is_new"] is True
     assert generator_calls[0][2]["class_import_graph"] == {"A": ()}
+
+
+@pytest.mark.parametrize("class_list", [None, ["A.csv"]])
+def test_experimental_package_bookkeeping(generation_root, generator_calls, class_list):
+    gen_dict = {"A": {"name": "A", "daughters": ["B"]}, "B": {"name": "B"}}
+    runner.generate_code(
+        str(generation_root), gen_dict, class_list=class_list, is_new=True
+    )
+    class_dir = generation_root / "Classes_new"
+    with (class_dir / "_class_dict.json").open(encoding="utf-8") as json_file:
+        assert json.load(json_file) == gen_dict
+    assert not (class_dir / "Class_Dict.json").exists()
+    spec = importlib.util.spec_from_file_location(
+        "generated_classes_new", class_dir / "__init__.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.get_class_dict() == gen_dict
+    assert issubclass(module.NotImplementedYetError, Exception)
+    assert issubclass(module.ParentMissingError, Exception)
+    with pytest.raises(module.ParentMissingError):
+        raise module.ParentMissingError("missing parent")
 
 
 def test_legacy_generation_and_ruff_formatting(

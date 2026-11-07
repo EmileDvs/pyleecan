@@ -2195,7 +2195,7 @@ def _apply_import_style(source, soft_name, import_style, class_package="Classes"
 
 
 def _redirect_experimental_class_imports(source, soft_name, gen_dict):
-    """Redirect static imports of generated class modules to Classes_new."""
+    """Redirect generated classes and selected support imports to Classes_new."""
     source_bytes = source.encode("utf-8")
     offsets = [0]
     for index, value in enumerate(source_bytes):
@@ -2205,24 +2205,49 @@ def _redirect_experimental_class_imports(source, soft_name, gen_dict):
     replacements = []
     prefix = soft_name + ".Classes."
     for node in ast.walk(ast.parse(source)):
-        if not (
-            isinstance(node, ast.ImportFrom)
-            and node.level == 0
-            and node.module
-            and node.module.startswith(prefix)
+        if not isinstance(node, ast.ImportFrom) or node.level != 0 or not node.module:
+            continue
+        if node.module == soft_name + ".Classes":
+            new_aliases = [
+                alias for alias in node.names
+                if alias.name in CLASS_ERROR_NAMES | {"get_class_dict"}
+            ]
+            legacy_aliases = [alias for alias in node.names if alias not in new_aliases]
+            if not new_aliases:
+                continue
+            imports = [
+                ast.ImportFrom(
+                    module=f"{soft_name}.Classes_new", names=new_aliases, level=0
+                )
+            ]
+            if legacy_aliases:
+                imports.append(
+                    ast.ImportFrom(module=node.module, names=legacy_aliases, level=0)
+                )
+            replacement = ("\n" + " " * node.col_offset).join(
+                ast.unparse(import_node) for import_node in imports
+            )
+        elif node.module.startswith(prefix) and (
+            node.module[len(prefix) :] in gen_dict
+            or node.module[len(prefix) :] in ("_check", "_FEMMHandler")
         ):
+            class_name = node.module[len(prefix) :]
+            module_name = {
+                "_check": "_check",
+                "_FEMMHandler": "_femm_handler",
+            }.get(class_name, class_module_name(class_name))
+            replacement = ast.unparse(
+                ast.ImportFrom(
+                    module=f"{soft_name}.Classes_new.{module_name}",
+                    names=node.names,
+                    level=0,
+                )
+            )
+        else:
             continue
-        class_name = node.module[len(prefix) :]
-        if class_name not in gen_dict:
-            continue
-        replacement = ast.ImportFrom(
-            module=f"{soft_name}.Classes_new.{class_module_name(class_name)}",
-            names=node.names,
-            level=0,
-        )
         start = offsets[node.lineno - 1] + node.col_offset
         end = offsets[node.end_lineno - 1] + node.end_col_offset
-        replacements.append((start, end, ast.unparse(replacement).encode("utf-8")))
+        replacements.append((start, end, replacement.encode("utf-8")))
 
     for start, end, replacement in sorted(replacements, reverse=True):
         source_bytes = source_bytes[:start] + replacement + source_bytes[end:]

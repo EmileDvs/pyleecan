@@ -17,6 +17,27 @@ from pyleecan.Generator.write_fct import write_file
 # List of the main packages (to sort the classes)
 PACKAGE_LIST = ["Geometry", "Machine", "Material", "Slot", "Import"]
 
+EXPERIMENTAL_INIT = '''"""Experimental dataclass-based Pyleecan classes."""
+
+from json import load
+from os.path import dirname, join
+
+
+def get_class_dict():
+    """Return the CSV-derived class generation dictionary."""
+    path = join(dirname(__file__), "_class_dict.json")
+    with open(path, encoding="utf-8") as class_dict_file:
+        return load(class_dict_file)
+
+
+class NotImplementedYetError(Exception):
+    """NotImplementedYetError"""
+
+
+class ParentMissingError(Exception):
+    """ParentMissingError"""
+'''
+
 
 def _validate_import_style(import_style):
     if import_style not in ("relative", "absolute"):
@@ -52,7 +73,8 @@ def generate_code(
     is_new : bool, optional
         Generate experimental dataclasses in Classes_new without modifying
         legacy class files or bookkeeping. Module names use snake_case without
-        the former "_new" suffix.
+        the former "_new" suffix. Generate the experimental package initializer
+        and the full CSV-derived _class_dict.json, even for a partial run.
     import_style : str, optional
         "relative" or "absolute" imports from the generated package in class files.
 
@@ -120,6 +142,7 @@ def generate_code(
             is_new=True,
             import_style=import_style,
         )
+        _write_experimental_bookkeeping(CLASS_DIR, gen_dict)
         return
 
     # A file to import every classes quickly
@@ -168,6 +191,14 @@ def generate_code(
     # Save gen_dict
     class_dict_file = join(CLASS_DIR, "Class_Dict.json")
     with open(class_dict_file, "w") as json_file:
+        json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
+
+
+def _write_experimental_bookkeeping(class_dir, gen_dict):
+    """Write the experimental package API and full class reference dictionary."""
+    with open(join(class_dir, "__init__.py"), "w", encoding="utf-8") as init_file:
+        init_file.write(EXPERIMENTAL_INIT)
+    with open(join(class_dir, "_class_dict.json"), "w", encoding="utf-8") as json_file:
         json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
 
 
@@ -230,6 +261,8 @@ def run_generate_classes(
 
     Experimental generation writes only selected modules in ``Classes_new``
     with snake_case names and does not rewrite CSVs or legacy bookkeeping.
+    It also writes an initializer and a full CSV-derived ``_class_dict.json``;
+    dictionary keys and metadata retain their source CSV class names.
     The experimental normalization classes use names such as ``NormVector``;
     their legacy names remain accepted when loading serialized data.
     ``is_ruff`` controls

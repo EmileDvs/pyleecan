@@ -259,25 +259,30 @@ def test_experimental_operating_point_module_names(
 
 
 @pytest.mark.parametrize(
-    ("import_style", "machine_import", "femm_import"),
+    ("import_style", "machine_import", "femm_import", "package_import"),
     [
         (
             "relative",
             "from .machine import ARC_NPOINT_D as POINTS",
             "from .mag_femm import MagFEMM as Model",
+            "from . import ParentMissingError as Missing, get_class_dict",
         ),
         (
             "absolute",
             "from pyleecan.Classes_new.machine import ARC_NPOINT_D as POINTS",
             "from pyleecan.Classes_new.mag_femm import MagFEMM as Model",
+            "from pyleecan.Classes_new import ParentMissingError as Missing, get_class_dict",
         ),
     ],
 )
-def test_experimental_class_import_redirect(import_style, machine_import, femm_import):
+def test_experimental_class_import_redirect(
+    import_style, machine_import, femm_import, package_import
+):
     source = (
         "from pyleecan.Classes.Machine import ARC_NPOINT_D as POINTS\n"
-        "from pyleecan.Classes._check import check_var\n"
-        "from pyleecan.Classes import ParentMissingError\n"
+        "from pyleecan.Classes._check import check_var as validate\n"
+        "from pyleecan.Classes._FEMMHandler import _FEMMHandler as Handler\n"
+        "from pyleecan.Classes import ParentMissingError as Missing, get_class_dict, unknown\n"
         "from other.Classes.Machine import Machine\n"
         "def method():\n"
         "    from pyleecan.Classes.MagFEMM import MagFEMM as Model\n"
@@ -291,9 +296,88 @@ def test_experimental_class_import_redirect(import_style, machine_import, femm_i
     )
     assert machine_import in transformed
     assert femm_import in transformed
-    assert "Classes._check import check_var" in transformed
-    assert "Classes import ParentMissingError" in transformed
+    if import_style == "relative":
+        assert "from ._check import check_var as validate" in transformed
+        assert "from ._femm_handler import _FEMMHandler as Handler" in transformed
+    else:
+        assert "from pyleecan.Classes_new._check import check_var as validate" in transformed
+        assert (
+            "from pyleecan.Classes_new._femm_handler import _FEMMHandler as Handler"
+            in transformed
+        )
+    assert package_import in transformed
+    assert "from pyleecan.Classes import unknown" in transformed or (
+        import_style == "relative" and "from ..Classes import unknown" in transformed
+    )
     assert "from other.Classes.Machine import Machine" in transformed
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_experimental_femm_handler_import(
+    generator_environment, tmp_path, import_style
+):
+    class_dict = deepcopy(generator_environment["MagFEMM"])
+    class_dict["methods"] = ["comp_flux_airgap"]
+    methods = tmp_path / "Methods" / "Simulation" / "MagFEMM"
+    methods.mkdir(parents=True)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / "Simulation" / "MagFEMM" / "comp_flux_airgap.py",
+        methods,
+    )
+    gen_dict = dict(generator_environment)
+    gen_dict["MagFEMM"] = class_dict
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict,
+        "MagFEMM",
+        str(output),
+        is_new=True,
+        import_style=import_style,
+        class_import_graph={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    expected = (
+        "from ._femm_handler import _FEMMHandler"
+        if import_style == "relative"
+        else "from pyleecan.Classes_new._femm_handler import _FEMMHandler"
+    )
+    assert expected in source
+    assert "_FEMMHandler()" in source
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_experimental_method_uses_package_exception(
+    generator_environment, tmp_path, import_style
+):
+    class_dict = deepcopy(generator_environment["MagElmer"])
+    class_dict["methods"] = ["solve_FEA"]
+    methods = tmp_path / "Methods" / "Simulation" / "MagElmer"
+    methods.mkdir(parents=True)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / "Simulation" / "MagElmer" / "solve_FEA.py",
+        methods,
+    )
+    gen_dict = dict(generator_environment)
+    gen_dict["MagElmer"] = class_dict
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict,
+        "MagElmer",
+        str(output),
+        is_new=True,
+        import_style=import_style,
+        class_import_graph={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    expected = (
+        "from . import NotImplementedYetError"
+        if import_style == "relative"
+        else "from pyleecan.Classes_new import NotImplementedYetError"
+    )
+    assert expected in source
+    assert "raise NotImplementedYetError(" in source
 
 
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])
