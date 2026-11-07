@@ -332,6 +332,68 @@ def _rename_method_references(source, renamed_names):
     return source_bytes.decode("utf-8")
 
 
+def _replace_empty_containers(source, blocked_names=()):
+    """Replace unshadowed empty built-in container calls in an inlined method."""
+    tree = ast.parse(source)
+    blocked = set(blocked_names)
+    candidates = {"dict", "list"}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
+            blocked.add(node.id)
+        elif isinstance(node, ast.arg):
+            blocked.add(node.arg)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            blocked.add(node.name)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            blocked.add(node.name)
+        elif isinstance(node, (ast.Global, ast.Nonlocal)):
+            blocked.update(node.names)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                if alias.name == "*":
+                    blocked.update(candidates)
+                else:
+                    blocked.add(
+                        alias.asname
+                        or (
+                            alias.name.split(".")[0]
+                            if isinstance(node, ast.Import)
+                            else alias.name
+                        )
+                    )
+        elif isinstance(node, ast.MatchAs) and node.name:
+            blocked.add(node.name)
+        elif isinstance(node, ast.MatchStar) and node.name:
+            blocked.add(node.name)
+        elif isinstance(node, ast.MatchMapping) and node.rest:
+            blocked.add(node.rest)
+
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id in candidates - blocked
+            and not node.args
+            and not node.keywords
+        ):
+            start = offsets[node.lineno - 1] + node.col_offset
+            end = offsets[node.end_lineno - 1] + node.end_col_offset
+            # Preserve comments inside multiline calls.
+            if b"#" not in encoded[start:end]:
+                replacements.append(
+                    (start, end, b"{}" if node.func.id == "dict" else b"[]")
+                )
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
+
+
 def _rewrite_method_call_targets(source, call_redirects):
     """Redirect imported helper calls to methods on an existing object."""
     if not call_redirects:
@@ -1837,6 +1899,16 @@ def _prepare_class_methods(
         )
         for name, value in class_attributes.items()
     ]
+    blocked_containers = set(import_bindings)
+    if any(
+        isinstance(node, ast.ImportFrom)
+        and any(alias.name == "*" for alias in node.names)
+        for node in imports
+    ):
+        blocked_containers.update(("dict", "list"))
+    for name, method_source in prepared.items():
+        if method_source is not None:
+            prepared[name] = _replace_empty_containers(method_source, blocked_containers)
     return (
         prepared,
         [node for node in imports if node.names],
@@ -3497,7 +3569,7 @@ def _generate_dataclass_class(
         parent_module = class_module_name(mother)
     else:
         parent_class = "PyleecanClass"
-        parent_module = class_module_name(parent_class)
+        parent_module = "_" + class_module_name(parent_class)
     imports = {
         "from dataclasses import dataclass, field",
         "from typing import Any, ClassVar",

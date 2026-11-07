@@ -19,7 +19,7 @@ runner = importlib.import_module("pyleecan.Generator.run_generate_classes")
 def generation_root(tmp_path):
     for folder in ("Classes", "Classes_new", "Functions"):
         (tmp_path / folder).mkdir()
-    (tmp_path / "Classes_new" / "pyleecan_class.py").write_text("", encoding="utf-8")
+    (tmp_path / "Classes_new" / "_pyleecan_class.py").write_text("", encoding="utf-8")
     return tmp_path
 
 
@@ -105,7 +105,7 @@ def test_experimental_runner_skips_csv_and_legacy_formatter(
         doc_dir="unused", int_dir="unused", main_dir=str(generation_root), is_new=True
     )
     assert generator_calls[0][2]["is_new"] is True
-    assert (generation_root / "Classes_new" / "pyleecan_class.py").is_file()
+    assert (generation_root / "Classes_new" / "_pyleecan_class.py").is_file()
     assert (generation_root / "Classes_new" / "a.py").is_file()
     assert not (generation_root / "Classes" / "Class_Dict.json").exists()
 
@@ -194,8 +194,8 @@ def test_invalid_import_style_does_not_modify_files(
 
 
 def test_experimental_generation_requires_shared_base(generation_root):
-    (generation_root / "Classes_new" / "pyleecan_class.py").unlink()
-    with pytest.raises(FileNotFoundError, match="pyleecan_class.py"):
+    (generation_root / "Classes_new" / "_pyleecan_class.py").unlink()
+    with pytest.raises(FileNotFoundError, match="_pyleecan_class.py"):
         runner.generate_code(str(generation_root), {"A": {}}, is_new=True)
 
 
@@ -213,7 +213,7 @@ def test_experimental_collision_is_rejected_before_writing(
         )
     assert sorted(
         path.name for path in (generation_root / "Classes_new").iterdir()
-    ) == ["pyleecan_class.py"]
+    ) == ["_pyleecan_class.py"]
 
 
 def test_legacy_formatter_failure_is_reported(

@@ -36,7 +36,7 @@ def test_experimental_generator_is_shared(generator_environment, tmp_path):
     )
     first = Path(path).read_text(encoding="utf-8")
     assert Path(path).name == "magnetics.py"
-    assert "from pyleecan.Classes_new.pyleecan_class import PyleecanClass" in first
+    assert "from pyleecan.Classes_new._pyleecan_class import PyleecanClass" in first
 
     path_from_shim = class_generator_new.generate_class_new(
         generator_environment, "Magnetics", str(tmp_path)
@@ -113,7 +113,7 @@ def test_experimental_generated_inheritance_imports(
     generator_environment, tmp_path, monkeypatch, import_style
 ):
     import pyleecan.Classes_new
-    from pyleecan.Classes_new.pyleecan_class import PyleecanClass
+    from pyleecan.Classes_new._pyleecan_class import PyleecanClass
 
     output_dir = tmp_path / "Classes_new"
     output_dir.mkdir()
