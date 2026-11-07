@@ -394,6 +394,159 @@ def _replace_empty_containers(source, blocked_names=()):
     return encoded.decode("utf-8")
 
 
+def _replace_dynamic_class_imports(source, soft_name, blocked_names=()):
+    """Replace recognized module-and-class import pairs in inlined methods."""
+    if set(blocked_names).intersection(
+        {"__import__", "getattr", "_pyleecan_import_class", "*"}
+    ):
+        return source, False
+    tree = ast.parse(source)
+    if any(
+        (isinstance(node, ast.Name) and node.id in {"__import__", "getattr"}
+         and isinstance(node.ctx, (ast.Store, ast.Del)))
+        or (isinstance(node, ast.arg) and node.arg in {"__import__", "getattr"})
+        for node in ast.walk(tree)
+    ):
+        return source, False
+    names = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
+    names.update(node.arg for node in ast.walk(tree) if isinstance(node, ast.arg))
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            bindings = {
+                alias.asname
+                or (
+                    alias.name.split(".")[0]
+                    if isinstance(node, ast.Import)
+                    else alias.name
+                )
+                for alias in node.names
+            }
+            if bindings.intersection({"__import__", "getattr", "*"}):
+                return source, False
+            names.update(bindings)
+    if "_pyleecan_import_class" in names:
+        return source, False
+
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+
+    matches = []
+    for parent in ast.walk(tree):
+        for _, statements in ast.iter_fields(parent):
+            if not isinstance(statements, list):
+                continue
+            for first, second in zip(statements, statements[1:]):
+                if not (
+                    isinstance(first, ast.Assign)
+                    and len(first.targets) == 1
+                    and isinstance(first.targets[0], ast.Name)
+                    and isinstance(first.value, ast.Call)
+                    and isinstance(first.value.func, ast.Name)
+                    and first.value.func.id == "__import__"
+                    and len(first.value.args) == 1
+                    and len(first.value.keywords) == 1
+                    and first.value.keywords[0].arg == "fromlist"
+                    and isinstance(first.value.keywords[0].value, (ast.List, ast.Tuple))
+                    and len(first.value.keywords[0].value.elts) == 1
+                    and isinstance(second, ast.Assign)
+                    and len(second.targets) == 1
+                    and isinstance(second.targets[0], ast.Name)
+                    and first.end_lineno + 1 == second.lineno
+                ):
+                    continue
+                class_expr = first.value.keywords[0].value.elts[0]
+                module_expr = first.value.args[0]
+                module_name = first.targets[0].id
+                value = second.value
+                if isinstance(value, ast.Attribute) and (
+                    isinstance(value.value, ast.Name)
+                    and value.value.id == module_name
+                    and isinstance(class_expr, ast.Constant)
+                    and value.attr == class_expr.value
+                ):
+                    module_ref = value.value
+                elif (
+                    isinstance(value, ast.Call)
+                    and isinstance(value.func, ast.Name)
+                    and value.func.id == "getattr"
+                    and len(value.args) == 2
+                    and not value.keywords
+                    and isinstance(value.args[0], ast.Name)
+                    and value.args[0].id == module_name
+                    and ast.dump(value.args[1]) == ast.dump(class_expr)
+                ):
+                    module_ref = value.args[0]
+                else:
+                    continue
+
+                package_expr = None
+                if isinstance(class_expr, ast.Constant) and isinstance(
+                    class_expr.value, str
+                ):
+                    suffix = ".Classes." + class_expr.value
+                    if isinstance(module_expr, ast.Constant) and isinstance(
+                        module_expr.value, str
+                    ) and module_expr.value == soft_name + suffix:
+                        package_expr = repr(soft_name + ".Classes")
+                    elif (
+                        isinstance(module_expr, ast.BinOp)
+                        and isinstance(module_expr.op, ast.Add)
+                        and isinstance(module_expr.left, ast.Name)
+                        and module_expr.left.id == "PACKAGE_NAME"
+                        and isinstance(module_expr.right, ast.Constant)
+                        and module_expr.right.value == suffix
+                    ):
+                        package_expr = 'PACKAGE_NAME + ".Classes"'
+                elif (
+                    isinstance(class_expr, ast.Name)
+                    and isinstance(module_expr, ast.BinOp)
+                    and isinstance(module_expr.op, ast.Add)
+                    and isinstance(module_expr.left, ast.Constant)
+                    and module_expr.left.value == soft_name + ".Classes."
+                    and ast.dump(module_expr.right) == ast.dump(class_expr)
+                ):
+                    package_expr = repr(soft_name + ".Classes")
+                if package_expr is None:
+                    continue
+                first_end = offsets[first.end_lineno - 1] + first.end_col_offset
+                first_start = offsets[first.lineno - 1] + first.col_offset
+                line_end = encoded.find(b"\n", first_end)
+                if (
+                    line_end < 0
+                    or encoded[first_end:line_end].strip()
+                    or b"#" in encoded[first_start:first_end]
+                ):
+                    continue
+                matches.append((first, second, module_ref, package_expr, class_expr))
+
+    safe_refs = {id(item[2]) for item in matches}
+    unsafe_modules = {
+        node.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name)
+        and isinstance(node.ctx, ast.Load)
+        and node.id in {item[0].targets[0].id for item in matches}
+        and id(node) not in safe_refs
+    }
+    replacements = []
+    for first, second, _, package_expr, class_expr in matches:
+        if first.targets[0].id in unsafe_modules:
+            continue
+        start = offsets[first.lineno - 1] + first.col_offset
+        end = offsets[second.end_lineno - 1] + second.end_col_offset
+        replacement = (
+            f"{second.targets[0].id} = _pyleecan_import_class("
+            f"{package_expr}, {ast.unparse(class_expr)})"
+        )
+        replacements.append((start, end, replacement.encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8"), bool(replacements)
+
+
 def _rewrite_method_call_targets(source, call_redirects):
     """Redirect imported helper calls to methods on an existing object."""
     if not call_redirects:
@@ -1334,6 +1487,23 @@ def _get_method_source(
         helper_sources.append("@staticmethod\n" + helper_source)
     if helper_sources:
         method_source += "\n\n" + "\n\n".join(helper_sources)
+    method_import_bindings = {
+        alias.asname
+        or (alias.name.split(".")[0] if isinstance(node, ast.Import) else alias.name)
+        for node in method_imports
+        for alias in node.names
+    }
+    method_source, replaced_class_import = _replace_dynamic_class_imports(
+        method_source, soft_name, method_import_bindings
+    )
+    if replaced_class_import:
+        method_imports.append(
+            ast.ImportFrom(
+                module=soft_name + ".Functions.Load.import_class",
+                names=[ast.alias(name="import_class", asname="_pyleecan_import_class")],
+                level=0,
+            )
+        )
     method_tree = ast.parse(method_source)
     if any(
         _is_numpy_import(node) for node in method_imports + list(ast.walk(method_tree))

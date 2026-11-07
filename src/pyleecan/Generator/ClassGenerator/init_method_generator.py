@@ -233,15 +233,10 @@ def generate_set_class_by_dict_list(prop_name, prop_type, daug_list):
         class_dict_str += TAB7 + '+ " in init_dict for ' + prop_name + '"\n'
         class_dict_str += TAB6 + ")\n"
         class_dict_str += TAB5 + "# Dynamic import to call the correct constructor\n"
-        class_dict_str += TAB5 + "module = __import__(\n"
         class_dict_str += (
-            TAB6
-            + '"'
-            + PACKAGE_NAME
-            + '.Classes." + class_name, fromlist=[class_name]\n'
+            TAB5
+            + f'class_obj = import_class("{PACKAGE_NAME}.Classes", class_name, "{prop_name}")\n'
         )
-        class_dict_str += TAB5 + ")\n"
-        class_dict_str += TAB5 + "class_obj = getattr(module, class_name)\n"
         class_dict_str += (
             TAB5 + "self." + prop_name + ".append(" + "class_obj(init_dict=obj))\n"
         )
@@ -289,11 +284,8 @@ def generate_set_class_by_dict_dict(prop_name, prop_type, daug_list):
         class_dict_str += TAB5 + "# Dynamic import to call the correct constructor\n"
         class_dict_str += (
             TAB5
-            + 'module = __import__("'
-            + PACKAGE_NAME
-            + '.Classes."+class_name, fromlist=[class_name])\n'
+            + f'class_obj = import_class("{PACKAGE_NAME}.Classes", class_name, "{prop_name}")\n'
         )
-        class_dict_str += TAB5 + "class_obj = getattr(module,class_name)\n"
         class_dict_str += (
             TAB5 + "self." + prop_name + "[key] = class_obj(init_dict=obj)\n"
         )
@@ -342,11 +334,8 @@ def generate_set_class_by_dict(prop_name, prop_type, daug_list):
         class_dict_str += TAB3 + "# Dynamic import to call the correct constructor\n"
         class_dict_str += (
             TAB3
-            + 'module = __import__("'
-            + PACKAGE_NAME
-            + '.Classes."+class_name, fromlist=[class_name])\n'
+            + f'class_obj = import_class("{PACKAGE_NAME}.Classes", class_name, "{prop_name}")\n'
         )
-        class_dict_str += TAB3 + "class_obj = getattr(module,class_name)\n"
         class_dict_str += (
             TAB3
             + "self."
