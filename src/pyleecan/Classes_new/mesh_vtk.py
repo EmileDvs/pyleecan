@@ -13,6 +13,7 @@ from vtk import vtkPointSet
 
 from ..definitions import RESULT_DIR
 from ..Functions.GUI.log_error import log_error
+from ._import import import_class
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg
 from .fpgn_tri import FPGNTri
@@ -115,7 +116,7 @@ class MeshVTK(Mesh):
             new_mesh.node.coordinate *= scale
         elif meshtype == "MeshMat":
             # Avoid circular import
-            from .mesh_mat import MeshMat
+            MeshMat = import_class("MeshMat")
 
             new_mesh = MeshMat(dimension=self.dimension)
 

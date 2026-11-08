@@ -20,10 +20,10 @@ from ..Functions.labels import (
     YSL_LAB,
     YSR_LAB,
 )
-from ..Functions.Load.import_class import import_class
 from ..Functions.Plot import dict_2D
 from ..Functions.Winding.gen_phase_list import gen_name
 from ._error import ParentMissingError
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .material import Material
@@ -613,7 +613,7 @@ class Slot(PyleecanClass):
         new_slot : SlotUD2
             SlotUD2 version of the Slot
         """
-        SlotUD2 = import_class("pyleecan.Classes", "SlotUD2")
+        SlotUD2 = import_class("SlotUD2")
         new_slot = SlotUD2()
         new_slot.Zs = self.Zs
         new_slot.line_list = self.build_geometry()

@@ -64,6 +64,21 @@ def test_experimental_generation_leaves_legacy_files_untouched(
     assert generator_calls[0][2]["class_import_graph"] == {"A": ()}
 
 
+def test_partial_generation_rejects_old_experimental_loader(
+    generation_root, generator_calls
+):
+    loader = generation_root / "Classes_new" / "_import.py"
+    loader.write_text("def import_class(mod_name, class_name): pass\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="full generation"):
+        runner.generate_code(
+            str(generation_root),
+            {"A": {"mother": "", "properties": []}},
+            class_list=["A.csv"],
+        )
+    assert loader.read_text(encoding="utf-8").startswith("def import_class(mod_name")
+    assert not generator_calls
+
+
 def test_shared_error_name_conflict_does_not_remove_existing_classes(
     generation_root, generator_calls, monkeypatch
 ):
@@ -86,17 +101,23 @@ def test_shared_error_name_conflict_does_not_remove_existing_classes(
 
 
 @pytest.mark.parametrize("class_list", [None, ["A.csv"]])
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
 def test_experimental_package_bookkeeping(
-    generation_root, generator_calls, class_list, monkeypatch
+    generation_root, generator_calls, class_list, monkeypatch, import_style
 ):
     gen_dict = {
         "A": {"name": "A", "mother": "", "properties": [], "daughters": ["B"]},
         "B": {"name": "B", "mother": "", "properties": [{"type": "A"}]},
     }
     runner.generate_code(
-        str(generation_root), gen_dict, class_list=class_list, is_new=True
+        str(generation_root), gen_dict, class_list=class_list, is_new=True,
+        import_style=import_style,
     )
     class_dir = generation_root / "Classes_new"
+    import_source = (class_dir / "_import.py").read_text(encoding="utf-8")
+    assert "_CLASS_MODULES = {'A': 'a', 'B': 'b'}" in import_source
+    assert "def import_class(" in import_source
+    assert not (class_dir / "_import_all.py").exists()
     with (class_dir / "_class_dict.json").open(encoding="utf-8") as json_file:
         assert json.load(json_file) == gen_dict
     assert not (class_dir / "Class_Dict.json").exists()
@@ -148,13 +169,105 @@ def test_legacy_generation_and_ruff_formatting(
     assert generator_calls[0][2]["is_new"] is False
     assert generator_calls[0][2]["import_style"] == "absolute"
     assert (generation_root / "Classes" / "A.py").is_file()
-    assert (generation_root / "Classes" / "Class_Dict.json").is_file()
+    assert (generation_root / "Classes" / "_class_dict.json").is_file()
+    assert not (generation_root / "Functions" / "load_switch.py").exists()
     assert calls == [
         (
             ["ruff", "format", str(generation_root / "Classes" / "A.py")],
             {"check": True},
         )
     ]
+
+
+def test_legacy_generation_preserves_existing_load_switch(
+    generation_root, generator_calls
+):
+    load_switch = generation_root / "Functions" / "load_switch.py"
+    load_switch.write_text("existing", encoding="utf-8")
+    runner.generate_code(
+        str(generation_root), {"A": {}}, class_list=["A.csv"], is_new=False
+    )
+    assert load_switch.read_text(encoding="utf-8") == "existing"
+    assert "from ..Classes.A import A" in (
+        generation_root / "Classes" / "_import_all.py"
+    ).read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_experimental_import_uses_generated_names_and_imports(
+    generation_root, generator_calls, monkeypatch, import_style
+):
+    gen_dict = {
+        "Norm_ref": {"name": "Norm_ref", "mother": "", "properties": []},
+        "OPdq": {"name": "OPdq", "mother": "", "properties": []},
+    }
+
+    def generate(gen_dict, name, output_dir, **kwargs):
+        symbol = "NormRef" if name == "Norm_ref" else name
+        (Path(output_dir) / (class_module_name(name) + ".py")).write_text(
+            "class " + symbol + ":\n    pass\n", encoding="utf-8"
+        )
+
+    monkeypatch.setattr(runner, "generate_class", generate)
+    package = "generated_import_all_" + import_style
+    generation_root.joinpath("__init__.py").write_text("", encoding="utf-8")
+    monkeypatch.syspath_prepend(str(generation_root.parent))
+    generation_root.rename(generation_root.parent / package)
+    root = generation_root.parent / package
+    runner.generate_code(
+        str(root), gen_dict, soft_name=package, import_style=import_style
+    )
+    module = importlib.import_module(package + ".Classes_new._import")
+    assert package + ".Classes_new.norm_ref" not in sys.modules
+    assert package + ".Classes_new.op_dq" not in sys.modules
+    assert module.NormRef.__name__ == "NormRef"
+    assert module.OPdq.__name__ == "OPdq"
+    assert not hasattr(module, "Norm_ref")
+    assert module.import_class("Norm_ref") is module.NormRef
+    assert module.import_class("OPdq") is module.OPdq
+    error_module = importlib.import_module(package + ".Classes_new._error")
+    with pytest.raises(error_module.InitUnKnowClassError, match="property example"):
+        module.import_class("Missing", "example")
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_generated_class_can_import_loader_without_loading_other_classes(
+    generation_root, monkeypatch, import_style
+):
+    package = "generated_loader_" + import_style
+    generation_root.joinpath("__init__.py").write_text("", encoding="utf-8")
+    root = generation_root.parent / package
+    generation_root.rename(root)
+    class_dir = root / "Classes_new"
+    monkeypatch.syspath_prepend(str(root.parent))
+    gen_dict = {
+        "A": {"mother": "", "properties": []},
+        "B": {"mother": "", "properties": []},
+        "Broken": {"mother": "", "properties": []},
+    }
+    runner._write_shared_errors(str(class_dir), {})
+    runner._write_experimental_bookkeeping(class_dir, gen_dict, package, import_style)
+    prefix = "." if import_style == "relative" else package + ".Classes_new."
+    (class_dir / "a.py").write_text(
+        f"from {prefix}_import import import_class\n"
+        "class A:\n"
+        "    def load(self): return import_class('B')\n",
+        encoding="utf-8",
+    )
+    (class_dir / "b.py").write_text("class B: pass\n", encoding="utf-8")
+    a = importlib.import_module(package + ".Classes_new.a")
+    assert package + ".Classes_new.b" not in sys.modules
+    assert package + ".Classes" not in sys.modules
+    b = a.A().load()
+    assert b is importlib.import_module(package + ".Classes_new.b").B
+    assert package + ".Classes" not in sys.modules
+
+    (class_dir / "broken.py").write_text(
+        "import missing_generated_loader_dependency\n", encoding="utf-8"
+    )
+    loader = importlib.import_module(package + ".Classes_new._import")
+    with pytest.raises(ModuleNotFoundError, match="missing_generated_loader_dependency"):
+        loader.import_class("Broken")
 
 
 def test_experimental_runner_skips_csv_and_legacy_formatter(

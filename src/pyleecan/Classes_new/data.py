@@ -8,10 +8,8 @@ import numpy as np
 from ..Functions.Load.retrocompatibility import (
     construct_experimental_class as _construct_experimental_class,
 )
-from ..Functions.Load.retrocompatibility import (
-    import_experimental_class as _import_experimental_class,
-)
 from ._check import check_var
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .normalization import Normalization
 
@@ -51,21 +49,15 @@ class Data(PyleecanClass):
         if type(value) is dict:
             for key, obj in value.items():
                 if type(obj) is dict:
-                    class_obj = _import_experimental_class(
-                        "pyleecan.Classes", obj.get("__class__"), "normalizations"
-                    )
+                    class_obj = import_class(obj.get("__class__"), "normalizations")
                     value[key] = _construct_experimental_class(class_obj, obj)
                 elif isinstance(
                     obj, (float, int, np.int32, np.int64, np.float32, np.float64)
                 ):
-                    NormRef = _import_experimental_class(
-                        "pyleecan.Classes", "NormRef", "normalizations"
-                    )
+                    NormRef = import_class("NormRef", "normalizations")
                     value[key] = NormRef(ref=obj)
                 elif isinstance(obj, (np.ndarray, list)):
-                    NormVector = _import_experimental_class(
-                        "pyleecan.Classes", "NormVector", "normalizations"
-                    )
+                    NormVector = import_class("NormVector", "normalizations")
                     value[key] = NormVector(vector=np.asarray(obj))
         if type(value) is int and value == -1:
             value = {}

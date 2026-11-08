@@ -10,7 +10,6 @@ from matplotlib.patches import Patch, Rectangle, Wedge
 from ..definitions import config_dict
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import BAR_LAB, WIND_LAB
-from ..Functions.load import import_class
 from ..Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     plot_quote,
 )
 from ._error import Lam_WindCheckError
+from ._import import import_class
 from .cond_type_21 import CondType21
 from .lam_slot import LamSlot
 from .lam_slot_wind import LamSlotWind
@@ -263,7 +263,7 @@ class LamSquirrelCage(LamSlotWind):
         """
 
         # Reuse method from Lamination instead of LamSlotWind since winding periodicity is given by lamination periodicity
-        Lamination = import_class("pyleecan.Classes", "Lamination")
+        Lamination = import_class("Lamination")
 
         per_a, is_antiper_a = Lamination.comp_periodicity_spatial(self)
 

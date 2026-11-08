@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from logging.config import dictConfig
 
 from ..loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .input import Input
 from .machine import Machine
@@ -184,8 +185,8 @@ class Simulation(PyleecanClass):
             Contains simulation results
         """
         # In-function import to avoid ImportError
-        from .xoutput import XOutput
-        from .output import Output
+        XOutput = import_class("XOutput")
+        Output = import_class("Output")
 
         if self.layer is None:
             self.layer = 0  # Top simulation

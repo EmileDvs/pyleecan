@@ -2,6 +2,8 @@ from importlib import import_module
 
 from numpy import array, expand_dims, int32, int64
 
+from ._error import CheckDimError, CheckMaxError, CheckMinError, CheckTypeError
+
 
 def set_array(obj, prop, value):
     """Set an array that can be None or a list
@@ -390,35 +392,3 @@ def check_dimensions(values, axes):
                     + ") do not match"
                 )
         return values
-
-
-class CheckDimError(Exception):
-    """ """
-
-
-class CheckError(Exception):
-    """ """
-
-
-class CheckMinError(CheckError):
-    """ """
-
-
-class CheckMaxError(CheckError):
-    """ """
-
-
-class CheckTypeError(CheckError):
-    """ """
-
-
-class InitUnKnowClassError(CheckError):
-    """ """
-
-
-class UnknowInitDictKeyError(CheckError):
-    """ """
-
-
-class NotADictError(CheckError):
-    """ """

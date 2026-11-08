@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ..Functions.Load.import_class import import_class
+from ._import import import_class
 from .opti_constraint import OptiConstraint
 from .opti_objective import OptiObjective
 from .opti_problem import OptiProblem
@@ -41,13 +41,11 @@ class VarOpti(VarParam):
     def check(self):
         """Check VarOpti parameters validity"""
 
-        Simu1 = import_class("pyleecan.Classes", "Simu1")
-        OptiDesignVarSet = import_class("pyleecan.Classes", "OptiDesignVarSet")
-        OptiBayesAlgSmoot = import_class("pyleecan.Classes", "OptiBayesAlgSmoot")
-        OptiGenAlgNsga2Deap = import_class("pyleecan.Classes", "OptiGenAlgNsga2Deap")
-        OptiDesignVarInterval = import_class(
-            "pyleecan.Classes", "OptiDesignVarInterval"
-        )
+        Simu1 = import_class("Simu1")
+        OptiDesignVarSet = import_class("OptiDesignVarSet")
+        OptiBayesAlgSmoot = import_class("OptiBayesAlgSmoot")
+        OptiGenAlgNsga2Deap = import_class("OptiGenAlgNsga2Deap")
+        OptiDesignVarInterval = import_class("OptiDesignVarInterval")
 
         # Check that VarOpti is always in the first layer of var_simu
         if not isinstance(self.parent, Simu1):

@@ -6,12 +6,11 @@ from typing import ClassVar
 
 import numpy as np
 
-from ..definitions import PACKAGE_NAME
 from ..Functions.Geometry.inter_circle_circle import inter_circle_circle
 from ..Functions.Geometry.inter_line_circle import inter_line_circle
 from ..Functions.init_fig import init_fig
-from ..Functions.Load.import_class import import_class as _pyleecan_import_class
 from ..Functions.Plot import TEXT_BOX
+from ._import import import_class
 from .line import Line
 from .segment import Segment
 
@@ -462,7 +461,7 @@ class Arc(Line):
         """
 
         # Dynamic import of Arc1 to prevent import loop from code generator
-        Arc1 = _pyleecan_import_class(PACKAGE_NAME + ".Classes", "Arc1")
+        Arc1 = import_class("Arc1")
 
         # Get the intersection point
         Z_int = self.intersect_line(Z1, Z2)

@@ -7,7 +7,7 @@ from typing import Any, Callable
 
 from ..definitions import PYTHON_DEFAULT_ENCODING
 from ..Functions.path_tools import abs_file_path
-from ._check import CheckTypeError
+from ._error import CheckTypeError
 from ._pyleecan_class import PyleecanClass
 
 

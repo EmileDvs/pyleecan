@@ -10,11 +10,11 @@ from matplotlib.patches import Patch
 from ..definitions import config_dict
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import BAR_LAB, WIND_LAB, decode_label
-from ..Functions.Load.import_class import import_class
 from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ..Functions.Winding.comp_cond_function import comp_cond_function
 from ..Functions.Winding.find_wind_phase_color import find_wind_phase_color
 from ..Functions.Winding.gen_phase_list import gen_name
+from ._import import import_class
 from .lam_slot import LamSlot
 from .lam_slot_multi import LamSlotMulti
 from .winding import Winding
@@ -131,7 +131,7 @@ class LamSlotMultiWind(LamSlotMulti):
         """
 
         # Call method of LamSlotWind
-        LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+        LamSlotWind = import_class("LamSlotWind")
 
         d_angle = LamSlotWind.comp_angle_d_axis(self, is_plot=is_plot)
 
@@ -161,7 +161,7 @@ class LamSlotMultiWind(LamSlotMulti):
         """
 
         # Call method of LamSlotWind
-        LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+        LamSlotWind = import_class("LamSlotWind")
 
         rot_dir = LamSlotWind.comp_mmf_dir(self, current_dir, phase_dir, is_plot)
 
@@ -196,7 +196,7 @@ class LamSlotMultiWind(LamSlotMulti):
         """
 
         # Call method of LamSlotWind
-        LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+        LamSlotWind = import_class("LamSlotWind")
 
         MMF_U, WF = LamSlotWind.comp_mmf_unit(
             self,
@@ -527,7 +527,7 @@ class LamSlotMultiWind(LamSlotMulti):
         """
 
         # Call method of LamSlotWind
-        LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+        LamSlotWind = import_class("LamSlotWind")
 
         LamSlotWind.plot_mmf_unit(
             self, r_max=r_max, fig=fig, save_path=save_path, is_show_fig=is_show_fig

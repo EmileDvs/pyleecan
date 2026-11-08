@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from math import ceil
 
-from ..definitions import PACKAGE_NAME, config_dict
+from ..definitions import config_dict
 from ..Functions.FEMM.get_FEMM_BC_propname import get_FEMM_BC_propname
 from ..Functions.FEMM.get_mesh_param import get_mesh_param
 from ..Functions.init_fig import init_fig
@@ -17,7 +17,7 @@ from ..Functions.labels import (
     YOKE_LAB,
     decode_label,
 )
-from ..Functions.Load.import_class import import_class as _pyleecan_import_class
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_2 import Arc2
@@ -387,7 +387,7 @@ class Surface(PyleecanClass):
         """
 
         # Dynamic import to avoid import loop
-        SurfLine = _pyleecan_import_class(PACKAGE_NAME + ".Classes", "SurfLine")
+        SurfLine = import_class("SurfLine")
 
         # Split all the lines of the surface
         lines = self.get_lines()

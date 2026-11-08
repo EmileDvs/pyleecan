@@ -8,8 +8,6 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..Functions.Load.import_class import import_class
-from ..Functions.Load.import_class import import_class as _pyleecan_import_class
 from ..Functions.SciDataTool import AxisError
 from ..Functions.SciDataTool.conversions import (
     cart2pol,
@@ -21,6 +19,7 @@ from ..Functions.SciDataTool.conversions import (
 from ..Functions.SciDataTool.Plot import REV_COMP_DICT
 from ..Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
 from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_nd import DataND
 
@@ -74,8 +73,8 @@ class VectorField(PyleecanClass):
             Vectorfield converted with new periodicities
         """
 
-        DataLinspace = import_class("pyleecan.Classes", "DataLinspace")
-        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+        DataLinspace = import_class("DataLinspace")
+        DataPattern = import_class("DataPattern")
 
         # Get axes list in original VectorField
         # Assumes axes are the following: time, angle, z and z is DataPattern or radius
@@ -337,7 +336,7 @@ class VectorField(PyleecanClass):
         """
 
         # Dynamic import to avoid loop
-        VectorField = _pyleecan_import_class("pyleecan.Classes", "VectorField")
+        VectorField = import_class("VectorField")
 
         comp_dict = {}
         for key, comp in self.components.items():
@@ -1425,7 +1424,7 @@ class VectorField(PyleecanClass):
         """
 
         # Dynamic import to avoid loop
-        VectorField = _pyleecan_import_class("pyleecan.Classes", "VectorField")
+        VectorField = import_class("VectorField")
 
         comp_dict = {}
 
@@ -1806,7 +1805,7 @@ class VectorField(PyleecanClass):
         """
 
         # Dynamic import to avoid import loop
-        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+        DataPattern = import_class("DataPattern")
 
         # Special case of quiver plot
         if type_plot == "quiver":
@@ -2484,7 +2483,7 @@ class VectorField(PyleecanClass):
         """
 
         # Dynamic import to avoid loop
-        VectorField = _pyleecan_import_class("pyleecan.Classes", "VectorField")
+        VectorField = import_class("VectorField")
 
         comp_dict = {}
         for key, comp in self.components.items():
@@ -2505,7 +2504,7 @@ class VectorField(PyleecanClass):
         """
 
         # Dynamic import to avoid loop
-        VectorField = _pyleecan_import_class("pyleecan.Classes", "VectorField")
+        VectorField = import_class("VectorField")
 
         if (
             "radial" in self.components
@@ -2563,7 +2562,7 @@ class VectorField(PyleecanClass):
         """
 
         # Dynamic import to avoid loop
-        VectorField = _pyleecan_import_class("pyleecan.Classes", "VectorField")
+        VectorField = import_class("VectorField")
 
         if "comp_x" in self.components or "comp_y" in self.components:
             return self.copy()

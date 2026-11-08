@@ -11,8 +11,8 @@ from ..definitions import config_dict
 from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
-from ..Functions.Load.import_class import import_class
 from ._error import ParentMissingError
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .material import Material
 
@@ -147,7 +147,7 @@ class Hole(PyleecanClass):
     # Inlined from Methods.Slot.Hole.convert_to_UD
     def convert_to_UD(self):
         """Convert the hole to HoleUD"""
-        HoleUD = import_class("pyleecan.Classes", "HoleUD")
+        HoleUD = import_class("HoleUD")
         surf_list = self.build_geometry()
         magnet_dict = self.get_magnet_dict()
         magnetization_dict = self.comp_magnetization_dict()

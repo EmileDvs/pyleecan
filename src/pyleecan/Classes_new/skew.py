@@ -6,9 +6,9 @@ from typing import Any, Callable
 
 import numpy as np
 
-from ..Functions.load import import_class
 from ..Functions.Plot import dict_2D
 from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
@@ -291,8 +291,8 @@ class Skew(PyleecanClass):
         y_list = [[a * 180 / np.pi for a in angle_list]]
         linestyle_list = ["solid"]
 
-        LamSlotM = import_class("pyleecan.Classes", "LamSlotM")
-        LamH = import_class("pyleecan.Classes", "LamH")
+        LamSlotM = import_class("LamSlotM")
+        LamH = import_class("LamH")
 
         if isinstance(self.parent, (LamSlotM, LamH)):
             legend_list.append("Rotor d-axis")

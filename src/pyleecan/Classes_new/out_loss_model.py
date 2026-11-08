@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 
-from ..Functions.Load.import_class import import_class
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_freq import DataFreq
 from .mesh_solution import MeshSolution
@@ -82,7 +82,7 @@ class OutLossModel(PyleecanClass):
             other_group = other["group"]
             other_name = other["name"]
 
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
+        OutLossModel = import_class("OutLossModel")
         new_loss_density = self.loss_density + other_loss_density
         new_coeff_dict = self.coeff_dict.copy()
         for key, value in other_coeff_dict.items():
@@ -128,7 +128,7 @@ class OutLossModel(PyleecanClass):
             other_name = other["name"]
             other_group = other["group"]
 
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
+        OutLossModel = import_class("OutLossModel")
         new_loss_density = self.loss_density + other_loss_density
         new_coeff_dict = self.coeff_dict.copy()
         for key, value in other_coeff_dict.items():
@@ -175,7 +175,7 @@ class OutLossModel(PyleecanClass):
             other_group = other["group"]
             other_name = other["name"]
 
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
+        OutLossModel = import_class("OutLossModel")
         new_loss_density = other_loss_density - self.loss_density
         new_coeff_dict = other_coeff_dict.copy()
         for key, value in self.coeff_dict.items():
@@ -221,7 +221,7 @@ class OutLossModel(PyleecanClass):
             other_group = other["group"]
             other_name = other["name"]
 
-        OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
+        OutLossModel = import_class("OutLossModel")
         new_loss_density = self.loss_density - other_loss_density
         new_coeff_dict = self.coeff_dict.copy()
         for key, value in other_coeff_dict.items():

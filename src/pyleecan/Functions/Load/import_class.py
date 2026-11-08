@@ -3,11 +3,13 @@ from importlib import import_module
 from ...Classes._check import InitUnKnowClassError
 
 
-def import_class(mod_name, class_name, prop_name=""):
-    """Dynamical import of a class (for init_dict=class.as_dict())"""
+def import_class(mod_name, class_name, prop_name="", *, module_name=None):
+    """Dynamically import a class, optionally specifying its module name."""
 
     try:
-        module = import_module(mod_name + "." + class_name)
+        module = import_module(
+            mod_name + "." + (class_name if module_name is None else module_name)
+        )
         return getattr(module, class_name)
     except Exception:
         if prop_name != "":

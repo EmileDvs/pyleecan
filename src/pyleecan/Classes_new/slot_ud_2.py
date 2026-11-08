@@ -4,9 +4,9 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..Functions.Load.import_class import import_class
 from ._check import check_var
 from ._error import SlotCheckError
+from ._import import import_class
 from .line import Line
 from .slot import Slot
 from .surface import Surface
@@ -50,9 +50,7 @@ class SlotUD2(Slot):
                     for ii, obj in enumerate(obj_list):
                         if type(obj) is dict and "__class__" in obj:
                             class_obj = import_class(
-                                "pyleecan.Classes",
-                                obj["__class__"],
-                                "split_active_surf_dict",
+                                obj["__class__"], "split_active_surf_dict"
                             )
                             value[key][ii] = class_obj(init_dict=obj)
         if value == -1:

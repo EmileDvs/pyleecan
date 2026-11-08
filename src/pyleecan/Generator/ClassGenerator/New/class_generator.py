@@ -4,6 +4,7 @@ import re
 import subprocess
 import tempfile
 import warnings
+from functools import lru_cache
 from keyword import iskeyword
 from os.path import basename, dirname, isfile, join
 from textwrap import indent
@@ -132,6 +133,9 @@ CLASS_STATIC_METHOD_HELPERS = {
     "MagElmer": {"_get_BP_dict"},
     "StructElmer": {"_get_BP_dict", "_execute"},
 }
+EXPERIMENTAL_LOCAL_METHOD_IMPORTS = {
+    ("VarSimu", "set_reused_data", "Classes.ElecLUTdq", "ElecLUTdq"),
+}
 CLASS_MODULE_CLASS_DEFINITIONS = {
     "Section": ("Elmer.Section", ("File", "Variable", "MATC")),
     "StructElmer": ("Simulation.StructElmer", ("ElmerProcessError",)),
@@ -208,6 +212,15 @@ def _get_exception_classes(module):
         return False
 
     return {name: node for name, node in classes.items() if is_exception_class(node)}
+
+
+@lru_cache(maxsize=1)
+def _check_error_definitions():
+    """Read the legacy validation exception hierarchy for experimental output."""
+    root = dirname(dirname(dirname(dirname(__file__))))
+    with open(join(root, "Classes", "_check.py"), encoding="utf-8") as check_file:
+        module = ast.parse(check_file.read())
+    return _get_exception_classes(module)
 
 
 def _get_error_class_fingerprint(
@@ -392,10 +405,11 @@ def _shared_error_name(origin):
 
 
 def _write_shared_errors(path_to_gen, definitions, source_path=None):
-    """Generate source-identified shared exceptions in dependency order."""
+    """Generate shared exceptions alphabetically, after their base classes."""
     source_path = source_path or path_to_gen
     dependencies = {}
     names = {}
+    check_errors = _check_error_definitions()
     for origin in sorted(definitions):
         name = _shared_error_name(origin)
         if name in names:
@@ -403,7 +417,7 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
                 f"Shared exception name {name!r} has different sources: "
                 f"{names[name]!r} and {origin!r}"
             )
-        if name in {"NotImplementedYetError", "ParentMissingError"}:
+        if name in CLASS_ERROR_NAMES or name in check_errors:
             raise ValueError(f"Shared exception name {name!r} is already defined")
         names[name] = origin
     for origin, definition in definitions.items():
@@ -428,43 +442,34 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
                     )
         dependencies[origin] = bases
 
-    pending = dict(definitions)
-    chunks = [
-        '"""Generated shared exception classes; do not edit by hand."""\n\n\n',
-        (
-            "class NotImplementedYetError(Exception):\n"
-            '    """NotImplementedYetError"""\n\n\n'
-        ),
-        (
-            "class ParentMissingError(Exception):\n"
-            '    """ParentMissingError"""\n\n\n'
-        ),
-    ]
-    while pending:
-        ready = sorted(
-            origin for origin in pending
-            if all(base not in pending for base in dependencies[origin].values())
-        )
-        if not ready:
-            raise ValueError(f"Circular shared exception dependencies: {sorted(pending)!r}")
-        for origin in ready:
-            definition = ast.parse(ast.unparse(pending.pop(origin))).body[0]
-            definition.name = _shared_error_name(origin)
-            for index, base in enumerate(definition.bases):
-                if isinstance(base, ast.Name) and base.id in dependencies[origin]:
-                    definition.bases[index] = ast.Name(
-                        id=_shared_error_name(dependencies[origin][base.id]),
-                        ctx=ast.Load(),
-                    )
-            if (
-                len(definition.body) == 2
-                and isinstance(definition.body[0], ast.Expr)
-                and isinstance(definition.body[0].value, ast.Constant)
-                and isinstance(definition.body[0].value.value, str)
-                and isinstance(definition.body[1], ast.Pass)
-            ):
-                definition.body.pop()
-            chunks.append(ast.unparse(definition) + "\n\n\n")
+    all_definitions = ast.parse(
+        'class NotImplementedYetError(Exception):\n'
+        '    """NotImplementedYetError"""\n\n'
+        'class ParentMissingError(Exception):\n'
+        '    """ParentMissingError"""\n'
+    ).body
+    all_definitions.extend(check_errors.values())
+    for origin, source_definition in definitions.items():
+        definition = ast.parse(ast.unparse(source_definition)).body[0]
+        definition.name = _shared_error_name(origin)
+        for index, base in enumerate(definition.bases):
+            if isinstance(base, ast.Name) and base.id in dependencies[origin]:
+                definition.bases[index] = ast.Name(
+                    id=_shared_error_name(dependencies[origin][base.id]),
+                    ctx=ast.Load(),
+                )
+        if (
+            len(definition.body) == 2
+            and isinstance(definition.body[0], ast.Expr)
+            and isinstance(definition.body[0].value, ast.Constant)
+            and isinstance(definition.body[0].value.value, str)
+            and isinstance(definition.body[1], ast.Pass)
+        ):
+            definition.body.pop()
+        all_definitions.append(definition)
+    chunks = ['"""Generated shared exception classes; do not edit by hand."""\n\n\n']
+    for definition in _sort_error_class_definitions(all_definitions):
+        chunks.append(ast.unparse(definition) + "\n\n\n")
     source = "".join(chunks).rstrip() + "\n"
     ast.parse(source, filename=join(path_to_gen, "_error.py"))
     if definitions:
@@ -1459,6 +1464,7 @@ def _get_method_source(
     } - hoisted_names
     target_package = [soft_name, "Classes"]
     method_imports = []
+    local_method_imports = []
     import_used_names = used_names | extra_used_names
     renamed_method_names = {}
     method_call_redirects = {}
@@ -1554,7 +1560,16 @@ def _get_method_source(
                 else absolute_module_parts
             )
             redirected_aliases = {}
+            local_aliases = []
             for alias in aliases:
+                if by_origin and (
+                    class_name,
+                    meth,
+                    redirect_module,
+                    alias.name,
+                ) in EXPERIMENTAL_LOCAL_METHOD_IMPORTS:
+                    local_aliases.append(alias)
+                    continue
                 method_call_redirect = METHOD_CALL_REDIRECTS.get(
                     (class_name, redirect_module, alias.name)
                 )
@@ -1569,6 +1584,15 @@ def _get_method_source(
                 if target_class is not None:
                     target_module = soft_name + ".Classes." + target_class
                     redirected_aliases.setdefault(target_module, []).append(alias)
+            if local_aliases:
+                local_method_imports.append(
+                    ast.ImportFrom(
+                        module=".".join(absolute_module_parts),
+                        names=local_aliases,
+                        level=0,
+                    )
+                )
+                aliases = [alias for alias in aliases if alias not in local_aliases]
             for target_module, target_aliases in redirected_aliases.items():
                 if (
                     target_module != soft_name + ".Classes." + class_name
@@ -1675,6 +1699,25 @@ def _get_method_source(
         method_source, method_body_imports, start_line, method_node
     )
     method_source = _resolve_method_relative_imports(method_source, source_package)
+    if local_method_imports:
+        method_tree = ast.parse(method_source)
+        function = next(
+            node
+            for node in method_tree.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        )
+        docstring = ast.get_docstring(function)
+        first_statement = function.body[1] if docstring is not None else function.body[0]
+        lines = method_source.splitlines(keepends=True)
+        indentation = " " * first_statement.col_offset
+        lines.insert(
+            first_statement.lineno - 1,
+            "".join(
+                indentation + ast.unparse(node) + "\n"
+                for node in local_method_imports
+            ) + "\n",
+        )
+        method_source = "".join(lines)
     method_source = _rename_method_references(method_source, renamed_method_names)
     method_source = _rewrite_method_call_targets(method_source, method_call_redirects)
     method_helper_names = inline_helper_names.difference(method_local_names)
@@ -2396,7 +2439,11 @@ def _get_absolute_import_module(import_node, target_package):
 def _apply_import_style(source, soft_name, import_style, class_package="Classes"):
     """Apply the configured Pyleecan import style without rewriting other code."""
     target_package = [soft_name, class_package]
-    lines = source.splitlines()
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
     replacements = []
 
     for node in ast.walk(ast.parse(source)):
@@ -2432,15 +2479,13 @@ def _apply_import_style(source, soft_name, import_style, class_package="Classes"
         else:
             continue
 
-        start = node.lineno - 1
-        end = node.end_lineno - 1
-        prefix = lines[start][: node.col_offset]
-        suffix = lines[end][node.end_col_offset :]
-        replacements.append((start, end, prefix + ast.unparse(replacement) + suffix))
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, ast.unparse(replacement).encode("utf-8")))
 
-    for start, end, replacement in reversed(replacements):
-        lines[start : end + 1] = [replacement]
-    return "\n".join(lines) + ("\n" if source.endswith("\n") else "")
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
 
 
 def _redirect_experimental_class_imports(source, soft_name, gen_dict):
@@ -2493,6 +2538,28 @@ def _redirect_experimental_class_imports(source, soft_name, gen_dict):
             replacement = ("\n" + " " * node.col_offset).join(
                 ast.unparse(import_node) for import_node in imports
             )
+        elif node.module == prefix + "_check":
+            error_names = _check_error_definitions()
+            error_aliases = [alias for alias in node.names if alias.name in error_names]
+            check_aliases = [alias for alias in node.names if alias.name not in error_names]
+            imports = []
+            if error_aliases:
+                imports.append(
+                    ast.ImportFrom(
+                        module=f"{soft_name}.Classes_new._error",
+                        names=error_aliases,
+                        level=0,
+                    )
+                )
+            if check_aliases:
+                imports.append(
+                    ast.ImportFrom(
+                        module=f"{soft_name}.Classes_new._check",
+                        names=check_aliases,
+                        level=0,
+                    )
+                )
+            replacement = ("; ").join(ast.unparse(item) for item in imports)
         elif node.module.startswith(prefix) and (
             node.module[len(prefix) :] in gen_dict
             or node.module[len(prefix) :] in ("_check", "_FEMMHandler")
@@ -2518,6 +2585,234 @@ def _redirect_experimental_class_imports(source, soft_name, gen_dict):
     for start, end, replacement in sorted(replacements, reverse=True):
         source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
     return source_bytes.decode("utf-8")
+
+
+def _replace_local_experimental_class_imports(source, soft_name, gen_dict):
+    """Load method-local generated classes through the shared import helper."""
+    tree = ast.parse(source)
+    class_modules = {
+        class_module_name(name): NORMALIZATION_CLASS_NAMES.get(name, name)
+        for name in gen_dict
+    }
+    used_names = {
+        node.id for node in ast.walk(tree) if isinstance(node, ast.Name)
+    }
+    used_names.update(node.arg for node in ast.walk(tree) if isinstance(node, ast.arg))
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            used_names.add(node.name)
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            used_names.update(
+                alias.asname or alias.name.split(".")[0] for alias in node.names
+            )
+    helper = "import_class"
+    if helper in used_names:
+        helper = "_pyleecan_local_import_class"
+    while helper in used_names:
+        helper += "_"
+    prefix = soft_name + ".Classes_new."
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+
+    class LocalImportVisitor(ast.NodeVisitor):
+        def __init__(self):
+            self.depth = 0
+
+        def visit_FunctionDef(self, node):
+            self.depth += 1
+            self.generic_visit(node)
+            self.depth -= 1
+
+        visit_AsyncFunctionDef = visit_FunctionDef
+
+        def visit_ImportFrom(self, node):
+            if not self.depth or node.level or not node.module:
+                return
+            if not node.module.startswith(prefix):
+                return
+            module_name = node.module[len(prefix):]
+            class_name = class_modules.get(module_name)
+            matching = [alias for alias in node.names if alias.name == class_name]
+            if not matching:
+                return
+            statements = []
+            for alias in node.names:
+                if alias.name != class_name:
+                    statements.append(
+                        ast.unparse(
+                            ast.ImportFrom(module=node.module, names=[alias], level=0)
+                        )
+                    )
+                else:
+                    statements.append(
+                        f"{alias.asname or alias.name} = {helper}({class_name!r})"
+                    )
+            start = offsets[node.lineno - 1] + node.col_offset
+            end = offsets[node.end_lineno - 1] + node.end_col_offset
+            replacements.append((start, end, "; ".join(statements).encode("utf-8")))
+
+    LocalImportVisitor().visit(tree)
+    if not replacements:
+        return source
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    source = encoded.decode("utf-8")
+    lines = source.splitlines(keepends=True)
+    index = tree.body[0].end_lineno if ast.get_docstring(tree) is not None else 0
+    for node in tree.body:
+        if isinstance(node, ast.ImportFrom) and node.module == "__future__":
+            index = node.end_lineno
+    lines.insert(
+        index,
+        f"\nfrom {soft_name}.Classes_new._import import import_class"
+        + (f" as {helper}" if helper != "import_class" else "")
+        + "\n",
+    )
+    return "".join(lines)
+
+
+def _redirect_experimental_loader_imports(source, soft_name):
+    """Redirect legacy class loaders and simplify their generated calls."""
+    tree = ast.parse(source)
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+    loader_modules = {
+        soft_name + ".Functions.Load.import_class",
+        soft_name + ".Functions.load",
+        soft_name + ".Classes_new._import",
+    }
+    retrocompat_module = soft_name + ".Functions.Load.retrocompatibility"
+
+    def is_loader(node, alias):
+        return (
+            node.module in loader_modules and alias.name == "import_class"
+            or node.module == retrocompat_module
+            and alias.name == "import_experimental_class"
+        )
+
+    bindings = set()
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.ImportFrom)
+            and node.level == 0
+            and node.module in loader_modules | {retrocompat_module}
+        ):
+            bindings.update(
+                alias.asname or alias.name
+                for alias in node.names if is_loader(node, alias)
+            )
+    can_use_plain = not any(
+        isinstance(node, ast.Name) and node.id == "import_class"
+        and isinstance(node.ctx, (ast.Store, ast.Del))
+        or isinstance(node, ast.arg) and node.arg == "import_class"
+        or isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+        and node.name == "import_class"
+        or isinstance(node, (ast.Import, ast.ImportFrom))
+        and any(
+            (alias.asname or alias.name.split(".")[0]) == "import_class"
+            and not (
+                isinstance(node, ast.ImportFrom)
+                and node.level == 0 and is_loader(node, alias)
+            )
+            for alias in node.names
+        )
+        for node in ast.walk(tree)
+    )
+    if any(
+        isinstance(node, ast.Name) and node.id in bindings - {"import_class"}
+        and isinstance(node.ctx, (ast.Store, ast.Del))
+        or isinstance(node, ast.arg) and node.arg in bindings - {"import_class"}
+        or isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+        and node.name in bindings - {"import_class"}
+        for node in ast.walk(tree)
+    ):
+        can_use_plain = False
+    rewritten_functions = set()
+    for node in ast.walk(tree):
+        if not (
+            isinstance(node, ast.ImportFrom)
+            and node.level == 0
+            and node.module in loader_modules | {retrocompat_module}
+        ):
+            continue
+        if not any(is_loader(node, alias) for alias in node.names):
+            continue
+        imports = []
+        for alias in node.names:
+            module = (
+                soft_name + ".Classes_new._import"
+                if is_loader(node, alias) else node.module
+            )
+            new_alias = ast.alias(
+                name="import_class" if is_loader(node, alias) else alias.name,
+                asname=(
+                    None if is_loader(node, alias) and can_use_plain
+                    else (alias.asname or alias.name)
+                    if is_loader(node, alias) and alias.name != "import_class"
+                    else alias.asname
+                ),
+            )
+            imports.append(ast.unparse(
+                ast.ImportFrom(module=module, names=[new_alias], level=0)
+            ))
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, "; ".join(imports).encode("utf-8")))
+    for node in ast.walk(tree):
+        if not (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id in bindings
+        ):
+            continue
+        if len(node.args) < 2:
+            continue
+        package = node.args[0]
+        is_package = (
+            isinstance(package, ast.Constant)
+            and package.value in (soft_name + ".Classes", soft_name + ".Classes_new")
+            or isinstance(package, ast.BinOp)
+            and isinstance(package.op, ast.Add)
+            and isinstance(package.left, ast.Name)
+            and package.left.id == "PACKAGE_NAME"
+            and isinstance(package.right, ast.Constant)
+            and package.right.value == ".Classes"
+        )
+        if not is_package:
+            raise ValueError(f"Unsupported experimental class loader call: {ast.unparse(node)}")
+        if node.keywords:
+            raise ValueError(f"Unsupported experimental class loader call: {ast.unparse(node)}")
+        call = ast.Call(
+            func=ast.Name(id="import_class" if can_use_plain else node.func.id, ctx=ast.Load()),
+            args=node.args[1:],
+            keywords=[],
+        )
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, ast.unparse(call).encode("utf-8")))
+        rewritten_functions.add(id(node.func))
+    if can_use_plain:
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Name) and node.id in bindings
+                and node.id != "import_class"
+                and isinstance(node.ctx, ast.Load)
+                and id(node) not in rewritten_functions
+            ):
+                start = offsets[node.lineno - 1] + node.col_offset
+                end = offsets[node.end_lineno - 1] + node.end_col_offset
+                replacements.append((start, end, b"import_class"))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
 
 
 def _remove_experimental_self_imports(source, soft_name, class_name, output_name):
@@ -4957,6 +5252,8 @@ def _generate_dataclass_class(
     source = _remove_redundant_experimental_class_imports(source, soft_name, gen_dict)
     source = _rename_experimental_normalizations(source, soft_name)
     source = _postpone_experimental_self_annotations(source, generated_name)
+    source = _replace_local_experimental_class_imports(source, soft_name, gen_dict)
+    source = _redirect_experimental_loader_imports(source, soft_name)
     source = _apply_import_style(source, soft_name, import_style, "Classes_new")
     source = _organize_header_imports(source, generated_name, class_path)
     source = _regroup_pyleecan_imports(source, generated_name, class_path)

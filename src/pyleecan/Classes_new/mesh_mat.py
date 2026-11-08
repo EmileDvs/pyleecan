@@ -13,6 +13,7 @@ import pyvista as pv
 
 from ..definitions import RESULT_DIR
 from ..Functions.GUI.log_error import log_error
+from ._import import import_class
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg
 from .mesh import Mesh
@@ -178,7 +179,7 @@ class MeshMat(Mesh):
             return new_mesh
 
         # Avoiding circular import
-        from .mesh_vtk import MeshVTK
+        MeshVTK = import_class("MeshVTK")
 
         elements_ = []
         element_types = []

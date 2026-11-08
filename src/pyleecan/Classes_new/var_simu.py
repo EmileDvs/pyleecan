@@ -7,7 +7,6 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..Functions.Load.import_class import import_class
 from ..Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
@@ -15,9 +14,9 @@ from ..Functions.Simulation.VarSimu.log_datakeeper_step_result import (
     log_datakeeper_step_result,
 )
 from ..Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_keeper import DataKeeper
-from .elec_lut_dq import ElecLUTdq
 from .mag_femm import MagFEMM
 from .post import Post
 
@@ -99,7 +98,7 @@ class VarSimu(PyleecanClass):
                 "VarSimu is an abstract class, please create one of its daughters."
             )
 
-        Simulation = import_class("pyleecan.Classes", "Simulation")
+        Simulation = import_class("Simulation")
         # Check for simulation or VarSimu
         if self.parent is None or not isinstance(self.parent, Simulation):
             raise self.VarSimuError("VarSimu object must be inside a Simulation object")
@@ -114,7 +113,7 @@ class VarSimu(PyleecanClass):
         # For multi-simulation of multi-simulation (different DataKeepe<r)
         is_multi = ref_simu.var_simu is not None
         # Dynamic import to avoid loop
-        InputCurrent = import_class("pyleecan.Classes", "InputCurrent", "")
+        InputCurrent = import_class("InputCurrent", "")
 
         # Save speed
         if not is_multi and "N0" not in symbol_list:
@@ -359,7 +358,7 @@ class VarSimu(PyleecanClass):
         """
 
         logger = self.get_logger()
-        Output = import_class("pyleecan.Classes", "Output")
+        Output = import_class("Output")
 
         # Check var_simu parameters
         self.check_param()  # Check isinstance(self.parent, Simulation)
@@ -517,8 +516,8 @@ class VarSimu(PyleecanClass):
             msg = "    "
         else:
             msg = ""
-        InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
-        InputVoltage = import_class("pyleecan.Classes", "InputVoltage")
+        InputCurrent = import_class("InputCurrent")
+        InputVoltage = import_class("InputVoltage")
         msg += "Running simulation " + str(index + 1) + "/" + str(nb_simu) + " with "
         for param_exp in paramexplorer_list:
             value = param_exp.get_value()[index]
@@ -591,6 +590,8 @@ class VarSimu(PyleecanClass):
         simu_type : str
             Name of the multi-simulation kind
         """
+
+        ElecLUTdq = import_class("ElecLUTdq")
 
         if simu.layer == 2:
             TAB = "    "

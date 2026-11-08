@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 
-from ..Functions.Load.import_class import import_class
+from ._import import import_class
 from .xoutput import XOutput
 
 
@@ -110,12 +110,12 @@ class LUT(XOutput):
         """
 
         # Dynamic import to avoid loop
-        Simu1 = import_class("pyleecan.Classes", "Simu1")
-        InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
-        VarLoadCurrent = import_class("pyleecan.Classes", "VarLoadCurrent")
-        OPdq = import_class("pyleecan.Classes", "OPdq")
-        MagFEMM = import_class("pyleecan.Classes", "MagFEMM")
-        PostLUT = import_class("pyleecan.Classes", "PostLUT")
+        Simu1 = import_class("Simu1")
+        InputCurrent = import_class("InputCurrent")
+        VarLoadCurrent = import_class("VarLoadCurrent")
+        OPdq = import_class("OPdq")
+        MagFEMM = import_class("MagFEMM")
+        PostLUT = import_class("PostLUT")
 
         if name is None:
             name = "comp_LUT_" + machine.name

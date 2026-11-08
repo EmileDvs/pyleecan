@@ -10,8 +10,6 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..Functions.Load.import_class import import_class
-from ..Functions.Load.import_class import import_class as _pyleecan_import_class
 from ..Functions.SciDataTool import (
     AxisError,
     NormError,
@@ -75,6 +73,7 @@ from ..Functions.SciDataTool.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 from ._check import check_dimensions, check_var
+from ._import import import_class
 from .data import Data
 from .data_1d import Data1D
 from .norm_indices import NormIndices
@@ -771,13 +770,13 @@ class DataND(Data):
 
         """
 
-        DataLinspace = import_class("pyleecan.Classes", "DataLinspace")
-        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+        DataLinspace = import_class("DataLinspace")
+        DataPattern = import_class("DataPattern")
 
         if is_waveform:
-            DataClass = import_class("pyleecan.Classes", "DataTime")
+            DataClass = import_class("DataTime")
         else:
-            DataClass = import_class("pyleecan.Classes", "DataFreq")
+            DataClass = import_class("DataFreq")
 
         # Get axes list
         axes_list = self.get_axes()
@@ -1166,7 +1165,7 @@ class DataND(Data):
         # If args not specified, write only oneperiod/pattern
         if args == tuple():
             # Dynamic import to avoid loop
-            DataPattern = _pyleecan_import_class("pyleecan.Classes", "DataPattern")
+            DataPattern = import_class("DataPattern")
             arg_list = []
             for axis in self.get_axes():
                 if isinstance(axis, DataPattern):
@@ -1419,9 +1418,9 @@ class DataND(Data):
             theoretical frequencies
         """
 
-        DataFreq = _pyleecan_import_class("pyleecan.Classes", "DataFreq")
+        DataFreq = import_class("DataFreq")
 
-        DataPattern = _pyleecan_import_class("pyleecan.Classes", "DataPattern")
+        DataPattern = import_class("DataPattern")
 
         if len(axes_list_filt) == 0 or len(arg_list) == 0:
             # Get fft along frequency axis (keep other axes)
@@ -1733,7 +1732,7 @@ class DataND(Data):
             Data_type = "DataND"
 
         # Dynamic import to avoid loop
-        DataClass = _pyleecan_import_class("pyleecan.Classes", Data_type)
+        DataClass = import_class(Data_type)
 
         for axis_name in axes_name_new:
             if not isinstance(results[axis_name], str):
@@ -2406,7 +2405,7 @@ class DataND(Data):
         """
 
         # Dynamic import to avoid import loop
-        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+        DataPattern = import_class("DataPattern")
 
         # Extract arg_list it the function called from another script with *arg_list
         if len(arg_list) == 1 and type(arg_list[0]) == tuple:
@@ -3160,7 +3159,7 @@ class DataND(Data):
             frames displayed per second
         """
         # Relative import of DataPattern to prevent circular import
-        DataPattern = _pyleecan_import_class("pyleecan.Classes", "DataPattern")
+        DataPattern = import_class("DataPattern")
 
         # Making sure that we have the right argument for a plot2D
         plot_options = param_dict.copy()
@@ -3361,7 +3360,7 @@ class DataND(Data):
         """
 
         # Dynamic import to avoid import loop
-        DataPattern = import_class("pyleecan.Classes", "DataPattern")
+        DataPattern = import_class("DataPattern")
 
         if len(arg_list) == 1 and type(arg_list[0]) == tuple:
             arg_list = arg_list[0]  # if called from another script with *arg_list
@@ -4003,7 +4002,7 @@ class DataND(Data):
         """
 
         # Relative import of DataPattern to prevent circular import
-        DataPattern = _pyleecan_import_class("pyleecan.Classes", "DataPattern")
+        DataPattern = import_class("DataPattern")
 
         # Making sure that we have the right argument for a plot3D
         plot_options = param_dict.copy()

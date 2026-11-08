@@ -9,10 +9,10 @@ import numpy as np
 from scipy.io import savemat
 
 from ..definitions import RESULT_DIR, config_dict
-from ..Functions.Load.import_class import import_class
 from ..Functions.Plot import fft_dict
 from ..Functions.Plot.Pyvista.configure_plot import configure_plot
 from ..Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .norm_affine import NormAffine
 from .norm_vector import NormVector
@@ -813,7 +813,7 @@ class Output(PyleecanClass):
         for _ in range(tab_level):
             tab += "    "
 
-        Output = import_class("pyleecan.Classes", "Output")
+        Output = import_class("Output")
         if type(self) is Output:
             mem_str = tab + "Total Output size: " + str(getsizeof(self)) + " o\n"
         else:  # XOutput (print only the Output part of the size)

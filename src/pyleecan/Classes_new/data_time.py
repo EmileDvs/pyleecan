@@ -3,8 +3,8 @@
 
 from dataclasses import dataclass
 
-from ..Functions.Load.import_class import import_class as _pyleecan_import_class
 from ..Functions.SciDataTool import AxisError
+from ._import import import_class
 from .data_1d import Data1D
 from .data_nd import DataND
 
@@ -30,8 +30,8 @@ class DataTime(DataND):
         """
 
         # Dynamic import to avoid loop
-        DataFreq = _pyleecan_import_class("pyleecan.Classes", "DataFreq")
-        DataPattern = _pyleecan_import_class("pyleecan.Classes", "DataPattern")
+        DataFreq = import_class("DataFreq")
+        DataPattern = import_class("DataPattern")
 
         axes_str = []
         for i, axis in enumerate(self.axes):
@@ -109,7 +109,7 @@ class DataTime(DataND):
         """
 
         # Dynamic import to avoid loop
-        DataDual = _pyleecan_import_class("pyleecan.Classes", "DataDual")
+        DataDual = import_class("DataDual")
 
         # Fill DataDual object with time/space data
         datadual = DataDual(

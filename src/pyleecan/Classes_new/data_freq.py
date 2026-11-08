@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..Functions.Load.import_class import import_class as _pyleecan_import_class
 from ..Functions.SciDataTool import AxisError
 from ..Functions.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
@@ -13,6 +12,7 @@ from ..Functions.SciDataTool.sum_convolution import (
     get_sum_amplitudes,
     get_sum_indices,
 )
+from ._import import import_class
 from .data_1d import Data1D
 from .data_nd import DataND
 
@@ -136,8 +136,8 @@ class DataFreq(DataND):
         """
 
         # Dynamic import to avoid loop
-        DataTime = _pyleecan_import_class("pyleecan.Classes", "DataTime")
-        DataPattern = _pyleecan_import_class("pyleecan.Classes", "DataPattern")
+        DataTime = import_class("DataTime")
+        DataPattern = import_class("DataPattern")
 
         axes_str = []
         for i, axis in enumerate(self.axes):
@@ -298,7 +298,7 @@ class DataFreq(DataND):
         """
 
         # Dynamic import to avoid loop
-        DataDual = _pyleecan_import_class("pyleecan.Classes", "DataDual")
+        DataDual = import_class("DataDual")
 
         # Fill DataDual object with fourier data
         datadual = DataDual(

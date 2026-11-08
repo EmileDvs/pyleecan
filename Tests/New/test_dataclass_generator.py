@@ -387,6 +387,22 @@ def test_real_shared_exception_hierarchy(generator_environment, tmp_path, monkey
     )
     class_generator._write_shared_errors(str(tmp_path), definitions, source_path=source)
     original = (tmp_path / "_error.py").read_text(encoding="utf-8")
+    remaining = {
+        node.name: node for node in ast.parse(original).body
+        if isinstance(node, ast.ClassDef)
+    }
+    for definition in [
+        node for node in ast.parse(original).body if isinstance(node, ast.ClassDef)
+    ]:
+        ready = sorted(
+            name for name, node in remaining.items()
+            if not any(
+                isinstance(base, ast.Name) and base.id in remaining
+                for base in node.bases
+            )
+        )
+        assert definition.name == ready[0]
+        del remaining[definition.name]
     class_generator._write_shared_errors(
         str(tmp_path), dict(reversed(list(definitions.items()))), source_path=source
     )
@@ -403,6 +419,80 @@ def test_real_shared_exception_hierarchy(generator_environment, tmp_path, monkey
     )
     assert issubclass(module.SlotCheckError, module.LaminationCheckError)
     assert issubclass(module.LaminationCheckError, module.MachineCheckError)
+
+
+def test_check_exceptions_are_shared_and_preserve_validation_behavior(tmp_path):
+    from pyleecan.Classes_new import _check, _error
+
+    definitions = class_generator._check_error_definitions()
+    class_generator._write_shared_errors(str(tmp_path), {})
+    tree = ast.parse((tmp_path / "_error.py").read_text(encoding="utf-8"))
+    generated = {
+        node.name: node for node in tree.body if isinstance(node, ast.ClassDef)
+    }
+    assert set(definitions) <= set(generated)
+    for name, definition in definitions.items():
+        assert ast.dump(generated[name]) == ast.dump(definition)
+    assert not any(
+        isinstance(node, ast.ClassDef) and node.name in definitions
+        for node in ast.parse(Path(_check.__file__).read_text(encoding="utf-8")).body
+    )
+    for name in definitions:
+        instance = getattr(_error, name)("test")
+        assert type(pickle.loads(pickle.dumps(instance))) is type(instance)
+    assert issubclass(_error.CheckTypeError, _error.CheckError)
+    assert issubclass(_error.CheckMinError, _error.CheckError)
+    assert issubclass(_error.CheckMaxError, _error.CheckError)
+    with pytest.raises(_error.CheckTypeError):
+        _check.check_var("value", "wrong", "int")
+    with pytest.raises(_error.CheckMinError):
+        _check.check_var("value", -1, "int", Vmin=0)
+    with pytest.raises(_error.CheckMaxError):
+        _check.check_var("value", 2, "int", Vmax=1)
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+@pytest.mark.parametrize("class_name", ["DataKeeper", "ParamExplorer"])
+def test_generated_check_error_imports(
+    generator_environment, tmp_path, class_name, import_style
+):
+    methods = tmp_path / "Methods" / "Simulation" / class_name
+    shutil.copytree(Path(MAIN_DIR) / "Methods" / "Simulation" / class_name, methods)
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        generator_environment, class_name, str(output), is_new=True,
+        import_style=import_style, class_import_graph={}, shared_error_definitions={},
+    )
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    imports = [
+        node for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and any(alias.name == "CheckTypeError" for alias in node.names)
+    ]
+    assert len(imports) == 1
+    assert (imports[0].level, imports[0].module) == (
+        (1, "_error") if import_style == "relative"
+        else (0, "pyleecan.Classes_new._error")
+    )
+
+
+def test_check_import_redirect_splits_errors_and_helpers():
+    source = (
+        "from pyleecan.Classes._check import check_var as validate, "
+        "CheckTypeError as TypeErrorAlias\n"
+    )
+    result = class_generator._redirect_experimental_class_imports(
+        source, "pyleecan", {}
+    )
+    tree = ast.parse(result)
+    assert [
+        (node.module, [(alias.name, alias.asname) for alias in node.names])
+        for node in tree.body
+    ] == [
+        ("pyleecan.Classes_new._error", [("CheckTypeError", "TypeErrorAlias")]),
+        ("pyleecan.Classes_new._check", [("check_var", "validate")]),
+    ]
 
 
 def test_current_generated_import_error_uses_shared_class():
@@ -1012,6 +1102,169 @@ def test_experimental_method_uses_package_exception(
     )
     assert expected in source
     assert "raise NotImplementedYetError(" in source
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_var_simu_elec_lut_import_is_local(
+    generator_environment, tmp_path, monkeypatch, import_style
+):
+    root = tmp_path
+    methods = root / "Methods" / "Simulation" / "VarSimu"
+    methods.mkdir(parents=True)
+    shutil.copytree(
+        Path(MAIN_DIR) / "Methods" / "Simulation" / "VarSimu",
+        methods,
+        dirs_exist_ok=True,
+    )
+    info = deepcopy(generator_environment["VarSimu"])
+    info["methods"] = ["set_reused_data"]
+    gen_dict = dict(generator_environment)
+    gen_dict["VarSimu"] = info
+    output = root / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict,
+        "VarSimu",
+        str(output),
+        is_new=True,
+        import_style=import_style,
+        class_import_graph={},
+        shared_error_definitions={},
+    )
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    assert any(
+        isinstance(node, ast.ImportFrom)
+        and (node.level, node.module) == (
+            (1, "_import") if import_style == "relative"
+            else (0, "pyleecan.Classes_new._import")
+        )
+        and any(alias.name == "import_class" and alias.asname is None for alias in node.names)
+        for node in tree.body
+    )
+    assert not any(
+        isinstance(node, ast.ImportFrom)
+        and any(alias.name == "ElecLUTdq" for alias in node.names)
+        for node in tree.body
+    )
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    method = next(
+        node for node in cls.body
+        if isinstance(node, ast.FunctionDef) and node.name == "set_reused_data"
+    )
+    assignment = next(
+        node for node in method.body
+        if isinstance(node, ast.Assign)
+        and any(isinstance(target, ast.Name) and target.id == "ElecLUTdq"
+                for target in node.targets)
+    )
+    assert ast.unparse(assignment.value) == "import_class('ElecLUTdq')"
+
+    import types
+
+    elec_module = types.ModuleType("pyleecan.Classes_new.elec_lut_dq")
+    elec_module.ElecLUTdq = type("ElecLUTdq", (), {})
+    monkeypatch.setitem(sys.modules, elec_module.__name__, elec_module)
+    method.decorator_list = []
+    namespace = {
+        "MagFEMM": type("MagFEMM", (), {}),
+        "import_class": lambda name: getattr(elec_module, name),
+    }
+    exec(
+        compile(ast.fix_missing_locations(ast.Module(body=[method], type_ignores=[])),
+                str(path), "exec"),
+        namespace,
+    )
+    target = elec_module.ElecLUTdq()
+    reference = object()
+    simulation = types.SimpleNamespace(layer=1, mag=None, elec=target)
+    result = types.SimpleNamespace(
+        simu=types.SimpleNamespace(elec=types.SimpleNamespace(LUT_enforced=reference))
+    )
+    instance = types.SimpleNamespace(is_reuse_femm_file=False, is_reuse_LUT=True)
+    namespace["set_reused_data"](instance, simulation, result, is_log=False)
+    assert target.LUT_enforced is reference
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+@pytest.mark.parametrize(
+    "class_name,method_name,method_folder,expected",
+    [
+        ("MeshMat", "convert", "Mesh", {"MeshVTK": "mesh_vtk"}),
+        ("MeshVTK", "convert", "Mesh", {"MeshMat": "mesh_mat"}),
+        ("Simulation", "run", "Simulation", {"XOutput": "xoutput", "Output": "output"}),
+    ],
+)
+def test_method_local_classes_use_import_class(
+    generator_environment, tmp_path, import_style, class_name, method_name,
+    method_folder, expected,
+):
+    methods = tmp_path / "Methods" / method_folder / class_name
+    methods.mkdir(parents=True)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / method_folder / class_name / (method_name + ".py"),
+        methods,
+    )
+    info = deepcopy(generator_environment[class_name])
+    info["methods"] = [method_name]
+    gen_dict = dict(generator_environment)
+    gen_dict[class_name] = info
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict, class_name, str(output), is_new=True,
+        import_style=import_style, class_import_graph={}, shared_error_definitions={},
+    )
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    method = next(
+        node for node in cls.body
+        if isinstance(node, ast.FunctionDef) and node.name == method_name
+    )
+    for imported_class in expected:
+        assignments = [
+            node for node in ast.walk(method)
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(target, ast.Name) and target.id == imported_class
+                for target in node.targets
+            )
+        ]
+        assert len(assignments) == 1
+        call = assignments[0].value
+        assert isinstance(call, ast.Call)
+        assert [arg.value for arg in call.args] == [imported_class]
+        assert not call.keywords
+        assert not any(
+            isinstance(node, ast.ImportFrom)
+            and any(alias.name == imported_class for alias in node.names)
+            for node in ast.walk(method)
+        )
+
+
+def test_legacy_var_simu_elec_lut_import_remains_at_module_level(
+    generator_environment, tmp_path
+):
+    methods = tmp_path / "Methods" / "Simulation" / "VarSimu"
+    methods.mkdir(parents=True)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / "Simulation" / "VarSimu" / "set_reused_data.py",
+        methods,
+    )
+    info = deepcopy(generator_environment["VarSimu"])
+    info["methods"] = ["set_reused_data"]
+    gen_dict = dict(generator_environment)
+    gen_dict["VarSimu"] = info
+    output = tmp_path / "Classes"
+    output.mkdir()
+    class_generator.generate_class(
+        gen_dict, "VarSimu", str(output), class_import_graph={}
+    )
+    tree = ast.parse((output / "VarSimu.py").read_text(encoding="utf-8"))
+    assert any(
+        isinstance(node, ast.ImportFrom)
+        and any(alias.name == "ElecLUTdq" for alias in node.names)
+        for node in tree.body
+    )
 
 
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])

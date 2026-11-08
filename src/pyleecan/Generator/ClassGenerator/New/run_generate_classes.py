@@ -1,3 +1,4 @@
+import ast
 import json
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
@@ -6,9 +7,11 @@ from os import cpu_count, listdir, remove
 from os.path import basename, isdir, isfile, join, realpath
 
 from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
+from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _shared_error_definitions,
     _write_shared_errors,
+    class_module_name,
     generate_class,
     get_class_import_graph,
     parent_type_mapping,
@@ -30,6 +33,59 @@ def get_class_dict():
     path = join(dirname(__file__), "_class_dict.json")
     with open(path, encoding="utf-8") as class_dict_file:
         return load(class_dict_file)
+'''
+
+EXPERIMENTAL_IMPORT = '''"""Generated class imports; do not edit by hand."""
+
+from importlib import import_module
+
+from {error_module} import InitUnKnowClassError
+
+_CLASS_MODULES = {class_modules}
+_LEGACY_NAMES = {legacy_names}
+__all__ = ["import_class", *_CLASS_MODULES]
+
+
+def import_class(class_name, prop_name=""):
+    """Import a generated class by name."""
+    class_name = _LEGACY_NAMES.get(class_name, class_name)
+    module_name = _CLASS_MODULES.get(class_name)
+    if module_name is None:
+        message = "Unknow class name " + str(class_name)
+        if prop_name:
+            message += " in init_dict for property " + prop_name
+        else:
+            message += " when loading"
+        raise InitUnKnowClassError(message)
+    target = __package__ + "." + module_name
+    try:
+        module = import_module(target)
+    except ModuleNotFoundError as error:
+        if error.name != target:
+            raise
+        message = "Unknow class name " + class_name
+        if prop_name:
+            message += " in init_dict for property " + prop_name
+        else:
+            message += " when loading"
+        raise InitUnKnowClassError(message) from error
+    try:
+        return getattr(module, class_name)
+    except AttributeError as error:
+        message = "Unknow class name " + class_name
+        if prop_name:
+            message += " in init_dict for property " + prop_name
+        else:
+            message += " when loading"
+        raise InitUnKnowClassError(message) from error
+
+
+def __getattr__(name):
+    if name not in _CLASS_MODULES:
+        raise AttributeError(f"module {{__name__!r}} has no attribute {{name!r}}")
+    value = import_class(name)
+    globals()[name] = value
+    return value
 '''
 
 
@@ -69,8 +125,12 @@ def generate_code(
         legacy class files or bookkeeping. Module names use snake_case without
         the former "_new" suffix. Generate the experimental package initializer,
         the full CSV-derived _class_dict.json, and the parent type mapping, even
-        for a partial run. Shared exception classes are generated in _error.py
-        from the full generation dictionary, including for partial runs.
+        for a partial run. Validation exceptions and shared exception classes
+        are generated in _error.py, including for partial runs. Shared method
+        exceptions are derived from the full generation dictionary. The
+        _import.py module also references the full generation dictionary.
+        A full generation is required before using partial generation when
+        upgrading from the former two-argument experimental import_class API.
         Defaults to True; False selects this generator's legacy output mode.
     import_style : str, optional
         "relative" or "absolute" imports from the generated package in class files.
@@ -81,7 +141,6 @@ def generate_code(
     """
     _validate_import_style(import_style)
     CLASS_DIR = join(root_path, "Classes_new" if is_new else "Classes")
-    FUNC_DIR = join(root_path, "Functions")
     DOC_DIR = join(root_path, "Generator", "ClassesRef")
     print("Reading classes csv in: " + DOC_DIR)
     print("Saving generated files in: " + CLASS_DIR)
@@ -101,6 +160,21 @@ def generate_code(
                 "Experimental output requires Classes_new/_pyleecan_class.py: "
                 + CLASS_DIR
             )
+        import_path = join(CLASS_DIR, "_import.py")
+        if class_list is not None and isfile(import_path):
+            with open(import_path, encoding="utf-8") as import_file:
+                previous = ast.parse(import_file.read(), filename=import_path)
+            for definition in previous.body:
+                if (
+                    isinstance(definition, ast.FunctionDef)
+                    and definition.name == "import_class"
+                    and definition.args.args
+                    and definition.args.args[0].arg == "mod_name"
+                ):
+                    raise ValueError(
+                        "The experimental import_class API changed; perform a full "
+                        "generation before generating individual classes."
+                    )
         class_names = (
             set(basename(csv_path)[:-4] for csv_path in class_list)
             if class_list is not None
@@ -144,7 +218,7 @@ def generate_code(
             import_style=import_style,
             shared_error_definitions=shared_errors,
         )
-        _write_experimental_bookkeeping(CLASS_DIR, gen_dict)
+        _write_experimental_bookkeeping(CLASS_DIR, gen_dict, soft_name, import_style)
         return
 
     # A file to import every classes quickly
@@ -153,30 +227,16 @@ def generate_code(
     import_file.write('"""File generated by generate_code() - \n')
     import_file.write('WARNING! All changes made in this file will be lost!\n"""\n\n')
 
-    # A file to select the constructor according to a string
-    load_file = open(join(FUNC_DIR, "load_switch.py"), "w")
-    # load_file.write("# -*- coding: utf-8 -*-\n")
-    load_file.write('"""File generated by generate_code() - \n')
-    load_file.write('WARNING! All changes made in this file will be lost!\n"""\n\n')
-
-    load_file.write("from ..Classes._import_all import *\n\n")
-    load_file.write("load_switch = {\n")
-
     # Keep generated bookkeeping deterministic while class modules are generated in parallel.
     generation_names = []
     for class_name, _ in iter(sorted(list(gen_dict.items()))):
         import_file.write(
             "from ..Classes." + class_name + " import " + class_name + "\n"
         )
-        load_file.write('    "' + class_name + '": ' + class_name + ",\n")
         if class_list is None or class_name in class_name_list:
             generation_names.append(class_name)
 
     import_file.close()
-    load_file.write("}\n")
-    load_file.close()
-
-    print("Generation of load_switch.py")
     print("Generation of import_all.py")
 
     _generate_classes(
@@ -191,18 +251,37 @@ def generate_code(
     )
 
     # Save gen_dict
-    class_dict_file = join(CLASS_DIR, "Class_Dict.json")
+    class_dict_file = join(CLASS_DIR, "_class_dict.json")
     with open(class_dict_file, "w") as json_file:
         json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
 
 
-def _write_experimental_bookkeeping(class_dir, gen_dict):
+def _write_experimental_bookkeeping(class_dir, gen_dict, soft_name, import_style):
     """Write the experimental package API and full generated metadata."""
     with open(join(class_dir, "__init__.py"), "w", encoding="utf-8") as init_file:
         init_file.write(EXPERIMENTAL_INIT)
     with open(join(class_dir, "_class_dict.json"), "w", encoding="utf-8") as json_file:
         json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
     _write_parent_types(class_dir, gen_dict)
+    class_modules = {
+        NORMALIZATION_CLASS_NAMES.get(name, name): class_module_name(name)
+        for name in sorted(gen_dict)
+    }
+    legacy_names = {
+        name: NORMALIZATION_CLASS_NAMES[name]
+        for name in sorted(gen_dict) if name in NORMALIZATION_CLASS_NAMES
+    }
+    error_module = "._error" if import_style == "relative" else (
+        soft_name + ".Classes_new._error"
+    )
+    with open(join(class_dir, "_import.py"), "w", encoding="utf-8") as import_file:
+        import_file.write(
+            EXPERIMENTAL_IMPORT.format(
+                error_module=error_module,
+                class_modules=repr(class_modules),
+                legacy_names=repr(legacy_names),
+            )
+        )
 
 
 def _write_parent_types(class_dir, gen_dict):

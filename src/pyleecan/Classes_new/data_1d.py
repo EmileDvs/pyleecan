@@ -7,10 +7,10 @@ from typing import Any
 
 import numpy as np
 
-from ..Functions.Load.import_class import import_class as _pyleecan_import_class
 from ..Functions.SciDataTool import AxisError, NormError
 from ..Functions.SciDataTool.conversions import convert
 from ..Functions.SciDataTool.symmetries import rebuild_symmetries_axis
+from ._import import import_class
 from .data import Data
 from .norm_vector import NormVector
 
@@ -113,7 +113,7 @@ class Data1D(Data):
         """
 
         # Dynamic import to avoid loop
-        Data1D = _pyleecan_import_class("pyleecan.Classes", "Data1D")
+        Data1D = import_class("Data1D")
 
         try:
             # Reduce axis to the given periodicity
@@ -411,7 +411,7 @@ class Data1D(Data):
         """
 
         # Dynamic import to avoid loop
-        DataLinspace = _pyleecan_import_class("pyleecan.Classes", "DataLinspace")
+        DataLinspace = import_class("DataLinspace")
 
         values = self.values
         number = values.size

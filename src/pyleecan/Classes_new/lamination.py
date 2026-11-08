@@ -27,10 +27,10 @@ from ..Functions.labels import (
     YSNR_LAB,
     YSR_LAB,
 )
-from ..Functions.Load.import_class import import_class
 from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ..Functions.Winding.gen_phase_list import gen_name
 from ._error import LaminationCheckError, NotImplementedYetError
+from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_3 import Arc3
@@ -1644,7 +1644,7 @@ class Lamination(PyleecanClass):
         )
 
         # Create equivalent LamSlot with notch as slot
-        LamSlot = import_class("pyleecan.Classes", "LamSlot")
+        LamSlot = import_class("LamSlot")
         lam_notch = LamSlot(
             is_stator=lam.is_stator,
             is_internal=lam.is_internal,

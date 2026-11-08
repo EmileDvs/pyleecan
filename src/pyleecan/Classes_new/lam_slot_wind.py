@@ -23,7 +23,6 @@ from ..Functions.labels import (
     decode_label,
     update_RTS_index,
 )
-from ..Functions.Load.import_class import import_class
 from ..Functions.Plot import dict_2D
 from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ..Functions.Plot.set_plot_gui_icon import set_plot_gui_icon
@@ -31,6 +30,7 @@ from ..Functions.Winding.comp_cond_function import comp_cond_function
 from ..Functions.Winding.find_wind_phase_color import find_wind_phase_color
 from ..Functions.Winding.gen_phase_list import gen_color, gen_name
 from ._error import Lam_WindCheckError
+from ._import import import_class
 from .data_1d import Data1D
 from .data_freq import DataFreq
 from .data_time import DataTime
@@ -551,7 +551,7 @@ class LamSlotWind(LamSlot):
         elif phase_dir not in [-1, 1]:
             raise Exception("Cannot enforce phase_dir other than +1 or -1")
 
-        InputVoltage = import_class("pyleecan.Classes", "InputVoltage")
+        InputVoltage = import_class("InputVoltage")
         input = InputVoltage(
             Na_tot=Na,
             Nt_tot=Nt,
