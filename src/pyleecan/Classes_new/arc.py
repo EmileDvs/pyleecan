@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -22,6 +23,8 @@ class Arc(Line):
     Attributes
     ----------
     """
+
+    ARC_NPOINT_D: ClassVar = 99
 
     # Inlined from Methods.Geometry.Arc.comp_distance
     def comp_distance(self, Z):

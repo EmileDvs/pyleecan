@@ -10,7 +10,6 @@ from ..Functions.Geometry.inter_line_line import inter_line_line
 from ..Functions.init_fig import init_fig
 from ..Functions.Plot import TEXT_BOX
 from .line import Line
-from .machine import LINE_NPOINT_D
 
 
 @dataclass(eq=False)
@@ -131,7 +130,7 @@ class Segment(Line):
         return float(abs(z2 - z1))
 
     # Inlined from Methods.Geometry.Segment.discretize
-    def discretize(self, nb_point=LINE_NPOINT_D):
+    def discretize(self, nb_point=Line.LINE_NPOINT_D):
         """Return the discretize version of the Segment.
         Begin and end are always returned
 

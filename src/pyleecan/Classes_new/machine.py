@@ -19,9 +19,6 @@ from .material import Material
 from .out_geo import OutGeo
 from .shaft import Shaft
 
-ARC_NPOINT_D = 99
-LINE_NPOINT_D = 1
-
 
 @dataclass(eq=False)
 class Machine(PyleecanClass):

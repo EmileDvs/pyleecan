@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -20,6 +20,7 @@ class Line(PyleecanClass):
         Default: {}
     """
 
+    LINE_NPOINT_D: ClassVar = 1
     prop_dict: dict[str, Any] | None = field(default_factory=dict)
     """Property dictionary"""
 

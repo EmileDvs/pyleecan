@@ -1015,23 +1015,33 @@ def test_experimental_method_uses_package_exception(
 
 
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])
-def test_experimental_arc_constant_import(
-    generator_environment, tmp_path, monkeypatch, import_style
+@pytest.mark.parametrize(
+    ("class_name", "owner", "constant", "value"),
+    [
+        ("Arc1", "Arc", "ARC_NPOINT_D", 99),
+        ("Arc2", "Arc", "ARC_NPOINT_D", 99),
+        ("Arc3", "Arc", "ARC_NPOINT_D", 99),
+        ("Segment", "Line", "LINE_NPOINT_D", 1),
+    ],
+)
+def test_experimental_geometry_constant_import(
+    generator_environment, tmp_path, monkeypatch, import_style,
+    class_name, owner, constant, value,
 ):
-    class_dict = deepcopy(generator_environment["Arc1"])
+    class_dict = deepcopy(generator_environment[class_name])
     class_dict["methods"] = ["discretize"]
     output = tmp_path / "Classes_new"
     output.mkdir()
-    methods = tmp_path / "Methods" / "Geometry" / "Arc1"
+    methods = tmp_path / "Methods" / "Geometry" / class_name
     methods.mkdir(parents=True)
     shutil.copy2(
-        Path(MAIN_DIR) / "Methods" / "Geometry" / "Arc1" / "discretize.py", methods
+        Path(MAIN_DIR) / "Methods" / "Geometry" / class_name / "discretize.py", methods
     )
     gen_dict = dict(generator_environment)
-    gen_dict["Arc1"] = class_dict
+    gen_dict[class_name] = class_dict
     path = class_generator.generate_class(
         gen_dict,
-        "Arc1",
+        class_name,
         str(output),
         is_new=True,
         import_style=import_style,
@@ -1039,12 +1049,23 @@ def test_experimental_arc_constant_import(
     )
     source = Path(path).read_text(encoding="utf-8")
     expected = (
-        "from .machine import ARC_NPOINT_D"
+        f"from .{owner.lower()} import {owner}"
         if import_style == "relative"
-        else "from pyleecan.Classes_new.machine import ARC_NPOINT_D"
+        else f"from pyleecan.Classes_new.{owner.lower()} import {owner}"
     )
     assert expected in source
-    assert "Classes.Machine import ARC_NPOINT_D" not in source
+    assert f"nb_point={owner}.{constant}" in source
+    assert f"import {constant}" not in source
+    tree = ast.parse(source)
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    method = next(
+        node for node in cls.body
+        if isinstance(node, ast.FunctionDef) and node.name == "discretize"
+    )
+    module = ast.Module(body=[method], type_ignores=[])
+    namespace = {owner: type(owner, (), {constant: value})}
+    exec(compile(ast.fix_missing_locations(module), str(path), "exec"), namespace)
+    assert namespace["discretize"].__defaults__ == (value,)
 
 
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])
@@ -1101,7 +1122,9 @@ def test_legacy_arc_constant_import_unchanged(
 @pytest.mark.parametrize(
     ("class_name", "module_constants", "class_constants"),
     [
-        ("Machine", {"ARC_NPOINT_D": 99, "LINE_NPOINT_D": 1}, {}),
+        ("Machine", {}, {}),
+        ("Arc", {}, {"ARC_NPOINT_D": 99}),
+        ("Line", {}, {"LINE_NPOINT_D": 1}),
         (
             "Skew",
             {
@@ -1162,6 +1185,11 @@ def test_experimental_module_and_class_constants(
             assert name not in generated_class.__dict__
     for name, value in class_constants.items():
         assert generated_class.__dict__[name] == value
+    if class_name == "Machine":
+        assert not hasattr(module, "ARC_NPOINT_D")
+        assert not hasattr(module, "LINE_NPOINT_D")
+        assert not hasattr(generated_class, "ARC_NPOINT_D")
+        assert not hasattr(generated_class, "LINE_NPOINT_D")
     assert generated_class.INNER_TEST_CONSTANT == 42
     assert "INNER_TEST_CONSTANT" not in module.__dict__
     assert "INNER_TEST_CONSTANT" not in {
@@ -1172,23 +1200,23 @@ def test_experimental_module_and_class_constants(
 def test_experimental_method_uses_exported_module_constant(
     generator_environment, tmp_path, monkeypatch
 ):
-    class_dict = deepcopy(generator_environment["Machine"])
+    class_dict = deepcopy(generator_environment["Skew"])
     class_dict["mother"] = ""
     class_dict["properties"] = []
     class_dict["methods"] = ["comp_axes"]
     output = tmp_path / "Classes_new"
     output.mkdir()
-    methods = tmp_path / "Methods" / "Machine" / "Machine"
+    methods = tmp_path / "Methods" / "Machine" / "Skew"
     methods.mkdir(parents=True)
     (methods / "comp_axes.py").write_text(
-        "from pyleecan.Methods.Machine import ARC_NPOINT_D\n"
-        "def comp_axes(self, count=ARC_NPOINT_D):\n"
-        "    return count, ARC_NPOINT_D\n",
+        "from pyleecan.Methods.Machine.Skew import TYPE_SKEW_LIST\n"
+        "def comp_axes(self, value=TYPE_SKEW_LIST):\n"
+        "    return value, TYPE_SKEW_LIST\n",
         encoding="utf-8",
     )
     path = class_generator.generate_class(
-        {"Machine": class_dict},
-        "Machine",
+        {"Skew": class_dict},
+        "Skew",
         str(output),
         is_new=True,
         class_import_graph={},
@@ -1198,8 +1226,88 @@ def test_experimental_method_uses_exported_module_constant(
     module = importlib.util.module_from_spec(spec)
     monkeypatch.setitem(sys.modules, name, module)
     spec.loader.exec_module(module)
-    assert module.Machine().comp_axes() == (99, 99)
-    assert module.Machine().comp_axes(3) == (3, 99)
+    values = ["linear", "vshape", "zig-zag", "user-defined", "function"]
+    assert module.Skew().comp_axes() == (values, values)
+    assert module.Skew().comp_axes(3) == (3, values)
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_experimental_machine_method_uses_geometry_constant(
+    generator_environment, tmp_path, import_style
+):
+    info = deepcopy(generator_environment["Machine"])
+    info.update(mother="", properties=[], constants=[], methods=["comp_axes"])
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    methods = tmp_path / "Methods" / "Machine" / "Machine"
+    methods.mkdir(parents=True)
+    (methods / "comp_axes.py").write_text(
+        "from pyleecan.Methods.Machine import ARC_NPOINT_D as POINTS\n"
+        "def comp_axes(self, count=POINTS):\n"
+        "    return count, POINTS\n",
+        encoding="utf-8",
+    )
+    path = class_generator.generate_class(
+        {"Machine": info, "Arc": generator_environment["Arc"]},
+        "Machine", str(output), is_new=True, import_style=import_style,
+        class_import_graph={}, shared_error_definitions={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert "count=Arc.ARC_NPOINT_D" in source
+    assert "return count, Arc.ARC_NPOINT_D" in source
+    assert "from .machine import" not in source
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_generated_geometry_constant_defaults_at_runtime(
+    generator_environment, tmp_path, monkeypatch, import_style
+):
+    package = "geometry_constants_" + import_style
+    root = tmp_path / package
+    output = root / "Classes_new"
+    output.mkdir(parents=True)
+    (root / "__init__.py").write_text("", encoding="utf-8")
+    (output / "__init__.py").write_text("", encoding="utf-8")
+    (output / "_pyleecan_class.py").write_text(
+        "class PyleecanClass:\n    pass\n", encoding="utf-8"
+    )
+    gen_dict = {}
+    for name in ("Line", "Arc", "Arc1", "Arc2", "Arc3", "Segment"):
+        info = deepcopy(generator_environment[name])
+        info.update(properties=[], constants=[], methods=[])
+        if name == "Line":
+            info["mother"] = ""
+        if name in ("Arc1", "Arc2", "Arc3", "Segment"):
+            info["methods"] = ["discretize"]
+            destination = root / "Methods" / "Geometry" / name
+            destination.mkdir(parents=True)
+            shutil.copy2(
+                Path(MAIN_DIR) / "Methods" / "Geometry" / name / "discretize.py",
+                destination,
+            )
+            shutil.copy2(
+                Path(MAIN_DIR) / "Methods" / "Geometry" / name / "__init__.py",
+                destination,
+            )
+        gen_dict[name] = info
+    monkeypatch.syspath_prepend(str(tmp_path))
+    for name in gen_dict:
+        class_generator.generate_class(
+            gen_dict, name, str(output), soft_name=package, is_new=True,
+            import_style=import_style, class_import_graph={},
+            shared_error_definitions={},
+        )
+    line = importlib.import_module(package + ".Classes_new.line").Line
+    arc = importlib.import_module(package + ".Classes_new.arc").Arc
+    assert line.LINE_NPOINT_D == 1
+    assert arc.ARC_NPOINT_D == 99
+    for name in ("Arc1", "Arc2", "Arc3", "Segment"):
+        module_name = class_generator.class_module_name(name)
+        cls = getattr(
+            importlib.import_module(package + ".Classes_new." + module_name), name
+        )
+        assert cls.discretize.__defaults__ == ((1 if name == "Segment" else 99),)
+    assert package + ".Classes_new.machine" not in sys.modules
 
 
 def test_ruff_uses_utf8_for_captured_text(tmp_path, monkeypatch):

@@ -8,7 +8,6 @@ import numpy as np
 from .arc import Arc
 from .arc_1 import Arc1
 from .arc_2 import Arc2
-from .machine import ARC_NPOINT_D
 
 
 @dataclass(eq=False)
@@ -107,7 +106,7 @@ class Arc3(Arc):
         return np.abs(z1 - z2) / 2.0  # Radius of the arc
 
     # Inlined from Methods.Geometry.Arc3.discretize
-    def discretize(self, nb_point=ARC_NPOINT_D):
+    def discretize(self, nb_point=Arc.ARC_NPOINT_D):
         """Return the discretize version of the Arc.
         Begin and end are always return
 

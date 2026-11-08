@@ -108,6 +108,10 @@ CLASS_BODY_CONSTANTS = {
         "MESH_FILE": repr("Mesh"),
     }
 }
+EXPERIMENTAL_GEOMETRY_CONSTANTS = {
+    "ARC_NPOINT_D": ("Arc", 99),
+    "LINE_NPOINT_D": ("Line", 1),
+}
 CLASS_METHOD_HELPERS = {
     "XOutput": {
         "_get_symbol_data_": ("Output.XOutput", "_get_symbol_data_"),
@@ -1566,7 +1570,16 @@ def _get_method_source(
                     target_module = soft_name + ".Classes." + target_class
                     redirected_aliases.setdefault(target_module, []).append(alias)
             for target_module, target_aliases in redirected_aliases.items():
-                if target_module != soft_name + ".Classes." + class_name:
+                if (
+                    target_module != soft_name + ".Classes." + class_name
+                    or (
+                        by_origin
+                        and any(
+                            alias.name in EXPERIMENTAL_GEOMETRY_CONSTANTS
+                            for alias in target_aliases
+                        )
+                    )
+                ):
                     method_imports.append(
                         ast.ImportFrom(
                             module=target_module,
@@ -4714,6 +4727,50 @@ def _generate_dataclass_class(
     shared_error_definitions,
 ):
     """Write an experimental dataclass using the prepared class methods."""
+    constant_references = {}
+    redirected_imports = []
+    for node in method_imports:
+        if (
+            isinstance(node, ast.ImportFrom)
+            and node.level == 0
+            and node.module == f"{soft_name}.Classes.Machine"
+        ):
+            remaining = []
+            for alias in node.names:
+                target = EXPERIMENTAL_GEOMETRY_CONSTANTS.get(alias.name)
+                if target is None:
+                    remaining.append(alias)
+                    continue
+                owner, _ = target
+                if owner == class_name:
+                    raise ValueError(
+                        f"Cannot import {alias.name} into its owning class {owner}"
+                    )
+                constant_references[alias.asname or alias.name] = (
+                    f"{owner}.{alias.name}"
+                )
+                redirected_imports.append(
+                    ast.ImportFrom(
+                        module=f"{soft_name}.Classes.{owner}",
+                        names=[ast.alias(name=owner)],
+                        level=0,
+                    )
+                )
+            if remaining:
+                redirected_imports.append(
+                    ast.ImportFrom(module=node.module, names=remaining, level=0)
+                )
+        else:
+            redirected_imports.append(node)
+    method_imports = redirected_imports
+    method_sources = {
+        name: (
+            _rename_method_references(source, constant_references)
+            if source is not None
+            else None
+        )
+        for name, source in method_sources.items()
+    }
     class_dict = gen_dict[class_name]
     generated_name = NORMALIZATION_CLASS_NAMES.get(class_name, class_name)
     output_module_name = output_name or class_module_name(class_name)
@@ -4803,6 +4860,7 @@ def _generate_dataclass_class(
         "".join(
             f"{name} = {value!r}\n"
             for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items()
+            if name not in EXPERIMENTAL_GEOMETRY_CONSTANTS
             if name != "VERSION"
         ),
         "".join(
@@ -4818,6 +4876,11 @@ def _generate_dataclass_class(
     ]
 
     body = []
+    body.extend(
+        f"{TAB}{name}: ClassVar = {value!r}\n"
+        for name, (owner, value) in EXPERIMENTAL_GEOMETRY_CONSTANTS.items()
+        if owner == class_name
+    )
     body.extend(
         f"{TAB}{name}: ClassVar = {expression}\n"
         for name, expression in CLASS_BODY_CONSTANTS.get(class_name, {}).items()
