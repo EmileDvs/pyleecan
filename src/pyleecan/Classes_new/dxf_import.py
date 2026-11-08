@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ._pyleecan_class import PyleecanClass
-from .magnetics import Magnetics
 from .surf_line import SurfLine
 
 
@@ -32,16 +31,6 @@ class DXFImport(PyleecanClass):
     """dictionary to assign the surfaces: key=complex reference point coordinate, value=label of the surface"""
     BC_list: list[Any] = field(default_factory=list)
     """List of tuple to apply boundary conditions (complex reference point coordinate, is_arc, label of the BC to apply)"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Magnetics,)):
-            raise TypeError(
-                "DXFImport parent must be an instance of Magnetics, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.DXFImport.get_surfaces
     def get_surfaces(self):

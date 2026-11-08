@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Geometry/SurfLine.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 from matplotlib.patches import Polygon
@@ -28,7 +28,7 @@ class SurfLine(Surface):
     PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
     PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
     PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
-    line_list: list[Line] = []
+    line_list: list[Line] = field(default_factory=list)
     """List of Lines """
 
     # Inlined from Methods.Geometry.SurfLine.check

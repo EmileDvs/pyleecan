@@ -30,13 +30,12 @@ from ..Functions.labels import (
 from ..Functions.Load.import_class import import_class
 from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ..Functions.Winding.gen_phase_list import gen_name
-from . import NotImplementedYetError
+from ._error import LaminationCheckError, NotImplementedYetError
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_3 import Arc3
 from .bore import Bore
 from .hole import Hole
-from .machine import Machine
 from .material import Material
 from .notch import Notch
 from .notch_even_dist import NotchEvenDist
@@ -128,16 +127,6 @@ class Lamination(PyleecanClass):
     """Bore Shape"""
     yoke: Bore | None = None
     """Yoke Shape"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Machine,)):
-            raise TypeError(
-                "Lamination parent must be an instance of Machine, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Lamination.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
@@ -731,7 +720,9 @@ class Lamination(PyleecanClass):
         """
 
         if self.Rint > self.Rext:
-            raise LC_RadiusError("The internal radius is greater than the external one")
+            raise self.LC_RadiusError(
+                "The internal radius is greater than the external one"
+            )
 
         for vent in self.axial_vent:
             vent.check()
@@ -748,11 +739,11 @@ class Lamination(PyleecanClass):
                 (Rmin, Rmax) = vent.comp_radius()
 
                 if Rmin < Rin:
-                    raise LC_VentYokeIn(
+                    raise self.LC_VentYokeIn(
                         "The ventilation ducts cross the yoke internal radius"
                     )
                 if Rmax > Rout:
-                    raise LC_VentYokeOut(
+                    raise self.LC_VentYokeOut(
                         "The ventilation ducts cross the yoke external radius"
                     )
 
@@ -1685,10 +1676,7 @@ class Lamination(PyleecanClass):
 
         return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
+    class LC_RadiusError(LaminationCheckError):
         """ """
 
     class LC_VentYokeIn(LaminationCheckError):
@@ -1696,13 +1684,3 @@ class Lamination(PyleecanClass):
 
     class LC_VentYokeOut(LaminationCheckError):
         """ """
-
-    class LC_RadiusError(LaminationCheckError):
-        """ """
-
-
-MachineCheckError = Lamination.MachineCheckError
-LaminationCheckError = Lamination.LaminationCheckError
-LC_VentYokeIn = Lamination.LC_VentYokeIn
-LC_VentYokeOut = Lamination.LC_VentYokeOut
-LC_RadiusError = Lamination.LC_RadiusError

@@ -10,6 +10,7 @@ from matplotlib.patches import Circle, Patch
 from ..definitions import config_dict
 from ..Functions.init_fig import init_fig
 from ..Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
+from ._error import Lam_WindCheckError
 from .conductor import Conductor
 from .segment import Segment
 
@@ -79,9 +80,13 @@ class CondType12(Conductor):
 
         if Swire > Scond:
             if self.Nwppc == 1:
-                raise C12_WireDontFit("The wire is too big to fit in the conductor")
+                raise self.C12_WireDontFit(
+                    "The wire is too big to fit in the conductor"
+                )
             else:
-                raise C12_WireDontFit("The wires are too big to fit in the conductor")
+                raise self.C12_WireDontFit(
+                    "The wires are too big to fit in the conductor"
+                )
 
     # Inlined from Methods.Machine.CondType12.comp_height
     def comp_height(self):
@@ -318,7 +323,7 @@ class CondType12(Conductor):
             center_list.append((-a, a))
             center_list.append((-a, -a))
         else:
-            raise NotPlotableError("You can't plot a coil with Nwppc>4")
+            raise self.NotPlotableError("You can't plot a coil with Nwppc>4")
 
         # Creation of the wires
         for center in center_list:
@@ -534,15 +539,6 @@ class CondType12(Conductor):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class Lam_WindCheckError(LaminationCheckError):
-        """ """
-
     class CondCheckError(Lam_WindCheckError):
         """ """
 
@@ -554,12 +550,3 @@ class CondType12(Conductor):
 
     class NotPlotableError(Exception):
         """ """
-
-
-MachineCheckError = CondType12.MachineCheckError
-LaminationCheckError = CondType12.LaminationCheckError
-Lam_WindCheckError = CondType12.Lam_WindCheckError
-CondCheckError = CondType12.CondCheckError
-Cond12CheckError = CondType12.Cond12CheckError
-C12_WireDontFit = CondType12.C12_WireDontFit
-NotPlotableError = CondType12.NotPlotableError

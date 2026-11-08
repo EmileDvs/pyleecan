@@ -11,7 +11,6 @@ from ..Functions.init_fig import init_fig
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .circle import Circle
-from .machine import Machine
 from .material import Material
 from .segment import Segment
 from .surf_line import SurfLine
@@ -47,16 +46,6 @@ class Frame(PyleecanClass):
     """Frame external radius"""
     mat_type: Material | None = None
     """Frame material"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Machine,)):
-            raise TypeError(
-                "Frame parent must be an instance of Machine, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Frame.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):

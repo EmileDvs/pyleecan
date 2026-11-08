@@ -8,7 +8,6 @@ import numpy as np
 from ..Functions.init_fig import init_fig
 from ._pyleecan_class import PyleecanClass
 from .import_matrix import ImportMatrix
-from .material import Material
 from .model_bh import ModelBH
 
 
@@ -61,16 +60,6 @@ class MatMagnetics(PyleecanClass):
     is_BH_extrapolate: bool = False
     """True to use ModelBH to fit input data and extrapolate BH curve"""
 
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Material,)):
-            raise TypeError(
-                "MatMagnetics parent must be an instance of Material, or None; "
-                + f"got {type(parent).__name__}"
-            )
-
     # Inlined from Methods.Material.MatMagnetics.get_BH
     def get_BH(self):
         """Return the B(H) curve of the material according to the Import object.
@@ -92,12 +81,12 @@ class MatMagnetics(PyleecanClass):
             BH = self.BH_curve.get_data()
 
             if len(BH.shape) != 2:
-                raise BHShapeError(
+                raise self.BHShapeError(
                     "BH must be a two colums matrix: H and B(H). Return shape: "
                     + str(BH.shape)
                 )
             if BH.shape[1] != 2:
-                raise BHShapeError(
+                raise self.BHShapeError(
                     "BH must be a two colums matrix: H and B(H). Return shape: "
                     + str(BH.shape)
                 )
@@ -109,7 +98,7 @@ class MatMagnetics(PyleecanClass):
             BH = self.ModelBH.get_BH()
 
         if self.mur_lin is None and BH is None:
-            raise BHShapeError("There are no BH data availible. Check input data.")
+            raise self.BHShapeError("There are no BH data availible. Check input data.")
 
         return BH
 
@@ -214,6 +203,3 @@ class MatMagnetics(PyleecanClass):
 
     class BHShapeError(Exception):
         """Raised when the BH curve has not the expected shape"""
-
-
-BHShapeError = MatMagnetics.BHShapeError

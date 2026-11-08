@@ -6,6 +6,7 @@ from typing import Any
 
 from ..Functions.Load.import_class import import_class
 from ._check import check_var
+from ._error import SlotCheckError
 from .line import Line
 from .slot import Slot
 from .surface import Surface
@@ -176,17 +177,3 @@ class SlotUD2(Slot):
         surface.translate(delta)
 
         return surface
-
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-
-MachineCheckError = SlotUD2.MachineCheckError
-LaminationCheckError = SlotUD2.LaminationCheckError
-SlotCheckError = SlotUD2.SlotCheckError

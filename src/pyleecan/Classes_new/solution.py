@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .mesh_solution import MeshSolution
 
 
 @dataclass(eq=False)
@@ -35,13 +34,3 @@ class Solution(PyleecanClass):
     """Dimension of the physical problem"""
     unit: str | None = None
     """Unit of the solution"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (MeshSolution,)):
-            raise TypeError(
-                "Solution parent must be an instance of MeshSolution, or None; "
-                + f"got {type(parent).__name__}"
-            )

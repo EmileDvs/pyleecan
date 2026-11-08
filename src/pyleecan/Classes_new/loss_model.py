@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ._pyleecan_class import PyleecanClass
-from .loss import Loss
 
 
 @dataclass(eq=False)
@@ -36,13 +35,3 @@ class LossModel(PyleecanClass):
     """True to show the plot of the curve fitting"""
     coeff_dict: dict[str, Any] | None = field(default_factory=dict)
     """dict of coefficients to compute losses with respect to frequency"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Loss,)):
-            raise TypeError(
-                "LossModel parent must be an instance of Loss, or None; "
-                + f"got {type(parent).__name__}"
-            )

@@ -35,14 +35,16 @@ class VarParamSweep(VarParam):
         # Check ParamExplorers
         for paramexplorer in self.paramexplorer_list:
             if paramexplorer.setter is None:
-                raise ParamExplorerError("ParamExplorer.setter must be defined")
+                raise self.ParamExplorerError("ParamExplorer.setter must be defined")
             elif len(paramexplorer.symbol) == 0:
-                raise ParamExplorerError("ParamExplorer.symbol cannot be empty")
+                raise self.ParamExplorerError("ParamExplorer.symbol cannot be empty")
             elif (
                 isinstance(paramexplorer, ParamExplorerSet)
                 and len(paramexplorer.value) == 0
             ):
-                raise ParamExplorerError("ParamExplorer.value_list cannot be empty")
+                raise self.ParamExplorerError(
+                    "ParamExplorer.value_list cannot be empty"
+                )
 
         # Default simulation index
         N_simu = self.get_simu_number()
@@ -58,9 +60,9 @@ class VarParamSweep(VarParam):
         # Check DataKeepers
         for datakeeper in self.datakeeper_list:
             if datakeeper.symbol in ["", None]:
-                raise DataKeeperError("DataKeeper.symbol cannot be empty")
+                raise self.DataKeeperError("DataKeeper.symbol cannot be empty")
             elif datakeeper.keeper is None:
-                raise DataKeeperError("DataKeeper.keeper must be defined")
+                raise self.DataKeeperError("DataKeeper.keeper must be defined")
 
     # Inlined from Methods.Simulation.VarParamSweep.generate_simulation_list
     def generate_simulation_list(self, ref_simu=None):
@@ -161,7 +163,3 @@ class VarParamSweep(VarParam):
 
     class ParamExplorerError(Exception):
         pass
-
-
-DataKeeperError = VarParamSweep.DataKeeperError
-ParamExplorerError = VarParamSweep.ParamExplorerError

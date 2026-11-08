@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -394,10 +394,10 @@ class SlotW29(Slot):
 
         """
         if self.W1 < self.W0:
-            raise S29_W01CheckError("You must have W0 <= W1")
+            raise self.S29_W01CheckError("You must have W0 <= W1")
 
         elif self.H2 == 0:
-            raise S29_H2CheckError("You must have H2 > 0")
+            raise self.S29_H2CheckError("You must have H2 > 0")
 
     # Inlined from Methods.Slot.SlotW29.comp_angle_opening
     def comp_angle_opening(self):
@@ -1029,24 +1029,8 @@ class SlotW29(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S29_H2CheckError(SlotCheckError):
         """ """
 
     class S29_W01CheckError(SlotCheckError):
         """ """
-
-
-MachineCheckError = SlotW29.MachineCheckError
-LaminationCheckError = SlotW29.LaminationCheckError
-SlotCheckError = SlotW29.SlotCheckError
-S29_H2CheckError = SlotW29.S29_H2CheckError
-S29_W01CheckError = SlotW29.S29_W01CheckError

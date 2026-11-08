@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .winding import Winding
 
 
 @dataclass(eq=False)
@@ -20,16 +19,6 @@ class EndWinding(PyleecanClass):
 
     Lew_enforced: float = 0
     """Enforced end-winding lekage inductance"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Winding,)):
-            raise TypeError(
-                "EndWinding parent must be an instance of Winding, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.EndWinding.comp_inductance
     def comp_inductance(self):

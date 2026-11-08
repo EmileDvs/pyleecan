@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment

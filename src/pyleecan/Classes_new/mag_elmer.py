@@ -50,7 +50,7 @@ from ..Functions.labels import (
     short_label,
 )
 from ..Functions.Winding.find_wind_phase_color import get_phase_id
-from . import NotImplementedYetError
+from ._error import NotImplementedYetError
 from .data_1d import Data1D
 from .data_time import DataTime
 from .dxf_import import DXFImport

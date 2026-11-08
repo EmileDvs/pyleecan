@@ -4,19 +4,11 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .conductor import Conductor
-from .frame import Frame
-from .hole import Hole
-from .lamination import Lamination
-from .magnet import Magnet
 from .mat_economical import MatEconomical
 from .mat_electrical import MatElectrical
 from .mat_ht import MatHT
 from .mat_magnetics import MatMagnetics
 from .mat_structural import MatStructural
-from .notch import Notch
-from .shaft import Shaft
-from .slot import Slot
 
 
 @dataclass(eq=False)
@@ -72,25 +64,3 @@ class Material(PyleecanClass):
     """material description"""
     path: str | None = None
     """Path to the material file"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Conductor,
-                Frame,
-                Hole,
-                Lamination,
-                Magnet,
-                Notch,
-                Shaft,
-                Slot,
-            ),
-        ):
-            raise TypeError(
-                "Material parent must be an instance of Conductor or Frame or Hole or Lamination or Magnet or Notch or Shaft or Slot, or None; "
-                + f"got {type(parent).__name__}"
-            )

@@ -23,10 +23,6 @@ from ..Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
 from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
 from ._pyleecan_class import PyleecanClass
 from .data_nd import DataND
-from .input import Input
-from .out_force import OutForce
-from .out_mag import OutMag
-from .solution import Solution
 
 
 @dataclass(eq=False)
@@ -52,24 +48,6 @@ class VectorField(PyleecanClass):
     """Symbol of the vector field"""
     components: dict[str, DataND] | None = None
     """Dict of the components"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Input,
-                OutForce,
-                OutMag,
-                Solution,
-            ),
-        ):
-            raise TypeError(
-                "VectorField parent must be an instance of Input or OutForce or OutMag or Solution, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.SciDataTool.VectorField.change_periodicity
     def change_periodicity(

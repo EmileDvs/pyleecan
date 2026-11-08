@@ -10,7 +10,6 @@ from ..Functions.load import import_class
 from ..Functions.Plot import dict_2D
 from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
 from ._pyleecan_class import PyleecanClass
-from .lamination import Lamination
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
 
@@ -63,16 +62,6 @@ class Skew(PyleecanClass):
     """Number of steps if step skew"""
     angle_overall: float | None = None
     """Overall skewing angle"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Lamination,)):
-            raise TypeError(
-                "Skew parent must be an instance of Lamination, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Skew.comp_angle
     def comp_angle(self):

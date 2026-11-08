@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -207,11 +207,11 @@ class HoleM62(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise S62_NoneError("You must set W0 !")
+            raise self.S62_NoneError("You must set W0 !")
         elif self.H0 is None:
-            raise S62_NoneError("You must set H0 !")
+            raise self.S62_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise S62_NoneError("You must set H1 !")
+            raise self.S62_NoneError("You must set H1 !")
 
     # Inlined from Methods.Slot.HoleM62.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -848,20 +848,5 @@ class HoleM62(HoleMag):
 
         self.magnet_0 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S62_NoneError(SlotCheckError):
         """Raised when a propery of HoleM62 is None"""
-
-
-MachineCheckError = HoleM62.MachineCheckError
-LaminationCheckError = HoleM62.LaminationCheckError
-SlotCheckError = HoleM62.SlotCheckError
-S62_NoneError = HoleM62.S62_NoneError

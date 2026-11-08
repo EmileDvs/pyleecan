@@ -1,7 +1,10 @@
 # Experimental dataclass generated from Generator/ClassesRef/Import/ImportData.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from typing import Any
 
 from ._pyleecan_class import PyleecanClass
@@ -9,8 +12,6 @@ from .data_1d import Data1D
 from .data_freq import DataFreq
 from .data_time import DataTime
 from .import_ import Import
-from .import_vector_field import ImportVectorField
-from .input import Input
 
 
 @dataclass(eq=False)
@@ -42,7 +43,7 @@ class ImportData(PyleecanClass):
         Default: -1
     """
 
-    axes: "list[ImportData]" = []
+    axes: list[ImportData] = dataclass_field(default_factory=list)
     """List of axes of the data"""
     field: Import | None = None
     """Field (Import object)"""
@@ -52,26 +53,10 @@ class ImportData(PyleecanClass):
     """Name of the field"""
     symbol: str | None = None
     """Symbol of the field"""
-    normalizations: dict[str, Any] = field(default_factory=dict)
+    normalizations: dict[str, Any] = dataclass_field(default_factory=dict)
     """Dict of normalizations"""
-    symmetries: dict[str, Any] = field(default_factory=dict)
+    symmetries: dict[str, Any] = dataclass_field(default_factory=dict)
     """Dict of symmetries"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                ImportVectorField,
-                Input,
-            ),
-        ):
-            raise TypeError(
-                "ImportData parent must be an instance of ImportVectorField or Input, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Import.ImportData.get_data
     def get_data(self):

@@ -7,7 +7,6 @@ import numpy as np
 
 from ._pyleecan_class import PyleecanClass
 from .material import Material
-from .winding import Winding
 
 
 @dataclass(eq=False)
@@ -28,16 +27,6 @@ class Conductor(PyleecanClass):
     """Material of the conductor"""
     ins_mat: Material | None = None
     """Material of the insulation"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Winding,)):
-            raise TypeError(
-                "Conductor parent must be an instance of Winding, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Conductor.check
     def check(self):

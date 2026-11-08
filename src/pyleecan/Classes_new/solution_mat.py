@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from typing import Any
 
 import numpy as np
@@ -33,9 +34,9 @@ class SolutionMat(Solution):
     """Matrix/Vector of the numerical values of the solutions."""
     indice: np.ndarray | None = None
     """Indices of loaded elements. Set to None if all elements are loaded"""
-    axis_name: list[Any] | None = field(default_factory=list)
+    axis_name: list[Any] | None = dataclass_field(default_factory=list)
     """List of axis names (e.g. "time", "direction")"""
-    axis_size: list[Any] | None = field(default_factory=list)
+    axis_size: list[Any] | None = dataclass_field(default_factory=list)
     """List of axis sizes"""
 
     # Inlined from Methods.Mesh.SolutionMat.get_axes_list

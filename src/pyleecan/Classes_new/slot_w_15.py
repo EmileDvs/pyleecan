@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -183,7 +183,7 @@ class SlotW15(Slot):
             theta = 2 * np.arctan((y2 - np.sqrt(-(R1**2) + x2**2 + y2**2)) / (R1 + x2))
             Z11 = R1 * np.exp(1j * theta) + Zc4
         else:
-            raise S15InnerError("Slot Type 15 can't be used on inner lamination")
+            raise self.S15InnerError("Slot Type 15 can't be used on inner lamination")
 
         point_dict = {}
         # symetry
@@ -261,7 +261,7 @@ class SlotW15(Slot):
         """
 
         if not self.is_outwards():
-            raise S15InnerError("Slot Type 15 can't be used on inner lamination")
+            raise self.S15InnerError("Slot Type 15 can't be used on inner lamination")
 
     # Inlined from Methods.Slot.SlotW15.comp_angle_opening
     def comp_angle_opening(self):
@@ -869,20 +869,5 @@ class SlotW15(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S15InnerError(SlotCheckError):
         """ """
-
-
-MachineCheckError = SlotW15.MachineCheckError
-LaminationCheckError = SlotW15.LaminationCheckError
-SlotCheckError = SlotW15.SlotCheckError
-S15InnerError = SlotW15.S15InnerError

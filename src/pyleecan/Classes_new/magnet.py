@@ -4,8 +4,6 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .hole import Hole
-from .lamination import Lamination
 from .material import Material
 
 
@@ -37,19 +35,3 @@ class Magnet(PyleecanClass):
     """Magnet axial length"""
     Nseg: int = 1
     """Number of segments"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Hole,
-                Lamination,
-            ),
-        ):
-            raise TypeError(
-                "Magnet parent must be an instance of Hole or Lamination, or None; "
-                + f"got {type(parent).__name__}"
-            )

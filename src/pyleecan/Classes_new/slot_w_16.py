@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -147,7 +147,7 @@ class SlotW16(Slot):
         hsp = np.pi / self.Zs  # Half slot pitch
 
         if self.is_outwards():
-            raise S16OutterError("Slot Type 16 can't be used on outer lamination")
+            raise self.S16OutterError("Slot Type 16 can't be used on outer lamination")
 
         # ZXt => Complex coordinate in the tooth ref
         Z1 = Rbo * np.exp(-1j * self.W0 / 2)
@@ -254,7 +254,7 @@ class SlotW16(Slot):
             Slot 16 must be on internal lamination only
         """
         if self.is_outwards():
-            raise S16OutterError("Slot 16 must be on internal lamination only")
+            raise self.S16OutterError("Slot 16 must be on internal lamination only")
 
         # Check W3 at min radius
         Rbo = self.get_Rbo()
@@ -262,7 +262,7 @@ class SlotW16(Slot):
         alphaT = 2 * np.arcsin(self.W3 * 0.5 / (Rbo - self.H0 - self.H2))
 
         if alphaT >= sp:
-            raise S16AlphaT(
+            raise self.S16AlphaT(
                 "Tooth is larger than the slot pitch angle: reduce W3, H2 or Zs"
             )
 
@@ -772,24 +772,8 @@ class SlotW16(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
+    class S16AlphaT(SlotCheckError):
         """ """
 
     class S16OutterError(SlotCheckError):
         """ """
-
-    class S16AlphaT(SlotCheckError):
-        """ """
-
-
-MachineCheckError = SlotW16.MachineCheckError
-LaminationCheckError = SlotW16.LaminationCheckError
-SlotCheckError = SlotW16.SlotCheckError
-S16OutterError = SlotW16.S16OutterError
-S16AlphaT = SlotW16.S16AlphaT

@@ -5,10 +5,9 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from ._pyleecan_class import PyleecanClass
-from .eec import EEC
 from .mesh_solution import MeshSolution
-from .simulation import Simulation
 from .slice_model import SliceModel
 
 
@@ -115,22 +114,6 @@ class Magnetics(PyleecanClass):
     """Permanent magnet temperature to adapt magnet remanent flux density"""
     is_periodicity_rotor: bool = False
     """True to consider rotor periodicity over time instead of stator"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                EEC,
-                Simulation,
-            ),
-        ):
-            raise TypeError(
-                "Magnetics parent must be an instance of EEC or Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.Magnetics.comp_axes
     def comp_axes(self, output):
@@ -552,9 +535,3 @@ class Magnetics(PyleecanClass):
         # Store magnetic quantities contained in out_dict in OutMag, as Data object if necessary
         output.mag.store(out_dict, axes_dict)
         output.mag.comp_power()
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = Magnetics.InputError

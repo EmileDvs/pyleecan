@@ -20,6 +20,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     plot_quote,
 )
+from ._error import Lam_WindCheckError
 from .cond_type_21 import CondType21
 from .lam_slot import LamSlot
 from .lam_slot_wind import LamSlotWind
@@ -119,10 +120,10 @@ class LamSquirrelCage(LamSlotWind):
         LamSlotWind.check(self)
 
         if self.is_stator:
-            raise SCC_NotARotor("A LamSquirrelCage Lamination can't be a stator")
+            raise self.SCC_NotARotor("A LamSquirrelCage Lamination can't be a stator")
 
         if not isinstance(self.winding.conductor, CondType21):
-            raise SCC_WrongCond("A LamSquirrelCage's conductor must be a type 2_1")
+            raise self.SCC_WrongCond("A LamSquirrelCage's conductor must be a type 2_1")
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_angle_d_axis
     def comp_angle_d_axis(self):
@@ -809,28 +810,11 @@ class LamSquirrelCage(LamSlotWind):
             plt.close(fig=fig)
         return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class Lam_WindCheckError(LaminationCheckError):
-        """ """
-
     class SquirrelCageCheckError(Lam_WindCheckError):
-        """ """
-
-    class SCC_WrongCond(SquirrelCageCheckError):
         """ """
 
     class SCC_NotARotor(SquirrelCageCheckError):
         """ """
 
-
-MachineCheckError = LamSquirrelCage.MachineCheckError
-LaminationCheckError = LamSquirrelCage.LaminationCheckError
-Lam_WindCheckError = LamSquirrelCage.Lam_WindCheckError
-SquirrelCageCheckError = LamSquirrelCage.SquirrelCageCheckError
-SCC_WrongCond = LamSquirrelCage.SCC_WrongCond
-SCC_NotARotor = LamSquirrelCage.SCC_NotARotor
+    class SCC_WrongCond(SquirrelCageCheckError):
+        """ """

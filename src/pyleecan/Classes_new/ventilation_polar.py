@@ -16,7 +16,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError
 from .arc_1 import Arc1
 from .hole import Hole
 from .lam_hole import LamHole
@@ -111,11 +111,11 @@ class VentilationPolar(Hole):
 
         # checking if the param have good type
         if type(alpha) not in [int, float]:
-            raise PolarArcBuildGeometryError(
+            raise self.PolarArcBuildGeometryError(
                 "The parameter 'alpha' must be an int or float"
             )
         if type(delta) not in [complex, int, float]:
-            raise PolarArcBuildGeometryError(
+            raise self.PolarArcBuildGeometryError(
                 "The parameter 'delta' must be a complex or float or int number"
             )
 
@@ -157,13 +157,13 @@ class VentilationPolar(Hole):
         """
 
         if not isinstance(self.Zh, int):
-            raise VentilationPolarInstanceError("Zh must be a integer")
+            raise self.VentilationPolarInstanceError("Zh must be a integer")
         if not isinstance(self.H0, float) and not isinstance(self.H0, int):
-            raise VentilationPolarInstanceError("H0 must be a float or int")
+            raise self.VentilationPolarInstanceError("H0 must be a float or int")
         if not isinstance(self.D0, float) and not isinstance(self.D0, int):
-            raise VentilationPolarInstanceError("D0 must be a float or int")
+            raise self.VentilationPolarInstanceError("D0 must be a float or int")
         if not isinstance(self.Alpha0, float) and not isinstance(self.Alpha0, int):
-            raise VentilationPolarInstanceError("Alpha0 must be a float or int")
+            raise self.VentilationPolarInstanceError("Alpha0 must be a float or int")
 
     # Inlined from Methods.Slot.VentilationPolar.comp_radius
     def comp_radius(self):
@@ -504,7 +504,3 @@ class VentilationPolar(Hole):
 
     class VentilationPolarInstanceError(Exception):
         """ """
-
-
-PolarArcBuildGeometryError = VentilationPolar.PolarArcBuildGeometryError
-VentilationPolarInstanceError = VentilationPolar.VentilationPolarInstanceError

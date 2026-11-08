@@ -16,7 +16,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError
 from .arc_1 import Arc1
 from .hole import Hole
 from .lam_hole import LamHole
@@ -113,11 +113,11 @@ class VentilationTrap(Hole):
 
         # checking if the param have good type
         if type(alpha) not in [int, float]:
-            raise TrapezeBuildGeometryError(
+            raise self.TrapezeBuildGeometryError(
                 "The parameter 'alpha' must be an int or float"
             )
         if type(delta) not in [complex, int, float]:
-            raise TrapezeBuildGeometryError(
+            raise self.TrapezeBuildGeometryError(
                 "The parameter 'delta' must be a complex or float or int number"
             )
 
@@ -147,13 +147,13 @@ class VentilationTrap(Hole):
         """
 
         if not isinstance(self.Zh, int):
-            raise VentilationTrapInstanceError("Zh must be a integer")
+            raise self.VentilationTrapInstanceError("Zh must be a integer")
         if not isinstance(self.H0, float) and not isinstance(self.H0, int):
-            raise VentilationTrapInstanceError("H0 must be a float or int")
+            raise self.VentilationTrapInstanceError("H0 must be a float or int")
         if not isinstance(self.D0, float) and not isinstance(self.D0, int):
-            raise VentilationTrapInstanceError("D0 must be a float or int")
+            raise self.VentilationTrapInstanceError("D0 must be a float or int")
         if not isinstance(self.Alpha0, float) and not isinstance(self.Alpha0, int):
-            raise VentilationTrapInstanceError("Alpha0 must be a float or int")
+            raise self.VentilationTrapInstanceError("Alpha0 must be a float or int")
 
     # Inlined from Methods.Slot.VentilationTrap.comp_radius
     def comp_radius(self):
@@ -451,7 +451,3 @@ class VentilationTrap(Hole):
 
     class VentilationTrapInstanceError(Exception):
         """Raised when a Ventilation Trap parameter is not int or float"""
-
-
-TrapezeBuildGeometryError = VentilationTrap.TrapezeBuildGeometryError
-VentilationTrapInstanceError = VentilationTrap.VentilationTrapInstanceError

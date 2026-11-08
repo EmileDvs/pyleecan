@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -276,33 +276,33 @@ class HoleM52R(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise S52R_NoneError("You must set W0 !")
+            raise self.S52R_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise S52R_NoneError("You must set W1 !")
+            raise self.S52R_NoneError("You must set W1 !")
         elif self.H0 is None:
-            raise S52R_NoneError("You must set H0 !")
+            raise self.S52R_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise S52R_NoneError("You must set H1 !")
+            raise self.S52R_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise S52R_NoneError("You must set H2 !")
+            raise self.S52R_NoneError("You must set H2 !")
         elif self.R0 is None:
-            raise S52R_NoneError("You must set R0 !")
+            raise self.S52R_NoneError("You must set R0 !")
 
         if self.H2 >= self.H1:
-            raise S52R_H12CheckError("You must have H2 < H1")
+            raise self.S52R_H12CheckError("You must have H2 < H1")
 
         if self.R0 >= self.H1:
-            raise S52R_R0CheckError("You must have R0 < H1")
+            raise self.S52R_R0CheckError("You must have R0 < H1")
 
         if self.R0 >= self.H1 - self.H2:
-            raise S52R_R0CheckError("You must have R0 < H1")
+            raise self.S52R_R0CheckError("You must have R0 < H1")
 
         h = self.H1 - self.H2
         w = self.W0 + self.W1
         Z2 = np.sqrt((self.get_Rext() - self.H0) ** 2 - h**2) - h + 1j * w / 2
 
         if np.angle(Z2) >= np.pi / self.Zh:
-            raise S52R_widthCheckError(
+            raise self.S52R_widthCheckError(
                 "The hole is too wide for the lamination (reduce W1, H0 or W0)"
             )
 
@@ -842,32 +842,14 @@ class HoleM52R(HoleMag):
 
         self.magnet_0 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S52R_H12CheckError(SlotCheckError):
-        """ """
-
-    class S52R_widthCheckError(SlotCheckError):
-        """ """
-
-    class S52R_R0CheckError(SlotCheckError):
         """ """
 
     class S52R_NoneError(SlotCheckError):
         """Raised when a propery of HoleM52R is None"""
 
+    class S52R_R0CheckError(SlotCheckError):
+        """ """
 
-MachineCheckError = HoleM52R.MachineCheckError
-LaminationCheckError = HoleM52R.LaminationCheckError
-SlotCheckError = HoleM52R.SlotCheckError
-S52R_H12CheckError = HoleM52R.S52R_H12CheckError
-S52R_widthCheckError = HoleM52R.S52R_widthCheckError
-S52R_R0CheckError = HoleM52R.S52R_R0CheckError
-S52R_NoneError = HoleM52R.S52R_NoneError
+    class S52R_widthCheckError(SlotCheckError):
+        """ """

@@ -1,6 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/VarSimu.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 import numpy as np
@@ -18,7 +20,6 @@ from .data_keeper import DataKeeper
 from .elec_lut_dq import ElecLUTdq
 from .mag_femm import MagFEMM
 from .post import Post
-from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -75,7 +76,7 @@ class VarSimu(PyleecanClass):
     """True to store every output in a list"""
     stop_if_error: bool = False
     """Stop the multi-simulation if a simulation fails """
-    var_simu: "VarSimu | None" = None
+    var_simu: VarSimu | None = None
     """Multi-simulation of a Multi-simulation definition"""
     nb_simu: int = 0
     """Number of simulations"""
@@ -90,27 +91,18 @@ class VarSimu(PyleecanClass):
     is_reuse_LUT: bool = True
     """True to reuse the look up table"""
 
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Simulation,)):
-            raise TypeError(
-                "VarSimu parent must be an instance of Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
-
     # Inlined from Methods.Simulation.VarSimu.check_param
     def check_param(self):
         """Check VarParamSweep parameters validity"""
         if type(self).__name__ == "VarSimu":
-            raise VarSimuError(
+            raise self.VarSimuError(
                 "VarSimu is an abstract class, please create one of its daughters."
             )
 
+        Simulation = import_class("pyleecan.Classes", "Simulation")
         # Check for simulation or VarSimu
         if self.parent is None or not isinstance(self.parent, Simulation):
-            raise VarSimuError("VarSimu object must be inside a Simulation object")
+            raise self.VarSimuError("VarSimu object must be inside a Simulation object")
 
     # Inlined from Methods.Simulation.VarSimu.gen_datakeeper_list
     def gen_datakeeper_list(self, ref_simu):
@@ -167,7 +159,7 @@ class VarSimu(PyleecanClass):
         multisim_dict : dict
             dictionary containing the simulation and paramexplorer list
         """
-        raise VarSimuError(
+        raise self.VarSimuError(
             "VarSimu is an abstract class, please create one of its daughters."
         )
 
@@ -626,6 +618,3 @@ class VarSimu(PyleecanClass):
 
     class VarSimuError(Exception):
         pass
-
-
-VarSimuError = VarSimu.VarSimuError

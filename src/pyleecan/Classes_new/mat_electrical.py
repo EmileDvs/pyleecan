@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import numpy as np
 
 from ._pyleecan_class import PyleecanClass
-from .material import Material
 
 
 @dataclass(eq=False)
@@ -32,16 +31,6 @@ class MatElectrical(PyleecanClass):
     """Relative dielectric constant"""
     alpha: float = 0
     """Thermal resistivity coefficient"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Material,)):
-            raise TypeError(
-                "MatElectrical parent must be an instance of Material, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Material.MatElectrical.get_conductivity
     def get_conductivity(self, T_op=None, T_ref=20):

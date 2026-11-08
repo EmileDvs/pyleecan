@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .arc_3 import Arc3
 from .lam_slot import LamSlot
@@ -239,10 +239,10 @@ class SlotW12(Slot):
         Rbo = self.get_Rbo()
 
         if self.R2 <= 0:
-            raise S12_R20CheckError("You must have R2 > 0")
+            raise self.S12_R20CheckError("You must have R2 > 0")
 
         if self.R2 / Rbo >= 1:
-            raise S12_RboCheckError("You must have R2 < Rbo")
+            raise self.S12_RboCheckError("You must have R2 < Rbo")
 
     # Inlined from Methods.Slot.SlotW12.comp_angle_opening
     def comp_angle_opening(self):
@@ -742,24 +742,8 @@ class SlotW12(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
+    class S12_R20CheckError(SlotCheckError):
         """ """
 
     class S12_RboCheckError(SlotCheckError):
         """ """
-
-    class S12_R20CheckError(SlotCheckError):
-        """ """
-
-
-MachineCheckError = SlotW12.MachineCheckError
-LaminationCheckError = SlotW12.LaminationCheckError
-SlotCheckError = SlotW12.SlotCheckError
-S12_RboCheckError = SlotW12.S12_RboCheckError
-S12_R20CheckError = SlotW12.S12_R20CheckError

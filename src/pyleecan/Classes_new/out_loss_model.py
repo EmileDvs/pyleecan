@@ -10,7 +10,6 @@ from ..Functions.Load.import_class import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_freq import DataFreq
 from .mesh_solution import MeshSolution
-from .out_loss import OutLoss
 from .solution_data import SolutionData
 
 
@@ -52,16 +51,6 @@ class OutLossModel(PyleecanClass):
     """The name of the loss model used to compute the loss stored in this output"""
     scalar_value: float | None = None
     """To store the value of get_loss_scalar (for scalar losses or with coeff_dict cleaned)"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (OutLoss,)):
-            raise TypeError(
-                "OutLossModel parent must be an instance of OutLoss, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Output.OutLossModel.__add__
     def __add__(self, other):

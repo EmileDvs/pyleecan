@@ -22,9 +22,7 @@ from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_2 import Arc2
 from .arc_3 import Arc3
-from .hole import Hole
 from .segment import Segment
-from .slot import Slot
 
 
 @dataclass(eq=False)
@@ -47,23 +45,6 @@ class Surface(PyleecanClass):
     """Center of symmetry"""
     label: str | None = None
     """Label of the surface"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Hole,
-                Slot,
-                Surface,
-            ),
-        ):
-            raise TypeError(
-                "Surface parent must be an instance of Hole or Slot or Surface, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Geometry.Surface.comp_mesh_dict
     def comp_mesh_dict(self, element_size, prefix=""):

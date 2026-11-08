@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -356,13 +356,13 @@ class SlotW13(Slot):
             With H1 in radian, you must have H1 < pi/2
         """
         if self.W1 < self.W0:
-            raise S13_W01CheckError("You must have W0 <= W1")
+            raise self.S13_W01CheckError("You must have W0 <= W1")
 
         if self.W1 < self.W2:
-            raise S13_W12CheckError("You must have W2 <= W1")
+            raise self.S13_W12CheckError("You must have W2 <= W1")
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise S13_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise self.S13_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # Inlined from Methods.Slot.SlotW13.comp_angle_opening
     def comp_angle_opening(self):
@@ -894,28 +894,11 @@ class SlotW13(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S13_H1rCheckError(SlotCheckError):
-        """ """
-
-    class S13_W12CheckError(SlotCheckError):
         """ """
 
     class S13_W01CheckError(SlotCheckError):
         """ """
 
-
-MachineCheckError = SlotW13.MachineCheckError
-LaminationCheckError = SlotW13.LaminationCheckError
-SlotCheckError = SlotW13.SlotCheckError
-S13_H1rCheckError = SlotW13.S13_H1rCheckError
-S13_W12CheckError = SlotW13.S13_W12CheckError
-S13_W01CheckError = SlotW13.S13_W01CheckError
+    class S13_W12CheckError(SlotCheckError):
+        """ """

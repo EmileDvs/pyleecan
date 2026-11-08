@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 
+from ._error import MachineCheckError
 from .lam_slot_wind import LamSlotWind
 from .machine_async import MachineAsync
 
@@ -52,11 +53,15 @@ class MachineDFIM(MachineAsync):
         super(type(self), self).check()
 
         if not isinstance(self.rotor, LamSlotWind):
-            raise M4C_WrongRotor("The Rotor of a MachineDFIM must be a LamSlotWind")
+            raise self.M4C_WrongRotor(
+                "The Rotor of a MachineDFIM must be a LamSlotWind"
+            )
         if not isinstance(self.stator, LamSlotWind):
-            raise M4C_WrongStator("The Stator of a MachineDFIM must be a LamSlotWind")
+            raise self.M4C_WrongStator(
+                "The Stator of a MachineDFIM must be a LamSlotWind"
+            )
         if self.rotor.winding.p != self.stator.winding.p:
-            raise M4C_PError(
+            raise self.M4C_PError(
                 "The stator and the rotor winding must have the same value for p"
             )
 
@@ -99,9 +104,6 @@ class MachineDFIM(MachineAsync):
             type_str += " (int rotor)"
 
         return type_str
-
-    class MachineCheckError(Exception):
-        """ """
 
     class M4C_PError(MachineCheckError):
         """
@@ -150,9 +152,3 @@ class MachineDFIM(MachineAsync):
             Winding
 
         """
-
-
-MachineCheckError = MachineDFIM.MachineCheckError
-M4C_PError = MachineDFIM.M4C_PError
-M4C_WrongRotor = MachineDFIM.M4C_WrongRotor
-M4C_WrongStator = MachineDFIM.M4C_WrongStator

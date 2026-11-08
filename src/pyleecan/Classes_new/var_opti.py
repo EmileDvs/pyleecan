@@ -51,43 +51,49 @@ class VarOpti(VarParam):
 
         # Check that VarOpti is always in the first layer of var_simu
         if not isinstance(self.parent, Simu1):
-            raise VarOptiError(
+            raise self.VarOptiError(
                 "VarOpti object must be the very first layer in var_simu"
             )
 
         # Check objectives
         if self.objective_list == -1 or not isinstance(self.objective_list, list):
-            raise VarOptiError("VarOpti object must have a list in objective_list")
+            raise self.VarOptiError("VarOpti object must have a list in objective_list")
         elif len(self.objective_list) == 0:
-            raise VarOptiError(
+            raise self.VarOptiError(
                 "VarOpti object must have at least one objective in objective_list"
             )
         else:
             for objective in self.objective_list:
                 if not isinstance(objective, OptiObjective):
-                    raise VarOptiError(
+                    raise self.VarOptiError(
                         "VarOpti object must have only OptiObjective objects in objective_list"
                     )
                 elif objective.symbol in ["", None]:
-                    raise VarOptiObjectiveError("OptiObjective.symbol cannot be empty")
+                    raise self.VarOptiObjectiveError(
+                        "OptiObjective.symbol cannot be empty"
+                    )
                 elif objective.keeper is None:
-                    raise VarOptiObjectiveError("OptiObjective.keeper must be defined")
+                    raise self.VarOptiObjectiveError(
+                        "OptiObjective.keeper must be defined"
+                    )
 
         # Check constraints
         if self.constraint_list == -1 or not isinstance(self.constraint_list, list):
-            raise VarOptiError("VarOpti object must have a list in constraint_list")
+            raise self.VarOptiError(
+                "VarOpti object must have a list in constraint_list"
+            )
         elif not len(self.constraint_list) == 0:
             for constraint in self.constraint_list:
                 if not isinstance(constraint, OptiConstraint):
-                    raise VarOptiError(
+                    raise self.VarOptiError(
                         "VarOpti object must have only OptiConstraint objects in constraint_list"
                     )
                 elif constraint.value in ["", None]:
-                    raise VarOptiConstraintError(
+                    raise self.VarOptiConstraintError(
                         "OptiConstraint.symbol cannot be empty"
                     )
                 elif constraint.keeper is None:
-                    raise VarOptiConstraintError(
+                    raise self.VarOptiConstraintError(
                         "OptiConstraint.keeper must be defined"
                     )
 
@@ -95,9 +101,11 @@ class VarOpti(VarParam):
         if self.paramexplorer_list == -1 or not isinstance(
             self.paramexplorer_list, list
         ):
-            raise VarOptiError("VarOpti object must have a list in paramexplorer_list")
+            raise self.VarOptiError(
+                "VarOpti object must have a list in paramexplorer_list"
+            )
         elif len(self.paramexplorer_list) == 0:
-            raise VarOptiError(
+            raise self.VarOptiError(
                 "VarOpti object must have at least one objective in paramexplorer_list"
             )
         else:
@@ -105,15 +113,15 @@ class VarOpti(VarParam):
                 if not isinstance(design_var, OptiDesignVarInterval) and not isinstance(
                     design_var, OptiDesignVarSet
                 ):
-                    raise VarOptiError(
+                    raise self.VarOptiError(
                         "VarOpti object must have only OptiDesignVarInterval or OptiDesignVarSet objects in paramexplorer_list"
                     )
                 elif design_var.symbol in ["", None]:
-                    raise VarOptiDesignVarError(
+                    raise self.VarOptiDesignVarError(
                         "OptiDesignVarSet.symbol or OptiDesignVarInterval.symbol cannot be empty"
                     )
                 elif design_var.setter is None:
-                    raise VarOptiDesignVarError(
+                    raise self.VarOptiDesignVarError(
                         "OptiDesignVarSet.setter or OptiDesignVarInterval.setter must be defined"
                     )
 
@@ -128,17 +136,17 @@ class VarOpti(VarParam):
         # Check DataKeepers
         for datakeeper in self.datakeeper_list:
             if datakeeper.symbol in ["", None]:
-                raise VarOptiDataKeeperError("DataKeeper.symbol cannot be empty")
+                raise self.VarOptiDataKeeperError("DataKeeper.symbol cannot be empty")
             elif datakeeper.keeper is None:
-                raise VarOptiDataKeeperError("DataKeeper.keeper must be defined")
+                raise self.VarOptiDataKeeperError("DataKeeper.keeper must be defined")
 
         # Check solver
         if self.solver is None:
-            raise VarOptiSolverError("VarOpti object must have a solver")
+            raise self.VarOptiSolverError("VarOpti object must have a solver")
         elif not isinstance(self.solver, OptiGenAlgNsga2Deap) and not isinstance(
             self.solver, OptiBayesAlgSmoot
         ):
-            raise VarOptiSolverError(
+            raise self.VarOptiSolverError(
                 "VarOpti object must have only a solver of type OptiGenAlgNsga2Deap or OptiBayesAlgSmoot"
             )
 
@@ -198,11 +206,3 @@ class VarOpti(VarParam):
 
     class VarOptiSolverError(Exception):
         pass
-
-
-VarOptiConstraintError = VarOpti.VarOptiConstraintError
-VarOptiDataKeeperError = VarOpti.VarOptiDataKeeperError
-VarOptiDesignVarError = VarOpti.VarOptiDesignVarError
-VarOptiError = VarOpti.VarOptiError
-VarOptiObjectiveError = VarOpti.VarOptiObjectiveError
-VarOptiSolverError = VarOpti.VarOptiSolverError

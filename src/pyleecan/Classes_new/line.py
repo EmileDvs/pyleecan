@@ -7,9 +7,6 @@ from typing import Any
 import numpy as np
 
 from ._pyleecan_class import PyleecanClass
-from .bore import Bore
-from .slot import Slot
-from .surface import Surface
 
 
 @dataclass(eq=False)
@@ -25,23 +22,6 @@ class Line(PyleecanClass):
 
     prop_dict: dict[str, Any] | None = field(default_factory=dict)
     """Property dictionary"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Bore,
-                Slot,
-                Surface,
-            ),
-        ):
-            raise TypeError(
-                "Line parent must be an instance of Bore or Slot or Surface, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Geometry.Line.comp_normal
     def comp_normal(self):

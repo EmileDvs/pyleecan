@@ -1,8 +1,8 @@
-"""Shared abstract base for experimental dataclass-based Pyleecan classes."""
+"""Shared base for experimental dataclass-based Pyleecan classes."""
 
-from abc import ABC, abstractmethod
 from copy import deepcopy
 from dataclasses import dataclass, field, fields
+from importlib import import_module
 from sys import getsizeof
 from typing import Any, get_args, get_type_hints
 
@@ -16,10 +16,12 @@ from pyleecan.Functions.Load.retrocompatibility import (
 )
 from pyleecan.Functions.save import save
 
+from ._parent_types import PARENT_TYPES
+
 
 @dataclass(eq=False)
-class PyleecanClass(ABC):
-    """Abstract base providing common behavior for generated Pyleecan dataclasses."""
+class PyleecanClass:
+    """Base providing common behavior for generated Pyleecan dataclasses."""
 
     parent: Any = field(
         default=None,
@@ -29,7 +31,11 @@ class PyleecanClass(ABC):
         metadata={"serialize": False, "compare": False},
     )
 
-    @abstractmethod
+    def __new__(cls, *args, **kwargs):
+        if cls is PyleecanClass:
+            raise TypeError("PyleecanClass cannot be instantiated directly")
+        return super().__new__(cls)
+
     def __post_init__(self):
         self._set_child_parents()
 
@@ -61,6 +67,29 @@ class PyleecanClass(ABC):
         for field_info in fields(self):
             if field_info.name != "parent":
                 self._set_parent_links(getattr(self, field_info.name), self)
+
+    def _assert_parent_type(self, parent):
+        """Validate a parent against the generated rules inherited by this class."""
+        if parent is None:
+            return
+        for cls in type(self).__mro__:
+            module_prefix = __package__ + "."
+            if not cls.__module__.startswith(module_prefix):
+                continue
+            key = (cls.__module__[len(module_prefix) :], cls.__name__)
+            if key in PARENT_TYPES:
+                parent_names = PARENT_TYPES[key]
+                parent_types = tuple(
+                    getattr(import_module("." + module, __package__), name)
+                    for module, name in parent_names
+                )
+                if not isinstance(parent, parent_types):
+                    expected = " or ".join(name for _, name in parent_names)
+                    raise TypeError(
+                        f"{cls.__name__} parent must be an instance of {expected}, "
+                        f"or None; got {type(parent).__name__}"
+                    )
+                return
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """Serialize dataclass fields using Pyleecan's object dictionary format."""

@@ -88,16 +88,6 @@ class Output(PyleecanClass):
     loss: OutLoss | None = None
     """Loss module output"""
 
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "Output parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )
-
     # Inlined from Methods.Output.Output.getter.comp_angle_rotor
     def comp_angle_rotor(self, Time):
         """Computes the angular position of the rotor as a function of time and set it as normalization
@@ -310,12 +300,12 @@ class Output(PyleecanClass):
             or self.simu.machine.rotor is None
             or self.simu.machine.rotor.mat_type is None
         ):
-            raise GetOutError(
+            raise self.GetOutError(
                 "Output.simu.machine.rotor.mat_type is not Set, can't get the B(H) curve"
             )
         mat_type = self.simu.machine.rotor.mat_type
         if mat_type.mag is None:
-            raise GetOutError("rotor materials magnetic property is not set")
+            raise self.GetOutError("rotor materials magnetic property is not set")
 
         # Compute and store the BH curve
         BH = mat_type.mag.get_BH()
@@ -357,12 +347,12 @@ class Output(PyleecanClass):
             or self.simu.machine.stator is None
             or self.simu.machine.stator.mat_type is None
         ):
-            raise GetOutError(
+            raise self.GetOutError(
                 "Output.simu.machine.stator.mat_type is not Set, can't get the B(H) curve"
             )
         mat_type = self.simu.machine.stator.mat_type
         if mat_type.mag is None:
-            raise GetOutError("stator materials magnetic property is not set")
+            raise self.GetOutError("stator materials magnetic property is not set")
 
         # Compute and store the BH curve
         BH = mat_type.mag.get_BH()
@@ -899,6 +889,3 @@ class Output(PyleecanClass):
 
     class GetOutError(Exception):
         """Raised when an output can't be returned"""
-
-
-GetOutError = Output.GetOutError

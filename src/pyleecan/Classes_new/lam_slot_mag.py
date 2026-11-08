@@ -16,6 +16,7 @@ from ..Functions.labels import (
     decode_label,
     update_RTS_index,
 )
+from ._error import LMC_SlotTooLong
 from .lam_slot import LamSlot
 from .lam_slot_m import LamSlotM
 from .magnet import Magnet
@@ -369,17 +370,3 @@ class LamSlotMag(LamSlotM):
         """
 
         self.magnet.Lmag = value
-
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class LMC_SlotTooLong(LaminationCheckError):
-        """ """
-
-
-MachineCheckError = LamSlotMag.MachineCheckError
-LaminationCheckError = LamSlotMag.LaminationCheckError
-LMC_SlotTooLong = LamSlotMag.LMC_SlotTooLong

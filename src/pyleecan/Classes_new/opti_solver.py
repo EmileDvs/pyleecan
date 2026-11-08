@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
 from .opti_problem import OptiProblem
-from .var_simu import VarSimu
 from .xoutput import XOutput
 
 
@@ -37,13 +36,3 @@ class OptiSolver(PyleecanClass):
     """Name of the logger to use"""
     is_keep_all_output: bool = False
     """Boolean to keep every output"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (VarSimu,)):
-            raise TypeError(
-                "OptiSolver parent must be an instance of VarSimu, or None; "
-                + f"got {type(parent).__name__}"
-            )

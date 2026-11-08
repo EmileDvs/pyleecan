@@ -21,7 +21,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -485,39 +485,39 @@ class HoleM51(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise S51_NoneError("You must set W0 !")
+            raise self.S51_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise S51_NoneError("You must set W1 !")
+            raise self.S51_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise S51_NoneError("You must set W2 !")
+            raise self.S51_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise S51_NoneError("You must set W3 !")
+            raise self.S51_NoneError("You must set W3 !")
         elif self.W4 is None:
-            raise S51_NoneError("You must set W4 !")
+            raise self.S51_NoneError("You must set W4 !")
         elif self.W5 is None:
-            raise S51_NoneError("You must set W5 !")
+            raise self.S51_NoneError("You must set W5 !")
         elif self.W6 is None:
-            raise S51_NoneError("You must set W6 !")
+            raise self.S51_NoneError("You must set W6 !")
         elif self.W7 is None:
-            raise S51_NoneError("You must set W7 !")
+            raise self.S51_NoneError("You must set W7 !")
         elif self.H0 is None:
-            raise S51_NoneError("You must set H0 !")
+            raise self.S51_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise S51_NoneError("You must set H1 !")
+            raise self.S51_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise S51_NoneError("You must set H2 !")
+            raise self.S51_NoneError("You must set H2 !")
 
         Rext = self.get_Rext()
         alpha = self.comp_alpha()
 
         if self.W0 < (self.W2 + self.W3):
-            raise S51_WCheckError("You must have W2+W3 < W0")
+            raise self.S51_WCheckError("You must have W2+W3 < W0")
 
         if Rext < self.H0 + self.H2:
-            raise S51_RHCheckError("You must have H0+H2 < Rext")
+            raise self.S51_RHCheckError("You must have H0+H2 < Rext")
 
         if alpha > np.pi / 2:
-            raise S51_AlphaCheckError("You must have alpha < pi/2")
+            raise self.S51_AlphaCheckError("You must have alpha < pi/2")
 
     # Inlined from Methods.Slot.HoleM51.comp_alpha
     def comp_alpha(self):
@@ -1144,32 +1144,14 @@ class HoleM51(HoleMag):
         self.magnet_1 = None
         self.magnet_2 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-    class S51_RHCheckError(SlotCheckError):
-        """ """
-
     class S51_AlphaCheckError(SlotCheckError):
-        """ """
-
-    class S51_WCheckError(SlotCheckError):
         """ """
 
     class S51_NoneError(SlotCheckError):
         """Raised when a propery of HoleM51 is None"""
 
+    class S51_RHCheckError(SlotCheckError):
+        """ """
 
-MachineCheckError = HoleM51.MachineCheckError
-LaminationCheckError = HoleM51.LaminationCheckError
-SlotCheckError = HoleM51.SlotCheckError
-S51_RHCheckError = HoleM51.S51_RHCheckError
-S51_AlphaCheckError = HoleM51.S51_AlphaCheckError
-S51_WCheckError = HoleM51.S51_WCheckError
-S51_NoneError = HoleM51.S51_NoneError
+    class S51_WCheckError(SlotCheckError):
+        """ """

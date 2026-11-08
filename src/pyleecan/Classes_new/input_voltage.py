@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from .import_gen_pwm import ImportGenPWM
 from .input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF, Input
 from .out_elec import OutElec
@@ -223,9 +224,3 @@ class InputVoltage(Input):
             self.OP.Ud_ref = 0
         if abs(self.OP.Uq_ref) < 1e-10:
             self.OP.Uq_ref = 0
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = InputVoltage.InputError

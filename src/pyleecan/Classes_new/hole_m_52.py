@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
 from .magnet import Magnet
@@ -250,28 +250,28 @@ class HoleM52(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise S52_NoneError("You must set W0 !")
+            raise self.S52_NoneError("You must set W0 !")
         elif self.W3 is None:
-            raise S52_NoneError("You must set W3 !")
+            raise self.S52_NoneError("You must set W3 !")
         elif self.H0 is None:
-            raise S52_NoneError("You must set H0 !")
+            raise self.S52_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise S52_NoneError("You must set H1 !")
+            raise self.S52_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise S52_NoneError("You must set H2 !")
+            raise self.S52_NoneError("You must set H2 !")
 
         if self.H2 >= self.H1:
-            raise S52_H12CheckError("You must have H2 < H1")
+            raise self.S52_H12CheckError("You must have H2 < H1")
 
         alpha = self.comp_alpha()
         if alpha <= 0:
-            raise S52_alphaCheckError(
+            raise self.S52_alphaCheckError(
                 "The teeth are too wide for the lamination (reduce W3 or H0)"
             )
 
         W1 = self.comp_W1()
         if W1 <= 0:
-            raise S52_W1CheckError("W1 is <=0, you must reduce W0 or W3")
+            raise self.S52_W1CheckError("W1 is <=0, you must reduce W0 or W3")
 
     # Inlined from Methods.Slot.HoleM52.comp_alpha
     def comp_alpha(self):
@@ -787,32 +787,14 @@ class HoleM52(HoleMag):
 
         self.magnet_0 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-    class S52_W1CheckError(SlotCheckError):
-        """ """
-
     class S52_H12CheckError(SlotCheckError):
         """ """
 
     class S52_NoneError(SlotCheckError):
         """Raised when a propery of HoleM52 is None"""
 
-    class S52_alphaCheckError(SlotCheckError):
+    class S52_W1CheckError(SlotCheckError):
         """ """
 
-
-MachineCheckError = HoleM52.MachineCheckError
-LaminationCheckError = HoleM52.LaminationCheckError
-SlotCheckError = HoleM52.SlotCheckError
-S52_W1CheckError = HoleM52.S52_W1CheckError
-S52_H12CheckError = HoleM52.S52_H12CheckError
-S52_NoneError = HoleM52.S52_NoneError
-S52_alphaCheckError = HoleM52.S52_alphaCheckError
+    class S52_alphaCheckError(SlotCheckError):
+        """ """

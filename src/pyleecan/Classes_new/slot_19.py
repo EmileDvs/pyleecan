@@ -6,6 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
+from ._error import SlotCheckError
 from .arc_1 import Arc1
 from .segment import Segment
 from .slot import Slot
@@ -128,7 +129,7 @@ class Slot19(Slot):
             W1 must be > 0
         """
         if self.W1 < 0:
-            raise S19_W1CheckError("W1 must be larger than zero")
+            raise self.S19_W1CheckError("W1 must be larger than zero")
 
     # Inlined from Methods.Slot.Slot19.comp_angle_bottom
     def comp_angle_bottom(self):
@@ -237,20 +238,5 @@ class Slot19(Slot):
 
         return Str + S1 - S0
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S19_W1CheckError(SlotCheckError):
         """ """
-
-
-MachineCheckError = Slot19.MachineCheckError
-LaminationCheckError = Slot19.LaminationCheckError
-SlotCheckError = Slot19.SlotCheckError
-S19_W1CheckError = Slot19.S19_W1CheckError

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from . import NotImplementedYetError
+from ._error import NotImplementedYetError
 from .force import Force
 
 

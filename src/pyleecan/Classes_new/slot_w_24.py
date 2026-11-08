@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -273,13 +273,13 @@ class SlotW24(Slot):
         Rbo = self.get_Rbo()
 
         if 2 * np.arcsin(self.W3 / (2 * Rbo)) > 2 * np.pi / self.Zs:
-            raise S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
+            raise self.S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
 
         if (
             not self.is_outwards()
             and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2)) > 2 * np.pi / self.Zs
         ):
-            raise S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
+            raise self.S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
 
     # Inlined from Methods.Slot.SlotW24.comp_angle_opening
     def comp_angle_opening(self):
@@ -714,24 +714,8 @@ class SlotW24(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
+    class S24_HWCheckError(SlotCheckError):
         """ """
 
     class S24_W3CheckError(SlotCheckError):
         """ """
-
-    class S24_HWCheckError(SlotCheckError):
-        """ """
-
-
-MachineCheckError = SlotW24.MachineCheckError
-LaminationCheckError = SlotW24.LaminationCheckError
-SlotCheckError = SlotW24.SlotCheckError
-S24_W3CheckError = SlotW24.S24_W3CheckError
-S24_HWCheckError = SlotW24.S24_HWCheckError

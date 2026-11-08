@@ -79,9 +79,6 @@ class Convert(PyleecanClass):
     is_P_to_other: bool = False
     """booleen to select the direction of conversion"""
 
-    def __post_init__(self):
-        super().__post_init__()
-
     # Inlined from Methods.Converter.Convert.convert_to_other
     def convert_to_other(self, machine):
         """conversion obj machine in dict

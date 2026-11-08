@@ -9,6 +9,7 @@ from matplotlib.patches import Patch
 
 from ..Functions.init_fig import init_fig
 from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from ._error import LaminationCheckError
 from .lamination import Lamination
 from .slot import Slot
 
@@ -59,22 +60,24 @@ class LamSlotMulti(Lamination):
 
         #
         if len(self.alpha.shape) > 1:
-            raise LamSlotMultiAlphaError("Alpha should have be a vector (1D array)")
+            raise self.LamSlotMultiAlphaError(
+                "Alpha should have be a vector (1D array)"
+            )
         if len(self.alpha) != len(self.slot_list):
-            raise LamSlotMultiAlphaError(
+            raise self.LamSlotMultiAlphaError(
                 "Alpha should have the same length as slot_list"
             )
         if self.alpha[0] < 0:
-            raise LamSlotMultiAlphaError(
+            raise self.LamSlotMultiAlphaError(
                 "Alpha should be an ordered array with values between 0 and 2*pi"
             )
         for ii in range(len(self.alpha) - 1):
             if self.alpha[ii] > self.alpha[ii + 1]:
-                raise LamSlotMultiAlphaError(
+                raise self.LamSlotMultiAlphaError(
                     "Alpha should be an ordered array with values between 0 and 2*pi"
                 )
         if self.alpha[-1] > 2 * np.pi:
-            raise LamSlotMultiAlphaError(
+            raise self.LamSlotMultiAlphaError(
                 "Alpha should be an ordered array with values between 0 and 2*pi"
             )
 
@@ -371,16 +374,5 @@ class LamSlotMulti(Lamination):
         else:
             return patches
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
     class LamSlotMultiAlphaError(LaminationCheckError):
         """ """
-
-
-MachineCheckError = LamSlotMulti.MachineCheckError
-LaminationCheckError = LamSlotMulti.LaminationCheckError
-LamSlotMultiAlphaError = LamSlotMulti.LamSlotMultiAlphaError

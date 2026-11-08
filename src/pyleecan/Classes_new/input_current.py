@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from ..Functions.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
+from ._error import InputError
 from .data_1d import Data1D
 from .data_freq import DataFreq
 from .data_time import DataTime
@@ -277,9 +278,3 @@ class InputCurrent(InputVoltage):
             self.OP.Id_ref = 0
         if abs(self.OP.Iq_ref) < 1e-10:
             self.OP.Iq_ref = 0
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = InputCurrent.InputError

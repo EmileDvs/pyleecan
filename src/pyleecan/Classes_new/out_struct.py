@@ -7,7 +7,6 @@ from typing import Any
 from ._pyleecan_class import PyleecanClass
 from .data import Data
 from .mesh_solution import MeshSolution
-from .output import Output
 
 
 @dataclass(eq=False)
@@ -38,13 +37,3 @@ class OutStruct(PyleecanClass):
     """FEA software mesh and solution"""
     FEA_dict: dict[str, Any] | None = field(default_factory=dict)
     """dictionary containing the main FEA parameter"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "OutStruct parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )

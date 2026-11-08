@@ -12,13 +12,12 @@ from matplotlib.pyplot import subplots
 from ..definitions import config_dict
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB, STATOR_LAB_S
+from ._error import MachineCheckError
 from ._pyleecan_class import PyleecanClass
-from .convert import Convert
 from .frame import Frame
 from .material import Material
 from .out_geo import OutGeo
 from .shaft import Shaft
-from .simulation import Simulation
 
 ARC_NPOINT_D = 99
 LINE_NPOINT_D = 1
@@ -63,22 +62,6 @@ class Machine(PyleecanClass):
     """Integer to store the machine type (for the GUI, should be replaced by a test of the object type)"""
     logger_name: str = "Pyleecan.Machine"
     """Name of the logger to use"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Convert,
-                Simulation,
-            ),
-        ):
-            raise TypeError(
-                "Machine parent must be an instance of Convert or Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Machine.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):
@@ -170,37 +153,39 @@ class Machine(PyleecanClass):
         """
 
         if type(self).__name__ == "Machine":
-            raise MC_AbstractError("Machine is an abstract class")
+            raise self.MC_AbstractError("Machine is an abstract class")
 
         if not self.stator.is_stator:
-            raise MC_StatorNotStator("self.stator.is_stator must be True")
+            raise self.MC_StatorNotStator("self.stator.is_stator must be True")
 
         if self.rotor.is_stator:
-            raise MC_RotorIsStator("self.rotor.is_stator must be False")
+            raise self.MC_RotorIsStator("self.rotor.is_stator must be False")
 
         if self.rotor.is_internal and self.stator.is_internal:
-            raise MC_BothInternal(
+            raise self.MC_BothInternal(
                 "self.rotor.is_internal and self.rotor.is_internal can't be both True"
             )
 
         if (not self.rotor.is_internal) and (not self.stator.is_internal):
-            raise MC_BothExternal(
+            raise self.MC_BothExternal(
                 "self.rotor.is_internal and self.rotor.is_internal can't be both False"
             )
 
         if self.rotor.is_internal:
             if self.rotor.Rext > self.stator.Rint:
-                raise MC_RotorDontFit("The Rotor is too big to fit in the Stator")
+                raise self.MC_RotorDontFit("The Rotor is too big to fit in the Stator")
             if self.shaft.Drsh / 2.0 > self.rotor.Rint:
-                raise MC_ShaftTooBig("The Shaft is too big to fit in the Rotor")
+                raise self.MC_ShaftTooBig("The Shaft is too big to fit in the Rotor")
             if self.shaft.Drsh / 2.0 < self.rotor.Rint:
-                raise MC_ShaftTooSmall("The Shaft is too small to fit in the Rotor")
+                raise self.MC_ShaftTooSmall(
+                    "The Shaft is too small to fit in the Rotor"
+                )
         else:
             if self.stator.Rext > self.rotor.Rint:
-                raise MC_StatorDontFit("The Stator is too big to fit in the Rotor")
+                raise self.MC_StatorDontFit("The Stator is too big to fit in the Rotor")
 
         if self.comp_width_airgap_mec() <= 0:
-            raise MC_MecAirgapError(
+            raise self.MC_MecAirgapError(
                 "The Stator and the rotor don't fit because "
                 "of magnet or short circuit ring"
             )
@@ -732,13 +717,13 @@ class Machine(PyleecanClass):
 
         # check that 'Rotor' or 'Stator' is in label
         if lam_str[0] not in [STATOR_LAB, ROTOR_LAB]:
-            raise LabelInputError(err_msg)
+            raise self.LabelInputError(err_msg)
 
         # get the requested lamination index
         try:
             index = self.get_lam_list_label().index(label)
         except:
-            raise LabelInputError(err_msg)
+            raise self.LabelInputError(err_msg)
 
         # return requested lamination
         return self.get_lam_list(is_int_to_ext=True, key=None)[index]
@@ -815,7 +800,7 @@ class Machine(PyleecanClass):
             elif key == ROTOR_LAB:
                 is_stator = False
             else:
-                raise KeyInputError(
+                raise self.KeyInputError(
                     f"'{key}' is not a valid input argument for key (only 'Stator' or 'Rotor' accepted for now)"
                 )
 
@@ -1287,7 +1272,10 @@ class Machine(PyleecanClass):
                     + str(e)
                 )
 
-    class MachineCheckError(Exception):
+    class KeyInputError(Exception):
+        """ """
+
+    class LabelInputError(Exception):
         """ """
 
     class MC_AbstractError(MachineCheckError):
@@ -1371,24 +1359,3 @@ class Machine(PyleecanClass):
 
     class MC_StatorNotStator(MachineCheckError):
         """ """
-
-    class LabelInputError(Exception):
-        """ """
-
-    class KeyInputError(Exception):
-        """ """
-
-
-MachineCheckError = Machine.MachineCheckError
-MC_AbstractError = Machine.MC_AbstractError
-MC_BothExternal = Machine.MC_BothExternal
-MC_BothInternal = Machine.MC_BothInternal
-MC_MecAirgapError = Machine.MC_MecAirgapError
-MC_RotorDontFit = Machine.MC_RotorDontFit
-MC_RotorIsStator = Machine.MC_RotorIsStator
-MC_ShaftTooBig = Machine.MC_ShaftTooBig
-MC_ShaftTooSmall = Machine.MC_ShaftTooSmall
-MC_StatorDontFit = Machine.MC_StatorDontFit
-MC_StatorNotStator = Machine.MC_StatorNotStator
-LabelInputError = Machine.LabelInputError
-KeyInputError = Machine.KeyInputError

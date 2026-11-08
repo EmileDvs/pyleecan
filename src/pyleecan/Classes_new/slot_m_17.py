@@ -16,7 +16,7 @@ from ..Functions.Plot import (
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -409,17 +409,3 @@ class SlotM17(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-
-MachineCheckError = SlotM17.MachineCheckError
-LaminationCheckError = SlotM17.LaminationCheckError
-SlotCheckError = SlotM17.SlotCheckError

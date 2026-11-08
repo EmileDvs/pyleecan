@@ -7,7 +7,6 @@ from typing import Optional, Union
 import numpy as np
 
 from ._pyleecan_class import PyleecanClass
-from .mesh import Mesh
 
 
 @dataclass(eq=False)
@@ -38,16 +37,6 @@ class NodeMat(PyleecanClass):
     """Sensibility for node searching"""
     indice: np.ndarray | None = None
     """Nodes unique indices"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Mesh,)):
-            raise TypeError(
-                "NodeMat parent must be an instance of Mesh, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Mesh.NodeMat.add_node
     def add_node(self, coordinate: np.typing.ArrayLike) -> Union[None, int]:

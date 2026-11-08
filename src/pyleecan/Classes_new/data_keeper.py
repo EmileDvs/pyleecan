@@ -9,9 +9,6 @@ from ..definitions import PYTHON_DEFAULT_ENCODING
 from ..Functions.path_tools import abs_file_path
 from ._check import CheckTypeError
 from ._pyleecan_class import PyleecanClass
-from .opti_problem import OptiProblem
-from .output import Output
-from .var_simu import VarSimu
 
 
 @dataclass(eq=False)
@@ -62,23 +59,6 @@ class DataKeeper(PyleecanClass):
     """Result for the reference simulation"""
     physic: str | None = None
     """Physic of the tracked quantity"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                OptiProblem,
-                Output,
-                VarSimu,
-            ),
-        ):
-            raise TypeError(
-                "DataKeeper parent must be an instance of OptiProblem or Output or VarSimu, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.DataKeeper._set_keeper
     def _set_keeper(self, value):

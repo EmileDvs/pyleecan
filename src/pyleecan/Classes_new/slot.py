@@ -23,12 +23,10 @@ from ..Functions.labels import (
 from ..Functions.Load.import_class import import_class
 from ..Functions.Plot import dict_2D
 from ..Functions.Winding.gen_phase_list import gen_name
-from . import ParentMissingError
+from ._error import ParentMissingError
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
-from .lamination import Lamination
 from .material import Material
-from .notch import Notch
 from .segment import Segment
 from .surf_line import SurfLine
 
@@ -60,22 +58,6 @@ class Slot(PyleecanClass):
     """Material for the wedge, if None no wedge"""
     is_bore: bool = True
     """True if the Slot is on the bore radius, False for yoke"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Lamination,
-                Notch,
-            ),
-        ):
-            raise TypeError(
-                "Slot parent must be an instance of Lamination or Notch, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Slot.Slot.build_geometry_active
     def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):

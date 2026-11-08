@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .material import Material
 
 
 @dataclass(eq=False)
@@ -65,13 +64,3 @@ class MatStructural(PyleecanClass):
     """shear modulus in XZ plane (XY is lamination plane, Z is rotation axis)"""
     Gyz: float = 2000000000
     """shear modulus in YZ plane (XY is lamination plane, Z is rotation axis)"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Material,)):
-            raise TypeError(
-                "MatStructural parent must be an instance of Material, or None; "
-                + f"got {type(parent).__name__}"
-            )

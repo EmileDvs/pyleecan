@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -363,26 +363,26 @@ class HoleM58(HoleMag):
         """
         # Check that everything is set
         if self.W0 is None:
-            raise S58_NoneError("You must set W0 !")
+            raise self.S58_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise S58_NoneError("You must set W1 !")
+            raise self.S58_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise S58_NoneError("You must set W2 !")
+            raise self.S58_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise S58_NoneError("You must set W3 !")
+            raise self.S58_NoneError("You must set W3 !")
         elif self.R0 is None:
-            raise S58_NoneError("You must set R0 !")
+            raise self.S58_NoneError("You must set R0 !")
         elif self.H0 is None:
-            raise S58_NoneError("You must set H0 !")
+            raise self.S58_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise S58_NoneError("You must set H1 !")
+            raise self.S58_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise S58_NoneError("You must set H2 !")
+            raise self.S58_NoneError("You must set H2 !")
 
         Rext = self.get_Rext()
 
         if self.W0 < self.W1 + self.W2:
-            raise S58_WCheckError("You must have W1+W2 <= W0")
+            raise self.S58_WCheckError("You must have W1+W2 <= W0")
 
     # Inlined from Methods.Slot.HoleM58.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -855,24 +855,8 @@ class HoleM58(HoleMag):
 
         self.magnet_0 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S58_NoneError(SlotCheckError):
         """Raised when a propery of HoleM58 is None"""
 
     class S58_WCheckError(SlotCheckError):
         """ """
-
-
-MachineCheckError = HoleM58.MachineCheckError
-LaminationCheckError = HoleM58.LaminationCheckError
-SlotCheckError = HoleM58.SlotCheckError
-S58_NoneError = HoleM58.S58_NoneError
-S58_WCheckError = HoleM58.S58_WCheckError

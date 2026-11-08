@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 
 from ..Functions.labels import SOP_LAB, WIND_LAB
+from ._error import SlotCheckError
 from .arc_1 import Arc1
 from .line import Line
 from .segment import Segment
@@ -237,17 +238,3 @@ class SlotUD(Slot):
             line_list.append(Segment(Z_list[ii], Z_list[ii + 1]))
 
         self.line_list = line_list
-
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-
-MachineCheckError = SlotUD.MachineCheckError
-LaminationCheckError = SlotUD.LaminationCheckError
-SlotCheckError = SlotUD.SlotCheckError

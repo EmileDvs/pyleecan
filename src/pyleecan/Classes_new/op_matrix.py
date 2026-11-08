@@ -6,11 +6,11 @@ from typing import Any
 
 import numpy as np
 
+from ._error import OPMatrixException
 from ._pyleecan_class import PyleecanClass
 from .op_dq import OPdq
 from .op_dqf import OPdqf
 from .op_slip import OPslip
-from .var_simu import VarSimu
 
 
 @dataclass(eq=False)
@@ -76,16 +76,6 @@ class OPMatrix(PyleecanClass):
     """DC rotor current"""
     col_names: list[Any] | None = field(default_factory=list)
     """Name of the columns from set_OP_matrix"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (VarSimu,)):
-            raise TypeError(
-                "OPMatrix parent must be an instance of VarSimu, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.OPMatrix.get_N_OP
     def get_N_OP(self):
@@ -477,9 +467,3 @@ class OPMatrix(PyleecanClass):
 
         # Store column names for get_OP_array("all")
         self.col_names = arg_list
-
-    class OPMatrixException(Exception):
-        """Raise when OP_matrix was wrongly defined"""
-
-
-OPMatrixException = OPMatrix.OPMatrixException

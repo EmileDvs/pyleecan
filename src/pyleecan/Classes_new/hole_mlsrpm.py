@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -341,21 +341,21 @@ class HoleMLSRPM(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise SLSRPM_NoneError("You must set W0 !")
+            raise self.SLSRPM_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise SLSRPM_NoneError("You must set W1 !")
+            raise self.SLSRPM_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise SLSRPM_NoneError("You must set W2 !")
+            raise self.SLSRPM_NoneError("You must set W2 !")
         elif self.H1 is None:
-            raise SLSRPM_NoneError("You must set H1 !")
+            raise self.SLSRPM_NoneError("You must set H1 !")
         elif self.R1 is None:
-            raise SLSRPM_NoneError("You must set R1 !")
+            raise self.SLSRPM_NoneError("You must set R1 !")
         elif self.R2 is None:
-            raise SLSRPM_NoneError("You must set R2 !")
+            raise self.SLSRPM_NoneError("You must set R2 !")
         elif self.R3 is None:
-            raise SLSRPM_NoneError("You must set R3 !")
+            raise self.SLSRPM_NoneError("You must set R3 !")
         elif self.magnet_0 is None:
-            raise SLSRPM_NoneError("You must set magnet_0 !")
+            raise self.SLSRPM_NoneError("You must set magnet_0 !")
 
     # Inlined from Methods.Slot.HoleMLSRPM.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -879,20 +879,5 @@ class HoleMLSRPM(HoleMag):
 
         self.magnet_0 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class SLSRPM_NoneError(SlotCheckError):
         """Raised when a propery of HoleM52 is None"""
-
-
-MachineCheckError = HoleMLSRPM.MachineCheckError
-LaminationCheckError = HoleMLSRPM.LaminationCheckError
-SlotCheckError = HoleMLSRPM.SlotCheckError
-SLSRPM_NoneError = HoleMLSRPM.SLSRPM_NoneError

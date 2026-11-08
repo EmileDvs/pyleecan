@@ -8,6 +8,7 @@ from typing import Any
 from pandas import ExcelFile, read_excel
 
 from ..Functions.path_tools import abs_file_path
+from ._error import PyleecanImportError as ImportError
 from .import_matrix import ImportMatrix
 
 
@@ -67,7 +68,9 @@ class ImportMatrixXls(ImportMatrix):
         """
         file_path = abs_file_path(self.file_path, is_check=False)
         if not os.path.isfile(file_path):
-            raise XlsFileError("ERROR: The xls file doesn't exist " + self.file_path)
+            raise self.XlsFileError(
+                "ERROR: The xls file doesn't exist " + self.file_path
+            )
         if self.usecols == "":
             self.usecols = None
 
@@ -171,12 +174,5 @@ class ImportMatrixXls(ImportMatrix):
             else:
                 return values
 
-    class ImportError(Exception):
-        """Raised when the data import or generation is not possible"""
-
     class XlsFileError(ImportError):
         """Raised when the file_path is wrong"""
-
-
-ImportError = ImportMatrixXls.ImportError
-XlsFileError = ImportMatrixXls.XlsFileError

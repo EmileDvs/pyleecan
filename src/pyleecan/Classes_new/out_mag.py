@@ -16,7 +16,6 @@ from .data_time import DataTime
 from .mesh_solution import MeshSolution
 from .norm_ref import NormRef
 from .out_internal import OutInternal
-from .output import Output
 from .slice_model import SliceModel
 from .vector_field import VectorField
 
@@ -119,16 +118,6 @@ class OutMag(PyleecanClass):
     """Dict of lamination winding fluxlinkage DataTime objects per slice"""
     Tem_norm: float = 0.001
     """Torque normalization"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "OutMag parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Output.OutMag.clean
     def clean(self, clean_level=1):

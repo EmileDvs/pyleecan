@@ -6,6 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
+from ._error import SlotCheckError
 from .arc_1 import Arc1
 from .segment import Segment
 from .slot import Slot
@@ -428,17 +429,3 @@ class SlotDC(Slot):
         surface.translate(delta)
 
         return surface
-
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-
-MachineCheckError = SlotDC.MachineCheckError
-LaminationCheckError = SlotDC.LaminationCheckError
-SlotCheckError = SlotDC.SlotCheckError

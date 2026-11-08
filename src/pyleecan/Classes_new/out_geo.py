@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from ._pyleecan_class import PyleecanClass
 from .data import Data
 from .out_geo_lam import OutGeoLam
-from .output import Output
 
 
 @dataclass(eq=False)
@@ -97,13 +96,3 @@ class OutGeo(PyleecanClass):
     """Number of time periodicities of the machine in rotating referential"""
     is_antiper_t_R: bool | None = None
     """True if an time anti-periodicity is possible after the periodicities in rotating referential"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "OutGeo parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )

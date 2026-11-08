@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .gui_option import GUIOption
 
 
 @dataclass(eq=False)
@@ -30,16 +29,6 @@ class Unit(PyleecanClass):
     """0: use rad, 1: use deg"""
     unit_m2: int = 0
     """0: use m^2, 1: use mm^2"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (GUIOption,)):
-            raise TypeError(
-                "Unit parent must be an instance of GUIOption, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.GUI_Option.Unit.get_m
     def get_m(self, value):

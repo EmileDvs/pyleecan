@@ -29,6 +29,3 @@ class Drive(PyleecanClass):
     """Maximum RMS current of the Drive"""
     is_current: bool = False
     """True to generate current waveform, False for voltage"""
-
-    def __post_init__(self):
-        super().__post_init__()

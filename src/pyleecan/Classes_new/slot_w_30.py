@@ -21,7 +21,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -525,10 +525,10 @@ class SlotW30(Slot):
         Rbo = self.get_Rbo()
 
         if self.W0 == 0:
-            raise S30_W0Error("You must have W0 > 0")
+            raise self.S30_W0Error("You must have W0 > 0")
 
         if self.W0 * 0.5 / Rbo >= 1:
-            raise S30_W0Error("You must have W0/2 < Rbo")
+            raise self.S30_W0Error("You must have W0/2 < Rbo")
 
         if self.is_outwards():
             R1 = Rbo + self.H0 + self.R1
@@ -536,12 +536,12 @@ class SlotW30(Slot):
             R1 = Rbo - self.H0 - self.R1
 
         if self.W3 * 0.5 / R1 >= 1:
-            raise S30_W3Error(
+            raise self.S30_W3Error(
                 "W3 is too high comparing to the lamination bore radius (Rbo)"
             )
 
         if self.H1 < self.R1 + self.R2:
-            raise S30_R1Error("You must have R1 + R2 < H1")
+            raise self.S30_R1Error("You must have R1 + R2 < H1")
 
         R1 = self.R1
         R2 = self.R2
@@ -561,13 +561,13 @@ class SlotW30(Slot):
         lr1 = abs(Z100 - Z40) - self.W0
 
         if R2 >= lr2 / 2:
-            raise S30_R2Error("R2 is too high")
+            raise self.S30_R2Error("R2 is too high")
 
         if R1 >= lr1 / 2:
             if self.R1 != 0:
-                raise S30_R1Error("R1 is too high")
+                raise self.S30_R1Error("R1 is too high")
             else:
-                raise S30_W3Error("W3 is too high")
+                raise self.S30_W3Error("W3 is too high")
 
     # Inlined from Methods.Slot.SlotW30.comp_angle_opening
     def comp_angle_opening(self):
@@ -1156,13 +1156,10 @@ class SlotW30(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
+    class S30_R1Error(SlotCheckError):
         """ """
 
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
+    class S30_R2Error(SlotCheckError):
         """ """
 
     class S30_W0Error(SlotCheckError):
@@ -1170,18 +1167,3 @@ class SlotW30(Slot):
 
     class S30_W3Error(SlotCheckError):
         """ """
-
-    class S30_R1Error(SlotCheckError):
-        """ """
-
-    class S30_R2Error(SlotCheckError):
-        """ """
-
-
-MachineCheckError = SlotW30.MachineCheckError
-LaminationCheckError = SlotW30.LaminationCheckError
-SlotCheckError = SlotW30.SlotCheckError
-S30_W0Error = SlotW30.S30_W0Error
-S30_W3Error = SlotW30.S30_W3Error
-S30_R1Error = SlotW30.S30_R1Error
-S30_R2Error = SlotW30.S30_R2Error

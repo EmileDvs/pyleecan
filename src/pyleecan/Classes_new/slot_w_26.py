@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .arc_3 import Arc3
 from .lam_slot import LamSlot
@@ -124,7 +124,7 @@ class SlotW26(Slot):
                 Z6, Z7, rot_sign * self.R1, is_trigo_direction=self.is_outwards()
             )
         else:  # Should never be called
-            raise Slot26_H1(Slot26_H1, "H1 can't be <0")
+            raise self.Slot26_H1(self.Slot26_H1, "H1 can't be <0")
 
         if self.H0 > 0:
             line_dict["7-8"] = Segment(Z7, Z8)
@@ -241,7 +241,7 @@ class SlotW26(Slot):
             You must have W0 < 2*R1
         """
         if self.R1 * 2 <= self.W0:
-            raise S26_WCheckError("You must have W0 < 2*R1")
+            raise self.S26_WCheckError("You must have W0 < 2*R1")
 
     # Inlined from Methods.Slot.SlotW26.comp_angle_opening
     def comp_angle_opening(self):
@@ -784,21 +784,5 @@ class SlotW26(Slot):
     class Slot26_H1(Exception):
         """ """
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S26_WCheckError(SlotCheckError):
         """ """
-
-
-Slot26_H1 = SlotW26.Slot26_H1
-MachineCheckError = SlotW26.MachineCheckError
-LaminationCheckError = SlotW26.LaminationCheckError
-SlotCheckError = SlotW26.SlotCheckError
-S26_WCheckError = SlotW26.S26_WCheckError

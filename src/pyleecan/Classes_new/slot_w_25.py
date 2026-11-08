@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -327,21 +327,23 @@ class SlotW25(Slot):
         Rbo = self.get_Rbo()
 
         if self.H1 == 0:
-            raise S25_W4CheckError("You must have H1>0 (use Slot 24 for H1=0)")
+            raise self.S25_W4CheckError("You must have H1>0 (use Slot 24 for H1=0)")
         if self.H2 == 0:
-            raise S25_W4CheckError("You must have H2>0 (use Slot 24 for H2=0)")
+            raise self.S25_W4CheckError("You must have H2>0 (use Slot 24 for H2=0)")
         if self.W4 == self.W3:
-            raise S25_W4CheckError("You must have W4 != W3 (use Slot 24 for W4=W3)")
+            raise self.S25_W4CheckError(
+                "You must have W4 != W3 (use Slot 24 for W4=W3)"
+            )
 
         if 2 * np.arcsin(self.W4 / (2 * Rbo)) > 2 * np.pi / self.Zs:
-            raise S25_W4CheckError("The teeth are too wide, reduce Zs or W4")
+            raise self.S25_W4CheckError("The teeth are too wide, reduce Zs or W4")
 
         if (
             not self.is_outwards()
             and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2 - self.H1))
             > 2 * np.pi / self.Zs
         ):
-            raise S25_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
+            raise self.S25_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
 
     # Inlined from Methods.Slot.SlotW25.comp_angle_opening
     def comp_angle_opening(self):
@@ -875,24 +877,8 @@ class SlotW25(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S25_HWCheckError(SlotCheckError):
         """ """
 
     class S25_W4CheckError(SlotCheckError):
         """ """
-
-
-MachineCheckError = SlotW25.MachineCheckError
-LaminationCheckError = SlotW25.LaminationCheckError
-SlotCheckError = SlotW25.SlotCheckError
-S25_HWCheckError = SlotW25.S25_HWCheckError
-S25_W4CheckError = SlotW25.S25_W4CheckError

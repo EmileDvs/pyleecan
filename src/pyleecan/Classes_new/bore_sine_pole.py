@@ -16,7 +16,7 @@ from ..Functions.Plot import (
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError
 from .arc_1 import Arc1
 from .bore import Bore
 from .lamination import Lamination

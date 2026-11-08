@@ -22,9 +22,6 @@ from .mesh import Mesh
 from .mesh_mat import MeshMat
 from .mesh_vtk import MeshVTK
 from .node_mat import NodeMat
-from .out_force import OutForce
-from .out_mag import OutMag
-from .out_struct import OutStruct
 from .solution import Solution
 from .solution_vector import SolutionVector
 
@@ -69,23 +66,6 @@ class MeshSolution(PyleecanClass):
     """Dimension of the physical problem"""
     path: str | None = None
     """Path where the MeshSolution is stored as a file"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                OutForce,
-                OutMag,
-                OutStruct,
-            ),
-        ):
-            raise TypeError(
-                "MeshSolution parent must be an instance of OutForce or OutMag or OutStruct, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Mesh.MeshSolution.__getitem__
     def __getitem__(self, label: Hashable) -> Solution:

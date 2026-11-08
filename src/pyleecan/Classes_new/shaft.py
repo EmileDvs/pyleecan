@@ -19,7 +19,6 @@ from ..Functions.labels import (
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .circle import Circle
-from .machine import Machine
 from .material import Material
 from .segment import Segment
 from .surf_line import SurfLine
@@ -49,16 +48,6 @@ class Shaft(PyleecanClass):
     """Shaft's Material"""
     Drsh: float = 0.045
     """diameter of the rotor shaft [m], used to estimate bearing diameter for friction losses"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Machine,)):
-            raise TypeError(
-                "Shaft parent must be an instance of Machine, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Shaft.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from .op import OP
 
 
@@ -312,9 +313,3 @@ class OPslip(OP):
             Z = Ud + 1j * Uq
             self.U0_ref = abs(Z)
             self.UPhi0_ref = np.angle(Z)
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = OPslip.InputError

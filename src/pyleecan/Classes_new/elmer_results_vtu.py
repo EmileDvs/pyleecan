@@ -65,7 +65,7 @@ class ElmerResultsVTU(Elmer):
         save_path, fn = os.path.split(self.file_path)
         file_name, file_ext = os.path.splitext(fn)
         if file_ext != ".vtu":
-            raise ElmerResultsVTUError(
+            raise self.ElmerResultsVTUError(
                 "ElmerResultsVTU: Results file must be of type VTU."
             )
 
@@ -156,6 +156,3 @@ class ElmerResultsVTU(Elmer):
 
     class ElmerResultsVTUError(Exception):
         pass
-
-
-ElmerResultsVTUError = ElmerResultsVTU.ElmerResultsVTUError

@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/SciDataTool/Data.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -14,12 +14,6 @@ from ..Functions.Load.retrocompatibility import (
 from ._check import check_var
 from ._pyleecan_class import PyleecanClass
 from .normalization import Normalization
-from .out_elec import OutElec
-from .out_force import OutForce
-from .out_geo import OutGeo
-from .out_loss import OutLoss
-from .out_mag import OutMag
-from .out_struct import OutStruct
 
 
 @dataclass(eq=False)
@@ -48,29 +42,8 @@ class Data(PyleecanClass):
     """Name of the physical quantity (to be used in plots)"""
     unit: str | None = None
     """Unit of the physical quantity (to be used in plots)"""
-    normalizations: dict[str, Normalization] = {}
+    normalizations: dict[str, Normalization] = field(default_factory=dict)
     """Normalizations available for the field and its axes"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Data,
-                OutElec,
-                OutForce,
-                OutGeo,
-                OutLoss,
-                OutMag,
-                OutStruct,
-            ),
-        ):
-            raise TypeError(
-                "Data parent must be an instance of Data or OutElec or OutForce or OutGeo or OutLoss or OutMag or OutStruct, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.SciDataTool.Data._set_normalizations
     def _set_normalizations(self, value):

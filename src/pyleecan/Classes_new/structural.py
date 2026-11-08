@@ -3,9 +3,9 @@
 
 from dataclasses import dataclass
 
+from ._error import InputError
 from ._pyleecan_class import PyleecanClass
 from .out_struct import OutStruct
-from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -21,16 +21,6 @@ class Structural(PyleecanClass):
 
     logger_name: str = "Pyleecan.Structural"
     """Name of the logger to use"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Simulation,)):
-            raise TypeError(
-                "Structural parent must be an instance of Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.Structural.comp_axes
     def comp_axes(self, output):
@@ -82,9 +72,3 @@ class Structural(PyleecanClass):
 
         # Compute the magnetic force according to the Force model
         self.force.comp_force(output)
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = Structural.InputError

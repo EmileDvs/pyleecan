@@ -16,7 +16,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError
 from .arc_1 import Arc1
 from .circle import Circle
 from .hole import Hole
@@ -96,11 +96,11 @@ class VentilationCirc(Hole):
 
         # checking if the param have good type
         if type(alpha) not in [int, float]:
-            raise CircleBuildGeometryError(
+            raise self.CircleBuildGeometryError(
                 "The parameter 'alpha' must be an int or float"
             )
         if type(delta) not in [complex, int, float]:
-            raise CircleBuildGeometryError(
+            raise self.CircleBuildGeometryError(
                 "The parameter 'delta' must be a complex or float or int number"
             )
 
@@ -145,13 +145,13 @@ class VentilationCirc(Hole):
         """
 
         if not isinstance(self.Zh, (int, np.int32)):
-            raise VentilationCircInstanceError("Zh must be an integer")
+            raise self.VentilationCircInstanceError("Zh must be an integer")
         if not isinstance(self.H0, (float, int)):
-            raise VentilationCircInstanceError("H0 must be a float ot int ")
+            raise self.VentilationCircInstanceError("H0 must be a float ot int ")
         if not isinstance(self.D0, (float, int)):
-            raise VentilationCircInstanceError("D0 must be a float or int ")
+            raise self.VentilationCircInstanceError("D0 must be a float or int ")
         if not isinstance(self.Alpha0, (float, int)):
-            raise VentilationCircInstanceError("Alpha0 must be a float ot int")
+            raise self.VentilationCircInstanceError("Alpha0 must be a float ot int")
 
     # Inlined from Methods.Slot.VentilationCirc.comp_radius
     def comp_radius(self):
@@ -441,7 +441,3 @@ class VentilationCirc(Hole):
 
     class VentilationCircInstanceError(Exception):
         """ """
-
-
-CircleBuildGeometryError = VentilationCirc.CircleBuildGeometryError
-VentilationCircInstanceError = VentilationCirc.VentilationCircInstanceError

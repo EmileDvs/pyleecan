@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 
+from ._error import InputError
 from .import_vector_field import ImportVectorField
 from .input import Input
 from .out_force import OutForce
@@ -62,9 +63,3 @@ class InputForce(Input):
 
             # Save the Output in the correct place
             self.parent.parent.force = outforce
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = InputForce.InputError

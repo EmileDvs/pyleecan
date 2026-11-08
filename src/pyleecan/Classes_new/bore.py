@@ -8,9 +8,8 @@ import numpy as np
 from ..definitions import config_dict
 from ..Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
 from ..Functions.init_fig import init_fig
-from . import ParentMissingError
+from ._error import ParentMissingError
 from ._pyleecan_class import PyleecanClass
-from .lamination import Lamination
 from .segment import Segment
 from .surf_line import SurfLine
 
@@ -35,16 +34,6 @@ class Bore(PyleecanClass):
     """how to merge slot/notch into the bore radius (0: connect the dot, 1: intersection, 2: translate)"""
     alpha: float = 0
     """Angular offset for the bore shape"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Lamination,)):
-            raise TypeError(
-                "Bore parent must be an instance of Lamination, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Bore.comp_Rmax
     def comp_Rmax(self):

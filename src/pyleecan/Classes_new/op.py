@@ -5,10 +5,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import OPMatrixException
 from ._pyleecan_class import PyleecanClass
-from .eec import EEC
-from .input import Input
-from .out_elec import OutElec
 
 
 @dataclass(eq=False)
@@ -49,23 +47,6 @@ class OP(PyleecanClass):
     """Input average power (e.g. for generator mode)"""
     efficiency: float | None = None
     """Efficiency"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                EEC,
-                Input,
-                OutElec,
-            ),
-        ):
-            raise TypeError(
-                "OP parent must be an instance of EEC or Input or OutElec, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.OP.get_machine_from_parent
     def get_machine_from_parent(self):
@@ -184,9 +165,3 @@ class OP(PyleecanClass):
                 )
 
         return OP_matrix
-
-    class OPMatrixException(Exception):
-        """Raise when OP_matrix was wrongly defined"""
-
-
-OPMatrixException = OP.OPMatrixException

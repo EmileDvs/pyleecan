@@ -43,6 +43,7 @@ from ..Functions.labels import (
     YSR_LAB,
     decode_label,
 )
+from ._error import InputError
 from .elmer_results_vtu import ElmerResultsVTU
 from .section import MATC, File, Section, Variable
 from .solver_input_file import SolverInputFile
@@ -1012,9 +1013,3 @@ class StructElmer(Structural):
 
         for info in self._execute("ElmerSolver", cwd, logger):
             print(info, end="")
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = StructElmer.InputError

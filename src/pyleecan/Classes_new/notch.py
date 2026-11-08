@@ -3,9 +3,8 @@
 
 from dataclasses import dataclass
 
-from . import ParentMissingError
+from ._error import ParentMissingError
 from ._pyleecan_class import PyleecanClass
-from .lamination import Lamination
 from .material import Material
 
 
@@ -22,16 +21,6 @@ class Notch(PyleecanClass):
 
     key_mat: Material | None = None
     """The material of the key (if None, no key to add)"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Lamination,)):
-            raise TypeError(
-                "Notch parent must be an instance of Lamination, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Notch.get_label
     def get_label(self, is_add_id=True):

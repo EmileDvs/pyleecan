@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from ._pyleecan_class import PyleecanClass
 from .data_1d import Data1D
 from .data_time import DataTime
@@ -15,7 +16,6 @@ from .lut import LUT
 from .machine_ipmsm import MachineIPMSM
 from .machine_scim import MachineSCIM
 from .machine_sipmsm import MachineSIPMSM
-from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -66,16 +66,6 @@ class Electrical(PyleecanClass):
     """Skin effect for resistance and inductance"""
     is_skin_effect_inductance: bool = True
     """True to include skin effect on inductance if type_skin_effect != False"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Simulation,)):
-            raise TypeError(
-                "Electrical parent must be an instance of Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.Electrical.comp_power
     def comp_power(self, out_dict, machine):
@@ -304,9 +294,3 @@ class Electrical(PyleecanClass):
 
         # Store electrical quantities contained in out_dict in OutElec, as Data object if necessary
         output.elec.store(out_dict)
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = Electrical.InputError

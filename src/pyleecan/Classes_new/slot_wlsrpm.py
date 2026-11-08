@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -389,7 +389,9 @@ class SlotWLSRPM(Slot):
         """
 
         if self.is_outwards():
-            raise SLSRPMOutterError("Slot Type LSRPM can’t be used on outer lamination")
+            raise self.SLSRPMOutterError(
+                "Slot Type LSRPM can’t be used on outer lamination"
+            )
 
     # Inlined from Methods.Slot.SlotWLSRPM.comp_angle_opening
     def comp_angle_opening(self):
@@ -751,20 +753,5 @@ class SlotWLSRPM(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class SLSRPMOutterError(SlotCheckError):
         """ """
-
-
-MachineCheckError = SlotWLSRPM.MachineCheckError
-LaminationCheckError = SlotWLSRPM.LaminationCheckError
-SlotCheckError = SlotWLSRPM.SlotCheckError
-SLSRPMOutterError = SlotWLSRPM.SLSRPMOutterError

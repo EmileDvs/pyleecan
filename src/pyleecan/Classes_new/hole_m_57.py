@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -438,19 +438,19 @@ class HoleM57(HoleMag):
         """
         # Check that everything is set
         if self.W0 is None:
-            raise S57_NoneError("You must set W0 !")
+            raise self.S57_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise S57_NoneError("You must set W1 !")
+            raise self.S57_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise S57_NoneError("You must set W2 !")
+            raise self.S57_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise S57_NoneError("You must set W3 !")
+            raise self.S57_NoneError("You must set W3 !")
         elif self.W4 is None:
-            raise S57_NoneError("You must set W4 !")
+            raise self.S57_NoneError("You must set W4 !")
         elif self.H1 is None:
-            raise S57_NoneError("You must set H1 !")
+            raise self.S57_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise S57_NoneError("You must set H2 !")
+            raise self.S57_NoneError("You must set H2 !")
 
     # Inlined from Methods.Slot.HoleM57.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -916,20 +916,5 @@ class HoleM57(HoleMag):
         self.magnet_0 = None
         self.magnet_1 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S57_NoneError(SlotCheckError):
         """Raised when a propery of HoleM57 is None"""
-
-
-MachineCheckError = HoleM57.MachineCheckError
-LaminationCheckError = HoleM57.LaminationCheckError
-SlotCheckError = HoleM57.SlotCheckError
-S57_NoneError = HoleM57.S57_NoneError

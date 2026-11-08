@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .arc_2 import Arc2
 from .lam_slot import LamSlot
@@ -350,10 +350,10 @@ class SlotW22(Slot):
             You must have W2 < 2*pi/Zs
         """
         if self.W2 < self.W0:
-            raise S22_A02CheckError("You must have W0 <= W2")
+            raise self.S22_A02CheckError("You must have W0 <= W2")
 
         if 2 * np.pi / self.Zs <= self.W2:
-            raise S22_SpCheckError("You must have W2 < 2*pi/Zs")
+            raise self.S22_SpCheckError("You must have W2 < 2*pi/Zs")
 
     # Inlined from Methods.Slot.SlotW22.comp_angle_opening
     def comp_angle_opening(self):
@@ -896,24 +896,8 @@ class SlotW22(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S22_A02CheckError(SlotCheckError):
         """ """
 
     class S22_SpCheckError(SlotCheckError):
         """ """
-
-
-MachineCheckError = SlotW22.MachineCheckError
-LaminationCheckError = SlotW22.LaminationCheckError
-SlotCheckError = SlotW22.SlotCheckError
-S22_A02CheckError = SlotW22.S22_A02CheckError
-S22_SpCheckError = SlotW22.S22_SpCheckError

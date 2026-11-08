@@ -13,6 +13,3 @@ class ScalarProduct(PyleecanClass):
     Attributes
     ----------
     """
-
-    def __post_init__(self):
-        super().__post_init__()

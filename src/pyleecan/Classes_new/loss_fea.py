@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 
+from ._error import InputError
 from .loss import Loss
 from .loss_model_joule import LossModelJoule
 from .loss_model_magnet import LossModelMagnet
@@ -86,9 +87,3 @@ class LossFEA(Loss):
         overall = sum(output.loss.loss_dict.values())
         overall.name = "overall"
         output.loss.loss_dict["overall"] = overall
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = LossFEA.InputError

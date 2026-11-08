@@ -13,7 +13,6 @@ from .norm_affine import NormAffine
 from .norm_indices import NormIndices
 from .norm_ref import NormRef
 from .op import OP
-from .simulation import Simulation
 
 ROT_DIR_REF = -1
 CURRENT_DIR_REF = -1
@@ -63,16 +62,6 @@ class Input(PyleecanClass):
     """Operating Point"""
     t_final: float | None = None
     """To enforce final time"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Simulation,)):
-            raise TypeError(
-                "Input parent must be an instance of Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.Input.comp_axes
     def comp_axes(

@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .output import Output
 
 
 @dataclass(eq=False)
@@ -25,13 +24,3 @@ class OutPost(PyleecanClass):
     """Name to use in the legend in case of comparison"""
     line_color: str | None = None
     """Color to use in case of comparison"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "OutPost parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )

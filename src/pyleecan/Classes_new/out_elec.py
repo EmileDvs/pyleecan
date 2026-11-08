@@ -20,7 +20,6 @@ from .eec import EEC
 from .import_gen_pwm import ImportGenPWM
 from .op import OP
 from .out_internal import OutInternal
-from .output import Output
 
 
 @dataclass(eq=False)
@@ -126,16 +125,6 @@ class OutElec(PyleecanClass):
     """RMS linear current density along airgap"""
     Erms: float | None = None
     """RMS back-emf"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "OutElec parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Output.OutElec.get_electrical
     def get_electrical(

@@ -5,11 +5,11 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from ._pyleecan_class import PyleecanClass
 from .data_1d import Data1D
 from .loss_model import LossModel
 from .out_loss_model import OutLossModel
-from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -45,16 +45,6 @@ class Loss(PyleecanClass):
     """Average rotor temperature for Electrical calculation"""
     is_get_meshsolution: bool = False
     """True to save loss density map as meshsolution"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Simulation,)):
-            raise TypeError(
-                "Loss parent must be an instance of Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Loss.Loss.comp_all_losses
     def comp_all_losses(
@@ -169,9 +159,3 @@ class Loss(PyleecanClass):
         axes_dict = self.comp_axes(output)
         # Comp and store in output
         self.comp_all_losses(axes_dict)
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = Loss.InputError

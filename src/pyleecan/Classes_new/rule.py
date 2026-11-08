@@ -20,9 +20,6 @@ class Rule(PyleecanClass):
     unit_type: str = "m"
     """unit"""
 
-    def __post_init__(self):
-        super().__post_init__()
-
     # Inlined from Methods.Converter.Rule.get_name
     def get_name(self):
         """Return the name of file or function

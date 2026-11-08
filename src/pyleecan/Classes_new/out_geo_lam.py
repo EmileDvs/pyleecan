@@ -7,7 +7,6 @@ from typing import Any
 import numpy as np
 
 from ._pyleecan_class import PyleecanClass
-from .out_geo import OutGeo
 
 
 @dataclass(eq=False)
@@ -68,13 +67,3 @@ class OutGeoLam(PyleecanClass):
     """Number of time periodicities of the lamination"""
     is_antiper_t: bool | None = None
     """True if an time anti-periodicity is possible after the periodicities"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (OutGeo,)):
-            raise TypeError(
-                "OutGeoLam parent must be an instance of OutGeo, or None; "
-                + f"got {type(parent).__name__}"
-            )

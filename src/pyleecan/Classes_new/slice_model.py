@@ -9,11 +9,10 @@ from scipy.stats import norm
 
 from ..Functions.Plot import dict_2D
 from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ._error import InputError
 from ._pyleecan_class import PyleecanClass
 from .data_pattern import DataPattern
-from .magnetics import Magnetics
 from .norm_ref import NormRef
-from .out_mag import OutMag
 
 
 @dataclass(eq=False)
@@ -64,22 +63,6 @@ class SliceModel(PyleecanClass):
     """True to define slices as steps"""
     is_skew: bool | None = None
     """True if slices account for skew"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Magnetics,
-                OutMag,
-            ),
-        ):
-            raise TypeError(
-                "SliceModel parent must be an instance of Magnetics or OutMag, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.SliceModel.get_data
     def get_data(self):
@@ -232,9 +215,3 @@ class SliceModel(PyleecanClass):
             win_title=win_title,
             **dict_2D,
         )
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = SliceModel.InputError

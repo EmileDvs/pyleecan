@@ -7,7 +7,6 @@ from typing import Optional
 import numpy as np
 
 from ._pyleecan_class import PyleecanClass
-from .mesh_solution import MeshSolution
 
 
 @dataclass(eq=False)
@@ -23,16 +22,6 @@ class Mesh(PyleecanClass):
 
     dimension: int = 2
     """Dimension of the physical problem"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (MeshSolution,)):
-            raise TypeError(
-                "Mesh parent must be an instance of MeshSolution, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Mesh.Mesh.get_node_coordinate
     def get_node_coordinate(

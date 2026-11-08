@@ -19,6 +19,3 @@ class Elmer(PyleecanClass):
 
     logger_name: str = "Pyleecan.Elmer"
     """Name of the logger to use"""
-
-    def __post_init__(self):
-        super().__post_init__()

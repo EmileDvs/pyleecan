@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import numpy as np
 
 from ._pyleecan_class import PyleecanClass
-from .element_mat import ElementMat
 
 
 @dataclass(eq=False)
@@ -22,16 +21,6 @@ class RefElement(PyleecanClass):
 
     epsilon: float = 0.05
     """Precision criterion"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (ElementMat,)):
-            raise TypeError(
-                "RefElement parent must be an instance of ElementMat, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Mesh.RefElement.get_element_area
     def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:

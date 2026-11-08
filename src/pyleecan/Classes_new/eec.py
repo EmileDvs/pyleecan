@@ -7,10 +7,8 @@ from dataclasses import dataclass
 from ..Functions.Electrical.dqh_transformation import n2dqh_DataTime
 from ..Functions.Load.import_class import import_class
 from ._pyleecan_class import PyleecanClass
-from .electrical import Electrical
 from .magnetics import Magnetics
 from .op import OP
-from .out_elec import OutElec
 
 
 @dataclass(eq=False)
@@ -71,22 +69,6 @@ class EEC(PyleecanClass):
     """Stator phase resistance"""
     fluxlink: Magnetics | None = None
     """Magnetic model for flux linkage calculation"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Electrical,
-                OutElec,
-            ),
-        ):
-            raise TypeError(
-                "EEC parent must be an instance of Electrical or OutElec, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.EEC.comp_fluxlinkage
     def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):
@@ -185,7 +167,7 @@ class EEC(PyleecanClass):
             Dict containing all magnetic quantities that have been calculated in EEC
         """
 
-        raise AbstractClassError(
+        raise self.AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -200,7 +182,7 @@ class EEC(PyleecanClass):
 
         """
 
-        raise AbstractClassError(
+        raise self.AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -310,7 +292,7 @@ class EEC(PyleecanClass):
             Dict containing all magnetic quantities that have been calculated in EEC
         """
 
-        raise AbstractClassError(
+        raise self.AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -332,7 +314,7 @@ class EEC(PyleecanClass):
         Is_PWM : DataFreq
             Stator current harmonics as DataFreq
         """
-        raise AbstractClassError(
+        raise self.AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -349,12 +331,9 @@ class EEC(PyleecanClass):
 
         """
 
-        raise AbstractClassError(
+        raise self.AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
     class AbstractClassError(Exception):
         pass
-
-
-AbstractClassError = EEC.AbstractClassError

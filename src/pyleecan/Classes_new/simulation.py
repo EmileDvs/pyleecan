@@ -2,16 +2,13 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from logging.config import dictConfig
 
 from ..loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
 from ._pyleecan_class import PyleecanClass
-from .electrical import Electrical
 from .input import Input
 from .machine import Machine
-from .opti_problem import OptiProblem
-from .output import Output
 from .post import Post
 from .var_load import VarLoad
 from .var_simu import VarSimu
@@ -70,7 +67,7 @@ class Simulation(PyleecanClass):
     """Name of the logger to use"""
     var_simu: VarSimu | None = None
     """Multi-simulation definition"""
-    postproc_list: list[Post] = []
+    postproc_list: list[Post] = field(default_factory=list)
     """List of postprocessings to run on Output after the simulation"""
     index: int | None = None
     """Index of the simulation (if part of a multi-simulation)"""
@@ -80,23 +77,6 @@ class Simulation(PyleecanClass):
     """Layer of the simulation in a multi-simulation (0 is top simulation)"""
     layer_log_warn: int | None = None
     """Enable to set the log console_handler to warning starting from a particular layer. layer_log_warn=2 => layer 0 and 1 info, layer 2 warning"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Electrical,
-                OptiProblem,
-                Output,
-            ),
-        ):
-            raise TypeError(
-                "Simulation parent must be an instance of Electrical or OptiProblem or Output, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.Simulation.get_OP_array
     def get_OP_array(self, *arg_list):

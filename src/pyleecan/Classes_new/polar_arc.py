@@ -55,7 +55,9 @@ class PolarArc(Surface):
 
         """
         if self.angle == 0:
-            raise AnglePolarArcError("The angle of a polar arc must be different to 0")
+            raise self.AnglePolarArcError(
+                "The angle of a polar arc must be different to 0"
+            )
 
     # Inlined from Methods.Geometry.PolarArc.comp_length
     # -*-- coding: utf-8 -*
@@ -145,9 +147,11 @@ class PolarArc(Surface):
         self.check()
 
         if not isinstance(nb_point, int):
-            raise NbPointPolarArcError("Discretize : the nb_point must be an integer")
+            raise self.NbPointPolarArcError(
+                "Discretize : the nb_point must be an integer"
+            )
         if nb_point < 0:
-            raise NbPointPolarArcError("Discretize: nb_point must be >= 0")
+            raise self.NbPointPolarArcError("Discretize: nb_point must be >= 0")
 
         # getting lines that delimit the PolarArc
         lines = self.get_lines()
@@ -304,7 +308,3 @@ class PolarArc(Surface):
 
     class NbPointPolarArcError(Exception):
         """ """
-
-
-AnglePolarArcError = PolarArc.AnglePolarArcError
-NbPointPolarArcError = PolarArc.NbPointPolarArcError

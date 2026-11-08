@@ -19,7 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .arc_3 import Arc3
 from .hole_mag import HoleMag
@@ -375,20 +375,20 @@ class HoleM60(HoleMag):
         """
         # Check that everything is set
         if self.W0 is None:
-            raise S60_NoneError("You must set W0 !")
+            raise self.S60_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise S60_NoneError("You must set W1 !")
+            raise self.S60_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise S60_NoneError("You must set W2 !")
+            raise self.S60_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise S60_NoneError("You must set W3 !")
+            raise self.S60_NoneError("You must set W3 !")
         elif self.H0 is None:
-            raise S60_NoneError("You must set H0 !")
+            raise self.S60_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise S60_NoneError("You must set H1 !")
+            raise self.S60_NoneError("You must set H1 !")
 
         if (self.W1 + self.H0) > self.W2:
-            raise S60_WCheckError("You must have (W1 + H0) <= W2")
+            raise self.S60_WCheckError("You must have (W1 + H0) <= W2")
 
     # Inlined from Methods.Slot.HoleM60.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -840,24 +840,8 @@ class HoleM60(HoleMag):
         self.magnet_0 = None
         self.magnet_1 = None
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
     class S60_NoneError(SlotCheckError):
         """Raised when a propery of HoleM58 is None"""
 
     class S60_WCheckError(SlotCheckError):
         """ """
-
-
-MachineCheckError = HoleM60.MachineCheckError
-LaminationCheckError = HoleM60.LaminationCheckError
-SlotCheckError = HoleM60.SlotCheckError
-S60_NoneError = HoleM60.S60_NoneError
-S60_WCheckError = HoleM60.S60_WCheckError

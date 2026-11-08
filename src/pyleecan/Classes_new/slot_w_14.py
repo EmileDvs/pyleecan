@@ -21,7 +21,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -254,7 +254,7 @@ class SlotW14(Slot):
         H1 = self.get_H1()
 
         if self.W0 * 0.5 / Rbo >= 1:
-            raise S14_Rbo0CheckError("You must have W0/2 < Rbo")
+            raise self.S14_Rbo0CheckError("You must have W0/2 < Rbo")
 
         if self.is_outwards():
             R1 = Rbo + self.H0 + H1
@@ -262,7 +262,7 @@ class SlotW14(Slot):
             R1 = Rbo - self.H0 - H1
 
         if self.W3 * 0.5 / R1 >= 1:
-            raise S14_Rbo1CheckError(
+            raise self.S14_Rbo1CheckError(
                 "W3 is too high comparing to the lamination bore radius (Rbo)"
             )
 
@@ -1071,24 +1071,8 @@ class SlotW14(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
+    class S14_Rbo0CheckError(SlotCheckError):
         """ """
 
     class S14_Rbo1CheckError(SlotCheckError):
         """ """
-
-    class S14_Rbo0CheckError(SlotCheckError):
-        """ """
-
-
-MachineCheckError = SlotW14.MachineCheckError
-LaminationCheckError = SlotW14.LaminationCheckError
-SlotCheckError = SlotW14.SlotCheckError
-S14_Rbo1CheckError = SlotW14.S14_Rbo1CheckError
-S14_Rbo0CheckError = SlotW14.S14_Rbo0CheckError

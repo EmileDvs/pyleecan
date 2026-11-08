@@ -60,7 +60,7 @@ class Circle(Surface):
 
         """
         if self.radius < 0:
-            raise RadiusCircleError("The radius of a circle must be >= 0")
+            raise self.RadiusCircleError("The radius of a circle must be >= 0")
 
     # Inlined from Methods.Geometry.Circle.comp_length
     def comp_length(self):
@@ -257,7 +257,7 @@ class Circle(Surface):
             The angle must be a float or int
         """
         if not isinstance(angle, float) and not isinstance(angle, int):
-            raise AngleRotationCircleError("The angle must be a float or int ")
+            raise self.AngleRotationCircleError("The angle must be a float or int ")
 
         if angle == 0:
             return  # Nothing to do
@@ -297,7 +297,7 @@ class Circle(Surface):
             and not isinstance(Zt, int)
             and not isinstance(Zt, float)
         ):
-            raise PointTranslateCircleError(
+            raise self.PointTranslateCircleError(
                 "The point must be a complex number or int or float"
             )
 
@@ -312,16 +312,11 @@ class Circle(Surface):
             self.point_ref = self.point_ref + Zt
         self.center = self.center + Zt
 
-    class RadiusCircleError(Exception):
-        """ """
-
     class AngleRotationCircleError(Exception):
         """ """
 
     class PointTranslateCircleError(Exception):
         """ """
 
-
-RadiusCircleError = Circle.RadiusCircleError
-AngleRotationCircleError = Circle.AngleRotationCircleError
-PointTranslateCircleError = Circle.PointTranslateCircleError
+    class RadiusCircleError(Exception):
+        """ """

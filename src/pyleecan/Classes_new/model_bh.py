@@ -7,7 +7,6 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from ._pyleecan_class import PyleecanClass
-from .mat_magnetics import MatMagnetics
 
 
 @dataclass(eq=False)
@@ -33,16 +32,6 @@ class ModelBH(PyleecanClass):
     """Max value of H for extrapolation"""
     delta: float = 100
     """Step value for H"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (MatMagnetics,)):
-            raise TypeError(
-                "ModelBH parent must be an instance of MatMagnetics, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Material.ModelBH.fit_model
     def fit_model(self, BH):

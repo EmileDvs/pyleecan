@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 
+from ._error import MachineCheckError
 from .lam_slot_wind import LamSlotWind
 from .lam_squirrel_cage import LamSquirrelCage
 from .machine_dfim import MachineDFIM
@@ -44,18 +45,24 @@ class MachineSCIM(MachineDFIM):
         self.__class__.__bases__[0].__bases__[0].check(self)
 
         if not isinstance(self.rotor, LamSquirrelCage):
-            raise M1C_WrongRotor("The Rotor of a MachineSCIM must be a LamSquirrelCage")
+            raise self.M1C_WrongRotor(
+                "The Rotor of a MachineSCIM must be a LamSquirrelCage"
+            )
         if not isinstance(self.stator, LamSlotWind):
-            raise M1C_WrongStator("The Stator of a MachineSCIM must be a LamSlotWind")
+            raise self.M1C_WrongStator(
+                "The Stator of a MachineSCIM must be a LamSlotWind"
+            )
         if self.rotor.winding.p != self.stator.winding.p:
-            raise M1C_SquirrelCagePError(
+            raise self.M1C_SquirrelCagePError(
                 "The stator and the rotor winding must have the same value for p"
             )
         if self.rotor.is_internal and (
             self.rotor.slot.comp_radius_mid_active() + self.rotor.Hscr / 2.0
             > self.stator.Rint
         ):
-            raise M1C_RingTooLarge("The Ring is larger than the stator internal radius")
+            raise self.M1C_RingTooLarge(
+                "The Ring is larger than the stator internal radius"
+            )
 
     # Inlined from Methods.Machine.MachineSCIM.get_machine_type
     def get_machine_type(self):
@@ -97,9 +104,6 @@ class MachineSCIM(MachineDFIM):
 
         return type_str
 
-    class MachineCheckError(Exception):
-        """ """
-
     class M1C_RingTooLarge(MachineCheckError):
         """ """
 
@@ -137,10 +141,3 @@ class MachineSCIM(MachineDFIM):
             Winding
 
         """
-
-
-MachineCheckError = MachineSCIM.MachineCheckError
-M1C_RingTooLarge = MachineSCIM.M1C_RingTooLarge
-M1C_SquirrelCagePError = MachineSCIM.M1C_SquirrelCagePError
-M1C_WrongRotor = MachineSCIM.M1C_WrongRotor
-M1C_WrongStator = MachineSCIM.M1C_WrongStator

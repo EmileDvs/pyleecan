@@ -9,8 +9,6 @@ from ..definitions import PYTHON_DEFAULT_ENCODING
 from ..Functions.path_tools import abs_file_path
 from ._check import CheckTypeError
 from ._pyleecan_class import PyleecanClass
-from .output import Output
-from .var_simu import VarSimu
 
 
 @dataclass(eq=False)
@@ -46,22 +44,6 @@ class ParamExplorer(PyleecanClass):
     """Function that takes a Simulation and a value in argument and modifiers the simulation"""
     getter: Callable[..., Any] | None = None
     """Function to return the reference value (simulation as argument)"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(
-            parent,
-            (
-                Output,
-                VarSimu,
-            ),
-        ):
-            raise TypeError(
-                "ParamExplorer parent must be an instance of Output or VarSimu, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.ParamExplorer._set_getter
     def _set_getter(self, value):

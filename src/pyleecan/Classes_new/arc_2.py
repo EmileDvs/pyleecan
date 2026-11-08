@@ -58,12 +58,12 @@ class Arc2(Arc):
         if self.begin == self.center or (
             abs(self.begin) == 0 and abs(self.center) == 0
         ):
-            raise PointArc2Error
+            raise self.PointArc2Error
             ("The beginning point and the center of an Arc2 can't be the same")
         if self.angle == 0:
-            raise AngleArc2Error("An arc can't have a null opening angle")
+            raise self.AngleArc2Error("An arc can't have a null opening angle")
         if self.angle == 2 * np.pi:
-            raise AngleArc2Error("You can't draw a circle with an Arc2")
+            raise self.AngleArc2Error("You can't draw a circle with an Arc2")
 
     # Inlined from Methods.Geometry.Arc2.comp_length
     def comp_length(self):
@@ -133,9 +133,9 @@ class Arc2(Arc):
 
         self.check()
         if not isinstance(nb_point, int):
-            raise NbPointArc2DError("discretize : nb_point must be an integer")
+            raise self.NbPointArc2DError("discretize : nb_point must be an integer")
         if nb_point < 0:
-            raise NbPointArc2DError("nb_point must be >=0")
+            raise self.NbPointArc2DError("nb_point must be >=0")
 
         # We use the complex representation of the point
         z1 = self.begin
@@ -310,7 +310,7 @@ class Arc2(Arc):
         None
         """
         if not isinstance(angle, float) and not isinstance(angle, int):
-            raise AngleRotationArc2Error("The angle must be a float or int")
+            raise self.AngleRotationArc2Error("The angle must be a float or int")
 
         # check if Arc2 is correct"
         self.check()
@@ -407,7 +407,7 @@ class Arc2(Arc):
             and not isinstance(Zt, int)
             and not isinstance(Zt, float)
         ):
-            raise PointTranslateArc2Error(
+            raise self.PointTranslateArc2Error(
                 "The point must be a complex number or int or float"
             )
 
@@ -421,21 +421,14 @@ class Arc2(Arc):
     class AngleArc2Error(Exception):
         """ """
 
-    class PointArc2Error(Exception):
+    class AngleRotationArc2Error(Exception):
         """ """
 
     class NbPointArc2DError(Exception):
         """ """
 
-    class AngleRotationArc2Error(Exception):
+    class PointArc2Error(Exception):
         """ """
 
     class PointTranslateArc2Error(Exception):
         """ """
-
-
-AngleArc2Error = Arc2.AngleArc2Error
-PointArc2Error = Arc2.PointArc2Error
-NbPointArc2DError = Arc2.NbPointArc2DError
-AngleRotationArc2Error = Arc2.AngleRotationArc2Error
-PointTranslateArc2Error = Arc2.PointTranslateArc2Error

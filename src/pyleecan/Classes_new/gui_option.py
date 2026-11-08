@@ -20,6 +20,3 @@ class GUIOption(PyleecanClass):
 
     unit: Unit | None = None
     """Unit options"""
-
-    def __post_init__(self):
-        super().__post_init__()

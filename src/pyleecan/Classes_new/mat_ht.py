@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 
 from ._pyleecan_class import PyleecanClass
-from .material import Material
 
 
 @dataclass(eq=False)
@@ -40,13 +39,3 @@ class MatHT(PyleecanClass):
     """specific heat capacity"""
     alpha: float = 0
     """thermal expansion coefficient"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Material,)):
-            raise TypeError(
-                "MatHT parent must be an instance of Material, or None; "
-                + f"got {type(parent).__name__}"
-            )

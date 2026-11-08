@@ -18,7 +18,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .arc_3 import Arc3
 from .hole import Hole
@@ -174,19 +174,19 @@ class HoleM54(Hole):
 
         # Check that everything is set
         if self.W0 is None:
-            raise S54_NoneError("You must set W0 !")
+            raise self.S54_NoneError("You must set W0 !")
         elif self.R1 is None:
-            raise S54_NoneError("You must set R1 !")
+            raise self.S54_NoneError("You must set R1 !")
         elif self.H0 is None:
-            raise S54_NoneError("You must set H0 !")
+            raise self.S54_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise S54_NoneError("You must set H1 !")
+            raise self.S54_NoneError("You must set H1 !")
 
         if 2 * np.pi / self.Zh <= self.W0:
-            raise H54_W0CheckError("You must have W0 < 2*pi/Zh")
+            raise self.H54_W0CheckError("You must have W0 < 2*pi/Zh")
 
         if self.R1 <= self.H0:
-            raise H54_R1CheckError("You must have H0 < R1")
+            raise self.H54_R1CheckError("You must have H0 < R1")
 
     # Inlined from Methods.Slot.HoleM54.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -513,13 +513,7 @@ class HoleM54(Hole):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
+    class H54_R1CheckError(SlotCheckError):
         """ """
 
     class H54_W0CheckError(SlotCheckError):
@@ -527,14 +521,3 @@ class HoleM54(Hole):
 
     class S54_NoneError(SlotCheckError):
         """Raised when a propery of HoleM54 is None"""
-
-    class H54_R1CheckError(SlotCheckError):
-        """ """
-
-
-MachineCheckError = HoleM54.MachineCheckError
-LaminationCheckError = HoleM54.LaminationCheckError
-SlotCheckError = HoleM54.SlotCheckError
-H54_W0CheckError = HoleM54.H54_W0CheckError
-S54_NoneError = HoleM54.S54_NoneError
-H54_R1CheckError = HoleM54.H54_R1CheckError

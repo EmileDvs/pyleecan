@@ -62,10 +62,10 @@ class Trapeze(Surface):
 
         """
         if self.W1 <= 0:
-            raise TrapezeError("the W1 base of Trapeze must be greater than 0")
+            raise self.TrapezeError("the W1 base of Trapeze must be greater than 0")
 
         if self.W2 <= 0:
-            raise TrapezeError("the W2 base of Trapeze must be greater than 0")
+            raise self.TrapezeError("the W2 base of Trapeze must be greater than 0")
 
     # Inlined from Methods.Geometry.Trapeze.comp_length
     # -*-- coding: utf-8 -*
@@ -312,6 +312,3 @@ class Trapeze(Surface):
 
     class TrapezeError(Exception):
         """ """
-
-
-TrapezeError = Trapeze.TrapezeError

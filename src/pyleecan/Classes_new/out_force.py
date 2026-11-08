@@ -7,7 +7,6 @@ from ._pyleecan_class import PyleecanClass
 from .data import Data
 from .data_time import DataTime
 from .mesh_solution import MeshSolution
-from .output import Output
 from .vector_field import VectorField
 
 
@@ -44,16 +43,6 @@ class OutForce(PyleecanClass):
     """Radius value for air-gap computation"""
     meshsolution: MeshSolution | None = None
     """Force computed on a mesh"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "OutForce parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Output.OutForce.store
     def store(self, out_dict, axes_dict):

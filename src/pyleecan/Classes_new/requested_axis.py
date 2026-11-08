@@ -107,9 +107,6 @@ class RequestedAxis(PyleecanClass):
     is_components: bool = False
     """To indicate if the values are strings"""
 
-    def __post_init__(self):
-        super().__post_init__()
-
     # Inlined from Methods.SciDataTool.RequestedAxis.get_axis
     def get_axis(
         self,

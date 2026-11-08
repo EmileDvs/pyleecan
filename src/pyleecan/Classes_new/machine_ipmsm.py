@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 
+from ._error import MachineCheckError
 from .lam_h import LamH
 from .lam_hole import LamHole
 from .lam_slot_wind import LamSlotWind
@@ -57,14 +58,16 @@ class MachineIPMSM(MachineSync):
         super(type(self), self).check()
 
         if not isinstance(self.rotor, LamHole):
-            raise M3C_WrongRotor("The Rotor of a Machine_Type_3 must be a LamHole")
+            raise self.M3C_WrongRotor("The Rotor of a Machine_Type_3 must be a LamHole")
         if not isinstance(self.stator, LamSlotWind):
-            raise M3C_WrongStator(
+            raise self.M3C_WrongStator(
                 "The Stator of a Machine_Type_3 must be a LamSlotWind"
             )
 
         if self.rotor.get_pole_pair_number() != self.stator.get_pole_pair_number():
-            raise M3C_PError("The stator and the rotor must have the same value for p")
+            raise self.M3C_PError(
+                "The stator and the rotor must have the same value for p"
+            )
 
     # Inlined from Methods.Machine.MachineIPMSM.get_machine_type
     def get_machine_type(self):
@@ -99,9 +102,6 @@ class MachineIPMSM(MachineSync):
             type_str += " (int rotor)"
 
         return type_str
-
-    class MachineCheckError(Exception):
-        """ """
 
     class M3C_PError(MachineCheckError):
         """
@@ -150,9 +150,3 @@ class MachineIPMSM(MachineSync):
             Winding
 
         """
-
-
-MachineCheckError = MachineIPMSM.MachineCheckError
-M3C_PError = MachineIPMSM.M3C_PError
-M3C_WrongRotor = MachineIPMSM.M3C_WrongRotor
-M3C_WrongStator = MachineIPMSM.M3C_WrongStator

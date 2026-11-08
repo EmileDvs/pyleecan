@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -301,7 +301,7 @@ class SlotW61(Slot):
         """
 
         if Nrad != 1 or Ntan != 2:
-            raise S61_WindError(
+            raise self.S61_WindError(
                 "Slot 61 can use only for winding with Nrad=1 and Ntan=2"
             )
         self.check()
@@ -376,16 +376,16 @@ class SlotW61(Slot):
         """
 
         if self.is_outwards():
-            raise S61_InnerCheckError("Slot 61 is for inner lamination only")
+            raise self.S61_InnerCheckError("Slot 61 is for inner lamination only")
 
         if self.W1 <= self.W2:
-            raise S61_W21CheckError("You must have W2 < W1")
+            raise self.S61_W21CheckError("You must have W2 < W1")
 
         if self.H3 + self.H4 >= self.H2:
-            raise S61_WindHError("You must have W3+W4 < H2")
+            raise self.S61_WindHError("You must have W3+W4 < H2")
 
         if self.W3 >= (self.W1 - self.W2) / 2:
-            raise S61_WindWError("You must have W3 < (W1-W2)/2")
+            raise self.S61_WindWError("You must have W3 < (W1-W2)/2")
 
     # Inlined from Methods.Slot.SlotW61.comp_angle_opening
     def comp_angle_opening(self):
@@ -975,13 +975,10 @@ class SlotW61(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
+    class S61_InnerCheckError(SlotCheckError):
         """ """
 
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
+    class S61_W21CheckError(SlotCheckError):
         """ """
 
     class S61_WindError(SlotCheckError):
@@ -1005,19 +1002,3 @@ class SlotW61(Slot):
 
     class S61_WindWError(SlotCheckError):
         """ """
-
-    class S61_InnerCheckError(SlotCheckError):
-        """ """
-
-    class S61_W21CheckError(SlotCheckError):
-        """ """
-
-
-MachineCheckError = SlotW61.MachineCheckError
-LaminationCheckError = SlotW61.LaminationCheckError
-SlotCheckError = SlotW61.SlotCheckError
-S61_WindError = SlotW61.S61_WindError
-S61_WindHError = SlotW61.S61_WindHError
-S61_WindWError = SlotW61.S61_WindWError
-S61_InnerCheckError = SlotW61.S61_InnerCheckError
-S61_W21CheckError = SlotW61.S61_W21CheckError

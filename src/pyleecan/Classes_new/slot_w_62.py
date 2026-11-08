@@ -20,7 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -285,7 +285,7 @@ class SlotW62(Slot):
         """
 
         if Nrad != 1 or Ntan != 2:
-            raise S62_WindError(
+            raise self.S62_WindError(
                 "Slot 62 can use only for winding with Nrad=1 and Ntan=2"
             )
         self.check()
@@ -355,25 +355,25 @@ class SlotW62(Slot):
 
         """
         if self.is_outwards():
-            raise S62_InnerCheckError("Slot 62 is for inner lamination only")
+            raise self.S62_InnerCheckError("Slot 62 is for inner lamination only")
 
         if self.H3 + self.H2 > self.H0:
-            raise S62_WindHError("You must have H3+H2 < H0")
+            raise self.S62_WindHError("You must have H3+H2 < H0")
 
         if self.W0 == 0:
-            raise S62_W0Error("You must have W0 > 0")
+            raise self.S62_W0Error("You must have W0 > 0")
 
         if self.W1 == 0:
-            raise S62_W1Error("You must have W1 > 0")
+            raise self.S62_W1Error("You must have W1 > 0")
 
         if self.H1 == 0:
-            raise S62_H1Error("You must have H1 > 0")
+            raise self.S62_H1Error("You must have H1 > 0")
 
         if self.W2 == 0:
-            raise S62_W2Error("You must have W2 > 0")
+            raise self.S62_W2Error("You must have W2 > 0")
 
         if self.H2 == 0:
-            raise S62_H2Error("You must have H2 > 0")
+            raise self.S62_H2Error("You must have H2 > 0")
 
     # Inlined from Methods.Slot.SlotW62.comp_angle_opening
     def comp_angle_opening(self):
@@ -898,48 +898,26 @@ class SlotW62(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-    class S62_WindError(SlotCheckError):
+    class S62_H1Error(SlotCheckError):
         """ """
 
     class S62_H2Error(SlotCheckError):
         """ """
 
-    class S62_W2Error(SlotCheckError):
-        """ """
-
-    class S62_W1Error(SlotCheckError):
-        """ """
-
     class S62_InnerCheckError(SlotCheckError):
-        """ """
-
-    class S62_WindHError(SlotCheckError):
         """ """
 
     class S62_W0Error(SlotCheckError):
         """ """
 
-    class S62_H1Error(SlotCheckError):
+    class S62_W1Error(SlotCheckError):
         """ """
 
+    class S62_W2Error(SlotCheckError):
+        """ """
 
-MachineCheckError = SlotW62.MachineCheckError
-LaminationCheckError = SlotW62.LaminationCheckError
-SlotCheckError = SlotW62.SlotCheckError
-S62_WindError = SlotW62.S62_WindError
-S62_H2Error = SlotW62.S62_H2Error
-S62_W2Error = SlotW62.S62_W2Error
-S62_W1Error = SlotW62.S62_W1Error
-S62_InnerCheckError = SlotW62.S62_InnerCheckError
-S62_WindHError = SlotW62.S62_WindHError
-S62_W0Error = SlotW62.S62_W0Error
-S62_H1Error = SlotW62.S62_H1Error
+    class S62_WindError(SlotCheckError):
+        """ """
+
+    class S62_WindHError(SlotCheckError):
+        """ """

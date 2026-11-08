@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from .eec_pmsm import EEC_PMSM
 from .electrical import Electrical
 from .lut_dq import LUTdq
@@ -793,9 +794,3 @@ class ElecLUTdq(Electrical):
                 out_dict["Tem_rip_norm"] = np.abs(Tem_rip_pp / out_dict["Tem_av"])
 
         return out_dict
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = ElecLUTdq.InputError

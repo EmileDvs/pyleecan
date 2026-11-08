@@ -1,11 +1,10 @@
 # Experimental dataclass generated from Generator/ClassesRef/Import/ImportVectorField.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._pyleecan_class import PyleecanClass
 from .import_data import ImportData
-from .input import Input
 from .vector_field import VectorField
 
 
@@ -26,22 +25,12 @@ class ImportVectorField(PyleecanClass):
         Default: None
     """
 
-    components: dict[str, ImportData] = {}
+    components: dict[str, ImportData] = field(default_factory=dict)
     """Dict of components (e.g. {"radial": ImportData})"""
     name: str | None = None
     """Name of the vector field"""
     symbol: str | None = None
     """Symbol of the vector field"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Input,)):
-            raise TypeError(
-                "ImportVectorField parent must be an instance of Input, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Import.ImportVectorField.get_data
     def get_data(self):

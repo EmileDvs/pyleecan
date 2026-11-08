@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from . import ParentMissingError
+from ._error import ParentMissingError
 from .arc_1 import Arc1
 from .bore import Bore
 from .segment import Segment

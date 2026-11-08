@@ -22,10 +22,10 @@ from ..Functions.Winding.reverse_wind_mat import (
     reverse_wind_mat,
 )
 from ..Functions.Winding.shift_wind_mat import shift_wind_mat
+from ._error import WindingError
 from ._pyleecan_class import PyleecanClass
 from .conductor import Conductor
 from .end_winding import EndWinding
-from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -140,16 +140,6 @@ class Winding(PyleecanClass):
     """Phase shift between both tri-phase systems in dual-tri-phase case"""
     is_wye: bool = True
     """True if the alimentation is wye (else delta)"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Lamination,)):
-            raise TypeError(
-                "Winding parent must be an instance of Lamination, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Machine.Winding.clean
     def clean(self):
@@ -1241,9 +1231,3 @@ class Winding(PyleecanClass):
             ]
         plt = plots._polar_layout_plot(None, None, wdg)
         plt.plot(show=is_show_fig, optimize_overhang=False)
-
-    class WindingError(Exception):
-        """ """
-
-
-WindingError = Winding.WindingError

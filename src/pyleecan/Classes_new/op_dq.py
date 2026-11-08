@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from .op import OP
 
 
@@ -275,9 +276,3 @@ class OPdq(OP):
 
         self.Ud_ref = Ud
         self.Uq_ref = Uq
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = OPdq.InputError

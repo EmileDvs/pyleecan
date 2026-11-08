@@ -30,6 +30,7 @@ from ..Functions.Plot.set_plot_gui_icon import set_plot_gui_icon
 from ..Functions.Winding.comp_cond_function import comp_cond_function
 from ..Functions.Winding.find_wind_phase_color import find_wind_phase_color
 from ..Functions.Winding.gen_phase_list import gen_color, gen_name
+from ._error import Lam_WindCheckError
 from .data_1d import Data1D
 from .data_freq import DataFreq
 from .data_time import DataTime
@@ -224,7 +225,9 @@ class LamSlotWind(LamSlot):
         self.slot.check()
 
         if self.comp_height_yoke() < 0:
-            raise LWC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
+            raise self.LWC_SlotTooLong(
+                "The Slot is too long for the lamination (HYoke <0)"
+            )
 
         """
         Wt = self.slot.comp_tooth_widths()["WTooth_min"]
@@ -1619,20 +1622,5 @@ class LamSlotWind(LamSlot):
             # Enforce call to redefine winding matrix
             self.winding.clean()
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class Lam_WindCheckError(LaminationCheckError):
-        """ """
-
     class LWC_SlotTooLong(Lam_WindCheckError):
         """ """
-
-
-MachineCheckError = LamSlotWind.MachineCheckError
-LaminationCheckError = LamSlotWind.LaminationCheckError
-Lam_WindCheckError = LamSlotWind.Lam_WindCheckError
-LWC_SlotTooLong = LamSlotWind.LWC_SlotTooLong

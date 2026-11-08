@@ -101,7 +101,7 @@ class Section(Elmer):
         Remove the item with the given key and return it.
         """
         if key not in self.keys():
-            raise ElmerSectionError("Key doesn't exist.")
+            raise self.ElmerSectionError("Key doesn't exist.")
 
         value = self._statements.pop(key)
         comment = self._comments.pop(key)
@@ -184,6 +184,3 @@ class Section(Elmer):
 
     class ElmerSectionError(Exception):
         pass
-
-
-ElmerSectionError = Section.ElmerSectionError

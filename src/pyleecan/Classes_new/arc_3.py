@@ -57,7 +57,7 @@ class Arc3(Arc):
         """
 
         if self.begin == self.end or (abs(self.begin) == 0 and abs(self.end) == 0):
-            raise PointArc3Error(
+            raise self.PointArc3Error(
                 "The beginning point and the ending point of an Arc3 can't be the same"
             )
 
@@ -132,9 +132,9 @@ class Arc3(Arc):
         # Check that the Arc is correct
         self.check()
         if not isinstance(nb_point, int):
-            raise NbPointArc3DError("discretize : nb_point must be an integer")
+            raise self.NbPointArc3DError("discretize : nb_point must be an integer")
         if nb_point < 0:
-            raise NbPointArc3DError("nb_point must be >=0")
+            raise self.NbPointArc3DError("nb_point must be >=0")
 
         # We use the complex representation of the point
         z1 = self.begin
@@ -314,7 +314,7 @@ class Arc3(Arc):
         None
         """
         if not isinstance(angle, float) and not isinstance(angle, int):
-            raise AngleRotationArc3Error("The angle must be a float or int ")
+            raise self.AngleRotationArc3Error("The angle must be a float or int ")
 
         # check if Arc3 is correct"
         self.check()
@@ -444,7 +444,7 @@ class Arc3(Arc):
             and not isinstance(Zt, int)
             and not isinstance(Zt, float)
         ):
-            raise PointTranslateArc3Error(
+            raise self.PointTranslateArc3Error(
                 "The point must be a complex number or int or float"
             )
 
@@ -455,20 +455,14 @@ class Arc3(Arc):
         self.begin = self.begin + Zt
         self.end = self.end + Zt
 
-    class PointArc3Error(Exception):
+    class AngleRotationArc3Error(Exception):
         """ """
 
     class NbPointArc3DError(Exception):
         """ """
 
-    class AngleRotationArc3Error(Exception):
+    class PointArc3Error(Exception):
         """ """
 
     class PointTranslateArc3Error(Exception):
         """ """
-
-
-PointArc3Error = Arc3.PointArc3Error
-NbPointArc3DError = Arc3.NbPointArc3DError
-AngleRotationArc3Error = Arc3.AngleRotationArc3Error
-PointTranslateArc3Error = Arc3.PointTranslateArc3Error

@@ -9,6 +9,7 @@ from matplotlib.patches import Patch
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import update_RTS_index
 from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from ._error import LaminationCheckError
 from .lamination import Lamination
 from .slot import Slot
 
@@ -55,7 +56,9 @@ class LamSlot(Lamination):
         self.slot.check()
 
         if self.comp_height_yoke() < 0:
-            raise LSC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
+            raise self.LSC_SlotTooLong(
+                "The Slot is too long for the lamination (HYoke <0)"
+            )
 
         """
         Wt = self.slot.comp_tooth_widths()["WTooth_min"]
@@ -464,20 +467,8 @@ class LamSlot(Lamination):
 
         self.slot.Zs = 2 * p
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
     class Lam_SlotCheckError(LaminationCheckError):
         """ """
 
     class LSC_SlotTooLong(Lam_SlotCheckError):
         """ """
-
-
-MachineCheckError = LamSlot.MachineCheckError
-LaminationCheckError = LamSlot.LaminationCheckError
-Lam_SlotCheckError = LamSlot.Lam_SlotCheckError
-LSC_SlotTooLong = LamSlot.LSC_SlotTooLong

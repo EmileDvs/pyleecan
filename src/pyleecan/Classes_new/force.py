@@ -5,10 +5,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import InputError
 from ._pyleecan_class import PyleecanClass
 from .data_1d import Data1D
 from .data_freq import DataFreq
-from .simulation import Simulation
 from .vector_field import VectorField
 
 
@@ -50,16 +50,6 @@ class Force(PyleecanClass):
     """To enforce the value of the radius for AGSF transfer"""
     logger_name: str = "Pyleecan.Force"
     """Name of the logger to use"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Simulation,)):
-            raise TypeError(
-                "Force parent must be an instance of Simulation, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Simulation.Force.comp_AGSF_transfer
     def comp_AGSF_transfer(self, output, rnoise=None):
@@ -265,9 +255,3 @@ class Force(PyleecanClass):
         # Compute the air-gap surface force transfer if required
         if self.is_agsf_transfer:
             self.comp_AGSF_transfer(output, self.max_wavenumber_transfer)
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = Force.InputError

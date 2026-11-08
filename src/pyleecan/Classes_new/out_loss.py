@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/OutLoss.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -9,7 +9,6 @@ from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
 from ._pyleecan_class import PyleecanClass
 from .data import Data
 from .out_loss_model import OutLossModel
-from .output import Output
 
 
 @dataclass(eq=False)
@@ -31,20 +30,10 @@ class OutLoss(PyleecanClass):
 
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Magnetics"""
-    loss_dict: dict[str, OutLossModel] = {}
+    loss_dict: dict[str, OutLossModel] = field(default_factory=dict)
     """Dict containing OutLossModel obects for each type of loss"""
     logger_name: str = "Pyleecan.Loss"
     """Name of the logger to use"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Output,)):
-            raise TypeError(
-                "OutLoss parent must be an instance of Output, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Output.OutLoss.__getitem__
     def __getitem__(self, idx):

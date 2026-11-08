@@ -12,9 +12,8 @@ from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
 from ..Functions.Load.import_class import import_class
-from . import ParentMissingError
+from ._error import ParentMissingError
 from ._pyleecan_class import PyleecanClass
-from .lamination import Lamination
 from .material import Material
 
 
@@ -48,16 +47,6 @@ class Hole(PyleecanClass):
     """Dictionary add an offset to the magnetization direction of the magnets (key=magnet_X, value=angle[rad])"""
     Alpha0: float = 0
     """Shift angle of the holes around circumference"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Lamination,)):
-            raise TypeError(
-                "Hole parent must be an instance of Lamination, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Slot.Hole.comp_height
     def comp_height(self):
@@ -215,7 +204,7 @@ class Hole(PyleecanClass):
         elif hasattr(self, "magnet_dict") and label in self.magnet_dict:
             return self.magnet_dict[label]
         else:
-            raise MagnetIndexError(
+            raise self.MagnetIndexError(
                 "Hole of type " + str(type(self)) + " has no magnet " + label
             )
 
@@ -477,12 +466,9 @@ class Hole(PyleecanClass):
         elif hasattr(self, "magnet_dict") and label in self.magnet_dict:
             self.magnet_dict[label] = magnet
         else:
-            raise MagnetIndexError(
+            raise self.MagnetIndexError(
                 "Hole of type " + str(type(self)) + " has no magnet " + label
             )
 
     class MagnetIndexError(Exception):
         """Raise when trying to access a non existing magnet"""
-
-
-MagnetIndexError = Hole.MagnetIndexError

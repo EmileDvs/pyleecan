@@ -9,7 +9,6 @@ from .data_keeper import DataKeeper
 from .opti_constraint import OptiConstraint
 from .opti_design_var import OptiDesignVar
 from .opti_objective import OptiObjective
-from .opti_solver import OptiSolver
 from .simulation import Simulation
 
 
@@ -56,13 +55,3 @@ class OptiProblem(PyleecanClass):
     """Function to execute a preprocessing on the simulation right before it is run."""
     datakeeper_list: list[DataKeeper] | None = None
     """List of DataKeepers to run on every output"""
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (OptiSolver,)):
-            raise TypeError(
-                "OptiProblem parent must be an instance of OptiSolver, or None; "
-                + f"got {type(parent).__name__}"
-            )

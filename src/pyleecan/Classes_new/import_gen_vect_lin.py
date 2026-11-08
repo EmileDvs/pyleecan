@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._error import PyleecanImportError as ImportError
 from .import_matrix import ImportMatrix
 
 
@@ -80,9 +81,3 @@ class ImportGenVectLin(ImportMatrix):
         )
 
         return self.edit_matrix(vect)
-
-    class ImportError(Exception):
-        """Raised when the data import or generation is not possible"""
-
-
-ImportError = ImportGenVectLin.ImportError

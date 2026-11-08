@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 
+from ._error import InputError
 from .electrical import Electrical
 from .force import Force
 from .loss import Loss
@@ -88,9 +89,3 @@ class Simu1(Simulation):
             logger.info("Running simulation postprocessings...")
             for postproc in self.postproc_list:
                 postproc.run(output)
-
-    class InputError(Exception):
-        """Raised when the input data are incomplete or incorrect"""
-
-
-InputError = Simu1.InputError

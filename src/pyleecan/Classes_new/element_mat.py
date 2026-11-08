@@ -8,7 +8,6 @@ import numpy as np
 
 from ._pyleecan_class import PyleecanClass
 from .gauss_point import GaussPoint
-from .mesh import Mesh
 from .ref_element import RefElement
 from .scalar_product_l2 import ScalarProductL2
 
@@ -53,16 +52,6 @@ class ElementMat(PyleecanClass):
     ref_element: RefElement | None = None
     gauss_point: GaussPoint | None = None
     scalar_product: ScalarProductL2 | None = None
-
-    def __post_init__(self):
-        super().__post_init__()
-
-    def _assert_parent_type(self, parent):
-        if parent is not None and not isinstance(parent, (Mesh,)):
-            raise TypeError(
-                "ElementMat parent must be an instance of Mesh, or None; "
-                + f"got {type(parent).__name__}"
-            )
 
     # Inlined from Methods.Mesh.ElementMat.add_element
     def add_element(

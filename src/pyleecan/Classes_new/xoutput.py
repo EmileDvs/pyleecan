@@ -175,7 +175,7 @@ class XOutput(Output):
             if paramexplorer.symbol == symbol:
                 return paramexplorer
 
-        raise XOutputError("Unknown symbol {}".format(symbol))
+        raise self.XOutputError("Unknown symbol {}".format(symbol))
 
     # Inlined from Methods.Output.XOutput.get_pareto_index
     def get_pareto_index(self):
@@ -440,7 +440,7 @@ class XOutput(Output):
             idx = slice(None)
 
         if plot_type not in ["point", "curve"]:
-            raise PlotError(f"Unknown plot_type {plot_type}.")
+            raise self.PlotError(f"Unknown plot_type {plot_type}.")
 
         # get data and labels
         x_values, x_label = self._get_symbol_data_(self, x_symbol, idx)
@@ -617,12 +617,8 @@ class XOutput(Output):
         """
         return self.output_list.remove(x)
 
-    class XOutputError(Exception):
-        pass
-
     class PlotError(Exception):
         pass
 
-
-XOutputError = XOutput.XOutputError
-PlotError = XOutput.PlotError
+    class XOutputError(Exception):
+        pass

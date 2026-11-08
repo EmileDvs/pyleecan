@@ -53,7 +53,7 @@ class Segment(Line):
 
         """
         if self.begin == self.end or (abs(self.begin) == 0 and abs(self.end) == 0):
-            raise PointSegmentError(
+            raise self.PointSegmentError(
                 "The beginning point and the ending point of "
                 "a Segment can't be the same"
             )
@@ -155,9 +155,9 @@ class Segment(Line):
 
         self.check()
         if not isinstance(nb_point, int):
-            raise NbPointSegmentDError("discretize : nb_point must be an integer")
+            raise self.NbPointSegmentDError("discretize : nb_point must be an integer")
         if nb_point < 0:
-            raise NbPointSegmentDError("nb_point must be >=0")
+            raise self.NbPointSegmentDError("nb_point must be >=0")
 
         # t start by 0 (begin) and end by 1 (end)
         # len(t) = nb_point +2 : begin + end + nb_point between
@@ -543,7 +543,7 @@ class Segment(Line):
 
         """
         if not isinstance(angle, float) and not isinstance(angle, int):
-            raise AngleRotationSegmentError("The angle must be a float or int ")
+            raise self.AngleRotationSegmentError("The angle must be a float or int ")
 
         # check if Segment is correct"
         self.check()
@@ -708,7 +708,7 @@ class Segment(Line):
             and not isinstance(Zt, int)
             and not isinstance(Zt, float)
         ):
-            raise PointTranslateSegmentError(
+            raise self.PointTranslateSegmentError(
                 "The point must be a complex number or int or float"
             )
 
@@ -719,20 +719,14 @@ class Segment(Line):
         self.begin = self.begin + Zt
         self.end = self.end + Zt
 
-    class PointSegmentError(Exception):
+    class AngleRotationSegmentError(Exception):
         """ """
 
     class NbPointSegmentDError(Exception):
         """ """
 
-    class AngleRotationSegmentError(Exception):
+    class PointSegmentError(Exception):
         """ """
 
     class PointTranslateSegmentError(Exception):
         """ """
-
-
-PointSegmentError = Segment.PointSegmentError
-NbPointSegmentDError = Segment.NbPointSegmentDError
-AngleRotationSegmentError = Segment.AngleRotationSegmentError
-PointTranslateSegmentError = Segment.PointTranslateSegmentError

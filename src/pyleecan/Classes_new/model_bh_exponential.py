@@ -24,6 +24,3 @@ class ModelBH_exponential(PyleecanClass):
     """BH curve parameter"""
     mu_a: float | None = None
     """Saturation permeability parameter"""
-
-    def __post_init__(self):
-        super().__post_init__()

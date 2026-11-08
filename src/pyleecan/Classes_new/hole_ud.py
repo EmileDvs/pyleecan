@@ -7,6 +7,7 @@ from typing import ClassVar
 import numpy as np
 
 from ..Functions.labels import HOLEM_LAB, HOLEV_LAB, LAM_LAB
+from ._error import SlotCheckError
 from .hole_mag import HoleMag
 from .magnet import Magnet
 from .surface import Surface
@@ -184,17 +185,3 @@ class HoleUD(HoleMag):
             self.magnet_dict = {}
         for key in self.magnet_dict.keys():
             self.magnet_dict[key] = None
-
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-
-MachineCheckError = HoleUD.MachineCheckError
-LaminationCheckError = HoleUD.LaminationCheckError
-SlotCheckError = HoleUD.SlotCheckError

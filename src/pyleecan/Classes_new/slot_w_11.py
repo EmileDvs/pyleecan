@@ -21,8 +21,8 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from . import ParentMissingError
 from ._check import check_var
+from ._error import ParentMissingError, SlotCheckError
 from .arc_1 import Arc1
 from .arc_3 import Arc3
 from .lam_slot import LamSlot
@@ -392,27 +392,27 @@ class SlotW11(Slot):
             return "In constant tooth mode, you must set W3 !"
 
         if self.R1 <= 0:
-            raise S11_R1CheckError("You must have R1 > 0")
+            raise self.S11_R1CheckError("You must have R1 > 0")
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise self.S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
             # return "With H1 in radian, you must have H1 < pi/2"
 
         if self.W1 is None or self.W0 is None:
             pass
         else:
             if self.W1 < self.W0:
-                raise S11_W01CheckError("You must have W0 <= W1")
+                raise self.S11_W01CheckError("You must have W0 <= W1")
 
         if not self.W1 is None or not self.W2 is None:
             if 2 * self.R1 > self.W2 and (not self.W2 is None or not self.R1 is None):
-                raise S11_RWCheckError("You must have 2*R1 <= W2")
+                raise self.S11_RWCheckError("You must have 2*R1 <= W2")
 
         if self.R1 > self.H2:
-            raise S11_RHCheckError("You must have R1 <= H2")
+            raise self.S11_RHCheckError("You must have R1 <= H2")
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise self.S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # Inlined from Methods.Slot.SlotW11.comp_angle_opening
     def comp_angle_opening(self):
@@ -1433,36 +1433,17 @@ class SlotW11(Slot):
                 fig.show()
             return fig, ax
 
-    class MachineCheckError(Exception):
-        """ """
-
-    class LaminationCheckError(MachineCheckError):
-        """ """
-
-    class SlotCheckError(LaminationCheckError):
-        """ """
-
-    class S11_RHCheckError(SlotCheckError):
-        """ """
-
-    class S11_W01CheckError(SlotCheckError):
-        """ """
-
     class S11_H1rCheckError(SlotCheckError):
         """ """
 
     class S11_R1CheckError(SlotCheckError):
         """ """
 
+    class S11_RHCheckError(SlotCheckError):
+        """ """
+
     class S11_RWCheckError(SlotCheckError):
         """ """
 
-
-MachineCheckError = SlotW11.MachineCheckError
-LaminationCheckError = SlotW11.LaminationCheckError
-SlotCheckError = SlotW11.SlotCheckError
-S11_RHCheckError = SlotW11.S11_RHCheckError
-S11_W01CheckError = SlotW11.S11_W01CheckError
-S11_H1rCheckError = SlotW11.S11_H1rCheckError
-S11_R1CheckError = SlotW11.S11_R1CheckError
-S11_RWCheckError = SlotW11.S11_RWCheckError
+    class S11_W01CheckError(SlotCheckError):
+        """ """
