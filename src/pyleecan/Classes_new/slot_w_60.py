@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..Functions.Plot import (
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -1012,16 +1012,16 @@ class SlotW60(Slot):
 
         """
 
-    class S60_W21CheckError(SlotCheckError):
-        """ """
-
-    class S60_WindWError(SlotCheckError):
-        """ """
-
     class S60_WindHError(SlotCheckError):
         """ """
 
+    class S60_W21CheckError(SlotCheckError):
+        """ """
+
     class S60_InnerCheckError(SlotCheckError):
+        """ """
+
+    class S60_WindWError(SlotCheckError):
         """ """
 
     class S60_RCheckError(SlotCheckError):
@@ -1032,8 +1032,8 @@ MachineCheckError = SlotW60.MachineCheckError
 LaminationCheckError = SlotW60.LaminationCheckError
 SlotCheckError = SlotW60.SlotCheckError
 S60_WindError = SlotW60.S60_WindError
-S60_W21CheckError = SlotW60.S60_W21CheckError
-S60_WindWError = SlotW60.S60_WindWError
 S60_WindHError = SlotW60.S60_WindHError
+S60_W21CheckError = SlotW60.S60_W21CheckError
 S60_InnerCheckError = SlotW60.S60_InnerCheckError
+S60_WindWError = SlotW60.S60_WindWError
 S60_RCheckError = SlotW60.S60_RCheckError

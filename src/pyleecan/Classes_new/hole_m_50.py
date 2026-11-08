@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import fsolve
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.labels import HOLEM_LAB, MAGNET_PROP_LAB
 from ..Functions.Plot import (
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -1114,22 +1114,22 @@ class HoleM50(HoleMag):
     class S50_W01CheckError(SlotCheckError):
         """ """
 
-    class S50_SpCheckError(SlotCheckError):
-        """ """
-
     class S50_NoneError(SlotCheckError):
         """Raised when a propery of HoleM50 is None"""
-
-    class S50_H23CheckError(SlotCheckError):
-        """ """
 
     class S50_W3CheckError(SlotCheckError):
         """ """
 
-    class S50_H01CheckError(SlotCheckError):
+    class S50_W5CheckError(SlotCheckError):
         """ """
 
-    class S50_W5CheckError(SlotCheckError):
+    class S50_H23CheckError(SlotCheckError):
+        """ """
+
+    class S50_SpCheckError(SlotCheckError):
+        """ """
+
+    class S50_H01CheckError(SlotCheckError):
         """ """
 
 
@@ -1137,9 +1137,9 @@ MachineCheckError = HoleM50.MachineCheckError
 LaminationCheckError = HoleM50.LaminationCheckError
 SlotCheckError = HoleM50.SlotCheckError
 S50_W01CheckError = HoleM50.S50_W01CheckError
-S50_SpCheckError = HoleM50.S50_SpCheckError
 S50_NoneError = HoleM50.S50_NoneError
-S50_H23CheckError = HoleM50.S50_H23CheckError
 S50_W3CheckError = HoleM50.S50_W3CheckError
-S50_H01CheckError = HoleM50.S50_H01CheckError
 S50_W5CheckError = HoleM50.S50_W5CheckError
+S50_H23CheckError = HoleM50.S50_H23CheckError
+S50_SpCheckError = HoleM50.S50_SpCheckError
+S50_H01CheckError = HoleM50.S50_H01CheckError

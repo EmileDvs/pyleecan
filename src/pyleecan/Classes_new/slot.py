@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import numpy as np
 from matplotlib.patches import Patch, Polygon
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import (
@@ -24,6 +23,7 @@ from ..Functions.labels import (
 from ..Functions.Load.import_class import import_class
 from ..Functions.Plot import dict_2D
 from ..Functions.Winding.gen_phase_list import gen_name
+from . import ParentMissingError
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .lamination import Lamination

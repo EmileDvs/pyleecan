@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.labels import HOLEM_LAB
 from ..Functions.Plot import (
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole

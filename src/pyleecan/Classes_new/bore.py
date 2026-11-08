@@ -5,10 +5,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
 from ..Functions.init_fig import init_fig
+from . import ParentMissingError
 from ._pyleecan_class import PyleecanClass
 from .lamination import Lamination
 from .segment import Segment

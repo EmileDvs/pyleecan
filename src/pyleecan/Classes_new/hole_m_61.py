@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Geometry.inter_line_circle import inter_line_circle
 from ..Functions.Geometry.inter_line_line import inter_line_line
@@ -23,6 +22,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -1285,15 +1285,15 @@ class HoleM61(HoleMag):
     class SlotCheckError(LaminationCheckError):
         """ """
 
-    class S61_WCheckError(SlotCheckError):
-        """ """
-
     class S61_NoneError(SlotCheckError):
         """Raised when a propery of HoleM58 is None"""
+
+    class S61_WCheckError(SlotCheckError):
+        """ """
 
 
 MachineCheckError = HoleM61.MachineCheckError
 LaminationCheckError = HoleM61.LaminationCheckError
 SlotCheckError = HoleM61.SlotCheckError
-S61_WCheckError = HoleM61.S61_WCheckError
 S61_NoneError = HoleM61.S61_NoneError
+S61_WCheckError = HoleM61.S61_WCheckError

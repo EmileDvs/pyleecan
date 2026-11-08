@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Geometry.comp_flower_arc import comp_flower_arc
 from ..Functions.Plot import (
@@ -17,6 +16,7 @@ from ..Functions.Plot import (
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .bore import Bore
 from .lamination import Lamination

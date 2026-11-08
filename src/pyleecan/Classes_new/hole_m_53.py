@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Geometry.inter_line_circle import inter_line_circle
 from ..Functions.labels import HOLEM_LAB
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -1058,14 +1058,11 @@ class HoleM53(HoleMag):
     class Slot53InterError(SlotCheckError):
         """ """
 
-    class S53_Rext1CheckError(SlotCheckError):
-        """ """
-
     class S53_Rext0CheckError(SlotCheckError):
         """ """
 
-    class S53_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM53 is None"""
+    class S53_Rext1CheckError(SlotCheckError):
+        """ """
 
     class S53_W4CheckError(SlotCheckError):
         """ """
@@ -1073,13 +1070,16 @@ class HoleM53(HoleMag):
     class S53_W5CheckError(SlotCheckError):
         """ """
 
+    class S53_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM53 is None"""
+
 
 MachineCheckError = HoleM53.MachineCheckError
 LaminationCheckError = HoleM53.LaminationCheckError
 SlotCheckError = HoleM53.SlotCheckError
 Slot53InterError = HoleM53.Slot53InterError
-S53_Rext1CheckError = HoleM53.S53_Rext1CheckError
 S53_Rext0CheckError = HoleM53.S53_Rext0CheckError
-S53_NoneError = HoleM53.S53_NoneError
+S53_Rext1CheckError = HoleM53.S53_Rext1CheckError
 S53_W4CheckError = HoleM53.S53_W4CheckError
 S53_W5CheckError = HoleM53.S53_W5CheckError
+S53_NoneError = HoleM53.S53_NoneError

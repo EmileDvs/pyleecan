@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..Functions.Plot import (
@@ -20,6 +19,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .arc_2 import Arc2
 from .lam_slot import LamSlot
@@ -905,15 +905,15 @@ class SlotW22(Slot):
     class SlotCheckError(LaminationCheckError):
         """ """
 
-    class S22_SpCheckError(SlotCheckError):
+    class S22_A02CheckError(SlotCheckError):
         """ """
 
-    class S22_A02CheckError(SlotCheckError):
+    class S22_SpCheckError(SlotCheckError):
         """ """
 
 
 MachineCheckError = SlotW22.MachineCheckError
 LaminationCheckError = SlotW22.LaminationCheckError
 SlotCheckError = SlotW22.SlotCheckError
-S22_SpCheckError = SlotW22.S22_SpCheckError
 S22_A02CheckError = SlotW22.S22_A02CheckError
+S22_SpCheckError = SlotW22.S22_SpCheckError

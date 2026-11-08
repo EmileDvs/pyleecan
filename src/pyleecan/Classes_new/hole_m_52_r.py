@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.labels import HOLEM_LAB
 from ..Functions.Plot import (
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -851,23 +851,23 @@ class HoleM52R(HoleMag):
     class SlotCheckError(LaminationCheckError):
         """ """
 
-    class S52R_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM52R is None"""
-
-    class S52R_R0CheckError(SlotCheckError):
+    class S52R_H12CheckError(SlotCheckError):
         """ """
 
     class S52R_widthCheckError(SlotCheckError):
         """ """
 
-    class S52R_H12CheckError(SlotCheckError):
+    class S52R_R0CheckError(SlotCheckError):
         """ """
+
+    class S52R_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM52R is None"""
 
 
 MachineCheckError = HoleM52R.MachineCheckError
 LaminationCheckError = HoleM52R.LaminationCheckError
 SlotCheckError = HoleM52R.SlotCheckError
-S52R_NoneError = HoleM52R.S52R_NoneError
-S52R_R0CheckError = HoleM52R.S52R_R0CheckError
-S52R_widthCheckError = HoleM52R.S52R_widthCheckError
 S52R_H12CheckError = HoleM52R.S52R_H12CheckError
+S52R_widthCheckError = HoleM52R.S52R_widthCheckError
+S52R_R0CheckError = HoleM52R.S52R_R0CheckError
+S52R_NoneError = HoleM52R.S52R_NoneError

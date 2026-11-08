@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..Functions.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -17,6 +16,7 @@ from ..Functions.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .hole import Hole
 from .lam_hole import LamHole

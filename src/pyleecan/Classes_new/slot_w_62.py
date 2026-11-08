@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..Functions.Plot import (
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment
@@ -913,22 +913,22 @@ class SlotW62(Slot):
     class S62_H2Error(SlotCheckError):
         """ """
 
-    class S62_WindHError(SlotCheckError):
-        """ """
-
-    class S62_W0Error(SlotCheckError):
-        """ """
-
     class S62_W2Error(SlotCheckError):
         """ """
 
     class S62_W1Error(SlotCheckError):
         """ """
 
-    class S62_H1Error(SlotCheckError):
+    class S62_InnerCheckError(SlotCheckError):
         """ """
 
-    class S62_InnerCheckError(SlotCheckError):
+    class S62_WindHError(SlotCheckError):
+        """ """
+
+    class S62_W0Error(SlotCheckError):
+        """ """
+
+    class S62_H1Error(SlotCheckError):
         """ """
 
 
@@ -937,9 +937,9 @@ LaminationCheckError = SlotW62.LaminationCheckError
 SlotCheckError = SlotW62.SlotCheckError
 S62_WindError = SlotW62.S62_WindError
 S62_H2Error = SlotW62.S62_H2Error
-S62_WindHError = SlotW62.S62_WindHError
-S62_W0Error = SlotW62.S62_W0Error
 S62_W2Error = SlotW62.S62_W2Error
 S62_W1Error = SlotW62.S62_W1Error
-S62_H1Error = SlotW62.S62_H1Error
 S62_InnerCheckError = SlotW62.S62_InnerCheckError
+S62_WindHError = SlotW62.S62_WindHError
+S62_W0Error = SlotW62.S62_W0Error
+S62_H1Error = SlotW62.S62_H1Error

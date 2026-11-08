@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Geometry.inter_line_line import inter_line_line
 from ..Functions.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
@@ -22,6 +21,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .lam_slot import LamSlot
 from .segment import Segment

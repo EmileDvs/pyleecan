@@ -4,8 +4,8 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from ._check import check_var
 from ..Functions.Load.import_class import import_class
+from ._check import check_var
 from .line import Line
 from .slot import Slot
 from .surface import Surface

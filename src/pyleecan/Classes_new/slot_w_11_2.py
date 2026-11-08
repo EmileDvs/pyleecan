@@ -7,8 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
-from ._check import check_var
 from ..definitions import config_dict
 from ..Functions.Geometry.inter_line_circle import inter_line_circle
 from ..Functions.Geometry.inter_line_line import inter_line_line
@@ -24,6 +22,8 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
+from ._check import check_var
 from .arc_1 import Arc1
 from .arc_3 import Arc3
 from .lam_slot import LamSlot
@@ -1461,27 +1461,27 @@ class SlotW11_2(Slot):
     class SlotCheckError(LaminationCheckError):
         """ """
 
+    class S11_2_R1CheckError(SlotCheckError):
+        """ """
+
+    class S11_2_H1rCheckError(SlotCheckError):
+        """ """
+
+    class S11_2_RWCheckError(SlotCheckError):
+        """ """
+
     class S11_2_W01CheckError(SlotCheckError):
         """ """
 
     class S11_2_RHCheckError(SlotCheckError):
         """ """
 
-    class S11_2_R1CheckError(SlotCheckError):
-        """ """
-
-    class S11_2_RWCheckError(SlotCheckError):
-        """ """
-
-    class S11_2_H1rCheckError(SlotCheckError):
-        """ """
-
 
 MachineCheckError = SlotW11_2.MachineCheckError
 LaminationCheckError = SlotW11_2.LaminationCheckError
 SlotCheckError = SlotW11_2.SlotCheckError
+S11_2_R1CheckError = SlotW11_2.S11_2_R1CheckError
+S11_2_H1rCheckError = SlotW11_2.S11_2_H1rCheckError
+S11_2_RWCheckError = SlotW11_2.S11_2_RWCheckError
 S11_2_W01CheckError = SlotW11_2.S11_2_W01CheckError
 S11_2_RHCheckError = SlotW11_2.S11_2_RHCheckError
-S11_2_R1CheckError = SlotW11_2.S11_2_R1CheckError
-S11_2_RWCheckError = SlotW11_2.S11_2_RWCheckError
-S11_2_H1rCheckError = SlotW11_2.S11_2_H1rCheckError

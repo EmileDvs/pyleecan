@@ -7,12 +7,12 @@ from typing import Any
 import numpy as np
 from matplotlib.patches import Patch
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
 from ..Functions.init_fig import init_fig
 from ..Functions.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
 from ..Functions.Load.import_class import import_class
+from . import ParentMissingError
 from ._pyleecan_class import PyleecanClass
 from .lamination import Lamination
 from .material import Material

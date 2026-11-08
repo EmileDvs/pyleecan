@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import fmin
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Plot import (
     ARROW_COLOR,
@@ -17,6 +16,7 @@ from ..Functions.Plot import (
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .bore import Bore
 from .lamination import Lamination

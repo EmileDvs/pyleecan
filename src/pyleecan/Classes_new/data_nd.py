@@ -10,7 +10,6 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ._check import check_dimensions, check_var
 from ..Functions.Load.import_class import import_class
 from ..Functions.Load.import_class import import_class as _pyleecan_import_class
 from ..Functions.SciDataTool import (
@@ -75,6 +74,7 @@ from ..Functions.SciDataTool.symmetries import rebuild_symmetries
 from ..Functions.SciDataTool.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
+from ._check import check_dimensions, check_var
 from .data import Data
 from .data_1d import Data1D
 from .norm_indices import NormIndices

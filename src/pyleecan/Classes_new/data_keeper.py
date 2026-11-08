@@ -5,9 +5,9 @@ from dataclasses import dataclass, field
 from ntpath import basename
 from typing import Any, Callable
 
-from ._check import CheckTypeError
 from ..definitions import PYTHON_DEFAULT_ENCODING
 from ..Functions.path_tools import abs_file_path
+from ._check import CheckTypeError
 from ._pyleecan_class import PyleecanClass
 from .opti_problem import OptiProblem
 from .output import Output

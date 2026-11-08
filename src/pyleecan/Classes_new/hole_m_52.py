@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.labels import HOLEM_LAB
 from ..Functions.Plot import (
@@ -21,6 +20,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
 from .magnet import Magnet
@@ -799,11 +799,11 @@ class HoleM52(HoleMag):
     class S52_W1CheckError(SlotCheckError):
         """ """
 
-    class S52_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM52 is None"""
-
     class S52_H12CheckError(SlotCheckError):
         """ """
+
+    class S52_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM52 is None"""
 
     class S52_alphaCheckError(SlotCheckError):
         """ """
@@ -813,6 +813,6 @@ MachineCheckError = HoleM52.MachineCheckError
 LaminationCheckError = HoleM52.LaminationCheckError
 SlotCheckError = HoleM52.SlotCheckError
 S52_W1CheckError = HoleM52.S52_W1CheckError
-S52_NoneError = HoleM52.S52_NoneError
 S52_H12CheckError = HoleM52.S52_H12CheckError
+S52_NoneError = HoleM52.S52_NoneError
 S52_alphaCheckError = HoleM52.S52_alphaCheckError

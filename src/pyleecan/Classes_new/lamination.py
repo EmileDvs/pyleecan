@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
-from . import NotImplementedYetError
 from ..definitions import config_dict
 from ..Functions.Geometry.merge_notch_list import merge_notch_list
 from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
@@ -31,6 +30,7 @@ from ..Functions.labels import (
 from ..Functions.Load.import_class import import_class
 from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ..Functions.Winding.gen_phase_list import gen_name
+from . import NotImplementedYetError
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_3 import Arc3
@@ -1691,10 +1691,10 @@ class Lamination(PyleecanClass):
     class LaminationCheckError(MachineCheckError):
         """ """
 
-    class LC_VentYokeOut(LaminationCheckError):
+    class LC_VentYokeIn(LaminationCheckError):
         """ """
 
-    class LC_VentYokeIn(LaminationCheckError):
+    class LC_VentYokeOut(LaminationCheckError):
         """ """
 
     class LC_RadiusError(LaminationCheckError):
@@ -1703,6 +1703,6 @@ class Lamination(PyleecanClass):
 
 MachineCheckError = Lamination.MachineCheckError
 LaminationCheckError = Lamination.LaminationCheckError
-LC_VentYokeOut = Lamination.LC_VentYokeOut
 LC_VentYokeIn = Lamination.LC_VentYokeIn
+LC_VentYokeOut = Lamination.LC_VentYokeOut
 LC_RadiusError = Lamination.LC_RadiusError

@@ -6,9 +6,9 @@ from typing import ClassVar
 
 import numpy as np
 
-from ._check import check_var
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from ._check import check_var
 from .op_matrix import OPMatrix
 from .var_simu import VarSimu
 

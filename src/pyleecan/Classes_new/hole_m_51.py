@@ -7,7 +7,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import ParentMissingError
 from ..definitions import config_dict
 from ..Functions.Geometry.inter_line_circle import inter_line_circle
 from ..Functions.labels import HOLEM_LAB
@@ -22,6 +21,7 @@ from ..Functions.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from . import ParentMissingError
 from .arc_1 import Arc1
 from .hole_mag import HoleMag
 from .lam_hole import LamHole
@@ -1153,8 +1153,8 @@ class HoleM51(HoleMag):
     class SlotCheckError(LaminationCheckError):
         """ """
 
-    class S51_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM51 is None"""
+    class S51_RHCheckError(SlotCheckError):
+        """ """
 
     class S51_AlphaCheckError(SlotCheckError):
         """ """
@@ -1162,14 +1162,14 @@ class HoleM51(HoleMag):
     class S51_WCheckError(SlotCheckError):
         """ """
 
-    class S51_RHCheckError(SlotCheckError):
-        """ """
+    class S51_NoneError(SlotCheckError):
+        """Raised when a propery of HoleM51 is None"""
 
 
 MachineCheckError = HoleM51.MachineCheckError
 LaminationCheckError = HoleM51.LaminationCheckError
 SlotCheckError = HoleM51.SlotCheckError
-S51_NoneError = HoleM51.S51_NoneError
+S51_RHCheckError = HoleM51.S51_RHCheckError
 S51_AlphaCheckError = HoleM51.S51_AlphaCheckError
 S51_WCheckError = HoleM51.S51_WCheckError
-S51_RHCheckError = HoleM51.S51_RHCheckError
+S51_NoneError = HoleM51.S51_NoneError

@@ -5,13 +5,13 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ._check import check_var
 from ..Functions.Load.retrocompatibility import (
     construct_experimental_class as _construct_experimental_class,
 )
 from ..Functions.Load.retrocompatibility import (
     import_experimental_class as _import_experimental_class,
 )
+from ._check import check_var
 from ._pyleecan_class import PyleecanClass
 from .normalization import Normalization
 from .out_elec import OutElec
