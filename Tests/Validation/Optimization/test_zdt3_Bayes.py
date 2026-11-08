@@ -131,7 +131,7 @@ def test_zdt3_Bayes():
     fig, axs = plt.subplots(1, 2, figsize=(16, 6))
     try:
         img_to_find = img.imread(
-            join(TEST_DIR, "Validation", "Optimization", "zdt3.jpg"), format="jpg"
+            join(TEST_DIR, "Data", "Optimization", "zdt3.jpg"), format="jpg"
         )
         axs[1].imshow(img_to_find, aspect="auto")
         axs[1].axis("off")

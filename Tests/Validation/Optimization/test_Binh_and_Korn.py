@@ -154,7 +154,7 @@ def test_Binh_and_Korn():
 
     try:
         img_to_find = img.imread(
-            join(TEST_DIR, "Validation", "Optimization", "Binh_and_Korn_function.jpg"),
+            join(TEST_DIR, "Data", "Optimization", "Binh_and_Korn_function.jpg"),
             format="jpg",
         )
         axs[1].imshow(img_to_find, aspect="auto")
