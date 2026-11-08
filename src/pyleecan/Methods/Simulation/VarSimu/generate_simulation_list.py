@@ -1,5 +1,4 @@
-class VarSimuError(Exception):
-    pass
+from pyleecan.Methods.Simulation.VarSimu.check_param import VarSimuError
 
 
 def generate_simulation_list(self, ref_simu=None):

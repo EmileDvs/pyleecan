@@ -206,7 +206,9 @@ def _get_exception_classes(module):
     return {name: node for name, node in classes.items() if is_exception_class(node)}
 
 
-def _get_error_class_fingerprint(path_to_gen, module_name, class_name, visited=()):
+def _get_error_class_fingerprint(
+    path_to_gen, module_name, class_name, visited=(), by_origin=False
+):
     """Return the definition of an exported exception class, if available."""
     if module_name in visited:
         return None
@@ -215,6 +217,8 @@ def _get_error_class_fingerprint(path_to_gen, module_name, class_name, visited=(
         return None
     class_node = _get_exception_classes(module).get(class_name)
     if class_node is not None:
+        if by_origin:
+            return (module_name, class_name)
         return ast.dump(class_node, include_attributes=False)
 
     for node in module.body:
@@ -229,11 +233,14 @@ def _get_error_class_fingerprint(path_to_gen, module_name, class_name, visited=(
                 imported_module,
                 alias.name,
                 visited + (module_name,),
+                by_origin=by_origin,
             )
     return None
 
 
-def _get_error_class_definitions(path_to_gen, module_name, class_name, visited=()):
+def _get_error_class_definitions(
+    path_to_gen, module_name, class_name, visited=(), by_origin=False
+):
     """Return exception definitions and their exception bases in dependency order."""
     if module_name in visited:
         return []
@@ -259,7 +266,11 @@ def _get_error_class_definitions(path_to_gen, module_name, class_name, visited=(
         if imported is None:
             return []
         return _get_error_class_definitions(
-            path_to_gen, imported[0], imported[1], visited + (module_name,)
+            path_to_gen,
+            imported[0],
+            imported[1],
+            visited + (module_name,),
+            by_origin=by_origin,
         )
     if class_name not in _get_exception_classes(module):
         return []
@@ -270,7 +281,9 @@ def _get_error_class_definitions(path_to_gen, module_name, class_name, visited=(
             continue
         if base.id in classes:
             dependencies.extend(
-                _get_error_class_definitions(path_to_gen, module_name, base.id, visited)
+                _get_error_class_definitions(
+                    path_to_gen, module_name, base.id, visited, by_origin=by_origin
+                )
             )
         elif base.id in imports:
             imported_module, imported_name = imports[base.id]
@@ -280,10 +293,12 @@ def _get_error_class_definitions(path_to_gen, module_name, class_name, visited=(
                     imported_module,
                     imported_name,
                     visited + (module_name,),
+                    by_origin=by_origin,
                 )
             )
 
     definition = ast.parse(ast.unparse(class_node)).body[0]
+    definition.error_origin = (module_name, class_name)
     definitions = []
     seen = set()
     for dependency in dependencies + [definition]:
@@ -292,8 +307,11 @@ def _get_error_class_definitions(path_to_gen, module_name, class_name, visited=(
             None,
         )
         if existing is not None:
-            if ast.dump(existing, include_attributes=False) != ast.dump(
-                dependency, include_attributes=False
+            if (
+                existing.error_origin != dependency.error_origin
+                if by_origin
+                else ast.dump(existing, include_attributes=False)
+                != ast.dump(dependency, include_attributes=False)
             ):
                 return []
             continue
@@ -303,7 +321,157 @@ def _get_error_class_definitions(path_to_gen, module_name, class_name, visited=(
     return definitions
 
 
-def _same_error_class_import(path_to_gen, first_identity, second_identity):
+def _sort_error_class_definitions(definitions):
+    """Sort available exception classes by name, after their local base classes."""
+    remaining = {definition.name: definition for definition in definitions}
+    dependencies = {
+        name: {
+            node.id
+            for base in definition.bases
+            for node in ast.walk(base)
+            if isinstance(node, ast.Name) and node.id in remaining
+        }
+        for name, definition in remaining.items()
+    }
+    ordered = []
+    while remaining:
+        ready = sorted(name for name in remaining if not dependencies[name])
+        if not ready:
+            raise ValueError(
+                "Circular exception class dependencies: "
+                + ", ".join(sorted(remaining))
+            )
+        name = ready[0]
+        ordered.append(remaining.pop(name))
+        for unresolved in remaining:
+            dependencies[unresolved].discard(name)
+    return ordered
+
+
+def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_graph):
+    """Find exception definitions used by more than one generated class."""
+    definitions = {}
+    owners = {}
+    for name, info in sorted(gen_dict.items()):
+        if not info.get("methods"):
+            continue
+        reserved = {item["name"] for item in info["constants"]}
+        reserved.update(method.split(".")[-1] for method in info["methods"])
+        reserved.update(item["name"] for item in info["properties"])
+        # Actual generation reports inline fallback warnings for selected classes.
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message=r"^Could not inline ")
+            prepared = _prepare_class_methods(
+                path_to_gen,
+                info["package"],
+                name,
+                info["methods"],
+                soft_name,
+                reserved_names=reserved,
+                class_import_graph=class_import_graph,
+                by_origin=True,
+            )
+        for definition in prepared[-1]:
+            origin = definition.error_origin
+            definitions[origin] = definition
+            owners.setdefault(origin, set()).add(name)
+    return {
+        origin: definitions[origin]
+        for origin, uses in owners.items()
+        if len(uses) > 1
+    }
+
+
+def _shared_error_name(origin):
+    """Return the public name of a shared exception."""
+    return "PyleecanImportError" if origin[1] == "ImportError" else origin[1]
+
+
+def _write_shared_errors(path_to_gen, definitions, source_path=None):
+    """Generate source-identified shared exceptions in dependency order."""
+    source_path = source_path or path_to_gen
+    dependencies = {}
+    names = {}
+    for origin in sorted(definitions):
+        name = _shared_error_name(origin)
+        if name in names:
+            raise ValueError(
+                f"Shared exception name {name!r} has different sources: "
+                f"{names[name]!r} and {origin!r}"
+            )
+        if name in {"NotImplementedYetError", "ParentMissingError"}:
+            raise ValueError(f"Shared exception name {name!r} is already defined")
+        names[name] = origin
+    for origin, definition in definitions.items():
+        bases = {}
+        for base in definition.bases:
+            if not isinstance(base, ast.Name):
+                raise TypeError(f"Unsupported exception base in {origin!r}")
+            resolved = _get_error_class_fingerprint(
+                source_path, origin[0], base.id, by_origin=True
+            )
+            if resolved is not None:
+                if resolved not in definitions:
+                    raise ValueError(f"Missing shared exception base {resolved!r}")
+                bases[base.id] = resolved
+            else:
+                builtin_base = getattr(builtins, base.id, None)
+                if not isinstance(builtin_base, type) or not issubclass(
+                    builtin_base, BaseException
+                ):
+                    raise ValueError(
+                        f"Unresolved exception base {base.id!r} in {origin!r}"
+                    )
+        dependencies[origin] = bases
+
+    pending = dict(definitions)
+    chunks = [
+        '"""Generated shared exception classes; do not edit by hand."""\n\n\n',
+        (
+            "class NotImplementedYetError(Exception):\n"
+            '    """NotImplementedYetError"""\n\n\n'
+        ),
+        (
+            "class ParentMissingError(Exception):\n"
+            '    """ParentMissingError"""\n\n\n'
+        ),
+    ]
+    while pending:
+        ready = sorted(
+            origin for origin in pending
+            if all(base not in pending for base in dependencies[origin].values())
+        )
+        if not ready:
+            raise ValueError(f"Circular shared exception dependencies: {sorted(pending)!r}")
+        for origin in ready:
+            definition = ast.parse(ast.unparse(pending.pop(origin))).body[0]
+            definition.name = _shared_error_name(origin)
+            for index, base in enumerate(definition.bases):
+                if isinstance(base, ast.Name) and base.id in dependencies[origin]:
+                    definition.bases[index] = ast.Name(
+                        id=_shared_error_name(dependencies[origin][base.id]),
+                        ctx=ast.Load(),
+                    )
+            if (
+                len(definition.body) == 2
+                and isinstance(definition.body[0], ast.Expr)
+                and isinstance(definition.body[0].value, ast.Constant)
+                and isinstance(definition.body[0].value.value, str)
+                and isinstance(definition.body[1], ast.Pass)
+            ):
+                definition.body.pop()
+            chunks.append(ast.unparse(definition) + "\n\n\n")
+    source = "".join(chunks).rstrip() + "\n"
+    ast.parse(source, filename=join(path_to_gen, "_error.py"))
+    if definitions:
+        source = _format_source_with_ruff(source, join(path_to_gen, "_error.py"))
+    with open(join(path_to_gen, "_error.py"), "w", encoding="utf-8") as error_file:
+        error_file.write(source)
+
+
+def _same_error_class_import(
+    path_to_gen, first_identity, second_identity, by_origin=False
+):
     """Check whether two imports refer to identically defined exception classes."""
     if (
         first_identity[0] != "ImportFrom"
@@ -313,11 +481,11 @@ def _same_error_class_import(path_to_gen, first_identity, second_identity):
     ):
         return False
     first_fingerprint = _get_error_class_fingerprint(
-        path_to_gen, first_identity[2], first_identity[3]
+        path_to_gen, first_identity[2], first_identity[3], by_origin=by_origin
     )
     return first_fingerprint is not None and first_fingerprint == (
         _get_error_class_fingerprint(
-            path_to_gen, second_identity[2], second_identity[3]
+            path_to_gen, second_identity[2], second_identity[3], by_origin=by_origin
         )
     )
 
@@ -340,6 +508,60 @@ def _rename_method_references(source, renamed_names):
         start = line_offsets[node.lineno - 1] + node.col_offset
         end = start + len(node.id.encode("utf-8"))
         replacements.append((start, end, renamed_names[node.id].encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
+    return source_bytes.decode("utf-8")
+
+
+def _qualify_local_errors(source, error_names, class_name):
+    """Qualify local errors with self in instance methods and the class otherwise."""
+    if not error_names:
+        return source
+    tree = ast.parse(source)
+    instance_references = set()
+    for function in tree.body:
+        if not isinstance(function, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        args = function.args.posonlyargs + function.args.args
+        if not args or args[0].arg != "self" or function.decorator_list:
+            continue
+        body_nodes = [node for statement in function.body for node in ast.walk(statement)]
+        if any(
+            (
+                isinstance(node, ast.Name)
+                and node.id == "self"
+                and isinstance(node.ctx, (ast.Store, ast.Del))
+            )
+            or (isinstance(node, ast.arg) and node.arg == "self")
+            or (isinstance(node, ast.ExceptHandler) and node.name == "self")
+            for node in body_nodes
+        ):
+            continue
+        instance_references.update(
+            id(node) for node in body_nodes if isinstance(node, ast.Name)
+        )
+
+    source_bytes = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(source_bytes):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.Name)
+            and isinstance(node.ctx, ast.Load)
+            and node.id in error_names
+        ):
+            owner = "self" if id(node) in instance_references else class_name
+            start = offsets[node.lineno - 1] + node.col_offset
+            replacements.append(
+                (
+                    start,
+                    start + len(node.id.encode("utf-8")),
+                    f"{owner}.{node.id}".encode("utf-8"),
+                )
+            )
     for start, end, replacement in sorted(replacements, reverse=True):
         source_bytes = source_bytes[:start] + replacement + source_bytes[end:]
     return source_bytes.decode("utf-8")
@@ -825,7 +1047,7 @@ def _resolve_method_relative_imports(source, source_package):
 
 
 def _expand_error_wildcard_imports(
-    module, method_node, used_names, path_to_gen, source_package
+    module, method_node, used_names, path_to_gen, source_package, by_origin=False
 ):
     """Resolve wildcard imports whose used names are package exception classes."""
     method_local_names = {
@@ -890,7 +1112,11 @@ def _expand_error_wildcard_imports(
 
         exception_classes = _get_exception_classes(package_module)
         error_fingerprints = {
-            name: ast.dump(node, include_attributes=False)
+            name: (
+                (".".join(module_parts), name)
+                if by_origin
+                else ast.dump(node, include_attributes=False)
+            )
             for name, node in exception_classes.items()
         }
         for statement in package_module.body:
@@ -899,7 +1125,8 @@ def _expand_error_wildcard_imports(
                     name = alias.asname or alias.name
                     if alias.name != "*" and "Error" in name:
                         error_fingerprints[name] = _get_error_class_fingerprint(
-                            path_to_gen, ".".join(module_parts), name
+                            path_to_gen, ".".join(module_parts), name,
+                            by_origin=by_origin,
                         )
             elif isinstance(statement, ast.Import):
                 for alias in statement.names:
@@ -969,6 +1196,7 @@ def _get_method_source(
     soft_name,
     hoist_names=(),
     class_import_graph=None,
+    by_origin=False,
 ):
     """Return a method definition and the imports it needs."""
     method_parts = [part for part in (class_pack or "").split(".") if part]
@@ -1038,7 +1266,7 @@ def _get_method_source(
             if name in helper_function_nodes and name not in inline_helper_names
         )
     module.body, wildcard_reason = _expand_error_wildcard_imports(
-        module, method_node, used_names, path_to_gen, source_package
+        module, method_node, used_names, path_to_gen, source_package, by_origin=by_origin
     )
     if wildcard_reason is not None:
         return None, [], [], [], wildcard_reason
@@ -1679,6 +1907,7 @@ def _prepare_class_methods(
     soft_name,
     reserved_names=(),
     class_import_graph=None,
+    by_origin=False,
 ):
     """Inline methods and collect their imports without name conflicts."""
     prepared = {}
@@ -1712,6 +1941,7 @@ def _prepare_class_methods(
             soft_name,
             repeated_assignments.get(meth, set()),
             class_import_graph=class_import_graph,
+            by_origin=by_origin,
         )
         if reason is not None:
             warnings.warn(
@@ -1888,7 +2118,9 @@ def _prepare_class_methods(
                 for previous in (existing, candidate):
                     if previous is None or previous == identity:
                         continue
-                    if _same_error_class_import(path_to_gen, previous, identity):
+                    if _same_error_class_import(
+                        path_to_gen, previous, identity, by_origin=by_origin
+                    ):
                         identity = previous
                     else:
                         conflict = True
@@ -1913,16 +2145,19 @@ def _prepare_class_methods(
                     continue
                 for alias in import_node.names:
                     definitions = _get_error_class_definitions(
-                        path_to_gen, module_name, alias.name
+                        path_to_gen, module_name, alias.name, by_origin=by_origin
                     )
                     for definition in definitions:
                         existing = candidate_error_definitions.get(
                             definition.name,
                             class_error_definitions.get(definition.name),
                         )
-                        if existing is not None and ast.dump(
-                            existing, include_attributes=False
-                        ) != ast.dump(definition, include_attributes=False):
+                        if existing is not None and (
+                            existing.error_origin != definition.error_origin
+                            if by_origin
+                            else ast.dump(existing, include_attributes=False)
+                            != ast.dump(definition, include_attributes=False)
+                        ):
                             conflict_reason = (
                                 "class error '"
                                 + definition.name
@@ -1980,7 +2215,7 @@ def _prepare_class_methods(
                         alias
                         for alias in import_node.names
                         if not _get_error_class_definitions(
-                            path_to_gen, module_name, alias.name
+                            path_to_gen, module_name, alias.name, by_origin=by_origin
                         )
                     ]
                     if not retained_aliases:
@@ -2098,7 +2333,7 @@ def _prepare_class_methods(
         fallback_reasons,
         assignments,
         method_default_overrides,
-        list(class_error_definitions.values()),
+        _sort_error_class_definitions(class_error_definitions.values()),
     )
 
 
@@ -2209,18 +2444,35 @@ def _redirect_experimental_class_imports(source, soft_name, gen_dict):
         if not isinstance(node, ast.ImportFrom) or node.level != 0 or not node.module:
             continue
         if node.module == soft_name + ".Classes":
-            new_aliases = [
+            error_aliases = [
+                alias for alias in node.names if alias.name in CLASS_ERROR_NAMES
+            ]
+            package_aliases = [
+                alias for alias in node.names if alias.name == "get_class_dict"
+            ]
+            legacy_aliases = [
                 alias for alias in node.names
-                if alias.name in CLASS_ERROR_NAMES | {"get_class_dict"}
+                if alias not in error_aliases and alias not in package_aliases
             ]
-            legacy_aliases = [alias for alias in node.names if alias not in new_aliases]
-            if not new_aliases:
+            if not error_aliases and not package_aliases:
                 continue
-            imports = [
-                ast.ImportFrom(
-                    module=f"{soft_name}.Classes_new", names=new_aliases, level=0
+            imports = []
+            if error_aliases:
+                imports.append(
+                    ast.ImportFrom(
+                        module=f"{soft_name}.Classes_new._error",
+                        names=error_aliases,
+                        level=0,
+                    )
                 )
-            ]
+            if package_aliases:
+                imports.append(
+                    ast.ImportFrom(
+                        module=f"{soft_name}.Classes_new",
+                        names=package_aliases,
+                        level=0,
+                    )
+                )
             if legacy_aliases:
                 imports.append(
                     ast.ImportFrom(module=node.module, names=legacy_aliases, level=0)
@@ -2306,8 +2558,8 @@ def _remove_experimental_self_imports(source, soft_name, class_name, output_name
     return encoded.decode("utf-8")
 
 
-def _quote_experimental_self_annotations(source, class_name):
-    """Make annotations referencing the module's own class forward references."""
+def _postpone_experimental_self_annotations(source, class_name):
+    """Postpone annotation evaluation when the class refers to itself."""
     tree = ast.parse(source)
     class_node = next(
         node for node in tree.body
@@ -2320,28 +2572,23 @@ def _quote_experimental_self_annotations(source, class_name):
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             annotations.append(node.returns)
 
-    encoded = source.encode("utf-8")
-    offsets = [0]
-    for index, value in enumerate(encoded):
-        if value == ord("\n"):
-            offsets.append(index + 1)
-    replacements = []
     for annotation in annotations:
         if annotation is None or not any(
             isinstance(node, ast.Name) and node.id == class_name
             for node in ast.walk(annotation)
         ):
             continue
-        start = offsets[annotation.lineno - 1] + annotation.col_offset
-        end = offsets[annotation.end_lineno - 1] + annotation.end_col_offset
-        if b"#" in encoded[start:end]:
-            raise ValueError(
-                f"Cannot preserve comments in a self-referencing annotation of {class_name}"
-            )
-        replacements.append((start, end, repr(ast.unparse(annotation)).encode("utf-8")))
-    for start, end, replacement in sorted(replacements, reverse=True):
-        encoded = encoded[:start] + replacement + encoded[end:]
-    return encoded.decode("utf-8")
+        lines = source.splitlines(keepends=True)
+        docstring = tree.body[0]
+        if not (
+            isinstance(docstring, ast.Expr)
+            and isinstance(docstring.value, ast.Constant)
+            and isinstance(docstring.value.value, str)
+        ):
+            raise ValueError(f"Missing generated module docstring for {class_name}")
+        lines.insert(docstring.end_lineno, "\nfrom __future__ import annotations\n")
+        return "".join(lines)
+    return source
 
 
 def _rename_experimental_normalizations(source, soft_name, import_style="absolute"):
@@ -3701,6 +3948,7 @@ def generate_class(
     class_import_graph=None,
     is_new=False,
     output_name=None,
+    shared_error_definitions=None,
 ):
     """Generate the corresponding class file.
 
@@ -3726,6 +3974,10 @@ def generate_class(
     output_name : str, optional
         Output module name for the dataclass version, without the .py extension.
         Defaults to the snake_case class name.
+    shared_error_definitions : dict, optional
+        Precomputed shared exceptions for experimental generation. If omitted,
+        derive them from the complete gen_dict and write Classes_new/_error.py.
+        Provide the complete generation dictionary even for a single class.
 
     Returns
     -------
@@ -3746,6 +3998,11 @@ def generate_class(
     if is_new and class_import_graph is None:
         source_class_dir = join(dirname(path_to_gen), "Classes")
         class_import_graph = get_class_import_graph(source_class_dir, gen_dict, soft_name)
+    if is_new and shared_error_definitions is None:
+        shared_error_definitions = _shared_error_definitions(
+            gen_dict, path_to_gen, soft_name, class_import_graph
+        )
+        _write_shared_errors(path_to_gen, shared_error_definitions)
     reserved_names = {constant["name"] for constant in class_dict["constants"]} | {
         method.split(".")[-1] for method in class_dict["methods"]
     }
@@ -3765,6 +4022,7 @@ def generate_class(
         soft_name,
         reserved_names=reserved_names,
         class_import_graph=class_import_graph,
+        by_origin=is_new,
     )
 
     if is_new:
@@ -3781,6 +4039,7 @@ def generate_class(
             class_attributes,
             method_default_overrides,
             class_error_definitions,
+            shared_error_definitions,
         )
 
     # Start of file generation
@@ -4242,8 +4501,6 @@ def _field_type(prop_type, default, gen_dict, soft_name, class_name=None):
     annotation = resolve_type(prop_type) if prop_type else "Any"
     if _is_none_default(default) and annotation not in ("Any", "None"):
         annotation = f"{annotation} | None"
-    if class_name and class_name in _referenced_classes(prop_type, gen_dict):
-        annotation = repr(annotation)
     return annotation, imports
 
 
@@ -4259,7 +4516,7 @@ def _referenced_classes(prop_type, gen_dict):
     return set()
 
 
-def _parent_type(class_name, gen_dict, soft_name):
+def _parent_type(class_name, gen_dict):
     """Return the highest-level CSV classes that can own this class."""
     owners = set()
     for owner_name, owner_dict in gen_dict.items():
@@ -4283,18 +4540,29 @@ def _parent_type(class_name, gen_dict, soft_name):
             owner = gen_dict[owner]["mother"]
         highest_owners.add(owner)
 
-    if not highest_owners:
-        return (), set()
-    parent_names = sorted(highest_owners)
-    imports = {
-        f"from {soft_name}.Classes.{name} import {name}"
-        for name in parent_names
-        if name != class_name
-    }
-    return tuple(parent_names), imports
+    return tuple(sorted(highest_owners))
 
 
-def _field_default(prop):
+def parent_type_mapping(gen_dict):
+    """Map generated root classes to their permitted parent modules and names."""
+    mapping = {}
+    for class_name, class_dict in sorted(gen_dict.items()):
+        if class_dict["mother"] in gen_dict:
+            continue
+        parent_names = _parent_type(class_name, gen_dict)
+        if parent_names:
+            key = (
+                class_module_name(class_name),
+                NORMALIZATION_CLASS_NAMES.get(class_name, class_name),
+            )
+            mapping[key] = tuple(
+                (class_module_name(name), NORMALIZATION_CLASS_NAMES.get(name, name))
+                for name in parent_names
+            )
+    return mapping
+
+
+def _field_default(prop, field_name="field"):
     """Format a dataclass default, using field() only when it is required."""
     prop_type = prop["type"]
     value = prop["value"]
@@ -4321,11 +4589,9 @@ def _field_default(prop):
     elif prop_type == "ndarray" and isinstance(value, list):
         default = f"default_factory=partial(deepcopy, np.array({value!r}))"
         requires_field = True
-    elif prop_type in ("list", "dict", "[ndarray]", "{ndarray}") and isinstance(
-        value, (list, dict)
-    ):
+    elif isinstance(value, (list, dict)):
         if not value:
-            factory = "dict" if prop_type in ("dict", "{ndarray}") else "list"
+            factory = "dict" if isinstance(value, dict) else "list"
             default = f"default_factory={factory}"
         else:
             default = f"default_factory=partial(deepcopy, {value!r})"
@@ -4348,7 +4614,7 @@ def _field_default(prop):
     )
     if metadata:
         field_args += f", metadata={metadata!r}"
-    return f"field({field_args})"
+    return f"{field_name}({field_args})"
 
 
 def _attribute_docstring(description):
@@ -4445,6 +4711,7 @@ def _generate_dataclass_class(
     class_attributes,
     method_default_overrides,
     class_error_definitions,
+    shared_error_definitions,
 ):
     """Write an experimental dataclass using the prepared class methods."""
     class_dict = gen_dict[class_name]
@@ -4453,6 +4720,11 @@ def _generate_dataclass_class(
     class_pack = class_dict["package"]
 
     class_path = join(path_to_gen, output_module_name + ".py")
+    field_name = (
+        "dataclass_field"
+        if any(prop["name"] == "field" for prop in class_dict["properties"])
+        else "field"
+    )
     mother = class_dict["mother"]
     if mother in gen_dict:
         parent_class = NORMALIZATION_CLASS_NAMES.get(mother, mother)
@@ -4461,15 +4733,46 @@ def _generate_dataclass_class(
         parent_class = "PyleecanClass"
         parent_module = "_" + class_module_name(parent_class)
     imports = {
-        "from dataclasses import dataclass, field",
+        (
+            "from dataclasses import dataclass, field as dataclass_field"
+            if field_name == "dataclass_field"
+            else "from dataclasses import dataclass, field"
+        ),
         "from typing import Any, ClassVar",
         f"from {soft_name}.Classes_new.{parent_module} import {parent_class}",
     }
-    parent_types = ()
-    if parent_class == "PyleecanClass":
-        parent_types, parent_imports = _parent_type(class_name, gen_dict, soft_name)
-        imports.update(parent_imports)
-
+    local_errors = [
+        definition
+        for definition in class_error_definitions
+        if definition.error_origin not in shared_error_definitions
+    ]
+    used_error_names = {
+        node.id
+        for source in method_sources.values()
+        if source is not None
+        for node in ast.walk(ast.parse(source))
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
+    used_error_names.update(
+        node.id
+        for definition in local_errors
+        for base in definition.bases
+        for node in ast.walk(base)
+        if isinstance(node, ast.Name)
+    )
+    for definition in class_error_definitions:
+        if (
+            definition.error_origin in shared_error_definitions
+            and definition.name in used_error_names
+        ):
+            shared_name = _shared_error_name(definition.error_origin)
+            alias = (
+                f" as {definition.name}" if shared_name != definition.name else ""
+            )
+            imports.add(
+                f"from {soft_name}.Classes_new._error import "
+                f"{shared_name}{alias}"
+            )
     for prop in class_dict["properties"]:
         annotation, type_imports = _field_type(
             prop["type"], prop["value"], gen_dict, soft_name, class_name
@@ -4534,27 +4837,12 @@ def _generate_dataclass_class(
         annotation, _ = _field_type(
             prop["type"], prop["value"], gen_dict, soft_name, class_name
         )
-        body.append(f"{TAB}{prop['name']}: {annotation} = {_field_default(prop)}\n")
+        body.append(
+            f"{TAB}{prop['name']}: {annotation} = {_field_default(prop, field_name)}\n"
+        )
         description = _property_description(prop)
         if description:
             body.append(f"{TAB}{_attribute_docstring(description)}\n")
-
-    if parent_class == "PyleecanClass":
-        body.append(f"\n{TAB}def __post_init__(self):\n")
-        body.append(f"{TAB}{TAB}super().__post_init__()\n")
-        if parent_types:
-            accepted_types = ", ".join(parent_types)
-            expected_types = " or ".join(parent_types)
-            body.extend(
-                [
-                    f"\n{TAB}def _assert_parent_type(self, parent):\n",
-                    f"{TAB}{TAB}if parent is not None and not isinstance(parent, ({accepted_types},)):\n",
-                    f"{TAB}{TAB}{TAB}raise TypeError(\n",
-                    f'{TAB}{TAB}{TAB}{TAB}"{generated_name} parent must be an instance of {expected_types}, or None; "\n',
-                    f'{TAB}{TAB}{TAB}{TAB}+ f"got {{type(parent).__name__}}"\n',
-                    f"{TAB}{TAB}{TAB})\n",
-                ]
-            )
 
     for method in class_dict["methods"]:
         if method_sources[method] is None:
@@ -4563,10 +4851,15 @@ def _generate_dataclass_class(
         body.append(
             f"\n{TAB}# Inlined from Methods.{class_pack}.{class_name}.{method}\n"
         )
-        body.append(indent(method_sources[method], TAB) + "\n")
+        method_source = _qualify_local_errors(
+            method_sources[method],
+            {definition.name for definition in local_errors},
+            generated_name,
+        )
+        body.append(indent(method_source, TAB) + "\n")
         for override in method_default_overrides[method]:
             body.append(f"{TAB}{ast.unparse(override)}\n")
-    for definition in class_error_definitions:
+    for definition in local_errors:
         if (
             isinstance(definition, ast.ClassDef)
             and len(definition.body) == 2
@@ -4580,14 +4873,6 @@ def _generate_dataclass_class(
             f"\n{TAB}{ast.unparse(definition).replace(chr(10), chr(10) + TAB)}\n"
         )
     chunks.append("".join(body))
-    if class_error_definitions:
-        chunks.append(
-            "\n"
-            + "".join(
-                f"{definition.name} = {generated_name}.{definition.name}\n"
-                for definition in class_error_definitions
-            )
-        )
     if fallback_reasons:
         chunks.append(
             "\n# Methods retained as imports because they could not be inlined:\n"
@@ -4608,7 +4893,7 @@ def _generate_dataclass_class(
     )
     source = _remove_redundant_experimental_class_imports(source, soft_name, gen_dict)
     source = _rename_experimental_normalizations(source, soft_name)
-    source = _quote_experimental_self_annotations(source, generated_name)
+    source = _postpone_experimental_self_annotations(source, generated_name)
     source = _apply_import_style(source, soft_name, import_style, "Classes_new")
     source = _organize_header_imports(source, generated_name, class_path)
     source = _regroup_pyleecan_imports(source, generated_name, class_path)

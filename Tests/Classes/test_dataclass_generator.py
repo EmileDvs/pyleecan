@@ -3,12 +3,15 @@
 import ast
 import importlib
 import os
+import pickle
 import shutil
 import subprocess
 import sys
 from copy import deepcopy
-from dataclasses import fields
+from dataclasses import dataclass, field, fields, make_dataclass
+from functools import partial
 from pathlib import Path
+from types import ModuleType
 from typing import get_type_hints
 
 import pytest
@@ -44,8 +47,9 @@ def test_experimental_generator(generator_environment, tmp_path):
     assert generated_class.name == "Magnetics"
     assert isinstance(generated_class.bases[0], ast.Name)
     assert generated_class.bases[0].id == "PyleecanClass"
-    assert any(
-        isinstance(node, ast.FunctionDef) and node.name == "_assert_parent_type"
+    assert not any(
+        isinstance(node, ast.FunctionDef)
+        and node.name in ("_assert_parent_type", "__post_init__")
         for node in generated_class.body
     )
 
@@ -61,6 +65,169 @@ def test_experimental_generator(generator_environment, tmp_path):
     assert child_class.name == "MagFEMM"
     assert isinstance(child_class.bases[0], ast.Name)
     assert child_class.bases[0].id == "Magnetics"
+
+
+def test_parent_mapping_uses_root_owners_and_generated_names(generator_environment):
+    mapping = class_generator.parent_type_mapping(generator_environment)
+    assert mapping[("normalization", "Normalization")] == (("data", "Data"),)
+    assert ("data", "Data") in mapping[("data", "Data")]
+    assert ("norm_ref", "NormRef") not in mapping
+
+
+def test_base_is_guarded_and_inherited_post_init_links_children(monkeypatch):
+    from pyleecan.Classes_new import _pyleecan_class
+
+    base = _pyleecan_class.PyleecanClass
+    with pytest.raises(TypeError, match="PyleecanClass cannot be instantiated directly"):
+        base()
+
+    @dataclass(eq=False)
+    class Child(base):
+        value: int = 0
+
+    @dataclass(eq=False)
+    class Owner(base):
+        children: list[Child] = field(default_factory=list)
+
+    @dataclass(eq=False)
+    class DerivedOwner(Owner):
+        extra: int = 0
+
+    monkeypatch.setattr(_pyleecan_class, "PARENT_TYPES", {})
+    child = Child(value=7)
+    owner = DerivedOwner(children=[child], extra=3)
+    assert child.parent is owner
+    assert "__post_init__" not in Owner.__dict__
+    copied = deepcopy(owner)
+    assert copied is not owner
+    assert copied.children[0] is not child
+    assert copied.children[0].parent is copied
+
+
+def test_parent_mapping_handles_special_module_and_class_names():
+    gen_dict = {
+        "Data1D": {"mother": "", "properties": []},
+        "Norm_ref": {"mother": "", "properties": [{"type": "Data1D"}]},
+        "OPdq": {"mother": "", "properties": [{"type": "Data1D"}]},
+        "XOutput": {"mother": "", "properties": [{"type": "Data1D"}]},
+    }
+    assert class_generator.parent_type_mapping(gen_dict) == {
+        ("data_1d", "Data1D"): (
+            ("norm_ref", "NormRef"),
+            ("op_dq", "OPdq"),
+            ("xoutput", "XOutput"),
+        )
+    }
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_generated_normalization_does_not_import_parent(
+    generator_environment, tmp_path, import_style
+):
+    path = class_generator.generate_class(
+        generator_environment,
+        "Normalization",
+        str(tmp_path),
+        is_new=True,
+        import_style=import_style,
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert "_assert_parent_type" not in source
+    assert "import Data" not in source
+
+
+def test_shared_parent_validation(monkeypatch):
+    from pyleecan.Classes_new import _pyleecan_class
+
+    package = "pyleecan.Classes_new"
+    root_module = ModuleType(package + ".test_parent_root")
+    owner_module = ModuleType(package + ".test_parent_owner")
+
+    class Root(_pyleecan_class.PyleecanClass):
+        def __post_init__(self):
+            super().__post_init__()
+
+    class Child(Root):
+        pass
+
+    class Owner:
+        pass
+
+    class DerivedOwner(Owner):
+        pass
+
+    Root.__module__ = root_module.__name__
+    Owner.__module__ = owner_module.__name__
+    root_module.Root = Root
+    owner_module.Owner = Owner
+    monkeypatch.setitem(sys.modules, root_module.__name__, root_module)
+    monkeypatch.setitem(sys.modules, owner_module.__name__, owner_module)
+    monkeypatch.setattr(
+        _pyleecan_class,
+        "PARENT_TYPES",
+        {("test_parent_root", "Root"): (("test_parent_owner", "Owner"),)},
+    )
+    child = Child()
+    child._assert_parent_type(None)
+    child._assert_parent_type(DerivedOwner())
+    with pytest.raises(TypeError, match="Root parent must be an instance of Owner"):
+        child._assert_parent_type(type("Owner", (), {})())
+    owner = Owner()
+    _pyleecan_class.PyleecanClass._set_parent_links({"a": [child]}, owner)
+    assert child.parent is owner
+    with pytest.raises(TypeError):
+        _pyleecan_class.PyleecanClass._set_parent_links([child], object())
+    assert child.parent is owner
+
+    monkeypatch.setattr(_pyleecan_class, "PARENT_TYPES", {})
+    child._assert_parent_type(object())
+    monkeypatch.setattr(
+        _pyleecan_class,
+        "PARENT_TYPES",
+        {("test_parent_root", "Root"): (("missing_parent_module", "Owner"),)},
+    )
+    with pytest.raises(ModuleNotFoundError):
+        child._assert_parent_type(owner)
+
+
+def test_normalization_data_parent_link():
+    from pyleecan.Classes_new.data import Data
+    from pyleecan.Classes_new.norm_vector import NormVector
+
+    normalization = NormVector()
+    data = Data(normalizations={"test": normalization})
+    assert normalization.parent is data
+    for copied in (data.copy(), deepcopy(data), pickle.loads(pickle.dumps(data))):
+        assert copied is not data
+        assert copied.normalizations["test"] is not normalization
+        assert copied.normalizations["test"].parent is copied
+    with pytest.raises(TypeError, match="Normalization parent"):
+        normalization._assert_parent_type(object())
+    data._assert_parent_type(Data())
+
+
+@pytest.mark.parametrize(
+    "imports",
+    [
+        "from pyleecan.Classes_new.norm_vector import NormVector; "
+        "from pyleecan.Classes_new.data import Data; ",
+        "from pyleecan.Classes_new.data import Data; "
+        "from pyleecan.Classes_new.norm_vector import NormVector; ",
+    ],
+)
+def test_normalization_data_import_in_fresh_process(imports):
+    subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            imports
+            + (
+                "n = NormVector(); d = Data(normalizations={'n': n}); "
+                "assert n.parent is d"
+            ),
+        ],
+        check=True,
+    )
 
 
 @pytest.mark.parametrize(
@@ -94,6 +261,426 @@ def test_experimental_module_names_are_unambiguous(generator_environment):
     class_generator.validate_class_module_names(generator_environment)
     with pytest.raises(ValueError, match="both map to module"):
         class_generator.validate_class_module_names({"MagFEMM": {}, "MagFemm": {}})
+
+
+def test_exception_sorting_respects_bases_and_alphabetizes_ready_classes():
+    definitions = ast.parse(
+        "class ZBase(Exception): pass\n"
+        "class AChild(ZBase): pass\n"
+        "class CChild(ZBase): pass\n"
+        "class BChild(ZBase): pass\n"
+    ).body
+    expected = ["ZBase", "AChild", "BChild", "CChild"]
+    for items in (definitions, list(reversed(definitions))):
+        ordered = class_generator._sort_error_class_definitions(items)
+        assert [node.name for node in ordered] == expected
+        namespace = {}
+        exec(
+            compile(ast.Module(body=ordered, type_ignores=[]), "<errors>", "exec"),
+            namespace,
+        )
+        assert issubclass(namespace["AChild"], namespace["ZBase"])
+
+
+def test_exception_sorting_reports_circular_dependencies():
+    definitions = ast.parse(
+        "class AError(BError): pass\nclass BError(AError): pass\n"
+    ).body
+    with pytest.raises(ValueError, match="Circular exception class dependencies"):
+        class_generator._sort_error_class_definitions(definitions)
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_shared_exceptions_across_partial_generation(
+    generator_environment, tmp_path, monkeypatch, import_style
+):
+    runner = importlib.import_module(
+        "pyleecan.Generator.ClassGenerator.New.run_generate_classes"
+    )
+    package = "test_shared_errors_" + import_style
+    root = tmp_path / package
+    classes = root / "Classes_new"
+    classes.mkdir(parents=True)
+    (root / "__init__.py").write_text("", encoding="utf-8")
+    (root / "Classes").mkdir()
+    (classes / "_pyleecan_class.py").write_text(
+        "class PyleecanClass:\n    pass\n", encoding="utf-8"
+    )
+    shared = root / "Methods" / "Slot" / "Shared"
+    shared.mkdir(parents=True)
+    (shared / "__init__.py").write_text(
+        "class SharedError(Exception):\n    pass\n", encoding="utf-8"
+    )
+    gen_dict = {}
+    for name in ("SlotW23", "SlotW24"):
+        info = deepcopy(generator_environment[name])
+        info.update(mother="", properties=[], constants=[], methods=["check"])
+        gen_dict[name] = info
+        method_dir = root / "Methods" / "Slot" / name
+        method_dir.mkdir(parents=True)
+        (method_dir / "check.py").write_text(
+            f"from {package}.Methods.Slot.Shared import SharedError\n"
+            "class LocalError(SharedError):\n    pass\n"
+            "def check(self):\n    raise LocalError('failed')\n",
+            encoding="utf-8",
+        )
+    monkeypatch.syspath_prepend(str(tmp_path))
+    for name in gen_dict:
+        runner.generate_code(
+            str(root), gen_dict, soft_name=package,
+            class_list=[name + ".csv"], max_workers=1, import_style=import_style,
+        )
+    first = importlib.import_module(package + ".Classes_new.slot_w_23")
+    second = importlib.import_module(package + ".Classes_new.slot_w_24")
+    errors = importlib.import_module(package + ".Classes_new._error")
+    assert first.SharedError is second.SharedError is errors.SharedError
+    assert not hasattr(first.SlotW23, "SharedError")
+    assert not hasattr(first, "LocalError")
+    assert first.SlotW23.LocalError is not second.SlotW24.LocalError
+    assert issubclass(first.SlotW23.LocalError, errors.SharedError)
+    assert issubclass(second.SlotW24.LocalError, errors.SharedError)
+    with pytest.raises(errors.SharedError):
+        first.SlotW23().check()
+    with pytest.raises(errors.SharedError):
+        second.SlotW24().check()
+
+
+def test_same_named_error_sources_raise_conflict(tmp_path, monkeypatch):
+    monkeypatch.setenv(
+        "PATH", str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", "")
+    )
+    root = tmp_path / "source"
+    output = root / "Classes_new"
+    output.mkdir(parents=True)
+    identities = []
+    definitions = {}
+    for package in ("First", "Second"):
+        folder = root / "Methods" / package
+        folder.mkdir(parents=True)
+        (folder / "__init__.py").write_text(
+            "class SameError(Exception):\n    pass\n", encoding="utf-8"
+        )
+        module = "example.Methods." + package
+        identity = ("ImportFrom", 0, module, "SameError", None)
+        identities.append(identity)
+        definition = class_generator._get_error_class_definitions(
+            str(output), module, "SameError", by_origin=True
+        )[0]
+        definitions[definition.error_origin] = definition
+
+    assert class_generator._same_error_class_import(str(output), *identities)
+    assert not class_generator._same_error_class_import(
+        str(output), *identities, by_origin=True
+    )
+    with pytest.raises(ValueError, match="SameError"):
+        class_generator._write_shared_errors(str(output), definitions)
+    assert not (output / "_error.py").exists()
+
+
+def test_real_shared_exception_hierarchy(generator_environment, tmp_path, monkeypatch):
+    source = str(Path(MAIN_DIR) / "Classes_new")
+    graph = class_generator.get_class_import_graph(
+        str(Path(MAIN_DIR) / "Classes"), generator_environment, "pyleecan"
+    )
+    definitions = class_generator._shared_error_definitions(
+        generator_environment, source, "pyleecan", graph
+    )
+    class_generator._write_shared_errors(str(tmp_path), definitions, source_path=source)
+    original = (tmp_path / "_error.py").read_text(encoding="utf-8")
+    class_generator._write_shared_errors(
+        str(tmp_path), dict(reversed(list(definitions.items()))), source_path=source
+    )
+    assert (tmp_path / "_error.py").read_text(encoding="utf-8") == original
+    spec = importlib.util.spec_from_file_location("real_shared_errors", tmp_path / "_error.py")
+    module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, spec.name, module)
+    spec.loader.exec_module(module)
+    assert not hasattr(module, "ERROR_TYPES")
+    assert not hasattr(module, "ImportError")
+    assert issubclass(module.PyleecanImportError, Exception)
+    assert pickle.loads(pickle.dumps(module.MachineCheckError("test"))).__class__ is (
+        module.MachineCheckError
+    )
+    assert issubclass(module.SlotCheckError, module.LaminationCheckError)
+    assert issubclass(module.LaminationCheckError, module.MachineCheckError)
+
+
+def test_current_generated_import_error_uses_shared_class():
+    from pyleecan.Classes_new._error import PyleecanImportError
+    from pyleecan.Classes_new.import_gen_vect_lin import ImportError, ImportGenVectLin
+
+    assert ImportError is PyleecanImportError
+    assert not hasattr(ImportGenVectLin, "ImportError")
+    with pytest.raises(PyleecanImportError, match="Start must not be None"):
+        ImportGenVectLin(start=None).check()
+
+
+def test_generated_hole_m50_local_errors_are_usable(generator_environment, tmp_path):
+    root = tmp_path
+    methods = root / "Methods"
+    for package in (("Slot", "HoleM50"), ("Slot", "Slot"), ("Machine", "Lamination")):
+        shutil.copytree(
+            Path(MAIN_DIR, "Methods", *package), methods.joinpath(*package)
+        )
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / "Machine" / "__init__.py",
+        methods / "Machine" / "__init__.py",
+    )
+    output = root / "Classes_new"
+    output.mkdir()
+    definitions = class_generator._get_error_class_definitions(
+        str(output), "pyleecan.Methods.Slot.Slot", "SlotCheckError", by_origin=True
+    )
+    shared = {definition.error_origin: definition for definition in definitions}
+    info = deepcopy(generator_environment["HoleM50"])
+    info.update(mother="", properties=[], constants=[], methods=["check"])
+    gen_dict = dict(generator_environment)
+    gen_dict["HoleM50"] = info
+    path = class_generator.generate_class(
+        gen_dict, "HoleM50", str(output), is_new=True, import_style="relative",
+        class_import_graph={}, shared_error_definitions=shared,
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    assert "from ._error import SlotCheckError" in source
+    assert "_shared_" not in source
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    local_names = {node.name for node in cls.body if isinstance(node, ast.ClassDef)}
+    assert "S50_NoneError" in local_names
+    assert "SlotCheckError" not in local_names
+    assert "raise self.S50_NoneError" in source
+    assert not any(isinstance(node, ast.Assign) for node in tree.body)
+
+    cls.decorator_list = []
+    cls.bases = []
+    from pyleecan.Classes_new._error import SlotCheckError
+
+    namespace = {"SlotCheckError": SlotCheckError}
+    exec(
+        compile(
+            ast.fix_missing_locations(ast.Module(body=[cls], type_ignores=[])),
+            str(path),
+            "exec",
+        ),
+        namespace,
+    )
+    hole_class = namespace["HoleM50"]
+    hole = hole_class()
+    hole.get_Rext = lambda: 1
+    hole.W0 = None
+    with pytest.raises(hole_class.S50_NoneError, match="W0"):
+        hole.check()
+
+
+def test_local_error_references_use_self_only_in_instance_methods():
+    source = (
+        "def check(self):\n"
+        "    raise LocalError('instance')\n"
+        "\n"
+        "@staticmethod\n"
+        "def helper():\n"
+        "    raise LocalError('static')\n"
+        "\n"
+        "def other():\n"
+        "    raise LocalError('no instance')\n"
+        "\n"
+        "def rebound(self):\n"
+        "    self = None\n"
+        "    raise LocalError('rebound')\n"
+    )
+    result = class_generator._qualify_local_errors(source, {"LocalError"}, "Example")
+    assert "raise self.LocalError('instance')" in result
+    assert "raise Example.LocalError('static')" in result
+    assert "raise Example.LocalError('no instance')" in result
+    assert "raise Example.LocalError('rebound')" in result
+
+    namespace = {}
+    exec(
+        "class Example:\n"
+        "    class LocalError(Exception):\n"
+        "        pass\n"
+        + "\n".join("    " + line for line in result.splitlines()),
+        namespace,
+    )
+    example = namespace["Example"]
+    for call in (example().check, example.helper, example.other, example().rebound):
+        with pytest.raises(example.LocalError):
+            call()
+
+    class Derived(example):
+        class LocalError(Exception):
+            pass
+
+    with pytest.raises(Derived.LocalError):
+        Derived().check()
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_slot_w23_errors_have_deterministic_order(
+    generator_environment, tmp_path, import_style
+):
+    class_dict = deepcopy(generator_environment["SlotW23"])
+    class_dict["methods"] = ["check"]
+    methods = tmp_path / "Methods" / "Slot"
+    methods.mkdir(parents=True)
+    for name in ("SlotW23", "Slot", "Lamination", "Machine"):
+        source = Path(MAIN_DIR) / "Methods" / "Slot" / name
+        if source.is_dir():
+            shutil.copytree(source, methods / name)
+    gen_dict = dict(generator_environment)
+    gen_dict["SlotW23"] = class_dict
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict,
+        "SlotW23",
+        str(output),
+        is_new=True,
+        import_style=import_style,
+        class_import_graph={},
+    )
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    names = [node.name for node in cls.body if isinstance(node, ast.ClassDef)]
+    assert names.index("S23_H1rCheckError") < names.index("S23_W01CheckError")
+    assert names.index("SlotCheckError") < names.index("S23_H1rCheckError")
+    aliases = [
+        node.targets[0].id
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and len(node.targets) == 1
+        and isinstance(node.targets[0], ast.Name)
+        and node.targets[0].id in names
+    ]
+    assert aliases == []
+
+
+@pytest.mark.parametrize(
+    ("prop_type", "value"),
+    [
+        ("{Normalization}", {}),
+        ("[Normalization]", []),
+        ("{[Normalization]}", {"axis": [1]}),
+        ("[Normalization]", [{"value": 1}]),
+        ("dict", {"key": [1]}),
+        ("list", [[1]]),
+    ],
+)
+def test_mutable_defaults_are_independent(prop_type, value):
+    expression = class_generator._field_default({"type": prop_type, "value": value})
+    field_value = eval(
+        expression, {"field": field, "partial": partial, "deepcopy": deepcopy}
+    )
+    cls = make_dataclass("Example", [("value", object, field_value)])
+    first, second = cls(), cls()
+    assert first.value == value
+    assert second.value == value
+    assert first.value is not second.value
+    if value:
+        if isinstance(value, dict):
+            first.value[next(iter(value))].append(2)
+        else:
+            first.value[0].clear()
+        assert second.value == value
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_data_normalizations_uses_default_factory(
+    generator_environment, tmp_path, import_style
+):
+    gen_dict = dict(generator_environment)
+    gen_dict["Data"] = deepcopy(gen_dict["Data"])
+    gen_dict["Data"]["methods"] = []
+    path = class_generator.generate_class(
+        gen_dict,
+        "Data",
+        str(tmp_path),
+        is_new=True,
+        import_style=import_style,
+        class_import_graph={},
+    )
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    data_class = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    assignment = next(
+        node
+        for node in data_class.body
+        if isinstance(node, ast.AnnAssign)
+        and isinstance(node.target, ast.Name)
+        and node.target.id == "normalizations"
+    )
+    assert ast.unparse(assignment.value) == "field(default_factory=dict)"
+    field_value = eval(
+        compile(ast.Expression(assignment.value), str(path), "eval"), {"field": field}
+    )
+    cls = make_dataclass("DataDefaults", [("normalizations", dict, field_value)])
+    first, second = cls(), cls()
+    first.normalizations["test"] = 1
+    assert second.normalizations == {}
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+@pytest.mark.parametrize(
+    ("class_name", "factory_names"),
+    [
+        ("ImportData", ("axes", "normalizations", "symmetries")),
+        ("SolutionMat", ("axis_name", "axis_size")),
+    ],
+)
+def test_field_attribute_does_not_shadow_factory(
+    generator_environment, tmp_path, import_style, class_name, factory_names
+):
+    gen_dict = dict(generator_environment)
+    gen_dict[class_name] = deepcopy(gen_dict[class_name])
+    gen_dict[class_name]["methods"] = []
+    path = class_generator.generate_class(
+        gen_dict,
+        class_name,
+        str(tmp_path),
+        is_new=True,
+        import_style=import_style,
+        class_import_graph={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert "field as dataclass_field" in source
+    tree = ast.parse(source)
+    definition = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    assignments = {
+        node.target.id: node
+        for node in definition.body
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+    }
+    for name in factory_names:
+        assert ast.unparse(assignments[name].value).startswith("dataclass_field(")
+    namespace = {"dataclass_field": field}
+    for node in definition.body:
+        if isinstance(node, ast.AnnAssign):
+            node.annotation = ast.Name(id="object", ctx=ast.Load())
+    definition.decorator_list = []
+    definition.bases = []
+    definition.body = [
+        node
+        for node in definition.body
+        if isinstance(node, ast.AnnAssign)
+    ]
+    exec(
+        compile(ast.fix_missing_locations(ast.Module(body=[definition], type_ignores=[])),
+                str(path), "exec"),
+        namespace,
+    )
+    from dataclasses import dataclass
+
+    cls = dataclass(namespace[class_name])
+    first, second = cls(), cls()
+    assert first.field is None
+    for name in factory_names:
+        first_value, second_value = getattr(first, name), getattr(second, name)
+        assert first_value is not second_value
+        if isinstance(first_value, list):
+            first_value.append(1)
+            assert second_value == []
+        else:
+            first_value["x"] = 1
+            assert second_value == {}
 
 
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])
@@ -134,6 +721,18 @@ def test_experimental_self_imports_and_recursive_types(
     source = Path(path).read_text(encoding="utf-8")
     assert "from .output import Output" not in source
     assert "from pyleecan.Classes_new.output import Output" not in source
+    assert "from __future__ import annotations" in source
+    assert "child: Output | None = None" in source
+    assert "children: list[Output] | None = None" in source
+    tree = ast.parse(source)
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    annotations = {
+        node.target.id: node.annotation
+        for node in cls.body
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+    }
+    assert not isinstance(annotations["child"], ast.Constant)
+    assert not isinstance(annotations["children"], ast.Constant)
 
     name = "pyleecan.Classes_new.test_recursive_output"
     spec = importlib.util.spec_from_file_location(name, path)
@@ -146,9 +745,50 @@ def test_experimental_self_imports_and_recursive_types(
     assert get_type_hints(module.Output.comp_axes)["return"] is module.Output
     instance = module.Output()
     assert instance.comp_axes() is module.Output
+    from pyleecan.Classes_new import _pyleecan_class
+
+    monkeypatch.setattr(
+        _pyleecan_class,
+        "PARENT_TYPES",
+        {("test_recursive_output", "Output"): (("test_recursive_output", "Output"),)},
+    )
     instance._assert_parent_type(module.Output())
     with pytest.raises(TypeError):
         instance._assert_parent_type(object())
+    assert module.Output.from_dict({"child": None, "children": None}).child is None
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_generated_var_simu_self_annotation(
+    generator_environment, tmp_path, monkeypatch, import_style
+):
+    info = deepcopy(generator_environment["VarSimu"])
+    info.update(
+        mother="",
+        constants=[],
+        methods=[],
+        properties=[prop for prop in info["properties"] if prop["name"] == "var_simu"],
+    )
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        {"VarSimu": info},
+        "VarSimu",
+        str(output),
+        is_new=True,
+        import_style=import_style,
+        class_import_graph={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert "from __future__ import annotations" in source
+    assert "var_simu: VarSimu | None = None" in source
+    name = "pyleecan.Classes_new.test_recursive_var_simu"
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, name, module)
+    spec.loader.exec_module(module)
+    assert get_type_hints(module.VarSimu)["var_simu"] == module.VarSimu | None
+    assert module.VarSimu.from_dict({"var_simu": None}).var_simu is None
 
 
 def test_self_module_imports_preserve_other_symbols():
@@ -259,13 +899,13 @@ def test_experimental_operating_point_module_names(
             "relative",
             "from .machine import ARC_NPOINT_D as POINTS",
             "from .mag_femm import MagFEMM as Model",
-            "from . import ParentMissingError as Missing, get_class_dict",
+            "from ._error import ParentMissingError as Missing",
         ),
         (
             "absolute",
             "from pyleecan.Classes_new.machine import ARC_NPOINT_D as POINTS",
             "from pyleecan.Classes_new.mag_femm import MagFEMM as Model",
-            "from pyleecan.Classes_new import ParentMissingError as Missing, get_class_dict",
+            "from pyleecan.Classes_new._error import ParentMissingError as Missing",
         ),
     ],
 )
@@ -366,9 +1006,9 @@ def test_experimental_method_uses_package_exception(
     )
     source = Path(path).read_text(encoding="utf-8")
     expected = (
-        "from . import NotImplementedYetError"
+        "from ._error import NotImplementedYetError"
         if import_style == "relative"
-        else "from pyleecan.Classes_new import NotImplementedYetError"
+        else "from pyleecan.Classes_new._error import NotImplementedYetError"
     )
     assert expected in source
     assert "raise NotImplementedYetError(" in source

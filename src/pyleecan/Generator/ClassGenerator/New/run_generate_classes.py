@@ -7,8 +7,11 @@ from os.path import basename, isdir, isfile, join, realpath
 
 from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
+    _shared_error_definitions,
+    _write_shared_errors,
     generate_class,
     get_class_import_graph,
+    parent_type_mapping,
     validate_class_module_names,
 )
 from pyleecan.Generator.read_fct import read_all
@@ -22,20 +25,11 @@ EXPERIMENTAL_INIT = '''"""Experimental dataclass-based Pyleecan classes."""
 from json import load
 from os.path import dirname, join
 
-
 def get_class_dict():
     """Return the CSV-derived class generation dictionary."""
     path = join(dirname(__file__), "_class_dict.json")
     with open(path, encoding="utf-8") as class_dict_file:
         return load(class_dict_file)
-
-
-class NotImplementedYetError(Exception):
-    """NotImplementedYetError"""
-
-
-class ParentMissingError(Exception):
-    """ParentMissingError"""
 '''
 
 
@@ -73,8 +67,10 @@ def generate_code(
     is_new : bool, optional
         Generate experimental dataclasses in Classes_new without modifying
         legacy class files or bookkeeping. Module names use snake_case without
-        the former "_new" suffix. Generate the experimental package initializer
-        and the full CSV-derived _class_dict.json, even for a partial run.
+        the former "_new" suffix. Generate the experimental package initializer,
+        the full CSV-derived _class_dict.json, and the parent type mapping, even
+        for a partial run. Shared exception classes are generated in _error.py
+        from the full generation dictionary, including for partial runs.
         Defaults to True; False selects this generator's legacy output mode.
     import_style : str, optional
         "relative" or "absolute" imports from the generated package in class files.
@@ -111,6 +107,10 @@ def generate_code(
             else set(gen_dict)
         )
         generation_names = sorted(name for name in gen_dict if name in class_names)
+        shared_errors = _shared_error_definitions(
+            gen_dict, CLASS_DIR, soft_name, class_import_graph
+        )
+        _write_shared_errors(CLASS_DIR, shared_errors)
     else:
         generation_names = None
 
@@ -142,6 +142,7 @@ def generate_code(
             max_workers,
             is_new=True,
             import_style=import_style,
+            shared_error_definitions=shared_errors,
         )
         _write_experimental_bookkeeping(CLASS_DIR, gen_dict)
         return
@@ -196,11 +197,35 @@ def generate_code(
 
 
 def _write_experimental_bookkeeping(class_dir, gen_dict):
-    """Write the experimental package API and full class reference dictionary."""
+    """Write the experimental package API and full generated metadata."""
     with open(join(class_dir, "__init__.py"), "w", encoding="utf-8") as init_file:
         init_file.write(EXPERIMENTAL_INIT)
     with open(join(class_dir, "_class_dict.json"), "w", encoding="utf-8") as json_file:
         json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
+    _write_parent_types(class_dir, gen_dict)
+
+
+def _write_parent_types(class_dir, gen_dict):
+    """Write parent rules for all generated classes."""
+    mapping = parent_type_mapping(gen_dict)
+    with open(
+        join(class_dir, "_parent_types.py"), "w", encoding="utf-8"
+    ) as parent_file:
+        parent_file.write('"""Generated parent type rules; do not edit by hand."""\n\n')
+        parent_file.write("PARENT_TYPES = {\n")
+        for (module, name), parents in sorted(mapping.items()):
+            key = f"({json.dumps(module)}, {json.dumps(name)})"
+            items = [
+                f"({json.dumps(parent_module)}, {json.dumps(parent_name)})"
+                for parent_module, parent_name in parents
+            ]
+            if len(items) == 1 and len(key) + len(items[0]) + 11 <= 88:
+                parent_file.write(f"    {key}: ({items[0]},),\n")
+            else:
+                parent_file.write(f"    {key}: (\n")
+                parent_file.writelines(f"        {item},\n" for item in items)
+                parent_file.write("    ),\n")
+        parent_file.write("}\n")
 
 
 def _generate_classes(
@@ -213,6 +238,7 @@ def _generate_classes(
     max_workers,
     is_new=False,
     import_style="absolute",
+    shared_error_definitions=None,
 ):
     def generate_one_class(class_name, import_graph=None):
         print("Generation of " + class_name + " class")
@@ -224,6 +250,8 @@ def _generate_classes(
         }
         if import_graph is not None:
             generation_kwargs["class_import_graph"] = import_graph
+        if is_new:
+            generation_kwargs["shared_error_definitions"] = shared_error_definitions
         generate_class(gen_dict, class_name, class_dir, **generation_kwargs)
 
     if generation_names and len(class_import_graph) == len(gen_dict):
@@ -262,8 +290,11 @@ def run_generate_classes(
 
     Experimental generation writes only selected modules in ``Classes_new``
     with snake_case names and does not rewrite CSVs or legacy bookkeeping.
-    It also writes an initializer and a full CSV-derived ``_class_dict.json``;
-    dictionary keys and metadata retain their source CSV class names.
+    It also writes an initializer, a full CSV-derived ``_class_dict.json``,
+    the full ``_parent_types.py`` mapping, and shared ``_error.py`` definitions,
+    even for partial generation. Existing classes need a full regeneration to
+    use the shared exceptions.
+    Class dictionary keys and metadata retain their source CSV class names.
     The experimental normalization classes use names such as ``NormVector``;
     their legacy names remain accepted when loading serialized data.
     ``is_ruff`` controls

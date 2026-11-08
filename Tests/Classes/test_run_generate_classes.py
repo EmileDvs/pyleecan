@@ -51,7 +51,10 @@ def test_experimental_generation_leaves_legacy_files_untouched(
     preserved = generation_root / "Classes_new" / "Other_new.py"
     preserved.write_text("other", encoding="utf-8")
     runner.generate_code(
-        str(generation_root), {"A": {}}, class_list=["A.csv"], is_new=True
+        str(generation_root),
+        {"A": {"mother": "", "properties": []}},
+        class_list=["A.csv"],
+        is_new=True,
     )
     assert legacy.read_text(encoding="utf-8") == "legacy"
     assert bookkeeping.read_text(encoding="utf-8") == "legacy switch"
@@ -61,9 +64,35 @@ def test_experimental_generation_leaves_legacy_files_untouched(
     assert generator_calls[0][2]["class_import_graph"] == {"A": ()}
 
 
+def test_shared_error_name_conflict_does_not_remove_existing_classes(
+    generation_root, generator_calls, monkeypatch
+):
+    class_dir = generation_root / "Classes_new"
+    existing = class_dir / "existing.py"
+    existing.write_text("unchanged", encoding="utf-8")
+    first = ("example.Methods.First", "SameError")
+    second = ("example.Methods.Second", "SameError")
+    monkeypatch.setattr(
+        runner,
+        "_shared_error_definitions",
+        lambda *args: {first: None, second: None},
+    )
+    with pytest.raises(ValueError, match="SameError"):
+        runner.generate_code(
+            str(generation_root), {"A": {"mother": "", "properties": []}}
+        )
+    assert existing.read_text(encoding="utf-8") == "unchanged"
+    assert not generator_calls
+
+
 @pytest.mark.parametrize("class_list", [None, ["A.csv"]])
-def test_experimental_package_bookkeeping(generation_root, generator_calls, class_list):
-    gen_dict = {"A": {"name": "A", "daughters": ["B"]}, "B": {"name": "B"}}
+def test_experimental_package_bookkeeping(
+    generation_root, generator_calls, class_list, monkeypatch
+):
+    gen_dict = {
+        "A": {"name": "A", "mother": "", "properties": [], "daughters": ["B"]},
+        "B": {"name": "B", "mother": "", "properties": [{"type": "A"}]},
+    }
     runner.generate_code(
         str(generation_root), gen_dict, class_list=class_list, is_new=True
     )
@@ -75,12 +104,26 @@ def test_experimental_package_bookkeeping(generation_root, generator_calls, clas
         "generated_classes_new", class_dir / "__init__.py"
     )
     module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, spec.name, module)
+    monkeypatch.delitem(sys.modules, spec.name + "._error", raising=False)
     spec.loader.exec_module(module)
+    error_module = importlib.import_module(spec.name + "._error")
+    assert not hasattr(module, "ParentMissingError")
+    assert not hasattr(module, "NotImplementedYetError")
     assert module.get_class_dict() == gen_dict
-    assert issubclass(module.NotImplementedYetError, Exception)
-    assert issubclass(module.ParentMissingError, Exception)
-    with pytest.raises(module.ParentMissingError):
-        raise module.ParentMissingError("missing parent")
+    parent_spec = importlib.util.spec_from_file_location(
+        "generated_parent_types", class_dir / "_parent_types.py"
+    )
+    parent_module = importlib.util.module_from_spec(parent_spec)
+    parent_spec.loader.exec_module(parent_module)
+    assert parent_module.PARENT_TYPES == {("a", "A"): (("b", "B"),)}
+    original = (class_dir / "_parent_types.py").read_text(encoding="utf-8")
+    runner._write_parent_types(class_dir, dict(reversed(list(gen_dict.items()))))
+    assert (class_dir / "_parent_types.py").read_text(encoding="utf-8") == original
+    assert issubclass(error_module.NotImplementedYetError, Exception)
+    assert issubclass(error_module.ParentMissingError, Exception)
+    with pytest.raises(error_module.ParentMissingError):
+        raise error_module.ParentMissingError("missing parent")
 
 
 def test_legacy_generation_and_ruff_formatting(
@@ -100,6 +143,7 @@ def test_legacy_generation_and_ruff_formatting(
         int_dir="unused",
         main_dir=str(generation_root),
         class_list=["A.csv"],
+        is_new=False,
     )
     assert generator_calls[0][2]["is_new"] is False
     assert generator_calls[0][2]["import_style"] == "absolute"
@@ -116,7 +160,11 @@ def test_legacy_generation_and_ruff_formatting(
 def test_experimental_runner_skips_csv_and_legacy_formatter(
     generation_root, generator_calls, monkeypatch
 ):
-    monkeypatch.setattr(runner, "read_all", lambda *args, **kwargs: {"A": {}})
+    monkeypatch.setattr(
+        runner,
+        "read_all",
+        lambda *args, **kwargs: {"A": {"mother": "", "properties": []}},
+    )
     monkeypatch.setattr(
         runner, "write_file", lambda value: pytest.fail("CSV must not be rewritten")
     )
@@ -148,6 +196,7 @@ def test_legacy_runner_can_skip_ruff(generation_root, generator_calls, monkeypat
         main_dir=str(generation_root),
         class_list=["A.csv"],
         is_ruff=False,
+        is_new=False,
     )
     assert generator_calls[0][2]["is_new"] is False
 
@@ -256,4 +305,5 @@ def test_legacy_formatter_failure_is_reported(
             int_dir="unused",
             main_dir=str(generation_root),
             class_list=["A.csv"],
+            is_new=False,
         )
