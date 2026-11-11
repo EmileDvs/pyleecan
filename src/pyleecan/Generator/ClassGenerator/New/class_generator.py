@@ -6,10 +6,10 @@ import tempfile
 import warnings
 from functools import lru_cache
 from keyword import iskeyword
-from os.path import basename, dirname, isfile, join
+from os.path import basename, dirname, isdir, isfile, join
 from textwrap import indent
 
-from ....Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from ....Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from ....Generator import PYTHON_TYPE, TAB
 from ....Generator.read_fct import (
     find_import_type,
@@ -156,9 +156,9 @@ CONFIGURED_PLOT_CONSTANT_NAMES = {
 
 
 def _load_method_error_module(path_to_gen, module_name):
-    """Load a Methods module or package initializer for error-class lookup."""
+    """Load a Methods or Functions module for error-class lookup."""
     module_parts = module_name.split(".")
-    if len(module_parts) < 2 or module_parts[1] != "Methods":
+    if len(module_parts) < 2 or module_parts[1] not in ("Methods", "Functions"):
         return None, None
     methods_path = join(dirname(path_to_gen), *module_parts[1:])
     module_path = methods_path + ".py"
@@ -348,6 +348,8 @@ def _sort_error_class_definitions(definitions):
 
 def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_graph):
     """Find exception definitions used by more than one generated class."""
+    from .generate_function_new_classes import FUNCTION_ERRORS
+
     definitions = {}
     owners = {}
     for name, info in sorted(gen_dict.items()):
@@ -372,15 +374,30 @@ def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_gra
             origin = definition.error_origin
             definitions[origin] = definition
             owners.setdefault(origin, set()).add(name)
-    return {
+    shared = {
         origin: definitions[origin]
         for origin, uses in owners.items()
         if len(uses) > 1
     }
+    if isdir(join(dirname(path_to_gen), "Functions")):
+        for module, errors in FUNCTION_ERRORS.items():
+            module_name = f"{soft_name}.Functions.{module}"
+            for name in errors:
+                found = _get_error_class_definitions(path_to_gen, module_name, name)
+                if not found or found[-1].error_origin != (module_name, name):
+                    raise ValueError(f"Missing function exception {module_name}.{name}")
+                for definition in found:
+                    shared[definition.error_origin] = definition
+    return shared
 
 
 def _shared_error_name(origin):
     """Return the public name of a shared exception."""
+    from .generate_function_new_classes import FUNCTION_ERRORS
+
+    parts = origin[0].split(".", 2)
+    if len(parts) == 3 and parts[1] == "Functions":
+        return FUNCTION_ERRORS.get(parts[2], {}).get(origin[1], origin[1])
     return "PyleecanImportError" if origin[1] == "ImportError" else origin[1]
 
 
@@ -3184,9 +3201,9 @@ def _rename_experimental_normalizations(source, soft_name, import_style="absolut
         lines.insert(
             position,
             (
-                "from ..Functions.Load.retrocompatibility import "
+                "from ._pyleecan_class import "
                 if import_style == "relative"
-                else f"from {soft_name}.Functions.Load.retrocompatibility import "
+                else f"from {soft_name}.Classes_new._pyleecan_class import "
             )
             + ", ".join(sorted(helper_names))
             + "\n",

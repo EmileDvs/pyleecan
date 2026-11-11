@@ -10,13 +10,48 @@ import numpy as np
 from dacite import Config, from_dict
 
 from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.Load.retrocompatibility import (
-    construct_experimental_class,
-    load_experimental_normalization_values,
-)
+from pyleecan.Functions.Load.import_class import import_class as import_legacy_class
 from pyleecan.Functions.save import save
+from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 
 from ._parent_types import PARENT_TYPES
+
+
+def import_experimental_class(mod_name, class_name, prop_name=""):
+    """Load experimental normalizations under either name, or a legacy class."""
+    package = __package__.rsplit(".", 1)[0]
+    if mod_name == package + ".Classes":
+        for old_name, new_name in NORMALIZATION_CLASS_NAMES.items():
+            if class_name in (old_name, new_name):
+                module = import_module(f"{package}.Classes_new.{old_name.lower()}")
+                return getattr(module, new_name)
+    return import_legacy_class(mod_name, class_name, prop_name)
+
+
+def construct_experimental_class(class_obj, data):
+    """Construct an experimental dataclass or a legacy init_dict class."""
+    if issubclass(class_obj, PyleecanClass):
+        return class_obj.from_dict(data)
+    return class_obj(init_dict=data)
+
+
+def load_experimental_normalization_values(value):
+    """Convert serialized experimental normalizations recursively."""
+    if isinstance(value, dict):
+        class_name = value.get("__class__")
+        if class_name in NORMALIZATION_CLASS_NAMES or class_name in (
+            NORMALIZATION_CLASS_NAMES.values()
+        ):
+            package = __package__.rsplit(".", 1)[0]
+            target = import_experimental_class(package + ".Classes", class_name)
+            return target.from_dict(value)
+        return {
+            key: load_experimental_normalization_values(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [load_experimental_normalization_values(item) for item in value]
+    return value
 
 
 @dataclass(eq=False)

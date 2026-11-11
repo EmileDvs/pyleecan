@@ -3,6 +3,11 @@
 Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_function_new_classes``
 after generating Classes_new. Existing generated copies are overwritten. Legacy
 load/save compatibility and unsupported dynamic imports are reported for review.
+Selected function exceptions are re-exported from Classes_new._error; regenerate
+the classes first when those shared definitions change.
+
+Experimental adaptations are implemented as targeted source transformations
+here. Changes made only in Functions_new are overwritten on regeneration.
 """
 
 import ast
@@ -13,8 +18,168 @@ from importlib.util import resolve_name
 from pathlib import Path
 
 from pyleecan.definitions import MAIN_DIR
-from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
+
+FUNCTION_ERRORS = {
+    "Converter.Utils.ConvertionError": {"ConvertionError": "ConvertionError"},
+    "Converter.Utils.EquivalentError": {"EquivalentError": "EquivalentError"},
+    "FEMM.draw_FEMM": {"FEMMError": "FEMMError"},
+    "Geometry.create_surface": {"SurfaceError": "SurfaceError"},
+    "Geometry.merge_notch_list": {"NotchError": "NotchError"},
+    "GMSH": {"InputError": "GMSHInputError"},
+    "Load.load_json": {"LoadMissingFileError": "LoadMissingFileError"},
+    "Load.retrocompatibility": {"RetroCompatibilityError": "RetroCompatibilityError"},
+    "load": {
+        "LoadMissingFolderError": "LoadMissingFolderError",
+        "LoadWrongDictClassError": "LoadWrongDictClassError",
+        "LoadWrongTypeError": "LoadWrongTypeError",
+        "LoadSwitchError": "LoadSwitchError",
+    },
+    "path_tools": {"FileError": "FileError", "ImportError": "PathImportError"},
+    "save": {"FormatError": "FormatError"},
+    "SciDataTool": {
+        "FTError": "FTError",
+        "AxisError": "AxisError",
+        "UnitError": "UnitError",
+        "NormError": "NormError",
+    },
+    "Structural.conversions": {"DimError": "DimError"},
+}
+
+
+def _redirect_function_errors(source, path, relative_path, class_dir):
+    """Replace selected definitions with re-exported shared exceptions."""
+    parts = list(relative_path.with_suffix("").parts)
+    if parts[-1] == "__init__":
+        parts.pop()
+    errors = FUNCTION_ERRORS.get(".".join(parts))
+    if not errors:
+        return source
+    tree = ast.parse(source, filename=str(path))
+    definitions = {
+        node.name: node for node in tree.body if isinstance(node, ast.ClassDef)
+    }
+    missing = set(errors) - definitions.keys()
+    if missing:
+        raise ValueError(
+            f"{path}: missing function exceptions: {', '.join(sorted(missing))}"
+        )
+    error_path = class_dir / "_error.py"
+    if not error_path.is_file():
+        raise FileNotFoundError(
+            f"Shared exceptions not generated: {error_path}; generate classes first"
+        )
+    with tokenize.open(error_path) as error_file:
+        shared = {
+            node.name: node
+            for node in ast.parse(error_file.read(), filename=str(error_path)).body
+            if isinstance(node, ast.ClassDef)
+        }
+    for name, shared_name in errors.items():
+        node = definitions[name]
+        shared_node = shared.get(shared_name)
+        if shared_node is None:
+            raise ValueError(f"{error_path}: missing {shared_name}; regenerate classes")
+        expected_bases = [
+            errors.get(base.id, base.id) if isinstance(base, ast.Name) else None
+            for base in node.bases
+        ]
+        if expected_bases != [
+            base.id if isinstance(base, ast.Name) else None for base in shared_node.bases
+        ]:
+            raise ValueError(
+                f"{error_path}: incompatible {shared_name}; regenerate classes"
+            )
+        if node.decorator_list:
+            raise ValueError(f"{path}:{node.lineno}: decorated exception {name}")
+    lines = source.splitlines(keepends=True)
+    for name, shared_name in sorted(
+        errors.items(), key=lambda item: definitions[item[0]].lineno, reverse=True
+    ):
+        node = definitions[name]
+        alias = f" as {name}" if name != shared_name else ""
+        lines[node.lineno - 1 : node.end_lineno] = [
+            f"from pyleecan.Classes_new._error import {shared_name}{alias}\n"
+        ]
+    return "".join(lines)
+
+
+def _adapt_retrocompatibility(source, path):
+    """Apply the versioned normalization migration to the legacy source."""
+    tree = ast.parse(source, filename=str(path))
+    lines = source.splitlines(keepends=True)
+
+    def unique_node(predicate, description):
+        matches = [node for node in tree.body if predicate(node)]
+        if len(matches) != 1:
+            raise ValueError(f"{path}: expected exactly one {description}")
+        return matches[0]
+
+    def function(name):
+        return unique_node(
+            lambda node: isinstance(node, ast.FunctionDef) and node.name == name,
+            f"function {name}",
+        )
+
+    existing_names = {
+        node.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
+    }
+    if "NORMALIZATION_CLASS_NAMES" in existing_names:
+        raise ValueError(f"{path}: normalization name mapping already exists")
+    search = function("_search_and_update")
+    if (
+        len(search.body) < 2
+        or not isinstance(search.body[0], ast.Expr)
+        or not isinstance(search.body[0].value, ast.Constant)
+        or not isinstance(search.body[0].value.value, str)
+        or not isinstance(search.body[1], ast.If)
+    ):
+        raise ValueError(f"{path}: unexpected _search_and_update structure")
+    versions = unique_node(
+        lambda node: isinstance(node, ast.Assign)
+        and len(node.targets) == 1
+        and isinstance(node.targets[0], ast.Name)
+        and node.targets[0].id == "OBJECT_VERSION_DICT"
+        and isinstance(node.value, ast.Dict),
+        "OBJECT_VERSION_DICT",
+    )
+    if any(
+        isinstance(key, ast.Constant) and key.value == "Normalization"
+        for key in versions.value.keys
+    ):
+        raise ValueError(f"{path}: Normalization version already exists")
+    if lines[versions.end_lineno - 1].strip() != "}":
+        raise ValueError(f"{path}: unexpected OBJECT_VERSION_DICT layout")
+    mapping_source = repr(NORMALIZATION_CLASS_NAMES)
+    conversion = (
+        f"NORMALIZATION_CLASS_NAMES = {mapping_source}\n\n\n"
+        'Normalization_VERSION = "1.5.2"\n\n\n'
+        "def convert_normalization(init_dict):\n"
+        '    """Update an old normalization class name in place."""\n'
+        '    class_name = init_dict.get("__class__")\n'
+        "    if class_name in NORMALIZATION_CLASS_NAMES:\n"
+        '        init_dict["__class__"] = NORMALIZATION_CLASS_NAMES[class_name]\n'
+    )
+    convert_init = function("convert_init_dict")
+    edits = [
+        (convert_init.lineno - 1, convert_init.lineno - 1, conversion + "\n\n"),
+        (
+            search.body[1].lineno - 1,
+            search.body[1].lineno - 1,
+            '    if update_dict["Normalization"]:\n        convert_normalization(obj_dict)\n',
+        ),
+        (
+            versions.end_lineno - 1,
+            versions.end_lineno - 1,
+            '    "Normalization": Normalization_VERSION,\n',
+        ),
+    ]
+    for start, end, replacement in sorted(edits, reverse=True):
+        lines[start:end] = [replacement]
+    return "".join(lines)
 
 
 def _rewrite_source(source, path, relative_path, class_dir):
@@ -207,6 +372,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None):
             with tokenize.open(path) as source_file:
                 source = source_file.read()
                 encoding = source_file.encoding
+            if relative == Path("Load") / "retrocompatibility.py":
+                source = _adapt_retrocompatibility(source, path)
+            source = _redirect_function_errors(source, path, relative, class_dir)
             rewritten, found = _rewrite_source(source, path, relative, class_dir)
             destination.write_text(rewritten, encoding=encoding, newline="")
             issues.extend((relative, line, message) for line, message in found)

@@ -16,7 +16,7 @@ import pytest
 from pyleecan.Classes.Magnetics import Magnetics
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _apply_import_style,
     _remove_redundant_experimental_class_imports,
@@ -527,7 +527,7 @@ def test_renamed_normalizations_and_legacy_serialization(
     tmp_path, monkeypatch, import_style
 ):
     import pyleecan.Classes_new
-    from pyleecan.Functions.Load.retrocompatibility import (
+    from pyleecan.Classes_new._pyleecan_class import (
         construct_experimental_class,
         import_experimental_class,
     )
@@ -561,16 +561,16 @@ def test_renamed_normalizations_and_legacy_serialization(
     loader_imports = [
         node for node in ast.parse(data_source).body
         if isinstance(node, ast.ImportFrom)
-        and any(alias.name == "import_class" for alias in node.names)
+        and any(alias.name == "import_experimental_class" for alias in node.names)
     ]
     assert len(loader_imports) == 1
     assert (loader_imports[0].level, loader_imports[0].module) == (
-        (1, "_import") if import_style == "relative"
-        else (0, "pyleecan.Classes_new._import")
+        (1, "_pyleecan_class") if import_style == "relative"
+        else (0, "pyleecan.Classes_new._pyleecan_class")
     )
-    assert "Functions.Load.retrocompatibility import" in data_source
-    assert "_import_experimental_class" not in data_source
-    assert "_pyleecan_class import construct_experimental_class" not in data_source
+    assert "Functions.Load.retrocompatibility import" not in data_source
+    assert "_import_experimental_class" in data_source
+    assert "construct_experimental_class as _construct_experimental_class" in data_source
     expected_check = (
         "from ._check import check_var"
         if import_style == "relative"
@@ -628,7 +628,7 @@ def test_renamed_normalizations_and_legacy_serialization(
 
         data_module = importlib.import_module("pyleecan.Classes_new.data")
 
-        from pyleecan.Functions.Load.retrocompatibility import (
+        from pyleecan.Classes_new._pyleecan_class import (
             load_experimental_normalization_values,
         )
 
@@ -665,6 +665,7 @@ def test_renamed_normalizations_and_legacy_serialization(
             "import_class": lambda name, prop="": import_experimental_class(
                 "pyleecan.Classes", name, prop
             ),
+            "_import_experimental_class": import_experimental_class,
             "_construct_experimental_class": construct_experimental_class,
         }
         exec(  # noqa: S102

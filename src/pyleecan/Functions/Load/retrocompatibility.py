@@ -1,4 +1,3 @@
-from importlib import import_module
 from logging import getLogger
 
 from numpy import array
@@ -10,59 +9,6 @@ from ...loggers import GUI_LOG_NAME
 
 class RetroCompatibilityError(Exception):
     pass
-
-
-# Experimental class names differ from those used by the legacy Classes package.
-NORMALIZATION_CLASS_NAMES = {
-    "Norm_ref": "NormRef",
-    "Norm_affine": "NormAffine",
-    "Norm_func": "NormFunc",
-    "Norm_indices": "NormIndices",
-    "Norm_vector": "NormVector",
-}
-
-
-def import_experimental_class(mod_name, class_name, prop_name=""):
-    """Load experimental normalizations under either name, or a legacy class."""
-    package = __package__.rsplit(".", 2)[0]
-    if mod_name == package + ".Classes":
-        for old_name, new_name in NORMALIZATION_CLASS_NAMES.items():
-            if class_name in (old_name, new_name):
-                module = import_module(f"{package}.Classes_new.{old_name.lower()}")
-                return getattr(module, new_name)
-    return import_class(mod_name, class_name, prop_name)
-
-
-def construct_experimental_class(class_obj, data):
-    """Construct an experimental dataclass or a legacy init_dict class."""
-    from ...Classes_new._pyleecan_class import PyleecanClass
-
-    if issubclass(class_obj, PyleecanClass):
-        return class_obj.from_dict(data)
-    return class_obj(init_dict=data)
-
-
-def load_experimental_normalization_values(value):
-    """Convert serialized experimental normalizations recursively.
-
-    Kept separate from convert_init_dict because the legacy loader still uses
-    the old class names.
-    """
-    if isinstance(value, dict):
-        class_name = value.get("__class__")
-        if class_name in NORMALIZATION_CLASS_NAMES or class_name in (
-            NORMALIZATION_CLASS_NAMES.values()
-        ):
-            package = __package__.rsplit(".", 2)[0]
-            target = import_experimental_class(package + ".Classes", class_name)
-            return target.from_dict(value)
-        return {
-            key: load_experimental_normalization_values(item)
-            for key, item in value.items()
-        }
-    if isinstance(value, list):
-        return [load_experimental_normalization_values(item) for item in value]
-    return value
 
 
 def convert_init_dict(init_dict):

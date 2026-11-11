@@ -474,6 +474,10 @@ def test_real_shared_exception_hierarchy(generator_environment, tmp_path, monkey
     spec.loader.exec_module(module)
     assert not hasattr(module, "ERROR_TYPES")
     assert not hasattr(module, "ImportError")
+    assert issubclass(module.AxisError, module.FTError)
+    assert module.GMSHInputError is not module.InputError
+    assert module.PathImportError is not module.PyleecanImportError
+    assert issubclass(module.RetroCompatibilityError, Exception)
     assert issubclass(module.PyleecanImportError, Exception)
     assert pickle.loads(pickle.dumps(module.MachineCheckError("test"))).__class__ is (
         module.MachineCheckError

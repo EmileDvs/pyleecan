@@ -15,7 +15,7 @@ import tokenize
 from pathlib import Path
 
 from pyleecan.definitions import TEST_DIR
-from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
 
 TEST_FOLDERS = (

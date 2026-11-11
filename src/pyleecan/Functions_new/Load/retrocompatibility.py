@@ -1,4 +1,3 @@
-from importlib import import_module
 from logging import getLogger
 
 from numpy import array
@@ -12,7 +11,6 @@ class RetroCompatibilityError(Exception):
     pass
 
 
-# Experimental class names differ from those used by the legacy Classes package.
 NORMALIZATION_CLASS_NAMES = {
     "Norm_ref": "NormRef",
     "Norm_affine": "NormAffine",
@@ -20,49 +18,6 @@ NORMALIZATION_CLASS_NAMES = {
     "Norm_indices": "NormIndices",
     "Norm_vector": "NormVector",
 }
-
-
-def import_experimental_class(mod_name, class_name, prop_name=""):
-    """Load experimental normalizations under either name, or a legacy class."""
-    package = __package__.rsplit(".", 2)[0]
-    if mod_name == package + ".Classes":
-        for old_name, new_name in NORMALIZATION_CLASS_NAMES.items():
-            if class_name in (old_name, new_name):
-                module = import_module(f"{package}.Classes_new.{old_name.lower()}")
-                return getattr(module, new_name)
-    return import_class(mod_name, class_name, prop_name)
-
-
-def construct_experimental_class(class_obj, data):
-    """Construct an experimental dataclass or a legacy init_dict class."""
-    from ...Classes_new._pyleecan_class import PyleecanClass
-
-    if issubclass(class_obj, PyleecanClass):
-        return class_obj.from_dict(data)
-    return class_obj(init_dict=data)
-
-
-def load_experimental_normalization_values(value):
-    """Convert serialized experimental normalizations recursively.
-
-    Kept separate from convert_init_dict because the legacy loader still uses
-    the old class names.
-    """
-    if isinstance(value, dict):
-        class_name = value.get("__class__")
-        if class_name in NORMALIZATION_CLASS_NAMES or class_name in (
-            NORMALIZATION_CLASS_NAMES.values()
-        ):
-            package = __package__.rsplit(".", 2)[0]
-            target = import_experimental_class(package + ".Classes", class_name)
-            return target.from_dict(value)
-        return {
-            key: load_experimental_normalization_values(item)
-            for key, item in value.items()
-        }
-    if isinstance(value, list):
-        return [load_experimental_normalization_values(item) for item in value]
-    return value
 
 
 def convert_init_dict(init_dict):
@@ -102,6 +57,8 @@ def _search_and_update(obj_dict, parent=None, parent_index=None, update_dict=Non
 
     """
     # add to list for later conversion
+    if update_dict["Normalization"]:
+        convert_normalization(obj_dict)
     if update_dict["HoleUD"] and is_HoleUD_dict(obj_dict):
         parent[parent_index] = convert_HoleUD(obj_dict)
     elif update_dict["OP"] and is_OP_dict(obj_dict):
@@ -577,7 +534,7 @@ def convert_meshsolution_mesh(meshsolution_dict):
             }
         else:  # Duplicated labels
             getLogger(GUI_LOG_NAME).warning(
-                f"MeshSolution constains solutions with same label, instancing solution_dict with \"{meshsolution_dict_new['label']}_i\""
+                f'MeshSolution constains solutions with same label, instancing solution_dict with "{meshsolution_dict_new["label"]}_i"'
             )
             meshsolution_dict_new["solution_dict"] = {
                 f"{meshsolution_dict_new['label']}_{k}": solution
@@ -587,6 +544,20 @@ def convert_meshsolution_mesh(meshsolution_dict):
         del meshsolution_dict_new["solution"]
 
     return MeshSolution(init_dict=meshsolution_dict_new)
+
+
+######################
+# v 1.5.1 => 1.5.2
+# Normalization class names use CamelCase
+######################
+Normalization_VERSION = "1.5.2"
+
+
+def convert_normalization(init_dict):
+    """Update an old normalization class name in place."""
+    class_name = init_dict.get("__class__")
+    if class_name in NORMALIZATION_CLASS_NAMES:
+        init_dict["__class__"] = NORMALIZATION_CLASS_NAMES[class_name]
 
 
 def is_before_version(ref_version, check_version=None):
@@ -635,6 +606,7 @@ OBJECT_VERSION_DICT = {
     "OptiDesignVar": OptiDesignVar_VERSION,
     "WmagHmag": WmagRenaming_VERSION,
     "MeshSolution": MeshSolution_VERSION,
+    "Normalization": Normalization_VERSION,
 }
 
 
@@ -654,7 +626,7 @@ def create_update_dict(file_version):
 
     # Set every parameter to update if the version is not defined
     if file_version is None:
-        update_dict = {class_obj: True for class_obj in OBJECT_VERSION_DICT.keys()}
+        update_dict = {class_obj: True for class_obj in OBJECT_VERSION_DICT}
     else:
         update_dict = {
             class_obj: is_before_version(version, file_version)

@@ -6,7 +6,7 @@ from os import cpu_count, listdir, remove
 from os.path import basename, isdir, isfile, join
 
 from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
-from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _shared_error_definitions,
     _write_shared_errors,
@@ -100,7 +100,8 @@ def generate_code(
     """Generate dataclasses in Classes_new without modifying legacy outputs.
 
     The initializer, class dictionary, parent mapping, and shared exceptions
-    are generated from the full CSV dictionary even during partial generation.
+    are generated from the full CSV dictionary and legacy Functions tree even
+    during partial generation.
     A full run is required when upgrading from the old two-argument import
     helper. Generate Functions_new before importing the generated classes.
     Class-valued fields with an empty CSV default construct the declared class;
