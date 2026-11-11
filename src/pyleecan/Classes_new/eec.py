@@ -8,7 +8,7 @@ from ..Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .magnetics import Magnetics
-from .op import OP
+from .op import OP as _field_type_OP
 
 
 @dataclass(eq=False)
@@ -51,7 +51,7 @@ class EEC(PyleecanClass):
 
     type_skin_effect: int = 1
     """Skin effect for resistance and inductance"""
-    OP: OP | None = field(default=None, metadata={"default_class": "OP"})
+    OP: _field_type_OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
     Tsta: float = 20
     """Average stator temperature for operational EEC calculation"""

@@ -12,7 +12,7 @@ from .import_matrix import ImportMatrix
 from .norm_affine import NormAffine
 from .norm_indices import NormIndices
 from .norm_ref import NormRef
-from .op import OP
+from .op import OP as _field_type_OP
 
 ROT_DIR_REF = -1
 CURRENT_DIR_REF = -1
@@ -62,7 +62,7 @@ class Input(PyleecanClass):
     """Number of rotor revolution (to compute the final time)"""
     Na_tot: int = 2048
     """Angular discretization"""
-    OP: OP | None = field(default=None, metadata={"default_class": "OP"})
+    OP: _field_type_OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
     t_final: float | None = None
     """To enforce final time"""

@@ -3,8 +3,9 @@
 from copy import deepcopy
 from dataclasses import dataclass, field, fields
 from importlib import import_module
+from pathlib import Path
 from sys import getsizeof
-from typing import Any, get_args, get_type_hints
+from typing import Any, get_args, get_origin, get_type_hints
 
 import numpy as np
 from dacite import Config, from_dict
@@ -91,19 +92,36 @@ class PyleecanClass:
         return import_class(class_name)()
 
     @classmethod
-    def from_dict(cls, data):
-        """Create this dataclass from a Pyleecan-style dictionary."""
-        values = {
-            key: load_experimental_normalization_values(value)
-            for key, value in data.items()
-            if key != "__class__"
-        }
+    def from_dict(cls, data, *, base_path=None):
+        """Create this dataclass, resolving split JSON references from base_path.
+
+        Legacy serialized None values are retained even for non-optional fields.
+        """
+        hints = get_type_hints(cls)
+        values = dict(data)
+        for field_info in fields(cls):
+            if field_info.name in values:
+                values[field_info.name] = cls._deserialize_field(
+                    values[field_info.name], hints.get(field_info.name, Any), base_path
+                )
+        values.pop("__class__", None)
         for field_info in fields(cls):
             value = values.get(field_info.name)
             class_name = field_info.metadata.get("default_class")
             if class_name is not None and type(value) is int and value == -1:
                 values[field_info.name] = cls._construct_default_class(class_name)
-        hints = get_type_hints(cls)
+        # Legacy setters accept None even for properties declared as non-optional.
+        null_fields = [
+            field_info.name
+            for field_info in fields(cls)
+            if field_info.init
+            and field_info.name in values
+            and values[field_info.name] is None
+            and hints.get(field_info.name) is not Any
+            and type(None) not in get_args(hints.get(field_info.name))
+        ]
+        for name in null_fields:
+            values.pop(name)
         hooks = {np.ndarray: np.asarray}
         for field_info in fields(cls):
             field_type = hints.get(field_info.name)
@@ -115,8 +133,65 @@ class PyleecanClass:
                         else construct_experimental_class(target, value)
                     )
         instance = from_dict(cls, values, config=Config(type_hooks=hooks))
+        for name in null_fields:
+            setattr(instance, name, None)
         instance._set_child_parents()
         return instance
+
+    @classmethod
+    def _deserialize_field(cls, value, annotation, base_path):
+        from ._import import import_class
+
+        candidates = tuple(
+            candidate
+            for candidate in cls._walk_types(annotation)
+            if isinstance(candidate, type) and issubclass(candidate, PyleecanClass)
+        )
+        if isinstance(value, str) and candidates and base_path is not None:
+            path = Path(base_path) / value
+            if value.endswith((".json", ".json.gz")):
+                from ..Functions_new.load import load
+
+                loaded = load(str(path))
+                if not isinstance(loaded, candidates):
+                    raise TypeError(
+                        f"{path}: incompatible serialized class {type(loaded).__name__}"
+                    )
+                return loaded
+        if isinstance(value, dict) and "__class__" in value:
+            target = import_class(value["__class__"])
+            if candidates and not issubclass(target, candidates):
+                raise TypeError(
+                    f"Serialized {target.__name__} is incompatible with {annotation}"
+                )
+            return target.from_dict(value, base_path=base_path)
+        origin = get_origin(annotation)
+        arguments = get_args(annotation)
+        if origin not in (list, tuple, dict):
+            container = next(
+                (
+                    candidate
+                    for candidate in arguments
+                    if get_origin(candidate) in (list, tuple, dict)
+                    and isinstance(value, get_origin(candidate))
+                ),
+                None,
+            )
+            if container is not None:
+                origin = get_origin(container)
+                arguments = get_args(container)
+        if isinstance(value, list):
+            item_type = arguments[0] if origin in (list, tuple) and arguments else Any
+            return [
+                cls._deserialize_field(item, item_type, base_path) for item in value
+            ]
+        if isinstance(value, dict):
+            item_type = arguments[1] if origin is dict and len(arguments) == 2 else Any
+            return {
+                key: cls._deserialize_field(item, item_type, base_path)
+                for key, item in value.items()
+            }
+        return value
 
     def _set_child_parents(self):
         """Set parent links on nested Pyleecan objects."""

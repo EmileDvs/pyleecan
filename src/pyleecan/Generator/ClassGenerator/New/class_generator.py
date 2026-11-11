@@ -4423,7 +4423,7 @@ def _is_none_default(value):
     return value in ("", None, "None")
 
 
-def _field_type(prop_type, default, gen_dict, soft_name, class_name=None):
+def _field_type(prop_type, default, gen_dict, soft_name, class_name=None, prop_name=None):
     """Return a Python annotation and imports needed for one CSV property."""
     imports = set()
 
@@ -4458,6 +4458,13 @@ def _field_type(prop_type, default, gen_dict, soft_name, class_name=None):
 
         if type_name in gen_dict:
             if type_name != class_name:
+                if type_name == prop_name:
+                    alias = f"_field_type_{type_name}"
+                    imports.add(f"from {soft_name}.Classes.{type_name} import {type_name}")
+                    imports.add(
+                        f"from {soft_name}.Classes.{type_name} import {type_name} as {alias}"
+                    )
+                    return alias
                 imports.add(f"from {soft_name}.Classes.{type_name} import {type_name}")
             return type_name
         if "." in type_name:
@@ -4935,7 +4942,7 @@ def _generate_dataclass_class(
             )
     for prop in class_dict["properties"]:
         annotation, type_imports = _field_type(
-            prop["type"], prop["value"], gen_dict, soft_name, class_name
+            prop["type"], prop["value"], gen_dict, soft_name, class_name, prop["name"]
         )
         imports.update(type_imports)
     if any(
@@ -5013,7 +5020,7 @@ def _generate_dataclass_class(
 
     for prop in class_dict["properties"]:
         annotation, _ = _field_type(
-            prop["type"], prop["value"], gen_dict, soft_name, class_name
+            prop["type"], prop["value"], gen_dict, soft_name, class_name, prop["name"]
         )
         body.append(
             f"{TAB}{prop['name']}: {annotation} = "

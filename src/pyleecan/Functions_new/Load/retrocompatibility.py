@@ -3,9 +3,9 @@ from logging import getLogger
 import numpy as np
 
 from ...Classes_new._error import RetroCompatibilityError
+from ...Classes_new._import import import_class
 from ...loggers import GUI_LOG_NAME
 from ..labels import HOLEM_LAB, HOLEV_LAB
-from .import_class import import_class
 
 NORMALIZATION_CLASS_NAMES = {
     "Norm_ref": "NormRef",
@@ -66,47 +66,82 @@ def _search_and_update(obj_dict, parent=None, parent_index=None, update_dict=Non
     if update_dict["Normalization"]:
         convert_normalization(obj_dict)
     if update_dict["HoleUD"] and is_HoleUD_dict(obj_dict):
-        parent[parent_index] = convert_HoleUD(obj_dict)
+        _converted = convert_HoleUD(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
     elif update_dict["OP"] and is_OP_dict(obj_dict):
-        parent[parent_index] = convert_OP(obj_dict)
+        _converted = convert_OP(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
     elif update_dict["OP_matrix"] and is_OP_matrix_dict(obj_dict):
-        parent[parent_index] = convert_OP_matrix(obj_dict)
+        _converted = convert_OP_matrix(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
     elif update_dict["Winding"] and is_Winding_dict(obj_dict):
         if (
-            parent is not None
+            isinstance(parent, dict)
             and "slot" in parent.keys()
             and "Zs" in parent["slot"].keys()
         ):
             # Add Zs for wind_mat generation
             obj_dict["Zs"] = parent["slot"]["Zs"]
-        parent[parent_index] = convert_Winding(obj_dict)
+        _converted = convert_Winding(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
     elif update_dict["Yoke_Notch"] and is_yoke_notch(obj_dict):
         move_yoke_notch(obj_dict)
     elif update_dict["VarParam"] and is_VarParam_dict(obj_dict):
-        rename_varparam(obj_dict)
+        obj_dict["__class__"] = "VarParamSweep"
     elif update_dict["OptiConstraint"] and is_OptiConstraint_dict(obj_dict):
-        parent[parent_index] = convert_opticonstraint(obj_dict)
+        _converted = convert_opticonstraint(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
     elif update_dict["OptiDesignVar"] and is_OptiDesignVar_dict(obj_dict):
-        parent[parent_index] = convert_optidesignvar(obj_dict)
+        _converted = convert_optidesignvar(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
     elif update_dict["WmagHmag"] and is_Wmag_Hmag(obj_dict):
-        parent[parent_index] = convert_Wmag_Hmag(obj_dict)
+        _converted = convert_Wmag_Hmag(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
     elif update_dict["MeshSolution"] and is_MeshSolution_dict(obj_dict):
-        parent[parent_index] = convert_meshsolution_mesh(obj_dict)
-    else:
-        # walk through the dict
-        for key, value in obj_dict.items():
-            if isinstance(value, dict):
-                # recursively search the dict
-                _search_and_update(
-                    value, parent=obj_dict, parent_index=key, update_dict=update_dict
-                )
-            elif isinstance(value, list):
-                for ii, item in enumerate(value):
-                    if isinstance(item, dict):
-                        # recursively search the dict
-                        _search_and_update(
-                            item, parent=value, parent_index=ii, update_dict=update_dict
-                        )
+        _converted = convert_meshsolution_mesh(obj_dict)
+        if not isinstance(_converted, dict):
+            _converted = _converted.as_dict()
+        if _converted is not obj_dict:
+            obj_dict.clear()
+            obj_dict.update(_converted)
+
+    def visit(value, parent, index):
+        if isinstance(value, dict):
+            _search_and_update(value, parent, index, update_dict)
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                visit(item, value, index)
+
+    for key, value in obj_dict.items():
+        visit(value, obj_dict, key)
 
 
 ############################################
@@ -158,7 +193,7 @@ def is_OP_matrix_dict(obj_dict):
 
 
 def convert_OP_matrix(obj_dict):
-    OPMatrix = import_class("pyleecan.Classes", "OPMatrix")
+    OPMatrix = import_class("OPMatrix")
     OP_mat_obj = OPMatrix()
     type_OP_matrix = obj_dict.pop("type_OP_matrix")
     if type_OP_matrix is None:
@@ -208,15 +243,14 @@ def is_OP_dict(obj_dict):
 
 def convert_OP(obj_dict):
     obj_dict_new = obj_dict.copy()
-    Class_obj = import_class("pyleecan.Classes", obj_dict_new["__class__"])
     N0 = obj_dict_new.pop("N0")
     Id = obj_dict_new.pop("Id_ref")
     Iq = obj_dict_new.pop("Iq_ref")
     Tem = obj_dict_new.pop("Tem_av_ref")
-    class_obj = Class_obj(init_dict=obj_dict_new)
-    OPdq = import_class("pyleecan.Classes", "OPdq")
+    class_obj = obj_dict_new
+    OPdq = import_class("OPdq")
     OP = OPdq(N0=N0, Id_ref=Id, Iq_ref=Iq, Tem_av_ref=Tem)
-    class_obj.OP = OP
+    class_obj["OP"] = OP.as_dict()
     return class_obj
 
 
@@ -233,7 +267,10 @@ def is_HoleUD_dict(obj_dict):
     if "__class__" in obj_dict.keys() and obj_dict["__class__"] == "HoleUD":
         # Old label : Hole_Rotor_R0_T0_S0
         # Old label : HoleMagnet_Rotor_Parallel_N_R0_T0_S0
-        return len(obj_dict["surf_list"][0]["label"].split("_")) > 3
+        return (
+            bool(obj_dict.get("surf_list"))
+            and len(obj_dict["surf_list"][0]["label"].split("_")) > 3
+        )
     else:
         return False
 
@@ -251,8 +288,7 @@ def convert_HoleUD(hole_dict):
         else:
             hole_dict_new["surf_list"][ii]["label"] = HOLEV_LAB
     # Instantiate object
-    HoleUD = import_class("pyleecan.Classes", "HoleUD")
-    return HoleUD(init_dict=hole_dict_new)
+    return {**hole_dict_new, "__class__": "HoleUD"}
 
 
 ######################
@@ -335,12 +371,11 @@ def convert_Winding(wind_dict):
             or wind_dict_new["Zs"] is None
         ):
             # Winding not fully defined => Use Star of slot
-            Winding = import_class("pyleecan.Classes", "Winding")
-            return Winding(init_dict=wind_dict_new)
+            return {**wind_dict_new, "__class__": "Winding"}
         else:
             # Generate old Winding matrix as UD
             old_class = wind_dict["__class__"]
-            WindingUD = import_class("pyleecan.Classes", "WindingUD")
+            WindingUD = import_class("WindingUD")
             new_wind = WindingUD(qs=qs, p=p, Ntcoil=Ntcoil, coil_pitch=coil_pitch)
             try:
                 if old_class == "WindingCW1L":
@@ -356,12 +391,10 @@ def convert_Winding(wind_dict):
                 return new_wind
             except Exception:
                 # Not able to generate winding matrix => Star of Slot
-                Winding = import_class("pyleecan.Classes", "Winding")
-                return Winding(init_dict=wind_dict_new)
+                return {**wind_dict_new, "__class__": "Winding"}
 
     else:
-        Winding_class = import_class("pyleecan.Classes", wind_dict_new["__class__"])
-        return Winding_class(init_dict=wind_dict_new)
+        return wind_dict_new
 
 
 ######################
@@ -386,8 +419,7 @@ def rename_varparam(varparam_dict):
     # Copy dict to keep original version
     varparam_dict_new = varparam_dict.copy()
     # Instantiate object
-    VarParamSweep = import_class("pyleecan.Classes", "VarParamSweep")
-    return VarParamSweep(init_dict=varparam_dict_new)
+    return {**varparam_dict_new, "__class__": "VarParamSweep"}
 
 
 ######################
@@ -419,8 +451,7 @@ def convert_opticonstraint(opticonstraint_dict):
     opticonstraint_dict_new["keeper"] = opticonstraint_dict_new["get_variable"]
     del opticonstraint_dict_new["get_variable"]
     # Instantiate object
-    OptiConstraint = import_class("pyleecan.Classes", "OptiConstraint")
-    return OptiConstraint(init_dict=opticonstraint_dict_new)
+    return {**opticonstraint_dict_new, "__class__": "OptiConstraint"}
 
 
 ######################
@@ -447,14 +478,10 @@ def convert_optidesignvar(optidesignvar_dict):
 
     if optidesignvar_dict_new["type_var"] == "set":
         del optidesignvar_dict_new["type_var"]
-        OptiDesignVarSet = import_class("pyleecan.Classes", "OptiDesignVarSet")
-        return OptiDesignVarSet(init_dict=optidesignvar_dict_new)
+        return {**optidesignvar_dict_new, "__class__": "OptiDesignVarSet"}
     else:
         del optidesignvar_dict_new["type_var"]
-        OptiDesignVarInterval = import_class(
-            "pyleecan.Classes", "OptiDesignVarInterval"
-        )
-        return OptiDesignVarInterval(init_dict=optidesignvar_dict_new)
+        return {**optidesignvar_dict_new, "__class__": "OptiDesignVarInterval"}
 
 
 ######################
@@ -516,9 +543,7 @@ def convert_meshsolution_mesh(meshsolution_dict):
     # Copy dict to keep original version
     meshsolution_dict_new = meshsolution_dict.copy()
 
-    MeshSolution = import_class("pyleecan.Classes", "MeshSolution")
-
-    if isinstance(meshsolution_dict_new["mesh"], list):
+    if isinstance(meshsolution_dict_new.get("mesh"), list):
         if len(meshsolution_dict_new["mesh"]) == 0:
             meshsolution_dict_new["mesh"] = None
         elif len(meshsolution_dict_new["mesh"]) == 1:
@@ -549,7 +574,7 @@ def convert_meshsolution_mesh(meshsolution_dict):
 
         del meshsolution_dict_new["solution"]
 
-    return MeshSolution(init_dict=meshsolution_dict_new)
+    return {**meshsolution_dict_new, "__class__": "MeshSolution"}
 
 
 def is_before_version(ref_version, check_version=None):

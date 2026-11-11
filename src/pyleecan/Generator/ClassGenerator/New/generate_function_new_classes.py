@@ -340,6 +340,172 @@ def _adapt_retrocompatibility(source, path):
     return "".join(lines)
 
 
+def _adapt_json_load(source, path):
+    """Adapt legacy load entry points to experimental dataclass construction."""
+    replacements = {
+        "from .Load.import_class import import_class":
+            "from pyleecan.Classes_new._import import import_class",
+        'class_obj = import_class("pyleecan.Classes", obj.get("__class__"), "")':
+            'class_obj = import_class(obj.get("__class__"))',
+        '''if folder_path != "":
+                wd = getcwd()
+                chdir(folder_path)
+                new_obj = class_obj(init_dict=obj)
+                chdir(wd)
+                return new_obj
+            else:
+                return class_obj(init_dict=obj)''':
+            "return class_obj.from_dict(obj, base_path=folder_path)",
+        "_, obj = load_json(file_path)": "file_path, obj = load_json(file_path)",
+        "    return init_data(obj, file_path)\n\n\ndef load_list":
+            "    if isinstance(obj, dict):\n"
+            "        convert_init_dict(obj)\n"
+            "    elif isinstance(obj, list):\n"
+            "        for item in obj:\n"
+            "            _convert_collections(item)\n"
+            "    return init_data(obj, file_path)\n\n\ndef load_list",
+        "def load_list(file_path):":
+            "def _convert_collections(obj):\n"
+            "    if isinstance(obj, dict):\n"
+            "        convert_init_dict(obj)\n"
+            "    elif isinstance(obj, list):\n"
+            "        for item in obj:\n"
+            "            _convert_collections(item)\n\n\n"
+            "def load_list(file_path):",
+        'Material = import_class("pyleecan.Classes", "Material")':
+            'Material = import_class("Material")',
+    }
+    for old, new in replacements.items():
+        if source.count(old) != 1:
+            raise ValueError(f"{path}: unexpected JSON loader source: {old[:60]}")
+        source = source.replace(old, new, 1)
+    return source
+
+
+def _adapt_json_retrocompatibility(source, path):
+    """Redirect compatibility constructors and make root conversions possible."""
+    tree = ast.parse(source, filename=str(path))
+    data = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(data):
+        if value == 10:
+            offsets.append(index + 1)
+    edits = []
+
+    def replace(node, text):
+        edits.append((
+            offsets[node.lineno - 1] + node.col_offset,
+            offsets[node.end_lineno - 1] + node.end_col_offset,
+            text.encode("utf-8"),
+        ))
+
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.ImportFrom)
+            and (node.level, node.module)
+            in {(1, "import_class"), (3, "Functions.Load.import_class")}
+        ):
+            replace(node, "from pyleecan.Classes_new._import import import_class")
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "import_class"
+            and len(node.args) == 2
+            and isinstance(node.args[0], ast.Constant)
+            and node.args[0].value == "pyleecan.Classes"
+        ):
+            replace(node, f"import_class({ast.unparse(node.args[1])})")
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and not node.args
+            and len(node.keywords) == 1
+            and node.keywords[0].arg == "init_dict"
+        ):
+            replace(node, f"{node.func.id}.from_dict({ast.unparse(node.keywords[0].value)})")
+        elif (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Subscript)
+            and ast.unparse(node.targets[0]) == "parent[parent_index]"
+            and isinstance(node.value, ast.Call)
+        ):
+            value = ast.unparse(node.value)
+            replace(
+                node,
+                f"_converted = {value}\n"
+                + " " * node.col_offset
+                + "if not isinstance(_converted, dict):\n"
+                + " " * (node.col_offset + 4)
+                + "_converted = _converted.as_dict()\n"
+                + " " * node.col_offset
+                + "if _converted is not obj_dict:\n"
+                + " " * (node.col_offset + 4)
+                + "obj_dict.clear()\n"
+                + " " * (node.col_offset + 4)
+                + "obj_dict.update(_converted)",
+            )
+    for start, end, text in sorted(edits, reverse=True):
+        data = data[:start] + text + data[end:]
+    source = data.decode("utf-8")
+    replacements = {
+        "            parent is not None\n            and \"slot\" in parent.keys()":
+            "            isinstance(parent, dict)\n            and \"slot\" in parent.keys()",
+        "        rename_varparam(obj_dict)": '        obj_dict["__class__"] = "VarParamSweep"',
+        "    else:\n        # walk through the dict\n": "    # walk through the dict\n",
+        'return len(obj_dict["surf_list"][0]["label"].split("_")) > 3':
+            'return bool(obj_dict.get("surf_list")) and len(obj_dict["surf_list"][0]["label"].split("_")) > 3',
+        'if isinstance(meshsolution_dict_new["mesh"], list):':
+            'if isinstance(meshsolution_dict_new.get("mesh"), list):',
+        "    class_obj = Class_obj.from_dict(obj_dict_new)":
+            "    class_obj = obj_dict_new",
+        "    class_obj.OP = OP\n    return class_obj":
+            '    class_obj["OP"] = OP.as_dict()\n    return class_obj',
+    }
+    for old, new in replacements.items():
+        if source.count(old) != 1:
+            raise ValueError(f"{path}: unexpected retrocompatibility source: {old[:60]}")
+        source = source.replace(old, new, 1)
+    class_returns = {
+        "HoleUD": ("hole_dict_new", "HoleUD"),
+        "Winding": ("wind_dict_new", "Winding"),
+        "Winding_class": ("wind_dict_new", None),
+        "VarParamSweep": ("varparam_dict_new", "VarParamSweep"),
+        "OptiConstraint": ("opticonstraint_dict_new", "OptiConstraint"),
+        "OptiDesignVarSet": ("optidesignvar_dict_new", "OptiDesignVarSet"),
+        "OptiDesignVarInterval": ("optidesignvar_dict_new", "OptiDesignVarInterval"),
+        "MeshSolution": ("meshsolution_dict_new", "MeshSolution"),
+    }
+    for class_name, (variable, serialized_name) in class_returns.items():
+        old = f"return {class_name}.from_dict({variable})"
+        if old not in source:
+            raise ValueError(f"{path}: missing compatibility return: {old}")
+        if serialized_name is None:
+            replacement = f"return {variable}"
+        else:
+            replacement = f'return {{**{variable}, "__class__": "{serialized_name}"}}'
+        source = source.replace(old, replacement)
+    for name in ("Class_obj", *class_returns):
+        source = re.sub(
+            rf"(?m)^[ \t]*{name} = import_class\([^\n]*\)\n", "", source
+        )
+    start = source.index("    # walk through the dict\n")
+    end = source.index("\n\n############################################", start)
+    source = (
+        source[:start]
+        + "    def visit(value, parent, index):\n"
+        + "        if isinstance(value, dict):\n"
+        + "            _search_and_update(value, parent, index, update_dict)\n"
+        + "        elif isinstance(value, list):\n"
+        + "            for index, item in enumerate(value):\n"
+        + "                visit(item, value, index)\n\n"
+        + "    for key, value in obj_dict.items():\n"
+        + "        visit(value, obj_dict, key)\n"
+        + source[end:]
+    )
+    return source
+
+
 def _rewrite_source(source, path, relative_path, class_dir):
     """Redirect supported imports and report legacy references needing review."""
     tree = ast.parse(source, filename=str(path))
@@ -549,6 +715,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 encoding = source_file.encoding
             if relative == Path("Load") / "retrocompatibility.py":
                 source = _adapt_retrocompatibility(source, path)
+                source = _adapt_json_retrocompatibility(source, path)
+            elif relative == Path("load.py"):
+                source = _adapt_json_load(source, path)
             source = _redirect_function_errors(source, path, relative, class_dir)
             package = ".".join(["pyleecan", "Functions", *relative.parts[:-1]])
             source = _redirect_shared_error_imports(source, package)

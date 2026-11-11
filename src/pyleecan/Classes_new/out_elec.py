@@ -18,7 +18,7 @@ from .data_nd import DataND
 from .data_time import DataTime
 from .eec import EEC
 from .import_gen_pwm import ImportGenPWM
-from .op import OP
+from .op import OP as _field_type_OP
 from .out_internal import OutInternal
 
 
@@ -103,7 +103,7 @@ class OutElec(PyleecanClass):
         default=None, metadata={"default_class": "OutInternal"}
     )
     """OutInternal object containg outputs related to a specific model"""
-    OP: OP | None = field(default=None, metadata={"default_class": "OP"})
+    OP: _field_type_OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
     Pem_av: float | None = None
     """Average Electromagnetic power"""

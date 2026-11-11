@@ -5,7 +5,7 @@ from ..Classes_new._error import (
     LoadWrongDictClassError,
     LoadWrongTypeError,
 )
-from .Load.import_class import import_class
+from ..Classes_new._import import import_class
 from .Load.load_hdf5 import load_hdf5
 from .Load.load_json import load_json
 from .Load.load_pkl import load_pkl
@@ -96,15 +96,8 @@ def init_data(obj, file_path):
         # Check if the dictionay has a "__class__" key
         if "__class__" in obj:
             # Check if data is a pyleecan class
-            class_obj = import_class("pyleecan.Classes", obj.get("__class__"), "")
-            if folder_path != "":
-                wd = os.getcwd()
-                os.chdir(folder_path)
-                new_obj = class_obj(init_dict=obj)
-                os.chdir(wd)
-                return new_obj
-            else:
-                return class_obj(init_dict=obj)
+            class_obj = import_class(obj.get("__class__"))
+            return class_obj.from_dict(obj, base_path=folder_path)
 
         # --- 'normal' dict ---
         data = {}
@@ -126,7 +119,7 @@ def _load(file_path, cls_type=None):
     file_path: str
         path to the file to load
     """
-    _, obj = load_json(file_path)
+    file_path, obj = load_json(file_path)
 
     # check the initial object's type if set
     if cls_type is not None:
@@ -139,7 +132,20 @@ def _load(file_path, cls_type=None):
                 + '" expected.'
             )
 
+    if isinstance(obj, dict):
+        convert_init_dict(obj)
+    elif isinstance(obj, list):
+        for item in obj:
+            _convert_collections(item)
     return init_data(obj, file_path)
+
+
+def _convert_collections(obj):
+    if isinstance(obj, dict):
+        convert_init_dict(obj)
+    elif isinstance(obj, list):
+        for item in obj:
+            _convert_collections(item)
 
 
 def load_list(file_path):
@@ -172,7 +178,7 @@ def load_matlib_folder(matlib_path):
 
     # Get and Read all the file to create a list dictionary : variable name <=> value
     material_list = []
-    Material = import_class("pyleecan.Classes", "Material")
+    Material = import_class("Material")
     for dirpath, _, filenames in os.walk(matlib_path):
         for file_name in filenames:
             # For all json file in the folder and subfolder
