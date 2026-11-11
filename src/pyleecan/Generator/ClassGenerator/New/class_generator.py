@@ -18,9 +18,8 @@ from ....Generator.read_fct import (
     is_dict_pyleecan_type,
     is_list_pyleecan_type,
 )
-from .import_method_generator import import_method
-
 CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
+MISSING_METHOD_REASONS = {"method source file is missing", "method function is missing"}
 
 
 def class_module_name(class_name):
@@ -1970,6 +1969,11 @@ def _prepare_class_methods(
             class_import_graph=class_import_graph,
         )
         if reason is not None:
+            action = (
+                "omitting the unavailable method"
+                if reason in MISSING_METHOD_REASONS
+                else "keeping its module import"
+            )
             warnings.warn(
                 "Could not inline "
                 + class_name
@@ -1977,7 +1981,8 @@ def _prepare_class_methods(
                 + meth
                 + ": "
                 + reason
-                + "; keeping its module import",
+                + "; "
+                + action,
                 stacklevel=2,
             )
             prepared[meth] = None
@@ -4300,6 +4305,8 @@ def generate_class(
     unambiguous module-level class imports and otherwise load classes lazily.
     Shared function imports target ``Functions_new`` except load/save helpers.
     Generate that function tree before importing generated classes.
+    Missing method files or functions are omitted with a warning; other
+    methods that cannot be inlined retain their original module imports.
 
     Parameters
     ----------
@@ -4914,8 +4921,15 @@ def _generate_dataclass_class(
         imports.update(("from copy import deepcopy", "from functools import partial"))
 
     for method in class_dict["methods"]:
-        if method_sources[method] is None:
-            imports.add(import_method(class_pack, class_name, method).strip())
+        if (
+            method_sources[method] is None
+            and fallback_reasons[method] not in MISSING_METHOD_REASONS
+        ):
+            package = f"{class_pack}." if class_pack else ""
+            method_name = method.split(".")[-1]
+            imports.add(
+                f"from ..Methods.{package}{class_name}.{method} import {method_name}"
+            )
     imports.update(ast.unparse(node) for node in method_imports)
     imports.update(
         f"from {soft_name}.Classes.{name} import {name}"
@@ -4982,7 +4996,10 @@ def _generate_dataclass_class(
 
     for method in class_dict["methods"]:
         if method_sources[method] is None:
-            body.append(f"\n{TAB}{method.split('.')[-1]} = {method.split('.')[-1]}\n")
+            if fallback_reasons[method] not in MISSING_METHOD_REASONS:
+                body.append(
+                    f"\n{TAB}{method.split('.')[-1]} = {method.split('.')[-1]}\n"
+                )
             continue
         body.append(
             f"\n{TAB}# Inlined from Methods.{class_pack}.{class_name}.{method}\n"
@@ -5011,9 +5028,15 @@ def _generate_dataclass_class(
     chunks.append("".join(body))
     if fallback_reasons:
         chunks.append(
-            "\n# Methods retained as imports because they could not be inlined:\n"
+            "\n# Methods that could not be inlined:\n"
             + "".join(
-                f"# {method}: {reason}\n" for method, reason in fallback_reasons.items()
+                f"# {method}: {reason}; "
+                + (
+                    "omitted\n"
+                    if reason in MISSING_METHOD_REASONS
+                    else "retained as import\n"
+                )
+                for method, reason in fallback_reasons.items()
             )
         )
 

@@ -26,11 +26,6 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _replace_local_experimental_class_imports,
     generate_class,
 )
-from pyleecan.Generator.ClassGenerator.New.init_method_generator import (
-    generate_set_class_by_dict,
-    generate_set_class_by_dict_dict,
-    generate_set_class_by_dict_list,
-)
 from pyleecan.Generator.read_fct import read_all
 
 
@@ -699,18 +694,81 @@ def test_renamed_normalizations_and_legacy_serialization(
             sys.modules.pop("pyleecan.Classes_new." + name, None)
 
 
-@pytest.mark.parametrize(
-    "generator",
-    [
-        generate_set_class_by_dict,
-        generate_set_class_by_dict_list,
-        generate_set_class_by_dict_dict,
-    ],
-)
-def test_constructor_class_imports_use_shared_helper(generator):
-    source = generator("item", "Magnetics", ["MagFEMM"])
-    assert 'import_class("pyleecan.Classes", class_name, "item")' in source
-    assert "__import__" not in source
+@pytest.mark.parametrize("reason", ["missing file", "missing function"])
+def test_missing_method_warns_and_is_omitted(tmp_path, monkeypatch, reason):
+    monkeypatch.setenv(
+        "PATH",
+        str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
+    )
+    gen_dict = read_all(DOC_DIR)
+    gen_dict["Magnetics"] = deepcopy(gen_dict["Magnetics"])
+    gen_dict["Magnetics"]["methods"] = ["comp_axes"]
+    output = tmp_path / "Classes"
+    output.mkdir()
+    if reason == "missing function":
+        methods = tmp_path / "Methods" / "Simulation" / "Magnetics"
+        methods.mkdir(parents=True)
+        (methods / "comp_axes.py").write_text(
+            "def other():\n    pass\n", encoding="utf-8"
+        )
+    expected = (
+        "method source file is missing"
+        if reason == "missing file"
+        else "method function is missing"
+    )
+    with pytest.warns(UserWarning, match=f"Magnetics.comp_axes: {expected}"):
+        path = generate_class(
+            gen_dict,
+            "Magnetics",
+            str(output),
+            class_import_graph={},
+            shared_error_definitions={},
+        )
+    source = Path(path).read_text(encoding="utf-8")
+    assert f"# comp_axes: {expected}; omitted" in source
+    assert "Methods.Simulation.Magnetics.comp_axes import" not in source
+    assert "comp_axes = comp_axes" not in source
+    compile(source, str(path), "exec")
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_uninlineable_existing_method_keeps_import(
+    tmp_path, monkeypatch, import_style
+):
+    monkeypatch.setenv(
+        "PATH",
+        str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
+    )
+    gen_dict = read_all(DOC_DIR)
+    gen_dict["Magnetics"] = deepcopy(gen_dict["Magnetics"])
+    gen_dict["Magnetics"]["methods"] = ["comp_axes"]
+    output = tmp_path / "Classes"
+    output.mkdir()
+    methods = tmp_path / "Methods" / "Simulation" / "Magnetics"
+    methods.mkdir(parents=True)
+    (methods / "comp_axes.py").write_text(
+        "from __future__ import annotations\n"
+        "def comp_axes(self):\n    return 42\n",
+        encoding="utf-8",
+    )
+    with pytest.warns(UserWarning, match="module has a __future__ import"):
+        path = generate_class(
+            gen_dict,
+            "Magnetics",
+            str(output),
+            import_style=import_style,
+            class_import_graph={},
+            shared_error_definitions={},
+        )
+    source = Path(path).read_text(encoding="utf-8")
+    prefix = "pyleecan." if import_style == "absolute" else ".."
+    assert (
+        f"from {prefix}Methods.Simulation.Magnetics.comp_axes import comp_axes"
+        in source
+    )
+    assert "comp_axes = comp_axes" in source
+    assert "# comp_axes: module has a __future__ import; retained as import" in source
+    compile(source, str(path), "exec")
 
 
 def test_generated_method_uses_import_class(tmp_path, monkeypatch):

@@ -3,7 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from pyleecan.Functions_new.generate_function_new_classes import (
+from pyleecan.Generator.ClassGenerator.New import generate_function_new_classes
+from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     _rewrite_source,
     generate_functions,
 )
@@ -66,7 +67,7 @@ def test_copy_tree_keeps_resources_and_reports_deferred_loader(tmp_path):
     (source / "__pycache__").mkdir()
     (source / "__pycache__" / "cache.pyc").write_bytes(b"cache")
     output.mkdir()
-    (output / "generate_function_new_classes.py").write_text("keep", encoding="utf-8")
+    (output / "existing.py").write_text("keep", encoding="utf-8")
     issues = generate_functions(source, output, classes)
     assert issues == [(Path("load.py"), 1, "dynamic class loader requires review")]
     assert (output / "Electrical" / "sample.py").read_text(encoding="utf-8") == (
@@ -74,7 +75,7 @@ def test_copy_tree_keeps_resources_and_reports_deferred_loader(tmp_path):
     )
     assert (output / "Electrical" / "fixture.lua").read_bytes() == b"fixture\x00"
     assert not (output / "__pycache__").exists()
-    assert (output / "generate_function_new_classes.py").read_text() == "keep"
+    assert (output / "existing.py").read_text() == "keep"
     assert (
         (source / "Electrical" / "sample.py")
         .read_text(encoding="utf-8")
@@ -82,6 +83,22 @@ def test_copy_tree_keeps_resources_and_reports_deferred_loader(tmp_path):
     )
     with pytest.raises(ValueError, match="separate"):
         generate_functions(source, source / "output", classes)
+
+
+def test_generate_functions_uses_default_package_paths(tmp_path, monkeypatch):
+    source = tmp_path / "Functions"
+    classes = tmp_path / "Classes_new"
+    source.mkdir()
+    classes.mkdir()
+    (source / "sample.py").write_text(
+        "from pyleecan.Functions.load import load\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(generate_function_new_classes, "MAIN_DIR", str(tmp_path))
+
+    assert generate_functions() == []
+    assert (tmp_path / "Functions_new" / "sample.py").read_text(
+        encoding="utf-8"
+    ) == "from pyleecan.Functions_new.load import load\n"
 
 
 @pytest.mark.parametrize("style", ["absolute", "relative"])

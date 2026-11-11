@@ -1,7 +1,7 @@
 """Generate Functions_new from Functions without modifying the legacy package.
 
-Run ``python -m pyleecan.Functions_new.generate_function_new_classes`` after
-generating Classes_new. Existing generated copies are overwritten. Legacy
+Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_function_new_classes``
+after generating Classes_new. Existing generated copies are overwritten. Legacy
 load/save compatibility and unsupported dynamic imports are reported for review.
 """
 
@@ -12,6 +12,7 @@ import tokenize
 from importlib.util import resolve_name
 from pathlib import Path
 
+from pyleecan.definitions import MAIN_DIR
 from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
 
@@ -181,7 +182,7 @@ def _rewrite_source(source, path, relative_path, class_dir):
 
 def generate_functions(source_dir=None, output_dir=None, class_dir=None):
     """Copy the complete function tree and return unresolved legacy references."""
-    root = Path(__file__).resolve().parent.parent
+    root = Path(MAIN_DIR)
     source_dir = Path(source_dir) if source_dir is not None else root / "Functions"
     output_dir = Path(output_dir) if output_dir is not None else root / "Functions_new"
     class_dir = Path(class_dir) if class_dir is not None else root / "Classes_new"

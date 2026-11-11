@@ -1,8 +1,10 @@
-"""Copy the test suite with direct class imports targeting Classes_new.
+"""Copy the test suite with class and function imports targeting new packages.
 
-Run this file to overwrite the copied tests in Tests/New. Data remains in
+Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_test_new_classes``
+to overwrite the copied tests in Tests/New. Data remains in
 Tests/Data, and copied tests use Tests/New/Results for the usual result paths.
-Legacy-only imports and dynamic loading are not adapted automatically.
+Unaliased ``import pyleecan.Functions...`` imports require manual review,
+as do legacy-only imports and dynamic loading.
 Running copied tests still imports Tests/__init__.py, which clears Tests/Results.
 """
 
@@ -12,6 +14,7 @@ import shutil
 import tokenize
 from pathlib import Path
 
+from pyleecan.definitions import TEST_DIR
 from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
 
@@ -51,6 +54,21 @@ def _rewrite_source(source, path, class_dir):
     replacements = []
     unsupported = []
     for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == "pyleecan.Functions" or alias.name.startswith(
+                    "pyleecan.Functions."
+                ):
+                    if alias.asname is None:
+                        unsupported.append((node.lineno, alias.name))
+                        continue
+                    start = offset(alias.lineno, alias.col_offset)
+                    end = start + len(alias.name.encode("utf-8"))
+                    replacement = alias.name.replace(
+                        "pyleecan.Functions", "pyleecan.Functions_new", 1
+                    )
+                    replacements.append((start, end, replacement.encode("utf-8")))
+            continue
         if not isinstance(node, ast.ImportFrom) or node.level or not node.module:
             continue
         start = offset(node.lineno, node.col_offset)
@@ -92,6 +110,36 @@ def _rewrite_source(source, path, class_dir):
                     replacements.append(
                         (alias_start, alias_end, replacement.encode("utf-8"))
                     )
+        elif node.module == "pyleecan":
+            for alias in node.names:
+                if alias.name == "Functions":
+                    alias_start = offset(alias.lineno, alias.col_offset)
+                    alias_end = offset(alias.end_lineno, alias.end_col_offset)
+                    replacement = "Functions_new as " + (alias.asname or "Functions")
+                    replacements.append(
+                        (alias_start, alias_end, replacement.encode("utf-8"))
+                    )
+        elif node.module == "pyleecan.Functions" or node.module.startswith(
+            "pyleecan.Functions."
+        ):
+            module_bytes = node.module.encode("utf-8")
+            segment = encoded[start:end]
+            match = re.search(
+                rb"\bfrom\s+" + re.escape(module_bytes) + rb"\s+import\b", segment
+            )
+            if match is None:
+                raise ValueError(f"{path}:{node.lineno}: cannot locate import module")
+            module_start = start + match.start() + match.group().find(module_bytes)
+            new_module = node.module.replace(
+                "pyleecan.Functions", "pyleecan.Functions_new", 1
+            )
+            replacements.append(
+                (
+                    module_start,
+                    module_start + len(module_bytes),
+                    new_module.encode("utf-8"),
+                )
+            )
         elif node.module == "Tests":
             result_aliases = [
                 alias for alias in node.names if alias.name in RESULT_NAMES
@@ -143,7 +191,7 @@ def generate_tests(tests_dir=None, class_dir=None):
     tests_dir = (
         Path(tests_dir)
         if tests_dir is not None
-        else Path(__file__).resolve().parent.parent
+        else Path(TEST_DIR)
     )
     class_dir = (
         Path(class_dir)
