@@ -1,4 +1,4 @@
-from .create_FEMM_boundary_conditions import create_FEMM_boundary_conditions
+from .create_femm_boundary_conditions import create_FEMM_boundary_conditions
 
 
 def get_FEMM_BC_propname(femm, line_label, BC_dict):

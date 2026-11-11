@@ -15,7 +15,7 @@ from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 
 from ..Functions_new.Optimization.check_cstr import check_cstr
 from ..Functions_new.Optimization.evaluate import evaluate
-from ..Functions_new.Optimization.tournamentDCD import tournamentDCD
+from ..Functions_new.Optimization.tournamentdcd import tournamentDCD
 from ..Functions_new.Optimization.update import update
 from .data_keeper import DataKeeper
 from .opti_design_var_interval import OptiDesignVarInterval

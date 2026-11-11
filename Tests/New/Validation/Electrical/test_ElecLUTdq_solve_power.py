@@ -15,7 +15,7 @@ from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.Classes_new.var_load_current import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.SciDataTool.Plot.plot_3D import plot_3D
+from pyleecan.Functions_new.SciDataTool.Plot.plot_3d import plot_3D
 
 
 @pytest.mark.skip(reason="Work in progress")

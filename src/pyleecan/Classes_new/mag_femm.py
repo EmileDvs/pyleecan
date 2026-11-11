@@ -12,10 +12,10 @@ import numpy as np
 
 from ..definitions import MAIN_DIR
 from ..Functions_new.FEMM import FEMM_GROUPS
-from ..Functions_new.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
-from ..Functions_new.FEMM.comp_FEMM_torque import comp_FEMM_torque
-from ..Functions_new.FEMM.draw_FEMM import draw_FEMM
-from ..Functions_new.FEMM.update_FEMM_simulation import update_FEMM_simulation
+from ..Functions_new.FEMM.comp_femm_phi_wind import comp_FEMM_Phi_wind
+from ..Functions_new.FEMM.comp_femm_torque import comp_FEMM_torque
+from ..Functions_new.FEMM.draw_femm import draw_FEMM
+from ..Functions_new.FEMM.update_femm_simulation import update_FEMM_simulation
 from ..Functions_new.labels import STATOR_LAB
 from ..Functions_new.MeshSolution.build_meshsolution import build_meshsolution
 from ..Functions_new.MeshSolution.build_solution_data import build_solution_data

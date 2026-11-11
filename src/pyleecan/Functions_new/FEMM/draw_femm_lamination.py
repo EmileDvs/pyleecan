@@ -1,4 +1,4 @@
-from .draw_FEMM_surfaces import draw_FEMM_surfaces
+from .draw_femm_surfaces import draw_FEMM_surfaces
 
 
 def draw_FEMM_lamination(

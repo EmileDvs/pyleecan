@@ -9,7 +9,7 @@ from numpy import array, linspace, ones, pi, zeros
 from pyleecan.Classes.import_all import *
 
 try:
-    from pyleecan.Functions_new.GMSH.gen_3D_mesh import gen_3D_mesh
+    from pyleecan.Functions_new.GMSH.gen_3d_mesh import gen_3D_mesh
 except ImportError as error:
     gen_3D_mesh = error
 from Tests.New._test_paths import save_plot_path

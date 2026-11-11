@@ -7,7 +7,7 @@ from typing import Any, Callable
 import numpy as np
 
 from ..Functions_new.Plot import dict_2D
-from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 

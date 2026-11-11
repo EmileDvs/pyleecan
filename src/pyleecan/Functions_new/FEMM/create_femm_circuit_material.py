@@ -2,8 +2,8 @@ import numpy as np
 
 from ..labels import ROTOR_LAB
 from ..Winding.find_wind_phase_color import get_phase_id
-from .set_FEMM_circuit_prop import set_FEMM_circuit_prop
-from .set_FEMM_wind_material import set_FEMM_wind_material
+from .set_femm_circuit_prop import set_FEMM_circuit_prop
+from .set_femm_wind_material import set_FEMM_wind_material
 
 
 def create_FEMM_circuit_material(

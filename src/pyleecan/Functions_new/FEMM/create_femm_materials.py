@@ -20,8 +20,8 @@ from ..labels import (
     get_obj_from_label,
 )
 from . import LAM_MAT_NAME
-from .create_FEMM_circuit_material import create_FEMM_circuit_material
-from .create_FEMM_magnet import create_FEMM_magnet
+from .create_femm_circuit_material import create_FEMM_circuit_material
+from .create_femm_magnet import create_FEMM_magnet
 
 
 def create_FEMM_materials(

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from math import ceil
 
 from ..definitions import config_dict
-from ..Functions_new.FEMM.get_FEMM_BC_propname import get_FEMM_BC_propname
+from ..Functions_new.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
 from ..Functions_new.FEMM.get_mesh_param import get_mesh_param
 from ..Functions_new.init_fig import init_fig
 from ..Functions_new.labels import (

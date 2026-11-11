@@ -53,9 +53,9 @@ from ..Functions_new.SciDataTool.Plot import (
     norm_dict,
     unit_dict,
 )
-from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
-from ..Functions_new.SciDataTool.Plot.plot_3D import plot_3D
-from ..Functions_new.SciDataTool.Plot.plot_4D import plot_4D
+from ..Functions_new.SciDataTool.Plot.plot_2d import plot_2D
+from ..Functions_new.SciDataTool.Plot.plot_3d import plot_3D
+from ..Functions_new.SciDataTool.Plot.plot_4d import plot_4D
 from ..Functions_new.SciDataTool.sum_mean import (
     my_mean,
     my_sum,

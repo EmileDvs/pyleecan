@@ -2,9 +2,9 @@ from ...Classes_new._error import FEMMError
 from ...Classes_new.circle import Circle
 from ...Classes_new.lamination import Lamination
 from ..labels import NO_MESH_LAB
-from .comp_FEMM_dict import comp_FEMM_dict
-from .draw_FEMM_lamination import draw_FEMM_lamination
-from .draw_FEMM_surfaces import draw_FEMM_surfaces
+from .comp_femm_dict import comp_FEMM_dict
+from .draw_femm_lamination import draw_FEMM_lamination
+from .draw_femm_surfaces import draw_FEMM_surfaces
 from .get_airgap_surface import get_airgap_surface
 from .get_sliding_band import get_sliding_band
 

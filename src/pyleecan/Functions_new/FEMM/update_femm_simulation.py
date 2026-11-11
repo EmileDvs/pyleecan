@@ -1,6 +1,6 @@
 import numpy as np
 
-from .set_FEMM_circuit_prop import set_FEMM_circuit_prop
+from .set_femm_circuit_prop import set_FEMM_circuit_prop
 
 
 def update_FEMM_simulation(

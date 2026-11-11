@@ -15,7 +15,7 @@ from pyleecan.Methods.Simulation.MagElmer import (
 )
 
 try:
-    from pyleecan.Functions_new.GMSH.draw_GMSH import draw_GMSH
+    from pyleecan.Functions_new.GMSH.draw_gmsh import draw_GMSH
 except:
     draw_GMSH = ImportError
 

@@ -7,10 +7,11 @@ from sys import getsizeof
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
+from numpy import array
 
 from ..definitions import config_dict
 from ..Functions_new.init_fig import init_fig
-from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from .data_keeper import DataKeeper
 from .opti_objective import OptiObjective
 from .output import Output
@@ -73,10 +74,10 @@ class XOutput(Output):
         """Helper function to get data and label by symbol to avoid duplicate code."""
         if symbol in self.keys():
             data = self[symbol]
-            values = np.array(data.result)[index]
+            values = array(data.result)[index]
         elif symbol in [pe.symbol for pe in self.paramexplorer_list]:
             data = self.get_paramexplorer(symbol)
-            values = np.array(data.value)[index]
+            values = array(data.value)[index]
         else:
             symbol_ = next(iter(self.keys()))
             self.get_logger().warning(
@@ -85,7 +86,7 @@ class XOutput(Output):
             )
             symbol = symbol_
             data = self[symbol]
-            values = np.array(data.result)[index]
+            values = array(data.result)[index]
         label = symbol
         if data.unit not in ["", None]:
             label += " [{}]".format(data.unit)

@@ -11,7 +11,7 @@ from meshio import read
 
 from .. import __version__
 from ..Functions_new.get_path_binary import get_path_binary
-from ..Functions_new.GMSH.draw_GMSH import draw_GMSH
+from ..Functions_new.GMSH.draw_gmsh import draw_GMSH
 from ..Functions_new.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,

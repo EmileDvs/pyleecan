@@ -13,7 +13,7 @@ from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.Classes_new.var_load_current import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR, config_dict
 from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from Tests.New._test_paths import save_validation_path as save_path
 
 

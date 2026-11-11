@@ -7,8 +7,8 @@ from ..labels import (
     get_obj_from_label,
 )
 from . import is_eddies
-from .assign_FEMM_surface import assign_FEMM_surface
-from .create_FEMM_materials import create_FEMM_materials
+from .assign_femm_surface import assign_FEMM_surface
+from .create_femm_materials import create_FEMM_materials
 
 
 def draw_FEMM_surfaces(

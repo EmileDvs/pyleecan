@@ -5088,6 +5088,16 @@ def _generate_dataclass_class(
     source = _replace_local_experimental_class_imports(source, soft_name, gen_dict)
     source = _redirect_experimental_loader_imports(source, soft_name)
     source = _redirect_experimental_function_imports(source, soft_name)
+    from .function_module_names import (
+        function_module_mapping,
+        redirect_function_module_imports,
+        redirect_rule_module_name,
+    )
+
+    source = redirect_function_module_imports(
+        source, soft_name + ".Classes_new", function_module_mapping(), soft_name
+    )
+    source = redirect_rule_module_name(source, soft_name)
     source = _use_static_default_factories(source, soft_name, gen_dict, generated_name)
     source = _apply_import_style(source, soft_name, import_style, "Classes_new")
     source = _organize_header_imports(source, generated_name, class_path)

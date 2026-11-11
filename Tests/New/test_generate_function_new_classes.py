@@ -12,6 +12,12 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _apply_import_style,
     _redirect_experimental_function_imports,
 )
+from pyleecan.Generator.ClassGenerator.New.function_module_names import (
+    function_module_mapping,
+    function_module_name,
+    redirect_function_module_imports,
+    redirect_rule_module_name,
+)
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     _adapt_retrocompatibility,
     _format_function_source,
@@ -21,6 +27,79 @@ from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import 
     _rewrite_source,
     generate_functions,
 )
+
+
+def test_function_module_names_and_imports(tmp_path):
+    source = tmp_path / "Functions"
+    (source / "FEMM").mkdir(parents=True)
+    (source / "FEMM" / "comp_FEMM_dict.py").touch()
+    (source / "FEMM" / "__init__.py").touch()
+    mapping = function_module_mapping(source)
+    assert mapping == {"FEMM.comp_FEMM_dict": "FEMM.comp_femm_dict"}
+    assert function_module_name("plot_4D") == "plot_4d"
+    assert function_module_name("curve_B(H)") == "curve_bh"
+    assert function_module_name("__init__") == "__init__"
+    text = (
+        "from .comp_FEMM_dict import comp_FEMM_dict\n"
+        "from pyleecan.Functions_new.FEMM import comp_FEMM_dict\n"
+        "import pyleecan.Functions_new.FEMM.comp_FEMM_dict as helper\n"
+        "value = import_module('pyleecan.Functions_new.FEMM.comp_FEMM_dict')\n"
+        "module = pyleecan.Functions_new.FEMM.comp_FEMM_dict\n"
+        "note = 'comp_FEMM_dict'\n"
+    )
+    result = redirect_function_module_imports(
+        text, "pyleecan.Functions_new.FEMM", mapping
+    )
+    assert "from .comp_femm_dict import comp_FEMM_dict" in result
+    assert "import comp_femm_dict as comp_FEMM_dict" in result
+    assert "import pyleecan.Functions_new.FEMM.comp_femm_dict as helper" in result
+    assert "import_module('pyleecan.Functions_new.FEMM.comp_femm_dict')" in result
+    assert "module = pyleecan.Functions_new.FEMM.comp_femm_dict" in result
+    assert "note = 'comp_FEMM_dict'" in result
+
+
+def test_function_module_mapping_rejects_collisions(tmp_path):
+    (tmp_path / "Foo.py").touch()
+    (tmp_path / "foo.py").touch()
+    if len(list(tmp_path.iterdir())) < 2:
+        pytest.skip("Case-insensitive filesystem")
+    with pytest.raises(ValueError, match="collision"):
+        function_module_mapping(tmp_path)
+
+
+def test_rule_module_name_conversion_keeps_legacy_values():
+    source = (
+        'name = f"pyleecan.Functions_new.Converter.MotorCAD.{self.fct_name}"\n'
+    )
+    result = redirect_rule_module_name(source)
+    from types import SimpleNamespace
+
+    for name in ("curve_B(H)", "slotW11_H1", "skew"):
+        namespace = {"self": SimpleNamespace(fct_name=name)}
+        exec(result, namespace)  # noqa: S102
+        assert namespace["name"].endswith("." + function_module_name(name))
+
+
+def test_generate_functions_renames_modules_and_references(tmp_path):
+    source = tmp_path / "Functions"
+    output = tmp_path / "Functions_new"
+    classes = tmp_path / "Classes_new"
+    (source / "FEMM").mkdir(parents=True)
+    classes.mkdir()
+    (source / "FEMM" / "comp_FEMM_dict.py").write_text(
+        "def comp_FEMM_dict():\n    return 3\n", encoding="utf-8"
+    )
+    (source / "FEMM" / "draw.py").write_text(
+        "from .comp_FEMM_dict import comp_FEMM_dict\n", encoding="utf-8"
+    )
+    generate_functions(source, output, classes)
+    assert (output / "FEMM" / "comp_femm_dict.py").exists()
+    assert not (output / "FEMM" / "comp_FEMM_dict.py").exists() or (
+        output / "FEMM" / "comp_FEMM_dict.py"
+    ).samefile(output / "FEMM" / "comp_femm_dict.py")
+    assert "from .comp_femm_dict import comp_FEMM_dict" in (
+        output / "FEMM" / "draw.py"
+    ).read_text(encoding="utf-8")
 
 
 def test_rewrite_imports_and_report_unresolved(tmp_path):

@@ -20,6 +20,10 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     VENDORED_CLASS_PACKAGES,
     class_module_name,
 )
+from pyleecan.Generator.ClassGenerator.New.function_module_names import (
+    function_module_mapping,
+    redirect_function_module_imports,
+)
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     _redirect_shared_error_imports,
 )
@@ -193,6 +197,9 @@ def _rewrite_source(source, path, class_dir):
     for start, end, replacement in sorted(replacements, reverse=True):
         encoded = encoded[:start] + replacement + encoded[end:]
     rewritten = encoded.decode("utf-8")
+    rewritten = redirect_function_module_imports(
+        rewritten, "Tests.New", function_module_mapping()
+    )
     ast.parse(rewritten, filename=str(path))
     return rewritten, unsupported
 

@@ -5,7 +5,7 @@ from ...Classes_new.electrical import Electrical
 from ...Classes_new.input_current import InputCurrent
 from ...Classes_new.op_dq import OPdq
 from ...Classes_new.simu_1 import Simu1
-from ..SciDataTool.Plot.plot_3D import plot_3D
+from ..SciDataTool.Plot.plot_3d import plot_3D
 
 
 def comp_MTPA(

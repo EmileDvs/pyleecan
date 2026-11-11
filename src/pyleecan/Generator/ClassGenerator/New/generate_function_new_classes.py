@@ -31,6 +31,11 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _replace_empty_containers,
     class_module_name,
 )
+from pyleecan.Generator.ClassGenerator.New.function_module_names import (
+    function_module_mapping,
+    function_module_name,
+    redirect_function_module_imports,
+)
 
 FUNCTION_ERRORS = {
     "Converter.Utils.ConvertionError": {"ConvertionError": "ConvertionError"},
@@ -530,11 +535,13 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         raise ValueError("Source and output function trees must be separate")
 
     issues = []
+    module_mapping = function_module_mapping(source_dir)
     for path in sorted(source_dir.rglob("*")):
         if not path.is_file() or "__pycache__" in path.parts or path.suffix == ".pyc":
             continue
         relative = path.relative_to(source_dir)
-        destination = output_dir / relative
+        output_relative = relative.with_name(function_module_name(relative.stem) + ".py") if path.suffix == ".py" else relative
+        destination = output_dir / output_relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         if path.suffix == ".py":
             with tokenize.open(path) as source_file:
@@ -566,6 +573,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 continue
             generated_package = ".".join(
                 ["pyleecan", "Functions_new", *relative.parts[:-1]]
+            )
+            rewritten = redirect_function_module_imports(
+                rewritten, generated_package, module_mapping
             )
             rewritten = _function_import_style(rewritten, generated_package, import_style)
             rewritten = _format_function_source(rewritten, destination)

@@ -17,7 +17,7 @@ from ..Functions_new.SciDataTool.conversions import (
 )
 from ..Functions_new.SciDataTool.Plot import REV_COMP_DICT
 from ..Functions_new.SciDataTool.Plot.init_fig import copy_fig, init_fig
-from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from ._error import AxisError
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass

@@ -428,6 +428,27 @@ def test_generated_method_imports_shared_function_error(
     assert "import cart2pol, pol2cart" in source
 
 
+def test_generated_rule_resolves_normalized_function_modules(generator_environment, tmp_path):
+    class_dict = deepcopy(generator_environment["RuleComplex"])
+    class_dict["methods"] = ["_set_fct_name"]
+    methods = tmp_path / "Methods" / "Converter" / "RuleComplex"
+    methods.mkdir(parents=True)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / "Converter" / "RuleComplex" / "_set_fct_name.py",
+        methods,
+    )
+    gen_dict = dict(generator_environment)
+    gen_dict["RuleComplex"] = class_dict
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict, "RuleComplex", str(output), import_style="relative", class_import_graph={}
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert "Functions_new.Converter.MotorCAD." in source
+    assert "self.fct_name.lower().replace(" in source
+
+
 def test_exception_sorting_reports_circular_dependencies():
     definitions = ast.parse(
         "class AError(BError): pass\nclass BError(AError): pass\n"

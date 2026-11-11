@@ -17,7 +17,7 @@ from pyleecan.Classes_new.var_load_voltage import VarLoadVoltage
 from pyleecan.definitions import DATA_DIR, TEST_DIR
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.Plot import dict_2D
-from pyleecan.Functions_new.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 
 is_show_fig = False
 
