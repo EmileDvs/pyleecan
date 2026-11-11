@@ -20,7 +20,7 @@ class SlotUD2(Slot):
     ----------
     line_list : [Line] or None
         list of line to draw the edges of the slot
-        Default: None
+        Default: []
     active_surf : Surface or None
         Active surface of the Slot
         Default: Surface()
@@ -32,7 +32,7 @@ class SlotUD2(Slot):
         Default: None
     """
 
-    line_list: list[Line] | None = None
+    line_list: list[Line] | None = field(default_factory=list)
     """list of line to draw the edges of the slot"""
     active_surf: Surface | None = field(
         default_factory=lambda: Surface(), metadata={"default_class": "Surface"}

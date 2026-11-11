@@ -40,12 +40,12 @@ def test_generated_defaults_and_sentinel_in_isolated_package(
         "MatMagnetics",
         "Winding",
         "MeshSolution",
+        "OutMagFEMM",
     ):
         class_generator.generate_class(
             generation,
             name,
             str(tmp_path / "Classes_new"),
-            is_new=True,
             import_style=import_style,
             shared_error_definitions={},
         )
@@ -61,6 +61,7 @@ from pyleecan.Classes_new.material import Material
 from pyleecan.Classes_new.winding import Winding
 from pyleecan.Classes_new.mesh import Mesh
 from pyleecan.Classes_new.mesh_solution import MeshSolution
+from pyleecan.Classes_new.out_mag_femm import OutMagFEMM
 from pyleecan.Classes_new.xoutput import XOutput
 
 fields = {{
@@ -103,6 +104,15 @@ assert type(Winding().conductor).__name__ == "Conductor"
 mesh_solution = MeshSolution()
 assert isinstance(mesh_solution.mesh, Mesh)
 assert mesh_solution.mesh.parent is mesh_solution
+assert mesh_solution.solution_dict == {{}}
+assert mesh_solution.solution_dict is not MeshSolution().solution_dict
+assert MeshSolution(solution_dict=None).solution_dict is None
+first_handler, second_handler = OutMagFEMM(), OutMagFEMM()
+assert first_handler.handler_list == [] and second_handler.handler_list == []
+assert first_handler.handler_list is not second_handler.handler_list
+assert OutMagFEMM(handler_list=None).handler_list is None
+handlers = [object()]
+assert OutMagFEMM(handler_list=handlers).handler_list is handlers
 simulation = Simulation(machine=None, input=None, var_simu=-1)
 assert type(simulation.var_simu).__name__ == "VarSimu"
 simulation.var_simu = -1
@@ -142,6 +152,28 @@ def test_object_default_metadata_and_docs():
     assert "'default_class': 'VarSimu'" in default
 
 
+@pytest.mark.parametrize(
+    ("type_name", "factory", "display"),
+    [
+        ("[_FEMMHandler]", "list", "[]"),
+        ("[Hole]", "list", "[]"),
+        ("{Solution}", "dict", "{}"),
+        ("{[Solution]}", "dict", "{}"),
+    ],
+)
+def test_typed_container_defaults(type_name, factory, display):
+    prop = {"type": type_name, "value": ""}
+    assert class_generator._field_default(prop) == f"field(default_factory={factory})"
+    assert class_generator._display_default(prop) == display
+    prop["value"] = -1
+    assert class_generator._field_default(prop) == f"field(default_factory={factory})"
+    assert class_generator._display_default(prop) == display
+    for value in (None, "None"):
+        prop["value"] = value
+        assert class_generator._field_default(prop) == "None"
+        assert class_generator._display_default(prop) == "None"
+
+
 def test_parent_mapping_includes_owners_of_child_types():
     generation = read_all(DOC_DIR)
     mapping = class_generator.parent_type_mapping(generation)
@@ -162,7 +194,6 @@ def test_generated_factory_reuses_static_mesh_import(
         generation,
         "MeshSolution",
         str(tmp_path),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
         shared_error_definitions={},

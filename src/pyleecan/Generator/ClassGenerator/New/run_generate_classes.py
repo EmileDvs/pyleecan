@@ -1,10 +1,9 @@
 import ast
 import json
-import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from os import cpu_count, listdir, remove
-from os.path import basename, isdir, isfile, join, realpath
+from os.path import basename, isdir, isfile, join
 
 from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
 from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
@@ -18,10 +17,6 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     validate_class_module_names,
 )
 from pyleecan.Generator.read_fct import read_all
-from pyleecan.Generator.write_fct import write_file
-
-# List of the main packages (to sort the classes)
-PACKAGE_LIST = ["Geometry", "Machine", "Material", "Slot", "Import"]
 
 EXPERIMENTAL_INIT = '''"""Experimental dataclass-based Pyleecan classes."""
 
@@ -98,13 +93,18 @@ def generate_code(
     root_path,
     gen_dict=None,
     soft_name="pyleecan",
-    is_log=True,
     class_list=None,
     max_workers=None,
-    is_new=True,
     import_style="absolute",
 ):
-    """Generate the package Classes code according to doc in root_path
+    """Generate dataclasses in Classes_new without modifying legacy outputs.
+
+    The initializer, class dictionary, parent mapping, and shared exceptions
+    are generated from the full CSV dictionary even during partial generation.
+    A full run is required when upgrading from the old two-argument import
+    helper. Generate Functions_new before importing the generated classes.
+    Class-valued fields with an empty CSV default construct the declared class;
+    explicitly supplied None is preserved and -1 constructs the class.
 
     Parameters
     ----------
@@ -114,29 +114,10 @@ def generate_code(
         Generation dictionary (contains all the csv data)
     soft_name : str
         Name of the software to generate
-    is_log : bool
-        True to add the log related code (get_logger...)
     class_list : list
         List of class csv path to generate
     max_workers : int, optional
         Maximum number of classes to generate concurrently. Defaults to at most 8.
-    is_new : bool, optional
-        Generate experimental dataclasses in Classes_new without modifying
-        legacy class files or bookkeeping. Module names use snake_case without
-        the former "_new" suffix. Generate the experimental package initializer,
-        the full CSV-derived _class_dict.json, and the parent type mapping, even
-        for a partial run. Validation exceptions and shared exception classes
-        are generated in _error.py, including for partial runs. Shared method
-        exceptions are derived from the full generation dictionary. The
-        _import.py module also references the full generation dictionary.
-        A full generation is required before using partial generation when
-        upgrading from the former two-argument experimental import_class API.
-        Generate Functions_new with its generate_function_new_classes module
-        before importing generated classes. Load/save imports remain legacy.
-        Class-valued fields with an empty CSV default use a lazy constructor;
-        explicitly supplied None is preserved, and -1 constructs the declared
-        class. Regenerate the full package to apply this to all existing classes.
-        Defaults to True; False selects this generator's legacy output mode.
     import_style : str, optional
         "relative" or "absolute" imports from the generated package in class files.
 
@@ -145,7 +126,7 @@ def generate_code(
     None
     """
     _validate_import_style(import_style)
-    CLASS_DIR = join(root_path, "Classes_new" if is_new else "Classes")
+    CLASS_DIR = join(root_path, "Classes_new")
     DOC_DIR = join(root_path, "Generator", "ClassesRef")
     print("Reading classes csv in: " + DOC_DIR)
     print("Saving generated files in: " + CLASS_DIR)
@@ -153,45 +134,41 @@ def generate_code(
     # Read all the csv files and snapshot imports before generated files are removed.
     if gen_dict is None:
         gen_dict = read_all(DOC_DIR, soft_name=soft_name)
-    if is_new:
-        validate_class_module_names(gen_dict)
+    validate_class_module_names(gen_dict)
     class_import_graph = get_class_import_graph(
         join(root_path, "Classes"), gen_dict, soft_name
     )
 
-    if is_new:
-        if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, "_pyleecan_class.py")):
-            raise FileNotFoundError(
-                "Experimental output requires Classes_new/_pyleecan_class.py: "
-                + CLASS_DIR
-            )
-        import_path = join(CLASS_DIR, "_import.py")
-        if class_list is not None and isfile(import_path):
-            with open(import_path, encoding="utf-8") as import_file:
-                previous = ast.parse(import_file.read(), filename=import_path)
-            for definition in previous.body:
-                if (
-                    isinstance(definition, ast.FunctionDef)
-                    and definition.name == "import_class"
-                    and definition.args.args
-                    and definition.args.args[0].arg == "mod_name"
-                ):
-                    raise ValueError(
-                        "The experimental import_class API changed; perform a full "
-                        "generation before generating individual classes."
-                    )
-        class_names = (
-            set(basename(csv_path)[:-4] for csv_path in class_list)
-            if class_list is not None
-            else set(gen_dict)
+    if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, "_pyleecan_class.py")):
+        raise FileNotFoundError(
+            "Experimental output requires Classes_new/_pyleecan_class.py: "
+            + CLASS_DIR
         )
-        generation_names = sorted(name for name in gen_dict if name in class_names)
-        shared_errors = _shared_error_definitions(
-            gen_dict, CLASS_DIR, soft_name, class_import_graph
-        )
-        _write_shared_errors(CLASS_DIR, shared_errors)
-    else:
-        generation_names = None
+    import_path = join(CLASS_DIR, "_import.py")
+    if class_list is not None and isfile(import_path):
+        with open(import_path, encoding="utf-8") as import_file:
+            previous = ast.parse(import_file.read(), filename=import_path)
+        for definition in previous.body:
+            if (
+                isinstance(definition, ast.FunctionDef)
+                and definition.name == "import_class"
+                and definition.args.args
+                and definition.args.args[0].arg == "mod_name"
+            ):
+                raise ValueError(
+                    "The experimental import_class API changed; perform a full "
+                    "generation before generating individual classes."
+                )
+    class_names = (
+        set(basename(csv_path)[:-4] for csv_path in class_list)
+        if class_list is not None
+        else set(gen_dict)
+    )
+    generation_names = sorted(name for name in gen_dict if name in class_names)
+    shared_errors = _shared_error_definitions(
+        gen_dict, CLASS_DIR, soft_name, class_import_graph
+    )
+    _write_shared_errors(CLASS_DIR, shared_errors)
 
     if class_list is None:
         # Deleting all the previous class
@@ -199,66 +176,17 @@ def generate_code(
         for file_name in listdir(CLASS_DIR):
             if file_name[0] != "_":
                 remove(join(CLASS_DIR, file_name))
-    else:
-        # Deleting only given classes in class_list
-        class_name_list = list()
-        for csv_path in class_list:
-            class_name = basename(csv_path)[:-4]
-            class_name_list.append(class_name)
-            class_path_py = realpath(join(CLASS_DIR, class_name + ".py"))
-            if isfile(class_path_py):
-                print("Deleting python class file: " + class_path_py)
-                remove(class_path_py)
-
-    if is_new:
-        _generate_classes(
-            gen_dict,
-            generation_names,
-            CLASS_DIR,
-            soft_name,
-            is_log,
-            class_import_graph,
-            max_workers,
-            is_new=True,
-            import_style=import_style,
-            shared_error_definitions=shared_errors,
-        )
-        _write_experimental_bookkeeping(CLASS_DIR, gen_dict, soft_name, import_style)
-        return
-
-    # A file to import every classes quickly
-    import_file = open(join(CLASS_DIR, "_import_all.py"), "w")
-    # import_file.write("# -*- coding: utf-8 -*-\n\n")
-    import_file.write('"""File generated by generate_code() - \n')
-    import_file.write('WARNING! All changes made in this file will be lost!\n"""\n\n')
-
-    # Keep generated bookkeeping deterministic while class modules are generated in parallel.
-    generation_names = []
-    for class_name, _ in iter(sorted(list(gen_dict.items()))):
-        import_file.write(
-            "from ..Classes." + class_name + " import " + class_name + "\n"
-        )
-        if class_list is None or class_name in class_name_list:
-            generation_names.append(class_name)
-
-    import_file.close()
-    print("Generation of import_all.py")
-
     _generate_classes(
         gen_dict,
         generation_names,
         CLASS_DIR,
         soft_name,
-        is_log,
         class_import_graph,
         max_workers,
         import_style=import_style,
+        shared_error_definitions=shared_errors,
     )
-
-    # Save gen_dict
-    class_dict_file = join(CLASS_DIR, "_class_dict.json")
-    with open(class_dict_file, "w") as json_file:
-        json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
+    _write_experimental_bookkeeping(CLASS_DIR, gen_dict, soft_name, import_style)
 
 
 def _write_experimental_bookkeeping(class_dir, gen_dict, soft_name, import_style):
@@ -317,10 +245,8 @@ def _generate_classes(
     generation_names,
     class_dir,
     soft_name,
-    is_log,
     class_import_graph,
     max_workers,
-    is_new=False,
     import_style="absolute",
     shared_error_definitions=None,
 ):
@@ -328,14 +254,11 @@ def _generate_classes(
         print("Generation of " + class_name + " class")
         generation_kwargs = {
             "soft_name": soft_name,
-            "is_log": is_log,
-            "is_new": is_new,
             "import_style": import_style,
+            "shared_error_definitions": shared_error_definitions,
         }
         if import_graph is not None:
             generation_kwargs["class_import_graph"] = import_graph
-        if is_new:
-            generation_kwargs["shared_error_definitions"] = shared_error_definitions
         generate_class(gen_dict, class_name, class_dir, **generation_kwargs)
 
     if generation_names and len(class_import_graph) == len(gen_dict):
@@ -362,15 +285,12 @@ def run_generate_classes(
     doc_dir=DOC_DIR,
     int_dir=INT_DIR,
     main_dir=MAIN_DIR,
-    is_ruff=True,
     soft_name=PACKAGE_NAME,
-    is_log=True,
     class_list=None,
     max_workers=None,
-    is_new=True,
     import_style="absolute",
 ):
-    """Generate experimental dataclasses by default, or select legacy output.
+    """Generate experimental dataclasses.
 
     Experimental generation writes only selected modules in ``Classes_new``
     with snake_case names and does not rewrite CSVs or legacy bookkeeping.
@@ -381,9 +301,7 @@ def run_generate_classes(
     Class dictionary keys and metadata retain their source CSV class names.
     The experimental normalization classes use names such as ``NormVector``;
     their legacy names remain accepted when loading serialized data.
-    ``is_ruff`` controls
-    full-file formatting of generated legacy modules; dataclasses are always
-    formatted by the class generator. ``import_style`` selects "absolute"
+    Dataclasses are formatted by the class generator. ``import_style`` selects "absolute"
     (the default) or "relative" imports in generated class files.
     """
 
@@ -392,46 +310,22 @@ def run_generate_classes(
         doc_dir, is_internal=False, in_path=int_dir, soft_name=soft_name
     )
 
-    if not is_new:
-        for class_dict in gen_dict.values():
-            # Write class into csv format following latest template
-            write_file(class_dict)
-
-        gen_dict = read_all(
-            doc_dir, is_internal=False, in_path=int_dir, soft_name=soft_name
-        )
-
     generate_code(
         main_dir,
         gen_dict,
         soft_name=soft_name,
-        is_log=is_log,
         class_list=class_list,
         max_workers=max_workers,
-        is_new=is_new,
         import_style=import_style,
     )
 
-    if is_ruff and not is_new:
-        selected = (
-            set(basename(csv_path)[:-4] for csv_path in class_list)
-            if class_list is not None
-            else set(gen_dict)
-        )
-        class_paths = [
-            join(main_dir, "Classes", name + ".py")
-            for name in sorted(gen_dict)
-            if name in selected
-        ]
-        if class_paths:
-            subprocess.run(["ruff", "format", *class_paths], check=True)
     now = datetime.now()
     print("End at: ", now.strftime("%H:%M:%S"))
 
 
 if __name__ == "__main__":
     # To generate all classes
-    run_generate_classes(max_workers=cpu_count(), is_new=True, import_style="relative")
+    run_generate_classes(max_workers=cpu_count(), import_style="relative")
 
     # list_csv = [
     #     "Data.csv",

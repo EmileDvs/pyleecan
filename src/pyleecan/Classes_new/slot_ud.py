@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotUD.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ..Functions_new.labels import SOP_LAB, WIND_LAB
 from ._error import SlotCheckError
@@ -20,7 +20,7 @@ class SlotUD(Slot):
     ----------
     line_list : [Line] or None
         list of line to draw the edges of the slot
-        Default: None
+        Default: []
     wind_begin_index : int or None
         Index of the first line to include in the winding
         Default: None
@@ -35,7 +35,7 @@ class SlotUD(Slot):
         Default: None
     """
 
-    line_list: list[Line] | None = None
+    line_list: list[Line] | None = field(default_factory=list)
     """list of line to draw the edges of the slot"""
     wind_begin_index: int | None = None
     """Index of the first line to include in the winding"""

@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from copy import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import imageio
 import matplotlib.pyplot as plt
@@ -38,14 +38,14 @@ class VectorField(PyleecanClass):
         Default: None
     components : {DataND} or None
         Dict of the components
-        Default: None
+        Default: {}
     """
 
     name: str | None = None
     """Name of the vector field"""
     symbol: str | None = None
     """Symbol of the vector field"""
-    components: dict[str, DataND] | None = None
+    components: dict[str, DataND] | None = field(default_factory=dict)
     """Dict of the components"""
 
     # Inlined from Methods.SciDataTool.VectorField.change_periodicity

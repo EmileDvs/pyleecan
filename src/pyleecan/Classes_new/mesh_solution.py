@@ -40,7 +40,7 @@ class MeshSolution(PyleecanClass):
         Default: Mesh()
     solution_dict : {Solution} or None
         A dictionary of Solution objects
-        Default: None
+        Default: {}
     group : dict or None
         Dict sorted by groups name with list of elements indices.
         Default: {}
@@ -60,7 +60,7 @@ class MeshSolution(PyleecanClass):
         default_factory=lambda: Mesh(), metadata={"default_class": "Mesh"}
     )
     """A Mesh object. """
-    solution_dict: dict[str, Solution] | None = None
+    solution_dict: dict[str, Solution] | None = field(default_factory=dict)
     """A dictionary of Solution objects"""
     group: dict[str, Any] | None = field(default_factory=dict)
     """Dict sorted by groups name with list of elements indices. """

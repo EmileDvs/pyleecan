@@ -14,7 +14,6 @@ import numpy as np
 import pytest
 
 from pyleecan.Classes.Magnetics import Magnetics
-from pyleecan.Classes.Simu1 import Simu1
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.Functions.Load.import_class import import_class
 from pyleecan.Functions.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
@@ -209,8 +208,7 @@ def test_real_legacy_loaders_are_simplified(
     output = tmp_path / "Classes_new"
     output.mkdir()
     path = generate_class(
-        gen_dict, class_name, str(output), is_new=True,
-        import_style=import_style, class_import_graph={}, shared_error_definitions={},
+        gen_dict, class_name, str(output), import_style=import_style, class_import_graph={}, shared_error_definitions={},
     )
     tree = ast.parse(Path(path).read_text(encoding="utf-8"))
     cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
@@ -437,7 +435,6 @@ def test_generated_get_values_reuses_norm_vector(
         gen_dict,
         class_name,
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -521,7 +518,7 @@ def test_generated_get_values_without_header_uses_new_normalization(
         methods,
     )
     path = generate_class(
-        gen_dict, class_name, str(output), is_new=True, class_import_graph={}
+        gen_dict, class_name, str(output), class_import_graph={}
     )
     source = Path(path).read_text(encoding="utf-8")
     assert '"pyleecan.Classes_new.norm_vector"' in source
@@ -562,7 +559,6 @@ def test_renamed_normalizations_and_legacy_serialization(
         data_gen_dict,
         "Data",
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -594,7 +590,6 @@ def test_renamed_normalizations_and_legacy_serialization(
             gen_dict,
             name,
             str(output),
-            is_new=True,
             import_style=import_style,
             class_import_graph={},
         )
@@ -718,8 +713,7 @@ def test_constructor_class_imports_use_shared_helper(generator):
     assert "__import__" not in source
 
 
-@pytest.mark.parametrize("is_new", [False, True])
-def test_generated_method_uses_import_class(tmp_path, monkeypatch, is_new):
+def test_generated_method_uses_import_class(tmp_path, monkeypatch):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -739,9 +733,9 @@ def test_generated_method_uses_import_class(tmp_path, monkeypatch, is_new):
         encoding="utf-8",
     )
     generate_class(
-        gen_dict, "Magnetics", str(output), is_new=is_new, class_import_graph={}
+        gen_dict, "Magnetics", str(output), class_import_graph={}
     )
-    path = output / ("magnetics.py" if is_new else "Magnetics.py")
+    path = output / "magnetics.py"
     module = ast.parse(path.read_text(encoding="utf-8"))
     cls = next(
         node
@@ -754,48 +748,21 @@ def test_generated_method_uses_import_class(tmp_path, monkeypatch, is_new):
         if isinstance(node, ast.FunctionDef) and node.name == "comp_axes"
     )
     body = ast.unparse(method)
-    expected_call = (
-        "import_class('Magnetics')" if is_new
-        else "_pyleecan_import_class('pyleecan.Classes', 'Magnetics')"
-    )
-    assert expected_call in body
+    assert "import_class('Magnetics')" in body
     assert "__import__" not in body
     namespace = {
-        "_pyleecan_import_class": import_class,
         "import_class": lambda name: Magnetics,
     }
     exec(body, namespace)
     assert namespace["comp_axes"](None) is Magnetics
     assert any(
         isinstance(node, ast.ImportFrom)
-        and node.module == (
-            "pyleecan.Classes_new._import" if is_new
-            else "pyleecan.Functions.Load.import_class"
-        )
+        and node.module == "pyleecan.Classes_new._import"
         and any(
             alias.name == "import_class"
-            and alias.asname == (None if is_new else "_pyleecan_import_class")
+            and alias.asname is None
             for alias in node.names
         )
         for node in module.body
         if isinstance(node, ast.ImportFrom) and node.module
     )
-
-
-def test_generated_legacy_constructor_loads_subclass(tmp_path, monkeypatch):
-    monkeypatch.setenv(
-        "PATH",
-        str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
-    )
-    gen_dict = read_all(DOC_DIR)
-    gen_dict["Output"] = deepcopy(gen_dict["Output"])
-    gen_dict["Output"]["methods"] = []
-    generate_class(gen_dict, "Output", str(tmp_path), class_import_graph={})
-    path = tmp_path / "Output.py"
-    spec = importlib.util.spec_from_file_location(
-        "pyleecan.Classes.test_generated_output", path
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    output = module.Output(simu=Simu1().as_dict())
-    assert isinstance(output.simu, Simu1)

@@ -18,17 +18,7 @@ from ....Generator.read_fct import (
     is_dict_pyleecan_type,
     is_list_pyleecan_type,
 )
-from ..as_dict_method_generator import generate_as_dict
-from ..compare_method_generator import generate_compare
-from ..copy_method_generator import generate_copy
-from ..eq_method_generator import generate_eq
-from ..init_void_method_generator import generate_init_void
-from ..properties_generator import generate_properties
-from ..set_None_method_generator import generate_set_None
-from ..size_of_method_generator import generate_size_of
-from ..str_method_generator import generate_str
 from .import_method_generator import import_method
-from .init_method_generator import generate_init
 
 CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
 
@@ -224,7 +214,7 @@ def _check_error_definitions():
 
 
 def _get_error_class_fingerprint(
-    path_to_gen, module_name, class_name, visited=(), by_origin=False
+    path_to_gen, module_name, class_name, visited=()
 ):
     """Return the definition of an exported exception class, if available."""
     if module_name in visited:
@@ -234,9 +224,7 @@ def _get_error_class_fingerprint(
         return None
     class_node = _get_exception_classes(module).get(class_name)
     if class_node is not None:
-        if by_origin:
-            return (module_name, class_name)
-        return ast.dump(class_node, include_attributes=False)
+        return (module_name, class_name)
 
     for node in module.body:
         if not isinstance(node, ast.ImportFrom):
@@ -250,13 +238,12 @@ def _get_error_class_fingerprint(
                 imported_module,
                 alias.name,
                 visited + (module_name,),
-                by_origin=by_origin,
             )
     return None
 
 
 def _get_error_class_definitions(
-    path_to_gen, module_name, class_name, visited=(), by_origin=False
+    path_to_gen, module_name, class_name, visited=()
 ):
     """Return exception definitions and their exception bases in dependency order."""
     if module_name in visited:
@@ -287,7 +274,6 @@ def _get_error_class_definitions(
             imported[0],
             imported[1],
             visited + (module_name,),
-            by_origin=by_origin,
         )
     if class_name not in _get_exception_classes(module):
         return []
@@ -299,7 +285,7 @@ def _get_error_class_definitions(
         if base.id in classes:
             dependencies.extend(
                 _get_error_class_definitions(
-                    path_to_gen, module_name, base.id, visited, by_origin=by_origin
+                    path_to_gen, module_name, base.id, visited
                 )
             )
         elif base.id in imports:
@@ -310,8 +296,7 @@ def _get_error_class_definitions(
                     imported_module,
                     imported_name,
                     visited + (module_name,),
-                    by_origin=by_origin,
-                )
+                    )
             )
 
     definition = ast.parse(ast.unparse(class_node)).body[0]
@@ -326,9 +311,6 @@ def _get_error_class_definitions(
         if existing is not None:
             if (
                 existing.error_origin != dependency.error_origin
-                if by_origin
-                else ast.dump(existing, include_attributes=False)
-                != ast.dump(dependency, include_attributes=False)
             ):
                 return []
             continue
@@ -386,7 +368,6 @@ def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_gra
                 soft_name,
                 reserved_names=reserved,
                 class_import_graph=class_import_graph,
-                by_origin=True,
             )
         for definition in prepared[-1]:
             origin = definition.error_origin
@@ -426,7 +407,7 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
             if not isinstance(base, ast.Name):
                 raise TypeError(f"Unsupported exception base in {origin!r}")
             resolved = _get_error_class_fingerprint(
-                source_path, origin[0], base.id, by_origin=True
+                source_path, origin[0], base.id
             )
             if resolved is not None:
                 if resolved not in definitions:
@@ -478,10 +459,8 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
         error_file.write(source)
 
 
-def _same_error_class_import(
-    path_to_gen, first_identity, second_identity, by_origin=False
-):
-    """Check whether two imports refer to identically defined exception classes."""
+def _same_error_class_import(path_to_gen, first_identity, second_identity):
+    """Check whether two imports refer to the same exception class."""
     if (
         first_identity[0] != "ImportFrom"
         or second_identity[0] != "ImportFrom"
@@ -490,11 +469,11 @@ def _same_error_class_import(
     ):
         return False
     first_fingerprint = _get_error_class_fingerprint(
-        path_to_gen, first_identity[2], first_identity[3], by_origin=by_origin
+        path_to_gen, first_identity[2], first_identity[3]
     )
     return first_fingerprint is not None and first_fingerprint == (
         _get_error_class_fingerprint(
-            path_to_gen, second_identity[2], second_identity[3], by_origin=by_origin
+            path_to_gen, second_identity[2], second_identity[3]
         )
     )
 
@@ -1056,7 +1035,7 @@ def _resolve_method_relative_imports(source, source_package):
 
 
 def _expand_error_wildcard_imports(
-    module, method_node, used_names, path_to_gen, source_package, by_origin=False
+    module, method_node, used_names, path_to_gen, source_package
 ):
     """Resolve wildcard imports whose used names are package exception classes."""
     method_local_names = {
@@ -1121,12 +1100,8 @@ def _expand_error_wildcard_imports(
 
         exception_classes = _get_exception_classes(package_module)
         error_fingerprints = {
-            name: (
-                (".".join(module_parts), name)
-                if by_origin
-                else ast.dump(node, include_attributes=False)
-            )
-            for name, node in exception_classes.items()
+            name: (".".join(module_parts), name)
+            for name in exception_classes
         }
         for statement in package_module.body:
             if isinstance(statement, ast.ImportFrom):
@@ -1135,8 +1110,7 @@ def _expand_error_wildcard_imports(
                     if alias.name != "*" and "Error" in name:
                         error_fingerprints[name] = _get_error_class_fingerprint(
                             path_to_gen, ".".join(module_parts), name,
-                            by_origin=by_origin,
-                        )
+                                    )
             elif isinstance(statement, ast.Import):
                 for alias in statement.names:
                     name = alias.asname or alias.name.split(".")[0]
@@ -1205,7 +1179,6 @@ def _get_method_source(
     soft_name,
     hoist_names=(),
     class_import_graph=None,
-    by_origin=False,
 ):
     """Return a method definition and the imports it needs."""
     method_parts = [part for part in (class_pack or "").split(".") if part]
@@ -1275,7 +1248,7 @@ def _get_method_source(
             if name in helper_function_nodes and name not in inline_helper_names
         )
     module.body, wildcard_reason = _expand_error_wildcard_imports(
-        module, method_node, used_names, path_to_gen, source_package, by_origin=by_origin
+        module, method_node, used_names, path_to_gen, source_package
     )
     if wildcard_reason is not None:
         return None, [], [], [], wildcard_reason
@@ -1562,7 +1535,7 @@ def _get_method_source(
             redirected_aliases = {}
             local_aliases = []
             for alias in aliases:
-                if by_origin and (
+                if (
                     class_name,
                     meth,
                     redirect_module,
@@ -1597,8 +1570,7 @@ def _get_method_source(
                 if (
                     target_module != soft_name + ".Classes." + class_name
                     or (
-                        by_origin
-                        and any(
+                        any(
                             alias.name in EXPERIMENTAL_GEOMETRY_CONSTANTS
                             for alias in target_aliases
                         )
@@ -1963,7 +1935,6 @@ def _prepare_class_methods(
     soft_name,
     reserved_names=(),
     class_import_graph=None,
-    by_origin=False,
 ):
     """Inline methods and collect their imports without name conflicts."""
     prepared = {}
@@ -1997,7 +1968,6 @@ def _prepare_class_methods(
             soft_name,
             repeated_assignments.get(meth, set()),
             class_import_graph=class_import_graph,
-            by_origin=by_origin,
         )
         if reason is not None:
             warnings.warn(
@@ -2175,7 +2145,7 @@ def _prepare_class_methods(
                     if previous is None or previous == identity:
                         continue
                     if _same_error_class_import(
-                        path_to_gen, previous, identity, by_origin=by_origin
+                        path_to_gen, previous, identity
                     ):
                         identity = previous
                     else:
@@ -2201,7 +2171,7 @@ def _prepare_class_methods(
                     continue
                 for alias in import_node.names:
                     definitions = _get_error_class_definitions(
-                        path_to_gen, module_name, alias.name, by_origin=by_origin
+                        path_to_gen, module_name, alias.name
                     )
                     for definition in definitions:
                         existing = candidate_error_definitions.get(
@@ -2210,9 +2180,6 @@ def _prepare_class_methods(
                         )
                         if existing is not None and (
                             existing.error_origin != definition.error_origin
-                            if by_origin
-                            else ast.dump(existing, include_attributes=False)
-                            != ast.dump(definition, include_attributes=False)
                         ):
                             conflict_reason = (
                                 "class error '"
@@ -2271,7 +2238,7 @@ def _prepare_class_methods(
                         alias
                         for alias in import_node.names
                         if not _get_error_class_definitions(
-                            path_to_gen, module_name, alias.name, by_origin=by_origin
+                            path_to_gen, module_name, alias.name
                         )
                     ]
                     if not retained_aliases:
@@ -4320,14 +4287,19 @@ def generate_class(
     class_name,
     path_to_gen,
     soft_name="pyleecan",
-    is_log=True,
     import_style="absolute",
     class_import_graph=None,
-    is_new=False,
     output_name=None,
     shared_error_definitions=None,
 ):
-    """Generate the corresponding class file.
+    """Generate a dataclass using the ``Classes_new`` inheritance hierarchy.
+
+    Configured module constants remain importable from the generated module;
+    CSV and class-body constants remain class attributes. Static imports of
+    generated classes target ``Classes_new``. Default factories reuse
+    unambiguous module-level class imports and otherwise load classes lazily.
+    Shared function imports target ``Functions_new`` except load/save helpers.
+    Generate that function tree before importing generated classes.
 
     Parameters
     ----------
@@ -4341,18 +4313,6 @@ def generate_class(
         "relative" or "absolute" style for imports from the generated Pyleecan package
     class_import_graph : dict, optional
         Snapshot of class imports used to detect circular imports.
-    is_new : bool, optional
-        Generate the experimental dataclass version instead of the legacy class.
-        The dataclass version uses the ``Classes_new`` inheritance hierarchy.
-        Configured module constants remain importable from the generated module;
-        CSV and class-body constants remain class attributes.
-        Static imports of generated class modules target ``Classes_new``; this
-        does not resolve any resulting circular imports.
-        Default factories reuse unambiguous module-level class imports and
-        otherwise load their class lazily.
-        Imports of shared functions target the generated ``Functions_new``
-        tree, except loading and saving helpers, which remain legacy for now.
-        Generate that tree with its generate_function_new_classes module first.
     output_name : str, optional
         Output module name for the dataclass version, without the .py extension.
         Defaults to the snake_case class name.
@@ -4363,24 +4323,21 @@ def generate_class(
 
     Returns
     -------
-    str or None
-        The generated path for the dataclass version; None for the legacy version.
+    str
+        The generated dataclass path.
 
     """
 
     if import_style not in ("relative", "absolute"):
         raise ValueError("import_style must be 'relative' or 'absolute'")
-    if not is_new and output_name is not None:
-        raise ValueError("output_name is only supported when is_new=True")
-    if is_new:
-        validate_class_module_names(gen_dict)
+    validate_class_module_names(gen_dict)
 
     class_dict = gen_dict[class_name]
     class_pack = class_dict["package"]
-    if is_new and class_import_graph is None:
+    if class_import_graph is None:
         source_class_dir = join(dirname(path_to_gen), "Classes")
         class_import_graph = get_class_import_graph(source_class_dir, gen_dict, soft_name)
-    if is_new and shared_error_definitions is None:
+    if shared_error_definitions is None:
         shared_error_definitions = _shared_error_definitions(
             gen_dict, path_to_gen, soft_name, class_import_graph
         )
@@ -4404,428 +4361,22 @@ def generate_class(
         soft_name,
         reserved_names=reserved_names,
         class_import_graph=class_import_graph,
-        by_origin=is_new,
     )
 
-    if is_new:
-        return _generate_dataclass_class(
-            gen_dict,
-            class_name,
-            path_to_gen,
-            soft_name,
-            import_style,
-            output_name,
-            method_sources,
-            method_imports,
-            fallback_reasons,
-            class_attributes,
-            method_default_overrides,
-            class_error_definitions,
-            shared_error_definitions,
-        )
-
-    # Start of file generation
-    # Create or Erase the file by opening it
-    class_file = open(join(path_to_gen, class_name + ".py"), "w", encoding="utf-8")
-
-    # List of non python type to import
-    import_type_list = list(find_import_type(gen_dict, class_dict, []))
-    if class_name in import_type_list:  # For recursive class
-        import_type_list.remove(class_name)
-    # Encoding
-    # class_file.write("# -*- coding: utf-8 -*-\n")
-
-    # Warning
-    class_file.write(
-        "# File generated according to "
-        + class_dict["path"][class_dict["path"].find("Generator") :]
-        + "\n"
-    )
-    if class_dict["is_internal"]:
-        class_file.write(
-            "# WARNING! Internal version of the class: DO NOT SHARE ON GITHUB !\n"
-        )
-    class_file.write("# WARNING! All changes made in this file will be lost!\n")
-    class_file.write(
-        '"""Method code available at https://github.com/Eomys/'
-        + soft_name
-        + "/tree/master/"
-        + soft_name
-        + "/Methods/"
-        + class_dict["package"]
-        + "/"
-        + class_dict["name"]
-        + '\n"""\n\n'
-    )
-    class_file.writelines(
-        name + " = " + repr(value) + "\n"
-        for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items()
-    )
-    class_file.writelines(
-        name + " = " + expression + "\n"
-        for name, expression in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(
-            class_name, {}
-        ).items()
-    )
-    if (
-        class_name in CLASS_MODULE_CONSTANTS
-        or class_name in CLASS_MODULE_CONSTANT_EXPRESSIONS
-    ):
-        class_file.write("\n")
-    if fallback_reasons:
-        class_file.write("# Inline fallback report:\n")
-        class_file.write(
-            "# These methods remain imported because their source or imports cannot "
-            "be safely moved into this class.\n"
-        )
-        class_file.writelines(
-            "# - " + meth + ": " + reason + "\n"
-            for meth, reason in fallback_reasons.items()
-        )
-        class_file.write("\n")
-
-    # Import
-    class_file.write("from os import linesep\n")
-    class_file.write("from sys import getsizeof\n")
-    if is_log:
-        class_file.write("from logging import getLogger\n")
-
-    if "ndarray" in import_type_list:
-        class_file.write("from ._check import set_array, " + "check_var, raise_\n")
-    else:
-        class_file.write("from ._check import check_var, raise_\n")
-
-    # Get logger function
-    if is_log:
-        class_file.write("from ..Functions.get_logger import get_logger\n")
-
-    #
-    # if len(class_dict["properties"]) == 0 and class_dict["mother"] == "":
-    #     class_file.write("from ..Functions.get_logger import check_init_dict\n")
-
-    # Save function
-    class_file.write("from ..Functions.save import save\n")
-    class_file.write("from ..Functions.load import load_init_dict\n")
-    class_file.write("from ..Functions.Load.import_class import import_class\n")
-    # Copy method
-    class_file.write("from copy import deepcopy\n")
-
-    # Import of the mother_class (FrozenClass by default)
-    # All the classes file are in the Classes folder (regardless of their main package)
-    if class_dict["mother"] != "" and "." not in class_dict["mother"]:
-        class_file.write(
-            "from ." + class_dict["mother"] + " import " + class_dict["mother"] + "\n\n"
-        )
-    elif class_dict["mother"] != "" and "." in class_dict["mother"]:
-        class_split = class_dict["mother"].split(".")
-        # Daughter of external package class
-        class_file.write(
-            "from " + ".".join(class_split[:-1]) + " import " + class_split[-1] + "\n\n"
-        )
-    else:
-        class_file.write("from ._frozen import FrozenClass\n\n")
-
-    # Import all the methods of the class
-    # The methods are in Methods.<Main package>.<class name>, one file per method
-    # if len(class_dict["methods"]) > 0:
-    #     class_file.write("# Import all class method\n")
-    #     class_file.write(
-    #         "# Try/catch to remove unnecessary dependencies in unused method\n"
-    #     )
-    class_file.writelines(
-        import_method(class_pack, class_name, meth)
-        for meth in class_dict["methods"]
-        if method_sources[meth] is None
-    )
-    class_file.writelines(ast.unparse(node) + "\n" for node in method_imports)
-    if len(class_dict["methods"]) > 0:
-        class_file.write("\n")
-
-    # ImportMatrixVal for ImportMatrix setter
-    if "ImportMatrix" in import_type_list:
-        class_file.write("from ..Classes.ImportMatrixVal import ImportMatrixVal\n")
-        class_file.write("from numpy import ndarray\n")
-        if "ndarray" not in import_type_list and "{ndarray}" not in import_type_list:
-            import_type_list.append("ndarray")
-    # Import Array from numpy
-    if (
-        "{ndarray}" in import_type_list
-        or "[ndarray]" in import_type_list
-        or "ndarray" in import_type_list
-    ):
-        class_file.write("from numpy import array, array_equal\n")
-    if "{ndarray}" in import_type_list:
-        import_type_list.remove("{ndarray}")
-    if "[ndarray]" in import_type_list:
-        import_type_list.remove("[ndarray]")
-    if "ndarray" in import_type_list:
-        import_type_list.remove("ndarray")
-    if "[]" in import_type_list:
-        class_file.write("from numpy import array, ndarray\n")
-    if "function" in import_type_list:
-        class_file.write("from ntpath import basename\n")
-        class_file.write("from os.path import isfile\n")
-        class_file.write("from ._check import CheckTypeError\n")
-        class_file.write("import numpy as np\n")
-        class_file.write("import random\n")
-        import_type_list.remove("function")
-    class_file.write("from numpy import isnan\n")  # For compare
-
-    # Import types from other package
-    types_imported = []
-    for import_type in import_type_list:
-        if "." in import_type and "SciDataTool" not in import_type:
-            class_file.write("from cloudpickle import dumps, loads\n")
-            class_file.write("from ._check import CheckTypeError\n")
-
-            # Remove the list if needed
-            if import_type.startswith("["):
-                import_type = import_type[1:-1]
-
-            # Extract import name
-            from_name = import_type[: import_type.rfind(".")]
-            type_name = import_type[import_type.rfind(".") + 1 :]
-
-            # Import the type if not already imported
-            if type_name not in types_imported:
-                class_file.write("try :\n")
-                class_file.write(
-                    TAB + "from " + from_name + " import " + type_name + "\n"
-                )
-                class_file.write("except ImportError :\n")
-                class_file.write(TAB + type_name + " = ImportError\n")
-
-                types_imported.append(type_name)
-
-    # Import of all needed software type for empty init
-    class_file.write("from ._check import InitUnKnowClassError\n")
-
-    # Class declaration
-    if class_dict["mother"] != "" and "." not in class_dict["mother"]:
-        class_file.write(
-            "\n\nclass " + class_name + "(" + class_dict["mother"] + "):\n"
-        )
-    elif class_dict["mother"] != "" and "." in class_dict["mother"]:
-        class_file.write(
-            "\n\nclass "
-            + class_name
-            + "("
-            + class_dict["mother"].split(".")[-1]
-            + "):\n"
-        )
-    else:
-        class_file.write("\n\nclass " + class_name + "(FrozenClass):\n")
-
-    # Class Docstring
-    if class_dict["desc"] != "":
-        class_file.write(TAB + '"""' + class_dict["desc"] + '"""\n')
-    class_file.write("\n")
-
-    # Declare all class Constante (VERSION should be a constante for every classes)
-    class_file.writelines(
-        TAB + cst["name"] + " = " + str(cst["value"]) + "\n"
-        for cst in class_dict["constants"]
-    )
-    class_file.writelines(
-        TAB + name + " = " + value + "\n"
-        for name, value in CLASS_BODY_CONSTANTS.get(class_name, {}).items()
-    )
-    class_file.writelines(
-        TAB + ast.unparse(assignment) + "\n" for assignment in class_attributes
-    )
-    class_file.write("\n")
-
-    # Asign all the Methods of the class
-    # if len(class_dict["methods"]) > 1:
-    #     class_file.write(
-    #         TAB
-    #         + "# Check ImportError to remove unnecessary dependencies in unused method\n"
-    #     )
-    for meth in class_dict["methods"]:
-        meth_name = meth.split(".")[-1]
-        if class_pack not in ["", None]:
-            class_file.write(
-                TAB
-                + "# cf Methods."
-                + class_pack
-                + "."
-                + class_name
-                + "."
-                + meth
-                + "\n"
-            )
-        else:
-            class_file.write(TAB + "# cf Methods." + class_name + "." + meth + "\n")
-        if method_sources[meth] is not None:
-            class_file.write(indent(method_sources[meth], TAB) + "\n\n")
-            for override in method_default_overrides[meth]:
-                class_file.write(TAB + ast.unparse(override) + "\n")
-                class_file.write("\n")
-            continue
-        # # class_file.write(TAB + "if isinstance(" + meth_name + ", ImportError):\n")
-        # # class_file.write(TAB2 + meth_name + " = property(\n")
-        # # class_file.write(TAB3 + "fget=lambda x: raise_(\n")
-        # # PEP8 formating
-        # if len(class_name) + 2 * len(meth_name) > 39:
-        #     # 2 lines Import text
-        #     class_file.write(TAB4 + "ImportError(\n")
-        #     class_file.write(
-        #         TAB5 + """"Can't use """ + class_name + " method " + meth_name + ': "\n'
-        #     )
-        #     class_file.write(TAB5 + "+ str(" + meth_name + ")\n")
-        #     class_file.write(TAB4 + ")\n")
-        # elif len(class_name) + 2 * len(meth_name) > 29:
-        #     # Import text on line different line
-        #     class_file.write(TAB4 + "ImportError(\n")
-        #     class_file.write(
-        #         TAB5 + """"Can't use """ + class_name + " method " + meth_name + ': "'
-        #     )
-        #     class_file.write(" + str(" + meth_name + ")\n")
-        #     class_file.write(TAB4 + ")\n")
-        # else:  # On one line
-        #     class_file.write(
-        #         TAB4
-        #         + """ImportError("Can't use """
-        #         + class_name
-        #         + " method "
-        #         + meth_name
-        #         + ': " + str('
-        #         + meth_name
-        #         + "))\n"
-        #     )
-        # class_file.write(TAB3 + ")\n")
-        # class_file.write(TAB2 + ")\n")
-        # class_file.write(TAB + "else:\n")
-        class_file.write(TAB + meth_name + " = " + meth_name + "\n")
-    # Save methods
-    class_file.write(TAB + "# generic save method is available in all object\n")
-    if "save" not in class_dict["methods"]:
-        class_file.write(TAB + "save = save\n")
-
-    if is_log:
-        class_file.write(TAB + "# get_logger method is available in all object\n")
-        class_file.write(TAB + "get_logger = get_logger\n\n")
-
-    # Add the __init__ method
-    if "__init__" not in class_dict["methods"]:
-        if len(class_dict["properties"]) == 0 and class_dict["mother"] == "":
-            class_file.write(generate_init_void(class_name, soft_name=soft_name) + "\n")
-        else:
-            class_file.write(
-                generate_init(gen_dict, class_dict, soft_name=soft_name) + "\n"
-            )
-
-    # Add the __str__ method
-    if "__str__" not in class_dict["methods"]:
-        class_file.write(generate_str(gen_dict, class_dict) + "\n")
-
-    # Add the __eq__ method
-    if "__eq__" not in class_dict["methods"]:
-        class_file.write(generate_eq(gen_dict, class_dict) + "\n")
-
-    # Add the compare method
-    if "compare" not in class_dict["methods"]:
-        class_file.write(generate_compare(gen_dict, class_dict) + "\n")
-
-    # Add the __sizeof__ method
-    class_file.write(generate_size_of(gen_dict, class_dict))
-
-    # Add the as_dict method
-    if "as_dict" not in class_dict["methods"]:
-        class_file.write(generate_as_dict(gen_dict, class_dict) + "\n")
-
-    # Add the copy method
-    if "copy" not in class_dict["methods"]:
-        class_file.write(generate_copy(gen_dict, class_dict) + "\n")
-
-    # Add the _set_None method
-    if "_set_None" not in class_dict["methods"]:
-        class_file.write(generate_set_None(gen_dict, class_dict, soft_name=soft_name))
-
-    # Add all the properties getter and setter
-    if len(class_dict["properties"]) > 0:
-        class_file.write(
-            "\n" + generate_properties(gen_dict, class_dict, soft_name=soft_name) + "\n"
-        )
-
-    class_file.writelines(
-        TAB + ast.unparse(definition).replace("\n", "\n" + TAB) + "\n\n"
-        for definition in class_error_definitions
-    )
-
-    # End of class generation
-    class_file.close()
-    class_path = join(path_to_gen, class_name + ".py")
-    if class_error_definitions:
-        with open(class_path, "a", encoding="utf-8") as generated_file:
-            generated_file.writelines(
-                "\n"
-                + definition.name
-                + " = "
-                + class_name
-                + "."
-                + definition.name
-                + "\n"
-                for definition in class_error_definitions
-            )
-    module_class_definitions = CLASS_MODULE_CLASS_DEFINITIONS.get(class_name)
-    if module_class_definitions is not None:
-        module_path = join(
-            dirname(path_to_gen),
-            "Methods",
-            *module_class_definitions[0].split("."),
-            "__init__.py",
-        )
-        with open(module_path, encoding="utf-8") as module_file:
-            module = ast.parse(module_file.read(), filename=module_path)
-        definitions = {
-            node.name: node for node in module.body if isinstance(node, ast.ClassDef)
-        }
-        missing_definitions = set(module_class_definitions[1]).difference(definitions)
-        if missing_definitions:
-            raise ValueError(
-                "Could not find configured module classes: "
-                + ", ".join(sorted(missing_definitions))
-                + " in "
-                + module_path
-            )
-        with open(class_path, "a", encoding="utf-8") as generated_file:
-            generated_file.write("\n")
-            generated_file.writelines(
-                ast.unparse(definitions[name]) + "\n\n"
-                for name in module_class_definitions[1]
-            )
-    with open(class_path, encoding="utf-8") as generated_file:
-        source = generated_file.read()
-    source = _apply_numpy_import_style(source)
-    source = _apply_pyvista_import_style(source)
-    source = _apply_os_import_style(source)
-    source = _apply_import_style(source, soft_name, import_style)
-    source = _organize_header_imports(source, class_name, class_path)
-    source = _regroup_pyleecan_imports(source, class_name, class_path)
-    with open(class_path, "w", encoding="utf-8") as generated_file:
-        generated_file.write(source)
-
-
-def generate_class_new(
-    gen_dict,
-    class_name,
-    path_to_gen,
-    soft_name="pyleecan",
-    is_log=True,
-    import_style="absolute",
-    output_name=None,
-):
-    """Compatibility wrapper for experimental dataclass generation."""
-    return generate_class(
+    return _generate_dataclass_class(
         gen_dict,
         class_name,
         path_to_gen,
-        soft_name=soft_name,
-        is_log=is_log,
-        import_style=import_style,
-        is_new=True,
-        output_name=output_name,
+        soft_name,
+        import_style,
+        output_name,
+        method_sources,
+        method_imports,
+        fallback_reasons,
+        class_attributes,
+        method_default_overrides,
+        class_error_definitions,
+        shared_error_definitions,
     )
 
 
@@ -4970,6 +4521,24 @@ def _field_default(prop, field_name="field", gen_dict=None):
     if is_class and value == "":
         default = f"default_factory=lambda: import_class({prop_type!r})()"
         requires_field = True
+    elif (
+        value == "" or type(value) is int and value == -1
+    ) and is_list_pyleecan_type(prop_type):
+        default = "default_factory=list"
+        requires_field = True
+    elif (
+        value == "" or type(value) is int and value == -1
+    ) and (
+        is_dict_list_pyleecan_type(prop_type) or is_dict_pyleecan_type(prop_type)
+    ):
+        default = "default_factory=dict"
+        requires_field = True
+    elif value == "None" and (
+        is_list_pyleecan_type(prop_type)
+        or is_dict_list_pyleecan_type(prop_type)
+        or is_dict_pyleecan_type(prop_type)
+    ):
+        default = "None"
     elif value in ("", None):
         if prop_type in ("list", "[]", "[ndarray]"):
             default = "default_factory=list"
@@ -5162,6 +4731,11 @@ def _display_default(prop, gen_dict=None):
     prop_type = prop["type"]
     if gen_dict is not None and prop_type in gen_dict and value == "":
         return NORMALIZATION_CLASS_NAMES.get(prop_type, prop_type) + "()"
+    if value == "" or type(value) is int and value == -1:
+        if is_list_pyleecan_type(prop_type):
+            return "[]"
+        if is_dict_list_pyleecan_type(prop_type) or is_dict_pyleecan_type(prop_type):
+            return "{}"
     if value in ("", None, "None"):
         if prop_type == "list":
             return "[]"

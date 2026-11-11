@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamHoleNS.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -20,15 +20,15 @@ class LamHoleNS(LamH):
     ----------
     hole_north : [Hole] or None
         lamination Holes for North pole
-        Default: None
+        Default: []
     hole_south : [Hole] or None
         lamination Holes for South pole
-        Default: None
+        Default: []
     """
 
-    hole_north: list[Hole] | None = None
+    hole_north: list[Hole] | None = field(default_factory=list)
     """lamination Holes for North pole"""
-    hole_south: list[Hole] | None = None
+    hole_south: list[Hole] | None = field(default_factory=list)
     """lamination Holes for South pole"""
 
     # Inlined from Methods.Machine.LamHoleNS._plot_arrow_mag

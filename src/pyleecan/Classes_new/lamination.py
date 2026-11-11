@@ -83,10 +83,10 @@ class Lamination(PyleecanClass):
         Default: True
     axial_vent : [Hole] or None
         Axial ventilation ducts
-        Default: None
+        Default: []
     notch : [Notch] or None
         Lamination bore notches
-        Default: None
+        Default: []
     skew : Skew or None
         Skew object
         Default: None
@@ -121,9 +121,9 @@ class Lamination(PyleecanClass):
     """To fill"""
     is_stator: bool = True
     """To fill"""
-    axial_vent: list[Hole] | None = None
+    axial_vent: list[Hole] | None = field(default_factory=list)
     """Axial ventilation ducts"""
-    notch: list[Notch] | None = None
+    notch: list[Notch] | None = field(default_factory=list)
     """Lamination bore notches"""
     skew: Skew | None = field(default=None, metadata={"default_class": "Skew"})
     """Skew object"""

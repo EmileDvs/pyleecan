@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/MachineUD.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .lamination import Lamination
 from .machine import Machine
@@ -15,13 +15,13 @@ class MachineUD(Machine):
     ----------
     lam_list : [Lamination] or None
         List of Lamination
-        Default: None
+        Default: []
     is_sync : bool
         True if the machine should be handled as a Synchronous machine
         Default: True
     """
 
-    lam_list: list[Lamination] | None = None
+    lam_list: list[Lamination] | None = field(default_factory=list)
     """List of Lamination"""
     is_sync: bool = True
     """True if the machine should be handled as a Synchronous machine"""

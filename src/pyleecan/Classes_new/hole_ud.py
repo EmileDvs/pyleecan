@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/HoleUD.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
@@ -21,19 +21,19 @@ class HoleUD(HoleMag):
     ----------
     surf_list : [Surface] or None
         List of surface to draw the Hole. Surfaces must be ordered in trigo order, label must contain HoleMagnet for Magnet and Hole for holes
-        Default: None
+        Default: []
     magnet_dict : {Magnet} or None
         dictionary with the magnet for the Hole (None to remove magnet, key should be magnet_X)
-        Default: None
+        Default: {}
     name : str or None
         Name of the hole (for save)
         Default: None
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    surf_list: list[Surface] | None = None
+    surf_list: list[Surface] | None = field(default_factory=list)
     """List of surface to draw the Hole. Surfaces must be ordered in trigo order, label must contain HoleMagnet for Magnet and Hole for holes"""
-    magnet_dict: dict[str, Magnet] | None = None
+    magnet_dict: dict[str, Magnet] | None = field(default_factory=dict)
     """dictionary with the magnet for the Hole (None to remove magnet, key should be magnet_X)"""
     name: str | None = None
     """Name of the hole (for save)"""

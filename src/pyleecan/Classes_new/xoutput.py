@@ -25,13 +25,13 @@ class XOutput(Output):
     ----------
     paramexplorer_list : [ParamExplorer] or None
         List containing ParamExplorer
-        Default: None
+        Default: []
     output_list : [Output] or None
         List containing Output (or Xoutput) for each simulation
-        Default: None
+        Default: []
     xoutput_dict : {DataKeeper} or None
         dictionary containing DataKeeper
-        Default: None
+        Default: {}
     nb_simu : int
         Number of simulations excluding reference simulation
         Default: 0; Minimum: 0
@@ -49,11 +49,11 @@ class XOutput(Output):
     FONT_SIZE_TITLE = config_dict["PLOT"]["FONT_SIZE_TITLE"]
     FONT_SIZE_LABEL = config_dict["PLOT"]["FONT_SIZE_LABEL"]
     FONT_SIZE_LEGEND = config_dict["PLOT"]["FONT_SIZE_LEGEND"]
-    paramexplorer_list: list[ParamExplorer] | None = None
+    paramexplorer_list: list[ParamExplorer] | None = field(default_factory=list)
     """List containing ParamExplorer"""
-    output_list: list[Output] | None = None
+    output_list: list[Output] | None = field(default_factory=list)
     """List containing Output (or Xoutput) for each simulation"""
-    xoutput_dict: dict[str, DataKeeper] | None = None
+    xoutput_dict: dict[str, DataKeeper] | None = field(default_factory=dict)
     """dictionary containing DataKeeper"""
     nb_simu: int = 0
     """Number of simulations excluding reference simulation"""

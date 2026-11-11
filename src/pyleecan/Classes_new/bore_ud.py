@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/BoreUD.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .bore import Bore
 from .line import Line
@@ -15,7 +15,7 @@ class BoreUD(Bore):
     ----------
     line_list : [Line] or None
         List of line to draw the full bore
-        Default: None
+        Default: []
     sym : int
         Symmetry factor (1= full machine, 2= half of the machine...)
         Default: 1; Minimum: 1
@@ -24,7 +24,7 @@ class BoreUD(Bore):
         Default: None
     """
 
-    line_list: list[Line] | None = None
+    line_list: list[Line] | None = field(default_factory=list)
     """List of line to draw the full bore"""
     sym: int = 1
     """Symmetry factor (1= full machine, 2= half of the machine...)"""

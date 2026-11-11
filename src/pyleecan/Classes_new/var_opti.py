@@ -20,19 +20,19 @@ class VarOpti(VarParam):
     ----------
     objective_list : [OptiObjective] or None
         List containing OptiObjective objects
-        Default: None
+        Default: []
     constraint_list : [OptiConstraint] or None
         List containing OptiConstraint objects
-        Default: None
+        Default: []
     solver : OptiSolver or None
         Object that solve an OptiProblem
         Default: None
     """
 
     NAME: ClassVar = "Optimization"
-    objective_list: list[OptiObjective] | None = None
+    objective_list: list[OptiObjective] | None = field(default_factory=list)
     """List containing OptiObjective objects"""
-    constraint_list: list[OptiConstraint] | None = None
+    constraint_list: list[OptiConstraint] | None = field(default_factory=list)
     """List containing OptiConstraint objects"""
     solver: OptiSolver | None = field(
         default=None, metadata={"default_class": "OptiSolver"}

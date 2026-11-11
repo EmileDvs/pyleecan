@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamSquirrelCageMag.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -20,10 +20,10 @@ class LamSquirrelCageMag(LamSquirrelCage):
     ----------
     hole : [Hole] or None
         lamination Hole
-        Default: None
+        Default: []
     """
 
-    hole: list[Hole] | None = None
+    hole: list[Hole] | None = field(default_factory=list)
     """lamination Hole"""
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.build_geometry

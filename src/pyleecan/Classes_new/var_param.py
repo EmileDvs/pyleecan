@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/VarParam.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from .param_explorer import ParamExplorer
@@ -16,9 +16,9 @@ class VarParam(VarSimu):
     ----------
     paramexplorer_list : [ParamExplorer] or None
         List containing ParamSetter to define every simulation
-        Default: None
+        Default: []
     """
 
     NAME: ClassVar = "Parameter Sweep"
-    paramexplorer_list: list[ParamExplorer] | None = None
+    paramexplorer_list: list[ParamExplorer] | None = field(default_factory=list)
     """List containing ParamSetter to define every simulation"""

@@ -55,8 +55,7 @@ def test_module_binding_blocks_rewrite():
     )
 
 
-@pytest.mark.parametrize("is_new", [False, True])
-def test_generator_rewrites_inlined_methods_only(tmp_path, monkeypatch, is_new):
+def test_generator_rewrites_inlined_methods_only(tmp_path, monkeypatch):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -76,20 +75,17 @@ def test_generator_rewrites_inlined_methods_only(tmp_path, monkeypatch, is_new):
         encoding="utf-8",
     )
     generate_class(
-        gen_dict, "Magnetics", str(output), is_new=is_new, class_import_graph={}
+        gen_dict, "Magnetics", str(output), class_import_graph={}
     )
-    source = (output / ("magnetics.py" if is_new else "Magnetics.py")).read_text(
+    source = (output / "magnetics.py").read_text(
         encoding="utf-8"
     )
     assert "values = []" in source
     assert "data = {}" in source
     assert "list((1,))" in source
-    if not is_new:
-        assert "Magnetics_dict = dict()" in source
 
 
-@pytest.mark.parametrize("is_new", [False, True])
-def test_generator_preserves_shadowed_builtin(tmp_path, monkeypatch, is_new):
+def test_generator_preserves_shadowed_builtin(tmp_path, monkeypatch):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -108,9 +104,9 @@ def test_generator_preserves_shadowed_builtin(tmp_path, monkeypatch, is_new):
         encoding="utf-8",
     )
     generate_class(
-        gen_dict, "Magnetics", str(output), is_new=is_new, class_import_graph={}
+        gen_dict, "Magnetics", str(output), class_import_graph={}
     )
-    source = (output / ("magnetics.py" if is_new else "Magnetics.py")).read_text(
+    source = (output / "magnetics.py").read_text(
         encoding="utf-8"
     )
     assert "from collections import defaultdict as dict" in source

@@ -106,8 +106,7 @@ def test_numpy_style_still_works():
     assert "return np.zeros(2)" in transformed
 
 
-@pytest.mark.parametrize("is_new", [False, True])
-def test_generated_meshmat_pyvista_annotation(generator_environment, tmp_path, is_new):
+def test_generated_meshmat_pyvista_annotation(generator_environment, tmp_path):
     gen_dict = generator_environment
     gen_dict["MeshMat"] = deepcopy(gen_dict["MeshMat"])
     gen_dict["MeshMat"]["methods"] = ["get_mesh_pv"]
@@ -117,9 +116,9 @@ def test_generated_meshmat_pyvista_annotation(generator_environment, tmp_path, i
     methods.mkdir(parents=True)
     copy2(Path(MAIN_DIR) / "Methods" / "Mesh" / "MeshMat" / "get_mesh_pv.py", methods)
     generate_class(
-        gen_dict, "MeshMat", str(output), is_new=is_new, class_import_graph={}
+        gen_dict, "MeshMat", str(output), class_import_graph={}
     )
-    path = output / ("mesh_mat.py" if is_new else "MeshMat.py")
+    path = output / "mesh_mat.py"
     source = path.read_text(encoding="utf-8")
     assert "import pyvista as pv" in source
     assert "from pyvista.core.pointset import UnstructuredGrid" not in source

@@ -91,8 +91,7 @@ def test_os_method_imports_normalized_before_conflict_checks():
     assert "return os.path.join('a', 'b')" in method
 
 
-@pytest.mark.parametrize("is_new", [False, True])
-def test_generated_meshmat_os_imports(tmp_path, monkeypatch, is_new):
+def test_generated_meshmat_os_imports(tmp_path, monkeypatch):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -106,9 +105,9 @@ def test_generated_meshmat_os_imports(tmp_path, monkeypatch, is_new):
     methods.mkdir(parents=True)
     copy2(Path(MAIN_DIR) / "Methods" / "Mesh" / "MeshMat" / "get_mesh_pv.py", methods)
     generate_class(
-        gen_dict, "MeshMat", str(output), is_new=is_new, class_import_graph={}
+        gen_dict, "MeshMat", str(output), class_import_graph={}
     )
-    path = output / ("mesh_mat.py" if is_new else "MeshMat.py")
+    path = output / "mesh_mat.py"
     source = path.read_text(encoding="utf-8")
     assert "import os\n" in source
     assert "from os import " not in source
@@ -118,8 +117,7 @@ def test_generated_meshmat_os_imports(tmp_path, monkeypatch, is_new):
     assert "os.remove(path)" in source
 
 
-@pytest.mark.parametrize("is_new", [False, True])
-def test_hoisted_os_assignment_keeps_its_binding(tmp_path, monkeypatch, is_new):
+def test_hoisted_os_assignment_keeps_its_binding(tmp_path, monkeypatch):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -142,18 +140,16 @@ def test_hoisted_os_assignment_keeps_its_binding(tmp_path, monkeypatch, is_new):
         gen_dict,
         "Magnetics",
         str(output),
-        is_new=is_new,
         class_import_graph={},
     )
-    path = output / ("magnetics.py" if is_new else "Magnetics.py")
+    path = output / "magnetics.py"
     source = path.read_text(encoding="utf-8")
     assert "import os" in source
     assert "LOCATION = os.path.join(" in source
     assert "from os.path import join" not in source
 
 
-@pytest.mark.parametrize("is_new", [False, True])
-def test_hoisted_os_assignment_with_another_method(tmp_path, monkeypatch, is_new):
+def test_hoisted_os_assignment_with_another_method(tmp_path, monkeypatch):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -180,10 +176,9 @@ def test_hoisted_os_assignment_with_another_method(tmp_path, monkeypatch, is_new
         gen_dict,
         "Magnetics",
         str(output),
-        is_new=is_new,
         class_import_graph={},
     )
-    source = (output / ("magnetics.py" if is_new else "Magnetics.py")).read_text(
+    source = (output / "magnetics.py").read_text(
         encoding="utf-8"
     )
     assert "LOCATION = os.path.join(" in source

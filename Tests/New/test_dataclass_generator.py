@@ -34,8 +34,7 @@ def generator_environment(monkeypatch):
 
 def test_experimental_generator(generator_environment, tmp_path):
     path = class_generator.generate_class(
-        generator_environment, "Magnetics", str(tmp_path), is_new=True
-    )
+        generator_environment, "Magnetics", str(tmp_path), )
     first = Path(path).read_text(encoding="utf-8")
     assert Path(path).name == "magnetics.py"
     assert "from pyleecan.Classes_new._pyleecan_class import PyleecanClass" in first
@@ -54,8 +53,7 @@ def test_experimental_generator(generator_environment, tmp_path):
     )
 
     child_path = class_generator.generate_class(
-        generator_environment, "MagFEMM", str(tmp_path), is_new=True
-    )
+        generator_environment, "MagFEMM", str(tmp_path), )
     child_source = Path(child_path).read_text(encoding="utf-8")
     assert "from pyleecan.Classes_new.magnetics import Magnetics" in child_source
     child_module = ast.parse(child_source)
@@ -65,6 +63,14 @@ def test_experimental_generator(generator_environment, tmp_path):
     assert child_class.name == "MagFEMM"
     assert isinstance(child_class.bases[0], ast.Name)
     assert child_class.bases[0].id == "Magnetics"
+
+
+def test_class_generator_rejects_legacy_mode(generator_environment, tmp_path):
+    with pytest.raises(TypeError, match="is_new"):
+        class_generator.generate_class(
+            generator_environment, "Magnetics", str(tmp_path), is_new=False
+        )
+    assert not list(tmp_path.iterdir())
 
 
 def test_parent_mapping_uses_root_owners_and_generated_names(generator_environment):
@@ -185,7 +191,6 @@ def test_generated_normalization_does_not_import_parent(
         generator_environment,
         "Normalization",
         str(tmp_path),
-        is_new=True,
         import_style=import_style,
     )
     source = Path(path).read_text(encoding="utf-8")
@@ -421,13 +426,12 @@ def test_same_named_error_sources_raise_conflict(tmp_path, monkeypatch):
         identity = ("ImportFrom", 0, module, "SameError", None)
         identities.append(identity)
         definition = class_generator._get_error_class_definitions(
-            str(output), module, "SameError", by_origin=True
+            str(output), module, "SameError"
         )[0]
         definitions[definition.error_origin] = definition
 
-    assert class_generator._same_error_class_import(str(output), *identities)
     assert not class_generator._same_error_class_import(
-        str(output), *identities, by_origin=True
+        str(output), *identities
     )
     with pytest.raises(ValueError, match="SameError"):
         class_generator._write_shared_errors(str(output), definitions)
@@ -518,8 +522,7 @@ def test_generated_check_error_imports(
     output = tmp_path / "Classes_new"
     output.mkdir()
     path = class_generator.generate_class(
-        generator_environment, class_name, str(output), is_new=True,
-        import_style=import_style, class_import_graph={}, shared_error_definitions={},
+        generator_environment, class_name, str(output), import_style=import_style, class_import_graph={}, shared_error_definitions={},
     )
     tree = ast.parse(Path(path).read_text(encoding="utf-8"))
     imports = [
@@ -576,7 +579,7 @@ def test_generated_hole_m50_local_errors_are_usable(generator_environment, tmp_p
     output = root / "Classes_new"
     output.mkdir()
     definitions = class_generator._get_error_class_definitions(
-        str(output), "pyleecan.Methods.Slot.Slot", "SlotCheckError", by_origin=True
+        str(output), "pyleecan.Methods.Slot.Slot", "SlotCheckError"
     )
     shared = {definition.error_origin: definition for definition in definitions}
     info = deepcopy(generator_environment["HoleM50"])
@@ -584,7 +587,7 @@ def test_generated_hole_m50_local_errors_are_usable(generator_environment, tmp_p
     gen_dict = dict(generator_environment)
     gen_dict["HoleM50"] = info
     path = class_generator.generate_class(
-        gen_dict, "HoleM50", str(output), is_new=True, import_style="relative",
+        gen_dict, "HoleM50", str(output), import_style="relative",
         class_import_graph={}, shared_error_definitions=shared,
     )
     source = Path(path).read_text(encoding="utf-8")
@@ -682,7 +685,6 @@ def test_slot_w23_errors_have_deterministic_order(
         gen_dict,
         "SlotW23",
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -742,7 +744,6 @@ def test_data_normalizations_uses_default_factory(
         gen_dict,
         "Data",
         str(tmp_path),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -783,7 +784,6 @@ def test_field_attribute_does_not_shadow_factory(
         gen_dict,
         class_name,
         str(tmp_path),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -861,7 +861,6 @@ def test_experimental_self_imports_and_recursive_types(
         gen_dict,
         "Output",
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -922,13 +921,12 @@ def test_generated_var_simu_self_annotation(
         {"VarSimu": info},
         "VarSimu",
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
     source = Path(path).read_text(encoding="utf-8")
     assert "from __future__ import annotations" in source
-    assert "var_simu: VarSimu | None = None" in source
+    assert "var_simu: VarSimu | None = field(" in source
     name = "pyleecan.Classes_new.test_recursive_var_simu"
     spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
@@ -981,7 +979,6 @@ def test_experimental_domain_module_names_in_generated_classes(
             gen_dict,
             name,
             str(output),
-            is_new=True,
             import_style=import_style,
             class_import_graph={},
         )
@@ -1024,7 +1021,6 @@ def test_experimental_operating_point_module_names(
             gen_dict,
             name,
             str(tmp_path),
-            is_new=True,
             import_style=import_style,
             class_import_graph={},
         )
@@ -1113,7 +1109,6 @@ def test_experimental_femm_handler_import(
         gen_dict,
         "MagFEMM",
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -1147,7 +1142,6 @@ def test_experimental_method_uses_package_exception(
         gen_dict,
         "MagElmer",
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -1183,7 +1177,6 @@ def test_var_simu_elec_lut_import_is_local(
         gen_dict,
         "VarSimu",
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
         shared_error_definitions={},
@@ -1268,8 +1261,7 @@ def test_method_local_classes_use_import_class(
     output = tmp_path / "Classes_new"
     output.mkdir()
     path = class_generator.generate_class(
-        gen_dict, class_name, str(output), is_new=True,
-        import_style=import_style, class_import_graph={}, shared_error_definitions={},
+        gen_dict, class_name, str(output), import_style=import_style, class_import_graph={}, shared_error_definitions={},
     )
     tree = ast.parse(Path(path).read_text(encoding="utf-8"))
     cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
@@ -1298,30 +1290,6 @@ def test_method_local_classes_use_import_class(
         )
 
 
-def test_legacy_var_simu_elec_lut_import_remains_at_module_level(
-    generator_environment, tmp_path
-):
-    methods = tmp_path / "Methods" / "Simulation" / "VarSimu"
-    methods.mkdir(parents=True)
-    shutil.copy2(
-        Path(MAIN_DIR) / "Methods" / "Simulation" / "VarSimu" / "set_reused_data.py",
-        methods,
-    )
-    info = deepcopy(generator_environment["VarSimu"])
-    info["methods"] = ["set_reused_data"]
-    gen_dict = dict(generator_environment)
-    gen_dict["VarSimu"] = info
-    output = tmp_path / "Classes"
-    output.mkdir()
-    class_generator.generate_class(
-        gen_dict, "VarSimu", str(output), class_import_graph={}
-    )
-    tree = ast.parse((output / "VarSimu.py").read_text(encoding="utf-8"))
-    assert any(
-        isinstance(node, ast.ImportFrom)
-        and any(alias.name == "ElecLUTdq" for alias in node.names)
-        for node in tree.body
-    )
 
 
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])
@@ -1353,7 +1321,6 @@ def test_experimental_geometry_constant_import(
         gen_dict,
         class_name,
         str(output),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -1389,7 +1356,6 @@ def test_experimental_property_types_import_new_modules(
         gen_dict,
         "Machine",
         str(tmp_path),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -1403,30 +1369,6 @@ def test_experimental_property_types_import_new_modules(
     assert "Classes.Frame import Frame" not in source
 
 
-@pytest.mark.parametrize("import_style", ["absolute", "relative"])
-def test_legacy_arc_constant_import_unchanged(
-    generator_environment, tmp_path, import_style
-):
-    gen_dict = dict(generator_environment)
-    gen_dict["Arc1"] = deepcopy(gen_dict["Arc1"])
-    gen_dict["Arc1"]["methods"] = ["discretize"]
-    output = tmp_path / "Classes"
-    output.mkdir()
-    methods = tmp_path / "Methods" / "Geometry" / "Arc1"
-    methods.mkdir(parents=True)
-    shutil.copy2(
-        Path(MAIN_DIR) / "Methods" / "Geometry" / "Arc1" / "discretize.py", methods
-    )
-    class_generator.generate_class(
-        gen_dict, "Arc1", str(output), import_style=import_style, class_import_graph={}
-    )
-    source = (output / "Arc1.py").read_text(encoding="utf-8")
-    expected = (
-        "from .Machine import ARC_NPOINT_D"
-        if import_style == "relative"
-        else "from pyleecan.Classes.Machine import ARC_NPOINT_D"
-    )
-    assert expected in source
 
 
 @pytest.mark.parametrize(
@@ -1475,7 +1417,6 @@ def test_experimental_module_and_class_constants(
         {class_name: class_dict},
         class_name,
         str(tmp_path),
-        is_new=True,
         import_style=import_style,
         class_import_graph={},
     )
@@ -1528,7 +1469,6 @@ def test_experimental_method_uses_exported_module_constant(
         {"Skew": class_dict},
         "Skew",
         str(output),
-        is_new=True,
         class_import_graph={},
     )
     name = "pyleecan.Classes_new.test_constants_method"
@@ -1559,7 +1499,7 @@ def test_experimental_machine_method_uses_geometry_constant(
     )
     path = class_generator.generate_class(
         {"Machine": info, "Arc": generator_environment["Arc"]},
-        "Machine", str(output), is_new=True, import_style=import_style,
+        "Machine", str(output), import_style=import_style,
         class_import_graph={}, shared_error_definitions={},
     )
     source = Path(path).read_text(encoding="utf-8")
@@ -1603,8 +1543,7 @@ def test_generated_geometry_constant_defaults_at_runtime(
     monkeypatch.syspath_prepend(str(tmp_path))
     for name in gen_dict:
         class_generator.generate_class(
-            gen_dict, name, str(output), soft_name=package, is_new=True,
-            import_style=import_style, class_import_graph={},
+            gen_dict, name, str(output), soft_name=package, import_style=import_style, class_import_graph={},
             shared_error_definitions={},
         )
     line = importlib.import_module(package + ".Classes_new.line").Line
@@ -1674,7 +1613,6 @@ def test_experimental_generated_inheritance_imports(
             gen_dict,
             name,
             str(output_dir),
-            is_new=True,
             import_style=import_style,
             class_import_graph={},
         )
@@ -1705,7 +1643,6 @@ def test_experimental_custom_output_name(generator_environment, tmp_path, monkey
         generator_environment,
         "Magnetics",
         str(tmp_path),
-        is_new=True,
         output_name="custom",
         class_import_graph={},
     )
@@ -1715,21 +1652,3 @@ def test_experimental_custom_output_name(generator_environment, tmp_path, monkey
         isinstance(node, ast.ClassDef) and node.name == "Magnetics"
         for node in module.body
     )
-    with pytest.raises(ValueError, match="output_name"):
-        class_generator.generate_class(
-            generator_environment, "Magnetics", str(tmp_path), output_name="custom"
-        )
-
-
-def test_original_generation_remains_available(generator_environment, tmp_path):
-    class_generator.generate_class(generator_environment, "Magnetics", str(tmp_path))
-
-    source = (tmp_path / "Magnetics.py").read_text(encoding="utf-8")
-    module = ast.parse(source)
-    generated_class = next(
-        node
-        for node in module.body
-        if isinstance(node, ast.ClassDef) and node.name == "Magnetics"
-    )
-    assert isinstance(generated_class.bases[0], ast.Name)
-    assert generated_class.bases[0].id == "FrozenClass"

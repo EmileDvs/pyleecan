@@ -35,7 +35,7 @@ class VarSimu(PyleecanClass):
         Default: None
     datakeeper_list : [DataKeeper] or None
         List containing DataKeepers to extract VarSimu results
-        Default: None
+        Default: []
     is_keep_all_output : bool
         True to store every output in a list
         Default: False
@@ -53,7 +53,7 @@ class VarSimu(PyleecanClass):
         Default: True
     postproc_list : [Post] or None
         List of post-processing to run on XOutput after the multisimulation
-        Default: None
+        Default: []
     pre_keeper_postproc_list : [Post] or None
         If not None, replace the reference simulation postproc_list in each generated simulation (run before datakeeper)
         Default: None
@@ -69,7 +69,7 @@ class VarSimu(PyleecanClass):
     """Name of the multi-simulation"""
     desc: str | None = None
     """Multi-simulation description"""
-    datakeeper_list: list[DataKeeper] | None = None
+    datakeeper_list: list[DataKeeper] | None = field(default_factory=list)
     """List containing DataKeepers to extract VarSimu results """
     is_keep_all_output: bool = False
     """True to store every output in a list"""
@@ -83,7 +83,7 @@ class VarSimu(PyleecanClass):
     """Number of simulations"""
     is_reuse_femm_file: bool = True
     """True to reuse the femm file for each simulation (draw the machine only once, MagFEMM only)"""
-    postproc_list: list[Post] | None = None
+    postproc_list: list[Post] | None = field(default_factory=list)
     """List of post-processing to run on XOutput after the multisimulation"""
     pre_keeper_postproc_list: list[Post] | None = None
     """If not None, replace the reference simulation postproc_list in each generated simulation (run before datakeeper)"""

@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Import/ImportGenMatrixSin.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -18,10 +18,10 @@ class ImportGenMatrixSin(ImportMatrix):
     ----------
     sin_list : [ImportGenVectSin] or None
         List of sinus vector to generate the matrix lines
-        Default: None
+        Default: []
     """
 
-    sin_list: list[ImportGenVectSin] | None = None
+    sin_list: list[ImportGenVectSin] | None = field(default_factory=list)
     """List of sinus vector to generate the matrix lines"""
 
     # Inlined from Methods.Import.ImportGenMatrixSin.get_data

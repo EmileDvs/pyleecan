@@ -33,7 +33,7 @@ class MeshMat(Mesh):
     ----------
     element_dict : {ElementMat} or None
         Storing connectivity
-        Default: None
+        Default: {}
     node : NodeMat or None
         Storing nodes
         Default: NodeMat()
@@ -48,7 +48,7 @@ class MeshMat(Mesh):
         Default: False
     """
 
-    element_dict: dict[str, ElementMat] | None = None
+    element_dict: dict[str, ElementMat] | None = field(default_factory=dict)
     """Storing connectivity"""
     node: NodeMat | None = field(
         default_factory=lambda: import_class("NodeMat")(),
