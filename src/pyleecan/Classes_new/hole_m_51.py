@@ -1,16 +1,16 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/HoleM51.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.Geometry.inter_line_circle import inter_line_circle
-from ..Functions.labels import HOLEM_LAB
-from ..Functions.Plot import (
+from ..Functions_new.Geometry.inter_line_circle import inter_line_circle
+from ..Functions_new.labels import HOLEM_LAB
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
@@ -71,13 +71,13 @@ class HoleM51(HoleMag):
         Unit: m; Default: 0; Minimum: 0
     magnet_0 : Magnet or None
         First Magnet
-        Default: None
+        Default: Magnet()
     magnet_1 : Magnet or None
         Second Magnet
-        Default: None
+        Default: Magnet()
     magnet_2 : Magnet or None
         Third Magnet
-        Default: None
+        Default: Magnet()
     """
 
     IS_SYMMETRICAL: ClassVar = 1
@@ -104,11 +104,17 @@ class HoleM51(HoleMag):
     """magnet_0 position"""
     W7: float = 0
     """magnet_0 width"""
-    magnet_0: Magnet | None = None
+    magnet_0: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """First Magnet"""
-    magnet_1: Magnet | None = None
+    magnet_1: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Second Magnet"""
-    magnet_2: Magnet | None = None
+    magnet_2: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Third Magnet"""
 
     # Inlined from Methods.Slot.HoleM51._comp_point_coordinate

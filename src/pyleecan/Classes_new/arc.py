@@ -6,10 +6,10 @@ from typing import ClassVar
 
 import numpy as np
 
-from ..Functions.Geometry.inter_circle_circle import inter_circle_circle
-from ..Functions.Geometry.inter_line_circle import inter_line_circle
-from ..Functions.init_fig import init_fig
-from ..Functions.Plot import TEXT_BOX
+from ..Functions_new.Geometry.inter_circle_circle import inter_circle_circle
+from ..Functions_new.Geometry.inter_line_circle import inter_line_circle
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.Plot import TEXT_BOX
 from ._import import import_class
 from .line import Line
 from .segment import Segment

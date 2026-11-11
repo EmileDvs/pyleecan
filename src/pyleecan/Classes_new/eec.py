@@ -2,9 +2,9 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from ..Functions.Electrical.dqh_transformation import n2dqh_DataTime
+from ..Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .magnetics import Magnetics
@@ -51,7 +51,7 @@ class EEC(PyleecanClass):
 
     type_skin_effect: int = 1
     """Skin effect for resistance and inductance"""
-    OP: OP | None = None
+    OP: OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
     Tsta: float = 20
     """Average stator temperature for operational EEC calculation"""
@@ -67,7 +67,9 @@ class EEC(PyleecanClass):
     """Skin effect coefficient for inductances at rotor side"""
     R1: float | None = None
     """Stator phase resistance"""
-    fluxlink: Magnetics | None = None
+    fluxlink: Magnetics | None = field(
+        default=None, metadata={"default_class": "Magnetics"}
+    )
     """Magnetic model for flux linkage calculation"""
 
     # Inlined from Methods.Simulation.EEC.comp_fluxlinkage

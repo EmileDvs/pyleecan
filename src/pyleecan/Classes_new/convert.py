@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .. import __version__
-from ..Functions.Converter.Utils.ConvertionError import ConvertionError
+from ..Functions_new.Converter.Utils.ConvertionError import ConvertionError
 from ._pyleecan_class import PyleecanClass
 from .cond_type_11 import CondType11
 from .cond_type_12 import CondType12
@@ -72,7 +72,7 @@ class Convert(PyleecanClass):
     """convertion unit file .mot into unit_dict"""
     other_dict: dict[str, Any] = field(default_factory=dict)
     """convertion file .mot in dict"""
-    machine: Machine | None = None
+    machine: Machine | None = field(default=None, metadata={"default_class": "Machine"})
     """machine pyleecan"""
     rules_list: list[Any] = field(default_factory=list)
     """list differents rules"""

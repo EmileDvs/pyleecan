@@ -1,0 +1,32 @@
+from pyleecan.Classes_new.data_time import DataTime
+from pyleecan.Classes_new.solution_data import SolutionData
+
+
+def build_solution_data(
+    field, axis_list, name="", symbol="", unit="", is_real=True, type_element="triangle"
+):
+    """Build the MeshSolution objets from FEMM outputs.
+
+    Parameters
+    ----------
+    field : ndarray
+        a data field
+    axis_list : list
+        a list of SciDataTool axis
+
+    Returns
+    -------
+    solution: SolutionData
+        a SolutionData object
+    """
+
+    data = DataTime(
+        name=name,
+        unit=unit,
+        symbol=symbol,
+        axes=axis_list,
+        values=field,
+        is_real=is_real,
+    )
+
+    return SolutionData(field=data, label=symbol, type_element=type_element)

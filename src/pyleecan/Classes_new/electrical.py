@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/Electrical.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -50,13 +50,13 @@ class Electrical(PyleecanClass):
         Default: True
     """
 
-    eec: EEC | None = None
+    eec: EEC | None = field(default=None, metadata={"default_class": "EEC"})
     """Electrical Equivalent Circuit"""
     logger_name: str = "Pyleecan.Electrical"
     """Name of the logger to use"""
     freq_max: float = 40000
     """Maximum frequency to calculate voltage and current harmonics"""
-    LUT_enforced: LUT | None = None
+    LUT_enforced: LUT | None = field(default=None, metadata={"default_class": "LUT"})
     """Look-Up Tables to update equivalent circuit parameters"""
     Tsta: float = 20
     """Average stator temperature for Electrical calculation"""

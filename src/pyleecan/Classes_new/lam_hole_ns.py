@@ -5,8 +5,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
-from ..Functions.labels import HOLEM_LAB, decode_label
+from ..Functions_new.Geometry.transform_hole_surf import transform_hole_surf
+from ..Functions_new.labels import HOLEM_LAB, decode_label
 from .hole import Hole
 from .lam_h import LamH
 from .lamination import Lamination

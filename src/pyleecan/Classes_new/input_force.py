@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/InputForce.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._error import InputError
 from .import_vector_field import ImportVectorField
@@ -20,7 +20,9 @@ class InputForce(Input):
         Unit: N.m^2; Default: None
     """
 
-    P: ImportVectorField | None = None
+    P: ImportVectorField | None = field(
+        default=None, metadata={"default_class": "ImportVectorField"}
+    )
     """Magnetic air-gap surface force"""
 
     # Inlined from Methods.Simulation.InputForce.gen_input

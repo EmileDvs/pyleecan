@@ -131,6 +131,11 @@ def generate_code(
         _import.py module also references the full generation dictionary.
         A full generation is required before using partial generation when
         upgrading from the former two-argument experimental import_class API.
+        Generate Functions_new with its generate_function_new_classes module
+        before importing generated classes. Load/save imports remain legacy.
+        Class-valued fields with an empty CSV default use a lazy constructor;
+        explicitly supplied None is preserved, and -1 constructs the declared
+        class. Regenerate the full package to apply this to all existing classes.
         Defaults to True; False selects this generator's legacy output mode.
     import_style : str, optional
         "relative" or "absolute" imports from the generated package in class files.

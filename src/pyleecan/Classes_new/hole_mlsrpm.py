@@ -1,15 +1,15 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/HoleMLSRPM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.labels import HOLEM_LAB, update_RTS_index
-from ..Functions.Plot import (
+from ..Functions_new.labels import HOLEM_LAB, update_RTS_index
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
@@ -57,7 +57,7 @@ class HoleMLSRPM(HoleMag):
         Unit: m; Default: 0.0165
     magnet_0 : Magnet or None
         Magnet of the hole
-        Default: None
+        Default: Magnet()
     """
 
     IS_SYMMETRICAL: ClassVar = 1
@@ -76,7 +76,9 @@ class HoleMLSRPM(HoleMag):
     """Radius 2"""
     R3: float = 0.0165
     """Radius 3"""
-    magnet_0: Magnet | None = None
+    magnet_0: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Magnet of the hole"""
 
     # Inlined from Methods.Slot.HoleMLSRPM._comp_point_coordinate

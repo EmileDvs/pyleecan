@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from matplotlib.patches import Patch, Rectangle
 
-from ..Functions.init_fig import init_fig
+from ..Functions_new.init_fig import init_fig
 from .conductor import Conductor
 
 

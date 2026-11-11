@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/XOutput.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from sys import getsizeof
 
 import matplotlib.pyplot as plt
@@ -9,8 +9,8 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
 from .data_keeper import DataKeeper
 from .opti_objective import OptiObjective
 from .output import Output
@@ -57,7 +57,9 @@ class XOutput(Output):
     """dictionary containing DataKeeper"""
     nb_simu: int = 0
     """Number of simulations excluding reference simulation"""
-    xoutput_ref: Output | None = None
+    xoutput_ref: Output | None = field(
+        default=None, metadata={"default_class": "Output"}
+    )
     """Xoutput (or Output) of the reference simulation (only if is_keep_all_output is True and not included in output_list)"""
     xoutput_ref_index: int | None = None
     """Index of the Xoutput (or Output) of the reference simulation in the output_list (only if is_keep_all_output is True)"""

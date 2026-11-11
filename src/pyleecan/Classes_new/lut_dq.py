@@ -1,12 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/LUTdq.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 import scipy.interpolate as scp_int
 
-from ..Functions.Electrical.dqh_transformation import n2dqh_DataTime
+from ..Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from .data_nd import DataND
 from .eec_pmsm import EEC_PMSM
 from .electrical import Electrical
@@ -29,7 +29,9 @@ class LUTdq(LUT):
 
     Phi_dqh_mean: np.ndarray | None = None
     """RMS stator winding flux table in dqh frame (including magnets and currents given by I_dqh)"""
-    Phi_dqh_mag: DataND | None = None
+    Phi_dqh_mag: DataND | None = field(
+        default=None, metadata={"default_class": "DataND"}
+    )
     """RMS stator winding flux linkage spectrum in dqh frame including harmonics (only magnets)"""
 
     # Inlined from Methods.Output.LUTdq.get_index_open_circuit

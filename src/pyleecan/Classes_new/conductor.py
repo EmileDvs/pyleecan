@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Conductor.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -17,15 +17,19 @@ class Conductor(PyleecanClass):
     ----------
     cond_mat : Material or None
         Material of the conductor
-        Default: None
+        Default: Material()
     ins_mat : Material or None
         Material of the insulation
-        Default: None
+        Default: Material()
     """
 
-    cond_mat: Material | None = None
+    cond_mat: Material | None = field(
+        default_factory=lambda: Material(), metadata={"default_class": "Material"}
+    )
     """Material of the conductor"""
-    ins_mat: Material | None = None
+    ins_mat: Material | None = field(
+        default_factory=lambda: Material(), metadata={"default_class": "Material"}
+    )
     """Material of the insulation"""
 
     # Inlined from Methods.Machine.Conductor.check

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..Functions.Plot import (
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

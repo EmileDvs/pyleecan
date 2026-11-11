@@ -1,12 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/OutElec.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
-from ..Functions.Electrical.dqh_transformation_freq import (
+from ..Functions_new.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
+from ..Functions_new.Electrical.dqh_transformation_freq import (
     dqh2n_DataFreq,
     n2dqh_DataFreq,
 )
@@ -89,19 +89,21 @@ class OutElec(PyleecanClass):
 
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Electrical"""
-    Is: DataND | None = None
+    Is: DataND | None = field(default=None, metadata={"default_class": "DataND"})
     """Stator currents DataTime object"""
-    Ir: DataND | None = None
+    Ir: DataND | None = field(default=None, metadata={"default_class": "DataND"})
     """Rotor currents as a function of time (each column correspond to one phase)"""
     logger_name: str = "pyleecan.Electrical"
     """Name of the logger to use"""
     Pj_losses: float | None = None
     """Electrical Joule losses"""
-    Us: DataND | None = None
+    Us: DataND | None = field(default=None, metadata={"default_class": "DataND"})
     """Stator voltage as a function of time (each column correspond to one phase)"""
-    internal: OutInternal | None = None
+    internal: OutInternal | None = field(
+        default=None, metadata={"default_class": "OutInternal"}
+    )
     """OutInternal object containg outputs related to a specific model"""
-    OP: OP | None = None
+    OP: OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
     Pem_av: float | None = None
     """Average Electromagnetic power"""
@@ -111,9 +113,11 @@ class OutElec(PyleecanClass):
     """Rotation direction of the stator phases (phase_dir*(n-1)*pi/qs, default value given by PHASE_DIR_REF)"""
     current_dir: int | None = None
     """Rotation direction of the stator currents (current_dir*2*pi*felec*time, default value given by CURRENT_DIR_REF)"""
-    PWM: ImportGenPWM | None = None
+    PWM: ImportGenPWM | None = field(
+        default=None, metadata={"default_class": "ImportGenPWM"}
+    )
     """Object to generate PWM signal"""
-    eec: EEC | None = None
+    eec: EEC | None = field(default=None, metadata={"default_class": "EEC"})
     """Electric Equivalent Circuit used for OP resolution"""
     P_out: float | None = None
     """Output power"""

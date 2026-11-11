@@ -1,11 +1,11 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/MatMagnetics.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.init_fig import init_fig
+from ..Functions_new.init_fig import init_fig
 from ._pyleecan_class import PyleecanClass
 from .import_matrix import ImportMatrix
 from .model_bh import ModelBH
@@ -31,13 +31,13 @@ class MatMagnetics(PyleecanClass):
         Unit: m; Default: 0; Minimum: 0
     BH_curve : ImportMatrix or None
         nonlinear B(H) curve (two columns matrix, H and B(H))
-        Default: None
+        Default: ImportMatrix()
     LossData : ImportMatrix or None
         specific loss data value triplets, i.e. B, f, P
-        Unit: W/kg; Default: None
+        Unit: W/kg; Default: ImportMatrix()
     ModelBH : ModelBH or None
         a model of BH curve with an analytical expression
-        Default: None
+        Default: ModelBH()
     is_BH_extrapolate : bool
         True to use ModelBH to fit input data and extrapolate BH curve
         Default: False
@@ -51,11 +51,19 @@ class MatMagnetics(PyleecanClass):
     """temperature coefficient for remanent flux density"""
     Wlam: float = 0
     """lamination sheet width without insulation [m] (0 == not laminated)"""
-    BH_curve: ImportMatrix | None = None
+    BH_curve: ImportMatrix | None = field(
+        default_factory=lambda: ImportMatrix(),
+        metadata={"default_class": "ImportMatrix"},
+    )
     """nonlinear B(H) curve (two columns matrix, H and B(H))"""
-    LossData: ImportMatrix | None = None
+    LossData: ImportMatrix | None = field(
+        default_factory=lambda: ImportMatrix(),
+        metadata={"default_class": "ImportMatrix"},
+    )
     """specific loss data value triplets, i.e. B, f, P"""
-    ModelBH: ModelBH | None = None
+    ModelBH: ModelBH | None = field(
+        default_factory=lambda: ModelBH(), metadata={"default_class": "ModelBH"}
+    )
     """a model of BH curve with an analytical expression"""
     is_BH_extrapolate: bool = False
     """True to use ModelBH to fit input data and extrapolate BH curve"""

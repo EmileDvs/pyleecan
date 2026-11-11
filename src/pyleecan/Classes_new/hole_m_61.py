@@ -1,17 +1,17 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/HoleM61.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.Geometry.inter_line_circle import inter_line_circle
-from ..Functions.Geometry.inter_line_line import inter_line_line
-from ..Functions.labels import HOLEM_LAB, decode_label
-from ..Functions.Plot import (
+from ..Functions_new.Geometry.inter_line_circle import inter_line_circle
+from ..Functions_new.Geometry.inter_line_line import inter_line_line
+from ..Functions_new.labels import HOLEM_LAB, decode_label
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
@@ -60,16 +60,16 @@ class HoleM61(HoleMag):
         Unit: m; Default: None; Minimum: 0
     magnet_0 : Magnet or None
         First Magnet
-        Default: None
+        Default: Magnet()
     magnet_1 : Magnet or None
         Second Magnet
-        Default: None
+        Default: Magnet()
     magnet_2 : Magnet or None
         Third Magnet
-        Default: None
+        Default: Magnet()
     magnet_3 : Magnet or None
         Fourth Magnet
-        Default: None
+        Default: Magnet()
     """
 
     IS_SYMMETRICAL: ClassVar = 1
@@ -88,13 +88,21 @@ class HoleM61(HoleMag):
     """Magnet height"""
     H2: float | None = None
     """Distance beetween the lamination bore and top of the slot"""
-    magnet_0: Magnet | None = None
+    magnet_0: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """First Magnet"""
-    magnet_1: Magnet | None = None
+    magnet_1: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Second Magnet"""
-    magnet_2: Magnet | None = None
+    magnet_2: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Third Magnet"""
-    magnet_3: Magnet | None = None
+    magnet_3: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Fourth Magnet"""
 
     # Inlined from Methods.Slot.HoleM61._comp_point_coordinate

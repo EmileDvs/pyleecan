@@ -1,12 +1,13 @@
 # Experimental dataclass generated from Generator/ClassesRef/Geometry/SurfRing.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
+from ..Functions_new.init_fig import init_fig
+from ._import import import_class
 from .surface import Surface
 
 
@@ -18,19 +19,25 @@ class SurfRing(Surface):
     ----------
     out_surf : Surface or None
         Outter surface
-        Default: None
+        Default: Surface()
     in_surf : Surface or None
         Inner surface
-        Default: None
+        Default: Surface()
     """
 
     PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
     PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
     PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
     PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
-    out_surf: Surface | None = None
+    out_surf: Surface | None = field(
+        default_factory=lambda: import_class("Surface")(),
+        metadata={"default_class": "Surface"},
+    )
     """Outter surface"""
-    in_surf: Surface | None = None
+    in_surf: Surface | None = field(
+        default_factory=lambda: import_class("Surface")(),
+        metadata={"default_class": "Surface"},
+    )
     """Inner surface"""
 
     # Inlined from Methods.Geometry.SurfRing.check

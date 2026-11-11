@@ -1,11 +1,11 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamSlotMag.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.labels import (
+from ..Functions_new.labels import (
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
     LAM_LAB,
@@ -30,10 +30,12 @@ class LamSlotMag(LamSlotM):
     ----------
     magnet : Magnet or None
         Magnet of the lamination
-        Default: None
+        Default: Magnet()
     """
 
-    magnet: Magnet | None = None
+    magnet: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Magnet of the lamination"""
 
     # Inlined from Methods.Machine.LamSlotMag.build_geometry

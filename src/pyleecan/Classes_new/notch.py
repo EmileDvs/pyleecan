@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Notch.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._error import ParentMissingError
 from ._pyleecan_class import PyleecanClass
@@ -19,7 +19,9 @@ class Notch(PyleecanClass):
         Default: None
     """
 
-    key_mat: Material | None = None
+    key_mat: Material | None = field(
+        default=None, metadata={"default_class": "Material"}
+    )
     """The material of the key (if None, no key to add)"""
 
     # Inlined from Methods.Machine.Notch.get_label

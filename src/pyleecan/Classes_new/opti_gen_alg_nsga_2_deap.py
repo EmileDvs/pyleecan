@@ -13,10 +13,10 @@ from deap import base, creator, tools
 from deap.base import Toolbox
 from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 
-from ..Functions.Optimization.check_cstr import check_cstr
-from ..Functions.Optimization.evaluate import evaluate
-from ..Functions.Optimization.tournamentDCD import tournamentDCD
-from ..Functions.Optimization.update import update
+from ..Functions_new.Optimization.check_cstr import check_cstr
+from ..Functions_new.Optimization.evaluate import evaluate
+from ..Functions_new.Optimization.tournamentDCD import tournamentDCD
+from ..Functions_new.Optimization.update import update
 from .data_keeper import DataKeeper
 from .opti_design_var_interval import OptiDesignVarInterval
 from .opti_design_var_set import OptiDesignVarSet

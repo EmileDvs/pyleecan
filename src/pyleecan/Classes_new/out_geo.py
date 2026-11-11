@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/OutGeo.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._pyleecan_class import PyleecanClass
 from .data import Data
@@ -64,9 +64,13 @@ class OutGeo(PyleecanClass):
         Default: None
     """
 
-    stator: OutGeoLam | None = None
+    stator: OutGeoLam | None = field(
+        default=None, metadata={"default_class": "OutGeoLam"}
+    )
     """Geometry output of the stator"""
-    rotor: OutGeoLam | None = None
+    rotor: OutGeoLam | None = field(
+        default=None, metadata={"default_class": "OutGeoLam"}
+    )
     """Geometry output of the rotor"""
     Wgap_mec: float | None = None
     """mechanical airgap width (minimal distance between the lamination including magnet)"""

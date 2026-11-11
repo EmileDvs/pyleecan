@@ -1,14 +1,14 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/Slot.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 from matplotlib.patches import Patch, Polygon
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import (
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
     DRAW_PROP_LAB,
@@ -20,8 +20,8 @@ from ..Functions.labels import (
     YSL_LAB,
     YSR_LAB,
 )
-from ..Functions.Plot import dict_2D
-from ..Functions.Winding.gen_phase_list import gen_name
+from ..Functions_new.Plot import dict_2D
+from ..Functions_new.Winding.gen_phase_list import gen_name
 from ._error import ParentMissingError
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
@@ -54,7 +54,9 @@ class Slot(PyleecanClass):
     WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
     Zs: int = 36
     """slot number"""
-    wedge_mat: Material | None = None
+    wedge_mat: Material | None = field(
+        default=None, metadata={"default_class": "Material"}
+    )
     """Material for the wedge, if None no wedge"""
     is_bore: bool = True
     """True if the Slot is on the bore radius, False for yoke"""

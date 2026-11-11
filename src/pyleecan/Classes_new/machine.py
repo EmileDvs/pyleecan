@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Machine.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
@@ -10,8 +10,8 @@ from matplotlib.patches import Patch, Polygon
 from matplotlib.pyplot import subplots
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB, STATOR_LAB_S
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB, STATOR_LAB_S
 from ._error import MachineCheckError
 from ._pyleecan_class import PyleecanClass
 from .frame import Frame
@@ -28,10 +28,10 @@ class Machine(PyleecanClass):
     ----------
     frame : Frame or None
         Machine's Frame
-        Default: None
+        Default: Frame()
     shaft : Shaft or None
         Machine's Shaft
-        Default: None
+        Default: Shaft()
     name : str
         Name of the machine
         Default: "default_machine"
@@ -47,9 +47,13 @@ class Machine(PyleecanClass):
     """
 
     PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    frame: Frame | None = None
+    frame: Frame | None = field(
+        default_factory=lambda: Frame(), metadata={"default_class": "Frame"}
+    )
     """Machine's Frame"""
-    shaft: Shaft | None = None
+    shaft: Shaft | None = field(
+        default_factory=lambda: Shaft(), metadata={"default_class": "Shaft"}
+    )
     """Machine's Shaft"""
     name: str = "default_machine"
     """Name of the machine"""

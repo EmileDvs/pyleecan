@@ -10,18 +10,18 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..Functions.SciDataTool import (
+from ..Functions_new.SciDataTool import (
     AxisError,
     NormError,
     UnitError,
     axes_dict_transformation,
     rev_axes_dict,
 )
-from ..Functions.SciDataTool.change_referential import (
+from ..Functions_new.SciDataTool.change_referential import (
     change_referential_spectrum,
     change_referential_waveform,
 )
-from ..Functions.SciDataTool.conversions import (
+from ..Functions_new.SciDataTool.conversions import (
     convert,
     get_unit_derivate,
     get_unit_integrate,
@@ -29,27 +29,27 @@ from ..Functions.SciDataTool.conversions import (
     to_dBA,
     to_noct,
 )
-from ..Functions.SciDataTool.conversions import convert as convert_unit
-from ..Functions.SciDataTool.derivation_integration import (
+from ..Functions_new.SciDataTool.conversions import convert as convert_unit
+from ..Functions_new.SciDataTool.derivation_integration import (
     antiderivate,
     derivate,
     integrate,
     integrate_local,
     integrate_local_pattern,
 )
-from ..Functions.SciDataTool.fft_functions import comp_fftn, comp_ifftn
-from ..Functions.SciDataTool.filter_spectral_leakage import (
+from ..Functions_new.SciDataTool.fft_functions import comp_fftn, comp_ifftn
+from ..Functions_new.SciDataTool.filter_spectral_leakage import (
     filter_spectral_leakage as filter_spectral_leakage_fct,
 )
-from ..Functions.SciDataTool.fix_axes_order import fix_axes_order
-from ..Functions.SciDataTool.interpolations import (
+from ..Functions_new.SciDataTool.fix_axes_order import fix_axes_order
+from ..Functions_new.SciDataTool.interpolations import (
     get_common_base,
     get_interpolation,
     get_interpolation_step,
 )
-from ..Functions.SciDataTool.omp import comp_undersampled_axe, omp
-from ..Functions.SciDataTool.parser import read_input_strings
-from ..Functions.SciDataTool.Plot import (
+from ..Functions_new.SciDataTool.omp import comp_undersampled_axe, omp
+from ..Functions_new.SciDataTool.parser import read_input_strings
+from ..Functions_new.SciDataTool.Plot import (
     COLORS,
     PARAM_2D,
     PARAM_3D,
@@ -59,17 +59,17 @@ from ..Functions.SciDataTool.Plot import (
     norm_dict,
     unit_dict,
 )
-from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
-from ..Functions.SciDataTool.Plot.plot_3D import plot_3D
-from ..Functions.SciDataTool.Plot.plot_4D import plot_4D
-from ..Functions.SciDataTool.sum_mean import (
+from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.SciDataTool.Plot.plot_3D import plot_3D
+from ..Functions_new.SciDataTool.Plot.plot_4D import plot_4D
+from ..Functions_new.SciDataTool.sum_mean import (
     my_mean,
     my_sum,
     root_mean_square,
     root_sum_square,
 )
-from ..Functions.SciDataTool.symmetries import rebuild_symmetries
-from ..Functions.SciDataTool.symmetries import (
+from ..Functions_new.SciDataTool.symmetries import rebuild_symmetries
+from ..Functions_new.SciDataTool.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 from ._check import check_dimensions, check_var

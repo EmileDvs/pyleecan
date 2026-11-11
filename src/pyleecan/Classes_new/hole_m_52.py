@@ -1,15 +1,15 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/HoleM52.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.labels import HOLEM_LAB
-from ..Functions.Plot import (
+from ..Functions_new.labels import HOLEM_LAB
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
@@ -51,7 +51,7 @@ class HoleM52(HoleMag):
         Unit: m; Default: 0.02; Minimum: 0
     magnet_0 : Magnet or None
         Magnet of the hole
-        Default: None
+        Default: Magnet()
     """
 
     IS_SYMMETRICAL: ClassVar = 1
@@ -66,7 +66,9 @@ class HoleM52(HoleMag):
     """Tooth width"""
     H2: float = 0.02
     """Additional depth for the magnet"""
-    magnet_0: Magnet | None = None
+    magnet_0: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Magnet of the hole"""
 
     # Inlined from Methods.Slot.HoleM52._comp_point_coordinate

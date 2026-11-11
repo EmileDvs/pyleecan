@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Optimization/OptiProblem.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from ._pyleecan_class import PyleecanClass
@@ -20,7 +20,7 @@ class OptiProblem(PyleecanClass):
     ----------
     simu : Simulation or None
         Default simulation
-        Default: None
+        Default: Simulation()
     design_var : [OptiDesignVar] or None
         List of design variables
         Default: None
@@ -41,7 +41,9 @@ class OptiProblem(PyleecanClass):
         Default: None
     """
 
-    simu: Simulation | None = None
+    simu: Simulation | None = field(
+        default_factory=lambda: Simulation(), metadata={"default_class": "Simulation"}
+    )
     """Default simulation"""
     design_var: list[OptiDesignVar] | None = None
     """List of design variables"""

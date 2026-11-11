@@ -5,8 +5,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..Functions.SciDataTool import AxisError
-from ..Functions.SciDataTool.sum_convolution import (
+from ..Functions_new.SciDataTool import AxisError
+from ..Functions_new.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
     get_sum_amplitudes,

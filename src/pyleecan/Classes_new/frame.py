@@ -1,13 +1,13 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Frame.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 from matplotlib.patches import Patch
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
+from ..Functions_new.init_fig import init_fig
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .circle import Circle
@@ -34,7 +34,7 @@ class Frame(PyleecanClass):
         Unit: m; Default: 0.2; Minimum: 0
     mat_type : Material or None
         Frame material
-        Default: None
+        Default: Material()
     """
 
     FRAME_COLOR = config_dict["PLOT"]["COLOR_DICT"]["FRAME_COLOR"]
@@ -44,7 +44,9 @@ class Frame(PyleecanClass):
     """frame internal radius"""
     Rext: float = 0.2
     """Frame external radius"""
-    mat_type: Material | None = None
+    mat_type: Material | None = field(
+        default_factory=lambda: Material(), metadata={"default_class": "Material"}
+    )
     """Frame material"""
 
     # Inlined from Methods.Machine.Frame.build_geometry

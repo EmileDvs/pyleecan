@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamSlotWind.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,9 +11,9 @@ from matplotlib.pyplot import plot, subplots
 
 from ..Classes._swat_em import datamodel
 from ..definitions import config_dict
-from ..Functions.Electrical.dqh_transformation import dqh2n
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import (
+from ..Functions_new.Electrical.dqh_transformation import dqh2n
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import (
     BAR_LAB,
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
@@ -23,12 +23,14 @@ from ..Functions.labels import (
     decode_label,
     update_RTS_index,
 )
-from ..Functions.Plot import dict_2D
-from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
-from ..Functions.Plot.set_plot_gui_icon import set_plot_gui_icon
-from ..Functions.Winding.comp_cond_function import comp_cond_function
-from ..Functions.Winding.find_wind_phase_color import find_wind_phase_color
-from ..Functions.Winding.gen_phase_list import gen_color, gen_name
+from ..Functions_new.Plot import dict_2D
+from ..Functions_new.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
+from ..Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ..Functions_new.Winding.comp_cond_function import comp_cond_function
+from ..Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
+from ..Functions_new.Winding.gen_phase_list import gen_color, gen_name
 from ._error import Lam_WindCheckError
 from ._import import import_class
 from .data_1d import Data1D
@@ -55,13 +57,15 @@ class LamSlotWind(LamSlot):
         Default: None; Minimum: 0; Maximum: 1
     winding : Winding or None
         Lamination's Winding
-        Default: None
+        Default: Winding()
     """
 
     PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
     Ksfill: float | None = None
     """Imposed Slot Fill factor (if None, will be computed according to the winding and the slot)"""
-    winding: Winding | None = None
+    winding: Winding | None = field(
+        default_factory=lambda: Winding(), metadata={"default_class": "Winding"}
+    )
     """Lamination's Winding"""
 
     # Inlined from Methods.Machine.LamSlotWind.build_geometry

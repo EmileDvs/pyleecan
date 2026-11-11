@@ -23,7 +23,7 @@ class OutStruct(PyleecanClass):
         Default: "Pyleecan.Structural"
     meshsolution : MeshSolution or None
         FEA software mesh and solution
-        Default: None
+        Default: MeshSolution()
     FEA_dict : dict or None
         dictionary containing the main FEA parameter
         Default: {}
@@ -33,7 +33,10 @@ class OutStruct(PyleecanClass):
     """Dict containing axes data used for Structural"""
     logger_name: str = "Pyleecan.Structural"
     """Name of the logger to use"""
-    meshsolution: MeshSolution | None = None
+    meshsolution: MeshSolution | None = field(
+        default_factory=lambda: MeshSolution(),
+        metadata={"default_class": "MeshSolution"},
+    )
     """FEA software mesh and solution"""
     FEA_dict: dict[str, Any] | None = field(default_factory=dict)
     """dictionary containing the main FEA parameter"""

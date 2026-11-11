@@ -1,14 +1,14 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/OutMag.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.labels import STATOR_LAB
-from ..Functions.MeshSolution.get_area import get_area
-from ..Functions.MeshSolution.get_indices_limited import get_indices_limited
-from ..Functions.SciDataTool.derivation_integration import integrate
+from ..Functions_new.labels import STATOR_LAB
+from ..Functions_new.MeshSolution.get_area import get_area
+from ..Functions_new.MeshSolution.get_indices_limited import get_indices_limited
+from ..Functions_new.SciDataTool.derivation_integration import integrate
 from ._pyleecan_class import PyleecanClass
 from .data import Data
 from .data_nd import DataND
@@ -55,7 +55,7 @@ class OutMag(PyleecanClass):
         Unit: V; Default: None
     meshsolution : MeshSolution or None
         FEA software mesh and solution
-        Default: None
+        Default: MeshSolution()
     logger_name : str
         Name of the logger to use
         Default: "Pyleecan.Magnetics"
@@ -84,9 +84,11 @@ class OutMag(PyleecanClass):
 
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Magnetics"""
-    B: VectorField | None = None
+    B: VectorField | None = field(
+        default=None, metadata={"default_class": "VectorField"}
+    )
     """Airgap flux density VectorField object"""
-    Tem: DataND | None = None
+    Tem: DataND | None = field(default=None, metadata={"default_class": "DataND"})
     """Electromagnetic torque DataTime object"""
     Tem_av: float | None = None
     """Average Electromagnetic torque"""
@@ -94,25 +96,34 @@ class OutMag(PyleecanClass):
     """Peak to Peak Torque ripple normalized according to average torque (None if average torque=0)"""
     Tem_rip_pp: float | None = None
     """Peak to Peak Torque ripple"""
-    Phi_wind_stator: DataND | None = None
+    Phi_wind_stator: DataND | None = field(
+        default=None, metadata={"default_class": "DataND"}
+    )
     """Stator winding flux DataTime object"""
     Phi_wind: dict[str, DataND] | None = None
     """Dict of lamination winding fluxlinkage DataTime objects"""
-    emf: DataND | None = None
+    emf: DataND | None = field(default=None, metadata={"default_class": "DataND"})
     """Electromotive force DataTime object"""
-    meshsolution: MeshSolution | None = None
+    meshsolution: MeshSolution | None = field(
+        default_factory=lambda: MeshSolution(),
+        metadata={"default_class": "MeshSolution"},
+    )
     """FEA software mesh and solution"""
     logger_name: str = "Pyleecan.Magnetics"
     """Name of the logger to use"""
-    internal: OutInternal | None = None
+    internal: OutInternal | None = field(
+        default=None, metadata={"default_class": "OutInternal"}
+    )
     """OutInternal object containg outputs related to a specific model"""
     Rag: float | None = None
     """Radius value for air-gap computation"""
     Pem_av: float | None = None
     """Average Electromagnetic power"""
-    Slice: SliceModel | None = None
+    Slice: SliceModel | None = field(
+        default=None, metadata={"default_class": "SliceModel"}
+    )
     """Slice model to account for skew"""
-    Tem_slice: DataND | None = None
+    Tem_slice: DataND | None = field(default=None, metadata={"default_class": "DataND"})
     """Electromagnetic torque DataTime object including torque per slice"""
     Phi_wind_slice: dict[str, DataND] | None = None
     """Dict of lamination winding fluxlinkage DataTime objects per slice"""

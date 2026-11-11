@@ -1,16 +1,16 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamSquirrelCage.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch, Rectangle, Wedge
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import BAR_LAB, WIND_LAB
-from ..Functions.Plot import (
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import BAR_LAB, WIND_LAB
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
@@ -43,7 +43,7 @@ class LamSquirrelCage(LamSlotWind):
         Unit: m; Default: 0.015; Minimum: 0
     ring_mat : Material or None
         Material of the Rotor short circuit ring
-        Default: None
+        Default: Material()
     """
 
     SCR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SCR_COLOR"]
@@ -55,7 +55,9 @@ class LamSquirrelCage(LamSlotWind):
     """short circuit ring section radial height [m]"""
     Lscr: float = 0.015
     """short circuit ring section axial length"""
-    ring_mat: Material | None = None
+    ring_mat: Material | None = field(
+        default_factory=lambda: Material(), metadata={"default_class": "Material"}
+    )
     """Material of the Rotor short circuit ring"""
 
     # Inlined from Methods.Machine.LamSquirrelCage.build_geometry

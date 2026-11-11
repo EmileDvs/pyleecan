@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from ..Functions.labels import HOLEM_LAB, HOLEV_LAB, LAM_LAB
+from ..Functions_new.labels import HOLEM_LAB, HOLEV_LAB, LAM_LAB
 from ._error import SlotCheckError
 from .hole_mag import HoleMag
 from .magnet import Magnet

@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/Material.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._pyleecan_class import PyleecanClass
 from .mat_economical import MatEconomical
@@ -25,19 +25,19 @@ class Material(PyleecanClass):
         Default: False
     elec : MatElectrical or None
         Electrical properties of the material
-        Default: None
+        Default: MatElectrical()
     mag : MatMagnetics or None
         Magnetic properties of the material
-        Default: None
+        Default: MatMagnetics()
     struct : MatStructural or None
         Structural properties of the material
-        Default: None
+        Default: MatStructural()
     HT : MatHT or None
         Heat Transfer properties of the material
-        Default: None
+        Default: MatHT()
     eco : MatEconomical or None
         Economical properties of the material
-        Default: None
+        Default: MatEconomical()
     desc : str
         material description
         Default: "Material description"
@@ -50,15 +50,29 @@ class Material(PyleecanClass):
     """name of the material"""
     is_isotropic: bool = False
     """If Isotropic, uniformity in all orientations"""
-    elec: MatElectrical | None = None
+    elec: MatElectrical | None = field(
+        default_factory=lambda: MatElectrical(),
+        metadata={"default_class": "MatElectrical"},
+    )
     """Electrical properties of the material"""
-    mag: MatMagnetics | None = None
+    mag: MatMagnetics | None = field(
+        default_factory=lambda: MatMagnetics(),
+        metadata={"default_class": "MatMagnetics"},
+    )
     """Magnetic properties of the material"""
-    struct: MatStructural | None = None
+    struct: MatStructural | None = field(
+        default_factory=lambda: MatStructural(),
+        metadata={"default_class": "MatStructural"},
+    )
     """Structural properties of the material"""
-    HT: MatHT | None = None
+    HT: MatHT | None = field(
+        default_factory=lambda: MatHT(), metadata={"default_class": "MatHT"}
+    )
     """Heat Transfer properties of the material"""
-    eco: MatEconomical | None = None
+    eco: MatEconomical | None = field(
+        default_factory=lambda: MatEconomical(),
+        metadata={"default_class": "MatEconomical"},
+    )
     """Economical properties of the material"""
     desc: str = "Material description"
     """material description"""

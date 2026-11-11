@@ -3,17 +3,17 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
+from ..Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
-from ..Functions.Simulation.VarSimu.log_datakeeper_step_result import (
+from ..Functions_new.Simulation.VarSimu.log_datakeeper_step_result import (
     log_datakeeper_step_result,
 )
-from ..Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step
+from ..Functions_new.Simulation.VarSimu.run_multisim_step import run_multisim_step
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_keeper import DataKeeper
@@ -75,7 +75,9 @@ class VarSimu(PyleecanClass):
     """True to store every output in a list"""
     stop_if_error: bool = False
     """Stop the multi-simulation if a simulation fails """
-    var_simu: VarSimu | None = None
+    var_simu: VarSimu | None = field(
+        default=None, metadata={"default_class": "VarSimu"}
+    )
     """Multi-simulation of a Multi-simulation definition"""
     nb_simu: int = 0
     """Number of simulations"""

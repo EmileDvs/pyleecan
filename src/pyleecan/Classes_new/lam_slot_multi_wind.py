@@ -1,19 +1,21 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamSlotMultiWind.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import BAR_LAB, WIND_LAB, decode_label
-from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
-from ..Functions.Winding.comp_cond_function import comp_cond_function
-from ..Functions.Winding.find_wind_phase_color import find_wind_phase_color
-from ..Functions.Winding.gen_phase_list import gen_name
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import BAR_LAB, WIND_LAB, decode_label
+from ..Functions_new.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
+from ..Functions_new.Winding.comp_cond_function import comp_cond_function
+from ..Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
+from ..Functions_new.Winding.gen_phase_list import gen_name
 from ._import import import_class
 from .lam_slot import LamSlot
 from .lam_slot_multi import LamSlotMulti
@@ -32,13 +34,15 @@ class LamSlotMultiWind(LamSlotMulti):
         Default: None; Minimum: 0; Maximum: 1
     winding : Winding or None
         Lamination's Winding
-        Default: None
+        Default: Winding()
     """
 
     PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
     Ksfill: float | None = None
     """Imposed Slot Fill factor (if None, will be computed according to the winding and the slot)"""
-    winding: Winding | None = None
+    winding: Winding | None = field(
+        default_factory=lambda: Winding(), metadata={"default_class": "Winding"}
+    )
     """Lamination's Winding"""
 
     # Inlined from Methods.Machine.LamSlotMultiWind.build_geometry

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..Functions.Structural.conversions import cart2pol, pol2cart
+from ..Functions_new.Structural.conversions import cart2pol, pol2cart
 from .solution_mat import SolutionMat
 
 

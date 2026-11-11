@@ -1,14 +1,14 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Shaft.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 from matplotlib.patches import Patch
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import (
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import (
     BOUNDARY_PROP_LAB,
     NO_LAM_LAB,
     SHAFT_LAB,
@@ -35,7 +35,7 @@ class Shaft(PyleecanClass):
         Unit: m; Default: 0.442; Minimum: 0
     mat_type : Material or None
         Shaft's Material
-        Default: None
+        Default: Material()
     Drsh : float
         diameter of the rotor shaft [m], used to estimate bearing diameter for friction losses
         Unit: m; Default: 0.045; Minimum: 0
@@ -44,7 +44,9 @@ class Shaft(PyleecanClass):
     SHAFT_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SHAFT_COLOR"]
     Lshaft: float = 0.442
     """length of the rotor shaft [m] (used for weight & cost estimation only)"""
-    mat_type: Material | None = None
+    mat_type: Material | None = field(
+        default_factory=lambda: Material(), metadata={"default_class": "Material"}
+    )
     """Shaft's Material"""
     Drsh: float = 0.045
     """diameter of the rotor shaft [m], used to estimate bearing diameter for friction losses"""

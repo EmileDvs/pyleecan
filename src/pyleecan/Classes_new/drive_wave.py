@@ -1,10 +1,10 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/DriveWave.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from ..Functions.check_parent import check_parent
-from ..Functions.Winding.gen_phase_list import gen_name
+from ..Functions_new.check_parent import check_parent
+from ..Functions_new.Winding.gen_phase_list import gen_name
 from .data_1d import Data1D
 from .data_linspace import DataLinspace
 from .data_time import DataTime
@@ -20,10 +20,12 @@ class DriveWave(Drive):
     ----------
     wave : Import or None
         Wave generator
-        Default: None
+        Default: Import()
     """
 
-    wave: Import | None = None
+    wave: Import | None = field(
+        default_factory=lambda: Import(), metadata={"default_class": "Import"}
+    )
     """Wave generator"""
 
     # Inlined from Methods.Simulation.DriveWave.get_wave

@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 
-from ..Functions.SciDataTool import AxisError
+from ..Functions_new.SciDataTool import AxisError
 from ._import import import_class
 from .data_1d import Data1D
 from .data_nd import DataND

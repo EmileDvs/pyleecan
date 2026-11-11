@@ -1,9 +1,10 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/MachineSIPMSM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._error import MachineCheckError
+from ._import import import_class
 from .lam_slot_m import LamSlotM
 from .lam_slot_wind import LamSlotWind
 from .lamination import Lamination
@@ -18,15 +19,20 @@ class MachineSIPMSM(MachineSync):
     ----------
     rotor : LamSlotM or None
         Machine's Rotor
-        Default: None
+        Default: LamSlotM()
     stator : Lamination or None
         Machine's Stator
-        Default: None
+        Default: Lamination()
     """
 
-    rotor: LamSlotM | None = None
+    rotor: LamSlotM | None = field(
+        default_factory=lambda: import_class("LamSlotM")(),
+        metadata={"default_class": "LamSlotM"},
+    )
     """Machine's Rotor"""
-    stator: Lamination | None = None
+    stator: Lamination | None = field(
+        default_factory=lambda: Lamination(), metadata={"default_class": "Lamination"}
+    )
     """Machine's Stator"""
 
     # Inlined from Methods.Machine.MachineSIPMSM.check

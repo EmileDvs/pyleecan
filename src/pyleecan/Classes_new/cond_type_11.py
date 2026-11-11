@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, Rectangle
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.Plot import (
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

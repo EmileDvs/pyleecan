@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Optimization/OptiSolver.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._pyleecan_class import PyleecanClass
 from .opti_problem import OptiProblem
@@ -16,10 +16,10 @@ class OptiSolver(PyleecanClass):
     ----------
     problem : OptiProblem or None
         Problem to solve
-        Default: None
+        Default: OptiProblem()
     xoutput : XOutput or None
         Optimization results containing every output
-        Default: None
+        Default: XOutput()
     logger_name : str
         Name of the logger to use
         Default: "Pyleecan.OptiSolver"
@@ -28,9 +28,13 @@ class OptiSolver(PyleecanClass):
         Default: False
     """
 
-    problem: OptiProblem | None = None
+    problem: OptiProblem | None = field(
+        default_factory=lambda: OptiProblem(), metadata={"default_class": "OptiProblem"}
+    )
     """Problem to solve"""
-    xoutput: XOutput | None = None
+    xoutput: XOutput | None = field(
+        default_factory=lambda: XOutput(), metadata={"default_class": "XOutput"}
+    )
     """Optimization results containing every output"""
     logger_name: str = "Pyleecan.OptiSolver"
     """Name of the logger to use"""

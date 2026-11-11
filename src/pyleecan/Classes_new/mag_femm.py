@@ -11,15 +11,15 @@ from typing import Any
 import numpy as np
 
 from ..definitions import MAIN_DIR
-from ..Functions.FEMM import FEMM_GROUPS
-from ..Functions.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
-from ..Functions.FEMM.comp_FEMM_torque import comp_FEMM_torque
-from ..Functions.FEMM.draw_FEMM import draw_FEMM
-from ..Functions.FEMM.update_FEMM_simulation import update_FEMM_simulation
-from ..Functions.labels import STATOR_LAB
-from ..Functions.MeshSolution.build_meshsolution import build_meshsolution
-from ..Functions.MeshSolution.build_solution_data import build_solution_data
-from ..Functions.MeshSolution.build_solution_vector import build_solution_vector
+from ..Functions_new.FEMM import FEMM_GROUPS
+from ..Functions_new.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
+from ..Functions_new.FEMM.comp_FEMM_torque import comp_FEMM_torque
+from ..Functions_new.FEMM.draw_FEMM import draw_FEMM
+from ..Functions_new.FEMM.update_FEMM_simulation import update_FEMM_simulation
+from ..Functions_new.labels import STATOR_LAB
+from ..Functions_new.MeshSolution.build_meshsolution import build_meshsolution
+from ..Functions_new.MeshSolution.build_solution_data import build_solution_data
+from ..Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 from ._femm_handler import _FEMMHandler
 from .data_1d import Data1D
 from .dxf_import import DXFImport
@@ -113,9 +113,13 @@ class MagFEMM(Magnetics):
     """False to desactivate the sliding band"""
     transform_list: list[Any] = field(default_factory=list)
     """List of dictionary to apply transformation on the machine surfaces. Key: label (to select the surface), type (rotate or translate), value (alpha or delta)"""
-    rotor_dxf: DXFImport | None = None
+    rotor_dxf: DXFImport | None = field(
+        default=None, metadata={"default_class": "DXFImport"}
+    )
     """To use a dxf version of the rotor instead of build_geometry"""
-    stator_dxf: DXFImport | None = None
+    stator_dxf: DXFImport | None = field(
+        default=None, metadata={"default_class": "DXFImport"}
+    )
     """To use a dxf version of the rotor instead of build_geometry"""
     import_file: str | None = None
     """To import an existing femm file"""

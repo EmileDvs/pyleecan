@@ -10,9 +10,9 @@ import numpy as np
 from meshio import read
 
 from .. import __version__
-from ..Functions.get_path_binary import get_path_binary
-from ..Functions.GMSH.draw_GMSH import draw_GMSH
-from ..Functions.labels import (
+from ..Functions_new.get_path_binary import get_path_binary
+from ..Functions_new.GMSH.draw_GMSH import draw_GMSH
+from ..Functions_new.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,
     AIRBOX_SR_LAB,
@@ -49,7 +49,7 @@ from ..Functions.labels import (
     get_obj_from_label,
     short_label,
 )
-from ..Functions.Winding.find_wind_phase_color import get_phase_id
+from ..Functions_new.Winding.find_wind_phase_color import get_phase_id
 from ._error import NotImplementedYetError
 from .data_1d import Data1D
 from .data_time import DataTime
@@ -121,9 +121,13 @@ class MagElmer(Magnetics):
     """To save FEA mesh and solution in a file"""
     transform_list: list[Any] = field(default_factory=list)
     """List of dictionary to apply transformation on the machine surfaces. Key: label (to select the surface), type (rotate or translate), value (alpha or delta)"""
-    rotor_dxf: DXFImport | None = None
+    rotor_dxf: DXFImport | None = field(
+        default=None, metadata={"default_class": "DXFImport"}
+    )
     """To use a dxf version of the rotor instead of build_geometry"""
-    stator_dxf: DXFImport | None = None
+    stator_dxf: DXFImport | None = field(
+        default=None, metadata={"default_class": "DXFImport"}
+    )
     """To use a dxf version of the rotor instead of build_geometry"""
     import_file: str | None = None
     """To import an existing simulation file"""

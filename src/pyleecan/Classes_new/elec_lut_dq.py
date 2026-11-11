@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/ElecLUTdq.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -74,7 +74,9 @@ class ElecLUTdq(Electrical):
     """Number of Id for LUT calculation"""
     n_Iq: int = 1
     """Number of Iq for LUT calculation"""
-    LUT_simu: Simulation | None = None
+    LUT_simu: Simulation | None = field(
+        default=None, metadata={"default_class": "Simulation"}
+    )
     """Simulation object to run for LUT calculation"""
     is_grid_dq: bool = True
     """True to build a n_Id*n_Iq grid, otherwise calculate n_Id+n_Iq simulations and extrapolate to the dq plane"""

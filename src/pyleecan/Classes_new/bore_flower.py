@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.Geometry.comp_flower_arc import comp_flower_arc
-from ..Functions.Plot import (
+from ..Functions_new.Geometry.comp_flower_arc import comp_flower_arc
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

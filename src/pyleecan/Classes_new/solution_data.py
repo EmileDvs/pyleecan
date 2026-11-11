@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 
 from .data_1d import Data1D
 from .data_nd import DataND
@@ -19,7 +20,9 @@ class SolutionData(Solution):
         Default: None
     """
 
-    field: DataND | None = None
+    field: DataND | None = dataclass_field(
+        default=None, metadata={"default_class": "DataND"}
+    )
     """Data object containing the numerical values of a solution. One of the axis must be "Indices", a list of indices. If the solution is a vector, one of the axis must be "Direction", values [\'x\',\'y\'] for example."""
 
     # Inlined from Methods.Mesh.SolutionData.get_axes_list

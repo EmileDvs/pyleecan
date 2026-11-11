@@ -8,9 +8,9 @@ import numpy as np
 from matplotlib.patches import Patch
 
 from ..definitions import config_dict
-from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
+from ..Functions_new.Geometry.transform_hole_surf import transform_hole_surf
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
 from ._error import ParentMissingError
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
@@ -28,7 +28,7 @@ class Hole(PyleecanClass):
         Default: 36; Minimum: 0
     mat_void : Material or None
         Material of the void part of the hole (Air in general)
-        Default: None
+        Default: Material()
     magnetization_dict_offset : dict or None
         Dictionary add an offset to the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Default: {}
@@ -41,7 +41,9 @@ class Hole(PyleecanClass):
     ARROW_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     Zh: int = 36
     """Number of Hole around the circumference"""
-    mat_void: Material | None = None
+    mat_void: Material | None = field(
+        default_factory=lambda: Material(), metadata={"default_class": "Material"}
+    )
     """Material of the void part of the hole (Air in general)"""
     magnetization_dict_offset: dict[str, Any] | None = field(default_factory=dict)
     """Dictionary add an offset to the magnetization direction of the magnets (key=magnet_X, value=angle[rad])"""

@@ -39,6 +39,22 @@ class PyleecanClass:
     def __post_init__(self):
         self._set_child_parents()
 
+    def __setattr__(self, name, value):
+        if name != "parent" and name in self.__dataclass_fields__:
+            field_info = self.__dataclass_fields__[name]
+            if type(value) is int and value == -1:
+                class_name = field_info.metadata.get("default_class")
+                if class_name is not None:
+                    value = self._construct_default_class(class_name)
+            self._set_parent_links(value, self)
+        super().__setattr__(name, value)
+
+    @staticmethod
+    def _construct_default_class(class_name):
+        from ._import import import_class
+
+        return import_class(class_name)()
+
     @classmethod
     def from_dict(cls, data):
         """Create this dataclass from a Pyleecan-style dictionary."""
@@ -47,6 +63,11 @@ class PyleecanClass:
             for key, value in data.items()
             if key != "__class__"
         }
+        for field_info in fields(cls):
+            value = values.get(field_info.name)
+            class_name = field_info.metadata.get("default_class")
+            if class_name is not None and type(value) is int and value == -1:
+                values[field_info.name] = cls._construct_default_class(class_name)
         hints = get_type_hints(cls)
         hooks = {np.ndarray: np.asarray}
         for field_info in fields(cls):

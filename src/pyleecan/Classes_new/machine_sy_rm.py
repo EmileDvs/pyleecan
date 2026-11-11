@@ -1,9 +1,10 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/MachineSyRM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._error import MachineCheckError
+from ._import import import_class
 from .lam_hole import LamHole
 from .lam_slot_wind import LamSlotWind
 from .machine_sync import MachineSync
@@ -17,15 +18,21 @@ class MachineSyRM(MachineSync):
     ----------
     rotor : LamHole or None
         Machine's Rotor
-        Default: None
+        Default: LamHole()
     stator : LamSlotWind or None
         Machine's Stator
-        Default: None
+        Default: LamSlotWind()
     """
 
-    rotor: LamHole | None = None
+    rotor: LamHole | None = field(
+        default_factory=lambda: import_class("LamHole")(),
+        metadata={"default_class": "LamHole"},
+    )
     """Machine's Rotor"""
-    stator: LamSlotWind | None = None
+    stator: LamSlotWind | None = field(
+        default_factory=lambda: import_class("LamSlotWind")(),
+        metadata={"default_class": "LamSlotWind"},
+    )
     """Machine's Stator"""
 
     # Inlined from Methods.Machine.MachineSyRM.check

@@ -10,12 +10,12 @@ import numpy as np
 from scipy.io import savemat
 
 from ..definitions import config_dict
-from ..Functions.GUI.log_error import log_error
-from ..Functions.Plot.Pyvista.configure_plot import configure_plot
-from ..Functions.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
-from ..Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
-from ..Functions.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
-from ..Functions.Structural.conversions import DimError, cart2pol, pol2cart
+from ..Functions_new.GUI.log_error import log_error
+from ..Functions_new.Plot.Pyvista.configure_plot import configure_plot
+from ..Functions_new.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
+from ..Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from ..Functions_new.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
+from ..Functions_new.Structural.conversions import DimError, cart2pol, pol2cart
 from ._pyleecan_class import PyleecanClass
 from .element_mat import ElementMat
 from .mesh import Mesh
@@ -37,7 +37,7 @@ class MeshSolution(PyleecanClass):
         Default: None
     mesh : Mesh or None
         A Mesh object.
-        Default: None
+        Default: Mesh()
     solution_dict : {Solution} or None
         A dictionary of Solution objects
         Default: None
@@ -56,7 +56,9 @@ class MeshSolution(PyleecanClass):
     FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
     label: str | None = None
     """(Optional) Descriptive name of the mesh"""
-    mesh: Mesh | None = None
+    mesh: Mesh | None = field(
+        default_factory=lambda: Mesh(), metadata={"default_class": "Mesh"}
+    )
     """A Mesh object. """
     solution_dict: dict[str, Solution] | None = None
     """A dictionary of Solution objects"""

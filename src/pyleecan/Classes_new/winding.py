@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Winding.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
@@ -10,18 +10,18 @@ from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 
 from ..Classes._swat_em import datamodel
 from ..definitions import config_dict
-from ..Functions._swat_em import plots
-from ..Functions._swat_em.config import config
-from ..Functions.Geometry.inter_line_line import inter_line_line
-from ..Functions.init_fig import init_fig
-from ..Functions.Winding.gen_phase_list import gen_name
-from ..Functions.Winding.reverse_wind_mat import (
+from ..Functions_new._swat_em import plots
+from ..Functions_new._swat_em.config import config
+from ..Functions_new.Geometry.inter_line_line import inter_line_line
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.Winding.gen_phase_list import gen_name
+from ..Functions_new.Winding.reverse_wind_mat import (
     change_layer,
     permute_B_C,
     reverse_layer,
     reverse_wind_mat,
 )
-from ..Functions.Winding.shift_wind_mat import shift_wind_mat
+from ..Functions_new.Winding.shift_wind_mat import shift_wind_mat
 from ._error import WindingError
 from ._pyleecan_class import PyleecanClass
 from .conductor import Conductor
@@ -60,7 +60,7 @@ class Winding(PyleecanClass):
         Unit: m; Default: 0.015; Minimum: 0
     conductor : Conductor or None
         Winding's conductor
-        Default: None
+        Default: Conductor()
     coil_pitch : int
         Distance (in slot) between a conductor of a certain phase and the corresponding return conductor
         Default: 1
@@ -78,7 +78,7 @@ class Winding(PyleecanClass):
         Default: None
     end_winding : EndWinding or None
         End Winding's definition
-        Default: None
+        Default: EndWinding()
     is_reverse_layer : bool
         True to reverse the layers (rad from False to Nrad-True => Nrad-True to False)
         Default: False
@@ -116,7 +116,9 @@ class Winding(PyleecanClass):
     """pole pairs number"""
     Lewout: float = 0.015
     """straight length of the conductors outside the lamination before the curved part of winding overhang [m] - can be negative to tune the average turn length (only used in voltage driven simulations)"""
-    conductor: Conductor | None = None
+    conductor: Conductor | None = field(
+        default_factory=lambda: Conductor(), metadata={"default_class": "Conductor"}
+    )
     """Winding's conductor"""
     coil_pitch: int = 1
     """Distance (in slot) between a conductor of a certain phase and the corresponding return conductor"""
@@ -128,7 +130,9 @@ class Winding(PyleecanClass):
     """Number of spatial periods of the winding"""
     is_aper_a: bool | None = None
     """True if the winding is anti-periodic over space"""
-    end_winding: EndWinding | None = None
+    end_winding: EndWinding | None = field(
+        default_factory=lambda: EndWinding(), metadata={"default_class": "EndWinding"}
+    )
     """End Winding's definition"""
     is_reverse_layer: bool = False
     """True to reverse the layers (rad from False to Nrad-True => Nrad-True to False)"""

@@ -2488,6 +2488,75 @@ def _apply_import_style(source, soft_name, import_style, class_package="Classes"
     return encoded.decode("utf-8")
 
 
+def _redirect_experimental_function_imports(source, soft_name):
+    """Use copied functions while retaining the legacy loading and saving APIs."""
+    data = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(data):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    prefix = soft_name + ".Functions"
+    deferred = {
+        prefix + ".load",
+        prefix + ".save",
+        prefix + ".Load",
+        prefix + ".Save",
+    }
+    replacements = []
+    for node in ast.walk(ast.parse(source)):
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id in {"import_module", "__import__"}
+            and node.args
+        ):
+            argument = node.args[0]
+            first = (
+                argument.values[0]
+                if isinstance(argument, ast.JoinedStr) and argument.values
+                else argument
+            )
+            if (
+                isinstance(first, ast.Constant)
+                and isinstance(first.value, str)
+                and (first.value == prefix or first.value.startswith(prefix + "."))
+                and not any(
+                    first.value == name or first.value.startswith(name + ".")
+                    for name in deferred
+                )
+            ):
+                start = offsets[argument.lineno - 1] + argument.col_offset
+                end = offsets[argument.end_lineno - 1] + argument.end_col_offset
+                segment = data[start:end]
+                old = prefix.encode("utf-8")
+                replacements.append(
+                    (
+                        start,
+                        end,
+                        segment.replace(old, (prefix + "_new").encode("utf-8"), 1),
+                    )
+                )
+            continue
+        if not isinstance(node, ast.ImportFrom) or node.level or not node.module:
+            continue
+        module = node.module
+        if not (module == prefix or module.startswith(prefix + ".")):
+            continue
+        if any(module == name or module.startswith(name + ".") for name in deferred):
+            continue
+        replacement = ast.ImportFrom(
+            module=soft_name + ".Functions_new" + module[len(prefix):],
+            names=node.names,
+            level=0,
+        )
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, ast.unparse(replacement).encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        data = data[:start] + replacement + data[end:]
+    return data.decode("utf-8")
+
+
 def _redirect_experimental_class_imports(source, soft_name, gen_dict):
     """Redirect generated classes and selected support imports to Classes_new."""
     source_bytes = source.encode("utf-8")
@@ -4279,6 +4348,11 @@ def generate_class(
         CSV and class-body constants remain class attributes.
         Static imports of generated class modules target ``Classes_new``; this
         does not resolve any resulting circular imports.
+        Default factories reuse unambiguous module-level class imports and
+        otherwise load their class lazily.
+        Imports of shared functions target the generated ``Functions_new``
+        tree, except loading and saving helpers, which remain legacy for now.
+        Generate that tree with its generate_function_new_classes module first.
     output_name : str, optional
         Output module name for the dataclass version, without the .py extension.
         Defaults to the snake_case class name.
@@ -4826,12 +4900,22 @@ def _referenced_classes(prop_type, gen_dict):
 
 def _parent_type(class_name, gen_dict):
     """Return the highest-level CSV classes that can own this class."""
+    assignable_classes = set()
+    for candidate in gen_dict:
+        ancestor = candidate
+        seen = set()
+        while ancestor in gen_dict and ancestor not in seen:
+            if ancestor == class_name:
+                assignable_classes.add(candidate)
+                break
+            seen.add(ancestor)
+            ancestor = gen_dict[ancestor]["mother"]
     owners = set()
     for owner_name, owner_dict in gen_dict.items():
         if owner_name == class_name:
             continue
         if any(
-            class_name in _referenced_classes(prop["type"], gen_dict)
+            assignable_classes & _referenced_classes(prop["type"], gen_dict)
             for prop in owner_dict["properties"]
         ):
             owners.add(owner_name)
@@ -4870,7 +4954,7 @@ def parent_type_mapping(gen_dict):
     return mapping
 
 
-def _field_default(prop, field_name="field"):
+def _field_default(prop, field_name="field", gen_dict=None):
     """Format a dataclass default, using field() only when it is required."""
     prop_type = prop["type"]
     value = prop["value"]
@@ -4878,8 +4962,15 @@ def _field_default(prop, field_name="field"):
     if prop.get("as_dict") not in (None, ""):
         metadata["as_dict"] = prop["as_dict"]
 
+    is_class = gen_dict is not None and prop_type in gen_dict
+    if is_class:
+        metadata["default_class"] = NORMALIZATION_CLASS_NAMES.get(prop_type, prop_type)
+
     requires_field = False
-    if value in ("", None):
+    if is_class and value == "":
+        default = f"default_factory=lambda: import_class({prop_type!r})()"
+        requires_field = True
+    elif value in ("", None):
         if prop_type in ("list", "[]", "[ndarray]"):
             default = "default_factory=list"
             requires_field = True
@@ -4925,6 +5016,111 @@ def _field_default(prop, field_name="field"):
     return f"{field_name}({field_args})"
 
 
+def _use_static_default_factories(source, soft_name, gen_dict, class_name):
+    """Reuse unshadowed module-level class imports in generated field factories."""
+    tree = ast.parse(source)
+    modules = {
+        NORMALIZATION_CLASS_NAMES.get(name, name): class_module_name(name)
+        for name in gen_dict
+    }
+    bindings = {}
+    counts = {}
+    has_wildcard = False
+
+    def record(name):
+        counts[name] = counts.get(name, 0) + 1
+
+    class ModuleBindings(ast.NodeVisitor):
+        def visit_FunctionDef(self, node):
+            record(node.name)
+
+        visit_AsyncFunctionDef = visit_FunctionDef
+        visit_ClassDef = visit_FunctionDef
+
+        def visit_Lambda(self, node):
+            pass
+
+        def visit_Name(self, node):
+            if isinstance(node.ctx, (ast.Store, ast.Del)):
+                record(node.id)
+
+        def visit_Import(self, node):
+            for alias in node.names:
+                record(alias.asname or alias.name.split(".")[0])
+
+        def visit_ImportFrom(self, node):
+            nonlocal has_wildcard
+            for alias in node.names:
+                if alias.name == "*":
+                    has_wildcard = True
+                else:
+                    record(alias.asname or alias.name)
+
+        def visit_ExceptHandler(self, node):
+            if node.name:
+                record(node.name)
+            self.generic_visit(node)
+
+    visitor = ModuleBindings()
+    for node in tree.body:
+        visitor.visit(node)
+        if not isinstance(node, ast.ImportFrom) or node.level != 0:
+            continue
+        for alias in node.names:
+            module = modules.get(alias.name)
+            if module and node.module == f"{soft_name}.Classes_new.{module}":
+                bindings[alias.name] = alias.asname or alias.name
+
+    if has_wildcard:
+        return source
+    bindings = {
+        name: binding for name, binding in bindings.items() if counts[binding] == 1
+    }
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == ord("\n"):
+            offsets.append(index + 1)
+    replacements = []
+    for cls in tree.body:
+        if not isinstance(cls, ast.ClassDef) or cls.name != class_name:
+            continue
+        for field_node in cls.body:
+            if not isinstance(field_node, ast.AnnAssign) or not isinstance(
+                field_node.value, ast.Call
+            ):
+                continue
+            for keyword in field_node.value.keywords:
+                if keyword.arg != "default_factory" or not isinstance(
+                    keyword.value, ast.Lambda
+                ):
+                    continue
+                call = keyword.value.body
+                if not (
+                    isinstance(call, ast.Call)
+                    and not call.args
+                    and not call.keywords
+                    and isinstance(call.func, ast.Call)
+                    and isinstance(call.func.func, ast.Name)
+                    and call.func.func.id == "import_class"
+                    and len(call.func.args) == 1
+                    and not call.func.keywords
+                    and isinstance(call.func.args[0], ast.Constant)
+                    and isinstance(call.func.args[0].value, str)
+                ):
+                    continue
+                name = call.func.args[0].value
+                name = NORMALIZATION_CLASS_NAMES.get(name, name)
+                binding = bindings.get(name)
+                if binding is not None:
+                    start = offsets[call.func.lineno - 1] + call.func.col_offset
+                    end = offsets[call.func.end_lineno - 1] + call.func.end_col_offset
+                    replacements.append((start, end, binding.encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
+
+
 def _attribute_docstring(description):
     """Format a CSV description as a safe triple-quoted attribute docstring."""
     escaped_description = repr(description)[1:-1]
@@ -4961,9 +5157,11 @@ def _format_source_with_ruff(source, class_path):
     return result.stdout
 
 
-def _display_default(prop):
+def _display_default(prop, gen_dict=None):
     value = prop["value"]
     prop_type = prop["type"]
+    if gen_dict is not None and prop_type in gen_dict and value == "":
+        return NORMALIZATION_CLASS_NAMES.get(prop_type, prop_type) + "()"
     if value in ("", None, "None"):
         if prop_type == "list":
             return "[]"
@@ -4975,7 +5173,7 @@ def _display_default(prop):
     return repr(value)
 
 
-def _class_docstring(class_dict):
+def _class_docstring(class_dict, gen_dict=None):
     """Build a NumPy-style class docstring from class and property metadata."""
     description = class_dict.get("desc") or class_dict["name"]
     lines = [description, "", "Attributes", "----------"]
@@ -4997,7 +5195,7 @@ def _class_docstring(class_dict):
         details = []
         if prop.get("unit") and prop["unit"] != "-":
             details.append(f"Unit: {prop['unit']}")
-        details.append(f"Default: {_display_default(prop)}")
+        details.append(f"Default: {_display_default(prop, gen_dict)}")
         if prop.get("min") not in (None, ""):
             details.append(f"Minimum: {prop['min']}")
         if prop.get("max") not in (None, ""):
@@ -5131,6 +5329,11 @@ def _generate_dataclass_class(
         )
         imports.update(type_imports)
     if any(
+        prop["type"] in gen_dict and prop["value"] == ""
+        for prop in class_dict["properties"]
+    ):
+        imports.add(f"from {soft_name}.Classes_new._import import import_class")
+    if any(
         "default_factory=partial(deepcopy" in _field_default(prop)
         for prop in class_dict["properties"]
     ):
@@ -5167,7 +5370,7 @@ def _generate_dataclass_class(
         ),
         "\n",
         f"@dataclass(eq=False)\nclass {generated_name}({parent_class}):\n",
-        indent(_class_docstring(class_dict), TAB) + "\n\n",
+        indent(_class_docstring(class_dict, gen_dict), TAB) + "\n\n",
     ]
 
     body = []
@@ -5196,7 +5399,8 @@ def _generate_dataclass_class(
             prop["type"], prop["value"], gen_dict, soft_name, class_name
         )
         body.append(
-            f"{TAB}{prop['name']}: {annotation} = {_field_default(prop, field_name)}\n"
+            f"{TAB}{prop['name']}: {annotation} = "
+            f"{_field_default(prop, field_name, gen_dict)}\n"
         )
         description = _property_description(prop)
         if description:
@@ -5254,6 +5458,8 @@ def _generate_dataclass_class(
     source = _postpone_experimental_self_annotations(source, generated_name)
     source = _replace_local_experimental_class_imports(source, soft_name, gen_dict)
     source = _redirect_experimental_loader_imports(source, soft_name)
+    source = _redirect_experimental_function_imports(source, soft_name)
+    source = _use_static_default_factories(source, soft_name, gen_dict, generated_name)
     source = _apply_import_style(source, soft_name, import_style, "Classes_new")
     source = _organize_header_imports(source, generated_name, class_path)
     source = _regroup_pyleecan_imports(source, generated_name, class_path)

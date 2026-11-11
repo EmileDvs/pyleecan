@@ -2,16 +2,16 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from sys import getsizeof
 
 import numpy as np
 from scipy.io import savemat
 
 from ..definitions import RESULT_DIR, config_dict
-from ..Functions.Plot import fft_dict
-from ..Functions.Plot.Pyvista.configure_plot import configure_plot
-from ..Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from ..Functions_new.Plot import fft_dict
+from ..Functions_new.Plot.Pyvista.configure_plot import configure_plot
+from ..Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .norm_affine import NormAffine
@@ -35,57 +35,73 @@ class Output(PyleecanClass):
     ----------
     simu : Simulation or None
         Simulation object that generated the Output
-        Default: None
+        Default: Simulation()
     path_result : str or None
         Path to the folder to same the results
         Default: None
     geo : OutGeo or None
         Geometry output
-        Default: None
+        Default: OutGeo()
     elec : OutElec or None
         Electrical module output
-        Default: None
+        Default: OutElec()
     mag : OutMag or None
         Magnetic module output
-        Default: None
+        Default: OutMag()
     struct : OutStruct or None
         Structural module output
-        Default: None
+        Default: OutStruct()
     post : OutPost or None
         Post-Processing settings
-        Default: None
+        Default: OutPost()
     logger_name : str
         Name of the logger to use
         Default: "Pyleecan.Output"
     force : OutForce or None
         Force module output
-        Default: None
+        Default: OutForce()
     loss : OutLoss or None
         Loss module output
-        Default: None
+        Default: OutLoss()
     """
 
     COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
     FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
-    simu: Simulation | None = None
+    simu: Simulation | None = field(
+        default_factory=lambda: Simulation(), metadata={"default_class": "Simulation"}
+    )
     """Simulation object that generated the Output"""
     path_result: str | None = None
     """Path to the folder to same the results"""
-    geo: OutGeo | None = None
+    geo: OutGeo | None = field(
+        default_factory=lambda: OutGeo(), metadata={"default_class": "OutGeo"}
+    )
     """Geometry output"""
-    elec: OutElec | None = None
+    elec: OutElec | None = field(
+        default_factory=lambda: OutElec(), metadata={"default_class": "OutElec"}
+    )
     """Electrical module output"""
-    mag: OutMag | None = None
+    mag: OutMag | None = field(
+        default_factory=lambda: OutMag(), metadata={"default_class": "OutMag"}
+    )
     """Magnetic module output"""
-    struct: OutStruct | None = None
+    struct: OutStruct | None = field(
+        default_factory=lambda: OutStruct(), metadata={"default_class": "OutStruct"}
+    )
     """Structural module output"""
-    post: OutPost | None = None
+    post: OutPost | None = field(
+        default_factory=lambda: OutPost(), metadata={"default_class": "OutPost"}
+    )
     """Post-Processing settings"""
     logger_name: str = "Pyleecan.Output"
     """Name of the logger to use"""
-    force: OutForce | None = None
+    force: OutForce | None = field(
+        default_factory=lambda: OutForce(), metadata={"default_class": "OutForce"}
+    )
     """Force module output"""
-    loss: OutLoss | None = None
+    loss: OutLoss | None = field(
+        default_factory=lambda: OutLoss(), metadata={"default_class": "OutLoss"}
+    )
     """Loss module output"""
 
     # Inlined from Methods.Output.Output.getter.comp_angle_rotor

@@ -53,7 +53,7 @@ class RuleComplex(Rule):
         # Load the function
         if self._fct_name is not None:
             module = __import__(
-                f"pyleecan.Functions.Converter.MotorCAD.{self.fct_name}",
+                f"pyleecan.Functions_new.Converter.MotorCAD.{self.fct_name}",
                 fromlist=(self.fct_name),
             )
             self.other_to_P = getattr(module, "other_to_P")

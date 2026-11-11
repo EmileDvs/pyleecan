@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Lamination.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from math import gcd
 
 import matplotlib.pyplot as plt
@@ -9,10 +9,10 @@ import numpy as np
 from matplotlib.patches import Patch
 
 from ..definitions import config_dict
-from ..Functions.Geometry.merge_notch_list import merge_notch_list
-from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
-from ..Functions.init_fig import init_fig
-from ..Functions.labels import (
+from ..Functions_new.Geometry.merge_notch_list import merge_notch_list
+from ..Functions_new.Geometry.transform_hole_surf import transform_hole_surf
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
     LAM_LAB,
@@ -27,8 +27,10 @@ from ..Functions.labels import (
     YSNR_LAB,
     YSR_LAB,
 )
-from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
-from ..Functions.Winding.gen_phase_list import gen_name
+from ..Functions_new.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
+from ..Functions_new.Winding.gen_phase_list import gen_name
 from ._error import LaminationCheckError, NotImplementedYetError
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
@@ -57,7 +59,7 @@ class Lamination(PyleecanClass):
         Unit: m; Default: 0.35; Minimum: 0
     mat_type : Material or None
         Lamination's material
-        Default: None
+        Default: Material()
     Nrvd : int
         number of radial air ventilation ducts in lamination
         Default: 0; Minimum: 0
@@ -101,7 +103,9 @@ class Lamination(PyleecanClass):
     STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     L1: float = 0.35
     """Lamination stack active length without radial ventilation airducts but including insulation layers between lamination sheets"""
-    mat_type: Material | None = None
+    mat_type: Material | None = field(
+        default_factory=lambda: Material(), metadata={"default_class": "Material"}
+    )
     """Lamination's material"""
     Nrvd: int = 0
     """number of radial air ventilation ducts in lamination"""
@@ -121,11 +125,11 @@ class Lamination(PyleecanClass):
     """Axial ventilation ducts"""
     notch: list[Notch] | None = None
     """Lamination bore notches"""
-    skew: Skew | None = None
+    skew: Skew | None = field(default=None, metadata={"default_class": "Skew"})
     """Skew object"""
-    bore: Bore | None = None
+    bore: Bore | None = field(default=None, metadata={"default_class": "Bore"})
     """Bore Shape"""
-    yoke: Bore | None = None
+    yoke: Bore | None = field(default=None, metadata={"default_class": "Bore"})
     """Yoke Shape"""
 
     # Inlined from Methods.Machine.Lamination.build_geometry

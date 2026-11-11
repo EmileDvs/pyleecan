@@ -45,7 +45,9 @@ class ImportData(PyleecanClass):
 
     axes: list[ImportData] = dataclass_field(default_factory=list)
     """List of axes of the data"""
-    field: Import | None = None
+    field: Import | None = dataclass_field(
+        default=None, metadata={"default_class": "Import"}
+    )
     """Field (Import object)"""
     unit: str = "SI"
     """Unit of the field"""

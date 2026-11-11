@@ -8,8 +8,8 @@ import numpy as np
 from matplotlib.patches import Circle, Patch
 
 from ..definitions import config_dict
-from ..Functions.init_fig import init_fig
-from ..Functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 from ._error import Lam_WindCheckError
 from .conductor import Conductor
 from .segment import Segment

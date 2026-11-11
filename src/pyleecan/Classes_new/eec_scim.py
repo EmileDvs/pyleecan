@@ -7,8 +7,8 @@ from multiprocessing import cpu_count
 import numpy as np
 import scipy.interpolate as scp_int
 
-from ..Functions.Electrical.dqh_transformation import abc2n, n2abc
-from ..Functions.labels import ROTOR_LAB, STATOR_LAB
+from ..Functions_new.Electrical.dqh_transformation import abc2n, n2abc
+from ..Functions_new.labels import ROTOR_LAB, STATOR_LAB
 from ._import import import_class
 from .eec import EEC
 from .import_gen_vect_lin import ImportGenVectLin

@@ -104,6 +104,63 @@ def test_base_is_guarded_and_inherited_post_init_links_children(monkeypatch):
     assert copied.children[0].parent is copied
 
 
+def test_parent_links_on_field_assignment(monkeypatch):
+    from pyleecan.Classes_new import _pyleecan_class
+
+    @dataclass(eq=False)
+    class Child(_pyleecan_class.PyleecanClass):
+        pass
+
+    @dataclass(eq=False)
+    class Owner(_pyleecan_class.PyleecanClass):
+        child: Child | None = None
+        children: dict = field(default_factory=dict)
+
+    monkeypatch.setattr(_pyleecan_class, "PARENT_TYPES", {})
+    owner = Owner()
+    child = Child()
+    owner.child = child
+    assert child.parent is owner
+    nested = Child()
+    owner.children = {"items": [nested]}
+    assert nested.parent is owner
+    owner.parent = child
+    assert owner.parent is child
+    assert child.parent is owner
+
+
+def test_simulation_input_parent_on_assignment():
+    from pyleecan.Classes_new.input_current import InputCurrent
+    from pyleecan.Classes_new.simulation import Simulation
+
+    simulation = Simulation()
+    input_current = InputCurrent()
+    simulation.input = input_current
+    assert input_current.parent is simulation
+    constructed = Simulation(input=InputCurrent())
+    assert constructed.input.parent is constructed
+    replacement = InputCurrent()
+    simulation.input = replacement
+    assert replacement.parent is simulation
+    simulation.input = None
+    assert simulation.input is None
+
+
+def test_invalid_parent_assignment_does_not_replace_existing_field():
+    from pyleecan.Classes_new.data import Data
+    from pyleecan.Classes_new.input_current import InputCurrent
+    from pyleecan.Classes_new.simulation import Simulation
+
+    simulation = Simulation(input=InputCurrent())
+    original = simulation.input
+    invalid = Data()
+    with pytest.raises(TypeError, match="Data parent"):
+        simulation.input = invalid
+    assert simulation.input is original
+    assert original.parent is simulation
+    assert invalid.parent is None
+
+
 def test_parent_mapping_handles_special_module_and_class_names():
     gen_dict = {
         "Data1D": {"mother": "", "properties": []},
@@ -781,7 +838,7 @@ def test_experimental_self_imports_and_recursive_types(
     class_dict["mother"] = ""
     class_dict["methods"] = ["comp_axes"]
     recursive_prop = deepcopy(generator_environment["VarSimu"]["properties"][0])
-    recursive_prop.update({"name": "child", "type": "Output", "value": ""})
+    recursive_prop.update({"name": "child", "type": "Output", "value": None})
     recursive_list = deepcopy(generator_environment["ImportData"]["properties"][0])
     recursive_list.update({"name": "children", "type": "[Output]", "value": None})
     class_dict["properties"] = [recursive_prop, recursive_list]
@@ -812,7 +869,7 @@ def test_experimental_self_imports_and_recursive_types(
     assert "from .output import Output" not in source
     assert "from pyleecan.Classes_new.output import Output" not in source
     assert "from __future__ import annotations" in source
-    assert "child: Output | None = None" in source
+    assert "child: Output | None = field(" in source
     assert "children: list[Output] | None = None" in source
     tree = ast.parse(source)
     cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))

@@ -1,11 +1,11 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/InputCurrent.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
+from ..Functions_new.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
 from ._error import InputError
 from .data_1d import Data1D
 from .data_freq import DataFreq
@@ -33,11 +33,17 @@ class InputCurrent(InputVoltage):
         Unit: A; Default: None
     """
 
-    Is: ImportMatrix | None = None
+    Is: ImportMatrix | None = field(
+        default=None, metadata={"default_class": "ImportMatrix"}
+    )
     """Stator currents as a function of time (each column correspond to one phase) to import"""
-    Ir: ImportMatrix | None = None
+    Ir: ImportMatrix | None = field(
+        default=None, metadata={"default_class": "ImportMatrix"}
+    )
     """Rotor currents as a function of time (each column correspond to one phase) to import"""
-    Is_harm: ImportData | None = None
+    Is_harm: ImportData | None = field(
+        default=None, metadata={"default_class": "ImportData"}
+    )
     """Stator harmonic currents"""
 
     # Inlined from Methods.Simulation.InputCurrent.gen_input

@@ -7,8 +7,10 @@ from typing import Any
 import numpy as np
 from matplotlib.patches import Patch
 
-from ..Functions.init_fig import init_fig
-from ..Functions.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from ..Functions_new.init_fig import init_fig
+from ..Functions_new.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
 from ._error import LaminationCheckError
 from .lamination import Lamination
 from .slot import Slot

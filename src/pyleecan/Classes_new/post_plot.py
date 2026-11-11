@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from inspect import signature
 from typing import Any
 
-from ..Functions.Plot import dict_2D, dict_3D
+from ..Functions_new.Plot import dict_2D, dict_3D
 from .post_method import PostMethod
 
 

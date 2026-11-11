@@ -1,11 +1,11 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamSlotMagNS.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.labels import (
+from ..Functions_new.labels import (
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
     LAM_LAB,
@@ -31,20 +31,26 @@ class LamSlotMagNS(LamSlotM):
     ----------
     magnet_north : Magnet or None
         North Magnet of the lamination
-        Default: None
+        Default: Magnet()
     magnet_south : Magnet or None
         South Magnet of the lamination
-        Default: None
+        Default: Magnet()
     slot_south : Slot or None
         South slot of the lamination
-        Default: None
+        Default: Slot()
     """
 
-    magnet_north: Magnet | None = None
+    magnet_north: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """North Magnet of the lamination"""
-    magnet_south: Magnet | None = None
+    magnet_south: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """South Magnet of the lamination"""
-    slot_south: Slot | None = None
+    slot_south: Slot | None = field(
+        default_factory=lambda: Slot(), metadata={"default_class": "Slot"}
+    )
     """South slot of the lamination"""
 
     # Inlined from Methods.Machine.LamSlotMagNS.build_geometry

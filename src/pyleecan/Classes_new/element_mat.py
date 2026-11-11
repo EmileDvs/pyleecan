@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Mesh/ElementMat.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional, Union
 
 import numpy as np
@@ -38,7 +38,7 @@ class ElementMat(PyleecanClass):
         Default: None
     scalar_product : ScalarProductL2 or None
         No description provided.
-        Default: None
+        Default: ScalarProductL2()
     """
 
     connectivity: np.ndarray | None = None
@@ -49,9 +49,16 @@ class ElementMat(PyleecanClass):
     """Define the number of node per element"""
     indice: np.ndarray | None = None
     """Element indices"""
-    ref_element: RefElement | None = None
-    gauss_point: GaussPoint | None = None
-    scalar_product: ScalarProductL2 | None = None
+    ref_element: RefElement | None = field(
+        default=None, metadata={"default_class": "RefElement"}
+    )
+    gauss_point: GaussPoint | None = field(
+        default=None, metadata={"default_class": "GaussPoint"}
+    )
+    scalar_product: ScalarProductL2 | None = field(
+        default_factory=lambda: ScalarProductL2(),
+        metadata={"default_class": "ScalarProductL2"},
+    )
 
     # Inlined from Methods.Mesh.ElementMat.add_element
     def add_element(

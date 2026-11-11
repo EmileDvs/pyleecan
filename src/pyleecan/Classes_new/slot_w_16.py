@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.Geometry.inter_circle_circle import inter_circle_circle
-from ..Functions.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
-from ..Functions.Plot import (
+from ..Functions_new.Geometry.inter_circle_circle import inter_circle_circle
+from ..Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

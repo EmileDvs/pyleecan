@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/OutForce.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._pyleecan_class import PyleecanClass
 from .data import Data
@@ -35,13 +35,17 @@ class OutForce(PyleecanClass):
 
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Force"""
-    AGSF: VectorField | None = None
+    AGSF: VectorField | None = field(
+        default=None, metadata={"default_class": "VectorField"}
+    )
     """Air Gap Surface Force (mainly computed with Maxwell stress tensor)"""
     logger_name: str = "Pyleecan.Force"
     """Name of the logger to use"""
     Rag: float | None = None
     """Radius value for air-gap computation"""
-    meshsolution: MeshSolution | None = None
+    meshsolution: MeshSolution | None = field(
+        default=None, metadata={"default_class": "MeshSolution"}
+    )
     """Force computed on a mesh"""
 
     # Inlined from Methods.Output.OutForce.store

@@ -61,7 +61,9 @@ class InputFlux(InputCurrent):
     """Unit of the flux if not T"""
     slice: np.ndarray | None = None
     """Slice axis values"""
-    B_enforced: VectorField | None = None
+    B_enforced: VectorField | None = field(
+        default=None, metadata={"default_class": "VectorField"}
+    )
     """Airgap flux density as VectorField object"""
 
     # Inlined from Methods.Simulation.InputFlux.gen_input

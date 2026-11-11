@@ -7,8 +7,8 @@ import numpy as np
 from matplotlib.patches import Polygon
 
 from ..definitions import config_dict
-from ..Functions.Geometry.comp_surface_num import comp_surface_num
-from ..Functions.init_fig import init_fig
+from ..Functions_new.Geometry.comp_surface_num import comp_surface_num
+from ..Functions_new.init_fig import init_fig
 from .line import Line
 from .surface import Surface
 

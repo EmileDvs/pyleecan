@@ -29,10 +29,10 @@ class Simulation(PyleecanClass):
         Default: None
     machine : Machine or None
         Machine to simulate
-        Default: None
+        Default: Machine()
     input : Input or None
         Input of the simulation
-        Default: None
+        Default: Input()
     logger_name : str
         Name of the logger to use
         Default: "Pyleecan.Simulation"
@@ -60,13 +60,19 @@ class Simulation(PyleecanClass):
     """Name of the simulation"""
     desc: str | None = None
     """Simulation description"""
-    machine: Machine | None = None
+    machine: Machine | None = field(
+        default_factory=lambda: Machine(), metadata={"default_class": "Machine"}
+    )
     """Machine to simulate"""
-    input: Input | None = None
+    input: Input | None = field(
+        default_factory=lambda: Input(), metadata={"default_class": "Input"}
+    )
     """Input of the simulation"""
     logger_name: str = "Pyleecan.Simulation"
     """Name of the logger to use"""
-    var_simu: VarSimu | None = None
+    var_simu: VarSimu | None = field(
+        default=None, metadata={"default_class": "VarSimu"}
+    )
     """Multi-simulation definition"""
     postproc_list: list[Post] = field(default_factory=list)
     """List of postprocessings to run on Output after the simulation"""

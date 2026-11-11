@@ -1,12 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/NotchEvenDist.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.Geometry.transform_hole_surf import transform_hole_surf
-from ..Functions.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
+from ..Functions_new.Geometry.transform_hole_surf import transform_hole_surf
+from ..Functions_new.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
 from .notch import Notch
 from .slot import Slot
 
@@ -22,12 +22,14 @@ class NotchEvenDist(Notch):
         Unit: rad; Default: 0
     notch_shape : Slot or None
         Shape of the Notch
-        Default: None
+        Default: Slot()
     """
 
     alpha: float = 0
     """angular positon of the first notch (0 is middle of first tooth)"""
-    notch_shape: Slot | None = None
+    notch_shape: Slot | None = field(
+        default_factory=lambda: Slot(), metadata={"default_class": "Slot"}
+    )
     """Shape of the Notch"""
 
     # Inlined from Methods.Machine.NotchEvenDist.build_geometry_key

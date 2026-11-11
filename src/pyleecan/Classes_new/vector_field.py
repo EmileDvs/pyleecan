@@ -8,17 +8,17 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..Functions.SciDataTool import AxisError
-from ..Functions.SciDataTool.conversions import (
+from ..Functions_new.SciDataTool import AxisError
+from ..Functions_new.SciDataTool.conversions import (
     cart2pol,
     pol2cart,
     rphiz_to_xyz,
     rphiz_to_xyz_field,
     xyz_to_rphiz,
 )
-from ..Functions.SciDataTool.Plot import REV_COMP_DICT
-from ..Functions.SciDataTool.Plot.init_fig import copy_fig, init_fig
-from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.SciDataTool.Plot import REV_COMP_DICT
+from ..Functions_new.SciDataTool.Plot.init_fig import copy_fig, init_fig
+from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
 from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_nd import DataND

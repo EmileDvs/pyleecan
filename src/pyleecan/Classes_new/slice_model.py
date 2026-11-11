@@ -7,8 +7,8 @@ from typing import Any
 import numpy as np
 from scipy.stats import norm
 
-from ..Functions.Plot import dict_2D
-from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.Plot import dict_2D
+from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
 from ._error import InputError
 from ._pyleecan_class import PyleecanClass
 from .data_pattern import DataPattern

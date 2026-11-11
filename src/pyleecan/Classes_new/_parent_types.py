@@ -11,6 +11,9 @@ PARENT_TYPES = {
         ("out_loss", "OutLoss"),
         ("out_mag", "OutMag"),
         ("out_struct", "OutStruct"),
+        ("output", "Output"),
+        ("solution", "Solution"),
+        ("vector_field", "VectorField"),
     ),
     ("data_keeper", "DataKeeper"): (
         ("opti_problem", "OptiProblem"),
@@ -31,7 +34,11 @@ PARENT_TYPES = {
     ("hole", "Hole"): (("lamination", "Lamination"),),
     ("import_", "Import"): (
         ("drive", "Drive"),
+        ("import_", "Import"),
         ("import_data", "ImportData"),
+        ("input", "Input"),
+        ("mat_magnetics", "MatMagnetics"),
+        ("out_elec", "OutElec"),
     ),
     ("import_data", "ImportData"): (
         ("import_vector_field", "ImportVectorField"),
@@ -105,8 +112,13 @@ PARENT_TYPES = {
     ("out_mag", "OutMag"): (("output", "Output"),),
     ("out_post", "OutPost"): (("output", "Output"),),
     ("out_struct", "OutStruct"): (("output", "Output"),),
-    ("output", "Output"): (("output", "Output"),),
+    ("output", "Output"): (
+        ("electrical", "Electrical"),
+        ("opti_solver", "OptiSolver"),
+        ("output", "Output"),
+    ),
     ("param_explorer", "ParamExplorer"): (
+        ("opti_problem", "OptiProblem"),
         ("output", "Output"),
         ("var_simu", "VarSimu"),
     ),
@@ -115,6 +127,7 @@ PARENT_TYPES = {
         ("var_simu", "VarSimu"),
     ),
     ("ref_element", "RefElement"): (("element_mat", "ElementMat"),),
+    ("scalar_product", "ScalarProduct"): (("element_mat", "ElementMat"),),
     ("shaft", "Shaft"): (("machine", "Machine"),),
     ("simulation", "Simulation"): (
         ("electrical", "Electrical"),

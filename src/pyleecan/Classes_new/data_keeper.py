@@ -6,7 +6,7 @@ from ntpath import basename
 from typing import Any, Callable
 
 from ..definitions import PYTHON_DEFAULT_ENCODING
-from ..Functions.path_tools import abs_file_path
+from ..Functions_new.path_tools import abs_file_path
 from ._error import CheckTypeError
 from ._pyleecan_class import PyleecanClass
 

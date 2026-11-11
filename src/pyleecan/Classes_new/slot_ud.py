@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 
-from ..Functions.labels import SOP_LAB, WIND_LAB
+from ..Functions_new.labels import SOP_LAB, WIND_LAB
 from ._error import SlotCheckError
 from .arc_1 import Arc1
 from .line import Line

@@ -7,8 +7,8 @@ from typing import Any
 
 import numpy as np
 
-from ..Functions.SciDataTool import NormError
-from ..Functions.SciDataTool.conversions import convert
+from ..Functions_new.SciDataTool import NormError
+from ..Functions_new.SciDataTool.conversions import convert
 from .data import Data
 
 
@@ -131,7 +131,7 @@ class DataPattern(Data):
 
         # fft/ifft
         if operation is not None:
-            module = import_module("pyleecan.Functions.SciDataTool.conversions")
+            module = import_module("pyleecan.Functions_new.SciDataTool.conversions")
             func = getattr(module, operation)  # Conversion function
             values = np.array(func(values, is_real=is_real))
 

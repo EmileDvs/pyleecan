@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 
 import numpy as np
 
@@ -21,7 +22,9 @@ class SolutionVector(Solution):
         Default: None
     """
 
-    field: VectorField | None = None
+    field: VectorField | None = dataclass_field(
+        default=None, metadata={"default_class": "VectorField"}
+    )
     """Data object containing the numerical values of a solution. One of the axis must be "Indices", a list of indices. If the solution is a vector, one of the axis must be "Direction", values [\'x\',\'y\'] for example."""
 
     # Inlined from Methods.Mesh.SolutionVector.get_axes_list

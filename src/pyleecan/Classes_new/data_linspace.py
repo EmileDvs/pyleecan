@@ -7,9 +7,9 @@ from typing import Any
 
 import numpy as np
 
-from ..Functions.SciDataTool import AxisError, NormError
-from ..Functions.SciDataTool.conversions import convert
-from ..Functions.SciDataTool.symmetries import rebuild_symmetries_axis
+from ..Functions_new.SciDataTool import AxisError, NormError
+from ..Functions_new.SciDataTool.conversions import convert
+from ..Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
 from ._import import import_class
 from .data import Data
 from .norm_vector import NormVector
@@ -293,7 +293,7 @@ class DataLinspace(Data):
 
         # fft/ifft
         if operation is not None:
-            module = import_module("pyleecan.Functions.SciDataTool.conversions")
+            module = import_module("pyleecan.Functions_new.SciDataTool.conversions")
             func = getattr(module, operation)  # Conversion function
             values = np.array(func(values, is_real=is_real))
             if is_full and (self.name == "freqs" or self.name == "wavenumber"):

@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/VarLoad.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
@@ -25,7 +25,9 @@ class VarLoad(VarSimu):
     """
 
     NAME: ClassVar = "Variable Load"
-    OP_matrix: OPMatrix | None = None
+    OP_matrix: OPMatrix | None = field(
+        default=None, metadata={"default_class": "OPMatrix"}
+    )
     """Operating point matrix object"""
 
     # Inlined from Methods.Simulation.VarLoad._set_OP_matrix

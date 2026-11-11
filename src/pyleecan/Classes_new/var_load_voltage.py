@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 
-from ..Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
+from ..Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
 from .input_voltage import InputVoltage

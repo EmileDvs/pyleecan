@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/Simu1.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._error import InputError
 from .electrical import Electrical
@@ -35,15 +35,19 @@ class Simu1(Simulation):
         Default: None
     """
 
-    elec: Electrical | None = None
+    elec: Electrical | None = field(
+        default=None, metadata={"default_class": "Electrical"}
+    )
     """Electrical module"""
-    mag: Magnetics | None = None
+    mag: Magnetics | None = field(default=None, metadata={"default_class": "Magnetics"})
     """Magnetic module"""
-    struct: Structural | None = None
+    struct: Structural | None = field(
+        default=None, metadata={"default_class": "Structural"}
+    )
     """Structural module"""
-    force: Force | None = None
+    force: Force | None = field(default=None, metadata={"default_class": "Force"})
     """Force moduale"""
-    loss: Loss | None = None
+    loss: Loss | None = field(default=None, metadata={"default_class": "Loss"})
     """Loss moduale"""
 
     # Inlined from Methods.Simulation.Simu1.run_single

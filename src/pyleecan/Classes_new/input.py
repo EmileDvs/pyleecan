@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/Input.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -48,9 +48,13 @@ class Input(PyleecanClass):
         Default: None
     """
 
-    time: ImportMatrix | None = None
+    time: ImportMatrix | None = field(
+        default=None, metadata={"default_class": "ImportMatrix"}
+    )
     """Electrical time vector (no symmetry) to import"""
-    angle: ImportMatrix | None = None
+    angle: ImportMatrix | None = field(
+        default=None, metadata={"default_class": "ImportMatrix"}
+    )
     """Electrical position vector (no symmetry) to import"""
     Nt_tot: int = 2048
     """Time discretization"""
@@ -58,7 +62,7 @@ class Input(PyleecanClass):
     """Number of rotor revolution (to compute the final time)"""
     Na_tot: int = 2048
     """Angular discretization"""
-    OP: OP | None = None
+    OP: OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
     t_final: float | None = None
     """To enforce final time"""

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pylab import False_
 
-from ..Functions.Electrical.dqh_transformation_freq import dqh2n_DataFreq
+from ..Functions_new.Electrical.dqh_transformation_freq import dqh2n_DataFreq
 from .data_1d import Data1D
 from .data_freq import DataFreq
 from .data_linspace import DataLinspace

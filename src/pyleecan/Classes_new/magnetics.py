@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/Magnetics.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -102,7 +102,9 @@ class Magnetics(PyleecanClass):
     """Shift angle to appy to the rotor in magnetic model"""
     logger_name: str = "Pyleecan.Magnetics"
     """Name of the logger to use"""
-    Slice_enforced: SliceModel | None = None
+    Slice_enforced: SliceModel | None = field(
+        default=None, metadata={"default_class": "SliceModel"}
+    )
     """Enforce slice model to account for skew"""
     Nslices_enforced: int | None = None
     """To enforce number of slices in slice model"""

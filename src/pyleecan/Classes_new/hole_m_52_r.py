@@ -1,15 +1,15 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/HoleM52R.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.labels import HOLEM_LAB
-from ..Functions.Plot import (
+from ..Functions_new.labels import HOLEM_LAB
+from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,
@@ -52,7 +52,7 @@ class HoleM52R(HoleMag):
         Unit: m; Default: 0.02; Minimum: 0
     magnet_0 : Magnet or None
         Magnet of the hole
-        Default: None
+        Default: Magnet()
     R0 : float
         Void corner radius
         Unit: m; Default: 0; Minimum: 0
@@ -70,7 +70,9 @@ class HoleM52R(HoleMag):
     """Void width"""
     H2: float = 0.02
     """Additional depth for the magnet"""
-    magnet_0: Magnet | None = None
+    magnet_0: Magnet | None = field(
+        default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
+    )
     """Magnet of the hole"""
     R0: float = 0
     """Void corner radius"""

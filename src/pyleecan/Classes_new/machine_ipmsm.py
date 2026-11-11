@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/MachineIPMSM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._error import MachineCheckError
 from .lam_h import LamH
@@ -19,15 +19,19 @@ class MachineIPMSM(MachineSync):
     ----------
     rotor : LamH or None
         Machine's Rotor
-        Default: None
+        Default: LamH()
     stator : Lamination or None
         Machine's Stator
-        Default: None
+        Default: Lamination()
     """
 
-    rotor: LamH | None = None
+    rotor: LamH | None = field(
+        default_factory=lambda: LamH(), metadata={"default_class": "LamH"}
+    )
     """Machine's Rotor"""
-    stator: Lamination | None = None
+    stator: Lamination | None = field(
+        default_factory=lambda: Lamination(), metadata={"default_class": "Lamination"}
+    )
     """Machine's Stator"""
 
     # Inlined from Methods.Machine.MachineIPMSM.check

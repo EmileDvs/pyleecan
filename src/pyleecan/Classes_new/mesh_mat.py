@@ -3,7 +3,7 @@
 
 import copy
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import repeat
 from typing import Dict, List, Literal, Optional, Tuple, Union
 
@@ -12,7 +12,7 @@ import numpy as np
 import pyvista as pv
 
 from ..definitions import RESULT_DIR
-from ..Functions.GUI.log_error import log_error
+from ..Functions_new.GUI.log_error import log_error
 from ._import import import_class
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg
@@ -36,7 +36,7 @@ class MeshMat(Mesh):
         Default: None
     node : NodeMat or None
         Storing nodes
-        Default: None
+        Default: NodeMat()
     _is_renum : bool
         True if renumering the nodes and elements is useful when renum method is called (saving calculation time)
         Default: False
@@ -50,7 +50,10 @@ class MeshMat(Mesh):
 
     element_dict: dict[str, ElementMat] | None = None
     """Storing connectivity"""
-    node: NodeMat | None = None
+    node: NodeMat | None = field(
+        default_factory=lambda: import_class("NodeMat")(),
+        metadata={"default_class": "NodeMat"},
+    )
     """Storing nodes"""
     _is_renum: bool = False
     """True if renumering the nodes and elements is useful when renum method is called (saving calculation time)"""

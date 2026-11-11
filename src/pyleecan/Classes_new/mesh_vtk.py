@@ -12,7 +12,7 @@ from meshio import read
 from vtk import vtkPointSet
 
 from ..definitions import RESULT_DIR
-from ..Functions.GUI.log_error import log_error
+from ..Functions_new.GUI.log_error import log_error
 from ._import import import_class
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg

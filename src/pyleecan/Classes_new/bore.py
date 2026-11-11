@@ -6,8 +6,8 @@ from dataclasses import dataclass
 import numpy as np
 
 from ..definitions import config_dict
-from ..Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
-from ..Functions.init_fig import init_fig
+from ..Functions_new.Geometry.cut_lines_between_angle import cut_lines_between_angles
+from ..Functions_new.init_fig import init_fig
 from ._error import ParentMissingError
 from ._pyleecan_class import PyleecanClass
 from .segment import Segment

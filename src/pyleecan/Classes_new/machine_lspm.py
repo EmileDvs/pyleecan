@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/MachineLSPM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ._error import MachineCheckError
 from .lam_slot_wind import LamSlotWind
@@ -17,15 +17,20 @@ class MachineLSPM(MachineSync):
     ----------
     rotor : LamSquirrelCageMag or None
         Machine's Rotor
-        Default: None
+        Default: LamSquirrelCageMag()
     stator : LamSlotWind or None
         Machine's Stator
-        Default: None
+        Default: LamSlotWind()
     """
 
-    rotor: LamSquirrelCageMag | None = None
+    rotor: LamSquirrelCageMag | None = field(
+        default_factory=lambda: LamSquirrelCageMag(),
+        metadata={"default_class": "LamSquirrelCageMag"},
+    )
     """Machine's Rotor"""
-    stator: LamSlotWind | None = None
+    stator: LamSlotWind | None = field(
+        default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
+    )
     """Machine's Stator"""
 
     # Inlined from Methods.Machine.MachineLSPM.check

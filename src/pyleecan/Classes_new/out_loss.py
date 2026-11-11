@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ..Functions_new.SciDataTool.Plot.plot_2D import plot_2D
 from ._pyleecan_class import PyleecanClass
 from .data import Data
 from .out_loss_model import OutLossModel
