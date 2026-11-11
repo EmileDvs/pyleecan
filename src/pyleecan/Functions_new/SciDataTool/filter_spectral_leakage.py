@@ -1,7 +1,6 @@
 import numpy as np
-import numpy.linalg as np_lin
 
-from ...Functions_new.SciDataTool.set_routines import unique_tol
+from .set_routines import unique_tol
 
 
 def filter_spectral_leakage(
@@ -114,7 +113,7 @@ def filter_spectral_leakage(
         is_3D = False
 
     # Filter spectrum
-    spectrum_filt = np_lin.solve(Wmatf, spectrum[If, ...])
+    spectrum_filt = np.linalg.solve(Wmatf, spectrum[If, ...])
 
     if is_3D:
         if Nslice > 1:

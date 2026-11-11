@@ -1,8 +1,8 @@
-from numpy import all as np_all
+import numpy as np
 
-from pyleecan.Classes_new.data_time import DataTime
-from pyleecan.Classes_new.solution_vector import SolutionVector
-from pyleecan.Classes_new.vector_field import VectorField
+from ...Classes_new.data_time import DataTime
+from ...Classes_new.solution_vector import SolutionVector
+from ...Classes_new.vector_field import VectorField
 
 
 def build_solution_vector(
@@ -45,7 +45,7 @@ def build_solution_vector(
     )
     components["comp_y"] = y_data
 
-    if field.shape[-1] == 3 and not np_all(field[..., 2] == 0):
+    if field.shape[-1] == 3 and not np.all(field[..., 2] == 0):
         z_data = DataTime(
             name=name,
             unit=unit,

@@ -1,15 +1,12 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import colors
 from matplotlib.image import NonUniformImage
 from mpl_toolkits.mplot3d import art3d
-from numpy import abs as np_abs
-from numpy import log10
-from numpy import nanmax as np_max
-from numpy import nanmin as np_min
 
-from ....Functions_new.SciDataTool.Plot import COLORS
-from ....Functions_new.SciDataTool.Plot.init_fig import init_fig
+from . import COLORS
+from .init_fig import init_fig
 
 
 def plot_3D(
@@ -140,13 +137,13 @@ def plot_3D(
 
     # Calculate z limits
     if z_min is None:
-        z_min = np_min(Zdata)
+        z_min = np.nanmin(Zdata)
     if z_max is None:
-        z_max = np_max(Zdata)
+        z_max = np.nanmax(Zdata)
 
     # Check logscale on z axis
     if is_logscale_z:
-        Zdata = 10 * log10(np_abs(Zdata))
+        Zdata = 10 * np.log10(np.abs(Zdata))
         clb_format = "%0.0f"
     else:
         clb_format = "%.4g"

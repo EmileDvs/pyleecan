@@ -1,10 +1,21 @@
-from numpy import angle, pi, floor_divide
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.lam_hole_ns import LamHoleNS
-from ...Functions_new.FEMM.get_mesh_param import get_mesh_param
+import numpy as np
+
+from ...Classes_new.lam_hole import LamHole
+from ...Classes_new.lam_hole_ns import LamHoleNS
 from ...Methods import NotImplementedYetError
-from ...Functions_new.Winding.find_wind_phase_color import get_phase_id
-from ...Functions_new.labels import decode_label, get_obj_from_label, WIND_LAB, ROTOR_LAB, HOLEM_LAB, HOLEV_LAB, MAG_LAB, VENT_LAB, BAR_LAB
+from ..labels import (
+    BAR_LAB,
+    HOLEM_LAB,
+    HOLEV_LAB,
+    MAG_LAB,
+    ROTOR_LAB,
+    VENT_LAB,
+    WIND_LAB,
+    decode_label,
+    get_obj_from_label,
+)
+from ..Winding.find_wind_phase_color import get_phase_id
+from .get_mesh_param import get_mesh_param
 
 
 def assign_FEMM_surface(femm, surf, prop, FEMM_dict, machine):
@@ -71,11 +82,11 @@ def assign_FEMM_surface(femm, surf, prop, FEMM_dict, machine):
                 lam = hole.parent
                 alpha_p = 360 / Zh
                 mag_0 = (
-                    floor_divide(angle(point_ref, deg=True), alpha_p) + 0.5
+                    np.floor_divide(np.angle(point_ref, deg=True), alpha_p) + 0.5
                 ) * alpha_p
 
                 mag_dict = hole.comp_magnetization_dict()
-                mag = mag_0 + mag_dict["magnet_" + str(T_id)] * 180 / pi
+                mag = mag_0 + mag_dict["magnet_" + str(T_id)] * 180 / np.pi
 
                 # modifiy magnetisation of south poles
                 if isinstance(lam, LamHole):
@@ -116,18 +127,22 @@ def assign_FEMM_surface(femm, surf, prop, FEMM_dict, machine):
             elif mag_obj.type_magnetization == 0:
                 mag = "theta + 180"  # Radial South pole magnet
             elif mag_obj.type_magnetization == 1 and (label_dict["S_id"] % 2) == 0:
-                mag = angle(point_ref) * 180 / pi  # Parallel North pole magnet
+                mag = np.angle(point_ref) * 180 / np.pi  # Parallel North pole magnet
             elif mag_obj.type_magnetization == 1:
-                mag = angle(point_ref) * 180 / pi + 180  # Parallel South pole magnet
+                mag = (
+                    np.angle(point_ref) * 180 / np.pi + 180
+                )  # Parallel South pole magnet
             elif mag_obj.type_magnetization == 2:
                 lam_obj = mag_obj.parent
                 Zs = lam_obj.get_Zs()
                 mag = str(-(Zs / 2 - 1)) + " * theta + 90 "
             elif mag_obj.type_magnetization == 3 and (label_dict["S_id"] % 2) == 0:
-                mag = angle(point_ref) * 180 / pi - 90  # Tangential North pole magnet
+                mag = (
+                    np.angle(point_ref) * 180 / np.pi - 90
+                )  # Tangential North pole magnet
             elif mag_obj.type_magnetization == 3:
                 mag = (
-                    angle(point_ref) * 180 / pi + 180 - 90
+                    np.angle(point_ref) * 180 / np.pi + 180 - 90
                 )  # Tangential South pole magnet
 
             # Assign magnet group (assuming one magnet per pole)

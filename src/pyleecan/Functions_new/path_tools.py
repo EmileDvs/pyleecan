@@ -1,6 +1,9 @@
 import re
 from os.path import isfile, join
 
+from ..Classes_new._error import FileError
+from ..Classes_new._error import PathImportError as ImportError
+
 
 def importName(modulename, name, ignore_error=False):
     """Import a named object from a module in the context of this function."""
@@ -47,15 +50,9 @@ def abs_file_path(file_path, is_check=True):
     return file_path
 
 
-from pyleecan.Classes_new._error import FileError
-
-
-from pyleecan.Classes_new._error import PathImportError as ImportError
-
-
 if __name__ == "__main__":
     import sys
-    from os.path import dirname, abspath, normpath, join
+    from os.path import abspath, dirname, join, normpath
 
     ROOT_DIR = normpath(abspath(join(dirname(__file__), "..", "..")))
 

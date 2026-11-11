@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
-from pyvista import UnstructuredGrid
+import pyvista as pv
 
 from ....definitions import config_dict
 
@@ -10,7 +8,7 @@ COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
 
 def plot_glyph_pv(
     pv_plotter,
-    mesh_pv: UnstructuredGrid,
+    mesh_pv: pv.UnstructuredGrid,
     vect_field: np.ndarray,
     is_point_arrow,
     factor=1,

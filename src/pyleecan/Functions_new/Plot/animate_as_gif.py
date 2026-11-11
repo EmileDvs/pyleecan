@@ -1,11 +1,10 @@
+import os
 from glob import glob
-from os import remove
-from os.path import join
 
 import imageio
 from matplotlib.pyplot import subplots
 
-from pyleecan.Classes_new.vector_field import VectorField
+from ...Classes_new.vector_field import VectorField
 
 
 def animate_as_gif(
@@ -43,7 +42,7 @@ def animate_as_gif(
         parameters of func
     """
 
-    with imageio.get_writer(join(save_path, file_name), mode="I") as writer:
+    with imageio.get_writer(os.path.join(save_path, file_name), mode="I") as writer:
         if isinstance(data_list, list):
             for i, data in enumerate(data_list):
                 if isinstance(data, VectorField):
@@ -101,4 +100,4 @@ def animate_as_gif(
                     writer.append_data(image)
 
     for file in glob(save_path + "\\temp_*"):
-        remove(file)
+        os.remove(file)

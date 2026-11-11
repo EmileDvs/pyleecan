@@ -1,17 +1,4 @@
-from numpy import (
-    array,
-    stack,
-    linspace,
-    argmin,
-    take,
-    isclose,
-    isin,
-    all,
-    abs as np_abs,
-    where,
-    zeros,
-    unique,
-)
+import numpy as np
 from scipy.interpolate import interp1d
 
 
@@ -48,16 +35,16 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
         if length1 > length2:
             number = length1
             if initial not in values1:
-                initial = values1[argmin(np_abs([i - initial for i in values1])) + 1]
+                initial = values1[np.argmin(np.abs([i - initial for i in values1])) + 1]
             if final not in values1:
-                final = values1[argmin(np_abs([i - final for i in values1])) - 1]
+                final = values1[np.argmin(np.abs([i - final for i in values1])) - 1]
         else:
             number = length2
             if initial not in values2:
-                initial = values2[argmin(np_abs([i - initial for i in values2])) + 1]
+                initial = values2[np.argmin(np.abs([i - initial for i in values2])) + 1]
             if final not in values2:
-                final = values2[argmin(np_abs([i - final for i in values2])) - 1]
-    return linspace(initial, final, int(number), endpoint=True)
+                final = values2[np.argmin(np.abs([i - final for i in values2])) - 1]
+    return np.linspace(initial, final, int(number), endpoint=True)
 
 
 def get_interpolation(values, axis_values, new_axis_values, index):
@@ -86,22 +73,22 @@ def get_interpolation(values, axis_values, new_axis_values, index):
         ):
             new_shape = list(values.shape)
             new_shape[index] = 1
-            new_values = zeros(tuple(new_shape), dtype=values.dtype)
+            new_values = np.zeros(tuple(new_shape), dtype=values.dtype)
             new_values[(slice(None),) * index] = None
             return new_values
         else:
-            idx = argmin(np_abs(axis_values - new_axis_values[0]))
-            return take(values, [idx], axis=index)
-    elif len(axis_values) == len(new_axis_values) and all(
-        isclose(axis_values, new_axis_values, rtol=1e-03)
+            idx = np.argmin(np.abs(axis_values - new_axis_values[0]))
+            return np.take(values, [idx], axis=index)
+    elif len(axis_values) == len(new_axis_values) and np.all(
+        np.isclose(axis_values, new_axis_values, rtol=1e-03)
     ):  # Same axes -> no interpolation
         return values
-    elif isin(
+    elif np.isin(
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
-        indice_take = where(isin(axis_values, new_axis_values))[0]
+        indice_take = np.where(np.isin(axis_values, new_axis_values))[0]
 
-        return take(
+        return np.take(
             values,
             indice_take,
             axis=index,
@@ -131,56 +118,60 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
     # elif len(new_axis_values) == 1:  # Single point -> use argmin
     #     idx = argmin(np_abs(axis_values - new_axis_values[0]))
     #     return take(values, [idx])
-    elif len(axis_values) == len(new_axis_values) and all(
-        isclose(axis_values, new_axis_values, rtol=1e-03)
+    elif len(axis_values) == len(new_axis_values) and np.all(
+        np.isclose(axis_values, new_axis_values, rtol=1e-03)
     ):  # Same axes -> no interpolation
         return values
-    elif isin(
+    elif np.isin(
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
         values_slices = []
-        indice_take = where(isin(axis_values, new_axis_values))[0]
-        _, idx_start, count = unique(
+        indice_take = np.where(np.isin(axis_values, new_axis_values))[0]
+        _, idx_start, count = np.unique(
             axis_values[indice_take], return_counts=True, return_index=True
         )
         if len(idx_start) > 0:
             for i, ii in enumerate(idx_start):
                 values_slices.append(
-                    take(values, indice_take[ii : ii + count[i]], axis=index).mean(
+                    np.take(values, indice_take[ii : ii + count[i]], axis=index).mean(
                         axis=index
                     )
                 )
-            return stack(values_slices, axis=index)
+            return np.stack(values_slices, axis=index)
         else:
-            return take(values, [], axis=index)
+            return np.take(values, [], axis=index)
 
     else:
         new_shape = list(values.shape)
         new_shape[index] = len(new_axis_values)
-        new_values = zeros(tuple(new_shape), dtype=values.dtype)
-        if len(axis_values) == 1 or all(axis_values == axis_values[0]):
+        new_values = np.zeros(tuple(new_shape), dtype=values.dtype)
+        if len(axis_values) == 1 or np.all(axis_values == axis_values[0]):
             for i in range(len(new_axis_values)):
-                new_values[(slice(None),) * index + (i,)] = take(values, 0, axis=index)
+                new_values[(slice(None),) * index + (i,)] = np.take(
+                    values, 0, axis=index
+                )
             return new_values
         else:
             for i in range(len(new_axis_values)):
                 for j in range(len(axis_values) - 1):
-                    if isclose(
+                    if np.isclose(
                         new_axis_values[i], axis_values[j], rtol=1e-03
-                    ) and isclose(new_axis_values[i], axis_values[j + 1], rtol=1e-03):
+                    ) and np.isclose(
+                        new_axis_values[i], axis_values[j + 1], rtol=1e-03
+                    ):
                         new_values[(slice(None),) * index + (i,)] = (
-                            take(values, j, axis=index)
-                            + take(values, j + 1, axis=index)
+                            np.take(values, j, axis=index)
+                            + np.take(values, j + 1, axis=index)
                         ) / 2
                         break
                     elif (
                         new_axis_values[i] >= axis_values[j]
                         and new_axis_values[i] < axis_values[j + 1]
-                        and not isclose(
+                        and not np.isclose(
                             new_axis_values[i], axis_values[j + 1], rtol=1e-03
                         )
                     ):
-                        new_values[(slice(None),) * index + (i,)] = take(
+                        new_values[(slice(None),) * index + (i,)] = np.take(
                             values, j, axis=index
                         )
                         break
@@ -188,18 +179,18 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
                         j == len(axis_values) - 2
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values[(slice(None),) * index + (i,)] = take(
+                        new_values[(slice(None),) * index + (i,)] = np.take(
                             values, j + 1, axis=index
                         )
                         break
                     else:
                         # Extrapolate for outer bounds
                         if new_axis_values[i] <= axis_values[0]:
-                            new_values[(slice(None),) * index + (i,)] = take(
+                            new_values[(slice(None),) * index + (i,)] = np.take(
                                 values, 0, axis=index
                             )
                         elif new_axis_values[i] >= axis_values[-1]:
-                            new_values[(slice(None),) * index + (i,)] = take(
+                            new_values[(slice(None),) * index + (i,)] = np.take(
                                 values, -1, axis=index
                             )
-            return array(new_values)
+            return np.array(new_values)

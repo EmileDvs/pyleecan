@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from ...Functions_new.labels import BOUNDARY_PROP_LAB
+from ..labels import BOUNDARY_PROP_LAB
 
 
 def get_boundary_condition(line, boundary_prop):

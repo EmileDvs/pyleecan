@@ -2,6 +2,7 @@ import traceback
 from logging import getLogger
 
 from PySide6.QtWidgets import QMessageBox, QWidget
+
 from ...loggers import GUI_LOG_NAME
 
 

@@ -1,4 +1,4 @@
-from numpy import sin, exp
+import numpy as np
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -30,7 +30,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     machine.rotor.slot.H1 = H1
     point_dict = machine.rotor.slot._comp_point_coordinate()
 
-    Z1 = Rbo * exp(-1j * 0)
+    Z1 = Rbo * np.exp(-1j * 0)
     Z7 = point_dict["Z7"]
 
     H = abs(Z7.real - Z1.real)

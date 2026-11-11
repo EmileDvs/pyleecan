@@ -1,5 +1,5 @@
 # regions IDs and names (must be unique)
-FEMM_GROUPS = dict()
+FEMM_GROUPS = {}
 
 # airgap GROUP for segments added between the rotor and stator (except middle airgap)
 FEMM_GROUPS["GROUP_AG"] = {"name": "airgap", "ID": 0}

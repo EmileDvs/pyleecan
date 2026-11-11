@@ -1,6 +1,8 @@
 import gzip
+import os
 from json import load as jload
-from os.path import isdir, isfile, splitext
+
+from ...Classes_new._error import LoadMissingFileError
 from ...definitions import PYTHON_DEFAULT_ENCODING
 
 
@@ -24,7 +26,7 @@ def load_json(file_path):
         file_path = file_path[:-1]
 
     # if a path is given, add default file name to file_path
-    if isdir(file_path):
+    if os.path.isdir(file_path):
         i = max(file_path.rfind("\\"), file_path.rfind("/"))
         if i != -1:
             file_path += file_path[i:]
@@ -32,15 +34,15 @@ def load_json(file_path):
             file_path += "/" + file_path
 
     # if there is no file extension, try some
-    if not splitext(file_path)[1]:
+    if not os.path.splitext(file_path)[1]:
         file_ext = ""
         for ext in [".json", ".json.gz"]:
-            if isfile(file_path + ext):
+            if os.path.isfile(file_path + ext):
                 file_ext = ext
         file_path += file_ext
 
     # The file (and the folder) should exist
-    if not isfile(file_path):
+    if not os.path.isfile(file_path):
         raise LoadMissingFileError(str(file_path) + " doesn't exist")
 
     # Get the data dictionary
@@ -55,6 +57,3 @@ def load_json(file_path):
         raise Exception("Error while loading " + file_path + "\n" + str(e))
 
     return file_path, json_data
-
-
-from pyleecan.Classes_new._error import LoadMissingFileError

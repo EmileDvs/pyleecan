@@ -1,6 +1,6 @@
-from numpy import append, concatenate, negative, ones, tile
+import numpy as np
 
-from pyleecan.Classes_new._error import AxisError
+from ...Classes_new._error import AxisError
 
 
 def rebuild_symmetries(values, axis_index, symmetries):
@@ -20,10 +20,10 @@ def rebuild_symmetries(values, axis_index, symmetries):
     if "period" in symmetries.keys():
         values = mytile(values, symmetries.get("period"), axis_index)
     elif "antiperiod" in symmetries.keys():
-        values2 = concatenate((values, negative(values)), axis=axis_index)
+        values2 = np.concatenate((values, np.negative(values)), axis=axis_index)
         values3 = mytile(values2, symmetries.get("antiperiod") // 2, axis_index)
         if symmetries.get("antiperiod") % 2 == 1:
-            values = concatenate((values3, values), axis=axis_index)
+            values = np.concatenate((values3, values), axis=axis_index)
         else:
             values = values3
     return values
@@ -46,13 +46,13 @@ def rebuild_symmetries_axis(values, symmetries):
         for i in range(symmetries.get("period") - 1):
             if len(values) == 1:
                 if "delta" in symmetries.keys():
-                    values_new = append(
+                    values_new = np.append(
                         values_new, values_new[-1] + symmetries["delta"]
                     )
                 else:
                     raise AxisError("must provide delta for symmetries with one sample")
             else:
-                values_new = concatenate(
+                values_new = np.concatenate(
                     (
                         values_new,
                         values + (values_new[-1] - values_new[-2]) + values_new[-1],
@@ -62,13 +62,13 @@ def rebuild_symmetries_axis(values, symmetries):
         for i in range(symmetries.get("antiperiod") - 1):
             if len(values) == 1:
                 if "delta" in symmetries.keys():
-                    values_new = append(
+                    values_new = np.append(
                         values_new, values_new[-1] + symmetries["delta"]
                     )
                 else:
                     raise AxisError("must provide delta for symmetries with one sample")
             else:
-                values_new = concatenate(
+                values_new = np.concatenate(
                     (
                         values_new,
                         values + (values_new[-1] - values_new[-2]) + values_new[-1],
@@ -79,6 +79,6 @@ def rebuild_symmetries_axis(values, symmetries):
 
 def mytile(values, n, axis_index):
     values_shape = values.shape
-    reps = ones(len(values_shape), dtype=int)
+    reps = np.ones(len(values_shape), dtype=int)
     reps[axis_index] = n
-    return tile(values, reps)
+    return np.tile(values, reps)

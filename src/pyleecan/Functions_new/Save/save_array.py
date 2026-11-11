@@ -1,4 +1,4 @@
-from numpy import ndindex, savetxt
+import numpy as np
 
 
 def save_array(
@@ -38,9 +38,9 @@ def save_array(
         # iterating through ndarray except and write slices of the last 2 dims
         if len(data.shape) > 2:
             d = len(data.shape) - 2
-            for i in ndindex(data.shape[:d]):
+            for i in np.ndindex(data.shape[:d]):
                 # writing a break to indicate different slices...
                 outfile.write(f"#{slice}{sep}{i}\n")
-                savetxt(outfile, data[i], delimiter=delimiter, fmt=fmt)
+                np.savetxt(outfile, data[i], delimiter=delimiter, fmt=fmt)
         else:
-            savetxt(outfile, data, delimiter=delimiter, fmt=fmt)
+            np.savetxt(outfile, data, delimiter=delimiter, fmt=fmt)

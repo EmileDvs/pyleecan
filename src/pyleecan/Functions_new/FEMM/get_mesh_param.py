@@ -1,22 +1,21 @@
-# -*- coding: utf-8 -*-
 from ..labels import (
     AIRGAP_LAB,
     BAR_LAB,
-    LAM_LAB,
-    MAG_LAB,
-    STATOR_LAB,
-    ROTOR_LAB,
     BORE_LAB,
-    NO_MESH_LAB,
-    SLID_LAB,
-    VENT_LAB,
-    KEY_LAB,
     HOLEM_LAB,
     HOLEV_LAB,
-    WIND_LAB,
+    KEY_LAB,
+    LAM_LAB,
+    MAG_LAB,
+    NO_MESH_LAB,
     NOTCH_LAB,
+    ROTOR_LAB,
+    SLID_LAB,
     SOP_LAB,
+    STATOR_LAB,
+    VENT_LAB,
     WEDGE_LAB,
+    WIND_LAB,
 )
 
 
@@ -34,7 +33,7 @@ def get_mesh_param(label_dict, FEMM_dict):
         dictionary containing the main mesh parameters of the surface
     """
 
-    mesh_dict = dict()
+    mesh_dict = {}
 
     # Default automesh except airgap
     mesh_dict["automesh"] = FEMM_dict["mesh"]["automesh"]

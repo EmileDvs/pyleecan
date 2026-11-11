@@ -1,4 +1,4 @@
-from numpy import real
+import numpy as np
 
 from ....definitions import config_dict
 
@@ -15,7 +15,7 @@ def plot_mesh_field(
     phase=1,
     colormap=COLOR_MAP,
 ):
-    mesh_pv[field_name] = real(field * phase)
+    mesh_pv[field_name] = np.real(field * phase)
     mesh_field = mesh_pv
 
     pv_plotter.add_mesh(

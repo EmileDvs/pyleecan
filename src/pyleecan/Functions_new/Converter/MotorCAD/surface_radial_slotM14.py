@@ -1,4 +1,4 @@
-from numpy import sqrt, exp, cos, arctan
+import numpy as np
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -38,11 +38,11 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
 
     Rbo = machine.rotor.get_Rbo()
 
-    slot_W1 = sqrt(2 * (Rbo + H1) ** 2 * (1 - cos(W1)))
-    machine.rotor.slot.W1 = 2 * arctan((slot_W1 / 2) / Rbo)
+    slot_W1 = np.sqrt(2 * (Rbo + H1) ** 2 * (1 - np.cos(W1)))
+    machine.rotor.slot.W1 = 2 * np.arctan((slot_W1 / 2) / Rbo)
 
     # set W0
-    machine.rotor.slot.W0 = 2 * arctan((slot_W1 / 2) / Rbo)
+    machine.rotor.slot.W0 = 2 * np.arctan((slot_W1 / 2) / Rbo)
 
     machine.rotor.slot.Rtopm = Rbo + H1
 
@@ -51,13 +51,13 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     ZM0 = point_dict["ZM0"]
     ZM2 = point_dict["ZM2"]
     ZM3 = point_dict["ZM3"]
-    ZM2 = ZM2 * exp(-1j * machine.rotor.slot.W0 / 2)
+    ZM2 = ZM2 * np.exp(-1j * machine.rotor.slot.W0 / 2)
     ZM2 = ZM2 - Red
-    ZM2 = ZM2 * exp(+1j * machine.rotor.slot.W0 / 2)
+    ZM2 = ZM2 * np.exp(+1j * machine.rotor.slot.W0 / 2)
 
-    ZM3 = ZM3 * exp(1j * machine.rotor.slot.W0 / 2)
+    ZM3 = ZM3 * np.exp(1j * machine.rotor.slot.W0 / 2)
     ZM3 = ZM3 - Red
-    ZM3 = ZM3 * exp(-1j * machine.rotor.slot.W0 / 2)
+    ZM3 = ZM3 * np.exp(-1j * machine.rotor.slot.W0 / 2)
 
     x2 = ZM0
     y2 = 0
@@ -78,7 +78,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
         (x2**2 - x1**2 + y2**2 - y1**2) / (2 * (y2 - y1))
     )
 
-    Rtopm = sqrt((x1 - x) ** 2 + (y1 - y) ** 2)
+    Rtopm = np.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)
 
     machine.rotor.slot.Rtopm = Rtopm
 

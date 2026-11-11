@@ -1,45 +1,15 @@
-from numpy import (
-    abs as np_abs,
-)
-from numpy import (
-    angle as np_angle,
-)
-from numpy import (
-    argwhere,
-    array,
-    column_stack,
-    cos,
-    exp,
-    floor,
-    imag,
-    isnan,
-    log10,
-    nan,
-    ndarray,
-    ones,
-    pi,
-    real,
-    sin,
-    sqrt,
-    square,
-    take,
-    where,
-    zeros,
-)
-from numpy import (
-    sum as np_sum,
-)
+import numpy as np
 
-from pyleecan.Classes_new._error import UnitError
-from ...Functions_new.SciDataTool.fft_functions import comp_fft_freqs, comp_fft_time, comp_nthoctave_axis
+from ...Classes_new._error import UnitError
+from .fft_functions import comp_fft_freqs, comp_fft_time, comp_nthoctave_axis
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
 unit_symbols = [
     ("dimless", 1.0, (0, 0, 0, 0, 0, 0)),  # dimensionless
     ("degC", 1.0, (0, 0, 0, 1, 0, 0)),  # degree Celsius
     ("rad", 1.0, (0, 0, 0, 0, 1, 0)),  # radians
-    ("°", pi / 180, (0, 0, 0, 0, 1, 0)),  # degree (angle)
-    ("rpm", 2 * pi / 60, (0, 0, -1, 0, 1, 0)),  # rotation per minute
+    ("°", np.pi / 180, (0, 0, 0, 0, 1, 0)),  # degree (angle)
+    ("rpm", 2 * np.pi / 60, (0, 0, -1, 0, 1, 0)),  # rotation per minute
     ("min", 60.0, (0, 0, 1, 0, 0, 0)),  # minute
     ("Ohm", 1.0, (1, 2, -3, 0, 0, -2)),  # Ohm
     ("At", 1.0, (0, 0, 0, 0, 0, 1)),  # Ampere-tour
@@ -283,19 +253,19 @@ def to_dB(values, unit, ref_value=1.0):
     ndarray of the converted field
     """
     if ref_value != 1:
-        if isinstance(values, ndarray):
+        if isinstance(values, np.ndarray):
             values[values < ref_value] = ref_value
         else:
             values = max(values, ref_value)
     mask = values != 0
     try:
         convert(values, unit, "W")
-        values_dB = 10.0 * where(
-            mask, log10(values / ref_value, where=mask, out=None), 0
+        values_dB = 10.0 * np.where(
+            mask, np.log10(values / ref_value, where=mask, out=None), 0
         )
     except Exception:
-        values_dB = 20.0 * where(
-            mask, log10(values / ref_value, where=mask, out=None), 0
+        values_dB = 20.0 * np.where(
+            mask, np.log10(values / ref_value, where=mask, out=None), 0
         )
     return values_dB
 
@@ -405,22 +375,22 @@ def dB_to_dBA(values, freqs, noct=None):
             -6.6,
             -9.3,
         ]
-        mask = argwhere(freqs in freqs_ref)
-        Aweight = take(Aweight, mask)
+        mask = np.argwhere(freqs in freqs_ref)
+        Aweight = np.take(Aweight, mask)
     else:
-        freq2 = square(freqs)
-        freq2[freq2 == 0] = nan
+        freq2 = np.square(freqs)
+        freq2[freq2 == 0] = np.nan
         RA = (
             12200.0**2
             * freq2**2
             / (
                 (freq2 + 20.6**2)
-                * sqrt((freq2 + 107.7**2) * (freq2 + 737.0**2))
+                * np.sqrt((freq2 + 107.7**2) * (freq2 + 737.0**2))
                 * (freq2 + 12200.0**2)
             )
         )
-        Aweight = 2.0 + 20.0 * log10(RA)
-        Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
+        Aweight = 2.0 + 20.0 * np.log10(RA)
+        Aweight[np.isnan(Aweight)] = -100  # replacing NaN by -100 dB
         values_dBA = values + Aweight
         return values_dBA
 
@@ -447,31 +417,31 @@ def to_noct(values, freqs, noct=3):
     freqbds.append(freqbds[-1])
     # freqbds = [0] + f_oct
     values_oct = []
-    N = zeros(len(freqbds) - 1)
+    N = np.zeros(len(freqbds) - 1)
     for i in range(len(freqbds) - 1):
         f1 = freqbds[i]
         f2 = freqbds[i + 1]
-        indices = argwhere((freqs >= f1) & (freqs <= f2))
+        indices = np.argwhere((freqs >= f1) & (freqs <= f2))
         N[i] = len(indices)
         if len(indices) == 0:
             values_oct.append(0)
         else:
-            values2 = take(values, indices)
-            if np_sum(values2) == 0:
+            values2 = np.take(values, indices)
+            if np.sum(values2) == 0:
                 values_oct.append(0)
             else:
-                values_oct.append(sqrt(np_sum(values2**2)))
-    values = array(values_oct)
+                values_oct.append(np.sqrt(np.sum(values2**2)))
+    values = np.array(values_oct)
     # Apply bin correction factor for when centre frequencies are not integer
     # multiples of the bandwicth (BW)
     df_fft = freqs[1] - freqs[0]
-    BW = zeros(len(freqbds) - 1)
+    BW = np.zeros(len(freqbds) - 1)
     for i in range(len(freqbds) - 1):
         BW[i] = freqbds[i + 1] - freqbds[i]
     for i in range(len(freqbds) - 1):
-        if (N[i] != 0) and (floor(BW[i] / df_fft) <= N[i]):
+        if (N[i] != 0) and (np.floor(BW[i] / df_fft) <= N[i]):
             values[i] = values[i] * (BW[i] / (df_fft * N[i])) ** 0.5
-    return [values, array(f_oct)]
+    return [values, np.array(f_oct)]
 
 
 def xyz_to_rphiz(values):
@@ -491,10 +461,10 @@ def xyz_to_rphiz(values):
     z = values[:, 2]
 
     affixe = x + 1j * y
-    r = np_abs(affixe)
-    phi = (np_angle(affixe) + 2 * pi) % (2 * pi)
+    r = np.abs(affixe)
+    phi = (np.angle(affixe) + 2 * np.pi) % (2 * np.pi)
 
-    return column_stack((r, phi, z))
+    return np.column_stack((r, phi, z))
 
 
 def rphiz_to_xyz(values):
@@ -514,14 +484,14 @@ def rphiz_to_xyz(values):
     if len(values.shape) > 2:
         z = values[:, 2]
 
-    affixe = r * exp(1j * phi)
-    x = real(affixe)
-    y = imag(affixe)
+    affixe = r * np.exp(1j * phi)
+    x = np.real(affixe)
+    y = np.imag(affixe)
 
     if len(values.shape) > 2:
-        return column_stack((x, y, z))
+        return np.column_stack((x, y, z))
     else:
-        return column_stack((x, y))
+        return np.column_stack((x, y))
 
 
 def xyz_to_rphiz_field(values, phi):
@@ -542,13 +512,13 @@ def xyz_to_rphiz_field(values, phi):
     field_y = values[:, 1]
     field_z = values[:, 2]
 
-    cos_phi = cos(phi)
-    sin_phi = sin(phi)
+    cos_phi = np.cos(phi)
+    sin_phi = np.sin(phi)
 
     field_r = cos_phi * field_x + sin_phi * field_y
     field_phi = -sin_phi * field_x + cos_phi * field_y
 
-    return column_stack((field_r, field_phi, field_z))
+    return np.column_stack((field_r, field_phi, field_z))
 
 
 def rphiz_to_xyz_field(values, phi):
@@ -569,13 +539,13 @@ def rphiz_to_xyz_field(values, phi):
     field_phi = values[:, 1]
     field_z = values[:, 2]
 
-    cos_phi = cos(phi)
-    sin_phi = sin(phi)
+    cos_phi = np.cos(phi)
+    sin_phi = np.sin(phi)
 
     field_x = cos_phi * field_r - sin_phi * field_phi
     field_y = sin_phi * field_r + cos_phi * field_phi
 
-    return column_stack((field_x, field_y, field_z))
+    return np.column_stack((field_x, field_y, field_z))
 
 
 def time_to_freqs(values, is_real):
@@ -600,25 +570,25 @@ def wavenumber_to_angle(values, is_real):
 
 def xy_to_rphi(x, y):
     affixe = x + 1j * y
-    r = np_abs(affixe)
-    phi = (np_angle(affixe) + 2 * pi) % (2 * pi)
+    r = np.abs(affixe)
+    phi = (np.angle(affixe) + 2 * np.pi) % (2 * np.pi)
 
     return (r, phi)
 
 
 def rphi_to_xy(r, phi):
-    affixe = r * exp(1j * phi)
-    x = real(affixe)
-    y = imag(affixe)
+    affixe = r * np.exp(1j * phi)
+    x = np.real(affixe)
+    y = np.imag(affixe)
 
     return (x, y)
 
 
 def cart2pol(field_x, field_y, phi):
-    cos_phi = cos(phi)
-    sin_phi = sin(phi)
+    cos_phi = np.cos(phi)
+    sin_phi = np.sin(phi)
 
-    dim_array = ones((1, field_x.ndim), int).ravel()
+    dim_array = np.ones((1, field_x.ndim), int).ravel()
     dim_array[1] = -1
 
     # Reshape b with dim_array and perform elementwise multiplication with
@@ -633,10 +603,10 @@ def cart2pol(field_x, field_y, phi):
 
 
 def pol2cart(field_r, field_phi, phi):
-    cos_phi = cos(phi)
-    sin_phi = sin(phi)
+    cos_phi = np.cos(phi)
+    sin_phi = np.sin(phi)
 
-    dim_array = ones((1, field_r.ndim), int).ravel()
+    dim_array = np.ones((1, field_r.ndim), int).ravel()
     if len(dim_array) > 1:
         dim_array[1] = -1
 

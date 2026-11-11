@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from numpy import roll
+import numpy as np
 
 
 def shift_wind_mat(wind_mat, Nshift):
@@ -23,4 +21,4 @@ def shift_wind_mat(wind_mat, Nshift):
     assert len(wind_mat.shape) == 4, "wind_mat has a wrong shape (dim 4)"
     assert Nshift % 1 == 0, "Nshift must be an integer"
 
-    return roll(wind_mat, shift=Nshift, axis=2)
+    return np.roll(wind_mat, shift=Nshift, axis=2)

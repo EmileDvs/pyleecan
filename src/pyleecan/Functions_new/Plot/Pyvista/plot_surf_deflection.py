@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from numpy import abs as np_abs
-from numpy import max as np_max
-from numpy import min as np_min
-from numpy import real
+import numpy as np
 
 from ....definitions import config_dict
 
@@ -50,25 +45,25 @@ def plot_surf_deflection(
 
     # Compute colorbar boundaries
     if clim is None:
-        clim = [np_min(real(field)), np_max(real(field))]
+        clim = [np.min(np.real(field)), np.max(np.real(field))]
         if (clim[1] - clim[0]) / clim[1] < 0.01:
             clim[0] = -abs(clim[1])
             clim[1] = abs(clim[1])
 
     # Compute deformation factor
     if factor is None:
-        factor = 0.2 * np_max(np_abs(surf_pv.bounds)) / np_max(np_abs(vect_field))
+        factor = 0.2 * np.max(np.abs(surf_pv.bounds)) / np.max(np.abs(vect_field))
 
     # Compute pyvista object
     # Add field to surf
-    surf_pv.point_data[field_name] = real(vect_field * phase) * factor
+    surf_pv.point_data[field_name] = np.real(vect_field * phase) * factor
     surf_pv.active_vectors_name = field_name
 
     # Warp by vectors
     surf_warp = surf_pv.warp_by_vector()
 
     # Add normal field amplitude for colormap
-    surf_warp[field_name] = real(field * phase)
+    surf_warp[field_name] = np.real(field * phase)
 
     # Plot mesh
     pv_plotter.add_mesh(

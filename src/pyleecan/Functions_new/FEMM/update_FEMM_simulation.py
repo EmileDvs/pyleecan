@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-from numpy import pi, angle
+import numpy as np
 
-from ...Functions_new.FEMM.set_FEMM_circuit_prop import set_FEMM_circuit_prop
+from .set_FEMM_circuit_prop import set_FEMM_circuit_prop
 
 
 def update_FEMM_simulation(
@@ -39,9 +38,9 @@ def update_FEMM_simulation(
     if is_sliding_band:  # No rotation without sliding band.
         # Rotor rotation using sliding band
         if is_internal_rotor:
-            femm.mi_modifyboundprop("bc_ag2", 10, 180 * angle_rotor[ii] / pi)
+            femm.mi_modifyboundprop("bc_ag2", 10, 180 * angle_rotor[ii] / np.pi)
         else:
-            femm.mi_modifyboundprop("bc_ag2", 11, 180 * angle_rotor[ii] / pi)
+            femm.mi_modifyboundprop("bc_ag2", 11, 180 * angle_rotor[ii] / np.pi)
 
     else:
         # Select and rotate rotor groups
@@ -50,7 +49,7 @@ def update_FEMM_simulation(
             if "Rotor" in key:
                 for ind in val:
                     femm.mi_selectgroup(ind)
-        femm.mi_moverotate(0, 0, 180 * angle_rotor[ii] / pi)
+        femm.mi_moverotate(0, 0, 180 * angle_rotor[ii] / np.pi)
 
     # Update currents
     if Is is not None or Ir is not None:

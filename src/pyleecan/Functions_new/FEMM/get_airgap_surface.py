@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-from numpy import exp, pi
+import numpy as np
 
-from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Classes_new.segment import Segment
-from ...Functions_new.labels import NO_LAM_LAB, AIRGAP_LAB, AS_BR_LAB, AS_BL_LAB, BOUNDARY_PROP_LAB
+from ...Classes_new.segment import Segment
+from ...Classes_new.surf_line import SurfLine
+from ..labels import AIRGAP_LAB, AS_BL_LAB, AS_BR_LAB, BOUNDARY_PROP_LAB, NO_LAM_LAB
 
 
 def get_airgap_surface(lam_int, lam_ext, sym=1):
@@ -24,22 +23,22 @@ def get_airgap_surface(lam_int, lam_ext, sym=1):
         Airgap point ref
     """
 
-    surf_list = list()
+    surf_list = []
 
     Rgap_mec_int = lam_int.comp_radius_mec()
     Rgap_mec_ext = lam_ext.comp_radius_mec()
     Wgap_mec = Rgap_mec_ext - Rgap_mec_int
 
-    point_ref = (Rgap_mec_int + Wgap_mec / 2) * exp(1j * pi / sym / 2)
+    point_ref = (Rgap_mec_int + Wgap_mec / 2) * np.exp(1j * np.pi / sym / 2)
 
     if sym == 1:
-        line_list = list()
+        line_list = []
     else:
         Z1 = lam_int.get_Rbo()
         Z2 = lam_ext.get_Rbo()
 
-        Z1_bis = Z1 * exp(1j * 2 * pi / sym)
-        Z2_bis = Z2 * exp(1j * 2 * pi / sym)
+        Z1_bis = Z1 * np.exp(1j * 2 * np.pi / sym)
+        Z2_bis = Z2 * np.exp(1j * 2 * np.pi / sym)
 
         line_list = [
             Segment(Z1, Z2, prop_dict={BOUNDARY_PROP_LAB: AS_BR_LAB}),

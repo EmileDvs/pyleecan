@@ -1,30 +1,7 @@
-from numpy import (
-    allclose,
-    around,
-    array,
-    ceil,
-    delete,
-    exp,
-    insert,
-    isclose,
-    isin,
-    linspace,
-    pi,
-    real,
-    take,
-    where,
-)
-from numpy.fft import (
-    fftn,
-    fftshift,
-    ifftn,
-    ifftshift,
-    irfftn,
-    rfftn,
-)
+import numpy as np
 
-from ...Functions_new.SciDataTool.nudft_functions import inudftn, is_uniform, nudftn
-from ...Functions_new.SciDataTool.Plot import fft_dict
+from .nudft_functions import inudftn, is_uniform, nudftn
+from .Plot import fft_dict
 
 
 def comp_fft_freqs(time, is_time, is_real):
@@ -71,7 +48,7 @@ def comp_fft_time(freqs, is_angle, is_real):
     Time/space vector
     """
     if freqs.size == 1:
-        time = array([0])
+        time = np.array([0])
     else:
         if is_real and not is_angle:
             N_tot = 2 * (len(freqs) - 1)  # Number of samples
@@ -80,11 +57,11 @@ def comp_fft_time(freqs, is_angle, is_real):
             N_tot = len(freqs)  # Number of samples
             fs = freqs[-1] / (N_tot - 2)
         tf = 1 / (fs * 2)
-        time = linspace(0, tf, N_tot, endpoint=False)
+        time = np.linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
         # timestep = 1.0 / fsampt
         if is_angle:
-            time *= 2.0 * pi
+            time *= 2.0 * np.pi
             # timestep *= 2.0 * pi
         # time = [0 + i * timestep for i in range(N_tot)]
     return time.tolist()
@@ -162,13 +139,13 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
         i = 1
         while f_oct[-1] <= freqmax:
             f = f0 * 2.0 ** (i / noct)
-            f_oct.append(0.5 * ceil(2.0 * f))
+            f_oct.append(0.5 * np.ceil(2.0 * f))
             i = i + 1
         f_oct = f_oct[:-1]
         i = -1
         while f_oct[0] > freqmin:
             f = f0 * 2.0 ** (i / noct)
-            f_oct = [0.5 * ceil(2.0 * f)] + f_oct
+            f_oct = [0.5 * np.ceil(2.0 * f)] + f_oct
             i = i - 1
         f_oct = f_oct[1:]
     return f_oct
@@ -209,7 +186,7 @@ def comp_fftn(values, axes_list, is_real=True):
     """
 
     axes = []
-    axes_dict_non_uniform = dict()
+    axes_dict_non_uniform = {}
     shape = []
     is_onereal = False
     is_twice = False
@@ -233,15 +210,15 @@ def comp_fftn(values, axes_list, is_real=True):
             if axis.input_data is not None:
                 if (
                     len(axis.input_data) == 1
-                    and not isin(
-                        around(axis.input_data, decimals=0),
-                        around(axis.values, decimals=0),
+                    and not np.isin(
+                        np.around(axis.input_data, decimals=0),
+                        np.around(axis.values, decimals=0),
                     ).all()
                 ) or (
                     len(axis.input_data) > 1
-                    and not isin(
-                        around(axis.input_data, decimals=5),
-                        around(axis.values, decimals=5),
+                    and not np.isin(
+                        np.around(axis.input_data, decimals=5),
+                        np.around(axis.values, decimals=5),
                     ).all()
                 ):
                     is_non_uniform = True
@@ -249,7 +226,7 @@ def comp_fftn(values, axes_list, is_real=True):
                     frequencies = (
                         axis.input_data
                         if axis.name == "freqs"
-                        else axis.input_data / (2 * pi)
+                        else axis.input_data / (2 * np.pi)
                     )
                     axes_dict_non_uniform[axis.index] = [
                         axis.corr_values,
@@ -284,34 +261,34 @@ def comp_fftn(values, axes_list, is_real=True):
                     axes = [axis.index] + axes
                     shape = [values.shape[axis.index]] + shape
     if axes != []:
-        size = array(shape).prod()
+        size = np.array(shape).prod()
         if is_onereal:
-            values_FT = rfftn(values, axes=axes)
+            values_FT = np.fft.rfftn(values, axes=axes)
             # Do not multiply constant component by 2 (f=0)
             if axes_list[axes[-1]].corr_values is not None:
                 freqs = axes_list[axes[-1]].corr_values
             else:
                 freqs = axes_list[axes[-1]].values
             if freqs[0] == 0:
-                slice_0 = take(values_FT, 0, axis=axes[-1])
+                slice_0 = np.take(values_FT, 0, axis=axes[-1])
                 slice_0 *= 0.5
                 if is_twice:
                     slice_0 *= 0.5
-                other_values = delete(values_FT, 0, axis=axes[-1])
-                values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
-            values_FT2 = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
+                other_values = np.delete(values_FT, 0, axis=axes[-1])
+                values_FT = np.insert(other_values, 0, slice_0, axis=axes[-1])
+            values_FT2 = 2.0 * np.fft.fftshift(values_FT, axes=axes[:-1]) / size
             if is_twice:
                 values_FT2 *= 2.0
         elif is_twice:
-            values_FT = fftn(values, axes=axes)
-            slice_0 = take(values_FT, 0, axis=axes[-1])
+            values_FT = np.fft.fftn(values, axes=axes)
+            slice_0 = np.take(values_FT, 0, axis=axes[-1])
             slice_0 *= 0.5
-            other_values = delete(values_FT, 0, axis=axes[-1])
-            values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
-            values_FT2 = 2.0 * fftshift(values_FT, axes=axes) / size
+            other_values = np.delete(values_FT, 0, axis=axes[-1])
+            values_FT = np.insert(other_values, 0, slice_0, axis=axes[-1])
+            values_FT2 = 2.0 * np.fft.fftshift(values_FT, axes=axes) / size
         else:
-            values_FT = fftn(values, axes=axes)
-            values_FT2 = fftshift(values_FT, axes=axes) / size
+            values_FT = np.fft.fftn(values, axes=axes)
+            values_FT2 = np.fft.fftshift(values_FT, axes=axes) / size
     else:
         values_FT2 = values
     return values_FT2
@@ -366,7 +343,7 @@ def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
                     corr_values = (
                         axis.corr_values
                         if axis.name == "time"
-                        else axis.corr_values / (2 * pi)
+                        else axis.corr_values / (2 * np.pi)
                     )
                     axes_dict_non_uniform[axis.index] = [
                         axis.input_data,
@@ -407,11 +384,11 @@ def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
                                 not is_uniform(axis.corr_values)
                                 or (
                                     len(freqs) != len(axis.corr_values)
-                                    and not isin(freqs, axis.corr_values).all()
+                                    and not np.isin(freqs, axis.corr_values).all()
                                 )
                                 or (
                                     len(freqs) == len(axis.corr_values)
-                                    and not allclose(
+                                    and not np.allclose(
                                         freqs,
                                         axis.corr_values,
                                         rtol=1e-5,
@@ -427,7 +404,7 @@ def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
                         frequencies = (
                             axis.corr_values
                             if axis.name == "time"
-                            else axis.corr_values / (2 * pi)
+                            else axis.corr_values / (2 * np.pi)
                         )
                         axes_dict_non_uniform[axis.index] = [
                             axis.input_data,
@@ -458,34 +435,34 @@ def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
     if axes:  # Check if ifftn has to be called
-        size = array(shape).prod()
+        size = np.array(shape).prod()
         if is_onereal:
             values = values * size / 2
             if is_half:
                 values *= 0.5
-            values_shift = ifftshift(values, axes=axes[:-1])
-            slice_0 = take(values_shift, 0, axis=axes[-1])
+            values_shift = np.fft.ifftshift(values, axes=axes[:-1])
+            slice_0 = np.take(values_shift, 0, axis=axes[-1])
             slice_0 *= 2
             if is_half:
                 slice_0 *= 2
-            other_values = delete(values_shift, 0, axis=axes[-1])
-            values = insert(other_values, 0, slice_0, axis=axes[-1])
-            values_IFT = irfftn(values, axes=axes)
+            other_values = np.delete(values_shift, 0, axis=axes[-1])
+            values = np.insert(other_values, 0, slice_0, axis=axes[-1])
+            values_IFT = np.fft.irfftn(values, axes=axes)
         elif is_half:
             values = values * size / 2
-            values_shift = ifftshift(values, axes=axes[:-1])
-            slice_0 = take(values_shift, 0, axis=axes[-1])
+            values_shift = np.fft.ifftshift(values, axes=axes[:-1])
+            slice_0 = np.take(values_shift, 0, axis=axes[-1])
             slice_0 *= 2
-            other_values = delete(values_shift, 0, axis=axes[-1])
-            values = insert(other_values, 0, slice_0, axis=axes[-1])
-            values_IFT = ifftn(values, axes=axes)
+            other_values = np.delete(values_shift, 0, axis=axes[-1])
+            values = np.insert(other_values, 0, slice_0, axis=axes[-1])
+            values_IFT = np.fft.ifftn(values, axes=axes)
         else:
-            values_shift = ifftshift(values, axes=axes) * size
-            values_IFT = ifftn(values_shift, axes=axes)
+            values_shift = np.fft.ifftshift(values, axes=axes) * size
+            values_IFT = np.fft.ifftn(values_shift, axes=axes)
     else:
         values_IFT = values
     if is_real:
-        values_IFT = real(values_IFT)
+        values_IFT = np.real(values_IFT)
     return values_IFT
 
 
@@ -566,9 +543,11 @@ def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
 
 
 def rect_window(f, M, dt):
-    W = where(
-        isclose(f, 0),
-        (1 - exp(-1j * 2 * pi * dt * f * (M))) / (1 - exp(-1j * 2 * pi * dt * f)) / M,
+    W = np.where(
+        np.isclose(f, 0),
+        (1 - np.exp(-1j * 2 * np.pi * dt * f * (M)))
+        / (1 - np.exp(-1j * 2 * np.pi * dt * f))
+        / M,
         1,
     )
     return W

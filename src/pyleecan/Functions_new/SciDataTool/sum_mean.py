@@ -1,6 +1,6 @@
 import numpy as np
 
-from ...Functions_new.SciDataTool.derivation_integration import integrate
+from .derivation_integration import integrate
 
 
 def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):

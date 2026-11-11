@@ -1,4 +1,4 @@
-from numpy import sqrt, exp, angle
+import numpy as np
 
 # Import for Plot debug
 # import matplotlib.pyplot as plt
@@ -43,33 +43,33 @@ def inter_circle_circle(Zc1, R1, Zc2, R2):
 
     # Set the coordinate system center Zc1, Zc2 on Ox+
     Zc1p = 0
-    Zc2p = (Zc2 - Zc1) * exp(-1j * angle(Zc2 - Zc1))
+    Zc2p = (Zc2 - Zc1) * np.exp(-1j * np.angle(Zc2 - Zc1))
 
     if D > R1 + R2:
         # The two circle are not big enought
         return []
     elif D == (R1 + R2):
         # Only one point between the two circles
-        return [(Zc2p - R2) * exp(1j * angle(Zc2 - Zc1)) + Zc1]
+        return [(Zc2p - R2) * np.exp(1j * np.angle(Zc2 - Zc1)) + Zc1]
     elif R2 > D + R1:
         # Particular cases First circle inside second circle
-        return list()
+        return []
     elif R1 > D + R2:
         # Particular cases Second circle inside first circle
-        return list()
+        return []
     elif R2 == D + R1:
         # Particular cases First circle inside second circle and one intersection
-        return [(-R1) * exp(1j * angle(Zc2 - Zc1)) + Zc1]
+        return [(-R1) * np.exp(1j * np.angle(Zc2 - Zc1)) + Zc1]
     elif R1 == D + R2:
         # Particular cases First circle inside second circle and one intersection
-        return [(Zc2p + R2) * exp(1j * angle(Zc2 - Zc1)) + Zc1]
+        return [(Zc2p + R2) * np.exp(1j * np.angle(Zc2 - Zc1)) + Zc1]
     else:  # D < R1 and D < R2:
         # Intersection between the two circles
         # cf https://mathworld.wolfram.com/Circle-CircleIntersection.html
         x = (D**2 - R2**2 + R1**2) / (2 * D)
-        y = sqrt(R1**2 - x**2)
-        Z1 = (x + 1j * y) * exp(1j * angle(Zc2 - Zc1)) + Zc1
-        Z2 = (x - 1j * y) * exp(1j * angle(Zc2 - Zc1)) + Zc1
+        y = np.sqrt(R1**2 - x**2)
+        Z1 = (x + 1j * y) * np.exp(1j * np.angle(Zc2 - Zc1)) + Zc1
+        Z2 = (x - 1j * y) * np.exp(1j * np.angle(Zc2 - Zc1)) + Zc1
         return [Z1, Z2]
 
     # In fact two points formula seems to work in all other cases

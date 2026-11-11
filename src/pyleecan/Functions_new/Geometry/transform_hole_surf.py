@@ -1,5 +1,6 @@
-from numpy import pi, exp
-from ...Functions_new.labels import update_RTS_index, decode_label, BOUNDARY_PROP_LAB, YSR_LAB, YSL_LAB
+import numpy as np
+
+from ..labels import BOUNDARY_PROP_LAB, YSL_LAB, YSR_LAB, decode_label, update_RTS_index
 
 
 def transform_hole_surf(
@@ -56,11 +57,11 @@ def transform_hole_surf(
             surf.translate(delta)
 
     # Duplicate to have Zh/sym all the hole surfaces
-    surf_list = list()
+    surf_list = []
     for ii in range(Zh // sym):
         for surf in hole_surf_list:
             new_surf = surf.copy()
-            new_surf.rotate(ii * 2 * pi / Zh)
+            new_surf.rotate(ii * 2 * np.pi / Zh)
             # Update label like "Rotor-0_HoleVoid_R0-T0-S0"
             new_surf.label = update_RTS_index(label=new_surf.label, S_id=ii)
             surf_list.append(new_surf)
@@ -70,18 +71,18 @@ def transform_hole_surf(
         # Add an extra surface for each cut (alpha0 > 0)
         for surf in hole_surf_list:
             last_surf = surf.copy()
-            last_surf.rotate((ii + 1) * 2 * pi / Zh)
+            last_surf.rotate((ii + 1) * 2 * np.pi / Zh)
             # Update label like "Rotor-0_HoleVoid_R0-T0-S0"
             last_surf.label = update_RTS_index(label=last_surf.label, S_id=ii + 1)
             surf_list.append(last_surf)
 
             first_surf = surf.copy()
-            first_surf.rotate((Zh - 1) * 2 * pi / Zh)
+            first_surf.rotate((Zh - 1) * 2 * np.pi / Zh)
             # Update label like "Rotor-0_HoleVoid_R0-T0-S0"
             first_surf.label = update_RTS_index(label=first_surf.label, S_id=Zh - 1)
             surf_list.append(first_surf)
 
-        cut_list = list()
+        cut_list = []
         for surf in surf_list:
             # Cut Ox axis
             top, _ = surf.split_line(
@@ -94,7 +95,7 @@ def transform_hole_surf(
                 # Cut O-"sym angle" axis
                 _, bot = top.split_line(
                     0,
-                    100 * exp(1j * 2 * pi / sym),
+                    100 * np.exp(1j * 2 * np.pi / sym),
                     is_join=True,
                     prop_dict_join={BOUNDARY_PROP_LAB: BC_prop_left},
                 )

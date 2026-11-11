@@ -1,16 +1,15 @@
-# -*- coding: utf-8 -*-
-from logging import WARNING
-import traceback
 import sys
+import traceback
+from logging import WARNING
 
 if sys.version_info > (3, 0):
     from io import StringIO
 else:
     from StringIO import StringIO
 
-from os import stat, remove
+import os
 from datetime import datetime
-from numpy import nan
+
 import numpy as np
 
 
@@ -110,9 +109,9 @@ def evaluate(solver, indiv):
                             + ".error_keeper execution failed:"
                             + str(err)
                         )
-                        datakeeper.result.append(nan)
+                        datakeeper.result.append(np.nan)
                 else:
-                    datakeeper.result.append(nan)
+                    datakeeper.result.append(np.nan)
 
         indiv.is_simu_valid = True
 
@@ -152,9 +151,9 @@ def evaluate(solver, indiv):
                         + ".error_keeper execution failed:"
                         + str(err)
                     )
-                    datakeeper.result.append(nan)
+                    datakeeper.result.append(np.nan)
             else:
-                datakeeper.result.append(nan)
+                datakeeper.result.append(np.nan)
 
         # Reset standard output and error
         evaluation_failure = True  # Evaluation failed

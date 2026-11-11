@@ -14,6 +14,8 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
 )
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     _adapt_retrocompatibility,
+    _format_function_source,
+    _function_import_style,
     _redirect_function_errors,
     _redirect_shared_error_imports,
     _rewrite_source,
@@ -98,7 +100,7 @@ def test_copy_tree_keeps_resources_and_reports_deferred_loader(tmp_path):
     issues = generate_functions(source, output, classes)
     assert issues == [(Path("copy.py"), 1, "dynamic class loader requires review")]
     assert (output / "Electrical" / "sample.py").read_text(encoding="utf-8") == (
-        "from pyleecan.Classes_new.data_time import DataTime\n"
+        "from ...Classes_new.data_time import DataTime\n"
     )
     assert (output / "Electrical" / "fixture.lua").read_bytes() == b"fixture\x00"
     assert not (output / "__pycache__").exists()
@@ -125,7 +127,157 @@ def test_generate_functions_uses_default_package_paths(tmp_path, monkeypatch):
     assert generate_functions() == []
     assert (tmp_path / "Functions_new" / "sample.py").read_text(
         encoding="utf-8"
-    ) == "from pyleecan.Functions_new.load import load\n"
+    ) == "from .load import load\n"
+
+
+@pytest.mark.parametrize(
+    ("style", "expected"),
+    [
+        ("relative", "from ...Classes_new._error import DimError as Error"),
+        ("absolute", "from pyleecan.Classes_new._error import DimError as Error"),
+    ],
+)
+def test_function_import_styles_respect_package_depth(style, expected):
+    source = (
+        "from pyleecan.Classes_new._error import DimError as Error\n"
+        "from ..Load.load_json import load_json\n"
+        "def local():\n"
+        "    from pyleecan.definitions import MAIN_DIR\n"
+    )
+    result = _function_import_style(source, "pyleecan.Functions_new.Structural", style)
+    assert expected in result
+    expected_load = (
+        "from ..Load.load_json import load_json"
+        if style == "relative"
+        else "from pyleecan.Functions_new.Load.load_json import load_json"
+    )
+    assert expected_load in result
+    assert (
+        "    from ...definitions import MAIN_DIR"
+        if style == "relative"
+        else "    from pyleecan.definitions import MAIN_DIR"
+    ) in result
+
+
+@pytest.mark.parametrize(
+    ("style", "expected"),
+    [
+        ("relative", "from ...Classes_new.data_time import DataTime"),
+        ("absolute", "from pyleecan.Classes_new.data_time import DataTime"),
+    ],
+)
+def test_generate_functions_emits_requested_import_style(tmp_path, style, expected):
+    source = tmp_path / "Functions"
+    output = tmp_path / "Functions_new"
+    classes = tmp_path / "Classes_new"
+    (source / "Electrical").mkdir(parents=True)
+    classes.mkdir()
+    (classes / "data_time.py").touch()
+    (source / "Electrical" / "sample.py").write_text(
+        "from ...Classes.DataTime import DataTime\n"
+        "from numpy import array\n"
+        "def make():\n    return array([1])\n",
+        encoding="utf-8",
+    )
+    assert generate_functions(source, output, classes, import_style=style) == []
+    result = (output / "Electrical" / "sample.py").read_text(encoding="utf-8")
+    assert expected in result
+    assert "import numpy as np" in result
+    assert "return np.array([1])" in result
+
+
+def test_error_imports_follow_module_docstring_and_future_import(tmp_path):
+    source = (
+        '# -*- coding: utf-8 -*-\n"""Module documentation."""\n'
+        "from __future__ import annotations\n\n"
+        "def fail():\n    raise InputError()\n\n"
+        "class InputError(Exception):\n    pass\n"
+    )
+    (tmp_path / "_error.py").write_text(
+        "class GMSHInputError(Exception): pass\n", encoding="utf-8"
+    )
+    result = _redirect_function_errors(source, Path("GMSH"), Path("GMSH") / "__init__.py", tmp_path)
+    assert result.index("from __future__") < result.index("import GMSHInputError")
+    assert result.index("import GMSHInputError") < result.index("def fail")
+    assert ast.get_docstring(ast.parse(result)) == "Module documentation."
+    compile(result, "generated.py", "exec")
+
+
+def test_invalid_import_style_rejected(tmp_path):
+    with pytest.raises(ValueError, match="import_style"):
+        generate_functions(tmp_path, tmp_path, tmp_path, import_style="invalid")
+
+
+def test_function_format_normalizes_numpy_and_preserves_shadowing(tmp_path):
+    source = (
+        "from numpy import array as make_array\n"
+        "from numpy.fft import fft\n"
+        "def compute(values):\n"
+        "    return fft(make_array(values))\n"
+    )
+    transformed = _format_function_source(source, tmp_path / "sample.py")
+    assert "import numpy as np" in transformed
+    assert "np.fft.fft(np.array(values))" in transformed
+    namespaces = [{}, {}]
+    for code, namespace in zip((source, transformed), namespaces):
+        exec(compile(code, "<test>", "exec"), namespace)  # noqa: S102
+    import numpy as np
+
+    np.testing.assert_array_equal(
+        namespaces[0]["compute"]([1, 2]), namespaces[1]["compute"]([1, 2])
+    )
+    shadowed = "from numpy import array\ndef compute(np):\n    return array(np)\n"
+    result = _format_function_source(shadowed, tmp_path / "shadowed.py")
+    assert "from numpy import array" in result
+    assert "return array(np)" in result
+    dynamic = "from numpy import pi\ndef compute(value):\n    return eval(value)\n"
+    result = _format_function_source(dynamic, tmp_path / "dynamic.py")
+    namespace = {}
+    exec(compile(result, "<test>", "exec"), namespace)  # noqa: S102
+    assert namespace["compute"]("pi / 2") == np.pi / 2
+    assert "from numpy import pi" in result
+    comprehension = (
+        "from numpy import array\n"
+        "def compute(values):\n"
+        "    return [array for array in values]\n"
+    )
+    result = _format_function_source(comprehension, tmp_path / "comprehension.py")
+    namespace = {}
+    exec(compile(result, "<test>", "exec"), namespace)  # noqa: S102
+    assert namespace["compute"]([1, 2]) == [1, 2]
+
+
+def test_function_format_replaces_unshadowed_empty_containers(tmp_path):
+    source = (
+        "def make():\n"
+        "    text = 'list() dict() tuple()'\n"
+        "    return list(), dict(), tuple(), list((1,)), dict(a=1), tuple([2])\n"
+    )
+    result = _format_function_source(source, tmp_path / "containers.py")
+    assert "'list() dict() tuple()'" in result or '"list() dict() tuple()"' in result
+    assert "return [], {}, (), list((1,)), dict(a=1), tuple([2])" in result
+    shadowed = "def make(tuple):\n    return list(), dict(), tuple()\n"
+    result = _format_function_source(shadowed, tmp_path / "shadowed.py")
+    assert "return [], {}, tuple()" in result
+
+
+def test_function_format_removes_only_utf8_header(tmp_path):
+    source = "# -*- coding: utf-8 -*-\nvalue = 'é'\n"
+    result = _format_function_source(source, tmp_path / "utf8.py")
+    assert "coding: utf-8" not in result
+    assert "é" in result
+    source = "# -*- coding: latin-1 -*-\nvalue = 1\n"
+    result = _format_function_source(source, tmp_path / "latin1.py")
+    assert result.startswith("# -*- coding: latin-1 -*-")
+
+
+def test_generated_parser_keeps_math_names_available_to_eval():
+    import numpy as np
+
+    from pyleecan.Functions_new.SciDataTool.parser import read_input_strings
+
+    axis = read_input_strings(["angle=pi/2"], {})[0]
+    assert axis.input_data == [np.pi / 2]
 
 
 def test_generated_normalization_transformation(tmp_path, monkeypatch):

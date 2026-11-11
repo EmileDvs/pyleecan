@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
+import numpy as np
 
-from numpy import pi, sign, sqrt
-
-from ...Functions_new.FEMM.set_FEMM_circuit_prop import set_FEMM_circuit_prop
-from ...Functions_new.FEMM.set_FEMM_wind_material import set_FEMM_wind_material
-from ...Functions_new.Winding.find_wind_phase_color import get_phase_id
-from ...Functions_new.labels import ROTOR_LAB
+from ..labels import ROTOR_LAB
+from ..Winding.find_wind_phase_color import get_phase_id
+from .set_FEMM_circuit_prop import set_FEMM_circuit_prop
+from .set_FEMM_wind_material import set_FEMM_wind_material
 
 
 def create_FEMM_circuit_material(
@@ -55,7 +53,7 @@ def create_FEMM_circuit_material(
     Zs_id = label_dict["S_id"]  # Zone slot number coordinate
     # Get the phase value in the correct slot zone
     q_id = get_phase_id(wind_mat, Nrad_id, Ntan_id, Zs_id)
-    s = sign(wind_mat[Nrad_id, Ntan_id, Zs_id, q_id])
+    s = np.sign(wind_mat[Nrad_id, Ntan_id, Zs_id, q_id])
 
     # circuit definition
     if ROTOR_LAB in label_dict["lam_type"]:
@@ -84,7 +82,7 @@ def create_FEMM_circuit_material(
         materials,
         cname=cname,
         Cduct=is_eddies * 1e-6 / rho,
-        dwire=sqrt(4 * Swire / pi) * 1e-3,
+        dwire=np.sqrt(4 * Swire / np.pi) * 1e-3,
     )
 
     return cname, materials, circuits

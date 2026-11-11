@@ -1,6 +1,7 @@
-from matplotlib.pyplot import subplots
 import io
 import pickle
+
+from matplotlib.pyplot import subplots
 
 
 def init_fig(fig=None, ax=None, shape="default", is_3d=False):

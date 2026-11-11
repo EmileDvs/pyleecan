@@ -1,16 +1,19 @@
 from logging import getLogger
 
-from numpy import array
+import numpy as np
 
-from ...Functions_new.labels import HOLEM_LAB, HOLEV_LAB
-from ...Functions_new.Load.import_class import import_class
+from ...Classes_new._error import RetroCompatibilityError
 from ...loggers import GUI_LOG_NAME
+from ..labels import HOLEM_LAB, HOLEV_LAB
+from .import_class import import_class
 
-
-from pyleecan.Classes_new._error import RetroCompatibilityError
-
-
-NORMALIZATION_CLASS_NAMES = {'Norm_ref': 'NormRef', 'Norm_affine': 'NormAffine', 'Norm_func': 'NormFunc', 'Norm_indices': 'NormIndices', 'Norm_vector': 'NormVector'}
+NORMALIZATION_CLASS_NAMES = {
+    "Norm_ref": "NormRef",
+    "Norm_affine": "NormAffine",
+    "Norm_func": "NormFunc",
+    "Norm_indices": "NormIndices",
+    "Norm_vector": "NormVector",
+}
 
 
 Normalization_VERSION = "1.5.2"
@@ -177,7 +180,7 @@ def convert_OP_matrix(obj_dict):
     if OP_matrix is None:
         obj_dict["OP_matrix"] = None
     else:
-        OP_matrix = array(OP_matrix)
+        OP_matrix = np.array(OP_matrix)
         if OP_matrix.shape[1] == 4:
             arg_list.append("Tem")
         elif OP_matrix.shape[1] == 5:
@@ -537,7 +540,7 @@ def convert_meshsolution_mesh(meshsolution_dict):
             }
         else:  # Duplicated labels
             getLogger(GUI_LOG_NAME).warning(
-                f"MeshSolution constains solutions with same label, instancing solution_dict with \"{meshsolution_dict_new['label']}_i\""
+                f'MeshSolution constains solutions with same label, instancing solution_dict with "{meshsolution_dict_new["label"]}_i"'
             )
             meshsolution_dict_new["solution_dict"] = {
                 f"{meshsolution_dict_new['label']}_{k}": solution

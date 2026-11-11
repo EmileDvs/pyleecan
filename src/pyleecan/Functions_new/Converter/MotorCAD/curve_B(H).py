@@ -1,4 +1,4 @@
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
+from ....Classes_new.import_matrix_val import ImportMatrixVal
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):

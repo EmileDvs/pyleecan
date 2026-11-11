@@ -1,4 +1,4 @@
-from numpy import sin
+import numpy as np
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -41,7 +41,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
         - machine.rotor.hole[hole_id].W4
         - (
             ((W - machine.rotor.hole[hole_id].W1) / 2)
-            / sin(machine.rotor.hole[hole_id].W0 / 2)
+            / np.sin(machine.rotor.hole[hole_id].W0 / 2)
         )
     )
 

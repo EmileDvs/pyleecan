@@ -1,11 +1,11 @@
 import numpy as np
 
-from pyleecan.Classes_new.data_1d import Data1D
-from pyleecan.Classes_new.data_dual import DataDual
-from pyleecan.Classes_new.data_freq import DataFreq
-from pyleecan.Classes_new.data_nd import DataND
-from pyleecan.Classes_new.data_time import DataTime
-from ...Functions_new.Winding.gen_phase_list import gen_name
+from ...Classes_new.data_1d import Data1D
+from ...Classes_new.data_dual import DataDual
+from ...Classes_new.data_freq import DataFreq
+from ...Classes_new.data_nd import DataND
+from ...Classes_new.data_time import DataTime
+from ..Winding.gen_phase_list import gen_name
 
 
 def n2dqh_DataTime(data_n, is_dqh_rms=True, phase_dir=None):
@@ -63,7 +63,7 @@ def n2dqh_DataTime(data_n, is_dqh_rms=True, phase_dir=None):
     )
 
     # Get normalizations
-    normalizations = dict()
+    normalizations = {}
     if data_n.normalizations is not None and len(data_n.normalizations) > 0:
         for key, val in data_n.normalizations.items():
             normalizations[key] = val.copy()
@@ -227,7 +227,7 @@ def dqh2n_DataTime(data_dqh, n, is_n_rms=False, phase_dir=None):
     )
 
     # Get normalizations
-    normalizations = dict()
+    normalizations = {}
     if data_dqh.normalizations is not None and len(data_dqh.normalizations) > 0:
         for key, val in data_dqh.normalizations.items():
             normalizations[key] = val.copy()
@@ -415,7 +415,7 @@ def get_phase_dir(Z_n, current_dir):
         rotating direction of phases +/-1
     """
 
-    from ...Functions_new.Electrical.dqh_transformation_freq import get_phase_dir as get_phase_dir_freq
+    from .dqh_transformation_freq import get_phase_dir as get_phase_dir_freq
 
     # Get number of time steps
     N = Z_n.shape[0]

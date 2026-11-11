@@ -1,4 +1,4 @@
-from numpy import loadtxt
+import numpy as np
 
 
 def load_array(file, sep=":", delimiter=","):
@@ -33,7 +33,7 @@ def load_array(file, sep=":", delimiter=","):
         try:
             tup_str = first_line.split(sep)[1][1:-1]
             shape = tuple(int(x) for x in tup_str.split(",") if x != "")
-            data = loadtxt(file, delimiter=delimiter).reshape(shape)
+            data = np.loadtxt(file, delimiter=delimiter).reshape(shape)
         except Exception as error:
             print("Exception occured while runing load_array():" + str(error))
 

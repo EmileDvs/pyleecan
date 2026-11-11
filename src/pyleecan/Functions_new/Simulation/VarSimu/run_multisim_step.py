@@ -1,7 +1,7 @@
 from logging import WARNING
 
-from ....Functions_new.Simulation.VarSimu.log_datakeeper_step_result import log_datakeeper_step_result
 from ....loggers import CONSOLE_LEVEL
+from .log_datakeeper_step_result import log_datakeeper_step_result
 
 
 def run_multisim_step(

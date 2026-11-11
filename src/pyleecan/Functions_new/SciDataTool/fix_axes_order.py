@@ -1,6 +1,6 @@
-from numpy import array
+import numpy as np
 
-from ...Functions_new.SciDataTool.Plot import fft_dict, ifft_dict
+from .Plot import fft_dict, ifft_dict
 
 
 def fix_axes_order(axes_list, args):
@@ -21,5 +21,5 @@ def fix_axes_order(axes_list, args):
         # axis was not in data -> keep same order
         return args
     else:
-        sort_indices = array(indices).argsort()
+        sort_indices = np.array(indices).argsort()
         return [args[i] for i in sort_indices]

@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
+import os
 
 from distutils.spawn import find_executable
-from os.path import split
 
 
 def get_path_binary(binary_name, is_include_file=True):
@@ -27,7 +26,7 @@ def get_path_binary(binary_name, is_include_file=True):
     path_file = find_executable(binary_name)
 
     if not is_include_file and path_file:
-        path_file, _ = split(path_file)
+        path_file, _ = os.path.split(path_file)
 
     return path_file
 

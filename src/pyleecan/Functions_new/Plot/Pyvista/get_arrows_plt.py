@@ -2,23 +2,20 @@ from typing import Tuple
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from numpy import abs as np_abs
-from numpy import hstack
-from numpy import max as np_max
-from numpy import ndarray, real, zeros
-from pyvista import PolyData, UnstructuredGrid
+import numpy as np
+import pyvista as pv
 
-from pyleecan.Classes_new.mesh_solution import MeshSolution
+from ....Classes_new.mesh_solution import MeshSolution
 
 
 def get_arrows_plt(
-    mesh_pv: UnstructuredGrid,
-    field: ndarray,
+    mesh_pv: pv.UnstructuredGrid,
+    field: np.ndarray,
     meshsol: MeshSolution,
     factor: float,
     is_point_arrow: bool,
     phase: complex = 1 + 0j,
-) -> Tuple[PolyData, float]:
+) -> Tuple[pv.PolyData, float]:
     """Create a pyvista arrow plot
 
     Parameters
@@ -44,16 +41,16 @@ def get_arrows_plt(
         an amplitude factor for the plot glyph
     """
 
-    vect_field = real(field * phase)
+    vect_field = np.real(field * phase)
 
     # Compute default factor if needed
     if factor is None:
-        factor = 0.2 * np_max(np_abs(mesh_pv.bounds)) / np_max(np_abs(vect_field))
+        factor = 0.2 * np.max(np.abs(mesh_pv.bounds)) / np.max(np.abs(vect_field))
 
     # Add third dimension if needed
     solution = meshsol.get_solution()
     if solution.dimension == 2:
-        vect_field = hstack((vect_field, zeros((vect_field.shape[0], 1))))
+        vect_field = np.hstack((vect_field, np.zeros((vect_field.shape[0], 1))))
 
     # Add field to mesh
     if is_point_arrow:

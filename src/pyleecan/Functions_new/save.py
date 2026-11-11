@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-from .Save.save_json import save_json
+from ..Classes_new._error import FormatError
 from .Save.save_hdf5 import save_hdf5
+from .Save.save_json import save_json
 from .Save.save_pkl import save_pkl
-
-
-from pyleecan.Classes_new._error import FormatError
 
 
 def save(self, save_path="", is_folder=False, type_handle_old=2, type_compression=0):

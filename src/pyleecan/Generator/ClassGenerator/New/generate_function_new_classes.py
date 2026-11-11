@@ -3,6 +3,7 @@
 Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_function_new_classes``
 after generating Classes_new. Existing generated copies are overwritten. Legacy
 load/save compatibility and unsupported dynamic imports are reported for review.
+Use ``--import-style absolute`` for absolute Pyleecan imports; relative is the default.
 Selected function exceptions are imported directly from Classes_new._error;
 regenerate the classes first when those shared definitions change.
 
@@ -10,9 +11,11 @@ Experimental adaptations are implemented as targeted source transformations
 here. Changes made only in Functions_new are overwritten on regeneration.
 """
 
+import argparse
 import ast
 import re
 import shutil
+import subprocess
 import tokenize
 from importlib.util import resolve_name
 from pathlib import Path
@@ -21,6 +24,11 @@ from pyleecan.definitions import MAIN_DIR
 from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     VENDORED_CLASS_PACKAGES,
+    _apply_numpy_import_style,
+    _apply_os_import_style,
+    _apply_pyvista_import_style,
+    _format_source_with_ruff,
+    _replace_empty_containers,
     class_module_name,
 )
 
@@ -104,17 +112,98 @@ def _redirect_function_errors(source, path, relative_path, class_dir):
         if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
     }
     lines = source.splitlines(keepends=True)
+    imports = []
     for name, shared_name in sorted(
         errors.items(), key=lambda item: definitions[item[0]].lineno, reverse=True
     ):
         node = definitions[name]
         alias = f" as {name}" if name != shared_name else ""
-        lines[node.lineno - 1 : node.end_lineno] = (
-            [f"from pyleecan.Classes_new._error import {shared_name}{alias}\n"]
-            if name in used
-            else []
-        )
+        if name in used:
+            imports.append(f"from pyleecan.Classes_new._error import {shared_name}{alias}\n")
+        lines[node.lineno - 1 : node.end_lineno] = []
+    if imports:
+        header = tree.body[0].lineno - 1
+        has_docstring = False
+        for node in tree.body:
+            if (
+                isinstance(node, ast.Expr)
+                and not has_docstring
+                and isinstance(node.value, ast.Constant)
+                and isinstance(node.value.value, str)
+            ) or (isinstance(node, ast.ImportFrom) and node.module == "__future__"):
+                header = node.end_lineno
+                has_docstring = True
+            else:
+                break
+        lines[header:header] = ["".join(reversed(imports)) + "\n"]
     return "".join(lines)
+
+
+def _function_import_style(source, package, import_style):
+    """Convert Pyleecan from-imports relative to the generated module package."""
+    data = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(data):
+        if value == 10:
+            offsets.append(index + 1)
+    replacements = []
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.ImportFrom) or node.module == "__future__":
+            continue
+        module = node.module or ""
+        if node.level:
+            module = resolve_name("." * node.level + module, package)
+        if module != "pyleecan" and not module.startswith("pyleecan."):
+            continue
+        if import_style == "absolute":
+            new_module, level = module, 0
+        else:
+            current_parts = package.split(".")
+            module_parts = module.split(".")
+            common = 0
+            for left, right in zip(current_parts, module_parts):
+                if left != right:
+                    break
+                common += 1
+            level = len(current_parts) - common + 1
+            new_module = ".".join(module_parts[common:]) or None
+        replacement = ast.ImportFrom(module=new_module, names=node.names, level=level)
+        replacements.append((
+            offsets[node.lineno - 1] + node.col_offset,
+            offsets[node.end_lineno - 1] + node.end_col_offset,
+            ast.unparse(replacement).encode("utf-8"),
+        ))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        data = data[:start] + replacement + data[end:]
+    return data.decode("utf-8")
+
+
+def _format_function_source(source, path):
+    """Apply the same import styles and Ruff formatting as generated classes."""
+    lines = source.splitlines(keepends=True)
+    if lines and lines[0].strip() == "# -*- coding: utf-8 -*-":
+        del lines[0]
+        source = "".join(lines)
+    source = _replace_empty_containers(source, include_tuple=True)
+    tree = ast.parse(source, filename=str(path))
+    reflective = any(
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id in {"eval", "exec", "globals", "locals"}
+        for node in ast.walk(tree)
+    )
+    if not reflective:
+        source = _apply_numpy_import_style(source)
+        source = _apply_pyvista_import_style(source)
+        source = _apply_os_import_style(source)
+    result = subprocess.run(
+        ["ruff", "check", "--select", "I001", "--fix", "--quiet",
+         "--stdin-filename", str(path), "-"],
+        input=source, capture_output=True, text=True, encoding="utf-8", check=False,
+    )
+    if result.returncode:
+        raise RuntimeError(f"Ruff could not organize imports in {path}: {result.stderr.strip()}")
+    return _format_source_with_ruff(result.stdout, str(path))
 
 
 def _redirect_shared_error_imports(source, package, soft_name="pyleecan"):
@@ -422,8 +511,10 @@ def _rewrite_source(source, path, relative_path, class_dir):
     return rewritten, sorted(issues)
 
 
-def generate_functions(source_dir=None, output_dir=None, class_dir=None):
+def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_style="relative"):
     """Copy the complete function tree and return unresolved legacy references."""
+    if import_style not in ("relative", "absolute"):
+        raise ValueError("import_style must be 'relative' or 'absolute'")
     root = Path(MAIN_DIR)
     source_dir = Path(source_dir) if source_dir is not None else root / "Functions"
     output_dir = Path(output_dir) if output_dir is not None else root / "Functions_new"
@@ -473,6 +564,11 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None):
                         raise ValueError(f"{destination}: refusing to remove modified module")
                     destination.unlink()
                 continue
+            generated_package = ".".join(
+                ["pyleecan", "Functions_new", *relative.parts[:-1]]
+            )
+            rewritten = _function_import_style(rewritten, generated_package, import_style)
+            rewritten = _format_function_source(rewritten, destination)
             destination.write_text(rewritten, encoding=encoding, newline="")
             issues.extend((relative, line, message) for line, message in found)
         else:
@@ -481,7 +577,10 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None):
 
 
 def main():
-    issues = generate_functions()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--import-style", choices=("relative", "absolute"), default="relative")
+    args = parser.parse_args()
+    issues = generate_functions(import_style=args.import_style)
     print("Copied Functions to Functions_new; existing copies were overwritten.")
     if issues:
         print("Legacy references requiring manual review:")

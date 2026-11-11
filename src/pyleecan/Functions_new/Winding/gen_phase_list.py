@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from random import choice
 import string
+from random import choice
+
 from ...definitions import config_dict
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
@@ -71,7 +70,7 @@ def gen_name(N, is_add_phase=False):
 
     Alpha = string.ascii_uppercase
 
-    Name_list = list()
+    Name_list = []
     for i in range(N):
         if is_add_phase:
             name = "Phase "

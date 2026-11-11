@@ -1,4 +1,4 @@
-from pyleecan.Classes_new.data_keeper import DataKeeper
+from ....Classes_new.data_keeper import DataKeeper
 
 
 def get_elec_datakeeper_dict():
@@ -9,7 +9,7 @@ def get_elec_datakeeper_dict():
         dict of DataKeeper for input/electric module
     """
 
-    dk_dict = dict()
+    dk_dict = {}
 
     dk_dict["Id"] = DataKeeper(
         name="Stator current along d-axis",

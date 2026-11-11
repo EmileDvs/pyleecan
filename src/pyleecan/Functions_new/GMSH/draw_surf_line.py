@@ -1,10 +1,12 @@
-from .get_boundary_condition import get_boundary_condition
-from numpy import pi
-from pyleecan.Classes_new.arc import Arc
-from pyleecan.Classes_new.arc_1 import Arc1
-from pyleecan.Classes_new.arc_2 import Arc2
 import cmath
-from ...Functions_new.labels import BOUNDARY_PROP_LAB
+
+import numpy as np
+
+from ...Classes_new.arc import Arc
+from ...Classes_new.arc_1 import Arc1
+from ...Classes_new.arc_2 import Arc2
+from ..labels import BOUNDARY_PROP_LAB
+from .get_boundary_condition import get_boundary_condition
 
 tol = 1e-6
 
@@ -47,7 +49,7 @@ def draw_surf_line(
         bc_name = get_boundary_condition(line, boundary_prop)
         # Gmsh built-in engine does not allow arcs larger than 180deg
         # so arcs are split into two
-        if isinstance(line, Arc) and abs(line.get_angle() * 180.0 / pi) >= 180.0:
+        if isinstance(line, Arc) and abs(line.get_angle() * 180.0 / np.pi) >= 180.0:
             rot_dir = 1 if line.is_trigo_direction == True else -1
             arc1 = Arc1(
                 begin=line.get_begin(),
@@ -73,7 +75,7 @@ def draw_surf_line(
                     n_elements=n_elem,
                     bc=bc_name,
                 )
-        elif isinstance(line, Arc) and (abs(line.get_angle() * 180.0 / pi) <= tol):
+        elif isinstance(line, Arc) and (abs(line.get_angle() * 180.0 / np.pi) <= tol):
             # Don't draw anything, this is a circle and usually is repeated ?
             pass
         else:
@@ -116,7 +118,7 @@ def _add_agline_to_dict(
     """
 
     # TO-DO: Allow repeated points for the rotor and stator sliding bands
-    dlines = list()
+    dlines = []
     ltag = None
     btag, bx, by = _find_point_tag(d, line.get_begin())
     etag, ex, ey = _find_point_tag(d, line.get_end())
@@ -259,7 +261,7 @@ def _find_lines_from_point(d={}, ptag=-1):
     ltag : int
         List of line tags
     """
-    lines = list()
+    lines = []
     for s_data in d.values():
         for lvalues in s_data.values():
             if type(lvalues) is not dict:

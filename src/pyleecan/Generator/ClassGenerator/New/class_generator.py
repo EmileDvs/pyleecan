@@ -572,11 +572,14 @@ def _qualify_local_errors(source, error_names, class_name):
     return source_bytes.decode("utf-8")
 
 
-def _replace_empty_containers(source, blocked_names=()):
-    """Replace unshadowed empty built-in container calls in an inlined method."""
+def _replace_empty_containers(source, blocked_names=(), include_tuple=False):
+    """Replace unshadowed empty built-in container calls with literals."""
     tree = ast.parse(source)
     blocked = set(blocked_names)
-    candidates = {"dict", "list"}
+    literals = {"dict": b"{}", "list": b"[]"}
+    if include_tuple:
+        literals["tuple"] = b"()"
+    candidates = set(literals)
     for node in ast.walk(tree):
         if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
             blocked.add(node.id)
@@ -626,9 +629,7 @@ def _replace_empty_containers(source, blocked_names=()):
             end = offsets[node.end_lineno - 1] + node.end_col_offset
             # Preserve comments inside multiline calls.
             if b"#" not in encoded[start:end]:
-                replacements.append(
-                    (start, end, b"{}" if node.func.id == "dict" else b"[]")
-                )
+                replacements.append((start, end, literals[node.func.id]))
     for start, end, replacement in sorted(replacements, reverse=True):
         encoded = encoded[:start] + replacement + encoded[end:]
     return encoded.decode("utf-8")
@@ -3583,7 +3584,7 @@ def _get_import_scope_info(scope_body, package):
 def _apply_package_import_style(source, package, package_alias):
     """Normalize package imports and their references to a shared module alias."""
     tree = ast.parse(source)
-    if package in ("pyvista", "os"):
+    if package in ("numpy", "pyvista", "os"):
         imported_names = set()
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):

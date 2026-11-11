@@ -1,17 +1,8 @@
 import matplotlib.pyplot as plt
-from numpy import (
-    abs,
-    arange,
-    argmin,
-    ceil,
-    cumsum,
-    ndarray,
-    shape,
-    zeros,
-)
+import numpy as np
 
-from ....Functions_new.SciDataTool.Plot import COLORS, LINESTYLES
-from ....Functions_new.SciDataTool.Plot.init_fig import init_fig
+from . import COLORS, LINESTYLES
+from .init_fig import init_fig
 
 
 def plot_2D(
@@ -134,7 +125,7 @@ def plot_2D(
     ndatas = len(Ydatas)
 
     # Retrocompatibility
-    if isinstance(Xdatas, ndarray):
+    if isinstance(Xdatas, np.ndarray):
         Xdatas = [Xdatas]
 
     if len(Xdatas) == 1:
@@ -150,7 +141,7 @@ def plot_2D(
     if len(color_list) < ndatas:
         # Repeat colors and change linestyles
         l = len(color_list)
-        n = int(ceil(ndatas / l))
+        n = int(np.ceil(ndatas / l))
         color_list = color_list * n
         if len(linestyle_list) < n:
             # Expand linestyles
@@ -159,7 +150,7 @@ def plot_2D(
             ]
         if len(linestyle_list) < n:
             # Linestyles is still too small -> repeat
-            m = int(ceil(n / len(linestyle_list)))
+            m = int(np.ceil(n / len(linestyle_list)))
             linestyle_list = linestyle_list * m
         linestyles = []
         for i in range(n):
@@ -167,11 +158,11 @@ def plot_2D(
         linestyle_list = linestyles
     if len(linestyle_list) < ndatas:
         # Repeat linestyles
-        m = int(ceil(ndatas / len(linestyle_list)))
+        m = int(np.ceil(ndatas / len(linestyle_list)))
         linestyle_list = linestyle_list * m
     if len(linewidth_list) < ndatas:
         # Repeat linewidths
-        m = int(ceil(ndatas / len(linewidth_list)))
+        m = int(np.ceil(ndatas / len(linewidth_list)))
         linewidth_list = linewidth_list * m
     if (len(legend_list) == 1 and legend_list[0] == "") or len(legend_list) == 0:
         no_legend = True
@@ -229,7 +220,7 @@ def plot_2D(
                 picker=True,
             )
             if fund_harm is not None:  # Find fundamental
-                imax = argmin(abs(Xdatas[i] - fund_harm))
+                imax = np.argmin(np.abs(Xdatas[i] - fund_harm))
                 if ndatas < 3 and len(color_list) > 2:
                     fund_color = color_list[2]
                 else:
@@ -271,9 +262,9 @@ def plot_2D(
             rotation=90,
         )
     elif type_plot == "octave":
-        pos = arange(0, 1, 1 / (ndatas + 1))[:-1] - (ndatas - 1) / (2 * (ndatas + 1))
+        pos = np.arange(0, 1, 1 / (ndatas + 1))[:-1] - (ndatas - 1) / (2 * (ndatas + 1))
         for i in range(ndatas):
-            x_axis = arange(len(Xdatas[i]))
+            x_axis = np.arange(len(Xdatas[i]))
             ax.bar(
                 x_axis + pos[i],
                 Ydatas[i],
@@ -374,8 +365,8 @@ def plot_2D(
 
         def get_cumulated_array(data, **kwargs):
             cum = data.clip(**kwargs)
-            cum = cumsum(cum, axis=0)
-            d = zeros(shape(data))
+            cum = np.cumsum(cum, axis=0)
+            d = np.zeros(np.shape(data))
             d[1:] = cum[:-1]
             return d
 

@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Tuple
 
-from pyvista.plotting import BasePlotter, Plotter, themes
+import pyvista as pv
 
 from ....definitions import config_dict
 
@@ -8,8 +8,10 @@ FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 
 
 def configure_plot(
-    pv_plotter: Optional[BasePlotter], win_title: str, is_show_axes: bool = True
-) -> Tuple[BasePlotter, Dict[str, Any]]:
+    pv_plotter: Optional[pv.plotting.BasePlotter],
+    win_title: str,
+    is_show_axes: bool = True,
+) -> Tuple[pv.plotting.BasePlotter, Dict[str, Any]]:
     """Configure a pyvista plot. If the plotter doesn't exist, create one depending on available package: PyVista or PyVistaQt.
 
     Parameters
@@ -24,8 +26,8 @@ def configure_plot(
 
     if pv_plotter is None:
         # Instantiate pv_plotter
-        pv_plotter = Plotter(
-            notebook=False, title=win_title, theme=themes.DocumentTheme()
+        pv_plotter = pv.plotting.Plotter(
+            notebook=False, title=win_title, theme=pv.plotting.themes.DocumentTheme()
         )
 
     # isometric view with z towards left

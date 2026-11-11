@@ -1,3 +1,6 @@
+from ...Classes_new._error import NotchError
+
+
 def merge_notch_list(notch_list_1, notch_list_2):
     """Merge two notches list
 
@@ -39,6 +42,3 @@ def merge_notch_list(notch_list_1, notch_list_2):
     merged = merged + notch_list_1[ii:] + notch_list_2[jj:]
 
     return merged
-
-
-from pyleecan.Classes_new._error import NotchError

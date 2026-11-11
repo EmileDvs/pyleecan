@@ -1,9 +1,10 @@
-from os import replace
-from numpy import pi
-from pyleecan.Classes_new.arc import Arc
+import os
 import sys
+
 import gmsh
-from os.path import splitext
+import numpy as np
+
+from ...Classes_new.arc import Arc
 
 
 def gen_3D_mesh(
@@ -114,7 +115,7 @@ def gen_3D_mesh(
     surf_list = [1]
     for ii in range(Zs):
         ov = factory.copy([(2, 1)])
-        factory.rotate(ov, 0, 0, -L / 2, 0, 0, 1, (ii + 1) * 2 * pi / Zs)
+        factory.rotate(ov, 0, 0, -L / 2, 0, 0, 1, (ii + 1) * 2 * np.pi / Zs)
         surf_list.append(ov[0][1])
     gmsh.model.addPhysicalGroup(2, surf_list, 2)
     gmsh.model.setPhysicalName(2, 2, "Lamination")
@@ -138,10 +139,10 @@ def gen_3D_mesh(
     # Generate the 3D mesh
     factory.synchronize()
 
-    filename, file_extension = splitext(save_path)
+    filename, file_extension = os.path.splitext(save_path)
     if file_extension == ".geo":
         gmsh.write(filename + ".geo_unrolled")
-        replace(filename + ".geo_unrolled", filename + file_extension)
+        os.replace(filename + ".geo_unrolled", filename + file_extension)
     else:
         gmsh.model.mesh.generate(3)
         gmsh.write(save_path)

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def inter_line_line(Z1, Z2, Z3, Z4):
     """INTER_LINE_LINE find the intersection between two lines defined by two
     complex

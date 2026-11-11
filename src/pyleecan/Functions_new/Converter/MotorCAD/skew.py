@@ -1,5 +1,6 @@
-from pyleecan.Classes_new._error import ConvertionError
-from numpy import pi
+import numpy as np
+
+from ....Classes_new._error import ConvertionError
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -40,7 +41,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
             skew_value = other_dict[f"[Magnetics]"][f"RotorSkewAngle_Array[{idx_skew}]"]
 
             # convertion deg in rad
-            skew_value = skew_value * pi / 180
+            skew_value = skew_value * np.pi / 180
 
             idx_skew += 1
             skew_list.append(skew_value)

@@ -1,26 +1,48 @@
-from pyleecan.Classes_new.arc import Arc
-from pyleecan.Classes_new.arc_2 import Arc2
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.machine_scim import MachineSCIM
-from pyleecan.Classes_new.machine_wrsm import MachineWRSM
-
-from ...Functions_new.labels import HOLEM_LAB_S, MAG_LAB, BAR_LAB, short_label, LAM_LAB, YOKE_LAB, WIND_LAB_S, LAM_LAB_S, SHAFT_LAB, decode_label, SLID_LAB, AIRGAP_LAB, BOT_LAB, TOP_LAB, AIRBOX_LAB, AIRBOX_R_LAB, AR_B_LAB, AR_T_LAB, SBR_B_LAB, SBR_T_LAB, AS_BL_LAB, AS_BR_LAB, AS_TL_LAB, AS_TR_LAB
-from pyleecan.Classes_new._error import GMSHInputError as InputError
-from ...Functions_new.GMSH.get_sliding_band import get_sliding_band
-from ...Functions_new.GMSH.get_air_box import get_air_box
-from ...Functions_new.GMSH.get_boundary_condition import get_boundary_condition
-from ...Functions_new.GMSH.draw_surf_line import draw_surf_line
-from ...Functions_new.GMSH.comp_gmsh_mesh_dict import comp_gmsh_mesh_dict
-import sys
-import gmsh
 import cmath
+import os
+import sys
 
-from os import replace
-from os.path import splitext
+import gmsh
+import numpy as np
 
-from numpy import pi
-
-from ...Functions_new.get_logger import get_logger
+from ...Classes_new._error import GMSHInputError as InputError
+from ...Classes_new.arc import Arc
+from ...Classes_new.arc_2 import Arc2
+from ...Classes_new.machine_scim import MachineSCIM
+from ...Classes_new.machine_sipmsm import MachineSIPMSM
+from ...Classes_new.machine_wrsm import MachineWRSM
+from ..get_logger import get_logger
+from ..labels import (
+    AIRBOX_LAB,
+    AIRBOX_R_LAB,
+    AIRGAP_LAB,
+    AR_B_LAB,
+    AR_T_LAB,
+    AS_BL_LAB,
+    AS_BR_LAB,
+    AS_TL_LAB,
+    AS_TR_LAB,
+    BAR_LAB,
+    BOT_LAB,
+    HOLEM_LAB_S,
+    LAM_LAB,
+    LAM_LAB_S,
+    MAG_LAB,
+    SBR_B_LAB,
+    SBR_T_LAB,
+    SHAFT_LAB,
+    SLID_LAB,
+    TOP_LAB,
+    WIND_LAB_S,
+    YOKE_LAB,
+    decode_label,
+    short_label,
+)
+from .comp_gmsh_mesh_dict import comp_gmsh_mesh_dict
+from .draw_surf_line import draw_surf_line
+from .get_air_box import get_air_box
+from .get_boundary_condition import get_boundary_condition
+from .get_sliding_band import get_sliding_band
 
 
 def draw_GMSH(
@@ -82,7 +104,7 @@ def draw_GMSH(
     # Default stator mesh element size
     mesh_size_S = machine.stator.Rext / 100.0  # Stator
     mesh_size_R = machine.rotor.Rext / 25.0  # Rotor
-    mesh_size_SB = 2.0 * pi * machine.rotor.Rext / 360.0  # Sliding Band
+    mesh_size_SB = 2.0 * np.pi * machine.rotor.Rext / 360.0  # Sliding Band
     mesh_size_AB = machine.stator.Rext / 50.0  # AirBox
     lam_list = machine.get_lam_list()
     lam_int = lam_list[0]
@@ -106,7 +128,7 @@ def draw_GMSH(
 
     # build geometry
     alpha = 0
-    rotor_list = list()
+    rotor_list = []
     if machine.shaft is not None:
         rotor_list.extend(machine.shaft.build_geometry(sym=sym, alpha=alpha))
     rotor_surf = machine.rotor.build_geometry(sym=sym, alpha=alpha)
@@ -115,7 +137,7 @@ def draw_GMSH(
         # first surface is a SurfRing (cf Lamination.build_geometry)
         rotor_surf[0] = rotor_surf[0].out_surf
     rotor_list.extend(rotor_surf)
-    stator_list = list()
+    stator_list = []
     stator_list.extend(machine.stator.build_geometry(sym=sym, alpha=alpha))
 
     #####################
@@ -178,9 +200,9 @@ def draw_GMSH(
                 mesh_size_R,
             )
 
-        lam_and_holes = list()
+        lam_and_holes = []
         ext_lam_loop = None
-        rotor_cloops = list()
+        rotor_cloops = []
         # loop though all (surface) entries of the rotor lamination
         for s_data in gmsh_dict.values():
             lloop = []
@@ -668,7 +690,7 @@ def draw_GMSH(
                         b_name = boundary_prop[AS_BR_LAB]
                         l_name = AS_BR_LAB
                     elif (exy_angle == bxy_angle) and (
-                        abs(abs(exy_angle) - 2.0 * pi / sym) < 1e-6
+                        abs(abs(exy_angle) - 2.0 * np.pi / sym) < 1e-6
                     ):
                         b_name = boundary_prop[AS_BL_LAB]
                         l_name = AS_BL_LAB
@@ -729,7 +751,7 @@ def draw_GMSH(
                         b_name = boundary_prop[AS_TR_LAB]
                         l_name = AS_TR_LAB
                     elif (exy_angle == bxy_angle) and (
-                        abs(abs(exy_angle) - 2.0 * pi / sym) < 1e-6
+                        abs(abs(exy_angle) - 2.0 * np.pi / sym) < 1e-6
                     ):
                         b_name = boundary_prop[AS_TL_LAB]
                         l_name = AS_TL_LAB
@@ -848,11 +870,11 @@ def draw_GMSH(
             model.setPhysicalName(1, pg, label)
 
     # save mesh or geo file depending on file extension
-    filename, file_extension = splitext(path_save)
+    filename, file_extension = os.path.splitext(path_save)
 
     if file_extension == ".geo":
         gmsh.write(filename + ".geo_unrolled")
-        replace(filename + ".geo_unrolled", filename + file_extension)
+        os.replace(filename + ".geo_unrolled", filename + file_extension)
     else:
         gmsh.model.mesh.generate(2)
         gmsh.write(path_save)

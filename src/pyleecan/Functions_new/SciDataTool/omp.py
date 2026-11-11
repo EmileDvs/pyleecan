@@ -1,25 +1,13 @@
 from math import floor
 
 import numpy as np
-from numpy import (
-    arange,
-    asarray,
-    concatenate,
-    identity,
-    linspace,
-    ndarray,
-    outer,
-    pi,
-    sin,
-    sqrt,
-)
 from scipy.fft import idct
 from sklearn.linear_model import orthogonal_mp
 
-from pyleecan.Classes_new.data_1d import Data1D
+from ...Classes_new.data_1d import Data1D
 
 
-def comp_DST(n: int) -> ndarray:
+def comp_DST(n: int) -> np.ndarray:
     """
     Compute the matrix of sinusoids, stacked as the columns of DST, with normed columns
     The first null component is removed because it would
@@ -29,13 +17,13 @@ def comp_DST(n: int) -> ndarray:
     DST: ndarray of shape (n,n-1)
     """
 
-    f = 0.5 * arange(n)
-    t = linspace(0, 1, n, endpoint=False)
+    f = 0.5 * np.arange(n)
+    t = np.linspace(0, 1, n, endpoint=False)
 
-    DST = sin(2 * pi * outer(f, t))
+    DST = np.sin(2 * np.pi * np.outer(f, t))
 
     # Norm the columns
-    DST = 2 * (1 / sqrt(2 * n)) * DST
+    DST = 2 * (1 / np.sqrt(2 * n)) * DST
 
     # Remove the first null component
     DST = DST[:, 1:]
@@ -43,7 +31,7 @@ def comp_DST(n: int) -> ndarray:
     return DST
 
 
-def comp_undersampling(K: float, Time: Data1D, seed: int = 42) -> ndarray:
+def comp_undersampling(K: float, Time: Data1D, seed: int = 42) -> np.ndarray:
     """
     Compute an undersampled Data1D object with a percentage K of the initial samples
 
@@ -66,7 +54,7 @@ def comp_undersampling(K: float, Time: Data1D, seed: int = 42) -> ndarray:
     np.random.seed(seed)
     M = np.random.choice(n, m, replace=False)
     M.sort()
-    M = asarray(M)
+    M = np.asarray(M)
 
     time_under = Time.values[M]
 
@@ -79,7 +67,7 @@ def comp_undersampling(K: float, Time: Data1D, seed: int = 42) -> ndarray:
     return M, Time_under
 
 
-def comp_dictionary(n: int, M: ndarray) -> ndarray:
+def comp_dictionary(n: int, M: np.ndarray) -> np.ndarray:
     """
     Construct the dictionary on which the signal is decomposed
 
@@ -92,7 +80,7 @@ def comp_dictionary(n: int, M: ndarray) -> ndarray:
     dictionary: concatenation of the DST and DCT's matrix
     """
 
-    DCT = idct(identity(n), type=2, norm="ortho", axis=0)
+    DCT = idct(np.identity(n), type=2, norm="ortho", axis=0)
     DCT = DCT[M]
 
     # DST with normed columns
@@ -100,12 +88,12 @@ def comp_dictionary(n: int, M: ndarray) -> ndarray:
     DST = comp_DST(n)
     DST = DST[M]
 
-    dictionary = concatenate([DCT, DST], axis=1)
+    dictionary = np.concatenate([DCT, DST], axis=1)
 
     return dictionary
 
 
-def comp_undersampled_axe(Time: Data1D, Time_under: Data1D) -> ndarray:
+def comp_undersampled_axe(Time: Data1D, Time_under: Data1D) -> np.ndarray:
     """
     Compute the ndarray M of indices of the undersampled signal such that:
     Time_under.value = Time.value[M]
@@ -125,14 +113,14 @@ def comp_undersampled_axe(Time: Data1D, Time_under: Data1D) -> ndarray:
 
 
 def omp(
-    Y: ndarray,
-    M: ndarray,
+    Y: np.ndarray,
+    M: np.ndarray,
     n: int,
     n_coefs: int = None,
     precompute: bool = True,
     dictionary=None,
     return_path: bool = False,
-) -> ndarray:
+) -> np.ndarray:
     """
     Given Y of shape (len(M),n_targets), recover n_targets signals (of length len(M)) with joint sparsity.
     Each signal - column of Y - is the signal's observation on the support M
@@ -173,7 +161,7 @@ def omp(
             X=dictionary_decomp, y=Y, n_nonzero_coefs=n_coefs, precompute=precompute
         )
 
-    dictionary_synth = comp_dictionary(n, arange(n))
+    dictionary_synth = comp_dictionary(n, np.arange(n))
 
     Y_full = dictionary_synth @ sparse_decomposition
 

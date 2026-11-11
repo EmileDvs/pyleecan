@@ -1,8 +1,27 @@
-from ...Functions_new.FEMM.create_FEMM_circuit_material import create_FEMM_circuit_material
-from ...Functions_new.FEMM.create_FEMM_magnet import create_FEMM_magnet
-from ...Functions_new.labels import LAM_LAB, STATOR_LAB, ROTOR_LAB, AIRGAP_LAB, VENT_LAB, NOTCH_LAB, HOLEV_LAB, HOLEM_LAB, MAG_LAB, SOP_LAB, KEY_LAB, WEDGE_LAB, WIND_LAB, BAR_LAB, SLID_LAB, NO_MESH_LAB, get_obj_from_label, decode_label
-from ...Functions_new.FEMM import LAM_MAT_NAME
-from pyleecan.Classes_new.import_matrix import ImportMatrix
+from ...Classes_new.import_matrix import ImportMatrix
+from ..labels import (
+    AIRGAP_LAB,
+    BAR_LAB,
+    HOLEM_LAB,
+    HOLEV_LAB,
+    KEY_LAB,
+    LAM_LAB,
+    MAG_LAB,
+    NO_MESH_LAB,
+    NOTCH_LAB,
+    ROTOR_LAB,
+    SLID_LAB,
+    SOP_LAB,
+    STATOR_LAB,
+    VENT_LAB,
+    WEDGE_LAB,
+    WIND_LAB,
+    decode_label,
+    get_obj_from_label,
+)
+from . import LAM_MAT_NAME
+from .create_FEMM_circuit_material import create_FEMM_circuit_material
+from .create_FEMM_magnet import create_FEMM_magnet
 
 
 def create_FEMM_materials(
@@ -54,7 +73,7 @@ def create_FEMM_materials(
         Dictionary of properties and dictionary containing the main parameters of FEMM
     """
 
-    prop_dict = dict()  # Initialisation of the dictionary to return
+    prop_dict = {}  # Initialisation of the dictionary to return
 
     rotor = machine.rotor
     stator = machine.stator
@@ -146,7 +165,8 @@ def create_FEMM_materials(
                     0,
                 )
                 if wedge_mat.mag.BH_curve is not None and not isinstance(
-                    wedge_mat.mag.BH_curve, ImportMatrix  # abstract class
+                    wedge_mat.mag.BH_curve,
+                    ImportMatrix,  # abstract class
                 ):
                     BH = wedge_mat.mag.BH_curve.get_data()
                     add_BH_curve(femm, BH, wedge_mat.name)

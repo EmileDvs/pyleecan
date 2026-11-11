@@ -1,4 +1,4 @@
-from numpy import sqrt, cos, arctan, arcsin
+import numpy as np
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -39,7 +39,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
 
     Rbo = machine.rotor.get_Rbo()
 
-    slot_W1 = sqrt(2 * (Rbo + H1) ** 2 * (1 - cos(W1)))
+    slot_W1 = np.sqrt(2 * (Rbo + H1) ** 2 * (1 - np.cos(W1)))
     machine.rotor.slot.W1 = slot_W1
 
     # set W0
@@ -47,7 +47,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     point_dict = machine.rotor.slot._comp_point_coordinate()
     ZM4 = point_dict["ZM4"]
 
-    machine.rotor.slot.W0 = 2 * arcsin((machine.rotor.slot.W1 / 2) / abs(ZM4))
+    machine.rotor.slot.W0 = 2 * np.arcsin((machine.rotor.slot.W1 / 2) / abs(ZM4))
 
     point_dict = machine.rotor.slot._comp_point_coordinate()
 
@@ -76,7 +76,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
         (x2**2 - x1**2 + y2**2 - y1**2) / (2 * (y2 - y1))
     )
 
-    Rtopm = sqrt((x1 - x) ** 2 + (y1 - y) ** 2)
+    Rtopm = np.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)
 
     machine.rotor.slot.Rtopm = Rtopm
 

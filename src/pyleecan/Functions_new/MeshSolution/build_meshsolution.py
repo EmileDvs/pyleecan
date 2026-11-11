@@ -2,9 +2,9 @@ from typing import Dict, Optional
 
 import numpy as np
 
-from pyleecan.Classes_new.mesh import Mesh
-from pyleecan.Classes_new.mesh_solution import MeshSolution
-from pyleecan.Classes_new.solution import Solution
+from ...Classes_new.mesh import Mesh
+from ...Classes_new.mesh_solution import MeshSolution
+from ...Classes_new.solution import Solution
 
 
 def build_meshsolution(

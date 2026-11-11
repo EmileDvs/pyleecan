@@ -1,10 +1,8 @@
-from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.arc import Arc
-from pyleecan.Classes_new.arc_2 import Arc2
-
-
-from pyleecan.Classes_new._error import SurfaceError
+from ...Classes_new._error import SurfaceError
+from ...Classes_new.arc import Arc
+from ...Classes_new.arc_2 import Arc2
+from ...Classes_new.segment import Segment
+from ...Classes_new.surf_line import SurfLine
 
 
 def create_surface(line_list):

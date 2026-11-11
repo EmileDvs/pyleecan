@@ -1,10 +1,10 @@
 import numpy as np
 
-from pyleecan.Classes_new.data_1d import Data1D
-from pyleecan.Classes_new.data_freq import DataFreq
-from ...Functions_new.Electrical.dqh_transformation import _check_data, abc2n, n2abc
-from ...Functions_new.SciDataTool.set_routines import union1d_tol
-from ...Functions_new.Winding.gen_phase_list import gen_name
+from ...Classes_new.data_1d import Data1D
+from ...Classes_new.data_freq import DataFreq
+from ..SciDataTool.set_routines import union1d_tol
+from ..Winding.gen_phase_list import gen_name
+from .dqh_transformation import _check_data, abc2n, n2abc
 
 
 def n2dqh_DataFreq(data_n, current_dir, felec, is_dqh_rms=True, phase_dir=None):
@@ -52,7 +52,7 @@ def n2dqh_DataFreq(data_n, current_dir, felec, is_dqh_rms=True, phase_dir=None):
     )
 
     # Create frequency axis
-    norm_freq = dict()
+    norm_freq = {}
     ax_freq = data_n.axes[0]
     if ax_freq.normalizations is not None and len(ax_freq.normalizations) > 0:
         for key, val in ax_freq.normalizations.items():
@@ -68,7 +68,7 @@ def n2dqh_DataFreq(data_n, current_dir, felec, is_dqh_rms=True, phase_dir=None):
     )
 
     # Get normalizations
-    normalizations = dict()
+    normalizations = {}
     if data_n.normalizations is not None and len(data_n.normalizations) > 0:
         for key, val in data_n.normalizations.items():
             normalizations[key] = val.copy()
@@ -223,7 +223,7 @@ def dqh2n_DataFreq(data_dqh, n, current_dir, felec, is_n_rms=False, phase_dir=No
     )
 
     # Create frequency axis
-    norm_freq = dict()
+    norm_freq = {}
     ax_freq = data_dqh.axes[0]
     if ax_freq.normalizations is not None and len(ax_freq.normalizations) > 0:
         for key, val in ax_freq.normalizations.items():
@@ -239,7 +239,7 @@ def dqh2n_DataFreq(data_dqh, n, current_dir, felec, is_n_rms=False, phase_dir=No
     )
 
     # Get normalizations
-    normalizations = dict()
+    normalizations = {}
     if data_dqh.normalizations is not None and len(data_dqh.normalizations) > 0:
         for key, val in data_dqh.normalizations.items():
             normalizations[key] = val.copy()

@@ -1,9 +1,11 @@
 import warnings
+from datetime import datetime
+
 import numpy as np
 from h5py import File as FileH5
-from ...definitions import PACKAGE_NAME
+
 from ... import __version__
-from datetime import datetime
+from ...definitions import PACKAGE_NAME
 
 
 def save_hdf5(obj, save_path, obj_dict=None):
@@ -47,7 +49,7 @@ def pyleecan_dict_to_hdf5(file, obj, obj_dict=None):
     if obj_dict is not None:
         pass
     elif isinstance(obj, dict):
-        obj_dict = dict()
+        obj_dict = {}
         for key, val in obj.items():
             obj_dict[key] = val.as_dict(type_handle_ndarray=2)
     else:

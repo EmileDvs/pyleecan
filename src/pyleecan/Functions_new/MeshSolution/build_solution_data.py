@@ -1,5 +1,5 @@
-from pyleecan.Classes_new.data_time import DataTime
-from pyleecan.Classes_new.solution_data import SolutionData
+from ...Classes_new.data_time import DataTime
+from ...Classes_new.solution_data import SolutionData
 
 
 def build_solution_data(

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def create_FEMM_bar(femm, is_mmfr, rho, materials):
     """Create the property for LamSquirrel cage on the rotor
 

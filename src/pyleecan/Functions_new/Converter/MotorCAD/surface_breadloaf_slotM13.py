@@ -1,4 +1,4 @@
-from numpy import sqrt, cos, arcsin, exp
+import numpy as np
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -37,7 +37,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
 
     Rbo = machine.rotor.get_Rbo()
 
-    slot_W1 = sqrt(2 * (Rbo) ** 2 * (1 - cos(W1)))
+    slot_W1 = np.sqrt(2 * (Rbo) ** 2 * (1 - np.cos(W1)))
     machine.rotor.slot.W1 = slot_W1
 
     # set W0
@@ -45,16 +45,16 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
 
     # correction value H1 (circular segment)
     c = machine.rotor.slot.W0
-    alpha = 2 * arcsin(c / (2 * Rbo))
-    H = Rbo * (1 - cos(alpha / 2))
+    alpha = 2 * np.arcsin(c / (2 * Rbo))
+    H = Rbo * (1 - np.cos(alpha / 2))
     machine.rotor.slot.H1 = machine.rotor.slot.H1 + H
 
     # define rtopm at max
 
     # alpha is the angle to rotate Z0 so ||Z1,Z10|| = W0
-    alpha = float(arcsin(slot_W1 / (2 * Rbo)))
+    alpha = float(np.arcsin(slot_W1 / (2 * Rbo)))
 
-    Z1 = Rbo * exp(-1j * alpha)
+    Z1 = Rbo * np.exp(-1j * alpha)
 
     machine.rotor.slot.Rtopm = abs(Z1)
 
@@ -85,7 +85,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
         (x2**2 - x1**2 + y2**2 - y1**2) / (2 * (y2 - y1))
     )
 
-    Rtopm = sqrt((x1 - x) ** 2 + (y1 - y) ** 2)
+    Rtopm = np.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)
 
     machine.rotor.slot.Rtopm = Rtopm
 

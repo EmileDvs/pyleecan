@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_area(meshsolution, group_names=None, indices=None):
     """Get the surface area of the specified groups of a MeshSolution
 

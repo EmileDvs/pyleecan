@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from numpy import array
+import numpy as np
 
 
 def comp_surface_num(point_list):
@@ -22,7 +20,7 @@ def comp_surface_num(point_list):
     # (ie point_list[0]=point_list[end]) If it's already the case Xi+1 - Xi =0
     point_list.append(point_list[0])
 
-    point_array = array(point_list)
+    point_array = np.array(point_list)
 
     # We translate the points so every point have imag >=0
     min_imag = min(point_array.imag)

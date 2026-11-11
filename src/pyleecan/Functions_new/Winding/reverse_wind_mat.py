@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from numpy import zeros
+import numpy as np
 
 
 def reverse_wind_mat(wind_mat):
@@ -68,11 +67,15 @@ def change_layer(wind_mat):
     assert len(wind_shape) == 4, "wind_mat has a wrong shape (dim 4)"
 
     if wind_shape[0] == 1 and wind_shape[1] != 1:
-        wind_mat2 = zeros((wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3]))
+        wind_mat2 = np.zeros(
+            (wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3])
+        )
         wind_mat2[:, 0, :, :] = wind_mat[0, :, :, :]
         return wind_mat2
     elif wind_shape[0] != 1 and wind_shape[1] == 1:
-        wind_mat2 = zeros((wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3]))
+        wind_mat2 = np.zeros(
+            (wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3])
+        )
         wind_mat2[0, :, :, :] = wind_mat[:, 0, :, :]
         return wind_mat2
     else:

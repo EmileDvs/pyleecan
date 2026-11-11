@@ -1,11 +1,11 @@
 import gzip
+import os
 from datetime import datetime
 from json import dump
 from logging import getLogger
-from os import makedirs, remove, listdir
-from os.path import isdir, isfile, join, split
 from shutil import move
-from numpy import int32
+
+import numpy as np
 
 from ... import __version__
 from ...Classes import get_class_dict
@@ -84,7 +84,7 @@ def save_json(
     if is_folder:
         msg = f"Saving {cls_name} to folder '{file_path}' ({len(split_list)} files)."
     else:
-        msg = f"Saving {cls_name} to file '{join(file_path, base_name)}'."
+        msg = f"Saving {cls_name} to file '{os.path.join(file_path, base_name)}'."
     logger.info(msg)
     print(msg)
 
@@ -93,7 +93,7 @@ def save_json(
         file_name = list(elem.keys())[0]
         save_obj = elem[file_name]
         json_kwargs = dict(sort_keys=True, indent=2, separators=(",", ": "))
-        json_file = join(file_path, file_name)
+        json_file = os.path.join(file_path, file_name)
 
         if type_compression == 1:
             with gzip.open(json_file, mode="wt", encoding="utf-8") as fp:
@@ -147,22 +147,22 @@ def setup_save_path(save_path, obj, is_folder, type_handle_old, file_ext, logger
         if not is_folder:
             if not save_path.endswith(file_ext):
                 save_path += file_ext
-            file_path, file_name = split(save_path)
+            file_path, file_name = os.path.split(save_path)
 
         # folder mode
         else:
-            file_path, file_name = split(save_path)
-            file_path = join(file_path, file_name)
+            file_path, file_name = os.path.split(save_path)
+            file_path = os.path.join(file_path, file_name)
             file_name += file_ext
             # Remove old files from old folder
-            if isdir(file_path) and type_handle_old != 0:
-                for name in listdir(file_path):
+            if os.path.isdir(file_path) and type_handle_old != 0:
+                for name in os.listdir(file_path):
                     if name[-5:] == ".json":
-                        path = join(file_path, name)
+                        path = os.path.join(file_path, name)
                         if type_handle_old == 1:
                             logger.debug("Removing old file :" + path)
                             try:
-                                remove(path)
+                                os.remove(path)
                             except Exception as e:
                                 logger.error(
                                     "Unable to remove old file ("
@@ -172,10 +172,10 @@ def setup_save_path(save_path, obj, is_folder, type_handle_old, file_ext, logger
                                 )
                         elif type_handle_old == 2:
                             logger.debug("Moving old file to Backup folder:" + path)
-                            back_path = join(file_path, "Backup")
+                            back_path = os.path.join(file_path, "Backup")
                             try:
-                                if not isdir(back_path):
-                                    makedirs(back_path)
+                                if not os.path.isdir(back_path):
+                                    os.makedirs(back_path)
                                 move(path, back_path)
                             except Exception as e:
                                 logger.error(
@@ -185,8 +185,8 @@ def setup_save_path(save_path, obj, is_folder, type_handle_old, file_ext, logger
                                     + str(e)
                                 )
 
-    if file_path and not isdir(file_path):
-        makedirs(file_path)
+    if file_path and not os.path.isdir(file_path):
+        os.makedirs(file_path)
 
     return file_path, file_name
 
@@ -221,7 +221,7 @@ def build_data(obj, logger):
     # pyleecan classes, i.e. instances with as_dict method
     if hasattr(obj, "as_dict") and callable(getattr(obj, "as_dict", None)):
         return build_data(obj.as_dict(), logger)
-    if isinstance(obj, int32):  # int
+    if isinstance(obj, np.int32):  # int
         return int(obj)
     # other allowed types
     if is_json_serializable(obj):
@@ -300,13 +300,13 @@ def create_folder(name, logger):
     path = dt_string + name
 
     # Check if the directory exists
-    while isdir(path):
+    while os.path.isdir(path):
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d-%Hh%Mmin%Ss-")
         path = dt_string + name
 
     logger.info("Creating folder " + path + " to save the object.")
-    makedirs(path)
+    os.makedirs(path)
 
     return path
 
@@ -358,12 +358,12 @@ def get_filename(obj, folder, split_list, file_ext, logger):
     # Add prefix to get a file name that doesn't exists
     num = 0
     new_name = name + file_ext
-    while isfile(join(folder, new_name)) or new_name in name_list:
+    while os.path.isfile(os.path.join(folder, new_name)) or new_name in name_list:
         num += 1
         new_name = name + "_{:05d}".format(num) + file_ext
 
     # logging
-    file_path = join(folder, new_name)
+    file_path = os.path.join(folder, new_name)
     logger.info(msg + file_path)
 
     return new_name  # Set the name to load the file

@@ -1,7 +1,14 @@
-from ...Functions_new.FEMM import is_eddies
-from ...Functions_new.FEMM.create_FEMM_materials import create_FEMM_materials
-from ...Functions_new.FEMM.assign_FEMM_surface import assign_FEMM_surface
-from ...Functions_new.labels import decode_label, get_obj_from_label, WIND_LAB, HOLEM_LAB, MAG_LAB, BAR_LAB
+from ..labels import (
+    BAR_LAB,
+    HOLEM_LAB,
+    MAG_LAB,
+    WIND_LAB,
+    decode_label,
+    get_obj_from_label,
+)
+from . import is_eddies
+from .assign_FEMM_surface import assign_FEMM_surface
+from .create_FEMM_materials import create_FEMM_materials
 
 
 def draw_FEMM_surfaces(

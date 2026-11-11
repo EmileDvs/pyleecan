@@ -1,11 +1,21 @@
-# -*- coding: utf-8 -*-
-from numpy import exp, pi
+import numpy as np
 
-from pyleecan.Classes_new.arc_1 import Arc1
-from pyleecan.Classes_new.circle import Circle
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
-from ...Functions_new.labels import SLID_LAB, NO_MESH_LAB, NO_LAM_LAB, BOUNDARY_PROP_LAB, SBS_TR_LAB, SBS_TL_LAB, SBS_BR_LAB, SBS_BL_LAB, SBR_B_LAB, SBR_T_LAB
+from ...Classes_new.arc_1 import Arc1
+from ...Classes_new.circle import Circle
+from ...Classes_new.segment import Segment
+from ...Classes_new.surf_line import SurfLine
+from ..labels import (
+    BOUNDARY_PROP_LAB,
+    NO_LAM_LAB,
+    NO_MESH_LAB,
+    SBR_B_LAB,
+    SBR_T_LAB,
+    SBS_BL_LAB,
+    SBS_BR_LAB,
+    SBS_TL_LAB,
+    SBS_TR_LAB,
+    SLID_LAB,
+)
 
 
 def get_sliding_band(sym, lam_int, lam_ext):
@@ -30,7 +40,7 @@ def get_sliding_band(sym, lam_int, lam_ext):
     Rgap_0_int, Rgap_0_ext = _get_radius_boundary(sym, lam_int, lam_ext)
     Wgap_mec = Rgap_mec_ext - Rgap_mec_int
     W_sb = Wgap_mec / 3  # Width sliding band
-    surf_list = list()
+    surf_list = []
     label_int = lam_int.get_label()
     label_ext = lam_ext.get_label()
 
@@ -41,7 +51,7 @@ def get_sliding_band(sym, lam_int, lam_ext):
                 center=0,
                 radius=Rgap_mec_int + W_sb,
                 label=label_int + "_" + SLID_LAB,
-                point_ref=(Rgap_mec_int + W_sb / 2) * exp(1j * pi / 2),
+                point_ref=(Rgap_mec_int + W_sb / 2) * np.exp(1j * np.pi / 2),
                 prop_dict={BOUNDARY_PROP_LAB: SBR_B_LAB},  # Bottom Radius
             )
         )
@@ -51,7 +61,7 @@ def get_sliding_band(sym, lam_int, lam_ext):
                 center=0,
                 radius=Rgap_mec_int + 2 * W_sb,
                 label=label_ext + "_" + SLID_LAB,
-                point_ref=(Rgap_mec_ext - W_sb / 2) * exp(1j * pi / 2),
+                point_ref=(Rgap_mec_ext - W_sb / 2) * np.exp(1j * np.pi / 2),
                 prop_dict={BOUNDARY_PROP_LAB: SBR_T_LAB},  # Top Radius
             )
         )
@@ -59,7 +69,7 @@ def get_sliding_band(sym, lam_int, lam_ext):
         surf_list.append(
             SurfLine(
                 line_list=[],
-                point_ref=(Rgap_mec_int + W_sb * 3 / 2) * exp(1j * pi / 2),
+                point_ref=(Rgap_mec_int + W_sb * 3 / 2) * np.exp(1j * np.pi / 2),
                 label=NO_LAM_LAB + "_" + NO_MESH_LAB,
             )
         )
@@ -71,9 +81,9 @@ def get_sliding_band(sym, lam_int, lam_ext):
         else:
             Z1 = Rgap_0_int
         Z2 = Rgap_mec_int + W_sb
-        Z3 = Z2 * exp(1j * 2 * pi / sym)
-        Z4 = Z1 * exp(1j * 2 * pi / sym)
-        airgap_lines = list()
+        Z3 = Z2 * np.exp(1j * 2 * np.pi / sym)
+        Z4 = Z1 * np.exp(1j * 2 * np.pi / sym)
+        airgap_lines = []
         airgap_lines.append(  # Bottom Right side
             Segment(begin=Z1, end=Z2, prop_dict={BOUNDARY_PROP_LAB: SBS_BR_LAB})
         )
@@ -91,7 +101,7 @@ def get_sliding_band(sym, lam_int, lam_ext):
         surf_list.append(
             SurfLine(
                 line_list=airgap_lines,
-                point_ref=(Z2 - W_sb / 2) * exp(1j * pi / sym),
+                point_ref=(Z2 - W_sb / 2) * np.exp(1j * np.pi / sym),
                 label=label_int + "_" + SLID_LAB,
             )
         )
@@ -102,9 +112,9 @@ def get_sliding_band(sym, lam_int, lam_ext):
         else:
             Z5 = Rgap_0_ext
         Z6 = Rgap_mec_ext - W_sb
-        Z7 = Z6 * exp(1j * 2 * pi / sym)
-        Z8 = Z5 * exp(1j * 2 * pi / sym)
-        airgap_lines = list()
+        Z7 = Z6 * np.exp(1j * 2 * np.pi / sym)
+        Z8 = Z5 * np.exp(1j * 2 * np.pi / sym)
+        airgap_lines = []
         airgap_lines.append(  # Top Right Side
             Segment(begin=Z5, end=Z6, prop_dict={BOUNDARY_PROP_LAB: SBS_TR_LAB})
         )
@@ -122,7 +132,7 @@ def get_sliding_band(sym, lam_int, lam_ext):
         surf_list.append(
             SurfLine(
                 line_list=airgap_lines,
-                point_ref=(Z6 + W_sb / 2) * exp(1j * pi / sym),
+                point_ref=(Z6 + W_sb / 2) * np.exp(1j * np.pi / sym),
                 label=label_ext + "_" + SLID_LAB,
             )
         )

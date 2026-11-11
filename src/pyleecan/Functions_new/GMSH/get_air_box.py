@@ -1,12 +1,18 @@
-# -*- coding: utf-8 -*-
-from numpy import exp, pi
+import numpy as np
 
-from pyleecan.Classes_new.arc_1 import Arc1
-from pyleecan.Classes_new.arc_2 import Arc2
-from pyleecan.Classes_new.circle import Circle
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
-from ...Functions_new.labels import AIRBOX_R_LAB, NO_LAM_LAB, AIRBOX_LAB, BOUNDARY_PROP_LAB, AIRBOX_SR_LAB, AIRBOX_SL_LAB, AIRBOX_R_LAB
+from ...Classes_new.arc_1 import Arc1
+from ...Classes_new.arc_2 import Arc2
+from ...Classes_new.circle import Circle
+from ...Classes_new.segment import Segment
+from ...Classes_new.surf_line import SurfLine
+from ..labels import (
+    AIRBOX_LAB,
+    AIRBOX_R_LAB,
+    AIRBOX_SL_LAB,
+    AIRBOX_SR_LAB,
+    BOUNDARY_PROP_LAB,
+    NO_LAM_LAB,
+)
 
 
 def get_air_box(sym, machine):
@@ -31,7 +37,7 @@ def get_air_box(sym, machine):
     R_ext = lam_ext.get_Ryoke()
     R_ab = 1.5 * R_ext  # Default at 1.5 times external lam radius
 
-    surf_list = list()
+    surf_list = []
     if sym == 1:  # Complete machine
         # TO-DO: Airbox Full Machine no implemented yet.
 
@@ -40,17 +46,17 @@ def get_air_box(sym, machine):
                 center=0,
                 radius=R_ab,
                 label=NO_LAM_LAB + "_" + AIRBOX_LAB,
-                point_ref=(R_ab / 2) * exp(1j * pi / 2),
+                point_ref=(R_ab / 2) * np.exp(1j * np.pi / 2),
                 prop_dict={BOUNDARY_PROP_LAB: AIRBOX_R_LAB},
             )
         )
     else:  # Symmetry
         # Internal AirGap
         Z1 = R_ext
-        Z0 = Z1 * exp(1j * 2 * pi / sym)
+        Z0 = Z1 * np.exp(1j * 2 * np.pi / sym)
         Z2 = R_ab
-        Z3 = Z2 * exp(1j * 2 * pi / sym)
-        airbox_lines = list()
+        Z3 = Z2 * np.exp(1j * 2 * np.pi / sym)
+        airbox_lines = []
         airbox_lines.append(
             Segment(begin=Z1, end=Z2, prop_dict={BOUNDARY_PROP_LAB: AIRBOX_SR_LAB})
         )

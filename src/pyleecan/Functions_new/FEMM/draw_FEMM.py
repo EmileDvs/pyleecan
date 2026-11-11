@@ -1,12 +1,12 @@
-from pyleecan.Classes_new.lamination import Lamination
-from pyleecan.Classes_new.circle import Circle
-
-from ...Functions_new.FEMM.draw_FEMM_lamination import draw_FEMM_lamination
-from ...Functions_new.FEMM.draw_FEMM_surfaces import draw_FEMM_surfaces
-from ...Functions_new.FEMM.comp_FEMM_dict import comp_FEMM_dict
-from ...Functions_new.FEMM.get_sliding_band import get_sliding_band
-from ...Functions_new.FEMM.get_airgap_surface import get_airgap_surface
-from ...Functions_new.labels import NO_MESH_LAB
+from ...Classes_new._error import FEMMError
+from ...Classes_new.circle import Circle
+from ...Classes_new.lamination import Lamination
+from ..labels import NO_MESH_LAB
+from .comp_FEMM_dict import comp_FEMM_dict
+from .draw_FEMM_lamination import draw_FEMM_lamination
+from .draw_FEMM_surfaces import draw_FEMM_surfaces
+from .get_airgap_surface import get_airgap_surface
+from .get_sliding_band import get_sliding_band
 
 
 def draw_FEMM(
@@ -93,7 +93,7 @@ def draw_FEMM(
         dictionary containing the main parameters of FEMM (including circuits and materials)
     """
 
-    if transform_list not in [None, list()] and is_fast_draw:
+    if transform_list not in [None, []] and is_fast_draw:
         is_fast_draw = False
         output.get_logger().debug("Removing fast_draw for transform_list in FEMM")
 
@@ -151,11 +151,11 @@ def draw_FEMM(
     if is_remove_ventR:
         for lam in machine_edit.get_lam_list(is_int_to_ext=True):
             if not lam.is_stator:
-                lam.axial_vent = list()
+                lam.axial_vent = []
     if is_remove_ventS:
         for lam in machine_edit.get_lam_list(is_int_to_ext=True):
             if lam.is_stator:
-                lam.axial_vent = list()
+                lam.axial_vent = []
 
     # Lamination list organized from interior to exterior
     lam_list = machine_edit.get_lam_list(is_int_to_ext=True)
@@ -188,7 +188,7 @@ def draw_FEMM(
         )
 
     # List of the Non lamination related surfaces
-    other_surf_list = list()
+    other_surf_list = []
 
     # Adding no_mesh for shaft if needed
     if lam_list[0].Rint > 0 and sym == 1:
@@ -252,6 +252,3 @@ def draw_FEMM(
         # femm.mi_close()
 
     return FEMM_dict
-
-
-from pyleecan.Classes_new._error import FEMMError

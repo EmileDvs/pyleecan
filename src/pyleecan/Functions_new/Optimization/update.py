@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def update(indiv):
     """Update the individual output after the mutation
 

@@ -1,10 +1,8 @@
-from pyleecan.Classes_new.lam_h import LamH
-from pyleecan.Classes_new.lam_slot_m import LamSlotM
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-
-from ...Functions_new.FEMM import FEMM_GROUPS
-from ...Functions_new.FEMM import acsolver, pbtype, precision, minangle
-from ...Functions_new.labels import ROTOR_LAB
+from ...Classes_new.lam_h import LamH
+from ...Classes_new.lam_slot_m import LamSlotM
+from ...Classes_new.machine_sipmsm import MachineSIPMSM
+from ..labels import ROTOR_LAB
+from . import FEMM_GROUPS, acsolver, minangle, pbtype, precision
 
 
 def comp_FEMM_dict(
@@ -37,9 +35,9 @@ def comp_FEMM_dict(
 
     """
 
-    FEMM_dict = dict()
+    FEMM_dict = {}
     # Gather the main Simulation/model related parameters
-    FEMM_dict["simu"] = dict()
+    FEMM_dict["simu"] = {}
     if type_calc_leakage == 1:
         FEMM_dict["simu"]["is_close_model"] = 1
     else:
@@ -54,13 +52,13 @@ def comp_FEMM_dict(
     FEMM_dict["simu"]["T_mag"] = T_mag
 
     # Gather all mesh related parameters
-    FEMM_dict["mesh"] = dict()
+    FEMM_dict["mesh"] = {}
     FEMM_dict["mesh"]["smart_mesh"] = 0
     FEMM_dict["mesh"]["automesh"] = 0  # 1 to let the solver define the mesh in all
     # regions(except in the airgap), otherwise meshsize_XXX parameters are used
-    FEMM_dict["mesh"][
-        "automesh_airgap"
-    ] = 0  # 1 to let the solver define the mesh in the
+    FEMM_dict["mesh"]["automesh_airgap"] = (
+        0  # 1 to let the solver define the mesh in the
+    )
     #  airgap, otherwise meshsize_airgap is used
     FEMM_dict["mesh"]["automesh_segments"] = 0  # 1 to let the solver define the mesh
     # points along arcs and segments, otherwise arcspan_XXX and
@@ -83,7 +81,7 @@ def comp_FEMM_dict(
         Hstot = Hs - Hsy  # Works with holes and slot
 
         # Store all the elements size for the lamination
-        FEMM_dict["mesh"][label] = dict()
+        FEMM_dict["mesh"][label] = {}
         if lam.is_stator:
             # stator slot region mesh and segments max element size parameter
             # If Hstot = 0 there is no slot and the region parameter won't be used
@@ -154,14 +152,14 @@ def comp_FEMM_dict(
     FEMM_dict["mesh"]["meshsize_air"] = Hry / 4 / Kmesh_fineness
 
     # Set groups (to select area by type)
-    FEMM_dict["groups"] = dict()
+    FEMM_dict["groups"] = {}
     for grp in FEMM_GROUPS:
         if grp != "lam_group_list":
             FEMM_dict["groups"][grp] = FEMM_GROUPS[grp]["ID"]
     grp_max = max(FEMM_dict["groups"].values())
 
     # Adding lam_group_list linking lam name to related ID
-    FEMM_dict["groups"]["lam_group_list"] = dict()
+    FEMM_dict["groups"]["lam_group_list"] = {}
     for key, val in FEMM_GROUPS["lam_group_list"].items():
         FEMM_dict["groups"]["lam_group_list"][key] = list(val)
 
@@ -177,7 +175,7 @@ def comp_FEMM_dict(
         )
 
     # Init empty list
-    FEMM_dict["materials"] = list()
-    FEMM_dict["circuits"] = list()
+    FEMM_dict["materials"] = []
+    FEMM_dict["circuits"] = []
 
     return FEMM_dict

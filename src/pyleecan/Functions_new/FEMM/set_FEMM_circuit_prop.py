@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def set_FEMM_circuit_prop(femm, circuits, Clabel, I=None):
     """Create or update the property of a circuit
 

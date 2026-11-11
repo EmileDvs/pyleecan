@@ -1,11 +1,9 @@
 from logging import getLogger
 
-from numpy import max as np_max
-from numpy import min as np_min
-from numpy import ndarray
+import numpy as np
 
-from pyleecan.Classes_new.data import Data
-from pyleecan.Classes_new.vector_field import VectorField
+from ....Classes_new.data import Data
+from ....Classes_new.vector_field import VectorField
 
 
 def log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type):
@@ -25,22 +23,22 @@ def log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type):
         else:
             value = datakeeper.result[index]
         # Format log
-        if isinstance(value, ndarray):
+        if isinstance(value, np.ndarray):
             msg += (
                 datakeeper.symbol
                 + "=array(min="
-                + format(np_min(value), ".4g")
+                + format(np.min(value), ".4g")
                 + ",max="
-                + format(np_max(value), ".4g")
+                + format(np.max(value), ".4g")
                 + ")"
             )
         elif isinstance(value, list):
             msg += (
                 datakeeper.symbol
                 + "=list(min="
-                + format(np_min(value), ".4g")
+                + format(np.min(value), ".4g")
                 + ",max="
-                + format(np_max(value), ".4g")
+                + format(np.max(value), ".4g")
                 + ")"
             )
         elif isinstance(value, Data) or isinstance(value, VectorField):

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def getattr_recursive(obj, attr_list):
     """
     Function to recursively get an attribute.

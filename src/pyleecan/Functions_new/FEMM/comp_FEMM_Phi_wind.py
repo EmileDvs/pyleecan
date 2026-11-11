@@ -1,4 +1,4 @@
-from numpy import zeros
+import numpy as np
 
 
 def comp_FEMM_Phi_wind(femm, qs, Npcp, is_stator, L1, L2, sym, is_rescale_flux=True):
@@ -29,7 +29,7 @@ def comp_FEMM_Phi_wind(femm, qs, Npcp, is_stator, L1, L2, sym, is_rescale_flux=T
         fluxlinkage of the winding phases [Vs]
 
     """
-    Phi_wind = zeros((1, qs))
+    Phi_wind = np.zeros((1, qs))
 
     if is_stator:
         label = "Circs"

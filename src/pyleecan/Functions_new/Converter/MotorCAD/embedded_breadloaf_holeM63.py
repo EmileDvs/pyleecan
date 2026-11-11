@@ -1,4 +1,4 @@
-from numpy import tan
+import numpy as np
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -37,7 +37,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
 
     Rbo = machine.rotor.get_Rbo()
 
-    W0 = H * tan(W0 / 2)
+    W0 = H * np.tan(W0 / 2)
 
     machine.rotor.hole[hole_id].W0 = W0 * 2
 

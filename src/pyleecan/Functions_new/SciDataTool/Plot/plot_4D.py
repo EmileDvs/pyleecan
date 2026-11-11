@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
-from numpy import abs as np_abs
-from numpy import log10, nan, zeros_like
-from numpy import nanmax as np_max
+import numpy as np
 
-from ....Functions_new.SciDataTool.Plot.init_fig import init_fig
+from .init_fig import init_fig
 
 
 def plot_4D(
@@ -142,24 +140,24 @@ def plot_4D(
 
     # Check logscale on z axis
     if is_logscale_z:
-        Zdata = 10 * log10(np_abs(Zdata))
+        Zdata = 10 * np.log10(np.abs(Zdata))
         clb_format = "%0.0f"
     else:
         clb_format = "%.4g"
 
     # Calculate z limits
     if z_max is None:
-        z_max = np_max(Zdata)
+        z_max = np.nanmax(Zdata)
     if z_min is None:
         if is_logscale_z:
             z_min = 0
         else:
             z_min = z_max / 1e4
 
-    Zdata[Zdata < z_min] = nan
+    Zdata[Zdata < z_min] = np.nan
 
     if is_same_size:
-        Sdata = zeros_like(Zdata)
+        Sdata = np.zeros_like(Zdata)
         Sdata[Zdata > z_max / 1e4] = 30
     elif Sdata is None:
         Sdata = 300 * Zdata / z_max

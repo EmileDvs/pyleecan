@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def check_cstr(solver, indiv):
     """Check the number of constraints violations of the individual
 

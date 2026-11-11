@@ -1,4 +1,4 @@
-from ..Functions_new.Load.import_class import import_class
+from .Load.import_class import import_class
 
 
 def copy(self, **kwargs):

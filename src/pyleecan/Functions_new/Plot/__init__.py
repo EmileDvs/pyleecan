@@ -1,4 +1,3 @@
-
 from ...definitions import config_dict
 
 dict_2D = {
@@ -73,7 +72,8 @@ MAIN_LINE_WIDTH = 1
 
 def plot_quote(Z1, Zlim1, Zlim2, Z2, offset_label=0, fig=None, ax=None, label=None):
     """Function to plot a "quote" for the scematics"""
-    from pyleecan.Classes_new.segment import Segment
+    from ...Classes_new.segment import Segment
+
     line1 = Segment(Z1, Zlim1)
     line2 = Segment(Zlim1, Zlim2)
     line3 = Segment(Zlim2, Z2)

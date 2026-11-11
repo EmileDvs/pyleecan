@@ -1,4 +1,4 @@
-from numpy import arccos, pi
+import numpy as np
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):
@@ -35,7 +35,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     ]
     self.unit_type = ""
     Zh = self.get_other(other_dict, other_path_list, other_unit_dict)
-    gamma = 2 * pi / Zh
+    gamma = 2 * np.pi / Zh
 
     self.unit_type = "m"
     other_path_list = [
@@ -52,7 +52,7 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     ]
     A = self.get_other(other_dict, other_path_list, other_unit_dict)
 
-    other_value = gamma - (pi / 180) * arccos((2 * H0 * H0 - A * A) / (2 * H0))
+    other_value = gamma - (np.pi / 180) * np.arccos((2 * H0 * H0 - A * A) / (2 * H0))
 
     path = f"machine.{lam_name_py}.axial_vent[{duct_id}].W1"
     self.set_P(machine, other_value, path)

@@ -1,6 +1,6 @@
 from math import ceil, sqrt
-from ...Functions_new.labels import BOUNDARY_PROP_LAB
-from ...Functions_new.labels import short_label
+
+from ..labels import BOUNDARY_PROP_LAB, short_label
 
 
 def comp_gmsh_mesh_dict(surface, element_size, user_mesh_dict={}):
@@ -25,7 +25,7 @@ def comp_gmsh_mesh_dict(surface, element_size, user_mesh_dict={}):
         Dictionary containing the number of element of each line of the surface
     """
 
-    mesh_dict = dict()
+    mesh_dict = {}
     # TO-DO: Airgap surfaces are special cases due to the boolean operations
     if "Airgap" in short_label(surface.label):
         return mesh_dict

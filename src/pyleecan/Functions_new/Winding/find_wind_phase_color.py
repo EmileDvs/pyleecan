@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from ...definitions import config_dict
-from ...Functions_new.labels import decode_label
+from ..labels import decode_label
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 

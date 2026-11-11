@@ -1,4 +1,4 @@
-from random import sample, choice
+from random import choice, sample
 
 
 def choseDCD(indiv_1, indiv_2):

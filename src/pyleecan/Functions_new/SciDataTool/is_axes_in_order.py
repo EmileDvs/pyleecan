@@ -1,4 +1,4 @@
-from ...Functions_new.SciDataTool.Plot import fft_dict, ifft_dict
+from .Plot import fft_dict, ifft_dict
 
 
 def is_axes_in_order(axes_selected, data):

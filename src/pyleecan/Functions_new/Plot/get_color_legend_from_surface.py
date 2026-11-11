@@ -1,6 +1,17 @@
-from ...Functions_new.labels import decode_label, STATOR_LAB, ROTOR_LAB, KEY_LAB, HOLEM_LAB, HOLEV_LAB, MAG_LAB, LAM_LAB, VENT_LAB, WEDGE_LAB, BAR_LAB
 from ...definitions import config_dict
-
+from ..labels import (
+    BAR_LAB,
+    HOLEM_LAB,
+    HOLEV_LAB,
+    KEY_LAB,
+    LAM_LAB,
+    MAG_LAB,
+    ROTOR_LAB,
+    STATOR_LAB,
+    VENT_LAB,
+    WEDGE_LAB,
+    decode_label,
+)
 
 if "WEDGE_COLOR" not in config_dict["PLOT"]["COLOR_DICT"]:
     config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"] = "y"

@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.interpolate as scp_int
 
-from ...Functions_new.SciDataTool.set_routines import unique_tol
+from .set_routines import unique_tol
 
 
 def change_referential_spectrum(
@@ -139,8 +139,8 @@ def change_referential_waveform(
     rotation_speed,
     is_aper_a=False,
     is_aper_t=False,
-    ta_in=tuple(),
-    ta_out=tuple(),
+    ta_in=(),
+    ta_out=(),
 ):
     """Change referential of input 3D array defined on time, angle and z given input rotation speed
     (algebric to include rotation direction)
