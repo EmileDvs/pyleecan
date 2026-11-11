@@ -228,9 +228,9 @@ class Slot(PyleecanClass):
             top_list.insert(
                 0,
                 Arc1(
-                    Zbo,
-                    top_list[0].get_begin(),
-                    Rbo,
+                    begin=Zbo,
+                    end=top_list[0].get_begin(),
+                    radius=Rbo,
                     prop_dict={BOUNDARY_PROP_LAB: BORE_LAB},
                 ),
             )
@@ -238,9 +238,9 @@ class Slot(PyleecanClass):
         if np.abs(Zbo - bot_list[-1].get_end()) > 1e-6:
             bot_list.append(
                 Arc1(
-                    bot_list[-1].get_end(),
-                    Zbo,
-                    Rbo,
+                    begin=bot_list[-1].get_end(),
+                    end=Zbo,
+                    radius=Rbo,
                     prop_dict={BOUNDARY_PROP_LAB: BORE_LAB},
                 )
             )
@@ -717,7 +717,9 @@ class Slot(PyleecanClass):
         # Add closing Arc
         Zbegin = curve_list[-1].get_end()
         Zend = curve_list[0].get_begin()
-        curve_list.append(Arc1(Zbegin, Zend, -Rbo, is_trigo_direction=False))
+        curve_list.append(
+            Arc1(begin=Zbegin, end=Zend, radius=-Rbo, is_trigo_direction=False)
+        )
 
         surf = SurfLine(line_list=curve_list, label="Slot")
         surf.comp_point_ref(is_set=True)
@@ -752,7 +754,11 @@ class Slot(PyleecanClass):
         Z1 = Ryoke * np.exp(1j * np.pi / self.Zs)
         Z2 = Ryoke * np.exp(-1j * np.pi / self.Zs)
         curve_list.append(
-            Segment(top_list[-1].get_end(), Z1, prop_dict={BOUNDARY_PROP_LAB: YSL_LAB})
+            Segment(
+                begin=top_list[-1].get_end(),
+                end=Z1,
+                prop_dict={BOUNDARY_PROP_LAB: YSL_LAB},
+            )
         )
         if Ryoke > 0:
             curve_list.append(
@@ -765,7 +771,11 @@ class Slot(PyleecanClass):
                 )
             )
         curve_list.append(
-            Segment(Z2, bot_list[0].get_begin(), prop_dict={BOUNDARY_PROP_LAB: YSR_LAB})
+            Segment(
+                begin=Z2,
+                end=bot_list[0].get_begin(),
+                prop_dict={BOUNDARY_PROP_LAB: YSR_LAB},
+            )
         )
         # Second half of the tooth
         curve_list.extend(bot_list)

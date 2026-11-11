@@ -99,44 +99,62 @@ class SlotW26(Slot):
         # Creation of curve
         line_dict = {}
         if self.H0 > 0:
-            line_dict["1-2"] = Segment(Z1, Z2)
+            line_dict["1-2"] = Segment(begin=Z1, end=Z2)
         else:
             line_dict["1-2"] = None
 
         if self.H1 > 0:
             line_dict["2-3"] = Arc1(
-                Z2, Z3, rot_sign * self.R1, is_trigo_direction=self.is_outwards()
+                begin=Z2,
+                end=Z3,
+                radius=rot_sign * self.R1,
+                is_trigo_direction=self.is_outwards(),
             )
-            line_dict["3-4"] = Segment(Z3, Z4)
-            line_dict["4-5"] = Arc3(Z4, Z5, self.is_outwards())
-            line_dict["5-6"] = Segment(Z5, Z6)
+            line_dict["3-4"] = Segment(begin=Z3, end=Z4)
+            line_dict["4-5"] = Arc3(
+                begin=Z4, end=Z5, is_trigo_direction=self.is_outwards()
+            )
+            line_dict["5-6"] = Segment(begin=Z5, end=Z6)
             line_dict["6-7"] = Arc1(
-                Z6, Z7, rot_sign * self.R1, is_trigo_direction=self.is_outwards()
+                begin=Z6,
+                end=Z7,
+                radius=rot_sign * self.R1,
+                is_trigo_direction=self.is_outwards(),
             )
         elif self.H1 == 0:
             line_dict["2-3"] = Arc1(
-                Z2, Z3, rot_sign * self.R1, is_trigo_direction=self.is_outwards()
+                begin=Z2,
+                end=Z3,
+                radius=rot_sign * self.R1,
+                is_trigo_direction=self.is_outwards(),
             )
             line_dict["3-4"] = None
-            line_dict["4-5"] = Arc3(Z3, Z6, self.is_outwards())
+            line_dict["4-5"] = Arc3(
+                begin=Z3, end=Z6, is_trigo_direction=self.is_outwards()
+            )
             line_dict["5-6"] = None
             line_dict["6-7"] = Arc1(
-                Z6, Z7, rot_sign * self.R1, is_trigo_direction=self.is_outwards()
+                begin=Z6,
+                end=Z7,
+                radius=rot_sign * self.R1,
+                is_trigo_direction=self.is_outwards(),
             )
         else:  # Should never be called
             raise self.Slot26_H1(self.Slot26_H1, "H1 can't be <0")
 
         if self.H0 > 0:
-            line_dict["7-8"] = Segment(Z7, Z8)
+            line_dict["7-8"] = Segment(begin=Z7, end=Z8)
         else:
             line_dict["7-8"] = None
 
         # Closing Arc (Rbo)
-        line_dict["8-1"] = Arc1(Z8, Z1, -self.get_Rbo(), is_trigo_direction=False)
+        line_dict["8-1"] = Arc1(
+            begin=Z8, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+        )
 
         # Closing Active part
-        line_dict["2-7"] = Segment(Z2, Z7)
-        line_dict["7-2"] = Segment(Z7, Z2)
+        line_dict["2-7"] = Segment(begin=Z2, end=Z7)
+        line_dict["7-2"] = Segment(begin=Z7, end=Z2)
 
         return line_dict
 
@@ -596,7 +614,7 @@ class SlotW26(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z1"], point_dict["Z8"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z8"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -621,7 +639,7 @@ class SlotW26(Slot):
                     label="H0",
                 )
                 # R1
-                line = Segment(point_dict["Zc1"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -633,7 +651,7 @@ class SlotW26(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H1
-                line = Segment(point_dict["Zc1"], point_dict["Zc2"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Zc2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -645,7 +663,7 @@ class SlotW26(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # R2
-                line = Segment(point_dict["Zc2"], point_dict["Z5"])
+                line = Segment(begin=point_dict["Zc2"], end=point_dict["Z5"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -659,7 +677,7 @@ class SlotW26(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -710,7 +728,7 @@ class SlotW26(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Radius lines
-                line = Segment(point_dict["Zc2"], point_dict["Zbot"])
+                line = Segment(begin=point_dict["Zc2"], end=point_dict["Zbot"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -718,7 +736,7 @@ class SlotW26(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Z5"], point_dict["Z4"])
+                line = Segment(begin=point_dict["Z5"], end=point_dict["Z4"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -726,7 +744,7 @@ class SlotW26(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Z3"], point_dict["Z6"])
+                line = Segment(begin=point_dict["Z3"], end=point_dict["Z6"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -734,7 +752,7 @@ class SlotW26(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Z2"], point_dict["Z7"])
+                line = Segment(begin=point_dict["Z2"], end=point_dict["Z7"])
                 line.plot(
                     fig=fig,
                     ax=ax,

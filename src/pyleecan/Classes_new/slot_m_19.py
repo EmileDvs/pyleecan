@@ -119,10 +119,10 @@ class SlotM19(Slot):
         # Creation of curve
         curve_list = []
         if self.H0 > 0:
-            curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Segment(Z2, Z3))
+            curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
         if self.H0 > 0:
-            curve_list.append(Segment(Z3, Z4))
+            curve_list.append(Segment(begin=Z3, end=Z4))
 
         return curve_list
 
@@ -291,14 +291,18 @@ class SlotM19(Slot):
         Z4 = point_dict["Z4"]
 
         curve_list = []
-        curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Segment(Z2, Z3))
-        curve_list.append(Segment(Z3, Z4))
+        curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
+        curve_list.append(Segment(begin=Z3, end=Z4))
 
         if self.is_outwards():
-            curve_list.append(Arc1(Z4, Z1, -Rbo, is_trigo_direction=False))
+            curve_list.append(
+                Arc1(begin=Z4, end=Z1, radius=-Rbo, is_trigo_direction=False)
+            )
         else:
-            curve_list.append(Arc1(Z4, Z1, -Rbo, is_trigo_direction=False))
+            curve_list.append(
+                Arc1(begin=Z4, end=Z1, radius=-Rbo, is_trigo_direction=False)
+            )
 
         surface = SurfLine(
             line_list=curve_list,
@@ -424,7 +428,7 @@ class SlotM19(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z3"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z3"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -449,7 +453,7 @@ class SlotM19(Slot):
                 if lam.is_internal == False and lam.is_stator == True:
                     # Hkey
                     mid = point_dict["Zmid"]
-                    line = Segment(mid, mid - sign * self.H0)
+                    line = Segment(begin=mid, end=mid - sign * self.H0)
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -463,7 +467,7 @@ class SlotM19(Slot):
 
                 # H0
                 mid = point_dict["Zmid"]
-                line = Segment(mid, mid - sign * self.H0)
+                line = Segment(begin=mid, end=mid - sign * self.H0)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -477,7 +481,7 @@ class SlotM19(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,

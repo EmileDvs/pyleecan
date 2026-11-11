@@ -97,10 +97,12 @@ class Frame(PyleecanClass):
                 Z1 = self.Rext
                 Z2 = Z1 * np.exp(1j * 2 * np.pi / sym)
                 curve_list = []
-                curve_list.append(Segment(Z0, Z1))
-                curve_list.append(Arc1(Z1, Z2, self.Rext))
-                curve_list.append(Segment(Z2, Z3))
-                curve_list.append(Arc1(Z3, Z0, -self.Rint, is_trigo_direction=False))
+                curve_list.append(Segment(begin=Z0, end=Z1))
+                curve_list.append(Arc1(begin=Z1, end=Z2, radius=self.Rext))
+                curve_list.append(Segment(begin=Z2, end=Z3))
+                curve_list.append(
+                    Arc1(begin=Z3, end=Z0, radius=-self.Rint, is_trigo_direction=False)
+                )
                 surf_frame = SurfLine(
                     line_list=curve_list,
                     label="Frame",

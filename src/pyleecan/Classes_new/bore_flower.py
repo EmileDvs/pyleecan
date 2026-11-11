@@ -177,7 +177,7 @@ class BoreFlower(Bore):
             # Adding schematics
             if is_add_schematics:
                 # Rarc
-                line = Segment(Zc, Zm0)
+                line = Segment(begin=Zc, end=Zm0)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -207,7 +207,7 @@ class BoreFlower(Bore):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -216,7 +216,7 @@ class BoreFlower(Bore):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Rarc
-                line = Segment(Zc, Z1)
+                line = Segment(begin=Zc, end=Z1)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -224,7 +224,7 @@ class BoreFlower(Bore):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(Zc, Z2)
+                line = Segment(begin=Zc, end=Z2)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -233,7 +233,7 @@ class BoreFlower(Bore):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Machine center
-                line = Segment(0, Rbo * np.exp(1j * np.angle(Z2)))
+                line = Segment(begin=0, end=Rbo * np.exp(1j * np.angle(Z2)))
                 line.plot(
                     fig=fig,
                     ax=ax,

@@ -334,7 +334,7 @@ class VentilationTrap(Hole):
             # Adding schematics
             if is_add_schematics:
                 # H0
-                line = Segment(0, point_dict["ZM1"])
+                line = Segment(begin=0, end=point_dict["ZM1"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -347,8 +347,8 @@ class VentilationTrap(Hole):
                 )
                 # D0
                 line = Segment(
-                    point_dict["ZM1"] * np.exp(1j * 2 * np.pi / self.Zh),
-                    point_dict["ZM2"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    begin=point_dict["ZM1"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    end=point_dict["ZM2"] * np.exp(1j * 2 * np.pi / self.Zh),
                 )
                 line.plot(
                     fig=fig,
@@ -377,7 +377,7 @@ class VentilationTrap(Hole):
                     fontsize=SC_FONT_SIZE,
                 )
                 # W1
-                line = Segment(point_dict["Z1"], point_dict["Z4"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z4"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -389,7 +389,7 @@ class VentilationTrap(Hole):
                     fontsize=SC_FONT_SIZE,
                 )
                 # W2
-                line = Segment(point_dict["Z2"], point_dict["Z3"])
+                line = Segment(begin=point_dict["Z2"], end=point_dict["Z3"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -403,7 +403,7 @@ class VentilationTrap(Hole):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -412,7 +412,7 @@ class VentilationTrap(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Center axis
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
                 line.plot(
                     fig=fig,
                     ax=ax,

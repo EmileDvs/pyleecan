@@ -1,9 +1,12 @@
 import ast
 import builtins
+import io
 import re
 import subprocess
 import tempfile
+import tokenize
 import warnings
+from bisect import bisect_left
 from functools import lru_cache
 from keyword import iskeyword
 from os.path import basename, dirname, isdir, isfile, join
@@ -2548,6 +2551,135 @@ def _redirect_experimental_function_imports(source, soft_name):
     return data.decode("utf-8")
 
 
+def _keyword_geometry_calls(source, soft_name):
+    """Preserve legacy geometry constructor arguments in generated methods."""
+    arguments = {
+        "Segment": ("begin", "end", "prop_dict"),
+        "Arc1": ("begin", "end", "radius", "is_trigo_direction", "prop_dict"),
+        "Arc2": ("begin", "center", "angle", "prop_dict"),
+        "Arc3": ("begin", "end", "is_trigo_direction", "prop_dict"),
+    }
+
+    def imported_geometry(node, alias):
+        return (
+            isinstance(node, ast.ImportFrom)
+            and alias.name in arguments
+            and (
+                node.level == 0
+                and node.module
+                == f"{soft_name}.Classes_new.{class_module_name(alias.name)}"
+                or node.level == 1
+                and node.module == class_module_name(alias.name)
+            )
+        )
+
+    tree = ast.parse(source)
+    bindings = {
+        alias.asname or alias.name: alias.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        for alias in node.names
+        if imported_geometry(node, alias)
+    }
+    calls = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id in bindings
+        and node.args
+    ]
+    if not calls:
+        return source
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.Name)
+            and isinstance(node.ctx, (ast.Store, ast.Del))
+            and node.id in bindings
+            or isinstance(node, ast.arg) and node.arg in bindings
+            or isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+            and node.name in bindings
+        ):
+            raise ValueError("Cannot safely rewrite a shadowed geometry class import")
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                binding = alias.asname or alias.name.split(".")[0]
+                if binding in bindings and (
+                    not imported_geometry(node, alias)
+                    or bindings[binding] != alias.name
+                ):
+                    raise ValueError("Cannot safely rewrite a conflicting geometry class import")
+
+    encoded = source.encode("utf-8")
+    lines = source.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line.encode("utf-8")))
+
+    def token_offset(position):
+        line, column = position
+        if line > len(lines):
+            return offsets[-1]
+        return offsets[line - 1] + len(lines[line - 1][:column].encode("utf-8"))
+
+    tokens = list(tokenize.generate_tokens(io.StringIO(source).readline))
+    token_starts = [token_offset(token.start) for token in tokens]
+    ignored = {
+        tokenize.NL,
+        tokenize.NEWLINE,
+        tokenize.COMMENT,
+        tokenize.INDENT,
+        tokenize.DEDENT,
+    }
+    edits = []
+    for call in calls:
+        class_name = bindings[call.func.id]
+        names = arguments[class_name]
+        if len(call.args) > len(names) or any(
+            isinstance(arg, ast.Starred) for arg in call.args
+        ):
+            raise ValueError(f"Cannot safely rewrite unpacked {class_name} arguments")
+        if {keyword.arg for keyword in call.keywords}.intersection(names[:len(call.args)]):
+            raise ValueError(f"{class_name} receives the same argument more than once")
+        function_end = offsets[call.func.end_lineno - 1] + call.func.end_col_offset
+        index = bisect_left(token_starts, function_end)
+        while tokens[index].type in ignored:
+            index += 1
+        if tokens[index].string != "(":
+            raise ValueError(f"Cannot locate {class_name} call arguments")
+        depth = 1
+        starts = []
+        expect_start = True
+        for token in tokens[index + 1:]:
+            if token.type in ignored:
+                continue
+            position = token_offset(token.start)
+            if depth == 1 and expect_start and token.string != ")":
+                starts.append(position)
+                expect_start = False
+            if token.type == tokenize.OP:
+                if token.string in "([{":
+                    depth += 1
+                elif token.string in ")]}":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                elif token.string == "," and depth == 1:
+                    expect_start = True
+        previous_end = function_end
+        for name, argument in zip(names, call.args):
+            arg_start = offsets[argument.lineno - 1] + argument.col_offset
+            candidates = [start for start in starts if previous_end < start <= arg_start]
+            if not candidates:
+                raise ValueError(f"Cannot locate {class_name} positional argument")
+            edits.append((candidates[-1], (name + "=").encode("utf-8")))
+            previous_end = offsets[argument.end_lineno - 1] + argument.end_col_offset
+
+    for position, text in sorted(edits, reverse=True):
+        encoded = encoded[:position] + text + encoded[position:]
+    return encoded.decode("utf-8")
+
+
 def _redirect_experimental_class_imports(source, soft_name, gen_dict):
     """Redirect generated classes and selected support imports to Classes_new."""
     source_bytes = source.encode("utf-8")
@@ -5086,6 +5218,7 @@ def _generate_dataclass_class(
 
     source = _redirect_shared_error_imports(source, soft_name + ".Classes", soft_name)
     source = _redirect_experimental_class_imports(source, soft_name, gen_dict)
+    source = _keyword_geometry_calls(source, soft_name)
     source = _remove_experimental_self_imports(
         source, soft_name, class_name, output_module_name
     )

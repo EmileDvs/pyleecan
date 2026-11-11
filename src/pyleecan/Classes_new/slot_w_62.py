@@ -118,32 +118,32 @@ class SlotW62(Slot):
 
         # Creation of curve
         line_dict = {}
-        line_dict["1-2"] = Segment(Z1, Z2)
+        line_dict["1-2"] = Segment(begin=Z1, end=Z2)
         if Z2 != Z3:
-            line_dict["2-3"] = Segment(Z2, Z3)
+            line_dict["2-3"] = Segment(begin=Z2, end=Z3)
         else:
             line_dict["2-3"] = None
-        line_dict["3-4"] = Segment(Z3, Z4)
-        line_dict["4-5"] = Arc1(Z4, Z5, abs(Z4))
-        line_dict["5-6"] = Segment(Z5, Z6)
+        line_dict["3-4"] = Segment(begin=Z3, end=Z4)
+        line_dict["4-5"] = Arc1(begin=Z4, end=Z5, radius=abs(Z4))
+        line_dict["5-6"] = Segment(begin=Z5, end=Z6)
         if Z6 != Z7:
-            line_dict["6-7"] = Segment(Z6, Z7)
+            line_dict["6-7"] = Segment(begin=Z6, end=Z7)
         else:
             line_dict["6-7"] = None
 
-        line_dict["7-8"] = Segment(Z7, Z8)
-        line_dict["8-1"] = Arc1(Z8, Z1, -Rbo, is_trigo_direction=False)
+        line_dict["7-8"] = Segment(begin=Z7, end=Z8)
+        line_dict["8-1"] = Arc1(begin=Z8, end=Z1, radius=-Rbo, is_trigo_direction=False)
 
         # Winding lines
-        line_dict["w3-w4"] = Segment(Zw3, Zw4)
-        line_dict["w4-w1"] = Segment(Zw4, Zw1)
-        line_dict["w1-w2"] = Segment(Zw1, Zw2)
-        line_dict["w2-w3"] = Segment(Zw2, Zw3)
+        line_dict["w3-w4"] = Segment(begin=Zw3, end=Zw4)
+        line_dict["w4-w1"] = Segment(begin=Zw4, end=Zw1)
+        line_dict["w1-w2"] = Segment(begin=Zw1, end=Zw2)
+        line_dict["w2-w3"] = Segment(begin=Zw2, end=Zw3)
 
-        line_dict["w3s-w4s"] = Segment(Zw3s, Zw4s)
-        line_dict["w4s-w1s"] = Segment(Zw4s, Zw1s)
-        line_dict["w1s-w2s"] = Segment(Zw1s, Zw2s)
-        line_dict["w2s-w3s"] = Segment(Zw2s, Zw3s)
+        line_dict["w3s-w4s"] = Segment(begin=Zw3s, end=Zw4s)
+        line_dict["w4s-w1s"] = Segment(begin=Zw4s, end=Zw1s)
+        line_dict["w1s-w2s"] = Segment(begin=Zw1s, end=Zw2s)
+        line_dict["w2s-w3s"] = Segment(begin=Zw2s, end=Zw3s)
 
         return line_dict
 
@@ -693,8 +693,8 @@ class SlotW62(Slot):
             if is_add_schematics:
                 # W0
                 line = Segment(
-                    (point_dict["Z4d"] + point_dict["Z3d"]) / 2,
-                    (point_dict["Z6"] + point_dict["Z5"]) / 2,
+                    begin=(point_dict["Z4d"] + point_dict["Z3d"]) / 2,
+                    end=(point_dict["Z6"] + point_dict["Z5"]) / 2,
                 )
                 line.plot(
                     fig=fig,
@@ -725,8 +725,8 @@ class SlotW62(Slot):
                 )
                 # W1
                 line = Segment(
-                    (point_dict["Z1d"] + point_dict["Z2d"]) / 2,
-                    (point_dict["Z8"] + point_dict["Z7"]) / 2,
+                    begin=(point_dict["Z1d"] + point_dict["Z2d"]) / 2,
+                    end=(point_dict["Z8"] + point_dict["Z7"]) / 2,
                 )
                 line.plot(
                     fig=fig,
@@ -755,8 +755,8 @@ class SlotW62(Slot):
                 if type_add_active != 0:
                     # H2
                     line = Segment(
-                        (point_dict["Zw1s"] + point_dict["Zw4s"]) / 2,
-                        (point_dict["Zw2s"] + point_dict["Zw3s"]) / 2,
+                        begin=(point_dict["Zw1s"] + point_dict["Zw4s"]) / 2,
+                        end=(point_dict["Zw2s"] + point_dict["Zw3s"]) / 2,
                     )
                     line.plot(
                         fig=fig,
@@ -783,8 +783,9 @@ class SlotW62(Slot):
                     )
                     # H3
                     line = Segment(
-                        ((point_dict["Zw4d"] + point_dict["Zw1d"]) / 2),
-                        ((point_dict["Zw4d"] + point_dict["Zw1d"]) / 2) + 1j * self.H3,
+                        begin=((point_dict["Zw4d"] + point_dict["Zw1d"]) / 2),
+                        end=((point_dict["Zw4d"] + point_dict["Zw1d"]) / 2)
+                        + 1j * self.H3,
                     )
                     line.plot(
                         fig=fig,
@@ -812,7 +813,7 @@ class SlotW62(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,

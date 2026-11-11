@@ -172,19 +172,31 @@ class SlotDC(Slot):
 
         # Creation of curve
         curve_list = []
-        curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Arc1(Z2, Z3, sign * self.D1 / 2, is_trigo_direction=direc))
-        curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Arc1(Z4, Z5, sign * self.D2 / 2, is_trigo_direction=direc))
-        curve_list.append(Segment(Z5, Z6))
+        curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(
+            Arc1(begin=Z2, end=Z3, radius=sign * self.D1 / 2, is_trigo_direction=direc)
+        )
+        curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(
+            Arc1(begin=Z4, end=Z5, radius=sign * self.D2 / 2, is_trigo_direction=direc)
+        )
+        curve_list.append(Segment(begin=Z5, end=Z6))
 
-        curve_list.append(Arc1(Z6, Z7, sign * self.R3, is_trigo_direction=direc))
+        curve_list.append(
+            Arc1(begin=Z6, end=Z7, radius=sign * self.R3, is_trigo_direction=direc)
+        )
 
-        curve_list.append(Segment(Z7, Z8))
-        curve_list.append(Arc1(Z8, Z9, sign * self.D2 / 2, is_trigo_direction=direc))
-        curve_list.append(Segment(Z9, Z10))
-        curve_list.append(Arc1(Z10, Z11, sign * self.D1 / 2, is_trigo_direction=direc))
-        curve_list.append(Segment(Z11, Z12))
+        curve_list.append(Segment(begin=Z7, end=Z8))
+        curve_list.append(
+            Arc1(begin=Z8, end=Z9, radius=sign * self.D2 / 2, is_trigo_direction=direc)
+        )
+        curve_list.append(Segment(begin=Z9, end=Z10))
+        curve_list.append(
+            Arc1(
+                begin=Z10, end=Z11, radius=sign * self.D1 / 2, is_trigo_direction=direc
+            )
+        )
+        curve_list.append(Segment(begin=Z11, end=Z12))
 
         return curve_list
 

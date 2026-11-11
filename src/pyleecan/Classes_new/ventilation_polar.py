@@ -343,7 +343,7 @@ class VentilationPolar(Hole):
             # Adding schematics
             if is_add_schematics:
                 # H0
-                line = Segment(0, point_dict["Z1"])
+                line = Segment(begin=0, end=point_dict["Z1"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -356,8 +356,8 @@ class VentilationPolar(Hole):
                 )
                 # D0
                 line = Segment(
-                    point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
-                    point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    begin=point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    end=point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
                 )
                 line.plot(
                     fig=fig,
@@ -406,7 +406,7 @@ class VentilationPolar(Hole):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -415,7 +415,7 @@ class VentilationPolar(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Center axis
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -453,7 +453,8 @@ class VentilationPolar(Hole):
                 )
                 # Vent side 1 axis
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z1"]))
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z1"])),
                 )
                 line.plot(
                     fig=fig,
@@ -464,7 +465,8 @@ class VentilationPolar(Hole):
                 )
                 # Vent side 2 axis
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z3"]))
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z3"])),
                 )
                 line.plot(
                     fig=fig,

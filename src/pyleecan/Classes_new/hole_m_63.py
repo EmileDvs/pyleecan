@@ -152,9 +152,9 @@ class HoleM63(HoleMag):
 
         # surface
         curve_list = []
-        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(Segment(begin=Z1, end=Z2))
         if self.top_flat:
-            curve_list.append(Segment(Z2, Z3))
+            curve_list.append(Segment(begin=Z2, end=Z3))
         else:
             curve_list.append(
                 Arc1(
@@ -164,8 +164,8 @@ class HoleM63(HoleMag):
                     is_trigo_direction=True,
                 )
             )
-        curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Segment(Z4, Z1))
+        curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(Segment(begin=Z4, end=Z1))
 
         point_ref = (Z3 + Z1) / 2
         S1 = SurfLine(line_list=curve_list, point_ref=point_ref)
@@ -455,7 +455,8 @@ class HoleM63(HoleMag):
             if is_add_schematics:
                 # H1
                 line = Segment(
-                    Rbo * np.exp(1j * alpha), (Rbo - self.H1) * np.exp(1j * alpha)
+                    begin=Rbo * np.exp(1j * alpha),
+                    end=(Rbo - self.H1) * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -470,8 +471,8 @@ class HoleM63(HoleMag):
 
                 # H0
                 line = Segment(
-                    point_dict["Z2"] * np.exp(1j * alpha),
-                    point_dict["Z1"] * np.exp(1j * alpha),
+                    begin=point_dict["Z2"] * np.exp(1j * alpha),
+                    end=point_dict["Z1"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -499,7 +500,7 @@ class HoleM63(HoleMag):
 
                 if is_add_main_line:
                     # Ox axis
-                    line = Segment(0, lam.Rext * 1.5 * np.exp(1j * alpha))
+                    line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * alpha))
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -509,7 +510,8 @@ class HoleM63(HoleMag):
                     )
                     # Tooth axis
                     line = Segment(
-                        0, lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha)
+                        begin=0,
+                        end=lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -519,7 +521,8 @@ class HoleM63(HoleMag):
                         linewidth=MAIN_LINE_WIDTH,
                     )
                     line = Segment(
-                        0, lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha)
+                        begin=0,
+                        end=lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -531,8 +534,8 @@ class HoleM63(HoleMag):
 
                     # line construction for W0
                     line = Segment(
-                        point_dict["Z2"] * np.exp(1j * alpha),
-                        point_dict["Z3"] * np.exp(1j * alpha),
+                        begin=point_dict["Z2"] * np.exp(1j * alpha),
+                        end=point_dict["Z3"] * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -683,7 +686,8 @@ class HoleM63(HoleMag):
             if is_add_schematics:
                 # H1
                 line = Segment(
-                    Rbo * np.exp(1j * alpha), (Rbo - self.H1) * np.exp(1j * alpha)
+                    begin=Rbo * np.exp(1j * alpha),
+                    end=(Rbo - self.H1) * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -711,8 +715,8 @@ class HoleM63(HoleMag):
                 )
                 # H0
                 line = Segment(
-                    point_dict["Z2"] * np.exp(1j * alpha),
-                    point_dict["Z1"] * np.exp(1j * alpha),
+                    begin=point_dict["Z2"] * np.exp(1j * alpha),
+                    end=point_dict["Z1"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -727,7 +731,7 @@ class HoleM63(HoleMag):
 
                 if is_add_main_line:
                     # Ox axis
-                    line = Segment(0, lam.Rext * 1.5 * np.exp(1j * alpha))
+                    line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * alpha))
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -737,7 +741,8 @@ class HoleM63(HoleMag):
                     )
                     # Tooth axis
                     line = Segment(
-                        0, lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha)
+                        begin=0,
+                        end=lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,
@@ -747,7 +752,8 @@ class HoleM63(HoleMag):
                         linewidth=MAIN_LINE_WIDTH,
                     )
                     line = Segment(
-                        0, lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha)
+                        begin=0,
+                        end=lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha),
                     )
                     line.plot(
                         fig=fig,

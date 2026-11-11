@@ -117,8 +117,9 @@ class BoreLSRPM(Bore):
 
             bore_list.append(
                 Segment(
-                    Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
-                    Z3 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    begin=Z2
+                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    end=Z3 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
                     prop_dict=prop_dict,
                 )
             )

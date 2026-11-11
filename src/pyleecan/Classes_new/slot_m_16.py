@@ -131,16 +131,16 @@ class SlotM16(Slot):
         # Creation of curve
         curve_list = []
         if self.H0 > 0:
-            curve_list.append(Segment(point_dict["Z1"], point_dict["Z2"]))
-        curve_list.append(Segment(point_dict["Z2"], point_dict["Z3"]))
+            curve_list.append(Segment(begin=point_dict["Z1"], end=point_dict["Z2"]))
+        curve_list.append(Segment(begin=point_dict["Z2"], end=point_dict["Z3"]))
         if self.H1 > 0:
-            curve_list.append(Segment(point_dict["Z3"], point_dict["Z4"]))
-        curve_list.append(Segment(point_dict["Z4"], point_dict["Z5"]))
+            curve_list.append(Segment(begin=point_dict["Z3"], end=point_dict["Z4"]))
+        curve_list.append(Segment(begin=point_dict["Z4"], end=point_dict["Z5"]))
         if self.H1 > 0:
-            curve_list.append(Segment(point_dict["Z5"], point_dict["Z6"]))
-        curve_list.append(Segment(point_dict["Z6"], point_dict["Z7"]))
+            curve_list.append(Segment(begin=point_dict["Z5"], end=point_dict["Z6"]))
+        curve_list.append(Segment(begin=point_dict["Z6"], end=point_dict["Z7"]))
         if self.H0 > 0:
-            curve_list.append(Segment(point_dict["Z7"], point_dict["Z8"]))
+            curve_list.append(Segment(begin=point_dict["Z7"], end=point_dict["Z8"]))
 
         return curve_list
 
@@ -435,7 +435,7 @@ class SlotM16(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z7"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z7"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -447,7 +447,7 @@ class SlotM16(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # W1
-                line = Segment(point_dict["Z5"], point_dict["Z4"])
+                line = Segment(begin=point_dict["Z5"], end=point_dict["Z4"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -470,7 +470,7 @@ class SlotM16(Slot):
                     label="H0",
                 )
                 # H1
-                line = Segment(point_dict["Z5"], point_dict["Z6"])
+                line = Segment(begin=point_dict["Z5"], end=point_dict["Z6"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -484,7 +484,7 @@ class SlotM16(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,

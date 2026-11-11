@@ -365,8 +365,8 @@ class HoleM54(Hole):
             if is_add_schematics:
                 # H1
                 line = Segment(
-                    Rbo * np.exp(1j * alpha),
-                    point_dict["Z0"] * np.exp(1j * alpha),
+                    begin=Rbo * np.exp(1j * alpha),
+                    end=point_dict["Z0"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -380,8 +380,8 @@ class HoleM54(Hole):
                 )
                 # H1
                 line = Segment(
-                    point_dict["Z2"] * np.exp(1j * alpha),
-                    point_dict["Z3"] * np.exp(1j * alpha),
+                    begin=point_dict["Z2"] * np.exp(1j * alpha),
+                    end=point_dict["Z3"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -395,8 +395,8 @@ class HoleM54(Hole):
                 )
                 # R1
                 line = Segment(
-                    point_dict["Z1"] * np.exp(1j * alpha),
-                    point_dict["Zc0"] * np.exp(1j * alpha),
+                    begin=point_dict["Z1"] * np.exp(1j * alpha),
+                    end=point_dict["Zc0"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -429,7 +429,7 @@ class HoleM54(Hole):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * alpha))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * alpha))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -466,8 +466,8 @@ class HoleM54(Hole):
                 )
                 # R1 lines
                 line = Segment(
-                    point_dict["Zc0"] * np.exp(1j * alpha),
-                    point_dict["Z4"] * np.exp(1j * alpha),
+                    begin=point_dict["Zc0"] * np.exp(1j * alpha),
+                    end=point_dict["Z4"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -477,8 +477,8 @@ class HoleM54(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Zc0"] * np.exp(1j * alpha),
-                    point_dict["Z3"] * np.exp(1j * alpha),
+                    begin=point_dict["Zc0"] * np.exp(1j * alpha),
+                    end=point_dict["Z3"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,

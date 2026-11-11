@@ -126,7 +126,8 @@ class BoreSinePole(Bore):
 
         if self.delta_q is not None and Rq < xedge:
             line = Segment(
-                Zedge * np.exp(1j * alpha1), 1j * Zedge.imag * np.exp(1j * alpha1)
+                begin=Zedge * np.exp(1j * alpha1),
+                end=1j * Zedge.imag * np.exp(1j * alpha1),
             )
             inter = line.intersect_line(Rq, Rq + 1j * Rq)
             if len(inter) != 1:
@@ -157,8 +158,9 @@ class BoreSinePole(Bore):
             for jj in range(len(Z) - 1):
                 bore_list.append(
                     Segment(
-                        Z[jj] * np.exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
-                        Z[jj + 1]
+                        begin=Z[jj]
+                        * np.exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
+                        end=Z[jj + 1]
                         * np.exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
                         prop_dict=prop_dict,
                     )
@@ -323,7 +325,9 @@ class BoreSinePole(Bore):
                 # delta_q
                 p1 = Rbo + self.delta_d - self.delta_q
                 p2 = Rbo + self.delta_d
-                line = Segment(p1 * np.exp(2j * alpha), p2 * np.exp(2j * alpha))
+                line = Segment(
+                    begin=p1 * np.exp(2j * alpha), end=p2 * np.exp(2j * alpha)
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -336,7 +340,7 @@ class BoreSinePole(Bore):
                 )
                 # W0
                 line = Segment(
-                    Zq1 * np.exp(2 * 1j * alpha), Zq2 * np.exp(4 * 1j * alpha)
+                    begin=Zq1 * np.exp(2 * 1j * alpha), end=Zq2 * np.exp(4 * 1j * alpha)
                 )
                 line.plot(
                     fig=fig,
@@ -349,7 +353,7 @@ class BoreSinePole(Bore):
                     fontsize=SC_FONT_SIZE,
                 )
                 # Rbo + delta_d
-                line = Segment(0, Rbo + self.delta_d)
+                line = Segment(begin=0, end=Rbo + self.delta_d)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -390,7 +394,7 @@ class BoreSinePole(Bore):
                 #     linewidth=MAIN_LINE_WIDTH,
                 # )
                 # Machine center
-                line = Segment(0, Rbo * np.exp(1j * alpha))
+                line = Segment(begin=0, end=Rbo * np.exp(1j * alpha))
                 line.plot(**plot_args)
                 # Rbo circle arc
                 Z1 = Rbo * np.exp(-1j * np.pi / 2)

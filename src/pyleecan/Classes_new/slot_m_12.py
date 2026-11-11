@@ -132,10 +132,10 @@ class SlotM12(Slot):
         # Creation of curve
         curve_list = []
         if self.H0 > 0:
-            curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Segment(Z2, Z3))
+            curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
         if self.H0 > 0:
-            curve_list.append(Segment(Z3, Z4))
+            curve_list.append(Segment(begin=Z3, end=Z4))
 
         return curve_list
 
@@ -330,19 +330,19 @@ class SlotM12(Slot):
         curve_list = []
         # Case Z2-Z1 overlapping with ZM1-ZM2
         if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-            curve_list.append(Segment(ZM1, Z1))
-            curve_list.append(Segment(Z1, ZM2))
+            curve_list.append(Segment(begin=ZM1, end=Z1))
+            curve_list.append(Segment(begin=Z1, end=ZM2))
         else:
-            curve_list.append(Segment(ZM1, ZM2))
-        curve_list.append(Arc1(ZM2, ZM3, abs(ZM0)))
+            curve_list.append(Segment(begin=ZM1, end=ZM2))
+        curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=abs(ZM0)))
 
         # Case Z3-Z4 overlapping with ZM3-ZM4
         if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-            curve_list.append(Segment(ZM3, Z4))
-            curve_list.append(Segment(Z4, ZM4))
+            curve_list.append(Segment(begin=ZM3, end=Z4))
+            curve_list.append(Segment(begin=Z4, end=ZM4))
         else:
-            curve_list.append(Segment(ZM3, ZM4))
-        curve_list.append(Segment(ZM4, ZM1))
+            curve_list.append(Segment(begin=ZM3, end=ZM4))
+        curve_list.append(Segment(begin=ZM4, end=ZM1))
 
         Zmid = (ZM1 + ZM3) / 2
 
@@ -474,7 +474,7 @@ class SlotM12(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z3"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z3"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -499,7 +499,7 @@ class SlotM12(Slot):
                     )
                     # H1
                     mid = (point_dict["ZM1"] + point_dict["ZM4"]) / 2
-                    line = Segment(mid, mid - sign * self.H1)
+                    line = Segment(begin=mid, end=mid - sign * self.H1)
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -512,7 +512,7 @@ class SlotM12(Slot):
                     )
 
                 # H0
-                line = Segment(point_dict["Z1"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -526,7 +526,7 @@ class SlotM12(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,

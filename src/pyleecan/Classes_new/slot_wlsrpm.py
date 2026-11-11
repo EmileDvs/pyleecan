@@ -197,13 +197,17 @@ class SlotWLSRPM(Slot):
 
         # Creation of curve
         curve_list = []
-        curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Arc1(Z2, Z3, self.R1, is_trigo_direction=True))
-        curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Segment(Z4, Z5))
-        curve_list.append(Segment(Z5, Z6))
-        curve_list.append(Arc1(Z6, Z7, self.R1, is_trigo_direction=True))
-        curve_list.append(Segment(Z7, Z8))
+        curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(
+            Arc1(begin=Z2, end=Z3, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(Segment(begin=Z4, end=Z5))
+        curve_list.append(Segment(begin=Z5, end=Z6))
+        curve_list.append(
+            Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+        )
+        curve_list.append(Segment(begin=Z7, end=Z8))
 
         return curve_list
 
@@ -257,12 +261,12 @@ class SlotWLSRPM(Slot):
         surf_list = []
         if Nrad == 1 and Ntan == 2:
             # Part 1 (0,0)
-            line1 = Segment(Z3, Z4)
-            line2 = Segment(Z4, Zch)
-            line3 = Segment(Zch, Zcl)
-            line4 = Arc1(Zcl, Z1, -Rbo, is_trigo_direction=False)
-            line5 = Segment(Z1, Z2)
-            line6 = Arc1(Z2, Z3, self.R1, is_trigo_direction=True)
+            line1 = Segment(begin=Z3, end=Z4)
+            line2 = Segment(begin=Z4, end=Zch)
+            line3 = Segment(begin=Zch, end=Zcl)
+            line4 = Arc1(begin=Zcl, end=Z1, radius=-Rbo, is_trigo_direction=False)
+            line5 = Segment(begin=Z1, end=Z2)
+            line6 = Arc1(begin=Z2, end=Z3, radius=self.R1, is_trigo_direction=True)
             point_ref = (Z3 + Z4 + Zch + Zcl + Z1 + Z2) / 6
 
             surface = SurfLine(
@@ -273,12 +277,12 @@ class SlotWLSRPM(Slot):
             surf_list.append(surface)
 
             # Part2 (0,1)
-            line1 = Segment(Zch, Z5)
-            line2 = Segment(Z5, Z6)
-            line3 = Arc1(Z6, Z7, self.R1, is_trigo_direction=True)
-            line4 = Segment(Z7, Z8)
-            line5 = Arc1(Z8, Zcl, -Rbo, is_trigo_direction=False)
-            line6 = Segment(Zcl, Zch)
+            line1 = Segment(begin=Zch, end=Z5)
+            line2 = Segment(begin=Z5, end=Z6)
+            line3 = Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+            line4 = Segment(begin=Z7, end=Z8)
+            line5 = Arc1(begin=Z8, end=Zcl, radius=-Rbo, is_trigo_direction=False)
+            line6 = Segment(begin=Zcl, end=Zch)
             point_ref = (Zch + Z5 + Z6 + Z7 + Z8 + Zcl) / 6
             surface = SurfLine(
                 line_list=[line1, line2, line3, line4, line5, line6],
@@ -289,12 +293,14 @@ class SlotWLSRPM(Slot):
 
         if Nrad == 2 and Ntan == 2:
             # Part 1 (0,0)
-            line1 = Segment(Z3, Z4)
-            line2 = Segment(Z4, Zch)
-            line3 = Segment(Zch, Zcm)
-            line4 = Arc1(Zcm, Z9, -(Rbo + self.H3), is_trigo_direction=False)
-            line5 = Segment(Z9, Z2)
-            line6 = Arc1(Z2, Z3, self.R1, is_trigo_direction=True)
+            line1 = Segment(begin=Z3, end=Z4)
+            line2 = Segment(begin=Z4, end=Zch)
+            line3 = Segment(begin=Zch, end=Zcm)
+            line4 = Arc1(
+                begin=Zcm, end=Z9, radius=-(Rbo + self.H3), is_trigo_direction=False
+            )
+            line5 = Segment(begin=Z9, end=Z2)
+            line6 = Arc1(begin=Z2, end=Z3, radius=self.R1, is_trigo_direction=True)
             point_ref = (Z3 + Z4 + Zch + Zcm + Z9 + Z2) / 6
 
             surface = SurfLine(
@@ -305,12 +311,14 @@ class SlotWLSRPM(Slot):
             surf_list.append(surface)
 
             # Part2 (0,1)
-            line1 = Segment(Zch, Z5)
-            line2 = Segment(Z5, Z6)
-            line3 = Arc1(Z6, Z7, self.R1, is_trigo_direction=True)
-            line4 = Segment(Z7, Z10)
-            line5 = Arc1(Z10, Zcm, -(Rbo + self.H3), is_trigo_direction=False)
-            line6 = Segment(Zcm, Zch)
+            line1 = Segment(begin=Zch, end=Z5)
+            line2 = Segment(begin=Z5, end=Z6)
+            line3 = Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+            line4 = Segment(begin=Z7, end=Z10)
+            line5 = Arc1(
+                begin=Z10, end=Zcm, radius=-(Rbo + self.H3), is_trigo_direction=False
+            )
+            line6 = Segment(begin=Zcm, end=Zch)
             point_ref = (Zch + Z5 + Z6 + Z7 + Z10 + Zcm) / 6
             surface = SurfLine(
                 line_list=[line1, line2, line3, line4, line5, line6],
@@ -320,10 +328,12 @@ class SlotWLSRPM(Slot):
             surf_list.append(surface)
 
             # Part3 (1,1)
-            line1 = Arc1(Zcm, Z10, Rbo + self.H3, is_trigo_direction=True)
-            line2 = Segment(Z10, Z8)
-            line3 = Arc1(Z8, Zcl, -Rbo, is_trigo_direction=False)
-            line4 = Segment(Zcl, Zcm)
+            line1 = Arc1(
+                begin=Zcm, end=Z10, radius=Rbo + self.H3, is_trigo_direction=True
+            )
+            line2 = Segment(begin=Z10, end=Z8)
+            line3 = Arc1(begin=Z8, end=Zcl, radius=-Rbo, is_trigo_direction=False)
+            line4 = Segment(begin=Zcl, end=Zcm)
             point_ref = (Zcm + Z10 + Z8 + Zcl) / 4
             surface = SurfLine(
                 line_list=[line1, line2, line3, line4],
@@ -333,10 +343,12 @@ class SlotWLSRPM(Slot):
             surf_list.append(surface)
 
             # Part4 (1,0)
-            line1 = Arc1(Z9, Zcm, Rbo + self.H3, is_trigo_direction=True)
-            line2 = Segment(Zcm, Zcl)
-            line3 = Arc1(Zcl, Z1, -Rbo, is_trigo_direction=False)
-            line4 = Segment(Z1, Z9)
+            line1 = Arc1(
+                begin=Z9, end=Zcm, radius=Rbo + self.H3, is_trigo_direction=True
+            )
+            line2 = Segment(begin=Zcm, end=Zcl)
+            line3 = Arc1(begin=Zcl, end=Z1, radius=-Rbo, is_trigo_direction=False)
+            line4 = Segment(begin=Z1, end=Z9)
             point_ref = (Z9 + Zcm + Zcl + Z1) / 4
             surface = SurfLine(
                 line_list=[line1, line2, line3, line4],
@@ -351,9 +363,9 @@ class SlotWLSRPM(Slot):
             # Add a line to close the winding area
             lines = [
                 Arc1(
-                    curve_list[-1].end,
-                    curve_list[0].begin,
-                    -Rbo,
+                    begin=curve_list[-1].end,
+                    end=curve_list[0].begin,
+                    radius=-Rbo,
                     is_trigo_direction=False,
                 )
             ]
@@ -625,8 +637,8 @@ class SlotWLSRPM(Slot):
             if is_add_schematics:
                 # W1
                 line = Segment(
-                    point_dict["Z4"] + 0.005 - 1j * 0.002,
-                    point_dict["Z2"] + 0.005 - 1j * 0.002,
+                    begin=point_dict["Z4"] + 0.005 - 1j * 0.002,
+                    end=point_dict["Z2"] + 0.005 - 1j * 0.002,
                 )
                 line.plot(
                     fig=fig,
@@ -640,8 +652,8 @@ class SlotWLSRPM(Slot):
                 )
                 # W3
                 line = Segment(
-                    point_dict["Z2"],
-                    point_dict["Z2"]
+                    begin=point_dict["Z2"],
+                    end=point_dict["Z2"]
                     + self.W3 * np.exp(1j * -(np.pi / 2 + 15 / 180 * np.pi)),
                 )
                 line.plot(
@@ -656,7 +668,7 @@ class SlotWLSRPM(Slot):
                 )
 
                 # H2
-                line = Segment(point_dict["Zch"], point_dict["Zcl"])
+                line = Segment(begin=point_dict["Zch"], end=point_dict["Zcl"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -669,8 +681,8 @@ class SlotWLSRPM(Slot):
                 )
                 # H3
                 line = Segment(
-                    point_dict["Zcm"] + 1j * 0.003 - 0.0001,
-                    point_dict["Zcl"] + 1j * 0.003 - 0.0001,
+                    begin=point_dict["Zcm"] + 1j * 0.003 - 0.0001,
+                    end=point_dict["Zcl"] + 1j * 0.003 - 0.0001,
                 )
                 line.plot(
                     fig=fig,
@@ -684,7 +696,7 @@ class SlotWLSRPM(Slot):
                 )
 
                 # R1
-                line = Segment(point_dict["Zc1"], point_dict["Z7"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z7"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -698,7 +710,7 @@ class SlotWLSRPM(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,

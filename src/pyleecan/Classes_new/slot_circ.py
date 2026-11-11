@@ -102,9 +102,9 @@ class SlotCirc(Slot):
         line_dict["M-2"].split_half(is_begin=False)
         # Closing arc
         line_dict["2-1"] = Arc1(
-            point_dict["Z2"],
-            point_dict["Z1"],
-            -self.get_Rbo(),
+            begin=point_dict["Z2"],
+            end=point_dict["Z1"],
+            radius=-self.get_Rbo(),
             is_trigo_direction=False,
         )
 
@@ -555,7 +555,7 @@ class SlotCirc(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z1"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
                 if self.is_outwards():
                     offset_label = -1 * self.H0 * 0.9 + 1j * 0.3 * self.W0
                 else:
@@ -571,7 +571,7 @@ class SlotCirc(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H0
-                line = Segment(point_dict["ZH"], point_dict["ZM"])
+                line = Segment(begin=point_dict["ZH"], end=point_dict["ZM"])
                 line.plot(
                     fig=fig,
                     ax=ax,

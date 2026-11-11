@@ -190,10 +190,10 @@ class PolarArc(Surface):
         Z1 = (center - (H / 2)) * np.exp(1j * (A / 2)) * np.exp(1j * np.angle(Z_ref))
 
         # Lines that delimit the PolarArc
-        line1 = Arc1(Z1, Z2, -abs(Z1), is_trigo_direction=False)
-        line2 = Segment(Z2, Z3)
-        line3 = Arc1(Z3, Z4, abs(Z3))
-        line4 = Segment(Z4, Z1)
+        line1 = Arc1(begin=Z1, end=Z2, radius=-abs(Z1), is_trigo_direction=False)
+        line2 = Segment(begin=Z2, end=Z3)
+        line3 = Arc1(begin=Z3, end=Z4, radius=abs(Z3))
+        line4 = Segment(begin=Z4, end=Z1)
 
         return [line1, line2, line3, line4]
 

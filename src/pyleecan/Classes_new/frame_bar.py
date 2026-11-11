@@ -111,10 +111,10 @@ class FrameBar(Frame):
             Z4 = Z0 * np.exp(rot_angle * 1j)
             # Define Lines
             curve_list = []
-            curve_list.append(Segment(Z1, Z2))
-            curve_list.append(Arc1(Z2, Z3, self.Rint))
-            curve_list.append(Segment(Z3, Z4))
-            curve_list.append(Arc2(Z4, 0, angle=-rot_angle))
+            curve_list.append(Segment(begin=Z1, end=Z2))
+            curve_list.append(Arc1(begin=Z2, end=Z3, radius=self.Rint))
+            curve_list.append(Segment(begin=Z3, end=Z4))
+            curve_list.append(Arc2(begin=Z4, center=0, angle=-rot_angle))
             # Define Surface
             surf_bar = SurfLine(
                 line_list=curve_list,

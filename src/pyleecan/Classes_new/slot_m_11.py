@@ -127,13 +127,17 @@ class SlotM11(Slot):
         # Creation of curve
         curve_list = []
         if self.H0 > 0:
-            curve_list.append(Segment(Z1, Z2))
+            curve_list.append(Segment(begin=Z1, end=Z2))
         if self.is_outwards():
-            curve_list.append(Arc1(Z2, Z3, Rbo + self.H0, is_trigo_direction=True))
+            curve_list.append(
+                Arc1(begin=Z2, end=Z3, radius=Rbo + self.H0, is_trigo_direction=True)
+            )
         else:
-            curve_list.append(Arc1(Z2, Z3, Rbo - self.H0, is_trigo_direction=True))
+            curve_list.append(
+                Arc1(begin=Z2, end=Z3, radius=Rbo - self.H0, is_trigo_direction=True)
+            )
         if self.H0 > 0:
-            curve_list.append(Segment(Z3, Z4))
+            curve_list.append(Segment(begin=Z3, end=Z4))
 
         return curve_list
 
@@ -306,31 +310,49 @@ class SlotM11(Slot):
         curve_list = []
         # Case Z2-Z1 overlapping with ZM1-ZM2
         if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-            curve_list.append(Segment(ZM1, Z1))
-            curve_list.append(Segment(Z1, ZM2))
+            curve_list.append(Segment(begin=ZM1, end=Z1))
+            curve_list.append(Segment(begin=Z1, end=ZM2))
         else:
-            curve_list.append(Segment(ZM1, ZM2))
+            curve_list.append(Segment(begin=ZM1, end=ZM2))
 
         if self.is_outwards():
             curve_list.append(
-                Arc1(ZM2, ZM3, (Rbo + self.H0 - self.H1), is_trigo_direction=True)
+                Arc1(
+                    begin=ZM2,
+                    end=ZM3,
+                    radius=(Rbo + self.H0 - self.H1),
+                    is_trigo_direction=True,
+                )
             )
         else:
             curve_list.append(
-                Arc1(ZM2, ZM3, (Rbo - self.H0 + self.H1), is_trigo_direction=True)
+                Arc1(
+                    begin=ZM2,
+                    end=ZM3,
+                    radius=(Rbo - self.H0 + self.H1),
+                    is_trigo_direction=True,
+                )
             )
 
         # Case Z3-Z4 overlapping with ZM3-ZM4
         if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-            curve_list.append(Segment(ZM3, Z4))
-            curve_list.append(Segment(Z4, ZM4))
+            curve_list.append(Segment(begin=ZM3, end=Z4))
+            curve_list.append(Segment(begin=Z4, end=ZM4))
         else:
-            curve_list.append(Segment(ZM3, ZM4))
+            curve_list.append(Segment(begin=ZM3, end=ZM4))
 
         if self.is_outwards():
-            curve_list.append(Arc1(ZM4, ZM1, -Rbo - self.H0, is_trigo_direction=False))
+            curve_list.append(
+                Arc1(
+                    begin=ZM4, end=ZM1, radius=-Rbo - self.H0, is_trigo_direction=False
+                )
+            )
         else:
-            curve_list.append(Arc1(ZM4, ZM1, -Rbo + self.H0, is_trigo_direction=False))
+            curve_list.append(
+                Arc1(
+                    begin=ZM4, end=ZM1, radius=-Rbo + self.H0, is_trigo_direction=False
+                )
+            )
 
         Zmid = (abs(ZM1) + abs(ZM3)) / 2
 
@@ -507,7 +529,7 @@ class SlotM11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H0
-                line = Segment(point_dict["Z1"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -538,7 +560,7 @@ class SlotM11(Slot):
                         fontsize=SC_FONT_SIZE,
                     )
                     # H1
-                    line = Segment(point_dict["ZM3"], point_dict["ZM4"])
+                    line = Segment(begin=point_dict["ZM3"], end=point_dict["ZM4"])
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -552,7 +574,7 @@ class SlotM11(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -561,7 +583,7 @@ class SlotM11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z1 Line
-                line = Segment(0, Rbo * 2 * np.exp(-1j * self.W0 / 2))
+                line = Segment(begin=0, end=Rbo * 2 * np.exp(-1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -570,7 +592,7 @@ class SlotM11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z2 Line
-                line = Segment(0, Rbo * 2 * np.exp(1j * self.W0 / 2))
+                line = Segment(begin=0, end=Rbo * 2 * np.exp(1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -580,7 +602,7 @@ class SlotM11(Slot):
                 )
                 if type_add_active != 0:
                     # ZM1 Line
-                    line = Segment(0, Rbo * 2 * np.exp(-1j * self.W1 / 2))
+                    line = Segment(begin=0, end=Rbo * 2 * np.exp(-1j * self.W1 / 2))
                     line.plot(
                         fig=fig,
                         ax=ax,
@@ -589,7 +611,7 @@ class SlotM11(Slot):
                         linewidth=MAIN_LINE_WIDTH,
                     )
                     # ZM2 Line
-                    line = Segment(0, Rbo * 2 * np.exp(1j * self.W1 / 2))
+                    line = Segment(begin=0, end=Rbo * 2 * np.exp(1j * self.W1 / 2))
                     line.plot(
                         fig=fig,
                         ax=ax,

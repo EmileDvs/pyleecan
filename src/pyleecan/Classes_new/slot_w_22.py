@@ -89,29 +89,31 @@ class SlotW22(Slot):
         # Creation of curve
         line_dict = {}
         if self.H0 > 0:
-            line_dict["1-2"] = Segment(Z1, Z2)
+            line_dict["1-2"] = Segment(begin=Z1, end=Z2)
         else:
             line_dict["1-2"] = None
 
         if self.W2 != self.W0:
-            line_dict["2-3"] = Arc2(Z2, Zc, -(self.W2 - self.W0) / 2)
+            line_dict["2-3"] = Arc2(begin=Z2, center=Zc, angle=-(self.W2 - self.W0) / 2)
         else:
             line_dict["2-3"] = None
-        line_dict["3-4"] = Segment(Z3, Z4)
-        line_dict["4-5"] = Arc2(Z4, Zc, self.W2)
-        line_dict["5-6"] = Segment(Z5, Z6)
+        line_dict["3-4"] = Segment(begin=Z3, end=Z4)
+        line_dict["4-5"] = Arc2(begin=Z4, center=Zc, angle=self.W2)
+        line_dict["5-6"] = Segment(begin=Z5, end=Z6)
         if self.W2 != self.W0:
-            line_dict["6-7"] = Arc2(Z6, Zc, -(self.W2 - self.W0) / 2)
+            line_dict["6-7"] = Arc2(begin=Z6, center=Zc, angle=-(self.W2 - self.W0) / 2)
         else:
             line_dict["6-7"] = None
 
         if self.H0 > 0:
-            line_dict["7-8"] = Segment(Z7, Z8)
+            line_dict["7-8"] = Segment(begin=Z7, end=Z8)
         else:
             line_dict["7-8"] = None
 
         # Closing Arc (Rbo)
-        line_dict["8-1"] = Arc1(Z8, Z1, -self.get_Rbo(), is_trigo_direction=False)
+        line_dict["8-1"] = Arc1(
+            begin=Z8, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+        )
 
         # Closing Active part
         line_dict["2-7"] = Arc1(
@@ -268,32 +270,32 @@ class SlotW22(Slot):
                 curve_list = []
                 curve_list.append(
                     Arc1(
-                        Z1,
-                        Z2,
-                        abs(Z1),
+                        begin=Z1,
+                        end=Z2,
+                        radius=abs(Z1),
                         is_trigo_direction=True,
                     )
                 )
                 curve_list.append(
                     Segment(
-                        Z2,
-                        Z3,
+                        begin=Z2,
+                        end=Z3,
                         prop_dict={DRAW_PROP_LAB: False},
                     )
                 )
                 curve_list.append(
                     Arc1(
-                        Z3,
-                        Z4,
-                        -abs(Z3),
+                        begin=Z3,
+                        end=Z4,
+                        radius=-abs(Z3),
                         is_trigo_direction=False,
                         prop_dict={DRAW_PROP_LAB: False},
                     )
                 )
                 curve_list.append(
                     Segment(
-                        Z4,
-                        Z1,
+                        begin=Z4,
+                        end=Z1,
                         prop_dict={DRAW_PROP_LAB: jj != 0},
                     )
                 )
@@ -740,7 +742,7 @@ class SlotW22(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H0
-                line = Segment(point_dict["Z1"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -752,7 +754,7 @@ class SlotW22(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H2
-                line = Segment(point_dict["Z3"], point_dict["Z4"])
+                line = Segment(begin=point_dict["Z3"], end=point_dict["Z4"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -766,7 +768,7 @@ class SlotW22(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -818,7 +820,8 @@ class SlotW22(Slot):
                 )
                 # Rad lines
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z1"]))
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z1"])),
                 )
                 line.plot(
                     fig=fig,
@@ -828,7 +831,8 @@ class SlotW22(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z3"]))
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z3"])),
                 )
                 line.plot(
                     fig=fig,
@@ -838,7 +842,8 @@ class SlotW22(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z5"]))
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z5"])),
                 )
                 line.plot(
                     fig=fig,
@@ -848,7 +853,8 @@ class SlotW22(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z7"]))
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z7"])),
                 )
                 line.plot(
                     fig=fig,

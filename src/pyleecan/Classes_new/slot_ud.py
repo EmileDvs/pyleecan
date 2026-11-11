@@ -195,9 +195,9 @@ class SlotUD(Slot):
                 is_trigo_direction=True,
             )
         bot_line = Arc1(
-            curve_list_end[-1].get_end(),
-            curve_list_start[0].get_begin(),
-            -self.get_Rbo(),
+            begin=curve_list_end[-1].get_end(),
+            end=curve_list_start[0].get_begin(),
+            radius=-self.get_Rbo(),
             is_trigo_direction=False,
         )
 
@@ -235,6 +235,6 @@ class SlotUD(Slot):
         # Creation of curve
         line_list = []
         for ii in range(len(Z_list) - 1):
-            line_list.append(Segment(Z_list[ii], Z_list[ii + 1]))
+            line_list.append(Segment(begin=Z_list[ii], end=Z_list[ii + 1]))
 
         self.line_list = line_list

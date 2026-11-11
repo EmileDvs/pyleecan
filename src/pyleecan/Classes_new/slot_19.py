@@ -100,10 +100,10 @@ class Slot19(Slot):
 
         # Creation of curve
         curve_list = []
-        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(Segment(begin=Z1, end=Z2))
         if self.W1 > 0:
-            curve_list.append(Arc1(Z2, Z3, abs(Z3)))
-        curve_list.append(Segment(Z3, Z4))
+            curve_list.append(Arc1(begin=Z2, end=Z3, radius=abs(Z3)))
+        curve_list.append(Segment(begin=Z3, end=Z4))
 
         return curve_list
 

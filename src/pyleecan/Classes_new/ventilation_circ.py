@@ -334,7 +334,7 @@ class VentilationCirc(Hole):
             # Adding schematics
             if is_add_schematics:
                 # H0
-                line = Segment(0, point_dict["Zc"])
+                line = Segment(begin=0, end=point_dict["Zc"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -347,8 +347,8 @@ class VentilationCirc(Hole):
                 )
                 # D0
                 line = Segment(
-                    point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
-                    point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    begin=point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
+                    end=point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
                 )
                 line.plot(
                     fig=fig,
@@ -379,7 +379,7 @@ class VentilationCirc(Hole):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -388,7 +388,7 @@ class VentilationCirc(Hole):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Center axis
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
                 line.plot(
                     fig=fig,
                     ax=ax,

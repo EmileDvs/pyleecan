@@ -146,13 +146,17 @@ class SlotM15(Slot):
         # Creation of curve
         curve_list = []
         if self.H0 > 0:
-            curve_list.append(Segment(Z1, Z2))
+            curve_list.append(Segment(begin=Z1, end=Z2))
         if self.is_outwards():
-            curve_list.append(Arc1(Z2, Z3, Rbo + self.H0, is_trigo_direction=True))
+            curve_list.append(
+                Arc1(begin=Z2, end=Z3, radius=Rbo + self.H0, is_trigo_direction=True)
+            )
         else:
-            curve_list.append(Arc1(Z2, Z3, Rbo - self.H0, is_trigo_direction=True))
+            curve_list.append(
+                Arc1(begin=Z2, end=Z3, radius=Rbo - self.H0, is_trigo_direction=True)
+            )
         if self.H0 > 0:
-            curve_list.append(Segment(Z3, Z4))
+            curve_list.append(Segment(begin=Z3, end=Z4))
 
         return curve_list
 
@@ -325,13 +329,17 @@ class SlotM15(Slot):
         ZM4 = point_dict["ZM4"]
 
         curve_list = []
-        curve_list.append(Segment(ZM1, ZM2))
+        curve_list.append(Segment(begin=ZM1, end=ZM2))
         if self.is_outwards():
-            curve_list.append(Arc1(ZM2, ZM3, -self.Rtopm, is_trigo_direction=False))
+            curve_list.append(
+                Arc1(begin=ZM2, end=ZM3, radius=-self.Rtopm, is_trigo_direction=False)
+            )
         else:
-            curve_list.append(Arc1(ZM2, ZM3, self.Rtopm))
-        curve_list.append(Segment(ZM3, ZM4))
-        curve_list.append(Arc1(ZM4, ZM1, -abs(ZM4), is_trigo_direction=False))
+            curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=self.Rtopm))
+        curve_list.append(Segment(begin=ZM3, end=ZM4))
+        curve_list.append(
+            Arc1(begin=ZM4, end=ZM1, radius=-abs(ZM4), is_trigo_direction=False)
+        )
 
         Zmid = (abs(ZM1) + abs(ZM3)) / 2  # ref. point on x-axis with respective radius
 
@@ -494,7 +502,7 @@ class SlotM15(Slot):
                     label="W1",
                 )
                 # H0
-                line = Segment(point_dict["Z1"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -517,7 +525,7 @@ class SlotM15(Slot):
                     label="H1",
                 )
                 # Rtopm
-                line = Segment(point_dict["Zc"], point_dict["ZM0"])
+                line = Segment(begin=point_dict["Zc"], end=point_dict["ZM0"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -532,7 +540,7 @@ class SlotM15(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -541,7 +549,7 @@ class SlotM15(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z1 Line
-                line = Segment(0, Rbo * 2 * np.exp(-1j * self.W0 / 2))
+                line = Segment(begin=0, end=Rbo * 2 * np.exp(-1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -550,7 +558,7 @@ class SlotM15(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Z2 Line
-                line = Segment(0, Rbo * 2 * np.exp(1j * self.W0 / 2))
+                line = Segment(begin=0, end=Rbo * 2 * np.exp(1j * self.W0 / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -573,7 +581,7 @@ class SlotM15(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Magnet Arc
-                line = Segment(point_dict["Zc"], point_dict["ZM2"])
+                line = Segment(begin=point_dict["Zc"], end=point_dict["ZM2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -581,7 +589,7 @@ class SlotM15(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc"], point_dict["ZM3"])
+                line = Segment(begin=point_dict["Zc"], end=point_dict["ZM3"])
                 line.plot(
                     fig=fig,
                     ax=ax,

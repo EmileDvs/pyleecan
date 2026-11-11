@@ -73,15 +73,19 @@ class SlotW24(Slot):
 
         # Creation of curve
         line_dict = {}
-        line_dict["1-2"] = Segment(Z1, Z2)
-        line_dict["2-3"] = Arc1(Z2, Z3, abs(Z2))
-        line_dict["3-4"] = Segment(Z3, Z4)
+        line_dict["1-2"] = Segment(begin=Z1, end=Z2)
+        line_dict["2-3"] = Arc1(begin=Z2, end=Z3, radius=abs(Z2))
+        line_dict["3-4"] = Segment(begin=Z3, end=Z4)
 
         # Closing Arc (Rbo)
-        line_dict["4-1"] = Arc1(Z4, Z1, -self.get_Rbo(), is_trigo_direction=False)
+        line_dict["4-1"] = Arc1(
+            begin=Z4, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+        )
 
         # Closing Active part
-        line_dict["1-4"] = Arc1(Z1, Z4, self.get_Rbo(), is_trigo_direction=True)
+        line_dict["1-4"] = Arc1(
+            begin=Z1, end=Z4, radius=self.get_Rbo(), is_trigo_direction=True
+        )
 
         return line_dict
 
@@ -207,27 +211,29 @@ class SlotW24(Slot):
                 point_ref = (Z1 + Z2 + Z3 + Z4) / 4  # reference point of the surface
                 # With one zone the order would be [Z7,Z4,Z5,Z6]
                 curve_list = []
-                curve_list.append(Arc1(Z1, Z2, abs(Z1), is_trigo_direction=True))
+                curve_list.append(
+                    Arc1(begin=Z1, end=Z2, radius=abs(Z1), is_trigo_direction=True)
+                )
                 curve_list.append(
                     Segment(
-                        Z2,
-                        Z3,
+                        begin=Z2,
+                        end=Z3,
                         prop_dict={DRAW_PROP_LAB: False},
                     )
                 )
                 curve_list.append(
                     Arc1(
-                        Z3,
-                        Z4,
-                        -abs(Z3),
+                        begin=Z3,
+                        end=Z4,
+                        radius=-abs(Z3),
                         is_trigo_direction=False,
                         prop_dict={DRAW_PROP_LAB: False},
                     )
                 )
                 curve_list.append(
                     Segment(
-                        Z4,
-                        Z1,
+                        begin=Z4,
+                        end=Z1,
                         prop_dict={DRAW_PROP_LAB: jj != 0},
                     )
                 )
@@ -592,7 +598,7 @@ class SlotW24(Slot):
             # Adding schematics
             if is_add_schematics:
                 # H2
-                line = Segment(point_dict["Z3"], point_dict["Z4"])
+                line = Segment(begin=point_dict["Z3"], end=point_dict["Z4"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -605,8 +611,8 @@ class SlotW24(Slot):
                 )
                 # W3
                 line = Segment(
-                    (point_dict["Z1"] + point_dict["Z2"]) / 2,
-                    (point_dict["Z3"] + point_dict["Z4"]) / 2 * np.exp(-1j * sp),
+                    begin=(point_dict["Z1"] + point_dict["Z2"]) / 2,
+                    end=(point_dict["Z3"] + point_dict["Z4"]) / 2 * np.exp(-1j * sp),
                 )
                 line.plot(
                     fig=fig,
@@ -621,7 +627,7 @@ class SlotW24(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -659,7 +665,7 @@ class SlotW24(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Tooth axis
-                line = Segment(0, lam.Rext * 1.5 * np.exp(-1j * sp / 2))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(-1j * sp / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -667,7 +673,7 @@ class SlotW24(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * sp / 2))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * sp / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,

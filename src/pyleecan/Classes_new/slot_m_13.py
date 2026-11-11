@@ -142,10 +142,10 @@ class SlotM13(Slot):
         # Creation of curve
         curve_list = []
         if self.H0 > 0:
-            curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Segment(Z2, Z3))
+            curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
         if self.H0 > 0:
-            curve_list.append(Segment(Z3, Z4))
+            curve_list.append(Segment(begin=Z3, end=Z4))
 
         return curve_list
 
@@ -335,24 +335,26 @@ class SlotM13(Slot):
         curve_list = []
         # Case Z2-Z1 overlapping with ZM1-ZM2
         if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-            curve_list.append(Segment(ZM1, Z1))
-            curve_list.append(Segment(Z1, ZM2))
+            curve_list.append(Segment(begin=ZM1, end=Z1))
+            curve_list.append(Segment(begin=Z1, end=ZM2))
         else:
-            curve_list.append(Segment(ZM1, ZM2))
+            curve_list.append(Segment(begin=ZM1, end=ZM2))
 
         if self.is_outwards():
-            curve_list.append(Arc1(ZM2, ZM3, -self.Rtopm, is_trigo_direction=False))
+            curve_list.append(
+                Arc1(begin=ZM2, end=ZM3, radius=-self.Rtopm, is_trigo_direction=False)
+            )
         else:
-            curve_list.append(Arc1(ZM2, ZM3, self.Rtopm))
+            curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=self.Rtopm))
 
         # Case Z3-Z4 overlapping with ZM3-ZM4
         if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-            curve_list.append(Segment(ZM3, Z4))
-            curve_list.append(Segment(Z4, ZM4))
+            curve_list.append(Segment(begin=ZM3, end=Z4))
+            curve_list.append(Segment(begin=Z4, end=ZM4))
         else:
-            curve_list.append(Segment(ZM3, ZM4))
+            curve_list.append(Segment(begin=ZM3, end=ZM4))
 
-        curve_list.append(Segment(ZM4, ZM1))
+        curve_list.append(Segment(begin=ZM4, end=ZM1))
 
         Zmid = (ZM1 + ZM3) / 2
 
@@ -484,7 +486,7 @@ class SlotM13(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z3"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z3"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -507,7 +509,7 @@ class SlotM13(Slot):
                     label="W1",
                 )
                 # H0
-                line = Segment(point_dict["Z1"], point_dict["Z2"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -531,7 +533,7 @@ class SlotM13(Slot):
                     label="H1",
                 )
                 # Rtopm
-                line = Segment(point_dict["Zc"], point_dict["ZM0"])
+                line = Segment(begin=point_dict["Zc"], end=point_dict["ZM0"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -545,7 +547,7 @@ class SlotM13(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -568,7 +570,7 @@ class SlotM13(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # Magnet Arc
-                line = Segment(point_dict["Zc"], point_dict["ZM2"])
+                line = Segment(begin=point_dict["Zc"], end=point_dict["ZM2"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -576,7 +578,7 @@ class SlotM13(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc"], point_dict["ZM3"])
+                line = Segment(begin=point_dict["Zc"], end=point_dict["ZM3"])
                 line.plot(
                     fig=fig,
                     ax=ax,

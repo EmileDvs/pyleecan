@@ -249,8 +249,8 @@ class Bore(PyleecanClass):
                     ):
                         line_list.append(
                             Segment(
-                                line_list[-1].get_end(),
-                                desc_dict["lines"][0].get_begin(),
+                                begin=line_list[-1].get_end(),
+                                end=desc_dict["lines"][0].get_begin(),
                             )
                         )
                 line_list.extend(desc_dict["lines"])
@@ -264,8 +264,8 @@ class Bore(PyleecanClass):
                 ):
                     line_list.append(
                         Segment(
-                            desc_dict["lines"][-1].get_end(),
-                            radius_desc_list[ii + 1]["lines"][0].get_begin(),
+                            begin=desc_dict["lines"][-1].get_end(),
+                            end=radius_desc_list[ii + 1]["lines"][0].get_begin(),
                         )
                     )
         return line_list

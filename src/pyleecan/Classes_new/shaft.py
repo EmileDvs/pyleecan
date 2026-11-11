@@ -88,14 +88,18 @@ class Shaft(PyleecanClass):
             end = begin * np.exp(1j * 2 * np.pi / sym)
             surface = SurfLine(
                 line_list=[
-                    Segment(0, begin, prop_dict={BOUNDARY_PROP_LAB: SHAFTSR_LAB}),
+                    Segment(
+                        begin=0, end=begin, prop_dict={BOUNDARY_PROP_LAB: SHAFTSR_LAB}
+                    ),
                     Arc1(
-                        begin,
-                        end,
-                        self.Drsh / 2,
+                        begin=begin,
+                        end=end,
+                        radius=self.Drsh / 2,
                         prop_dict={BOUNDARY_PROP_LAB: SHAFTR_LAB},
                     ),
-                    Segment(end, 0, prop_dict={BOUNDARY_PROP_LAB: SHAFTSL_LAB}),
+                    Segment(
+                        begin=end, end=0, prop_dict={BOUNDARY_PROP_LAB: SHAFTSL_LAB}
+                    ),
                 ],
                 label=NO_LAM_LAB + "_" + SHAFT_LAB,
                 point_ref=0,

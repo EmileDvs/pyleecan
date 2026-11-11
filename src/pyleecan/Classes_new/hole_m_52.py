@@ -166,23 +166,23 @@ class HoleM52(HoleMag):
 
         # Creation of the air curve
         curve_list = []
-        curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Segment(Z2, Z3))
-        curve_list.append(Segment(Z3, Z11))
-        curve_list.append(Segment(Z11, Z1))
+        curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
+        curve_list.append(Segment(begin=Z3, end=Z11))
+        curve_list.append(Segment(begin=Z11, end=Z1))
         point_ref = (Z1 + Z2 + Z3 + Z11) / 4
         S1 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
         # Creation of the magnet curve
         curve_list = []
         if is_simplified:
-            curve_list.append(Segment(Z3, Z11))
-            curve_list.append(Segment(Z7, Z10))
+            curve_list.append(Segment(begin=Z3, end=Z11))
+            curve_list.append(Segment(begin=Z7, end=Z10))
         else:
-            curve_list.append(Segment(Z4, Z11))
-            curve_list.append(Segment(Z11, Z10))
-            curve_list.append(Segment(Z10, Z6))
-            curve_list.append(Segment(Z6, Z4))
+            curve_list.append(Segment(begin=Z4, end=Z11))
+            curve_list.append(Segment(begin=Z11, end=Z10))
+            curve_list.append(Segment(begin=Z10, end=Z6))
+            curve_list.append(Segment(begin=Z6, end=Z4))
         point_ref = (Z11 + Z4 + Z6 + Z10) / 4
         S2 = SurfLine(
             line_list=curve_list, label=mag_label + "T0-S0", point_ref=point_ref
@@ -190,25 +190,25 @@ class HoleM52(HoleMag):
 
         # Creation of the second air curve
         curve_list = []
-        curve_list.append(Segment(Z7, Z8))
-        curve_list.append(Segment(Z8, Z9))
-        curve_list.append(Segment(Z9, Z10))
-        curve_list.append(Segment(Z10, Z7))
+        curve_list.append(Segment(begin=Z7, end=Z8))
+        curve_list.append(Segment(begin=Z8, end=Z9))
+        curve_list.append(Segment(begin=Z9, end=Z10))
+        curve_list.append(Segment(begin=Z10, end=Z7))
         point_ref = (Z7 + Z8 + Z9 + Z10) / 4
         S3 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
         # Area with no magnet (S1 + S2 + S3)
         curve_list = []
-        curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Segment(Z2, Z3))
+        curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
         if self.H2 > 0:
-            curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Segment(Z4, Z6))
+            curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(Segment(begin=Z4, end=Z6))
         if self.H2 > 0:
-            curve_list.append(Segment(Z6, Z7))
-        curve_list.append(Segment(Z7, Z8))
-        curve_list.append(Segment(Z8, Z9))
-        curve_list.append(Segment(Z9, Z1))
+            curve_list.append(Segment(begin=Z6, end=Z7))
+        curve_list.append(Segment(begin=Z7, end=Z8))
+        curve_list.append(Segment(begin=Z8, end=Z9))
+        curve_list.append(Segment(begin=Z9, end=Z1))
         point_ref = (Z11 + Z4 + Z6 + Z10) / 4
         S4 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
@@ -319,7 +319,7 @@ class HoleM52(HoleMag):
         point_dict = self._comp_point_coordinate()
 
         mag_dict = {}
-        S0 = Segment(point_dict["Z4"], point_dict["Z6"])
+        S0 = Segment(begin=point_dict["Z4"], end=point_dict["Z6"])
         mag_dict["magnet_0"] = S0.comp_normal()
 
         if not is_north:
@@ -604,8 +604,10 @@ class HoleM52(HoleMag):
                 )
                 # W3
                 line = Segment(
-                    (point_dict["Z2"] + point_dict["Z1"]) / 2 * np.exp(1j * alpha),
-                    (point_dict["Z9"] + point_dict["Z8"])
+                    begin=(point_dict["Z2"] + point_dict["Z1"])
+                    / 2
+                    * np.exp(1j * alpha),
+                    end=(point_dict["Z9"] + point_dict["Z8"])
                     / 2
                     * np.exp(1j * sp)
                     * np.exp(1j * alpha),
@@ -622,8 +624,10 @@ class HoleM52(HoleMag):
                 )
                 # H0
                 line = Segment(
-                    point_dict["Z9"] * np.exp(1j * alpha),
-                    Rbo * np.exp(1j * np.angle(point_dict["Z9"])) * np.exp(1j * alpha),
+                    begin=point_dict["Z9"] * np.exp(1j * alpha),
+                    end=Rbo
+                    * np.exp(1j * np.angle(point_dict["Z9"]))
+                    * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -637,8 +641,8 @@ class HoleM52(HoleMag):
                 )
                 # H1
                 line = Segment(
-                    point_dict["Z11"] * np.exp(1j * alpha),
-                    point_dict["Z4"] * np.exp(1j * alpha),
+                    begin=point_dict["Z11"] * np.exp(1j * alpha),
+                    end=point_dict["Z4"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -652,8 +656,8 @@ class HoleM52(HoleMag):
                 )
                 # H2
                 line = Segment(
-                    point_dict["Z7"] * np.exp(1j * alpha),
-                    point_dict["Z6"] * np.exp(1j * alpha),
+                    begin=point_dict["Z7"] * np.exp(1j * alpha),
+                    end=point_dict["Z6"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -668,7 +672,7 @@ class HoleM52(HoleMag):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * alpha))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * alpha))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -678,7 +682,8 @@ class HoleM52(HoleMag):
                 )
                 # Tooth axis
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha)
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -688,7 +693,8 @@ class HoleM52(HoleMag):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    0, lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha)
+                    begin=0,
+                    end=lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -699,8 +705,8 @@ class HoleM52(HoleMag):
                 )
                 # H0 lines
                 line = Segment(
-                    0,
-                    abs(point_dict["Z9"])
+                    begin=0,
+                    end=abs(point_dict["Z9"])
                     * 1.5
                     * np.exp(1j * np.angle(point_dict["Z9"]))
                     * np.exp(1j * alpha),
@@ -714,8 +720,8 @@ class HoleM52(HoleMag):
                 )
                 # W3 lines
                 line = Segment(
-                    point_dict["Z1"] * np.exp(1j * alpha),
-                    point_dict["Z9"] * np.exp(1j * sp) * np.exp(1j * alpha),
+                    begin=point_dict["Z1"] * np.exp(1j * alpha),
+                    end=point_dict["Z9"] * np.exp(1j * sp) * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -725,8 +731,8 @@ class HoleM52(HoleMag):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 line = Segment(
-                    point_dict["Z2"] * np.exp(1j * alpha),
-                    point_dict["Z8"] * np.exp(1j * sp) * np.exp(1j * alpha),
+                    begin=point_dict["Z2"] * np.exp(1j * alpha),
+                    end=point_dict["Z8"] * np.exp(1j * sp) * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,
@@ -737,8 +743,8 @@ class HoleM52(HoleMag):
                 )
                 # Magnet line
                 line = Segment(
-                    point_dict["Z3"] * np.exp(1j * alpha),
-                    point_dict["Z7"] * np.exp(1j * alpha),
+                    begin=point_dict["Z3"] * np.exp(1j * alpha),
+                    end=point_dict["Z7"] * np.exp(1j * alpha),
                 )
                 line.plot(
                     fig=fig,

@@ -174,9 +174,13 @@ class Circle(Surface):
         begin = self.center + self.radius
         end = self.center - self.radius
         # first half-circle
-        line1 = Arc3(begin, end, True, prop_dict=self.prop_dict)
+        line1 = Arc3(
+            begin=begin, end=end, is_trigo_direction=True, prop_dict=self.prop_dict
+        )
         # second half-circle
-        line2 = Arc3(end, begin, True, prop_dict=self.prop_dict)
+        line2 = Arc3(
+            begin=end, end=begin, is_trigo_direction=True, prop_dict=self.prop_dict
+        )
         return [line1, line2]
 
     # Inlined from Methods.Geometry.Circle.get_patches

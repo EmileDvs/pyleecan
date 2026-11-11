@@ -262,78 +262,114 @@ class HoleM50(HoleMag):
         Rext = self.get_Rext()
 
         # Create all the lines
-        L_1_2 = Segment(Z1, Z2, prop_dict=None)
-        L_1s_2s = Segment(Z1s, Z2s, prop_dict=None)
-        L_1s_11s = Segment(Z1s, Z11s, prop_dict=None)
-        L_2_3 = Segment(Z2, Z3, prop_dict=None)
-        L_2s_1s = Segment(Z2s, Z1s, prop_dict=None)
-        L_2s_3s = Segment(Z2s, Z3s, prop_dict=None)
-        L_3_4 = Segment(Z3, Z4, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Right"})
-        L_3s_2s = Segment(Z3s, Z2s, prop_dict=None)
-        L_3s_4s = Segment(Z3s, Z4s, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Left"})
-        L_3_8c = Segment(Z3, Z8c, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Right"})
-        L_3s_8cs = Segment(Z3s, Z8cs, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Left"})
-        L_4_5 = Segment(Z4, Z5, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Bottom"})
-        L_4s_3s = Segment(Z4s, Z3s, prop_dict=None)
+        L_1_2 = Segment(begin=Z1, end=Z2, prop_dict=None)
+        L_1s_2s = Segment(begin=Z1s, end=Z2s, prop_dict=None)
+        L_1s_11s = Segment(begin=Z1s, end=Z11s, prop_dict=None)
+        L_2_3 = Segment(begin=Z2, end=Z3, prop_dict=None)
+        L_2s_1s = Segment(begin=Z2s, end=Z1s, prop_dict=None)
+        L_2s_3s = Segment(begin=Z2s, end=Z3s, prop_dict=None)
+        L_3_4 = Segment(
+            begin=Z3, end=Z4, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Right"}
+        )
+        L_3s_2s = Segment(begin=Z3s, end=Z2s, prop_dict=None)
+        L_3s_4s = Segment(
+            begin=Z3s, end=Z4s, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Left"}
+        )
+        L_3_8c = Segment(
+            begin=Z3, end=Z8c, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Right"}
+        )
+        L_3s_8cs = Segment(
+            begin=Z3s, end=Z8cs, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Left"}
+        )
+        L_4_5 = Segment(
+            begin=Z4, end=Z5, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Bottom"}
+        )
+        L_4s_3s = Segment(begin=Z4s, end=Z3s, prop_dict=None)
         L_4s_5s = Segment(
-            Z4s, Z5s, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Bottom"}
+            begin=Z4s, end=Z5s, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Bottom"}
         )
-        L_5_6 = Segment(Z5, Z6, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Left"})
-        L_5s_4s = Segment(Z5s, Z4s, prop_dict=None)
-        L_5s_6s = Segment(Z5s, Z6s, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Right"})
-        L_6_7 = Segment(Z6, Z7, prop_dict=None)
-        L_6s_5s = Segment(Z6s, Z5s, prop_dict=None)
-        L_6s_7s = Segment(Z6s, Z7s, prop_dict=None)
-        L_6_8b = Segment(Z6, Z8b, prop_dict=None)
-        L_6s_8bs = Segment(Z6s, Z8bs, prop_dict=None)
-        L_7_6s = Segment(Z7, Z6s, prop_dict=None)
-        L_7_8 = Segment(Z7, Z8, prop_dict={MAGNET_PROP_LAB: "Rotor_Radial_Bridge"})
-        L_7s_6 = Segment(Z7s, Z6, prop_dict=None)
-        L_7s_8s = Segment(Z7s, Z8s, prop_dict={MAGNET_PROP_LAB: "Rotor_Radial_Bridge"})
+        L_5_6 = Segment(
+            begin=Z5, end=Z6, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Left"}
+        )
+        L_5s_4s = Segment(begin=Z5s, end=Z4s, prop_dict=None)
+        L_5s_6s = Segment(
+            begin=Z5s, end=Z6s, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Right"}
+        )
+        L_6_7 = Segment(begin=Z6, end=Z7, prop_dict=None)
+        L_6s_5s = Segment(begin=Z6s, end=Z5s, prop_dict=None)
+        L_6s_7s = Segment(begin=Z6s, end=Z7s, prop_dict=None)
+        L_6_8b = Segment(begin=Z6, end=Z8b, prop_dict=None)
+        L_6s_8bs = Segment(begin=Z6s, end=Z8bs, prop_dict=None)
+        L_7_6s = Segment(begin=Z7, end=Z6s, prop_dict=None)
+        L_7_8 = Segment(
+            begin=Z7, end=Z8, prop_dict={MAGNET_PROP_LAB: "Rotor_Radial_Bridge"}
+        )
+        L_7s_6 = Segment(begin=Z7s, end=Z6, prop_dict=None)
+        L_7s_8s = Segment(
+            begin=Z7s, end=Z8s, prop_dict={MAGNET_PROP_LAB: "Rotor_Radial_Bridge"}
+        )
 
-        L_8_8b = Segment(Z8, Z8b, prop_dict=None)
-        L_8_9 = Segment(Z8, Z9, prop_dict=None)
-        L_8s_8bs = Segment(Z8s, Z8bs, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Top"})
-        L_8s_8b = Segment(Z8s, Z8b, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Top"})
-        L_8s_9 = Segment(Z8s, Z9, prop_dict=None)
-        L_8s_9s = Segment(Z8s, Z9s, prop_dict=None)
+        L_8_8b = Segment(begin=Z8, end=Z8b, prop_dict=None)
+        L_8_9 = Segment(begin=Z8, end=Z9, prop_dict=None)
+        L_8s_8bs = Segment(
+            begin=Z8s, end=Z8bs, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Top"}
+        )
+        L_8s_8b = Segment(
+            begin=Z8s, end=Z8b, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Top"}
+        )
+        L_8s_9 = Segment(begin=Z8s, end=Z9, prop_dict=None)
+        L_8s_9s = Segment(begin=Z8s, end=Z9s, prop_dict=None)
 
-        L_8b_6 = Segment(Z8b, Z6, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Left"})
-        L_8bs_6s = Segment(Z8bs, Z6s, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Right"})
-        L_8b_8c = Segment(Z8b, Z8c, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Top"})
-        L_8b_8s = Segment(Z8b, Z8s, prop_dict=None)
-        L_8bs_8 = Segment(Z8bs, Z8, prop_dict=None)
-        L_8bs_8s = Segment(Z8bs, Z8s, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Top"})
+        L_8b_6 = Segment(
+            begin=Z8b, end=Z6, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Left"}
+        )
+        L_8bs_6s = Segment(
+            begin=Z8bs, end=Z6s, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Right"}
+        )
+        L_8b_8c = Segment(
+            begin=Z8b, end=Z8c, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_0_Top"}
+        )
+        L_8b_8s = Segment(begin=Z8b, end=Z8s, prop_dict=None)
+        L_8bs_8 = Segment(begin=Z8bs, end=Z8, prop_dict=None)
+        L_8bs_8s = Segment(
+            begin=Z8bs, end=Z8s, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Top"}
+        )
         L_8bs_8cs = Segment(
-            Z8bs, Z8cs, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Top"}
+            begin=Z8bs, end=Z8cs, prop_dict={MAGNET_PROP_LAB: "Rotor_Magnet_1_Top"}
         )
 
-        L_8c_3 = Segment(Z8c, Z3, prop_dict=None)
-        L_8cs_3s = Segment(Z8cs, Z3s, prop_dict=None)
-        L_8c_9 = Segment(Z8c, Z9, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Top"})
-        L_8cs_9s = Segment(Z8cs, Z9s, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Top"})
+        L_8c_3 = Segment(begin=Z8c, end=Z3, prop_dict=None)
+        L_8cs_3s = Segment(begin=Z8cs, end=Z3s, prop_dict=None)
+        L_8c_9 = Segment(
+            begin=Z8c, end=Z9, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_0_Top"}
+        )
+        L_8cs_9s = Segment(
+            begin=Z8cs, end=Z9s, prop_dict={MAGNET_PROP_LAB: "Rotor_Hole_1_Top"}
+        )
 
-        L_9_10 = Segment(Z9, Z10, prop_dict=None)
-        L_9s_8s = Segment(Z9s, Z8s, prop_dict=None)
-        L_9s_10s = Segment(Z9s, Z10s, prop_dict=None)
+        L_9_10 = Segment(begin=Z9, end=Z10, prop_dict=None)
+        L_9s_8s = Segment(begin=Z9s, end=Z8s, prop_dict=None)
+        L_9s_10s = Segment(begin=Z9s, end=Z10s, prop_dict=None)
         L_10_11 = Arc1(
-            Z10,
-            Z11,
-            -Rext + self.H1,
+            begin=Z10,
+            end=Z11,
+            radius=-Rext + self.H1,
             is_trigo_direction=False,
             prop_dict={MAGNET_PROP_LAB: "Rotor_Tangential_Bridge"},
         )
-        L_10s_9s = Segment(Z10s, Z9s, prop_dict=None)
+        L_10s_9s = Segment(begin=Z10s, end=Z9s, prop_dict=None)
         L_10s_11s = Arc1(
-            Z10s,
-            Z11s,
-            Rext - self.H1,
+            begin=Z10s,
+            end=Z11s,
+            radius=Rext - self.H1,
             is_trigo_direction=True,
             prop_dict={MAGNET_PROP_LAB: "Rotor_Tangential_Bridge"},
         )
-        L_11_1 = Segment(Z11, Z1, prop_dict=None)
-        L_11s_1s = Segment(Z11s, Z1s, prop_dict=None)
-        L_11s_10s = Arc1(Z11s, Z10s, -Rext + self.H1, is_trigo_direction=False)
+        L_11_1 = Segment(begin=Z11, end=Z1, prop_dict=None)
+        L_11s_1s = Segment(begin=Z11s, end=Z1s, prop_dict=None)
+        L_11s_10s = Arc1(
+            begin=Z11s, end=Z10s, radius=-Rext + self.H1, is_trigo_direction=False
+        )
 
         # Create all the surfaces for all the cases
         surf_list = []
@@ -470,7 +506,13 @@ class HoleM50(HoleMag):
         if self.H4 > 0:
             curve_list.append(L_9s_10s)
         curve_list.append(
-            Arc1(Z10s, Z11s, Rext - self.H1, is_trigo_direction=True, prop_dict=None)
+            Arc1(
+                begin=Z10s,
+                end=Z11s,
+                radius=Rext - self.H1,
+                is_trigo_direction=True,
+                prop_dict=None,
+            )
         )
         if self.H4 > 0:
             curve_list.append(L_11s_1s)
@@ -727,9 +769,9 @@ class HoleM50(HoleMag):
         point_dict = self._comp_point_coordinate()
 
         mag_dict = {}
-        S0 = Segment(point_dict["Z5"], point_dict["Z4"])
+        S0 = Segment(begin=point_dict["Z5"], end=point_dict["Z4"])
         mag_dict["magnet_0"] = S0.comp_normal()
-        S1 = Segment(point_dict["Z4s"], point_dict["Z5s"])
+        S1 = Segment(begin=point_dict["Z4s"], end=point_dict["Z5s"])
         mag_dict["magnet_1"] = S1.comp_normal()
 
         if self.magnetization_dict_offset is not None:
@@ -966,7 +1008,9 @@ class HoleM50(HoleMag):
                     fontsize=SC_FONT_SIZE,
                 )
                 # W0
-                line = Segment(point_dict["Z9"] * rot, point_dict["Z9s"] * rot)
+                line = Segment(
+                    begin=point_dict["Z9"] * rot, end=point_dict["Z9s"] * rot
+                )
                 line.plot(
                     label="W0",
                     offset_label=self.W0 * 0.3 + 1j * self.H3 * 0.2,
@@ -974,27 +1018,29 @@ class HoleM50(HoleMag):
                 )
                 # W1
                 line = Segment(
-                    (point_dict["Z8"] + point_dict["Z7"]) / 2 * rot,
-                    (point_dict["Z8s"] + point_dict["Z7s"]) / 2 * rot,
+                    begin=(point_dict["Z8"] + point_dict["Z7"]) / 2 * rot,
+                    end=(point_dict["Z8s"] + point_dict["Z7s"]) / 2 * rot,
                 )
                 line.plot(label="W1", offset_label=-1j * self.H3 * 0.4, **kwargs)
                 # W2
-                line = Segment(point_dict["Z8"] * rot, point_dict["Z8b"] * rot)
+                line = Segment(
+                    begin=point_dict["Z8"] * rot, end=point_dict["Z8b"] * rot
+                )
                 line.plot(label="W2", offset_label=1j * self.H3 * 0.2, **kwargs)
                 # W3
                 line = Segment(
-                    (point_dict["Z1s"] + point_dict["Z11s"]) * 0.5 * rot,
-                    (point_dict["Z1"] + point_dict["Z11"])
+                    begin=(point_dict["Z1s"] + point_dict["Z11s"]) * 0.5 * rot,
+                    end=(point_dict["Z1"] + point_dict["Z11"])
                     * 0.5
                     * rot
                     * np.exp(1j * sp),
                 )
                 line.plot(label="W3", offset_label=-1j * self.H3 * 0.3, **kwargs)
                 # W4
-                line = Segment(point_dict["Z5"] * rot, point_dict["Z4"] * rot)
+                line = Segment(begin=point_dict["Z5"] * rot, end=point_dict["Z4"] * rot)
                 line.plot(label="W4", offset_label=-1j * self.H3 * 0.3, **kwargs)
                 # H0
-                line = Segment(Rbo * rot, point_dict["Z8"].real * rot)
+                line = Segment(begin=Rbo * rot, end=point_dict["Z8"].real * rot)
                 line.plot(
                     label="H0",
                     offset_label=self.W0 * 0.05 + 1j * self.H3 * 0.2,
@@ -1002,32 +1048,40 @@ class HoleM50(HoleMag):
                 )
                 # H1
                 line = Segment(
-                    Rbo * np.exp(-1j * sp / 2) * rot,
-                    (Rbo - self.H1) * np.exp(-1j * sp / 2) * rot,
+                    begin=Rbo * np.exp(-1j * sp / 2) * rot,
+                    end=(Rbo - self.H1) * np.exp(-1j * sp / 2) * rot,
                 )
                 line.plot(label="H1", offset_label=self.H3 * 0.2, **kwargs)
                 # H2
                 line = Segment(
-                    (point_dict["Z3s"] + point_dict["Z6s"]) * 0.5 * rot,
-                    (point_dict["Z4s"] + point_dict["Z5s"]) * 0.5 * rot,
+                    begin=(point_dict["Z3s"] + point_dict["Z6s"]) * 0.5 * rot,
+                    end=(point_dict["Z4s"] + point_dict["Z5s"]) * 0.5 * rot,
                 )
                 line.plot(label="H2", offset_label=self.H3 * 0.2, **kwargs)
                 # H3
-                line = Segment(point_dict["Z4s"] * rot, point_dict["Z8cs"] * rot)
+                line = Segment(
+                    begin=point_dict["Z4s"] * rot, end=point_dict["Z8cs"] * rot
+                )
                 line.plot(label="H3", offset_label=self.H3 * 0.2, **kwargs)
                 # H4
-                line = Segment(point_dict["Z9s"] * rot, point_dict["Z10s"] * rot)
+                line = Segment(
+                    begin=point_dict["Z9s"] * rot, end=point_dict["Z10s"] * rot
+                )
                 line.plot(label="H4", offset_label=self.H3 * 0.2, **kwargs)
 
             if is_add_main_line:
                 lines = []
                 # Ox axis
-                lines.append(Segment(0, lam.Rext * 1.5 * rot))
+                lines.append(Segment(begin=0, end=lam.Rext * 1.5 * rot))
 
                 # Tooth axis
-                lines.append(Segment(0, lam.Rext * 1.5 * np.exp(1j * sp / 2) * rot))
+                lines.append(
+                    Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * sp / 2) * rot)
+                )
 
-                lines.append(Segment(0, lam.Rext * 1.5 * np.exp(-1j * sp / 2) * rot))
+                lines.append(
+                    Segment(begin=0, end=lam.Rext * 1.5 * np.exp(-1j * sp / 2) * rot)
+                )
                 # H1 radius
                 R = Rbo - self.H1
                 rot_N = np.exp(-1j * np.pi / 2 * 0.9) * rot
@@ -1051,13 +1105,23 @@ class HoleM50(HoleMag):
                     )
                 )
                 # W1 lines
-                lines.append(Segment(point_dict["Z7"] * rot, point_dict["Z7s"] * rot))
-                lines.append(Segment(point_dict["Z8"] * rot, point_dict["Z8s"] * rot))
+                lines.append(
+                    Segment(begin=point_dict["Z7"] * rot, end=point_dict["Z7s"] * rot)
+                )
+                lines.append(
+                    Segment(begin=point_dict["Z8"] * rot, end=point_dict["Z8s"] * rot)
+                )
                 # W2 lines
-                lines.append(Segment(point_dict["Z8"] * rot, point_dict["Z8a"] * rot))
-                lines.append(Segment(point_dict["Z8s"] * rot, point_dict["Z8as"] * rot))
+                lines.append(
+                    Segment(begin=point_dict["Z8"] * rot, end=point_dict["Z8a"] * rot)
+                )
+                lines.append(
+                    Segment(begin=point_dict["Z8s"] * rot, end=point_dict["Z8as"] * rot)
+                )
                 # H2 lines
-                lines.append(Segment(point_dict["Z3s"] * rot, point_dict["Z6s"] * rot))
+                lines.append(
+                    Segment(begin=point_dict["Z3s"] * rot, end=point_dict["Z6s"] * rot)
+                )
 
                 for line in lines:
                     line.plot(

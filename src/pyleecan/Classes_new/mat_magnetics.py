@@ -8,7 +8,6 @@ import numpy as np
 from ..Functions_new.init_fig import init_fig
 from ._pyleecan_class import PyleecanClass
 from .import_matrix import ImportMatrix
-from .model_bh import ModelBH
 from .model_bh import ModelBH as _field_type_ModelBH
 
 
@@ -63,7 +62,8 @@ class MatMagnetics(PyleecanClass):
     )
     """specific loss data value triplets, i.e. B, f, P"""
     ModelBH: _field_type_ModelBH | None = field(
-        default_factory=lambda: ModelBH(), metadata={"default_class": "ModelBH"}
+        default_factory=lambda: _field_type_ModelBH(),
+        metadata={"default_class": "ModelBH"},
     )
     """a model of BH curve with an analytical expression"""
     is_BH_extrapolate: bool = False

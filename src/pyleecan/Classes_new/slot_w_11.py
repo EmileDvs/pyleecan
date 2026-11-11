@@ -128,7 +128,7 @@ class SlotW11(Slot):
         # Creation of curve
         line_dict = {}
         if self.H0 > 0:
-            line_dict["1-2"] = Segment(Z1, Z2)
+            line_dict["1-2"] = Segment(begin=Z1, end=Z2)
         else:
             line_dict["1-2"] = None
 
@@ -136,40 +136,50 @@ class SlotW11(Slot):
         if H1 == 0 and self.W1 == self.W0:
             line_dict["2-3"] = None
         else:
-            line_dict["2-3"] = Segment(Z2, Z3)
-        line_dict["3-4"] = Segment(Z3, Z4)
+            line_dict["2-3"] = Segment(begin=Z2, end=Z3)
+        line_dict["3-4"] = Segment(begin=Z3, end=Z4)
 
         if self.R1 * 2 < self.W2:
             line_dict["4-5"] = Arc1(
-                Z4, Z5, rot_sign * self.R1, is_trigo_direction=self.is_outwards()
+                begin=Z4,
+                end=Z5,
+                radius=rot_sign * self.R1,
+                is_trigo_direction=self.is_outwards(),
             )
-            line_dict["5-6"] = Segment(Z5, Z6)
+            line_dict["5-6"] = Segment(begin=Z5, end=Z6)
             line_dict["6-7"] = Arc1(
-                Z6, Z7, rot_sign * self.R1, is_trigo_direction=self.is_outwards()
+                begin=Z6,
+                end=Z7,
+                radius=rot_sign * self.R1,
+                is_trigo_direction=self.is_outwards(),
             )
         else:
             line_dict["4-5"] = None
-            line_dict["5-6"] = Arc3(Z4, Z7, self.is_outwards())
+            line_dict["5-6"] = Arc3(
+                begin=Z4, end=Z7, is_trigo_direction=self.is_outwards()
+            )
             line_dict["6-7"] = None
 
-        line_dict["7-8"] = Segment(Z7, Z8)
+        line_dict["7-8"] = Segment(begin=Z7, end=Z8)
         if H1 == 0 and self.W1 == self.W0:
             line_dict["8-9"] = None
         else:
-            line_dict["8-9"] = Segment(Z8, Z9)
+            line_dict["8-9"] = Segment(begin=Z8, end=Z9)
 
         if self.H0 > 0:
-            line_dict["9-10"] = Segment(Z9, Z10)
+            line_dict["9-10"] = Segment(begin=Z9, end=Z10)
         else:
             line_dict["9-10"] = None
 
         # Closing Arc
-        line_dict["10-1"] = Arc1(Z10, Z1, -self.get_Rbo(), is_trigo_direction=False)
+        line_dict["10-1"] = Arc1(
+            begin=Z10, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+        )
 
         # Closing Active part
-        line_dict["3-8"] = Segment(Z3, Z8)
-        line_dict["8-3"] = Segment(Z8, Z3)
-        line_dict["9-2"] = Segment(Z9, Z2)
+        line_dict["3-8"] = Segment(begin=Z3, end=Z8)
+        line_dict["8-3"] = Segment(begin=Z8, end=Z3)
+        line_dict["9-2"] = Segment(begin=Z9, end=Z2)
 
         return line_dict
 
@@ -848,7 +858,7 @@ class SlotW11(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z1"], point_dict["Z10"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z10"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -860,7 +870,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # W1
-                line = Segment(point_dict["Z3"], point_dict["Z8"])
+                line = Segment(begin=point_dict["Z3"], end=point_dict["Z8"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -889,7 +899,7 @@ class SlotW11(Slot):
                     label="W2",
                 )
                 # H0
-                line = Segment(point_dict["Z10"], point_dict["Z9"])
+                line = Segment(begin=point_dict["Z10"], end=point_dict["Z9"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -901,7 +911,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H1 [m]
-                line = Segment(point_dict["Z2"].real, point_dict["Z3"].real)
+                line = Segment(begin=point_dict["Z2"].real, end=point_dict["Z3"].real)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -932,7 +942,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H2
-                line = Segment(point_dict["Z3"].real, point_dict["Z5"].real)
+                line = Segment(begin=point_dict["Z3"].real, end=point_dict["Z5"].real)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -944,7 +954,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # R1
-                line = Segment(point_dict["Zc1"], point_dict["Z5"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z5"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -958,7 +968,7 @@ class SlotW11(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -981,7 +991,7 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # H1 line
-                line = Segment(point_dict["Z2"], point_dict["Z9"])
+                line = Segment(begin=point_dict["Z2"], end=point_dict["Z9"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -990,7 +1000,7 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # R1 circle
-                line = Segment(point_dict["Zc1"], point_dict["Z5"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z5"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -998,7 +1008,7 @@ class SlotW11(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc1"], point_dict["Z4"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z4"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1006,7 +1016,7 @@ class SlotW11(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc2"], point_dict["Z6"])
+                line = Segment(begin=point_dict["Zc2"], end=point_dict["Z6"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1014,7 +1024,7 @@ class SlotW11(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc2"], point_dict["Z7"])
+                line = Segment(begin=point_dict["Zc2"], end=point_dict["Z7"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1170,7 +1180,7 @@ class SlotW11(Slot):
             # Adding schematics
             if is_add_schematics:
                 # W0
-                line = Segment(point_dict["Z1"], point_dict["Z10"])
+                line = Segment(begin=point_dict["Z1"], end=point_dict["Z10"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1183,8 +1193,8 @@ class SlotW11(Slot):
                 )
                 # W3
                 line = Segment(
-                    (point_dict["Z3"] + point_dict["Z4"]) / 2,
-                    (point_dict["Z7"] + point_dict["Z8"]) / 2 * np.exp(-1j * sp),
+                    begin=(point_dict["Z3"] + point_dict["Z4"]) / 2,
+                    end=(point_dict["Z7"] + point_dict["Z8"]) / 2 * np.exp(-1j * sp),
                 )
                 line.plot(
                     fig=fig,
@@ -1197,7 +1207,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H0
-                line = Segment(point_dict["Z10"], point_dict["Z9"])
+                line = Segment(begin=point_dict["Z10"], end=point_dict["Z9"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1209,7 +1219,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H1[m]
-                line = Segment(point_dict["Z2"].real, point_dict["Z3"].real)
+                line = Segment(begin=point_dict["Z2"].real, end=point_dict["Z3"].real)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1240,7 +1250,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # H2
-                line = Segment(point_dict["Z3"].real, point_dict["Z5"].real)
+                line = Segment(begin=point_dict["Z3"].real, end=point_dict["Z5"].real)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1252,7 +1262,7 @@ class SlotW11(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # R1
-                line = Segment(point_dict["Zc1"], point_dict["Z5"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z5"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1266,7 +1276,7 @@ class SlotW11(Slot):
 
             if is_add_main_line:
                 # Ox axis
-                line = Segment(0, lam.Rext * 1.5)
+                line = Segment(begin=0, end=lam.Rext * 1.5)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1289,7 +1299,7 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # H1 line
-                line = Segment(point_dict["Z2"], point_dict["Z9"])
+                line = Segment(begin=point_dict["Z2"], end=point_dict["Z9"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1298,7 +1308,7 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # R1 circle
-                line = Segment(point_dict["Zc1"], point_dict["Z5"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z5"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1306,7 +1316,7 @@ class SlotW11(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc1"], point_dict["Z4"])
+                line = Segment(begin=point_dict["Zc1"], end=point_dict["Z4"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1314,7 +1324,7 @@ class SlotW11(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc2"], point_dict["Z6"])
+                line = Segment(begin=point_dict["Zc2"], end=point_dict["Z6"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1322,7 +1332,7 @@ class SlotW11(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(point_dict["Zc2"], point_dict["Z7"])
+                line = Segment(begin=point_dict["Zc2"], end=point_dict["Z7"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1331,7 +1341,9 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # W3 parralel
-                line = Segment(point_dict["Z3"] * np.exp(1j * sp), point_dict["Z8"])
+                line = Segment(
+                    begin=point_dict["Z3"] * np.exp(1j * sp), end=point_dict["Z8"]
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1340,7 +1352,9 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
 
-                line = Segment(point_dict["Z3"], point_dict["Z8"] * np.exp(-1j * sp))
+                line = Segment(
+                    begin=point_dict["Z3"], end=point_dict["Z8"] * np.exp(-1j * sp)
+                )
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1350,7 +1364,7 @@ class SlotW11(Slot):
                 )
 
                 # H0 lines
-                line = Segment(0, point_dict["Z1"])
+                line = Segment(begin=0, end=point_dict["Z1"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1358,7 +1372,7 @@ class SlotW11(Slot):
                     linestyle=MAIN_LINE_STYLE,
                     linewidth=MAIN_LINE_WIDTH,
                 )
-                line = Segment(0, point_dict["Z10"])
+                line = Segment(begin=0, end=point_dict["Z10"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1367,7 +1381,7 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # H1
-                line = Segment(point_dict["Z2"] - 1j, point_dict["Z9"])
+                line = Segment(begin=point_dict["Z2"] - 1j, end=point_dict["Z9"])
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1376,7 +1390,7 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
                 # axis between Slot
-                line = Segment(0, lam.Rext * 1.5 * np.exp(-1j * sp / 2))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(-1j * sp / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -1385,7 +1399,7 @@ class SlotW11(Slot):
                     linewidth=MAIN_LINE_WIDTH,
                 )
 
-                line = Segment(0, lam.Rext * 1.5 * np.exp(1j * sp / 2))
+                line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * sp / 2))
                 line.plot(
                     fig=fig,
                     ax=ax,

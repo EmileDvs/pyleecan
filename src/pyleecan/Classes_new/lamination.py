@@ -677,8 +677,8 @@ class Lamination(PyleecanClass):
         for line in inter_list:
             line_list.append(
                 Segment(
-                    Zb,
-                    line.get_begin(),
+                    begin=Zb,
+                    end=line.get_begin(),
                     prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)},
                 )
             )
@@ -688,7 +688,9 @@ class Lamination(PyleecanClass):
             Zb = line.get_end()
         # Add last line (or Z1 to Z2 if no intersection)
         line_list.append(
-            Segment(Zb, Z2, prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)})
+            Segment(
+                begin=Zb, end=Z2, prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)}
+            )
         )
         # reverse the lines if needed
         if not is_int_to_ext:
