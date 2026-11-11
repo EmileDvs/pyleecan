@@ -14,7 +14,7 @@ from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
 from pyleecan.GUI.Dialog.DMachineSetup.SSimu.SSimu import SSimu
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Classes_new.loss_fea import LossFEA
 

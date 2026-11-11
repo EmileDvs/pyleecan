@@ -3,7 +3,7 @@ from os.path import join
 import matplotlib.pyplot as plt
 from numpy import linspace, pi
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.Classes_new.lam_slot_multi_wind import LamSlotMultiWind
 from pyleecan.Classes_new.slot_w_22 import SlotW22
 from pyleecan.Classes_new.slot_w_11 import SlotW11

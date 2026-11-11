@@ -13,8 +13,8 @@ from os.path import join, isdir, isfile
 from os import makedirs, remove
 from numpy import exp, pi
 import matplotlib.pyplot as plt
-from pyleecan.Functions.init_fig import init_fig
-from pyleecan.Functions.Plot import (
+from pyleecan.Functions_new.init_fig import init_fig
+from pyleecan.Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     SC_FONT_SIZE,

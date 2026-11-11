@@ -14,8 +14,8 @@ from pyleecan.Classes_new.mag_femm import MagFEMM
 from pyleecan.Classes_new.output import Output
 import pytest
 
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR
 
 IPMSM_xxx = load(join(DATA_DIR, "Machine", "IPMSM_xxx.json"))

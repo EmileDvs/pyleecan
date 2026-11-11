@@ -246,25 +246,10 @@ def load_matlib(matlib_path=None, machine=None):
     return material_dict
 
 
-class LoadMissingFolderError(Exception):
-    """ """
-
-    pass
+from pyleecan.Classes_new._error import LoadMissingFolderError
 
 
-class LoadWrongDictClassError(Exception):
-    """ """
-
-    pass
+from pyleecan.Classes_new._error import LoadWrongDictClassError
 
 
-class LoadWrongTypeError(Exception):
-    """ """
-
-    pass
-
-
-class LoadSwitchError(Exception):
-    """ """
-
-    pass
+from pyleecan.Classes_new._error import LoadWrongTypeError

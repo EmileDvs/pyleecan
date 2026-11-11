@@ -13,7 +13,7 @@ from pyleecan.Classes_new.data_keeper import DataKeeper
 from pyleecan.Classes_new.param_explorer_set import ParamExplorerSet
 
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 from Tests.New._test_paths import save_validation_path as save_path
 from pyleecan.definitions import DATA_DIR

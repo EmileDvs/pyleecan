@@ -30,7 +30,7 @@ from numpy import (
     sum as np_sum,
 )
 
-from ...Functions_new.SciDataTool import UnitError
+from pyleecan.Classes_new._error import UnitError
 from ...Functions_new.SciDataTool.fft_functions import comp_fft_freqs, comp_fft_time, comp_nthoctave_axis
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"

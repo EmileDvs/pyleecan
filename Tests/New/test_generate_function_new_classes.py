@@ -15,6 +15,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     _adapt_retrocompatibility,
     _redirect_function_errors,
+    _redirect_shared_error_imports,
     _rewrite_source,
     generate_functions,
 )
@@ -53,6 +54,26 @@ def test_rewrite_imports_and_report_unresolved(tmp_path):
     assert "from ..Load.import_class import import_class" not in result
     assert issues == [(8, "legacy import: pyleecan.Classes.import_all")]
     ast.parse(result)
+
+
+def test_rewrite_vendored_class_packages(tmp_path):
+    smoot = tmp_path / "_smoot"
+    swat = tmp_path / "_swat_em"
+    smoot.mkdir()
+    swat.mkdir()
+    (smoot / "__init__.py").touch()
+    (swat / "datamodel.py").touch()
+    source = (
+        "from pyleecan.Classes._smoot import MOO as Optimizer\n"
+        "from ...Classes._swat_em.datamodel import datamodel\n"
+        "from ...Classes._other import Something\n"
+    )
+    result, issues = _rewrite_source(
+        source, Path("sample.py"), Path("_smoot") / "sample.py", tmp_path
+    )
+    assert "from pyleecan.Classes_new._smoot import MOO as Optimizer" in result
+    assert "from pyleecan.Classes_new._swat_em.datamodel import datamodel" in result
+    assert issues == [(3, "legacy import: pyleecan.Classes._other")]
 
 
 def test_copy_tree_keeps_resources_and_reports_deferred_loader(tmp_path):
@@ -172,7 +193,7 @@ def test_normalization_transformation_reports_source_drift(tmp_path):
 
 
 def test_function_error_rewrite_rejects_missing_or_stale_shared_classes(tmp_path):
-    source = "class InputError(Exception):\n    pass\n"
+    source = "class InputError(Exception):\n    pass\n\ndef fail():\n    raise InputError()\n"
     path = tmp_path / "GMSH" / "__init__.py"
     relative = Path("GMSH") / "__init__.py"
     with pytest.raises(FileNotFoundError, match="generate classes first"):
@@ -186,6 +207,45 @@ def test_function_error_rewrite_rejects_missing_or_stale_shared_classes(tmp_path
     assert "import GMSHInputError as InputError" in result
     with pytest.raises(ValueError, match="missing function exceptions"):
         _redirect_function_errors("pass\n", path, relative, tmp_path)
+
+
+def test_shared_error_imports_preserve_other_imports_and_aliases():
+    source = (
+        "from pyleecan.Functions.GMSH import InputError, draw_GMSH\n"
+        "from ..SciDataTool import AxisError as Axis, axes_dict\n"
+        "text = 'pyleecan.Functions.GMSH.InputError'\n"
+    )
+    result = _redirect_shared_error_imports(source, "pyleecan.Functions_new.Plot")
+    assert "from pyleecan.Functions.GMSH import draw_GMSH" in result
+    assert "from pyleecan.Classes_new._error import GMSHInputError as InputError" in result
+    assert "from ..SciDataTool import axes_dict" in result
+    assert "from pyleecan.Classes_new._error import AxisError as Axis" in result
+    assert "text = 'pyleecan.Functions.GMSH.InputError'" in result
+    ast.parse(result)
+
+
+def test_generator_removes_only_obsolete_error_modules(tmp_path):
+    source = tmp_path / "Functions"
+    output = tmp_path / "Functions_new"
+    classes = tmp_path / "Classes_new"
+    source_module = source / "Converter" / "Utils" / "ConvertionError.py"
+    target_module = output / "Converter" / "Utils" / "ConvertionError.py"
+    source_module.parent.mkdir(parents=True)
+    target_module.parent.mkdir(parents=True)
+    classes.mkdir()
+    source_module.write_text("class ConvertionError(Exception): pass\n", encoding="utf-8")
+    (classes / "_error.py").write_text(
+        "class ConvertionError(Exception): pass\n", encoding="utf-8"
+    )
+    target_module.write_text(
+        "from pyleecan.Classes_new._error import ConvertionError\n", encoding="utf-8"
+    )
+    assert generate_functions(source, output, classes) == []
+    assert not target_module.exists()
+    target_module.write_text("custom_value = 1\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="refusing to remove modified module"):
+        generate_functions(source, output, classes)
+    assert target_module.read_text(encoding="utf-8") == "custom_value = 1\n"
 
 
 def test_shared_function_errors_end_to_end(tmp_path, monkeypatch):
@@ -234,6 +294,9 @@ def test_shared_function_errors_end_to_end(tmp_path, monkeypatch):
         path = source.joinpath(*module.split("."))
         path = path / "__init__.py" if path.is_dir() else path.with_suffix(".py")
         generated = output / path.relative_to(source)
+        if module in ("Converter.Utils.ConvertionError", "Converter.Utils.EquivalentError"):
+            assert not generated.exists()
+            continue
         tree = ast.parse(generated.read_text(encoding="utf-8-sig"))
         assert not ({n.name for n in tree.body if isinstance(n, ast.ClassDef)} & set(errors))
 
@@ -241,14 +304,14 @@ def test_shared_function_errors_end_to_end(tmp_path, monkeypatch):
 import pyleecan
 pyleecan.__path__.insert(0, {str(package_root)!r})
 from pyleecan.Classes_new import _error
-from pyleecan.Functions_new.SciDataTool import FTError, AxisError, NormError, UnitError
-from pyleecan.Functions_new.GMSH import InputError
-from pyleecan.Functions_new.path_tools import ImportError, FileError
-from pyleecan.Functions_new.Load.load_json import LoadMissingFileError, load_json
-from pyleecan.Functions_new.load import LoadWrongTypeError
-from pyleecan.Functions_new.save import FormatError
-from pyleecan.Functions_new.Load.retrocompatibility import RetroCompatibilityError
-from pyleecan.Functions_new.Structural.conversions import DimError
+from pyleecan.Classes_new._error import FTError, AxisError, NormError, UnitError
+from pyleecan.Classes_new._error import GMSHInputError as InputError
+from pyleecan.Classes_new._error import PathImportError as ImportError, FileError
+from pyleecan.Functions_new.Load.load_json import load_json
+from pyleecan.Classes_new._error import (
+    DimError, FormatError, LoadMissingFileError, LoadWrongTypeError,
+    RetroCompatibilityError,
+)
 assert FTError is _error.FTError
 assert all(issubclass(x, FTError) for x in (AxisError, NormError, UnitError))
 assert InputError is _error.GMSHInputError and InputError is not _error.InputError

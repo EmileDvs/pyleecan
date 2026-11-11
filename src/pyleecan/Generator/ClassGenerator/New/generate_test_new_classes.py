@@ -16,7 +16,13 @@ from pathlib import Path
 
 from pyleecan.definitions import TEST_DIR
 from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
-from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
+from pyleecan.Generator.ClassGenerator.New.class_generator import (
+    VENDORED_CLASS_PACKAGES,
+    class_module_name,
+)
+from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
+    _redirect_shared_error_imports,
+)
 
 TEST_FOLDERS = (
     "Classes",
@@ -41,6 +47,7 @@ RESULT_NAMES = {
 
 def _rewrite_source(source, path, class_dir):
     """Rewrite imports without modifying unrelated code, comments or strings."""
+    source = _redirect_shared_error_imports(source, "Tests")
     tree = ast.parse(source, filename=str(path))
     encoded = source.encode("utf-8")
     offsets = [0]
@@ -75,15 +82,19 @@ def _rewrite_source(source, path, class_dir):
         end = offset(node.end_lineno, node.end_col_offset)
         if node.module.startswith("pyleecan.Classes."):
             class_name = node.module.removeprefix("pyleecan.Classes.")
-            if "." in class_name:
+            is_vendored = class_name.split(".")[0] in VENDORED_CLASS_PACKAGES
+            if "." in class_name and not is_vendored:
                 unsupported.append((node.lineno, node.module))
                 continue
             module_name = (
                 class_name
-                if class_name.startswith("_")
+                if is_vendored or class_name.startswith("_")
                 else class_module_name(class_name)
             )
-            if not (class_dir / (module_name + ".py")).is_file():
+            module_path = class_dir.joinpath(*module_name.split("."))
+            if not module_path.with_suffix(".py").is_file() and not (
+                module_path / "__init__.py"
+            ).is_file():
                 unsupported.append((node.lineno, node.module))
                 continue
             module_bytes = node.module.encode("utf-8")

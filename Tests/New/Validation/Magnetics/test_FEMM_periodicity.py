@@ -24,8 +24,8 @@ from pyleecan.Classes_new.bore_flower import BoreFlower
 from pyleecan.Classes_new.mag_femm import MagFEMM
 from pyleecan.Classes_new.force_mt import ForceMT
 
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 
 from pyleecan.definitions import DATA_DIR
 

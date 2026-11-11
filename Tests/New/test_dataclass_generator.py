@@ -344,6 +344,90 @@ def test_exception_sorting_respects_bases_and_alphabetizes_ready_classes():
         assert issubclass(namespace["AChild"], namespace["ZBase"])
 
 
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_vendored_class_imports_are_redirected(import_style):
+    source = (
+        "from pyleecan.Classes._smoot.smoot import MOO as Optimizer\n"
+        "from pyleecan.Classes._swat_em import datamodel\n"
+        "from pyleecan.Classes._other import untouched\n"
+    )
+    result = class_generator._redirect_experimental_class_imports(
+        source, "pyleecan", {}
+    )
+    result = class_generator._apply_import_style(
+        result, "pyleecan", import_style, "Classes_new"
+    )
+    prefix = "pyleecan.Classes_new." if import_style == "absolute" else "."
+    assert f"from {prefix}_smoot.smoot import MOO as Optimizer" in result
+    assert f"from {prefix}_swat_em import datamodel" in result
+    assert "Classes._other import untouched" in result
+
+
+@pytest.mark.parametrize(
+    ("class_name", "method_path", "method_name", "package"),
+    [
+        ("Winding", ("Machine", "Winding"), "comp_connection_mat", "_swat_em"),
+        (
+            "OptiBayesAlgSmoot",
+            ("Optimization", "OptiBayesAlgSmoot"),
+            "solve",
+            "_smoot.smoot",
+        ),
+    ],
+)
+def test_generated_methods_use_vendored_classes(
+    generator_environment, tmp_path, class_name, method_path, method_name, package
+):
+    class_dict = deepcopy(generator_environment[class_name])
+    class_dict["methods"] = [method_name]
+    methods = tmp_path / "Methods" / Path(*method_path)
+    methods.mkdir(parents=True)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / Path(*method_path) / f"{method_name}.py",
+        methods,
+    )
+    gen_dict = dict(generator_environment)
+    gen_dict[class_name] = class_dict
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict,
+        class_name,
+        str(output),
+        import_style="relative",
+        class_import_graph={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert f"from .{package} import " in source
+    assert f"Classes.{package} import " not in source
+
+
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_generated_method_imports_shared_function_error(
+    generator_environment, tmp_path, import_style
+):
+    class_dict = deepcopy(generator_environment["MeshSolution"])
+    class_dict["methods"] = ["get_field"]
+    methods = tmp_path / "Methods" / "Mesh" / "MeshSolution"
+    methods.mkdir(parents=True)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / "Mesh" / "MeshSolution" / "get_field.py",
+        methods,
+    )
+    gen_dict = dict(generator_environment)
+    gen_dict["MeshSolution"] = class_dict
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    path = class_generator.generate_class(
+        gen_dict, "MeshSolution", str(output),
+        import_style=import_style, class_import_graph={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    prefix = "." if import_style == "relative" else "pyleecan.Classes_new."
+    assert f"from {prefix}_error import DimError" in source
+    assert "import cart2pol, pol2cart" in source
+
+
 def test_exception_sorting_reports_circular_dependencies():
     definitions = ast.parse(
         "class AError(BError): pass\nclass BError(AError): pass\n"

@@ -18,7 +18,7 @@ from itertools import repeat
 
 import random
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 

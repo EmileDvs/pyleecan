@@ -24,7 +24,7 @@ from pyleecan.Classes_new.input_current import InputCurrent
 from pyleecan.Classes_new.var_opti import VarOpti
 from pyleecan.Classes_new.output import Output
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 import matplotlib.pyplot as plt
 import matplotlib.image as img

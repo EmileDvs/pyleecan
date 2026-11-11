@@ -41,7 +41,4 @@ def merge_notch_list(notch_list_1, notch_list_2):
     return merged
 
 
-class NotchError(Exception):
-    """Raised when notch are coliding"""
-
-    pass
+from pyleecan.Classes_new._error import NotchError

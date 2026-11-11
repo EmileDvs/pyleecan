@@ -14,7 +14,7 @@ from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.Classes_new.struct_elmer import StructElmer
 from pyleecan.Classes_new.input_voltage import InputVoltage
 from pyleecan.Classes_new.output import Output
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 
 # get the machine

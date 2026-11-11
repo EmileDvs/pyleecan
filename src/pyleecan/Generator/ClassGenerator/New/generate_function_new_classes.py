@@ -3,8 +3,8 @@
 Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_function_new_classes``
 after generating Classes_new. Existing generated copies are overwritten. Legacy
 load/save compatibility and unsupported dynamic imports are reported for review.
-Selected function exceptions are re-exported from Classes_new._error; regenerate
-the classes first when those shared definitions change.
+Selected function exceptions are imported directly from Classes_new._error;
+regenerate the classes first when those shared definitions change.
 
 Experimental adaptations are implemented as targeted source transformations
 here. Changes made only in Functions_new are overwritten on regeneration.
@@ -19,7 +19,10 @@ from pathlib import Path
 
 from pyleecan.definitions import MAIN_DIR
 from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
-from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
+from pyleecan.Generator.ClassGenerator.New.class_generator import (
+    VENDORED_CLASS_PACKAGES,
+    class_module_name,
+)
 
 FUNCTION_ERRORS = {
     "Converter.Utils.ConvertionError": {"ConvertionError": "ConvertionError"},
@@ -49,7 +52,7 @@ FUNCTION_ERRORS = {
 
 
 def _redirect_function_errors(source, path, relative_path, class_dir):
-    """Replace selected definitions with re-exported shared exceptions."""
+    """Replace selected definitions with shared imports only where used."""
     parts = list(relative_path.with_suffix("").parts)
     if parts[-1] == "__init__":
         parts.pop()
@@ -93,16 +96,77 @@ def _redirect_function_errors(source, path, relative_path, class_dir):
             )
         if node.decorator_list:
             raise ValueError(f"{path}:{node.lineno}: decorated exception {name}")
+    used = {
+        node.id
+        for item in tree.body
+        if item not in (definitions[name] for name in errors)
+        for node in ast.walk(item)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
     lines = source.splitlines(keepends=True)
     for name, shared_name in sorted(
         errors.items(), key=lambda item: definitions[item[0]].lineno, reverse=True
     ):
         node = definitions[name]
         alias = f" as {name}" if name != shared_name else ""
-        lines[node.lineno - 1 : node.end_lineno] = [
-            f"from pyleecan.Classes_new._error import {shared_name}{alias}\n"
-        ]
+        lines[node.lineno - 1 : node.end_lineno] = (
+            [f"from pyleecan.Classes_new._error import {shared_name}{alias}\n"]
+            if name in used
+            else []
+        )
     return "".join(lines)
+
+
+def _redirect_shared_error_imports(source, package, soft_name="pyleecan"):
+    """Redirect imports of centralized function errors, preserving bindings."""
+    data = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(data):
+        if value == 10:
+            offsets.append(index + 1)
+    replacements = []
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        module = node.module or ""
+        if node.level:
+            module = resolve_name("." * node.level + module, package)
+        errors = None
+        for prefix in (f"{soft_name}.Functions.", f"{soft_name}.Functions_new."):
+            if module.startswith(prefix):
+                errors = FUNCTION_ERRORS.get(module[len(prefix) :])
+                break
+        if not errors:
+            continue
+        if any(alias.name == "*" for alias in node.names):
+            raise ValueError(f"{module}:{node.lineno}: wildcard error import requires review")
+        selected = [alias for alias in node.names if alias.name in errors]
+        if not selected:
+            continue
+        remaining = [alias for alias in node.names if alias.name not in errors]
+        shared = [
+            ast.alias(
+                name=errors[alias.name],
+                asname=alias.asname or (
+                    alias.name if errors[alias.name] != alias.name else None
+                ),
+            )
+            for alias in selected
+        ]
+        imports = []
+        if remaining:
+            imports.append(ast.ImportFrom(module=node.module, names=remaining, level=node.level))
+        imports.append(
+            ast.ImportFrom(module=f"{soft_name}.Classes_new._error", names=shared, level=0)
+        )
+        replacement = ("; ".join(ast.unparse(item) for item in imports)).encode("utf-8")
+        replacements.append(
+            (offsets[node.lineno - 1] + node.col_offset,
+             offsets[node.end_lineno - 1] + node.end_col_offset, replacement)
+        )
+    for start, end, replacement in sorted(replacements, reverse=True):
+        data = data[:start] + replacement + data[end:]
+    return data.decode("utf-8")
 
 
 def _adapt_retrocompatibility(source, path):
@@ -267,7 +331,19 @@ def _rewrite_source(source, path, relative_path, class_dir):
                 continue
             if module == "pyleecan.Classes" or module.startswith("pyleecan.Classes."):
                 name = module.removeprefix("pyleecan.Classes.")
-                if (
+                if name.split(".")[0] in VENDORED_CLASS_PACKAGES:
+                    module_path = class_dir.joinpath(*name.split("."))
+                    if not module_path.with_suffix(".py").is_file() and not (
+                        module_path / "__init__.py"
+                    ).is_file():
+                        issues.append((node.lineno, f"legacy import: {module}"))
+                        continue
+                    replacement = ast.ImportFrom(
+                        module="pyleecan.Classes_new." + name,
+                        names=node.names,
+                        level=0,
+                    )
+                elif (
                     module == "pyleecan.Classes"
                     or "." in name
                     or name.startswith("_")
@@ -276,18 +352,19 @@ def _rewrite_source(source, path, relative_path, class_dir):
                 ):
                     issues.append((node.lineno, f"legacy import: {module}"))
                     continue
-                aliases = []
-                for alias in node.names:
-                    renamed = NORMALIZATION_CLASS_NAMES.get(alias.name, alias.name)
-                    binding = alias.asname or (
-                        alias.name if renamed != alias.name else None
+                else:
+                    aliases = []
+                    for alias in node.names:
+                        renamed = NORMALIZATION_CLASS_NAMES.get(alias.name, alias.name)
+                        binding = alias.asname or (
+                            alias.name if renamed != alias.name else None
+                        )
+                        aliases.append(ast.alias(name=renamed, asname=binding))
+                    replacement = ast.ImportFrom(
+                        module="pyleecan.Classes_new." + class_module_name(name),
+                        names=aliases,
+                        level=0,
                     )
-                    aliases.append(ast.alias(name=renamed, asname=binding))
-                replacement = ast.ImportFrom(
-                    module="pyleecan.Classes_new." + class_module_name(name),
-                    names=aliases,
-                    level=0,
-                )
             elif not node.level and (
                 module == "pyleecan.Functions"
                 or module.startswith("pyleecan.Functions.")
@@ -375,7 +452,27 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None):
             if relative == Path("Load") / "retrocompatibility.py":
                 source = _adapt_retrocompatibility(source, path)
             source = _redirect_function_errors(source, path, relative, class_dir)
+            package = ".".join(["pyleecan", "Functions", *relative.parts[:-1]])
+            source = _redirect_shared_error_imports(source, package)
             rewritten, found = _rewrite_source(source, path, relative, class_dir)
+            if relative in (
+                Path("Converter") / "Utils" / "ConvertionError.py",
+                Path("Converter") / "Utils" / "EquivalentError.py",
+            ):
+                body = ast.parse(rewritten).body
+                if body:
+                    raise ValueError(f"{path}: error-only module contains other code")
+                if destination.exists():
+                    with tokenize.open(destination) as existing:
+                        existing_tree = ast.parse(existing.read(), filename=str(destination))
+                    if any(
+                        not isinstance(node, ast.ImportFrom)
+                        or node.module != "pyleecan.Classes_new._error"
+                        for node in existing_tree.body
+                    ):
+                        raise ValueError(f"{destination}: refusing to remove modified module")
+                    destination.unlink()
+                continue
             destination.write_text(rewritten, encoding=encoding, newline="")
             issues.extend((relative, line, message) for line, message in found)
         else:

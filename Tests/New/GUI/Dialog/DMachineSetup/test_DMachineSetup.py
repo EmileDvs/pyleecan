@@ -17,7 +17,7 @@ from pyleecan.Classes_new.machine_wrsm import MachineWRSM
 from pyleecan.Classes_new.machine_srm import MachineSRM
 from pyleecan.Classes_new.machine_lspm import MachineLSPM
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.Functions.load import load_matlib
+from pyleecan.Functions_new.load import load_matlib
 from Tests.New._test_paths import save_gui_path as save_path
 from Tests import TEST_DATA_DIR
 from pyleecan.definitions import DATA_DIR

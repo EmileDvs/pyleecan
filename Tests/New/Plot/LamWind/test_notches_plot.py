@@ -15,7 +15,7 @@ from pyleecan.Classes_new.notch_even_dist import NotchEvenDist
 
 from Tests.New._test_paths import save_plot_path as save_path
 from Tests.New.Plot.LamWind import wind_mat
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 

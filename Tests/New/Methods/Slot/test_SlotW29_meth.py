@@ -9,7 +9,7 @@ from numpy import ndarray, arcsin, exp
 from pyleecan.Classes_new.lam_slot import LamSlot
 from pyleecan.Classes_new.slot import Slot
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from os.path import join
 from pyleecan.definitions import DATA_DIR
 

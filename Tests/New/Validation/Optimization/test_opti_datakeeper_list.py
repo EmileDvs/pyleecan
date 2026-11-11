@@ -18,7 +18,7 @@ from pyleecan.Classes_new.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
 import random
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 

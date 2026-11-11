@@ -3,7 +3,7 @@ import pytest
 
 from pyleecan.Classes_new.data_1d import Data1D
 from pyleecan.Classes_new.data_time import DataTime
-from pyleecan.Functions.SciDataTool.omp import comp_undersampled_axe, comp_undersampling
+from pyleecan.Functions_new.SciDataTool.omp import comp_undersampled_axe, comp_undersampling
 
 
 @pytest.mark.scidatatool

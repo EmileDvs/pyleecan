@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .. import __version__
-from ..Functions_new.Converter.Utils.ConvertionError import ConvertionError
+from ._error import ConvertionError
 from ._pyleecan_class import PyleecanClass
 from .cond_type_11 import CondType11
 from .cond_type_12 import CondType12

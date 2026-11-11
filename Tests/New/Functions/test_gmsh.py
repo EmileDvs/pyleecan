@@ -3,7 +3,7 @@ from os.path import isfile, join
 import pytest
 
 try:
-    from pyleecan.Functions.GMSH.gen_3D_mesh import gen_3D_mesh
+    from pyleecan.Functions_new.GMSH.gen_3D_mesh import gen_3D_mesh
 except:
     gen_3D_mesh = ImportError
 

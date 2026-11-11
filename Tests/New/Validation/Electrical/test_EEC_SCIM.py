@@ -9,8 +9,8 @@ from pyleecan.Classes_new.eec_scim import EEC_SCIM
 from pyleecan.Classes_new.mag_femm import MagFEMM
 from pyleecan.Classes_new.op_dq import OPdq
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
-from pyleecan.Functions.SciDataTool.Plot.plot_2D import plot_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.SciDataTool.Plot.plot_2D import plot_2D
 
 is_show_fig = False
 

@@ -5,13 +5,13 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..Functions_new.SciDataTool import AxisError
 from ..Functions_new.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
     get_sum_amplitudes,
     get_sum_indices,
 )
+from ._error import AxisError
 from ._import import import_class
 from .data_1d import Data1D
 from .data_nd import DataND

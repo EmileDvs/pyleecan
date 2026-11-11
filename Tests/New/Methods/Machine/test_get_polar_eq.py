@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from numpy import pi
 
 from Tests.New._test_paths import save_plot_path as save_path
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 

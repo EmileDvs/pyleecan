@@ -12,7 +12,7 @@ from pymoo.indicators.hv import HV
 from pymoo.indicators.igd import IGD
 from smt.sampling_methods import LHS
 
-from pyleecan.Classes._smoot import MOO
+from pyleecan.Classes_new._smoot import MOO
 
 
 def write_increase_iter(

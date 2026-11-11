@@ -1,4 +1,4 @@
-from ....Functions_new.Converter.Utils.ConvertionError import ConvertionError
+from pyleecan.Classes_new._error import ConvertionError
 from numpy import pi
 
 

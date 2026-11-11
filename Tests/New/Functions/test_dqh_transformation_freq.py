@@ -6,14 +6,14 @@ from numpy.testing import assert_array_almost_equal
 from pyleecan.Classes_new.data_1d import Data1D
 from pyleecan.Classes_new.data_time import DataTime
 from pyleecan.Classes_new.norm_ref import NormRef as Norm_ref
-from pyleecan.Functions.Electrical.dqh_transformation import n2dqh_DataTime
-from pyleecan.Functions.Electrical.dqh_transformation_freq import (
+from pyleecan.Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
+from pyleecan.Functions_new.Electrical.dqh_transformation_freq import (
     dqh2n_DataFreq,
     get_phase_dir,
     get_phase_dir_DataFreq,
     n2dqh_DataFreq,
 )
-from pyleecan.Functions.Winding.gen_phase_list import gen_name
+from pyleecan.Functions_new.Winding.gen_phase_list import gen_name
 
 param_list = [
     {"qs": 3, "current_dir": -1, "phase_dir": -1},  # pyleecan convention, 3 phases

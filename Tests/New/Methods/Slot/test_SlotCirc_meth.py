@@ -8,7 +8,7 @@ from pyleecan.Classes_new.lam_slot import LamSlot
 from pyleecan.Classes_new.slot import Slot
 from pyleecan.Methods.Slot.SlotCirc import SlotCheckError
 import matplotlib.pyplot as plt
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from Tests.New._test_paths import save_load_path
 
 # For AlmostEqual

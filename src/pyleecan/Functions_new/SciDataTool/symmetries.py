@@ -1,6 +1,6 @@
 from numpy import append, concatenate, negative, ones, tile
 
-from ...Functions_new.SciDataTool import AxisError
+from pyleecan.Classes_new._error import AxisError
 
 
 def rebuild_symmetries(values, axis_index, symmetries):

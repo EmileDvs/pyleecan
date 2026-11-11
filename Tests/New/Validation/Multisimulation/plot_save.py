@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from os.path import join
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.Plot import dict_2D
 
 
 def plot_save(output):

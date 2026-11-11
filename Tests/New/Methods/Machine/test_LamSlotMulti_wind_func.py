@@ -6,7 +6,7 @@ from numpy import linspace, pi
 from pyleecan.Classes_new.lam_slot_multi_wind import LamSlotMultiWind
 from numpy.testing import assert_array_almost_equal
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from Tests.New._test_paths import save_plot_path as save_path
 
 

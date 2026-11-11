@@ -84,6 +84,34 @@ def test_generation_copies_trees_and_preserves_data_and_results(tmp_path):
     assert result.read_text(encoding="utf-8") == "result"
 
 
+def test_rewrite_vendored_class_packages(tmp_path):
+    for package in ("_smoot", "_swat_em"):
+        folder = tmp_path / package
+        folder.mkdir()
+        (folder / "__init__.py").touch()
+        (folder / "helper.py").touch()
+    source = (
+        "from pyleecan.Classes._smoot import MOO as Optimizer\n"
+        "from pyleecan.Classes._swat_em.helper import item\n"
+    )
+    result, issues = _rewrite_source(source, Path("sample.py"), tmp_path)
+    assert result == source.replace("pyleecan.Classes.", "pyleecan.Classes_new.")
+    assert issues == []
+    (tmp_path / "_swat_em" / "helper.py").unlink()
+    result, issues = _rewrite_source(source, Path("sample.py"), tmp_path)
+    assert "from pyleecan.Classes._swat_em.helper import item" in result
+    assert issues == [(2, "pyleecan.Classes._swat_em.helper")]
+
+
+def test_rewrite_shared_error_imports(tmp_path):
+    source = "from pyleecan.Functions.load import load, LoadWrongTypeError as BadType\n"
+    result, issues = _rewrite_source(source, Path("sample.py"), tmp_path)
+    assert "from pyleecan.Functions_new.load import load" in result
+    assert "from pyleecan.Classes_new._error import LoadWrongTypeError as BadType" in result
+    assert issues == []
+    ast.parse(result)
+
+
 def test_rewrite_function_imports_preserves_format_and_bindings(tmp_path):
     source = (
         "# from pyleecan.Functions.load import load\n"

@@ -6,7 +6,7 @@ from numpy import pi
 from pyleecan.Classes_new.notch_even_dist import NotchEvenDist
 from pyleecan.Classes_new.slot_circ import SlotCirc
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 
 @pytest.mark.IPMSM

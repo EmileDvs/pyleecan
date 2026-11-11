@@ -7,7 +7,7 @@ from numpy.testing import assert_almost_equal
 from pyleecan.Classes_new.end_winding_rect import EndWindingRect
 from pyleecan.Classes_new.end_winding_circ import EndWindingCirc
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 from pyleecan.definitions import DATA_DIR
 

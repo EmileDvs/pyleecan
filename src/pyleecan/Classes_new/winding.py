@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 
-from ..Classes._swat_em import datamodel
 from ..definitions import config_dict
 from ..Functions_new._swat_em import plots
 from ..Functions_new._swat_em.config import config
@@ -24,6 +23,7 @@ from ..Functions_new.Winding.reverse_wind_mat import (
 from ..Functions_new.Winding.shift_wind_mat import shift_wind_mat
 from ._error import WindingError
 from ._pyleecan_class import PyleecanClass
+from ._swat_em import datamodel
 from .conductor import Conductor
 from .end_winding import EndWinding
 

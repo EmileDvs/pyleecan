@@ -4,7 +4,7 @@ from shutil import copytree, rmtree
 import pytest
 import mock
 from PySide6 import QtWidgets
-from pyleecan.Functions.load import LIB_KEY, MACH_KEY, load, load_matlib
+from pyleecan.Functions_new.load import LIB_KEY, MACH_KEY, load, load_matlib
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.SMHoleMag import SMHoleMag
 from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (

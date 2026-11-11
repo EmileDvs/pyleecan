@@ -7,9 +7,9 @@ from typing import Any
 
 import numpy as np
 
-from ..Functions_new.SciDataTool import AxisError, NormError
 from ..Functions_new.SciDataTool.conversions import convert
 from ..Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
+from ._error import AxisError, NormError
 from ._import import import_class
 from .data import Data
 from .norm_vector import NormVector

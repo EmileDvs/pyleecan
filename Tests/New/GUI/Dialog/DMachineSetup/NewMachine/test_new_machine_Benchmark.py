@@ -33,7 +33,7 @@ from pyleecan.GUI.Dialog.DMachineSetup.SSkew.SSkew import SSkew
 from Tests.New.GUI import gui_option  # Set unit as [m]
 from Tests.New._test_paths import save_gui_path as save_path
 
-from pyleecan.Functions.load import load_matlib
+from pyleecan.Functions_new.load import load_matlib
 
 from pyleecan.definitions import DATA_DIR
 

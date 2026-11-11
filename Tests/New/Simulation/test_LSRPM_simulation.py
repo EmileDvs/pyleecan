@@ -1,7 +1,7 @@
 # Load the machine
 from os.path import join
 from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 import matplotlib.pyplot as plt
 import pytest

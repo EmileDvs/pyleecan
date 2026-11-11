@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from numpy import exp, pi
 from pyleecan.Classes.import_all import *
 
-from pyleecan.Functions.Plot import P_FONT_SIZE, TEXT_BOX
+from pyleecan.Functions_new.Plot import P_FONT_SIZE, TEXT_BOX
 from Tests.New._test_paths import SCHEMATICS_PATH
 
 

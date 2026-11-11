@@ -14,7 +14,7 @@ from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.Classes_new.solution_vector import SolutionVector
 from pyleecan.Classes_new.vector_field import VectorField
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from Tests.New._test_paths import save_plot_path as save_path
 
 DELTA = 1e-6

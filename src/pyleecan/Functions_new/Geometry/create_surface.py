@@ -4,8 +4,7 @@ from pyleecan.Classes_new.arc import Arc
 from pyleecan.Classes_new.arc_2 import Arc2
 
 
-class SurfaceError(Exception):
-    pass
+from pyleecan.Classes_new._error import SurfaceError
 
 
 def create_surface(line_list):

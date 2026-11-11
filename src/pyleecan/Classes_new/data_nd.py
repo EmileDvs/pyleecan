@@ -10,13 +10,7 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..Functions_new.SciDataTool import (
-    AxisError,
-    NormError,
-    UnitError,
-    axes_dict_transformation,
-    rev_axes_dict,
-)
+from ..Functions_new.SciDataTool import axes_dict_transformation, rev_axes_dict
 from ..Functions_new.SciDataTool.change_referential import (
     change_referential_spectrum,
     change_referential_waveform,
@@ -73,6 +67,7 @@ from ..Functions_new.SciDataTool.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 from ._check import check_dimensions, check_var
+from ._error import AxisError, NormError, UnitError
 from ._import import import_class
 from .data import Data
 from .data_1d import Data1D

@@ -7,8 +7,8 @@ from typing import Any
 
 import numpy as np
 
-from ..Functions_new.SciDataTool import NormError
 from ..Functions_new.SciDataTool.conversions import convert
+from ._error import NormError
 from .data import Data
 
 

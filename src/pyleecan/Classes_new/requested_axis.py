@@ -7,8 +7,8 @@ from typing import Any
 
 import numpy as np
 
-from ..Functions_new.SciDataTool import AxisError
 from ..Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
+from ._error import AxisError
 from ._pyleecan_class import PyleecanClass
 from .data_pattern import DataPattern
 

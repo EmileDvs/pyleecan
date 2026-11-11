@@ -12,7 +12,7 @@ from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleMUD.PHoleMUD import PHoleM
 from Tests.New.GUI import gui_option  # Set unit to m
 from Tests import TEST_DATA_DIR
 from pyleecan.Classes_new.material import Material
-from pyleecan.Functions.load import load_matlib
+from pyleecan.Functions_new.load import load_matlib
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.definitions import DATA_DIR
 

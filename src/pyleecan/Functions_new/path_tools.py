@@ -47,16 +47,10 @@ def abs_file_path(file_path, is_check=True):
     return file_path
 
 
-class FileError(Exception):
-    """Raised when the file does not exists"""
-
-    pass
+from pyleecan.Classes_new._error import FileError
 
 
-class ImportError(Exception):
-    """Raised when the path could not be imported"""
-
-    pass
+from pyleecan.Classes_new._error import PathImportError as ImportError
 
 
 if __name__ == "__main__":

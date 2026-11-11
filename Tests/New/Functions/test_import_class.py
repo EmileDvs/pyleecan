@@ -4,7 +4,7 @@ import pytest
 
 from pyleecan.Classes_new._check import InitUnKnowClassError
 from pyleecan.Classes_new.magnetics import Magnetics
-from pyleecan.Functions.Load.import_class import import_class
+from pyleecan.Functions_new.Load.import_class import import_class
 
 
 def test_import_class_returns_class():

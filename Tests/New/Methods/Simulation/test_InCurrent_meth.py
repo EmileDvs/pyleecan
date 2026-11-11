@@ -21,8 +21,8 @@ from pyleecan.Classes_new.output import Output
 from pyleecan.Classes_new.simulation import Simulation
 from pyleecan.Classes_new.op_dq import OPdq
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 from pyleecan.Methods.Simulation.Input import CURRENT_DIR_REF, ROT_DIR_REF, InputError
 import pytest
 from Tests.New._test_paths import save_plot_path as save_path

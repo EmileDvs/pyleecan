@@ -4,8 +4,7 @@ from .Save.save_hdf5 import save_hdf5
 from .Save.save_pkl import save_pkl
 
 
-class FormatError(Exception):
-    pass
+from pyleecan.Classes_new._error import FormatError
 
 
 def save(self, save_path="", is_folder=False, type_handle_old=2, type_compression=0):

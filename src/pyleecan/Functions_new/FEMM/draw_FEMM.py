@@ -254,7 +254,4 @@ def draw_FEMM(
     return FEMM_dict
 
 
-class FEMMError(Exception):
-    """Raised when FEMM is not possible to run"""
-
-    pass
+from pyleecan.Classes_new._error import FEMMError

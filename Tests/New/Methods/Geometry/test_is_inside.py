@@ -4,7 +4,7 @@ import pytest
 from pyleecan.Classes_new.circle import Circle
 from pyleecan.Classes_new.segment import Segment
 from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from Tests import TEST_DATA_DIR
 
 # Configuring the test of is_inside

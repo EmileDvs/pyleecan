@@ -13,8 +13,8 @@ from pyleecan.Classes_new.import_matlab import ImportMatlab
 from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
 from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
 from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR
 from Tests import TEST_DATA_DIR
 

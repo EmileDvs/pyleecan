@@ -1,7 +1,7 @@
 from numpy import inf, pi  # import pi for eval  # noqa: F401
 
 from pyleecan.Classes_new.requested_axis import RequestedAxis
-from ...Functions_new.SciDataTool import AxisError
+from pyleecan.Classes_new._error import AxisError
 
 
 def read_input_strings(args, axis_data):

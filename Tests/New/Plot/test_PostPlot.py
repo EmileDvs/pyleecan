@@ -16,8 +16,8 @@ from pyleecan.Classes_new.force_mt import ForceMT
 
 from pyleecan.Classes_new.post_plot import PostPlot
 
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR
 
 

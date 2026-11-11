@@ -12,8 +12,8 @@ from pyleecan.Classes_new.input_current import InputCurrent
 from pyleecan.Classes_new.mag_femm import MagFEMM
 from pyleecan.Classes_new.output import Output
 from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR
 from pyleecan.definitions import config_dict
 

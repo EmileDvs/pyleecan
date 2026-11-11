@@ -24,7 +24,7 @@ from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.Classes_new.var_load_current import VarLoadCurrent
 from pyleecan.Classes_new.var_param_sweep import VarParamSweep
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from Tests.New._test_paths import save_validation_path as save_path
 
 # Prius MTPA

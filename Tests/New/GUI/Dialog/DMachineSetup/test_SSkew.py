@@ -10,7 +10,7 @@ from PySide6 import QtWidgets
 
 from pyleecan.Classes_new.skew import Skew
 from pyleecan.GUI.Dialog.DMachineSetup.SSkew.SSkew import SSkew
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 

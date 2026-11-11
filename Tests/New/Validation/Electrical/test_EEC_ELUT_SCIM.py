@@ -12,7 +12,7 @@ from pyleecan.Classes_new.lut_slip import LUTslip
 from pyleecan.Classes_new.op_slip import OPslip
 from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR, TEST_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 is_show_fig = True
 

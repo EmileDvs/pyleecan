@@ -26,15 +26,10 @@ from pyleecan.Classes_new.slot_ud import SlotUD
 from pyleecan.Classes_new.hole_ud import HoleUD
 from pyleecan.Classes_new.winding import Winding
 from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Functions.load import (
-    LoadWrongDictClassError,
-    LoadWrongTypeError,
-    load,
-    load_dict,
-    load_list,
-)
-from pyleecan.Functions.Load.load_json import LoadMissingFileError
-from pyleecan.Functions.Save.save_json import save_json
+from pyleecan.Functions_new.load import load, load_dict, load_list
+from pyleecan.Classes_new._error import LoadWrongDictClassError, LoadWrongTypeError
+from pyleecan.Classes_new._error import LoadMissingFileError
+from pyleecan.Functions_new.Save.save_json import save_json
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_load_path as save_path
 from Tests import x as logger

@@ -7,17 +7,20 @@ from ...Functions_new.Load.import_class import import_class
 from ...loggers import GUI_LOG_NAME
 
 
-class RetroCompatibilityError(Exception):
-    pass
+from pyleecan.Classes_new._error import RetroCompatibilityError
 
 
-NORMALIZATION_CLASS_NAMES = {
-    "Norm_ref": "NormRef",
-    "Norm_affine": "NormAffine",
-    "Norm_func": "NormFunc",
-    "Norm_indices": "NormIndices",
-    "Norm_vector": "NormVector",
-}
+NORMALIZATION_CLASS_NAMES = {'Norm_ref': 'NormRef', 'Norm_affine': 'NormAffine', 'Norm_func': 'NormFunc', 'Norm_indices': 'NormIndices', 'Norm_vector': 'NormVector'}
+
+
+Normalization_VERSION = "1.5.2"
+
+
+def convert_normalization(init_dict):
+    """Update an old normalization class name in place."""
+    class_name = init_dict.get("__class__")
+    if class_name in NORMALIZATION_CLASS_NAMES:
+        init_dict["__class__"] = NORMALIZATION_CLASS_NAMES[class_name]
 
 
 def convert_init_dict(init_dict):
@@ -534,7 +537,7 @@ def convert_meshsolution_mesh(meshsolution_dict):
             }
         else:  # Duplicated labels
             getLogger(GUI_LOG_NAME).warning(
-                f'MeshSolution constains solutions with same label, instancing solution_dict with "{meshsolution_dict_new["label"]}_i"'
+                f"MeshSolution constains solutions with same label, instancing solution_dict with \"{meshsolution_dict_new['label']}_i\""
             )
             meshsolution_dict_new["solution_dict"] = {
                 f"{meshsolution_dict_new['label']}_{k}": solution
@@ -544,20 +547,6 @@ def convert_meshsolution_mesh(meshsolution_dict):
         del meshsolution_dict_new["solution"]
 
     return MeshSolution(init_dict=meshsolution_dict_new)
-
-
-######################
-# v 1.5.1 => 1.5.2
-# Normalization class names use CamelCase
-######################
-Normalization_VERSION = "1.5.2"
-
-
-def convert_normalization(init_dict):
-    """Update an old normalization class name in place."""
-    class_name = init_dict.get("__class__")
-    if class_name in NORMALIZATION_CLASS_NAMES:
-        init_dict["__class__"] = NORMALIZATION_CLASS_NAMES[class_name]
 
 
 def is_before_version(ref_version, check_version=None):
@@ -626,7 +615,7 @@ def create_update_dict(file_version):
 
     # Set every parameter to update if the version is not defined
     if file_version is None:
-        update_dict = {class_obj: True for class_obj in OBJECT_VERSION_DICT}
+        update_dict = {class_obj: True for class_obj in OBJECT_VERSION_DICT.keys()}
     else:
         update_dict = {
             class_obj: is_before_version(version, file_version)

@@ -13,12 +13,6 @@ from numpy import (
 )
 
 
-class DimError(Exception):
-    """Raised when the dimension of the field does not match requested operation (3D vs 1D)"""
-
-    pass
-
-
 def xyz_to_rphiz(values):
     """Converts axis values from cartesian coordinates into cylindrical coordinates
 

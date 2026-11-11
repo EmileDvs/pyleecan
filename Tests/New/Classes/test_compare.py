@@ -11,7 +11,7 @@ from pyleecan.Classes_new.mag_femm import MagFEMM
 from pyleecan.Classes_new.post_plot import PostPlot
 from pyleecan.Classes_new.post_function import PostFunction
 from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 

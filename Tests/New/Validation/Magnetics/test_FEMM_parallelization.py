@@ -12,8 +12,8 @@ from pyleecan.Classes_new.mag_femm import MagFEMM
 from pyleecan.Classes_new.op_dq import OPdq
 from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 from Tests.New._test_paths import save_validation_path as save_path
 
 

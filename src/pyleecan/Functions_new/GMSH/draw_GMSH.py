@@ -5,7 +5,7 @@ from pyleecan.Classes_new.machine_scim import MachineSCIM
 from pyleecan.Classes_new.machine_wrsm import MachineWRSM
 
 from ...Functions_new.labels import HOLEM_LAB_S, MAG_LAB, BAR_LAB, short_label, LAM_LAB, YOKE_LAB, WIND_LAB_S, LAM_LAB_S, SHAFT_LAB, decode_label, SLID_LAB, AIRGAP_LAB, BOT_LAB, TOP_LAB, AIRBOX_LAB, AIRBOX_R_LAB, AR_B_LAB, AR_T_LAB, SBR_B_LAB, SBR_T_LAB, AS_BL_LAB, AS_BR_LAB, AS_TL_LAB, AS_TR_LAB
-from ...Functions_new.GMSH import InputError
+from pyleecan.Classes_new._error import GMSHInputError as InputError
 from ...Functions_new.GMSH.get_sliding_band import get_sliding_band
 from ...Functions_new.GMSH.get_air_box import get_air_box
 from ...Functions_new.GMSH.get_boundary_condition import get_boundary_condition

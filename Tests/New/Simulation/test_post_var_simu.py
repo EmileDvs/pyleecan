@@ -17,7 +17,7 @@ from pyleecan.Classes_new.var_param_sweep import VarParamSweep
 from pyleecan.Classes_new.param_explorer_set import ParamExplorerSet
 from pyleecan.Classes_new.data_keeper import DataKeeper
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 from Tests import TEST_DATA_DIR

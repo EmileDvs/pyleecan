@@ -1,7 +1,7 @@
 import pytest
 from os.path import join
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Classes_new.ventilation_circ import VentilationCirc
 from pyleecan.Classes_new.bore_flower import BoreFlower

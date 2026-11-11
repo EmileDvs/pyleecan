@@ -12,7 +12,7 @@ from pyleecan.Classes_new.op_dq import OPdq
 from pyleecan.Classes_new.output import Output
 from pyleecan.Classes_new.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from Tests.New._test_paths import save_load_path, save_plot_path
 
 

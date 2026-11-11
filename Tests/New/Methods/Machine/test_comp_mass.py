@@ -15,7 +15,7 @@ from pyleecan.Classes_new.ventilation_polar import VentilationPolar
 from pyleecan.Classes_new.hole_m_50 import HoleM50
 from pyleecan.Classes_new.frame import Frame
 from pyleecan.Classes_new.shaft import Shaft
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 Toyota_Prius = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))

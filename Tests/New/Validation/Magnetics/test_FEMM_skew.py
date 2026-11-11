@@ -10,8 +10,8 @@ from pyleecan.Classes_new.op_dq import OPdq
 from pyleecan.Classes_new.skew import Skew
 from pyleecan.Classes_new.simu_1 import Simu1
 
-from pyleecan.Functions.load import load
-from pyleecan.Functions.Plot import dict_2D
+from pyleecan.Functions_new.load import load
+from pyleecan.Functions_new.Plot import dict_2D
 
 from pyleecan.definitions import DATA_DIR
 

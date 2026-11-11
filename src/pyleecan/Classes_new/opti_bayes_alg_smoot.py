@@ -7,7 +7,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..Classes._smoot.smoot import MOO
+from ._smoot.smoot import MOO
 from .data_keeper import DataKeeper
 from .opti_bayes_alg import OptiBayesAlg
 from .opti_design_var_interval import OptiDesignVarInterval

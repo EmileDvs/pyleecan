@@ -28,7 +28,7 @@ from pyleecan.Classes_new.material import Material
 from pyleecan.Classes_new.mat_magnetics import MatMagnetics
 
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 
 def test_LSRPM():

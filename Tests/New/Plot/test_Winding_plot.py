@@ -12,7 +12,7 @@ from pyleecan.Classes_new.winding_sc import WindingSC
 from pyleecan.Classes_new.slot_w_21 import SlotW21
 from pyleecan.Classes_new.slot_w_22 import SlotW22
 from Tests.New._test_paths import save_plot_path as save_path
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 

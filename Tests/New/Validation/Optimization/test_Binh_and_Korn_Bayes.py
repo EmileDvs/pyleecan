@@ -29,7 +29,7 @@ import numpy as np
 import random
 from Tests.New._test_paths import save_validation_path as save_path
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR, TEST_DIR
 
 

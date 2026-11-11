@@ -7,7 +7,7 @@ from shutil import copyfile, rmtree
 
 from PySide6 import QtWidgets
 
-from pyleecan.Functions.load import load, load_matlib
+from pyleecan.Functions_new.load import load, load_matlib
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from Tests import TEST_DATA_DIR

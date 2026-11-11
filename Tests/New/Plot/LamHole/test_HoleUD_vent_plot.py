@@ -10,7 +10,7 @@ from pyleecan.Classes_new.ventilation_circ import VentilationCirc
 from pyleecan.Classes_new.hole_ud import HoleUD
 from pyleecan.Classes_new.segment import Segment
 from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Functions.labels import HOLEV_LAB
+from pyleecan.Functions_new.labels import HOLEV_LAB
 from Tests.New._test_paths import save_plot_path as save_path
 
 

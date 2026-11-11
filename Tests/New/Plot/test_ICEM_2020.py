@@ -9,12 +9,12 @@ from numpy import array, linspace, ones, pi, zeros
 from pyleecan.Classes.import_all import *
 
 try:
-    from pyleecan.Functions.GMSH.gen_3D_mesh import gen_3D_mesh
+    from pyleecan.Functions_new.GMSH.gen_3D_mesh import gen_3D_mesh
 except ImportError as error:
     gen_3D_mesh = error
 from Tests.New._test_paths import save_plot_path
 from Tests.New.Plot.LamWind import wind_mat
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.Classes_new.input_current import InputCurrent
 from pyleecan.Classes_new.mag_femm import MagFEMM
 from pyleecan.Classes_new.simu_1 import Simu1
@@ -29,7 +29,7 @@ from pyleecan.Classes_new.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
 import numpy as np
 import random
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 
 # Gather results in the same folder

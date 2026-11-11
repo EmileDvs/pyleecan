@@ -5,7 +5,7 @@ import pytest
 from numpy import pi
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 from pyleecan.definitions import DATA_DIR
 

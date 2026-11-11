@@ -57,7 +57,4 @@ def load_json(file_path):
     return file_path, json_data
 
 
-class LoadMissingFileError(Exception):
-    """ """
-
-    pass
+from pyleecan.Classes_new._error import LoadMissingFileError

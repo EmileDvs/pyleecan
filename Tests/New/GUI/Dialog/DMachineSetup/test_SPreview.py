@@ -10,7 +10,7 @@ from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.GUI.Dialog.DMachineSetup.SSimu.SSimu import SSimu
 from pyleecan.GUI.Dialog.DMachineSetup.SPreview.SPreview import SPreview
 from pyleecan.definitions import DATA_DIR as data_test, MAIN_DIR
-from pyleecan.Functions.load import load_matlib
+from pyleecan.Functions_new.load import load_matlib
 
 matlib_path = join(data_test, "Material")
 machine_path = join(MAIN_DIR, "Data", "Machine")

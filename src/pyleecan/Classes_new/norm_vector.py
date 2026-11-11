@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..Functions_new.SciDataTool import NormError
+from ._error import NormError
 from .normalization import Normalization
 
 

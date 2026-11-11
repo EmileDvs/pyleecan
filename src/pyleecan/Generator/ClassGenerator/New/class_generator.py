@@ -19,6 +19,7 @@ from ....Generator.read_fct import (
     is_list_pyleecan_type,
 )
 CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
+VENDORED_CLASS_PACKAGES = {"_smoot", "_swat_em"}
 MISSING_METHOD_REASONS = {"method source file is missing", "method function is missing"}
 
 
@@ -2619,6 +2620,16 @@ def _redirect_experimental_class_imports(source, soft_name, gen_dict):
                 )
             replacement = ("; ").join(ast.unparse(item) for item in imports)
         elif node.module.startswith(prefix) and (
+            node.module[len(prefix) :].split(".")[0] in VENDORED_CLASS_PACKAGES
+        ):
+            replacement = ast.unparse(
+                ast.ImportFrom(
+                    module=f"{soft_name}.Classes_new.{node.module[len(prefix):]}",
+                    names=node.names,
+                    level=0,
+                )
+            )
+        elif node.module.startswith(prefix) and (
             node.module[len(prefix) :] in gen_dict
             or node.module[len(prefix) :] in ("_check", "_FEMMHandler")
         ):
@@ -5063,6 +5074,9 @@ def _generate_dataclass_class(
     source = _apply_os_import_style(source)
     # Inlined methods and their imports were prepared relative to Classes.
     source = _apply_import_style(source, soft_name, "absolute")
+    from .generate_function_new_classes import _redirect_shared_error_imports
+
+    source = _redirect_shared_error_imports(source, soft_name + ".Classes", soft_name)
     source = _redirect_experimental_class_imports(source, soft_name, gen_dict)
     source = _remove_experimental_self_imports(
         source, soft_name, class_name, output_module_name

@@ -14,7 +14,7 @@ from pyleecan.Classes_new.hole_m_52 import HoleM52
 from pyleecan.Classes_new.slot_w_21 import SlotW21
 from pyleecan.Classes_new.shaft import Shaft
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from Tests.New._test_paths import save_plot_path as save_path
 
 

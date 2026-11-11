@@ -8,7 +8,7 @@ import mock
 from PySide6.QtGui import *
 from PySide6 import QtWidgets
 
-from pyleecan.Functions.load import load_matlib
+from pyleecan.Functions_new.load import load_matlib
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.definitions import DATA_DIR
 

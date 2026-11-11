@@ -2,7 +2,7 @@ from os.path import join
 
 import pytest
 
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
 from pyleecan.Classes_new.lam_hole import LamHole

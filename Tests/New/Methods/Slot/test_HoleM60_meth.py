@@ -5,7 +5,7 @@ import pytest
 from pyleecan.Classes_new.hole import Hole
 from pyleecan.Classes_new.lam_hole import LamHole
 from pyleecan.Classes_new.hole_m_60 import HoleM60
-from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
+from pyleecan.Functions_new.Geometry.inter_line_line import inter_line_line
 
 HoleM60_test = list()
 # Tests without magnet

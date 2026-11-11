@@ -6,8 +6,8 @@ import pytest
 from numpy import all as np_all
 from numpy import round as np_round
 from numpy.random import rand
-from pyleecan.Functions.Load.load_array import load_array
-from pyleecan.Functions.Save.save_array import save_array
+from pyleecan.Functions_new.Load.load_array import load_array
+from pyleecan.Functions_new.Save.save_array import save_array
 from Tests.New._test_paths import save_load_path as save_path
 from Tests import x as logger
 

@@ -1,12 +1,12 @@
 import pytest
-from pyleecan.Functions.load import load
+from pyleecan.Functions_new.load import load
 
 from Tests.New._test_paths import save_plot_path as save_path
 from pyleecan.definitions import DATA_DIR
 from os.path import join, isdir, isfile
 from os import makedirs, remove
 import matplotlib.pyplot as plt
-from pyleecan.Functions.init_fig import init_fig
+from pyleecan.Functions_new.init_fig import init_fig
 
 
 SCHEMATICS_PATH = join(save_path, "Schematics")
