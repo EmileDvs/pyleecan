@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 from dataclasses import dataclass, field, fields
+from functools import cache
 from importlib import import_module
 from pathlib import Path
 from sys import getsizeof
@@ -11,48 +12,24 @@ import numpy as np
 from dacite import Config, from_dict
 
 from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.Load.import_class import import_class as import_legacy_class
 from pyleecan.Functions.save import save
-from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 
 from ._parent_types import PARENT_TYPES
 
 
-def import_experimental_class(mod_name, class_name, prop_name=""):
-    """Load experimental normalizations under either name, or a legacy class."""
-    package = __package__.rsplit(".", 1)[0]
-    if mod_name == package + ".Classes":
-        for old_name, new_name in NORMALIZATION_CLASS_NAMES.items():
-            if class_name in (old_name, new_name):
-                module = import_module(f"{package}.Classes_new.{old_name.lower()}")
-                return getattr(module, new_name)
-    return import_legacy_class(mod_name, class_name, prop_name)
+@cache
+def _complex_field_names(cls):
+    """Names of the fields declared as complex (or complex | None)."""
+    return frozenset(
+        name
+        for name, hint in get_type_hints(cls).items()
+        if hint is complex or complex in get_args(hint)
+    )
 
 
-def construct_experimental_class(class_obj, data):
-    """Construct an experimental dataclass or a legacy init_dict class."""
-    if issubclass(class_obj, PyleecanClass):
-        return class_obj.from_dict(data)
-    return class_obj(init_dict=data)
-
-
-def load_experimental_normalization_values(value):
-    """Convert serialized experimental normalizations recursively."""
-    if isinstance(value, dict):
-        class_name = value.get("__class__")
-        if class_name in NORMALIZATION_CLASS_NAMES or class_name in (
-            NORMALIZATION_CLASS_NAMES.values()
-        ):
-            package = __package__.rsplit(".", 1)[0]
-            target = import_experimental_class(package + ".Classes", class_name)
-            return target.from_dict(value)
-        return {
-            key: load_experimental_normalization_values(item)
-            for key, item in value.items()
-        }
-    if isinstance(value, list):
-        return [load_experimental_normalization_values(item) for item in value]
-    return value
+def _to_complex(value):
+    """Legacy complex setter: complex values are serialized as str."""
+    return complex(value) if isinstance(value, str) else value
 
 
 @dataclass(eq=False)
@@ -122,7 +99,7 @@ class PyleecanClass:
         ]
         for name in null_fields:
             values.pop(name)
-        hooks = {np.ndarray: np.asarray}
+        hooks = {np.ndarray: np.asarray, complex: _to_complex}
         for field_info in fields(cls):
             field_type = hints.get(field_info.name)
             for candidate in cls._walk_types(field_type):
@@ -130,13 +107,20 @@ class PyleecanClass:
                     hooks[candidate] = lambda value, target=candidate: (
                         value
                         if isinstance(value, target)
-                        else construct_experimental_class(target, value)
+                        else cls._construct_from_dict(target, value)
                     )
         instance = from_dict(cls, values, config=Config(type_hooks=hooks))
         for name in null_fields:
             setattr(instance, name, None)
         instance._set_child_parents()
         return instance
+
+    @staticmethod
+    def _construct_from_dict(target, data):
+        """Build a generated dataclass, or another class (SciDataTool) by init_dict."""
+        if issubclass(target, PyleecanClass):
+            return target.from_dict(data)
+        return target(init_dict=data)
 
     @classmethod
     def _deserialize_field(cls, value, annotation, base_path):
@@ -231,6 +215,10 @@ class PyleecanClass:
             if field_info.metadata.get("serialize", True):
                 if field_info.metadata.get("as_dict") in ("1", "2"):
                     values[field_info.name] = None
+                elif field_info.name in _complex_field_names(type(self)):
+                    # Legacy: complex properties are serialized as str
+                    value = getattr(self, field_info.name)
+                    values[field_info.name] = None if value is None else str(value)
                 else:
                     values[field_info.name] = self._serialize_value(
                         getattr(self, field_info.name),

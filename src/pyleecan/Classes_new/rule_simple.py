@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Converter/RuleSimple.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, ClassVar
 
 from .rule import Rule
@@ -15,7 +15,7 @@ class RuleSimple(Rule):
     ----------
     other_key_list : list or None
         parameter
-        Default: []
+        Default: None
     P_obj_path : str or None
         path pyleecan parameter in object machine
         Default: None
@@ -27,7 +27,7 @@ class RuleSimple(Rule):
         Default: None
     """
 
-    other_key_list: list[Any] | None = field(default_factory=list)
+    other_key_list: list[Any] | None = None
     """parameter """
     P_obj_path: str | None = None
     """path pyleecan parameter in object machine """

@@ -33,9 +33,9 @@ class MeshSolution(PyleecanClass):
 
     Attributes
     ----------
-    label : str or None
+    label : str
         (Optional) Descriptive name of the mesh
-        Default: None
+        Default: ""
     mesh : Mesh or None
         A Mesh object.
         Default: Mesh()
@@ -44,7 +44,7 @@ class MeshSolution(PyleecanClass):
         Default: {}
     group : dict or None
         Dict sorted by groups name with list of elements indices.
-        Default: {}
+        Default: None
     dimension : int
         Dimension of the physical problem
         Default: 2; Minimum: 1; Maximum: 3
@@ -56,7 +56,7 @@ class MeshSolution(PyleecanClass):
     COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
     FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 
-    label: str | None = None
+    label: str = ""
     """(Optional) Descriptive name of the mesh"""
     mesh: Mesh | None = field(
         default_factory=lambda: Mesh(), metadata={"default_class": "Mesh"}
@@ -64,7 +64,7 @@ class MeshSolution(PyleecanClass):
     """A Mesh object. """
     solution_dict: dict[str, Solution] | None = field(default_factory=dict)
     """A dictionary of Solution objects"""
-    group: dict[str, Any] | None = field(default_factory=dict)
+    group: dict[str, Any] | None = None
     """Dict sorted by groups name with list of elements indices. """
     dimension: int = field(default=2, metadata={"min": 1, "max": 3})
     """Dimension of the physical problem"""

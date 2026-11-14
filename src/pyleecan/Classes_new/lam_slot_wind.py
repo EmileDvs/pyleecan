@@ -32,7 +32,6 @@ from ..Functions_new.Winding.comp_cond_function import comp_cond_function
 from ..Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
 from ..Functions_new.Winding.gen_phase_list import gen_color, gen_name
 from ._error import Lam_WindCheckError
-from ._import import import_class
 from ._swat_em import datamodel
 from .data_1d import Data1D
 from .data_freq import DataFreq
@@ -537,6 +536,8 @@ class LamSlotWind(LamSlot):
 
         """
 
+        from .input_voltage import InputVoltage
+
         # Check that parent machine is not None
         if self.parent is None:
             raise Exception("Cannot calculate mmf unit if parent machine is None")
@@ -560,7 +561,6 @@ class LamSlotWind(LamSlot):
         elif phase_dir not in [-1, 1]:
             raise Exception("Cannot enforce phase_dir other than +1 or -1")
 
-        InputVoltage = import_class("InputVoltage")
         input = InputVoltage(
             Na_tot=Na,
             Nt_tot=Nt,

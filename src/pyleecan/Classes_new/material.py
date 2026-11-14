@@ -42,9 +42,9 @@ class Material(PyleecanClass):
     desc : str
         material description
         Default: "Material description"
-    path : str or None
+    path : str
         Path to the material file
-        Default: None
+        Default: ""
     """
 
     name: str = "Material"
@@ -77,7 +77,7 @@ class Material(PyleecanClass):
     """Economical properties of the material"""
     desc: str = "Material description"
     """material description"""
-    path: str | None = None
+    path: str = ""
     """Path to the material file"""
 
     _package: ClassVar[str] = "Material"

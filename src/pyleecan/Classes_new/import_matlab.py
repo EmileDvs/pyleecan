@@ -18,17 +18,17 @@ class ImportMatlab(ImportMatrix):
 
     Attributes
     ----------
-    file_path : str or None
+    file_path : str
         Path of the file to load
-        Default: None
-    var_name : str or None
+        Default: ""
+    var_name : str
         Name of the variable to load
-        Default: None
+        Default: ""
     """
 
-    file_path: str | None = None
+    file_path: str = ""
     """Path of the file to load"""
-    var_name: str | None = None
+    var_name: str = ""
     """Name of the variable to load"""
 
     _package: ClassVar[str] = "Import"

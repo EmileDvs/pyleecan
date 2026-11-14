@@ -15,7 +15,6 @@ from ..Functions_new.Simulation.VarSimu.log_datakeeper_step_result import (
     log_datakeeper_step_result,
 )
 from ..Functions_new.Simulation.VarSimu.run_multisim_step import run_multisim_step
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_keeper import DataKeeper
 from .mag_femm import MagFEMM
@@ -28,12 +27,12 @@ class VarSimu(PyleecanClass):
 
     Attributes
     ----------
-    name : str or None
+    name : str
         Name of the multi-simulation
-        Default: None
-    desc : str or None
+        Default: ""
+    desc : str
         Multi-simulation description
-        Default: None
+        Default: ""
     datakeeper_list : [DataKeeper] or None
         List containing DataKeepers to extract VarSimu results
         Default: []
@@ -66,9 +65,9 @@ class VarSimu(PyleecanClass):
         Default: True
     """
 
-    name: str | None = None
+    name: str = ""
     """Name of the multi-simulation"""
-    desc: str | None = None
+    desc: str = ""
     """Multi-simulation description"""
     datakeeper_list: list[DataKeeper] | None = field(default_factory=list)
     """List containing DataKeepers to extract VarSimu results """
@@ -99,12 +98,13 @@ class VarSimu(PyleecanClass):
     # Inlined from Methods.Simulation.VarSimu.check_param
     def check_param(self):
         """Check VarParamSweep parameters validity"""
+        from .simulation import Simulation
+
         if type(self).__name__ == "VarSimu":
             raise self.VarSimuError(
                 "VarSimu is an abstract class, please create one of its daughters."
             )
 
-        Simulation = import_class("Simulation")
         # Check for simulation or VarSimu
         if self.parent is None or not isinstance(self.parent, Simulation):
             raise self.VarSimuError("VarSimu object must be inside a Simulation object")
@@ -112,6 +112,8 @@ class VarSimu(PyleecanClass):
     # Inlined from Methods.Simulation.VarSimu.gen_datakeeper_list
     def gen_datakeeper_list(self, ref_simu):
         """Generate default DataKeepers according the reference simulation type"""
+        from .input_current import InputCurrent
+
         datakeeper_list = []
 
         # To avoid adding twice a DataKeeper
@@ -119,7 +121,6 @@ class VarSimu(PyleecanClass):
         # For multi-simulation of multi-simulation (different DataKeepe<r)
         is_multi = ref_simu.var_simu is not None
         # Dynamic import to avoid loop
-        InputCurrent = import_class("InputCurrent", "")
 
         # Save speed
         if not is_multi and "N0" not in symbol_list:
@@ -363,8 +364,9 @@ class VarSimu(PyleecanClass):
             A VarSimu object
         """
 
+        from .output import Output
+
         logger = self.get_logger()
-        Output = import_class("Output")
 
         # Check var_simu parameters
         self.check_param()  # Check isinstance(self.parent, Simulation)
@@ -518,12 +520,13 @@ class VarSimu(PyleecanClass):
             Logger to use (info)
         """
 
+        from .input_current import InputCurrent
+        from .input_voltage import InputVoltage
+
         if layer == 2:
             msg = "    "
         else:
             msg = ""
-        InputCurrent = import_class("InputCurrent")
-        InputVoltage = import_class("InputVoltage")
         msg += "Running simulation " + str(index + 1) + "/" + str(nb_simu) + " with "
         for param_exp in paramexplorer_list:
             value = param_exp.get_value()[index]
@@ -597,7 +600,7 @@ class VarSimu(PyleecanClass):
             Name of the multi-simulation kind
         """
 
-        ElecLUTdq = import_class("ElecLUTdq")
+        from .elec_lut_dq import ElecLUTdq
 
         if simu.layer == 2:
             TAB = "    "

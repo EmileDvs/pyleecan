@@ -29,7 +29,7 @@ class SliceModel(PyleecanClass):
         Default: 5
     z_list : list or None
         List of slice positions
-        Unit: m; Default: []
+        Unit: m; Default: None
     angle_rotor : ndarray or None
         Array of rotor skew angles in case of skew
         Unit: rad; Default: None
@@ -51,7 +51,7 @@ class SliceModel(PyleecanClass):
     """Type of slice distribution to use for rotor skew if linear and continuous ("uniform", "gauss", "user-defined")"""
     Nslices: int = 5
     """Number of slices"""
-    z_list: list[Any] | None = field(default_factory=list, metadata={"unit": "m"})
+    z_list: list[Any] | None = field(default=None, metadata={"unit": "m"})
     """List of slice positions"""
     angle_rotor: np.ndarray | None = field(default=None, metadata={"unit": "rad"})
     """Array of rotor skew angles in case of skew"""

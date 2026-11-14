@@ -30,14 +30,14 @@ class LamSlotMulti(Lamination):
         Unit: [rad]; Default: None
     sym_dict_enforced : dict or None
         Dictionary to enforce the lamination symmetry
-        Default: {}
+        Default: None
     """
 
     slot_list: list[Slot] | None = field(default_factory=list)
     """List of lamination Slot"""
     alpha: np.ndarray | None = field(default=None, metadata={"unit": "[rad]"})
     """Angular position of the Slots"""
-    sym_dict_enforced: dict[str, Any] | None = field(default_factory=dict)
+    sym_dict_enforced: dict[str, Any] | None = None
     """Dictionary to enforce the lamination symmetry"""
 
     _package: ClassVar[str] = "Machine"

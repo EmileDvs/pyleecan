@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Output/OutMagElmer.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, ClassVar
 
 from .out_internal import OutInternal
@@ -15,10 +15,10 @@ class OutMagElmer(OutInternal):
     ----------
     FEA_dict : dict or None
         dictionary containing the main FEA parameters
-        Default: {}
+        Default: None
     """
 
-    FEA_dict: dict[str, Any] | None = field(default_factory=dict)
+    FEA_dict: dict[str, Any] | None = None
     """dictionary containing the main FEA parameters"""
 
     _package: ClassVar[str] = "Output"

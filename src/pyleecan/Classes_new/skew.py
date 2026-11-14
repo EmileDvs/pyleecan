@@ -8,7 +8,6 @@ import numpy as np
 
 from ..Functions_new.Plot import dict_2D
 from ..Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
@@ -34,10 +33,10 @@ class Skew(PyleecanClass):
         Default: None
     angle_list : list or None
         List of skew angles
-        Unit: rad; Default: []
+        Unit: rad; Default: None
     z_list : list or None
         List of z axis positions for which skew angles are given
-        Unit: m; Default: []
+        Unit: m; Default: None
     Nstep : int or None
         Number of steps if step skew
         Default: None; Minimum: 2
@@ -54,9 +53,9 @@ class Skew(PyleecanClass):
     """True to define skew as steps"""
     function: Callable[..., Any] | None = None
     """Function which describes skew pattern"""
-    angle_list: list[Any] | None = field(default_factory=list, metadata={"unit": "rad"})
+    angle_list: list[Any] | None = field(default=None, metadata={"unit": "rad"})
     """List of skew angles"""
-    z_list: list[Any] | None = field(default_factory=list, metadata={"unit": "m"})
+    z_list: list[Any] | None = field(default=None, metadata={"unit": "m"})
     """List of z axis positions for which skew angles are given"""
     Nstep: int | None = field(default=None, metadata={"min": 2})
     """Number of steps if step skew"""
@@ -290,14 +289,14 @@ class Skew(PyleecanClass):
 
         """
 
+        from .lam_slot_m import LamSlotM
+        from .lam_h import LamH
+
         angle_list, z_list = self.comp_pattern()
 
         legend_list = ["Skew pattern"]
         y_list = [[a * 180 / np.pi for a in angle_list]]
         linestyle_list = ["solid"]
-
-        LamSlotM = import_class("LamSlotM")
-        LamH = import_class("LamH")
 
         if isinstance(self.parent, (LamSlotM, LamH)):
             legend_list.append("Rotor d-axis")

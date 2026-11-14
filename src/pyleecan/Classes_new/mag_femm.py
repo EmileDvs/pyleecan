@@ -48,9 +48,9 @@ class MagFEMM(Magnetics):
     type_calc_leakage : int
         0 no leakage calculation /  1 calculation using single slot
         Default: 0; Minimum: 0; Maximum: 1
-    file_name : str or None
+    file_name : str
         Name of the file to save the FEMM model
-        Default: None
+        Default: ""
     FEMM_dict_enforced : dict or None
         To enforce user-defined values for FEMM main parameters
         Default: {}
@@ -101,7 +101,7 @@ class MagFEMM(Magnetics):
     """global coefficient to adjust geometry fineness in FEMM (1 : default , > 1 : finner , < 1 : less fine)"""
     type_calc_leakage: int = field(default=0, metadata={"min": 0, "max": 1})
     """0 no leakage calculation /  1 calculation using single slot """
-    file_name: str | None = None
+    file_name: str = ""
     """Name of the file to save the FEMM model"""
     FEMM_dict_enforced: dict[str, Any] | None = field(default_factory=dict)
     """To enforce user-defined values for FEMM main parameters """

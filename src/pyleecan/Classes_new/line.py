@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Geometry/Line.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, ClassVar
 
 import numpy as np
@@ -17,12 +17,12 @@ class Line(PyleecanClass):
     ----------
     prop_dict : dict or None
         Property dictionary
-        Default: {}
+        Default: None
     """
 
     LINE_NPOINT_D: ClassVar = 1
 
-    prop_dict: dict[str, Any] | None = field(default_factory=dict)
+    prop_dict: dict[str, Any] | None = None
     """Property dictionary"""
 
     _package: ClassVar[str] = "Geometry"

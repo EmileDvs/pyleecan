@@ -36,9 +36,9 @@ class Machine(PyleecanClass):
     name : str
         Name of the machine
         Default: "default_machine"
-    desc : str or None
+    desc : str
         Machine description
-        Default: None
+        Default: ""
     type_machine : int
         Integer to store the machine type (for the GUI, should be replaced by a test of the object type)
         Default: 1
@@ -59,7 +59,7 @@ class Machine(PyleecanClass):
     """Machine's Shaft"""
     name: str = "default_machine"
     """Name of the machine"""
-    desc: str | None = None
+    desc: str = ""
     """Machine description"""
     type_machine: int = 1
     """Integer to store the machine type (for the GUI, should be replaced by a test of the object type)"""

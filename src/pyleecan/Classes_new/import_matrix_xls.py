@@ -18,12 +18,12 @@ class ImportMatrixXls(ImportMatrix):
 
     Attributes
     ----------
-    file_path : str or None
+    file_path : str
         Path of the file to load
-        Default: None
-    sheet : str or None
+        Default: ""
+    sheet : str
         Name of the sheet to load
-        Default: None
+        Default: ""
     skiprows : int
         To skip some rows in the file (header)
         Default: 0; Minimum: 0
@@ -32,21 +32,21 @@ class ImportMatrixXls(ImportMatrix):
         Default: None
     axes_colrows : dict or None
         To read axes in first line/column
-        Default: {}
+        Default: None
     is_allsheets : bool
         To read all sheets in a 3D matrix
         Default: False
     """
 
-    file_path: str | None = None
+    file_path: str = ""
     """Path of the file to load"""
-    sheet: str | None = None
+    sheet: str = ""
     """Name of the sheet to load"""
     skiprows: int = field(default=0, metadata={"min": 0})
     """To skip some rows in the file (header)"""
     usecols: str | None = None
     """list of Excel column letters and column ranges (e.g. "A:E" or "A,C,E:F")"""
-    axes_colrows: dict[str, Any] | None = field(default_factory=dict)
+    axes_colrows: dict[str, Any] | None = None
     """To read axes in first line/column"""
     is_allsheets: bool = False
     """To read all sheets in a 3D matrix"""

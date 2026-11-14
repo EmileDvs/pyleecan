@@ -15,7 +15,7 @@ class ParamExplorerSet(ParamExplorer):
     ----------
     value : [] or None
         List containing the different parameter values to explore
-        Default: None
+        Default: []
     """
 
     value: list[Any] | None = field(default_factory=list)

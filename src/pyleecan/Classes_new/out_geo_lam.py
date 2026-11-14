@@ -17,7 +17,7 @@ class OutGeoLam(PyleecanClass):
     ----------
     name_phase : list or None
         Name of the phases of the winding (if any)
-        Default: []
+        Default: None
     BH_curve : ndarray or None
         B(H) curve (two columns matrix, H and B(H))
         Default: None
@@ -47,7 +47,7 @@ class OutGeoLam(PyleecanClass):
         Default: None
     """
 
-    name_phase: list[Any] | None = field(default_factory=list)
+    name_phase: list[Any] | None = None
     """Name of the phases of the winding (if any)"""
     BH_curve: np.ndarray | None = None
     """B(H) curve (two columns matrix, H and B(H))"""

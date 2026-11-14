@@ -20,10 +20,10 @@ class DataPattern(Data):
     ----------
     rebuild_indices : list or None
         Indices to rebuild complete axis
-        Default: []
+        Default: None
     unique_indices : list or None
         Indices which were taken from complete axis
-        Default: []
+        Default: None
     is_step : bool
         True if the axis is defined by step
         Default: True
@@ -44,9 +44,9 @@ class DataPattern(Data):
         Default: False
     """
 
-    rebuild_indices: list[Any] | None = field(default_factory=list)
+    rebuild_indices: list[Any] | None = None
     """Indices to rebuild complete axis"""
-    unique_indices: list[Any] | None = field(default_factory=list)
+    unique_indices: list[Any] | None = None
     """Indices which were taken from complete axis"""
     is_step: bool = True
     """True if the axis is defined by step"""

@@ -12,7 +12,6 @@ from ..Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ..Functions_new.init_fig import init_fig
 from ..Functions_new.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
 from ._error import ParentMissingError
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .material import Material
 
@@ -31,7 +30,7 @@ class Hole(PyleecanClass):
         Default: Material()
     magnetization_dict_offset : dict or None
         Dictionary add an offset to the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
-        Default: {}
+        Default: None
     Alpha0 : float
         Shift angle of the holes around circumference
         Unit: rad; Default: 0; Minimum: 0; Maximum: 6.29
@@ -46,7 +45,7 @@ class Hole(PyleecanClass):
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Material of the void part of the hole (Air in general)"""
-    magnetization_dict_offset: dict[str, Any] | None = field(default_factory=dict)
+    magnetization_dict_offset: dict[str, Any] | None = None
     """Dictionary add an offset to the magnetization direction of the magnets (key=magnet_X, value=angle[rad])"""
     Alpha0: float = field(default=0, metadata={"unit": "rad", "min": 0, "max": 6.29})
     """Shift angle of the holes around circumference"""
@@ -153,7 +152,8 @@ class Hole(PyleecanClass):
     # Inlined from Methods.Slot.Hole.convert_to_UD
     def convert_to_UD(self):
         """Convert the hole to HoleUD"""
-        HoleUD = import_class("HoleUD")
+        from .hole_ud import HoleUD
+
         surf_list = self.build_geometry()
         magnet_dict = self.get_magnet_dict()
         magnetization_dict = self.comp_magnetization_dict()

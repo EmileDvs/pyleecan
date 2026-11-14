@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ._error import MachineCheckError
-from ._import import import_class
 from .lam_slot_m import LamSlotM
 from .lam_slot_wind import LamSlotWind
 from .lamination import Lamination
@@ -27,8 +26,7 @@ class MachineSIPMSM(MachineSync):
     """
 
     rotor: LamSlotM | None = field(
-        default_factory=lambda: import_class("LamSlotM")(),
-        metadata={"default_class": "LamSlotM"},
+        default_factory=lambda: LamSlotM(), metadata={"default_class": "LamSlotM"}
     )
     """Machine's Rotor"""
     stator: Lamination | None = field(

@@ -7,7 +7,6 @@ from typing import ClassVar
 import numpy as np
 
 from ..Functions_new.init_fig import init_fig
-from ._import import import_class
 from .surface import Surface
 
 
@@ -26,13 +25,11 @@ class SurfRing(Surface):
     """
 
     out_surf: Surface | None = field(
-        default_factory=lambda: import_class("Surface")(),
-        metadata={"default_class": "Surface"},
+        default_factory=lambda: Surface(), metadata={"default_class": "Surface"}
     )
     """Outter surface"""
     in_surf: Surface | None = field(
-        default_factory=lambda: import_class("Surface")(),
-        metadata={"default_class": "Surface"},
+        default_factory=lambda: Surface(), metadata={"default_class": "Surface"}
     )
     """Inner surface"""
 

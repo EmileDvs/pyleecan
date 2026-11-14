@@ -559,6 +559,8 @@ def test_shared_exceptions_across_partial_generation(
     (classes / "_pyleecan_class.py").write_text(
         "class PyleecanClass:\n    pass\n", encoding="utf-8"
     )
+    # Hand-written class loader (not generated)
+    shutil.copyfile(Path(MAIN_DIR) / "Classes_new" / "_import.py", classes / "_import.py")
     shared = root / "Methods" / "Slot" / "Shared"
     shared.mkdir(parents=True)
     (shared / "__init__.py").write_text(
@@ -975,6 +977,10 @@ def test_field_attribute_does_not_shadow_factory(
     gen_dict = dict(generator_environment)
     gen_dict[class_name] = deepcopy(gen_dict[class_name])
     gen_dict[class_name]["methods"] = []
+    for prop in gen_dict[class_name]["properties"]:
+        # Empty CSV value => empty list default (legacy None stays None)
+        if prop["name"] in factory_names and prop["type"] == "list":
+            prop["value"] = ""
     path = class_generator.generate_class(
         gen_dict,
         class_name,
@@ -1379,15 +1385,7 @@ def test_var_simu_elec_lut_import_is_local(
         shared_error_definitions={},
     )
     tree = ast.parse(Path(path).read_text(encoding="utf-8"))
-    assert any(
-        isinstance(node, ast.ImportFrom)
-        and (node.level, node.module) == (
-            (1, "_import") if import_style == "relative"
-            else (0, "pyleecan.Classes_new._import")
-        )
-        and any(alias.name == "import_class" and alias.asname is None for alias in node.names)
-        for node in tree.body
-    )
+    # ElecLUTdq is imported in the method only (static local import)
     assert not any(
         isinstance(node, ast.ImportFrom)
         and any(alias.name == "ElecLUTdq" for alias in node.names)
@@ -1398,13 +1396,15 @@ def test_var_simu_elec_lut_import_is_local(
         node for node in cls.body
         if isinstance(node, ast.FunctionDef) and node.name == "set_reused_data"
     )
-    assignment = next(
-        node for node in method.body
-        if isinstance(node, ast.Assign)
-        and any(isinstance(target, ast.Name) and target.id == "ElecLUTdq"
-                for target in node.targets)
+    local_import = next(
+        node for node in ast.walk(method)
+        if isinstance(node, ast.ImportFrom)
+        and any(alias.name == "ElecLUTdq" for alias in node.names)
     )
-    assert ast.unparse(assignment.value) == "import_class('ElecLUTdq')"
+    assert (local_import.level, local_import.module) == (
+        (1, "elec_lut_dq") if import_style == "relative"
+        else (0, "pyleecan.Classes_new.elec_lut_dq")
+    )
 
     import types
 
@@ -1413,8 +1413,9 @@ def test_var_simu_elec_lut_import_is_local(
     monkeypatch.setitem(sys.modules, elec_module.__name__, elec_module)
     method.decorator_list = []
     namespace = {
+        "__name__": "pyleecan.Classes_new.var_simu",
+        "__package__": "pyleecan.Classes_new",
         "MagFEMM": type("MagFEMM", (), {}),
-        "import_class": lambda name: getattr(elec_module, name),
     }
     exec(
         compile(ast.fix_missing_locations(ast.Module(body=[method], type_ignores=[])),
@@ -1441,7 +1442,7 @@ def test_var_simu_elec_lut_import_is_local(
         ("Simulation", "run", "Simulation", {"XOutput": "xoutput", "Output": "output"}),
     ],
 )
-def test_method_local_classes_use_import_class(
+def test_method_local_classes_use_static_imports(
     generator_environment, tmp_path, import_style, class_name, method_name,
     method_folder, expected,
 ):
@@ -1466,24 +1467,20 @@ def test_method_local_classes_use_import_class(
         node for node in cls.body
         if isinstance(node, ast.FunctionDef) and node.name == method_name
     )
-    for imported_class in expected:
-        assignments = [
+    assert not any(
+        isinstance(node, ast.Name) and node.id == "import_class"
+        for node in ast.walk(method)
+    )
+    for imported_class, module in expected.items():
+        local_imports = [
             node for node in ast.walk(method)
-            if isinstance(node, ast.Assign)
-            and any(
-                isinstance(target, ast.Name) and target.id == imported_class
-                for target in node.targets
-            )
-        ]
-        assert len(assignments) == 1
-        call = assignments[0].value
-        assert isinstance(call, ast.Call)
-        assert [arg.value for arg in call.args] == [imported_class]
-        assert not call.keywords
-        assert not any(
-            isinstance(node, ast.ImportFrom)
+            if isinstance(node, ast.ImportFrom)
             and any(alias.name == imported_class for alias in node.names)
-            for node in ast.walk(method)
+        ]
+        assert len(local_imports) == 1
+        assert (local_imports[0].level, local_imports[0].module) == (
+            (1, module) if import_style == "relative"
+            else (0, "pyleecan.Classes_new." + module)
         )
 
 

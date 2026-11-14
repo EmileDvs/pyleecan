@@ -41,6 +41,11 @@ def generation_root(tmp_path):
     for folder in ("Classes", "Classes_new", "Functions"):
         (tmp_path / folder).mkdir()
     (tmp_path / "Classes_new" / "_pyleecan_class.py").write_text("", encoding="utf-8")
+    # Hand-written class loader (not generated)
+    shutil.copyfile(
+        Path(MAIN_DIR) / "Classes_new" / "_import.py",
+        tmp_path / "Classes_new" / "_import.py",
+    )
     copy_function_error_modules(tmp_path / "Functions")
     return tmp_path
 
@@ -93,23 +98,9 @@ def test_legacy_mode_is_rejected_before_writing(generation_root, entrypoint):
             runner.run_generate_classes(main_dir=str(generation_root), is_new=False)
     assert legacy.read_text(encoding="utf-8") == "unchanged"
     assert sorted(path.name for path in (generation_root / "Classes_new").iterdir()) == [
-        "_pyleecan_class.py"
+        "_import.py",
+        "_pyleecan_class.py",
     ]
-
-
-def test_partial_generation_rejects_old_experimental_loader(
-    generation_root, generator_calls
-):
-    loader = generation_root / "Classes_new" / "_import.py"
-    loader.write_text("def import_class(mod_name, class_name): pass\n", encoding="utf-8")
-    with pytest.raises(ValueError, match="full generation"):
-        runner.generate_code(
-            str(generation_root),
-            {"A": {"mother": "", "properties": []}},
-            class_list=["A.csv"],
-        )
-    assert loader.read_text(encoding="utf-8").startswith("def import_class(mod_name")
-    assert not generator_calls
 
 
 def test_shared_error_name_conflict_does_not_remove_existing_classes(
@@ -146,9 +137,11 @@ def test_experimental_package_bookkeeping(
         str(generation_root), gen_dict, class_list=class_list, import_style=import_style,
     )
     class_dir = generation_root / "Classes_new"
+    # The hand-written class loader is not modified by the generation
     import_source = (class_dir / "_import.py").read_text(encoding="utf-8")
-    assert "_CLASS_MODULES = {'A': 'a', 'B': 'b'}" in import_source
-    assert "def import_class(" in import_source
+    assert import_source == (Path(MAIN_DIR) / "Classes_new" / "_import.py").read_text(
+        encoding="utf-8"
+    )
     assert not (class_dir / "_import_all.py").exists()
     # Class information comes from Classes_new._class_info.ClassInfo
     assert not (class_dir / "_class_dict.json").exists()
@@ -211,6 +204,8 @@ def test_experimental_import_uses_generated_names_and_imports(
         str(root), gen_dict, soft_name=package, import_style=import_style
     )
     module = importlib.import_module(package + ".Classes_new._import")
+    # The legacy names are read in Functions_new retrocompatibility (missing here)
+    monkeypatch.setattr(module, "_legacy_class_names", lambda: {"Norm_ref": "NormRef"})
     assert package + ".Classes_new.norm_ref" not in sys.modules
     assert package + ".Classes_new.op_dq" not in sys.modules
     assert module.NormRef.__name__ == "NormRef"
@@ -354,4 +349,4 @@ def test_experimental_collision_is_rejected_before_writing(
             str(generation_root), {"MagFEMM": {}, "MagFemm": {}}, )
     assert sorted(
         path.name for path in (generation_root / "Classes_new").iterdir()
-    ) == ["_pyleecan_class.py"]
+    ) == ["_import.py", "_pyleecan_class.py"]

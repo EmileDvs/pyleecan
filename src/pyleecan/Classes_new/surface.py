@@ -18,7 +18,6 @@ from ..Functions_new.labels import (
     YOKE_LAB,
     decode_label,
 )
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_2 import Arc2
@@ -35,9 +34,9 @@ class Surface(PyleecanClass):
     point_ref : complex
         Center of symmetry
         Default: 0
-    label : str or None
+    label : str
         Label of the surface
-        Default: None
+        Default: ""
     """
 
     PATCH_COLOR: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
@@ -47,7 +46,7 @@ class Surface(PyleecanClass):
 
     point_ref: complex = 0
     """Center of symmetry"""
-    label: str | None = None
+    label: str = ""
     """Label of the surface"""
 
     _package: ClassVar[str] = "Geometry"
@@ -393,8 +392,7 @@ class Surface(PyleecanClass):
             (one can be None if the line doesn't cut the surface)
         """
 
-        # Dynamic import to avoid import loop
-        SurfLine = import_class("SurfLine")
+        from .surf_line import SurfLine
 
         # Split all the lines of the surface
         lines = self.get_lines()

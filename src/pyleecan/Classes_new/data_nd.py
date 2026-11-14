@@ -768,13 +768,13 @@ class DataND(Data):
 
         """
 
-        DataLinspace = import_class("DataLinspace")
-        DataPattern = import_class("DataPattern")
+        from .data_linspace import DataLinspace
+        from .data_pattern import DataPattern
 
         if is_waveform:
-            DataClass = import_class("DataTime")
+            from .data_time import DataTime as DataClass
         else:
-            DataClass = import_class("DataFreq")
+            from .data_freq import DataFreq as DataClass
 
         # Get axes list
         axes_list = self.get_axes()
@@ -1163,7 +1163,8 @@ class DataND(Data):
         # If args not specified, write only oneperiod/pattern
         if args == tuple():
             # Dynamic import to avoid loop
-            DataPattern = import_class("DataPattern")
+            from .data_pattern import DataPattern
+
             arg_list = []
             for axis in self.get_axes():
                 if isinstance(axis, DataPattern):
@@ -1416,9 +1417,8 @@ class DataND(Data):
             theoretical frequencies
         """
 
-        DataFreq = import_class("DataFreq")
-
-        DataPattern = import_class("DataPattern")
+        from .data_freq import DataFreq
+        from .data_pattern import DataPattern
 
         if len(axes_list_filt) == 0 or len(arg_list) == 0:
             # Get fft along frequency axis (keep other axes)
@@ -2402,8 +2402,7 @@ class DataND(Data):
             True to display legend in a frame
         """
 
-        # Dynamic import to avoid import loop
-        DataPattern = import_class("DataPattern")
+        from .data_pattern import DataPattern
 
         # Extract arg_list it the function called from another script with *arg_list
         if len(arg_list) == 1 and type(arg_list[0]) == tuple:
@@ -3156,8 +3155,7 @@ class DataND(Data):
         fps: int
             frames displayed per second
         """
-        # Relative import of DataPattern to prevent circular import
-        DataPattern = import_class("DataPattern")
+        from .data_pattern import DataPattern
 
         # Making sure that we have the right argument for a plot2D
         plot_options = param_dict.copy()
@@ -3357,8 +3355,7 @@ class DataND(Data):
             True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
         """
 
-        # Dynamic import to avoid import loop
-        DataPattern = import_class("DataPattern")
+        from .data_pattern import DataPattern
 
         if len(arg_list) == 1 and type(arg_list[0]) == tuple:
             arg_list = arg_list[0]  # if called from another script with *arg_list
@@ -3999,8 +3996,7 @@ class DataND(Data):
             frames displayed per second
         """
 
-        # Relative import of DataPattern to prevent circular import
-        DataPattern = import_class("DataPattern")
+        from .data_pattern import DataPattern
 
         # Making sure that we have the right argument for a plot3D
         plot_options = param_dict.copy()

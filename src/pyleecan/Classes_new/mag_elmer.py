@@ -78,9 +78,9 @@ class MagElmer(Magnetics):
     Kgeo_fineness : float
         global coefficient to adjust geometry fineness (1 : default , > 1 : finner , < 1 : less fine)
         Default: 1
-    file_name : str or None
+    file_name : str
         Name of the file to save the Elmer model
-        Default: None
+        Default: ""
     FEA_dict : dict or None
         To enforce user-defined values for Elmer main parameters
         Default: {}
@@ -99,9 +99,9 @@ class MagElmer(Magnetics):
     stator_dxf : DXFImport or None
         To use a dxf version of the rotor instead of build_geometry
         Default: None
-    import_file : str or None
+    import_file : str
         To import an existing simulation file
-        Default: None
+        Default: ""
     nb_worker : int
         To run Elmer in parallel (the parallelization is on the time loop)
         Default: 1
@@ -111,7 +111,7 @@ class MagElmer(Magnetics):
     """global coefficient to adjust mesh fineness (1 : default , > 1 : finner , < 1 : less fine)"""
     Kgeo_fineness: float = 1
     """global coefficient to adjust geometry fineness (1 : default , > 1 : finner , < 1 : less fine)"""
-    file_name: str | None = None
+    file_name: str = ""
     """Name of the file to save the Elmer model"""
     FEA_dict: dict[str, Any] | None = field(default_factory=dict)
     """To enforce user-defined values for Elmer main parameters """
@@ -129,7 +129,7 @@ class MagElmer(Magnetics):
         default=None, metadata={"default_class": "DXFImport"}
     )
     """To use a dxf version of the rotor instead of build_geometry"""
-    import_file: str | None = None
+    import_file: str = ""
     """To import an existing simulation file"""
     nb_worker: int = 1
     """To run Elmer in parallel (the parallelization is on the time loop)"""

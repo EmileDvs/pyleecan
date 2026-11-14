@@ -18,19 +18,19 @@ class ImportVectorField(PyleecanClass):
     components : {ImportData}
         Dict of components (e.g. {"radial": ImportData})
         Default: {}
-    name : str or None
+    name : str
         Name of the vector field
-        Default: None
-    symbol : str or None
+        Default: ""
+    symbol : str
         Symbol of the vector field
-        Default: None
+        Default: ""
     """
 
     components: dict[str, ImportData] = field(default_factory=dict)
     """Dict of components (e.g. {"radial": ImportData})"""
-    name: str | None = None
+    name: str = ""
     """Name of the vector field"""
-    symbol: str | None = None
+    symbol: str = ""
     """Symbol of the vector field"""
 
     _package: ClassVar[str] = "Import"

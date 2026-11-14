@@ -22,12 +22,12 @@ class ImportMeshMat(Import):
 
     Attributes
     ----------
-    file_path : str or None
+    file_path : str
         Path of the file to load
-        Default: None
+        Default: ""
     """
 
-    file_path: str | None = None
+    file_path: str = ""
     """Path of the file to load"""
 
     _package: ClassVar[str] = "Import"

@@ -17,15 +17,15 @@ class ParamExplorer(PyleecanClass):
 
     Attributes
     ----------
-    name : str or None
+    name : str
         Parameter name
-        Default: None
-    symbol : str or None
+        Default: ""
+    symbol : str
         Parameter symbol
-        Default: None
-    unit : str or None
+        Default: ""
+    unit : str
         Parameter unit
-        Default: None
+        Default: ""
     setter : function or None
         Function that takes a Simulation and a value in argument and modifiers the simulation
         Default: None
@@ -34,11 +34,11 @@ class ParamExplorer(PyleecanClass):
         Default: None
     """
 
-    name: str | None = None
+    name: str = ""
     """Parameter name"""
-    symbol: str | None = None
+    symbol: str = ""
     """Parameter symbol"""
-    unit: str | None = None
+    unit: str = ""
     """Parameter unit"""
     setter: Callable[..., Any] | None = None
     """Function that takes a Simulation and a value in argument and modifiers the simulation"""

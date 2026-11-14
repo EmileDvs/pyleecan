@@ -3,7 +3,6 @@ from logging import getLogger
 import numpy as np
 
 from ...Classes_new._error import RetroCompatibilityError
-from ...Classes_new._import import import_class
 from ...loggers import GUI_LOG_NAME
 from ..labels import HOLEM_LAB, HOLEV_LAB
 
@@ -193,7 +192,8 @@ def is_OP_matrix_dict(obj_dict):
 
 
 def convert_OP_matrix(obj_dict):
-    OPMatrix = import_class("OPMatrix")
+    from ...Classes_new.op_matrix import OPMatrix
+
     OP_mat_obj = OPMatrix()
     type_OP_matrix = obj_dict.pop("type_OP_matrix")
     if type_OP_matrix is None:
@@ -248,7 +248,8 @@ def convert_OP(obj_dict):
     Iq = obj_dict_new.pop("Iq_ref")
     Tem = obj_dict_new.pop("Tem_av_ref")
     class_obj = obj_dict_new
-    OPdq = import_class("OPdq")
+    from ...Classes_new.op_dq import OPdq
+
     OP = OPdq(N0=N0, Id_ref=Id, Iq_ref=Iq, Tem_av_ref=Tem)
     class_obj["OP"] = OP.as_dict()
     return class_obj
@@ -375,7 +376,8 @@ def convert_Winding(wind_dict):
         else:
             # Generate old Winding matrix as UD
             old_class = wind_dict["__class__"]
-            WindingUD = import_class("WindingUD")
+            from ...Classes_new.winding_ud import WindingUD
+
             new_wind = WindingUD(qs=qs, p=p, Ntcoil=Ntcoil, coil_pitch=coil_pitch)
             try:
                 if old_class == "WindingCW1L":

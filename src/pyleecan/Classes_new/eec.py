@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ..Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .magnetics import Magnetics
 from .op import OP as _field_type_OP
@@ -99,9 +98,9 @@ class EEC(PyleecanClass):
             Stator flux linkage Data object
         """
 
-        Simu1 = import_class("Simu1")
-        InputCurrent = import_class("InputCurrent")
-        MagFEMM = import_class("MagFEMM")
+        from .simu_1 import Simu1
+        from .input_current import InputCurrent
+        from .mag_femm import MagFEMM
 
         if self.fluxlink is None:
             mag_model = MagFEMM()

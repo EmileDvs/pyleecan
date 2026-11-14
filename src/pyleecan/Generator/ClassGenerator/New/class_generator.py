@@ -8,11 +8,12 @@ import tokenize
 import warnings
 from bisect import bisect_left
 from functools import lru_cache
-from keyword import iskeyword
 from os.path import basename, dirname, isdir, isfile, join
 from textwrap import indent
 
 from ....Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+# The module naming rule of the classes is defined in Classes_new (single source)
+from ....Classes_new._import import class_module_name
 from ....Generator import PYTHON_TYPE, TAB
 from ....Generator.read_fct import (
     find_import_type,
@@ -24,30 +25,6 @@ from ....Generator.read_fct import (
 CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
 VENDORED_CLASS_PACKAGES = {"_smoot", "_swat_em"}
 MISSING_METHOD_REASONS = {"method source file is missing", "method function is missing"}
-
-
-def class_module_name(class_name):
-    """Convert a class name to a Python module name, keeping acronyms together."""
-    special_modules = {
-        "Data1D": "data_1d",
-        "OPdq": "op_dq",
-        "OPdqf": "op_dqf",
-        "OPslip": "op_slip",
-        "ScalarProductL2": "scalar_product_l2",
-        "XOutput": "xoutput",
-    }
-    if class_name in special_modules:
-        return special_modules[class_name]
-    name = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", class_name)
-    name = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
-    name = re.sub(r"([A-Za-z])([0-9])", r"\1_\2", name).lower()
-    if "LUT" in class_name:
-        name = re.sub(r"(^|_)lu_t(?=[a-z])", r"\1lut_", name)
-    if iskeyword(name):
-        name += "_"
-    if not name.isidentifier():
-        raise ValueError(f"Cannot derive a Python module name from {class_name!r}")
-    return name
 
 
 def validate_class_module_names(gen_dict):
@@ -2928,92 +2905,292 @@ def _redirect_experimental_class_imports(source, soft_name, gen_dict):
     return source_bytes.decode("utf-8")
 
 
-def _replace_local_experimental_class_imports(source, soft_name, gen_dict):
-    """Load method-local generated classes through the shared import helper."""
+def _remove_unused_loader_import(source, soft_name):
+    """Remove the import of the class loader (import_class) if it is unused."""
     tree = ast.parse(source)
-    class_modules = {
-        class_module_name(name): NORMALIZATION_CLASS_NAMES.get(name, name)
-        for name in gen_dict
-    }
-    used_names = {
-        node.id for node in ast.walk(tree) if isinstance(node, ast.Name)
-    }
-    used_names.update(node.arg for node in ast.walk(tree) if isinstance(node, ast.arg))
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-            used_names.add(node.name)
-        if isinstance(node, (ast.Import, ast.ImportFrom)):
-            used_names.update(
-                alias.asname or alias.name.split(".")[0] for alias in node.names
-            )
-    helper = "import_class"
-    if helper in used_names:
-        helper = "_pyleecan_local_import_class"
-    while helper in used_names:
-        helper += "_"
-    prefix = soft_name + ".Classes_new."
-    encoded = source.encode("utf-8")
-    offsets = [0]
-    for index, value in enumerate(encoded):
-        if value == ord("\n"):
-            offsets.append(index + 1)
-    replacements = []
-
-    class LocalImportVisitor(ast.NodeVisitor):
-        def __init__(self):
-            self.depth = 0
-
-        def visit_FunctionDef(self, node):
-            self.depth += 1
-            self.generic_visit(node)
-            self.depth -= 1
-
-        visit_AsyncFunctionDef = visit_FunctionDef
-
-        def visit_ImportFrom(self, node):
-            if not self.depth or node.level or not node.module:
-                return
-            if not node.module.startswith(prefix):
-                return
-            module_name = node.module[len(prefix):]
-            class_name = class_modules.get(module_name)
-            matching = [alias for alias in node.names if alias.name == class_name]
-            if not matching:
-                return
-            statements = []
-            for alias in node.names:
-                if alias.name != class_name:
-                    statements.append(
-                        ast.unparse(
-                            ast.ImportFrom(module=node.module, names=[alias], level=0)
-                        )
-                    )
-                else:
-                    statements.append(
-                        f"{alias.asname or alias.name} = {helper}({class_name!r})"
-                    )
-            start = offsets[node.lineno - 1] + node.col_offset
-            end = offsets[node.end_lineno - 1] + node.end_col_offset
-            replacements.append((start, end, "; ".join(statements).encode("utf-8")))
-
-    LocalImportVisitor().visit(tree)
-    if not replacements:
-        return source
-    for start, end, replacement in sorted(replacements, reverse=True):
-        encoded = encoded[:start] + replacement + encoded[end:]
-    source = encoded.decode("utf-8")
-    lines = source.splitlines(keepends=True)
-    index = tree.body[0].end_lineno if ast.get_docstring(tree) is not None else 0
     for node in tree.body:
-        if isinstance(node, ast.ImportFrom) and node.module == "__future__":
-            index = node.end_lineno
-    lines.insert(
-        index,
-        f"\nfrom {soft_name}.Classes_new._import import import_class"
-        + (f" as {helper}" if helper != "import_class" else "")
-        + "\n",
-    )
-    return "".join(lines)
+        if not (
+            isinstance(node, ast.ImportFrom)
+            and (
+                node.level == 0 and node.module == soft_name + ".Classes_new._import"
+                or node.level == 1 and node.module == "_import"
+            )
+        ):
+            continue
+        used = {
+            child.id
+            for child in ast.walk(tree)
+            if isinstance(child, ast.Name)
+        }
+        kept = [
+            alias
+            for alias in node.names
+            if alias.name != "import_class" or (alias.asname or alias.name) in used
+        ]
+        if len(kept) == len(node.names):
+            continue
+        lines = source.splitlines(keepends=True)
+        replacement = (
+            ast.unparse(ast.ImportFrom(module=node.module, names=kept, level=node.level))
+            + "\n"
+            if kept
+            else ""
+        )
+        lines[node.lineno - 1 : node.end_lineno] = [replacement]
+        return "".join(lines)
+    return source
+
+
+def _static_local_class_imports(
+    source, soft_name, gen_dict, generated_name, modules=None
+):
+    """Replace the method-local class loads by regular (static) local imports.
+
+    ``X = import_class("Name")`` in a method becomes
+    ``from <soft_name>.Classes_new.name import Name as X``: linters and type
+    checkers can follow it, and a local import still avoids import cycles.
+    The imports are grouped at the top of the method body (after its docstring
+    and its existing local imports). ``import_class`` is kept for the class
+    names only known at runtime.
+    """
+    tree = ast.parse(source)
+    if modules is None:  # class name -> module name of the generated classes
+        modules = {
+            NORMALIZATION_CLASS_NAMES.get(name, name): class_module_name(name)
+            for name in gen_dict
+        }
+    loader_module = soft_name + ".Classes_new._import"
+    loader_imports = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom)
+        and node.level == 0
+        and node.module == loader_module
+    ]
+    bindings = {
+        alias.asname or alias.name
+        for node in loader_imports
+        for alias in node.names
+        if alias.name == "import_class"
+    }
+    if not bindings:
+        return source
+    lines = source.splitlines(keepends=True)
+
+    def alone_on_lines(node):
+        """True if the statement is alone on its lines (comments aside)."""
+        before = lines[node.lineno - 1].encode("utf-8")[: node.col_offset]
+        after = lines[node.end_lineno - 1].encode("utf-8")[node.end_col_offset :]
+        return not before.strip() and (
+            not after.strip() or after.strip().startswith(b"#")
+        )
+
+    def is_known_load(node):
+        return (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id in bindings
+            and 1 <= len(node.value.args) <= 2
+            and not node.value.keywords
+            and isinstance(node.value.args[0], ast.Constant)
+            and node.value.args[0].value in modules
+            and alone_on_lines(node)
+        )
+
+    # Known class loads, grouped by their innermost function
+    loads = {}
+
+    def collect(node, function):
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                collect(child, child)
+            elif isinstance(child, ast.ClassDef):
+                collect(child, None)
+            else:
+                if function is not None and is_known_load(child):
+                    loads.setdefault(function, []).append(child)
+                collect(child, function)
+
+    collect(tree, None)
+    if not loads:
+        return source
+
+    # Statement block of each statement (to keep the emptied blocks valid)
+    blocks = {}
+    for node in ast.walk(tree):
+        for name in ("body", "orelse", "finalbody"):
+            block = getattr(node, name, None)
+            if isinstance(block, list):
+                for statement in block:
+                    blocks[id(statement)] = block
+
+    removed = set()  # indexes of the removed lines
+    replaced = {}  # first line index of a removed statement -> new text
+    inserted = {}  # line index -> lines inserted before it
+    removed_statements = set()
+    replaced_calls = set()
+    hoisted_bodies = []  # function bodies that receive the imports
+    for function, statements in loads.items():
+        body = function.body
+        index = 0
+        if (
+            body
+            and isinstance(body[0], ast.Expr)
+            and isinstance(body[0].value, ast.Constant)
+            and isinstance(body[0].value.value, str)
+        ):
+            index = 1  # docstring
+        while index < len(body) and isinstance(body[index], (ast.Import, ast.ImportFrom)):
+            index += 1  # existing local imports
+        first = body[index]
+        if not alone_on_lines(first):
+            continue
+        indent = " " * first.col_offset
+        existing = {ast.unparse(statement) for statement in body[:index]}
+        imports = []
+        targets = [node.targets[0].id for node in statements]
+        for node in statements:
+            class_name = node.value.args[0].value
+            target = node.targets[0].id
+            for line in range(node.lineno - 1, node.end_lineno):
+                removed.add(line)
+            removed_statements.add(id(node))
+            replaced_calls.add(id(node.value.func))
+            if class_name == generated_name:
+                # The class of this module is a module global
+                if target != class_name:
+                    replaced[node.lineno - 1] = (
+                        " " * node.col_offset + f"{target} = {class_name}\n"
+                    )
+                    removed_statements.discard(id(node))
+                continue
+            statement = ast.unparse(
+                ast.ImportFrom(
+                    module=f"{soft_name}.Classes_new.{modules[class_name]}",
+                    names=[
+                        ast.alias(
+                            name=class_name,
+                            asname=None if target == class_name else target,
+                        )
+                    ],
+                    level=0,
+                )
+            )
+            if not any(node is top for top in body) or targets.count(target) > 1:
+                # Load in a block (if/else, loop, try...) or name loaded several
+                # times: the import is kept in place to keep the bound class
+                replaced[node.lineno - 1] = " " * node.col_offset + statement + "\n"
+                removed_statements.discard(id(node))
+            elif statement not in existing and statement not in imports:
+                imports.append(statement)
+        if not imports:
+            continue
+        if index and isinstance(body[index - 1], (ast.Import, ast.ImportFrom)):
+            # Right after the existing local imports
+            line = body[index - 1].end_lineno
+            block = [indent + statement + "\n" for statement in imports]
+        else:
+            # Above the comments that introduce the first statement
+            line = (
+                min(
+                    [first.lineno]
+                    + [node.lineno for node in getattr(first, "decorator_list", [])]
+                )
+                - 1
+            )
+            bound = body[index - 1].end_lineno if index else function.lineno
+            while line - 1 >= bound and lines[line - 1].lstrip().startswith("#"):
+                line -= 1
+            block = [indent + statement + "\n" for statement in imports] + ["\n"]
+        inserted.setdefault(line, []).extend(block)
+        hoisted_bodies.append(body)
+
+    # A block whose statements are all removed needs a "pass"
+    for node in ast.walk(tree):
+        if id(node) not in removed_statements:
+            continue
+        block = blocks[id(node)]
+        if (
+            block[0] is node
+            and all(id(statement) in removed_statements for statement in block)
+            and not any(block is body for body in hoisted_bodies)
+        ):
+            replaced[node.lineno - 1] = " " * node.col_offset + "pass\n"
+
+    # Remove the loader import when it is no longer used
+    remaining = {
+        node.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name)
+        and node.id in bindings
+        and id(node) not in replaced_calls
+    }
+    for node in loader_imports:
+        kept = [
+            alias
+            for alias in node.names
+            if alias.name != "import_class" or (alias.asname or alias.name) in remaining
+        ]
+        if len(kept) != len(node.names):
+            for line in range(node.lineno - 1, node.end_lineno):
+                removed.add(line)
+            if kept:
+                replaced[node.lineno - 1] = (
+                    ast.unparse(ast.ImportFrom(module=node.module, names=kept, level=0))
+                    + "\n"
+                )
+
+    # Remove the comments of a paragraph whose statements are all removed
+    # (e.g. "# Dynamic import to avoid loop" above the moved loads)
+    docstring_ends = {
+        function.body[0].end_lineno - 1
+        for function in loads
+        if isinstance(function.body[0], ast.Expr)
+        and isinstance(function.body[0].value, ast.Constant)
+        and isinstance(function.body[0].value.value, str)
+    }
+    index = 0
+    while index < len(lines):
+        if index in removed or not lines[index].lstrip().startswith("#"):
+            index += 1
+            continue
+        start = index
+        while index < len(lines) and lines[index].lstrip().startswith("#"):
+            index += 1
+        paragraph_start = (
+            start == 0
+            or not lines[start - 1].strip()
+            or lines[start - 1].rstrip().endswith(":")  # block start
+            or start - 1 in docstring_ends
+        )
+        indent = len(lines[start]) - len(lines[start].lstrip())
+        end = index
+        while (
+            end < len(lines)
+            and end in removed
+            and end not in replaced
+            and not inserted.get(end)
+        ):
+            end += 1
+        paragraph_end = (
+            end == len(lines)
+            or not lines[end].strip()
+            or len(lines[end]) - len(lines[end].lstrip()) < indent  # block end
+        )
+        if paragraph_start and end > index and paragraph_end:
+            removed.update(range(start, index))
+
+    output = []
+    for index, line in enumerate(lines):
+        output.extend(inserted.get(index, []))
+        if index in replaced:
+            output.append(replaced[index])
+        elif index not in removed:
+            output.append(line)
+    return "".join(output)
 
 
 def _redirect_experimental_loader_imports(source, soft_name):
@@ -3030,21 +3207,16 @@ def _redirect_experimental_loader_imports(source, soft_name):
         soft_name + ".Functions.load",
         soft_name + ".Classes_new._import",
     }
-    retrocompat_module = soft_name + ".Functions.Load.retrocompatibility"
 
     def is_loader(node, alias):
-        return (
-            node.module in loader_modules and alias.name == "import_class"
-            or node.module == retrocompat_module
-            and alias.name == "import_experimental_class"
-        )
+        return node.module in loader_modules and alias.name == "import_class"
 
     bindings = set()
     for node in ast.walk(tree):
         if (
             isinstance(node, ast.ImportFrom)
             and node.level == 0
-            and node.module in loader_modules | {retrocompat_module}
+            and node.module in loader_modules
         ):
             bindings.update(
                 alias.asname or alias.name
@@ -3081,7 +3253,7 @@ def _redirect_experimental_loader_imports(source, soft_name):
         if not (
             isinstance(node, ast.ImportFrom)
             and node.level == 0
-            and node.module in loader_modules | {retrocompat_module}
+            and node.module in loader_modules
         ):
             continue
         if not any(is_loader(node, alias) for alias in node.names):
@@ -3288,7 +3460,6 @@ def _rename_experimental_normalizations(source, soft_name, import_style="absolut
         if value == ord("\n"):
             offsets.append(index + 1)
     replacements = []
-    helper_names = set()
     loader_bindings = set()
     normalization_setter_calls = {
         id(child)
@@ -3380,8 +3551,9 @@ def _rename_experimental_normalizations(source, soft_name, import_style="absolut
                     )
                 )
             ):
-                replace(node.func, "_import_experimental_class")
-                helper_names.add("import_experimental_class as _import_experimental_class")
+                # The loader call is redirected to Classes_new._import.import_class
+                # (which also accepts the legacy normalization names) by
+                # _redirect_experimental_loader_imports: only rename the class
                 if (
                     isinstance(node.args[1], ast.Constant)
                     and node.args[1].value in old_names
@@ -3453,9 +3625,10 @@ def _rename_experimental_normalizations(source, soft_name, import_style="absolut
                     and len(call.keywords) == 1
                     and call.keywords[0].arg == "init_dict"
                 ):
-                    replace(call, f"_construct_experimental_class(class_obj, {ast.unparse(call.keywords[0].value)})")
-                    helper_names.add(
-                        "construct_experimental_class as _construct_experimental_class"
+                    # Normalizations are generated dataclasses
+                    replace(
+                        call,
+                        f"class_obj.from_dict({ast.unparse(call.keywords[0].value)})",
                     )
                 elif (
                     isinstance(call, ast.Call)
@@ -3471,27 +3644,6 @@ def _rename_experimental_normalizations(source, soft_name, import_style="absolut
     for start, end, replacement in sorted(replacements, reverse=True):
         encoded = encoded[:start] + replacement + encoded[end:]
     renamed = _rename_method_references(encoded.decode("utf-8"), NORMALIZATION_CLASS_NAMES)
-    if helper_names:
-        lines = renamed.splitlines(keepends=True)
-        first = ast.parse(renamed).body[0]
-        position = (
-            first.end_lineno
-            if isinstance(first, ast.Expr)
-            and isinstance(first.value, ast.Constant)
-            and isinstance(first.value.value, str)
-            else 0
-        )
-        lines.insert(
-            position,
-            (
-                "from ._pyleecan_class import "
-                if import_style == "relative"
-                else f"from {soft_name}.Classes_new._pyleecan_class import "
-            )
-            + ", ".join(sorted(helper_names))
-            + "\n",
-        )
-        renamed = "".join(lines)
     return renamed
 
 
@@ -4691,8 +4843,16 @@ def generate_class(
 _BASE_TYPES = {"bool", "complex", "float", "int", "str"}
 
 
-def _is_none_default(value):
-    return value in ("", None, "None")
+def _is_none_default(value, prop_type=None):
+    """True if the legacy default of a CSV property is None.
+
+    An empty CSV value means None, except for str properties (empty string)
+    and the list/dict properties (empty container). A None value is None
+    for every type.
+    """
+    if value in (None, "None"):
+        return True
+    return value == "" and prop_type != "str"
 
 
 def _field_type(prop_type, default, gen_dict, soft_name, class_name=None, prop_name=None):
@@ -4747,7 +4907,7 @@ def _field_type(prop_type, default, gen_dict, soft_name, class_name=None, prop_n
         return "Any"
 
     annotation = resolve_type(prop_type) if prop_type else "Any"
-    if _is_none_default(default) and annotation not in ("Any", "None"):
+    if _is_none_default(default, prop_type) and annotation not in ("Any", "None"):
         annotation = f"{annotation} | None"
     return annotation, imports
 
@@ -4883,13 +5043,19 @@ def _field_default(prop, field_name="field", gen_dict=None):
         or is_dict_pyleecan_type(prop_type)
     ):
         default = "None"
-    elif value in ("", None):
+    elif value is None or value == "None":
+        # Legacy: a None CSV value is None (lists and dicts included)
+        default = "None"
+    elif value == "":
         if prop_type in ("list", "[]", "[ndarray]"):
             default = "default_factory=list"
             requires_field = True
         elif prop_type in ("dict", "{ndarray}"):
             default = "default_factory=dict"
             requires_field = True
+        elif prop_type == "str":
+            # Legacy: an empty CSV value is an empty string for str
+            default = '""'
         else:
             default = "None"
     elif prop_type == "list" and value == -1:
@@ -4977,11 +5143,14 @@ def _use_static_default_factories(source, soft_name, gen_dict, class_name):
     visitor = ModuleBindings()
     for node in tree.body:
         visitor.visit(node)
-        if not isinstance(node, ast.ImportFrom) or node.level != 0:
+        if not isinstance(node, ast.ImportFrom):
             continue
         for alias in node.names:
             module = modules.get(alias.name)
-            if module and node.module == f"{soft_name}.Classes_new.{module}":
+            if module and (
+                node.level == 0 and node.module == f"{soft_name}.Classes_new.{module}"
+                or node.level == 1 and node.module == module
+            ):
                 bindings[alias.name] = alias.asname or alias.name
 
     if has_wildcard:
@@ -5090,11 +5259,14 @@ def _display_default(prop, gen_dict=None):
             return "[]"
         if is_dict_list_pyleecan_type(prop_type) or is_dict_pyleecan_type(prop_type):
             return "{}"
-    if value in ("", None, "None"):
-        if prop_type == "list":
+    if value == "":
+        if prop_type in ("list", "[]", "[ndarray]"):
             return "[]"
-        if prop_type == "dict":
+        if prop_type in ("dict", "{ndarray}"):
             return "{}"
+        if prop_type == "str":
+            return '""'
+    if _is_none_default(value, prop_type):
         return "None"
     if prop_type in PYTHON_TYPE:
         return get_value_str(value, prop_type)
@@ -5108,7 +5280,7 @@ def _class_docstring(class_dict, gen_dict=None):
     for prop in class_dict["properties"]:
         prop_type = prop.get("type") or "Any"
         property_description = _property_description(prop)
-        if prop.get("value") in ("", None, "None"):
+        if _is_none_default(prop.get("value"), prop.get("type")):
             prop_type += " or None"
         lines.extend(
             [
@@ -5450,8 +5622,10 @@ def _generate_dataclass_class(
     source = _remove_redundant_experimental_class_imports(source, soft_name, gen_dict)
     source = _rename_experimental_normalizations(source, soft_name)
     source = _postpone_experimental_self_annotations(source, generated_name)
-    source = _replace_local_experimental_class_imports(source, soft_name, gen_dict)
     source = _redirect_experimental_loader_imports(source, soft_name)
+    # Static local imports instead of import_class for the known class names
+    source = _static_local_class_imports(source, soft_name, gen_dict, generated_name)
+    source = _remove_redundant_experimental_class_imports(source, soft_name, gen_dict)
     source = _redirect_experimental_function_imports(source, soft_name)
     from .function_module_names import (
         function_module_mapping,
@@ -5468,6 +5642,9 @@ def _generate_dataclass_class(
     source = _organize_header_imports(source, generated_name, class_path)
     source = _regroup_pyleecan_imports(source, generated_name, class_path)
     source = _organize_header_imports(source, generated_name, class_path)
+    # The header imports are now final: reuse them in the field factories
+    source = _use_static_default_factories(source, soft_name, gen_dict, generated_name)
+    source = _remove_unused_loader_import(source, soft_name)
     source = _format_source_with_ruff(source, class_path)
     with open(class_path, "w", encoding="utf-8") as generated_file:
         generated_file.write(source)

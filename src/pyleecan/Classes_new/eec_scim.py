@@ -10,7 +10,6 @@ import scipy.interpolate as scp_int
 
 from ..Functions_new.Electrical.dqh_transformation import abc2n, n2abc
 from ..Functions_new.labels import ROTOR_LAB, STATOR_LAB
-from ._import import import_class
 from .eec import EEC
 from .import_gen_vect_lin import ImportGenVectLin
 from .import_matrix_val import ImportMatrixVal
@@ -209,9 +208,9 @@ class EEC_SCIM(EEC):
             Stator magnetizing current [A]
         """
 
-        Simu1 = import_class("Simu1")
-        InputCurrent = import_class("InputCurrent")
-        MagFEMM = import_class("MagFEMM")
+        from .simu_1 import Simu1
+        from .input_current import InputCurrent
+        from .mag_femm import MagFEMM
 
         p = machine.get_pole_pair_number()
 

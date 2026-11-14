@@ -13,7 +13,6 @@ from ..definitions import RESULT_DIR, config_dict
 from ..Functions_new.Plot import fft_dict
 from ..Functions_new.Plot.Pyvista.configure_plot import configure_plot
 from ..Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .norm_affine import NormAffine
 from .norm_vector import NormVector
@@ -37,9 +36,9 @@ class Output(PyleecanClass):
     simu : Simulation or None
         Simulation object that generated the Output
         Default: Simulation()
-    path_result : str or None
+    path_result : str
         Path to the folder to same the results
-        Default: None
+        Default: ""
     geo : OutGeo or None
         Geometry output
         Default: OutGeo()
@@ -73,7 +72,7 @@ class Output(PyleecanClass):
         default_factory=lambda: Simulation(), metadata={"default_class": "Simulation"}
     )
     """Simulation object that generated the Output"""
-    path_result: str | None = None
+    path_result: str = ""
     """Path to the folder to same the results"""
     geo: OutGeo | None = field(
         default_factory=lambda: OutGeo(), metadata={"default_class": "OutGeo"}
@@ -834,7 +833,6 @@ class Output(PyleecanClass):
         for _ in range(tab_level):
             tab += "    "
 
-        Output = import_class("Output")
         if type(self) is Output:
             mem_str = tab + "Total Output size: " + str(getsizeof(self)) + " o\n"
         else:  # XOutput (print only the Output part of the size)

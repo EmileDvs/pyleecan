@@ -29,12 +29,12 @@ class ImportData(PyleecanClass):
     unit : str
         Unit of the field
         Default: "SI"
-    name : str or None
+    name : str
         Name of the field
-        Default: None
-    symbol : str or None
+        Default: ""
+    symbol : str
         Symbol of the field
-        Default: None
+        Default: ""
     normalizations : dict
         Dict of normalizations
         Default: -1
@@ -51,9 +51,9 @@ class ImportData(PyleecanClass):
     """Field (Import object)"""
     unit: str = "SI"
     """Unit of the field"""
-    name: str | None = None
+    name: str = ""
     """Name of the field"""
-    symbol: str | None = None
+    symbol: str = ""
     """Symbol of the field"""
     normalizations: dict[str, Any] = dataclass_field(default_factory=dict)
     """Dict of normalizations"""

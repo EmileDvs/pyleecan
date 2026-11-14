@@ -35,7 +35,7 @@ class InputFlux(InputCurrent):
         Default: False
     B_dict : dict or None
         Dict of Import objects or lists for each component of the flux
-        Default: {}
+        Default: None
     unit : str or None
         Unit of the flux if not T
         Default: None
@@ -55,7 +55,7 @@ class InputFlux(InputCurrent):
     """If angle is antiperiodic"""
     is_antiper_t: bool = False
     """If time is antiperiodic"""
-    B_dict: dict[str, Any] | None = field(default_factory=dict)
+    B_dict: dict[str, Any] | None = None
     """Dict of Import objects or lists for each component of the flux"""
     unit: str | None = None
     """Unit of the flux if not T"""

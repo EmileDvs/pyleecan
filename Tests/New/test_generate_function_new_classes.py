@@ -102,6 +102,26 @@ def test_generate_functions_renames_modules_and_references(tmp_path):
     ).read_text(encoding="utf-8")
 
 
+def test_generate_functions_skips_unused_legacy_modules(tmp_path):
+    source = tmp_path / "Functions"
+    output = tmp_path / "Functions_new"
+    classes = tmp_path / "Classes_new"
+    source.mkdir()
+    classes.mkdir()
+    (source / "copy.py").write_text(
+        "def copy(self):\n    return type(self)(init_dict=self.as_dict())\n",
+        encoding="utf-8",
+    )
+    (source / "other.py").write_text("def other():\n    return 1\n", encoding="utf-8")
+    # Copy left by a previous generation
+    output.mkdir()
+    (output / "copy.py").write_text("stale", encoding="utf-8")
+    generate_functions(source, output, classes)
+    assert Path("copy.py") in generate_function_new_classes.SKIPPED_FUNCTION_MODULES
+    assert not (output / "copy.py").exists()
+    assert (output / "other.py").exists()
+
+
 def test_rewrite_imports_and_report_unresolved(tmp_path):
     class_dir = tmp_path / "Classes_new"
     class_dir.mkdir()
@@ -217,7 +237,7 @@ def test_copy_tree_keeps_resources_and_reports_deferred_loader(tmp_path):
     (source / "Electrical" / "sample.py").write_text(
         "from ...Classes.DataTime import DataTime\n", encoding="utf-8"
     )
-    (source / "copy.py").write_text(
+    (source / "load_switch.py").write_text(
         "obj = import_class('pyleecan.Classes', 'DataTime')\n", encoding="utf-8"
     )
     (source / "Electrical" / "fixture.lua").write_bytes(b"fixture\x00")
@@ -226,7 +246,7 @@ def test_copy_tree_keeps_resources_and_reports_deferred_loader(tmp_path):
     output.mkdir()
     (output / "existing.py").write_text("keep", encoding="utf-8")
     issues = generate_functions(source, output, classes)
-    assert issues == [(Path("copy.py"), 1, "dynamic class loader requires review")]
+    assert issues == [(Path("load_switch.py"), 1, "dynamic class loader requires review")]
     assert (output / "Electrical" / "sample.py").read_text(encoding="utf-8") == (
         "from ...Classes_new.data_time import DataTime\n"
     )

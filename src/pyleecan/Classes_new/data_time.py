@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ._error import AxisError
-from ._import import import_class
 from .data_1d import Data1D
 from .data_nd import DataND
 
@@ -33,9 +32,8 @@ class DataTime(DataND):
         a DataFreq object
         """
 
-        # Dynamic import to avoid loop
-        DataFreq = import_class("DataFreq")
-        DataPattern = import_class("DataPattern")
+        from .data_freq import DataFreq
+        from .data_pattern import DataPattern
 
         axes_str = []
         for i, axis in enumerate(self.axes):
@@ -112,8 +110,7 @@ class DataTime(DataND):
         a DataDual object
         """
 
-        # Dynamic import to avoid loop
-        DataDual = import_class("DataDual")
+        from .data_dual import DataDual
 
         # Fill DataDual object with time/space data
         datadual = DataDual(

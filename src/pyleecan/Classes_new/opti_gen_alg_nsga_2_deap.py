@@ -40,7 +40,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         Default: None
     """
 
-    toolbox: Toolbox | None = "None"
+    toolbox: Toolbox | None = None
     """DEAP toolbox"""
 
     _package: ClassVar[str] = "Optimization"

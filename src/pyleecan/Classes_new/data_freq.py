@@ -13,7 +13,6 @@ from ..Functions_new.SciDataTool.sum_convolution import (
     get_sum_indices,
 )
 from ._error import AxisError
-from ._import import import_class
 from .data_1d import Data1D
 from .data_nd import DataND
 
@@ -139,9 +138,8 @@ class DataFreq(DataND):
         a DataTime object
         """
 
-        # Dynamic import to avoid loop
-        DataTime = import_class("DataTime")
-        DataPattern = import_class("DataPattern")
+        from .data_time import DataTime
+        from .data_pattern import DataPattern
 
         axes_str = []
         for i, axis in enumerate(self.axes):
@@ -301,8 +299,7 @@ class DataFreq(DataND):
         a DataDual object
         """
 
-        # Dynamic import to avoid loop
-        DataDual = import_class("DataDual")
+        from .data_dual import DataDual
 
         # Fill DataDual object with fourier data
         datadual = DataDual(

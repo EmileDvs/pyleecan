@@ -10,7 +10,6 @@ from ..Functions_new.Geometry.inter_circle_circle import inter_circle_circle
 from ..Functions_new.Geometry.inter_line_circle import inter_line_circle
 from ..Functions_new.init_fig import init_fig
 from ..Functions_new.Plot import TEXT_BOX
-from ._import import import_class
 from .line import Line
 from .segment import Segment
 
@@ -463,8 +462,7 @@ class Arc(Line):
             Both part of the arc
         """
 
-        # Dynamic import of Arc1 to prevent import loop from code generator
-        Arc1 = import_class("Arc1")
+        from .arc_1 import Arc1
 
         # Get the intersection point
         Z_int = self.intersect_line(Z1, Z2)

@@ -4,7 +4,6 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from ._import import import_class
 from .opti_constraint import OptiConstraint
 from .opti_objective import OptiObjective
 from .opti_problem import OptiProblem
@@ -47,11 +46,11 @@ class VarOpti(VarParam):
     def check(self):
         """Check VarOpti parameters validity"""
 
-        Simu1 = import_class("Simu1")
-        OptiDesignVarSet = import_class("OptiDesignVarSet")
-        OptiBayesAlgSmoot = import_class("OptiBayesAlgSmoot")
-        OptiGenAlgNsga2Deap = import_class("OptiGenAlgNsga2Deap")
-        OptiDesignVarInterval = import_class("OptiDesignVarInterval")
+        from .simu_1 import Simu1
+        from .opti_design_var_set import OptiDesignVarSet
+        from .opti_bayes_alg_smoot import OptiBayesAlgSmoot
+        from .opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+        from .opti_design_var_interval import OptiDesignVarInterval
 
         # Check that VarOpti is always in the first layer of var_simu
         if not isinstance(self.parent, Simu1):

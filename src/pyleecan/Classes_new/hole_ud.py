@@ -25,9 +25,9 @@ class HoleUD(HoleMag):
     magnet_dict : {Magnet} or None
         dictionary with the magnet for the Hole (None to remove magnet, key should be magnet_X)
         Default: {}
-    name : str or None
+    name : str
         Name of the hole (for save)
-        Default: None
+        Default: ""
     """
 
     IS_SYMMETRICAL: ClassVar = 1
@@ -36,7 +36,7 @@ class HoleUD(HoleMag):
     """List of surface to draw the Hole. Surfaces must be ordered in trigo order, label must contain HoleMagnet for Magnet and Hole for holes"""
     magnet_dict: dict[str, Magnet] | None = field(default_factory=dict)
     """dictionary with the magnet for the Hole (None to remove magnet, key should be magnet_X)"""
-    name: str | None = None
+    name: str = ""
     """Name of the hole (for save)"""
 
     _package: ClassVar[str] = "Slot"

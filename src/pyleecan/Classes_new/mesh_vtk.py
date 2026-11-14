@@ -13,7 +13,6 @@ from vtk import vtkPointSet
 
 from ..definitions import RESULT_DIR
 from ..Functions_new.GUI.log_error import log_error
-from ._import import import_class
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg
 from .fpgn_tri import FPGNTri
@@ -54,18 +53,18 @@ class MeshVTK(Mesh):
     is_vtk_surf : bool
         Save the surface mesh in a vtk file
         Default: False
-    surf_path : str or None
+    surf_path : str
         Path where the outer surface is stored
-        Default: None
-    surf_name : str or None
+        Default: ""
+    surf_name : str
         Name of the outer surface file
-        Default: None
+        Default: ""
     node_normals : ndarray or None
         Array of normals to nodes (element vertices)
         Default: None
     """
 
-    mesh: vtkPointSet | None = field(default="None", metadata={"as_dict": "1"})
+    mesh: vtkPointSet | None = field(default=None, metadata={"as_dict": "1"})
     """Pyvista object of the mesh (optional)"""
     is_pyvista_mesh: bool = False
     """Store the pyvista object"""
@@ -76,14 +75,14 @@ class MeshVTK(Mesh):
     name: str = "mesh"
     """Name of the mesh file"""
     surf: pv.core.pointset.PolyData | None = field(
-        default="None", metadata={"as_dict": "1"}
+        default=None, metadata={"as_dict": "1"}
     )
     """Pyvista object of the outer surface"""
     is_vtk_surf: bool = False
     """Save the surface mesh in a vtk file"""
-    surf_path: str | None = None
+    surf_path: str = ""
     """Path where the outer surface is stored"""
-    surf_name: str | None = None
+    surf_name: str = ""
     """Name of the outer surface file"""
     node_normals: np.ndarray | None = None
     """Array of normals to nodes (element vertices)"""
@@ -119,7 +118,7 @@ class MeshVTK(Mesh):
             new_mesh.node.coordinate *= scale
         elif meshtype == "MeshMat":
             # Avoid circular import
-            MeshMat = import_class("MeshMat")
+            from .mesh_mat import MeshMat
 
             new_mesh = MeshMat(dimension=self.dimension)
 

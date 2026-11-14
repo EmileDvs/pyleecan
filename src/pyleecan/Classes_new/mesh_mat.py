@@ -13,7 +13,6 @@ import pyvista as pv
 
 from ..definitions import RESULT_DIR
 from ..Functions_new.GUI.log_error import log_error
-from ._import import import_class
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg
 from .mesh import Mesh
@@ -51,8 +50,7 @@ class MeshMat(Mesh):
     element_dict: dict[str, ElementMat] | None = field(default_factory=dict)
     """Storing connectivity"""
     node: NodeMat | None = field(
-        default_factory=lambda: import_class("NodeMat")(),
-        metadata={"default_class": "NodeMat"},
+        default_factory=lambda: NodeMat(), metadata={"default_class": "NodeMat"}
     )
     """Storing nodes"""
     sym: int = 1
@@ -185,7 +183,7 @@ class MeshMat(Mesh):
             return new_mesh
 
         # Avoiding circular import
-        MeshVTK = import_class("MeshVTK")
+        from .mesh_vtk import MeshVTK
 
         elements_ = []
         element_types = []

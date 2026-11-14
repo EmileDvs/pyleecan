@@ -17,15 +17,15 @@ class DataKeeper(PyleecanClass):
 
     Attributes
     ----------
-    name : str or None
+    name : str
         Data name
-        Default: None
-    symbol : str or None
+        Default: ""
+    symbol : str
         Data symbol
-        Default: None
-    unit : str or None
+        Default: ""
+    unit : str
         Data unit
-        Default: None
+        Default: ""
     keeper : function or None
         Function that takes an Output in argument and return a value
         Default: None
@@ -34,7 +34,7 @@ class DataKeeper(PyleecanClass):
         Default: None
     result : [] or None
         List containing datakeeper results for each simulation
-        Default: None
+        Default: []
     result_ref : Any or None
         Result for the reference simulation
         Default: None
@@ -43,11 +43,11 @@ class DataKeeper(PyleecanClass):
         Default: None
     """
 
-    name: str | None = None
+    name: str = ""
     """Data name"""
-    symbol: str | None = None
+    symbol: str = ""
     """Data symbol"""
-    unit: str | None = None
+    unit: str = ""
     """Data unit"""
     keeper: Callable[..., Any] | None = None
     """Function that takes an Output in argument and return a value"""

@@ -33,7 +33,6 @@ from ..Functions_new.Plot.get_color_legend_from_surface import (
 )
 from ..Functions_new.Winding.gen_phase_list import gen_name
 from ._error import LaminationCheckError, NotImplementedYetError
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_3 import Arc3
@@ -1636,6 +1635,8 @@ class Lamination(PyleecanClass):
             Axis containing the plot
         """
 
+        from .lam_slot import LamSlot
+
         if self.notch is None:
             raise Exception("No notch set")
         if index > len(self.notch) - 1:
@@ -1657,7 +1658,6 @@ class Lamination(PyleecanClass):
         )
 
         # Create equivalent LamSlot with notch as slot
-        LamSlot = import_class("LamSlot")
         lam_notch = LamSlot(
             is_stator=lam.is_stator,
             is_internal=lam.is_internal,

@@ -2,9 +2,11 @@ import pytest
 from cloudpickle import dumps
 
 from pyleecan.Classes_new._check import CheckMaxError, CheckMinError, CheckTypeError
+from pyleecan.Classes_new._import import import_class
 from pyleecan.Classes_new._import_all import *
 from pyleecan.Classes_new._pyleecan_class import PyleecanClass
 from pyleecan.definitions import DOC_DIR
+from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator import PYTHON_TYPE
 from pyleecan.Generator.ClassGenerator.init_method_generator import get_mother_attr
 from pyleecan.Generator.read_fct import read_all
@@ -14,6 +16,8 @@ from Tests.find import find_test_value, is_type_dict, is_type_list
 gen_dict = read_all(DOC_DIR)  # dict of class dict
 # Remove one list level (packages Machine, Simulation, Material...)
 class_list = list(gen_dict.values())
+# The classes are resolved by their CSV name (import_class accepts the legacy
+# names of the renamed classes, e.g. Norm_ref -> NormRef)
 
 """
 This test check that all the classes matches the current documentation
@@ -64,10 +68,12 @@ def test_class_as_dict(class_dict):
         elif is_type_dict(prop["type"]):  # Dict of pyleecan type
             d[prop["name"]] = dict()
         else:  # pyleecan type
-            d[prop["name"]] = eval(prop["type"] + "().as_dict()")
-    d["__class__"] = class_dict["name"]
+            d[prop["name"]] = import_class(prop["type"])().as_dict()
+    # Accepted difference: the normalization classes are renamed (Norm_ref ->
+    # NormRef...), the legacy names are still accepted when loading
+    d["__class__"] = NORMALIZATION_CLASS_NAMES.get(class_dict["name"], class_dict["name"])
 
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = import_class(class_dict["name"])()
     # Test
     try:
         result_dict = test_obj.as_dict(type_handle_ndarray=0, keep_function=False)
@@ -100,7 +106,7 @@ def test_class_as_dict(class_dict):
 def test_class_set_None(class_dict):
     """Check that _set_None set to None every non pyleecantype properties"""
 
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = import_class(class_dict["name"])()
     test_obj._set_None()
     prop_list = get_mother_attr(gen_dict, class_dict, "properties")[0]
     for prop in prop_list:
@@ -114,35 +120,35 @@ def test_class_inherit(class_dict):
     """Check if the class inherit of its mother class"""
     if class_dict["mother"] != "":
         assert (
-            eval("issubclass(" + class_dict["name"] + ", " + class_dict["mother"] + ")")
+            issubclass(import_class(class_dict["name"]), import_class(class_dict["mother"]))
             == True
         )
     else:
-        assert issubclass(eval(class_dict["name"]), PyleecanClass) == True
+        assert issubclass(import_class(class_dict["name"]), PyleecanClass) == True
 
 
 @pytest.mark.parametrize("class_dict", class_list)
 def test_class_methods(class_dict):
     """Check if the class has all its methods"""
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = import_class(class_dict["name"])()
 
     meth_list = get_mother_attr(gen_dict, class_dict, "methods")[0]
     for meth in meth_list:
         meth = meth.split(".")[-1]  # Get the methods name if in a folder
 
         # Check if the method exists, shouldn't be raised because of the class generator
-        assert eval("hasattr(" + class_dict["name"] + ", '" + meth + "')") == True, (
+        assert hasattr(import_class(class_dict["name"]), meth) == True, (
             class_dict["name"] + " has no method: " + meth
         )
 
-        meth_obj = eval("getattr(" + class_dict["name"] + ", '" + meth + "')")
+        meth_obj = getattr(import_class(class_dict["name"]), meth)
         assert not isinstance(meth_obj, property), meth_obj.fget("")
 
 
 @pytest.mark.parametrize("class_dict", class_list)
 def test_class_type_float(class_dict):
     """Check if the setter is type sensitive for float"""
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = import_class(class_dict["name"])()
 
     prop_list = get_mother_attr(gen_dict, class_dict, "properties")[0]
     for prop in prop_list:
@@ -174,7 +180,7 @@ def test_class_type_float(class_dict):
 def test_class_min(class_dict):
     """Check if the setter respect the specified min"""
     # Setup
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = import_class(class_dict["name"])()
 
     prop_list = get_mother_attr(gen_dict, class_dict, "properties")[0]
     for prop in prop_list:
@@ -198,7 +204,7 @@ def test_class_min(class_dict):
 def test_class_max(class_dict):
     """Check if the setter respect the specified max"""
     # Setup
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = import_class(class_dict["name"])()
 
     prop_list = get_mother_attr(gen_dict, class_dict, "properties")[0]
     for prop in prop_list:
@@ -222,7 +228,7 @@ def test_class_max(class_dict):
 def test_class_copy(class_dict):
     """Check if the copy method is correct"""
 
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = import_class(class_dict["name"])()
     result = test_obj.copy()
     assert test_obj == result
 

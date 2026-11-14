@@ -29,6 +29,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _apply_pyvista_import_style,
     _format_source_with_ruff,
     _replace_empty_containers,
+    _static_local_class_imports,
     class_module_name,
 )
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
@@ -36,6 +37,14 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_name,
     redirect_function_module_imports,
 )
+
+SKIPPED_FUNCTION_MODULES = {
+    Path("copy.py"): (
+        "unused legacy function (copy objects through init_dict): the new classes "
+        "use PyleecanClass.copy"
+    ),
+}
+"""Legacy Functions modules that are not copied in Functions_new (with the reason)"""
 
 FUNCTION_ERRORS = {
     "Converter.Utils.ConvertionError": {"ConvertionError": "ConvertionError"},
@@ -534,6 +543,33 @@ def _legacy_class_replacements(tree, package):
     return renamed
 
 
+def _static_function_class_imports(source, class_dir):
+    """Replace the local loads of known classes by static local imports.
+
+    ``X = import_class("Name")`` in a function becomes
+    ``from pyleecan.Classes_new.name import Name as X`` when the module of the
+    class exists in class_dir; import_class is kept for the runtime names.
+    """
+    names = {
+        node.args[0].value
+        for node in ast.walk(ast.parse(source))
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.args
+        and isinstance(node.args[0], ast.Constant)
+        and isinstance(node.args[0].value, str)
+        and node.args[0].value.isidentifier()
+    }
+    modules = {
+        name: class_module_name(name)
+        for name in names
+        if (class_dir / (class_module_name(name) + ".py")).is_file()
+    }
+    if not modules:
+        return source
+    return _static_local_class_imports(source, "pyleecan", {}, None, modules=modules)
+
+
 def _class_dict_getters(tree, package):
     """Names bound to the legacy ``pyleecan.Classes.get_class_dict`` function.
 
@@ -574,7 +610,6 @@ def _rewrite_source(source, path, relative_path, class_dir):
     deferred = relative_path.parts[0] in {"Load", "Save"} or relative_path.name in {
         "load.py",
         "save.py",
-        "copy.py",
         "load_switch.py",
     }
     dynamic_assignments = {}
@@ -780,10 +815,7 @@ def _rewrite_source(source, path, relative_path, class_dir):
                 end = offset(node.end_lineno, node.end_col_offset)
                 replacements.append((start, end, b"ClassInfo().get_dict()"))
                 continue
-            if isinstance(node.func, ast.Name) and node.func.id in {
-                "import_class",
-                "import_experimental_class",
-            }:
+            if isinstance(node.func, ast.Name) and node.func.id == "import_class":
                 issues.append((node.lineno, "dynamic class loader requires review"))
             elif any(
                 isinstance(arg, ast.Constant)
@@ -832,6 +864,10 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         relative = path.relative_to(source_dir)
         output_relative = relative.with_name(function_module_name(relative.stem) + ".py") if path.suffix == ".py" else relative
         destination = output_dir / output_relative
+        if relative in SKIPPED_FUNCTION_MODULES:
+            # Not generated: remove a copy left by a previous generation
+            destination.unlink(missing_ok=True)
+            continue
         destination.parent.mkdir(parents=True, exist_ok=True)
         if path.suffix == ".py":
             with tokenize.open(path) as source_file:
@@ -870,6 +906,7 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             rewritten = redirect_function_module_imports(
                 rewritten, generated_package, module_mapping
             )
+            rewritten = _static_function_class_imports(rewritten, class_dir)
             rewritten = _function_import_style(rewritten, generated_package, import_style)
             rewritten = _format_function_source(rewritten, destination)
             destination.write_text(rewritten, encoding=encoding, newline="")

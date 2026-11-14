@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ._error import MachineCheckError
-from ._import import import_class
 from .lam_slot_wind import LamSlotWind
 from .machine_sync import MachineSync
 
@@ -25,13 +24,11 @@ class MachineWRSM(MachineSync):
     """
 
     rotor: LamSlotWind | None = field(
-        default_factory=lambda: import_class("LamSlotWind")(),
-        metadata={"default_class": "LamSlotWind"},
+        default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
     )
     """Machine's Rotor"""
     stator: LamSlotWind | None = field(
-        default_factory=lambda: import_class("LamSlotWind")(),
-        metadata={"default_class": "LamSlotWind"},
+        default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
     )
     """Machine's Stator"""
 

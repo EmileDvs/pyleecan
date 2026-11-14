@@ -178,7 +178,8 @@ def load_matlib_folder(matlib_path):
 
     # Get and Read all the file to create a list dictionary : variable name <=> value
     material_list = []
-    Material = import_class("Material")
+    from ..Classes_new.material import Material
+
     for dirpath, _, filenames in os.walk(matlib_path):
         for file_name in filenames:
             # For all json file in the folder and subfolder

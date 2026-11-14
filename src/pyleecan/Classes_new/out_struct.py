@@ -26,7 +26,7 @@ class OutStruct(PyleecanClass):
         Default: MeshSolution()
     FEA_dict : dict or None
         dictionary containing the main FEA parameter
-        Default: {}
+        Default: None
     """
 
     axes_dict: dict[str, Data] | None = None
@@ -38,7 +38,7 @@ class OutStruct(PyleecanClass):
         metadata={"default_class": "MeshSolution"},
     )
     """FEA software mesh and solution"""
-    FEA_dict: dict[str, Any] | None = field(default_factory=dict)
+    FEA_dict: dict[str, Any] | None = None
     """dictionary containing the main FEA parameter"""
 
     _package: ClassVar[str] = "Output"

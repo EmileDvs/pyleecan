@@ -14,9 +14,9 @@ class DXFImport(PyleecanClass):
 
     Attributes
     ----------
-    file_path : str or None
+    file_path : str
         Path to the DXF file to import
-        Default: None
+        Default: ""
     surf_dict : dict or None
         dictionary to assign the surfaces: key=complex reference point coordinate, value=label of the surface
         Default: {}
@@ -25,7 +25,7 @@ class DXFImport(PyleecanClass):
         Default: []
     """
 
-    file_path: str | None = None
+    file_path: str = ""
     """Path to the DXF file to import"""
     surf_dict: dict[str, Any] | None = field(default_factory=dict)
     """dictionary to assign the surfaces: key=complex reference point coordinate, value=label of the surface"""

@@ -6,7 +6,7 @@ from unittest.mock import patch  # for unittest of input
 
 import pytest
 from numpy import array, ones, pi
-from pyleecan.Classes_new._check import InitUnKnowClassError
+from pyleecan.Classes_new._error import InitUnKnowClassError
 from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
 from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
 from pyleecan.Classes_new.input_current import InputCurrent

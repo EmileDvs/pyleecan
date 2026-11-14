@@ -15,13 +15,13 @@ class OutMagFEMM(OutInternal):
     ----------
     FEMM_dict : dict or None
         dictionary containing the main FEMM parameters
-        Default: {}
+        Default: None
     handler_list : [_FEMMHandler] or None
         List of FEMM Handler (more than 1 if nb_worker >1)
         Default: []
     """
 
-    FEMM_dict: dict[str, Any] | None = field(default_factory=dict)
+    FEMM_dict: dict[str, Any] | None = None
     """dictionary containing the main FEMM parameters"""
     handler_list: list[Any] | None = field(default_factory=list)
     """List of FEMM Handler (more than 1 if nb_worker >1)"""

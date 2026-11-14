@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/ForceTensor.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, ClassVar
 
 import numpy as np
@@ -25,12 +25,12 @@ class ForceTensor(Force):
         Default: "stator core"
     tensor : dict or None
         Force model(s) to be used
-        Default: {}
+        Default: None
     """
 
     group: str = "stator core"
     """Name of the group selected for magnetic force computation. If None, all the domain is selected."""
-    tensor: dict[str, Any] | None = field(default_factory=dict)
+    tensor: dict[str, Any] | None = None
     """Force model(s) to be used"""
 
     _package: ClassVar[str] = "Simulation"

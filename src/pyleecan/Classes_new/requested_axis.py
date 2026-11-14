@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/SciDataTool/RequestedAxis.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from importlib import import_module
 from typing import Any, ClassVar
 
@@ -19,27 +19,27 @@ class RequestedAxis(PyleecanClass):
 
     Attributes
     ----------
-    name : str or None
+    name : str
         Name requested in get_along command
-        Default: None
-    corr_name : str or None
+        Default: ""
+    corr_name : str
         Corresponding axis if a transform is required
-        Default: None
-    unit : str or None
+        Default: ""
+    unit : str
         Unit requested in get_along command
-        Default: None
-    corr_unit : str or None
+        Default: ""
+    corr_unit : str
         Corresponding unit if a transform is required
-        Default: None
-    extension : str or None
+        Default: ""
+    extension : str
         Extension of the requested axis (single or interval)
-        Default: None
+        Default: ""
     values : ndarray or None
         Values of the axis
         Default: None
     indices : list or None
         Indices of the axis
-        Default: []
+        Default: None
     input_data : ndarray or None
         Input data to interpolate on
         Default: None
@@ -72,19 +72,19 @@ class RequestedAxis(PyleecanClass):
         Default: False
     """
 
-    name: str | None = None
+    name: str = ""
     """Name requested in get_along command"""
-    corr_name: str | None = None
+    corr_name: str = ""
     """Corresponding axis if a transform is required"""
-    unit: str | None = None
+    unit: str = ""
     """Unit requested in get_along command"""
-    corr_unit: str | None = None
+    corr_unit: str = ""
     """Corresponding unit if a transform is required"""
-    extension: str | None = None
+    extension: str = ""
     """Extension of the requested axis (single or interval)"""
     values: np.ndarray | None = None
     """Values of the axis"""
-    indices: list[Any] | None = field(default_factory=list)
+    indices: list[Any] | None = None
     """Indices of the axis"""
     input_data: np.ndarray | None = None
     """Input data to interpolate on"""

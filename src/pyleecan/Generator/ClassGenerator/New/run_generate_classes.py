@@ -1,4 +1,3 @@
-import ast
 import json
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -6,11 +5,9 @@ from os import cpu_count, listdir, remove
 from os.path import basename, isdir, isfile, join
 
 from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
-from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _shared_error_definitions,
     _write_shared_errors,
-    class_module_name,
     generate_class,
     get_class_import_graph,
     parent_type_mapping,
@@ -30,60 +27,6 @@ Use ``Classes_new._class_info.ClassInfo().get_dict()`` to get the class
 information (built from the dataclasses themselves).
 """
 '''
-
-EXPERIMENTAL_IMPORT = '''"""Generated class imports; do not edit by hand."""
-
-from importlib import import_module
-
-from {error_module} import InitUnKnowClassError
-
-_CLASS_MODULES = {class_modules}
-_LEGACY_NAMES = {legacy_names}
-__all__ = ["import_class", *_CLASS_MODULES]
-
-
-def import_class(class_name, prop_name=""):
-    """Import a generated class by name."""
-    class_name = _LEGACY_NAMES.get(class_name, class_name)
-    module_name = _CLASS_MODULES.get(class_name)
-    if module_name is None:
-        message = "Unknow class name " + str(class_name)
-        if prop_name:
-            message += " in init_dict for property " + prop_name
-        else:
-            message += " when loading"
-        raise InitUnKnowClassError(message)
-    target = __package__ + "." + module_name
-    try:
-        module = import_module(target)
-    except ModuleNotFoundError as error:
-        if error.name != target:
-            raise
-        message = "Unknow class name " + class_name
-        if prop_name:
-            message += " in init_dict for property " + prop_name
-        else:
-            message += " when loading"
-        raise InitUnKnowClassError(message) from error
-    try:
-        return getattr(module, class_name)
-    except AttributeError as error:
-        message = "Unknow class name " + class_name
-        if prop_name:
-            message += " in init_dict for property " + prop_name
-        else:
-            message += " when loading"
-        raise InitUnKnowClassError(message) from error
-
-
-def __getattr__(name):
-    if name not in _CLASS_MODULES:
-        raise AttributeError(f"module {{__name__!r}} has no attribute {{name!r}}")
-    value = import_class(name)
-    globals()[name] = value
-    return value
-'''
-
 
 def _validate_import_style(import_style):
     if import_style not in ("relative", "absolute"):
@@ -141,25 +84,13 @@ def generate_code(
         join(root_path, "Classes"), gen_dict, soft_name
     )
 
-    if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, "_pyleecan_class.py")):
-        raise FileNotFoundError(
-            "Experimental output requires Classes_new/_pyleecan_class.py: " + CLASS_DIR
-        )
-    import_path = join(CLASS_DIR, "_import.py")
-    if class_list is not None and isfile(import_path):
-        with open(import_path, encoding="utf-8") as import_file:
-            previous = ast.parse(import_file.read(), filename=import_path)
-        for definition in previous.body:
-            if (
-                isinstance(definition, ast.FunctionDef)
-                and definition.name == "import_class"
-                and definition.args.args
-                and definition.args.args[0].arg == "mod_name"
-            ):
-                raise ValueError(
-                    "The experimental import_class API changed; perform a full "
-                    "generation before generating individual classes."
-                )
+    for support_module in ("_pyleecan_class.py", "_import.py"):
+        # Hand-written support modules (not generated)
+        if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, support_module)):
+            raise FileNotFoundError(
+                f"Experimental output requires Classes_new/{support_module}: "
+                + CLASS_DIR
+            )
     class_names = (
         set(basename(csv_path)[:-4] for csv_path in class_list)
         if class_list is not None
@@ -195,26 +126,8 @@ def _write_experimental_bookkeeping(class_dir, gen_dict, soft_name, import_style
     with open(join(class_dir, "__init__.py"), "w", encoding="utf-8") as init_file:
         init_file.write(EXPERIMENTAL_INIT)
     _write_parent_types(class_dir, gen_dict)
-    class_modules = {
-        NORMALIZATION_CLASS_NAMES.get(name, name): class_module_name(name)
-        for name in sorted(gen_dict)
-    }
-    legacy_names = {
-        name: NORMALIZATION_CLASS_NAMES[name]
-        for name in sorted(gen_dict)
-        if name in NORMALIZATION_CLASS_NAMES
-    }
-    error_module = (
-        "._error" if import_style == "relative" else (soft_name + ".Classes_new._error")
-    )
-    with open(join(class_dir, "_import.py"), "w", encoding="utf-8") as import_file:
-        import_file.write(
-            EXPERIMENTAL_IMPORT.format(
-                error_module=error_module,
-                class_modules=repr(class_modules),
-                legacy_names=repr(legacy_names),
-            )
-        )
+    # Classes_new/_import.py is hand-written: the module of a class is derived
+    # from its name (class_module_name), no generated class table is needed
 
 
 def _write_parent_types(class_dir, gen_dict):

@@ -28,9 +28,9 @@ class ElmerResultsVTU(Elmer):
     label : str
         Label of the resulting meshsolution
         Default: "ElmerResults"
-    file_path : str or None
+    file_path : str
         Filename of the results VTU data file
-        Default: None
+        Default: ""
     store_dict : dict or None
         Dict containing the data names to store
         Default: {}
@@ -38,7 +38,7 @@ class ElmerResultsVTU(Elmer):
 
     label: str = "ElmerResults"
     """Label of the resulting meshsolution"""
-    file_path: str | None = None
+    file_path: str = ""
     """Filename of the results VTU data file"""
     store_dict: dict[str, Any] | None = field(default_factory=dict)
     """Dict containing the data names to store"""

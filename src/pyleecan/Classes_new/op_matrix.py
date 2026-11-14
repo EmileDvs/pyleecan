@@ -51,7 +51,7 @@ class OPMatrix(PyleecanClass):
         Unit: Arms; Default: None
     col_names : list or None
         Name of the columns from set_OP_matrix
-        Default: []
+        Default: None
     """
 
     N0: np.ndarray | None = field(default=None, metadata={"unit": "rpm"})
@@ -74,7 +74,7 @@ class OPMatrix(PyleecanClass):
     """True if power given in OP_matrix is the output power, False if it is the input power"""
     If_ref: np.ndarray | None = field(default=None, metadata={"unit": "Arms"})
     """DC rotor current"""
-    col_names: list[Any] | None = field(default_factory=list)
+    col_names: list[Any] | None = None
     """Name of the columns from set_OP_matrix"""
 
     _package: ClassVar[str] = "Simulation"

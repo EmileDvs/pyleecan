@@ -20,16 +20,16 @@ class BoreUD(Bore):
     sym : int
         Symmetry factor (1= full machine, 2= half of the machine...)
         Default: 1; Minimum: 1
-    name : str or None
+    name : str
         Name of the bore (for save)
-        Default: None
+        Default: ""
     """
 
     line_list: list[Line] | None = field(default_factory=list)
     """List of line to draw the full bore"""
     sym: int = field(default=1, metadata={"min": 1})
     """Symmetry factor (1= full machine, 2= half of the machine...)"""
-    name: str | None = None
+    name: str = ""
     """Name of the bore (for save)"""
 
     _package: ClassVar[str] = "Machine"

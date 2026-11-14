@@ -31,9 +31,9 @@ class SlotUD(Slot):
     type_line_wind : int
         0 to close winding with Segment, 1 for Arc1
         Default: 0; Minimum: 0; Maximum: 1
-    name : str or None
+    name : str
         Name of the slot (for save)
-        Default: None
+        Default: ""
     """
 
     line_list: list[Line] | None = field(default_factory=list)
@@ -44,7 +44,7 @@ class SlotUD(Slot):
     """Index of the last line to include in the winding"""
     type_line_wind: int = field(default=0, metadata={"min": 0, "max": 1})
     """0 to close winding with Segment, 1 for Arc1"""
-    name: str | None = None
+    name: str = ""
     """Name of the slot (for save)"""
 
     _package: ClassVar[str] = "Slot"

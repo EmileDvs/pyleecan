@@ -24,7 +24,6 @@ from ..Functions_new.labels import (
 from ..Functions_new.Plot import dict_2D
 from ..Functions_new.Winding.gen_phase_list import gen_name
 from ._error import ParentMissingError
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .material import Material
@@ -622,7 +621,8 @@ class Slot(PyleecanClass):
         new_slot : SlotUD2
             SlotUD2 version of the Slot
         """
-        SlotUD2 = import_class("SlotUD2")
+        from .slot_ud_2 import SlotUD2
+
         new_slot = SlotUD2()
         new_slot.Zs = self.Zs
         new_slot.line_list = self.build_geometry()

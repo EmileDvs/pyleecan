@@ -7,7 +7,6 @@ from logging.config import dictConfig
 from typing import ClassVar
 
 from ..loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .input import Input
 from .machine import Machine
@@ -22,12 +21,12 @@ class Simulation(PyleecanClass):
 
     Attributes
     ----------
-    name : str or None
+    name : str
         Name of the simulation
-        Default: None
-    desc : str or None
+        Default: ""
+    desc : str
         Simulation description
-        Default: None
+        Default: ""
     machine : Machine or None
         Machine to simulate
         Default: Machine()
@@ -57,9 +56,9 @@ class Simulation(PyleecanClass):
         Default: None; Minimum: 0
     """
 
-    name: str | None = None
+    name: str = ""
     """Name of the simulation"""
-    desc: str | None = None
+    desc: str = ""
     """Simulation description"""
     machine: Machine | None = field(
         default_factory=lambda: Machine(), metadata={"default_class": "Machine"}
@@ -195,8 +194,8 @@ class Simulation(PyleecanClass):
             Contains simulation results
         """
         # In-function import to avoid ImportError
-        XOutput = import_class("XOutput")
-        Output = import_class("Output")
+        from .xoutput import XOutput
+        from .output import Output
 
         if self.layer is None:
             self.layer = 0  # Top simulation

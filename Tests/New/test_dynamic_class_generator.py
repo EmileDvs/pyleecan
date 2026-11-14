@@ -23,7 +23,8 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _redirect_experimental_loader_imports,
     _rename_experimental_normalizations,
     _replace_dynamic_class_imports,
-    _replace_local_experimental_class_imports,
+    _static_local_class_imports,
+    class_module_name,
     generate_class,
 )
 from pyleecan.Generator.read_fct import read_all
@@ -86,76 +87,116 @@ def test_import_class_supports_distinct_module_and_class_names():
     with pytest.raises(InitUnKnowClassError, match="MissingClass"):
         import_class("pyleecan.Classes_new", "MissingClass", module_name="mesh_mat")
     with pytest.raises(InitUnKnowClassError, match="MissingClass"):
-        import_class("pyleecan.Classes_new", "MissingClass", module_name="missing_class")
+        import_class(
+            "pyleecan.Classes_new", "MissingClass", module_name="missing_class"
+        )
 
 
-def test_local_class_import_preserves_guard_alias_and_other_names(monkeypatch):
-    module = importlib.util.module_from_spec(
-        importlib.machinery.ModuleSpec("pyleecan.Classes_new.mesh_mat", loader=None)
-    )
-    module.MeshMat = type("MeshMat", (), {})
-    module.other = object()
-    monkeypatch.setitem(sys.modules, module.__name__, module)
-    loader = importlib.util.module_from_spec(
-        importlib.machinery.ModuleSpec("pyleecan.Classes_new._import", loader=None)
-    )
-    loader.import_class = lambda name: import_class(
-        "pyleecan.Classes_new", name, module_name="mesh_mat"
-    )
-    monkeypatch.setitem(sys.modules, loader.__name__, loader)
+def test_static_local_class_imports_replace_known_class_loads():
     source = (
-        "import_class = None\n"
-        "def _pyleecan_local_import_class():\n    pass\n"
-        "def method(enabled):\n"
-        "    if enabled:\n"
-        "        from pyleecan.Classes_new.mesh_mat import MeshMat as Alias, other\n"
-        "        return Alias, other\n"
-        "    return None\n"
+        "from pyleecan.Classes_new._import import import_class\n"
+        "def method(name):\n"
+        "    MeshMat = import_class('MeshMat')\n"
+        "    Vector = import_class('NormVector', 'normalizations')\n"
+        "    Self = import_class('Arc')\n"
+        "    return MeshMat, Vector, Self, import_class(name)\n"
     )
-    result = _replace_local_experimental_class_imports(
-        source, "pyleecan", {"MeshMat": {}}
+    result = _static_local_class_imports(
+        source, "pyleecan", {"MeshMat": {}, "Norm_vector": {}, "Arc": {}}, "Arc"
     )
-    assert "import_class as _pyleecan_local_import_class_" in result
-    namespace = {}
-    exec(result, namespace)  # noqa: S102
-    calls = []
-
-    def tracked_import(*args, **kwargs):
-        calls.append((args, kwargs))
-        return loader.import_class(*args, **kwargs)
-
-    namespace["_pyleecan_local_import_class_"] = tracked_import
-    assert namespace["method"](False) is None
-    assert calls == []
-    assert namespace["method"](True) == (module.MeshMat, module.other)
-    assert calls == [(("MeshMat",), {})]
-
-
-def test_local_class_import_handles_renamed_normalizations_and_other_imports():
-    source = (
-        "from pyleecan.Classes_new.norm_vector import NormVector\n"
-        "def method():\n"
+    assert "    from pyleecan.Classes_new.mesh_mat import MeshMat\n" in result
+    assert (
         "    from pyleecan.Classes_new.norm_vector import NormVector as Vector\n"
-        "    from pyleecan.Classes_new.norm_vector import unrelated\n"
-        "    from os.path import join\n"
-        "    return Vector, unrelated, join\n"
+        in result
     )
-    result = _replace_local_experimental_class_imports(
-        source, "pyleecan", {"Norm_vector": {}}
+    # The class of the generated module is a module global
+    assert "    Self = Arc\n" in result
+    # import_class is kept for the class names only known at runtime
+    assert "from pyleecan.Classes_new._import import import_class\n" in result
+    assert "import_class(name)" in result
+    ast.parse(result)
+
+
+def test_static_local_class_imports_are_grouped_at_method_top():
+    # The loads in a block (if/else...) may be conditional: they stay in place
+    source = (
+        "from pyleecan.Classes_new._import import import_class\n"
+        "def method(x):\n"
+        '    """Doc"""\n'
+        "    from numpy import pi\n"
+        "\n"
+        "    # Dynamic import to avoid loop\n"
+        "    Arc1 = import_class('Arc1')\n"
+        "    Arc2 = import_class('Arc2')\n"
+        "\n"
+        "    # Compute\n"
+        "    y = x * pi\n"
+        "    if y:\n"
+        "        MeshMat = import_class('MeshMat')\n"
+        "    else:\n"
+        "        MeshMat = import_class('Arc2')\n"
+        "    def inner():\n"
+        "        # Dynamic import to avoid loop\n"
+        "        Arc1 = import_class('Arc1')\n"
+        "\n"
+        "        return Arc1\n"
+        "    return MeshMat, inner\n"
     )
-    assert "from pyleecan.Classes_new.norm_vector import NormVector\n" in result
-    assert "from pyleecan.Classes_new.norm_vector import unrelated" in result
-    assert "from os.path import join" in result
-    assert "Vector = import_class('NormVector')" in result
+    result = _static_local_class_imports(
+        source, "pyleecan", {"MeshMat": {}, "Arc1": {}, "Arc2": {}}, "Arc"
+    )
+    assert result == (
+        "def method(x):\n"
+        '    """Doc"""\n'
+        "    from numpy import pi\n"
+        "    from pyleecan.Classes_new.arc_1 import Arc1\n"
+        "    from pyleecan.Classes_new.arc_2 import Arc2\n"
+        "\n"
+        "\n"
+        "    # Compute\n"
+        "    y = x * pi\n"
+        "    if y:\n"
+        "        from pyleecan.Classes_new.mesh_mat import MeshMat\n"
+        "    else:\n"
+        "        from pyleecan.Classes_new.arc_2 import Arc2 as MeshMat\n"
+        "    def inner():\n"
+        "        from pyleecan.Classes_new.arc_1 import Arc1\n"
+        "\n"
+        "\n"
+        "        return Arc1\n"
+        "    return MeshMat, inner\n"
+    )
+
+
+def test_static_local_class_imports_remove_unused_loader():
+    source = (
+        "from pyleecan.Classes_new._import import import_class\n"
+        "def method():\n"
+        "    Arc1 = import_class('Arc1')\n"
+        "    return Arc1\n"
+        "Arc1 = import_class('Arc1')\n"
+    )
+    result = _static_local_class_imports(source, "pyleecan", {"Arc1": {}}, "Arc")
+    # Module level loads are not methods: they are kept with the loader import
+    assert "from pyleecan.Classes_new._import import import_class\n" in result
+    assert "    from pyleecan.Classes_new.arc_1 import Arc1\n" in result
+    method_only = source.rsplit("Arc1 = import_class('Arc1')\n", 1)[0]
+    result = _static_local_class_imports(method_only, "pyleecan", {"Arc1": {}}, "Arc")
+    assert "import_class" not in result
+    assert "    from pyleecan.Classes_new.arc_1 import Arc1\n" in result
 
 
 @pytest.mark.parametrize(
     "source, expected",
     [
-        ("_pyleecan_import_class(PACKAGE_NAME + '.Classes', 'Arc1')",
-         "import_class('Arc1')"),
-        ("_pyleecan_import_class('pyleecan.Classes', name, 'axis')",
-         "import_class(name, 'axis')"),
+        (
+            "_pyleecan_import_class(PACKAGE_NAME + '.Classes', 'Arc1')",
+            "import_class('Arc1')",
+        ),
+        (
+            "_pyleecan_import_class('pyleecan.Classes', name, 'axis')",
+            "import_class(name, 'axis')",
+        ),
     ],
 )
 def test_experimental_loader_simplifies_legacy_calls(source, expected):
@@ -175,7 +216,9 @@ def test_experimental_loader_preserves_alias_when_plain_name_conflicts():
         "    return loader('pyleecan.Classes', 'Arc1'), import_class\n"
     )
     transformed = _redirect_experimental_loader_imports(source, "pyleecan")
-    assert "from pyleecan.Classes_new._import import import_class as loader" in transformed
+    assert (
+        "from pyleecan.Classes_new._import import import_class as loader" in transformed
+    )
     assert "return loader('Arc1'), import_class" in transformed
 
 
@@ -191,33 +234,55 @@ def test_real_legacy_loaders_are_simplified(
     tmp_path, monkeypatch, class_name, folder, method, expected, import_style
 ):
     monkeypatch.setenv(
-        "PATH", str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", "")
+        "PATH",
+        str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
     )
     gen_dict = read_all(DOC_DIR)
     gen_dict[class_name] = deepcopy(gen_dict[class_name])
     gen_dict[class_name]["methods"] = [method]
     method_dir = tmp_path / "Methods" / folder / class_name
     method_dir.mkdir(parents=True)
-    shutil.copy2(Path(MAIN_DIR) / "Methods" / folder / class_name / (method + ".py"),
-                 method_dir)
+    shutil.copy2(
+        Path(MAIN_DIR) / "Methods" / folder / class_name / (method + ".py"), method_dir
+    )
     output = tmp_path / "Classes_new"
     output.mkdir()
     path = generate_class(
-        gen_dict, class_name, str(output), import_style=import_style, class_import_graph={}, shared_error_definitions={},
+        gen_dict,
+        class_name,
+        str(output),
+        import_style=import_style,
+        class_import_graph={},
+        shared_error_definitions={},
     )
     tree = ast.parse(Path(path).read_text(encoding="utf-8"))
     cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
-    function = next(node for node in cls.body if isinstance(node, ast.FunctionDef)
-                    and node.name == method)
-    calls = [
-        node for node in ast.walk(function)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
-        and node.func.id == "import_class"
-    ]
-    assert [call.args[0].value for call in calls] == list(expected)
-    assert all(len(call.args) == 1 and not call.keywords for call in calls)
+    function = next(
+        node
+        for node in cls.body
+        if isinstance(node, ast.FunctionDef) and node.name == method
+    )
+    # The legacy dynamic loads become static local imports of the classes
     assert not any(
-        isinstance(node, ast.ImportFrom) and node.module
+        isinstance(node, ast.Name) and node.id == "import_class"
+        for node in ast.walk(function)
+    )
+    local_imports = [
+        node for node in ast.walk(function) if isinstance(node, ast.ImportFrom)
+    ]
+    assert [alias.name for node in local_imports for alias in node.names] == list(
+        expected
+    )
+    for node in local_imports:
+        module = class_module_name(node.names[0].name)
+        assert (node.level, node.module) == (
+            (1, module)
+            if import_style == "relative"
+            else (0, "pyleecan.Classes_new." + module)
+        )
+    assert not any(
+        isinstance(node, ast.ImportFrom)
+        and node.module
         and node.module.endswith("Functions.load")
         for node in tree.body
     )
@@ -512,9 +577,7 @@ def test_generated_get_values_without_header_uses_new_normalization(
         Path(MAIN_DIR) / "Methods" / "SciDataTool" / class_name / "get_values.py",
         methods,
     )
-    path = generate_class(
-        gen_dict, class_name, str(output), class_import_graph={}
-    )
+    path = generate_class(gen_dict, class_name, str(output), class_import_graph={})
     source = Path(path).read_text(encoding="utf-8")
     assert '"pyleecan.Classes_new.norm_vector"' in source
     assert 'fromlist=["NormVector"]' in source
@@ -527,10 +590,8 @@ def test_renamed_normalizations_and_legacy_serialization(
     tmp_path, monkeypatch, import_style
 ):
     import pyleecan.Classes_new
-    from pyleecan.Classes_new._pyleecan_class import (
-        construct_experimental_class,
-        import_experimental_class,
-    )
+    from pyleecan.Classes_new._import import import_class as import_new_class
+    from pyleecan.Classes_new._pyleecan_class import PyleecanClass
 
     monkeypatch.setenv(
         "PATH",
@@ -558,19 +619,24 @@ def test_renamed_normalizations_and_legacy_serialization(
         class_import_graph={},
     )
     data_source = Path(data_path).read_text(encoding="utf-8")
+    # The legacy loader calls use the generated import_class (it accepts the
+    # legacy normalization names) and the normalizations are built from_dict
     loader_imports = [
-        node for node in ast.parse(data_source).body
+        node
+        for node in ast.parse(data_source).body
         if isinstance(node, ast.ImportFrom)
-        and any(alias.name == "import_experimental_class" for alias in node.names)
+        and any(alias.name == "import_class" for alias in node.names)
     ]
     assert len(loader_imports) == 1
     assert (loader_imports[0].level, loader_imports[0].module) == (
-        (1, "_pyleecan_class") if import_style == "relative"
-        else (0, "pyleecan.Classes_new._pyleecan_class")
+        (1, "_import")
+        if import_style == "relative"
+        else (0, "pyleecan.Classes_new._import")
     )
     assert "Functions.Load.retrocompatibility import" not in data_source
-    assert "_import_experimental_class" in data_source
-    assert "construct_experimental_class as _construct_experimental_class" in data_source
+    assert "experimental_class" not in data_source
+    assert 'import_class(obj.get("__class__"), "normalizations")' in data_source
+    assert "class_obj.from_dict(obj)" in data_source
     expected_check = (
         "from ._check import check_var"
         if import_style == "relative"
@@ -605,18 +671,19 @@ def test_renamed_normalizations_and_legacy_serialization(
             cls = getattr(module, new_name)
             assert cls.__name__ == new_name
             assert not hasattr(module, old_name)
-            assert import_experimental_class("pyleecan.Classes", old_name) is cls
-            assert import_experimental_class("pyleecan.Classes", new_name) is cls
+            assert import_new_class(old_name) is cls
+            assert import_new_class(new_name) is cls
             assert (
                 cls.from_dict({"__class__": old_name}).as_dict()["__class__"]
                 == new_name
             )
-        norm_vector = import_experimental_class("pyleecan.Classes", "NormVector")
+        norm_vector = import_new_class("NormVector")
         from pyleecan.Classes.Norm_vector import Norm_vector as LegacyNormVector
 
         assert import_class("pyleecan.Classes", "Norm_vector") is LegacyNormVector
-        assert import_experimental_class("pyleecan.Classes", "Norm_vector") is norm_vector
-        legacy = construct_experimental_class(
+        assert import_new_class("Norm_vector") is norm_vector
+        # Field types that are not generated dataclasses are built by init_dict
+        legacy = PyleecanClass._construct_from_dict(
             LegacyNormVector, {"__class__": "Norm_vector", "vector": [5, 6]}
         )
         assert isinstance(legacy, LegacyNormVector)
@@ -627,16 +694,6 @@ def test_renamed_normalizations_and_legacy_serialization(
             np.testing.assert_array_equal(loaded.vector, [1.0, 2.0])
 
         data_module = importlib.import_module("pyleecan.Classes_new.data")
-
-        from pyleecan.Classes_new._pyleecan_class import (
-            load_experimental_normalization_values,
-        )
-
-        nested = load_experimental_normalization_values(
-            {"untouched": 1, "values": [[{"__class__": "Norm_vector", "vector": [7]}]]}
-        )
-        assert nested["untouched"] == 1
-        assert isinstance(nested["values"][0][0], norm_vector)
 
         for serialized_name in ("Norm_vector", "NormVector"):
             holder = data_module.Data.from_dict(
@@ -652,6 +709,7 @@ def test_renamed_normalizations_and_legacy_serialization(
             )
 
         from pyleecan.Classes_new._check import check_var
+
         tree = ast.parse(Path(data_path).read_text(encoding="utf-8"))
         data_class = next(node for node in tree.body if isinstance(node, ast.ClassDef))
         setter = next(
@@ -660,13 +718,12 @@ def test_renamed_normalizations_and_legacy_serialization(
             if isinstance(node, ast.FunctionDef) and node.name == "_set_normalizations"
         )
         namespace = {
+            # Known normalizations are imported locally (relative import)
+            "__name__": "pyleecan.Classes_new.data",
+            "__package__": "pyleecan.Classes_new",
             "np": np,
             "check_var": check_var,
-            "import_class": lambda name, prop="": import_experimental_class(
-                "pyleecan.Classes", name, prop
-            ),
-            "_import_experimental_class": import_experimental_class,
-            "_construct_experimental_class": construct_experimental_class,
+            "import_class": import_new_class,
         }
         exec(  # noqa: S102
             compile(
@@ -733,9 +790,7 @@ def test_missing_method_warns_and_is_omitted(tmp_path, monkeypatch, reason):
 
 
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])
-def test_uninlineable_existing_method_keeps_import(
-    tmp_path, monkeypatch, import_style
-):
+def test_uninlineable_existing_method_keeps_import(tmp_path, monkeypatch, import_style):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -748,8 +803,7 @@ def test_uninlineable_existing_method_keeps_import(
     methods = tmp_path / "Methods" / "Simulation" / "Magnetics"
     methods.mkdir(parents=True)
     (methods / "comp_axes.py").write_text(
-        "from __future__ import annotations\n"
-        "def comp_axes(self):\n    return 42\n",
+        "from __future__ import annotations\ndef comp_axes(self):\n    return 42\n",
         encoding="utf-8",
     )
     with pytest.warns(UserWarning, match="module has a __future__ import"):
@@ -772,7 +826,7 @@ def test_uninlineable_existing_method_keeps_import(
     compile(source, str(path), "exec")
 
 
-def test_generated_method_uses_import_class(tmp_path, monkeypatch):
+def test_generated_method_dynamic_self_import_uses_class(tmp_path, monkeypatch):
     monkeypatch.setenv(
         "PATH",
         str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
@@ -791,9 +845,7 @@ def test_generated_method_uses_import_class(tmp_path, monkeypatch):
         "    return cls\n",
         encoding="utf-8",
     )
-    generate_class(
-        gen_dict, "Magnetics", str(output), class_import_graph={}
-    )
+    generate_class(gen_dict, "Magnetics", str(output), class_import_graph={})
     path = output / "magnetics.py"
     module = ast.parse(path.read_text(encoding="utf-8"))
     cls = next(
@@ -807,21 +859,10 @@ def test_generated_method_uses_import_class(tmp_path, monkeypatch):
         if isinstance(node, ast.FunctionDef) and node.name == "comp_axes"
     )
     body = ast.unparse(method)
-    assert "import_class('Magnetics')" in body
+    # The class of the module itself is a module global (no import needed)
+    assert "cls = Magnetics" in body
     assert "__import__" not in body
-    namespace = {
-        "import_class": lambda name: Magnetics,
-    }
+    assert "import_class" not in path.read_text(encoding="utf-8")
+    namespace = {"Magnetics": Magnetics}
     exec(body, namespace)
     assert namespace["comp_axes"](None) is Magnetics
-    assert any(
-        isinstance(node, ast.ImportFrom)
-        and node.module == "pyleecan.Classes_new._import"
-        and any(
-            alias.name == "import_class"
-            and alias.asname is None
-            for alias in node.names
-        )
-        for node in module.body
-        if isinstance(node, ast.ImportFrom) and node.module
-    )

@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ._import import import_class
 from .xoutput import XOutput
 
 
@@ -113,13 +112,12 @@ class LUT(XOutput):
             Name of the simulation
         """
 
-        # Dynamic import to avoid loop
-        Simu1 = import_class("Simu1")
-        InputCurrent = import_class("InputCurrent")
-        VarLoadCurrent = import_class("VarLoadCurrent")
-        OPdq = import_class("OPdq")
-        MagFEMM = import_class("MagFEMM")
-        PostLUT = import_class("PostLUT")
+        from .simu_1 import Simu1
+        from .input_current import InputCurrent
+        from .var_load_current import VarLoadCurrent
+        from .op_dq import OPdq
+        from .mag_femm import MagFEMM
+        from .post_lut import PostLUT
 
         if name is None:
             name = "comp_LUT_" + machine.name

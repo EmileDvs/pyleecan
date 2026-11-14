@@ -13,17 +13,17 @@ class OutPost(PyleecanClass):
 
     Attributes
     ----------
-    legend_name : str or None
+    legend_name : str
         Name to use in the legend in case of comparison
-        Default: None
-    line_color : str or None
+        Default: ""
+    line_color : str
         Color to use in case of comparison
-        Default: None
+        Default: ""
     """
 
-    legend_name: str | None = None
+    legend_name: str = ""
     """Name to use in the legend in case of comparison"""
-    line_color: str | None = None
+    line_color: str = ""
     """Color to use in case of comparison"""
 
     _package: ClassVar[str] = "Output"

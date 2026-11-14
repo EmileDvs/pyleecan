@@ -26,10 +26,10 @@ class SlotUD2(Slot):
         Default: Surface()
     split_active_surf_dict : dict or None
         Dictionary to enforced the split active surface (key="Nrad=1, Ntan=2"). Labels set according to list order (loop on Nrad then Ntan)
-        Default: {}
-    name : str or None
-        Name of the slot (for save)
         Default: None
+    name : str
+        Name of the slot (for save)
+        Default: ""
     """
 
     line_list: list[Line] | None = field(default_factory=list)
@@ -38,9 +38,9 @@ class SlotUD2(Slot):
         default_factory=lambda: Surface(), metadata={"default_class": "Surface"}
     )
     """Active surface of the Slot"""
-    split_active_surf_dict: dict[str, Any] | None = field(default_factory=dict)
+    split_active_surf_dict: dict[str, Any] | None = None
     """Dictionary to enforced the split active surface (key="Nrad=1, Ntan=2"). Labels set according to list order (loop on Nrad then Ntan)"""
-    name: str | None = None
+    name: str = ""
     """Name of the slot (for save)"""
 
     _package: ClassVar[str] = "Slot"
@@ -110,7 +110,7 @@ class SlotUD2(Slot):
             List of surface delimiting the active zone
         """
 
-        Slot = import_class("Slot")
+        from .slot import Slot
 
         key = "Nrad=" + str(Nrad) + ", Ntan=" + str(Ntan)
 

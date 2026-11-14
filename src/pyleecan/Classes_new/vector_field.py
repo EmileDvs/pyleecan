@@ -20,7 +20,6 @@ from ..Functions_new.SciDataTool.Plot import REV_COMP_DICT
 from ..Functions_new.SciDataTool.Plot.init_fig import copy_fig, init_fig
 from ..Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from ._error import AxisError
-from ._import import import_class
 from ._pyleecan_class import PyleecanClass
 from .data_nd import DataND
 
@@ -31,20 +30,20 @@ class VectorField(PyleecanClass):
 
     Attributes
     ----------
-    name : str or None
+    name : str
         Name of the vector field
-        Default: None
-    symbol : str or None
+        Default: ""
+    symbol : str
         Symbol of the vector field
-        Default: None
+        Default: ""
     components : {DataND} or None
         Dict of the components
         Default: {}
     """
 
-    name: str | None = None
+    name: str = ""
     """Name of the vector field"""
-    symbol: str | None = None
+    symbol: str = ""
     """Symbol of the vector field"""
     components: dict[str, DataND] | None = field(default_factory=dict)
     """Dict of the components"""
@@ -77,8 +76,8 @@ class VectorField(PyleecanClass):
             Vectorfield converted with new periodicities
         """
 
-        DataLinspace = import_class("DataLinspace")
-        DataPattern = import_class("DataPattern")
+        from .data_linspace import DataLinspace
+        from .data_pattern import DataPattern
 
         # Get axes list in original VectorField
         # Assumes axes are the following: time, angle, z and z is DataPattern or radius
@@ -338,9 +337,6 @@ class VectorField(PyleecanClass):
         -------
         a VectorField object
         """
-
-        # Dynamic import to avoid loop
-        VectorField = import_class("VectorField")
 
         comp_dict = {}
         for key, comp in self.components.items():
@@ -1427,9 +1423,6 @@ class VectorField(PyleecanClass):
         a VectorField object
         """
 
-        # Dynamic import to avoid loop
-        VectorField = import_class("VectorField")
-
         comp_dict = {}
 
         for comp in self.components:  # Call get_data_along on each component
@@ -1808,8 +1801,7 @@ class VectorField(PyleecanClass):
             True to display legend in a frame
         """
 
-        # Dynamic import to avoid import loop
-        DataPattern = import_class("DataPattern")
+        from .data_pattern import DataPattern
 
         # Special case of quiver plot
         if type_plot == "quiver":
@@ -2486,9 +2478,6 @@ class VectorField(PyleecanClass):
         a VectorField object
         """
 
-        # Dynamic import to avoid loop
-        VectorField = import_class("VectorField")
-
         comp_dict = {}
         for key, comp in self.components.items():
             comp_dict[key] = comp.time_to_freq()
@@ -2506,9 +2495,6 @@ class VectorField(PyleecanClass):
         -------
         a VectorField object
         """
-
-        # Dynamic import to avoid loop
-        VectorField = import_class("VectorField")
 
         if (
             "radial" in self.components
@@ -2564,9 +2550,6 @@ class VectorField(PyleecanClass):
         -------
         a VectorField object
         """
-
-        # Dynamic import to avoid loop
-        VectorField = import_class("VectorField")
 
         if "comp_x" in self.components or "comp_y" in self.components:
             return self.copy()

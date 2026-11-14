@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Converter/RuleEquation.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, ClassVar
 
 from sympy.solvers import solve
@@ -17,7 +17,7 @@ class RuleEquation(Rule):
     ----------
     param : list or None
         dict all parameters
-        Default: []
+        Default: None
     equation : str or None
         conversion paramter to pyleecan (Y are always on other side
         Default: None
@@ -26,7 +26,7 @@ class RuleEquation(Rule):
         Default: None
     """
 
-    param: list[Any] | None = field(default_factory=list)
+    param: list[Any] | None = None
     """dict all parameters"""
     equation: str | None = None
     """conversion paramter to pyleecan (Y are always on other side"""

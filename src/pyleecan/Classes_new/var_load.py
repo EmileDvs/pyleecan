@@ -52,7 +52,8 @@ class VarLoad(VarSimu):
             value = class_obj(init_dict=value)
         elif isinstance(value, np.ndarray):
             # Conver matrix to OP_matrix object
-            class_obj = import_class("OPMatrix", "OP_matrix")
+            from .op_matrix import OPMatrix as class_obj
+
             value_obj = class_obj()
             value_obj._set_None()
             # N0, Id, Iq, Tem, Pem is the most commun OP_matrix format
@@ -64,7 +65,8 @@ class VarLoad(VarSimu):
                 value_obj.set_OP_array(value, "N0", "Id", "Iq")
             value = value_obj
         elif type(value) is int and value == -1:  # Default constructor
-            OP_matrix = import_class("OPMatrix", "OP_matrix")
+            from .op_matrix import OPMatrix as OP_matrix
+
             value = OP_matrix()
         check_var("OP_matrix", value, "OPMatrix")
         self._OP_matrix = value

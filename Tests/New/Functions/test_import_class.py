@@ -2,7 +2,7 @@
 
 import pytest
 
-from pyleecan.Classes_new._check import InitUnKnowClassError
+from pyleecan.Classes_new._error import InitUnKnowClassError
 from pyleecan.Classes_new.magnetics import Magnetics
 from pyleecan.Functions_new.Load.import_class import import_class
 

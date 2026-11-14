@@ -19,9 +19,9 @@ class ElmerResults(Elmer):
     data : dict or None
         Dict with simulation results
         Default: {}
-    file : str or None
+    file : str
         Filename of the results data file
-        Default: None
+        Default: ""
     usecols : list
         List integers (starting with 1) of columns to load. If usecols is not set all columns are loaded.
         Default: []
@@ -35,7 +35,7 @@ class ElmerResults(Elmer):
 
     data: dict[str, Any] | None = field(default_factory=dict)
     """Dict with simulation results"""
-    file: str | None = None
+    file: str = ""
     """Filename of the results data file"""
     usecols: list[Any] = field(default_factory=list)
     """List integers (starting with 1) of columns to load. If usecols is not set all columns are loaded."""

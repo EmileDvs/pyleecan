@@ -14,15 +14,15 @@ class Section(Elmer):
 
     Attributes
     ----------
-    section : str or None
+    section : str
         Name of the section
-        Default: None
+        Default: ""
     id : int or None
         Index of a numbered section
         Default: None
-    comment : str or None
+    comment : str
         Section global comment
-        Default: None
+        Default: ""
     _statements : dict or None
         internal dict to store the sections statements
         Default: {}
@@ -31,11 +31,11 @@ class Section(Elmer):
         Default: {}
     """
 
-    section: str | None = None
+    section: str = ""
     """Name of the section"""
     id: int | None = None
     """Index of a numbered section"""
-    comment: str | None = None
+    comment: str = ""
     """Section global comment"""
 
     _statements: dict[str, Any] | None = field(default_factory=dict)

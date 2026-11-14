@@ -10,7 +10,6 @@ import numpy as np
 from ..Functions_new.SciDataTool.conversions import convert
 from ..Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
 from ._error import AxisError, NormError
-from ._import import import_class
 from .data import Data
 from .norm_vector import NormVector
 
@@ -38,13 +37,13 @@ class Data1D(Data):
         Default: None
     sort_indices : list or None
         List of indices to use to sort axis
-        Default: []
+        Default: None
     filter : dict or None
         Dict of filter keys
-        Default: {}
+        Default: None
     char_to_rm : list or None
         List of characters to remove in filter table
-        Default: []
+        Default: None
     """
 
     values: np.ndarray | None = None
@@ -57,11 +56,11 @@ class Data1D(Data):
     """True if axis must be used to overlay curves in plots"""
     delimiter: str | None = None
     """Character used to separate attributes in string case (e.g. "r=0, stator, radial")"""
-    sort_indices: list[Any] | None = field(default_factory=list)
+    sort_indices: list[Any] | None = None
     """List of indices to use to sort axis"""
-    filter: dict[str, Any] | None = field(default_factory=dict)
+    filter: dict[str, Any] | None = None
     """Dict of filter keys"""
-    char_to_rm: list[Any] | None = field(default_factory=list)
+    char_to_rm: list[Any] | None = None
     """List of characters to remove in filter table"""
 
     _package: ClassVar[str] = "SciDataTool"
@@ -114,9 +113,6 @@ class Data1D(Data):
         New_axis: Data1D
             Axis with requested (anti-)periodicities
         """
-
-        # Dynamic import to avoid loop
-        Data1D = import_class("Data1D")
 
         try:
             # Reduce axis to the given periodicity
@@ -413,8 +409,7 @@ class Data1D(Data):
         DataLinspace or Data1D
         """
 
-        # Dynamic import to avoid loop
-        DataLinspace = import_class("DataLinspace")
+        from .data_linspace import DataLinspace
 
         values = self.values
         number = values.size

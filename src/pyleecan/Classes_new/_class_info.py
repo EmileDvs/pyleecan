@@ -11,6 +11,8 @@ Neither the legacy CSV files nor ``_class_dict.json`` are required.
 import ast
 import re
 import sys
+from importlib import import_module
+from pkgutil import iter_modules
 from collections.abc import Callable
 from dataclasses import MISSING, Field, fields
 from functools import cache
@@ -20,7 +22,7 @@ from typing import Any, ForwardRef, Union, get_args, get_origin
 
 import numpy as np
 
-from ._import import _CLASS_MODULES, import_class
+from ._import import class_module_name
 from ._pyleecan_class import PyleecanClass
 
 BASE_TYPES = (bool, complex, float, int, str)
@@ -123,7 +125,7 @@ class ClassInfo:
 @cache
 def _build_class_dict():
     """Import every generated class and gather its information."""
-    classes = {name: import_class(name) for name in _CLASS_MODULES}
+    classes = _all_classes()
     class_dict = {name: _class_info(cls) for name, cls in classes.items()}
 
     for cls_name, cls_dict in class_dict.items():
@@ -149,6 +151,28 @@ def _build_class_dict():
         cls_dict["prop_dict"] = {prop["name"]: prop for prop in cls_dict["properties"]}
 
     return class_dict
+
+
+def _all_classes():
+    """Pyleecan classes defined in the public modules of this package.
+
+    Each class is defined in the module named after it (see class_module_name).
+    """
+    package = sys.modules[__package__]
+    classes = {}
+    for module_info in iter_modules(package.__path__):
+        if module_info.name.startswith("_"):
+            continue
+        module = import_module(f"{__package__}.{module_info.name}")
+        for name, value in vars(module).items():
+            if (
+                isinstance(value, type)
+                and issubclass(value, PyleecanClass)
+                and value.__module__ == module.__name__
+                and class_module_name(name) == module_info.name
+            ):
+                classes[name] = value
+    return dict(sorted(classes.items()))
 
 
 def _class_info(cls):
