@@ -1,3 +1,5 @@
+from numpy import array
+
 from ....Classes.Data1D import Data1D
 from ....Classes.DataLinspace import DataLinspace
 from ....Classes.DataTime import DataTime
@@ -24,7 +26,7 @@ def get_wave(self):
     Phase = Data1D(
         name="phase",
         unit="",
-        values=gen_name(wave.shape[0]),
+        values=array(gen_name(wave.shape[0])),
         is_components=True,
     )
     # Ouput.Simulation.Electrical.EEC.Drive

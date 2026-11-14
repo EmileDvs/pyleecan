@@ -48,7 +48,9 @@ def test_dqh_transformation_freq(param_dict):
     Time = Data1D(name="time", unit="s", values=time, normalizations=norm_time)
 
     # Phase axis for plots
-    Phase = Data1D(name="phase", unit="", values=gen_name(qs), is_components=True)
+    Phase = Data1D(
+        name="phase", unit="", values=array(gen_name(qs)), is_components=True
+    )
 
     A_harm = array(
         [

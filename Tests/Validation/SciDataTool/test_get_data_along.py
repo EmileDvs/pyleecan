@@ -430,7 +430,7 @@ def test_get_data_along_to_linspace():
     Phase = Data1D(
         name="phase",
         unit="",
-        values=["A", "B", "C"],
+        values=np.array(["A", "B", "C"]),
         is_components=True,
     )
 

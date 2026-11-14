@@ -222,7 +222,7 @@ def dqh2n_DataTime(data_dqh, n, is_n_rms=False, phase_dir=None):
     Phase = Data1D(
         name="phase",
         unit="",
-        values=gen_name(n),
+        values=np.array(gen_name(n)),
         is_components=True,
     )
 

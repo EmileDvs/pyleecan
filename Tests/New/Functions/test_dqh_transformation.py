@@ -54,7 +54,7 @@ def test_dqh_transformation(param_dict):
     Phase = Data1D(
         name="phase",
         unit="",
-        values=gen_name(qs),
+        values=array(gen_name(qs)),
         is_components=True,
     )
 

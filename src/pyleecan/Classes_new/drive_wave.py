@@ -3,6 +3,8 @@
 
 from dataclasses import dataclass, field
 
+import numpy as np
+
 from ..Functions_new.check_parent import check_parent
 from ..Functions_new.Winding.gen_phase_list import gen_name
 from .data_1d import Data1D
@@ -48,7 +50,7 @@ class DriveWave(Drive):
         Phase = Data1D(
             name="phase",
             unit="",
-            values=gen_name(wave.shape[0]),
+            values=np.array(gen_name(wave.shape[0])),
             is_components=True,
         )
         # Ouput.Simulation.Electrical.EEC.Drive

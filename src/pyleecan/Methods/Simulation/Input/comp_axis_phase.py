@@ -1,4 +1,4 @@
-from numpy import pi
+from numpy import array, pi
 
 from ....Classes.Data1D import Data1D
 from ....Classes.DataLinspace import DataLinspace
@@ -60,7 +60,7 @@ def comp_axis_phase(self, lamination, per_a=None, is_apera=None, Phase_in=None):
                 Phase = Data1D(
                     name="phase",
                     unit="rad",
-                    values=name_phase,
+                    values=array(name_phase),
                     is_components=True,
                     is_overlay=True,
                     filter={"Phase": []},

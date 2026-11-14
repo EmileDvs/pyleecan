@@ -234,7 +234,7 @@ def dqh2n_DataFreq(data_dqh, n, current_dir, felec, is_n_rms=False, phase_dir=No
     Phase = Data1D(
         name="phase",
         unit="",
-        values=gen_name(n),
+        values=np.array(gen_name(n)),
         is_components=True,
     )
 

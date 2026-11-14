@@ -1,3 +1,5 @@
+from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import generate_tests
+from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import generate_functions
 import ast
 import json
 from concurrent.futures import ThreadPoolExecutor
@@ -327,6 +329,10 @@ def run_generate_classes(
 if __name__ == "__main__":
     # To generate all classes
     run_generate_classes(max_workers=cpu_count(), import_style="relative")
+
+    generate_functions()
+
+    generate_tests()
 
     # list_csv = [
     #     "Data.csv",

@@ -389,7 +389,7 @@ class Input(PyleecanClass):
                     Phase = Data1D(
                         name="phase",
                         unit="rad",
-                        values=name_phase,
+                        values=np.array(name_phase),
                         is_components=True,
                         is_overlay=True,
                         filter={"Phase": []},
