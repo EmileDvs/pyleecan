@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -54,18 +55,21 @@ class Electrical(PyleecanClass):
     """Electrical Equivalent Circuit"""
     logger_name: str = "Pyleecan.Electrical"
     """Name of the logger to use"""
-    freq_max: float = 40000
+    freq_max: float = field(default=40000, metadata={"unit": "Hz"})
     """Maximum frequency to calculate voltage and current harmonics"""
     LUT_enforced: LUT | None = field(default=None, metadata={"default_class": "LUT"})
     """Look-Up Tables to update equivalent circuit parameters"""
-    Tsta: float = 20
+    Tsta: float = field(default=20, metadata={"unit": "deg Celsius"})
     """Average stator temperature for Electrical calculation"""
-    Trot: float = 20
+    Trot: float = field(default=20, metadata={"unit": "deg Celsius"})
     """Average rotor temperature for Electrical calculation"""
     type_skin_effect: int = 1
     """Skin effect for resistance and inductance"""
     is_skin_effect_inductance: bool = True
     """True to include skin effect on inductance if type_skin_effect != False"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Electrical.comp_power
     def comp_power(self, out_dict, machine):

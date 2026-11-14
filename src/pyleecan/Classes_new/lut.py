@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._import import import_class
 from .xoutput import XOutput
@@ -14,6 +15,9 @@ class LUT(XOutput):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.LUT.get_eec
     def get_eec(self):

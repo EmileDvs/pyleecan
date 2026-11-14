@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -25,12 +26,15 @@ class NotchEvenDist(Notch):
         Default: Slot()
     """
 
-    alpha: float = 0
+    alpha: float = field(default=0, metadata={"unit": "rad"})
     """angular positon of the first notch (0 is middle of first tooth)"""
     notch_shape: Slot | None = field(
         default_factory=lambda: Slot(), metadata={"default_class": "Slot"}
     )
     """Shape of the Notch"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.NotchEvenDist.build_geometry_key
     def build_geometry_key(self, index=0, sym=1, alpha=0, delta=0):

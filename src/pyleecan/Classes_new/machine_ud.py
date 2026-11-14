@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from .lamination import Lamination
 from .machine import Machine
@@ -25,6 +26,9 @@ class MachineUD(Machine):
     """List of Lamination"""
     is_sync: bool = True
     """True if the machine should be handled as a Synchronous machine"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineUD.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):

@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/EndWinding.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -17,8 +18,11 @@ class EndWinding(PyleecanClass):
         Unit: H; Default: 0; Minimum: 0
     """
 
-    Lew_enforced: float = 0
+    Lew_enforced: float = field(default=0, metadata={"unit": "H", "min": 0})
     """Enforced end-winding lekage inductance"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.EndWinding.comp_inductance
     def comp_inductance(self):

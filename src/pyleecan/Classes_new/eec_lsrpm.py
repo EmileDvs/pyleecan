@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 from scipy import linalg
@@ -16,6 +17,9 @@ class EEC_LSRPM(EEC):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC_LSRPM.comp_joule_losses
     def comp_joule_losses(self, output):

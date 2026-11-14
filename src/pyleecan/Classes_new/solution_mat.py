@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from dataclasses import field as dataclass_field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -38,6 +38,9 @@ class SolutionMat(Solution):
     """List of axis names (e.g. "time", "direction")"""
     axis_size: list[Any] | None = dataclass_field(default_factory=list)
     """List of axis sizes"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.SolutionMat.get_axes_list
     def get_axes_list(self, *args):

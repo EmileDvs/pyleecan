@@ -4,7 +4,7 @@
 import os
 from dataclasses import dataclass, field
 from inspect import signature
-from typing import Any
+from typing import Any, ClassVar
 
 from ..Functions_new.Plot import dict_2D, dict_3D
 from .post_method import PostMethod
@@ -48,6 +48,9 @@ class PostPlot(PostMethod):
     """File format extension ("png", "svg", "eps") in which to save the figure. The PostPlot automatically saves the figure in the results folder. The user can specify a different folder by specifying "save_path"=path_str or not save the figure by specifying "save_path"=None in param_dict, if the plot_method enables it."""
     quantity: str | None = None
     """Full path to the quantity to which apply the plot_method except Output (e.g. mag.B, elec.get_Is, mag.meshsolution)"""
+
+    _package: ClassVar[str] = "Post"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Post.PostPlot.run
     def run(self, output):

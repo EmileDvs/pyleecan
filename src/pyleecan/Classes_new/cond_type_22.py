@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/CondType22.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -19,8 +20,11 @@ class CondType22(Conductor):
         Unit: m; Default: 0.01; Minimum: 0
     """
 
-    Sbar: float = 0.01
+    Sbar: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Surface of the Slot"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType22.comp_height_wire
     def comp_height_wire(self):

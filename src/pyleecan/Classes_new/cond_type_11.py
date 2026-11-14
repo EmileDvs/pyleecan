@@ -1,12 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/CondType11.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, Rectangle
 
-from ..definitions import config_dict
 from ..Functions_new.init_fig import init_fig
 from ..Functions_new.Plot import (
     ARROW_COLOR,
@@ -53,24 +53,25 @@ class CondType11(Conductor):
         Unit: deg; Default: 58; Minimum: 0; Maximum: 180
     """
 
-    COND_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
-    INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
-    Hwire: float = 0.01
+    Hwire: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """cf schematics, single strand height without insulation"""
-    Wwire: float = 0.01
+    Wwire: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """cf schematics, single strand width without insulation"""
-    Nwppc_rad: int = 1
+    Nwppc_rad: int = field(default=1, metadata={"min": 1})
     """number of form wound strands in parallel per conductor along radial (vertical) direction"""
-    Nwppc_tan: int = 1
+    Nwppc_tan: int = field(default=1, metadata={"min": 1})
     """number of form wound strands in parallel per conductor along tangential (horizontal) direction"""
-    Wins_wire: float = 0
+    Wins_wire: float = field(default=0, metadata={"unit": "m", "min": 0})
     """(advanced) cf schematics, winding strand insulation thickness"""
-    Wins_coil: float = 0
+    Wins_coil: float = field(default=0, metadata={"unit": "m", "min": 0})
     """(advanced) cf schematics, winding coil insulation  thickness"""
-    type_winding_shape: int = 0
+    type_winding_shape: int = field(default=0, metadata={"min": 0, "max": 1})
     """type of winding shape for end winding length calculation\\n0 for hairpin windings\\n1 for normal windings"""
-    alpha_ew: float = 58
+    alpha_ew: float = field(default=58, metadata={"unit": "deg", "min": 0, "max": 180})
     """angle of winding overhang hairpin coils [deg]"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType11.comp_height
     def comp_height(self):

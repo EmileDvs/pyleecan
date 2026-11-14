@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .data import Data
@@ -36,7 +37,7 @@ class OutForce(PyleecanClass):
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Force"""
     AGSF: VectorField | None = field(
-        default=None, metadata={"default_class": "VectorField"}
+        default=None, metadata={"unit": "N.m^2", "default_class": "VectorField"}
     )
     """Air Gap Surface Force (mainly computed with Maxwell stress tensor)"""
     logger_name: str = "Pyleecan.Force"
@@ -47,6 +48,9 @@ class OutForce(PyleecanClass):
         default=None, metadata={"default_class": "MeshSolution"}
     )
     """Force computed on a mesh"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutForce.store
     def store(self, out_dict, axes_dict):

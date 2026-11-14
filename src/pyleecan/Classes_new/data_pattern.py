@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from importlib import import_module
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -60,6 +60,9 @@ class DataPattern(Data):
     """Complete axis"""
     is_overlay: bool = False
     """True if axis must be used to overlay curves in plots"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.DataPattern.get_length
     def get_length(self, is_pattern=False, is_smallestperiod=False):

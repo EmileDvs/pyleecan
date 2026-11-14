@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -35,10 +35,13 @@ class LamSlotMulti(Lamination):
 
     slot_list: list[Slot] | None = field(default_factory=list)
     """List of lamination Slot"""
-    alpha: np.ndarray | None = None
+    alpha: np.ndarray | None = field(default=None, metadata={"unit": "[rad]"})
     """Angular position of the Slots"""
     sym_dict_enforced: dict[str, Any] | None = field(default_factory=dict)
     """Dictionary to enforce the lamination symmetry"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotMulti.check
     def check(self):

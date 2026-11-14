@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from importlib import import_module
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -106,6 +106,9 @@ class RequestedAxis(PyleecanClass):
     """To store original axis values (useful in case of non uniform fft)"""
     is_components: bool = False
     """To indicate if the values are strings"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.RequestedAxis.get_axis
     def get_axis(

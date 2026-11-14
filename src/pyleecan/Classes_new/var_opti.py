@@ -30,6 +30,7 @@ class VarOpti(VarParam):
     """
 
     NAME: ClassVar = "Optimization"
+
     objective_list: list[OptiObjective] | None = field(default_factory=list)
     """List containing OptiObjective objects"""
     constraint_list: list[OptiConstraint] | None = field(default_factory=list)
@@ -38,6 +39,9 @@ class VarOpti(VarParam):
         default=None, metadata={"default_class": "OptiSolver"}
     )
     """Object that solve an OptiProblem"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarOpti.check
     def check(self):

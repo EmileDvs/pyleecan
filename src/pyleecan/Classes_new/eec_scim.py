@@ -1,8 +1,9 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/EEC_SCIM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from multiprocessing import cpu_count
+from typing import ClassVar
 
 import numpy as np
 import scipy.interpolate as scp_int
@@ -68,36 +69,39 @@ class EEC_SCIM(EEC):
         Unit: Arms; Default: None
     """
 
-    Rfe: float | None = None
+    Rfe: float | None = field(default=None, metadata={"unit": "Ohm"})
     """Iron loss resistance"""
-    L1: float | None = None
+    L1: float | None = field(default=None, metadata={"unit": "H"})
     """Stator phase inductance"""
-    R2: float | None = None
+    R2: float | None = field(default=None, metadata={"unit": "Ohm"})
     """Rotor phase resistance"""
-    L2: float | None = None
+    L2: float | None = field(default=None, metadata={"unit": "H"})
     """Rotor phase inductance"""
     K21Z: float | None = None
     """transformation ratio from secondary (2, rotor) to primary (1, stator) for impedance"""
     K21I: float | None = None
     """transformation ratio from secondary (2, rotor) to primary (1, stator) for current"""
-    Im_table: np.ndarray | None = None
+    Im_table: np.ndarray | None = field(default=None, metadata={"unit": "Arms"})
     """Array of magnetizing current"""
-    Lm_table: np.ndarray | None = None
+    Lm_table: np.ndarray | None = field(default=None, metadata={"unit": "H"})
     """Array of magnetizing inductance function of Im_table"""
-    I1: complex | None = None
+    I1: complex | None = field(default=None, metadata={"unit": "Arms"})
     """Stator phase current (after solve)"""
-    I2: complex | None = None
+    I2: complex | None = field(default=None, metadata={"unit": "Arms"})
     """Rotor phase current (after solve)"""
-    U1: complex | None = None
+    U1: complex | None = field(default=None, metadata={"unit": "Vrms"})
     """Stator phase voltage (after solve)"""
-    U2: complex | None = None
+    U2: complex | None = field(default=None, metadata={"unit": "Vrms"})
     """Rotor phase voltage (after solve)"""
-    If: complex | None = None
+    If: complex | None = field(default=None, metadata={"unit": "Arms"})
     """Iron loss current (after solve)"""
-    Lm: float | None = None
+    Lm: float | None = field(default=None, metadata={"unit": "H"})
     """Magnetizing inductance (after solve)"""
-    Im: complex | None = None
+    Im: complex | None = field(default=None, metadata={"unit": "Arms"})
     """Magnetizing current (after solve)"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC_SCIM._comp_flux_mean
     def _comp_flux_mean(self, out):

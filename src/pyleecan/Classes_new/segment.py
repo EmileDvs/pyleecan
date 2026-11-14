@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -30,6 +31,9 @@ class Segment(Line):
     """begin point of the line"""
     end: complex = 0
     """end point of the line"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Segment.check
     def check(self):

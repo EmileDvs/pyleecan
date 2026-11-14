@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -25,6 +26,9 @@ class LamSquirrelCageMag(LamSquirrelCage):
 
     hole: list[Hole] | None = field(default_factory=list)
     """lamination Hole"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

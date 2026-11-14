@@ -1,5 +1,3 @@
-from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import generate_tests
-from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import generate_functions
 import ast
 import json
 from concurrent.futures import ThreadPoolExecutor
@@ -18,18 +16,19 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     parent_type_mapping,
     validate_class_module_names,
 )
+from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
+    generate_functions,
+)
+from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
+    generate_tests,
+)
 from pyleecan.Generator.read_fct import read_all
 
-EXPERIMENTAL_INIT = '''"""Experimental dataclass-based Pyleecan classes."""
+EXPERIMENTAL_INIT = '''"""Experimental dataclass-based Pyleecan classes.
 
-from json import load
-from os.path import dirname, join
-
-def get_class_dict():
-    """Return the CSV-derived class generation dictionary."""
-    path = join(dirname(__file__), "_class_dict.json")
-    with open(path, encoding="utf-8") as class_dict_file:
-        return load(class_dict_file)
+Use ``Classes_new._class_info.ClassInfo().get_dict()`` to get the class
+information (built from the dataclasses themselves).
+"""
 '''
 
 EXPERIMENTAL_IMPORT = '''"""Generated class imports; do not edit by hand."""
@@ -144,8 +143,7 @@ def generate_code(
 
     if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, "_pyleecan_class.py")):
         raise FileNotFoundError(
-            "Experimental output requires Classes_new/_pyleecan_class.py: "
-            + CLASS_DIR
+            "Experimental output requires Classes_new/_pyleecan_class.py: " + CLASS_DIR
         )
     import_path = join(CLASS_DIR, "_import.py")
     if class_list is not None and isfile(import_path):
@@ -196,8 +194,6 @@ def _write_experimental_bookkeeping(class_dir, gen_dict, soft_name, import_style
     """Write the experimental package API and full generated metadata."""
     with open(join(class_dir, "__init__.py"), "w", encoding="utf-8") as init_file:
         init_file.write(EXPERIMENTAL_INIT)
-    with open(join(class_dir, "_class_dict.json"), "w", encoding="utf-8") as json_file:
-        json.dump(gen_dict, json_file, sort_keys=True, indent=4, separators=(",", ": "))
     _write_parent_types(class_dir, gen_dict)
     class_modules = {
         NORMALIZATION_CLASS_NAMES.get(name, name): class_module_name(name)
@@ -205,10 +201,11 @@ def _write_experimental_bookkeeping(class_dir, gen_dict, soft_name, import_style
     }
     legacy_names = {
         name: NORMALIZATION_CLASS_NAMES[name]
-        for name in sorted(gen_dict) if name in NORMALIZATION_CLASS_NAMES
+        for name in sorted(gen_dict)
+        if name in NORMALIZATION_CLASS_NAMES
     }
-    error_module = "._error" if import_style == "relative" else (
-        soft_name + ".Classes_new._error"
+    error_module = (
+        "._error" if import_style == "relative" else (soft_name + ".Classes_new._error")
     )
     with open(join(class_dir, "_import.py"), "w", encoding="utf-8") as import_file:
         import_file.write(
@@ -297,11 +294,11 @@ def run_generate_classes(
 
     Experimental generation writes only selected modules in ``Classes_new``
     with snake_case names and does not rewrite CSVs or legacy bookkeeping.
-    It also writes an initializer, a full CSV-derived ``_class_dict.json``,
-    the full ``_parent_types.py`` mapping, and shared ``_error.py`` definitions,
-    even for partial generation. Existing classes need a full regeneration to
-    use the shared exceptions.
-    Class dictionary keys and metadata retain their source CSV class names.
+    It also writes an initializer, the full ``_parent_types.py`` mapping and
+    shared ``_error.py`` definitions, even for partial generation. Existing
+    classes need a full regeneration to use the shared exceptions.
+    The class information is no longer written: it is rebuilt from the
+    dataclasses by ``Classes_new._class_info.ClassInfo``.
     The experimental normalization classes use names such as ``NormVector``;
     their legacy names remain accepted when loading serialized data.
     Dataclasses are formatted by the class generator. ``import_style`` selects "absolute"
@@ -353,7 +350,7 @@ if __name__ == "__main__":
     #     "VectorField.csv",
     # ]
 
-    # list_csv = ["SolutionData.csv", "LUTdq.csv", "OutElec.csv", "OutMag.csv"]
+    # list_csv = ["Section.csv"]
 
-    # To generate only one class
-    # run_generate_classes(class_list=list_csv)
+    # # To generate only one class
+    # run_generate_classes(class_list=list_csv, import_style="relative")

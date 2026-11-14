@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from scipy.stats import norm
@@ -51,18 +51,21 @@ class SliceModel(PyleecanClass):
     """Type of slice distribution to use for rotor skew if linear and continuous ("uniform", "gauss", "user-defined")"""
     Nslices: int = 5
     """Number of slices"""
-    z_list: list[Any] | None = field(default_factory=list)
+    z_list: list[Any] | None = field(default_factory=list, metadata={"unit": "m"})
     """List of slice positions"""
-    angle_rotor: np.ndarray | None = None
+    angle_rotor: np.ndarray | None = field(default=None, metadata={"unit": "rad"})
     """Array of rotor skew angles in case of skew"""
-    angle_stator: np.ndarray | None = None
+    angle_stator: np.ndarray | None = field(default=None, metadata={"unit": "rad"})
     """Array of stator skew angles in case of skew"""
-    L: float | None = None
+    L: float | None = field(default=None, metadata={"unit": "m"})
     """Machine length (mean of rotor/stator lengths)"""
     is_step: bool | None = None
     """True to define slices as steps"""
     is_skew: bool | None = None
     """True if slices account for skew"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.SliceModel.get_data
     def get_data(self):

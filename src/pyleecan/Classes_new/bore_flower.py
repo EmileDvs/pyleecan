@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/BoreFlower.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,10 +39,14 @@ class BoreFlower(Bore):
     """
 
     MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    N: int = 8
+
+    N: int = field(default=8, metadata={"min": 0})
     """Number of flower arc"""
-    Rarc: float = 0.01
+    Rarc: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Radius of the flower arc"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreFlower.comp_periodicity_spatial
     def comp_periodicity_spatial(self):

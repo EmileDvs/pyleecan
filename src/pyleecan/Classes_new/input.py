@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -49,23 +50,26 @@ class Input(PyleecanClass):
     """
 
     time: ImportMatrix | None = field(
-        default=None, metadata={"default_class": "ImportMatrix"}
+        default=None, metadata={"unit": "s", "default_class": "ImportMatrix"}
     )
     """Electrical time vector (no symmetry) to import"""
     angle: ImportMatrix | None = field(
-        default=None, metadata={"default_class": "ImportMatrix"}
+        default=None, metadata={"unit": "rad", "default_class": "ImportMatrix"}
     )
     """Electrical position vector (no symmetry) to import"""
-    Nt_tot: int = 2048
+    Nt_tot: int = field(default=2048, metadata={"min": 1})
     """Time discretization"""
-    Nrev: float | None = None
+    Nrev: float | None = field(default=None, metadata={"min": 0})
     """Number of rotor revolution (to compute the final time)"""
-    Na_tot: int = 2048
+    Na_tot: int = field(default=2048, metadata={"min": 1})
     """Angular discretization"""
     OP: _field_type_OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
     t_final: float | None = None
     """To enforce final time"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Input.comp_axes
     def comp_axes(

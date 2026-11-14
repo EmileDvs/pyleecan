@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .normalization import Normalization
 
@@ -24,6 +25,9 @@ class NormAffine(Normalization):
     """slope of the axis function"""
     offset: float = 0
     """offset of the axis function"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Norm_affine.normalize
     def normalize(

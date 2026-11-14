@@ -25,6 +25,9 @@ class Arc(Line):
 
     ARC_NPOINT_D: ClassVar = 99
 
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
+
     # Inlined from Methods.Geometry.Arc.comp_distance
     def comp_distance(self, Z):
         """Compute the distance of a point to the Arc

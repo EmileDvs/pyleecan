@@ -1,18 +1,16 @@
-import pytest
 from logging import Logger
-from pyleecan.Generator.read_fct import read_all
-from pyleecan.definitions import DOC_DIR
-from pyleecan.Classes.import_all import *
 
-# Get the dict of all the classes and their information
-gen_dict = read_all(DOC_DIR)  # dict of class dict
-# Remove one list level (packages Machine, Simulation, Material...)
-class_list = list(gen_dict.values())
+import pytest
+
+from pyleecan.Classes_new._class_info import ClassInfo
+
+# Class information rebuilt from the dataclasses themselves
+class_list = list(ClassInfo().get_dict().values())
 
 
-@pytest.mark.parametrize("class_dict", class_list)
+@pytest.mark.parametrize("class_dict", class_list, ids=lambda c: c["name"])
 def test_loggers(class_dict):
-    test_obj = eval(class_dict["name"] + "()")
+    test_obj = class_dict["class"]()
     logger = test_obj.get_logger()
     logger.info("test")
     assert isinstance(logger, Logger)

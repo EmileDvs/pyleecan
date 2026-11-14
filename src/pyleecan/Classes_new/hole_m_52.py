@@ -56,20 +56,24 @@ class HoleM52(HoleMag):
 
     IS_SYMMETRICAL: ClassVar = 1
     MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    H0: float = 0.003
+
+    H0: float = field(default=0.003, metadata={"unit": "m", "min": 0})
     """Slot depth"""
-    W0: float = 0.003
+    W0: float = field(default=0.003, metadata={"unit": "m", "min": 0})
     """Magnet width"""
-    H1: float = 0
+    H1: float = field(default=0, metadata={"unit": "m", "min": 0})
     """Magnet height"""
-    W3: float = 0.013
+    W3: float = field(default=0.013, metadata={"unit": "m", "min": 0})
     """Tooth width"""
-    H2: float = 0.02
+    H2: float = field(default=0.02, metadata={"unit": "m", "min": 0})
     """Additional depth for the magnet"""
     magnet_0: Magnet | None = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Magnet of the hole"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM52._comp_point_coordinate
     def _comp_point_coordinate(self):

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from dataclasses import field as dataclass_field
-from typing import Any
+from typing import Any, ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .data_1d import Data1D
@@ -59,6 +59,9 @@ class ImportData(PyleecanClass):
     """Dict of normalizations"""
     symmetries: dict[str, Any] = dataclass_field(default_factory=dict)
     """Dict of symmetries"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportData.get_data
     def get_data(self):

@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Loss/LossFEA.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._error import InputError
 from .loss import Loss
@@ -31,14 +32,17 @@ class LossFEA(Loss):
         Default: 1
     """
 
-    k_ed: float | None = None
+    k_ed: float | None = field(default=None, metadata={"unit": "W/(m3*T2*Hz2)"})
     """eddy current loss coefficients"""
-    k_hy: float | None = None
+    k_hy: float | None = field(default=None, metadata={"unit": "W/(m3*T2*Hz)"})
     """hysteresis loss coefficients"""
-    k_p: float | None = None
+    k_p: float | None = field(default=None, metadata={"unit": "W/(m3*T2*Hz2)"})
     """proximity loss coefficients"""
     type_skin_effect: int = 1
     """Skin effect for resistance calculation (0 to ignore skin effect, 1 to consider it)"""
+
+    _package: ClassVar[str] = "Loss"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossFEA.run
     def run(self):

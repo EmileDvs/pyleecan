@@ -65,6 +65,92 @@ def test_experimental_generator(generator_environment, tmp_path):
     assert child_class.bases[0].id == "Magnetics"
 
 
+def test_generated_section_includes_method_package_classes(
+    generator_environment, tmp_path, monkeypatch
+):
+    source = Path(MAIN_DIR) / "Methods" / "Elmer" / "Section"
+    methods = tmp_path / "Methods" / "Elmer" / "Section"
+    methods.mkdir(parents=True)
+    for name in ("__init__.py", "write.py", "pop.py"):
+        shutil.copyfile(source / name, methods / name)
+    specs = deepcopy(generator_environment)
+    specs["Section"]["methods"] = ["write", "pop"]
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+
+    path = class_generator.generate_class(specs, "Section", str(output))
+    generated = Path(path).read_text(encoding="utf-8")
+    # The constants shared by the Elmer classes are only defined in Elmer
+    module = ast.parse(generated)
+    assert not [node for node in module.body if isinstance(node, ast.Assign)]
+    assert "solver_input_file" not in generated
+    assert "def write(self, stream=None):" in generated
+    assert "stream.write(self.NEWLINE + self.END + self.NEWLINE)" in generated
+    assert "+ 2 * Section.INDENT" in generated
+    # Section inherits the shared constants from the generated Elmer class
+    elmer_path = class_generator.generate_class(specs, "Elmer", str(output))
+    elmer_spec = importlib.util.spec_from_file_location(
+        "pyleecan.Classes_new.elmer", elmer_path
+    )
+    elmer_module = importlib.util.module_from_spec(elmer_spec)
+    elmer_spec.loader.exec_module(elmer_module)
+    monkeypatch.setitem(sys.modules, "pyleecan.Classes_new.elmer", elmer_module)
+    classes = [node.name for node in ast.parse(generated).body if isinstance(node, ast.ClassDef)]
+    assert classes[-4:] == ["Section", "File", "Variable", "MATC"]
+    namespace = {"__name__": "pyleecan.Classes_new.generated_section"}
+    exec(compile(generated, str(path), "exec"), namespace)
+
+    Section = namespace["Section"]
+    assert issubclass(Section.ElmerSectionError, Exception)
+    assert Section._convert(namespace["File"]("mesh")) == 'File "mesh"'
+    matc = namespace["MATC"]("x")
+    variable = namespace["Variable"]("Coordinate", matc)
+    # Same as legacy Methods.Elmer.Section.write._convert: NEWLINE + 2 * INDENT
+    assert Section._convert(variable) == 'Variable Coordinate\n    Real MATC "x"'
+
+
+def test_shared_class_constants_are_inherited(generator_environment):
+    constants = class_generator._class_constants("SurfLine", generator_environment)
+    assert set(class_generator.CLASS_SHARED_CONSTANTS["Surface"]) <= set(constants)
+    # SolverInputFile: constants shared by Elmer then its own constants
+    assert list(
+        class_generator._class_constants("SolverInputFile", generator_environment)
+    ) == ["WHITESPACE", "INDENT", "COMMENT", "NEWLINE", "END", "MESH_FILE"]
+    assert class_generator._class_constants("Segment", generator_environment) == {}
+    assert class_generator._class_constant_imports(
+        class_generator.CLASS_SHARED_CONSTANTS["Surface"], "pyleecan"
+    ) == {"from pyleecan.definitions import config_dict"}
+    assert class_generator._class_constant_imports({"X": "'a'"}, "pyleecan") == set()
+
+
+def test_shared_class_constants_in_daughter_methods(generator_environment, tmp_path):
+    """Matching module constants use the class attribute, others stay local."""
+    methods = tmp_path / "Methods" / "Geometry" / "SurfLine"
+    methods.mkdir(parents=True)
+    (methods / "get_patches.py").write_text(
+        "from ....definitions import config_dict\n"
+        'PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]\n'
+        'PATCH_EDGE = "red"\n\n\n'
+        "def get_patches(self, color=PATCH_COLOR):\n"
+        "    return color, PATCH_EDGE, PATCH_COLOR\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "Classes_new"
+    output.mkdir()
+    specs = deepcopy(generator_environment)
+    specs["SurfLine"]["methods"] = ["get_patches"]
+    path = class_generator.generate_class(
+        specs, "SurfLine", str(output), shared_error_definitions={}
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    # A value different from the shared constant stays local to the method
+    assert 'def get_patches(self, color=None, *, PATCH_EDGE="red"):' in source
+    assert "return color, PATCH_EDGE, self.PATCH_COLOR" in source
+    # The inherited default value is reached through the mother class
+    assert "+ (Surface.PATCH_COLOR,)" in source
+    assert "PATCH_COLOR =" not in source and "PATCH_COLOR:" not in source
+
+
 def test_class_generator_rejects_legacy_mode(generator_environment, tmp_path):
     with pytest.raises(TypeError, match="is_new"):
         class_generator.generate_class(
@@ -1192,8 +1278,10 @@ def test_experimental_class_import_redirect(
             in transformed
         )
     assert package_import in transformed
-    assert "from pyleecan.Classes import unknown" in transformed or (
-        import_style == "relative" and "from ..Classes import unknown" in transformed
+    # get_class_dict has no Classes_new equivalent: it stays a legacy import
+    assert "from pyleecan.Classes import get_class_dict, unknown" in transformed or (
+        import_style == "relative"
+        and "from ..Classes import get_class_dict, unknown" in transformed
     )
     assert "from other.Classes.Machine import Machine" in transformed
 
@@ -1501,10 +1589,18 @@ def test_experimental_property_types_import_new_modules(
         ),
         ("Input", {"ROT_DIR_REF": -1, "CURRENT_DIR_REF": -1, "PHASE_DIR_REF": -1}, {}),
         (
-            "SolverInputFile",
-            {"WHITESPACE": " ", "INDENT": "  "},
-            {"WHITESPACE": " ", "COMMENT": "! ", "MESH_FILE": "Mesh"},
+            "Elmer",
+            {},
+            {
+                "WHITESPACE": " ",
+                "INDENT": "  ",
+                "COMMENT": "! ",
+                "NEWLINE": "\n",
+                "END": "End",
+            },
         ),
+        # Shared Elmer constants are only defined in the mother class
+        ("SolverInputFile", {}, {"MESH_FILE": "Mesh"}),
     ],
 )
 @pytest.mark.parametrize("import_style", ["absolute", "relative"])

@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -13,3 +14,6 @@ class ScalarProduct(PyleecanClass):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""

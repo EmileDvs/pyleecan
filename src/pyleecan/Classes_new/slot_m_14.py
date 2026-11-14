@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotM14.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.Geometry.comp_flower_arc import comp_flower_arc
 from ..Functions_new.Plot import (
     ARROW_COLOR,
@@ -51,17 +50,20 @@ class SlotM14(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W0: float = 0.0122
+
+    W0: float = field(default=0.0122, metadata={"unit": "rad", "min": 0})
     """Slot isthmus angular width."""
-    H0: float = 0.001
+    H0: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Slot isthmus height."""
-    W1: float = 0.0122
+    W1: float = field(default=0.0122, metadata={"unit": "rad", "min": 0})
     """Magnet angular width"""
-    H1: float = 0.001
+    H1: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Magnet Height"""
-    Rtopm: float = 0.001
+    Rtopm: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Radius of the magnet top"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM14._comp_point_coordinate
     def _comp_point_coordinate(self):

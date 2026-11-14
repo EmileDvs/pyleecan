@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/MatElectrical.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -25,12 +26,15 @@ class MatElectrical(PyleecanClass):
         Unit: 1/K; Default: 0; Minimum: 0
     """
 
-    rho: float = 0
+    rho: float = field(default=0, metadata={"unit": "ohm.m", "min": 0})
     """Resistivity at 20 deg C"""
-    epsr: float = 1
+    epsr: float = field(default=1, metadata={"min": 0})
     """Relative dielectric constant"""
-    alpha: float = 0
+    alpha: float = field(default=0, metadata={"unit": "1/K", "min": 0})
     """Thermal resistivity coefficient"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.MatElectrical.get_conductivity
     def get_conductivity(self, T_op=None, T_ref=20):

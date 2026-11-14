@@ -100,21 +100,22 @@ class Winding(PyleecanClass):
     PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
     ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
     STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
+
     is_reverse_wind: bool = False
     """True to reverse the default winding algorithm along the airgap (c, b, a instead of a, b, c along the trigonometric direction)"""
     Nslot_shift_wind: int = 0
     """Number of slots to shift the coils obtained with pyleecan winding algorithm (a, b, c becomes b, c, a with Nslot_shift_wind=1)"""
-    qs: int = 3
+    qs: int = field(default=3, metadata={"min": 0})
     """number of phases """
-    Ntcoil: int = 7
+    Ntcoil: int = field(default=7, metadata={"min": 1})
     """number of turns per coil"""
-    Npcp: int = 2
+    Npcp: int = field(default=2, metadata={"min": 1})
     """number of parallel circuits per phase"""
-    type_connection: int = 0
+    type_connection: int = field(default=0, metadata={"min": -1, "max": 1})
     """Winding connection : 0 star (Y), 1 triangle (delta), -1 no connection"""
-    p: int = 3
+    p: int = field(default=3, metadata={"min": 1})
     """pole pairs number"""
-    Lewout: float = 0.015
+    Lewout: float = field(default=0.015, metadata={"unit": "m", "min": 0})
     """straight length of the conductors outside the lamination before the curved part of winding overhang [m] - can be negative to tune the average turn length (only used in voltage driven simulations)"""
     conductor: Conductor | None = field(
         default_factory=lambda: Conductor(), metadata={"default_class": "Conductor"}
@@ -124,9 +125,9 @@ class Winding(PyleecanClass):
     """Distance (in slot) between a conductor of a certain phase and the corresponding return conductor"""
     wind_mat: np.ndarray | None = None
     """Winding matrix calculated with Star of slots (from SWAT_EM package)"""
-    Nlayer: int = 1
+    Nlayer: int = field(default=1, metadata={"min": 1})
     """Number of different coils in a slot"""
-    per_a: int | None = None
+    per_a: int | None = field(default=None, metadata={"min": 1})
     """Number of spatial periods of the winding"""
     is_aper_a: bool | None = None
     """True if the winding is anti-periodic over space"""
@@ -140,10 +141,13 @@ class Winding(PyleecanClass):
     """True to change the layer from radial to tangential or tangential to radial"""
     is_permute_B_C: bool = False
     """True to permute phase B and phase C"""
-    dual_tri_phase_shift: float | None = None
+    dual_tri_phase_shift: float | None = field(default=None, metadata={"unit": "rad"})
     """Phase shift between both tri-phase systems in dual-tri-phase case"""
     is_wye: bool = True
     """True if the alimentation is wye (else delta)"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Winding.clean
     def clean(self):

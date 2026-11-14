@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/ModelBH.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 from scipy.optimize import curve_fit
@@ -26,12 +27,15 @@ class ModelBH(PyleecanClass):
         Unit: A/m; Default: 100
     """
 
-    Bmax: float = 2.31
+    Bmax: float = field(default=2.31, metadata={"unit": "T"})
     """Max value of B for extrapolation"""
-    Hmax: float | None = None
+    Hmax: float | None = field(default=None, metadata={"unit": "A/m"})
     """Max value of H for extrapolation"""
-    delta: float = 100
+    delta: float = field(default=100, metadata={"unit": "A/m"})
     """Step value for H"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.ModelBH.fit_model
     def fit_model(self, BH):

@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Import/ImportGenPWM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -72,42 +73,45 @@ class ImportGenPWM(ImportMatrix):
         Default: 0
     """
 
-    fs: float = 96000
+    fs: float = field(default=96000, metadata={"unit": "Hz", "min": 0})
     """sample frequency"""
-    duration: float = 10
+    duration: float = field(default=10, metadata={"unit": "s", "min": 0})
     """duration"""
-    f: float = 50
+    f: float = field(default=50, metadata={"unit": "Hz", "min": 0})
     """fundamental frequency"""
-    fmax: float = 0
+    fmax: float = field(default=0, metadata={"unit": "Hz", "min": 0})
     """maximal fundamental frequency"""
-    fmode: int = 0
+    fmode: int = field(default=0, metadata={"min": 0})
     """speed mode: 0: Fixed speed, 1: Variable speed"""
     fswimode: int = 0
     """switch mode: 0:Fixed fswi, 1:Variable fswi"""
-    fswi: float = 1000
+    fswi: float = field(default=1000, metadata={"unit": "Hz"})
     """switching frequency"""
-    fswi_max: float = 3000
+    fswi_max: float = field(default=3000, metadata={"unit": "Hz"})
     """maximal switching frequency"""
     typePWM: int = 8
     """0: GDPWM 1: DPWMMIN 2: DPWMMAX 3: DPWM0 4: DPWM1 5: DPWM2 6: DPWM3 7: SVPWM 8: SPWM"""
-    Vdc1: float = 2
+    Vdc1: float = field(default=2, metadata={"unit": "V"})
     """DC BUS voltage"""
-    U0: float | None = None
+    U0: float | None = field(default=None, metadata={"unit": "V"})
     """reference voltage amplitude (rms)"""
     type_carrier: int = 0
     """1: forward toothsaw carrier 2: backwards toothsaw carrier 3: toothsaw carrier else: symetrical toothsaw carrier"""
-    var_amp: int = 20
+    var_amp: int = field(default=20, metadata={"unit": "%"})
     """percentage of variation of carrier amplitude"""
     qs: int = 3
     """number of phase"""
     is_star: bool = True
     """True if star coupling, False if triangle coupling"""
-    phase_dir: int = -1
+    phase_dir: int = field(default=-1, metadata={"min": -1, "max": 1})
     """Rotation direction of the stator phases (phase_dir*(n-1)*pi/qs, default value given by PHASE_DIR_REF)"""
-    current_dir: int = -1
+    current_dir: int = field(default=-1, metadata={"min": -1, "max": 1})
     """Rotation direction of the stator currents (current_dir*2*pi*felec*time, default value given by CURRENT_DIR_REF)"""
     Phi0: float = 0
     """reference voltage phase (rad)"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenPWM.comp_carrier
     def comp_carrier(self, time):

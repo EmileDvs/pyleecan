@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -60,15 +61,15 @@ class ElecLUTdq(Electrical):
         Default: 1; Minimum: 0; Maximum: 1
     """
 
-    n_interp: int = 10
+    n_interp: int = field(default=10, metadata={"min": 1})
     """Number of id values used for interpolation"""
-    Id_min: float | None = None
+    Id_min: float | None = field(default=None, metadata={"unit": "Arms"})
     """Minimum Id for LUT calculation"""
-    Id_max: float | None = None
+    Id_max: float | None = field(default=None, metadata={"unit": "Arms"})
     """Maximum Id for LUT calculation"""
-    Iq_min: float | None = None
+    Iq_min: float | None = field(default=None, metadata={"unit": "Arms"})
     """Minimum Iq for LUT calculation"""
-    Iq_max: float | None = None
+    Iq_max: float | None = field(default=None, metadata={"unit": "Arms"})
     """Maximum Iq for LUT calculation"""
     n_Id: int = 1
     """Number of Id for LUT calculation"""
@@ -80,14 +81,17 @@ class ElecLUTdq(Electrical):
     """Simulation object to run for LUT calculation"""
     is_grid_dq: bool = True
     """True to build a n_Id*n_Iq grid, otherwise calculate n_Id+n_Iq simulations and extrapolate to the dq plane"""
-    Urms_max: float | None = None
+    Urms_max: float | None = field(default=None, metadata={"unit": "Vrms", "min": 0})
     """Maximum rms phase voltage"""
-    Jrms_max: float | None = None
+    Jrms_max: float | None = field(default=None, metadata={"unit": "A/m2", "min": 0})
     """Maximum rms current density in slot"""
-    Irms_max: float | None = None
+    Irms_max: float | None = field(default=None, metadata={"unit": "A", "min": 0})
     """Maximum rms phase current"""
-    load_rate: float = 1
+    load_rate: float = field(default=1, metadata={"min": 0, "max": 1})
     """Load rate between 0 (no-load) and 1 (full-load) for MTPA calculation"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ElecLUTdq.comp_LUTdq
     def comp_LUTdq(self):

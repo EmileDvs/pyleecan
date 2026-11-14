@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -38,16 +39,20 @@ class Frame(PyleecanClass):
     """
 
     FRAME_COLOR = config_dict["PLOT"]["COLOR_DICT"]["FRAME_COLOR"]
-    Lfra: float = 0.35
+
+    Lfra: float = field(default=0.35, metadata={"unit": "m", "min": 0})
     """frame length [m]"""
-    Rint: float = 0.2
+    Rint: float = field(default=0.2, metadata={"unit": "m", "min": 0})
     """frame internal radius"""
-    Rext: float = 0.2
+    Rext: float = field(default=0.2, metadata={"unit": "m", "min": 0})
     """Frame external radius"""
     mat_type: Material | None = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Frame material"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Frame.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):

@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/ModelBH_exponential.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -20,7 +21,10 @@ class ModelBH_exponential(PyleecanClass):
         Default: None
     """
 
-    Bs: float | None = None
+    Bs: float | None = field(default=None, metadata={"unit": "T"})
     """BH curve parameter"""
     mu_a: float | None = None
     """Saturation permeability parameter"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""

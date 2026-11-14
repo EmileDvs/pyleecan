@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 import numpy as np
 
@@ -54,14 +54,19 @@ class Skew(PyleecanClass):
     """True to define skew as steps"""
     function: Callable[..., Any] | None = None
     """Function which describes skew pattern"""
-    angle_list: list[Any] | None = field(default_factory=list)
+    angle_list: list[Any] | None = field(default_factory=list, metadata={"unit": "rad"})
     """List of skew angles"""
-    z_list: list[Any] | None = field(default_factory=list)
+    z_list: list[Any] | None = field(default_factory=list, metadata={"unit": "m"})
     """List of z axis positions for which skew angles are given"""
-    Nstep: int | None = None
+    Nstep: int | None = field(default=None, metadata={"min": 2})
     """Number of steps if step skew"""
-    angle_overall: float | None = None
+    angle_overall: float | None = field(
+        default=None, metadata={"unit": "rad", "min": 0}
+    )
     """Overall skewing angle"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Skew.comp_angle
     def comp_angle(self):

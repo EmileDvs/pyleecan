@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from .param_explorer import ParamExplorer
 
@@ -20,6 +20,9 @@ class ParamExplorerSet(ParamExplorer):
 
     value: list[Any] | None = field(default_factory=list)
     """List containing the different parameter values to explore"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ParamExplorerSet.get_max
     def get_max(self):

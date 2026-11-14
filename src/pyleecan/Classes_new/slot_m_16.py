@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotM16.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -48,15 +47,18 @@ class SlotM16(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W0: float = 0.0122
+
+    W0: float = field(default=0.0122, metadata={"unit": "m", "min": 0})
     """Slot isthmus width."""
-    H0: float = 0.001
+    H0: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Slot isthmus height."""
-    W1: float = 0.0122
+    W1: float = field(default=0.0122, metadata={"unit": "m", "min": 0})
     """Slot Width"""
-    H1: float = 0.001
+    H1: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Slot Height"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM16._comp_point_coordinate
     def _comp_point_coordinate(self):

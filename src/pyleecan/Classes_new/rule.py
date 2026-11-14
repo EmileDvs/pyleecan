@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -19,6 +20,9 @@ class Rule(PyleecanClass):
 
     unit_type: str = "m"
     """unit"""
+
+    _package: ClassVar[str] = "Converter"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.Rule.get_name
     def get_name(self):

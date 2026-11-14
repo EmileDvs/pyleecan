@@ -4,7 +4,7 @@
 import os
 import subprocess
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from meshio import read
@@ -133,6 +133,9 @@ class MagElmer(Magnetics):
     """To import an existing simulation file"""
     nb_worker: int = 1
     """To run Elmer in parallel (the parallelization is on the time loop)"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.MagElmer.comp_flux_airgap
     def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):

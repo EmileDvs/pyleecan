@@ -1,8 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Mesh/Mesh.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import ClassVar, Optional
 
 import numpy as np
 
@@ -20,8 +20,11 @@ class Mesh(PyleecanClass):
         Default: 2; Minimum: 1; Maximum: 3
     """
 
-    dimension: int = 2
+    dimension: int = field(default=2, metadata={"min": 1, "max": 3})
     """Dimension of the physical problem"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.Mesh.get_node_coordinate
     def get_node_coordinate(

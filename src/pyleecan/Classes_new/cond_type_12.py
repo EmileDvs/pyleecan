@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/CondType12.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,19 +39,21 @@ class CondType12(Conductor):
         Default: 0.5; Minimum: 0
     """
 
-    COND_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
-    INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
     COND_INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][2].copy()
-    Wwire: float = 0.015
+
+    Wwire: float = field(default=0.015, metadata={"unit": "m", "min": 0})
     """cf schematics, single strand diameter without insulation"""
-    Wins_cond: float = 0.015
+    Wins_cond: float = field(default=0.015, metadata={"unit": "m", "min": 0})
     """(advanced) cf schematics, conductor diameter"""
-    Nwppc: int = 1
+    Nwppc: int = field(default=1, metadata={"min": 1})
     """number of strands in parallel per conductor"""
-    Wins_wire: float = 0
+    Wins_wire: float = field(default=0, metadata={"unit": "m", "min": 0})
     """(advanced) cf schematics, winding strand insulation thickness"""
-    Kwoh: float = 0.5
+    Kwoh: float = field(default=0.5, metadata={"min": 0})
     """winding overhang factor which describes the fact that random round wire end-windings can be more or less compressed (0.5 for small motors, 0.8 for large motors) - can be used to tune the average turn length (relevant if type_cond==1)"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType12.check
     def check(self):

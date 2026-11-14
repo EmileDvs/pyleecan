@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotW24.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.labels import DRAW_PROP_LAB, WIND_LAB
 from ..Functions_new.Plot import (
     ARROW_COLOR,
@@ -42,11 +41,14 @@ class SlotW24(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W3: float = 0.003
+
+    W3: float = field(default=0.003, metadata={"unit": "m", "min": 0})
     """Teeth width"""
-    H2: float = 0.003
+    H2: float = field(default=0.003, metadata={"unit": "m", "min": 0})
     """Slot height"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW24._comp_line_dict
     def _comp_line_dict(self):

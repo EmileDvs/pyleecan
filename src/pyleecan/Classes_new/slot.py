@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch, Polygon
@@ -48,11 +49,14 @@ class Slot(PyleecanClass):
         Default: True
     """
 
+    KEY_COLOR: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"]
+    MAGNET_COLOR: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
     ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
     STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
     WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
-    Zs: int = 36
+
+    Zs: int = field(default=36, metadata={"min": 0})
     """slot number"""
     wedge_mat: Material | None = field(
         default=None, metadata={"default_class": "Material"}
@@ -60,6 +64,9 @@ class Slot(PyleecanClass):
     """Material for the wedge, if None no wedge"""
     is_bore: bool = True
     """True if the Slot is on the bore radius, False for yoke"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Slot.build_geometry_active
     def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):

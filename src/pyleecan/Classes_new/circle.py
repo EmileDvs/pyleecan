@@ -2,12 +2,11 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from matplotlib.patches import Circle
 
-from ..definitions import config_dict
 from .arc_3 import Arc3
 from .surface import Surface
 
@@ -29,16 +28,15 @@ class Circle(Surface):
         Default: {}
     """
 
-    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
-    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
-    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
-    radius: float = 1
+    radius: float = field(default=1, metadata={"min": 0})
     """Radius of the circle"""
     center: complex = 0
     """center of the Circle"""
     prop_dict: dict[str, Any] | None = field(default_factory=dict)
     """Property dict to apply on the lines"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Circle.check
     def check(self):
@@ -236,7 +234,9 @@ class Circle(Surface):
         ]
 
     get_patches.__defaults__ = (
-        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+        get_patches.__defaults__[:0]
+        + (Surface.PATCH_COLOR,)
+        + get_patches.__defaults__[1:]
     )
 
     # Inlined from Methods.Geometry.Circle.rotate

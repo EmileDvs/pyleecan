@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .import_data import ImportData
@@ -31,6 +32,9 @@ class ImportVectorField(PyleecanClass):
     """Name of the vector field"""
     symbol: str | None = None
     """Symbol of the vector field"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportVectorField.get_data
     def get_data(self):

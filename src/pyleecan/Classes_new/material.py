@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .mat_economical import MatEconomical
@@ -78,3 +79,6 @@ class Material(PyleecanClass):
     """material description"""
     path: str | None = None
     """Path to the material file"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""

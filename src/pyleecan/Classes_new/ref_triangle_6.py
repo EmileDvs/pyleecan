@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .ref_element import RefElement
 
@@ -13,6 +14,9 @@ class RefTriangle6(RefElement):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.RefTriangle6.get_real_point
     def get_real_point(self, element_coordinate, ref_pt, nb_ref_pt=1):

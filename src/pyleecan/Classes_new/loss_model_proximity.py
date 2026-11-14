@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Loss/LossModelProximity.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -19,8 +20,11 @@ class LossModelProximity(LossModel):
         Unit: W/kg; Default: None
     """
 
-    k_p: float | None = None
+    k_p: float | None = field(default=None, metadata={"unit": "W/kg"})
     """Proximity loss coefficient"""
+
+    _package: ClassVar[str] = "Loss"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelProximity.comp_coeff
     def comp_coeff(self):

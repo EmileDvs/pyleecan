@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .surf_line import SurfLine
@@ -31,6 +31,9 @@ class DXFImport(PyleecanClass):
     """dictionary to assign the surfaces: key=complex reference point coordinate, value=label of the surface"""
     BC_list: list[Any] = field(default_factory=list)
     """List of tuple to apply boundary conditions (complex reference point coordinate, is_arc, label of the BC to apply)"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.DXFImport.get_surfaces
     def get_surfaces(self):

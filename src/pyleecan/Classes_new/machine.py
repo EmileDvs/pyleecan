@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
@@ -47,6 +48,7 @@ class Machine(PyleecanClass):
     """
 
     PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
+
     frame: Frame | None = field(
         default_factory=lambda: Frame(), metadata={"default_class": "Frame"}
     )
@@ -63,6 +65,9 @@ class Machine(PyleecanClass):
     """Integer to store the machine type (for the GUI, should be replaced by a test of the object type)"""
     logger_name: str = "Pyleecan.Machine"
     """Name of the logger to use"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Machine.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):

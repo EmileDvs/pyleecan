@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotW29.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..Functions_new.Plot import (
     ARROW_COLOR,
@@ -58,21 +57,24 @@ class SlotW29(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W0: float = 0.05
+
+    W0: float = field(default=0.05, metadata={"unit": "m", "min": 0})
     """Slot isthmus width."""
-    H0: float = 0.001
+    H0: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Slot isthmus height."""
-    H1: float = 0.0015
+    H1: float = field(default=0.0015, metadata={"unit": "m", "min": 0})
     """Slot middle height"""
-    W1: float = 0.015
+    W1: float = field(default=0.015, metadata={"unit": "m", "min": 0})
     """Slot middle width."""
-    wedge_type: int = 0
+    wedge_type: int = field(default=0, metadata={"min": 0})
     """selection type wedge"""
-    H2: float = 0.03
+    H2: float = field(default=0.03, metadata={"unit": "m", "min": 0})
     """Slot bottom height"""
-    W2: float = 0.2
+    W2: float = field(default=0.2, metadata={"unit": "m", "min": 0})
     """Slot bottom width."""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW29._comp_line_dict
     def _comp_line_dict(self):

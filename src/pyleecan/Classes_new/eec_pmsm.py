@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/EEC_PMSM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,18 +42,21 @@ class EEC_PMSM(EEC):
         Unit: Wb; Default: None
     """
 
-    Ld: float | None = None
+    Ld: float | None = field(default=None, metadata={"unit": "H"})
     """Stator winding inductance along d-axis"""
-    Lq: float | None = None
+    Lq: float | None = field(default=None, metadata={"unit": "H"})
     """Stator winding inductance along q-axis"""
-    Phid: float | None = None
+    Phid: float | None = field(default=None, metadata={"unit": "Wb"})
     """Stator winding flux along d-axis"""
-    Phiq: float | None = None
+    Phiq: float | None = field(default=None, metadata={"unit": "Wb"})
     """Stator winding flux along q-axis"""
-    Phid_mag: float | None = None
+    Phid_mag: float | None = field(default=None, metadata={"unit": "Wb"})
     """Stator winding flux along d-axis in open-circuit (rotor flux linkage)"""
-    Phiq_mag: float | None = None
+    Phiq_mag: float | None = field(default=None, metadata={"unit": "Wb"})
     """Stator winding flux along q-axis in open-circuit (rotor flux linkage)"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC_PMSM.clear_parameters
     def clear_parameters(self):

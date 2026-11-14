@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -91,6 +92,9 @@ class VarSimu(PyleecanClass):
     """List of post-processing to run on output after each simulation (except reference one) after the datakeeper."""
     is_reuse_LUT: bool = True
     """True to reuse the look up table"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarSimu.check_param
     def check_param(self):

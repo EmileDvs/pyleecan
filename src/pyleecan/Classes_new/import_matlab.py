@@ -3,6 +3,7 @@
 
 import os
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 from scipy.io import loadmat
@@ -29,6 +30,9 @@ class ImportMatlab(ImportMatrix):
     """Path of the file to load"""
     var_name: str | None = None
     """Name of the variable to load"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatlab.get_data
     def get_data(self):

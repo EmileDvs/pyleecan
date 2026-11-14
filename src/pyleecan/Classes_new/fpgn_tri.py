@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .gauss_point import GaussPoint
 
@@ -19,6 +20,9 @@ class FPGNTri(GaussPoint):
 
     nb_gauss_point: int = 3
     """Nb of gauss point to be used"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.FPGNTri.get_gauss_points
     def get_gauss_points(self):

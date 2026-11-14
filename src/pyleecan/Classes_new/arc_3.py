@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -33,6 +34,9 @@ class Arc3(Arc):
     """end of the arc"""
     is_trigo_direction: bool = True
     """Rotation direction of the arc"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Arc3.check
     def check(self):

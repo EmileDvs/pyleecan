@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .opti_problem import OptiProblem
@@ -40,3 +41,6 @@ class OptiSolver(PyleecanClass):
     """Name of the logger to use"""
     is_keep_all_output: bool = False
     """Boolean to keep every output"""
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""

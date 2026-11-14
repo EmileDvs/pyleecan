@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from ntpath import basename
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 from ..definitions import PYTHON_DEFAULT_ENCODING
 from ..Functions_new.path_tools import abs_file_path
@@ -59,6 +59,9 @@ class DataKeeper(PyleecanClass):
     """Result for the reference simulation"""
     physic: str | None = None
     """Physic of the tracked quantity"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.DataKeeper._set_keeper
     def _set_keeper(self, value):

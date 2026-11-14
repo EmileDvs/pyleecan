@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -42,14 +43,18 @@ class Shaft(PyleecanClass):
     """
 
     SHAFT_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SHAFT_COLOR"]
-    Lshaft: float = 0.442
+
+    Lshaft: float = field(default=0.442, metadata={"unit": "m", "min": 0})
     """length of the rotor shaft [m] (used for weight & cost estimation only)"""
     mat_type: Material | None = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Shaft's Material"""
-    Drsh: float = 0.045
+    Drsh: float = field(default=0.045, metadata={"unit": "m", "min": 0})
     """diameter of the rotor shaft [m], used to estimate bearing diameter for friction losses"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Shaft.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):

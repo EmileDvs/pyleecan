@@ -3,6 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ..Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from ._import import import_class
@@ -53,9 +54,9 @@ class EEC(PyleecanClass):
     """Skin effect for resistance and inductance"""
     OP: _field_type_OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
-    Tsta: float = 20
+    Tsta: float = field(default=20, metadata={"unit": "deg Celsius"})
     """Average stator temperature for operational EEC calculation"""
-    Trot: float = 20
+    Trot: float = field(default=20, metadata={"unit": "deg Celsius"})
     """Average rotor temperature for operational EEC calculation"""
     Xkr_skinS: float = 1
     """Skin effect coefficient for resistances at stator side"""
@@ -65,12 +66,15 @@ class EEC(PyleecanClass):
     """Skin effect coefficient for resistances at rotor side"""
     Xke_skinR: float = 1
     """Skin effect coefficient for inductances at rotor side"""
-    R1: float | None = None
+    R1: float | None = field(default=None, metadata={"unit": "Ohm"})
     """Stator phase resistance"""
     fluxlink: Magnetics | None = field(
         default=None, metadata={"default_class": "Magnetics"}
     )
     """Magnetic model for flux linkage calculation"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC.comp_fluxlinkage
     def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):

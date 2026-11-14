@@ -2,10 +2,10 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.init_fig import init_fig
 from ._import import import_class
 from .surface import Surface
@@ -25,10 +25,6 @@ class SurfRing(Surface):
         Default: Surface()
     """
 
-    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
-    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
-    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
     out_surf: Surface | None = field(
         default_factory=lambda: import_class("Surface")(),
         metadata={"default_class": "Surface"},
@@ -39,6 +35,9 @@ class SurfRing(Surface):
         metadata={"default_class": "Surface"},
     )
     """Inner surface"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.SurfRing.check
     # -*- coding: utf-8 -*-
@@ -217,7 +216,9 @@ class SurfRing(Surface):
         return patch_list
 
     get_patches.__defaults__ = (
-        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+        get_patches.__defaults__[:0]
+        + (Surface.PATCH_COLOR,)
+        + get_patches.__defaults__[1:]
     )
 
     # Inlined from Methods.Geometry.SurfRing.plot_lines

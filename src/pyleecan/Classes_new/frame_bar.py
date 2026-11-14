@@ -2,7 +2,8 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -27,10 +28,13 @@ class FrameBar(Frame):
         Unit: m; Default: 0.01; Minimum: 0
     """
 
-    Nbar: int = 8
+    Nbar: int = field(default=8, metadata={"unit": "m", "min": 1})
     """Number of bars"""
-    wbar: float = 0.01
+    wbar: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Width of bars"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.FrameBar.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0):

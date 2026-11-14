@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/BoreSinePole.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -47,16 +48,20 @@ class BoreSinePole(Bore):
     """
 
     MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    N: int = 8
+
+    N: int = field(default=8, metadata={"min": 0})
     """Number of Poles"""
-    k: float = 1
+    k: float = field(default=1, metadata={"min": 0})
     """pole width modifier"""
-    delta_d: float = 0.001
+    delta_d: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """d-axis air gap width"""
-    delta_q: float | None = None
+    delta_q: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """q-axis air gap width"""
-    W0: float | None = None
+    W0: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Width of the pole"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreSinePole.comp_periodicity_spatial
     def comp_periodicity_spatial(self):

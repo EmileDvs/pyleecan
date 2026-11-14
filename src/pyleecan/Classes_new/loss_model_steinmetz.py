@@ -1,8 +1,9 @@
 # Experimental dataclass generated from Generator/ClassesRef/Loss/LossModelSteinmetz.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import groupby
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,14 +32,17 @@ class LossModelSteinmetz(LossModel):
         Default: None
     """
 
-    k_hy: float | None = None
+    k_hy: float | None = field(default=None, metadata={"unit": "W/kg"})
     """Hysteresis loss coefficient"""
-    k_ed: float | None = None
+    k_ed: float | None = field(default=None, metadata={"unit": "W/kg"})
     """Eddy current loss coefficient"""
     alpha_f: float | None = None
     """Hysteresis loss power coefficient for the frequency"""
     alpha_B: float | None = None
     """Hysteresis loss power coefficient for the flux density magnitude"""
+
+    _package: ClassVar[str] = "Loss"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelSteinmetz.comp_coeff
     def comp_coeff(self, material):

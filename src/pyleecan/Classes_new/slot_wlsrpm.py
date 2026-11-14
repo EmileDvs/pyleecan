@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotWLSRPM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.labels import WIND_LAB
 from ..Functions_new.Plot import (
     ARROW_COLOR,
@@ -51,17 +50,20 @@ class SlotWLSRPM(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W1: float = 0.008
+
+    W1: float = field(default=0.008, metadata={"unit": "m", "min": 0})
     """Slot bottom side width."""
-    W3: float = 0.0116
+    W3: float = field(default=0.0116, metadata={"unit": "m", "min": 0})
     """Tooth width"""
-    H2: float = 0.0148
+    H2: float = field(default=0.0148, metadata={"unit": "m", "min": 0})
     """Slot height """
-    R1: float = 0.00075
+    R1: float = field(default=0.00075, metadata={"unit": "m", "min": 0})
     """Top radius"""
-    H3: float = 0.001
+    H3: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """damper winding height"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotWLSRPM._comp_point_coordinate
     def _comp_point_coordinate(self):

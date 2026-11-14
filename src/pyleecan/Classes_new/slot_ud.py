@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ..Functions_new.labels import SOP_LAB, WIND_LAB
 from ._error import SlotCheckError
@@ -41,10 +42,13 @@ class SlotUD(Slot):
     """Index of the first line to include in the winding"""
     wind_end_index: int | None = None
     """Index of the last line to include in the winding"""
-    type_line_wind: int = 0
+    type_line_wind: int = field(default=0, metadata={"min": 0, "max": 1})
     """0 to close winding with Segment, 1 for Arc1"""
     name: str | None = None
     """Name of the slot (for save)"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotUD.build_geometry
     def build_geometry(self):

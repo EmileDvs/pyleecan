@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -53,11 +53,11 @@ class OutGeoLam(PyleecanClass):
     """B(H) curve (two columns matrix, H and B(H))"""
     Ksfill: float | None = None
     """Slot fill factor"""
-    S_slot: float | None = None
+    S_slot: float | None = field(default=None, metadata={"unit": "m^2"})
     """Slot surface"""
-    S_slot_wind: float | None = None
+    S_slot_wind: float | None = field(default=None, metadata={"unit": "m^2"})
     """Slot winding surface"""
-    S_wind_act: float | None = None
+    S_wind_act: float | None = field(default=None, metadata={"unit": "m^2"})
     """Conductor active surface"""
     per_a: int | None = None
     """Number of spatial periodicities of the lamination"""
@@ -67,3 +67,6 @@ class OutGeoLam(PyleecanClass):
     """Number of time periodicities of the lamination"""
     is_antiper_t: bool | None = None
     """True if an time anti-periodicity is possible after the periodicities"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""

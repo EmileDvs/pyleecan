@@ -3,6 +3,7 @@
 
 from copy import copy
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import imageio
 import matplotlib.pyplot as plt
@@ -47,6 +48,9 @@ class VectorField(PyleecanClass):
     """Symbol of the vector field"""
     components: dict[str, DataND] | None = field(default_factory=dict)
     """Dict of the components"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.VectorField.change_periodicity
     def change_periodicity(

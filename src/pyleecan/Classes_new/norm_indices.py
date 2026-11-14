@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -15,6 +16,9 @@ class NormIndices(Normalization):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Norm_indices.normalize
     def normalize(

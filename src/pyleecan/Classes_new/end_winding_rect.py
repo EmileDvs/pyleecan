@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/EndWindingRect.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -28,10 +29,13 @@ class EndWindingRect(EndWinding):
 
     coil_pitch: float | None = None
     """effective coil pitch (override) for length calculation"""
-    lambda_length: float = 0
+    lambda_length: float = field(default=0, metadata={"min": 0})
     """permeance factor related to end winding length"""
-    lambda_width: float = 0
+    lambda_width: float = field(default=0, metadata={"min": 0})
     """permeance factor related to end winding width"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.EndWindingRect.comp_inductance
     def comp_inductance(self):

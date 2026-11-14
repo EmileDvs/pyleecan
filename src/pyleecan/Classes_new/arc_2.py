@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Geometry/Arc2.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -29,8 +30,14 @@ class Arc2(Arc):
     """begin point of the arc"""
     center: complex = 0
     """center of the arc"""
-    angle: float = 1.57079633
+    angle: float = field(
+        default=1.57079633,
+        metadata={"unit": "rad", "min": -6.283185308, "max": 6.283185308},
+    )
     """opening angle of the arc"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Arc2.check
     def check(self):

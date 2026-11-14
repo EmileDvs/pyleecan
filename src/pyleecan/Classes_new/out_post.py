@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -24,3 +25,6 @@ class OutPost(PyleecanClass):
     """Name to use in the legend in case of comparison"""
     line_color: str | None = None
     """Color to use in case of comparison"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""

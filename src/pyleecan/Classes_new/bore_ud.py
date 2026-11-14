@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from .bore import Bore
 from .line import Line
@@ -26,10 +27,13 @@ class BoreUD(Bore):
 
     line_list: list[Line] | None = field(default_factory=list)
     """List of line to draw the full bore"""
-    sym: int = 1
+    sym: int = field(default=1, metadata={"min": 1})
     """Symmetry factor (1= full machine, 2= half of the machine...)"""
     name: str | None = None
     """Name of the bore (for save)"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreUD.comp_periodicity_spatial
     def comp_periodicity_spatial(self):

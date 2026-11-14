@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/VentilationTrap.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,14 +45,17 @@ class VentilationTrap(Hole):
         Unit: m; Default: 1; Minimum: 0
     """
 
-    D0: float = 1
+    D0: float = field(default=1, metadata={"unit": "m", "min": 0})
     """Hole height"""
-    H0: float = 1
+    H0: float = field(default=1, metadata={"unit": "m", "min": 0})
     """Radius of the hole bottom"""
-    W1: float = 1
+    W1: float = field(default=1, metadata={"unit": "m", "min": 0})
     """Hole small basis"""
-    W2: float = 1
+    W2: float = field(default=1, metadata={"unit": "m", "min": 0})
     """Hole large basis"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.VentilationTrap._comp_point_coordinate
     def _comp_point_coordinate(self):

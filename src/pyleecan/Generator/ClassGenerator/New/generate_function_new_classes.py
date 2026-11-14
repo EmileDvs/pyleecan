@@ -506,6 +506,55 @@ def _adapt_json_retrocompatibility(source, path):
     return source
 
 
+LEGACY_CLASS_REPLACEMENTS = {
+    ("pyleecan.Classes._frozen", "FrozenClass"): (
+        "pyleecan.Classes_new._pyleecan_class",
+        "PyleecanClass",
+    ),
+}
+"""Legacy class support imports replaced by their Classes_new equivalent"""
+
+
+def _legacy_class_replacements(tree, package):
+    """Map the local names of replaced legacy classes to their new names.
+
+    Only the names imported without alias are renamed in the module body.
+    """
+    renamed = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        module = node.module or ""
+        if node.level:
+            module = resolve_name("." * node.level + module, package)
+        for alias in node.names:
+            target = LEGACY_CLASS_REPLACEMENTS.get((module, alias.name))
+            if target is not None and alias.asname is None:
+                renamed[alias.name] = target[1]
+    return renamed
+
+
+def _class_dict_getters(tree, package):
+    """Names bound to the legacy ``pyleecan.Classes.get_class_dict`` function.
+
+    Their calls are replaced by ``ClassInfo().get_dict()`` which builds the
+    class information from the generated dataclasses (no _class_dict.json).
+    """
+    names = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            module = node.module or ""
+            if node.level:
+                module = resolve_name("." * node.level + module, package)
+            if module == "pyleecan.Classes":
+                names.update(
+                    alias.asname or alias.name
+                    for alias in node.names
+                    if alias.name == "get_class_dict"
+                )
+    return names
+
+
 def _rewrite_source(source, path, relative_path, class_dir):
     """Redirect supported imports and report legacy references needing review."""
     tree = ast.parse(source, filename=str(path))
@@ -547,6 +596,8 @@ def _rewrite_source(source, path, relative_path, class_dir):
             name = node.value.args[1].value
             if (class_dir / (class_module_name(name) + ".py")).is_file():
                 dynamic_assignments[node] = name
+    class_dict_getters = _class_dict_getters(tree, package)
+    renamed_classes = _legacy_class_replacements(tree, package)
     converted_calls = {id(node.value.func) for node in dynamic_assignments}
     remaining_loader_uses = any(
         isinstance(node, ast.Name)
@@ -588,6 +639,62 @@ def _rewrite_source(source, path, relative_path, class_dir):
                 start = offset(node.lineno, node.col_offset)
                 end = offset(node.end_lineno, node.end_col_offset)
                 replacements.append((start, end, b""))
+                continue
+            replaced_aliases = [
+                alias
+                for alias in node.names
+                if (module, alias.name) in LEGACY_CLASS_REPLACEMENTS
+            ]
+            if replaced_aliases:
+                imports = [
+                    ast.ImportFrom(
+                        module=LEGACY_CLASS_REPLACEMENTS[(module, alias.name)][0],
+                        names=[
+                            ast.alias(
+                                name=LEGACY_CLASS_REPLACEMENTS[(module, alias.name)][1],
+                                asname=alias.asname,
+                            )
+                        ],
+                        level=0,
+                    )
+                    for alias in replaced_aliases
+                ]
+                others = [alias for alias in node.names if alias not in replaced_aliases]
+                if others:
+                    issues.append((node.lineno, f"legacy import: {module}"))
+                    imports.append(
+                        ast.ImportFrom(module=node.module, names=others, level=node.level)
+                    )
+                start = offset(node.lineno, node.col_offset)
+                end = offset(node.end_lineno, node.end_col_offset)
+                replacement = ("\n" + " " * node.col_offset).join(
+                    ast.unparse(import_node) for import_node in imports
+                )
+                replacements.append((start, end, replacement.encode("utf-8")))
+                continue
+            if module == "pyleecan.Classes" and any(
+                alias.name == "get_class_dict" for alias in node.names
+            ):
+                # The class dict is built from the dataclasses by ClassInfo
+                imports = [
+                    ast.ImportFrom(
+                        module="pyleecan.Classes_new._class_info",
+                        names=[ast.alias(name="ClassInfo")],
+                        level=0,
+                    )
+                ]
+                others = [alias for alias in node.names if alias.name != "get_class_dict"]
+                if others:
+                    issues.append((node.lineno, f"legacy import: {module}"))
+                    imports.append(
+                        ast.ImportFrom(module=node.module, names=others, level=node.level)
+                    )
+                start = offset(node.lineno, node.col_offset)
+                end = offset(node.end_lineno, node.end_col_offset)
+                replacement = ("\n" + " " * node.col_offset).join(
+                    ast.unparse(import_node) for import_node in imports
+                )
+                replacements.append((start, end, replacement.encode("utf-8")))
                 continue
             if module == "pyleecan.Classes" or module.startswith("pyleecan.Classes."):
                 name = module.removeprefix("pyleecan.Classes.")
@@ -663,6 +770,16 @@ def _rewrite_source(source, path, relative_path, class_dir):
         elif isinstance(node, ast.Call):
             if any(node is assignment.value for assignment in dynamic_assignments):
                 continue
+            if (
+                isinstance(node.func, ast.Name)
+                and node.func.id in class_dict_getters
+                and not node.args
+                and not node.keywords
+            ):
+                start = offset(node.lineno, node.col_offset)
+                end = offset(node.end_lineno, node.end_col_offset)
+                replacements.append((start, end, b"ClassInfo().get_dict()"))
+                continue
             if isinstance(node.func, ast.Name) and node.func.id in {
                 "import_class",
                 "import_experimental_class",
@@ -675,6 +792,13 @@ def _rewrite_source(source, path, relative_path, class_dir):
                 for arg in node.args
             ):
                 issues.append((node.lineno, "dynamic legacy package reference"))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in renamed_classes:
+            start = offset(node.lineno, node.col_offset)
+            end = offset(node.end_lineno, node.end_col_offset)
+            replacements.append(
+                (start, end, renamed_classes[node.id].encode("utf-8"))
+            )
     for start, end, replacement in sorted(replacements, reverse=True):
         data = data[:start] + replacement + data[end:]
     rewritten = data.decode("utf-8")

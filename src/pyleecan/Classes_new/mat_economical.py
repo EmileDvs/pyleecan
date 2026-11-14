@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/MatEconomical.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -20,7 +21,10 @@ class MatEconomical(PyleecanClass):
         Default: "$"
     """
 
-    cost_unit: float = 0.127
+    cost_unit: float = field(default=0.127, metadata={"unit": "unit/kg", "min": 0})
     """Cost of one kilo of material"""
     unit_name: str = "$"
     """Name of the unit"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""

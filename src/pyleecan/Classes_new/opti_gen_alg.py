@@ -1,8 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Optimization/OptiGenAlg.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
-from typing import Any, Callable
+from dataclasses import dataclass, field
+from typing import Any, Callable, ClassVar
 
 from .opti_solver import OptiSolver
 
@@ -42,11 +42,14 @@ class OptiGenAlg(OptiSolver):
     """Crossover of the genetic algorithm"""
     mutator: Callable[..., Any] | None = None
     """Mutator of the genetic algorithm"""
-    p_cross: float = 0.9
+    p_cross: float = field(default=0.9, metadata={"min": 0, "max": 1})
     """Probability of crossover"""
-    p_mutate: float = 0.1
+    p_mutate: float = field(default=0.1, metadata={"min": 0, "max": 1})
     """Probability of mutation """
-    size_pop: int = 40
+    size_pop: int = field(default=40, metadata={"min": 1})
     """Size of the population"""
-    nb_gen: int = 100
+    nb_gen: int = field(default=100, metadata={"min": 1})
     """Number of generations"""
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""

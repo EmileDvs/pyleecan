@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ..Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
@@ -19,6 +20,9 @@ class VarLoadCurrent(VarLoad):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarLoadCurrent.generate_simulation_list
     def generate_simulation_list(self, ref_simu=None):

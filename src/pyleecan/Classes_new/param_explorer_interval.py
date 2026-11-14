@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/ParamExplorerInterval.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -35,12 +36,15 @@ class ParamExplorerInterval(ParamExplorer):
     """Minumum value of the interval"""
     max_value: float = 1
     """Maximum value of the interval"""
-    N: int = 4
+    N: int = field(default=4, metadata={"min": 2})
     """Number of value to take in the interval"""
-    type_value_gen: int = 0
+    type_value_gen: int = field(default=0, metadata={"min": 0, "max": 1})
     """How to generate the value list. 0: linspace, 1: random (Not available yet)"""
-    type_value: int = 0
+    type_value: int = field(default=0, metadata={"min": 0, "max": 1})
     """Type of the value: 0:float, 1:int"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ParamExplorerInterval.get_max
     def get_max(self):

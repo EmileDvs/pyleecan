@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .data import Data
@@ -40,3 +40,6 @@ class OutStruct(PyleecanClass):
     """FEA software mesh and solution"""
     FEA_dict: dict[str, Any] | None = field(default_factory=dict)
     """dictionary containing the main FEA parameter"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""

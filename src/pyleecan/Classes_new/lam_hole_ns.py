@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -30,6 +31,9 @@ class LamHoleNS(LamH):
     """lamination Holes for North pole"""
     hole_south: list[Hole] | None = field(default_factory=list)
     """lamination Holes for South pole"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamHoleNS._plot_arrow_mag
     def _plot_arrow_mag(

@@ -1,8 +1,9 @@
 # Experimental dataclass generated from Generator/ClassesRef/Loss/LossModelBertotti.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import groupby
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,12 +29,15 @@ class LossModelBertotti(LossModel):
         Unit: W/kg; Default: None
     """
 
-    k_hy: float | None = None
+    k_hy: float | None = field(default=None, metadata={"unit": "W/kg"})
     """Hysteresis loss coefficient"""
-    k_ed: float | None = None
+    k_ed: float | None = field(default=None, metadata={"unit": "W/kg"})
     """Eddy current loss coefficient"""
-    k_ex: float | None = None
+    k_ex: float | None = field(default=None, metadata={"unit": "W/kg"})
     """Excess loss coefficient"""
+
+    _package: ClassVar[str] = "Loss"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelBertotti.comp_coeff
     def comp_coeff(self, material):

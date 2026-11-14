@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotM18.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.labels import COND_BOUNDARY_PROP_LAB, YOKE_LAB, YSML_LAB, YSMR_LAB
 from ..Functions_new.Plot import (
     ARROW_COLOR,
@@ -39,9 +38,12 @@ class SlotM18(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    H0: float = 0.001
+
+    H0: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Magnet Height"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM18._comp_point_coordinate
     def _comp_point_coordinate(self):

@@ -1,8 +1,9 @@
 # Experimental dataclass generated from Generator/ClassesRef/Optimization/OptiBayesAlgSmoot.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,10 +32,13 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
         Default: 100; Minimum: 1
     """
 
-    size_pop: int = 40
+    size_pop: int = field(default=40, metadata={"min": 1})
     """Number of individuals for each generation"""
-    nb_gen: int = 100
+    nb_gen: int = field(default=100, metadata={"min": 1})
     """Number of generations for the genetic part"""
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Optimization.OptiBayesAlgSmoot.check_optimization_input
     def check_optimization_input(self):

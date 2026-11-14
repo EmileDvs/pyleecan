@@ -1,8 +1,9 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/ModelBH_Langevin.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from math import isnan
+from typing import ClassVar
 
 import numpy as np
 
@@ -29,7 +30,7 @@ class ModelBH_Langevin(ModelBH):
         Default: 240
     """
 
-    Bs: float | None = None
+    Bs: float | None = field(default=None, metadata={"unit": "T"})
     """To enforc Saturation flux density"""
     a: float | None = None
     """To enforce Saturation parameter a"""
@@ -37,6 +38,9 @@ class ModelBH_Langevin(ModelBH):
     """Init value for Bs for fitting algorithm"""
     param2: float = 240
     """Init value for a for fitting algorithm"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.ModelBH_Langevin.BH_func
     def BH_func(self, H, Bs, a):

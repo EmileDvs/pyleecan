@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -15,6 +16,9 @@ class ScalarProductL2(ScalarProduct):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.ScalarProductL2.scalar_product
     def scalar_product(self, funca, funcb, detJ, weights, nb_gauss_points):

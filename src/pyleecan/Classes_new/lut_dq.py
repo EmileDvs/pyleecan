@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 import scipy.interpolate as scp_int
@@ -27,12 +28,15 @@ class LUTdq(LUT):
         Unit: Wbrms; Default: None
     """
 
-    Phi_dqh_mean: np.ndarray | None = None
+    Phi_dqh_mean: np.ndarray | None = field(default=None, metadata={"unit": "Wbrms"})
     """RMS stator winding flux table in dqh frame (including magnets and currents given by I_dqh)"""
     Phi_dqh_mag: DataND | None = field(
-        default=None, metadata={"default_class": "DataND"}
+        default=None, metadata={"unit": "Wbrms", "default_class": "DataND"}
     )
     """RMS stator winding flux linkage spectrum in dqh frame including harmonics (only magnets)"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.LUTdq.get_index_open_circuit
     def get_index_open_circuit(self):

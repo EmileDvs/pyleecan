@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 from .normalization import Normalization
 
@@ -20,6 +20,9 @@ class NormFunc(Normalization):
 
     function: Callable[..., Any] | None = None
     """function to apply"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Norm_func.normalize
     def normalize(

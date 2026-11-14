@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .hole import Hole
 
@@ -13,6 +14,9 @@ class HoleMag(Hole):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleMag.comp_mass_magnet_id
     def comp_mass_magnet_id(self, index):

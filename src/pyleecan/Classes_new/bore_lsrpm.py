@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/BoreLSRPM.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -28,12 +29,15 @@ class BoreLSRPM(Bore):
         Unit: m; Default: 0.0035
     """
 
-    N: int = 8
+    N: int = field(default=8, metadata={"min": 0})
     """Number of flower arc"""
-    Rarc: float = 0.0375
+    Rarc: float = field(default=0.0375, metadata={"unit": "m", "min": 0})
     """Radius of the flower arc"""
-    W1: float = 0.0035
+    W1: float = field(default=0.0035, metadata={"unit": "m"})
     """Width of segement"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreLSRPM.comp_periodicity_spatial
     def comp_periodicity_spatial(self):

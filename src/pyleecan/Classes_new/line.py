@@ -21,8 +21,12 @@ class Line(PyleecanClass):
     """
 
     LINE_NPOINT_D: ClassVar = 1
+
     prop_dict: dict[str, Any] | None = field(default_factory=dict)
     """Property dictionary"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Line.comp_normal
     def comp_normal(self):

@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -61,12 +62,16 @@ class LamSlotWind(LamSlot):
     """
 
     PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
-    Ksfill: float | None = None
+
+    Ksfill: float | None = field(default=None, metadata={"min": 0, "max": 1})
     """Imposed Slot Fill factor (if None, will be computed according to the winding and the slot)"""
     winding: Winding | None = field(
         default_factory=lambda: Winding(), metadata={"default_class": "Winding"}
     )
     """Lamination's Winding"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotWind.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
@@ -974,9 +979,6 @@ class LamSlotWind(LamSlot):
         is_clean_plot=False,
         is_winding_connection=False,
         is_winding_connection_phase_A=False,
-        *,
-        PLUS_HATCH="++",
-        MINUS_HATCH="..",
     ):
         """Plot the Lamination in a matplotlib fig
 
@@ -1082,9 +1084,9 @@ class LamSlotWind(LamSlot):
                         wind_mat=wind_mat, label=surf.label
                     )
                     if sign == "+" and is_add_sign:
-                        hatch = PLUS_HATCH
+                        hatch = self.PLUS_HATCH
                     elif sign == "-" and is_add_sign:
-                        hatch = MINUS_HATCH
+                        hatch = self.MINUS_HATCH
                     else:
                         hatch = None
                     patches.extend(
@@ -1315,13 +1317,13 @@ class LamSlotWind(LamSlot):
                     if is_add_sign:
                         if "Phase +" not in label_leg:
                             # Adding + and - in the legend as separate patch
-                            patch_leg.append(Patch(color="w", hatch=PLUS_HATCH))
+                            patch_leg.append(Patch(color="w", hatch=self.PLUS_HATCH))
                             patch_leg[-1].set_edgecolor("k")
                             label_leg.append("Phase +")
 
                         if "Phase -" not in label_leg:
                             # Adding + and - legend
-                            patch_leg.append(Patch(color="w", hatch=MINUS_HATCH))
+                            patch_leg.append(Patch(color="w", hatch=self.MINUS_HATCH))
                             patch_leg[-1].set_edgecolor("k")
                             label_leg.append("Phase -")
 

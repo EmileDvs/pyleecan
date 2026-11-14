@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Loss/Loss.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -39,12 +40,15 @@ class Loss(PyleecanClass):
     """Name of the logger to use"""
     model_dict: dict[str, LossModel] | None = None
     """Dict of loss model whose key is a lamination and value is the associated loss model (alternative to model_index/model_list)"""
-    Tsta: float = 20
+    Tsta: float = field(default=20, metadata={"unit": "deg Celsius"})
     """Average stator temperature for Electrical calculation"""
-    Trot: float = 20
+    Trot: float = field(default=20, metadata={"unit": "deg Celsius"})
     """Average rotor temperature for Electrical calculation"""
     is_get_meshsolution: bool = False
     """True to save loss density map as meshsolution"""
+
+    _package: ClassVar[str] = "Loss"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.Loss.comp_all_losses
     def comp_all_losses(

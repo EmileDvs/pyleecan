@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._error import MachineCheckError
 from ._import import import_class
@@ -34,6 +35,9 @@ class MachineSyRM(MachineSync):
         metadata={"default_class": "LamSlotWind"},
     )
     """Machine's Stator"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSyRM.check
     def check(self):

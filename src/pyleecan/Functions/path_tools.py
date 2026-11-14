@@ -50,18 +50,14 @@ def abs_file_path(file_path, is_check=True):
 class FileError(Exception):
     """Raised when the file does not exists"""
 
-    pass
-
 
 class ImportError(Exception):
     """Raised when the path could not be imported"""
 
-    pass
-
 
 if __name__ == "__main__":
     import sys
-    from os.path import dirname, abspath, normpath, join
+    from os.path import abspath, dirname, join, normpath
 
     ROOT_DIR = normpath(abspath(join(dirname(__file__), "..", "..")))
 
@@ -69,10 +65,10 @@ if __name__ == "__main__":
 
     from ..definitions import MATLIB_DIR
 
-    file = "<MATLIB_DIR>\Magnet1.json"
+    file = "<MATLIB_DIR>/Magnet1.json"
     print(abs_file_path(file, is_check=False))
 
-    file = "MATLIB_DIR>\Magnet1.json"
+    file = "MATLIB_DIR>/Magnet1.json"
     print(abs_file_path(file, is_check=False))
 
     file = join(MATLIB_DIR, "test.json")

@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -22,6 +23,9 @@ class EndWindingCirc(EndWinding):
 
     coil_pitch: float | None = None
     """effective coil pitch (override) for length calculation"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.EndWindingCirc.comp_inductance
     def comp_inductance(self):

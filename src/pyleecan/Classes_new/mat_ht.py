@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/MatHT.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -29,13 +30,16 @@ class MatHT(PyleecanClass):
         Default: 0; Minimum: 0
     """
 
-    lambda_x: float = 1
+    lambda_x: float = field(default=1, metadata={"unit": "W/K", "min": 0})
     """thermal conductivity (XY is lamination plane, Z is rotation axis)"""
-    lambda_y: float = 1
+    lambda_y: float = field(default=1, metadata={"unit": "W/K", "min": 0})
     """thermal conductivity (XY is lamination plane, Z is rotation axis)"""
-    lambda_z: float = 1
+    lambda_z: float = field(default=1, metadata={"unit": "W/K", "min": 0})
     """thermal conductivity (XY is lamination plane, Z is rotation axis)"""
-    Cp: float = 1
+    Cp: float = field(default=1, metadata={"unit": "W/kg/K", "min": 0})
     """specific heat capacity"""
-    alpha: float = 0
+    alpha: float = field(default=0, metadata={"min": 0})
     """thermal expansion coefficient"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""

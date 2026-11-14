@@ -84,6 +84,31 @@ def test_generation_copies_trees_and_preserves_data_and_results(tmp_path):
     assert result.read_text(encoding="utf-8") == "result"
 
 
+def test_generation_skips_independently_maintained_tests(tmp_path):
+    tests_dir = tmp_path / "Tests"
+    class_dir = tmp_path / "Classes_new"
+    class_dir.mkdir()
+    for folder in TEST_FOLDERS:
+        (tests_dir / folder).mkdir(parents=True)
+    for name in ("test_classes.py", "test_loggers.py"):
+        (tests_dir / "Classes" / name).write_text("legacy", encoding="utf-8")
+
+    output = tests_dir / "New" / "Classes"
+    output.mkdir(parents=True)
+    preserved = output / "test_classes.py"
+    preserved.write_text("independent", encoding="utf-8")
+    (tests_dir / "Methods" / "test_loggers.py").write_text(
+        "other = True", encoding="utf-8"
+    )
+
+    generate_tests(tests_dir, class_dir)
+    assert preserved.read_text(encoding="utf-8") == "independent"
+    assert not (output / "test_loggers.py").exists()
+    assert (tests_dir / "New" / "Methods" / "test_loggers.py").read_text(
+        encoding="utf-8"
+    ) == "other = True"
+
+
 def test_rewrite_vendored_class_packages(tmp_path):
     for package in ("_smoot", "_swat_em"):
         folder = tmp_path / package

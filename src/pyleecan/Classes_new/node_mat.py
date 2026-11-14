@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import Optional, Union
+from typing import ClassVar, Optional, Union
 
 import numpy as np
 
@@ -37,6 +37,9 @@ class NodeMat(PyleecanClass):
     """Sensibility for node searching"""
     indice: np.ndarray | None = None
     """Nodes unique indices"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.NodeMat.add_node
     def add_node(self, coordinate: np.typing.ArrayLike) -> Union[None, int]:

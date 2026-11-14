@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._error import InputError
 from ._pyleecan_class import PyleecanClass
@@ -21,6 +22,9 @@ class Structural(PyleecanClass):
 
     logger_name: str = "Pyleecan.Structural"
     """Name of the logger to use"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Structural.comp_axes
     def comp_axes(self, output):

@@ -3,7 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from meshio import read
@@ -42,6 +42,9 @@ class ElmerResultsVTU(Elmer):
     """Filename of the results VTU data file"""
     store_dict: dict[str, Any] | None = field(default_factory=dict)
     """Dict containing the data names to store"""
+
+    _package: ClassVar[str] = "Elmer"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.ElmerResultsVTU.build_meshsolution
     def build_meshsolution(self):

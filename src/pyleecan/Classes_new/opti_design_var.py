@@ -4,7 +4,7 @@
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 from .param_explorer import ParamExplorer
 
@@ -27,3 +27,6 @@ class OptiDesignVar(ParamExplorer):
     """Space of the variable"""
     get_value: Callable[..., Any] | None = None
     """Function of the space to initiate the variable"""
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""

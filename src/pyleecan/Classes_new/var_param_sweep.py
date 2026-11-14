@@ -19,6 +19,9 @@ class VarParamSweep(VarParam):
 
     NAME: ClassVar = "Parameter Sweep"
 
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
+
     # Inlined from Methods.Simulation.VarParamSweep.check_param
     def check_param(self):
         """Check VarParamSweep parameters validity

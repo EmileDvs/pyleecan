@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -37,6 +38,9 @@ class DataDual(DataND):
     """List of the Data1D objects corresponding to the axes in fourier domain"""
     values_df: np.ndarray | None = None
     """Values of the field in fourier domain"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.DataDual.get_along
     def get_along(

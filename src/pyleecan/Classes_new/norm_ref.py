@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .normalization import Normalization
 
@@ -19,6 +20,9 @@ class NormRef(Normalization):
 
     ref: float = 1
     """reference value"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Norm_ref.normalize
     def normalize(

@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._error import MachineCheckError
 from .lam_slot_wind import LamSlotWind
@@ -16,6 +17,9 @@ class MachineSCIM(MachineDFIM):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSCIM.check
     def check(self):

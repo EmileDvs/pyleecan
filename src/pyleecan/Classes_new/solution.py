@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Mesh/Solution.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -30,7 +31,10 @@ class Solution(PyleecanClass):
     """Type of element (Point, Segment2, Triangle3, etc.)"""
     label: str | None = None
     """Label to identify the solution"""
-    dimension: int = 2
+    dimension: int = field(default=2, metadata={"min": 1, "max": 3})
     """Dimension of the physical problem"""
     unit: str | None = None
     """Unit of the solution"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""

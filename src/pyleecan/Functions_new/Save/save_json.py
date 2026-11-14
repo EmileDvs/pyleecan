@@ -8,8 +8,8 @@ from shutil import move
 import numpy as np
 
 from ... import __version__
-from ...Classes import get_class_dict
 from ...Classes._frozen import FrozenClass
+from ...Classes_new._class_info import ClassInfo
 from ...definitions import PACKAGE_NAME
 
 
@@ -71,7 +71,7 @@ def save_json(
     if is_folder:
         # Add the classes daughters
         class_to_add = []
-        class_dict = get_class_dict()
+        class_dict = ClassInfo().get_dict()
 
         for class_name in class_to_split:
             class_to_add.extend(class_dict[class_name]["daughters"])

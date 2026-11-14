@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 from dataclasses import field as dataclass_field
+from typing import ClassVar
 
 import numpy as np
 
@@ -26,6 +27,9 @@ class SolutionVector(Solution):
         default=None, metadata={"default_class": "VectorField"}
     )
     """Data object containing the numerical values of a solution. One of the axis must be "Indices", a list of indices. If the solution is a vector, one of the axis must be "Direction", values [\'x\',\'y\'] for example."""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.SolutionVector.get_axes_list
     def get_axes_list(self, *args):

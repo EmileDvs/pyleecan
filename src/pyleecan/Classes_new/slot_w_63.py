@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotW63.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.Geometry.inter_line_line import inter_line_line
 from ..Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..Functions_new.Plot import (
@@ -56,19 +55,22 @@ class SlotW63(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 0
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W0: float = 0.314
+
+    W0: float = field(default=0.314, metadata={"unit": "m", "min": 0})
     """Pole bottom width"""
-    W1: float = 0.02
+    W1: float = field(default=0.02, metadata={"unit": "m", "min": 0})
     """Pole top width"""
-    H0: float = 0.003
+    H0: float = field(default=0.003, metadata={"unit": "m", "min": 0})
     """Pole bottom height"""
-    H1: float = 0.05
+    H1: float = field(default=0.05, metadata={"unit": "m", "min": 0})
     """Pole top height"""
-    H2: float = 0.0
+    H2: float = field(default=0.0, metadata={"unit": "m", "min": 0})
     """Heigh Ploe"""
-    W2: float = 0.0
+    W2: float = field(default=0.0, metadata={"unit": "m", "min": 0})
     """Width Ploe"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW63._comp_line_dict
     def _comp_line_dict(self):

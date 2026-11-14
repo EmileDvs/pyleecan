@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/OPdq.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -29,14 +30,17 @@ class OPdq(OP):
         Unit: Vrms; Default: None
     """
 
-    Id_ref: float | None = None
+    Id_ref: float | None = field(default=None, metadata={"unit": "Arms"})
     """d-axis current rms value"""
-    Iq_ref: float | None = None
+    Iq_ref: float | None = field(default=None, metadata={"unit": "Arms"})
     """q-axis current rms value"""
-    Ud_ref: float | None = None
+    Ud_ref: float | None = field(default=None, metadata={"unit": "Vrms"})
     """d-axis voltage rms value"""
-    Uq_ref: float | None = None
+    Uq_ref: float | None = field(default=None, metadata={"unit": "Vrms"})
     """q-axis voltage rms value"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OPdq.get_felec
     def get_felec(self, p=None):

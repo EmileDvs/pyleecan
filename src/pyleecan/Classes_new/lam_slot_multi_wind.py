@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,12 +39,16 @@ class LamSlotMultiWind(LamSlotMulti):
     """
 
     PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
-    Ksfill: float | None = None
+
+    Ksfill: float | None = field(default=None, metadata={"min": 0, "max": 1})
     """Imposed Slot Fill factor (if None, will be computed according to the winding and the slot)"""
     winding: Winding | None = field(
         default_factory=lambda: Winding(), metadata={"default_class": "Winding"}
     )
     """Lamination's Winding"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotMultiWind.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
@@ -330,9 +335,6 @@ class LamSlotMultiWind(LamSlotMulti):
         save_path=None,
         win_title=None,
         is_winding_connection=False,
-        *,
-        PLUS_HATCH="++",
-        MINUS_HATCH="..",
     ):
         """Plot the Lamination with empty Slots in a matplotlib fig
 
@@ -405,9 +407,9 @@ class LamSlotMultiWind(LamSlotMulti):
                         wind_mat=wind_mat, label=surf.label
                     )
                     if sign == "+" and is_add_sign:
-                        hatch = PLUS_HATCH
+                        hatch = self.PLUS_HATCH
                     elif sign == "-" and is_add_sign:
-                        hatch = MINUS_HATCH
+                        hatch = self.MINUS_HATCH
                     else:
                         hatch = None
                     patches.extend(
@@ -489,7 +491,8 @@ class LamSlotMultiWind(LamSlotMulti):
                                 index = ii % len(self.PHASE_COLORS)
                                 patch_leg.append(
                                     Patch(
-                                        color=self.PHASE_COLORS[index], hatch=PLUS_HATCH
+                                        color=self.PHASE_COLORS[index],
+                                        hatch=self.PLUS_HATCH,
                                     )
                                 )
                                 label_leg.append(phase_name[ii] + " +")
@@ -499,7 +502,7 @@ class LamSlotMultiWind(LamSlotMulti):
                                 patch_leg.append(
                                     Patch(
                                         color=self.PHASE_COLORS[index],
-                                        hatch=MINUS_HATCH,
+                                        hatch=self.MINUS_HATCH,
                                     )
                                 )
                                 label_leg.append(phase_name[ii] + " -")

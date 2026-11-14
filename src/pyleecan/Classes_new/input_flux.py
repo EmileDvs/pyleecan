@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -59,12 +59,15 @@ class InputFlux(InputCurrent):
     """Dict of Import objects or lists for each component of the flux"""
     unit: str | None = None
     """Unit of the flux if not T"""
-    slice: np.ndarray | None = None
+    slice: np.ndarray | None = field(default=None, metadata={"unit": "m"})
     """Slice axis values"""
     B_enforced: VectorField | None = field(
         default=None, metadata={"default_class": "VectorField"}
     )
     """Airgap flux density as VectorField object"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputFlux.gen_input
     def gen_input(

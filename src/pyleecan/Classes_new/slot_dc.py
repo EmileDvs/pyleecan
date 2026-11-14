@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotDC.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
@@ -46,22 +46,26 @@ class SlotDC(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    W1: float = 0.0122
+
+    W1: float = field(default=0.0122, metadata={"unit": "m", "min": 0})
     """Slot isthmus width."""
-    H1: float = 0.0122
+    H1: float = field(default=0.0122, metadata={"unit": "m", "min": 0})
     """Distance upper rod center to bore"""
-    D1: float = 0.001
+    D1: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Diameter upper rod"""
-    W2: float = 0.0122
+    W2: float = field(default=0.0122, metadata={"unit": "m", "min": 0})
     """Middle connection width"""
-    H2: float = 0.001
+    H2: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Height between the first and second center"""
-    D2: float = 0.001
+    D2: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Diameter upper section lower rod"""
-    H3: float = 0.001
+    H3: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Length of lower rod"""
-    R3: float = 0.001
+    R3: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Radius lower section lower rod"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotDC._comp_point_coordinate
     def _comp_point_coordinate(self):

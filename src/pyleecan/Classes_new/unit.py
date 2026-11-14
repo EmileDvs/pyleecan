@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/GUI_Option/Unit.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -23,12 +24,15 @@ class Unit(PyleecanClass):
         Default: 0; Minimum: 0; Maximum: 1
     """
 
-    unit_m: int = 0
+    unit_m: int = field(default=0, metadata={"min": 0, "max": 1})
     """0: use m, 1: use mm"""
-    unit_rad: int = 0
+    unit_rad: int = field(default=0, metadata={"min": 0, "max": 1})
     """0: use rad, 1: use deg"""
-    unit_m2: int = 0
+    unit_m2: int = field(default=0, metadata={"min": 0, "max": 1})
     """0: use m^2, 1: use mm^2"""
+
+    _package: ClassVar[str] = "GUI_Option"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.GUI_Option.Unit.get_m
     def get_m(self, value):

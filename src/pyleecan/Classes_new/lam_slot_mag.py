@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -37,6 +38,9 @@ class LamSlotMag(LamSlotM):
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Magnet of the lamination"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotMag.build_geometry
     def build_geometry(

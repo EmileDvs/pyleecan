@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from importlib import import_module
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -63,6 +63,9 @@ class DataLinspace(Data):
     """Dictionary of the symmetries along each axis, used to reduce storage"""
     is_overlay: bool = False
     """True if axis must be used to overlay curves in plots"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.DataLinspace.get_axis_periodic
     def get_axis_periodic(self, Nper, is_aper=False):

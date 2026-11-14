@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .machine import Machine
 
@@ -13,6 +14,9 @@ class MachineAsync(Machine):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineAsync.comp_desc_dict
     def comp_desc_dict(self):

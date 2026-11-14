@@ -62,24 +62,28 @@ class HoleMLSRPM(HoleMag):
 
     IS_SYMMETRICAL: ClassVar = 1
     MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    H1: float = 0.002373479
+
+    H1: float = field(default=0.002373479, metadata={"unit": "m", "min": 0})
     """Magnet depth"""
-    W0: float = 0.00388
+    W0: float = field(default=0.00388, metadata={"unit": "m", "min": 0})
     """Magnet top width"""
-    W1: float = 0.219911482
+    W1: float = field(default=0.219911482, metadata={"unit": "rad", "min": 0})
     """Magnet width angular 1 """
-    W2: float = 0.0007
+    W2: float = field(default=0.0007, metadata={"unit": "m", "min": 0})
     """Small distance"""
-    R1: float = 0.0003
+    R1: float = field(default=0.0003, metadata={"unit": "m", "min": 0})
     """Rounding radius"""
-    R2: float = 0.019327
+    R2: float = field(default=0.019327, metadata={"unit": "m"})
     """Radius 2"""
-    R3: float = 0.0165
+    R3: float = field(default=0.0165, metadata={"unit": "m"})
     """Radius 3"""
     magnet_0: Magnet | None = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Magnet of the hole"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleMLSRPM._comp_point_coordinate
     def _comp_point_coordinate(self):

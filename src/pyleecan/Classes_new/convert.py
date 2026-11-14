@@ -3,7 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from .. import __version__
 from ._error import ConvertionError
@@ -78,6 +78,9 @@ class Convert(PyleecanClass):
     """list differents rules"""
     is_P_to_other: bool = False
     """booleen to select the direction of conversion"""
+
+    _package: ClassVar[str] = "Converter"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.Convert.convert_to_other
     def convert_to_other(self, machine):

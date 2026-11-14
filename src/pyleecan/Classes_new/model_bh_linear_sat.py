@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Material/ModelBH_linear_sat.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -28,7 +29,7 @@ class ModelBH_linear_sat(ModelBH):
         Default: 240
     """
 
-    Bs: float | None = None
+    Bs: float | None = field(default=None, metadata={"unit": "T"})
     """Saturation flux density"""
     mu_a: float | None = None
     """Linear permeability"""
@@ -36,6 +37,9 @@ class ModelBH_linear_sat(ModelBH):
     """Init value for Bs for fitting algorithm"""
     param2: float = 240
     """Init value for mu_a for fitting algorithm"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.ModelBH_linear_sat.BH_func
     def BH_func(self, H, Bs, mu_a):

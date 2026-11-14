@@ -2,9 +2,11 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
+from ..definitions import config_dict
 from ._pyleecan_class import PyleecanClass
 from .material import Material
 
@@ -23,6 +25,9 @@ class Conductor(PyleecanClass):
         Default: Material()
     """
 
+    COND_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
+    INS_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
+
     cond_mat: Material | None = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
@@ -31,6 +36,9 @@ class Conductor(PyleecanClass):
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Material of the insulation"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Conductor.check
     def check(self):

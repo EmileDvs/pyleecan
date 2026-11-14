@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -23,6 +24,9 @@ class ImportGenMatrixSin(ImportMatrix):
 
     sin_list: list[ImportGenVectSin] | None = field(default_factory=list)
     """List of sinus vector to generate the matrix lines"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenMatrixSin.get_data
     def get_data(self):

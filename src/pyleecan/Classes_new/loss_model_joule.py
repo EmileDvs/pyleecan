@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -21,6 +22,9 @@ class LossModelJoule(LossModel):
 
     type_skin_effect: int = 1
     """0 to ignore skin effect, 1 to consider it"""
+
+    _package: ClassVar[str] = "Loss"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelJoule.comp_coeff
     def comp_coeff(self, T_op=20, T_ref=20):

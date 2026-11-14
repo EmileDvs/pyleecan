@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -21,6 +22,9 @@ class FPGNSeg(GaussPoint):
 
     nb_gauss_point: int = 4
     """Nb of gauss point to be used"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.FPGNSeg.get_gauss_points
     def get_gauss_points(self):

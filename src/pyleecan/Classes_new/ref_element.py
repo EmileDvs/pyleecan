@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Mesh/Interpolation/RefElement.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -19,8 +20,11 @@ class RefElement(PyleecanClass):
         Default: 0.05; Minimum: 0.00E+00
     """
 
-    epsilon: float = 0.05
+    epsilon: float = field(default=0.05, metadata={"min": 0.0})
     """Precision criterion"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.RefElement.get_element_area
     def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:

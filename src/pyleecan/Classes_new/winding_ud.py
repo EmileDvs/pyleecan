@@ -24,6 +24,9 @@ class WindingUD(Winding):
 
     NAME: ClassVar = "User defined"
 
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
+
     # Inlined from Methods.Machine.WindingUD.import_from_csv
     def import_from_csv(
         self, file_path=None, *, ZS_COL=0, COIL_COL=1, RAD_COL=2, TAN_COL=3

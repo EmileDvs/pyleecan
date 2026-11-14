@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._error import ParentMissingError
 from ._pyleecan_class import PyleecanClass
@@ -23,6 +24,9 @@ class Notch(PyleecanClass):
         default=None, metadata={"default_class": "Material"}
     )
     """The material of the key (if None, no key to add)"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Notch.get_label
     def get_label(self, is_add_id=True):

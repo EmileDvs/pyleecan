@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 from math import ceil
+from typing import ClassVar
 
 from ..definitions import config_dict
 from ..Functions_new.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
@@ -39,12 +40,18 @@ class Surface(PyleecanClass):
         Default: None
     """
 
-    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
-    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
+    PATCH_COLOR: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
+    PATCH_COLOR_ALPHA: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
+    PATCH_EDGE: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
+    PATCH_EDGE_ALPHA: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
+
     point_ref: complex = 0
     """Center of symmetry"""
     label: str | None = None
     """Label of the surface"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Surface.comp_mesh_dict
     def comp_mesh_dict(self, element_size, prefix=""):

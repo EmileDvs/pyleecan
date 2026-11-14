@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,6 +34,9 @@ class LamSlotM(LamSlot):
     """Matrix to enforce a different relative magnetic permeability for each magnet layer (shape: [Nrad, Ntan, Zs])"""
     Brm20_matrix: np.ndarray | None = None
     """Matrix to enforce a different magnet remanence induction at 20degC for each magnet layer (shape: [Nrad, Ntan, Zs])"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotM.comp_angle_d_axis
     def comp_angle_d_axis(self):

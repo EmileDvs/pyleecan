@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -39,7 +39,8 @@ class Hole(PyleecanClass):
 
     MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
     ARROW_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
-    Zh: int = 36
+
+    Zh: int = field(default=36, metadata={"min": 0})
     """Number of Hole around the circumference"""
     mat_void: Material | None = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
@@ -47,8 +48,11 @@ class Hole(PyleecanClass):
     """Material of the void part of the hole (Air in general)"""
     magnetization_dict_offset: dict[str, Any] | None = field(default_factory=dict)
     """Dictionary add an offset to the magnetization direction of the magnets (key=magnet_X, value=angle[rad])"""
-    Alpha0: float = 0
+    Alpha0: float = field(default=0, metadata={"unit": "rad", "min": 0, "max": 6.29})
     """Shift angle of the holes around circumference"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Hole.comp_height
     def comp_height(self):

@@ -23,6 +23,9 @@ class WindingSC(Winding):
 
     NAME: ClassVar = "short-circuit"
 
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
+
     # Inlined from Methods.Machine.WindingSC.comp_connection_mat
     # TODO: update docstring -> there should not be elementary circuits since
     #       every bar could have its own unique current

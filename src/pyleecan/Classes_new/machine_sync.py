@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .machine import Machine
 
@@ -13,6 +14,9 @@ class MachineSync(Machine):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSync.comp_angle_rotor_initial
     def comp_angle_rotor_initial(self):

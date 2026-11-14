@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .data_keeper import DataKeeper
@@ -57,3 +57,6 @@ class OptiProblem(PyleecanClass):
     """Function to execute a preprocessing on the simulation right before it is run."""
     datakeeper_list: list[DataKeeper] | None = field(default_factory=list)
     """List of DataKeepers to run on every output"""
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""

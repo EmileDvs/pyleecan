@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .data_keeper import DataKeeper
 
@@ -13,3 +14,6 @@ class OptiObjective(DataKeeper):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""

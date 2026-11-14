@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 import pyuff
@@ -22,6 +23,9 @@ class ImportMeshUnv(Import):
 
     file_path: str | None = None
     """Path of the file to load"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMeshUnv.get_data
     def get_data(self):

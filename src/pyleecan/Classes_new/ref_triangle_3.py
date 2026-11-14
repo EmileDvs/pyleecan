@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import ClassVar, Optional, Tuple
 
 import numpy as np
 
@@ -16,6 +16,9 @@ class RefTriangle3(RefElement):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.RefTriangle3.get_element_area
     def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:

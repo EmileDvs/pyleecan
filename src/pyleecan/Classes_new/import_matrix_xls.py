@@ -3,7 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from pandas import ExcelFile, read_excel
 
@@ -42,7 +42,7 @@ class ImportMatrixXls(ImportMatrix):
     """Path of the file to load"""
     sheet: str | None = None
     """Name of the sheet to load"""
-    skiprows: int = 0
+    skiprows: int = field(default=0, metadata={"min": 0})
     """To skip some rows in the file (header)"""
     usecols: str | None = None
     """list of Excel column letters and column ranges (e.g. "A:E" or "A,C,E:F")"""
@@ -50,6 +50,9 @@ class ImportMatrixXls(ImportMatrix):
     """To read axes in first line/column"""
     is_allsheets: bool = False
     """To read all sheets in a 3D matrix"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrixXls.get_data
     def get_data(self):

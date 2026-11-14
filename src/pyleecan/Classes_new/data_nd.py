@@ -4,7 +4,7 @@
 import csv
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import imageio
 import matplotlib.pyplot as plt
@@ -102,6 +102,9 @@ class DataND(Data):
     """Values of the field"""
     is_real: bool = True
     """To indicate if the signal is real (use only positive frequencies)"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.DataND._apply_operations
     def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):

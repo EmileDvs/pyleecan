@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._error import MachineCheckError
 from .lam_slot_wind import LamSlotWind
@@ -32,6 +33,9 @@ class MachineLSPM(MachineSync):
         default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
     )
     """Machine's Stator"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineLSPM.check
     def check(self):

@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/OPslip.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -32,16 +33,19 @@ class OPslip(OP):
         Unit: rad; Default: None
     """
 
-    I0_ref: float | None = None
+    I0_ref: float | None = field(default=None, metadata={"unit": "Arms"})
     """Current rms value"""
-    IPhi0_ref: float | None = None
+    IPhi0_ref: float | None = field(default=None, metadata={"unit": "rad"})
     """Current phase"""
     slip_ref: float = 0
     """Rotor mechanical slip"""
-    U0_ref: float | None = None
+    U0_ref: float | None = field(default=None, metadata={"unit": "Vrms"})
     """stator voltage (phase to neutral)"""
-    UPhi0_ref: float | None = None
+    UPhi0_ref: float | None = field(default=None, metadata={"unit": "rad"})
     """Voltage phase"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OPslip.get_felec
     def get_felec(self, p=None):

@@ -82,27 +82,28 @@ class HoleM51(HoleMag):
 
     IS_SYMMETRICAL: ClassVar = 1
     MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    H0: float = 0.003
+
+    H0: float = field(default=0.003, metadata={"unit": "m", "min": 0})
     """Hole depth"""
-    H1: float = 0
+    H1: float = field(default=0, metadata={"unit": "m", "min": 0})
     """Distance from the lamination Bore"""
-    H2: float = 0.02
+    H2: float = field(default=0.02, metadata={"unit": "m", "min": 0})
     """Hole width"""
-    W0: float = 0.01
+    W0: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Hole bottom width"""
-    W1: float = 0
+    W1: float = field(default=0, metadata={"unit": "rad", "min": 0})
     """Hole angular width"""
-    W2: float = 0.01
+    W2: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """magnet_1 position"""
-    W3: float = 0
+    W3: float = field(default=0, metadata={"unit": "m", "min": 0})
     """magnet_1 width"""
-    W4: float = 0.01
+    W4: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """magnet_2 position"""
-    W5: float = 0.01
+    W5: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """magnet_2 width"""
-    W6: float = 0
+    W6: float = field(default=0, metadata={"unit": "m", "min": 0})
     """magnet_0 position"""
-    W7: float = 0
+    W7: float = field(default=0, metadata={"unit": "m", "min": 0})
     """magnet_0 width"""
     magnet_0: Magnet | None = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
@@ -116,6 +117,9 @@ class HoleM51(HoleMag):
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Third Magnet"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM51._comp_point_coordinate
     def _comp_point_coordinate(self):

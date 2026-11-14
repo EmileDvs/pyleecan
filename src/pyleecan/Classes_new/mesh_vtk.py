@@ -4,7 +4,7 @@
 import os
 import shutil
 from dataclasses import dataclass, field
-from typing import Literal, Optional
+from typing import ClassVar, Literal, Optional
 
 import numpy as np
 import pyvista as pv
@@ -87,6 +87,9 @@ class MeshVTK(Mesh):
     """Name of the outer surface file"""
     node_normals: np.ndarray | None = None
     """Array of normals to nodes (element vertices)"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.MeshVTK.convert
     def convert(

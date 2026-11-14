@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -16,6 +17,9 @@ class ForceMT(Force):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ForceMT.comp_force
     def comp_force(self, output, axes_dict):

@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -22,6 +23,9 @@ class NormVector(Normalization):
 
     vector: np.ndarray | None = None
     """vector to replace axis values"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Norm_vector.normalize
     def normalize(

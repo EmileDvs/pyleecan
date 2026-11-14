@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from ntpath import basename
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 from ..definitions import PYTHON_DEFAULT_ENCODING
 from ..Functions_new.path_tools import abs_file_path
@@ -44,6 +44,9 @@ class ParamExplorer(PyleecanClass):
     """Function that takes a Simulation and a value in argument and modifiers the simulation"""
     getter: Callable[..., Any] | None = None
     """Function to return the reference value (simulation as argument)"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ParamExplorer._set_getter
     def _set_getter(self, value):

@@ -3,10 +3,9 @@
 
 from dataclasses import dataclass, field
 from io import StringIO
-from typing import Any
+from typing import Any, ClassVar
 
 from .elmer import Elmer
-from .solver_input_file import INDENT
 
 
 @dataclass(eq=False)
@@ -38,10 +37,13 @@ class Section(Elmer):
     """Index of a numbered section"""
     comment: str | None = None
     """Section global comment"""
+
     _statements: dict[str, Any] | None = field(default_factory=dict)
     """internal dict to store the sections statements"""
     _comments: dict[str, Any] | None = field(default_factory=dict)
     """internal dict to store comments on single statements"""
+    _package: ClassVar[str] = "Elmer"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.Section.__delitem__
     # -*- coding: utf-8 -*-
@@ -109,7 +111,7 @@ class Section(Elmer):
         return (value, comment)
 
     # Inlined from Methods.Elmer.Section.write
-    def write(self, stream=None, *, NEWLINE="\n", END="End"):
+    def write(self, stream=None):
         """Write the Elmer SIF section to a stream. If no stream is given, the method
         will return a StringIO.
         """
@@ -123,10 +125,10 @@ class Section(Elmer):
             nbr = ""
 
         # write section header
-        stream.write(NEWLINE)
+        stream.write(self.NEWLINE)
         if self.comment:
             stream.write("! " + self.comment)
-            stream.write(NEWLINE)
+            stream.write(self.NEWLINE)
         stream.write(self.section + " " + nbr)
 
         # write section entries
@@ -135,13 +137,13 @@ class Section(Elmer):
             value, comment = self[key]
             if isinstance(value, list) and len(value) > 1:
                 n = "(" + str(len(value)) + ")"
-            stream.write(NEWLINE + INDENT)
+            stream.write(self.NEWLINE + self.INDENT)
             stream.write(key + n + " = " + self._convert(value))
             if comment:
-                stream.write(INDENT + "! " + comment)
+                stream.write(self.INDENT + "! " + comment)
 
         # end section
-        stream.write(NEWLINE + END + NEWLINE)
+        stream.write(self.NEWLINE + self.END + self.NEWLINE)
 
         return stream
 
@@ -174,8 +176,8 @@ class Section(Elmer):
             return (
                 "Variable "
                 + value.name
-                + NEWLINE
-                + 2 * INDENT
+                + Section.NEWLINE
+                + 2 * Section.INDENT
                 + Section._convert(value.value)
             )
 
@@ -184,3 +186,18 @@ class Section(Elmer):
 
     class ElmerSectionError(Exception):
         pass
+
+
+class File(str):
+    pass
+
+
+class Variable:
+    def __init__(self, name=None, value=None):
+        self.name = name
+        self.value = value
+
+
+class MATC:
+    def __init__(self, expr=None):
+        self.expr = expr

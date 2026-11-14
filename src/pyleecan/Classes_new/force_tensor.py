@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -32,6 +32,9 @@ class ForceTensor(Force):
     """Name of the group selected for magnetic force computation. If None, all the domain is selected."""
     tensor: dict[str, Any] | None = field(default_factory=dict)
     """Force model(s) to be used"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ForceTensor.comp_force
     def comp_force(self, output, axes_dict):

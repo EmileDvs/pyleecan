@@ -5,7 +5,7 @@ import copy
 import os
 from dataclasses import dataclass, field
 from itertools import repeat
-from typing import Dict, List, Literal, Optional, Tuple, Union
+from typing import ClassVar, Dict, List, Literal, Optional, Tuple, Union
 
 import meshio
 import numpy as np
@@ -55,12 +55,15 @@ class MeshMat(Mesh):
         metadata={"default_class": "NodeMat"},
     )
     """Storing nodes"""
-    _is_renum: bool = False
-    """True if renumering the nodes and elements is useful when renum method is called (saving calculation time)"""
     sym: int = 1
     """Spatial symmetry factor"""
     is_antiper_a: bool = False
     """True if there is a spatial antiperiod"""
+
+    _is_renum: bool = False
+    """True if renumering the nodes and elements is useful when renum method is called (saving calculation time)"""
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.MeshMat.add_element
     def add_element(

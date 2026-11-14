@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/CondType21.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from matplotlib.patches import Patch, Rectangle
 
@@ -26,12 +27,15 @@ class CondType21(Conductor):
         Unit: m; Default: 0; Minimum: 0
     """
 
-    Hbar: float = 0.01
+    Hbar: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Bar height"""
-    Wbar: float = 0.01
+    Wbar: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Bar width"""
-    Wins: float = 0
+    Wins: float = field(default=0, metadata={"unit": "m", "min": 0})
     """Width of insulation"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType21.comp_height
     def comp_height(self):

@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .unit import Unit
@@ -22,3 +23,6 @@ class GUIOption(PyleecanClass):
         default_factory=lambda: Unit(), metadata={"default_class": "Unit"}
     )
     """Unit options"""
+
+    _package: ClassVar[str] = "GUIOption"
+    """Name of the package of the legacy class module"""

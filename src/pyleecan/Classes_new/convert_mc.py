@@ -3,6 +3,7 @@
 
 import os
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -60,6 +61,9 @@ class ConvertMC(Convert):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Converter"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_conductor_to_other
     def convert_conductor_to_other(self, is_stator):

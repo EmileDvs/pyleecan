@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -44,7 +45,7 @@ class InputVoltage(Input):
         Default: False
     """
 
-    rot_dir: int | None = None
+    rot_dir: int | None = field(default=None, metadata={"min": -1, "max": 1})
     """Rotation direction of the rotor (rot_dir*N0, default value given by ROT_DIR_REF)"""
     angle_rotor_initial: float = 0
     """Initial angular position of the rotor at t=0"""
@@ -52,9 +53,9 @@ class InputVoltage(Input):
         default=None, metadata={"default_class": "ImportGenPWM"}
     )
     """Object to generate PWM signal"""
-    phase_dir: int | None = None
+    phase_dir: int | None = field(default=None, metadata={"min": -1, "max": 1})
     """Rotation direction of the stator phase (phase_dir*(n-1)*pi/qs, default value given by PHASE_DIR_REF)"""
-    current_dir: int | None = None
+    current_dir: int | None = field(default=None, metadata={"min": -1, "max": 1})
     """Rotation direction of the stator currents (current_dir*2*pi*felec*time, default value given by CURRENT_DIR_REF)"""
     is_periodicity_t: bool = False
     """True to compute voltage/currents only on one time periodicity (use periodicities defined in axes_dict[time])"""
@@ -62,6 +63,9 @@ class InputVoltage(Input):
     """True to compute voltage/currents only on one angle periodicity (use periodicities defined in axes_dict[angle])"""
     is_generator: bool = False
     """True if machine is used as a generator"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputVoltage.gen_input
     def gen_input(self):

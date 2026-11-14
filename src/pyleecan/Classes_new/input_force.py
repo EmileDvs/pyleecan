@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._error import InputError
 from .import_vector_field import ImportVectorField
@@ -21,9 +22,12 @@ class InputForce(Input):
     """
 
     P: ImportVectorField | None = field(
-        default=None, metadata={"default_class": "ImportVectorField"}
+        default=None, metadata={"unit": "N.m^2", "default_class": "ImportVectorField"}
     )
     """Magnetic air-gap surface force"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputForce.gen_input
     def gen_input(self):

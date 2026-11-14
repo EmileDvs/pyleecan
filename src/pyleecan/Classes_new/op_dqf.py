@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/OPdqf.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 from .op_dq import OPdq
 
@@ -17,5 +18,8 @@ class OPdqf(OPdq):
         Unit: Arms; Default: None
     """
 
-    If_ref: float | None = None
+    If_ref: float | None = field(default=None, metadata={"unit": "Arms"})
     """DC rotor current"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""

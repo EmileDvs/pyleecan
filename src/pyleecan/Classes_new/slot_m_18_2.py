@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotM18_2.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.labels import (
     COND_BOUNDARY_PROP_LAB,
     WIND_LAB,
@@ -48,11 +47,14 @@ class SlotM18_2(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    H0_bore: float = 0.001
+
+    H0_bore: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Height of the magnet near the bore"""
-    H0_gap: float = 0.001
+    H0_gap: float = field(default=0.001, metadata={"unit": "m", "min": 0})
     """Height of the magnet near the airgap"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM18_2._comp_point_coordinate
     def _comp_point_coordinate(self):

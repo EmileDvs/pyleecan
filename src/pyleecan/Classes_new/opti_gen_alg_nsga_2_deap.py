@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,6 +42,9 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
 
     toolbox: Toolbox | None = "None"
     """DEAP toolbox"""
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input
     def check_optimization_input(self):

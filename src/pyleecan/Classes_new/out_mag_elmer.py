@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from .out_internal import OutInternal
 
@@ -20,6 +20,9 @@ class OutMagElmer(OutInternal):
 
     FEA_dict: dict[str, Any] | None = field(default_factory=dict)
     """dictionary containing the main FEA parameters"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutMagElmer.clean
     def clean(self, clean_level=1):

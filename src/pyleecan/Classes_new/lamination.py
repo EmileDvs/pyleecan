@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass, field
 from math import gcd
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -98,26 +99,29 @@ class Lamination(PyleecanClass):
         Default: None
     """
 
+    PLUS_HATCH: ClassVar[str] = "++"
+    MINUS_HATCH: ClassVar[str] = ".."
+    ROTOR_COLOR: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
+    STATOR_COLOR: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
-    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
-    L1: float = 0.35
+
+    L1: float = field(default=0.35, metadata={"unit": "m", "min": 0})
     """Lamination stack active length without radial ventilation airducts but including insulation layers between lamination sheets"""
     mat_type: Material | None = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Lamination's material"""
-    Nrvd: int = 0
+    Nrvd: int = field(default=0, metadata={"min": 0})
     """number of radial air ventilation ducts in lamination"""
-    Wrvd: float = 0
+    Wrvd: float = field(default=0, metadata={"unit": "m", "min": 0})
     """axial width of ventilation ducts in lamination"""
-    Kf1: float = 0.95
+    Kf1: float = field(default=0.95, metadata={"min": 0, "max": 1})
     """lamination stacking / packing factor"""
     is_internal: bool = True
     """True for internal lamination topology, False for external lamination"""
-    Rint: float = 0
+    Rint: float = field(default=0, metadata={"unit": "m", "min": 0})
     """To fill"""
-    Rext: float = 1
+    Rext: float = field(default=1, metadata={"unit": "m", "min": 0})
     """To fill"""
     is_stator: bool = True
     """To fill"""
@@ -131,6 +135,9 @@ class Lamination(PyleecanClass):
     """Bore Shape"""
     yoke: Bore | None = field(default=None, metadata={"default_class": "Bore"})
     """Yoke Shape"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Lamination.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

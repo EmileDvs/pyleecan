@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -89,15 +90,21 @@ class OutElec(PyleecanClass):
 
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Electrical"""
-    Is: DataND | None = field(default=None, metadata={"default_class": "DataND"})
+    Is: DataND | None = field(
+        default=None, metadata={"unit": "A", "default_class": "DataND"}
+    )
     """Stator currents DataTime object"""
-    Ir: DataND | None = field(default=None, metadata={"default_class": "DataND"})
+    Ir: DataND | None = field(
+        default=None, metadata={"unit": "A", "default_class": "DataND"}
+    )
     """Rotor currents as a function of time (each column correspond to one phase)"""
     logger_name: str = "pyleecan.Electrical"
     """Name of the logger to use"""
-    Pj_losses: float | None = None
+    Pj_losses: float | None = field(default=None, metadata={"unit": "W"})
     """Electrical Joule losses"""
-    Us: DataND | None = field(default=None, metadata={"default_class": "DataND"})
+    Us: DataND | None = field(
+        default=None, metadata={"unit": "V", "default_class": "DataND"}
+    )
     """Stator voltage as a function of time (each column correspond to one phase)"""
     internal: OutInternal | None = field(
         default=None, metadata={"default_class": "OutInternal"}
@@ -105,13 +112,13 @@ class OutElec(PyleecanClass):
     """OutInternal object containg outputs related to a specific model"""
     OP: _field_type_OP | None = field(default=None, metadata={"default_class": "OP"})
     """Operating Point"""
-    Pem_av: float | None = None
+    Pem_av: float | None = field(default=None, metadata={"unit": "W"})
     """Average Electromagnetic power"""
-    Tem_av: float | None = None
+    Tem_av: float | None = field(default=None, metadata={"unit": "N.m"})
     """Average Electromagnetic torque"""
-    phase_dir: int | None = None
+    phase_dir: int | None = field(default=None, metadata={"min": -1, "max": 1})
     """Rotation direction of the stator phases (phase_dir*(n-1)*pi/qs, default value given by PHASE_DIR_REF)"""
-    current_dir: int | None = None
+    current_dir: int | None = field(default=None, metadata={"min": -1, "max": 1})
     """Rotation direction of the stator currents (current_dir*2*pi*felec*time, default value given by CURRENT_DIR_REF)"""
     PWM: ImportGenPWM | None = field(
         default=None, metadata={"default_class": "ImportGenPWM"}
@@ -119,16 +126,19 @@ class OutElec(PyleecanClass):
     """Object to generate PWM signal"""
     eec: EEC | None = field(default=None, metadata={"default_class": "EEC"})
     """Electric Equivalent Circuit used for OP resolution"""
-    P_out: float | None = None
+    P_out: float | None = field(default=None, metadata={"unit": "W"})
     """Output power"""
-    Jrms: float | None = None
+    Jrms: float | None = field(default=None, metadata={"unit": "A/m2", "min": 0})
     """RMS current density in slots"""
-    P_in: float | None = None
+    P_in: float | None = field(default=None, metadata={"unit": "W"})
     """Input power"""
-    Arms: float | None = None
+    Arms: float | None = field(default=None, metadata={"unit": "A/m"})
     """RMS linear current density along airgap"""
-    Erms: float | None = None
+    Erms: float | None = field(default=None, metadata={"unit": "V"})
     """RMS back-emf"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutElec.get_electrical
     def get_electrical(

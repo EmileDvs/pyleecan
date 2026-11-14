@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from ._check import check_var
 from .rule import Rule
@@ -31,6 +31,9 @@ class RuleComplex(Rule):
     """name source"""
     param_dict: dict[str, Any] = field(default_factory=dict)
     """dict to pass param """
+
+    _package: ClassVar[str] = "Converter"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.RuleComplex._set_fct_name
     def _set_fct_name(self, value):

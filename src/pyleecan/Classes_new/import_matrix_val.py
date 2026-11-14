@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -21,6 +22,9 @@ class ImportMatrixVal(ImportMatrix):
 
     value: np.ndarray | None = None
     """The matrix to return"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrixVal.get_data
     def get_data(self):

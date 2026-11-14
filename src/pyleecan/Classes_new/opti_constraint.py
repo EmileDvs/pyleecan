@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .data_keeper import DataKeeper
 
@@ -24,3 +25,6 @@ class OptiConstraint(DataKeeper):
     """Type of comparison ( "==", "<=", ">=", "<",">")"""
     value: float = 0
     """Value to compare"""
+
+    _package: ClassVar[str] = "Optimization"
+    """Name of the package of the legacy class module"""

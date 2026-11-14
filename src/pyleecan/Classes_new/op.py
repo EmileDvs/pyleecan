@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/OP.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -35,18 +36,21 @@ class OP(PyleecanClass):
         Default: None
     """
 
-    N0: float | None = None
+    N0: float | None = field(default=None, metadata={"unit": "rpm"})
     """Rotor speed"""
-    felec: float | None = None
+    felec: float | None = field(default=None, metadata={"unit": "Hz"})
     """Electrical Frequency"""
-    Tem_av_ref: float | None = None
+    Tem_av_ref: float | None = field(default=None, metadata={"unit": "N.m"})
     """Output average electromagnetic torque"""
-    Pem_av_ref: float | None = None
+    Pem_av_ref: float | None = field(default=None, metadata={"unit": "W"})
     """Output average Electromagnetic Power"""
-    Pem_av_in: float | None = None
+    Pem_av_in: float | None = field(default=None, metadata={"unit": "W"})
     """Input average power (e.g. for generator mode)"""
     efficiency: float | None = None
     """Efficiency"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OP.get_machine_from_parent
     def get_machine_from_parent(self):

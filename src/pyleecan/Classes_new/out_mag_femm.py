@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from .out_internal import OutInternal
 
@@ -25,6 +25,9 @@ class OutMagFEMM(OutInternal):
     """dictionary containing the main FEMM parameters"""
     handler_list: list[Any] | None = field(default_factory=list)
     """List of FEMM Handler (more than 1 if nb_worker >1)"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutMagFEMM.clean
     def clean(self, clean_level=1):

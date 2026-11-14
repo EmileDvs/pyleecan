@@ -1,7 +1,7 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/Slot19.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
@@ -33,14 +33,18 @@ class Slot19(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    W0: float = 0.013
+
+    W0: float = field(default=0.013, metadata={"unit": "m", "min": 0})
     """Slot top width"""
-    H0: float = 0.02
+    H0: float = field(default=0.02, metadata={"unit": "m", "min": 0})
     """Slot height"""
-    W1: float = 0.01
+    W1: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Slot bottom width."""
     Wx_is_rad: bool = False
     """Wx unit, False for m, True for rad"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Slot19._comp_point_coordinate
     def _comp_point_coordinate(self):

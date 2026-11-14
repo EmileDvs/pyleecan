@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -43,13 +44,13 @@ class MatMagnetics(PyleecanClass):
         Default: False
     """
 
-    mur_lin: float = 1
+    mur_lin: float = field(default=1, metadata={"min": 0})
     """Relative magnetic permeability"""
-    Brm20: float = 0
+    Brm20: float = field(default=0, metadata={"unit": "T"})
     """magnet remanence induction at 20degC"""
     alpha_Br: float = 0
     """temperature coefficient for remanent flux density"""
-    Wlam: float = 0
+    Wlam: float = field(default=0, metadata={"unit": "m", "min": 0})
     """lamination sheet width without insulation [m] (0 == not laminated)"""
     BH_curve: ImportMatrix | None = field(
         default_factory=lambda: ImportMatrix(),
@@ -58,7 +59,7 @@ class MatMagnetics(PyleecanClass):
     """nonlinear B(H) curve (two columns matrix, H and B(H))"""
     LossData: ImportMatrix | None = field(
         default_factory=lambda: ImportMatrix(),
-        metadata={"default_class": "ImportMatrix"},
+        metadata={"unit": "W/kg", "default_class": "ImportMatrix"},
     )
     """specific loss data value triplets, i.e. B, f, P"""
     ModelBH: _field_type_ModelBH | None = field(
@@ -68,6 +69,9 @@ class MatMagnetics(PyleecanClass):
     """a model of BH curve with an analytical expression"""
     is_BH_extrapolate: bool = False
     """True to use ModelBH to fit input data and extrapolate BH curve"""
+
+    _package: ClassVar[str] = "Material"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.MatMagnetics.get_BH
     def get_BH(self):

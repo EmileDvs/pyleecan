@@ -25,10 +25,14 @@ class VarLoad(VarSimu):
     """
 
     NAME: ClassVar = "Variable Load"
+
     OP_matrix: OPMatrix | None = field(
         default=None, metadata={"default_class": "OPMatrix"}
     )
     """Operating point matrix object"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarLoad._set_OP_matrix
     def _set_OP_matrix(self, value):

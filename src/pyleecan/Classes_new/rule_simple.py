@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from .rule import Rule
 
@@ -35,6 +35,9 @@ class RuleSimple(Rule):
     """conversion paramter to pyleecan"""
     file_name: str | None = None
     """use just to debug, give name of file"""
+
+    _package: ClassVar[str] = "Converter"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.RuleSimple.convert_to_other
     def convert_to_other(self, other_dict, machine, other_unit_dict):

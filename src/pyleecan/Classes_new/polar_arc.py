@@ -1,12 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Geometry/PolarArc.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Polygon
 
-from ..definitions import config_dict
 from .arc_1 import Arc1
 from .segment import Segment
 from .surface import Surface
@@ -26,14 +26,13 @@ class PolarArc(Surface):
         Unit: m; Default: 1; Minimum: 0
     """
 
-    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
-    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
-    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
-    angle: float = 1
+    angle: float = field(default=1, metadata={"min": 0})
     """Polar angle"""
-    height: float = 1
+    height: float = field(default=1, metadata={"unit": "m", "min": 0})
     """The Heigth of the PolarAngle"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.PolarArc.check
     def check(self):
@@ -257,7 +256,9 @@ class PolarArc(Surface):
         ]
 
     get_patches.__defaults__ = (
-        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+        get_patches.__defaults__[:0]
+        + (Surface.PATCH_COLOR,)
+        + get_patches.__defaults__[1:]
     )
 
     # Inlined from Methods.Geometry.PolarArc.rotate

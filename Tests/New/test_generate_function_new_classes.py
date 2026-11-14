@@ -137,6 +137,55 @@ def test_rewrite_imports_and_report_unresolved(tmp_path):
     ast.parse(result)
 
 
+def test_rewrite_get_class_dict_to_class_info(tmp_path):
+    class_dir = tmp_path / "Classes_new"
+    class_dir.mkdir()
+    source = (
+        "from ...Classes import get_class_dict\n"
+        "from pyleecan.Classes import get_class_dict as gcd, unknown\n"
+        "def daughters(name):\n"
+        "    class_dict = get_class_dict()\n"
+        "    return class_dict[name]['daughters'] + list(gcd())\n"
+    )
+    result, issues = _rewrite_source(
+        source, Path("sample.py"), Path("Save") / "sample.py", class_dir
+    )
+    assert "get_class_dict" not in result
+    assert "gcd" not in result
+    assert result.count("from pyleecan.Classes_new._class_info import ClassInfo") == 2
+    assert "from pyleecan.Classes import unknown" in result
+    assert "    class_dict = ClassInfo().get_dict()\n" in result
+    assert "list(ClassInfo().get_dict())" in result
+    assert issues == [(2, "legacy import: pyleecan.Classes")]
+    ast.parse(result)
+
+
+def test_rewrite_frozen_class_to_pyleecan_class(tmp_path):
+    class_dir = tmp_path / "Classes_new"
+    class_dir.mkdir()
+    source = (
+        "from ...Classes._frozen import FrozenClass\n"
+        "from pyleecan.Classes._frozen import FrozenClass as Frozen\n"
+        "def is_pyleecan(obj):\n"
+        "    return isinstance(obj, FrozenClass) or isinstance(obj, Frozen)\n"
+    )
+    result, issues = _rewrite_source(
+        source, Path("sample.py"), Path("Save") / "sample.py", class_dir
+    )
+    assert "FrozenClass" not in result
+    assert "_frozen" not in result
+    assert (
+        "from pyleecan.Classes_new._pyleecan_class import PyleecanClass\n" in result
+    )
+    assert (
+        "from pyleecan.Classes_new._pyleecan_class import PyleecanClass as Frozen"
+        in result
+    )
+    assert "isinstance(obj, PyleecanClass) or isinstance(obj, Frozen)" in result
+    assert issues == []
+    ast.parse(result)
+
+
 def test_rewrite_vendored_class_packages(tmp_path):
     smoot = tmp_path / "_smoot"
     swat = tmp_path / "_swat_em"

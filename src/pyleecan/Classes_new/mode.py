@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Simulation/Mode.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -26,12 +27,15 @@ class Mode(SolutionMat):
         Default: None; Minimum: 0
     """
 
-    nat_freq: float | None = None
+    nat_freq: float | None = field(default=None, metadata={"unit": "Hz"})
     """Natural frequency of the mode"""
-    order_circ: int | None = None
+    order_circ: int | None = field(default=None, metadata={"min": 0})
     """Circumferential order"""
-    order_long: int | None = None
+    order_long: int | None = field(default=None, metadata={"min": 0})
     """Longitudinal order"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Mode.get_shape_pol
     def get_shape_pol(self):

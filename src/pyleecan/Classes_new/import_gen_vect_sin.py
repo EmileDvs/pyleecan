@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Import/ImportGenVectSin.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -31,16 +32,19 @@ class ImportGenVectSin(ImportMatrix):
         Unit: s; Default: 1; Minimum: 0
     """
 
-    f: float = 100
+    f: float = field(default=100, metadata={"unit": "Hz", "min": 0})
     """Frequency of the sinus to generate"""
     A: float = 1
     """Amplitude of the sinus to generate"""
-    Phi: float = 0
+    Phi: float = field(default=0, metadata={"min": -6.29, "max": 6.29})
     """Phase of the sinus to generate"""
-    N: int = 1024
+    N: int = field(default=1024, metadata={"min": 0})
     """Length of the vector to generate"""
-    Tf: float = 1
+    Tf: float = field(default=1, metadata={"unit": "s", "min": 0})
     """End time of the sinus generation"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenVectSin.get_data
     def get_data(self):

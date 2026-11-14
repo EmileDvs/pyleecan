@@ -1,7 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Bore.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -30,10 +31,14 @@ class Bore(PyleecanClass):
 
     ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
     STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
-    type_merge_slot: int = 1
+
+    type_merge_slot: int = field(default=1, metadata={"min": 0, "max": 2})
     """how to merge slot/notch into the bore radius (0: connect the dot, 1: intersection, 2: translate)"""
-    alpha: float = 0
+    alpha: float = field(default=0, metadata={"unit": "rad"})
     """Angular offset for the bore shape"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Bore.comp_Rmax
     def comp_Rmax(self):

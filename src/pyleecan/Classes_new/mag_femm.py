@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool
 from shutil import copyfile
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -99,7 +99,7 @@ class MagFEMM(Magnetics):
     """global coefficient to adjust mesh fineness in FEMM (1 : default , > 1 : finner , < 1 : less fine)"""
     Kgeo_fineness: float = 1
     """global coefficient to adjust geometry fineness in FEMM (1 : default , > 1 : finner , < 1 : less fine)"""
-    type_calc_leakage: int = 0
+    type_calc_leakage: int = field(default=0, metadata={"min": 0, "max": 1})
     """0 no leakage calculation /  1 calculation using single slot """
     file_name: str | None = None
     """Name of the file to save the FEMM model"""
@@ -127,7 +127,7 @@ class MagFEMM(Magnetics):
     """To close femm automatically after the simulation"""
     nb_worker: int = 1
     """To run FEMM in parallel (the parallelization is on the time loop)"""
-    Rag_enforced: float | None = None
+    Rag_enforced: float | None = field(default=None, metadata={"unit": "m"})
     """To enforce a different radius value for air-gap outputs"""
     is_set_previous: bool = True
     """True set previous .ans result file in current .fem to use it as initialization and speed up calculation time"""
@@ -135,6 +135,9 @@ class MagFEMM(Magnetics):
     """True to use the symetry of the lamination to draw the machine faster"""
     is_calc_torque_energy: bool = True
     """True to calculate torque from integration of energy derivate over rotor elements"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.MagFEMM.build_MS_sliced
     def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):

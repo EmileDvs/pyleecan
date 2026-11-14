@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -85,24 +86,28 @@ class OutMag(PyleecanClass):
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Magnetics"""
     B: VectorField | None = field(
-        default=None, metadata={"default_class": "VectorField"}
+        default=None, metadata={"unit": "H", "default_class": "VectorField"}
     )
     """Airgap flux density VectorField object"""
-    Tem: DataND | None = field(default=None, metadata={"default_class": "DataND"})
+    Tem: DataND | None = field(
+        default=None, metadata={"unit": "N.m", "default_class": "DataND"}
+    )
     """Electromagnetic torque DataTime object"""
-    Tem_av: float | None = None
+    Tem_av: float | None = field(default=None, metadata={"unit": "N.m"})
     """Average Electromagnetic torque"""
     Tem_rip_norm: float | None = None
     """Peak to Peak Torque ripple normalized according to average torque (None if average torque=0)"""
-    Tem_rip_pp: float | None = None
+    Tem_rip_pp: float | None = field(default=None, metadata={"unit": "N.m"})
     """Peak to Peak Torque ripple"""
     Phi_wind_stator: DataND | None = field(
-        default=None, metadata={"default_class": "DataND"}
+        default=None, metadata={"unit": "Wb", "default_class": "DataND"}
     )
     """Stator winding flux DataTime object"""
-    Phi_wind: dict[str, DataND] | None = None
+    Phi_wind: dict[str, DataND] | None = field(default=None, metadata={"unit": "Wb"})
     """Dict of lamination winding fluxlinkage DataTime objects"""
-    emf: DataND | None = field(default=None, metadata={"default_class": "DataND"})
+    emf: DataND | None = field(
+        default=None, metadata={"unit": "V", "default_class": "DataND"}
+    )
     """Electromotive force DataTime object"""
     meshsolution: MeshSolution | None = field(
         default_factory=lambda: MeshSolution(),
@@ -117,18 +122,25 @@ class OutMag(PyleecanClass):
     """OutInternal object containg outputs related to a specific model"""
     Rag: float | None = None
     """Radius value for air-gap computation"""
-    Pem_av: float | None = None
+    Pem_av: float | None = field(default=None, metadata={"unit": "W"})
     """Average Electromagnetic power"""
     Slice: SliceModel | None = field(
         default=None, metadata={"default_class": "SliceModel"}
     )
     """Slice model to account for skew"""
-    Tem_slice: DataND | None = field(default=None, metadata={"default_class": "DataND"})
+    Tem_slice: DataND | None = field(
+        default=None, metadata={"unit": "N", "default_class": "DataND"}
+    )
     """Electromagnetic torque DataTime object including torque per slice"""
-    Phi_wind_slice: dict[str, DataND] | None = None
+    Phi_wind_slice: dict[str, DataND] | None = field(
+        default=None, metadata={"unit": "Wb/m"}
+    )
     """Dict of lamination winding fluxlinkage DataTime objects per slice"""
-    Tem_norm: float = 0.001
+    Tem_norm: float = field(default=0.001, metadata={"unit": "N.m"})
     """Torque normalization"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutMag.clean
     def clean(self, clean_level=1):

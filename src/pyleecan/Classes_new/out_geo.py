@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 from .data import Data
@@ -72,19 +73,19 @@ class OutGeo(PyleecanClass):
         default=None, metadata={"default_class": "OutGeoLam"}
     )
     """Geometry output of the rotor"""
-    Wgap_mec: float | None = None
+    Wgap_mec: float | None = field(default=None, metadata={"unit": "m"})
     """mechanical airgap width (minimal distance between the lamination including magnet)"""
-    Wgap_mag: float | None = None
+    Wgap_mag: float | None = field(default=None, metadata={"unit": "m"})
     """the magnetic airgap width (distance beetween the two Laminations bore radius)"""
-    Rgap_mec: float | None = None
+    Rgap_mec: float | None = field(default=None, metadata={"unit": "m"})
     """radius of the center of the mecanical airgap"""
-    Lgap: float | None = None
+    Lgap: float | None = field(default=None, metadata={"unit": "m"})
     """Airgap active length"""
     logger_name: str = "Pyleecan.OutGeo"
     """Name of the logger to use"""
-    angle_rotor_initial: float | None = None
+    angle_rotor_initial: float | None = field(default=None, metadata={"unit": "rad"})
     """Difference between the d axis angle of the stator and the rotor"""
-    rot_dir: int | None = None
+    rot_dir: int | None = field(default=None, metadata={"min": -1, "max": 1})
     """Rotation direction of the rotor (rot_dir*N0, default value given by ROT_DIR_REF)"""
     per_a: int | None = None
     """Number of spatial periodicities of the machine"""
@@ -100,3 +101,6 @@ class OutGeo(PyleecanClass):
     """Number of time periodicities of the machine in rotating referential"""
     is_antiper_t_R: bool | None = None
     """True if an time anti-periodicity is possible after the periodicities in rotating referential"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""

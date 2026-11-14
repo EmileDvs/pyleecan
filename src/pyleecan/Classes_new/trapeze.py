@@ -1,12 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Geometry/Trapeze.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Polygon
 
-from ..definitions import config_dict
 from .segment import Segment
 from .surface import Surface
 
@@ -28,16 +28,15 @@ class Trapeze(Surface):
         Unit: m; Default: 1; Minimum: 0
     """
 
-    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
-    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
-    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
-    height: float = 1
+    height: float = field(default=1, metadata={"unit": "m", "min": 0})
     """the height of the Trapeze"""
-    W2: float = 1
+    W2: float = field(default=1, metadata={"unit": "m", "min": 0})
     """the big base of Trapeze"""
-    W1: float = 1
+    W1: float = field(default=1, metadata={"unit": "m", "min": 0})
     """the small base of the Trapeze"""
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Trapeze.check
     def check(self):
@@ -262,7 +261,9 @@ class Trapeze(Surface):
         ]
 
     get_patches.__defaults__ = (
-        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+        get_patches.__defaults__[:0]
+        + (Surface.PATCH_COLOR,)
+        + get_patches.__defaults__[1:]
     )
 
     # Inlined from Methods.Geometry.Trapeze.rotate

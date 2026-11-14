@@ -1,7 +1,8 @@
 """Copy the test suite with class and function imports targeting new packages.
 
 Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_test_new_classes``
-to overwrite the copied tests in Tests/New. Data remains in
+to overwrite the copied tests in Tests/New, except the independently maintained
+Classes/test_classes.py and Classes/test_loggers.py. Data remains in
 Tests/Data, and copied tests use Tests/New/Results for the usual result paths.
 Unaliased ``import pyleecan.Functions...`` imports require manual review,
 as do legacy-only imports and dynamic loading.
@@ -38,6 +39,10 @@ TEST_FOLDERS = (
     "Tutorials",
     "Validation",
 )
+PRESERVED_TESTS = {
+    Path("Classes") / "test_classes.py",
+    Path("Classes") / "test_loggers.py",
+}
 RESULT_NAMES = {
     "save_path",
     "save_plot_path",
@@ -229,6 +234,7 @@ def generate_tests(tests_dir=None, class_dir=None):
                 not path.is_file()
                 or "__pycache__" in path.parts
                 or path.suffix == ".pyc"
+                or path.relative_to(tests_dir) in PRESERVED_TESTS
             ):
                 continue
             destination = output / path.relative_to(tests_dir)
@@ -250,7 +256,7 @@ def generate_tests(tests_dir=None, class_dir=None):
 
 def main():
     issues = generate_tests()
-    print("Copied test trees to Tests/New; existing copies were overwritten.")
+    print("Copied test trees to Tests/New; independently maintained tests were preserved.")
     if issues:
         print("Legacy imports requiring manual review:")
         for path, line, module in issues:

@@ -4,6 +4,7 @@
 import os
 from dataclasses import dataclass, field
 from logging.config import dictConfig
+from typing import ClassVar
 
 from ..loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
 from ._import import import_class
@@ -76,14 +77,17 @@ class Simulation(PyleecanClass):
     """Multi-simulation definition"""
     postproc_list: list[Post] = field(default_factory=list)
     """List of postprocessings to run on Output after the simulation"""
-    index: int | None = None
+    index: int | None = field(default=None, metadata={"min": 0})
     """Index of the simulation (if part of a multi-simulation)"""
     path_result: str | None = None
     """Path to the Result folder to use (None to use default one)"""
-    layer: int | None = None
+    layer: int | None = field(default=None, metadata={"min": 0})
     """Layer of the simulation in a multi-simulation (0 is top simulation)"""
-    layer_log_warn: int | None = None
+    layer_log_warn: int | None = field(default=None, metadata={"min": 0})
     """Enable to set the log console_handler to warning starting from a particular layer. layer_log_warn=2 => layer 0 and 1 info, layer 2 warning"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Simulation.get_OP_array
     def get_OP_array(self, *arg_list):

@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from ._check import check_var
 from ._error import SlotCheckError
@@ -42,6 +42,9 @@ class SlotUD2(Slot):
     """Dictionary to enforced the split active surface (key="Nrad=1, Ntan=2"). Labels set according to list order (loop on Nrad then Ntan)"""
     name: str | None = None
     """Name of the slot (for save)"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotUD2._set_split_active_surf_dict
     def _set_split_active_surf_dict(self, value):

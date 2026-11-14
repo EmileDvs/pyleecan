@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -34,17 +35,20 @@ class InputCurrent(InputVoltage):
     """
 
     Is: ImportMatrix | None = field(
-        default=None, metadata={"default_class": "ImportMatrix"}
+        default=None, metadata={"unit": "A", "default_class": "ImportMatrix"}
     )
     """Stator currents as a function of time (each column correspond to one phase) to import"""
     Ir: ImportMatrix | None = field(
-        default=None, metadata={"default_class": "ImportMatrix"}
+        default=None, metadata={"unit": "A", "default_class": "ImportMatrix"}
     )
     """Rotor currents as a function of time (each column correspond to one phase) to import"""
     Is_harm: ImportData | None = field(
-        default=None, metadata={"default_class": "ImportData"}
+        default=None, metadata={"unit": "A", "default_class": "ImportData"}
     )
     """Stator harmonic currents"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputCurrent.gen_input
     def gen_input(self):

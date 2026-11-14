@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 from ._error import InputError
 from .electrical import Electrical
@@ -49,6 +50,9 @@ class Simu1(Simulation):
     """Force moduale"""
     loss: Loss | None = field(default=None, metadata={"default_class": "Loss"})
     """Loss moduale"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Simu1.run_single
     def run_single(self):

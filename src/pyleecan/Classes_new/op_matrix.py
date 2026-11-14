@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -54,28 +54,31 @@ class OPMatrix(PyleecanClass):
         Default: []
     """
 
-    N0: np.ndarray | None = None
+    N0: np.ndarray | None = field(default=None, metadata={"unit": "rpm"})
     """Rotor speed"""
-    Id_ref: np.ndarray | None = None
+    Id_ref: np.ndarray | None = field(default=None, metadata={"unit": "Arms"})
     """d-axis current rms value"""
-    Iq_ref: np.ndarray | None = None
+    Iq_ref: np.ndarray | None = field(default=None, metadata={"unit": "Arms"})
     """q-axis current rms value"""
-    Ud_ref: np.ndarray | None = None
+    Ud_ref: np.ndarray | None = field(default=None, metadata={"unit": "Vrms"})
     """d-axis voltage rms value"""
-    Uq_ref: np.ndarray | None = None
+    Uq_ref: np.ndarray | None = field(default=None, metadata={"unit": "Vrms"})
     """q-axis voltage rms value"""
-    Tem_av_ref: np.ndarray | None = None
+    Tem_av_ref: np.ndarray | None = field(default=None, metadata={"unit": "N.m"})
     """Output average electromagnetic torque"""
-    Pem_av_ref: np.ndarray | None = None
+    Pem_av_ref: np.ndarray | None = field(default=None, metadata={"unit": "W"})
     """Output/Input average Electromagnetic Power"""
     slip_ref: np.ndarray | None = None
     """Rotor mechanical slip"""
     is_output_power: bool = True
     """True if power given in OP_matrix is the output power, False if it is the input power"""
-    If_ref: np.ndarray | None = None
+    If_ref: np.ndarray | None = field(default=None, metadata={"unit": "Arms"})
     """DC rotor current"""
     col_names: list[Any] | None = field(default_factory=list)
     """Name of the columns from set_OP_matrix"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OPMatrix.get_N_OP
     def get_N_OP(self):

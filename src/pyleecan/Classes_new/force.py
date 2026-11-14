@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -50,6 +51,9 @@ class Force(PyleecanClass):
     """To enforce the value of the radius for AGSF transfer"""
     logger_name: str = "Pyleecan.Force"
     """Name of the logger to use"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Force.comp_AGSF_transfer
     def comp_AGSF_transfer(self, output, rnoise=None):

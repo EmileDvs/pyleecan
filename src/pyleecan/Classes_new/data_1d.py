@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from importlib import import_module
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -63,6 +63,9 @@ class Data1D(Data):
     """Dict of filter keys"""
     char_to_rm: list[Any] | None = field(default_factory=list)
     """List of characters to remove in filter table"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Data1D.check_filter
     def check_filter(self):

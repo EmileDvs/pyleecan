@@ -2,11 +2,11 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Polygon
 
-from ..definitions import config_dict
 from ..Functions_new.Geometry.comp_surface_num import comp_surface_num
 from ..Functions_new.init_fig import init_fig
 from .line import Line
@@ -24,12 +24,11 @@ class SurfLine(Surface):
         Default: []
     """
 
-    PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
-    PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
-    PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
-    PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
     line_list: list[Line] = field(default_factory=list)
     """List of Lines """
+
+    _package: ClassVar[str] = "Geometry"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.SurfLine.check
     # -*- coding: utf-8 -*-
@@ -267,7 +266,9 @@ class SurfLine(Surface):
         ]
 
     get_patches.__defaults__ = (
-        get_patches.__defaults__[:0] + (PATCH_COLOR,) + get_patches.__defaults__[1:]
+        get_patches.__defaults__[:0]
+        + (Surface.PATCH_COLOR,)
+        + get_patches.__defaults__[1:]
     )
 
     # Inlined from Methods.Geometry.SurfLine.plot_lines

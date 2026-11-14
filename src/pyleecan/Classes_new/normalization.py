@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -19,3 +20,6 @@ class Normalization(PyleecanClass):
 
     unit: str = "SI"
     """Normalization must be applied on axis values in this unit"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""

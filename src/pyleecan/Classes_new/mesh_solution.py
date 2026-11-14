@@ -4,7 +4,7 @@
 import os
 from collections.abc import ItemsView, KeysView, ValuesView
 from dataclasses import dataclass, field
-from typing import Any, Hashable, Iterator, Optional
+from typing import Any, ClassVar, Hashable, Iterator, Optional
 
 import numpy as np
 from scipy.io import savemat
@@ -55,6 +55,7 @@ class MeshSolution(PyleecanClass):
 
     COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
     FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
+
     label: str | None = None
     """(Optional) Descriptive name of the mesh"""
     mesh: Mesh | None = field(
@@ -65,10 +66,13 @@ class MeshSolution(PyleecanClass):
     """A dictionary of Solution objects"""
     group: dict[str, Any] | None = field(default_factory=dict)
     """Dict sorted by groups name with list of elements indices. """
-    dimension: int = 2
+    dimension: int = field(default=2, metadata={"min": 1, "max": 3})
     """Dimension of the physical problem"""
     path: str | None = None
     """Path where the MeshSolution is stored as a file"""
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.MeshSolution.__getitem__
     def __getitem__(self, label: Hashable) -> Solution:

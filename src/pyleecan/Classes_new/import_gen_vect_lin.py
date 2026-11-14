@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -37,6 +38,9 @@ class ImportGenVectLin(ImportMatrix):
     """Number of value in the linspace"""
     endpoint: bool = True
     """If True, stop is the last sample. Otherwise, it is not included"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenVectLin.check
     def check(self):

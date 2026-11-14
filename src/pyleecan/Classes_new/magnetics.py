@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -88,17 +89,17 @@ class Magnetics(PyleecanClass):
     """True to compute the stator magnetomotive force / stator armature magnetic field"""
     is_mmfr: bool = True
     """True to compute the rotor magnetomotive force / rotor magnetic field"""
-    type_BH_stator: int = 0
+    type_BH_stator: int = field(default=0, metadata={"min": 0, "max": 2})
     """0 to use the B(H) curve, 1 to use linear B(H) curve according to mur_lin, 2 to enforce infinite permeability (mur_lin =100000)"""
-    type_BH_rotor: int = 0
+    type_BH_rotor: int = field(default=0, metadata={"min": 0, "max": 2})
     """0 to use the B(H) curve, 1 to use linear B(H) curve according to mur_lin, 2 to enforce infinite permeability (mur_lin =100000)"""
     is_periodicity_t: bool = False
     """True to compute only on one time periodicity (use periodicities defined in axes_dict[time])"""
     is_periodicity_a: bool = False
     """True to compute only on one angle periodicity (use periodicities defined in axes_dict[angle])"""
-    angle_stator_shift: float = 0
+    angle_stator_shift: float = field(default=0, metadata={"unit": "rad"})
     """Shift angle to appy to the stator in magnetic model"""
-    angle_rotor_shift: float = 0
+    angle_rotor_shift: float = field(default=0, metadata={"unit": "rad"})
     """Shift angle to appy to the rotor in magnetic model"""
     logger_name: str = "Pyleecan.Magnetics"
     """Name of the logger to use"""
@@ -112,10 +113,13 @@ class Magnetics(PyleecanClass):
     """To enforce type of slice distribution to use for rotor skew if linear and continuous ("uniform", "gauss", "user-defined")"""
     is_current_harm: bool = True
     """False To compute only the airgap flux from fundamental current harmonics"""
-    T_mag: float = 20
+    T_mag: float = field(default=20, metadata={"unit": "deg Celsius"})
     """Permanent magnet temperature to adapt magnet remanent flux density"""
     is_periodicity_rotor: bool = False
     """True to consider rotor periodicity over time instead of stator"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Magnetics.comp_axes
     def comp_axes(self, output):

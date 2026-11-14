@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -42,6 +43,9 @@ class Data(PyleecanClass):
     """Unit of the physical quantity (to be used in plots)"""
     normalizations: dict[str, Normalization] = field(default_factory=dict)
     """Normalizations available for the field and its axes"""
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Data._set_normalizations
     def _set_normalizations(self, value):

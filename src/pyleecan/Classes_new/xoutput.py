@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass, field
 from sys import getsizeof
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -50,13 +51,14 @@ class XOutput(Output):
     FONT_SIZE_TITLE = config_dict["PLOT"]["FONT_SIZE_TITLE"]
     FONT_SIZE_LABEL = config_dict["PLOT"]["FONT_SIZE_LABEL"]
     FONT_SIZE_LEGEND = config_dict["PLOT"]["FONT_SIZE_LEGEND"]
+
     paramexplorer_list: list[ParamExplorer] | None = field(default_factory=list)
     """List containing ParamExplorer"""
     output_list: list[Output] | None = field(default_factory=list)
     """List containing Output (or Xoutput) for each simulation"""
     xoutput_dict: dict[str, DataKeeper] | None = field(default_factory=dict)
     """dictionary containing DataKeeper"""
-    nb_simu: int = 0
+    nb_simu: int = field(default=0, metadata={"min": 0})
     """Number of simulations excluding reference simulation"""
     xoutput_ref: Output | None = field(
         default=None, metadata={"default_class": "Output"}
@@ -64,6 +66,9 @@ class XOutput(Output):
     """Xoutput (or Output) of the reference simulation (only if is_keep_all_output is True and not included in output_list)"""
     xoutput_ref_index: int | None = None
     """Index of the Xoutput (or Output) of the reference simulation in the output_list (only if is_keep_all_output is True)"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.XOutput.__delitem__
     def __delitem__(self, key):

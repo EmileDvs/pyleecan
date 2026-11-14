@@ -2,17 +2,38 @@
 
 import importlib
 import importlib.util
-import json
 import os
+import shutil
 import sys
 from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
+from pyleecan.definitions import MAIN_DIR
 from pyleecan.Generator.ClassGenerator.New.class_generator import class_module_name
+from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
+    FUNCTION_ERRORS,
+)
 
 runner = importlib.import_module("pyleecan.Generator.ClassGenerator.New.run_generate_classes")
+
+
+def copy_function_error_modules(functions_dir):
+    """Copy the legacy Functions modules defining the shared function errors.
+
+    The generator writes these exceptions (ConvertionError, FEMMError...) in
+    Classes_new/_error.py, so it requires their legacy definition modules.
+    """
+    legacy_dir = Path(MAIN_DIR) / "Functions"
+    for module in FUNCTION_ERRORS:
+        relative = Path(*module.split("."))
+        source = legacy_dir / relative.with_suffix(".py")
+        if not source.is_file():
+            source = legacy_dir / relative / "__init__.py"
+        destination = functions_dir / source.relative_to(legacy_dir)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, destination)
 
 
 @pytest.fixture
@@ -20,6 +41,7 @@ def generation_root(tmp_path):
     for folder in ("Classes", "Classes_new", "Functions"):
         (tmp_path / folder).mkdir()
     (tmp_path / "Classes_new" / "_pyleecan_class.py").write_text("", encoding="utf-8")
+    copy_function_error_modules(tmp_path / "Functions")
     return tmp_path
 
 
@@ -128,8 +150,8 @@ def test_experimental_package_bookkeeping(
     assert "_CLASS_MODULES = {'A': 'a', 'B': 'b'}" in import_source
     assert "def import_class(" in import_source
     assert not (class_dir / "_import_all.py").exists()
-    with (class_dir / "_class_dict.json").open(encoding="utf-8") as json_file:
-        assert json.load(json_file) == gen_dict
+    # Class information comes from Classes_new._class_info.ClassInfo
+    assert not (class_dir / "_class_dict.json").exists()
     assert not (class_dir / "Class_Dict.json").exists()
     spec = importlib.util.spec_from_file_location(
         "generated_classes_new", class_dir / "__init__.py"
@@ -139,9 +161,12 @@ def test_experimental_package_bookkeeping(
     monkeypatch.delitem(sys.modules, spec.name + "._error", raising=False)
     spec.loader.exec_module(module)
     error_module = importlib.import_module(spec.name + "._error")
+    # Function exceptions are defined with the shared class errors
+    assert issubclass(error_module.ConvertionError, Exception)
+    assert issubclass(error_module.EquivalentError, Exception)
     assert not hasattr(module, "ParentMissingError")
     assert not hasattr(module, "NotImplementedYetError")
-    assert module.get_class_dict() == gen_dict
+    assert not hasattr(module, "get_class_dict")
     parent_spec = importlib.util.spec_from_file_location(
         "generated_parent_types", class_dir / "_parent_types.py"
     )

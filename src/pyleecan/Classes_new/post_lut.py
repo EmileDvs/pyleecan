@@ -3,6 +3,7 @@
 
 import os
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .post_method import PostMethod
 
@@ -25,6 +26,9 @@ class PostLUT(PostMethod):
     """True to save LUT in PostLUT"""
     file_name: str = "LUT"
     """File name of the file created if is_save_LUT is True"""
+
+    _package: ClassVar[str] = "Post"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Post.PostLUT.run
     def run(self, LUT):

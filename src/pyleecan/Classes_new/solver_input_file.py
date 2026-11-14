@@ -8,9 +8,6 @@ from typing import Any, ClassVar
 from .. import __version__
 from .elmer import Elmer
 
-WHITESPACE = " "
-INDENT = 2 * WHITESPACE
-
 
 @dataclass(eq=False)
 class SolverInputFile(Elmer):
@@ -23,13 +20,13 @@ class SolverInputFile(Elmer):
         Default: []
     """
 
-    WHITESPACE: ClassVar = " "
-    COMMENT: ClassVar = "! "
-    NEWLINE: ClassVar = "\n"
-    END: ClassVar = "End"
-    MESH_FILE: ClassVar = "Mesh"
+    MESH_FILE: ClassVar[str] = "Mesh"
+
     sections: list[Any] = field(default_factory=list)
     """List of SIF sections"""
+
+    _package: ClassVar[str] = "Elmer"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.SolverInputFile.write
     def write(self, stream=None):
@@ -59,12 +56,12 @@ class SolverInputFile(Elmer):
 
         f.write(SolverInputFile.NEWLINE)
         f.write(f"Header")
-        f.write(SolverInputFile.NEWLINE + INDENT)
+        f.write(SolverInputFile.NEWLINE + SolverInputFile.INDENT)
         f.write(f"CHECK KEYWORDS Warn")
-        f.write(SolverInputFile.NEWLINE + INDENT)
+        f.write(SolverInputFile.NEWLINE + SolverInputFile.INDENT)
         f.write(f'Mesh DB "." "{SolverInputFile.MESH_FILE}"')
-        f.write(SolverInputFile.NEWLINE + INDENT)
+        f.write(SolverInputFile.NEWLINE + SolverInputFile.INDENT)
         f.write(f'Include Path ""')
-        f.write(SolverInputFile.NEWLINE + INDENT)
+        f.write(SolverInputFile.NEWLINE + SolverInputFile.INDENT)
         f.write(f'Results Directory ""')
         f.write(SolverInputFile.NEWLINE + SolverInputFile.END + SolverInputFile.NEWLINE)

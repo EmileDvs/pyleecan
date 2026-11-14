@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -21,6 +22,9 @@ class ImportMatrix(Import):
 
     is_transpose: bool = False
     """True to transpose the Imported/Generated matrix"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrix.edit_matrix
     def edit_matrix(self, matrix):

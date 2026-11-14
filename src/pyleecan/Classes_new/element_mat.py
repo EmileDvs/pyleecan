@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Optional, Union
+from typing import ClassVar, Optional, Union
 
 import numpy as np
 
@@ -59,6 +59,9 @@ class ElementMat(PyleecanClass):
         default_factory=lambda: ScalarProductL2(),
         metadata={"default_class": "ScalarProductL2"},
     )
+
+    _package: ClassVar[str] = "Mesh"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.ElementMat.add_element
     def add_element(

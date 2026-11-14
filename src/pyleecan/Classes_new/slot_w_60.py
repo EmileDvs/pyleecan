@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotW60.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..Functions_new.Plot import (
     ARROW_COLOR,
@@ -61,23 +60,26 @@ class SlotW60(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 0
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W1: float = 0.02
+
+    W1: float = field(default=0.02, metadata={"unit": "m", "min": 0})
     """Pole top width"""
-    W2: float = 0.03
+    W2: float = field(default=0.03, metadata={"unit": "m", "min": 0})
     """Pole bottom width"""
-    H1: float = 0.05
+    H1: float = field(default=0.05, metadata={"unit": "m", "min": 0})
     """Pole top height"""
-    H2: float = 0.15
+    H2: float = field(default=0.15, metadata={"unit": "m", "min": 0})
     """Pole bottom height"""
-    R1: float = 0.03
+    R1: float = field(default=0.03, metadata={"unit": "m", "min": 0})
     """Pole top radius"""
-    H3: float = 0
+    H3: float = field(default=0, metadata={"unit": "m", "min": 0})
     """Top Distance Ploe-coil """
-    H4: float = 0
+    H4: float = field(default=0, metadata={"unit": "m", "min": 0})
     """Bottom Distance Ploe-coil """
-    W3: float = 0
+    W3: float = field(default=0, metadata={"unit": "m", "min": 0})
     """Edge Distance Ploe-coil """
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW60._comp_line_dict
     def _comp_line_dict(self):

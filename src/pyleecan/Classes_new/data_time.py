@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from ._error import AxisError
 from ._import import import_class
@@ -16,6 +17,9 @@ class DataTime(DataND):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "SciDataTool"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.DataTime.time_to_freq
     def time_to_freq(self):

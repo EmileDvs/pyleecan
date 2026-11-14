@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 from ._pyleecan_class import PyleecanClass
 
@@ -35,3 +35,6 @@ class LossModel(PyleecanClass):
     """True to show the plot of the curve fitting"""
     coeff_dict: dict[str, Any] | None = field(default_factory=dict)
     """dict of coefficients to compute losses with respect to frequency"""
+
+    _package: ClassVar[str] = "Loss"
+    """Name of the package of the legacy class module"""

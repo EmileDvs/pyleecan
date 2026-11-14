@@ -3,7 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -43,6 +43,9 @@ class ElmerResults(Elmer):
     """List of columns data names"""
     is_scalars: bool = False
     """Determin if data are 'SaveScalars' data, else 'SaveLine' data are assumed"""
+
+    _package: ClassVar[str] = "Elmer"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.ElmerResults.get_data
     def get_data(self):

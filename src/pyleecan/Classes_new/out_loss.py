@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -34,6 +35,9 @@ class OutLoss(PyleecanClass):
     """Dict containing OutLossModel obects for each type of loss"""
     logger_name: str = "Pyleecan.Loss"
     """Name of the logger to use"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutLoss.__getitem__
     def __getitem__(self, idx):

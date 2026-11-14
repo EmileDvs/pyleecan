@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .post import Post
 
@@ -13,6 +14,9 @@ class PostMethod(Post):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Post"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Post.PostMethod.run
     def run(self, output):

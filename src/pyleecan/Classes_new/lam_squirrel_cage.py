@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -48,17 +49,19 @@ class LamSquirrelCage(LamSlotWind):
 
     SCR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SCR_COLOR"]
     MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
-    STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     BAR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["BAR_COLOR"]
-    Hscr: float = 0.03
+
+    Hscr: float = field(default=0.03, metadata={"unit": "m", "min": 0})
     """short circuit ring section radial height [m]"""
-    Lscr: float = 0.015
+    Lscr: float = field(default=0.015, metadata={"unit": "m", "min": 0})
     """short circuit ring section axial length"""
     ring_mat: Material | None = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Material of the Rotor short circuit ring"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSquirrelCage.build_geometry
     def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

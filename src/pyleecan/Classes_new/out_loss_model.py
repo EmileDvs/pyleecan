@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -51,6 +51,9 @@ class OutLossModel(PyleecanClass):
     """The name of the loss model used to compute the loss stored in this output"""
     scalar_value: float | None = None
     """To store the value of get_loss_scalar (for scalar losses or with coeff_dict cleaned)"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutLossModel.__add__
     def __add__(self, other):

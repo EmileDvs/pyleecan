@@ -1,13 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Slot/SlotW23.csv
 """Generated experimental dataclass; do not edit by hand."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..definitions import config_dict
 from ..Functions_new.Geometry.inter_line_line import inter_line_line
 from ..Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..Functions_new.Plot import (
@@ -66,25 +65,28 @@ class SlotW23(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
-    MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-    W0: float | None = None
+
+    W0: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Slot isthmus width."""
-    H0: float | None = None
+    H0: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Slot isthmus height."""
-    H1: float | None = None
+    H1: float | None = field(default=None, metadata={"unit": "m/rad", "min": 0})
     """height or angle  (See Schematics)"""
-    W1: float | None = None
+    W1: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Slot top width."""
-    H2: float | None = None
+    H2: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Slot height below wedge """
-    W2: float | None = None
+    W2: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Slot bottom width."""
     H1_is_rad: bool = False
     """H1 unit, False for m, True for rad"""
     is_cstt_tooth: bool = False
     """True: use W3 to define the slot, False: use W2 and W1"""
-    W3: float | None = None
+    W3: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Tooth width"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW23._comp_line_dict
     def _comp_line_dict(self):

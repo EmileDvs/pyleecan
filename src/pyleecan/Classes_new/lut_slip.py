@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from .lut import LUT
 
@@ -13,3 +14,6 @@ class LUTslip(LUT):
     Attributes
     ----------
     """
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""

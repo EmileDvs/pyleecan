@@ -4,6 +4,7 @@
 import os
 from dataclasses import dataclass, field
 from sys import getsizeof
+from typing import ClassVar
 
 import numpy as np
 from scipy.io import savemat
@@ -67,6 +68,7 @@ class Output(PyleecanClass):
 
     COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
     FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
+
     simu: Simulation | None = field(
         default_factory=lambda: Simulation(), metadata={"default_class": "Simulation"}
     )
@@ -103,6 +105,9 @@ class Output(PyleecanClass):
         default_factory=lambda: OutLoss(), metadata={"default_class": "OutLoss"}
     )
     """Loss module output"""
+
+    _package: ClassVar[str] = "Output"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.Output.getter.comp_angle_rotor
     def comp_angle_rotor(self, Time):

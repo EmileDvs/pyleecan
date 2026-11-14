@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 from .post import Post
 
@@ -20,3 +20,6 @@ class PostFunction(Post):
 
     run: Callable[..., Any] | None = None
     """Post-processing that takes an output in argument"""
+
+    _package: ClassVar[str] = "Post"
+    """Name of the package of the legacy class module"""

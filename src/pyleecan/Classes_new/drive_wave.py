@@ -2,6 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -29,6 +30,9 @@ class DriveWave(Drive):
         default_factory=lambda: Import(), metadata={"default_class": "Import"}
     )
     """Wave generator"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.DriveWave.get_wave
     def get_wave(self):

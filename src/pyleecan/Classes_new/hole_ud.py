@@ -31,12 +31,16 @@ class HoleUD(HoleMag):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
+
     surf_list: list[Surface] | None = field(default_factory=list)
     """List of surface to draw the Hole. Surfaces must be ordered in trigo order, label must contain HoleMagnet for Magnet and Hole for holes"""
     magnet_dict: dict[str, Magnet] | None = field(default_factory=dict)
     """dictionary with the magnet for the Hole (None to remove magnet, key should be magnet_X)"""
     name: str | None = None
     """Name of the hole (for save)"""
+
+    _package: ClassVar[str] = "Slot"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleUD.build_geometry
     def build_geometry(self, alpha=0, delta=0, is_simplified=False):

@@ -4,7 +4,7 @@
 import os
 import subprocess
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import gmsh
 import numpy as np
@@ -93,6 +93,9 @@ class StructElmer(Structural):
     """List of dictionary to apply transformation on the machine surfaces. Key: label (to select the surface), type (rotate or translate), value (alpha or delta)"""
     include_magnets: bool = True
     """Switch to include magents in the structural simulation"""
+
+    _package: ClassVar[str] = "Simulation"
+    """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.StructElmer.gen_case
     def gen_case(self, output, mesh_names, *, ID_LAM=1, ID_MAG=2):

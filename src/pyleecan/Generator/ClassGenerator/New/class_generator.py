@@ -70,8 +70,6 @@ METHOD_IMPORT_REDIRECTS = {
     ("Methods.Elmer.Section", "File"): "Section",
     ("Methods.Elmer.Section", "Variable"): "Section",
     ("Methods.Elmer.Section", "MATC"): "Section",
-    ("Methods.Elmer.Section.write", "INDENT"): "SolverInputFile",
-    ("Methods.Elmer.SolverInputFile.write", "INDENT"): "SolverInputFile",
     ("Methods.Simulation.Input", "CURRENT_DIR_REF"): "Input",
     ("Methods.Simulation.Input", "ROT_DIR_REF"): "Input",
     ("Methods.Simulation.Input", "PHASE_DIR_REF"): "Input",
@@ -87,21 +85,112 @@ CLASS_MODULE_CONSTANTS = {
         "PHASE_DIR_REF": -1,
     },
 }
-CLASS_MODULE_CONSTANT_EXPRESSIONS = {
-    "SolverInputFile": {
-        "WHITESPACE": repr(" "),
-        "INDENT": "2 * WHITESPACE",
-    }
-}
+CLASS_MODULE_CONSTANT_EXPRESSIONS = {}
 CLASS_BODY_CONSTANTS = {
     "SolverInputFile": {
-        "WHITESPACE": repr(" "),
-        "COMMENT": repr("! "),
-        "NEWLINE": repr("\n"),
-        "END": repr("End"),
         "MESH_FILE": repr("Mesh"),
     }
 }
+# Class constants shared by a class and all its daughters: they are written in
+# the body of the owner class only, and the module-level definitions of the
+# same names in the method modules of the owner and its daughters are replaced
+# by references to the class attribute (self.NAME, or ClassName.NAME in static
+# helpers). Expressions may use the previous constants of the same owner.
+CLASS_SHARED_CONSTANTS = {
+    "Elmer": {
+        "WHITESPACE": repr(" "),
+        "INDENT": "2 * WHITESPACE",
+        "COMMENT": repr("! "),
+        "NEWLINE": repr("\n"),
+        "END": repr("End"),
+    },
+    "Conductor": {
+        "COND_COLOR": 'config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()',
+        "INS_COLOR": 'config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()',
+    },
+    "Lamination": {
+        "PLUS_HATCH": repr("++"),
+        "MINUS_HATCH": repr(".."),
+        "ROTOR_COLOR": 'config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]',
+        "STATOR_COLOR": 'config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]',
+    },
+    "Slot": {
+        "KEY_COLOR": 'config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"]',
+        "MAGNET_COLOR": 'config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]',
+    },
+    "Surface": {
+        "PATCH_COLOR": 'config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]',
+        "PATCH_COLOR_ALPHA": 'config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]',
+        "PATCH_EDGE": 'config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]',
+        "PATCH_EDGE_ALPHA": 'config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]',
+    },
+}
+
+
+def _class_constants(class_name, gen_dict=None):
+    """Class body constants available in a class, inherited ones included.
+
+    Returns a dict name -> expression with the CLASS_SHARED_CONSTANTS of the
+    class and of its mothers (found in gen_dict) and its CLASS_BODY_CONSTANTS.
+    """
+    owners = [class_name]
+    while gen_dict is not None and gen_dict.get(owners[-1], {}).get("mother"):
+        mother = gen_dict[owners[-1]]["mother"]
+        if mother in owners:
+            break
+        owners.append(mother)
+    constants = {}
+    for owner in reversed(owners):
+        constants.update(CLASS_SHARED_CONSTANTS.get(owner, {}))
+    constants.update(CLASS_BODY_CONSTANTS.get(class_name, {}))
+    return constants
+
+
+CLASS_CONSTANT_IMPORTS = {"config_dict": "from {soft_name}.definitions import config_dict"}
+"""Imports required by the names used in the class constant expressions"""
+
+
+def _class_constant_imports(constants, soft_name):
+    """Imports needed to evaluate class constant expressions in the class body."""
+    names = {
+        node.id
+        for expression in constants.values()
+        for node in ast.walk(ast.parse(expression, mode="eval"))
+        if isinstance(node, ast.Name)
+    }
+    return {
+        CLASS_CONSTANT_IMPORTS[name].format(soft_name=soft_name)
+        for name in names
+        if name in CLASS_CONSTANT_IMPORTS
+    }
+
+
+def _class_constant_definitions(constants):
+    """Format class body constants as typed ClassVar definitions."""
+    from ....definitions import config_dict
+
+    values = {}
+    lines = []
+    for name, expression in constants.items():
+        try:
+            values[name] = eval(
+                expression,
+                {"__builtins__": {}},
+                {"config_dict": config_dict, **values},
+            )
+        except Exception:  # noqa: BLE001 - only used to infer the type
+            annotation = "ClassVar"
+        else:
+            value_type = type(values[name])
+            annotation = (
+                f"ClassVar[{value_type.__name__}]"
+                if value_type in (bool, complex, float, int, str)
+                else "ClassVar"
+            )
+        lines.append((name, f"{TAB}{name}: {annotation} = {expression}\n"))
+    return lines
+
+
 EXPERIMENTAL_GEOMETRY_CONSTANTS = {
     "ARC_NPOINT_D": ("Arc", 99),
     "LINE_NPOINT_D": ("Line", 1),
@@ -205,6 +294,18 @@ def _get_exception_classes(module):
         return False
 
     return {name: node for name, node in classes.items() if is_exception_class(node)}
+
+
+def _section_module_classes(path_to_gen):
+    """Read Section's non-exception helper classes from its method package."""
+    path = join(dirname(path_to_gen), "Methods", "Elmer", "Section", "__init__.py")
+    with open(path, encoding="utf-8") as source_file:
+        module = ast.parse(source_file.read(), filename=path)
+    exceptions = _get_exception_classes(module)
+    return [
+        node for node in module.body
+        if isinstance(node, ast.ClassDef) and node.name not in exceptions
+    ]
 
 
 @lru_cache(maxsize=1)
@@ -373,6 +474,7 @@ def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_gra
                 soft_name,
                 reserved_names=reserved,
                 class_import_graph=class_import_graph,
+                class_constants=_class_constants(name, gen_dict),
             )
         for definition in prepared[-1]:
             origin = definition.error_origin
@@ -1200,8 +1302,18 @@ def _get_method_source(
     soft_name,
     hoist_names=(),
     class_import_graph=None,
+    class_constants=None,
 ):
-    """Return a method definition and the imports it needs."""
+    """Return a method definition and the imports it needs.
+
+    ``class_constants`` (name -> expression) are the class body constants
+    available in the class, inherited ones included (see _class_constants).
+    Module-level definitions of these names in the method module are dropped
+    and their references use the class attribute instead, but only when the
+    module defines the same value (a different value stays local to the method).
+    """
+    if class_constants is None:
+        class_constants = CLASS_BODY_CONSTANTS.get(class_name, {})
     method_parts = [part for part in (class_pack or "").split(".") if part]
     method_parts.extend([class_name, *meth.split(".")])
     method_path = join(dirname(path_to_gen), "Methods", *method_parts) + ".py"
@@ -1213,6 +1325,18 @@ def _get_method_source(
         return None, [], [], [], "method source file is missing"
 
     module = ast.parse(source, filename=method_path)
+    module_values = {
+        node.targets[0].id: ast.unparse(node.value)
+        for node in module.body
+        if isinstance(node, ast.Assign)
+        and len(node.targets) == 1
+        and isinstance(node.targets[0], ast.Name)
+    }
+    class_constants = {
+        name: expression
+        for name, expression in class_constants.items()
+        if module_values.get(name) == ast.unparse(ast.parse(expression, mode="eval"))
+    }
     method_name = meth.split(".")[-1]
     method_node = next(
         (
@@ -1358,7 +1482,7 @@ def _get_method_source(
         name: value
         for name, value in literal_defaults.items()
         if name not in signature_names
-        and name not in CLASS_BODY_CONSTANTS.get(class_name, {})
+        and name not in class_constants
         and name not in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(class_name, {})
     }
     method_local_names = {
@@ -1382,7 +1506,7 @@ def _get_method_source(
         if len(targets) != 1 or not isinstance(targets[0], ast.Name):
             continue
         name = targets[0].id
-        if name in literal_defaults:
+        if name in literal_defaults or name in class_constants:
             continue
         module_assignments[name] = node.value
 
@@ -1431,6 +1555,20 @@ def _get_method_source(
         and name not in signature_non_default_names
         and (name not in signature_default_names or name in direct_default_names)
     } | configured_assignment_names
+    # Class constants are referenced as class attributes like hoisted names
+    # (self.NAME in the body, __defaults__ restored for signature defaults)
+    used_class_constants = (
+        used_names.intersection(class_constants) - method_local_names
+    )
+    unsupported = used_class_constants & (
+        signature_non_default_names | (signature_default_names - direct_default_names)
+    )
+    if unsupported:
+        raise ValueError(
+            f"{class_name}.{method_name}: class constants {sorted(unsupported)} "
+            "can only be used as a whole default value in the signature"
+        )
+    hoisted_names |= used_class_constants
     if hoisted_names and not method_node.args.args:
         return (
             None,
@@ -1482,7 +1620,7 @@ def _get_method_source(
                 helper_bindings
                 - inline_literal_defaults.keys()
                 - hoisted_names
-                - CLASS_BODY_CONSTANTS.get(class_name, {}).keys()
+                - class_constants.keys()
                 - CLASS_MODULE_CONSTANT_EXPRESSIONS.get(class_name, {}).keys()
             )
         )
@@ -1766,7 +1904,7 @@ def _get_method_source(
         helper_reference_names.update(
             {
                 name: class_name + "." + name
-                for name in CLASS_BODY_CONSTANTS.get(class_name, {}).keys()
+                for name in class_constants.keys()
                 if name not in helper_local_names
             }
         )
@@ -1956,6 +2094,7 @@ def _prepare_class_methods(
     soft_name,
     reserved_names=(),
     class_import_graph=None,
+    class_constants=None,
 ):
     """Inline methods and collect their imports without name conflicts."""
     prepared = {}
@@ -1973,6 +2112,11 @@ def _prepare_class_methods(
     repeated_assignments = _find_repeated_method_assignments(
         path_to_gen, class_pack, class_name, methods
     )
+    section_classes = (
+        {node.name for node in _section_module_classes(path_to_gen)}
+        if class_name == "Section"
+        else set()
+    )
 
     for meth in methods:
         (
@@ -1989,6 +2133,7 @@ def _prepare_class_methods(
             soft_name,
             repeated_assignments.get(meth, set()),
             class_import_graph=class_import_graph,
+            class_constants=class_constants,
         )
         if reason is not None:
             action = (
@@ -2028,7 +2173,14 @@ def _prepare_class_methods(
                     configured_module_classes is not None
                     and absolute_module
                     == soft_name + ".Methods." + configured_module_classes[0]
-                    and alias.name in configured_module_classes[1]
+                    and alias.name in (
+                        section_classes if class_name == "Section"
+                        else configured_module_classes[1]
+                    )
+                    and (
+                        class_name != "Section"
+                        or alias.asname in (None, alias.name)
+                    )
                 ):
                     continue
                 binding = alias.asname or alias.name
@@ -2697,32 +2849,19 @@ def _redirect_experimental_class_imports(source, soft_name, gen_dict):
             error_aliases = [
                 alias for alias in node.names if alias.name in CLASS_ERROR_NAMES
             ]
-            package_aliases = [
-                alias for alias in node.names if alias.name == "get_class_dict"
-            ]
+            # get_class_dict has no Classes_new equivalent (use ClassInfo)
             legacy_aliases = [
-                alias for alias in node.names
-                if alias not in error_aliases and alias not in package_aliases
+                alias for alias in node.names if alias not in error_aliases
             ]
-            if not error_aliases and not package_aliases:
+            if not error_aliases:
                 continue
-            imports = []
-            if error_aliases:
-                imports.append(
-                    ast.ImportFrom(
-                        module=f"{soft_name}.Classes_new._error",
-                        names=error_aliases,
-                        level=0,
-                    )
+            imports = [
+                ast.ImportFrom(
+                    module=f"{soft_name}.Classes_new._error",
+                    names=error_aliases,
+                    level=0,
                 )
-            if package_aliases:
-                imports.append(
-                    ast.ImportFrom(
-                        module=f"{soft_name}.Classes_new",
-                        names=package_aliases,
-                        level=0,
-                    )
-                )
+            ]
             if legacy_aliases:
                 imports.append(
                     ast.ImportFrom(module=node.module, names=legacy_aliases, level=0)
@@ -4529,6 +4668,7 @@ def generate_class(
         soft_name,
         reserved_names=reserved_names,
         class_import_graph=class_import_graph,
+        class_constants=_class_constants(class_name, gen_dict),
     )
 
     return _generate_dataclass_class(
@@ -4680,11 +4820,40 @@ def parent_type_mapping(gen_dict):
     return mapping
 
 
+def _metadata_number(value):
+    """Convert a CSV min/max bound to an int or float when it is numeric."""
+    text = str(value).strip()
+    for convert in (int, float):
+        try:
+            return convert(text)
+        except ValueError:
+            pass
+    return text
+
+
+def _property_metadata(prop):
+    """Return the runtime metadata of a CSV property, omitting empty cells.
+
+    The keys are read back by ``Classes_new._class_info.ClassInfo`` so that the
+    class information can be rebuilt from the dataclasses alone. The
+    description is not stored: it is the attribute docstring written below the
+    field, which ClassInfo reads from the module source. The unit "-" means
+    "no unit" and is not stored either.
+    """
+    metadata = {}
+    if prop.get("unit") not in (None, "", "-"):
+        metadata["unit"] = prop["unit"]
+    for key in ("min", "max"):
+        if prop.get(key) not in (None, ""):
+            metadata[key] = _metadata_number(prop[key])
+    return metadata
+
+
 def _field_default(prop, field_name="field", gen_dict=None):
     """Format a dataclass default, using field() only when it is required."""
     prop_type = prop["type"]
     value = prop["value"]
-    metadata = {}
+    metadata = _property_metadata(prop)
     if prop.get("as_dict") not in (None, ""):
         metadata["as_dict"] = prop["as_dict"]
 
@@ -4865,6 +5034,16 @@ def _use_static_default_factories(source, soft_name, gen_dict, class_name):
     return encoded.decode("utf-8")
 
 
+def _assigned_name(assignment):
+    """Name bound by a class body assignment ("" if it is not a simple name)."""
+    target = (
+        assignment.target
+        if isinstance(assignment, (ast.AnnAssign, ast.AugAssign))
+        else assignment.targets[0]
+    )
+    return target.id if isinstance(target, ast.Name) else ""
+
+
 def _attribute_docstring(description):
     """Format a CSV description as a safe triple-quoted attribute docstring."""
     escaped_description = repr(description)[1:-1]
@@ -5031,6 +5210,13 @@ def _generate_dataclass_class(
     else:
         parent_class = "PyleecanClass"
         parent_module = "_" + class_module_name(parent_class)
+    own_constants = {
+        **CLASS_SHARED_CONSTANTS.get(class_name, {}),
+        **CLASS_BODY_CONSTANTS.get(class_name, {}),
+    }
+    inherited_constants = set(_class_constants(class_name, gen_dict)) - set(
+        own_constants
+    )
     imports = {
         (
             "from dataclasses import dataclass, field as dataclass_field"
@@ -5077,6 +5263,7 @@ def _generate_dataclass_class(
             prop["type"], prop["value"], gen_dict, soft_name, class_name, prop["name"]
         )
         imports.update(type_imports)
+    imports.update(_class_constant_imports(own_constants, soft_name))
     if any(
         prop["type"] in gen_dict and prop["value"] == ""
         for prop in class_dict["properties"]
@@ -5129,38 +5316,63 @@ def _generate_dataclass_class(
         indent(_class_docstring(class_dict, gen_dict), TAB) + "\n\n",
     ]
 
-    body = []
-    body.extend(
-        f"{TAB}{name}: ClassVar = {value!r}\n"
+    # Attributes are written in three groups separated by a blank line:
+    # class attributes (ClassVar), dataclass fields, then the attributes whose
+    # name begins with "_" (private fields, and _package at the very end).
+    class_level = []  # (name, source) of the ClassVar and class attributes
+    class_level.extend(
+        (name, f"{TAB}{name}: ClassVar = {value!r}\n")
         for name, (owner, value) in EXPERIMENTAL_GEOMETRY_CONSTANTS.items()
         if owner == class_name
     )
-    body.extend(
-        f"{TAB}{name}: ClassVar = {expression}\n"
-        for name, expression in CLASS_BODY_CONSTANTS.get(class_name, {}).items()
-        if name != "VERSION"
+    # Constants owned by this class (shared with its daughters, then its own)
+    class_level.extend(
+        _class_constant_definitions(
+            {
+                name: expression
+                for name, expression in own_constants.items()
+                if name != "VERSION"
+            }
+        )
     )
-    body.extend(
-        f"{TAB}{constant['name']}: ClassVar = {constant['value']}\n"
+    class_level.extend(
+        (constant["name"], f"{TAB}{constant['name']}: ClassVar = {constant['value']}\n")
         for constant in class_dict["constants"]
         if constant["name"] != "VERSION"
         if constant["name"] not in CLASS_MODULE_CONSTANTS.get(class_name, {})
         and constant["name"]
         not in CLASS_MODULE_CONSTANT_EXPRESSIONS.get(class_name, {})
     )
-    body.extend(f"{TAB}{ast.unparse(assignment)}\n" for assignment in class_attributes)
+    class_level.extend(
+        (_assigned_name(assignment), f"{TAB}{ast.unparse(assignment)}\n")
+        for assignment in class_attributes
+    )
 
+    fields_source = []  # (name, source) of the dataclass fields
     for prop in class_dict["properties"]:
         annotation, _ = _field_type(
             prop["type"], prop["value"], gen_dict, soft_name, class_name, prop["name"]
         )
-        body.append(
+        source = (
             f"{TAB}{prop['name']}: {annotation} = "
             f"{_field_default(prop, field_name, gen_dict)}\n"
         )
         description = _property_description(prop)
         if description:
-            body.append(f"{TAB}{_attribute_docstring(description)}\n")
+            source += f"{TAB}{_attribute_docstring(description)}\n"
+        fields_source.append((prop["name"], source))
+
+    attribute_groups = [
+        [source for name, source in class_level if not name.startswith("_")],
+        [source for name, source in fields_source if not name.startswith("_")],
+        [source for name, source in class_level if name.startswith("_")]
+        + [source for name, source in fields_source if name.startswith("_")]
+        + [
+            f"{TAB}_package: ClassVar[str] = {class_pack!r}\n"
+            f'{TAB}"""Name of the package of the legacy class module"""\n'
+        ],
+    ]
+    body = ["\n".join("".join(group) for group in attribute_groups if group)]
 
     for method in class_dict["methods"]:
         if method_sources[method] is None:
@@ -5179,7 +5391,12 @@ def _generate_dataclass_class(
         )
         body.append(indent(method_source, TAB) + "\n")
         for override in method_default_overrides[method]:
-            body.append(f"{TAB}{ast.unparse(override)}\n")
+            # Inherited class constants are not defined in this class body
+            override_source = _rename_method_references(
+                ast.unparse(override),
+                {name: f"{parent_class}.{name}" for name in inherited_constants},
+            )
+            body.append(f"{TAB}{override_source}\n")
     for definition in local_errors:
         if (
             isinstance(definition, ast.ClassDef)
@@ -5206,6 +5423,14 @@ def _generate_dataclass_class(
                 )
                 for method, reason in fallback_reasons.items()
             )
+        )
+    if class_name == "Section":
+        chunks.append(
+            "\n\n"
+            + "\n\n".join(
+                ast.unparse(node) for node in _section_module_classes(path_to_gen)
+            )
+            + "\n"
         )
 
     source = "".join(chunks)
