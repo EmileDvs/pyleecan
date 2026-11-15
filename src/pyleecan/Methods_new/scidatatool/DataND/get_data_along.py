@@ -1,9 +1,6 @@
-from ....Classes.Data1D import Data1D
-from ....Functions.SciDataTool import axes_dict, rev_axes_dict
-from ....Functions.SciDataTool.conversions import (
-    get_unit_derivate,
-    get_unit_integrate,
-)
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Functions_new.SciDataTool import axes_dict, rev_axes_dict
+from ....Functions_new.SciDataTool.conversions import get_unit_derivate, get_unit_integrate
 
 
 def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):

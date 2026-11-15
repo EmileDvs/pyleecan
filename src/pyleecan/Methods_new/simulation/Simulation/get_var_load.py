@@ -1,4 +1,4 @@
-from ....Classes.VarLoad import VarLoad
+from ....Classes_new.simulation.var_load import VarLoad
 
 
 def get_var_load(self):

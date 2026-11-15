@@ -1,7 +1,7 @@
 from os.path import join
 
-from ....Functions.Electrical.dqh_transformation import n2dqh_DataTime
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
+from ....Functions_new.Load.import_class import import_class
 
 
 def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):

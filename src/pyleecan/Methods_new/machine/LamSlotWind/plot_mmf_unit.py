@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 from numpy import min as np_min, max as np_max
 
 
-from ....Functions.Plot import dict_2D
+from ....Functions_new.Plot import dict_2D
 from ....definitions import config_dict
-from ....Functions.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 

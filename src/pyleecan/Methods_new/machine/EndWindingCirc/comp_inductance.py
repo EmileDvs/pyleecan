@@ -1,6 +1,6 @@
 from numpy import log, pi, sqrt
 
-from ....Classes.LamSlotWind import LamSlotWind
+from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
 
 def comp_inductance(self):

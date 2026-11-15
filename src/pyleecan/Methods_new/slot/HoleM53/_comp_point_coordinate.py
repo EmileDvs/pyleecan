@@ -1,5 +1,5 @@
 from numpy import cos, exp, sin
-from ....Functions.Geometry.inter_line_circle import inter_line_circle
+from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 from . import Slot53InterError
 
 

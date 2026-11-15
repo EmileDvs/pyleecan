@@ -1,5 +1,5 @@
-from ....Classes.DataTime import DataTime
-from ....Classes.VectorField import VectorField
+from ....Classes_new.scidatatool.data_time import DataTime
+from ....Classes_new.scidatatool.vector_field import VectorField
 
 
 def store(self, out_dict, axes_dict):

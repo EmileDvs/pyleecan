@@ -1,9 +1,9 @@
 from numpy import pi
 
-from pyleecan.Classes.Arc1 import Arc1
-from pyleecan.Classes.Segment import Segment
-from pyleecan.Classes.SurfLine import SurfLine
-from pyleecan.Functions.labels import HOLEV_LAB, HOLEM_LAB
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from pyleecan.Functions_new.labels import HOLEV_LAB, HOLEM_LAB
 
 
 def build_geometry(self, alpha=0, delta=0, is_simplified=False):

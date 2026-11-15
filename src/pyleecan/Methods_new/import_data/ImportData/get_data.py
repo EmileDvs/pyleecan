@@ -1,6 +1,6 @@
-from ....Classes.Data1D import Data1D
-from ....Classes.DataFreq import DataFreq
-from ....Classes.DataTime import DataTime
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_freq import DataFreq
+from ....Classes_new.scidatatool.data_time import DataTime
 
 
 def get_data(self):

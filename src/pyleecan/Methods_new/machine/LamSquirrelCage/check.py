@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.CondType21 import CondType21
-from ....Classes.LamSlotWind import LamSlotWind
+from ....Classes_new.machine.cond_type_21 import CondType21
+from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 from . import *
 
 

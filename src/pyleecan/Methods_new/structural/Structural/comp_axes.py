@@ -1,5 +1,5 @@
 from ...simulation.Input import InputError
-from ....Classes.OutStruct import OutStruct
+from ....Classes_new.output.out_struct import OutStruct
 
 
 def comp_axes(self, output):

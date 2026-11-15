@@ -1,7 +1,7 @@
-from ....Classes.LossModelMagnet import LossModelMagnet
-from ....Classes.LossModelProximity import LossModelProximity
-from ....Classes.LossModelSteinmetz import LossModelSteinmetz
-from ....Classes.LossModelJoule import LossModelJoule
+from ....Classes_new.loss.loss_model_magnet import LossModelMagnet
+from ....Classes_new.loss.loss_model_proximity import LossModelProximity
+from ....Classes_new.loss.loss_model_steinmetz import LossModelSteinmetz
+from ....Classes_new.loss.loss_model_joule import LossModelJoule
 from ...simulation.Input import InputError
 
 

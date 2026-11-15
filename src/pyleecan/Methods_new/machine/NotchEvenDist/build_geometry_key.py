@@ -1,5 +1,5 @@
-from ....Functions.Geometry.transform_hole_surf import transform_hole_surf
-from ....Functions.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
+from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
+from ....Functions_new.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 
 from numpy import pi, exp
 

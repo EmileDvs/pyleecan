@@ -1,9 +1,9 @@
 from numpy import arcsin, cos, exp, angle, pi, sin, tan
 
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
-from ....Functions.Geometry.inter_line_line import inter_line_line
-from ....Functions.labels import HOLEV_LAB, HOLEM_LAB
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.Geometry.inter_line_line import inter_line_line
+from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
 
 
 def build_geometry(self, alpha=0, delta=0, is_simplified=False):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from numpy import pi
-from ....Classes.LamH import LamH
+from ....Classes_new.machine.lam_h import LamH
 
 
 def comp_surfaces(self):

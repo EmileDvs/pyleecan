@@ -1,8 +1,8 @@
 from numpy import pi
 
-from ....Functions.load import import_class
-from ....Functions.Plot import dict_2D
-from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ....Functions_new.load import import_class
+from ....Functions_new.Plot import dict_2D
+from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 
 
 def plot(

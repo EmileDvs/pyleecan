@@ -1,6 +1,6 @@
 from numpy import pi, exp, angle
 
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 
 
 def get_notch_desc_list(self, sym=1):

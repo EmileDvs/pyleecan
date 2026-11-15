@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....Classes.SlotW22 import SlotW22
+from ....Classes_new.slot.slot_w_22 import SlotW22
 
 
 def get_polar_eq(self):

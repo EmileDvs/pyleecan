@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
-from ....Classes.Circle import Circle
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
+from ....Classes_new.geometry.circle import Circle
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
 from numpy import exp, pi
-from ....Functions.labels import (
-    SHAFT_LAB,
-    NO_LAM_LAB,
-    BOUNDARY_PROP_LAB,
-    SHAFTSR_LAB,
-    SHAFTSL_LAB,
-    SHAFTR_LAB,
-)
+from ....Functions_new.labels import SHAFT_LAB, NO_LAM_LAB, BOUNDARY_PROP_LAB, SHAFTSR_LAB, SHAFTSL_LAB, SHAFTR_LAB
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0):

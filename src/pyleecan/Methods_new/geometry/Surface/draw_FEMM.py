@@ -1,19 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Arc2 import Arc2
-from ....Classes.Arc3 import Arc3
-from ....Functions.FEMM.get_mesh_param import get_mesh_param
-from ....Functions.FEMM.get_FEMM_BC_propname import get_FEMM_BC_propname
-from ....Functions.labels import (
-    DRAW_PROP_LAB,
-    decode_label,
-    BOUNDARY_PROP_LAB,
-    RADIUS_PROP_LAB,
-    YOKE_LAB,
-    BORE_LAB,
-    LAM_LAB,
-)
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_2 import Arc2
+from ....Classes_new.geometry.arc_3 import Arc3
+from ....Functions_new.FEMM.get_mesh_param import get_mesh_param
+from ....Functions_new.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
+from ....Functions_new.labels import DRAW_PROP_LAB, decode_label, BOUNDARY_PROP_LAB, RADIUS_PROP_LAB, YOKE_LAB, BORE_LAB, LAM_LAB
 
 
 def draw_FEMM(

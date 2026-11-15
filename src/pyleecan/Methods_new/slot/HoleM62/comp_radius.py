@@ -2,7 +2,7 @@
 
 from numpy import abs
 
-from pyleecan.Classes.Arc1 import Arc1
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
 
 
 def comp_radius(self):

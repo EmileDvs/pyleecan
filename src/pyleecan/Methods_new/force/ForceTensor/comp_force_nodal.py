@@ -1,10 +1,10 @@
 import numpy as np
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataTime import DataTime
-from ....Classes.MeshSolution import MeshSolution
-from ....Classes.SolutionVector import SolutionVector
-from ....Classes.VectorField import VectorField
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_time import DataTime
+from ....Classes_new.mesh.mesh_solution import MeshSolution
+from ....Classes_new.mesh.solution_vector import SolutionVector
+from ....Classes_new.scidatatool.vector_field import VectorField
 
 
 def comp_force_nodal(self, output, axes_dict):

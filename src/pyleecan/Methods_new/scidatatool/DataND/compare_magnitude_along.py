@@ -1,7 +1,4 @@
-from ....Functions.SciDataTool.interpolations import (
-    get_common_base,
-    get_interpolation,
-)
+from ....Functions_new.SciDataTool.interpolations import get_common_base, get_interpolation
 
 
 def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False):

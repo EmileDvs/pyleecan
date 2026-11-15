@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from numpy import zeros, linspace
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
 
 
 def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):

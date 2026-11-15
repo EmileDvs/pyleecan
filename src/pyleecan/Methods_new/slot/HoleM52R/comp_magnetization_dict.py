@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from numpy import pi
-from pyleecan.Classes.Segment import Segment
+from pyleecan.Classes_new.geometry.segment import Segment
 
 
 def comp_magnetization_dict(self, is_north=True):

@@ -3,10 +3,10 @@
 from numpy import angle
 from scipy.optimize import fsolve
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import WIND_LAB
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import WIND_LAB
 
 
 def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):

@@ -1,4 +1,4 @@
-from ....Functions.labels import WEDGE_LAB
+from ....Functions_new.labels import WEDGE_LAB
 
 
 def get_surface_wedges(self, alpha=0, delta=0):

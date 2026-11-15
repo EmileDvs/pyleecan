@@ -1,6 +1,6 @@
 from numpy import interp, zeros
 
-from ....Classes.SliceModel import SliceModel
+from ....Classes_new.simulation.slice_model import SliceModel
 
 
 def get_slice_model(self):

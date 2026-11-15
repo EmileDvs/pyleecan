@@ -3,14 +3,14 @@ from os.path import split, splitext
 from meshio import read
 from numpy import arange
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataTime import DataTime
-from ....Classes.MeshSolution import MeshSolution
-from ....Classes.MeshVTK import MeshVTK
-from ....Classes.Norm_ref import Norm_ref
-from ....Classes.SolutionData import SolutionData
-from ....Classes.SolutionVector import SolutionVector
-from ....Classes.VectorField import VectorField
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_time import DataTime
+from ....Classes_new.mesh.mesh_solution import MeshSolution
+from ....Classes_new.mesh.mesh_vtk import MeshVTK
+from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
+from ....Classes_new.mesh.solution_data import SolutionData
+from ....Classes_new.mesh.solution_vector import SolutionVector
+from ....Classes_new.scidatatool.vector_field import VectorField
 from . import ElmerResultsVTUError
 
 # TODO add groups, see get_meshsolution of MagFEMM

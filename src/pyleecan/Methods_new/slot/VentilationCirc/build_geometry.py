@@ -1,8 +1,8 @@
 from numpy import exp, pi
 from . import *
-from ....Functions.labels import VENT_LAB
+from ....Functions_new.labels import VENT_LAB
 
-from ....Classes.Circle import Circle
+from ....Classes_new.geometry.circle import Circle
 
 
 def build_geometry(self, alpha=0, delta=0):

@@ -1,7 +1,4 @@
-from ....Functions.SciDataTool.interpolations import (
-    get_common_base,
-    get_interpolation,
-)
+from ....Functions_new.SciDataTool.interpolations import get_common_base, get_interpolation
 
 
 def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):

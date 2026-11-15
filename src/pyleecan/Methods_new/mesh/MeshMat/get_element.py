@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-from ....Classes.ElementMat import ElementMat
+from ....Classes_new.mesh.element_mat import ElementMat
 
 
 def _check_element_name(

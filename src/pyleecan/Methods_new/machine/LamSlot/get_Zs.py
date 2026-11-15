@@ -2,10 +2,10 @@
 
 from numpy import pi, angle, exp
 
-from ....Classes.Circle import Circle
-from ....Classes.SurfLine import SurfLine
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.circle import Circle
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
 
 
 def get_Zs(self):

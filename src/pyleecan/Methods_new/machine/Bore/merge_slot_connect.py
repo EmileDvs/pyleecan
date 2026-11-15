@@ -1,7 +1,7 @@
 from numpy import pi, exp
 
-from ....Functions.Geometry.cut_lines_between_angle import cut_lines_between_angles
-from ....Classes.Segment import Segment
+from ....Functions_new.Geometry.cut_lines_between_angle import cut_lines_between_angles
+from ....Classes_new.geometry.segment import Segment
 
 
 def merge_slot_connect(self, radius_desc_list, prop_dict, sym):

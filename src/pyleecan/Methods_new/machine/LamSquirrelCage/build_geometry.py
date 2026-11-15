@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from ....Functions.labels import WIND_LAB, BAR_LAB
+from ....Functions_new.labels import WIND_LAB, BAR_LAB
 
-from ....Classes.LamSlotWind import LamSlotWind
+from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

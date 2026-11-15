@@ -1,6 +1,6 @@
 from numpy import zeros
 
-from ....Functions.SciDataTool import AxisError
+from pyleecan.classes_common.errors import AxisError
 
 
 def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]):

@@ -2,7 +2,7 @@
 
 from numpy import tan
 from numpy import arcsin, exp, sqrt, pi
-from ....Functions.Geometry.inter_line_line import inter_line_line
+from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
 def get_H1(self):

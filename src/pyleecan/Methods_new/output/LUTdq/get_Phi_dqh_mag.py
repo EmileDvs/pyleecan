@@ -1,4 +1,4 @@
-from ....Functions.Electrical.dqh_transformation import n2dqh_DataTime
+from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 
 
 def get_Phi_dqh_mag(self):

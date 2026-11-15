@@ -1,8 +1,8 @@
-from .....Classes.LamSquirrelCage import LamSquirrelCage
-from .....Classes.SlotW11_2 import SlotW11_2
-from .....Classes.SlotW30 import SlotW30
-from .....Classes.SlotW23 import SlotW23
-from .....Classes.SlotW26 import SlotW26
+from .....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
+from .....Classes_new.slot.slot_w_11_2 import SlotW11_2
+from .....Classes_new.slot.slot_w_30 import SlotW30
+from .....Classes_new.slot.slot_w_23 import SlotW23
+from .....Classes_new.slot.slot_w_26 import SlotW26
 
 
 def convert_slot_rotor_to_P(self):

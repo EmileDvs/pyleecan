@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Arc3 import Arc3
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_3 import Arc3
+from ....Classes_new.geometry.segment import Segment
 
 
 def set_from_point_list(self, point_list, is_sym=False):

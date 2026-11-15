@@ -14,28 +14,11 @@ from numpy import (
 )
 
 from .... import __version__
-from ....Classes.MachineIPMSM import MachineIPMSM
-from ....Classes.MachineSIPMSM import MachineSIPMSM
-from ....Functions.get_path_binary import get_path_binary
-from ....Functions.labels import (
-    AIRGAP_LAB,
-    BOT_LAB,
-    HOLEM_LAB_S,
-    HOLEV_LAB_S,
-    LAM_LAB_S,
-    MAG_LAB,
-    NO_LAM_LAB,
-    ROTOR_LAB,
-    ROTOR_LAB_S,
-    SHAFT_LAB,
-    SLID_LAB,
-    STATOR_LAB_S,
-    WIND_LAB_S,
-    decode_label,
-    get_obj_from_label,
-    short_label,
-)
-from ....Functions.Winding.find_wind_phase_color import get_phase_id
+from ....Classes_new.machine.machine_ipmsm import MachineIPMSM
+from ....Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from ....Functions_new.get_path_binary import get_path_binary
+from ....Functions_new.labels import AIRGAP_LAB, BOT_LAB, HOLEM_LAB_S, HOLEV_LAB_S, LAM_LAB_S, MAG_LAB, NO_LAM_LAB, ROTOR_LAB, ROTOR_LAB_S, SHAFT_LAB, SLID_LAB, STATOR_LAB_S, WIND_LAB_S, decode_label, get_obj_from_label, short_label
+from ....Functions_new.Winding.find_wind_phase_color import get_phase_id
 from ....Methods import NotImplementedYetError
 
 

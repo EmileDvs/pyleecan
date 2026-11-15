@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from os.path import join
 
-from ....Classes.ElmerResultsVTU import ElmerResultsVTU
+from ....Classes_new.elmer.elmer_results_vtu import ElmerResultsVTU
 
 # TODO define "Results" dir, etc. in __init__
 

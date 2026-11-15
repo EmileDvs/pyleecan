@@ -1,4 +1,4 @@
-from ....Classes.Arc1 import Arc1
+from ....Classes_new.geometry.arc_1 import Arc1
 from numpy import pi, abs as np_abs
 
 DELTA = 1e-9  # To remove computing noise

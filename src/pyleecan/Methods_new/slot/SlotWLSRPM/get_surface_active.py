@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.SurfLine import SurfLine
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.surf_line import SurfLine
 
 
 def get_surface_active(self, alpha=0, delta=0):

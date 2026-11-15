@@ -1,4 +1,4 @@
-from ....Classes.DataKeeper import DataKeeper
+from ....Classes_new.simulation.data_keeper import DataKeeper
 
 
 def get_mag_datakeeper(self, symbol_list, is_multi=False):

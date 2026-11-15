@@ -20,13 +20,13 @@ from numpy import (
 )
 from numpy.core.numeric import zeros_like
 
-from ....Classes.Norm_indices import Norm_indices
-from ....Functions.Load.import_class import import_class
-from ....Functions.SciDataTool.fix_axes_order import fix_axes_order
-from ....Functions.SciDataTool.parser import read_input_strings
-from ....Functions.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
-from ....Functions.SciDataTool.Plot.plot_3D import plot_3D
-from ....Functions.SciDataTool.Plot.plot_4D import plot_4D
+from ....Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
+from ....Functions_new.Load.import_class import import_class
+from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
+from ....Functions_new.SciDataTool.parser import read_input_strings
+from ....Functions_new.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
+from ....Functions_new.SciDataTool.Plot.plot_3d import plot_3D
+from ....Functions_new.SciDataTool.Plot.plot_4d import plot_4D
 
 
 def plot_3D_Data(

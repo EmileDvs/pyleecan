@@ -1,11 +1,11 @@
 from numpy import dot, exp, ones, pi, sqrt, squeeze, zeros
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataFreq import DataFreq
-from ....Classes.DataTime import DataTime
-from ....Classes.OPdq import OPdq
-from ....Functions.Electrical.dqh_transformation import dqh2n
-from ....Functions.Load.import_class import import_class
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_freq import DataFreq
+from ....Classes_new.scidatatool.data_time import DataTime
+from ....Classes_new.simulation.op_dq import OPdq
+from ....Functions_new.Electrical.dqh_transformation import dqh2n
+from ....Functions_new.Load.import_class import import_class
 from ...simulation.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
 
 

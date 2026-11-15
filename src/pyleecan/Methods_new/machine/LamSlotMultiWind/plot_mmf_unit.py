@@ -1,4 +1,4 @@
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Load.import_class import import_class
 
 
 def plot_mmf_unit(self, r_max=100, fig=None, save_path=None, is_show_fig=True):

@@ -1,4 +1,4 @@
-from ....Classes.SurfLine import SurfLine
+from ....Classes_new.geometry.surf_line import SurfLine
 
 
 def get_surface(self):

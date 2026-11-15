@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ....Classes.OptiObjective import OptiObjective
+from ....Classes_new.optimization.opti_objective import OptiObjective
 
 
 def get_pareto_index(self):

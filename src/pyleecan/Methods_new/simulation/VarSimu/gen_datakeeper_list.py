@@ -1,5 +1,5 @@
-from ....Classes.DataKeeper import DataKeeper
-from ....Functions.Load.import_class import import_class
+from ....Classes_new.simulation.data_keeper import DataKeeper
+from ....Functions_new.Load.import_class import import_class
 
 
 def gen_datakeeper_list(self, ref_simu):

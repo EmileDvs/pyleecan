@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from ....Functions.Structural.conversions import pol2cart
+from ....Functions_new.Structural.conversions import pol2cart
 
 
 def get_field(self, *args, is_squeeze=False, node=None, is_rthetaz=False):

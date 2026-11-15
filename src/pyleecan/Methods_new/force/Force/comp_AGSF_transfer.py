@@ -1,8 +1,8 @@
 from numpy import multiply, newaxis, power, repeat, where
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataFreq import DataFreq
-from ....Classes.VectorField import VectorField
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_freq import DataFreq
+from ....Classes_new.scidatatool.vector_field import VectorField
 
 
 def comp_AGSF_transfer(self, output, rnoise=None):

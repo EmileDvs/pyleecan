@@ -2,9 +2,9 @@
 
 from numpy import exp, pi
 
-from ....Classes.PolarArc import PolarArc
+from ....Classes_new.geometry.polar_arc import PolarArc
 from . import *
-from ....Functions.labels import VENT_LAB
+from ....Functions_new.labels import VENT_LAB
 
 
 def build_geometry(self, alpha=0, delta=0):

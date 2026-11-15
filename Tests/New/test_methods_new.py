@@ -131,3 +131,41 @@ def test_modernize_is_idempotent():
     source = path.read_text(encoding="utf-8")
     package = "pyleecan.Methods_new.geometry.Segment"
     assert modernize_method_source(source, package, str(ROOT / "Classes_new")) == source
+
+
+def test_new_names():
+    from pyleecan.Generator.ClassGenerator.New.source_names import (
+        to_legacy_names,
+        to_new_names,
+    )
+
+    package = "pyleecan.Methods_new.geometry.Segment"
+    legacy = (
+        "from ....Classes.Segment import Segment\n"
+        "from ....Classes.Norm_ref import Norm_ref\n"
+        "from ....Classes._check import check_var\n"
+        "from ....Functions.FEMM.comp_FEMM_dict import comp_FEMM_dict\n"
+        "from ....Functions.FEMM import comp_FEMM_dict as femm\n"
+        "from pyleecan.Functions.init_fig import init_fig\n"
+    )
+    new = (
+        "from ....Classes_new.geometry.segment import Segment\n"
+        "from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref\n"
+        "from ....Classes._check import check_var\n"  # Support module: kept
+        "from ....Functions_new.FEMM.comp_femm_dict import comp_FEMM_dict\n"
+        "from ....Functions_new.FEMM import comp_femm_dict as femm\n"
+        "from pyleecan.Functions_new.init_fig import init_fig\n"
+    )
+    assert to_new_names(legacy, package) == new
+    assert to_legacy_names(new, package) == legacy
+
+
+def test_methods_new_imports():
+    """Every module of Methods_new can be imported (and type-checked)"""
+    import importlib
+
+    for path in sorted((ROOT / "Methods_new").rglob("*.py")):
+        parts = list(path.relative_to(ROOT / "Methods_new").with_suffix("").parts)
+        if parts[-1] == "__init__":
+            parts = parts[:-1]
+        importlib.import_module(".".join(["pyleecan", "Methods_new", *parts]))

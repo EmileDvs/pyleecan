@@ -1,7 +1,7 @@
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import HOLEM_LAB, MAGNET_PROP_LAB
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import HOLEM_LAB, MAGNET_PROP_LAB
 
 
 def build_geometry(self, alpha=0, delta=0, is_simplified=False):

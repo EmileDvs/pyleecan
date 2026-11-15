@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from numpy import arcsin, exp, pi, tan
-from ....Functions.Geometry.inter_line_line import inter_line_line
+from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
 def get_H1(self):

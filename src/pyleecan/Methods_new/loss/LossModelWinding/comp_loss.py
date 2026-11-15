@@ -2,7 +2,7 @@ from numpy import array
 from numpy import sum as np_sum
 from numpy import zeros
 
-from ....Functions.Electrical.comp_loss_joule import comp_loss_joule
+from ....Functions_new.Electrical.comp_loss_joule import comp_loss_joule
 
 
 def comp_loss(self):

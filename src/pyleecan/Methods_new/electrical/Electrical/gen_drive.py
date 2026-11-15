@@ -1,7 +1,7 @@
 import numpy as np
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataTime import DataTime
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_time import DataTime
 
 
 def gen_drive(self, output):

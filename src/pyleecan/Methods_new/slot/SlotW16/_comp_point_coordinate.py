@@ -1,7 +1,7 @@
 from numpy import arcsin, exp, pi, sqrt
 
 from . import S16OutterError
-from ....Functions.Geometry.inter_circle_circle import inter_circle_circle
+from ....Functions_new.Geometry.inter_circle_circle import inter_circle_circle
 
 
 def _comp_point_coordinate(self):

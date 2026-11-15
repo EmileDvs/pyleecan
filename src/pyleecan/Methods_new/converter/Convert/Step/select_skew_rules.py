@@ -1,4 +1,4 @@
-from .....Classes.Skew import Skew
+from .....Classes_new.machine.skew import Skew
 
 
 def select_skew_rules(self, is_stator):

@@ -1,4 +1,4 @@
-from ....Classes.ParamExplorerSet import ParamExplorerSet
+from ....Classes_new.simulation.param_explorer_set import ParamExplorerSet
 
 
 class ParamExplorerError(Exception):

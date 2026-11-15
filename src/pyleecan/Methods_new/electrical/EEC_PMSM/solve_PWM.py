@@ -1,8 +1,8 @@
 import numpy as np
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataFreq import DataFreq
-from ....Functions.Electrical.dqh_transformation_freq import dqh2n_DataFreq
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_freq import DataFreq
+from ....Functions_new.Electrical.dqh_transformation_freq import dqh2n_DataFreq
 
 
 def solve_PWM(self, output, is_dqh_freq=False, is_skin_effect_inductance=False):

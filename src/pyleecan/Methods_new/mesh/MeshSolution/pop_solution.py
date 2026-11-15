@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pyleecan.Classes.Solution import Solution
+from pyleecan.Classes_new.mesh.solution import Solution
 
 
 def pop_solution(self, label: str) -> Solution:

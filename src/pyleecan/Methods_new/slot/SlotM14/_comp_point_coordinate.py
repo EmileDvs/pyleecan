@@ -1,5 +1,5 @@
 from numpy import arcsin, exp, angle
-from ....Functions.Geometry.comp_flower_arc import comp_flower_arc
+from ....Functions_new.Geometry.comp_flower_arc import comp_flower_arc
 
 
 def _comp_point_coordinate(self):

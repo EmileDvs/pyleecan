@@ -1,4 +1,4 @@
-from ....Functions.labels import decode_label
+from ....Functions_new.labels import decode_label
 
 
 def get_magnet_by_label(self, label=None, label_dict=None):

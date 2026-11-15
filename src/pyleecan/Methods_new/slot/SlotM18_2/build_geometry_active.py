@@ -1,13 +1,7 @@
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import (
-    WIND_LAB,
-    COND_BOUNDARY_PROP_LAB,
-    YSMR_LAB,
-    YSML_LAB,
-    YOKE_LAB,
-)
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import WIND_LAB, COND_BOUNDARY_PROP_LAB, YSMR_LAB, YSML_LAB, YOKE_LAB
 
 
 def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):

@@ -1,6 +1,6 @@
-from ....Classes.ElementMat import ElementMat
-from ....Classes.MeshMat import MeshMat
-from ....Classes.NodeMat import NodeMat
+from ....Classes_new.mesh.element_mat import ElementMat
+from ....Classes_new.mesh.mesh_mat import MeshMat
+from ....Classes_new.mesh.node_mat import NodeMat
 
 
 def perm_coord(

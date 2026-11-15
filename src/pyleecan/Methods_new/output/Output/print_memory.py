@@ -1,5 +1,5 @@
 from sys import getsizeof
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Load.import_class import import_class
 
 
 def print_memory(self, tab_level=0, detail_level=1, is_print=True):

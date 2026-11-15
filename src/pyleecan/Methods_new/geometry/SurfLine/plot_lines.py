@@ -1,6 +1,6 @@
 from numpy import real, imag
 
-from ....Functions.init_fig import init_fig
+from ....Functions_new.init_fig import init_fig
 
 
 def plot_lines(self, fig=None, ax=None, is_show_fig=True):

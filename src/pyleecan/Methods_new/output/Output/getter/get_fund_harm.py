@@ -1,4 +1,4 @@
-from .....Functions.Plot import fft_dict
+from .....Functions_new.Plot import fft_dict
 
 
 def get_fund_harm(self, data):

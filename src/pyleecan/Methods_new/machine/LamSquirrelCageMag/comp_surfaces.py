@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from numpy import pi
-from ....Classes.LamSlotWind import LamSlotWind
+from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
 
 def comp_surfaces(self):

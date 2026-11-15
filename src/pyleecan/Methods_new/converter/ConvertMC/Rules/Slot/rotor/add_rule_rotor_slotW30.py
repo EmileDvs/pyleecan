@@ -1,6 +1,6 @@
-from pyleecan.Classes.RuleSimple import RuleSimple
-from pyleecan.Classes.RuleEquation import RuleEquation
-from pyleecan.Classes.RuleComplex import RuleComplex
+from pyleecan.Classes_new.converter.rule_simple import RuleSimple
+from pyleecan.Classes_new.converter.rule_equation import RuleEquation
+from pyleecan.Classes_new.converter.rule_complex import RuleComplex
 
 
 def add_rule_rotor_slotW30(self, is_stator):

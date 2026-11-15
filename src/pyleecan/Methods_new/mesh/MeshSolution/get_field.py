@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.SolutionVector import SolutionVector
-from ....Classes.MeshMat import MeshMat
-from ....Classes.MeshVTK import MeshVTK
-from ....Functions.Structural.conversions import DimError, cart2pol, pol2cart
+from ....Classes_new.mesh.solution_vector import SolutionVector
+from ....Classes_new.mesh.mesh_mat import MeshMat
+from ....Classes_new.mesh.mesh_vtk import MeshVTK
+from ....Functions_new.Structural.conversions import cart2pol, pol2cart; from pyleecan.classes_common.errors import DimError
 from numpy import (
     einsum,
     sqrt,

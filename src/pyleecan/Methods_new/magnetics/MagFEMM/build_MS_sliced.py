@@ -1,9 +1,9 @@
 from numpy import append, concatenate
 
-from ....Classes.Data1D import Data1D
-from ....Functions.MeshSolution.build_meshsolution import build_meshsolution
-from ....Functions.MeshSolution.build_solution_data import build_solution_data
-from ....Functions.MeshSolution.build_solution_vector import build_solution_vector
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Functions_new.MeshSolution.build_meshsolution import build_meshsolution
+from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
+from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 
 
 def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):

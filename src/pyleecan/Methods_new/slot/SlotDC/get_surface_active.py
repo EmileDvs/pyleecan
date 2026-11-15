@@ -3,9 +3,9 @@
 from numpy import angle
 from scipy.optimize import fsolve
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
 
 
 def get_surface_active(self, alpha=0, delta=0):

@@ -1,8 +1,8 @@
-from .....Classes.SlotW11 import SlotW11
-from .....Classes.SlotW14 import SlotW14
-from .....Classes.SlotW21 import SlotW21
-from .....Classes.SlotW23 import SlotW23
-from .....Classes.SlotW29 import SlotW29
+from .....Classes_new.slot.slot_w_11 import SlotW11
+from .....Classes_new.slot.slot_w_14 import SlotW14
+from .....Classes_new.slot.slot_w_21 import SlotW21
+from .....Classes_new.slot.slot_w_23 import SlotW23
+from .....Classes_new.slot.slot_w_29 import SlotW29
 
 
 def convert_slot_to_other(self):

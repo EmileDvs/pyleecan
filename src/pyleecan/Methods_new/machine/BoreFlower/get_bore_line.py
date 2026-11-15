@@ -1,5 +1,5 @@
-from ....Functions.Geometry.comp_flower_arc import comp_flower_arc
-from ....Classes.Arc1 import Arc1
+from ....Functions_new.Geometry.comp_flower_arc import comp_flower_arc
+from ....Classes_new.geometry.arc_1 import Arc1
 from ....Methods import ParentMissingError
 from numpy import pi, exp
 

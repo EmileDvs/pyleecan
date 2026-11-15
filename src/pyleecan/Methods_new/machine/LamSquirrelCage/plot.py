@@ -1,6 +1,6 @@
 from matplotlib.patches import Patch, Wedge
-from ....Classes.LamSlotWind import LamSlotWind
-from ....Functions.init_fig import init_fig
+from ....Classes_new.machine.lam_slot_wind import LamSlotWind
+from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
 
 SCR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SCR_COLOR"]

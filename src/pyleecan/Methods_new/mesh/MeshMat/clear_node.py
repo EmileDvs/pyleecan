@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from ....Classes.NodeMat import NodeMat
+from ....Classes_new.mesh.node_mat import NodeMat
 
 
 def clear_node(self):

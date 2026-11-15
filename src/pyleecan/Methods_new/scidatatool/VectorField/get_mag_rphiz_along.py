@@ -1,7 +1,7 @@
 from numpy import zeros
 
-from ....Functions.SciDataTool import AxisError
-from ....Functions.SciDataTool.conversions import cart2pol
+from pyleecan.classes_common.errors import AxisError
+from ....Functions_new.SciDataTool.conversions import cart2pol
 
 
 def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):

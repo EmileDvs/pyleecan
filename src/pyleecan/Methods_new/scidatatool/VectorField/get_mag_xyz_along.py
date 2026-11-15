@@ -1,7 +1,7 @@
 from numpy import zeros
 
-from ....Functions.SciDataTool import AxisError
-from ....Functions.SciDataTool.conversions import pol2cart
+from pyleecan.classes_common.errors import AxisError
+from ....Functions_new.SciDataTool.conversions import pol2cart
 
 
 def get_mag_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):

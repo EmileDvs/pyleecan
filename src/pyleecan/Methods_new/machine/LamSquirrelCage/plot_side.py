@@ -1,6 +1,6 @@
 from matplotlib.patches import Rectangle, Patch
 import matplotlib.pyplot as plt
-from ....Functions.init_fig import init_fig
+from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
 
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]

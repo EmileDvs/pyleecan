@@ -1,7 +1,7 @@
 from numpy import zeros, sqrt, isnan
 
-from ....Functions.Electrical.dqh_transformation import n2abc
-from ....Functions.labels import STATOR_LAB, ROTOR_LAB
+from ....Functions_new.Electrical.dqh_transformation import n2abc
+from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
 
 
 def _comp_flux_mean(self, out):

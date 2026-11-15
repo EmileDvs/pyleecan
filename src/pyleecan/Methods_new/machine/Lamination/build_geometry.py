@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
-from ....Classes.SurfLine import SurfLine
-from ....Classes.SurfRing import SurfRing
-from ....Functions.labels import (
-    LAM_LAB,
-    BORE_LAB,
-    YOKE_LAB,
-    RADIUS_PROP_LAB,
-    BOUNDARY_PROP_LAB,
-)
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Classes_new.geometry.surf_ring import SurfRing
+from ....Functions_new.labels import LAM_LAB, BORE_LAB, YOKE_LAB, RADIUS_PROP_LAB, BOUNDARY_PROP_LAB
 
-from ....Functions.Geometry.transform_hole_surf import transform_hole_surf
+from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

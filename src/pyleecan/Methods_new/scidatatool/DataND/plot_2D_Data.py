@@ -25,17 +25,12 @@ from numpy import (
     sum as np_sum,
 )
 
-from ....Classes.Norm_indices import Norm_indices
-from ....Functions.Load.import_class import import_class
-from ....Functions.SciDataTool.fix_axes_order import fix_axes_order
-from ....Functions.SciDataTool.parser import read_input_strings
-from ....Functions.SciDataTool.Plot import (
-    COLORS,
-    axes_dict,
-    norm_dict,
-    unit_dict,
-)
-from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ....Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
+from ....Functions_new.Load.import_class import import_class
+from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
+from ....Functions_new.SciDataTool.parser import read_input_strings
+from ....Functions_new.SciDataTool.Plot import COLORS, axes_dict, norm_dict, unit_dict
+from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 
 
 def plot_2D_Data(

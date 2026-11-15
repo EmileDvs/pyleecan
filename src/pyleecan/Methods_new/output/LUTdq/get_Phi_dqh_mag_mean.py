@@ -1,7 +1,7 @@
 from numpy import array
 
-from ....Classes.EEC_PMSM import EEC_PMSM
-from ....Classes.Electrical import Electrical
+from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
+from ....Classes_new.electrical.electrical import Electrical
 
 
 def get_Phi_dqh_mag_mean(self):

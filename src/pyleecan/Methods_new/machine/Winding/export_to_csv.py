@@ -1,4 +1,4 @@
-from ....Functions.Winding.gen_phase_list import gen_name
+from ....Functions_new.Winding.gen_phase_list import gen_name
 
 ZS_NAME = "Slot Id"
 COIL_NAME = "Ntcoil"

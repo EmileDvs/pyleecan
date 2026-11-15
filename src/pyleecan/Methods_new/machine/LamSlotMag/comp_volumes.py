@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from numpy import pi
-from ....Classes.LamSlot import LamSlot
+from ....Classes_new.machine.lam_slot import LamSlot
 
 
 def comp_volumes(self):

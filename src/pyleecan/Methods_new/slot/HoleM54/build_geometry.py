@@ -1,9 +1,9 @@
 from numpy import pi, exp
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Arc3 import Arc3
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import HOLEV_LAB, HOLEM_LAB
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_3 import Arc3
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
 
 
 def build_geometry(self, alpha=0, delta=0, is_simplified=False):

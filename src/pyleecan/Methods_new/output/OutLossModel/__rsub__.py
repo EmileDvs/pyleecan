@@ -1,4 +1,4 @@
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Load.import_class import import_class
 
 
 def __rsub__(self, other):

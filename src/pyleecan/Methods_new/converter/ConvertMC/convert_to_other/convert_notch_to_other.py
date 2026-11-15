@@ -1,4 +1,4 @@
-from .....Classes.SlotM19 import SlotM19
+from .....Classes_new.slot.slot_m_19 import SlotM19
 
 
 def convert_notch_to_other(self, is_stator):

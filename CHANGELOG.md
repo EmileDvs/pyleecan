@@ -74,9 +74,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   previously each class held its own nested copy.
 - **`Methods_new`**: the methods of the new classes, written by a method
   generator (`generate_methods_new.py`) from the legacy `Methods` for all
-  packages, self-contained, and read by the class generator. It will gather
-  the method-level modernizations (shared with the functions generator); a
-  package needing hand-written changes can be frozen.
+  packages, self-contained and importable (new import names: `Classes_new`,
+  `Functions_new`, shared errors), and read by the class generator. It
+  gathers the method-level modernizations (shared with the functions
+  generator: `source_names.py`); a package needing hand-written changes can
+  be frozen.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,

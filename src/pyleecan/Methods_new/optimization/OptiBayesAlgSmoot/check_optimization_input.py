@@ -1,8 +1,8 @@
 from logging import Logger, FileHandler, Formatter, INFO, NOTSET
 from datetime import datetime
-from ....Classes.OptiObjective import OptiObjective
-from ....Classes.OptiDesignVarSet import OptiDesignVarSet
-from ....Classes.OptiDesignVarInterval import OptiDesignVarInterval
+from ....Classes_new.optimization.opti_objective import OptiObjective
+from ....Classes_new.optimization.opti_design_var_set import OptiDesignVarSet
+from ....Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
 
 
 class OptimizationAttributeError(Exception):

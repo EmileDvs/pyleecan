@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import arcsin, cos, exp, pi, sin, tan
-from pyleecan.Functions.Geometry.inter_line_line import inter_line_line
+from pyleecan.Functions_new.Geometry.inter_line_line import inter_line_line
 
 
 def get_H1(self):

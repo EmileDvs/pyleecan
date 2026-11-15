@@ -2,10 +2,10 @@ from numpy import max as np_max
 from numpy import mean as np_mean
 from numpy import min as np_min
 
-from ....Classes.DataTime import DataTime
-from ....Classes.Norm_ref import Norm_ref
-from ....Classes.VectorField import VectorField
-from ....Functions.labels import STATOR_LAB
+from ....Classes_new.scidatatool.data_time import DataTime
+from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
+from ....Classes_new.scidatatool.vector_field import VectorField
+from ....Functions_new.labels import STATOR_LAB
 
 
 def store(self, out_dict, axes_dict):

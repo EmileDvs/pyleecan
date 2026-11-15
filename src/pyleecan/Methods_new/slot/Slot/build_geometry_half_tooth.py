@@ -1,8 +1,8 @@
 from numpy import abs as np_abs
 from numpy import imag, pi, exp
 
-from ....Classes.Arc1 import Arc1
-from ....Functions.labels import BORE_LAB, BOUNDARY_PROP_LAB
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Functions_new.labels import BORE_LAB, BOUNDARY_PROP_LAB
 
 
 def build_geometry_half_tooth(self, is_top=False, alpha=0, delta=0):

@@ -1,8 +1,8 @@
 import random
 from collections.abc import Iterable
 from deap.tools import mutPolynomialBounded
-from ....Classes.OptiDesignVarInterval import OptiDesignVarInterval
-from ....Classes.OptiDesignVarSet import OptiDesignVarSet
+from ....Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
+from ....Classes_new.optimization.opti_design_var_set import OptiDesignVarSet
 
 
 def mutate(self, indiv):

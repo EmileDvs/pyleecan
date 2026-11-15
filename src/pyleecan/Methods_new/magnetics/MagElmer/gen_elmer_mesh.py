@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import subprocess
 
-from ....Functions.get_path_binary import get_path_binary
+from ....Functions_new.get_path_binary import get_path_binary
 
 
 def gen_elmer_mesh(self, output):

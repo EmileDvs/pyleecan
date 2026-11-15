@@ -1,5 +1,5 @@
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import SOP_LAB, DRAW_PROP_LAB
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import SOP_LAB, DRAW_PROP_LAB
 
 
 def get_surface_opening(self, alpha=0, delta=0):

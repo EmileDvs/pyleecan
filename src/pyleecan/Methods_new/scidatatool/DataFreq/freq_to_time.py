@@ -1,5 +1,5 @@
-from ....Classes.Data1D import Data1D
-from ....Functions.SciDataTool import AxisError
+from ....Classes_new.scidatatool.data_1d import Data1D
+from pyleecan.classes_common.errors import AxisError
 
 
 def freq_to_time(self):

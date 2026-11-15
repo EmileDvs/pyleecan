@@ -1,4 +1,4 @@
-from ....Functions.Geometry.inter_line_circle import inter_line_circle
+from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 
 
 def intersect_obj(self, other, is_on_line=True):

@@ -3,7 +3,7 @@ from pandas import read_excel, ExcelFile
 from . import XlsFileError
 from os.path import isfile
 
-from ....Functions.path_tools import abs_file_path
+from ....Functions_new.path_tools import abs_file_path
 
 
 def get_data(self):

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from numpy import pi
 
-from ....Classes.Lamination import Lamination
-from ....Functions.Geometry.transform_hole_surf import transform_hole_surf
+from ....Classes_new.machine.lamination import Lamination
+from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

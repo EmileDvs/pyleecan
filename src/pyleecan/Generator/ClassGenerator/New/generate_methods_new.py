@@ -139,7 +139,15 @@ def modernize_method_source(source, package, class_dir):
     source : str
         Modernized source
     """
-    return _redirect_methods_imports(source, package, class_dir)
+    from .class_generator import relocate_class_imports
+    from .generate_function_new_classes import _redirect_shared_error_imports
+    from .source_names import to_new_names
+
+    source = _redirect_methods_imports(source, package, class_dir)
+    # Errors of the function modules: shared errors (classes_common.errors)
+    source = _redirect_shared_error_imports(source, package)
+    source = relocate_class_imports(source, "pyleecan", "Classes_new", {})
+    return to_new_names(source, package)  # Classes_new / Functions_new names
 
 
 def _redirect_methods_imports(source, package, class_dir):

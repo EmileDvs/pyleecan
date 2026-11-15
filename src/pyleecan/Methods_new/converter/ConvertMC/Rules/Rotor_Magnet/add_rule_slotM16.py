@@ -1,4 +1,4 @@
-from pyleecan.Classes.RuleSimple import RuleSimple
+from pyleecan.Classes_new.converter.rule_simple import RuleSimple
 
 
 def add_rule_slotM16(self):

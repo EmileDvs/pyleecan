@@ -1,11 +1,11 @@
 from numpy import arange, array
 
-from ....Classes.DataPattern import DataPattern
-from ....Classes.ImportMatrixVal import ImportMatrixVal
-from ....Classes.ImportMatrixXls import ImportMatrixXls
-from ....Classes.Input import Input
-from ....Classes.InputCurrent import InputCurrent
-from ....Classes.OutMag import OutMag
+from ....Classes_new.scidatatool.data_pattern import DataPattern
+from ....Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from ....Classes_new.import_data.import_matrix_xls import ImportMatrixXls
+from ....Classes_new.simulation.input import Input
+from ....Classes_new.simulation.input_current import InputCurrent
+from ....Classes_new.output.out_mag import OutMag
 
 VERBOSE_KEY = {"B_{rad}": "Radial", "B_{circ}": "Tangential", "B_{ax}": "Axial"}
 

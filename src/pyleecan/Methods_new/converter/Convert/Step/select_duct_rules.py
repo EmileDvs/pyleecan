@@ -1,6 +1,6 @@
-from .....Classes.VentilationCirc import VentilationCirc
-from .....Classes.VentilationPolar import VentilationPolar
-from .....Classes.VentilationTrap import VentilationTrap
+from .....Classes_new.slot.ventilation_circ import VentilationCirc
+from .....Classes_new.slot.ventilation_polar import VentilationPolar
+from .....Classes_new.slot.ventilation_trap import VentilationTrap
 
 
 def select_duct_rules(self, is_stator):

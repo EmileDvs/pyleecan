@@ -1,4 +1,4 @@
-from .....Classes.SlotM19 import SlotM19
+from .....Classes_new.slot.slot_m_19 import SlotM19
 
 
 def select_notch_rules(self, is_stator):

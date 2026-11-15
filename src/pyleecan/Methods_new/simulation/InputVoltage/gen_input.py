@@ -1,6 +1,6 @@
 from numpy import angle, pi
 
-from ....Classes.OutElec import OutElec
+from ....Classes_new.output.out_elec import OutElec
 
 from ..Input import CURRENT_DIR_REF, ROT_DIR_REF, InputError, PHASE_DIR_REF
 
@@ -14,7 +14,7 @@ def gen_input(self):
         An InputVoltage object
     """
 
-    from ....Classes.Simulation import Simulation
+    from ....Classes_new.simulation.simulation import Simulation
 
     # Get the simulation
     if isinstance(self.parent, Simulation):

@@ -1,5 +1,5 @@
 import os
-from ....Functions.GUI.log_error import log_error
+from ....Functions_new.GUI.log_error import log_error
 
 
 def save_vtk(self, save_path):

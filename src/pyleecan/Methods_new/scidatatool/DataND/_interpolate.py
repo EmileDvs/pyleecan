@@ -1,7 +1,4 @@
-from ....Functions.SciDataTool.interpolations import (
-    get_interpolation,
-    get_interpolation_step,
-)
+from ....Functions_new.SciDataTool.interpolations import get_interpolation, get_interpolation_step
 
 
 def _interpolate(self, values, axes_list):

@@ -1,12 +1,12 @@
 from numpy import zeros, sqrt, tile
 from multiprocessing import cpu_count
 
-from ....Classes.ImportGenVectLin import ImportGenVectLin
-from ....Classes.ImportMatrixVal import ImportMatrixVal
+from ....Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from ....Classes_new.import_data.import_matrix_val import ImportMatrixVal
 
-from ....Functions.Electrical.dqh_transformation import abc2n
+from ....Functions_new.Electrical.dqh_transformation import abc2n
 
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Load.import_class import import_class
 
 
 def _comp_Lm_FEA(self, machine, K21Z, Xke_skinS):

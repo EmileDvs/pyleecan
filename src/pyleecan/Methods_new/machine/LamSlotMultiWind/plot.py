@@ -1,15 +1,13 @@
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 
-from ....Functions.labels import decode_label, WIND_LAB, BAR_LAB
-from ....Functions.Winding.find_wind_phase_color import find_wind_phase_color
-from ....Functions.Winding.gen_phase_list import gen_name
-from ....Functions.init_fig import init_fig
+from ....Functions_new.labels import decode_label, WIND_LAB, BAR_LAB
+from ....Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
+from ....Functions_new.Winding.gen_phase_list import gen_name
+from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
-from ....Classes.WindingSC import WindingSC
-from ....Functions.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
+from ....Classes_new.machine.winding_sc import WindingSC
+from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 PLUS_HATCH = "++"

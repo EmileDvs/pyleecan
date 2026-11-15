@@ -1,5 +1,5 @@
 from numpy import ndarray
-from ....Classes.OPMatrix import OPMatrix
+from ....Classes_new.simulation.op_matrix import OPMatrix
 
 
 def set_OP_array(self, OP_matrix, *arg_list, is_update_input=True, input_index=0):

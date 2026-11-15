@@ -1,5 +1,5 @@
-from ......Classes.RuleSimple import RuleSimple
-from ......Classes.RuleComplex import RuleComplex
+from ......Classes_new.converter.rule_simple import RuleSimple
+from ......Classes_new.converter.rule_complex import RuleComplex
 
 
 def add_rule_ventilationPolar(self, is_stator, duct_id):

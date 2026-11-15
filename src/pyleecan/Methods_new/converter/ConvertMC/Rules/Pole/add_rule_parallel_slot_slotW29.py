@@ -1,4 +1,4 @@
-from ......Classes.RuleSimple import RuleSimple
+from ......Classes_new.converter.rule_simple import RuleSimple
 
 
 def add_rule_parallel_slot_slotW29(self):

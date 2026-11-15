@@ -1,7 +1,7 @@
 # -*-- coding: utf-8 -*
 from numpy import angle, exp
 
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 
 
 def get_lines(self):

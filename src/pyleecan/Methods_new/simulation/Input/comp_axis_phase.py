@@ -1,8 +1,8 @@
 from numpy import array, pi
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataLinspace import DataLinspace
-from ....Classes.Norm_indices import Norm_indices
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_linspace import DataLinspace
+from ....Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
 
 
 def comp_axis_phase(self, lamination, per_a=None, is_apera=None, Phase_in=None):

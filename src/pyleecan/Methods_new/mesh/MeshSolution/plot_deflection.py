@@ -6,10 +6,10 @@ from numpy import max as np_max
 from numpy import min as np_min
 from numpy import pi, real
 
-from ....Classes.MeshVTK import MeshVTK
+from ....Classes_new.mesh.mesh_vtk import MeshVTK
 from ....definitions import config_dict
-from ....Functions.Plot.Pyvista.configure_plot import configure_plot
-from ....Functions.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
+from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
+from ....Functions_new.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
 
 COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]

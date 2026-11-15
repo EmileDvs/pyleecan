@@ -307,8 +307,14 @@ Order:
      it is self-contained. The class generator translates the `Methods_new`
      paths for its configuration tables (`_legacy_methods_module`,
      `_methods_location`). Generated classes byte-identical.
-   - [ ] New import names for the classes and functions (`Classes_new`,
-     `Functions_new`) in `Methods_new`.
+   - [x] New import names for the classes and functions (`Classes_new`,
+     `Functions_new`) in `Methods_new` (`source_names.to_new_names`, shared by
+     the generators); the function errors are imported from the shared
+     errors (pass moved from the class generator). All 2025 modules of
+     `Methods_new` can be imported. The class generator reads them through a
+     compatibility shim (`_read_method_source`: `to_legacy_names`), removed
+     as its name-dependent passes move to the method generator (point 2).
+     Generated classes byte-identical.
 2. The method-level passes moved one by one from the class generator to the
    shared pipeline, each byte-identical.
 3. Step 5 transformations: class-specific functions moved into their class,

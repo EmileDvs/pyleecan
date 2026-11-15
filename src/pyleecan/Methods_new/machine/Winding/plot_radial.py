@@ -1,7 +1,7 @@
 from ....Classes._swat_em import datamodel
 from ....definitions import config_dict
-from ....Functions._swat_em import plots
-from ....Functions._swat_em.config import config
+from ....Functions_new._swat_em import plots
+from ....Functions_new._swat_em.config import config
 
 
 def plot_radial(self, is_show_fig=True):

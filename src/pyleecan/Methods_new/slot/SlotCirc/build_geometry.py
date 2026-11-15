@@ -1,6 +1,6 @@
 from numpy import exp
 
-from ....Classes.Arc1 import Arc1
+from ....Classes_new.geometry.arc_1 import Arc1
 
 
 def build_geometry(self):

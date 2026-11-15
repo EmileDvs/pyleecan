@@ -3,9 +3,9 @@ from itertools import combinations
 
 import numpy as np
 
-from ....Classes.ElementMat import ElementMat
-from ....Classes.FPGNSeg import FPGNSeg
-from ....Classes.RefSegmentP1 import RefSegmentP1
+from ....Classes_new.mesh.element_mat import ElementMat
+from ....Classes_new.mesh.fpgn_seg import FPGNSeg
+from ....Classes_new.mesh.ref_segment_p_1 import RefSegmentP1
 
 
 def interface(self, other_mesh: "MeshMat") -> "MeshMat":

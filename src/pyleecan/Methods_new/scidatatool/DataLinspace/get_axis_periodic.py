@@ -1,5 +1,5 @@
-from ....Classes.Norm_vector import Norm_vector
-from ....Functions.SciDataTool import AxisError
+from ....Classes_new.scidatatool.norm_vector import NormVector as Norm_vector
+from pyleecan.classes_common.errors import AxisError
 
 
 def get_axis_periodic(self, Nper, is_aper=False):

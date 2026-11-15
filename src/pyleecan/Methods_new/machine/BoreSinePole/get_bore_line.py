@@ -1,4 +1,4 @@
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 from ....Methods import ParentMissingError
 from numpy import linspace, pi, cos, tan, exp
 from scipy.optimize import fmin

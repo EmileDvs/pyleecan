@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, subplots
 from numpy import array, linspace, meshgrid
 
-from ....Functions.Winding.gen_phase_list import gen_color, gen_name
+from ....Functions_new.Winding.gen_phase_list import gen_color, gen_name
 
 
 def plot_winding(

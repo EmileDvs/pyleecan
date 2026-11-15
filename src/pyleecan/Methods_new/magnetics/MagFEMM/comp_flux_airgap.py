@@ -1,13 +1,13 @@
 from numpy import zeros
 
 from ....Classes._FEMMHandler import _FEMMHandler
-from ....Classes.Data1D import Data1D
-from ....Classes.OutMagFEMM import OutMagFEMM
-from ....Functions.FEMM.draw_FEMM import draw_FEMM
-from ....Functions.labels import STATOR_LAB
-from ....Functions.MeshSolution.build_meshsolution import build_meshsolution
-from ....Functions.MeshSolution.build_solution_data import build_solution_data
-from ....Functions.MeshSolution.build_solution_vector import build_solution_vector
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.output.out_mag_femm import OutMagFEMM
+from ....Functions_new.FEMM.draw_femm import draw_FEMM
+from ....Functions_new.labels import STATOR_LAB
+from ....Functions_new.MeshSolution.build_meshsolution import build_meshsolution
+from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
+from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 
 
 def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):

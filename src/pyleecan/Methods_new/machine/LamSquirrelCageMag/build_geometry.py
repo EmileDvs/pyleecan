@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from numpy import pi
-from ....Classes.LamSquirrelCage import LamSquirrelCage
-from ....Functions.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
+from ....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
+from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

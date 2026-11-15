@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from os.path import join
 
-from ....Functions.GMSH.draw_GMSH import draw_GMSH
+from ....Functions_new.GMSH.draw_gmsh import draw_GMSH
 from . import _execute, _get_BP_dict
 
 

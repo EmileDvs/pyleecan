@@ -4,12 +4,12 @@ from typing import Literal
 import numpy as np
 import pyvista as pv
 
-from ....Classes.Mesh import Mesh
-from ....Classes.RefLine3 import RefLine3
-from ....Classes.RefQuad4 import RefQuad4
-from ....Classes.RefQuad9 import RefQuad9
-from ....Classes.RefTriangle3 import RefTriangle3
-from ....Classes.RefTriangle6 import RefTriangle6
+from ....Classes_new.mesh.mesh import Mesh
+from ....Classes_new.mesh.ref_line_3 import RefLine3
+from ....Classes_new.mesh.ref_quad_4 import RefQuad4
+from ....Classes_new.mesh.ref_quad_9 import RefQuad9
+from ....Classes_new.mesh.ref_triangle_3 import RefTriangle3
+from ....Classes_new.mesh.ref_triangle_6 import RefTriangle6
 
 
 def convert(
@@ -45,7 +45,7 @@ def convert(
         return new_mesh
 
     # Avoiding circular import
-    from ....Classes.MeshVTK import MeshVTK
+    from ....Classes_new.mesh.mesh_vtk import MeshVTK
 
     elements_ = []
     element_types = []

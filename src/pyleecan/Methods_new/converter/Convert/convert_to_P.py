@@ -1,4 +1,4 @@
-from ....Functions.Converter.Utils.ConvertionError import ConvertionError
+from pyleecan.classes_common.errors import ConvertionError
 from .... import __version__
 from os import path
 

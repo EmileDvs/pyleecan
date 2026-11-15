@@ -3,8 +3,8 @@ import numpy as np
 from numpy import cos, pi, sin
 from pylab import False_
 
-from ....Classes.DataLinspace import DataLinspace
-from ....Classes.DataTime import DataTime
+from ....Classes_new.scidatatool.data_linspace import DataLinspace
+from ....Classes_new.scidatatool.data_time import DataTime
 
 
 def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time, is_test=False_):

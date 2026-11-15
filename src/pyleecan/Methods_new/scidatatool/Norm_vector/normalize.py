@@ -1,4 +1,4 @@
-from ....Functions.SciDataTool import NormError
+from pyleecan.classes_common.errors import NormError
 
 
 def normalize(

@@ -2,9 +2,9 @@
 
 from numpy import exp, pi
 
-from ....Classes.Trapeze import Trapeze
+from ....Classes_new.geometry.trapeze import Trapeze
 from . import *
-from ....Functions.labels import VENT_LAB
+from ....Functions_new.labels import VENT_LAB
 
 
 def build_geometry(self, alpha=0, delta=0):

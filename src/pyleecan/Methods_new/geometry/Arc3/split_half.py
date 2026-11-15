@@ -1,6 +1,6 @@
 from numpy import pi
 
-from ....Classes.Arc2 import Arc2
+from ....Classes_new.geometry.arc_2 import Arc2
 
 
 def split_half(self, is_begin=True):

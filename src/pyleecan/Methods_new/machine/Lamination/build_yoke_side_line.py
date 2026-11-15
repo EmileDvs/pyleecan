@@ -1,13 +1,8 @@
-from ....Functions.labels import (
-    BOUNDARY_PROP_LAB,
-    YS_LAB,
-    YSR_LAB,
-    YSL_LAB,
-)
+from ....Functions_new.labels import BOUNDARY_PROP_LAB, YS_LAB, YSR_LAB, YSL_LAB
 from numpy import exp, pi, angle as np_angle
 
 DELTA = 1e-6
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 
 
 def build_yoke_side_line(

@@ -1,13 +1,9 @@
 from numpy import array, array2string, column_stack, exp, real, squeeze
 
-from ....Functions.Load.import_class import import_class
-from ....Functions.SciDataTool.conversions import (
-    rphiz_to_xyz,
-    rphiz_to_xyz_field,
-    xyz_to_rphiz,
-)
-from ....Functions.SciDataTool.Plot import REV_COMP_DICT
-from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ....Functions_new.Load.import_class import import_class
+from ....Functions_new.SciDataTool.conversions import rphiz_to_xyz, rphiz_to_xyz_field, xyz_to_rphiz
+from ....Functions_new.SciDataTool.Plot import REV_COMP_DICT
+from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 
 
 def plot_2D_Data(

@@ -1,9 +1,9 @@
 from matplotlib.patches import Patch
 from numpy import exp
 
-from ....Functions.init_fig import init_fig
-from ....Functions.labels import HOLEM_LAB, decode_label
-from ....Functions.Geometry.transform_hole_surf import transform_hole_surf
+from ....Functions_new.init_fig import init_fig
+from ....Functions_new.labels import HOLEM_LAB, decode_label
+from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ....definitions import config_dict
 from ....Methods import ParentMissingError
 

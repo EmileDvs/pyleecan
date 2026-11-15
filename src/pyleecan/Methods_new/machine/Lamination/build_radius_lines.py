@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from numpy import pi, exp
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Arc3 import Arc3
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_3 import Arc3
 
 
 def build_radius_lines(self, is_bore, sym=1, is_reversed=False, prop_dict=None):

@@ -1,6 +1,6 @@
 from numpy import array
-from ....Functions.init_fig import init_fig
-from ....Functions.Plot import TEXT_BOX
+from ....Functions_new.init_fig import init_fig
+from ....Functions_new.Plot import TEXT_BOX
 
 
 def plot(

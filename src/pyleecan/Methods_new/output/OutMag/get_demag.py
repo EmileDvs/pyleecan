@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from ....Functions.MeshSolution.get_area import get_area
-from ....Functions.MeshSolution.get_indices_limited import get_indices_limited
+from ....Functions_new.MeshSolution.get_area import get_area
+from ....Functions_new.MeshSolution.get_indices_limited import get_indices_limited
 
 
 def get_demag(self, Hmax, group_name=None):

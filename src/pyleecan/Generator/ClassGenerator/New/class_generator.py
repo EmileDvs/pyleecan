@@ -229,6 +229,26 @@ def _methods_location(path_to_gen, legacy_path):
     return join(root, *new_parts), new_parts
 
 
+def _read_method_source(path):
+    """Read a method module (or method package __init__).
+
+    The modules of Methods_new import the classes and the functions with
+    their new names; the passes of this generator still use the legacy names,
+    so they are translated back (source_names.to_legacy_names). This shim is
+    removed when the passes are moved to the method generator (PLAN.md Step 5).
+    """
+    with open(path, encoding="utf-8") as source_file:
+        source = source_file.read()
+    parts = path.replace("\\", "/").split("/")
+    if METHODS_NEW_PACKAGE in parts:
+        from .source_names import to_legacy_names
+
+        index = len(parts) - 1 - parts[::-1].index(METHODS_NEW_PACKAGE)
+        package_parts = parts[index:-1]  # The package of an __init__ is its folder
+        source = to_legacy_names(source, ".".join(["pyleecan", *package_parts]))
+    return source
+
+
 def _is_methods_module(module_name, soft_name):
     """True for a method module, legacy (Methods) or hand-written (Methods_new)."""
     return module_name.startswith(
@@ -620,8 +640,10 @@ def _load_method_error_module(path_to_gen, module_name):
         module_path = join(methods_path, "__init__.py")
         package_parts = module_parts
     try:
-        with open(module_path, encoding="utf-8") as source_file:
-            return ast.parse(source_file.read(), filename=module_path), package_parts
+        return (
+            ast.parse(_read_method_source(module_path), filename=module_path),
+            package_parts,
+        )
     except FileNotFoundError:
         return None, None
 
@@ -659,8 +681,7 @@ def _get_exception_classes(module):
 def _section_module_classes(path_to_gen):
     """Read Section's non-exception helper classes from its method package."""
     path = join(_methods_location(path_to_gen, "Elmer.Section")[0], "__init__.py")
-    with open(path, encoding="utf-8") as source_file:
-        module = ast.parse(source_file.read(), filename=path)
+    module = ast.parse(_read_method_source(path), filename=path)
     exceptions = _get_exception_classes(module)
     return [
         node for node in module.body
@@ -1583,8 +1604,7 @@ def _expand_error_wildcard_imports(
             )
         init_path = join(dirname(path_to_gen), *module_parts[1:], "__init__.py")
         try:
-            with open(init_path, encoding="utf-8") as init_file:
-                package_module = ast.parse(init_file.read(), filename=init_path)
+            package_module = ast.parse(_read_method_source(init_path), filename=init_path)
         except FileNotFoundError:
             return None, "wildcard import package initializer is missing"
 
@@ -1685,8 +1705,7 @@ def _get_method_source(
     method_path = join(method_dir, *meth.split(".")) + ".py"
 
     try:
-        with open(method_path, encoding="utf-8") as method_file:
-            source = method_file.read()
+        source = _read_method_source(method_path)
     except FileNotFoundError:
         return None, [], [], [], "method source file is missing"
 
@@ -2357,8 +2376,7 @@ def _find_repeated_method_assignments(path_to_gen, class_pack, class_name, metho
     for meth in methods:
         method_path = join(method_dir, *meth.split(".")) + ".py"
         try:
-            with open(method_path, encoding="utf-8") as method_file:
-                module = ast.parse(method_file.read(), filename=method_path)
+            module = ast.parse(_read_method_source(method_path), filename=method_path)
         except FileNotFoundError:
             continue
 
@@ -2567,8 +2585,9 @@ def _prepare_class_methods(
                     _methods_location(path_to_gen, configured_helper[0])[0],
                     "__init__.py",
                 )
-                with open(helper_path, encoding="utf-8") as helper_file:
-                    helper_module = ast.parse(helper_file.read(), filename=helper_path)
+                helper_module = ast.parse(
+                    _read_method_source(helper_path), filename=helper_path
+                )
                 helper_node = next(
                     (
                         node

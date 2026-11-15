@@ -6,8 +6,8 @@ from numpy import max as np_max
 from numpy import pi
 
 from ....definitions import config_dict
-from ....Functions.Plot.Pyvista.configure_plot import configure_plot
-from ....Functions.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
+from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
+from ....Functions_new.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
 
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 

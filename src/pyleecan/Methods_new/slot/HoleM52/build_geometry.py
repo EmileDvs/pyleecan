@@ -2,9 +2,9 @@
 
 from numpy import exp
 
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import HOLEV_LAB, HOLEM_LAB
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
 
 
 def build_geometry(self, alpha=0, delta=0, is_simplified=False):

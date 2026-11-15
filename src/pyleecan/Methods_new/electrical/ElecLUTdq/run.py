@@ -1,7 +1,7 @@
 import numpy as np
 
-from ....Classes.EEC_PMSM import EEC_PMSM
-from ....Classes.OutLoss import OutLoss
+from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
+from ....Classes_new.output.out_loss import OutLoss
 
 from ...simulation.Input import InputError
 

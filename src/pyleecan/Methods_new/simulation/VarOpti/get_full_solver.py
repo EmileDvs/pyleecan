@@ -1,4 +1,4 @@
-from ....Classes.OptiProblem import OptiProblem
+from ....Classes_new.optimization.opti_problem import OptiProblem
 
 
 def get_full_solver(self):

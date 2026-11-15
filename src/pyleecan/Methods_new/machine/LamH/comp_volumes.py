@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from numpy import pi
-from ....Classes.Lamination import Lamination
+from ....Classes_new.machine.lamination import Lamination
 
 
 def comp_volumes(self):

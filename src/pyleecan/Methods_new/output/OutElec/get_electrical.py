@@ -1,14 +1,11 @@
 from numpy import abs as np_abs
 from numpy import argmin, array, zeros
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataFreq import DataFreq
-from ....Classes.DataTime import DataTime
-from ....Functions.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
-from ....Functions.Electrical.dqh_transformation_freq import (
-    dqh2n_DataFreq,
-    n2dqh_DataFreq,
-)
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_freq import DataFreq
+from ....Classes_new.scidatatool.data_time import DataTime
+from ....Functions_new.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
+from ....Functions_new.Electrical.dqh_transformation_freq import dqh2n_DataFreq, n2dqh_DataFreq
 
 
 def get_electrical(

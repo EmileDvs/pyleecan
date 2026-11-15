@@ -3,16 +3,16 @@ from typing import Literal
 
 from numpy import arange, array
 
-from ....Classes.ElementMat import ElementMat
-from ....Classes.FPGNSeg import FPGNSeg
-from ....Classes.FPGNTri import FPGNTri
-from ....Classes.Mesh import Mesh
-from ....Classes.NodeMat import NodeMat
-from ....Classes.RefLine3 import RefLine3
-from ....Classes.RefQuad9 import RefQuad9
-from ....Classes.RefSegmentP1 import RefSegmentP1
-from ....Classes.RefTriangle3 import RefTriangle3
-from ....Classes.ScalarProductL2 import ScalarProductL2
+from ....Classes_new.mesh.element_mat import ElementMat
+from ....Classes_new.mesh.fpgn_seg import FPGNSeg
+from ....Classes_new.mesh.fpgn_tri import FPGNTri
+from ....Classes_new.mesh.mesh import Mesh
+from ....Classes_new.mesh.node_mat import NodeMat
+from ....Classes_new.mesh.ref_line_3 import RefLine3
+from ....Classes_new.mesh.ref_quad_9 import RefQuad9
+from ....Classes_new.mesh.ref_segment_p_1 import RefSegmentP1
+from ....Classes_new.mesh.ref_triangle_3 import RefTriangle3
+from ....Classes_new.mesh.scalar_product_l2 import ScalarProductL2
 
 
 def convert(
@@ -42,7 +42,7 @@ def convert(
         new_mesh.node.coordinate *= scale
     elif meshtype == "MeshMat":
         # Avoid circular import
-        from ....Classes.MeshMat import MeshMat
+        from ....Classes_new.mesh.mesh_mat import MeshMat
 
         new_mesh = MeshMat(dimension=self.dimension)
 

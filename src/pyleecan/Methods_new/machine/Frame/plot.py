@@ -1,6 +1,6 @@
 from matplotlib.patches import Patch
 
-from ....Functions.init_fig import init_fig
+from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
 
 FRAME_COLOR = config_dict["PLOT"]["COLOR_DICT"]["FRAME_COLOR"]

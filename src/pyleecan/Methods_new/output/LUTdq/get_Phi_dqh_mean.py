@@ -1,8 +1,8 @@
 from numpy import zeros, array
 
-from ....Classes.EEC_PMSM import EEC_PMSM
+from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
 
-from ....Functions.Electrical.dqh_transformation import n2dqh_DataTime
+from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 
 
 def get_Phi_dqh_mean(self):

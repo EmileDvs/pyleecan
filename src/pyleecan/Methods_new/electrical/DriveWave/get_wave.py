@@ -1,10 +1,10 @@
 from numpy import array
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataLinspace import DataLinspace
-from ....Classes.DataTime import DataTime
-from ....Functions.check_parent import check_parent
-from ....Functions.Winding.gen_phase_list import gen_name
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_linspace import DataLinspace
+from ....Classes_new.scidatatool.data_time import DataTime
+from ....Functions_new.check_parent import check_parent
+from ....Functions_new.Winding.gen_phase_list import gen_name
 
 
 def get_wave(self):

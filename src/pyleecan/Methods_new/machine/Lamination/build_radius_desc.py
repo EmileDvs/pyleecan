@@ -1,8 +1,8 @@
 from numpy import exp, pi, angle
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Arc3 import Arc3
-from ....Functions.Geometry.merge_notch_list import merge_notch_list
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_3 import Arc3
+from ....Functions_new.Geometry.merge_notch_list import merge_notch_list
 
 
 def build_radius_desc(self, is_bore, sym=1):

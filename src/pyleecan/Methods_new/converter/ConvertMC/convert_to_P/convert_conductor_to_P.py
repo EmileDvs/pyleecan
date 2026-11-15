@@ -1,5 +1,5 @@
-from .....Classes.CondType12 import CondType12
-from .....Classes.CondType11 import CondType11
+from .....Classes_new.machine.cond_type_12 import CondType12
+from .....Classes_new.machine.cond_type_11 import CondType11
 
 
 def convert_conductor_to_P(self, is_stator):

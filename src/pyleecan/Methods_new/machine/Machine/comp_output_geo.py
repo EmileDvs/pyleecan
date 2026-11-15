@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.OutGeo import OutGeo
+from ....Classes_new.output.out_geo import OutGeo
 
 
 def comp_output_geo(self):

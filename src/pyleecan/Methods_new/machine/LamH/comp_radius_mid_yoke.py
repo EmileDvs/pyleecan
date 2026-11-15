@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....Classes.Hole import Hole
+from ....Classes_new.slot.hole import Hole
 
 
 def comp_radius_mid_yoke(self):

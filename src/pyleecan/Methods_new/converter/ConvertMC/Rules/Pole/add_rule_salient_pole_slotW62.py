@@ -1,6 +1,6 @@
-from ......Classes.RuleSimple import RuleSimple
-from ......Classes.RuleEquation import RuleEquation
-from ......Classes.RuleComplex import RuleComplex
+from ......Classes_new.converter.rule_simple import RuleSimple
+from ......Classes_new.converter.rule_equation import RuleEquation
+from ......Classes_new.converter.rule_complex import RuleComplex
 
 
 def add_rule_salient_pole_slotW62(self):

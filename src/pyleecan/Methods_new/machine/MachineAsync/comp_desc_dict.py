@@ -1,4 +1,4 @@
-from ....Classes.Machine import Machine
+from ....Classes_new.machine.machine import Machine
 
 
 def comp_desc_dict(self):

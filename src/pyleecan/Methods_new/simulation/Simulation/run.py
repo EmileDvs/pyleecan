@@ -7,8 +7,8 @@ def run(self):
         Contains simulation results
     """
     # In-function import to avoid ImportError
-    from ....Classes.XOutput import XOutput
-    from ....Classes.Output import Output
+    from ....Classes_new.output.xoutput import XOutput
+    from ....Classes_new.output.output import Output
 
     if self.layer is None:
         self.layer = 0  # Top simulation

@@ -1,8 +1,6 @@
 from numpy import isnan
-from ....Classes.Simulation import Simulation
-from ....Functions.Simulation.VarSimu.get_elec_datakeeper_dict import (
-    get_elec_datakeeper_dict,
-)
+from ....Classes_new.simulation.simulation import Simulation
+from ....Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import get_elec_datakeeper_dict
 
 
 def get_elec_datakeeper(self, symbol_list, is_multi=False):

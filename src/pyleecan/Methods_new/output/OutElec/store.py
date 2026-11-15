@@ -1,7 +1,7 @@
 import numpy as np
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataFreq import DataFreq
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_freq import DataFreq
 
 
 def store(self, out_dict):

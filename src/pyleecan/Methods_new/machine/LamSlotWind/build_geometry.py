@@ -1,15 +1,8 @@
 from numpy import pi
 
-from ....Classes.LamSlot import LamSlot
-from ....Functions.labels import update_RTS_index
-from ....Functions.labels import (
-    BOUNDARY_PROP_LAB,
-    COND_BOUNDARY_PROP_LAB,
-    WIND_LAB,
-    YSMR_LAB,
-    YSML_LAB,
-    decode_label,
-)
+from ....Classes_new.machine.lam_slot import LamSlot
+from ....Functions_new.labels import update_RTS_index
+from ....Functions_new.labels import BOUNDARY_PROP_LAB, COND_BOUNDARY_PROP_LAB, WIND_LAB, YSMR_LAB, YSML_LAB, decode_label
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

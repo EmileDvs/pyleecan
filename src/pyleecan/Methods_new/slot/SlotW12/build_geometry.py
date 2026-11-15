@@ -2,8 +2,8 @@
 
 from numpy import arcsin, exp
 
-from ....Classes.Arc3 import Arc3
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.arc_3 import Arc3
+from ....Classes_new.geometry.segment import Segment
 
 
 def build_geometry(self):

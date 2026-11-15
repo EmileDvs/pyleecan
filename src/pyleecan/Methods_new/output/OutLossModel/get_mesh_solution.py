@@ -1,6 +1,6 @@
-from ....Classes.DataFreq import DataFreq
-from ....Classes.MeshSolution import MeshSolution
-from ....Classes.SolutionData import SolutionData
+from ....Classes_new.scidatatool.data_freq import DataFreq
+from ....Classes_new.mesh.mesh_solution import MeshSolution
+from ....Classes_new.mesh.solution_data import SolutionData
 
 
 def get_mesh_solution(self):

@@ -1,4 +1,4 @@
-from .....Classes.RuleComplex import RuleComplex
+from .....Classes_new.converter.rule_complex import RuleComplex
 
 
 def add_rule_skew(self):

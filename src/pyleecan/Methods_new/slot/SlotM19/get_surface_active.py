@@ -4,9 +4,9 @@ from numpy import linspace, zeros
 from numpy import abs as np_abs
 from numpy import sqrt
 
-from ....Classes.Segment import Segment
-from ....Classes.Arc1 import Arc1
-from ....Classes.SurfLine import SurfLine
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.surf_line import SurfLine
 
 
 def get_surface_active(self, alpha=0, delta=0):

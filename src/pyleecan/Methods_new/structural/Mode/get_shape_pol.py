@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ....Functions.Structural.conversions import cart2pol
+from ....Functions_new.Structural.conversions import cart2pol
 
 
 def get_shape_pol(self):

@@ -1,5 +1,5 @@
-from ....Classes.OutForce import OutForce
-from ....Classes.InputCurrent import InputCurrent
+from ....Classes_new.output.out_force import OutForce
+from ....Classes_new.simulation.input_current import InputCurrent
 from ..Input import InputError
 
 

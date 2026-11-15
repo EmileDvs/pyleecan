@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
-from ....Functions.init_fig import init_fig
-from ....Functions.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
+from ....Functions_new.init_fig import init_fig
+from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 
 
 def plot(

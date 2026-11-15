@@ -3,14 +3,14 @@ from os.path import join
 
 import numpy as np
 
-from ....Classes.ElementMat import ElementMat
-from ....Classes.FPGNTri import FPGNTri
-from ....Classes.MeshMat import MeshMat
-from ....Classes.NodeMat import NodeMat
-from ....Classes.RefTriangle3 import RefTriangle3
-from ....Classes.ScalarProductL2 import ScalarProductL2
+from ....Classes_new.mesh.element_mat import ElementMat
+from ....Classes_new.mesh.fpgn_tri import FPGNTri
+from ....Classes_new.mesh.mesh_mat import MeshMat
+from ....Classes_new.mesh.node_mat import NodeMat
+from ....Classes_new.mesh.ref_triangle_3 import RefTriangle3
+from ....Classes_new.mesh.scalar_product_l2 import ScalarProductL2
 from ....definitions import MAIN_DIR
-from ....Functions.FEMM import FEMM_GROUPS
+from ....Functions_new.FEMM import FEMM_GROUPS
 
 
 def get_meshsolution(

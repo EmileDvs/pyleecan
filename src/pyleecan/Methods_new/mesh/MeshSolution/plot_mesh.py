@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.MeshMat import MeshMat
-from ....Functions.Plot.Pyvista.configure_plot import configure_plot
+from ....Classes_new.mesh.mesh_mat import MeshMat
+from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
 
 
 def plot_mesh(

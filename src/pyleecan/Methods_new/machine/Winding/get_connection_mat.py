@@ -1,10 +1,5 @@
-from ....Functions.Winding.reverse_wind_mat import (
-    reverse_wind_mat,
-    reverse_layer,
-    change_layer,
-    permute_B_C,
-)
-from ....Functions.Winding.shift_wind_mat import shift_wind_mat
+from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat, reverse_layer, change_layer, permute_B_C
+from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
 
 
 def get_connection_mat(self, Zs=None, p=None):

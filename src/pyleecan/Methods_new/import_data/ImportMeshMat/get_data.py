@@ -4,12 +4,12 @@ from os.path import splitext
 
 import numpy as np
 
-from ....Classes.ElementMat import ElementMat
-from ....Classes.ImportMeshUnv import ImportMeshUnv
-from ....Classes.MeshMat import MeshMat
-from ....Classes.NodeMat import NodeMat
-from ....Classes.RefQuad4 import RefQuad4
-from ....Classes.RefTriangle3 import RefTriangle3
+from ....Classes_new.mesh.element_mat import ElementMat
+from ....Classes_new.import_data.import_mesh_unv import ImportMeshUnv
+from ....Classes_new.mesh.mesh_mat import MeshMat
+from ....Classes_new.mesh.node_mat import NodeMat
+from ....Classes_new.mesh.ref_quad_4 import RefQuad4
+from ....Classes_new.mesh.ref_triangle_3 import RefTriangle3
 
 
 def get_data(self):

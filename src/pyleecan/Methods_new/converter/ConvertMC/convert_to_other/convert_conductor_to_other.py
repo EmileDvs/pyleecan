@@ -1,5 +1,5 @@
-from .....Classes.CondType12 import CondType12
-from .....Classes.CondType13 import CondType13
+from .....Classes_new.machine.cond_type_12 import CondType12
+from .....Classes_new.machine.cond_type_13 import CondType13
 
 
 def convert_conductor_to_other(self, is_stator):

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from ....Functions.init_fig import init_fig
+from ....Functions_new.init_fig import init_fig
 from matplotlib.patches import Patch
 from ....definitions import config_dict
 

@@ -1,19 +1,8 @@
 from numpy import abs as np_abs
 from numpy import nanmax, nanmin
 
-from ....Functions.SciDataTool.derivation_integration import (
-    antiderivate,
-    derivate,
-    integrate,
-    integrate_local,
-    integrate_local_pattern,
-)
-from ....Functions.SciDataTool.sum_mean import (
-    my_mean,
-    my_sum,
-    root_mean_square,
-    root_sum_square,
-)
+from ....Functions_new.SciDataTool.derivation_integration import antiderivate, derivate, integrate, integrate_local, integrate_local_pattern
+from ....Functions_new.SciDataTool.sum_mean import my_mean, my_sum, root_mean_square, root_sum_square
 
 
 def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):

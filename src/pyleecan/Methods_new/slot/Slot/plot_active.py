@@ -1,11 +1,11 @@
 from matplotlib.patches import Patch, Polygon
 from numpy import array, exp, pi
 
-from ....Classes.Material import Material
+from ....Classes_new.material.material import Material
 from ....definitions import config_dict
-from ....Functions.init_fig import init_fig
-from ....Functions.Plot import dict_2D
-from ....Functions.Winding.gen_phase_list import gen_name
+from ....Functions_new.init_fig import init_fig
+from ....Functions_new.Plot import dict_2D
+from ....Functions_new.Winding.gen_phase_list import gen_name
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]

@@ -1,5 +1,5 @@
-from ......Classes.RuleSimple import RuleSimple
-from ......Classes.RuleEquation import RuleEquation
+from ......Classes_new.converter.rule_simple import RuleSimple
+from ......Classes_new.converter.rule_equation import RuleEquation
 
 
 def add_rule_holeM60(self, hole_id):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....Classes.Arc3 import Arc3
+from ....Classes_new.geometry.arc_3 import Arc3
 
 
 def get_lines(self):

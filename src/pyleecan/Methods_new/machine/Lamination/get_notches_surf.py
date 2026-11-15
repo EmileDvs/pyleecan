@@ -1,10 +1,10 @@
-from ....Functions.Geometry.transform_hole_surf import transform_hole_surf
-from ....Functions.labels import NOTCH_LAB, YSNR_LAB, YSNL_LAB
-from ....Classes.NotchEvenDist import NotchEvenDist
-from ....Functions.Geometry.merge_notch_list import merge_notch_list
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
+from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
+from ....Functions_new.labels import NOTCH_LAB, YSNR_LAB, YSNL_LAB
+from ....Classes_new.machine.notch_even_dist import NotchEvenDist
+from ....Functions_new.Geometry.merge_notch_list import merge_notch_list
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
 
 from numpy import pi, exp
 

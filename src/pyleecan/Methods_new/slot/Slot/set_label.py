@@ -1,4 +1,4 @@
-from ....Functions.labels import WIND_LAB
+from ....Functions_new.labels import WIND_LAB
 
 
 def set_label(self, surf_list, Nrad, Ntan, lam_label):

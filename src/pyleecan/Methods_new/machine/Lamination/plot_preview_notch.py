@@ -1,4 +1,4 @@
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Load.import_class import import_class
 from numpy import pi
 from ....definitions import config_dict
 from matplotlib.patches import Patch

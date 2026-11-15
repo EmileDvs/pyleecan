@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.interpolate as scp_int
 
-from ....Functions.Electrical.comp_loss_joule import comp_loss_joule
+from ....Functions_new.Electrical.comp_loss_joule import comp_loss_joule
 
 
 def interp_Ploss_dqh(self, Id, Iq, N0, exclude_models=[]):

@@ -1,9 +1,6 @@
 from numpy import any as np_any
 
-from ....Functions.SciDataTool.sum_convolution import (
-    get_sum_amplitudes,
-    get_sum_indices,
-)
+from ....Functions_new.SciDataTool.sum_convolution import get_sum_amplitudes, get_sum_indices
 
 
 def sum(

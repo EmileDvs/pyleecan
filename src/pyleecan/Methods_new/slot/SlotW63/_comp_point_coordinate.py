@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import pi, exp, arcsin, sin
-from ....Functions.Geometry.inter_line_line import inter_line_line
+from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
 def _comp_point_coordinate(self):

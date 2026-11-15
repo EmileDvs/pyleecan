@@ -8,8 +8,8 @@ from numpy import pi, real
 from numpy.linalg import norm
 
 from pyleecan.definitions import config_dict
-from pyleecan.Functions.Plot.Pyvista.configure_plot import configure_plot
-from pyleecan.Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from pyleecan.Functions_new.Plot.Pyvista.configure_plot import configure_plot
+from pyleecan.Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 
 COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]

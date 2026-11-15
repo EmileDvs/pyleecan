@@ -1,7 +1,7 @@
 from numpy import meshgrid, linspace, zeros, array
 
-from ....Classes.LUTdq import LUTdq
-from ....Classes.OPMatrix import OPMatrix
+from ....Classes_new.output.lut_dq import LUTdq
+from ....Classes_new.simulation.op_matrix import OPMatrix
 
 
 def comp_LUTdq(self):

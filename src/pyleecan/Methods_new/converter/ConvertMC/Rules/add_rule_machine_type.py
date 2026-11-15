@@ -1,4 +1,4 @@
-from pyleecan.Classes.RuleComplex import RuleComplex
+from pyleecan.Classes_new.converter.rule_complex import RuleComplex
 
 
 def add_rule_machine_type(self):

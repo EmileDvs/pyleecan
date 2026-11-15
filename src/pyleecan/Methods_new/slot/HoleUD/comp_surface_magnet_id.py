@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....Functions.labels import HOLEM_LAB
+from ....Functions_new.labels import HOLEM_LAB
 
 
 def comp_surface_magnet_id(self, index):

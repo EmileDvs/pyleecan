@@ -1,8 +1,6 @@
 import numpy as np
 
-from ....Functions.SciDataTool.filter_spectral_leakage import (
-    filter_spectral_leakage as filter_spectral_leakage_fct,
-)
+from ....Functions_new.SciDataTool.filter_spectral_leakage import filter_spectral_leakage as filter_spectral_leakage_fct
 
 
 def filter_spectral_leakage(

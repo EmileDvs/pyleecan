@@ -1,8 +1,6 @@
 from numpy import take
 
-from ....Functions.SciDataTool.symmetries import (
-    rebuild_symmetries as rebuild_symmetries_fct,
-)
+from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries as rebuild_symmetries_fct
 
 
 def _rebuild_symmetries(

@@ -1,6 +1,6 @@
-from ....Classes.InputVoltage import InputVoltage
-from ....Classes.Simulation import Simulation
-from ....Classes.OPdq import OPdq
+from ....Classes_new.simulation.input_voltage import InputVoltage
+from ....Classes_new.simulation.simulation import Simulation
+from ....Classes_new.simulation.op_dq import OPdq
 
 
 def get_input_list(self):

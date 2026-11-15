@@ -1,7 +1,7 @@
-from ....Classes.MachineIPMSM import MachineIPMSM
-from ....Classes.MachineSIPMSM import MachineSIPMSM
-from ....Classes.MachineSCIM import MachineSCIM
-from ....Classes.MachineWRSM import MachineWRSM
+from ....Classes_new.machine.machine_ipmsm import MachineIPMSM
+from ....Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from ....Classes_new.machine.machine_scim import MachineSCIM
+from ....Classes_new.machine.machine_wrsm import MachineWRSM
 
 
 def select_machine_rules(self):

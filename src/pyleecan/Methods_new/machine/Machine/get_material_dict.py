@@ -1,4 +1,4 @@
-from ....Classes.Material import Material
+from ....Classes_new.material.material import Material
 
 
 def get_material_dict(self, path="self", is_unique=False):

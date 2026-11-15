@@ -1,5 +1,5 @@
-from ....Functions.load import load_init_dict
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.load import load_init_dict
+from ....Functions_new.Load.import_class import import_class
 from ....Classes._check import check_var
 from numpy import ndarray, array
 

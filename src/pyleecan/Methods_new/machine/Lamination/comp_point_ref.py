@@ -1,5 +1,5 @@
 from numpy import exp, pi
-from ....Classes.Arc import Arc
+from ....Classes_new.geometry.arc import Arc
 
 
 def comp_point_ref(self, sym=1):

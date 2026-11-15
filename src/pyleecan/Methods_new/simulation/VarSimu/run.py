@@ -1,10 +1,8 @@
 import numpy as np
 import itertools
-from ....Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step
-from ....Functions.Simulation.VarSimu.log_datakeeper_step_result import (
-    log_datakeeper_step_result,
-)
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Simulation.VarSimu.run_multisim_step import run_multisim_step
+from ....Functions_new.Simulation.VarSimu.log_datakeeper_step_result import log_datakeeper_step_result
+from ....Functions_new.Load.import_class import import_class
 
 
 def run(self):

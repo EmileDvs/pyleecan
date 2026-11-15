@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Input import InputError
-from ....Classes.PostFunction import PostFunction
-from ....Classes.PostMethod import PostMethod
+from ....Classes_new.post.post_function import PostFunction
+from ....Classes_new.post.post_method import PostMethod
 
 
 def run_single(self):

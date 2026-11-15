@@ -1,7 +1,7 @@
 from numpy import float32, float64, int32, int64, ndarray
 
 from ....Classes._check import check_var
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Load.import_class import import_class
 
 
 def _set_normalizations(self, value):

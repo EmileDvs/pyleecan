@@ -1,8 +1,8 @@
 from numpy import add, apply_along_axis, take
 
-from ....Functions.SciDataTool import AxisError, NormError, UnitError
-from ....Functions.SciDataTool.conversions import convert, to_dB, to_dBA, to_noct
-from ....Functions.SciDataTool.fix_axes_order import fix_axes_order
+from pyleecan.classes_common.errors import AxisError, NormError, UnitError
+from ....Functions_new.SciDataTool.conversions import convert, to_dB, to_dBA, to_noct
+from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
 
 
 def get_magnitude_along(

@@ -1,6 +1,6 @@
 from numpy import pi
 
-from ....Functions.SciDataTool.derivation_integration import integrate
+from ....Functions_new.SciDataTool.derivation_integration import integrate
 
 
 def comp_torque_MT(self):

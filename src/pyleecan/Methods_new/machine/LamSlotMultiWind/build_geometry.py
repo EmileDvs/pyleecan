@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from numpy import pi
 
-from ....Classes.Winding import Winding
+from ....Classes_new.machine.winding import Winding
 from ....Methods import NotImplementedYetError
-from ....Classes.LamSlot import LamSlot
+from ....Classes_new.machine.lam_slot import LamSlot
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

@@ -3,8 +3,8 @@
 from numpy import array, power, zeros
 
 from ..Winding import WindingError
-from ....Functions.Winding.reverse_wind_mat import reverse_wind_mat
-from ....Functions.Winding.shift_wind_mat import shift_wind_mat
+from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
+from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
 
 
 def init_as_CW1L(self, Zs=None):

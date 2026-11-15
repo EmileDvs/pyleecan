@@ -3,7 +3,7 @@ import copy
 
 import numpy as np
 
-from ....Classes.ElementMat import ElementMat
+from ....Classes_new.mesh.element_mat import ElementMat
 
 
 def renum(self):

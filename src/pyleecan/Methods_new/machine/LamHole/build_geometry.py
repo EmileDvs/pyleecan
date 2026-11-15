@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from numpy import pi, exp
 
-from ....Classes.Lamination import Lamination
-from ....Classes.Circle import Circle
-from ....Classes.SurfLine import SurfLine
-from ....Classes.SurfRing import SurfRing
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
-from ....Functions.labels import update_RTS_index
-from ....Functions.Geometry.transform_hole_surf import transform_hole_surf
+from ....Classes_new.machine.lamination import Lamination
+from ....Classes_new.geometry.circle import Circle
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Classes_new.geometry.surf_ring import SurfRing
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Functions_new.labels import update_RTS_index
+from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):

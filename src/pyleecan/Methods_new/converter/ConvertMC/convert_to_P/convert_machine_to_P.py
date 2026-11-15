@@ -1,7 +1,7 @@
-from .....Classes.MachineSIPMSM import MachineSIPMSM
-from .....Classes.MachineIPMSM import MachineIPMSM
-from .....Classes.MachineSCIM import MachineSCIM
-from .....Classes.MachineWRSM import MachineWRSM
+from .....Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from .....Classes_new.machine.machine_ipmsm import MachineIPMSM
+from .....Classes_new.machine.machine_scim import MachineSCIM
+from .....Classes_new.machine.machine_wrsm import MachineWRSM
 
 
 def convert_machine_to_P(self):

@@ -1,10 +1,10 @@
 from numpy import angle
 
-from ....Classes.EEC_SCIM import EEC_SCIM
-from ....Classes.EEC_PMSM import EEC_PMSM
-from ....Classes.MachineSCIM import MachineSCIM
-from ....Classes.MachineSIPMSM import MachineSIPMSM
-from ....Classes.MachineIPMSM import MachineIPMSM
+from ....Classes_new.electrical.eec_scim import EEC_SCIM
+from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
+from ....Classes_new.machine.machine_scim import MachineSCIM
+from ....Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from ....Classes_new.machine.machine_ipmsm import MachineIPMSM
 
 from ...simulation.Input import InputError
 

@@ -1,7 +1,7 @@
 from inspect import signature
 from os.path import join
 
-from ....Functions.Plot import dict_2D, dict_3D
+from ....Functions_new.Plot import dict_2D, dict_3D
 
 
 def run(self, output):

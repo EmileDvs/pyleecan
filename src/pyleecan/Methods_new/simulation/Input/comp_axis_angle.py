@@ -1,8 +1,8 @@
 from numpy import pi
 
-from ....Classes.Data1D import Data1D
-from ....Classes.DataLinspace import DataLinspace
-from ....Classes.Norm_ref import Norm_ref
+from ....Classes_new.scidatatool.data_1d import Data1D
+from ....Classes_new.scidatatool.data_linspace import DataLinspace
+from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 
 
 def comp_axis_angle(self, p, Rag, per_a=None, is_antiper_a=None, Angle_in=None):

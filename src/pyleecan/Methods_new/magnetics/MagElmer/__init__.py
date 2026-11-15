@@ -1,25 +1,4 @@
-from ....Functions.labels import (
-    AIRBOX_R_LAB,
-    AIRBOX_SR_LAB,
-    SHAFTSR_LAB,
-    SHAFTSL_LAB,
-    YSR_LAB,
-    YSL_LAB,
-    ROTOR_LAB,
-    STATOR_LAB,
-    SBS_TR_LAB,
-    SBS_TL_LAB,
-    SBS_BR_LAB,
-    SBS_BL_LAB,
-    SBR_B_LAB,
-    SBR_T_LAB,
-    AS_TR_LAB,
-    AS_TL_LAB,
-    AS_BR_LAB,
-    AS_BL_LAB,
-    AR_T_LAB,
-    AIRBOX_SL_LAB,
-)
+from ....Functions_new.labels import AIRBOX_R_LAB, AIRBOX_SR_LAB, SHAFTSR_LAB, SHAFTSL_LAB, YSR_LAB, YSL_LAB, ROTOR_LAB, STATOR_LAB, SBS_TR_LAB, SBS_TL_LAB, SBS_BR_LAB, SBS_BL_LAB, SBR_B_LAB, SBR_T_LAB, AS_TR_LAB, AS_TL_LAB, AS_BR_LAB, AS_BL_LAB, AR_T_LAB, AIRBOX_SL_LAB
 
 
 def _get_BP_dict():

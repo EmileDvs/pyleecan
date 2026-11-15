@@ -1,4 +1,4 @@
-from ....Functions.Geometry.inter_circle_circle import inter_circle_circle
+from ....Functions_new.Geometry.inter_circle_circle import inter_circle_circle
 
 # import matplotlib.pyplot as plt
 

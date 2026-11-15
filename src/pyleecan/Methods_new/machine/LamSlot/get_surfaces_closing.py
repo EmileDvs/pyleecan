@@ -1,6 +1,6 @@
 from numpy import pi
-from ....Functions.labels import update_RTS_index
-from ....Classes.Lamination import Lamination
+from ....Functions_new.labels import update_RTS_index
+from ....Classes_new.machine.lamination import Lamination
 
 
 def get_surfaces_closing(self, sym=1):

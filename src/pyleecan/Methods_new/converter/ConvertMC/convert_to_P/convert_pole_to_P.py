@@ -1,7 +1,7 @@
-from .....Classes.LamSlotWind import LamSlotWind
-from .....Classes.SlotW63 import SlotW63
-from .....Classes.SlotW62 import SlotW62
-from .....Classes.SlotW29 import SlotW29
+from .....Classes_new.machine.lam_slot_wind import LamSlotWind
+from .....Classes_new.slot.slot_w_63 import SlotW63
+from .....Classes_new.slot.slot_w_62 import SlotW62
+from .....Classes_new.slot.slot_w_29 import SlotW29
 
 
 def convert_pole_to_P(self):

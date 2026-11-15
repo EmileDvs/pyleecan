@@ -1,5 +1,5 @@
-from pyleecan.Classes.RuleSimple import RuleSimple
-from pyleecan.Classes.RuleEquation import RuleEquation
+from pyleecan.Classes_new.converter.rule_simple import RuleSimple
+from pyleecan.Classes_new.converter.rule_equation import RuleEquation
 
 
 def add_rule_machine_dimension(self):

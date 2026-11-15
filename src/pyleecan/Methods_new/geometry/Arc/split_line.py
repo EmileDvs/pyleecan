@@ -1,6 +1,6 @@
 from numpy import exp, angle, abs as np_abs
 
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 from ....definitions import PACKAGE_NAME
 
 DELTA = 1e-7  # To remove computing/DXF noise

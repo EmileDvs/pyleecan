@@ -1,10 +1,10 @@
-from .....Classes.LamHole import LamHole
-from .....Classes.HoleM52 import HoleM52
-from .....Classes.HoleM57 import HoleM57
-from .....Classes.HoleM60 import HoleM60
-from .....Classes.HoleM61 import HoleM61
-from .....Classes.HoleM62 import HoleM62
-from .....Classes.HoleM63 import HoleM63
+from .....Classes_new.machine.lam_hole import LamHole
+from .....Classes_new.slot.hole_m_52 import HoleM52
+from .....Classes_new.slot.hole_m_57 import HoleM57
+from .....Classes_new.slot.hole_m_60 import HoleM60
+from .....Classes_new.slot.hole_m_61 import HoleM61
+from .....Classes_new.slot.hole_m_62 import HoleM62
+from .....Classes_new.slot.hole_m_63 import HoleM63
 
 
 def convert_hole_to_P(self):

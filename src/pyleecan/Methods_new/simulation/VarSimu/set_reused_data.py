@@ -1,5 +1,5 @@
-from ....Classes.MagFEMM import MagFEMM
-from ....Classes.ElecLUTdq import ElecLUTdq
+from ....Classes_new.magnetics.mag_femm import MagFEMM
+from ....Classes_new.electrical.elec_lut_dq import ElecLUTdq
 
 
 def set_reused_data(self, simu, output, is_log=True, simu_type="VarSimu"):

@@ -1,4 +1,4 @@
-from ....Functions.labels import STATOR_LAB, ROTOR_LAB
+from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
 from ....Methods import ParentMissingError
 
 

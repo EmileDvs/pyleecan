@@ -4,9 +4,9 @@ from os.path import isfile, splitext
 from numpy import pi, roll, sin, zeros, cos, all
 
 from ....Classes._FEMMHandler import _FEMMHandler
-from ....Functions.FEMM.comp_FEMM_Phi_wind import comp_FEMM_Phi_wind
-from ....Functions.FEMM.comp_FEMM_torque import comp_FEMM_torque
-from ....Functions.FEMM.update_FEMM_simulation import update_FEMM_simulation
+from ....Functions_new.FEMM.comp_femm_phi_wind import comp_FEMM_Phi_wind
+from ....Functions_new.FEMM.comp_femm_torque import comp_FEMM_torque
+from ....Functions_new.FEMM.update_femm_simulation import update_FEMM_simulation
 
 
 def solve_FEMM(

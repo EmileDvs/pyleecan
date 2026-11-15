@@ -1,4 +1,4 @@
-from ....Functions.init_fig import init_fig
+from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
 
 PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]

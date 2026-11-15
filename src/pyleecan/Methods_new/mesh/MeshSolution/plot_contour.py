@@ -7,8 +7,8 @@ from numpy import min as np_min
 from numpy import pi, real
 
 from ....definitions import config_dict
-from ....Functions.Plot.Pyvista.configure_plot import configure_plot
-from ....Functions.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
+from ....Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 
 COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]

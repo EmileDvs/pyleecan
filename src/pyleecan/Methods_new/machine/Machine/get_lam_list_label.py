@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....Functions.labels import STATOR_LAB, ROTOR_LAB
+from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
 
 
 def get_lam_list_label(self):

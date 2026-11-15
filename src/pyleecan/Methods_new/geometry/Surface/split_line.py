@@ -1,4 +1,4 @@
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 from ....definitions import PACKAGE_NAME
 
 

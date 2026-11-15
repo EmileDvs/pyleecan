@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from numpy import cos, exp, arcsin, array
-from ....Classes.Arc1 import Arc1
+from ....Classes_new.geometry.arc_1 import Arc1
 
 
 def comp_height(self):

@@ -1,5 +1,5 @@
-from ....Classes.SolutionVector import SolutionVector
-from ....Classes.MeshVTK import MeshVTK
+from ....Classes_new.mesh.solution_vector import SolutionVector
+from ....Classes_new.mesh.mesh_vtk import MeshVTK
 
 
 def get_mesh_field_pv(

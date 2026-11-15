@@ -1,9 +1,9 @@
-from .....Classes.SlotM11 import SlotM11
-from .....Classes.SlotM12 import SlotM12
-from .....Classes.SlotM13 import SlotM13
-from .....Classes.SlotM15 import SlotM15
-from .....Classes.SlotM16 import SlotM16
-from pyleecan.Classes.SlotM16 import SlotM16
+from .....Classes_new.slot.slot_m_11 import SlotM11
+from .....Classes_new.slot.slot_m_12 import SlotM12
+from .....Classes_new.slot.slot_m_13 import SlotM13
+from .....Classes_new.slot.slot_m_15 import SlotM15
+from .....Classes_new.slot.slot_m_16 import SlotM16
+from pyleecan.Classes_new.slot.slot_m_16 import SlotM16
 
 
 def convert_magnet_to_other(self):

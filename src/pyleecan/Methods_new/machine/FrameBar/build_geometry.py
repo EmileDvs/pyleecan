@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....Classes.Frame import Frame
+from ....Classes_new.machine.frame import Frame
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0):

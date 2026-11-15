@@ -4,14 +4,14 @@ from numpy import matmul, pi
 from numpy import sum as np_sum
 from numpy import zeros
 
-from ....Classes.HoleM50 import HoleM50
-from ....Classes.HoleM51 import HoleM51
-from ....Classes.HoleM52 import HoleM52
-from ....Classes.HoleM53 import HoleM53
-from ....Classes.HoleM57 import HoleM57
-from ....Classes.HoleM58 import HoleM58
-from ....Classes.LamHole import LamHole
-from ....Classes.LamSlotMag import LamSlotMag
+from ....Classes_new.slot.hole_m_50 import HoleM50
+from ....Classes_new.slot.hole_m_51 import HoleM51
+from ....Classes_new.slot.hole_m_52 import HoleM52
+from ....Classes_new.slot.hole_m_53 import HoleM53
+from ....Classes_new.slot.hole_m_57 import HoleM57
+from ....Classes_new.slot.hole_m_58 import HoleM58
+from ....Classes_new.machine.lam_hole import LamHole
+from ....Classes_new.machine.lam_slot_mag import LamSlotMag
 
 
 def comp_loss(self):

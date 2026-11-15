@@ -3,8 +3,8 @@
 from os.path import join, split
 from numpy import pi
 
-from ....Classes.Section import Section
-from ....Classes.SolverInputFile import SolverInputFile
+from ....Classes_new.elmer.section import Section
+from ....Classes_new.elmer.solver_input_file import SolverInputFile
 from ...elmer.Section import File, Variable, MATC
 
 

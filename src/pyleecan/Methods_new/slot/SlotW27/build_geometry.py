@@ -2,7 +2,7 @@
 
 from numpy import arcsin, exp
 
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 
 
 def build_geometry(self):

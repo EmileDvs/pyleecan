@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.LamSlotM import LamSlotM
-from ....Classes.LamSlotWind import LamSlotWind
+from ....Classes_new.machine.lam_slot_m import LamSlotM
+from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 from .. import MachineCheckError
 
 

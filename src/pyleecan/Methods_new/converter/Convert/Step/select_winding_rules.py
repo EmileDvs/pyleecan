@@ -1,4 +1,4 @@
-from .....Classes.MachineWRSM import MachineWRSM
+from .....Classes_new.machine.machine_wrsm import MachineWRSM
 
 
 def select_winding_rules(self, is_stator):

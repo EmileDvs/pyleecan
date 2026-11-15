@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from deap import base, creator, tools
-from ....Classes.Output import Output
-from ....Classes.XOutput import XOutput
-from ....Classes.VarSimu import VarSimu
+from ....Classes_new.output.output import Output
+from ....Classes_new.output.xoutput import XOutput
+from ....Classes_new.simulation.var_simu import VarSimu
 
 
 def create_toolbox(self):

@@ -1,7 +1,7 @@
 from numpy import array, unique
 
-from ....Classes.DataPattern import DataPattern
-from ....Classes.Norm_ref import Norm_ref
+from ....Classes_new.scidatatool.data_pattern import DataPattern
+from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 
 
 def get_data(self):

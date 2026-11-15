@@ -1,5 +1,5 @@
 from numpy import pi
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.segment import Segment
 
 
 def comp_magnetization_dict(self, is_north=True):

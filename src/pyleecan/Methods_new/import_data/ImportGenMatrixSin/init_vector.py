@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.ImportGenVectSin import ImportGenVectSin
+from ....Classes_new.import_data.import_gen_vect_sin import ImportGenVectSin
 from . import InitSinMatDimError
 
 

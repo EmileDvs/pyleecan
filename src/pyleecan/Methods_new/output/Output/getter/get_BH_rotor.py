@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from . import GetOutError
-from .....Classes.OutGeoLam import OutGeoLam
+from .....Classes_new.output.out_geo_lam import OutGeoLam
 
 
 def get_BH_rotor(self):

@@ -1,6 +1,6 @@
 from numpy import linspace, meshgrid, pi, repeat, sum as np_sum, zeros, mean
 
-from ....Functions.Winding.comp_cond_function import comp_cond_function
+from ....Functions_new.Winding.comp_cond_function import comp_cond_function
 
 
 def comp_wind_function(self, angle=None, Na=2048, alpha_mmf0=0, per_a=1):

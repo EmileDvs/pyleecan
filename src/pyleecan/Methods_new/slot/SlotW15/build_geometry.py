@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
 
 
 def build_geometry(self):

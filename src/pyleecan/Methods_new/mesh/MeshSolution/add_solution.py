@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pyleecan.Classes.Solution import Solution
+from pyleecan.Classes_new.mesh.solution import Solution
 
 
 def add_solution(self, solution: Solution, label: Optional[str] = "") -> None:

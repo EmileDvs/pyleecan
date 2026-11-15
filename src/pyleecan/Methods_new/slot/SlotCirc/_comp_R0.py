@@ -1,5 +1,5 @@
 from numpy import sqrt
-from ....Functions.Geometry.circle_from_3_points import circle_from_3_points
+from ....Functions_new.Geometry.circle_from_3_points import circle_from_3_points
 
 
 def _comp_R0(self):

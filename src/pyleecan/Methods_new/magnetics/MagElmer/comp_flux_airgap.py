@@ -2,8 +2,8 @@
 from os.path import join
 import subprocess
 
-from ....Functions.GMSH.draw_GMSH import draw_GMSH
-from ....Classes.OutMagElmer import OutMagElmer
+from ....Functions_new.GMSH.draw_gmsh import draw_GMSH
+from ....Classes_new.output.out_mag_elmer import OutMagElmer
 from . import _get_BP_dict
 
 

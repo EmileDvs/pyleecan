@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ....Functions.Structural.conversions import pol2cart
+from ....Functions_new.Structural.conversions import pol2cart
 
 
 def get_shape_xyz(self):

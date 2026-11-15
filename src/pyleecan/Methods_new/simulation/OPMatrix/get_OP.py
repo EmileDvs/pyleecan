@@ -1,6 +1,6 @@
-from ....Classes.OPdq import OPdq
-from ....Classes.OPdqf import OPdqf
-from ....Classes.OPslip import OPslip
+from ....Classes_new.simulation.op_dq import OPdq
+from ....Classes_new.simulation.op_dqf import OPdqf
+from ....Classes_new.simulation.op_slip import OPslip
 
 
 def get_OP(self, index):

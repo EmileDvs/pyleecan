@@ -2,9 +2,9 @@ from importlib import import_module
 
 from numpy import argsort, array
 
-from ....Classes.DataPattern import DataPattern
-from ....Functions.SciDataTool import AxisError
-from ....Functions.SciDataTool.symmetries import rebuild_symmetries_axis
+from ....Classes_new.scidatatool.data_pattern import DataPattern
+from pyleecan.classes_common.errors import AxisError
+from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
 
 operation_list = [
     "max",

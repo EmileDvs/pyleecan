@@ -2,16 +2,10 @@
 
 from numpy import linspace, zeros
 
-from ....Classes.Arc1 import Arc1
-from ....Classes.Segment import Segment
-from ....Classes.SurfLine import SurfLine
-from ....Functions.labels import (
-    WIND_LAB,
-    COND_BOUNDARY_PROP_LAB,
-    YSMR_LAB,
-    YSML_LAB,
-    YOKE_LAB,
-)
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import WIND_LAB, COND_BOUNDARY_PROP_LAB, YSMR_LAB, YSML_LAB, YOKE_LAB
 
 
 def get_surface_active(self, alpha=0, delta=0):

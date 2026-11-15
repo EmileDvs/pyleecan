@@ -1,4 +1,4 @@
-from ....Functions.Load.import_class import import_class
+from ....Functions_new.Load.import_class import import_class
 
 
 def comp_mmf_unit(self, Na, Nt, felec=1, current_dir=None, phase_dir=None):

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Classes.OutLossModel import OutLossModel
+from ....Classes_new.output.out_loss_model import OutLossModel
 
 
 def comp_all_losses(

@@ -1,4 +1,4 @@
-from ....Classes.VectorField import VectorField
+from ....Classes_new.scidatatool.vector_field import VectorField
 
 
 def get_data(self):

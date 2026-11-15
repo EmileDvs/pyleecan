@@ -1,8 +1,8 @@
 import numpy as np
 
 from ....definitions import config_dict
-from ....Functions.init_fig import init_fig
-from ....Functions.SciDataTool.Plot.plot_2D import plot_2D
+from ....Functions_new.init_fig import init_fig
+from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from . import _get_symbol_data_
 
 COLORS = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"]

@@ -1,4 +1,4 @@
-from ....Classes.LamSlot import LamSlot
+from ....Classes_new.machine.lam_slot import LamSlot
 
 
 def comp_masses(self):

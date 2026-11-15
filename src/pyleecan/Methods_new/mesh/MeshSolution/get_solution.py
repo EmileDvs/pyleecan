@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Optional
 
-from ....Classes.Solution import Solution
+from ....Classes_new.mesh.solution import Solution
 
 
 def get_solution(self, label: Optional[str] = None) -> Solution:

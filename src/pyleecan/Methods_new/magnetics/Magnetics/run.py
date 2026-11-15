@@ -1,6 +1,6 @@
 from numpy import zeros, ndarray, iscomplexobj, tile
 
-from pyleecan.Classes.MeshSolution import MeshSolution
+from pyleecan.Classes_new.mesh.mesh_solution import MeshSolution
 
 from ...simulation.Input import InputError
 
