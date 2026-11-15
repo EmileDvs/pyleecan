@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def get_Rext(self):
+def get_Rext(self) -> float:
     """Return the parent lamination exterior radius
 
     Parameters

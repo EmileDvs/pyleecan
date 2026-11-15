@@ -1,7 +1,7 @@
 from ....Functions_new.labels import HOLEM_LAB
 
 
-def comp_surface_magnet_id(self, index):
+def comp_surface_magnet_id(self, index: int) -> float:
     """Compute the surface of the hole magnet of the corresponding index
 
     Parameters

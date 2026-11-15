@@ -3,7 +3,7 @@ from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 
 
-def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0) -> list:
     """Split the slot winding area in several zone
 
     Parameters

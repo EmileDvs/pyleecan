@@ -3,7 +3,7 @@ from ....Classes_new.geometry.arc_3 import Arc3
 from ....Classes_new.geometry.segment import Segment
 
 
-def build_geometry(self):
+def build_geometry(self) -> list:
     """Compute the curve (Segment) needed to plot the object.
     The ending point of a curve is the starting point of the next curve in
     the list

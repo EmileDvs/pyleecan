@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_angle_bottom(self):
+def comp_angle_bottom(self) -> float:
     """Compute the slot bottom angle of the Slot
 
     Parameters

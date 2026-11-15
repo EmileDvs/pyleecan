@@ -1,6 +1,8 @@
 # Experimental dataclass generated from Generator/ClassesRef/Geometry/Circle.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
@@ -193,7 +195,7 @@ class Circle(Surface):
         edgecolor=None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
-    ):
+    ) -> list[Circle]:
         """Returns the Circle Patch to be display in matplotlib
 
         Parameters

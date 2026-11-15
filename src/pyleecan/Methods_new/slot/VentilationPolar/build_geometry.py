@@ -5,7 +5,7 @@ from . import *
 from ....Functions_new.labels import VENT_LAB
 
 
-def build_geometry(self, alpha=0, delta=0):
+def build_geometry(self, alpha: float = 0, delta: complex = 0) -> list:
     """Compute the curve needed to plot the ventilations
 
     Parameters

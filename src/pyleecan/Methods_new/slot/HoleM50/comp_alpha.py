@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_alpha(self):
+def comp_alpha(self) -> float:
     """Compute the alpha angle of the slot (cf schematics)
 
     Parameters

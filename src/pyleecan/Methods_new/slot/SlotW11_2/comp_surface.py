@@ -1,4 +1,4 @@
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Compute the Slot total surface (by analytical computation for comp_surface_opening and numerical computation for comp_surface_active).
     Caution, the bottom of the Slot is an Arc
 

@@ -1,4 +1,4 @@
-def comp_surface_active(self):
+def comp_surface_active(self) -> float:
     """Compute the Slot inner surface for winding
 
     Parameters

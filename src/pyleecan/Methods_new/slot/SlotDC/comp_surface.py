@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Compute the Slot total surface (by analytical computation).
     Caution, the top of the Slot is an Arc
 

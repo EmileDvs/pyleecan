@@ -1,4 +1,4 @@
-def comp_radius_mid_active(self):
+def comp_radius_mid_active(self) -> float:
     """Compute the radius at the middle of the active part of the slot
 
     Parameters

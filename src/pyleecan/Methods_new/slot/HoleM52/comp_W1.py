@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_W1(self):
+def comp_W1(self) -> float:
     """Compute W1 (cf schematics)
 
     Parameters

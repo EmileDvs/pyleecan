@@ -1,4 +1,4 @@
-def comp_mass_magnets(self):
+def comp_mass_magnets(self) -> float:
     """Compute the mass of the hole magnets (some of them may be missing)
 
     Parameters

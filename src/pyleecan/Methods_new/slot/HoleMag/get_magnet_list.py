@@ -1,4 +1,4 @@
-def get_magnet_list(self):
+def get_magnet_list(self) -> list:
     """Return the list of magnet (including None)
 
     Parameters

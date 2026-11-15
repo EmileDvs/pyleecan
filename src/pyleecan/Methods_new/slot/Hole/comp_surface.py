@@ -1,4 +1,4 @@
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Compute the Hole total surface (by numerical computation).
 
     Parameters

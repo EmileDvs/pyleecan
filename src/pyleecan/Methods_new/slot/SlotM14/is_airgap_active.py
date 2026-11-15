@@ -1,4 +1,4 @@
-def is_airgap_active(self):
+def is_airgap_active(self) -> bool:
     """Return True if a part or the full active surface is in the airgap
 
     Parameters

@@ -41,6 +41,8 @@ IMPORTED_TYPES = {
     "matplotlib.figure.figure": ("Figure", ("matplotlib.figure", "Figure")),
     "matplotlib.axes.axes": ("Axes", ("matplotlib.axes", "Axes")),
     "femmhandler": ("_FEMMHandler", ("pyleecan.classes_common.femm_handler", "_FEMMHandler")),
+    "matplotlib.patches.polygon": ("Polygon", ("matplotlib.patches", "Polygon")),
+    "matplotlib.patches.circle": ("Circle", ("matplotlib.patches", "Circle")),
 }
 """Documented types needing an import -> (annotation, (module, name)); a
 ("numpy", "np") import is ``import numpy as np``"""
@@ -189,7 +191,18 @@ def _annotation(text, class_names, imports, unrecognized):
     lowered = re.sub(r"\s+object$", "", lowered)
     text = re.sub(r"\s+object$", "", text)
     hint = None
-    if lowered in BUILTIN_TYPES:
+    # Containers: pyleecan notation "[X]" / "{X}" (as in the CSV files) or
+    # "list of X"; the item type must be recognized
+    container = (
+        re.fullmatch(r"\[(.+)\]", text)
+        or re.fullmatch(r"\{(.+)\}", text)
+        or re.fullmatch(r"list of (.+)", text, re.I)
+    )
+    if container is not None:
+        item = _annotation(container.group(1), class_names, imports, None)
+        if item is not None and not item.endswith("| None"):
+            hint = f"dict[str, {item}]" if text.startswith("{") else f"list[{item}]"
+    elif lowered in BUILTIN_TYPES:
         hint = BUILTIN_TYPES[lowered]
     elif lowered in IMPORTED_TYPES:
         hint, (module, name) = IMPORTED_TYPES[lowered]

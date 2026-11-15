@@ -1,4 +1,4 @@
-def comp_surface_magnets(self):
+def comp_surface_magnets(self) -> float:
     """Compute the surface of all the magnet(s)
 
     Parameters

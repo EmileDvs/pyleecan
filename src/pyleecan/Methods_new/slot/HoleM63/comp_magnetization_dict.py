@@ -4,7 +4,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 
 
-def comp_magnetization_dict(self, is_north=True):
+def comp_magnetization_dict(self, is_north=True) -> dict:
     """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
     Mangetization angle with Hole centered on Ox axis
 

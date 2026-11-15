@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surface_opening(self):
+def comp_surface_opening(self) -> float:
     """Compute the Slot opening surface (by analytical computation)
 
     Parameters

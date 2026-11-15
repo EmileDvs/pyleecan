@@ -2,7 +2,7 @@ import numpy as np
 
 
 
-def comp_height(self):
+def comp_height(self) -> float:
     """Compute the height of the Slot.
     Caution, the bottom of the Slot is an Arc
 

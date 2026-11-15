@@ -3,7 +3,7 @@ from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
-def _comp_point_coordinate(self):
+def _comp_point_coordinate(self) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters

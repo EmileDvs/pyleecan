@@ -13,15 +13,15 @@ WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
 
 def plot_active(
     self,
-    wind_mat=None,
+    wind_mat: np.ndarray | None = None,
     fig=None,
     ax=None,
-    is_bar=False,
-    is_show_fig=True,
-    enforced_default_color=None,
-    alpha=0,
-    delta=0,
-    is_add_wedge=False,
+    is_bar: bool = False,
+    is_show_fig: bool = True,
+    enforced_default_color: str | None = None,
+    alpha: float = 0,
+    delta: complex = 0,
+    is_add_wedge: bool = False,
 ):
     """Plot the active area of the lamination according to the wind_mat
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Compute the surface of all the axial ventilation ducts
 
     Parameters

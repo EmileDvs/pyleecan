@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_angle_active_eq(self):
+def comp_angle_active_eq(self) -> float:
     """Compute the equivalent angle of the active part of the slot
     (Ideal polar shape with the same surface and height)
 

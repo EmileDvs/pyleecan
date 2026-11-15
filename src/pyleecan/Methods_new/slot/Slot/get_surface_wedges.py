@@ -1,7 +1,7 @@
 from ....Functions_new.labels import WEDGE_LAB
 
 
-def get_surface_wedges(self, alpha=0, delta=0):
+def get_surface_wedges(self, alpha: float = 0, delta: complex = 0) -> list:
     """Return the list of surfaces defining the wedges area of the Slot
 
     Parameters

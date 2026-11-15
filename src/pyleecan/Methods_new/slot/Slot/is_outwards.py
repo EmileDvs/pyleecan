@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def is_outwards(self):
+def is_outwards(self) -> bool:
     """Return if the slot is outwards (on an external lamination) or inwards
     (on an internal lamination)
 

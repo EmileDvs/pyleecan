@@ -198,7 +198,7 @@ class PolarArc(Surface):
         edgecolor=None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
-    ):
+    ) -> list[Polygon]:
         """Returns the PolarArc Patch to be display in matplotlib
         Parameters
         ----------

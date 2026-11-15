@@ -4,7 +4,7 @@ from . import S16OutterError
 from ....Functions_new.Geometry.inter_circle_circle import inter_circle_circle
 
 
-def _comp_point_coordinate(self):
+def _comp_point_coordinate(self) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters

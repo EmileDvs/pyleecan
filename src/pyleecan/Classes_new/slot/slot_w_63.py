@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,6 +32,12 @@ from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..machine.lam_slot import LamSlot
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.surface import Surface
 
 
 @dataclass(eq=False)
@@ -79,7 +85,7 @@ class SlotW63(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW63._comp_line_dict
-    def _comp_line_dict(self):
+    def _comp_line_dict(self) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -151,7 +157,7 @@ class SlotW63(Slot):
         return line_dict
 
     # Inlined from Methods.Slot.SlotW63._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinate needed to plot the Slot.
 
         Parameters
@@ -222,7 +228,7 @@ class SlotW63(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW63.build_geometry
-    def build_geometry(self):
+    def build_geometry(self) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -266,7 +272,14 @@ class SlotW63(Slot):
         return [line for line in curve_list if line is not None]
 
     # Inlined from Methods.Slot.SlotW63.build_geometry_active
-    def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):
+    def build_geometry_active(
+        self,
+        Nrad: int,
+        Ntan: int,
+        is_simplified: bool = False,
+        alpha: float = 0,
+        delta: complex = 0,
+    ) -> list:
         """Split the slot winding area in several zone
 
         Parameters
@@ -400,7 +413,7 @@ class SlotW63(Slot):
             raise S63_W0CheckError("You must have W0 > 0")
 
     # Inlined from Methods.Slot.SlotW63.comp_angle_opening
-    def comp_angle_opening(self):
+    def comp_angle_opening(self) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
@@ -420,7 +433,7 @@ class SlotW63(Slot):
         return slot_pitch - tooth_angle
 
     # Inlined from Methods.Slot.SlotW63.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -444,7 +457,7 @@ class SlotW63(Slot):
         return Rbo - abs((Z5 + Z4) / 2)
 
     # Inlined from Methods.Slot.SlotW63.comp_height_active
-    def comp_height_active(self):
+    def comp_height_active(self) -> float:
         """Compute the height of the winding area
 
         Parameters
@@ -466,7 +479,7 @@ class SlotW63(Slot):
         return abs(Zw1 - Zw2)
 
     # Inlined from Methods.Slot.SlotW63.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -517,7 +530,7 @@ class SlotW63(Slot):
         return Sring - (St + Sarc_top - Sarc_bot1) + Sarc_bot2
 
     # Inlined from Methods.Slot.SlotW63.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the Slot inner surface for winding
 
         Parameters
@@ -558,7 +571,7 @@ class SlotW63(Slot):
         return surface - s_bottom - Sarc_top - Striangle - Srect
 
     # Inlined from Methods.Slot.SlotW63.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
+    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -579,7 +592,7 @@ class SlotW63(Slot):
         raise Exception("get_surface_active not available for SlotW63")
 
     # Inlined from Methods.Slot.SlotW63.get_surface_opening
-    def get_surface_opening(self, alpha=0, delta=0):
+    def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -664,17 +677,17 @@ class SlotW63(Slot):
     # Inlined from Methods.Slot.SlotW63.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        type_add_active=1,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
+        type_add_active: int = 1,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters

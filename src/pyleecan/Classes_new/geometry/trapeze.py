@@ -200,7 +200,7 @@ class Trapeze(Surface):
         edgecolor=None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
-    ):
+    ) -> list[Polygon]:
         """Returns the Trapeze Patch to be display in matplotlib
 
         Parameters

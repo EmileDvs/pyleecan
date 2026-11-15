@@ -3,7 +3,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import DRAW_PROP_LAB
 
 
-def get_surface(self):
+def get_surface(self) -> SurfLine:
     """Returns the surface delimiting the slot
 
     Parameters

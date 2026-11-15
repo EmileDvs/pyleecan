@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_height_active(self, Ndisc=200):
+def comp_height_active(self, Ndisc: int = 200) -> float:
     """Compute the height of the active area
 
     Parameters

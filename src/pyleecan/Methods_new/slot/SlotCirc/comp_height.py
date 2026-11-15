@@ -1,4 +1,4 @@
-def comp_height(self):
+def comp_height(self) -> float:
     """Compute the height of the Slot.
     Caution, the top of the Slot is an Arc
 

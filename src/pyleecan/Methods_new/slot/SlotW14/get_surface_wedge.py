@@ -2,7 +2,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import SOP_LAB, DRAW_PROP_LAB
 
 
-def get_surface_wedge(self, alpha=0, delta=0):
+def get_surface_wedge(self, alpha: float = 0, delta: complex = 0) -> list:
     """Return the list of surfaces defining the opening area of the Slot
 
     Parameters

@@ -2,7 +2,7 @@ import numpy as np
 from ....Classes_new.geometry.arc_1 import Arc1
 
 
-def _comp_point_coordinate(self):
+def _comp_point_coordinate(self) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters

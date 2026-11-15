@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_center(self):
+def get_center(self) -> list:
     """Return a list of the center of the ventilations
 
     Parameters

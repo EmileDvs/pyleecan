@@ -1,7 +1,7 @@
 from ....Functions_new.labels import HOLEV_LAB, VENT_LAB
 
 
-def get_R_id(self):
+def get_R_id(self) -> tuple[int, str]:
     """Return the "Radial" index for label (index in lam.hole or lam.axial_vent)
 
     Parameters

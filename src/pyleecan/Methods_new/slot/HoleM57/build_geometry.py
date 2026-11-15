@@ -6,7 +6,7 @@ from ....Functions_new.Geometry.inter_line_line import inter_line_line
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
 
 
-def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
     """Compute the curve (Segment) needed to plot the Slot.
     The ending point of a curve is the starting point of the next curve in
     the list
@@ -250,7 +250,7 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     return surf_list
 
 
-def set_name_line(hole_lines, name):
+def set_name_line(hole_lines: list, name: str) -> list:
     """Define the  label of each line of the hole
 
     Parameters

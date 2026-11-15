@@ -4,7 +4,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import WIND_LAB, COND_BOUNDARY_PROP_LAB, YSMR_LAB, YSML_LAB, YOKE_LAB
 
 
-def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
+def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0) -> list:
     """Split the slot active area in several zone
 
     Parameters

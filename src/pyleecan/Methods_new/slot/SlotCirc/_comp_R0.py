@@ -2,7 +2,7 @@ import numpy as np
 from ....Functions_new.Geometry.circle_from_3_points import circle_from_3_points
 
 
-def _comp_R0(self):
+def _comp_R0(self) -> float:
     """Compute the radius of the circle
 
     Parameters

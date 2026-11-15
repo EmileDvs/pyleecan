@@ -2,7 +2,7 @@ import numpy as np
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
 
 
-def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
     """Compute the curve (Segment) needed to plot the Hole.
     The ending point of a curve is the starting point of the next curve in
     the list

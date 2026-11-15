@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_height_opening(self, Ndisc=200):
+def comp_height_opening(self, Ndisc: int = 200) -> float:
     """Compute the height of the opening area (Hslot - Hactive)
 
     Parameters

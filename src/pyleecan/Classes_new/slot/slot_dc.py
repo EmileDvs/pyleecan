@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -11,6 +11,9 @@ from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from ..geometry.surface import Surface
 
 
 @dataclass(eq=False)
@@ -68,7 +71,7 @@ class SlotDC(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotDC._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> list:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -131,7 +134,7 @@ class SlotDC(Slot):
         return [Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, Z11, Z12, Zc1, Zc2, Zc3]
 
     # Inlined from Methods.Slot.SlotDC.build_geometry
-    def build_geometry(self):
+    def build_geometry(self) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -227,7 +230,7 @@ class SlotDC(Slot):
             raise SlotCheckError("Slot 17 must have D1/2 + D2/2 < H2")
 
     # Inlined from Methods.Slot.SlotDC.comp_angle_opening
-    def comp_angle_opening(self):
+    def comp_angle_opening(self) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
@@ -247,7 +250,7 @@ class SlotDC(Slot):
         return float(2 * np.arcsin(self.W1 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.SlotDC.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the Slot.
         Caution, the top of the Slot is an Arc
 
@@ -276,7 +279,7 @@ class SlotDC(Slot):
             return H + Harc
 
     # Inlined from Methods.Slot.SlotDC.comp_height_active
-    def comp_height_active(self):
+    def comp_height_active(self) -> float:
         """Compute the height of the winding area
 
         Parameters
@@ -299,7 +302,7 @@ class SlotDC(Slot):
         )
 
     # Inlined from Methods.Slot.SlotDC.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the top of the Slot is an Arc
 
@@ -348,7 +351,7 @@ class SlotDC(Slot):
             return Swind + S6 + Sarc
 
     # Inlined from Methods.Slot.SlotDC.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the Slot inner surface for winding (by analytical computation)
 
         Parameters
@@ -404,7 +407,7 @@ class SlotDC(Slot):
         return S1 + S2 + S3 - Sarc1 + S4 + S5 - Sarc2 - Sarc3
 
     # Inlined from Methods.Slot.SlotDC.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
+    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         """Return the full winding surface
 
         Parameters

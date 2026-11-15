@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,6 +27,10 @@ from ..geometry.surf_line import SurfLine
 from ..machine.lam_hole import LamHole
 from ..machine.magnet import Magnet
 from .hole_mag import HoleMag
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -72,7 +76,7 @@ class HoleM62(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM62._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -115,7 +119,9 @@ class HoleM62(HoleMag):
         return point_dict
 
     # Inlined from Methods.Slot.HoleM62.build_geometry
-    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+    def build_geometry(
+        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+    ) -> list:
         """Compute the curve (Segment) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -220,7 +226,7 @@ class HoleM62(HoleMag):
             raise S62_NoneError("You must set H1 !")
 
     # Inlined from Methods.Slot.HoleM62.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True):
+    def comp_magnetization_dict(self, is_north=True) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -288,7 +294,7 @@ class HoleM62(HoleMag):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM62.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the Hole
 
         Parameters
@@ -325,7 +331,7 @@ class HoleM62(HoleMag):
             return self.H0 * self.W0 + Stop - Sbot
 
     # Inlined from Methods.Slot.HoleM62.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index):
+    def comp_surface_magnet_id(self, index: int) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -348,7 +354,7 @@ class HoleM62(HoleMag):
         return 0
 
     # Inlined from Methods.Slot.HoleM62.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if the Hole has magnets
 
         Parameters
@@ -367,17 +373,17 @@ class HoleM62(HoleMag):
     # Inlined from Methods.Slot.HoleM62.plot_schematics
     def plot_schematics(
         self,
-        is_return_default=False,
-        is_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_return_default: bool = False,
+        is_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters
@@ -608,17 +614,17 @@ class HoleM62(HoleMag):
     # Inlined from Methods.Slot.HoleM62.plot_schematics_radial
     def plot_schematics_radial(
         self,
-        is_return_default=False,
-        is_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_return_default: bool = False,
+        is_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters

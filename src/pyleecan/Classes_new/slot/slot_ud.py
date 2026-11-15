@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import SlotCheckError
 from ...Functions_new.labels import SOP_LAB, WIND_LAB
@@ -11,6 +11,9 @@ from ..geometry.line import Line
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from ..geometry.surface import Surface
 
 
 @dataclass(eq=False)
@@ -51,7 +54,7 @@ class SlotUD(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotUD.build_geometry
-    def build_geometry(self):
+    def build_geometry(self) -> list:
         """Compute the curve (Line) needed to plot the object.
         The ending point of a curve is the starting point of the next curve
         in the list
@@ -110,7 +113,7 @@ class SlotUD(Slot):
                 )
 
     # Inlined from Methods.Slot.SlotUD.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
+    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -164,7 +167,7 @@ class SlotUD(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotUD.get_surface_opening
-    def get_surface_opening(self, alpha=0, delta=0):
+    def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -217,7 +220,7 @@ class SlotUD(Slot):
         return [surface]
 
     # Inlined from Methods.Slot.SlotUD.set_from_point_list
-    def set_from_point_list(self, point_list, is_sym=False):
+    def set_from_point_list(self, point_list: list[complex], is_sym: bool = False):
         """Set the line_list from a point list (connected by Segments)
 
         Parameters

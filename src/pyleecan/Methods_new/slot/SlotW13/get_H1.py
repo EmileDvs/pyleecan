@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_H1(self):
+def get_H1(self) -> float:
     """Return H1 in [m]
 
     Parameters

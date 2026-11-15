@@ -6,7 +6,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
 
 
-def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
     """Compute the curve (Line) needed to plot the Hole.
     The ending point of a curve is the starting point of the next curve in
     the list

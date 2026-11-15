@@ -1,4 +1,4 @@
-def comp_mass_magnet_id(self, index):
+def comp_mass_magnet_id(self, index: int) -> float:
     """Compute the mass of the hole magnet of the corresponding index
 
     Parameters

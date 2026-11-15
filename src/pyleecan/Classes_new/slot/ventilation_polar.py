@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,6 +27,10 @@ from ..geometry.polar_arc import PolarArc
 from ..geometry.segment import Segment
 from ..machine.lam_hole import LamHole
 from .hole import Hole
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -57,7 +61,7 @@ class VentilationPolar(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.VentilationPolar._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Hole.
 
         Parameters
@@ -87,7 +91,7 @@ class VentilationPolar(Hole):
         return point_dict
 
     # Inlined from Methods.Slot.VentilationPolar.build_geometry
-    def build_geometry(self, alpha=0, delta=0):
+    def build_geometry(self, alpha: float = 0, delta: complex = 0) -> list:
         """Compute the curve needed to plot the ventilations
 
         Parameters
@@ -198,7 +202,7 @@ class VentilationPolar(Hole):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.VentilationPolar.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of all the axial ventilation ducts
 
         Parameters
@@ -218,7 +222,7 @@ class VentilationPolar(Hole):
         return np.pi * ((self.H0 + self.D0) ** 2 - self.H0**2) / (2 * np.pi / self.W1)
 
     # Inlined from Methods.Slot.VentilationPolar.get_center
-    def get_center(self):
+    def get_center(self) -> list:
         """Return a list of the center of the ventilations
 
         Parameters
@@ -246,17 +250,17 @@ class VentilationPolar(Hole):
     # Inlined from Methods.Slot.VentilationPolar.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters

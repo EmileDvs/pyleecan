@@ -3,7 +3,7 @@ from ....Classes_new.geometry.arc_3 import Arc3
 from ....Classes_new.geometry.segment import Segment
 
 
-def set_from_point_list(self, point_list, is_sym=False):
+def set_from_point_list(self, point_list: list[complex], is_sym: bool = False):
     """Set the line_list from a point list (connected by Segments)
 
     Parameters

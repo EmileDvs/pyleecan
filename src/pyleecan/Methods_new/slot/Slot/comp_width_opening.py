@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_width_opening(self, is_curved=False):
+def comp_width_opening(self, is_curved: bool = False) -> float:
     """Compute the average opening width of the Slot
 
     Parameters

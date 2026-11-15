@@ -2,7 +2,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 
 
-def build_geometry(self):
+def build_geometry(self) -> list:
     """Compute the curve (Line) needed to plot the Slot.
     The ending point of a curve is the starting point of the next curve in
     the list

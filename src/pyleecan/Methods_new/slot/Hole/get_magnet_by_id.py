@@ -1,7 +1,11 @@
 from . import MagnetIndexError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.magnet import Magnet
 
 
-def get_magnet_by_id(self, index):
+def get_magnet_by_id(self, index: int) -> Magnet:
     """Return the magnet at the corresponding index
     returns None is the magnet is None
     Raise error if the hole doesn't have a magnet for the corresponding index

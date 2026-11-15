@@ -1,4 +1,4 @@
-def comp_angle_opening(self):
+def comp_angle_opening(self) -> float:
     """Compute the average opening angle of the Slot
 
     Parameters

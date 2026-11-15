@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,6 +24,12 @@ from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..machine.lam_slot import LamSlot
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.surface import Surface
 
 
 @dataclass(eq=False)
@@ -61,7 +67,7 @@ class SlotM16(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM16._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -111,7 +117,7 @@ class SlotM16(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotM16.build_geometry
-    def build_geometry(self):
+    def build_geometry(self) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -169,7 +175,7 @@ class SlotM16(Slot):
             raise S16_W01CheckError("You must have W0 < W1")
 
     # Inlined from Methods.Slot.SlotM16.comp_angle_opening
-    def comp_angle_opening(self):
+    def comp_angle_opening(self) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
@@ -188,7 +194,7 @@ class SlotM16(Slot):
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.SlotM16.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -215,7 +221,7 @@ class SlotM16(Slot):
             return Rbo - abs((Z4 + Z5) / 2)
 
     # Inlined from Methods.Slot.SlotM16.comp_height_active
-    def comp_height_active(self):
+    def comp_height_active(self) -> float:
         """Compute the height of the winding area
 
         Parameters
@@ -245,7 +251,7 @@ class SlotM16(Slot):
         return R2 - R1
 
     # Inlined from Methods.Slot.SlotM16.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -276,7 +282,7 @@ class SlotM16(Slot):
             return S0 + S1 + Sarc
 
     # Inlined from Methods.Slot.SlotM16.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the Slot inner surface for winding (by analytical computation)
 
         Parameters
@@ -294,7 +300,7 @@ class SlotM16(Slot):
         return self.W1 * self.H1
 
     # Inlined from Methods.Slot.SlotM16.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
+    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -339,17 +345,17 @@ class SlotM16(Slot):
     # Inlined from Methods.Slot.SlotM16.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters

@@ -1,4 +1,4 @@
-def is_full_pitch_active(self):
+def is_full_pitch_active(self) -> bool:
     """Returns True if the active surface angular width
     matches the slot pitch (like SlotM17 or SlotM18)
     (used to set Boundary conditions in FEMM airgap)

@@ -2,7 +2,7 @@ import numpy as np
 from ....Classes_new.geometry.arc_1 import Arc1
 
 
-def comp_height(self):
+def comp_height(self) -> float:
     """Compute the height of the Slot.
     Caution, the bottom of the Slot is an Arc
 

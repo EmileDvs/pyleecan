@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_W5(self):
+def comp_W5(self) -> float:
     """Compute the W5 width of the slot (cf schematics)
 
     Parameters

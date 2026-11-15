@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_alpha(self):
+def comp_alpha(self) -> float:
     """The opening angle with a W3 teeth width and Rext - H0 radius
 
     Parameters

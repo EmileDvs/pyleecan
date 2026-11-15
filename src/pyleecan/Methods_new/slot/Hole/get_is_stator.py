@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def get_is_stator(self):
+def get_is_stator(self) -> bool:
     """Return True if the parent lamination is stator and False if is a rotor
 
     Parameters

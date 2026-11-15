@@ -115,3 +115,29 @@ def test_several_returns_as_tuple():
 '''
     result, _ = _hint(source)
     assert "def f(self) -> tuple[float, int]:" in result
+
+
+def test_container_hints():
+    source = '''def f(self, z_list, surf_dict, patches, other):
+    """Doc
+
+    Parameters
+    ----------
+    z_list : [complex]
+        Points
+    surf_dict : {Surface}
+        Surfaces
+    patches : list of matplotlib.patches.Polygon
+        Patches
+    other : [unknown thing]
+        Not recognized
+    """
+    pass
+'''
+    result, unrecognized = _hint(source)
+    assert "z_list: list[complex]" in result
+    assert "surf_dict: dict[str, Surface]" in result
+    assert "patches: list[Polygon]" in result
+    assert "from matplotlib.patches import Polygon" in result
+    assert ", other):" in result  # Unrecognized item type: no hint
+    assert unrecognized["[unknown thing]"] == 1

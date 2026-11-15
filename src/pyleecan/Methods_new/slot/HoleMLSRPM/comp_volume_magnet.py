@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_volume_magnet(self):
+def comp_volume_magnet(self) -> float:
     """Compute the volume of the magnet (if any)
 
     Parameters

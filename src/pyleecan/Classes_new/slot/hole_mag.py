@@ -19,7 +19,7 @@ class HoleMag(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleMag.comp_mass_magnet_id
-    def comp_mass_magnet_id(self, index):
+    def comp_mass_magnet_id(self, index: int) -> float:
         """Compute the mass of the hole magnet of the corresponding index
 
         Parameters
@@ -46,7 +46,7 @@ class HoleMag(Hole):
             return self.comp_surface_magnet_id(index) * Lmag
 
     # Inlined from Methods.Slot.HoleMag.comp_mass_magnets
-    def comp_mass_magnets(self):
+    def comp_mass_magnets(self) -> float:
         """Compute the mass of the hole magnets (some of them may be missing)
 
         Parameters
@@ -81,7 +81,7 @@ class HoleMag(Hole):
         return M
 
     # Inlined from Methods.Slot.HoleMag.comp_surface_magnets
-    def comp_surface_magnets(self):
+    def comp_surface_magnets(self) -> float:
         """Compute the surface of all the magnet(s)
 
         Parameters
@@ -102,7 +102,7 @@ class HoleMag(Hole):
         return Smag
 
     # Inlined from Methods.Slot.HoleMag.comp_volume_magnets
-    def comp_volume_magnets(self):
+    def comp_volume_magnets(self) -> float:
         """Compute the volume of the hole magnets (some of them may be missing)
 
         Parameters
@@ -130,7 +130,7 @@ class HoleMag(Hole):
         return V
 
     # Inlined from Methods.Slot.HoleMag.get_magnet_list
-    def get_magnet_list(self):
+    def get_magnet_list(self) -> list:
         """Return the list of magnet (including None)
 
         Parameters
@@ -157,7 +157,7 @@ class HoleMag(Hole):
         return magnet_list
 
     # Inlined from Methods.Slot.HoleMag.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if the Hole has magnet
 
         Parameters

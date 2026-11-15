@@ -448,6 +448,21 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
       (5, legacy API to support in the legacy layers), objects built without
       their lamination (7), one `S50_NoneError`, three tests expecting
       different values after a copy.
+- [x] Type hints (`slot` in `HINTED_SUBPACKAGES`): 817/886 parameters and
+      582/694 returns hinted. Container types recognized: `[X]`, `{X}` (as in
+      the CSV files) and `list of X`, when the item type is recognized
+      (`list[Line]`, `dict[str, Magnet]`, `list[Polygon]`). Test results
+      unchanged.
+- [ ] `ty check src/pyleecan/Methods_new/slot`: 259 diagnostics (review list):
+      - ~108 `list[Line]` expected, `list[Segment | Arc1]` found: locals built
+        from a list literal, `list` is invariant (`SurfLine(line_list=...)`);
+      - ~70 `**kwargs` built from a dict literal (`Unknown | str | int`) passed
+        to typed parameters (`plot_schematics`);
+      - 61 `plot_schematics` returns the lamination when `is_return_default`:
+        the documented return (`fig, ax`) is incomplete;
+      - 8 implicit `None` returns (`comp_surface_opening`, `get_H1`...),
+        `split_line` not declared on the `Line` base (SlotW21/22/25/29),
+        `Legend | None`, `point_ref` on a None default (`Hole.plot`).
 
 #### Method errors
 

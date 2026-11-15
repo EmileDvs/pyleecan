@@ -1,4 +1,4 @@
-def comp_volume_magnets(self):
+def comp_volume_magnets(self) -> float:
     """Compute the volume of the hole magnets (some of them may be missing)
 
     Parameters

@@ -2,7 +2,7 @@ import numpy as np
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
-def _comp_point_coordinate(self):
+def _comp_point_coordinate(self) -> dict:
     """Compute the point coordinate needed to plot the Slot.
 
     Parameters

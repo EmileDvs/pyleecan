@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_alpha(self):
+def comp_alpha(self) -> float:
     """Compute the angle of the Hole (cf schematics)
 
     Parameters

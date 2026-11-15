@@ -1,4 +1,4 @@
-def comp_surface_opening(self, Ndisc=200):
+def comp_surface_opening(self, Ndisc: int = 200) -> float:
     """Compute the Slot opening surface (by numerical computation).
     Caution, the bottom of the Slot is an Arc
 

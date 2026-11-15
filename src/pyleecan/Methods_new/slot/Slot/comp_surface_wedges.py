@@ -1,4 +1,4 @@
-def comp_surface_wedges(self, Ndisc=200):
+def comp_surface_wedges(self, Ndisc: int = 200) -> float:
     """Compute the Slot wedges surface (by numerical computation).
     Caution, the bottom of the Slot is an Arc
 

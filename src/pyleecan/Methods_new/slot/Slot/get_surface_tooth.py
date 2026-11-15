@@ -8,7 +8,7 @@ from ....Functions_new.labels import BOUNDARY_PROP_LAB, YSR_LAB, YSL_LAB, YOKE_L
 
 
 
-def get_surface_tooth(self):
+def get_surface_tooth(self) -> SurfLine:
     """Returns the surface delimiting the tooth (including yoke part)
 
     Parameters

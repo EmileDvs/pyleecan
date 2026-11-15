@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_mass_magnet(self):
+def comp_mass_magnet(self) -> float:
     """Compute the mass of the magnet (if any)
 
     Parameters

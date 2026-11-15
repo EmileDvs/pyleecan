@@ -1,11 +1,16 @@
 from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
 STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
 
-def plot(self, fig=None, ax=None, is_show_fig=True):
+def plot(self, fig=None, ax=None, is_show_fig=True) -> tuple[Figure, Axes]:
     """Plot the Slot in a matplotlib fig
 
     Parameters

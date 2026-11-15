@@ -2,7 +2,7 @@ from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.arc_1 import Arc1
 
 
-def _comp_line_dict(self):
+def _comp_line_dict(self) -> dict:
     """Define a dictionnary of the lines to draw the slot
     If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 

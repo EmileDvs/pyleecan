@@ -4,7 +4,7 @@ from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 from . import Slot53InterError
 
 
-def comp_W5(self):
+def comp_W5(self) -> float:
     """Compute the W5 width of the hole (cf schematics)
 
     Parameters

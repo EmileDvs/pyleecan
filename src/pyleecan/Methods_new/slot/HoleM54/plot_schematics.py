@@ -8,23 +8,28 @@ from ....Classes_new.geometry.segment import Segment
 from ....definitions import config_dict
 from ....Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, MAIN_LINE_COLOR, MAIN_LINE_STYLE, MAIN_LINE_WIDTH, P_FONT_SIZE, SC_FONT_SIZE, SC_LINE_COLOR, SC_LINE_STYLE, SC_LINE_WIDTH, TEXT_BOX, plot_quote
 from ....Methods import ParentMissingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
 
 def plot_schematics(
     self,
-    is_default=False,
-    is_return_default=False,
-    is_add_point_label=False,
-    is_add_schematics=True,
-    is_add_main_line=True,
+    is_default: bool = False,
+    is_return_default: bool = False,
+    is_add_point_label: bool = False,
+    is_add_schematics: bool = True,
+    is_add_main_line: bool = True,
     type_add_active=True,
-    save_path=None,
-    is_show_fig=True,
-    fig=None,
-    ax=None,
-):
+    save_path: str | None = None,
+    is_show_fig: bool = True,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+) -> tuple[Figure, Axes]:
     """Plot the schematics of the slot
 
     Parameters

@@ -1,7 +1,11 @@
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.slot.slot_ud_2 import SlotUD2
 
 
-def convert_to_SlotUD2(self):
+def convert_to_SlotUD2(self) -> SlotUD2:
     """Convert the slot to the equivalent SlotUD2
 
     Parameters

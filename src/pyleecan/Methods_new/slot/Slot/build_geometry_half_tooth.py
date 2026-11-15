@@ -5,7 +5,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Functions_new.labels import BORE_LAB, BOUNDARY_PROP_LAB
 
 
-def build_geometry_half_tooth(self, is_top=False, alpha=0, delta=0):
+def build_geometry_half_tooth(self, is_top: bool = False, alpha: float = 0, delta: complex = 0) -> list:
     """Build the geometry of a Half Tooth
 
     Parameters

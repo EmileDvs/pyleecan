@@ -1,4 +1,4 @@
-def comp_height_wind(self):
+def comp_height_wind(self) -> float:
     """Compute the height of the winding area
 
     Parameters

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surface_magnet(self):
+def comp_surface_magnet(self) -> float:
     """Compute the surface of the Hole
 
     Parameters

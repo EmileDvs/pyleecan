@@ -1,7 +1,7 @@
 from ....Functions.Load.import_class import import_class
 
 
-def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0):
     """Split the slot active area in several zone
     This method assume that the active area is centered on X axis and symetrical
     Otherwise a dedicated build_geometry_active method must be provided

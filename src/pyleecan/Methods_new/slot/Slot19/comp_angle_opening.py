@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_angle_opening(self):
+def comp_angle_opening(self) -> float:
     """Compute the slot opening angle of the Slot
 
     Parameters

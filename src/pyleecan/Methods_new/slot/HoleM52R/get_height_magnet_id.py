@@ -1,4 +1,4 @@
-def get_height_magnet_id(self, index):
+def get_height_magnet_id(self, index: int) -> float:
     """Get the height of the hole magnet of the corresponding index
 
     Parameters

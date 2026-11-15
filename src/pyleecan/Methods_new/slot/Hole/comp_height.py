@@ -1,4 +1,4 @@
-def comp_height(self):
+def comp_height(self) -> float:
     """Compute the height of the Hole (Rmax-Rmin)
 
     Parameters

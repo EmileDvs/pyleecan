@@ -1,4 +1,4 @@
-def comp_width(self):
+def comp_width(self) -> float:
     """Compute the average width of the Slot by dividing its surface by its height
 
     Parameters

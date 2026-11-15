@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def get_name_lam(self):
+def get_name_lam(self) -> str:
     """Return the name of the parent lamination
 
     Parameters

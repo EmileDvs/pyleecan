@@ -6,6 +6,11 @@ from ....Functions_new.labels import HOLEM_LAB, decode_label
 from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ....definitions import config_dict
 from ....Methods import ParentMissingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 ARROW_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
@@ -15,13 +20,13 @@ def plot(
     self,
     fig=None,
     ax=None,
-    title=None,
-    display_magnet=True,
-    is_add_arrow=False,
-    is_add_ref=False,
+    title: str | None = None,
+    display_magnet: bool = True,
+    is_add_arrow: bool = False,
+    is_add_ref: bool = False,
     is_show_fig=True,
-    is_all_hole=False,
-):
+    is_all_hole: bool = False,
+) -> tuple[Figure, Axes]:
     """Plot the Hole in a matplotlib fig
 
     Parameters

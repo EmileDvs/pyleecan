@@ -3,7 +3,7 @@ import numpy as np
 from . import S15InnerError
 
 
-def _comp_point_coordinate(self):
+def _comp_point_coordinate(self) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters

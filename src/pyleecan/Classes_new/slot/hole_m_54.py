@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,6 +30,10 @@ from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..machine.lam_hole import LamHole
 from .hole import Hole
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -68,7 +72,7 @@ class HoleM54(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM54._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -103,7 +107,9 @@ class HoleM54(Hole):
         return point_dict
 
     # Inlined from Methods.Slot.HoleM54.build_geometry
-    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+    def build_geometry(
+        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+    ) -> list:
         """Compute the curve (Arc) needed to plot the Hole.
         The ending point of a curve is the starting point of the next curve in the
         list
@@ -198,7 +204,7 @@ class HoleM54(Hole):
             raise H54_R1CheckError("You must have H0 < R1")
 
     # Inlined from Methods.Slot.HoleM54.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True):
+    def comp_magnetization_dict(self, is_north=True) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -247,7 +253,7 @@ class HoleM54(Hole):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM54.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the complete surface of the Hole
 
         Parameters
@@ -271,17 +277,17 @@ class HoleM54(Hole):
     # Inlined from Methods.Slot.HoleM54.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters

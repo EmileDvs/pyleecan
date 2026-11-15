@@ -1,4 +1,8 @@
-def get_surface_active(self, alpha=0, delta=0):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.surface import Surface
+def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     """Return the full winding surface
 
     Parameters

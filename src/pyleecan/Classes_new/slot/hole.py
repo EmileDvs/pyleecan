@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -14,6 +14,12 @@ from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
 from .._legacy_class import LegacyClass
 from ..material.material import Material
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..machine.magnet import Magnet
 
 
 @dataclass(eq=False)
@@ -54,7 +60,7 @@ class Hole(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Hole.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the Hole (Rmax-Rmin)
 
         Parameters
@@ -73,7 +79,7 @@ class Hole(LegacyClass):
         return Rmax - Rmin
 
     # Inlined from Methods.Slot.Hole.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True):
+    def comp_magnetization_dict(self, is_north=True) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -127,7 +133,7 @@ class Hole(LegacyClass):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.Hole.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Hole total surface (by numerical computation).
 
         Parameters
@@ -167,7 +173,7 @@ class Hole(LegacyClass):
         )
 
     # Inlined from Methods.Slot.Hole.get_is_stator
-    def get_is_stator(self):
+    def get_is_stator(self) -> bool:
         """Return True if the parent lamination is stator and False if is a rotor
 
         Parameters
@@ -187,7 +193,7 @@ class Hole(LegacyClass):
             raise ParentMissingError("Error: The hole is not inside a Lamination")
 
     # Inlined from Methods.Slot.Hole.get_magnet_by_id
-    def get_magnet_by_id(self, index):
+    def get_magnet_by_id(self, index: int) -> Magnet:
         """Return the magnet at the corresponding index
         returns None is the magnet is None
         Raise error if the hole doesn't have a magnet for the corresponding index
@@ -215,7 +221,7 @@ class Hole(LegacyClass):
             )
 
     # Inlined from Methods.Slot.Hole.get_magnet_dict
-    def get_magnet_dict(self):
+    def get_magnet_dict(self) -> dict[str, Magnet]:
         """Return a dictionary with all the magnets of the Hole
 
         Parameters
@@ -240,7 +246,7 @@ class Hole(LegacyClass):
             return magnet_dict
 
     # Inlined from Methods.Slot.Hole.get_R_id
-    def get_R_id(self):
+    def get_R_id(self) -> tuple[int, str]:
         """Return the "Radial" index for label (index in lam.hole or lam.axial_vent)
 
         Parameters
@@ -269,7 +275,7 @@ class Hole(LegacyClass):
             raise Exception("Error, impossible to get Hole R-id")
 
     # Inlined from Methods.Slot.Hole.get_Rbo
-    def get_Rbo(self):
+    def get_Rbo(self) -> float:
         """Return the parent lamination bore radius
 
         Parameters
@@ -290,7 +296,7 @@ class Hole(LegacyClass):
             raise ParentMissingError("Error: The hole is not inside a Lamination")
 
     # Inlined from Methods.Slot.Hole.get_Rext
-    def get_Rext(self):
+    def get_Rext(self) -> float:
         """Return the parent lamination exterior radius
 
         Parameters
@@ -311,7 +317,7 @@ class Hole(LegacyClass):
             raise ParentMissingError("Error: The hole is not inside a Lamination")
 
     # Inlined from Methods.Slot.Hole.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if the Hole has magnets
 
         Parameters
@@ -333,13 +339,13 @@ class Hole(LegacyClass):
         self,
         fig=None,
         ax=None,
-        title=None,
-        display_magnet=True,
-        is_add_arrow=False,
-        is_add_ref=False,
+        title: str | None = None,
+        display_magnet: bool = True,
+        is_add_arrow: bool = False,
+        is_add_ref: bool = False,
         is_show_fig=True,
-        is_all_hole=False,
-    ):
+        is_all_hole: bool = False,
+    ) -> tuple[Figure, Axes]:
         """Plot the Hole in a matplotlib fig
 
         Parameters
@@ -452,7 +458,7 @@ class Hole(LegacyClass):
         return fig, ax
 
     # Inlined from Methods.Slot.Hole.set_magnet_by_id
-    def set_magnet_by_id(self, index, magnet):
+    def set_magnet_by_id(self, index: int, magnet: Magnet):
         """Set the magnet at the corresponding index
         Raise error if the hole doesn't have a magnet for the corresponding index
 

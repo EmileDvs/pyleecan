@@ -201,7 +201,7 @@ class Surface(LegacyClass):
                 )
 
     # Inlined from Methods.Geometry.Surface.intersect_line
-    def intersect_line(self, Z1: complex, Z2: complex):
+    def intersect_line(self, Z1: complex, Z2: complex) -> list[complex]:
         """Return all the intersection of a line with the surfaces
 
         Parameters

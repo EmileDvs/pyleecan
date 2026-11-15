@@ -1,7 +1,11 @@
 from ....Functions_new.labels import WIND_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.surface import Surface
 
 
-def set_label(self, surf_list, Nrad, Ntan, lam_label):
+def set_label(self, surf_list: list[Surface], Nrad: int, Ntan: int, lam_label: str):
     """Set the normalized label on the active surface
     (internal method of build_geometry_active)
 

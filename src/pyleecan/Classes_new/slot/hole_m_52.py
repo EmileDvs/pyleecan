@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,6 +32,10 @@ from ..geometry.surf_line import SurfLine
 from ..machine.lam_hole import LamHole
 from ..machine.magnet import Magnet
 from .hole_mag import HoleMag
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -82,7 +86,7 @@ class HoleM52(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM52._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -134,7 +138,9 @@ class HoleM52(HoleMag):
         return point_dict
 
     # Inlined from Methods.Slot.HoleM52.build_geometry
-    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+    def build_geometry(
+        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+    ) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -286,7 +292,7 @@ class HoleM52(HoleMag):
             raise S52_W1CheckError("W1 is <=0, you must reduce W0 or W3")
 
     # Inlined from Methods.Slot.HoleM52.comp_alpha
-    def comp_alpha(self):
+    def comp_alpha(self) -> float:
         """The opening angle with a W3 teeth width and Rext - H0 radius
 
         Parameters
@@ -308,7 +314,7 @@ class HoleM52(HoleMag):
         return slot_pitch - alpha_tooth
 
     # Inlined from Methods.Slot.HoleM52.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True):
+    def comp_magnetization_dict(self, is_north=True) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -369,7 +375,7 @@ class HoleM52(HoleMag):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM52.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the Hole
 
         Parameters
@@ -407,7 +413,7 @@ class HoleM52(HoleMag):
         return Smag + Strap
 
     # Inlined from Methods.Slot.HoleM52.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index):
+    def comp_surface_magnet_id(self, index: int) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -428,7 +434,7 @@ class HoleM52(HoleMag):
         return 0
 
     # Inlined from Methods.Slot.HoleM52.comp_W1
-    def comp_W1(self):
+    def comp_W1(self) -> float:
         """Compute W1 (cf schematics)
 
         Parameters
@@ -460,7 +466,7 @@ class HoleM52(HoleMag):
         return D19 / 2.0 - D1S - self.W0 / 2.0
 
     # Inlined from Methods.Slot.HoleM52.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if the Hole has magnets
 
         Parameters
@@ -479,17 +485,17 @@ class HoleM52(HoleMag):
     # Inlined from Methods.Slot.HoleM52.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters
