@@ -4,11 +4,11 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class ModelBH_exponential(PyleecanClass):
+class ModelBH_exponential(LegacyClass):
     """Abstract class for BH curve model
 
     Attributes

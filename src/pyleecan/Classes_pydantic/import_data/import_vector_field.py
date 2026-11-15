@@ -5,12 +5,12 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..scidatatool.vector_field import VectorField
 from .import_data import ImportData
 
 
-class ImportVectorField(PyleecanModel):
+class ImportVectorField(LegacyModel):
     """Abstract class for Data Import/Generation
 
     Attributes

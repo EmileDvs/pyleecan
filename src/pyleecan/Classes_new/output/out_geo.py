@@ -4,13 +4,13 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..scidatatool.data import Data
 from .out_geo_lam import OutGeoLam
 
 
 @dataclass(eq=False)
-class OutGeo(PyleecanClass):
+class OutGeo(LegacyClass):
     """Gather the geometrical and the global outputs
 
     Attributes

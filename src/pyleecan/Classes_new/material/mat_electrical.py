@@ -6,11 +6,11 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class MatElectrical(PyleecanClass):
+class MatElectrical(LegacyClass):
     """material electrical properties
 
     Attributes

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from dataclasses import field as dataclass_field
 from typing import Any, ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_time import DataTime
@@ -15,7 +15,7 @@ from .import_ import Import
 
 
 @dataclass(eq=False)
-class ImportData(PyleecanClass):
+class ImportData(LegacyClass):
     """Abstract class for Data Import/Generation
 
     Attributes

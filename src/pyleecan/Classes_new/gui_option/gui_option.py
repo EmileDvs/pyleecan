@@ -4,12 +4,12 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from .unit import Unit
 
 
 @dataclass(eq=False)
-class GUIOption(PyleecanClass):
+class GUIOption(LegacyClass):
     """GUIOption
 
     Attributes

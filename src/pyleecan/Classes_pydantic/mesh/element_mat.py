@@ -6,13 +6,14 @@ from typing import ClassVar, Optional, Union
 import numpy as np
 from pydantic import Field
 
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 from .gauss_point import GaussPoint
 from .ref_element import RefElement
 from .scalar_product_l2 import ScalarProductL2
 
 
-class ElementMat(PyleecanModel):
+class ElementMat(LegacyModel):
     """Define the connectivity under matricial format containing one type of element (example: only triangles with 3 nodes).
 
     Attributes

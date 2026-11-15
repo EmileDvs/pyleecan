@@ -7,7 +7,7 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..machine.machine_ipmsm import MachineIPMSM
 from ..machine.machine_scim import MachineSCIM
 from ..machine.machine_sipmsm import MachineSIPMSM
@@ -20,7 +20,7 @@ from .eec_scim import EEC_SCIM
 
 
 @dataclass(eq=False)
-class Electrical(PyleecanClass):
+class Electrical(LegacyClass):
     """Electric module object for electrical equivalent circuit simulation
 
     Attributes

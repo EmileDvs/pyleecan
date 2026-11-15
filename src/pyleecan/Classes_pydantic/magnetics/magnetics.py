@@ -7,12 +7,12 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..mesh.mesh_solution import MeshSolution
 from ..simulation.slice_model import SliceModel
 
 
-class Magnetics(PyleecanModel):
+class Magnetics(LegacyModel):
     """Magnetic module abstract object
 
     Attributes

@@ -7,13 +7,13 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..output.out_loss_model import OutLossModel
 from ..scidatatool.data_1d import Data1D
 from .loss_model import LossModel
 
 
-class Loss(PyleecanModel):
+class Loss(LegacyModel):
     """Loss module object that contain the loss models.
 
     Attributes

@@ -8,7 +8,7 @@ from pydantic import Field
 
 from ... import __version__
 from ...classes_common.errors import ConvertionError
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..machine.cond_type_11 import CondType11
 from ..machine.cond_type_12 import CondType12
 from ..machine.machine import Machine
@@ -46,7 +46,7 @@ from ..slot.ventilation_polar import VentilationPolar
 from ..slot.ventilation_trap import VentilationTrap
 
 
-class Convert(PyleecanModel):
+class Convert(LegacyModel):
     """initialisation of conversion abstract
 
     Attributes

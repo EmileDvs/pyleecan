@@ -3,10 +3,10 @@
 
 from typing import Any, ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class LossModel(PyleecanModel):
+class LossModel(LegacyModel):
     """Abstract Loss Model Class
 
     Attributes

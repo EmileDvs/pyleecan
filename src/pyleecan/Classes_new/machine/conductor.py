@@ -7,12 +7,12 @@ from typing import ClassVar
 import numpy as np
 
 from ...definitions import config_dict
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..material.material import Material
 
 
 @dataclass(eq=False)
-class Conductor(PyleecanClass):
+class Conductor(LegacyClass):
     """abstact class for conductors
 
     Attributes

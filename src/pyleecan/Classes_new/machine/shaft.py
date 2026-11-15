@@ -17,7 +17,7 @@ from ...Functions_new.labels import (
     SHAFTSL_LAB,
     SHAFTSR_LAB,
 )
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..geometry.arc_1 import Arc1
 from ..geometry.circle import Circle
 from ..geometry.segment import Segment
@@ -26,7 +26,7 @@ from ..material.material import Material
 
 
 @dataclass(eq=False)
-class Shaft(PyleecanClass):
+class Shaft(LegacyClass):
     """machine shaft
 
     Attributes

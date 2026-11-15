@@ -47,7 +47,7 @@ from pyleecan.Generator.read_fct import read_all
 SKIPPED_FUNCTION_MODULES = {
     Path("copy.py"): (
         "unused legacy function (copy objects through init_dict): the new classes "
-        "use PyleecanClass.copy"
+        "use model_copy (or the legacy copy)"
     ),
 }
 """Legacy Functions modules that are not copied in Functions_new (with the reason)"""
@@ -523,11 +523,12 @@ def _adapt_json_retrocompatibility(source, path):
 
 LEGACY_CLASS_REPLACEMENTS = {
     ("pyleecan.Classes._frozen", "FrozenClass"): (
-        "pyleecan.Classes_new._pyleecan_class",
-        "PyleecanClass",
+        "pyleecan.classes_common.base",
+        "PyleecanBase",
     ),
 }
-"""Legacy class support imports replaced by their Classes_new equivalent"""
+"""Legacy class support imports replaced by their equivalent, independent of the
+class implementation (marker base of the dataclass and pydantic bases)"""
 
 
 def _legacy_class_replacements(tree, package):

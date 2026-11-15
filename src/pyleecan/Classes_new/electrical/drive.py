@@ -4,11 +4,11 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class Drive(PyleecanClass):
+class Drive(LegacyClass):
     """Abstract Drive class
 
     Attributes

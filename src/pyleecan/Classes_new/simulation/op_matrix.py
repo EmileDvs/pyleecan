@@ -7,14 +7,14 @@ from typing import Any, ClassVar
 import numpy as np
 
 from ...classes_common.errors import OPMatrixException
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from .op_dq import OPdq
 from .op_dqf import OPdqf
 from .op_slip import OPslip
 
 
 @dataclass(eq=False)
-class OPMatrix(PyleecanClass):
+class OPMatrix(LegacyClass):
     """Define the Operating Point of a variable speed simulation
 
     Attributes

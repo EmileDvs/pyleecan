@@ -4,11 +4,11 @@
 from typing import ClassVar
 
 from ...classes_common.errors import InputError
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..output.out_struct import OutStruct
 
 
-class Structural(PyleecanModel):
+class Structural(LegacyModel):
     """Structural module abstract object
 
     Attributes

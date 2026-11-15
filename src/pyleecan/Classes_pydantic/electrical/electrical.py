@@ -7,7 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..machine.machine_ipmsm import MachineIPMSM
 from ..machine.machine_scim import MachineSCIM
 from ..machine.machine_sipmsm import MachineSIPMSM
@@ -19,7 +19,7 @@ from .eec_pmsm import EEC_PMSM
 from .eec_scim import EEC_SCIM
 
 
-class Electrical(PyleecanModel):
+class Electrical(LegacyModel):
     """Electric module object for electrical equivalent circuit simulation
 
     Attributes

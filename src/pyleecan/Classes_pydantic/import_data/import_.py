@@ -3,10 +3,10 @@
 
 from typing import ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class Import(PyleecanModel):
+class Import(LegacyModel):
     """Abstract class for Data Import/Generation
 
     Attributes

@@ -7,10 +7,10 @@ from typing import Any, Callable, ClassVar
 from ...classes_common.errors import CheckTypeError
 from ...definitions import PYTHON_DEFAULT_ENCODING
 from ...Functions_new.path_tools import abs_file_path
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class ParamExplorer(PyleecanModel):
+class ParamExplorer(LegacyModel):
     """Abstract class for the multi-simulation
 
     Attributes

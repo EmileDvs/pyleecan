@@ -8,11 +8,11 @@ from pydantic import Field
 
 from ...classes_common.check import check_var
 from .._import import import_class
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from .normalization import Normalization
 
 
-class Data(PyleecanModel):
+class Data(LegacyModel):
     """Abstract class for all kinds of data
 
     Attributes

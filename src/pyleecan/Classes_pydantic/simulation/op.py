@@ -7,10 +7,10 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import OPMatrixException
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class OP(PyleecanModel):
+class OP(LegacyModel):
     """Define the Operating Point of the simulation
 
     Attributes

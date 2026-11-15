@@ -5,10 +5,10 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class EndWinding(PyleecanModel):
+class EndWinding(LegacyModel):
     """Abstract Class of the machine's end winding
 
     Attributes

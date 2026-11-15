@@ -10,7 +10,7 @@ from ...Functions_new.labels import STATOR_LAB
 from ...Functions_new.MeshSolution.get_area import get_area
 from ...Functions_new.MeshSolution.get_indices_limited import get_indices_limited
 from ...Functions_new.SciDataTool.derivation_integration import integrate
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..mesh.mesh_solution import MeshSolution
 from ..scidatatool.data import Data
 from ..scidatatool.data_nd import DataND
@@ -21,7 +21,7 @@ from ..simulation.slice_model import SliceModel
 from .out_internal import OutInternal
 
 
-class OutMag(PyleecanModel):
+class OutMag(LegacyModel):
     """Gather the magnetic module outputs
 
     Attributes

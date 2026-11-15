@@ -6,11 +6,11 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class RefElement(PyleecanClass):
+class RefElement(LegacyClass):
     """Store shape functions definition in the reference element
 
     Attributes

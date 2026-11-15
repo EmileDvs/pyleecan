@@ -4,12 +4,12 @@
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..geometry.surf_line import SurfLine
 
 
 @dataclass(eq=False)
-class DXFImport(PyleecanClass):
+class DXFImport(LegacyClass):
     """Use a DXF to define a lamination
 
     Attributes

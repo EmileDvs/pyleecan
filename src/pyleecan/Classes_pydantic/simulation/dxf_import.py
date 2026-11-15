@@ -5,11 +5,11 @@ from typing import Any, ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..geometry.surf_line import SurfLine
 
 
-class DXFImport(PyleecanModel):
+class DXFImport(LegacyModel):
     """Use a DXF to define a lamination
 
     Attributes

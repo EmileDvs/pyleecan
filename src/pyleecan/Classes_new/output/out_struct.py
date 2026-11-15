@@ -4,13 +4,13 @@
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..scidatatool.data import Data
 
 
 @dataclass(eq=False)
-class OutStruct(PyleecanClass):
+class OutStruct(LegacyClass):
     """Gather the structural module outputs
 
     Attributes

@@ -5,12 +5,12 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...classes_common.errors import InputError
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..output.out_struct import OutStruct
 
 
 @dataclass(eq=False)
-class Structural(PyleecanClass):
+class Structural(LegacyClass):
     """Structural module abstract object
 
     Attributes

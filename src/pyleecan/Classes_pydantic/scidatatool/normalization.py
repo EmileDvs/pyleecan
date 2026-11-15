@@ -3,10 +3,10 @@
 
 from typing import ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class Normalization(PyleecanModel):
+class Normalization(LegacyModel):
     """Abstract class for normalizations
 
     Attributes

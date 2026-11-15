@@ -5,10 +5,11 @@ from typing import Any, ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 
 
-class OutGeoLam(PyleecanModel):
+class OutGeoLam(LegacyModel):
     """Gather the geometrical and the global outputs of a lamination
 
     Attributes

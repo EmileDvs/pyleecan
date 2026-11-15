@@ -9,7 +9,7 @@ from pydantic import Field
 
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..geometry.arc_1 import Arc1
 from ..geometry.circle import Circle
 from ..geometry.segment import Segment
@@ -18,7 +18,7 @@ from ..geometry.surf_ring import SurfRing
 from ..material.material import Material
 
 
-class Frame(PyleecanModel):
+class Frame(LegacyModel):
     """machine frame
 
     Attributes

@@ -17,7 +17,7 @@ from ...Functions_new.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
 from ...Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 from ...Functions_new.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
 from ...Functions_new.Structural.conversions import cart2pol, pol2cart
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from .element_mat import ElementMat
 from .mesh import Mesh
 from .mesh_mat import MeshMat
@@ -27,7 +27,7 @@ from .solution import Solution
 from .solution_vector import SolutionVector
 
 
-class MeshSolution(PyleecanModel):
+class MeshSolution(LegacyModel):
     """Abstract class to associate a mesh with one or several solutions
 
     Attributes

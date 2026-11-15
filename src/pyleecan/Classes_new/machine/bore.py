@@ -10,13 +10,13 @@ from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
 from ...Functions_new.Geometry.cut_lines_between_angle import cut_lines_between_angles
 from ...Functions_new.init_fig import init_fig
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 
 
 @dataclass(eq=False)
-class Bore(PyleecanClass):
+class Bore(LegacyClass):
     """Abstract class for Bore shape
 
     Attributes

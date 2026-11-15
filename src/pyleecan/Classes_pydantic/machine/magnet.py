@@ -5,11 +5,11 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..material.material import Material
 
 
-class Magnet(PyleecanModel):
+class Magnet(LegacyModel):
     """Magnet class
 
     Attributes

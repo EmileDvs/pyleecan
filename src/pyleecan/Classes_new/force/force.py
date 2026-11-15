@@ -7,14 +7,14 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.vector_field import VectorField
 
 
 @dataclass(eq=False)
-class Force(PyleecanClass):
+class Force(LegacyClass):
     """Forces module abstract object
 
     Attributes

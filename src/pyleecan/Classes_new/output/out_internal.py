@@ -4,11 +4,11 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class OutInternal(PyleecanClass):
+class OutInternal(LegacyClass):
     """Abstract class whose childs enable to store outputs related to a specific model
 
     Attributes

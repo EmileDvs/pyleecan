@@ -7,13 +7,13 @@ from typing import ClassVar
 import numpy as np
 
 from ...Functions_new.init_fig import init_fig
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..import_data.import_matrix import ImportMatrix
 from .model_bh import ModelBH as _field_type_ModelBH
 
 
 @dataclass(eq=False)
-class MatMagnetics(PyleecanClass):
+class MatMagnetics(LegacyClass):
     """magnetic material properties
 
     Attributes

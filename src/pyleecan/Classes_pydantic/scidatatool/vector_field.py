@@ -20,11 +20,11 @@ from ...Functions_new.SciDataTool.conversions import (
 from ...Functions_new.SciDataTool.Plot import REV_COMP_DICT
 from ...Functions_new.SciDataTool.Plot.init_fig import copy_fig, init_fig
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from .data_nd import DataND
 
 
-class VectorField(PyleecanModel):
+class VectorField(LegacyModel):
     """Class for 2D or 3D vector fields (time or frequency domain)
 
     Attributes

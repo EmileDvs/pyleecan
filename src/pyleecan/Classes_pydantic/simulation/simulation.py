@@ -8,7 +8,7 @@ from typing import ClassVar
 from pydantic import Field
 
 from ...loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..machine.machine import Machine
 from ..post.post import Post
 from .input import Input
@@ -16,7 +16,7 @@ from .var_load import VarLoad
 from .var_simu import VarSimu
 
 
-class Simulation(PyleecanModel):
+class Simulation(LegacyModel):
     """Abstract class for the simulation
 
     Attributes

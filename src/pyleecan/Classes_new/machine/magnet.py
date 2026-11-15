@@ -4,12 +4,12 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..material.material import Material
 
 
 @dataclass(eq=False)
-class Magnet(PyleecanClass):
+class Magnet(LegacyClass):
     """Magnet class
 
     Attributes

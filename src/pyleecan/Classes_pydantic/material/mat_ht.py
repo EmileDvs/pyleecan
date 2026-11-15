@@ -5,10 +5,10 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class MatHT(PyleecanModel):
+class MatHT(LegacyModel):
     """Material Heat Transfer properties
 
     Attributes

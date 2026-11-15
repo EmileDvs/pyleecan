@@ -7,11 +7,11 @@ from typing import ClassVar
 import numpy as np
 from scipy.optimize import curve_fit
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class ModelBH(PyleecanClass):
+class ModelBH(LegacyClass):
     """Abstract class for BH curve model
 
     Attributes

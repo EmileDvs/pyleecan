@@ -18,7 +18,7 @@ from ...Functions_new.labels import (
     YOKE_LAB,
     decode_label,
 )
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from .arc_1 import Arc1
 from .arc_2 import Arc2
 from .arc_3 import Arc3
@@ -26,7 +26,7 @@ from .segment import Segment
 
 
 @dataclass(eq=False)
-class Surface(PyleecanClass):
+class Surface(LegacyClass):
     """SurfLine define by list of lines that delimit it
 
     Attributes

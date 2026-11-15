@@ -5,10 +5,10 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class ModelBH_exponential(PyleecanModel):
+class ModelBH_exponential(LegacyModel):
     """Abstract class for BH curve model
 
     Attributes

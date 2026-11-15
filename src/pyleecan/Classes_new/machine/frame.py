@@ -9,7 +9,7 @@ from matplotlib.patches import Patch
 
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..geometry.arc_1 import Arc1
 from ..geometry.circle import Circle
 from ..geometry.segment import Segment
@@ -19,7 +19,7 @@ from ..material.material import Material
 
 
 @dataclass(eq=False)
-class Frame(PyleecanClass):
+class Frame(LegacyClass):
     """machine frame
 
     Attributes

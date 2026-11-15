@@ -7,14 +7,14 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..output.out_loss_model import OutLossModel
 from ..scidatatool.data_1d import Data1D
 from .loss_model import LossModel
 
 
 @dataclass(eq=False)
-class Loss(PyleecanClass):
+class Loss(LegacyClass):
     """Loss module object that contain the loss models.
 
     Attributes

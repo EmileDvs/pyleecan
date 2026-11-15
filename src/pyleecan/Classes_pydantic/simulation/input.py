@@ -6,7 +6,7 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..import_data.import_matrix import ImportMatrix
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_linspace import DataLinspace
@@ -20,7 +20,7 @@ CURRENT_DIR_REF = -1
 PHASE_DIR_REF = -1
 
 
-class Input(PyleecanModel):
+class Input(LegacyModel):
     """Starting data of the simulation
 
     Attributes

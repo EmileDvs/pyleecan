@@ -24,7 +24,7 @@ from ...Functions_new.labels import (
 )
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.Winding.gen_phase_list import gen_name
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
@@ -32,7 +32,7 @@ from ..material.material import Material
 
 
 @dataclass(eq=False)
-class Slot(PyleecanClass):
+class Slot(LegacyClass):
     """Generic class for slot (abstract)
 
     Attributes

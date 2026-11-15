@@ -10,12 +10,13 @@ from scipy.stats import norm
 from ...classes_common.errors import InputError
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 from ..scidatatool.data_pattern import DataPattern
 from ..scidatatool.norm_ref import NormRef
 
 
-class SliceModel(PyleecanModel):
+class SliceModel(LegacyModel):
     """Class to hande slices in magnetics model
 
     Attributes

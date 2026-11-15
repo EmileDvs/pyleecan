@@ -5,10 +5,10 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class Solution(PyleecanModel):
+class Solution(LegacyModel):
     """Abstract class for solution related classes.
 
     Attributes

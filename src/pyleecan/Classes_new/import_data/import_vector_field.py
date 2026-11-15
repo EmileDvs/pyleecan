@@ -4,13 +4,13 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..scidatatool.vector_field import VectorField
 from .import_data import ImportData
 
 
 @dataclass(eq=False)
-class ImportVectorField(PyleecanClass):
+class ImportVectorField(LegacyClass):
     """Abstract class for Data Import/Generation
 
     Attributes

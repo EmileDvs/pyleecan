@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..import_data.import_matrix import ImportMatrix
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_linspace import DataLinspace
@@ -21,7 +21,7 @@ PHASE_DIR_REF = -1
 
 
 @dataclass(eq=False)
-class Input(PyleecanClass):
+class Input(LegacyClass):
     """Starting data of the simulation
 
     Attributes

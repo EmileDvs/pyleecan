@@ -4,13 +4,13 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..output.xoutput import XOutput
 from .opti_problem import OptiProblem
 
 
 @dataclass(eq=False)
-class OptiSolver(PyleecanClass):
+class OptiSolver(LegacyClass):
     """Optimization solver class
 
     Attributes

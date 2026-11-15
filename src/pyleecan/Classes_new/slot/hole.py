@@ -12,12 +12,12 @@ from ...definitions import config_dict
 from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..material.material import Material
 
 
 @dataclass(eq=False)
-class Hole(PyleecanClass):
+class Hole(LegacyClass):
     """Holes for lamination (abstract)
 
     Attributes

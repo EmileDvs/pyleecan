@@ -6,11 +6,11 @@ from typing import Any, ClassVar
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class Line(PyleecanClass):
+class Line(LegacyClass):
     """Abstract geometry class (A line between two points)
 
     Attributes

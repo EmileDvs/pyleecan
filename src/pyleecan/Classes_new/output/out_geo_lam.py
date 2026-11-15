@@ -6,11 +6,11 @@ from typing import Any, ClassVar
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class OutGeoLam(PyleecanClass):
+class OutGeoLam(LegacyClass):
     """Gather the geometrical and the global outputs of a lamination
 
     Attributes

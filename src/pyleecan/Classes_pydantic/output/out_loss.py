@@ -7,12 +7,12 @@ import numpy as np
 from pydantic import Field
 
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..scidatatool.data import Data
 from .out_loss_model import OutLossModel
 
 
-class OutLoss(PyleecanModel):
+class OutLoss(LegacyModel):
     """Gather the loss module outputs
 
     Attributes

@@ -8,12 +8,12 @@ import numpy as np
 
 from ...classes_common.check import check_var
 from .._import import import_class
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from .normalization import Normalization
 
 
 @dataclass(eq=False)
-class Data(PyleecanClass):
+class Data(LegacyClass):
     """Abstract class for all kinds of data
 
     Attributes

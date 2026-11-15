@@ -3,10 +3,10 @@
 
 from typing import ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class Post(PyleecanModel):
+class Post(LegacyModel):
     """Abstract class for postprocessing
 
     Attributes

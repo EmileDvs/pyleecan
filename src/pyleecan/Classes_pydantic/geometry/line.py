@@ -5,10 +5,10 @@ from typing import Any, ClassVar
 
 import numpy as np
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class Line(PyleecanModel):
+class Line(LegacyModel):
     """Abstract geometry class (A line between two points)
 
     Attributes

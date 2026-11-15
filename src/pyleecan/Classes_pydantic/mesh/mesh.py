@@ -6,10 +6,10 @@ from typing import ClassVar, Optional
 import numpy as np
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class Mesh(PyleecanModel):
+class Mesh(LegacyModel):
     """Abstract Class for mesh related classes
 
     Attributes

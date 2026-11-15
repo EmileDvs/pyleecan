@@ -137,6 +137,7 @@ parameter. Only the base classes differ per folder.
 | Reference implementation | pydantic; the dataclass implementation is kept and compared |
 | Class folders | `Classes` (legacy), `Classes_new` (dataclass), `Classes_pydantic` (pydantic) |
 | Legacy compatibility | in a separate layer (`LegacyClass`/`LegacyModel`) above the target bases |
+| Target API | pydantic names on both target bases: `model_dump(mode=)`, `model_validate`, `model_copy`, `==` |
 | Parent links | removed from the target design; kept only in the legacy layer |
 | Reworked methods | hand-written `Methods_new` folder, read by the generator instead of legacy `Methods` |
 | `Methods_new` bootstrap | one legacy package at a time, copied when its refactor starts; the generator falls back to legacy `Methods` for the others |
@@ -201,10 +202,16 @@ Note: `Classes_pydantic` still uses `Functions_new`, whose functions build
 - [x] Create the shared support package `classes_common` (lookup, `ClassInfo`,
       checks, errors, parent rules, FEMM handler; done with Step 0 since
       `Classes_pydantic` needs it).
-- [ ] Create `LegacyClass` and `LegacyModel`; move the legacy behaviours there.
-- [ ] Slim the target bases; use native `complex` and a minimal `NDArray` in `PyleecanModel`.
-- [ ] Contract tests for the target bases: one behaviour specification that
-      both implementations must pass (accepted inputs, errors, serialization).
+- [x] Create `LegacyClass` (`Classes_new/_legacy_class.py`) and `LegacyModel`
+      (`Classes_pydantic/_legacy_model.py`); move the legacy behaviours there.
+      The generated root classes derive from them (`class_generator.ROOT_BASES`).
+- [x] Slim the target bases; native `complex` and a minimal `NDArray` in
+      `PyleecanModel`. Both target bases offer the pydantic API:
+      `model_dump(mode=...)`, `model_validate`, `model_copy`, `==`
+      (implemented with dacite on the dataclass base).
+- [x] Contract tests for the target bases (`Tests/New/Classes/test_target_bases.py`):
+      one specification, both implementations; the dataclass type/min/max
+      checks are strict xfail until Step 2.
 
 ### Step 2: type, min and max validation for dataclasses
 

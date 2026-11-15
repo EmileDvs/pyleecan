@@ -23,12 +23,13 @@ from ...Functions_new.Winding.reverse_wind_mat import (
     reverse_wind_mat,
 )
 from ...Functions_new.Winding.shift_wind_mat import shift_wind_mat
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 from .conductor import Conductor
 from .end_winding import EndWinding
 
 
-class Winding(PyleecanModel):
+class Winding(LegacyModel):
     """Winding class generating connection matrix using Star of slots method (coupling with SWAT-EM)
 
     Attributes

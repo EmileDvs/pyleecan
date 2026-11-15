@@ -6,13 +6,13 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ...Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..magnetics.magnetics import Magnetics
 from ..simulation.op import OP as _field_type_OP
 
 
 @dataclass(eq=False)
-class EEC(PyleecanClass):
+class EEC(LegacyClass):
     """Equivalent Electrical Circuit abstract class
 
     Attributes

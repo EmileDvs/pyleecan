@@ -3,10 +3,10 @@
 
 from typing import ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class ScalarProduct(PyleecanModel):
+class ScalarProduct(LegacyModel):
     """Store shape functions definition in the reference element
 
     Attributes

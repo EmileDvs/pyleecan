@@ -6,11 +6,11 @@ from typing import ClassVar, Optional, Union
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class NodeMat(PyleecanClass):
+class NodeMat(LegacyClass):
     """Class to define nodes coordinates and getter.
 
     Attributes

@@ -5,7 +5,7 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from .mat_economical import MatEconomical
 from .mat_electrical import MatElectrical
 from .mat_ht import MatHT
@@ -13,7 +13,7 @@ from .mat_magnetics import MatMagnetics
 from .mat_structural import MatStructural
 
 
-class Material(PyleecanModel):
+class Material(LegacyModel):
     """Material
 
     Attributes

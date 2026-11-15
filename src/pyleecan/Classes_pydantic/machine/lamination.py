@@ -33,7 +33,7 @@ from ...Functions_new.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 from ...Functions_new.Winding.gen_phase_list import gen_name
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..geometry.arc_1 import Arc1
 from ..geometry.arc_3 import Arc3
 from ..geometry.segment import Segment
@@ -48,7 +48,7 @@ from .notch_even_dist import NotchEvenDist
 from .skew import Skew
 
 
-class Lamination(PyleecanModel):
+class Lamination(LegacyModel):
     """abstract class for lamination
 
     Attributes

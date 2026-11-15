@@ -7,7 +7,7 @@ from logging.config import dictConfig
 from typing import ClassVar
 
 from ...loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..machine.machine import Machine
 from ..post.post import Post
 from .input import Input
@@ -16,7 +16,7 @@ from .var_simu import VarSimu
 
 
 @dataclass(eq=False)
-class Simulation(PyleecanClass):
+class Simulation(LegacyClass):
     """Abstract class for the simulation
 
     Attributes

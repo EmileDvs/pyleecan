@@ -74,6 +74,17 @@ The generation pipeline works on ``Classes_new`` module names; the last pass
 (relocate_class_imports) moves the imports to the package of the backend.
 """
 
+ROOT_BASES = {
+    "dataclass": ("_legacy_class", "LegacyClass"),
+    "pydantic": ("_legacy_model", "LegacyModel"),
+}
+"""(module, class) of the base of the generated root classes, by backend
+
+Phase 1: the legacy layer (LegacyClass/LegacyModel) above the target bases
+(PyleecanClass/PyleecanModel). Phase 2 switches to the target bases and
+deletes the legacy layer.
+"""
+
 VENDORED_SOURCE_PACKAGE = "Classes_new"
 """Package holding the vendored code (_smoot, _swat_em) for every backend"""
 
@@ -5722,12 +5733,8 @@ def _generate_dataclass_class(
     if mother in gen_dict:
         parent_class = NORMALIZATION_CLASS_NAMES.get(mother, mother)
         parent_module = class_module_name(mother)
-    elif is_pydantic:
-        parent_class = "PyleecanModel"
-        parent_module = "_pyleecan_model"
     else:
-        parent_class = "PyleecanClass"
-        parent_module = "_" + class_module_name(parent_class)
+        parent_module, parent_class = ROOT_BASES[backend]
     own_constants = {
         **CLASS_SHARED_CONSTANTS.get(class_name, {}),
         **CLASS_BODY_CONSTANTS.get(class_name, {}),

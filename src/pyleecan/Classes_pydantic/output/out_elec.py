@@ -14,7 +14,7 @@ from ...Functions_new.Electrical.dqh_transformation_freq import (
     dqh2n_DataFreq,
     n2dqh_DataFreq,
 )
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..electrical.eec import EEC
 from ..import_data.import_gen_pwm import ImportGenPWM
 from ..scidatatool.data import Data
@@ -26,7 +26,7 @@ from ..simulation.op import OP as _field_type_OP
 from .out_internal import OutInternal
 
 
-class OutElec(PyleecanModel):
+class OutElec(LegacyModel):
     """Gather the electric module outputs
 
     Attributes

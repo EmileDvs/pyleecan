@@ -8,11 +8,12 @@ import numpy as np
 
 from ...classes_common.errors import AxisError
 from ...Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 from .data_pattern import DataPattern
 
 
-class RequestedAxis(PyleecanModel):
+class RequestedAxis(LegacyModel):
     """Class to handle requested axes during get_along methods
 
     Attributes

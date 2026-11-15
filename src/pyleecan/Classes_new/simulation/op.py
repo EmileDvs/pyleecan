@@ -7,11 +7,11 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import OPMatrixException
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class OP(PyleecanClass):
+class OP(LegacyClass):
     """Define the Operating Point of the simulation
 
     Attributes

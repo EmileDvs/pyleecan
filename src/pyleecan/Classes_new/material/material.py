@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from .mat_economical import MatEconomical
 from .mat_electrical import MatElectrical
 from .mat_ht import MatHT
@@ -13,7 +13,7 @@ from .mat_structural import MatStructural
 
 
 @dataclass(eq=False)
-class Material(PyleecanClass):
+class Material(LegacyClass):
     """Material
 
     Attributes

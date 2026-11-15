@@ -7,13 +7,13 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..simulation.slice_model import SliceModel
 
 
 @dataclass(eq=False)
-class Magnetics(PyleecanClass):
+class Magnetics(LegacyClass):
     """Magnetic module abstract object
 
     Attributes

@@ -6,11 +6,11 @@ from typing import ClassVar, Optional
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class Mesh(PyleecanClass):
+class Mesh(LegacyClass):
     """Abstract Class for mesh related classes
 
     Attributes

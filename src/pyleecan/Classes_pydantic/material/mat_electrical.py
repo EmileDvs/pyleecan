@@ -6,10 +6,10 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class MatElectrical(PyleecanModel):
+class MatElectrical(LegacyModel):
     """material electrical properties
 
     Attributes

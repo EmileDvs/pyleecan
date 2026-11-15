@@ -5,12 +5,12 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ...classes_common.errors import ParentMissingError
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..material.material import Material
 
 
 @dataclass(eq=False)
-class Notch(PyleecanClass):
+class Notch(LegacyClass):
     """Notch
 
     Attributes

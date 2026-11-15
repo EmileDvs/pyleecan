@@ -41,6 +41,14 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `slot`, ...; `Import` becomes `import_data`). The `electrical` (with EEC and
   Drive), `magnetics`, `force` and `structural` (with Mode) modules and their
   child classes are taken out of `simulation`.
+- **Target bases and legacy layer**: `PyleecanClass` (dataclass) and
+  `PyleecanModel` (pydantic) are the Phase 2 design and share the pydantic
+  API: `model_dump(mode="python"|"json")`, `model_validate` (polymorphic on
+  `"__class__"`, unknown keys rejected), `model_copy` and an ndarray-aware
+  `==`. The legacy behaviours (parent links, `None` and `-1` values, ignored
+  unknown keys, `as_dict`/`from_dict`/`copy`/`compare`) are in `LegacyClass` /
+  `LegacyModel`, which the generated classes derive from during Phase 1. A
+  contract test suite checks both target bases with the same specification.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,
@@ -62,6 +70,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   is, in pydantic models, a field without the `_` whose legacy name is kept as
   alias (files) and as a property (methods).
 - `pydantic>=2.12` is a dependency.
+- Pydantic `complex` fields use the native pydantic type (int, float and the
+  string form accepted); the legacy string serialization is done by
+  `LegacyModel.as_dict`.
+- The new functions test `isinstance(obj, PyleecanBase)` (marker of both
+  bases) instead of the dataclass base.
 - Class constants refactored to avoid circular imports; attribute metadata
   (unit, min, max) and descriptions follow the legacy definitions.
 - The load function returns objects of the new classes.
@@ -82,7 +95,7 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 | Step | Status |
 |---|---|
 | 0. Separate the implementations in the generator | done |
-| 1. Split the bases (target / legacy layer) | to do |
+| 1. Split the bases (target / legacy layer) | done |
 | 2. Type, min and max validation for dataclasses | to do |
 | 3. `Functions_pydantic` | to do |
 | 4. Phase 1 test architecture (`--backend`) | to do |

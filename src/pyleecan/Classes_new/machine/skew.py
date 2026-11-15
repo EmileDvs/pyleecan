@@ -8,13 +8,13 @@ import numpy as np
 
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
 
 
 @dataclass(eq=False)
-class Skew(PyleecanClass):
+class Skew(LegacyClass):
     """Class for the skew (rotor or stator)
 
     Attributes

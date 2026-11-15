@@ -6,14 +6,14 @@ from typing import Any, ClassVar
 
 import numpy as np
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData
 from ..scidatatool.data_freq import DataFreq
 
 
 @dataclass(eq=False)
-class OutLossModel(PyleecanClass):
+class OutLossModel(LegacyClass):
     """Gather the loss module outputs
 
     Attributes

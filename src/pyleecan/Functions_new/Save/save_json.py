@@ -8,8 +8,8 @@ from shutil import move
 import numpy as np
 
 from ... import __version__
+from ...classes_common.base import PyleecanBase
 from ...Classes_new._class_info import ClassInfo
-from ...Classes_new._pyleecan_class import PyleecanClass
 from ...definitions import PACKAGE_NAME
 
 
@@ -39,7 +39,7 @@ def save_json(
         list of classes (and daughter classes) that should be split
         only for is_folder == True
     """
-    if isinstance(obj, PyleecanClass):  # Pyleecan obj
+    if isinstance(obj, PyleecanBase):  # Pyleecan obj
         # Get the object logger
         logger = obj.get_logger()
     else:

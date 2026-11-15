@@ -3,10 +3,10 @@
 
 from typing import ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class OutPost(PyleecanModel):
+class OutPost(LegacyModel):
     """Gather the parameters for the post-processings
 
     Attributes

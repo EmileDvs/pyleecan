@@ -3,10 +3,10 @@
 
 from typing import ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class OutInternal(PyleecanModel):
+class OutInternal(LegacyModel):
     """Abstract class whose childs enable to store outputs related to a specific model
 
     Attributes

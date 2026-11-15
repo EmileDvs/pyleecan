@@ -5,12 +5,12 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..scidatatool.data import Data
 from .out_geo_lam import OutGeoLam
 
 
-class OutGeo(PyleecanModel):
+class OutGeo(LegacyModel):
     """Gather the geometrical and the global outputs
 
     Attributes

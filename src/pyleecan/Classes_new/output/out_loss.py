@@ -7,13 +7,13 @@ from typing import ClassVar
 import numpy as np
 
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..scidatatool.data import Data
 from .out_loss_model import OutLossModel
 
 
 @dataclass(eq=False)
-class OutLoss(PyleecanClass):
+class OutLoss(LegacyClass):
     """Gather the loss module outputs
 
     Attributes

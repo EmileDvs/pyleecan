@@ -7,14 +7,14 @@ from typing import Any, ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_time import DataTime
 from .import_ import Import
 
 
-class ImportData(PyleecanModel):
+class ImportData(LegacyModel):
     """Abstract class for Data Import/Generation
 
     Attributes

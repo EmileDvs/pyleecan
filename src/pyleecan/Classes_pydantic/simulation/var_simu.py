@@ -15,13 +15,13 @@ from ...Functions_new.Simulation.VarSimu.log_datakeeper_step_result import (
     log_datakeeper_step_result,
 )
 from ...Functions_new.Simulation.VarSimu.run_multisim_step import run_multisim_step
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..magnetics.mag_femm import MagFEMM
 from ..post.post import Post
 from .data_keeper import DataKeeper
 
 
-class VarSimu(PyleecanModel):
+class VarSimu(LegacyModel):
     """Abstract class for the multi-simulation
 
     Attributes

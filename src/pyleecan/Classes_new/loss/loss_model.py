@@ -4,11 +4,11 @@
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class LossModel(PyleecanClass):
+class LossModel(LegacyClass):
     """Abstract Loss Model Class
 
     Attributes

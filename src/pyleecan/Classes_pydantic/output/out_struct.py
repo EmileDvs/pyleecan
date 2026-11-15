@@ -5,12 +5,12 @@ from typing import Any, ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..mesh.mesh_solution import MeshSolution
 from ..scidatatool.data import Data
 
 
-class OutStruct(PyleecanModel):
+class OutStruct(LegacyModel):
     """Gather the structural module outputs
 
     Attributes

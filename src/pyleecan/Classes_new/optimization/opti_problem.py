@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Callable, ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..simulation.data_keeper import DataKeeper
 from ..simulation.simulation import Simulation
 from .opti_constraint import OptiConstraint
@@ -13,7 +13,7 @@ from .opti_objective import OptiObjective
 
 
 @dataclass(eq=False)
-class OptiProblem(PyleecanClass):
+class OptiProblem(LegacyClass):
     """Multi-objectives optimization problem with some constraints
 
     Attributes

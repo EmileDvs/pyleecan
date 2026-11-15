@@ -1,0 +1,315 @@
+"""Legacy layer of the dataclass Pyleecan classes (Phase 1 only, hand-written).
+
+``LegacyClass`` adds to the target base ``PyleecanClass`` the behaviours of the
+legacy classes, so that the generated classes can be validated against them.
+Phase 2 removes this layer: the generated classes then derive from
+``PyleecanClass`` directly.
+
+Legacy behaviours:
+
+- every field accepts None (legacy setters skipped the checks for None),
+- ``-1`` sets the default value (e.g. a default object) of a field,
+- nested objects get a ``parent`` link to the object holding them,
+- loading ignores the unknown keys (old files, serialization keys) and
+  resolves the objects saved in separate files (split JSON, ``base_path``),
+- legacy API: ``as_dict`` (complex as str, ``type_handle_ndarray``, ``as_dict``
+  field modes), ``from_dict``, ``copy``, ``compare`` and ``_set_None``.
+
+An existing method can be replaced on an object (e.g. a mock in tests): a
+dataclass allows it natively.
+"""
+
+from copy import deepcopy
+from dataclasses import dataclass, field, fields
+from functools import cache
+from typing import Any, get_args, get_type_hints
+
+import numpy as np
+
+from ..classes_common.parents import assert_parent_type
+from ._pyleecan_class import PyleecanClass
+
+
+@cache
+def _complex_field_names(cls):
+    """Names of the fields declared as complex (or complex | None)."""
+    return frozenset(
+        name
+        for name, hint in get_type_hints(cls).items()
+        if hint is complex or complex in get_args(hint)
+    )
+
+
+@dataclass(eq=False)
+class LegacyClass(PyleecanClass):
+    """Legacy layer of the Pyleecan classes built on stdlib dataclasses."""
+
+    parent: Any = field(
+        default=None,
+        init=False,
+        repr=False,
+        compare=False,
+        metadata={"serialize": False, "compare": False},
+    )
+
+    def __new__(cls, *args, **kwargs):
+        if cls is LegacyClass:
+            raise TypeError("LegacyClass cannot be instantiated directly")
+        return super().__new__(cls)
+
+    def __post_init__(self):
+        self._set_child_parents()
+
+    def __setattr__(self, name, value):
+        if name != "parent" and name in self.__dataclass_fields__:
+            field_info = self.__dataclass_fields__[name]
+            if type(value) is int and value == -1:
+                class_name = field_info.metadata.get("default_class")
+                if class_name is not None:
+                    value = self._construct_default_class(class_name)
+            self._set_parent_links(value, self)
+        super().__setattr__(name, value)
+
+    @staticmethod
+    def _construct_default_class(class_name):
+        from ._import import import_class
+
+        return import_class(class_name)()
+
+    # Legacy loading
+    @classmethod
+    def _loaded_values(cls, data):
+        """Like the legacy init_dict, the keys that are not fields are ignored.
+
+        These are the serialization keys ("__class__", "__save_date__",
+        "__version__") and the properties removed since the file was saved.
+        """
+        names = {field_info.name for field_info in fields(cls) if field_info.init}
+        return {key: value for key, value in data.items() if key in names}
+
+    @classmethod
+    def model_validate(cls, data):
+        """Build an object from a dump, with the legacy loading rules.
+
+        A "__class__" key builds that class (a subclass of cls).
+        """
+        if isinstance(data, cls):
+            return data
+        if not isinstance(data, dict):
+            raise TypeError(f"{cls.__name__} cannot be built from {type(data).__name__}")
+        return cls._target_class(data).from_dict(data)
+
+    @classmethod
+    def from_dict(cls, data, *, base_path=None):
+        """Create this dataclass, resolving split JSON references from base_path.
+
+        Like the legacy init_dict, the class built is cls ("__class__" is
+        ignored). Legacy serialized None values are retained even for
+        non-optional fields.
+        """
+        hints = get_type_hints(cls)
+        values = cls._loaded_values(data)
+        for field_info in fields(cls):
+            value = values.get(field_info.name)
+            class_name = field_info.metadata.get("default_class")
+            if class_name is not None and type(value) is int and value == -1:
+                values[field_info.name] = cls._construct_default_class(class_name)
+        # Legacy setters accept None even for properties declared as non-optional.
+        null_fields = [
+            field_info.name
+            for field_info in fields(cls)
+            if field_info.init
+            and field_info.name in values
+            and values[field_info.name] is None
+            and hints.get(field_info.name) is not Any
+            and type(None) not in get_args(hints.get(field_info.name))
+        ]
+        for name in null_fields:
+            values.pop(name)
+        instance = cls._build(values, base_path=base_path, strict=False)
+        for name in null_fields:
+            setattr(instance, name, None)
+        instance._set_child_parents()
+        return instance
+
+    @classmethod
+    def _load_nested(cls, target, data, base_path):
+        """Build a nested object with the legacy loading rules."""
+        if issubclass(target, LegacyClass):
+            return target.from_dict(data, base_path=base_path)
+        return target.model_validate(data)
+
+    # Parent links
+    def _set_child_parents(self):
+        """Set parent links on nested Pyleecan objects."""
+        for field_info in fields(self):
+            if field_info.name != "parent":
+                self._set_parent_links(getattr(self, field_info.name), self)
+
+    def _assert_parent_type(self, parent):
+        """Validate a parent against the generated rules inherited by this class."""
+        from ._import import LOOKUP
+
+        assert_parent_type(self, parent, LOOKUP)
+
+    @staticmethod
+    def _set_parent_links(value, parent):
+        if isinstance(value, (list, tuple)):
+            for item in value:
+                LegacyClass._set_parent_links(item, parent)
+        elif isinstance(value, dict):
+            for item in value.values():
+                LegacyClass._set_parent_links(item, parent)
+        elif hasattr(value, "parent"):
+            assert_parent_type = getattr(value, "_assert_parent_type", None)
+            if assert_parent_type is not None:
+                assert_parent_type(parent)
+            value.parent = parent
+
+    def __deepcopy__(self, memo=None):
+        """Deep copy of the field values, without the parent."""
+        values = {
+            field_info.name: deepcopy(getattr(self, field_info.name), memo)
+            for field_info in fields(self)
+            if field_info.init
+        }
+        return type(self)(**values)
+
+    # Legacy API
+    def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
+        """Serialize dataclass fields using Pyleecan's object dictionary format."""
+        if type_handle_ndarray not in (0, 1, 2):
+            raise ValueError(f"Unknown type_handle_ndarray: {type_handle_ndarray}")
+        values = {}
+        for field_info in fields(self):
+            if field_info.metadata.get("serialize", True):
+                if field_info.metadata.get("as_dict") in ("1", "2"):
+                    values[field_info.name] = None
+                elif field_info.name in _complex_field_names(type(self)):
+                    # Legacy: complex properties are serialized as str
+                    value = getattr(self, field_info.name)
+                    values[field_info.name] = None if value is None else str(value)
+                else:
+                    values[field_info.name] = self._serialize_value(
+                        getattr(self, field_info.name),
+                        type_handle_ndarray,
+                        keep_function,
+                        kwargs,
+                    )
+        values["__class__"] = type(self).__name__
+        return values
+
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
+        """Compare dataclass fields and return paths to differing values."""
+        if type(other) is not type(self):
+            return [f"type({name})"]
+        ignored = set(ignore_list or ())
+        differences = []
+        for field_info in fields(self):
+            if not field_info.metadata.get("compare", True):
+                continue
+            left = getattr(self, field_info.name)
+            right = getattr(other, field_info.name)
+            field_name = f"{name}.{field_info.name}"
+            if left is None or right is None:
+                if left is not right:
+                    differences.append(field_name + " None mismatch")
+                continue
+            if hasattr(left, "compare"):
+                differences.extend(
+                    left.compare(
+                        right,
+                        name=field_name,
+                        ignore_list=ignore_list,
+                        is_add_value=is_add_value,
+                    )
+                )
+                continue
+            if isinstance(left, np.ndarray) or isinstance(right, np.ndarray):
+                equal = np.array_equal(left, right, equal_nan=True)
+            else:
+                try:
+                    equal = bool(left == right)
+                except TypeError, ValueError:
+                    equal = False
+            if not equal:
+                suffix = f" (self={left}, other={right})" if is_add_value else ""
+                differences.append(field_name + suffix)
+        return [item for item in differences if item not in ignored]
+
+    def copy(self):
+        """Copy dataclass values and their nested Pyleecan objects."""
+        values = {}
+        for field_info in fields(self):
+            if not field_info.init:
+                continue
+            mode = field_info.metadata.get("as_dict")
+            value = getattr(self, field_info.name)
+            if mode == "1":
+                values[field_info.name] = None
+            elif mode == "2":
+                values[field_info.name] = value
+            else:
+                values[field_info.name] = self._copy_value(value)
+        return type(self)(**values)
+
+    def _set_None(self):
+        """Set fields to None, recursively clearing nested objects."""
+        for field_info in fields(self):
+            if field_info.name == "parent":
+                continue
+            value = getattr(self, field_info.name)
+            if value is not None and hasattr(value, "_set_None"):
+                value._set_None()
+            else:
+                setattr(self, field_info.name, None)
+
+    @staticmethod
+    def _serialize_value(value, type_handle_ndarray, keep_function, kwargs):
+        if value is None:
+            return None
+        if isinstance(value, np.ndarray):
+            if type_handle_ndarray == 0:
+                return value.tolist()
+            if type_handle_ndarray == 1:
+                return value.copy()
+            if type_handle_ndarray == 2:
+                return value
+            raise ValueError(f"Unknown type_handle_ndarray: {type_handle_ndarray}")
+        if hasattr(value, "as_dict"):
+            return value.as_dict(
+                type_handle_ndarray=type_handle_ndarray,
+                keep_function=keep_function,
+                **kwargs,
+            )
+        if isinstance(value, dict):
+            return {
+                key: LegacyClass._serialize_value(
+                    item, type_handle_ndarray, keep_function, kwargs
+                )
+                for key, item in value.items()
+            }
+        if isinstance(value, (list, tuple)):
+            return [
+                LegacyClass._serialize_value(
+                    item, type_handle_ndarray, keep_function, kwargs
+                )
+                for item in value
+            ]
+        if type(value) is complex:
+            return str(value)
+        if callable(value) and not keep_function:
+            return None
+        return value
+
+    @staticmethod
+    def _copy_value(value):
+        if value is None:
+            return None
+        if isinstance(value, list):
+            return [LegacyClass._copy_value(item) for item in value]
+        if isinstance(value, dict):
+            return {key: LegacyClass._copy_value(item) for key, item in value.items()}
+        if hasattr(value, "copy"):
+            return value.copy()
+        return deepcopy(value)

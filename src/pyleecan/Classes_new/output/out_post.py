@@ -4,11 +4,11 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class OutPost(PyleecanClass):
+class OutPost(LegacyClass):
     """Gather the parameters for the post-processings
 
     Attributes

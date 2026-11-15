@@ -13,7 +13,7 @@ from ...definitions import RESULT_DIR, config_dict
 from ...Functions_new.Plot import fft_dict
 from ...Functions_new.Plot.Pyvista.configure_plot import configure_plot
 from ...Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..scidatatool.norm_affine import NormAffine
 from ..scidatatool.norm_vector import NormVector
 from ..simulation.simulation import Simulation
@@ -27,7 +27,7 @@ from .out_post import OutPost
 from .out_struct import OutStruct
 
 
-class Output(PyleecanModel):
+class Output(LegacyModel):
     """Main Output object: gather all the outputs of all the modules
 
     Attributes

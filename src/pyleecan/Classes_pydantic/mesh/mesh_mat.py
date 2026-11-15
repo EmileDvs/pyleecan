@@ -50,15 +50,24 @@ class MeshMat(Mesh):
     """Storing connectivity"""
     node: NodeMat | None = Field(default_factory=lambda: NodeMat())
     """Storing nodes"""
+    is_renum: bool = Field(default=False, alias="_is_renum")
+    """True if renumering the nodes and elements is useful when renum method is called (saving calculation time)"""
     sym: int = 1
     """Spatial symmetry factor"""
     is_antiper_a: bool = False
     """True if there is a spatial antiperiod"""
 
-    _is_renum: bool = False
-    """True if renumering the nodes and elements is useful when renum method is called (saving calculation time)"""
     _package: ClassVar[str] = "Mesh"
     """Name of the package of the legacy class module"""
+
+    @property
+    def _is_renum(self):
+        """Legacy name of is_renum"""
+        return self.is_renum
+
+    @_is_renum.setter
+    def _is_renum(self, value):
+        self.is_renum = value
 
     # Inlined from Methods.Mesh.MeshMat.add_element
     def add_element(

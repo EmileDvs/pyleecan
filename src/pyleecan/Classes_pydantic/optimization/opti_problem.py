@@ -5,7 +5,7 @@ from typing import Any, Callable, ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..simulation.data_keeper import DataKeeper
 from ..simulation.simulation import Simulation
 from .opti_constraint import OptiConstraint
@@ -13,7 +13,7 @@ from .opti_design_var import OptiDesignVar
 from .opti_objective import OptiObjective
 
 
-class OptiProblem(PyleecanModel):
+class OptiProblem(LegacyModel):
     """Multi-objectives optimization problem with some constraints
 
     Attributes

@@ -8,11 +8,11 @@ from typing import Any, Callable, ClassVar
 from ...classes_common.errors import CheckTypeError
 from ...definitions import PYTHON_DEFAULT_ENCODING
 from ...Functions_new.path_tools import abs_file_path
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 
 
 @dataclass(eq=False)
-class DataKeeper(PyleecanClass):
+class DataKeeper(LegacyClass):
     """Class for defining data to keep on a multi-simulation
 
     Attributes

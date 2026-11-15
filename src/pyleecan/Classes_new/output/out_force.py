@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..scidatatool.data import Data
 from ..scidatatool.data_time import DataTime
@@ -12,7 +12,7 @@ from ..scidatatool.vector_field import VectorField
 
 
 @dataclass(eq=False)
-class OutForce(PyleecanClass):
+class OutForce(LegacyClass):
     """Gather the structural module outputs
 
     Attributes

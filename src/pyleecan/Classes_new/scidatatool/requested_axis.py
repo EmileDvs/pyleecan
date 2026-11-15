@@ -9,12 +9,12 @@ import numpy as np
 
 from ...classes_common.errors import AxisError
 from ...Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from .data_pattern import DataPattern
 
 
 @dataclass(eq=False)
-class RequestedAxis(PyleecanClass):
+class RequestedAxis(LegacyClass):
     """Class to handle requested axes during get_along methods
 
     Attributes

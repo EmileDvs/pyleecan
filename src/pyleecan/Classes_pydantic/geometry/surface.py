@@ -17,14 +17,15 @@ from ...Functions_new.labels import (
     YOKE_LAB,
     decode_label,
 )
-from .._pyleecan_model import Complex, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import Complex
 from .arc_1 import Arc1
 from .arc_2 import Arc2
 from .arc_3 import Arc3
 from .segment import Segment
 
 
-class Surface(PyleecanModel):
+class Surface(LegacyModel):
     """SurfLine define by list of lines that delimit it
 
     Attributes

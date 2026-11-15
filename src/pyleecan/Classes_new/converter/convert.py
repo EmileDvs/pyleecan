@@ -7,7 +7,7 @@ from typing import Any, ClassVar
 
 from ... import __version__
 from ...classes_common.errors import ConvertionError
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..machine.cond_type_11 import CondType11
 from ..machine.cond_type_12 import CondType12
 from ..machine.machine import Machine
@@ -46,7 +46,7 @@ from ..slot.ventilation_trap import VentilationTrap
 
 
 @dataclass(eq=False)
-class Convert(PyleecanClass):
+class Convert(LegacyClass):
     """initialisation of conversion abstract
 
     Attributes

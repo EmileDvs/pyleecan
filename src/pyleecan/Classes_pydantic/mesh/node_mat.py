@@ -5,10 +5,11 @@ from typing import ClassVar, Optional, Union
 
 import numpy as np
 
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 
 
-class NodeMat(PyleecanModel):
+class NodeMat(LegacyModel):
     """Class to define nodes coordinates and getter.
 
     Attributes

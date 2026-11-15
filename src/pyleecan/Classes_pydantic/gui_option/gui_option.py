@@ -5,11 +5,11 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from .unit import Unit
 
 
-class GUIOption(PyleecanModel):
+class GUIOption(LegacyModel):
     """GUIOption
 
     Attributes

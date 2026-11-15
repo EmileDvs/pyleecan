@@ -38,8 +38,18 @@ PACKAGE_INIT_KINDS = {
 }
 
 BACKEND_SUPPORT_MODULES = {
-    "dataclass": ("_pyleecan_class.py", "_import.py", "_class_info.py"),
-    "pydantic": ("_pyleecan_model.py", "_import.py", "_class_info.py"),
+    "dataclass": (
+        "_pyleecan_class.py",
+        "_legacy_class.py",
+        "_import.py",
+        "_class_info.py",
+    ),
+    "pydantic": (
+        "_pyleecan_model.py",
+        "_legacy_model.py",
+        "_import.py",
+        "_class_info.py",
+    ),
 }
 """Hand-written support modules required in the class package of a backend"""
 
@@ -120,7 +130,14 @@ def generate_code(
                 f"Experimental output requires {package}/{support_module}: "
                 + CLASS_DIR
             )
-    for support_module in ("class_lookup.py", "class_info.py", "check.py", "base.py"):
+    for support_module in (
+        "class_lookup.py",
+        "class_info.py",
+        "check.py",
+        "base.py",
+        "equality.py",
+        "parents.py",
+    ):
         # Hand-written shared support (classes_common)
         if not isfile(join(common_dir(CLASS_DIR), support_module)):
             raise FileNotFoundError(

@@ -3,13 +3,14 @@
 
 from typing import Any, ClassVar
 
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData
 from ..scidatatool.data_freq import DataFreq
 
 
-class OutLossModel(PyleecanModel):
+class OutLossModel(LegacyModel):
     """Gather the loss module outputs
 
     Attributes

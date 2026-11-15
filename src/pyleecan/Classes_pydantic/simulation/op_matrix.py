@@ -7,13 +7,14 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import OPMatrixException
-from .._pyleecan_model import NDArray, PyleecanModel
+from .._legacy_model import LegacyModel
+from .._pyleecan_model import NDArray
 from .op_dq import OPdq
 from .op_dqf import OPdqf
 from .op_slip import OPslip
 
 
-class OPMatrix(PyleecanModel):
+class OPMatrix(LegacyModel):
     """Define the Operating Point of a variable speed simulation
 
     Attributes

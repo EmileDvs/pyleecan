@@ -7,11 +7,11 @@ import numpy as np
 from pydantic import Field
 
 from ...definitions import config_dict
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..material.material import Material
 
 
-class Conductor(PyleecanModel):
+class Conductor(LegacyModel):
     """abstact class for conductors
 
     Attributes

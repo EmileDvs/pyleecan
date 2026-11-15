@@ -14,7 +14,7 @@ from ...classes_common.errors import MachineCheckError
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB, STATOR_LAB_S
-from .._pyleecan_class import PyleecanClass
+from .._legacy_class import LegacyClass
 from ..material.material import Material
 from ..output.out_geo import OutGeo
 from .frame import Frame
@@ -22,7 +22,7 @@ from .shaft import Shaft
 
 
 @dataclass(eq=False)
-class Machine(PyleecanClass):
+class Machine(LegacyClass):
     """Abstract class for machines
 
     Attributes

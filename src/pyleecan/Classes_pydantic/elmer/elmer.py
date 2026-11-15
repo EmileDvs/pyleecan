@@ -3,10 +3,10 @@
 
 from typing import ClassVar
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class Elmer(PyleecanModel):
+class Elmer(LegacyModel):
     """Abstract parent class for all Elmer related convienence classes
 
     Attributes

@@ -8,12 +8,12 @@ from pydantic import Field
 
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
 
 
-class Skew(PyleecanModel):
+class Skew(LegacyModel):
     """Class for the skew (rotor or stator)
 
     Attributes

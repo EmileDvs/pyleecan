@@ -7,10 +7,10 @@ import numpy as np
 from pydantic import Field
 from scipy.optimize import curve_fit
 
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 
 
-class ModelBH(PyleecanModel):
+class ModelBH(LegacyModel):
     """Abstract class for BH curve model
 
     Attributes

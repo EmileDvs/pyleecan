@@ -7,12 +7,12 @@ import numpy as np
 from pydantic import Field
 
 from ...Functions_new.init_fig import init_fig
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..import_data.import_matrix import ImportMatrix
 from .model_bh import ModelBH as _field_type_ModelBH
 
 
-class MatMagnetics(PyleecanModel):
+class MatMagnetics(LegacyModel):
     """magnetic material properties
 
     Attributes

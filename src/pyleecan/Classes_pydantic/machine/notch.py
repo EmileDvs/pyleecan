@@ -4,11 +4,11 @@
 from typing import ClassVar
 
 from ...classes_common.errors import ParentMissingError
-from .._pyleecan_model import PyleecanModel
+from .._legacy_model import LegacyModel
 from ..material.material import Material
 
 
-class Notch(PyleecanModel):
+class Notch(LegacyModel):
     """Notch
 
     Attributes
