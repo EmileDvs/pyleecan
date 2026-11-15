@@ -3,10 +3,10 @@ from os.path import join
 import pytest
 from numpy import cos, linspace, meshgrid, pi, sin, zeros
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
-from pyleecan.Classes_new.scidatatool.norm_affine import NormAffine as Norm_affine
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_linspace import DataLinspace
+from backend_classes.scidatatool.data_time import DataTime
+from backend_classes.scidatatool.norm_affine import NormAffine as Norm_affine
 from Tests.New._test_paths import save_validation_path
 
 

@@ -37,11 +37,11 @@ class Section(Elmer):
     """Index of a numbered section"""
     comment: str = ""
     """Section global comment"""
+
     statements: dict[str, Any] | None = Field(alias="_statements", default_factory=dict)
     """internal dict to store the sections statements"""
     comments: dict[str, Any] | None = Field(alias="_comments", default_factory=dict)
     """internal dict to store comments on single statements"""
-
     _package: ClassVar[str] = "Elmer"
     """Name of the package of the legacy class module"""
 

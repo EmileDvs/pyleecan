@@ -4,12 +4,12 @@ from numpy import delete, exp, insert, pi, real, take, zeros
 from numpy.fft import fftn, fftshift, ifftn, ifftshift, irfftn, rfftn
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_freq import DataFreq
-from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
-from pyleecan.Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
-from pyleecan.Classes_new.scidatatool.vector_field import VectorField
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_freq import DataFreq
+from backend_classes.scidatatool.data_linspace import DataLinspace
+from backend_classes.scidatatool.data_time import DataTime
+from backend_classes.scidatatool.norm_indices import NormIndices as Norm_indices
+from backend_classes.scidatatool.vector_field import VectorField
 
 
 @pytest.mark.scidatatool

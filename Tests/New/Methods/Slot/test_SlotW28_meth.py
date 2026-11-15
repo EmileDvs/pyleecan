@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.slot.slot_w_28 import SlotW28
+from backend_classes.slot.slot_w_28 import SlotW28
 from numpy import ndarray, arcsin, exp
-from pyleecan.Classes_new.machine.lam_slot import LamSlot
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.geometry.segment import Segment
+from backend_classes.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW28 import (
     S28_ZsCheckError,
     S28_RboW0CheckError,

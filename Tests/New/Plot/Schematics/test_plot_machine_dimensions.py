@@ -1,20 +1,17 @@
 import pytest
-from pyleecan.Classes_new.machine.machine_ud import MachineUD
-from pyleecan.Classes_new.machine.lamination import Lamination
-from pyleecan.Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Classes_new.machine.frame import Frame
-from pyleecan.Classes_new.geometry.segment import Segment
+from backend_classes.machine.machine_ud import MachineUD
+from backend_classes.machine.lamination import Lamination
+from backend_classes.machine.lam_squirrel_cage import LamSquirrelCage
+from backend_classes.machine.shaft import Shaft
+from backend_classes.machine.frame import Frame
+from backend_classes.geometry.segment import Segment
 from Tests.New._test_paths import save_plot_path as save_path
 from os.path import join, isdir, isfile
 from os import makedirs, remove
 from numpy import exp, pi
 import matplotlib.pyplot as plt
-from pyleecan.Functions_new.init_fig import init_fig
-from pyleecan.Functions_new.Plot import (
-    ARROW_WIDTH,
-    SC_FONT_SIZE,
-)
+from backend_functions.init_fig import init_fig
+from backend_functions.Plot import ARROW_WIDTH, SC_FONT_SIZE
 
 ARROW_COLOR = "r"
 SCHEMATICS_PATH = join(save_path, "Schematics")

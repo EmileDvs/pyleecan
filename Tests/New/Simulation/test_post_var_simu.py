@@ -5,19 +5,19 @@ from copy import copy
 
 from numpy import sqrt
 import numpy as np
-from pyleecan.Classes_new.slot.hole_m_51 import HoleM51
-from pyleecan.Classes_new.slot.hole_m_52 import HoleM52
-from pyleecan.Classes_new.slot.hole_m_53 import HoleM53
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.post.post_function import PostFunction
-from pyleecan.Classes_new.post.post_method import PostMethod
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.simulation.var_param_sweep import VarParamSweep
-from pyleecan.Classes_new.simulation.param_explorer_set import ParamExplorerSet
-from pyleecan.Classes_new.simulation.data_keeper import DataKeeper
+from backend_classes.slot.hole_m_51 import HoleM51
+from backend_classes.slot.hole_m_52 import HoleM52
+from backend_classes.slot.hole_m_53 import HoleM53
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.post.post_function import PostFunction
+from backend_classes.post.post_method import PostMethod
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.simulation.var_param_sweep import VarParamSweep
+from backend_classes.simulation.param_explorer_set import ParamExplorerSet
+from backend_classes.simulation.data_keeper import DataKeeper
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 from Tests import TEST_DATA_DIR

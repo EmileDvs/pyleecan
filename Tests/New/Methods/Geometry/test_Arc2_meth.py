@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pyleecan.Classes_new.geometry.arc_2 import Arc2
+from backend_classes.geometry.arc_2 import Arc2
 
 from pyleecan.Methods.Geometry.Arc2 import (
     PointArc2Error,

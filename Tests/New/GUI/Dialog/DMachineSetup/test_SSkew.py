@@ -8,9 +8,9 @@ from numpy.testing import assert_almost_equal
 
 from PySide6 import QtWidgets
 
-from pyleecan.Classes_new.machine.skew import Skew
+from backend_classes.machine.skew import Skew
 from pyleecan.GUI.Dialog.DMachineSetup.SSkew.SSkew import SSkew
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 

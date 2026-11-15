@@ -2,9 +2,9 @@
 import pytest
 from numpy import pi
 
-from pyleecan.Classes_new.machine.lam_slot import LamSlot
-from pyleecan.Classes_new.slot.slot_w_60 import SlotW60
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.slot.slot_w_60 import SlotW60
+from backend_classes.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW60 import (
     S60_InnerCheckError,
     S60_RCheckError,

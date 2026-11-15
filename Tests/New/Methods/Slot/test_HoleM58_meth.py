@@ -5,13 +5,13 @@ from numpy import pi
 
 import pytest
 
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.slot.hole import Hole
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine.magnet import Magnet
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Classes_new.slot.hole_m_58 import HoleM58
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.slot.hole import Hole
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_ipmsm import MachineIPMSM
+from backend_classes.machine.magnet import Magnet
+from backend_classes.machine.shaft import Shaft
+from backend_classes.slot.hole_m_58 import HoleM58
 
 HoleM58_test = list()
 

@@ -4,17 +4,17 @@ from os.path import join
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
-from pyleecan.Classes_new.force.force_tensor import ForceTensor
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.mesh.solution_vector import SolutionVector
-from pyleecan.Classes_new.scidatatool.vector_field import VectorField
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_time import DataTime
+from backend_classes.force.force_tensor import ForceTensor
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.mesh.solution_vector import SolutionVector
+from backend_classes.scidatatool.vector_field import VectorField
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from Tests.New._test_paths import save_plot_path as save_path
 
 DELTA = 1e-6

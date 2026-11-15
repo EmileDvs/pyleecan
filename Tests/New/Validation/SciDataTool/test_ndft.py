@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_freq import DataFreq
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_freq import DataFreq
+from backend_classes.scidatatool.data_time import DataTime
 
 
 @pytest.mark.scidatatool

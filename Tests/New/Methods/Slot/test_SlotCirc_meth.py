@@ -2,13 +2,13 @@
 import pytest
 from os.path import join, isfile
 from os import remove
-from pyleecan.Classes_new.slot.slot_circ import SlotCirc
+from backend_classes.slot.slot_circ import SlotCirc
 from numpy import ndarray, pi, exp
-from pyleecan.Classes_new.machine.lam_slot import LamSlot
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotCirc import SlotCheckError
 import matplotlib.pyplot as plt
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from Tests.New._test_paths import save_load_path
 
 # For AlmostEqual

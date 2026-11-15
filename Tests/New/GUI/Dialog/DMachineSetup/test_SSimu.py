@@ -14,9 +14,9 @@ from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
 from pyleecan.GUI.Dialog.DMachineSetup.SSimu.SSimu import SSimu
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Classes_new.loss.loss_fea import LossFEA
+from backend_classes.loss.loss_fea import LossFEA
 
 from Tests.New._test_paths import save_gui_path as save_path
 

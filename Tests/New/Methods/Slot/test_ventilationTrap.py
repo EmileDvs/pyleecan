@@ -4,10 +4,10 @@ from os.path import join
 import pytest
 from numpy import pi
 
-from pyleecan.Classes_new.machine.lamination import Lamination
-from pyleecan.Classes_new.slot.ventilation_trap import VentilationTrap
+from backend_classes.machine.lamination import Lamination
+from backend_classes.slot.ventilation_trap import VentilationTrap
 from pyleecan.Methods.Slot.VentilationTrap import TrapezeBuildGeometryError
-from pyleecan.Classes_new.slot.hole import Hole
+from backend_classes.slot.hole import Hole
 
 """unittest for VentilationTrap"""
 

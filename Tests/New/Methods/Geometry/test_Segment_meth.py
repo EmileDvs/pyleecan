@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pyleecan.Classes_new.geometry.segment import Segment
+from backend_classes.geometry.segment import Segment
 
 from pyleecan.Methods.Geometry.Segment import (
     PointSegmentError,

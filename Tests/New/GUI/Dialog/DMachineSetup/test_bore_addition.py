@@ -8,10 +8,10 @@ from numpy import pi
 from numpy.testing import assert_almost_equal
 import pytest
 from Tests.New.GUI import gui_option  # Set unit as [m]
-from pyleecan.Classes_new.machine.bore_flower import BoreFlower
-from pyleecan.Classes_new.machine.bore_sine_pole import BoreSinePole
+from backend_classes.machine.bore_flower import BoreFlower
+from backend_classes.machine.bore_sine_pole import BoreSinePole
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load_matlib, load
+from backend_functions.load import load_matlib, load
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.GUI.Dialog.DMachineSetup.DBore.DBore import DBore
 from pyleecan.GUI.Dialog.DMachineSetup.DBore.PBoreSinePole.PBoreSinePole import (

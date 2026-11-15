@@ -9,16 +9,16 @@ In Proceedings of the third international Conference on Genetic Algorithms (Mend
 # Imports
 from os.path import join
 import pytest
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.data_keeper import DataKeeper
-from pyleecan.Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
-from pyleecan.Classes_new.optimization.opti_objective import OptiObjective
-from pyleecan.Classes_new.optimization.opti_problem import OptiProblem
-from pyleecan.Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.data_keeper import DataKeeper
+from backend_classes.optimization.opti_design_var_interval import OptiDesignVarInterval
+from backend_classes.optimization.opti_objective import OptiObjective
+from backend_classes.optimization.opti_problem import OptiProblem
+from backend_classes.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
 import random
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 

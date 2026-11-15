@@ -3,9 +3,9 @@
 import sys
 
 from numpy import pi, array
-from pyleecan.Classes_new.machine.lam_slot_multi import LamSlotMulti
-from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
-from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
+from backend_classes.machine.lam_slot_multi import LamSlotMulti
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.slot.slot_w_22 import SlotW22
 
 import pytest
 

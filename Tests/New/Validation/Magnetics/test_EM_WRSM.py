@@ -5,16 +5,16 @@ from multiprocessing import cpu_count
 import pytest
 from numpy.testing import assert_array_almost_equal
 from Tests.New._test_paths import save_validation_path as save_path
-from pyleecan.Classes_new.simulation.op_dqf import OPdqf
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.simulation.input_flux import InputFlux
-from pyleecan.Classes_new.import_data.import_matlab import ImportMatlab
-from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.Plot import dict_2D
+from backend_classes.simulation.op_dqf import OPdqf
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.simulation.input_flux import InputFlux
+from backend_classes.import_data.import_matlab import ImportMatlab
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_functions.load import load
+from backend_functions.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR
 from Tests import TEST_DATA_DIR
 

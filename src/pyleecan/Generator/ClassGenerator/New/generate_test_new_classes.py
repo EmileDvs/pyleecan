@@ -7,6 +7,11 @@ Tests/Data, and copied tests use Tests/New/Results for the usual result paths.
 Unaliased ``import pyleecan.Functions...`` imports require manual review,
 as do legacy-only imports and dynamic loading.
 Running copied tests still imports Tests/__init__.py, which clears Tests/Results.
+
+The copied tests import the classes and functions from the alias packages
+``backend_classes`` and ``backend_functions``, mapped by ``pytest --backend``
+to Classes_new/Functions_new (dataclass) or Classes_pydantic/Functions_pydantic
+(pydantic), see Tests/New/_backend.py.
 """
 
 import ast
@@ -57,6 +62,74 @@ RESULT_NAMES = {
     "SCHEMATICS_PATH",
     "SCHEMATICS_POINT_PATH",
 }
+
+
+BACKEND_ALIASES = {
+    "pyleecan.Classes_new": "backend_classes",
+    "pyleecan.Functions_new": "backend_functions",
+}
+"""Package of the dataclass implementation -> alias package of the tested one"""
+
+
+def alias_backend_imports(source):
+    """Import the classes and functions of the tested implementation (aliases).
+
+    ``pyleecan.Classes_new.x`` becomes ``backend_classes.x`` and
+    ``pyleecan.Functions_new.x`` becomes ``backend_functions.x``, in imports and
+    in string constants (e.g. ``mock.patch`` targets). The vendored code and
+    the shared support (classes_common) are not aliased.
+    """
+
+    def alias(module):
+        for package, alias_package in BACKEND_ALIASES.items():
+            if module == package or module.startswith(package + "."):
+                rest = module[len(package) :]
+                if rest.lstrip(".").partition(".")[0] in VENDORED_CLASS_PACKAGES:
+                    return None
+                return alias_package + rest
+        return None
+
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == 10:  # "\n"
+            offsets.append(index + 1)
+    replacements = []
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.ImportFrom) and not node.level and node.module:
+            new_module = alias(node.module)
+            if new_module is None:
+                continue
+            replacement = ast.unparse(
+                ast.ImportFrom(module=new_module, names=node.names, level=0)
+            )
+        elif isinstance(node, ast.Import):
+            if not any(alias(name.name) for name in node.names if name.asname):
+                continue
+            replacement = ast.unparse(
+                ast.Import(
+                    names=[
+                        ast.alias(
+                            (alias(name.name) if name.asname else None) or name.name,
+                            name.asname,
+                        )
+                        for name in node.names
+                    ]
+                )
+            )
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+            new_value = alias(node.value)
+            if new_value is None:
+                continue
+            replacement = repr(new_value)
+        else:
+            continue
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, replacement.encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
 
 
 def _rewrite_source(source, path, class_dir):
@@ -221,11 +294,7 @@ def _rewrite_source(source, path, class_dir):
 
 def generate_tests(tests_dir=None, class_dir=None):
     """Copy the selected test trees and return unresolved legacy imports."""
-    tests_dir = (
-        Path(tests_dir)
-        if tests_dir is not None
-        else Path(TEST_DIR)
-    )
+    tests_dir = Path(tests_dir) if tests_dir is not None else Path(TEST_DIR)
     class_dir = (
         Path(class_dir)
         if class_dir is not None
@@ -260,6 +329,8 @@ def generate_tests(tests_dir=None, class_dir=None):
                 rewritten = relocate_class_imports(
                     rewritten, "pyleecan", "Classes_new", class_module_paths
                 )
+                # Classes and functions of the implementation under test
+                rewritten = alias_backend_imports(rewritten)
                 destination.write_text(rewritten, encoding=encoding, newline="")
                 unsupported.extend(
                     (path.relative_to(tests_dir), line, module)
@@ -272,7 +343,9 @@ def generate_tests(tests_dir=None, class_dir=None):
 
 def main():
     issues = generate_tests()
-    print("Copied test trees to Tests/New; independently maintained tests were preserved.")
+    print(
+        "Copied test trees to Tests/New; independently maintained tests were preserved."
+    )
     if issues:
         print("Legacy imports requiring manual review:")
         for path, line, module in issues:

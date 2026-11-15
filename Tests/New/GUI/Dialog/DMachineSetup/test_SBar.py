@@ -7,12 +7,12 @@ import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
-from pyleecan.Classes_new.machine.cond_type_21 import CondType21
-from pyleecan.Classes_new.machine.cond_type_22 import CondType22
-from pyleecan.Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
-from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
-from pyleecan.Classes_new.material.material import Material
-from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
+from backend_classes.machine.cond_type_21 import CondType21
+from backend_classes.machine.cond_type_22 import CondType22
+from backend_classes.machine.lam_squirrel_cage import LamSquirrelCage
+from backend_classes.machine.machine_scim import MachineSCIM
+from backend_classes.material.material import Material
+from backend_classes.slot.slot_w_22 import SlotW22
 from Tests.New.GUI import gui_option  # Set unit as [m]
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from pyleecan.GUI.Dialog.DMachineSetup.SBar.PCondType21.PCondType21 import PCondType21

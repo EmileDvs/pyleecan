@@ -2,7 +2,7 @@
 
 import pytest
 
-from pyleecan.Classes_new._class_info import PYLEECAN_BASES, ClassInfo
+from backend_classes._class_info import PYLEECAN_BASES, ClassInfo
 from pyleecan.definitions import DOC_DIR
 from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (

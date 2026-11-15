@@ -5,15 +5,15 @@ import pytest
 from numpy import pi, sqrt
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Classes_new.electrical.eec_lsrpm import EEC_LSRPM
-from pyleecan.Classes_new.electrical.electrical import Electrical
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.output.output import Output
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from backend_classes.electrical.eec_lsrpm import EEC_LSRPM
+from backend_classes.electrical.electrical import Electrical
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.output.output import Output
+from backend_classes.simulation.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.Plot import dict_2D
+from backend_functions.load import load
+from backend_functions.Plot import dict_2D
 from Tests.New._test_paths import save_validation_path as save_path
 
 

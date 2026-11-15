@@ -4,16 +4,16 @@ from os import makedirs, remove
 
 import numpy as np
 
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.simulation.var_param_sweep import VarParamSweep
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.data_keeper import DataKeeper
-from pyleecan.Classes_new.simulation.param_explorer_set import ParamExplorerSet
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.simulation.var_param_sweep import VarParamSweep
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.data_keeper import DataKeeper
+from backend_classes.simulation.param_explorer_set import ParamExplorerSet
 
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 
 from Tests.New._test_paths import save_validation_path as save_path
 from pyleecan.definitions import DATA_DIR

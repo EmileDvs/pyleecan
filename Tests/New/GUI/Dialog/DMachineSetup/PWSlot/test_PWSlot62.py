@@ -5,8 +5,8 @@ import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot.slot_w_62 import SlotW62
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.slot.slot_w_62 import SlotW62
 from pyleecan.GUI.Dialog.DMachineSetup.SWPole.PWSlot62.PWSlot62 import PWSlot62
 
 

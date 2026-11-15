@@ -1,6 +1,6 @@
 import pytest
-from pyleecan.Classes_new.machine.cond_type_11 import CondType11
-from pyleecan.Classes_new.machine.cond_type_12 import CondType12
+from backend_classes.machine.cond_type_11 import CondType11
+from backend_classes.machine.cond_type_12 import CondType12
 
 from Tests.New._test_paths import save_plot_path as save_path
 from os.path import join, isdir, isfile

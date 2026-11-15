@@ -6,10 +6,10 @@ from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 from numpy import pi
 from Tests.New.GUI import gui_option  # Set unit as [m]
-from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.slot.slot_m_18 import SlotM18
+from backend_classes.machine.lam_slot_mag import LamSlotMag
+from backend_classes.slot.slot_m_18 import SlotM18
 from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot18.PMSlot18 import PMSlot18
-from pyleecan.Classes_new.material.material import Material
+from backend_classes.material.material import Material
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 
 

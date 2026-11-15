@@ -2,12 +2,12 @@
 import pytest
 from numpy import exp, arcsin, pi
 
-from pyleecan.Classes_new.machine.lam_slot import LamSlot
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
-from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.geometry.segment import Segment
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.geometry.surf_line import SurfLine
 
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.slot.slot import Slot
 
 # For AlmostEqual
 DELTA = 1e-6

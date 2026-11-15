@@ -31,6 +31,7 @@ from pydantic import PrivateAttr, field_validator
 
 from ..classes_common.equality import compare_values
 from ..classes_common.functions import SourceFunction, is_function_annotation
+from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
 from ..classes_common.legacy_values import annotation_classes, legacy_object_value
 from ._pyleecan_model import PyleecanModel
 
@@ -94,6 +95,12 @@ class LegacyModel(PyleecanModel):
         if value is None:
             return None
         field_info = cls.model_fields[info.field_name]
+        if (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and is_complex_annotation(field_info.annotation)
+        ):
+            return value  # Legacy: an int or a float given to a complex is kept
         if type(value) is int and value == -1:
             if field_info.default_factory is not None:
                 return field_info.default_factory()
@@ -149,7 +156,19 @@ class LegacyModel(PyleecanModel):
         """
         if type_handle_ndarray not in (0, 1, 2):
             raise ValueError(f"Unknown type_handle_ndarray: {type_handle_ndarray}")
-        return _legacy_dump(self.model_dump(), type_handle_ndarray, keep_function)
+        values = {}
+        for name, info in type(self).model_fields.items():
+            extra = info.json_schema_extra if isinstance(info.json_schema_extra, dict) else {}
+            values[info.alias or name] = legacy_field(  # Legacy name of a renamed field
+                getattr(self, name),
+                is_complex_annotation(info.annotation),
+                extra.get("as_dict"),
+                type_handle_ndarray,
+                keep_function,
+                kwargs,
+            )
+        values["__class__"] = type(self).__name__
+        return values
 
     def copy(self):
         """Deep copy of the object (without its parent)."""
@@ -185,25 +204,3 @@ class LegacyModel(PyleecanModel):
                 value._set_None()
             else:
                 setattr(self, name, None)
-
-
-def _legacy_dump(value, type_handle_ndarray, keep_function):
-    """Convert a python dump to the legacy as_dict format."""
-    if isinstance(value, dict):
-        return {
-            key: _legacy_dump(item, type_handle_ndarray, keep_function)
-            for key, item in value.items()
-        }
-    if isinstance(value, (list, tuple)):
-        return [_legacy_dump(item, type_handle_ndarray, keep_function) for item in value]
-    if isinstance(value, SourceFunction):
-        return value.source  # Legacy: functions are saved by their source
-    if isinstance(value, np.ndarray):
-        if type_handle_ndarray == 0:
-            return value.tolist()
-        return value.copy() if type_handle_ndarray == 1 else value
-    if type(value) is complex:
-        return str(value)
-    if callable(value) and not keep_function:
-        return None
-    return value

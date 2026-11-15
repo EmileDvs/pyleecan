@@ -5,26 +5,26 @@ Test Pyleecan optimization module using Zitzler–Deb–Thiele's function N. 3
 """
 from os.path import join
 import pytest
-from pyleecan.Classes_new.simulation.op_slip import OPslip
+from backend_classes.simulation.op_slip import OPslip
 from pyleecan.definitions import PACKAGE_NAME
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.output.output import Output
-from pyleecan.Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
-from pyleecan.Classes_new.optimization.opti_objective import OptiObjective
-from pyleecan.Classes_new.optimization.opti_constraint import OptiConstraint
-from pyleecan.Classes_new.optimization.opti_problem import OptiProblem
-from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.optimization.opti_bayes_alg_smoot import OptiBayesAlgSmoot
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.output.output import Output
+from backend_classes.optimization.opti_design_var_interval import OptiDesignVarInterval
+from backend_classes.optimization.opti_objective import OptiObjective
+from backend_classes.optimization.opti_constraint import OptiConstraint
+from backend_classes.optimization.opti_problem import OptiProblem
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.optimization.opti_bayes_alg_smoot import OptiBayesAlgSmoot
 from Tests.New._test_paths import save_validation_path as save_path
 import matplotlib.pyplot as plt
 import matplotlib.image as img
 import numpy as np
 import random
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR, TEST_DIR
 
 

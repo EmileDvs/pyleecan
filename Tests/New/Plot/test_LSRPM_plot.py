@@ -5,30 +5,30 @@ import pytest
 import matplotlib.pyplot as plt
 
 from numpy import array, pi, zeros
-from pyleecan.Classes_new.machine.frame import Frame
-from pyleecan.Classes_new.machine.lam_hole import LamHole
+from backend_classes.machine.frame import Frame
+from backend_classes.machine.lam_hole import LamHole
 
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.lam_slot_wind import LamSlotWind
 
-from pyleecan.Classes_new.machine.bore_lsrpm import BoreLSRPM
+from backend_classes.machine.bore_lsrpm import BoreLSRPM
 
-from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine.magnet import Magnet
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Classes_new.slot.hole_mlsrpm import HoleMLSRPM
+from backend_classes.machine.machine_ipmsm import MachineIPMSM
+from backend_classes.machine.magnet import Magnet
+from backend_classes.machine.shaft import Shaft
+from backend_classes.slot.hole_mlsrpm import HoleMLSRPM
 from Tests.New._test_paths import save_plot_path as save_path
-from pyleecan.Classes_new.slot.slot_wlsrpm import SlotWLSRPM
-from pyleecan.Classes_new.machine.winding_ud import WindingUD
+from backend_classes.slot.slot_wlsrpm import SlotWLSRPM
+from backend_classes.machine.winding_ud import WindingUD
 
 
-from pyleecan.Classes_new.machine.cond_type_11 import CondType11
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Classes_new.machine.frame import Frame
-from pyleecan.Classes_new.material.material import Material
-from pyleecan.Classes_new.material.mat_magnetics import MatMagnetics
+from backend_classes.machine.cond_type_11 import CondType11
+from backend_classes.machine.shaft import Shaft
+from backend_classes.machine.frame import Frame
+from backend_classes.material.material import Material
+from backend_classes.material.mat_magnetics import MatMagnetics
 
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 
 
 def test_LSRPM():

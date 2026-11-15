@@ -1,10 +1,10 @@
 import pytest
 from numpy import pi
 
-from pyleecan.Classes_new.converter.rule_complex import RuleComplex
-from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.slot.hole_m_61 import HoleM61
+from backend_classes.converter.rule_complex import RuleComplex
+from backend_classes.machine.machine_ipmsm import MachineIPMSM
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.slot.hole_m_61 import HoleM61
 
 HoleM61_test = list()
 

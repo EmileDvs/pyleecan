@@ -1,7 +1,7 @@
 # Load the machine
 from os.path import join
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Functions_new.load import load
+from backend_classes.simulation.op_dq import OPdq
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 import matplotlib.pyplot as plt
 import pytest
@@ -9,10 +9,10 @@ from os.path import join
 
 from numpy import ones, pi, array, linspace, cos, sqrt, zeros
 
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.magnetics.mag_femm import MagFEMM
 
 
 is_show_fig = False

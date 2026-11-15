@@ -1,4 +1,9 @@
-"""Shared fixtures for the tests of the new (dataclass) class generator."""
+"""Shared configuration of the tests of the new classes.
+
+``pytest --backend=dataclass|pydantic`` selects the class implementation the
+tests import through the ``backend_classes`` / ``backend_functions`` alias
+packages (see _backend.py). The default is dataclass.
+"""
 
 from os.path import dirname, isfile, join
 
@@ -6,6 +11,31 @@ import pytest
 
 from pyleecan.definitions import MAIN_DIR
 from pyleecan.Generator.ClassGenerator.New import class_generator
+from Tests.New import _backend
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--backend",
+        choices=sorted(_backend.BACKENDS),
+        default=_backend.DEFAULT_BACKEND,
+        help="class implementation tested through backend_classes/backend_functions",
+    )
+
+
+def pytest_configure(config):
+    # Before the collection: the test modules import the alias packages
+    _backend.install(config.getoption("backend"))
+
+
+def pytest_report_header(config):
+    return f"pyleecan backend: {config.getoption('backend')}"
+
+
+@pytest.fixture(scope="session")
+def backend(request):
+    """Class implementation under test ("dataclass" or "pydantic")"""
+    return request.config.getoption("backend")
 
 
 @pytest.fixture(autouse=True)

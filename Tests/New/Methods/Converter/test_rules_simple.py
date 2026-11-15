@@ -1,10 +1,10 @@
 import pytest
 from numpy import pi
-from pyleecan.Classes_new.converter.rule_simple import RuleSimple
+from backend_classes.converter.rule_simple import RuleSimple
 
-from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
+from backend_classes.machine.machine_sipmsm import MachineSIPMSM
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.slot.slot_w_11 import SlotW11
 
 
 class TestRuleSimple(object):

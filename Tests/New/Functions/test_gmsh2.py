@@ -4,10 +4,10 @@ import json
 
 from os import makedirs
 from os.path import join, isdir
-from pyleecan.Functions_new.load import load
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.output.output import Output
-from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
+from backend_functions.load import load
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.output.output import Output
+from backend_classes.slot.slot_m_10 import SlotM10
 from pyleecan.definitions import DATA_DIR
 from Tests.New._test_paths import save_plot_path
 from pyleecan.Methods.Simulation.MagElmer import (
@@ -15,7 +15,7 @@ from pyleecan.Methods.Simulation.MagElmer import (
 )
 
 try:
-    from pyleecan.Functions_new.GMSH.draw_gmsh import draw_GMSH
+    from backend_functions.GMSH.draw_gmsh import draw_GMSH
 except:
     draw_GMSH = ImportError
 

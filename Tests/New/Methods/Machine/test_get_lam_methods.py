@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
-from pyleecan.Classes_new.machine.machine_ud import MachineUD
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_scim import MachineSCIM
+from backend_classes.machine.machine_ud import MachineUD
+from backend_classes.machine.lam_slot_wind import LamSlotWind
 
 # init some laminations and a machine
 rotor_0 = LamSlotWind(Rint=0.1, Rext=0.2, is_stator=False)

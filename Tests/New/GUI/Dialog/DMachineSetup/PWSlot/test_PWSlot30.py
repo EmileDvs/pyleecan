@@ -5,10 +5,10 @@ from random import uniform
 
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
-from pyleecan.Classes_new.material.material import Material
+from backend_classes.material.material import Material
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot.slot_w_30 import SlotW30
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.slot.slot_w_30 import SlotW30
 from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.PWSlot30.PWSlot30 import PWSlot30
 
 

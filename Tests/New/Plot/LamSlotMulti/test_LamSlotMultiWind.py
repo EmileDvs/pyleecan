@@ -3,12 +3,12 @@ from os.path import join
 import matplotlib.pyplot as plt
 from numpy import linspace, pi
 
-from pyleecan.Functions_new.load import load
-from pyleecan.Classes_new.machine.lam_slot_multi_wind import LamSlotMultiWind
-from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
-from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
-from pyleecan.Classes_new.slot.slot_circ import SlotCirc
-from pyleecan.Classes_new.machine.notch_even_dist import NotchEvenDist
+from backend_functions.load import load
+from backend_classes.machine.lam_slot_multi_wind import LamSlotMultiWind
+from backend_classes.slot.slot_w_22 import SlotW22
+from backend_classes.slot.slot_w_11 import SlotW11
+from backend_classes.slot.slot_circ import SlotCirc
+from backend_classes.machine.notch_even_dist import NotchEvenDist
 
 from pyleecan.definitions import DATA_DIR
 from Tests.New._test_paths import save_plot_path as save_path

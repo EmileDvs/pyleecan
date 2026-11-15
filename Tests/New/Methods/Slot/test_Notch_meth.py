@@ -2,9 +2,9 @@
 
 import sys
 
-from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.notch_even_dist import NotchEvenDist
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.notch_even_dist import NotchEvenDist
 from pyleecan.Methods import ParentMissingError
 
 import pytest

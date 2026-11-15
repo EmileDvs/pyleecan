@@ -6,20 +6,20 @@ from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 from numpy import pi
 
-from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
-from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
-from pyleecan.Classes_new.slot.slot_m_12 import SlotM12
-from pyleecan.Classes_new.slot.slot_m_13 import SlotM13
-from pyleecan.Classes_new.slot.slot_m_14 import SlotM14
-from pyleecan.Classes_new.slot.slot_m_15 import SlotM15
-from pyleecan.Classes_new.slot.slot_m_16 import SlotM16
-from pyleecan.Classes_new.slot.slot_m_17 import SlotM17
-from pyleecan.Classes_new.slot.slot_m_18 import SlotM18
-from pyleecan.Classes_new.slot.slot_m_19 import SlotM19
-from pyleecan.Classes_new.material.material import Material
+from backend_classes.machine.lam_slot_mag import LamSlotMag
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_sipmsm import MachineSIPMSM
+from backend_classes.slot.slot_m_10 import SlotM10
+from backend_classes.slot.slot_m_11 import SlotM11
+from backend_classes.slot.slot_m_12 import SlotM12
+from backend_classes.slot.slot_m_13 import SlotM13
+from backend_classes.slot.slot_m_14 import SlotM14
+from backend_classes.slot.slot_m_15 import SlotM15
+from backend_classes.slot.slot_m_16 import SlotM16
+from backend_classes.slot.slot_m_17 import SlotM17
+from backend_classes.slot.slot_m_18 import SlotM18
+from backend_classes.slot.slot_m_19 import SlotM19
+from backend_classes.material.material import Material
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.WSlotMag.WSlotMag import WSlotMag
 from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10

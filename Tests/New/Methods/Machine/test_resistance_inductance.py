@@ -4,10 +4,10 @@ import pytest
 
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Classes_new.machine.end_winding_rect import EndWindingRect
-from pyleecan.Classes_new.machine.end_winding_circ import EndWindingCirc
+from backend_classes.machine.end_winding_rect import EndWindingRect
+from backend_classes.machine.end_winding_circ import EndWindingCirc
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 
 from pyleecan.definitions import DATA_DIR
 

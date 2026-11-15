@@ -1,7 +1,7 @@
 from os.path import join
 import pytest
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 

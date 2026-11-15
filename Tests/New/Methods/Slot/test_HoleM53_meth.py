@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from backend_classes.geometry.segment import Segment
+from backend_classes.geometry.surf_line import SurfLine
 
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.slot.hole_m_53 import HoleM53
-from pyleecan.Classes_new.machine.magnet import Magnet
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.slot.hole_m_53 import HoleM53
+from backend_classes.machine.magnet import Magnet
 from numpy import exp, arcsin, ndarray, pi
 
 from pyleecan.Methods.Slot.HoleM53 import Slot53InterError

@@ -2,16 +2,16 @@ from numpy import ones, pi, array, linspace, zeros
 from os.path import join
 import pytest
 
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.machine.winding_ud import WindingUD
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.post.post_plot import PostPlot
-from pyleecan.Classes_new.post.post_function import PostFunction
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Functions_new.load import load
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.machine.winding_ud import WindingUD
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.post.post_plot import PostPlot
+from backend_classes.post.post_function import PostFunction
+from backend_classes.simulation.op_dq import OPdq
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 

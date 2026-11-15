@@ -3,12 +3,12 @@ from os.path import isfile, join
 import pytest
 
 try:
-    from pyleecan.Functions_new.GMSH.gen_3d_mesh import gen_3D_mesh
+    from backend_functions.GMSH.gen_3d_mesh import gen_3D_mesh
 except:
     gen_3D_mesh = ImportError
 
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.slot.slot_w_10 import SlotW10
 from Tests.New._test_paths import save_validation_path as save_path
 
 

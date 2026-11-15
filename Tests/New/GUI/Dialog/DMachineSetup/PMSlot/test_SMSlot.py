@@ -7,13 +7,13 @@ from PySide6.QtTest import QTest
 from numpy import pi
 import mock
 
-from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.machine.lam_slot_mag_ns import LamSlotMagNS
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
-from pyleecan.Classes_new.slot.slot_m_12 import SlotM12
-from pyleecan.Classes_new.material.material import Material
+from backend_classes.machine.lam_slot_mag import LamSlotMag
+from backend_classes.machine.lam_slot_mag_ns import LamSlotMagNS
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_sipmsm import MachineSIPMSM
+from backend_classes.slot.slot_m_11 import SlotM11
+from backend_classes.slot.slot_m_12 import SlotM12
+from backend_classes.material.material import Material
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.SMSlot import SMSlot
 from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.WSlotMag.WSlotMag import WSlotMag

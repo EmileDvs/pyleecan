@@ -1,8 +1,8 @@
 import pytest
 
-from pyleecan.Classes_new.converter.rule_complex import RuleComplex
-from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.machine.skew import Skew
+from backend_classes.converter.rule_complex import RuleComplex
+from backend_classes.machine.machine_sipmsm import MachineSIPMSM
+from backend_classes.machine.skew import Skew
 from numpy import pi
 
 skew_l = list()

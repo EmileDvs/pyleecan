@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import pytest
 from numpy import exp, pi, zeros
 
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
-from pyleecan.Classes_new.machine.winding_ud import WindingUD
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.machine.winding_ud import WindingUD
 from pyleecan.definitions import config_dict
 from Tests.New._test_paths import save_plot_path as save_path
 

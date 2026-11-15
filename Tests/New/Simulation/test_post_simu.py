@@ -1,13 +1,13 @@
 import pytest
 from os.path import join
-from pyleecan.Classes_new.simulation.op_dq import OPdq
+from backend_classes.simulation.op_dq import OPdq
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Classes_new.post.post_function import PostFunction
-from pyleecan.Classes_new.post.post_method import PostMethod
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from backend_classes.post.post_function import PostFunction
+from backend_classes.post.post_method import PostMethod
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.input_current import InputCurrent
 
 
 class ExamplePostMethod(PostMethod):

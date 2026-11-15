@@ -5,12 +5,12 @@ from unittest import TestCase
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.mesh.element_mat import ElementMat
-from pyleecan.Classes_new.mesh.fpgn_seg import FPGNSeg
-from pyleecan.Classes_new.mesh.mesh_mat import MeshMat
-from pyleecan.Classes_new.mesh.mesh_solution import MeshSolution
-from pyleecan.Classes_new.mesh.node_mat import NodeMat
-from pyleecan.Classes_new.mesh.ref_segment_p_1 import RefSegmentP1
+from backend_classes.mesh.element_mat import ElementMat
+from backend_classes.mesh.fpgn_seg import FPGNSeg
+from backend_classes.mesh.mesh_mat import MeshMat
+from backend_classes.mesh.mesh_solution import MeshSolution
+from backend_classes.mesh.node_mat import NodeMat
+from backend_classes.mesh.ref_segment_p_1 import RefSegmentP1
 
 
 @pytest.mark.MeshSol

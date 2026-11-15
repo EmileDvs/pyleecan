@@ -2,8 +2,8 @@
 
 import pytest
 from numpy import array_equal
-from pyleecan.Classes_new.simulation.param_explorer_interval import ParamExplorerInterval
-from pyleecan.Classes_new.simulation.param_explorer_set import ParamExplorerSet
+from backend_classes.simulation.param_explorer_interval import ParamExplorerInterval
+from backend_classes.simulation.param_explorer_set import ParamExplorerSet
 
 param_test = list()
 param_test.append(

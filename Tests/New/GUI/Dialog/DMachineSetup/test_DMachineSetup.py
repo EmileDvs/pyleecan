@@ -8,16 +8,16 @@ import sys
 import mock  # for unittest of raw_input
 from PySide6 import QtWidgets
 
-from pyleecan.Classes_new.machine.machine_sy_rm import MachineSyRM
-from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine.machine_dfim import MachineDFIM
-from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
-from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.machine.machine_wrsm import MachineWRSM
-from pyleecan.Classes_new.machine.machine_srm import MachineSRM
-from pyleecan.Classes_new.machine.machine_lspm import MachineLSPM
+from backend_classes.machine.machine_sy_rm import MachineSyRM
+from backend_classes.machine.machine_ipmsm import MachineIPMSM
+from backend_classes.machine.machine_dfim import MachineDFIM
+from backend_classes.machine.machine_scim import MachineSCIM
+from backend_classes.machine.machine_sipmsm import MachineSIPMSM
+from backend_classes.machine.machine_wrsm import MachineWRSM
+from backend_classes.machine.machine_srm import MachineSRM
+from backend_classes.machine.machine_lspm import MachineLSPM
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.Functions_new.load import load_matlib
+from backend_functions.load import load_matlib
 from Tests.New._test_paths import save_gui_path as save_path
 from Tests import TEST_DATA_DIR
 from pyleecan.definitions import DATA_DIR

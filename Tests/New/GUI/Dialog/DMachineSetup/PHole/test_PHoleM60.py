@@ -3,9 +3,9 @@ from Tests.New.GUI import gui_option  # Set unit as [m]
 import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
-from pyleecan.Classes_new.material.material import Material
-from pyleecan.Classes_new.slot.hole_m_60 import HoleM60
-from pyleecan.Classes_new.machine.lam_hole import LamHole
+from backend_classes.material.material import Material
+from backend_classes.slot.hole_m_60 import HoleM60
+from backend_classes.machine.lam_hole import LamHole
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleM60.PHoleM60 import PHoleM60
 

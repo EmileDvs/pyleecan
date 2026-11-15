@@ -9,22 +9,22 @@ In Proceedings of the third international Conference on Genetic Algorithms (Mend
 # Imports
 from os.path import join
 import pytest
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.simulation.data_keeper import DataKeeper
-from pyleecan.Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
-from pyleecan.Classes_new.optimization.opti_design_var_set import OptiDesignVarSet
-from pyleecan.Classes_new.optimization.opti_objective import OptiObjective
-from pyleecan.Classes_new.optimization.opti_constraint import OptiConstraint
-from pyleecan.Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
-from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.simulation.var_opti import VarOpti
-from pyleecan.Classes_new.output.output import Output
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.simulation.data_keeper import DataKeeper
+from backend_classes.optimization.opti_design_var_interval import OptiDesignVarInterval
+from backend_classes.optimization.opti_design_var_set import OptiDesignVarSet
+from backend_classes.optimization.opti_objective import OptiObjective
+from backend_classes.optimization.opti_constraint import OptiConstraint
+from backend_classes.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.simulation.var_opti import VarOpti
+from backend_classes.output.output import Output
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 import matplotlib.pyplot as plt
 import matplotlib.image as img

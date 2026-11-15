@@ -1,10 +1,10 @@
 import pytest
 from numpy import pi
 
-from pyleecan.Classes_new.converter.rule_complex import RuleComplex
-from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
-from pyleecan.Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
-from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
+from backend_classes.converter.rule_complex import RuleComplex
+from backend_classes.machine.machine_scim import MachineSCIM
+from backend_classes.machine.lam_squirrel_cage import LamSquirrelCage
+from backend_classes.slot.slot_w_11 import SlotW11
 
 rotor_bar_test = list()
 # Common values

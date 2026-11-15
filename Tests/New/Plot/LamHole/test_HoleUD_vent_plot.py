@@ -5,12 +5,12 @@ import pytest
 
 import matplotlib.pyplot as plt
 from numpy import pi
-from pyleecan.Classes_new.machine.lamination import Lamination
-from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.slot.hole_ud import HoleUD
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.surf_line import SurfLine
-from pyleecan.Functions_new.labels import HOLEV_LAB
+from backend_classes.machine.lamination import Lamination
+from backend_classes.slot.ventilation_circ import VentilationCirc
+from backend_classes.slot.hole_ud import HoleUD
+from backend_classes.geometry.segment import Segment
+from backend_classes.geometry.surf_line import SurfLine
+from backend_functions.labels import HOLEV_LAB
 from Tests.New._test_paths import save_plot_path as save_path
 
 

@@ -2,18 +2,11 @@ import pytest
 from numpy import array, cos, linspace, mean, pi, sin, sqrt, zeros
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
-from pyleecan.Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
-from pyleecan.Functions_new.Electrical.dqh_transformation import (
-    dqh2n,
-    dqh2n_DataTime,
-    get_phase_dir,
-    get_phase_dir_DataTime,
-    n2dqh,
-    n2dqh_DataTime,
-)
-from pyleecan.Functions_new.Winding.gen_phase_list import gen_name
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_time import DataTime
+from backend_classes.scidatatool.norm_ref import NormRef as Norm_ref
+from backend_functions.Electrical.dqh_transformation import dqh2n, dqh2n_DataTime, get_phase_dir, get_phase_dir_DataTime, n2dqh, n2dqh_DataTime
+from backend_functions.Winding.gen_phase_list import gen_name
 
 param_list = [
     {"qs": 3, "current_dir": -1, "phase_dir": -1},  # pyleecan convention, 3 phases

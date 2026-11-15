@@ -2,12 +2,12 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
-from pyleecan.Classes_new.scidatatool.data_pattern import DataPattern
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
-from pyleecan.Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
-from pyleecan.Classes_new.scidatatool.vector_field import VectorField
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_linspace import DataLinspace
+from backend_classes.scidatatool.data_pattern import DataPattern
+from backend_classes.scidatatool.data_time import DataTime
+from backend_classes.scidatatool.norm_ref import NormRef as Norm_ref
+from backend_classes.scidatatool.vector_field import VectorField
 
 
 @pytest.mark.scidatatool

@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
-from pyleecan.Functions_new.SciDataTool.omp import comp_undersampled_axe, comp_undersampling
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_time import DataTime
+from backend_functions.SciDataTool.omp import comp_undersampled_axe, comp_undersampling
 
 
 @pytest.mark.scidatatool

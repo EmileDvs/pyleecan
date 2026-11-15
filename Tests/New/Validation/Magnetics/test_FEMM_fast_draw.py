@@ -1,25 +1,25 @@
 import pytest
 from os.path import join
 from numpy import pi
-from pyleecan.Classes_new.simulation.op_dq import OPdq
+from backend_classes.simulation.op_dq import OPdq
 import matplotlib.pyplot as plt
 
-from pyleecan.Classes_new.machine.machine_dfim import MachineDFIM
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.winding import Winding
-from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
-from pyleecan.Classes_new.slot.slot_w_14 import SlotW14
-from pyleecan.Classes_new.slot.slot_w_21 import SlotW21
-from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
-from pyleecan.Classes_new.slot.slot_w_23 import SlotW23
-from pyleecan.Classes_new.slot.slot_w_25 import SlotW25
-from pyleecan.Classes_new.slot.slot_w_29 import SlotW29
-from pyleecan.Classes_new.machine.cond_type_11 import CondType11
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from backend_classes.machine.machine_dfim import MachineDFIM
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.winding import Winding
+from backend_classes.slot.slot_w_11 import SlotW11
+from backend_classes.slot.slot_w_14 import SlotW14
+from backend_classes.slot.slot_w_21 import SlotW21
+from backend_classes.slot.slot_w_22 import SlotW22
+from backend_classes.slot.slot_w_23 import SlotW23
+from backend_classes.slot.slot_w_25 import SlotW25
+from backend_classes.slot.slot_w_29 import SlotW29
+from backend_classes.machine.cond_type_11 import CondType11
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_femm import MagFEMM
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 M400_50A = load(join(DATA_DIR, "Material", "M400-50A.json"))

@@ -3,8 +3,8 @@
 import pytest
 
 from pyleecan.classes_common.check import InitUnKnowClassError
-from pyleecan.Classes_new.magnetics.magnetics import Magnetics
-from pyleecan.Functions_new.Load.import_class import import_class
+from backend_classes.magnetics.magnetics import Magnetics
+from backend_functions.Load.import_class import import_class
 
 
 def test_import_class_returns_class():

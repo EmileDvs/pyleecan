@@ -2,8 +2,8 @@
 
 import sys
 
-from pyleecan.Classes_new.slot.hole_m_50 import HoleM50
-from pyleecan.Classes_new.machine.lam_hole import LamHole
+from backend_classes.slot.hole_m_50 import HoleM50
+from backend_classes.machine.lam_hole import LamHole
 from pyleecan.Methods import ParentMissingError
 
 import pytest

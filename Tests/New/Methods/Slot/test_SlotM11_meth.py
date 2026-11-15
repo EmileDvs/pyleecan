@@ -2,14 +2,14 @@
 
 import pytest
 
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
-from pyleecan.Classes_new.geometry.segment import Segment
+from backend_classes.geometry.arc_1 import Arc1
+from backend_classes.geometry.segment import Segment
 
-from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from backend_classes.machine.lam_slot_mag import LamSlotMag
 
-from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
+from backend_classes.slot.slot_m_11 import SlotM11
 from numpy import pi, exp, angle, array, arcsin
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.slot.slot import Slot
 from pyleecan.Methods import ParentMissingError
 
 Mag11_test = list()

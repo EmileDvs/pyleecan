@@ -2,9 +2,9 @@
 
 import pytest
 
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
-from pyleecan.Classes_new.geometry.arc_2 import Arc2
-from pyleecan.Classes_new.geometry.arc_3 import Arc3
+from backend_classes.geometry.arc_1 import Arc1
+from backend_classes.geometry.arc_2 import Arc2
+from backend_classes.geometry.arc_3 import Arc3
 from numpy import pi, array, exp, sqrt
 
 

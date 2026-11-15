@@ -3,18 +3,18 @@ from os.path import isdir, isfile, join
 
 import matplotlib.pyplot as plt
 from numpy import array, cos, exp, linspace, ones, pi, sin, sqrt, zeros
-from pyleecan.Classes_new.machine.cond_type_21 import CondType21
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.lam_squirrel_cage_mag import LamSquirrelCageMag
-from pyleecan.Classes_new.machine.machine_lspm import MachineLSPM
-from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
-from pyleecan.Classes_new.machine.winding import Winding
-from pyleecan.Classes_new.machine.winding_sc import WindingSC
-from pyleecan.Classes_new.slot.hole_m_52 import HoleM52
-from pyleecan.Classes_new.slot.slot_w_21 import SlotW21
-from pyleecan.Classes_new.machine.shaft import Shaft
+from backend_classes.machine.cond_type_21 import CondType21
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.lam_squirrel_cage_mag import LamSquirrelCageMag
+from backend_classes.machine.machine_lspm import MachineLSPM
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.machine.winding import Winding
+from backend_classes.machine.winding_sc import WindingSC
+from backend_classes.slot.hole_m_52 import HoleM52
+from backend_classes.slot.slot_w_21 import SlotW21
+from backend_classes.machine.shaft import Shaft
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from Tests.New._test_paths import save_plot_path as save_path
 
 

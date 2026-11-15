@@ -7,28 +7,28 @@ from unittest.mock import patch  # for unittest of input
 import pytest
 from numpy import array, ones, pi
 from pyleecan.classes_common.check import InitUnKnowClassError
-from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.output.xoutput import XOutput
-from pyleecan.Classes_new.simulation.data_keeper import DataKeeper
-from pyleecan.Classes_new.output.output import Output
-from pyleecan.Classes_new.post.post_function import PostFunction
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
-from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
-from pyleecan.Classes_new.slot.slot_ud import SlotUD
-from pyleecan.Classes_new.slot.hole_ud import HoleUD
-from pyleecan.Classes_new.machine.winding import Winding
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Functions_new.load import load, load_dict, load_list; from pyleecan.classes_common.errors import LoadWrongDictClassError, LoadWrongTypeError
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.machine.lam_slot_mag import LamSlotMag
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_sipmsm import MachineSIPMSM
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.output.xoutput import XOutput
+from backend_classes.simulation.data_keeper import DataKeeper
+from backend_classes.output.output import Output
+from backend_classes.post.post_function import PostFunction
+from backend_classes.machine.shaft import Shaft
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.slot.slot_m_11 import SlotM11
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.slot.slot_ud import SlotUD
+from backend_classes.slot.hole_ud import HoleUD
+from backend_classes.machine.winding import Winding
+from backend_classes.simulation.op_dq import OPdq
+from backend_functions.load import load, load_dict, load_list; from pyleecan.classes_common.errors import LoadWrongDictClassError, LoadWrongTypeError
 from pyleecan.classes_common.errors import LoadMissingFileError
-from pyleecan.Functions_new.Save.save_json import save_json
+from backend_functions.Save.save_json import save_json
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_load_path as save_path
 from Tests import x as logger

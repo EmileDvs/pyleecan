@@ -3,14 +3,14 @@ from os.path import join, isdir
 import pytest
 from numpy import array, linspace, ones, pi, zeros, sqrt, cos
 from Tests.New._test_paths import save_plot_path
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.magnetics.mag_elmer import MagElmer
-from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.output.output import Output
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.Plot import dict_2D
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_elmer import MagElmer
+from backend_classes.slot.slot_m_10 import SlotM10
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.output.output import Output
+from backend_functions.load import load
+from backend_functions.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR
 
 # Gather results in the same folder

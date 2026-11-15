@@ -6,16 +6,16 @@ from os.path import join
 from mock import MagicMock
 from numpy import array, pi, zeros
 
-from pyleecan.Classes_new.machine.machine_ud import MachineUD
-from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.slot.ventilation_polar import VentilationPolar
-from pyleecan.Classes_new.slot.hole_m_50 import HoleM50
-from pyleecan.Classes_new.machine.frame import Frame
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Functions_new.load import load
+from backend_classes.machine.machine_ud import MachineUD
+from backend_classes.machine.machine_ipmsm import MachineIPMSM
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.slot.ventilation_circ import VentilationCirc
+from backend_classes.slot.ventilation_polar import VentilationPolar
+from backend_classes.slot.hole_m_50 import HoleM50
+from backend_classes.machine.frame import Frame
+from backend_classes.machine.shaft import Shaft
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 Toyota_Prius = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))

@@ -2,10 +2,10 @@
 
 import pytest
 
-from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.slot.slot_m_13 import SlotM13
+from backend_classes.machine.lam_slot_mag import LamSlotMag
+from backend_classes.slot.slot_m_13 import SlotM13
 from numpy import pi, exp, sqrt
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.slot.slot import Slot
 
 Mag13_test = list()
 # Internal Slot inset

@@ -2,11 +2,11 @@ from os.path import join
 
 import pytest
 
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_ipmsm import MachineIPMSM
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.machine.lam_slot_wind import LamSlotWind
 
 
 def test_desc_SCIM():

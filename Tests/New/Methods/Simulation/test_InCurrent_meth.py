@@ -12,17 +12,17 @@ from numpy import (
 )
 from numpy.testing import assert_array_almost_equal
 import matplotlib.pyplot as plt
-from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.machine_dfim import MachineDFIM
-from pyleecan.Classes_new.output.output import Output
-from pyleecan.Classes_new.simulation.simulation import Simulation
-from pyleecan.Classes_new.simulation.op_dq import OPdq
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_dfim import MachineDFIM
+from backend_classes.output.output import Output
+from backend_classes.simulation.simulation import Simulation
+from backend_classes.simulation.op_dq import OPdq
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.Plot import dict_2D
+from backend_functions.load import load
+from backend_functions.Plot import dict_2D
 from pyleecan.Methods.Simulation.Input import CURRENT_DIR_REF, ROT_DIR_REF, InputError
 import pytest
 from Tests.New._test_paths import save_plot_path as save_path

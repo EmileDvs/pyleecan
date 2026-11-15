@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
+from backend_classes.slot.slot_w_11 import SlotW11
 from numpy import arcsin, exp, pi
-from pyleecan.Classes_new.machine.lam_slot import LamSlot
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW11 import S11_H1rCheckError, S11_R1CheckError
 
 # For AlmostEqual

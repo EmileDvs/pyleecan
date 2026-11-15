@@ -4,14 +4,14 @@ import pytest
 from os.path import join
 from multiprocessing import cpu_count
 
-from pyleecan.Classes_new.force.force_mt import ForceMT
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from backend_classes.force.force_mt import ForceMT
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.simulation.input_current import InputCurrent
 
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.Plot import dict_2D
+from backend_functions.load import load
+from backend_functions.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR
 from Tests.New._test_paths import save_validation_path as save_path
 

@@ -3,19 +3,19 @@ from os.path import join
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.electrical.elec_lut_dq import ElecLUTdq
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.simulation.input_voltage import InputVoltage
-from pyleecan.Classes_new.loss.loss_fea import LossFEA
-from pyleecan.Classes_new.loss.loss_model_steinmetz import LossModelSteinmetz
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.post.post_lut import PostLUT
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
-from pyleecan.Classes_new.simulation.var_load_current import VarLoadCurrent
+from backend_classes.electrical.elec_lut_dq import ElecLUTdq
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.simulation.input_voltage import InputVoltage
+from backend_classes.loss.loss_fea import LossFEA
+from backend_classes.loss.loss_model_steinmetz import LossModelSteinmetz
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.post.post_lut import PostLUT
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.simulation.var_load_current import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.SciDataTool.Plot.plot_3d import plot_3D
+from backend_functions.load import load
+from backend_functions.SciDataTool.Plot.plot_3d import plot_3D
 
 
 @pytest.mark.skip(reason="Work in progress")

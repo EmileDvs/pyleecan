@@ -4,7 +4,7 @@ from os.path import isdir, join
 import matplotlib.pyplot as plt
 import pytest
 
-from pyleecan.Classes_new.import_data.import_gen_pwm import ImportGenPWM
+from backend_classes.import_data.import_gen_pwm import ImportGenPWM
 from Tests.New._test_paths import save_plot_path as save_path
 
 save_path = join(save_path, "Import")

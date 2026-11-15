@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from pyleecan.Classes_new.geometry.circle import Circle
-from pyleecan.Classes_new.geometry.arc_3 import Arc3
+from backend_classes.geometry.circle import Circle
+from backend_classes.geometry.arc_3 import Arc3
 from pyleecan.Methods.Geometry.Circle import (
     AngleRotationCircleError,
     PointTranslateCircleError,

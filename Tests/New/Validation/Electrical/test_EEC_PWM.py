@@ -4,15 +4,15 @@ import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal, assert_array_less
 
-from pyleecan.Classes_new.electrical.eec_pmsm import EEC_PMSM
-from pyleecan.Classes_new.electrical.electrical import Electrical
-from pyleecan.Classes_new.import_data.import_gen_pwm import ImportGenPWM
-from pyleecan.Classes_new.simulation.input_voltage import InputVoltage
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from backend_classes.electrical.eec_pmsm import EEC_PMSM
+from backend_classes.electrical.electrical import Electrical
+from backend_classes.import_data.import_gen_pwm import ImportGenPWM
+from backend_classes.simulation.input_voltage import InputVoltage
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.simulation.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.SciDataTool.Plot.plot_2d import plot_2D
+from backend_functions.load import load
+from backend_functions.SciDataTool.Plot.plot_2d import plot_2D
 
 is_show_fig = False
 

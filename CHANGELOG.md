@@ -37,7 +37,13 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   machine files of `Data/Machine` load the same with the legacy, dataclass and
   pydantic `load`.
 - **`Tests/New`**: copy of the legacy tests targeting the new classes and
-  functions; test data gathered in `Tests/Data`.
+  functions; test data gathered in `Tests/Data`. The tests import the classes
+  and functions through alias packages (`backend_classes`,
+  `backend_functions`): `pytest --backend=dataclass|pydantic` selects the
+  implementation under test. The legacy class tests pass the same on both.
+- **Cross tests** (`Tests/New/Cross`): for every class, the legacy, dataclass
+  and pydantic implementations give the same legacy dictionary, load the
+  legacy dictionaries and give the same JSON dump.
 - **`ClassInfo`** (`Classes_new/_class_info.py`): the class information
   (properties, types, units, min/max, descriptions) is rebuilt at runtime from
   the classes themselves; `Class_Dict.json` is no longer needed.
@@ -84,8 +90,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   is, in pydantic models, a field without the `_` whose legacy name is kept as
   alias (files) and as a property (methods).
 - `pydantic>=2.12` is a dependency.
-- The legacy `compare` of both implementations is shared and reports the
-  legacy paths (`name.list[0]`, `name.dict[key]`, `len(name.list)`).
+- The legacy `compare` and `as_dict` of both implementations are shared
+  (`classes_common`); `compare` reports the legacy paths (`name.list[0]`,
+  `name.dict[key]`, `len(name.list)`).
 - Loading a dataclass no longer type-checks with dacite: the fields are
   validated by the class itself.
 - Pydantic `complex` fields use the native pydantic type (int, float and the
@@ -118,11 +125,10 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 | 1. Split the bases (target / legacy layer) | done |
 | 2. Type, min and max validation for dataclasses | done |
 | 3. `Functions_pydantic` | done |
-| 4. Phase 1 test architecture (`--backend`) | to do |
+| 4. Phase 1 test architecture (`--backend`) | done (method results: with Step 5) |
 | 5. Package refactor pass (`Methods_new`, no parent links) | to do |
 | 6. Remaining utility functions | to do |
 
-Legacy class tests (`Tests/New/Classes`, run on `Classes_new`): 2855 passed,
+Legacy class tests (`Tests/New/Classes`), with each backend: 2855 passed,
 1 failed (`test_copy_out`: custom property setter of `ParamExplorer`, planned
-in Step 5). `Classes_pydantic` is tested by the same suite from Step 4
-(`--backend`).
+in Step 5). Cross tests (`Tests/New/Cross`): 1405 passed.

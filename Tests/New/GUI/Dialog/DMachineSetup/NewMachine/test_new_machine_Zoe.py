@@ -9,8 +9,8 @@ from numpy import max as np_max
 from PySide6 import QtWidgets
 import mock
 import pytest
-from pyleecan.Classes_new.machine.machine_wrsm import MachineWRSM
-from pyleecan.Classes_new.machine.shaft import Shaft
+from backend_classes.machine.machine_wrsm import MachineWRSM
+from backend_classes.machine.shaft import Shaft
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
 from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (
@@ -27,8 +27,8 @@ from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.PCondType11.PCondType11 import 
 from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.PCondType12.PCondType12 import (
     PCondType12,
 )
-from pyleecan.Classes_new.machine.cond_type_11 import CondType11
-from pyleecan.Classes_new.machine.cond_type_12 import CondType12
+from backend_classes.machine.cond_type_11 import CondType11
+from backend_classes.machine.cond_type_12 import CondType12
 from pyleecan.GUI.Dialog.DMachineSetup.SWinding.SWinding import SWinding
 from pyleecan.GUI.Dialog.DMachineSetup.SPreview.SPreview import SPreview
 from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.SWSlot import SWSlot
@@ -36,7 +36,7 @@ from pyleecan.GUI.Dialog.DMachineSetup.SSkew.SSkew import SSkew
 
 from Tests.New.GUI import gui_option  # Set unit as [m]
 
-from pyleecan.Functions_new.load import load_matlib
+from backend_functions.load import load_matlib
 from Tests.New._test_paths import save_gui_path as save_path
 
 from pyleecan.definitions import DATA_DIR

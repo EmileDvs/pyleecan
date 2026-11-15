@@ -4,13 +4,13 @@ import pytest
 from numpy import abs as np_abs
 from numpy import array, zeros
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
-from pyleecan.Classes_new.mesh.solution_data import SolutionData
-from pyleecan.Classes_new.mesh.solution_mat import SolutionMat
-from pyleecan.Classes_new.mesh.solution_vector import SolutionVector
-from pyleecan.Classes_new.scidatatool.vector_field import VectorField
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_linspace import DataLinspace
+from backend_classes.scidatatool.data_time import DataTime
+from backend_classes.mesh.solution_data import SolutionData
+from backend_classes.mesh.solution_mat import SolutionMat
+from backend_classes.mesh.solution_vector import SolutionVector
+from backend_classes.scidatatool.vector_field import VectorField
 
 
 @pytest.mark.MeshSol

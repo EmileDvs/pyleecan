@@ -7,27 +7,27 @@ import matplotlib.pyplot as plt
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QTabBar
 
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine.machine_sy_rm import MachineSyRM
-from pyleecan.Classes_new.machine.magnet import Magnet
-from pyleecan.Classes_new.slot.hole_m_50 import HoleM50
-from pyleecan.Classes_new.slot.hole_m_51 import HoleM51
-from pyleecan.Classes_new.slot.hole_m_52 import HoleM52
-from pyleecan.Classes_new.slot.hole_m_52_r import HoleM52R
-from pyleecan.Classes_new.slot.hole_m_53 import HoleM53
-from pyleecan.Classes_new.slot.hole_m_54 import HoleM54
-from pyleecan.Classes_new.slot.hole_m_57 import HoleM57
-from pyleecan.Classes_new.slot.hole_m_58 import HoleM58
-from pyleecan.Classes_new.slot.hole_m_60 import HoleM60
-from pyleecan.Classes_new.slot.hole_m_61 import HoleM61
-from pyleecan.Classes_new.slot.hole_m_62 import HoleM62
-from pyleecan.Classes_new.slot.hole_m_63 import HoleM63
-from pyleecan.Classes_new.slot.hole_ud import HoleUD
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_ipmsm import MachineIPMSM
+from backend_classes.machine.machine_sy_rm import MachineSyRM
+from backend_classes.machine.magnet import Magnet
+from backend_classes.slot.hole_m_50 import HoleM50
+from backend_classes.slot.hole_m_51 import HoleM51
+from backend_classes.slot.hole_m_52 import HoleM52
+from backend_classes.slot.hole_m_52_r import HoleM52R
+from backend_classes.slot.hole_m_53 import HoleM53
+from backend_classes.slot.hole_m_54 import HoleM54
+from backend_classes.slot.hole_m_57 import HoleM57
+from backend_classes.slot.hole_m_58 import HoleM58
+from backend_classes.slot.hole_m_60 import HoleM60
+from backend_classes.slot.hole_m_61 import HoleM61
+from backend_classes.slot.hole_m_62 import HoleM62
+from backend_classes.slot.hole_m_63 import HoleM63
+from backend_classes.slot.hole_ud import HoleUD
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.SMHoleMag import SMHoleMag
-from pyleecan.Classes_new.material.material import Material
+from backend_classes.material.material import Material
 
 from Tests.New.GUI import gui_option  # Set unit as [m]
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
-from pyleecan.Classes_new.slot.slot_w_26 import SlotW26
+from backend_classes.slot.slot_w_26 import SlotW26
 from numpy import ndarray, angle
-from pyleecan.Classes_new.machine.lam_slot import LamSlot
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.slot.slot import Slot
 
 # For AlmostEqual
 DELTA = 1e-4

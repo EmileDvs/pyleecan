@@ -4,15 +4,15 @@ from os.path import join
 import pytest
 from numpy import array, pi, zeros
 
-from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.simulation.input_current import InputCurrent
-from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
-from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Classes_new.output.output import Output
-from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.output.output import Output
+from backend_classes.simulation.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
+from backend_functions.load import load
 from Tests.New._test_paths import save_load_path, save_plot_path
 
 

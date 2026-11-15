@@ -1,7 +1,7 @@
 import pytest
 from os.path import join
-from pyleecan.Classes_new.slot.slot_ud_2 import SlotUD2
-from pyleecan.Functions_new.load import load
+from backend_classes.slot.slot_ud_2 import SlotUD2
+from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 
 # For AlmostEqual

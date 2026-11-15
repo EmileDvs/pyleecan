@@ -4,8 +4,8 @@ import pytest
 from cloudpickle import dumps
 from pydantic import ValidationError
 
-from pyleecan.Classes_new._class_info import PYLEECAN_BASES
-from pyleecan.Classes_new._import import import_class
+from backend_classes._class_info import PYLEECAN_BASES
+from backend_classes._import import import_class
 from pyleecan.classes_common.errors import (
     CheckMaxError,
     CheckMinError,

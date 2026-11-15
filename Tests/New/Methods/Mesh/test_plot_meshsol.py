@@ -1,14 +1,14 @@
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.scidatatool.data_freq import DataFreq
-from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
-from pyleecan.Classes_new.mesh.element_mat import ElementMat
-from pyleecan.Classes_new.mesh.mesh_mat import MeshMat
-from pyleecan.Classes_new.mesh.mesh_solution import MeshSolution
-from pyleecan.Classes_new.mesh.node_mat import NodeMat
-from pyleecan.Classes_new.mesh.solution_vector import SolutionVector
-from pyleecan.Classes_new.scidatatool.vector_field import VectorField
+from backend_classes.scidatatool.data_freq import DataFreq
+from backend_classes.scidatatool.data_linspace import DataLinspace
+from backend_classes.mesh.element_mat import ElementMat
+from backend_classes.mesh.mesh_mat import MeshMat
+from backend_classes.mesh.mesh_solution import MeshSolution
+from backend_classes.mesh.node_mat import NodeMat
+from backend_classes.mesh.solution_vector import SolutionVector
+from backend_classes.scidatatool.vector_field import VectorField
 from Tests.New._test_paths import save_plot_path as save_path
 
 

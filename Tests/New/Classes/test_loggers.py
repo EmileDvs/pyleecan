@@ -2,7 +2,7 @@ from logging import Logger
 
 import pytest
 
-from pyleecan.Classes_new._class_info import ClassInfo
+from backend_classes._class_info import ClassInfo
 
 # Class information rebuilt from the dataclasses themselves
 class_list = list(ClassInfo().get_dict().values())

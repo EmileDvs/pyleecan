@@ -245,13 +245,27 @@ Creation time with validation (GC on, 2026-11-15): `Segment` 1.8 us (legacy),
 
 ### Step 4: Phase 1 test architecture
 
-- [ ] `--backend` option: the generated `Tests/New` tree imports the classes
-      through an alias package that `conftest.py` maps to `Classes_new` or
-      `Classes_pydantic`.
-- [ ] Parity tests: the legacy-derived suite passes on both implementations.
-- [ ] Cross tests: legacy, dataclass and pydantic objects built from the same data
-      give the same `as_dict`, load the same files and give the same method results.
-- [ ] CI runs the suite once per backend.
+- [x] `--backend` option: the generated `Tests/New` tree imports the classes
+      and functions through the alias packages `backend_classes` and
+      `backend_functions`, mapped by `Tests/New/conftest.py` to the dataclass or
+      pydantic packages (`Tests/New/_backend.py`; an alias module is the real
+      module object). The test generator writes the aliases
+      (`alias_backend_imports`).
+- [x] Parity tests: the legacy-derived class suite passes the same on both
+      implementations (`Tests/New/Classes`: 2855 passed, 1 failed with each
+      backend: `test_copy_out`, custom setter of `ParamExplorer`, Step 5).
+- [x] Legacy `as_dict` shared by both legacy layers (`classes_common.legacy_dump`);
+      an int or a float given to a complex is kept, as in legacy.
+- [x] Cross tests (`Tests/New/Cross`): for the 281 classes, the default
+      objects of the three implementations have the same `as_dict`, the
+      legacy dictionary loads as the default object in both new
+      implementations, and both have the same JSON `model_dump`; the 37 machine
+      files load the same (`Tests/New/test_functions_pydantic.py`).
+- [ ] Method results compared between implementations: with the method tests
+      of each package, run with both backends (Step 5).
+- [ ] CI runs the suite once per backend (no CI configuration in the
+      repository yet):
+      `pytest Tests/New/Classes --backend=dataclass` and `--backend=pydantic`.
 
 ### Step 5: package refactor pass (`Methods_new`)
 

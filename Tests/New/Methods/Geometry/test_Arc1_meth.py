@@ -4,7 +4,7 @@ from os.path import join
 import matplotlib.pyplot as plt
 from numpy import array, exp, pi, sqrt
 
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from backend_classes.geometry.arc_1 import Arc1
 from pyleecan.Methods.Geometry.Arc1 import (
     PointArc1Error,
     RadiusArc1Error,

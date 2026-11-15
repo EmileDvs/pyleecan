@@ -5939,7 +5939,8 @@ def _generate_dataclass_class(
         description = _property_description(prop)
         if description:
             source += f"{TAB}{_attribute_docstring(description)}\n"
-        fields_source.append((name, source))
+        # Grouped by the legacy name (a renamed "_x" field stays with the "_" ones)
+        fields_source.append((prop["name"], source))
 
     attribute_groups = [
         [source for name, source in class_level if not name.startswith("_")],

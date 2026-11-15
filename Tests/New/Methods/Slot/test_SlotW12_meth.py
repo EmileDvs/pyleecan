@@ -2,13 +2,13 @@
 import pytest
 
 from numpy import ndarray, arcsin, exp
-from pyleecan.Classes_new.machine.lam_slot import LamSlot
-from pyleecan.Classes_new.slot.slot_w_12 import SlotW12
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.surf_line import SurfLine
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
-from pyleecan.Classes_new.geometry.arc_3 import Arc3
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.slot.slot_w_12 import SlotW12
+from backend_classes.geometry.segment import Segment
+from backend_classes.geometry.surf_line import SurfLine
+from backend_classes.geometry.arc_1 import Arc1
+from backend_classes.geometry.arc_3 import Arc3
+from backend_classes.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW12 import S12_R20CheckError
 
 # For AlmostEqual

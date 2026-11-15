@@ -5,9 +5,9 @@ from numpy import pi, exp
 
 import pytest
 
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.slot.hole_m_57 import HoleM57
-from pyleecan.Classes_new.slot.hole import Hole
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.slot.hole_m_57 import HoleM57
+from backend_classes.slot.hole import Hole
 
 DELTA = 1e-6
 HoleM57_test = list()

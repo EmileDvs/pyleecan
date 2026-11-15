@@ -24,10 +24,8 @@ from dataclasses import dataclass, field, fields
 from functools import cache
 from typing import Any, ClassVar, get_args, get_type_hints
 
-import numpy as np
-
 from ..classes_common.equality import compare_values
-from ..classes_common.functions import SourceFunction
+from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
 from ..classes_common.parents import assert_parent_type
 from ._pyleecan_class import PyleecanClass
 
@@ -46,7 +44,7 @@ def _complex_field_names(cls):
     return frozenset(
         name
         for name, hint in get_type_hints(cls).items()
-        if hint is complex or complex in get_args(hint)
+        if is_complex_annotation(hint)
     )
 
 
@@ -191,22 +189,19 @@ class LegacyClass(PyleecanClass):
         """Serialize dataclass fields using Pyleecan's object dictionary format."""
         if type_handle_ndarray not in (0, 1, 2):
             raise ValueError(f"Unknown type_handle_ndarray: {type_handle_ndarray}")
-        values = {}
-        for field_info in fields(self):
-            if field_info.metadata.get("serialize", True):
-                if field_info.metadata.get("as_dict") in ("1", "2"):
-                    values[field_info.name] = None
-                elif field_info.name in _complex_field_names(type(self)):
-                    # Legacy: complex properties are serialized as str
-                    value = getattr(self, field_info.name)
-                    values[field_info.name] = None if value is None else str(value)
-                else:
-                    values[field_info.name] = self._serialize_value(
-                        getattr(self, field_info.name),
-                        type_handle_ndarray,
-                        keep_function,
-                        kwargs,
-                    )
+        complex_names = _complex_field_names(type(self))
+        values = {
+            field_info.name: legacy_field(
+                getattr(self, field_info.name),
+                field_info.name in complex_names,
+                field_info.metadata.get("as_dict"),
+                type_handle_ndarray,
+                keep_function,
+                kwargs,
+            )
+            for field_info in fields(self)
+            if field_info.metadata.get("serialize", True)
+        }
         values["__class__"] = type(self).__name__
         return values
 
@@ -256,46 +251,6 @@ class LegacyClass(PyleecanClass):
                 value._set_None()
             else:
                 setattr(self, field_info.name, None)
-
-    @staticmethod
-    def _serialize_value(value, type_handle_ndarray, keep_function, kwargs):
-        if value is None:
-            return None
-        if isinstance(value, SourceFunction):
-            return value.source  # Legacy: functions are saved by their source
-        if isinstance(value, np.ndarray):
-            if type_handle_ndarray == 0:
-                return value.tolist()
-            if type_handle_ndarray == 1:
-                return value.copy()
-            if type_handle_ndarray == 2:
-                return value
-            raise ValueError(f"Unknown type_handle_ndarray: {type_handle_ndarray}")
-        if hasattr(value, "as_dict"):
-            return value.as_dict(
-                type_handle_ndarray=type_handle_ndarray,
-                keep_function=keep_function,
-                **kwargs,
-            )
-        if isinstance(value, dict):
-            return {
-                key: LegacyClass._serialize_value(
-                    item, type_handle_ndarray, keep_function, kwargs
-                )
-                for key, item in value.items()
-            }
-        if isinstance(value, (list, tuple)):
-            return [
-                LegacyClass._serialize_value(
-                    item, type_handle_ndarray, keep_function, kwargs
-                )
-                for item in value
-            ]
-        if type(value) is complex:
-            return str(value)
-        if callable(value) and not keep_function:
-            return None
-        return value
 
     @staticmethod
     def _copy_value(value):

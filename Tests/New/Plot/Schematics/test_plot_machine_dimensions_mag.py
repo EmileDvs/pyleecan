@@ -1,27 +1,20 @@
 import pytest
-from pyleecan.Classes_new.machine.machine_ud import MachineUD
-from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
-from pyleecan.Classes_new.machine.lamination import Lamination
-from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Classes_new.machine.frame import Frame
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from backend_classes.machine.machine_ud import MachineUD
+from backend_classes.slot.slot_m_11 import SlotM11
+from backend_classes.machine.lamination import Lamination
+from backend_classes.machine.lam_slot_mag import LamSlotMag
+from backend_classes.machine.lam_squirrel_cage import LamSquirrelCage
+from backend_classes.machine.shaft import Shaft
+from backend_classes.machine.frame import Frame
+from backend_classes.geometry.segment import Segment
+from backend_classes.geometry.arc_1 import Arc1
 from Tests.New._test_paths import save_plot_path as save_path
 from os.path import join, isdir, isfile
 from os import makedirs, remove
 from numpy import exp, pi
 import matplotlib.pyplot as plt
-from pyleecan.Functions_new.init_fig import init_fig
-from pyleecan.Functions_new.Plot import (
-    ARROW_COLOR,
-    ARROW_WIDTH,
-    SC_FONT_SIZE,
-    MAIN_LINE_COLOR,
-    MAIN_LINE_STYLE,
-    MAIN_LINE_WIDTH,
-)
+from backend_functions.init_fig import init_fig
+from backend_functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, MAIN_LINE_COLOR, MAIN_LINE_STYLE, MAIN_LINE_WIDTH
 
 SCHEMATICS_PATH = join(save_path, "Schematics")
 

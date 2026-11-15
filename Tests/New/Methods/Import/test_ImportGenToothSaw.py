@@ -7,7 +7,7 @@ from os.path import isdir, join
 from numpy import linspace
 import matplotlib.pyplot as plt
 
-from pyleecan.Classes_new.import_data.import_gen_tooth_saw import ImportGenToothSaw
+from backend_classes.import_data.import_gen_tooth_saw import ImportGenToothSaw
 from Tests.New._test_paths import save_plot_path as save_path
 
 

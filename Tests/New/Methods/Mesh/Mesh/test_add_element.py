@@ -2,8 +2,8 @@
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.mesh.element_mat import ElementMat
-from pyleecan.Classes_new.mesh.mesh_mat import MeshMat
+from backend_classes.mesh.element_mat import ElementMat
+from backend_classes.mesh.mesh_mat import MeshMat
 
 
 @pytest.mark.MeshSol

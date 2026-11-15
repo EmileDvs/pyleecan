@@ -1,6 +1,6 @@
-from pyleecan.Classes_new.machine.lamination import Lamination
-from pyleecan.Classes_new.machine.notch_even_dist import NotchEvenDist
-from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
+from backend_classes.machine.lamination import Lamination
+from backend_classes.machine.notch_even_dist import NotchEvenDist
+from backend_classes.slot.slot_m_10 import SlotM10
 import pytest
 import matplotlib.pyplot as plt
 

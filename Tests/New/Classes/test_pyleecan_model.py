@@ -58,7 +58,7 @@ def test_round_trip_through_a_container():
     data = json.loads(json.dumps(slot.as_dict()))
     assert data["line_list"][0] == {
         "prop_dict": None,
-        "begin": "0j",
+        "begin": "0",  # Legacy: an int given to a complex is kept (str(0))
         "end": "1j",
         "__class__": "Segment",
     }

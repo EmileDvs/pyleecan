@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from pyleecan.Classes_new.geometry.polar_arc import PolarArc
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
-from pyleecan.Classes_new.geometry.segment import Segment
+from backend_classes.geometry.polar_arc import PolarArc
+from backend_classes.geometry.arc_1 import Arc1
+from backend_classes.geometry.segment import Segment
 from numpy import pi
 from mock import MagicMock
 from pyleecan.definitions import config_dict

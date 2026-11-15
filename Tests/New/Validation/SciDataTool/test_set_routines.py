@@ -1,11 +1,7 @@
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Functions_new.SciDataTool.set_routines import (
-    intersect1d_tol,
-    union1d_tol,
-    unique_tol,
-)
+from backend_functions.SciDataTool.set_routines import intersect1d_tol, union1d_tol, unique_tol
 
 
 def test_set_routines():

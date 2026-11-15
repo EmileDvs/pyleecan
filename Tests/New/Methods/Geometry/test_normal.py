@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.geometry.segment import Segment
+from backend_classes.geometry.segment import Segment
 
 from numpy import pi, sqrt, exp
 

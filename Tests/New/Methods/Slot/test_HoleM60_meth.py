@@ -2,10 +2,10 @@
 
 from numpy import pi, angle
 import pytest
-from pyleecan.Classes_new.slot.hole import Hole
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.slot.hole_m_60 import HoleM60
-from pyleecan.Functions_new.Geometry.inter_line_line import inter_line_line
+from backend_classes.slot.hole import Hole
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.slot.hole_m_60 import HoleM60
+from backend_functions.Geometry.inter_line_line import inter_line_line
 
 HoleM60_test = list()
 # Tests without magnet

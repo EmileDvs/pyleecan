@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*
 from os.path import join
 import pytest
-from pyleecan.Classes_new.geometry.circle import Circle
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.surf_line import SurfLine
-from pyleecan.Functions_new.load import load
+from backend_classes.geometry.circle import Circle
+from backend_classes.geometry.segment import Segment
+from backend_classes.geometry.surf_line import SurfLine
+from backend_functions.load import load
 from Tests import TEST_DATA_DIR
 
 # Configuring the test of is_inside

@@ -6,13 +6,8 @@ from os.path import isfile, join
 import pytest
 from numpy import array_equal
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Functions_new.load import load
-from pyleecan.Functions_new.Load.retrocompatibility import (
-    convert_init_dict,
-    is_before_version,
-    convert_Wmag_Hmag,
-    is_Wmag_Hmag,
-)
+from backend_functions.load import load
+from backend_functions.Load.retrocompatibility import convert_init_dict, is_before_version, convert_Wmag_Hmag, is_Wmag_Hmag
 from Tests import TEST_DATA_DIR
 
 

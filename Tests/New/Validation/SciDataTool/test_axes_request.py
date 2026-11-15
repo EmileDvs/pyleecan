@@ -3,9 +3,9 @@ from os.path import join
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.scidatatool.data_1d import Data1D
-from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
-from pyleecan.Classes_new.scidatatool.data_time import DataTime
+from backend_classes.scidatatool.data_1d import Data1D
+from backend_classes.scidatatool.data_linspace import DataLinspace
+from backend_classes.scidatatool.data_time import DataTime
 from Tests.New._test_paths import save_validation_path
 
 

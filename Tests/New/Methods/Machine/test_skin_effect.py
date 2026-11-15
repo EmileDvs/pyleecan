@@ -2,9 +2,9 @@ from os.path import join
 
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Classes_new.machine.cond_type_11 import CondType11
-from pyleecan.Classes_new.machine.cond_type_21 import CondType21
-from pyleecan.Functions_new.load import load
+from backend_classes.machine.cond_type_11 import CondType11
+from backend_classes.machine.cond_type_21 import CondType21
+from backend_functions.load import load
 
 from pyleecan.definitions import DATA_DIR
 

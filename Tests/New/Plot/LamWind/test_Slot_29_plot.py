@@ -4,14 +4,14 @@ from os.path import join
 import matplotlib.pyplot as plt
 from numpy import array, pi, zeros
 
-from pyleecan.Classes_new.machine.frame import Frame
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.machine_dfim import MachineDFIM
-from pyleecan.Classes_new.machine.shaft import Shaft
-from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.machine.winding_ud import WindingUD
-from pyleecan.Classes_new.material.mat_magnetics import MatMagnetics
-from pyleecan.Classes_new.slot.slot_w_29 import SlotW29
+from backend_classes.machine.frame import Frame
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_dfim import MachineDFIM
+from backend_classes.machine.shaft import Shaft
+from backend_classes.slot.ventilation_circ import VentilationCirc
+from backend_classes.machine.winding_ud import WindingUD
+from backend_classes.material.mat_magnetics import MatMagnetics
+from backend_classes.slot.slot_w_29 import SlotW29
 
 from Tests.New._test_paths import save_plot_path as save_path
 from Tests.New.Plot.LamWind import wind_mat

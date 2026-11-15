@@ -6,10 +6,10 @@ from os import makedirs
 
 from numpy import array_equal
 
-from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine.winding import Winding
-from pyleecan.Classes_new.machine.winding_ud import WindingUD
-from pyleecan.Classes_new.slot.slot import Slot
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.winding import Winding
+from backend_classes.machine.winding_ud import WindingUD
+from backend_classes.slot.slot import Slot
 
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_load_path as save_path
