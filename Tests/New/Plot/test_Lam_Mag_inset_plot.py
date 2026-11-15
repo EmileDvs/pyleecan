@@ -5,20 +5,20 @@ import pytest
 import matplotlib.pyplot as plt
 from numpy import pi
 
-from pyleecan.Classes_new.frame import Frame
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.lamination import Lamination
-from pyleecan.Classes_new.slot_m_10 import SlotM10
-from pyleecan.Classes_new.slot_m_11 import SlotM11
-from pyleecan.Classes_new.slot_m_12 import SlotM12
-from pyleecan.Classes_new.slot_m_13 import SlotM13
-from pyleecan.Classes_new.slot_m_14 import SlotM14
-from pyleecan.Classes_new.slot_m_15 import SlotM15
-from pyleecan.Classes_new.slot_m_16 import SlotM16
-from pyleecan.Classes_new.shaft import Shaft
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.ventilation_trap import VentilationTrap
-from pyleecan.Classes_new.mat_magnetics import MatMagnetics
+from pyleecan.Classes_new.machine.frame import Frame
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.machine.lamination import Lamination
+from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
+from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
+from pyleecan.Classes_new.slot.slot_m_12 import SlotM12
+from pyleecan.Classes_new.slot.slot_m_13 import SlotM13
+from pyleecan.Classes_new.slot.slot_m_14 import SlotM14
+from pyleecan.Classes_new.slot.slot_m_15 import SlotM15
+from pyleecan.Classes_new.slot.slot_m_16 import SlotM16
+from pyleecan.Classes_new.machine.shaft import Shaft
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.slot.ventilation_trap import VentilationTrap
+from pyleecan.Classes_new.material.mat_magnetics import MatMagnetics
 from Tests.New._test_paths import save_plot_path as save_path
 
 

@@ -1,10 +1,10 @@
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Classes_new.data_linspace import DataLinspace
-from pyleecan.Classes_new.data_pattern import DataPattern
-from pyleecan.Classes_new.data_time import DataTime
-from pyleecan.Classes_new.vector_field import VectorField
+from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
+from pyleecan.Classes_new.scidatatool.data_pattern import DataPattern
+from pyleecan.Classes_new.scidatatool.data_time import DataTime
+from pyleecan.Classes_new.scidatatool.vector_field import VectorField
 
 is_show_fig = False
 

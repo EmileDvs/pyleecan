@@ -2,9 +2,9 @@
 
 import sys
 
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.winding import Winding
-from pyleecan.Classes_new.slot_w_22 import SlotW22
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.winding import Winding
+from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
 
 import pytest
 

@@ -2,15 +2,15 @@ from numpy import ones, pi, array, linspace, zeros
 from os.path import join
 import pytest
 
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.winding_ud import WindingUD
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.post_plot import PostPlot
-from pyleecan.Classes_new.post_function import PostFunction
-from pyleecan.Classes_new.op_dq import OPdq
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.machine.winding_ud import WindingUD
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.post.post_plot import PostPlot
+from pyleecan.Classes_new.post.post_function import PostFunction
+from pyleecan.Classes_new.simulation.op_dq import OPdq
 from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 

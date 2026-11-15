@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.slot_w_30 import SlotW30
+from pyleecan.Classes_new.slot.slot_w_30 import SlotW30
 from numpy import arcsin, exp, pi
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW30 import (
     S30_R1Error,
     S30_R2Error,

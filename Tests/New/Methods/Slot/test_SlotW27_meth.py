@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.slot_w_27 import SlotW27
+from pyleecan.Classes_new.slot.slot_w_27 import SlotW27
 from numpy import ndarray, arcsin, exp
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW27 import S27_W03CheckError
 
 # For AlmostEqual
@@ -217,15 +217,15 @@ class Test_SlotW27_meth(object):
             Z1,
         ]
         curve_list = list()
-        curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Segment(Z2, Z3))
-        curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Segment(Z4, Z5))
-        curve_list.append(Segment(Z5, Z6))
-        curve_list.append(Segment(Z6, Z7))
-        curve_list.append(Segment(Z7, Z8))
-        curve_list.append(Segment(Z8, Z9))
-        curve_list.append(Segment(Z9, Z10))
+        curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
+        curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(Segment(begin=Z4, end=Z5))
+        curve_list.append(Segment(begin=Z5, end=Z6))
+        curve_list.append(Segment(begin=Z6, end=Z7))
+        curve_list.append(Segment(begin=Z7, end=Z8))
+        curve_list.append(Segment(begin=Z8, end=Z9))
+        curve_list.append(Segment(begin=Z9, end=Z10))
 
         result = test_obj.build_geometry()
         assert len(result) == len(curve_list)

@@ -1,6 +1,6 @@
-from ...Classes_new.lam_h import LamH
-from ...Classes_new.lam_slot_m import LamSlotM
-from ...Classes_new.machine_sipmsm import MachineSIPMSM
+from ...Classes_new.machine.lam_h import LamH
+from ...Classes_new.machine.lam_slot_m import LamSlotM
+from ...Classes_new.machine.machine_sipmsm import MachineSIPMSM
 from ..labels import ROTOR_LAB
 from . import FEMM_GROUPS, acsolver, minangle, pbtype, precision
 

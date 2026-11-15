@@ -2,13 +2,13 @@
 
 import pytest
 
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Classes_new.hole import Hole
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.hole_m_62 import HoleM62
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from pyleecan.Classes_new.slot.hole import Hole
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.slot.hole_m_62 import HoleM62
 
-from pyleecan.Classes_new.magnet import Magnet
+from pyleecan.Classes_new.machine.magnet import Magnet
 from numpy import exp, arcsin, ndarray, pi, angle
 import matplotlib.pyplot as plt
 

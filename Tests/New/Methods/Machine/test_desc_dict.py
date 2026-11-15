@@ -4,9 +4,9 @@ import pytest
 
 from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
 
 
 def test_desc_SCIM():

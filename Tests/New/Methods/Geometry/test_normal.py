@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.segment import Segment
+from pyleecan.Classes_new.geometry.segment import Segment
 
 from numpy import pi, sqrt, exp
 
@@ -14,7 +14,7 @@ norm_list = list()
 # 0) Segment on Ox
 norm_list.append(
     {
-        "test_obj": Segment(-1, 1),
+        "test_obj": Segment(begin=-1, end=1),
         "result_0": (0, 1j * 2 / 3),
         "result_1": 1j * 2 / 3,
         "result_2": pi / 2,
@@ -23,7 +23,7 @@ norm_list.append(
 # 1) Segment diagonal X+,Y+
 norm_list.append(
     {
-        "test_obj": Segment(1, 1j),
+        "test_obj": Segment(begin=1, end=1j),
         "result_0": (0.5 + 0.5j, (0.5 - 1 / 3) * (1 + 1j)),
         "result_1": -1 / 3 * (1 + 1j),
         "result_2": -3 * pi / 4,
@@ -32,7 +32,7 @@ norm_list.append(
 # 2) Reversed 1
 norm_list.append(
     {
-        "test_obj": Segment(1j, 1),
+        "test_obj": Segment(begin=1j, end=1),
         "result_0": (0.5 + 0.5j, (0.5 + 1 / 3) * (1 + 1j)),
         "result_1": +1 / 3 * (1 + 1j),
         "result_2": pi / 4,
@@ -41,7 +41,7 @@ norm_list.append(
 # 3) Segment diagonal X-Y+
 norm_list.append(
     {
-        "test_obj": Segment(-1, 1j),
+        "test_obj": Segment(begin=-1, end=1j),
         "result_0": (-0.5 + 0.5j, (0.5 + 1 / 3) * (-1 + 1j)),
         "result_1": 1 / 3 * (-1 + 1j),
         "result_2": 3 * pi / 4,
@@ -50,7 +50,7 @@ norm_list.append(
 # 4) Reverse 3
 norm_list.append(
     {
-        "test_obj": Segment(1j, -1),
+        "test_obj": Segment(begin=1j, end=-1),
         "result_0": (-0.5 + 0.5j, (0.5 - 1 / 3) * (-1 + 1j)),
         "result_1": -1 / 3 * (-1 + 1j),
         "result_2": -pi / 4,
@@ -59,7 +59,7 @@ norm_list.append(
 # 5) Segment diagonal X- Y-
 norm_list.append(
     {
-        "test_obj": Segment(-1, -1j),
+        "test_obj": Segment(begin=-1, end=-1j),
         "result_0": (-0.5 - 0.5j, (0.5 - 1 / 3) * (-1 - 1j)),
         "result_1": 1 / 3 * (1 + 1j),
         "result_2": pi / 4,
@@ -68,7 +68,7 @@ norm_list.append(
 # 6) Reversed 5
 norm_list.append(
     {
-        "test_obj": Segment(-1j, -1),
+        "test_obj": Segment(begin=-1j, end=-1),
         "result_0": (-0.5 - 0.5j, (0.5 + 1 / 3) * (-1 - 1j)),
         "result_1": -1 / 3 * (1 + 1j),
         "result_2": -3 * pi / 4,
@@ -77,7 +77,7 @@ norm_list.append(
 # 7) Segment diagonal X+ Y-
 norm_list.append(
     {
-        "test_obj": Segment(-1j, 1),
+        "test_obj": Segment(begin=-1j, end=1),
         "result_0": (0.5 - 0.5j, (0.5 - 1 / 3) * (1 - 1j)),
         "result_1": -1 / 3 * (1 - 1j),
         "result_2": 3 * pi / 4,
@@ -86,7 +86,7 @@ norm_list.append(
 # 8) Reversed 7
 norm_list.append(
     {
-        "test_obj": Segment(1, -1j),
+        "test_obj": Segment(begin=1, end=-1j),
         "result_0": (0.5 - 0.5j, (0.5 + 1 / 3) * (1 - 1j)),
         "result_1": 1 / 3 * (1 - 1j),
         "result_2": -pi / 4,

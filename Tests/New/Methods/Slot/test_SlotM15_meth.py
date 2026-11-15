@@ -2,10 +2,10 @@
 
 import pytest
 
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.slot_m_15 import SlotM15
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.slot.slot_m_15 import SlotM15
 from numpy import pi, exp, sqrt, arcsin, angle
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods import ParentMissingError
 
 mm = 1e-3

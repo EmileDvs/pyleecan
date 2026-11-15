@@ -12,14 +12,14 @@ from numpy import (
 )
 from numpy.testing import assert_array_almost_equal
 import matplotlib.pyplot as plt
-from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine_dfim import MachineDFIM
-from pyleecan.Classes_new.output import Output
-from pyleecan.Classes_new.simulation import Simulation
-from pyleecan.Classes_new.op_dq import OPdq
+from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.machine_dfim import MachineDFIM
+from pyleecan.Classes_new.output.output import Output
+from pyleecan.Classes_new.simulation.simulation import Simulation
+from pyleecan.Classes_new.simulation.op_dq import OPdq
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.Plot import dict_2D

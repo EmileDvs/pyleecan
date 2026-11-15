@@ -5,10 +5,10 @@ import sys
 import pytest
 from PySide6 import QtWidgets
 import matplotlib.pyplot as plt
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine_wrsm import MachineWRSM
-from pyleecan.Classes_new.slot_w_60 import SlotW60
-from pyleecan.Classes_new.slot_w_61 import SlotW61
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.machine_wrsm import MachineWRSM
+from pyleecan.Classes_new.slot.slot_w_60 import SlotW60
+from pyleecan.Classes_new.slot.slot_w_61 import SlotW61
 from pyleecan.GUI.Dialog.DMachineSetup.SWPole.PWSlot60.PWSlot60 import PWSlot60
 from pyleecan.GUI.Dialog.DMachineSetup.SWPole.PWSlot61.PWSlot61 import PWSlot61
 from pyleecan.GUI.Dialog.DMachineSetup.SWPole.SWPole import SWPole

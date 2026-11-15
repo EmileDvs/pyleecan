@@ -192,7 +192,7 @@ def is_OP_matrix_dict(obj_dict):
 
 
 def convert_OP_matrix(obj_dict):
-    from ...Classes_new.op_matrix import OPMatrix
+    from ...Classes_new.simulation.op_matrix import OPMatrix
 
     OP_mat_obj = OPMatrix()
     type_OP_matrix = obj_dict.pop("type_OP_matrix")
@@ -242,14 +242,14 @@ def is_OP_dict(obj_dict):
 
 
 def convert_OP(obj_dict):
+    from ...Classes_new.simulation.op_dq import OPdq
+
     obj_dict_new = obj_dict.copy()
     N0 = obj_dict_new.pop("N0")
     Id = obj_dict_new.pop("Id_ref")
     Iq = obj_dict_new.pop("Iq_ref")
     Tem = obj_dict_new.pop("Tem_av_ref")
     class_obj = obj_dict_new
-    from ...Classes_new.op_dq import OPdq
-
     OP = OPdq(N0=N0, Id_ref=Id, Iq_ref=Iq, Tem_av_ref=Tem)
     class_obj["OP"] = OP.as_dict()
     return class_obj
@@ -376,7 +376,7 @@ def convert_Winding(wind_dict):
         else:
             # Generate old Winding matrix as UD
             old_class = wind_dict["__class__"]
-            from ...Classes_new.winding_ud import WindingUD
+            from ...Classes_new.machine.winding_ud import WindingUD
 
             new_wind = WindingUD(qs=qs, p=p, Ntcoil=Ntcoil, coil_pitch=coil_pitch)
             try:

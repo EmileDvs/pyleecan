@@ -4,7 +4,7 @@ import numpy as np
 from scipy.fft import idct
 from sklearn.linear_model import orthogonal_mp
 
-from ...Classes_new.data_1d import Data1D
+from ...Classes_new.scidatatool.data_1d import Data1D
 
 
 def comp_DST(n: int) -> np.ndarray:

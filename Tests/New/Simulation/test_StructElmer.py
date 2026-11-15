@@ -4,16 +4,16 @@ from numpy import pi
 import pytest
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_validation_path as save_path
-from pyleecan.Classes_new.op_dq import OPdq
+from pyleecan.Classes_new.simulation.op_dq import OPdq
 from pyleecan.definitions import DATA_DIR
 
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.slot_m_11 import SlotM11
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.struct_elmer import StructElmer
-from pyleecan.Classes_new.input_voltage import InputVoltage
-from pyleecan.Classes_new.output import Output
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.structural.struct_elmer import StructElmer
+from pyleecan.Classes_new.simulation.input_voltage import InputVoltage
+from pyleecan.Classes_new.output.output import Output
 from pyleecan.Functions_new.load import load
 
 

@@ -2,13 +2,13 @@
 
 import pytest
 
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Classes_new.arc_1 import Arc1
-from pyleecan.Classes_new.arc_3 import Arc3
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.hole_m_54 import HoleM54
-from pyleecan.Classes_new.hole import Hole
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from pyleecan.Classes_new.geometry.arc_3 import Arc3
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.slot.hole_m_54 import HoleM54
+from pyleecan.Classes_new.slot.hole import Hole
 from pyleecan.Methods.Slot.HoleM54 import S54_NoneError
 
 from numpy import exp, arcsin, ndarray, pi

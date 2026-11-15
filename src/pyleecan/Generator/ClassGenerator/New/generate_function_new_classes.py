@@ -17,10 +17,11 @@ import re
 import shutil
 import subprocess
 import tokenize
+from functools import cache
 from importlib.util import resolve_name
 from pathlib import Path
 
-from pyleecan.definitions import MAIN_DIR
+from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     VENDORED_CLASS_PACKAGES,
@@ -28,15 +29,19 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _apply_os_import_style,
     _apply_pyvista_import_style,
     _format_source_with_ruff,
+    _keyword_geometry_calls,
     _replace_empty_containers,
     _static_local_class_imports,
     class_module_name,
+    generated_module_paths,
+    relocate_class_imports,
 )
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_mapping,
     function_module_name,
     redirect_function_module_imports,
 )
+from pyleecan.Generator.read_fct import read_all
 
 SKIPPED_FUNCTION_MODULES = {
     Path("copy.py"): (
@@ -543,6 +548,12 @@ def _legacy_class_replacements(tree, package):
     return renamed
 
 
+@cache
+def _class_gen_dict():
+    """Class information of the legacy CSVs (constructor arguments)."""
+    return read_all(DOC_DIR)
+
+
 def _static_function_class_imports(source, class_dir):
     """Replace the local loads of known classes by static local imports.
 
@@ -563,7 +574,7 @@ def _static_function_class_imports(source, class_dir):
     modules = {
         name: class_module_name(name)
         for name in names
-        if (class_dir / (class_module_name(name) + ".py")).is_file()
+        if class_module_name(name) in generated_module_paths(class_dir)
     }
     if not modules:
         return source
@@ -629,7 +640,7 @@ def _rewrite_source(source, path, relative_path, class_dir):
             ):
                 continue
             name = node.value.args[1].value
-            if (class_dir / (class_module_name(name) + ".py")).is_file():
+            if class_module_name(name) in generated_module_paths(class_dir):
                 dynamic_assignments[node] = name
     class_dict_getters = _class_dict_getters(tree, package)
     renamed_classes = _legacy_class_replacements(tree, package)
@@ -749,7 +760,7 @@ def _rewrite_source(source, path, relative_path, class_dir):
                     module == "pyleecan.Classes"
                     or "." in name
                     or name.startswith("_")
-                    or not (class_dir / (class_module_name(name) + ".py")).is_file()
+                    or class_module_name(name) not in generated_module_paths(class_dir)
                     or any(alias.name == "*" for alias in node.names)
                 ):
                     issues.append((node.lineno, f"legacy import: {module}"))
@@ -858,6 +869,8 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
 
     issues = []
     module_mapping = function_module_mapping(source_dir)
+    generated_module_paths.cache_clear()
+    class_module_paths = generated_module_paths(class_dir)
     for path in sorted(source_dir.rglob("*")):
         if not path.is_file() or "__pycache__" in path.parts or path.suffix == ".pyc":
             continue
@@ -907,6 +920,13 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 rewritten, generated_package, module_mapping
             )
             rewritten = _static_function_class_imports(rewritten, class_dir)
+            # Pydantic models only accept keyword arguments
+            rewritten = _keyword_geometry_calls(rewritten, "pyleecan", _class_gen_dict())
+            # Class modules are in sub-packages of Classes_new
+            rewritten = _function_import_style(rewritten, generated_package, "absolute")
+            rewritten = relocate_class_imports(
+                rewritten, "pyleecan", "Classes_new", class_module_paths
+            )
             rewritten = _function_import_style(rewritten, generated_package, import_style)
             rewritten = _format_function_source(rewritten, destination)
             destination.write_text(rewritten, encoding=encoding, newline="")

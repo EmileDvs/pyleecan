@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.slot_w_24 import SlotW24
+from pyleecan.Classes_new.slot.slot_w_24 import SlotW24
 from numpy import ndarray, pi, exp
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW24 import S24_HWCheckError
 
 # For AlmostEqual

@@ -6,26 +6,26 @@ from unittest.mock import patch  # for unittest of input
 
 import pytest
 from numpy import array, ones, pi
-from pyleecan.Classes_new._error import InitUnKnowClassError
-from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.xoutput import XOutput
-from pyleecan.Classes_new.data_keeper import DataKeeper
-from pyleecan.Classes_new.output import Output
-from pyleecan.Classes_new.post_function import PostFunction
-from pyleecan.Classes_new.shaft import Shaft
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.slot_m_11 import SlotM11
-from pyleecan.Classes_new.slot_w_10 import SlotW10
-from pyleecan.Classes_new.slot_ud import SlotUD
-from pyleecan.Classes_new.hole_ud import HoleUD
-from pyleecan.Classes_new.winding import Winding
-from pyleecan.Classes_new.op_dq import OPdq
+from pyleecan.Classes_new._check import InitUnKnowClassError
+from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.output.xoutput import XOutput
+from pyleecan.Classes_new.simulation.data_keeper import DataKeeper
+from pyleecan.Classes_new.output.output import Output
+from pyleecan.Classes_new.post.post_function import PostFunction
+from pyleecan.Classes_new.machine.shaft import Shaft
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
+from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
+from pyleecan.Classes_new.slot.slot_ud import SlotUD
+from pyleecan.Classes_new.slot.hole_ud import HoleUD
+from pyleecan.Classes_new.machine.winding import Winding
+from pyleecan.Classes_new.simulation.op_dq import OPdq
 from pyleecan.Functions_new.load import load, load_dict, load_list; from pyleecan.Classes_new._error import LoadWrongDictClassError, LoadWrongTypeError
 from pyleecan.Classes_new._error import LoadMissingFileError
 from pyleecan.Functions_new.Save.save_json import save_json

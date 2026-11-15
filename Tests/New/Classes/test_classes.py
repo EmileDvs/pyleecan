@@ -1,10 +1,13 @@
+from collections.abc import Mapping
+
 import pytest
 from cloudpickle import dumps
+from pydantic import ValidationError
 
 from pyleecan.Classes_new._check import CheckMaxError, CheckMinError, CheckTypeError
+from pyleecan.Classes_new._class_info import PYLEECAN_BASES
+from pyleecan.Classes_new._error import InitUnKnowClassError
 from pyleecan.Classes_new._import import import_class
-from pyleecan.Classes_new._import_all import *
-from pyleecan.Classes_new._pyleecan_class import PyleecanClass
 from pyleecan.definitions import DOC_DIR
 from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator import PYTHON_TYPE
@@ -18,6 +21,32 @@ gen_dict = read_all(DOC_DIR)  # dict of class dict
 class_list = list(gen_dict.values())
 # The classes are resolved by their CSV name (import_class accepts the legacy
 # names of the renamed classes, e.g. Norm_ref -> NormRef)
+
+
+
+class _ClassNamespace(Mapping):
+    """Pyleecan classes by name, to evaluate the CSV default values (e.g. "Segment()")"""
+
+    def __getitem__(self, name):
+        try:
+            return import_class(name)
+        except InitUnKnowClassError:
+            raise KeyError(name) from None
+
+    def __iter__(self):
+        return iter(())
+
+    def __len__(self):
+        return 0
+
+
+CLASSES = _ClassNamespace()
+
+# Errors raised by an invalid value: legacy check errors (dataclasses) or
+# pydantic ValidationError (classes of the PYDANTIC_PACKAGES)
+TYPE_ERRORS = (CheckTypeError, ValidationError)
+MIN_ERRORS = (CheckMinError, ValidationError)
+MAX_ERRORS = (CheckMaxError, ValidationError)
 
 """
 This test check that all the classes matches the current documentation
@@ -41,7 +70,7 @@ def test_class_as_dict(class_dict):
         elif prop["value"] in ["None", None]:
             d[prop["name"]] = None
         elif type(prop["value"]) is str and "()" in prop["value"]:
-            d[prop["name"]] = eval(prop["value"] + ".as_dict()")
+            d[prop["name"]] = eval(prop["value"] + ".as_dict()", globals(), CLASSES)
         elif prop["type"] == "complex":
             d[prop["name"]] = str(prop["value"])
         elif prop["type"] == "dict":
@@ -57,7 +86,7 @@ def test_class_as_dict(class_dict):
         elif prop["type"] in PYTHON_TYPE:  # PYTHON_TYPE and not dict or list
             d[prop["name"]] = prop["value"]
         elif "." in prop["type"]:  # Imported type or list of imported type
-            val = eval(prop["value"])
+            val = eval(prop["value"], globals(), CLASSES)
             d[prop["name"]] = {
                 "__class__": str(type(val)),
                 "__repr__": str(val.__repr__()),
@@ -124,7 +153,7 @@ def test_class_inherit(class_dict):
             == True
         )
     else:
-        assert issubclass(import_class(class_dict["name"]), PyleecanClass) == True
+        assert issubclass(import_class(class_dict["name"]), PYLEECAN_BASES) == True
 
 
 @pytest.mark.parametrize("class_dict", class_list)
@@ -171,7 +200,7 @@ def test_class_type_float(class_dict):
             assert test_obj.__getattribute__(prop["name"]) == value, msg
         else:
             # CheckTypeError expected
-            with pytest.raises(CheckTypeError):
+            with pytest.raises(TYPE_ERRORS):
                 # print(msg + " value " + str(value) + " type " + str(type(value)))
                 test_obj.__setattr__(prop["name"], value)
 
@@ -196,7 +225,7 @@ def test_class_min(class_dict):
             )
 
             # Test Fail
-            with pytest.raises(CheckMinError):
+            with pytest.raises(MIN_ERRORS):
                 test_obj.__setattr__(prop["name"], min_val - 1)
 
 
@@ -220,7 +249,7 @@ def test_class_max(class_dict):
             )
 
             # Test Fail
-            with pytest.raises(CheckMaxError):
+            with pytest.raises(MAX_ERRORS):
                 test_obj.__setattr__(prop["name"], max_val + 1)
 
 

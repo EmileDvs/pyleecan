@@ -19,13 +19,17 @@ from pyleecan.definitions import TEST_DIR
 from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     VENDORED_CLASS_PACKAGES,
+    _keyword_geometry_calls,
     class_module_name,
+    generated_module_paths,
+    relocate_class_imports,
 )
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_mapping,
     redirect_function_module_imports,
 )
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
+    _class_gen_dict,
     _redirect_shared_error_imports,
 )
 
@@ -101,9 +105,11 @@ def _rewrite_source(source, path, class_dir):
                 else class_module_name(class_name)
             )
             module_path = class_dir.joinpath(*module_name.split("."))
-            if not module_path.with_suffix(".py").is_file() and not (
-                module_path / "__init__.py"
-            ).is_file():
+            if (
+                module_name not in generated_module_paths(class_dir)
+                and not module_path.with_suffix(".py").is_file()
+                and not (module_path / "__init__.py").is_file()
+            ):
                 unsupported.append((node.lineno, node.module))
                 continue
             module_bytes = node.module.encode("utf-8")
@@ -205,6 +211,8 @@ def _rewrite_source(source, path, class_dir):
     rewritten = redirect_function_module_imports(
         rewritten, "Tests.New", function_module_mapping()
     )
+    # The pydantic models (Geometry) only accept keyword arguments
+    rewritten = _keyword_geometry_calls(rewritten, "pyleecan", _class_gen_dict())
     ast.parse(rewritten, filename=str(path))
     return rewritten, unsupported
 
@@ -223,6 +231,8 @@ def generate_tests(tests_dir=None, class_dir=None):
     )
     if not class_dir.is_dir():
         raise FileNotFoundError(f"Classes_new directory does not exist: {class_dir}")
+    generated_module_paths.cache_clear()
+    class_module_paths = generated_module_paths(class_dir)
     output = tests_dir / "New"
     unsupported = []
     for folder in TEST_FOLDERS:
@@ -244,6 +254,10 @@ def generate_tests(tests_dir=None, class_dir=None):
                     source = source_file.read()
                     encoding = source_file.encoding
                 rewritten, issues = _rewrite_source(source, path, class_dir)
+                # Class modules are in sub-packages of Classes_new
+                rewritten = relocate_class_imports(
+                    rewritten, "pyleecan", "Classes_new", class_module_paths
+                )
                 destination.write_text(rewritten, encoding=encoding, newline="")
                 unsupported.extend(
                     (path.relative_to(tests_dir), line, module)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from pyleecan.Classes_new.trapeze import Trapeze
-from pyleecan.Classes_new.segment import Segment
+from pyleecan.Classes_new.geometry.trapeze import Trapeze
+from pyleecan.Classes_new.geometry.segment import Segment
 from mock import MagicMock
 from numpy import pi
 

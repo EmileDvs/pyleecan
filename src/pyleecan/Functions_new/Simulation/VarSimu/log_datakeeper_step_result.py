@@ -2,8 +2,8 @@ from logging import getLogger
 
 import numpy as np
 
-from ....Classes_new.data import Data
-from ....Classes_new.vector_field import VectorField
+from ....Classes_new.scidatatool.data import Data
+from ....Classes_new.scidatatool.vector_field import VectorField
 
 
 def log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type):

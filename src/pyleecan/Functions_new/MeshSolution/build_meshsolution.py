@@ -2,9 +2,9 @@ from typing import Dict, Optional
 
 import numpy as np
 
-from ...Classes_new.mesh import Mesh
-from ...Classes_new.mesh_solution import MeshSolution
-from ...Classes_new.solution import Solution
+from ...Classes_new.mesh.mesh import Mesh
+from ...Classes_new.mesh.mesh_solution import MeshSolution
+from ...Classes_new.mesh.solution import Solution
 
 
 def build_meshsolution(

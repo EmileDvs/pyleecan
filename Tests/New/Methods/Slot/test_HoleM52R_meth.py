@@ -2,12 +2,12 @@
 
 import pytest
 
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
 
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.hole_m_52_r import HoleM52R
-from pyleecan.Classes_new.magnet import Magnet
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.slot.hole_m_52_r import HoleM52R
+from pyleecan.Classes_new.machine.magnet import Magnet
 from pyleecan.Methods.Slot.HoleM52R import (
     S52R_NoneError,
     S52R_R0CheckError,

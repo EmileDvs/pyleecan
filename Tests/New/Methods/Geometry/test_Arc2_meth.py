@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pyleecan.Classes_new.arc_2 import Arc2
+from pyleecan.Classes_new.geometry.arc_2 import Arc2
 
 from pyleecan.Methods.Geometry.Arc2 import (
     PointArc2Error,
@@ -348,23 +348,23 @@ class Test_Arc2_meth(object):
 
     def test_check_Point(self):
         """Check that you can detect a one point arc"""
-        arc = Arc2(0, 0, 1)
+        arc = Arc2(begin=0, center=0, angle=1)
         with pytest.raises(PointArc2Error):
             arc.check()
 
     def test_check_Angle(self):
         """Check that you can detect null angle"""
-        arc = Arc2(0, 1, 0)
+        arc = Arc2(begin=0, center=1, angle=0)
         with pytest.raises(AngleArc2Error):
             arc.check()
-        arc = Arc2(0, 1, 2 * pi)
+        arc = Arc2(begin=0, center=1, angle=2 * pi)
         with pytest.raises(AngleArc2Error):
             arc.check()
 
     @pytest.mark.parametrize("test_dict", discretize_test)
     def test_dicretize(self, test_dict):
         """Check that you can discretize an arc2"""
-        arc = Arc2(test_dict["begin"], test_dict["center"], test_dict["angle"])
+        arc = Arc2(begin=test_dict["begin"], center=test_dict["center"], angle=test_dict["angle"])
 
         result = arc.discretize(test_dict["nb_point"])
 
@@ -376,32 +376,32 @@ class Test_Arc2_meth(object):
 
     def test_discretize_Point_error(self):
         """Check that dicretize can detect a one point arc2"""
-        arc = Arc2(0, 0, 2)
+        arc = Arc2(begin=0, center=0, angle=2)
         with pytest.raises(PointArc2Error):
             arc.discretize(5)
 
     def test_discretize_Angle_error(self):
         """Check that discretize can detect a null angle arc2"""
-        arc = Arc2(0, 1, 0)
+        arc = Arc2(begin=0, center=1, angle=0)
         with pytest.raises(AngleArc2Error):
             arc.discretize(5)
 
     def test_discretize_Nb_error(self):
         """Check that discretize can detect a wrong arg"""
-        arc = Arc2(0, 1, 1)
+        arc = Arc2(begin=0, center=1, angle=1)
         with pytest.raises(NbPointArc2DError):
             arc.discretize(-1)
 
     def test_discretize_Nb_Type_error(self):
         """Check that discretize can detect a wrong arg"""
-        arc = Arc2(0, 1, 1)
+        arc = Arc2(begin=0, center=1, angle=1)
         with pytest.raises(NbPointArc2DError):
             arc.discretize("test")
 
     @pytest.mark.parametrize("test_dict", comp_length_test)
     def test_comp_length(self, test_dict):
         """Check that you the length return by comp_length is correct"""
-        arc = Arc2(test_dict["begin"], test_dict["center"], test_dict["angle"])
+        arc = Arc2(begin=test_dict["begin"], center=test_dict["center"], angle=test_dict["angle"])
 
         a = float(arc.comp_length())
         b = float(test_dict["length"])
@@ -409,42 +409,42 @@ class Test_Arc2_meth(object):
 
     def test_comp_length_Point_error(self):
         """Check that comp_length can detect a one point arc2"""
-        arc = Arc2(0, 0, 2)
+        arc = Arc2(begin=0, center=0, angle=2)
         with pytest.raises(PointArc2Error):
             arc.comp_length()
 
     def test_comp_length_angle_error(self):
         """Check that comp_length can detect a null angle arc2"""
-        arc = Arc2(0, 1, 0)
+        arc = Arc2(begin=0, center=1, angle=0)
         with pytest.raises(AngleArc2Error):
             arc.comp_length()
 
     def test_comp_radius(self):
         """Check that the radius is correct"""
-        test_obj = Arc2(1, 0, pi / 2)
+        test_obj = Arc2(begin=1, center=0, angle=pi / 2)
         result = test_obj.comp_radius()
 
         assert round(abs(result - 1), 7) == 0
 
-        test_obj = Arc2(2 * exp(1j * 3 * pi / 4), 0, -pi / 2)
+        test_obj = Arc2(begin=2 * exp(1j * 3 * pi / 4), center=0, angle=-pi / 2)
         result = test_obj.comp_radius()
 
         assert round(abs(result - 2), 7) == 0
 
     def test_get_center(self):
         """Check that the center is returned correctly"""
-        test_obj = Arc2(1, 1 + 1j, pi)
+        test_obj = Arc2(begin=1, center=1 + 1j, angle=pi)
         result = test_obj.get_center()
         assert result == 1 + 1j
 
     def test_get_end(self):
         """Check that the end is correct"""
-        test_obj = Arc2(1, 0, pi / 2)
+        test_obj = Arc2(begin=1, center=0, angle=pi / 2)
         result = test_obj.get_end()
 
         assert result == 1 * exp(1j * pi / 2)
 
-        test_obj = Arc2(0, 1, -pi / 2)
+        test_obj = Arc2(begin=0, center=1, angle=-pi / 2)
         result = test_obj.get_end()
 
         a = abs(result)
@@ -458,7 +458,7 @@ class Test_Arc2_meth(object):
 
         # The end point is to close from 0
 
-        test_obj = Arc2(0, 0.00000000000000000001, -pi / 6)
+        test_obj = Arc2(begin=0, center=0.00000000000000000001, angle=-pi / 6)
         result = test_obj.get_end()
 
         assert result == 0

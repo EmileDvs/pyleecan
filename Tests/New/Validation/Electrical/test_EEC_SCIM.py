@@ -5,9 +5,9 @@ import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Classes_new.eec_scim import EEC_SCIM
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.op_dq import OPdq
+from pyleecan.Classes_new.electrical.eec_scim import EEC_SCIM
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.simulation.op_dq import OPdq
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.SciDataTool.Plot.plot_2d import plot_2D

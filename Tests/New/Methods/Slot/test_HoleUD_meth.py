@@ -2,17 +2,17 @@
 from os.path import isfile, join
 import pytest
 
-from pyleecan.Classes_new.hole_ud import HoleUD
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.surf_line import SurfLine
+from pyleecan.Classes_new.slot.hole_ud import HoleUD
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.Plot import dict_2D
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.magnet import Magnet
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.machine.magnet import Magnet
 from Tests.New._test_paths import save_validation_path as save_path
 import matplotlib.pyplot as plt
 

@@ -170,6 +170,8 @@ def load_matlib_folder(matlib_path):
         List of Material object from the Library
     """
 
+    from ..Classes_new.material.material import Material
+
     # Check that the dir exist
     if not os.path.isdir(matlib_path):
         raise LoadMissingFolderError(
@@ -178,8 +180,6 @@ def load_matlib_folder(matlib_path):
 
     # Get and Read all the file to create a list dictionary : variable name <=> value
     material_list = []
-    from ..Classes_new.material import Material
-
     for dirpath, _, filenames in os.walk(matlib_path):
         for file_name in filenames:
             # For all json file in the folder and subfolder

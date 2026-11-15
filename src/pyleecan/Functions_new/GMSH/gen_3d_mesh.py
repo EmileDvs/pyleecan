@@ -4,7 +4,7 @@ import sys
 import gmsh
 import numpy as np
 
-from ...Classes_new.arc import Arc
+from ...Classes_new.geometry.arc import Arc
 
 
 def gen_3D_mesh(

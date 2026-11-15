@@ -72,11 +72,11 @@ MAIN_LINE_WIDTH = 1
 
 def plot_quote(Z1, Zlim1, Zlim2, Z2, offset_label=0, fig=None, ax=None, label=None):
     """Function to plot a "quote" for the scematics"""
-    from ...Classes_new.segment import Segment
+    from ...Classes_new.geometry.segment import Segment
 
-    line1 = Segment(Z1, Zlim1)
-    line2 = Segment(Zlim1, Zlim2)
-    line3 = Segment(Zlim2, Z2)
+    line1 = Segment(begin=Z1, end=Zlim1)
+    line2 = Segment(begin=Zlim1, end=Zlim2)
+    line3 = Segment(begin=Zlim2, end=Z2)
     line1.plot(
         fig=fig,
         ax=ax,

@@ -1,10 +1,10 @@
 import pytest
 from numpy import array, mean, ones, pi
 from numpy.testing import assert_array_almost_equal
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.op_matrix import OPMatrix
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.var_load_current import VarLoadCurrent
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.simulation.op_matrix import OPMatrix
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.simulation.var_load_current import VarLoadCurrent
 
 
 class Test_OP_matrix_meth(object):

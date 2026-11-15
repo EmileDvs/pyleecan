@@ -6,12 +6,12 @@ import pytest
 import matplotlib.pyplot as plt
 from numpy import pi, exp
 
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.magnet import Magnet
-from pyleecan.Classes_new.arc_1 import Arc1
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.machine.magnet import Magnet
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.labels import HOLEM_LAB, decode_label
-from pyleecan.Classes_new.hole_m_51 import HoleM51
+from pyleecan.Classes_new.slot.hole_m_51 import HoleM51
 from pyleecan.definitions import DATA_DIR
 from Tests.New._test_paths import save_plot_path as save_path
 

@@ -6,11 +6,11 @@ import gmsh
 import numpy as np
 
 from ...Classes_new._error import GMSHInputError as InputError
-from ...Classes_new.arc import Arc
-from ...Classes_new.arc_2 import Arc2
-from ...Classes_new.machine_scim import MachineSCIM
-from ...Classes_new.machine_sipmsm import MachineSIPMSM
-from ...Classes_new.machine_wrsm import MachineWRSM
+from ...Classes_new.geometry.arc import Arc
+from ...Classes_new.geometry.arc_2 import Arc2
+from ...Classes_new.machine.machine_scim import MachineSCIM
+from ...Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from ...Classes_new.machine.machine_wrsm import MachineWRSM
 from ..get_logger import get_logger
 from ..labels import (
     AIRBOX_LAB,

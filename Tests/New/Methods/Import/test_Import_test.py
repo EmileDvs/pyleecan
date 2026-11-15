@@ -4,11 +4,11 @@ from numpy import array, array_equal, linspace, pi, sqrt, transpose
 from numpy.random import uniform
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.import_gen_matrix_sin import ImportGenMatrixSin
-from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_gen_vect_sin import ImportGenVectSin
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.import_matrix_xls import ImportMatrixXls
+from pyleecan.Classes_new.import_data.import_gen_matrix_sin import ImportGenMatrixSin
+from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from pyleecan.Classes_new.import_data.import_gen_vect_sin import ImportGenVectSin
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.import_data.import_matrix_xls import ImportMatrixXls
 from pyleecan.Methods.Import.ImportGenMatrixSin import (
     GenSinDimError,
     GenSinEmptyError,

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.arc_2 import Arc2
-from pyleecan.Classes_new.segment import Segment
+from pyleecan.Classes_new.geometry.arc_2 import Arc2
+from pyleecan.Classes_new.geometry.segment import Segment
 
-from pyleecan.Classes_new.slot_w_22 import SlotW22
+from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
 from numpy import pi, ndarray, cos, sin, arcsin, exp, angle
-from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot import Slot
 
 # For AlmostEqual
 DELTA = 1e-4

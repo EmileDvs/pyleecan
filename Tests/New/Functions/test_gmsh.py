@@ -7,8 +7,8 @@ try:
 except:
     gen_3D_mesh = ImportError
 
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot_w_10 import SlotW10
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
 from Tests.New._test_paths import save_validation_path as save_path
 
 

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.slot_w_16 import SlotW16
+from pyleecan.Classes_new.slot.slot_w_16 import SlotW16
 from numpy import ndarray, arcsin, pi, angle
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW16 import S16OutterError
 import matplotlib.pyplot as plt
-from pyleecan.Classes_new.arc_1 import Arc1
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
 
 # For AlmostEqual
 DELTA = 1e-4

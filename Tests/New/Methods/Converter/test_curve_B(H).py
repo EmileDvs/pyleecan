@@ -1,8 +1,8 @@
 import pytest
 
-from pyleecan.Classes_new.rule_complex import RuleComplex
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.converter.rule_complex import RuleComplex
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
 
 
 material_l = list()

@@ -4,9 +4,9 @@ from numpy import pi
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.material import Material
-from pyleecan.Classes_new.slot_w_11 import SlotW11
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.material.material import Material
+from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
 from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.PWSlot11.PWSlot11 import PWSlot11
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 

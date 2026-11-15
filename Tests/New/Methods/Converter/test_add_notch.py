@@ -1,11 +1,11 @@
 import pytest
 from numpy import pi
 
-from pyleecan.Classes_new.rule_complex import RuleComplex
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.notch_even_dist import NotchEvenDist
-from pyleecan.Classes_new.slot_m_19 import SlotM19
+from pyleecan.Classes_new.converter.rule_complex import RuleComplex
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.machine.notch_even_dist import NotchEvenDist
+from pyleecan.Classes_new.slot.slot_m_19 import SlotM19
 
 
 notch_l = list()

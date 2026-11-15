@@ -2,9 +2,9 @@
 import pytest
 
 
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot_w_62 import SlotW62
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot_w_62 import SlotW62
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW62 import (
     S62_InnerCheckError,
     S62_WindError,

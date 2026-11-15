@@ -8,17 +8,17 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 
-from pyleecan.Classes_new.hole_m_50 import HoleM50
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.lam_squirrel_cage import LamSquirrelCage
-from pyleecan.Classes_new.machine_dfim import MachineDFIM
-from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.machine_scim import MachineSCIM
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.machine_sy_rm import MachineSyRM
-from pyleecan.Classes_new.machine_wrsm import MachineWRSM
+from pyleecan.Classes_new.slot.hole_m_50 import HoleM50
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
+from pyleecan.Classes_new.machine.machine_dfim import MachineDFIM
+from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
+from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.machine.machine_sy_rm import MachineSyRM
+from pyleecan.Classes_new.machine.machine_wrsm import MachineWRSM
 from pyleecan.GUI.Dialog.DMachineSetup.SMachineType.SMachineType import SMachineType
 
 

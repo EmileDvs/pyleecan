@@ -6,13 +6,13 @@ import pytest
 import matplotlib.pyplot as plt
 from numpy import pi
 
-from pyleecan.Classes_new.frame import Frame
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.magnet import Magnet
-from pyleecan.Classes_new.shaft import Shaft
-from pyleecan.Classes_new.hole_m_51 import HoleM51
+from pyleecan.Classes_new.machine.frame import Frame
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
+from pyleecan.Classes_new.machine.magnet import Magnet
+from pyleecan.Classes_new.machine.shaft import Shaft
+from pyleecan.Classes_new.slot.hole_m_51 import HoleM51
 from Tests.New._test_paths import save_plot_path as save_path
 
 

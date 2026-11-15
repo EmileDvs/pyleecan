@@ -1,10 +1,10 @@
 import pytest
 from numpy import pi
 
-from pyleecan.Classes_new.rule_complex import RuleComplex
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot_w_11 import SlotW11
+from pyleecan.Classes_new.converter.rule_complex import RuleComplex
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
 
 
 class TestComplexRuleSlotW11(object):

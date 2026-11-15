@@ -6,10 +6,10 @@ import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 from Tests.New.GUI import gui_option  # Set unit as [m]
-from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.hole_m_51 import HoleM51
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.material import Material
+from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
+from pyleecan.Classes_new.slot.hole_m_51 import HoleM51
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.material.material import Material
 from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleM51.PHoleM51 import PHoleM51
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from PySide6.QtCore import Qt

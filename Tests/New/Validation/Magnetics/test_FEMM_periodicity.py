@@ -8,21 +8,21 @@ import matplotlib.pyplot as plt
 from numpy import exp, sqrt, pi, max as np_max, ones
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.bore_ud import BoreUD
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.ventilation_polar import VentilationPolar
-from pyleecan.Classes_new.slot_circ import SlotCirc
-from pyleecan.Classes_new.slot_m_10 import SlotM10
-from pyleecan.Classes_new.slot_m_18 import SlotM18
-from pyleecan.Classes_new.slot_m_18_2 import SlotM18_2
-from pyleecan.Classes_new.notch_even_dist import NotchEvenDist
-from pyleecan.Classes_new.bore_flower import BoreFlower
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.force_mt import ForceMT
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.machine.bore_ud import BoreUD
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.slot.ventilation_polar import VentilationPolar
+from pyleecan.Classes_new.slot.slot_circ import SlotCirc
+from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
+from pyleecan.Classes_new.slot.slot_m_18 import SlotM18
+from pyleecan.Classes_new.slot.slot_m_18_2 import SlotM18_2
+from pyleecan.Classes_new.machine.notch_even_dist import NotchEvenDist
+from pyleecan.Classes_new.machine.bore_flower import BoreFlower
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.force.force_mt import ForceMT
 
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.Plot import dict_2D

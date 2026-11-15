@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.slot_w_13 import SlotW13
+from pyleecan.Classes_new.slot.slot_w_13 import SlotW13
 from numpy import ndarray, arcsin, pi
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW13 import S13_H1rCheckError
 
 # For AlmostEqual

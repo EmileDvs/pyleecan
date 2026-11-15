@@ -1,13 +1,13 @@
 import pytest
 
-from pyleecan.Classes_new.rule_complex import RuleComplex
+from pyleecan.Classes_new.converter.rule_complex import RuleComplex
 
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.slot_w_11 import SlotW11
-from pyleecan.Classes_new.hole_m_50 import HoleM50
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
+from pyleecan.Classes_new.slot.hole_m_50 import HoleM50
 
 
 class TestComplexRulePolePairNumber(object):

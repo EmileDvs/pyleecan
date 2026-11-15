@@ -3,7 +3,7 @@ import pytest
 
 import matplotlib.pyplot as plt
 from numpy import pi
-from pyleecan.Classes_new.circle import Circle
+from pyleecan.Classes_new.geometry.circle import Circle
 from Tests.New._test_paths import save_plot_path as save_path
 
 

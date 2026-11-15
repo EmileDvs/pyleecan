@@ -2,9 +2,9 @@
 
 import pytest
 
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.slot_m_19 import SlotM19
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.slot.slot_m_19 import SlotM19
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods import ParentMissingError
 
 from numpy import exp, angle

@@ -5,15 +5,15 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.data import Data
-from pyleecan.Classes_new.data_1d import Data1D
-from pyleecan.Classes_new.data_freq import DataFreq
-from pyleecan.Classes_new.data_linspace import DataLinspace
-from pyleecan.Classes_new.data_time import DataTime
-from pyleecan.Classes_new.norm_func import NormFunc as Norm_func
-from pyleecan.Classes_new.norm_indices import NormIndices as Norm_indices
-from pyleecan.Classes_new.norm_ref import NormRef as Norm_ref
-from pyleecan.Classes_new.norm_vector import NormVector as Norm_vector
+from pyleecan.Classes_new.scidatatool.data import Data
+from pyleecan.Classes_new.scidatatool.data_1d import Data1D
+from pyleecan.Classes_new.scidatatool.data_freq import DataFreq
+from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
+from pyleecan.Classes_new.scidatatool.data_time import DataTime
+from pyleecan.Classes_new.scidatatool.norm_func import NormFunc as Norm_func
+from pyleecan.Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
+from pyleecan.Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
+from pyleecan.Classes_new.scidatatool.norm_vector import NormVector as Norm_vector
 from pyleecan.Classes_new._error import NormError
 from Tests import TEST_DATA_DIR
 

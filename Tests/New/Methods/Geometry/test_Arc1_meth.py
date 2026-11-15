@@ -4,7 +4,7 @@ from os.path import join
 import matplotlib.pyplot as plt
 from numpy import array, exp, pi, sqrt
 
-from pyleecan.Classes_new.arc_1 import Arc1
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
 from pyleecan.Methods.Geometry.Arc1 import (
     PointArc1Error,
     RadiusArc1Error,
@@ -602,13 +602,13 @@ class Test_Arc1_meth(object):
 
     def test_check_Point(self):
         """Check that you can detect a one point arc"""
-        arc = Arc1(0, 0, 1)
+        arc = Arc1(begin=0, end=0, radius=1)
         with pytest.raises(PointArc1Error):
             arc.check()
 
     def test_check_Radius(self):
         """Check that you can detect null radius"""
-        arc = Arc1(0, 1, 0)
+        arc = Arc1(begin=0, end=1, radius=0)
         with pytest.raises(RadiusArc1Error):
             arc.check()
 
@@ -616,9 +616,9 @@ class Test_Arc1_meth(object):
     def test_dicretize(self, test_dict):
         """Check that you can discretize an arc1"""
         arc = Arc1(
-            test_dict["begin"],
-            test_dict["end"],
-            test_dict["Radius"],
+            begin=test_dict["begin"],
+            end=test_dict["end"],
+            radius=test_dict["Radius"],
             is_trigo_direction=test_dict["is_trigo"],
         )
 
@@ -646,25 +646,25 @@ class Test_Arc1_meth(object):
 
     def test_discretize_Point_error(self):
         """Check that discretize detect a one point arc1"""
-        arc = Arc1(0, 0, 2)
+        arc = Arc1(begin=0, end=0, radius=2)
         with pytest.raises(PointArc1Error):
             arc.discretize(5)
 
     def test_discretize_Radius_error(self):
         """Check that discretize detect a null radius"""
-        arc = Arc1(0, 1, 0)
+        arc = Arc1(begin=0, end=1, radius=0)
         with pytest.raises(RadiusArc1Error):
             arc.discretize(5)
 
     def test_discretize_Nb_error(self):
         """Check that discretize can detect a wrong arg"""
-        arc = Arc1(0, 1, 1)
+        arc = Arc1(begin=0, end=1, radius=1)
         with pytest.raises(NbPointArc1DError):
             arc.discretize(-1)
 
     def test_discretize_Nb_Type_error(self):
         """Check that discretize can detect a wrong arg"""
-        arc = Arc1(0, 1, 1)
+        arc = Arc1(begin=0, end=1, radius=1)
         with pytest.raises(NbPointArc1DError):
             arc.discretize("test")
 
@@ -692,13 +692,13 @@ class Test_Arc1_meth(object):
 
     def test_comp_length_Point_error(self):
         """Check that discretize detect a one point arc1"""
-        arc = Arc1(0, 0, 2)
+        arc = Arc1(begin=0, end=0, radius=2)
         with pytest.raises(PointArc1Error):
             arc.comp_length()
 
     def test_comp_length_Radius_error(self):
         """Check that discretize detect a null radius arc1"""
-        arc = Arc1(0, 1, 0)
+        arc = Arc1(begin=0, end=1, radius=0)
         with pytest.raises(RadiusArc1Error):
             arc.comp_length()
 

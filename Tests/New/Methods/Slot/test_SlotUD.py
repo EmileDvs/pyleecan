@@ -1,6 +1,6 @@
 import pytest
 from os.path import join
-from pyleecan.Classes_new.slot_ud_2 import SlotUD2
+from pyleecan.Classes_new.slot.slot_ud_2 import SlotUD2
 from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 

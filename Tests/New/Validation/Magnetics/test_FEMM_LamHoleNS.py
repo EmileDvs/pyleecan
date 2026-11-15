@@ -8,13 +8,13 @@ from Tests.New._test_paths import save_validation_path as save_path
 from numpy import exp, sqrt, pi, max as np_max
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.lam_hole_ns import LamHoleNS
-from pyleecan.Classes_new.notch_even_dist import NotchEvenDist
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.force_mt import ForceMT
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.machine.lam_hole_ns import LamHoleNS
+from pyleecan.Classes_new.machine.notch_even_dist import NotchEvenDist
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.force.force_mt import ForceMT
 
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.Plot import dict_2D

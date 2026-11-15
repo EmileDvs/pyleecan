@@ -5,7 +5,7 @@ import pytest
 from os.path import join
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_path
-from pyleecan.Classes_new.elmer_results import ElmerResults
+from pyleecan.Classes_new.elmer.elmer_results import ElmerResults
 
 
 @pytest.mark.StructElmer

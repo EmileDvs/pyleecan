@@ -9,9 +9,9 @@ import logging
 from numpy import pi
 from numpy.testing import assert_almost_equal
 import matplotlib.pyplot as plt
-from pyleecan.Classes_new.slot_m_10 import SlotM10
-from pyleecan.Classes_new.slot_m_11 import SlotM11
-from pyleecan.Classes_new.slot_circ import SlotCirc
+from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
+from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
+from pyleecan.Classes_new.slot.slot_circ import SlotCirc
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load_matlib, load
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup

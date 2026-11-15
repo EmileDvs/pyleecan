@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*
 from os.path import join
 import pytest
-from pyleecan.Classes_new.circle import Circle
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
+from pyleecan.Classes_new.geometry.circle import Circle
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
 from pyleecan.Functions_new.load import load
 from Tests import TEST_DATA_DIR
 
@@ -28,14 +28,14 @@ A6 = 3 + 1j
 A7 = 3
 
 line_list1 = list()
-line_list1.append(Segment(A0, A1))
-line_list1.append(Segment(A1, A2))
-line_list1.append(Segment(A2, A3))
-line_list1.append(Segment(A3, A4))
-line_list1.append(Segment(A4, A5))
-line_list1.append(Segment(A5, A6))
-line_list1.append(Segment(A6, A7))
-line_list1.append(Segment(A7, A0))
+line_list1.append(Segment(begin=A0, end=A1))
+line_list1.append(Segment(begin=A1, end=A2))
+line_list1.append(Segment(begin=A2, end=A3))
+line_list1.append(Segment(begin=A3, end=A4))
+line_list1.append(Segment(begin=A4, end=A5))
+line_list1.append(Segment(begin=A5, end=A6))
+line_list1.append(Segment(begin=A6, end=A7))
+line_list1.append(Segment(begin=A7, end=A0))
 
 C2 = SurfLine(line_list=line_list1, point_ref=A0)
 

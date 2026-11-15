@@ -2,8 +2,7 @@
 
 import pytest
 
-from pyleecan.Classes_new._class_info import ClassInfo
-from pyleecan.Classes_new._pyleecan_class import PyleecanClass
+from pyleecan.Classes_new._class_info import PYLEECAN_BASES, ClassInfo
 from pyleecan.definitions import DOC_DIR
 from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
@@ -32,7 +31,7 @@ def test_class_info_matches_csv(csv_dict):
     assert info["mother"] == _new_name(csv_dict["mother"])
     assert info["package"] == csv_dict["package"]
     assert info["daughters"] == sorted(_new_name(n) for n in csv_dict["daughters"])
-    assert issubclass(info["class"], PyleecanClass)
+    assert issubclass(info["class"], PYLEECAN_BASES)
     # Every CSV method is a method of the dataclass (inlined helpers may be added)
     assert {m.split(".")[-1] for m in csv_dict["methods"]} <= set(info["methods"])
     # Own properties come first, in CSV order with the "_" ones at the end

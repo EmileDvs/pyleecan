@@ -4,10 +4,10 @@ from os.path import join
 import pytest
 from numpy import pi
 
-from pyleecan.Classes_new.lamination import Lamination
-from pyleecan.Classes_new.ventilation_polar import VentilationPolar
+from pyleecan.Classes_new.machine.lamination import Lamination
+from pyleecan.Classes_new.slot.ventilation_polar import VentilationPolar
 from pyleecan.Methods.Slot.VentilationPolar import PolarArcBuildGeometryError
-from pyleecan.Classes_new.hole import Hole
+from pyleecan.Classes_new.slot.hole import Hole
 
 """unittest for VentilationPolar"""
 

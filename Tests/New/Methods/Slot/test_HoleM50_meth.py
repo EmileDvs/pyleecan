@@ -2,10 +2,10 @@
 
 import pytest
 
-from pyleecan.Classes_new.hole_m_50 import HoleM50
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Classes_new.magnet import Magnet
+from pyleecan.Classes_new.slot.hole_m_50 import HoleM50
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from pyleecan.Classes_new.machine.magnet import Magnet
 from pyleecan.Methods.Slot.HoleM50 import *
 
 # For AlmostEqual

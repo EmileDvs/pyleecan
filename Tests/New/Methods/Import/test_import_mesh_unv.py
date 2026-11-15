@@ -7,8 +7,8 @@ from os.path import basename, isdir, join, splitext
 
 import pytest
 
-from pyleecan.Classes_new.import_mesh_mat import ImportMeshMat
-from pyleecan.Classes_new.mesh_solution import MeshSolution
+from pyleecan.Classes_new.import_data.import_mesh_mat import ImportMeshMat
+from pyleecan.Classes_new.mesh.mesh_solution import MeshSolution
 from pyleecan.definitions import TEST_DIR
 from Tests.New._test_paths import save_plot_path as save_path
 

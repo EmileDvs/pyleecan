@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pyleecan.Classes_new.segment import Segment
+from pyleecan.Classes_new.geometry.segment import Segment
 
 from pyleecan.Methods.Geometry.Segment import PointSegmentError, NbPointSegmentDError
 from numpy import pi, array, exp
@@ -117,7 +117,7 @@ class Test_Segment_Split(object):
     @pytest.mark.parametrize("test_dict", split_list)
     def test_intersect(self, test_dict):
         """Check that the intersection is computed correctly"""
-        seg = Segment(test_dict["begin"], test_dict["end"])
+        seg = Segment(begin=test_dict["begin"], end=test_dict["end"])
 
         # Check intersection
         result = seg.intersect_line(test_dict["Z1"], test_dict["Z2"])

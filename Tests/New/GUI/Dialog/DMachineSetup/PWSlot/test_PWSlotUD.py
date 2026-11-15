@@ -5,11 +5,11 @@ import sys
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 from numpy import pi
-from pyleecan.Classes_new.material import Material
+from pyleecan.Classes_new.material.material import Material
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
 from Tests.New.GUI import gui_option  # Set unit as [m]
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot_ud import SlotUD
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.slot.slot_ud import SlotUD
 from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.PWSlotUD.PWSlotUD import PWSlotUD
 
 

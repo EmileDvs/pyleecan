@@ -3,8 +3,8 @@ from os.path import join
 
 from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.bore_flower import BoreFlower
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.machine.bore_flower import BoreFlower
 
 test_per_list = [
     {"machine": "Toyota_Prius", "exp": (4, True, 4, True)},

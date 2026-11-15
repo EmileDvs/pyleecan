@@ -41,6 +41,7 @@ def generation_root(tmp_path):
     for folder in ("Classes", "Classes_new", "Functions"):
         (tmp_path / folder).mkdir()
     (tmp_path / "Classes_new" / "_pyleecan_class.py").write_text("", encoding="utf-8")
+    (tmp_path / "Classes_new" / "_pyleecan_model.py").write_text("", encoding="utf-8")
     # Hand-written class loader (not generated)
     shutil.copyfile(
         Path(MAIN_DIR) / "Classes_new" / "_import.py",
@@ -100,6 +101,7 @@ def test_legacy_mode_is_rejected_before_writing(generation_root, entrypoint):
     assert sorted(path.name for path in (generation_root / "Classes_new").iterdir()) == [
         "_import.py",
         "_pyleecan_class.py",
+        "_pyleecan_model.py",
     ]
 
 
@@ -349,4 +351,4 @@ def test_experimental_collision_is_rejected_before_writing(
             str(generation_root), {"MagFEMM": {}, "MagFemm": {}}, )
     assert sorted(
         path.name for path in (generation_root / "Classes_new").iterdir()
-    ) == ["_import.py", "_pyleecan_class.py"]
+    ) == ["_import.py", "_pyleecan_class.py", "_pyleecan_model.py"]

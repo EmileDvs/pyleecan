@@ -9,8 +9,8 @@ from numpy import max as np_max
 from PySide6 import QtWidgets
 import mock
 import pytest
-from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.shaft import Shaft
+from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
+from pyleecan.Classes_new.machine.shaft import Shaft
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
 from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (
@@ -28,8 +28,8 @@ from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.PCondType11.PCondType11 import 
 from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.PCondType12.PCondType12 import (
     PCondType12,
 )
-from pyleecan.Classes_new.cond_type_11 import CondType11
-from pyleecan.Classes_new.cond_type_12 import CondType12
+from pyleecan.Classes_new.machine.cond_type_11 import CondType11
+from pyleecan.Classes_new.machine.cond_type_12 import CondType12
 from pyleecan.GUI.Dialog.DMachineSetup.SWinding.SWinding import SWinding
 from pyleecan.GUI.Dialog.DMachineSetup.SPreview.SPreview import SPreview
 from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.SWSlot import SWSlot

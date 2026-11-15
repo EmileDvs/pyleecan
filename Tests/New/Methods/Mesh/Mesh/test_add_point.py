@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from pyleecan.Classes_new.mesh_mat import MeshMat
-from pyleecan.Classes_new.node_mat import NodeMat
+from pyleecan.Classes_new.mesh.mesh_mat import MeshMat
+from pyleecan.Classes_new.mesh.node_mat import NodeMat
 import numpy as np
 
 

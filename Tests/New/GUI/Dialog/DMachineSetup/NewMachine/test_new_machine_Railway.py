@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from PySide6 import QtWidgets
 import mock
 import pytest
-from pyleecan.Classes_new.machine_scim import MachineSCIM
-from pyleecan.Classes_new.shaft import Shaft
+from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
+from pyleecan.Classes_new.machine.shaft import Shaft
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
 from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (
@@ -24,8 +24,8 @@ from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.PCondType11.PCondType11 import 
     PCondType11,
 )
 from pyleecan.GUI.Dialog.DMachineSetup.SBar.PCondType21.PCondType21 import PCondType21
-from pyleecan.Classes_new.cond_type_11 import CondType11
-from pyleecan.Classes_new.cond_type_12 import CondType12
+from pyleecan.Classes_new.machine.cond_type_11 import CondType11
+from pyleecan.Classes_new.machine.cond_type_12 import CondType12
 from pyleecan.GUI.Dialog.DMachineSetup.SWinding.SWinding import SWinding
 from pyleecan.GUI.Dialog.DMachineSetup.SPreview.SPreview import SPreview
 from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.SWSlot import SWSlot

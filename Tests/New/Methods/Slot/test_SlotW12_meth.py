@@ -2,13 +2,13 @@
 import pytest
 
 from numpy import ndarray, arcsin, exp
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot_w_12 import SlotW12
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
-from pyleecan.Classes_new.arc_1 import Arc1
-from pyleecan.Classes_new.arc_3 import Arc3
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot_w_12 import SlotW12
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from pyleecan.Classes_new.geometry.arc_3 import Arc3
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods.Slot.SlotW12 import S12_R20CheckError
 
 # For AlmostEqual
@@ -224,13 +224,13 @@ class Test_SlotW12_meth(object):
 
         # creation of the curve
         curve_list = list()
-        curve_list.append(Segment(Z1, Z2))
-        curve_list.append(Arc3(Z2, Z3, True))
-        curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Arc3(Z4, Z5, True))
-        curve_list.append(Segment(Z5, Z6))
-        curve_list.append(Arc3(Z6, Z7, True))
-        curve_list.append(Segment(Z7, Z8))
+        curve_list.append(Segment(begin=Z1, end=Z2))
+        curve_list.append(Arc3(begin=Z2, end=Z3, is_trigo_direction=True))
+        curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(Arc3(begin=Z4, end=Z5, is_trigo_direction=True))
+        curve_list.append(Segment(begin=Z5, end=Z6))
+        curve_list.append(Arc3(begin=Z6, end=Z7, is_trigo_direction=True))
+        curve_list.append(Segment(begin=Z7, end=Z8))
 
         result = test_obj.build_geometry()
         assert len(result) == len(curve_list)

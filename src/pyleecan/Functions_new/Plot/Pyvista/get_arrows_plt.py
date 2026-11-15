@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pyvista as pv
 
-from ....Classes_new.mesh_solution import MeshSolution
+from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 
 def get_arrows_plt(

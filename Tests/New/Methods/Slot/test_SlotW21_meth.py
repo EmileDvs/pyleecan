@@ -1,9 +1,9 @@
 import pytest
 from numpy import arcsin, pi
 
-from pyleecan.Classes_new.lam_slot import LamSlot
-from pyleecan.Classes_new.slot import Slot
-from pyleecan.Classes_new.slot_w_21 import SlotW21
+from pyleecan.Classes_new.machine.lam_slot import LamSlot
+from pyleecan.Classes_new.slot.slot import Slot
+from pyleecan.Classes_new.slot.slot_w_21 import SlotW21
 from pyleecan.Methods.Slot.SlotW21 import S21_H1rCheckError
 
 # For AlmostEqual

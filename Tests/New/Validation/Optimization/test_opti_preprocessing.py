@@ -9,11 +9,11 @@ In Proceedings of the third international Conference on Genetic Algorithms (Mend
 # Imports
 from os.path import join
 import pytest
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.opti_design_var_interval import OptiDesignVarInterval
-from pyleecan.Classes_new.opti_objective import OptiObjective
-from pyleecan.Classes_new.opti_problem import OptiProblem
-from pyleecan.Classes_new.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
+from pyleecan.Classes_new.optimization.opti_objective import OptiObjective
+from pyleecan.Classes_new.optimization.opti_problem import OptiProblem
+from pyleecan.Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 from itertools import repeat
 
 import random

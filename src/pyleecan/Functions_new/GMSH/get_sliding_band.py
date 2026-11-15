@@ -2,14 +2,14 @@ import cmath
 
 import numpy as np
 
-from ...Classes_new.arc import Arc
-from ...Classes_new.arc_1 import Arc1
-from ...Classes_new.arc_2 import Arc2
-from ...Classes_new.circle import Circle
-from ...Classes_new.machine_sipmsm import MachineSIPMSM
-from ...Classes_new.segment import Segment
-from ...Classes_new.surf_line import SurfLine
-from ...Classes_new.surf_ring import SurfRing
+from ...Classes_new.geometry.arc import Arc
+from ...Classes_new.geometry.arc_1 import Arc1
+from ...Classes_new.geometry.arc_2 import Arc2
+from ...Classes_new.geometry.circle import Circle
+from ...Classes_new.geometry.segment import Segment
+from ...Classes_new.geometry.surf_line import SurfLine
+from ...Classes_new.geometry.surf_ring import SurfRing
+from ...Classes_new.machine.machine_sipmsm import MachineSIPMSM
 from ..labels import (
     AIRBOX_LAB,
     AIRBOX_R_LAB,

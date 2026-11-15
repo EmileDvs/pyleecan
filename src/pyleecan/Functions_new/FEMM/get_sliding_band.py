@@ -1,9 +1,9 @@
 import numpy as np
 
-from ...Classes_new.arc_1 import Arc1
-from ...Classes_new.circle import Circle
-from ...Classes_new.segment import Segment
-from ...Classes_new.surf_line import SurfLine
+from ...Classes_new.geometry.arc_1 import Arc1
+from ...Classes_new.geometry.circle import Circle
+from ...Classes_new.geometry.segment import Segment
+from ...Classes_new.geometry.surf_line import SurfLine
 from ..labels import (
     BOUNDARY_PROP_LAB,
     NO_LAM_LAB,

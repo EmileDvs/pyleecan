@@ -4,25 +4,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy import exp, linspace, ones, pi, sqrt, zeros
-from pyleecan.Classes_new.data_keeper import DataKeeper
-from pyleecan.Classes_new.drive_wave import DriveWave
-from pyleecan.Classes_new.eec_pmsm import EEC_PMSM
-from pyleecan.Classes_new.force_mt import ForceMT
-from pyleecan.Classes_new.import_gen_matrix_sin import ImportGenMatrixSin
-from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_gen_vect_sin import ImportGenVectSin
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.output import Output
-from pyleecan.Classes_new.param_explorer_interval import ParamExplorerInterval
-from pyleecan.Classes_new.param_explorer_set import ParamExplorerSet
-from pyleecan.Classes_new.post_function import PostFunction
-from pyleecan.Classes_new.post_plot import PostPlot
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.var_load_current import VarLoadCurrent
-from pyleecan.Classes_new.var_param_sweep import VarParamSweep
+from pyleecan.Classes_new.simulation.data_keeper import DataKeeper
+from pyleecan.Classes_new.electrical.drive_wave import DriveWave
+from pyleecan.Classes_new.electrical.eec_pmsm import EEC_PMSM
+from pyleecan.Classes_new.force.force_mt import ForceMT
+from pyleecan.Classes_new.import_data.import_gen_matrix_sin import ImportGenMatrixSin
+from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from pyleecan.Classes_new.import_data.import_gen_vect_sin import ImportGenVectSin
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.output.output import Output
+from pyleecan.Classes_new.simulation.param_explorer_interval import ParamExplorerInterval
+from pyleecan.Classes_new.simulation.param_explorer_set import ParamExplorerSet
+from pyleecan.Classes_new.post.post_function import PostFunction
+from pyleecan.Classes_new.post.post_plot import PostPlot
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.simulation.var_load_current import VarLoadCurrent
+from pyleecan.Classes_new.simulation.var_param_sweep import VarParamSweep
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load
 from Tests.New._test_paths import save_validation_path as save_path

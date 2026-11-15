@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pyleecan.Classes_new.segment import Segment
+from pyleecan.Classes_new.geometry.segment import Segment
 
 from pyleecan.Methods.Geometry.Segment import (
     PointSegmentError,
@@ -85,14 +85,14 @@ class Test_Segment_meth(object):
 
     def test_check(self):
         """Check that you can detect a one point segment"""
-        segment = Segment(0, 0)
+        segment = Segment(begin=0, end=0)
         with pytest.raises(PointSegmentError):
             segment.check()
 
     @pytest.mark.parametrize("test_dict", discretize_test)
     def test_dicretize(self, test_dict):
         """Check that you can discretize a segment"""
-        segment = Segment(test_dict["begin"], test_dict["end"])
+        segment = Segment(begin=test_dict["begin"], end=test_dict["end"])
 
         result = segment.discretize(test_dict["nb_point"])
 
@@ -102,13 +102,13 @@ class Test_Segment_meth(object):
 
     def test_discretize_Point_error(self):
         """Check that dicretize can detect a one point segment"""
-        segment = Segment(0, 0)
+        segment = Segment(begin=0, end=0)
         with pytest.raises(PointSegmentError):
             segment.discretize(5)
 
     def test_discretize_Nb_error(self):
         """Check that you can detect a wrong argument"""
-        segment = Segment(0, 10)
+        segment = Segment(begin=0, end=10)
         with pytest.raises(NbPointSegmentDError):
             segment.discretize(-1)
         with pytest.raises(NbPointSegmentDError):
@@ -117,38 +117,38 @@ class Test_Segment_meth(object):
     @pytest.mark.parametrize("test_dict", comp_length_test)
     def test_comp_length(self, test_dict):
         """Check that you the length return by comp_length is correct"""
-        segment = Segment(test_dict["begin"], test_dict["end"])
+        segment = Segment(begin=test_dict["begin"], end=test_dict["end"])
 
         assert round(abs(segment.comp_length() - test_dict["length"]), 7) == 0
 
     def test_comp_length_Point_error(self):
         """Check that comp_length can detect a one point segment"""
-        segment = Segment(0, 0)
+        segment = Segment(begin=0, end=0)
         with pytest.raises(PointSegmentError):
             segment.comp_length()
 
     def test_get_middle(self):
         """Check that you can compute the middle of the segment"""
-        segment = Segment(0, 10)
+        segment = Segment(begin=0, end=10)
         result = segment.get_middle()
         expect = 5.0
         assert round(abs(abs(result - expect) - 0), 7) == 0
 
-        segment = Segment(10, 10 * exp(1j * pi / 2))
+        segment = Segment(begin=10, end=10 * exp(1j * pi / 2))
         result = segment.get_middle()
         expect = 5 + 5j
         assert round(abs(abs(result - expect) - 0), 7) == 0
 
     def test_rotate(self):
         """Check that you can rotate the segment"""
-        segment = Segment(0, 1)
+        segment = Segment(begin=0, end=1)
         segment.rotate(pi / 2)
         expect_begin = 0
         expect_end = 1j
         assert round(abs(abs(expect_begin - segment.begin) - 0), 7) == 0
         assert round(abs(abs(expect_end - segment.end) - 0), 7) == 0
 
-        segment = Segment(1 + 1j, 1)
+        segment = Segment(begin=1 + 1j, end=1)
         segment.rotate(-pi / 2)
         expect_begin = 1 - 1j
         expect_end = -1j
@@ -160,14 +160,14 @@ class Test_Segment_meth(object):
 
     def test_translate(self):
         """Check that you can translate the segment"""
-        segment = Segment(0, 3j)
+        segment = Segment(begin=0, end=3j)
         segment.translate(2)
         expect_begin = 2
         expect_end = 2 + 3j
         assert round(abs(abs(expect_begin - segment.begin) - 0), 7) == 0
         assert round(abs(abs(expect_end - segment.end) - 0), 7) == 0
 
-        segment = Segment(-2 + 1j, 2 + 3j)
+        segment = Segment(begin=-2 + 1j, end=2 + 3j)
         segment.translate(-2 - 3j)
         expect_begin = -4 - 2j
         expect_end = 0

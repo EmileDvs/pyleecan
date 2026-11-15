@@ -5,7 +5,7 @@ import pytest
 from numpy import pi
 from numpy.testing import assert_array_almost_equal, assert_almost_equal
 
-from pyleecan.Classes_new.skew import Skew
+from pyleecan.Classes_new.machine.skew import Skew
 
 from pyleecan.Functions_new.load import load
 

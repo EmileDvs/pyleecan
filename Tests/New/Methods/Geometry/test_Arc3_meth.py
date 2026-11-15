@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from pyleecan.Classes_new.arc_3 import Arc3
-from pyleecan.Classes_new.arc_2 import Arc2
+from pyleecan.Classes_new.geometry.arc_3 import Arc3
+from pyleecan.Classes_new.geometry.arc_2 import Arc2
 from pyleecan.Methods.Geometry.Arc3 import (
     AngleRotationArc3Error,
     NbPointArc3DError,

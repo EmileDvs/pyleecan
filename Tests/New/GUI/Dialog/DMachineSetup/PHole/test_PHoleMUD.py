@@ -6,12 +6,12 @@ from os.path import join
 
 from PySide6 import QtWidgets
 
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.hole_ud import HoleUD
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.slot.hole_ud import HoleUD
 from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleMUD.PHoleMUD import PHoleMUD
 from Tests.New.GUI import gui_option  # Set unit to m
 from Tests import TEST_DATA_DIR
-from pyleecan.Classes_new.material import Material
+from pyleecan.Classes_new.material.material import Material
 from pyleecan.Functions_new.load import load_matlib
 from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.definitions import DATA_DIR

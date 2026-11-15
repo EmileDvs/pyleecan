@@ -5,13 +5,13 @@ import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Classes_new.elec_lut_dq import ElecLUTdq
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.post_lut import PostLUT
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.var_load_current import VarLoadCurrent
+from pyleecan.Classes_new.electrical.elec_lut_dq import ElecLUTdq
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.post.post_lut import PostLUT
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.simulation.var_load_current import VarLoadCurrent
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.SciDataTool.Plot.plot_2d import plot_2D

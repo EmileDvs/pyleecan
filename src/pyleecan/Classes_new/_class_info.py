@@ -1,8 +1,9 @@
-"""Runtime information on the generated Pyleecan dataclasses.
+"""Runtime information on the generated Pyleecan classes.
 
 The class information (name, description, inheritance, properties, methods...)
-is rebuilt from the dataclasses themselves: field annotations, defaults,
-``field(metadata=...)`` (unit, min, max...) written by the class generator and
+is rebuilt from the classes themselves (stdlib dataclasses or pydantic models):
+field annotations, defaults, ``field(metadata=...)`` or pydantic ``Field``
+(unit, min, max...) written by the class generator and
 the attribute docstrings written below each field (read from the module source,
 as linters do, or from the class docstring when the source is not available).
 Neither the legacy CSV files nor ``_class_dict.json`` are required.
@@ -11,19 +12,24 @@ Neither the legacy CSV files nor ``_class_dict.json`` are required.
 import ast
 import re
 import sys
-from importlib import import_module
-from pkgutil import iter_modules
 from collections.abc import Callable
-from dataclasses import MISSING, Field, fields
+from dataclasses import MISSING, fields
 from functools import cache
+from importlib import import_module
 from inspect import cleandoc, getsourcefile
 from types import FunctionType, NoneType, UnionType
-from typing import Any, ForwardRef, Union, get_args, get_origin
+from typing import Annotated, Any, ForwardRef, NamedTuple, Union, get_args, get_origin
 
 import numpy as np
+from annotated_types import Ge, Le
+from pydantic_core import PydanticUndefined
 
 from ._import import class_module_name
 from ._pyleecan_class import PyleecanClass
+from ._pyleecan_model import PyleecanModel
+
+PYLEECAN_BASES = (PyleecanClass, PyleecanModel)
+"""Bases of the generated classes (dataclasses and pydantic models)"""
 
 BASE_TYPES = (bool, complex, float, int, str)
 """Python types reported by their plain name"""
@@ -69,7 +75,7 @@ class ClassInfo:
     string such as ``"float"``, ``"[Segment]"`` or ``"{Data}"``),
     ``annotation``, ``desc``, ``unit``, ``min``, ``max`` (None when not set),
     ``as_dict``, ``value`` (static default or None), ``default_factory``
-    (callable or None) and ``field`` (the dataclass Field).
+    (callable or None) and ``field`` (the dataclass Field or pydantic FieldInfo).
 
     The dict is built once per process and shared: do not modify it.
     """
@@ -156,20 +162,21 @@ def _build_class_dict():
 def _all_classes():
     """Pyleecan classes defined in the public modules of this package.
 
-    Each class is defined in the module named after it (see class_module_name).
+    Each class is defined in the module named after it (see class_module_name),
+    in one of the sub-packages (see _import.module_path).
     """
-    package = sys.modules[__package__]
+    from ._import import _module_paths
+
     classes = {}
-    for module_info in iter_modules(package.__path__):
-        if module_info.name.startswith("_"):
-            continue
-        module = import_module(f"{__package__}.{module_info.name}")
+    for module_name, path in _module_paths().items():
+        module = import_module(f"{__package__}.{path}")
         for name, value in vars(module).items():
             if (
                 isinstance(value, type)
-                and issubclass(value, PyleecanClass)
+                and issubclass(value, PYLEECAN_BASES)
+                and value not in PYLEECAN_BASES
                 and value.__module__ == module.__name__
-                and class_module_name(name) == module_info.name
+                and class_module_name(name) == module_name
             ):
                 classes[name] = value
     return dict(sorted(classes.items()))
@@ -181,21 +188,20 @@ def _class_info(cls):
         (
             base
             for base in cls.__bases__
-            if issubclass(base, PyleecanClass) and base is not PyleecanClass
+            if issubclass(base, PYLEECAN_BASES) and base not in PYLEECAN_BASES
         ),
         None,
     )
     mother = "" if mother_cls is None else mother_cls.__name__
     mother_fields = (
-        set() if mother_cls is None else {f.name for f in fields(mother_cls)}
+        set() if mother_cls is None else {f.name for f in _class_fields(mother_cls)}
     )
     own_names = set(_own_annotations(cls))
     descriptions = _attribute_docstrings(cls) or _docstring_attributes(cls)
     properties = [
         _prop_info(cls, field, descriptions.get(field.name, ""))
-        for field in fields(cls)
-        if field.name != "parent"
-        and (field.name in own_names or field.name not in mother_fields)
+        for field in _class_fields(cls)
+        if field.name in own_names or field.name not in mother_fields
     ]
     return {
         "name": cls.__name__,
@@ -317,8 +323,56 @@ def _docstring_attributes(cls):
     }
 
 
-def _prop_info(cls, field: Field, desc=""):
-    annotation = _resolve_annotation(cls, field.type)
+class _FieldRecord(NamedTuple):
+    """Field of a dataclass or of a pydantic model, in a common form."""
+
+    name: str
+    annotation: Any
+    metadata: dict
+    default: Any
+    default_factory: Any
+    field: Any
+
+
+def _class_fields(cls):
+    """Fields of a generated class (without the parent link)."""
+    if issubclass(cls, PyleecanModel):
+        records = []
+        for name, info in cls.model_fields.items():
+            extra = info.json_schema_extra
+            metadata = dict(extra) if isinstance(extra, dict) else {}
+            for item in info.metadata:  # Field(ge=..., le=...)
+                if isinstance(item, Ge):
+                    metadata["min"] = item.ge
+                elif isinstance(item, Le):
+                    metadata["max"] = item.le
+            records.append(
+                _FieldRecord(
+                    name,
+                    info.annotation,
+                    metadata,
+                    MISSING if info.default is PydanticUndefined else info.default,
+                    MISSING if info.default_factory is None else info.default_factory,
+                    info,
+                )
+            )
+        return records
+    return [
+        _FieldRecord(
+            field.name,
+            field.type,
+            field.metadata,
+            field.default,
+            field.default_factory,
+            field,
+        )
+        for field in fields(cls)
+        if field.name != "parent"
+    ]
+
+
+def _prop_info(cls, field: _FieldRecord, desc=""):
+    annotation = _resolve_annotation(cls, field.annotation)
     metadata = field.metadata
     return {
         "name": field.name,
@@ -333,7 +387,7 @@ def _prop_info(cls, field: Field, desc=""):
         "default_factory": (
             None if field.default_factory is MISSING else field.default_factory
         ),
-        "field": field,
+        "field": field.field,
     }
 
 
@@ -368,6 +422,8 @@ def _type_name(annotation):
         if len(not_none) == 1:
             return _type_name(not_none[0])
         return " | ".join(_type_name(arg) for arg in not_none)
+    if origin is Annotated:  # pydantic field types (Complex, NDArray)
+        return _type_name(args[0])
     if annotation is Any or annotation is None:
         return ""
     if annotation is np.ndarray:
@@ -385,7 +441,7 @@ def _type_name(annotation):
             return "dict"
         return "{" + _type_name(args[1]) + "}"
     if isinstance(annotation, type):
-        if issubclass(annotation, PyleecanClass):
+        if issubclass(annotation, PYLEECAN_BASES):
             return annotation.__name__
         return annotation.__module__ + "." + annotation.__qualname__
     return str(annotation)

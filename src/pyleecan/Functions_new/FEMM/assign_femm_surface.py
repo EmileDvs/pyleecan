@@ -1,7 +1,7 @@
 import numpy as np
 
-from ...Classes_new.lam_hole import LamHole
-from ...Classes_new.lam_hole_ns import LamHoleNS
+from ...Classes_new.machine.lam_hole import LamHole
+from ...Classes_new.machine.lam_hole_ns import LamHoleNS
 from ...Methods import NotImplementedYetError
 from ..labels import (
     BAR_LAB,

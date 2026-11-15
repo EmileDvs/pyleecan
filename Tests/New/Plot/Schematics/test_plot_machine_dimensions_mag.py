@@ -1,13 +1,13 @@
 import pytest
-from pyleecan.Classes_new.machine_ud import MachineUD
-from pyleecan.Classes_new.slot_m_11 import SlotM11
-from pyleecan.Classes_new.lamination import Lamination
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.lam_squirrel_cage import LamSquirrelCage
-from pyleecan.Classes_new.shaft import Shaft
-from pyleecan.Classes_new.frame import Frame
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.arc_1 import Arc1
+from pyleecan.Classes_new.machine.machine_ud import MachineUD
+from pyleecan.Classes_new.slot.slot_m_11 import SlotM11
+from pyleecan.Classes_new.machine.lamination import Lamination
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
+from pyleecan.Classes_new.machine.shaft import Shaft
+from pyleecan.Classes_new.machine.frame import Frame
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
 from Tests.New._test_paths import save_plot_path as save_path
 from os.path import join, isdir, isfile
 from os import makedirs, remove
@@ -68,7 +68,7 @@ class Test_plot_dimensions_mag(object):
         ax.set_title("")
         ax.set_axis_off()
         # Add Schematics
-        line = Segment(0, rotor.Rint * exp(1j * pi / 4 * 3))
+        line = Segment(begin=0, end=rotor.Rint * exp(1j * pi / 4 * 3))
         line.plot(
             fig=fig,
             ax=ax,
@@ -79,7 +79,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(0, rotor.Rext * exp(1j * pi / 6))
+        line = Segment(begin=0, end=rotor.Rext * exp(1j * pi / 6))
         line.plot(
             fig=fig,
             ax=ax,
@@ -90,7 +90,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(0, stator.Rint * exp(1j * 2 * pi / 6))
+        line = Segment(begin=0, end=stator.Rint * exp(1j * 2 * pi / 6))
         line.plot(
             fig=fig,
             ax=ax,
@@ -101,7 +101,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(0, stator.Rext * exp(1j * pi / 2))
+        line = Segment(begin=0, end=stator.Rext * exp(1j * pi / 2))
         line.plot(
             fig=fig,
             ax=ax,
@@ -112,7 +112,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(rotor.Rext, stator.Rint)
+        line = Segment(begin=rotor.Rext, end=stator.Rint)
         line.plot(
             fig=fig,
             ax=ax,
@@ -123,7 +123,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(frame.Rext, frame.Rint)
+        line = Segment(begin=frame.Rext, end=frame.Rint)
         line.plot(
             fig=fig,
             ax=ax,
@@ -214,7 +214,7 @@ class Test_plot_dimensions_mag(object):
         ax.set_title("")
         ax.set_axis_off()
         # Add Schematics
-        line = Segment(0, rotor.Rext * exp(1j * pi / 6))
+        line = Segment(begin=0, end=rotor.Rext * exp(1j * pi / 6))
         line.plot(
             fig=fig,
             ax=ax,
@@ -225,7 +225,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(0, stator.Rint * exp(1j * 2 * pi / 6))
+        line = Segment(begin=0, end=stator.Rint * exp(1j * 2 * pi / 6))
         line.plot(
             fig=fig,
             ax=ax,
@@ -236,7 +236,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(0, stator.Rext * exp(1j * pi / 2))
+        line = Segment(begin=0, end=stator.Rext * exp(1j * pi / 2))
         line.plot(
             fig=fig,
             ax=ax,
@@ -247,7 +247,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(rotor.Rext, stator.Rint)
+        line = Segment(begin=rotor.Rext, end=stator.Rint)
         line.plot(
             fig=fig,
             ax=ax,
@@ -258,7 +258,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(frame.Rext, frame.Rint)
+        line = Segment(begin=frame.Rext, end=frame.Rint)
         line.plot(
             fig=fig,
             ax=ax,
@@ -335,7 +335,7 @@ class Test_plot_dimensions_mag(object):
         ax.set_title("")
         ax.set_axis_off()
         # Add Schematics
-        line = Segment(0, rotor.Rext * exp(1j * pi / 2))
+        line = Segment(begin=0, end=rotor.Rext * exp(1j * pi / 2))
         line.plot(
             fig=fig,
             ax=ax,
@@ -346,7 +346,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(0, rotor.Rint * exp(1j * 2 * pi / 6))
+        line = Segment(begin=0, end=rotor.Rint * exp(1j * 2 * pi / 6))
         line.plot(
             fig=fig,
             ax=ax,
@@ -357,7 +357,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(0, stator.Rext * exp(1j * pi / 6))
+        line = Segment(begin=0, end=stator.Rext * exp(1j * pi / 6))
         line.plot(
             fig=fig,
             ax=ax,
@@ -368,7 +368,7 @@ class Test_plot_dimensions_mag(object):
             is_arrow=True,
             fontsize=SC_FONT_SIZE,
         )
-        line = Segment(rotor.Rint, stator.Rext)
+        line = Segment(begin=rotor.Rint, end=stator.Rext)
         line.plot(
             fig=fig,
             ax=ax,

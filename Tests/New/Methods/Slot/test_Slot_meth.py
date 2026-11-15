@@ -2,8 +2,8 @@
 
 import sys
 
-from pyleecan.Classes_new.slot_w_10 import SlotW10
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
 from pyleecan.Methods import ParentMissingError
 
 import pytest

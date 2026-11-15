@@ -1,7 +1,7 @@
 import numpy as np
 
-from ...Classes_new.segment import Segment
-from ...Classes_new.surf_line import SurfLine
+from ...Classes_new.geometry.segment import Segment
+from ...Classes_new.geometry.surf_line import SurfLine
 from ..labels import AIRGAP_LAB, AS_BL_LAB, AS_BR_LAB, BOUNDARY_PROP_LAB, NO_LAM_LAB
 
 
@@ -41,8 +41,8 @@ def get_airgap_surface(lam_int, lam_ext, sym=1):
         Z2_bis = Z2 * np.exp(1j * 2 * np.pi / sym)
 
         line_list = [
-            Segment(Z1, Z2, prop_dict={BOUNDARY_PROP_LAB: AS_BR_LAB}),
-            Segment(Z1_bis, Z2_bis, prop_dict={BOUNDARY_PROP_LAB: AS_BL_LAB}),
+            Segment(begin=Z1, end=Z2, prop_dict={BOUNDARY_PROP_LAB: AS_BR_LAB}),
+            Segment(begin=Z1_bis, end=Z2_bis, prop_dict={BOUNDARY_PROP_LAB: AS_BL_LAB}),
         ]
 
     # Middle

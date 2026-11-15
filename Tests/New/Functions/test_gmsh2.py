@@ -5,9 +5,9 @@ import json
 from os import makedirs
 from os.path import join, isdir
 from pyleecan.Functions_new.load import load
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.output import Output
-from pyleecan.Classes_new.slot_m_10 import SlotM10
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.output.output import Output
+from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
 from pyleecan.definitions import DATA_DIR
 from Tests.New._test_paths import save_plot_path
 from pyleecan.Methods.Simulation.MagElmer import (

@@ -2,12 +2,12 @@
 
 import pytest
 
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
 
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.hole_m_52 import HoleM52
-from pyleecan.Classes_new.magnet import Magnet
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.slot.hole_m_52 import HoleM52
+from pyleecan.Classes_new.machine.magnet import Magnet
 from pyleecan.Methods.Slot.HoleM52 import S52_NoneError, S52_W1CheckError
 
 from numpy import exp, arcsin, ndarray, pi

@@ -5,11 +5,11 @@ import pytest
 
 import matplotlib.pyplot as plt
 from numpy import pi
-from pyleecan.Classes_new.lamination import Lamination
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.hole_ud import HoleUD
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
+from pyleecan.Classes_new.machine.lamination import Lamination
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.slot.hole_ud import HoleUD
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
 from pyleecan.Functions_new.labels import HOLEV_LAB
 from Tests.New._test_paths import save_plot_path as save_path
 
@@ -23,10 +23,10 @@ def test_HoleUD_vent_plot():
     line_list = list()
     W = 0.01
     C = 0.15
-    line_list.append(Segment(C - W - 1j * W, C + W - 1j * W))
-    line_list.append(Segment(C + W - 1j * W, C + W + 1j * W))
-    line_list.append(Segment(C + W + 1j * W, C - W + 1j * W))
-    line_list.append(Segment(C - W + 1j * W, C - W - 1j * W))
+    line_list.append(Segment(begin=C - W - 1j * W, end=C + W - 1j * W))
+    line_list.append(Segment(begin=C + W - 1j * W, end=C + W + 1j * W))
+    line_list.append(Segment(begin=C + W + 1j * W, end=C - W + 1j * W))
+    line_list.append(Segment(begin=C - W + 1j * W, end=C - W - 1j * W))
     vent.surf_list = [SurfLine(line_list=line_list, label=HOLEV_LAB)]
     # Circular Vent on "tooth" axis
     vent2 = VentilationCirc(Zh=8, H0=0.15, D0=0.02, Alpha0=pi / 8)

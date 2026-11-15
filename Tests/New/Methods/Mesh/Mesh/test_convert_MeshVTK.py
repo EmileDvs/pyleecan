@@ -4,8 +4,8 @@ from os.path import join
 import pytest
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.import_mesh_mat import ImportMeshMat
-from pyleecan.Classes_new.mesh_vtk import MeshVTK
+from pyleecan.Classes_new.import_data.import_mesh_mat import ImportMeshMat
+from pyleecan.Classes_new.mesh.mesh_vtk import MeshVTK
 from Tests import TEST_DATA_DIR
 
 

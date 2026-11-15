@@ -4,13 +4,13 @@ from os.path import join
 import matplotlib.pyplot as plt
 from numpy import pi
 
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot_w_10 import SlotW10
-from pyleecan.Classes_new.winding_ud import WindingUD
-from pyleecan.Classes_new.winding import Winding
-from pyleecan.Classes_new.winding_sc import WindingSC
-from pyleecan.Classes_new.slot_w_21 import SlotW21
-from pyleecan.Classes_new.slot_w_22 import SlotW22
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.slot.slot_w_10 import SlotW10
+from pyleecan.Classes_new.machine.winding_ud import WindingUD
+from pyleecan.Classes_new.machine.winding import Winding
+from pyleecan.Classes_new.machine.winding_sc import WindingSC
+from pyleecan.Classes_new.slot.slot_w_21 import SlotW21
+from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
 from Tests.New._test_paths import save_plot_path as save_path
 from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR

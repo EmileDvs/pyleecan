@@ -4,13 +4,13 @@ import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
 
-from pyleecan.Classes_new.eec_scim import EEC_SCIM
-from pyleecan.Classes_new.electrical import Electrical
-from pyleecan.Classes_new.import_matlab import ImportMatlab
-from pyleecan.Classes_new.input_voltage import InputVoltage
-from pyleecan.Classes_new.lut_slip import LUTslip
-from pyleecan.Classes_new.op_slip import OPslip
-from pyleecan.Classes_new.simu_1 import Simu1
+from pyleecan.Classes_new.electrical.eec_scim import EEC_SCIM
+from pyleecan.Classes_new.electrical.electrical import Electrical
+from pyleecan.Classes_new.import_data.import_matlab import ImportMatlab
+from pyleecan.Classes_new.simulation.input_voltage import InputVoltage
+from pyleecan.Classes_new.output.lut_slip import LUTslip
+from pyleecan.Classes_new.simulation.op_slip import OPslip
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR, TEST_DIR
 from pyleecan.Functions_new.load import load
 

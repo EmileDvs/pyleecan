@@ -1,9 +1,9 @@
 import pytest
 
-from pyleecan.Classes_new.rule_equation import RuleEquation
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot_w_11 import SlotW11
+from pyleecan.Classes_new.converter.rule_equation import RuleEquation
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.slot.slot_w_11 import SlotW11
 
 
 class Test_converter_mot(object):

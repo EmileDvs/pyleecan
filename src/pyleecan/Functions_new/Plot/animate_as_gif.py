@@ -4,7 +4,7 @@ from glob import glob
 import imageio
 from matplotlib.pyplot import subplots
 
-from ...Classes_new.vector_field import VectorField
+from ...Classes_new.scidatatool.vector_field import VectorField
 
 
 def animate_as_gif(

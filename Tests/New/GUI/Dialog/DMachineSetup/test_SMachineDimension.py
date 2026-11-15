@@ -7,12 +7,12 @@ import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
-from pyleecan.Classes_new.frame import Frame
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine_scim import MachineSCIM
-from pyleecan.Classes_new.material import Material
+from pyleecan.Classes_new.machine.frame import Frame
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
+from pyleecan.Classes_new.material.material import Material
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
-from pyleecan.Classes_new.shaft import Shaft
+from pyleecan.Classes_new.machine.shaft import Shaft
 from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (
     SMachineDimension,
 )

@@ -1,4 +1,4 @@
-from ...Classes_new.import_matrix import ImportMatrix
+from ...Classes_new.import_data.import_matrix import ImportMatrix
 from ..labels import (
     AIRGAP_LAB,
     BAR_LAB,

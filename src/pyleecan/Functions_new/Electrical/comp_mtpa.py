@@ -1,10 +1,10 @@
 import numpy as np
 
-from ...Classes_new.eec_pmsm import EEC_PMSM
-from ...Classes_new.electrical import Electrical
-from ...Classes_new.input_current import InputCurrent
-from ...Classes_new.op_dq import OPdq
-from ...Classes_new.simu_1 import Simu1
+from ...Classes_new.electrical.eec_pmsm import EEC_PMSM
+from ...Classes_new.electrical.electrical import Electrical
+from ...Classes_new.simulation.input_current import InputCurrent
+from ...Classes_new.simulation.op_dq import OPdq
+from ...Classes_new.simulation.simu_1 import Simu1
 from ..SciDataTool.Plot.plot_3d import plot_3D
 
 

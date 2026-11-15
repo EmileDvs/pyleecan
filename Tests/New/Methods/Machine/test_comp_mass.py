@@ -6,15 +6,15 @@ from os.path import join
 from mock import MagicMock
 from numpy import array, pi, zeros
 
-from pyleecan.Classes_new.machine_ud import MachineUD
-from pyleecan.Classes_new.machine_ipmsm import MachineIPMSM
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.lam_hole import LamHole
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.ventilation_polar import VentilationPolar
-from pyleecan.Classes_new.hole_m_50 import HoleM50
-from pyleecan.Classes_new.frame import Frame
-from pyleecan.Classes_new.shaft import Shaft
+from pyleecan.Classes_new.machine.machine_ud import MachineUD
+from pyleecan.Classes_new.machine.machine_ipmsm import MachineIPMSM
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.lam_hole import LamHole
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.slot.ventilation_polar import VentilationPolar
+from pyleecan.Classes_new.slot.hole_m_50 import HoleM50
+from pyleecan.Classes_new.machine.frame import Frame
+from pyleecan.Classes_new.machine.shaft import Shaft
 from pyleecan.Functions_new.load import load
 from pyleecan.definitions import DATA_DIR
 

@@ -27,6 +27,14 @@ def _complex_field_names(cls):
     )
 
 
+@cache
+def _pyleecan_bases():
+    """Bases of the generated classes: dataclasses and pydantic models."""
+    from ._pyleecan_model import PyleecanModel
+
+    return (PyleecanClass, PyleecanModel)
+
+
 def _to_complex(value):
     """Legacy complex setter: complex values are serialized as str."""
     return complex(value) if isinstance(value, str) else value
@@ -117,8 +125,8 @@ class PyleecanClass:
 
     @staticmethod
     def _construct_from_dict(target, data):
-        """Build a generated dataclass, or another class (SciDataTool) by init_dict."""
-        if issubclass(target, PyleecanClass):
+        """Build a generated class, or another class (SciDataTool) by init_dict."""
+        if issubclass(target, _pyleecan_bases()):
             return target.from_dict(data)
         return target(init_dict=data)
 
@@ -129,7 +137,7 @@ class PyleecanClass:
         candidates = tuple(
             candidate
             for candidate in cls._walk_types(annotation)
-            if isinstance(candidate, type) and issubclass(candidate, PyleecanClass)
+            if isinstance(candidate, type) and issubclass(candidate, _pyleecan_bases())
         )
         if isinstance(value, str) and candidates and base_path is not None:
             path = Path(base_path) / value
@@ -187,15 +195,18 @@ class PyleecanClass:
         """Validate a parent against the generated rules inherited by this class."""
         if parent is None:
             return
+        from ._import import module_path
+
         for cls in type(self).__mro__:
             module_prefix = __package__ + "."
             if not cls.__module__.startswith(module_prefix):
                 continue
-            key = (cls.__module__[len(module_prefix) :], cls.__name__)
+            # The rules use the class module names (without sub-package)
+            key = (cls.__module__.rpartition(".")[2], cls.__name__)
             if key in PARENT_TYPES:
                 parent_names = PARENT_TYPES[key]
                 parent_types = tuple(
-                    getattr(import_module("." + module, __package__), name)
+                    getattr(import_module("." + module_path(module), __package__), name)
                     for module, name in parent_names
                 )
                 if not isinstance(parent, parent_types):

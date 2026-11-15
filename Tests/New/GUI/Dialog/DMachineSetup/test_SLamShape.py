@@ -7,12 +7,12 @@ import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.slot_w_14 import SlotW14
-from pyleecan.Classes_new.machine_scim import MachineSCIM
-from pyleecan.Classes_new.material import Material
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.ventilation_trap import VentilationTrap
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.slot.slot_w_14 import SlotW14
+from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
+from pyleecan.Classes_new.material.material import Material
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.slot.ventilation_trap import VentilationTrap
 from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
 

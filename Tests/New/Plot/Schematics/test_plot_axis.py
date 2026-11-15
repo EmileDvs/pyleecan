@@ -3,15 +3,15 @@ from os.path import join
 import matplotlib.pyplot as plt
 import pytest
 from numpy import argmax, cos, abs as np_abs, angle as np_angle, exp, pi, array, zeros
-from pyleecan.Classes_new.op_dq import OPdq
+from pyleecan.Classes_new.simulation.op_dq import OPdq
 
 from Tests.New._test_paths import save_plot_path as save_path
-from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.output import Output
-from pyleecan.Classes_new.simu_1 import Simu1
+from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.output.output import Output
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR

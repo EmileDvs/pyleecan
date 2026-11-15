@@ -559,6 +559,9 @@ def test_shared_exceptions_across_partial_generation(
     (classes / "_pyleecan_class.py").write_text(
         "class PyleecanClass:\n    pass\n", encoding="utf-8"
     )
+    (classes / "_pyleecan_model.py").write_text(
+        "class PyleecanModel:\n    pass\n", encoding="utf-8"
+    )
     # Hand-written class loader (not generated)
     shutil.copyfile(Path(MAIN_DIR) / "Classes_new" / "_import.py", classes / "_import.py")
     shared = root / "Methods" / "Slot" / "Shared"
@@ -1645,9 +1648,14 @@ def test_experimental_module_and_class_constants(
         assert not hasattr(generated_class, "LINE_NPOINT_D")
     assert generated_class.INNER_TEST_CONSTANT == 42
     assert "INNER_TEST_CONSTANT" not in module.__dict__
-    assert "INNER_TEST_CONSTANT" not in {
-        field.name for field in fields(generated_class)
-    }
+    assert "INNER_TEST_CONSTANT" not in _field_names(generated_class)
+
+
+def _field_names(cls):
+    """Field names of a generated dataclass or pydantic model."""
+    if hasattr(cls, "model_fields"):
+        return set(cls.model_fields)
+    return {field.name for field in fields(cls)}
 
 
 def test_experimental_method_uses_exported_module_constant(
@@ -1722,6 +1730,10 @@ def test_generated_geometry_constant_defaults_at_runtime(
     (output / "__init__.py").write_text("", encoding="utf-8")
     (output / "_pyleecan_class.py").write_text(
         "class PyleecanClass:\n    pass\n", encoding="utf-8"
+    )
+    # Geometry classes are pydantic models (PYDANTIC_PACKAGES)
+    (output / "_pyleecan_model.py").write_text(
+        "class PyleecanModel:\n    pass\n", encoding="utf-8"
     )
     gen_dict = {}
     for name in ("Line", "Arc", "Arc1", "Arc2", "Arc3", "Segment"):
@@ -1854,3 +1866,75 @@ def test_experimental_custom_output_name(generator_environment, tmp_path, monkey
         isinstance(node, ast.ClassDef) and node.name == "Magnetics"
         for node in module.body
     )
+
+
+# Classes of the PYDANTIC_PACKAGES (Geometry) are pydantic models
+@pytest.mark.parametrize("import_style", ["absolute", "relative"])
+def test_geometry_class_is_generated_as_pydantic_model(
+    generator_environment, tmp_path, import_style
+):
+    assert generator_environment["PolarArc"]["package"] in (
+        class_generator.PYDANTIC_PACKAGES
+    )
+    info = deepcopy(generator_environment["PolarArc"])
+    info["methods"] = []
+    gen_dict = dict(generator_environment, PolarArc=info)
+    path = class_generator.generate_class(
+        gen_dict, "PolarArc", str(tmp_path), import_style=import_style,
+        class_import_graph={}, shared_error_definitions={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert "@dataclass" not in source and "dataclasses" not in source
+    assert "class PolarArc(Surface):" in source
+    # min/max are Field bounds, the unit is in json_schema_extra
+    assert 'height: float = Field(default=1, ge=0, json_schema_extra={"unit": "m"})' in source
+    assert "angle: float = Field(default=1, ge=0)" in source
+    assert "default_class" not in source
+    assert "    point_ref: Complex = 0" not in source  # Inherited from Surface
+    root = deepcopy(generator_environment["Surface"])
+    root["methods"] = []
+    path = class_generator.generate_class(
+        dict(generator_environment, Surface=root), "Surface", str(tmp_path),
+        import_style=import_style, class_import_graph={}, shared_error_definitions={},
+    )
+    source = Path(path).read_text(encoding="utf-8")
+    assert "class Surface(PyleecanModel):" in source
+    assert "    point_ref: Complex = 0\n" in source
+    assert "import Complex, PyleecanModel" in source
+
+
+def test_pydantic_class_and_mother_must_share_base(generator_environment):
+    gen_dict = dict(generator_environment)
+    gen_dict["Segment"] = dict(gen_dict["Segment"], package="Machine")
+    with pytest.raises(ValueError, match="same base"):
+        class_generator._is_pydantic_class("Segment", gen_dict)
+
+
+def test_pydantic_annotation_types():
+    assert class_generator._pydantic_annotation("complex | None") == (
+        "Complex | None",
+        {"Complex"},
+    )
+    assert class_generator._pydantic_annotation("list[np.ndarray]") == (
+        "list[NDArray]",
+        {"NDArray"},
+    )
+    assert class_generator._pydantic_annotation("dict[str, Any]") == (
+        "dict[str, Any]",
+        set(),
+    )
+
+
+def test_keyword_calls_for_pydantic_classes_in_functions(generator_environment):
+    source = (
+        "from ...Classes_new.segment import Segment\n"
+        "from ...Classes_new.surf_line import SurfLine\n"
+        "def f(Z1, Z2, lines):\n"
+        "    return Segment(Z1, Z2), SurfLine(lines, 0, 'label')\n"
+    )
+    result = class_generator._keyword_geometry_calls(
+        source, "pyleecan", generator_environment
+    )
+    assert "Segment(begin=Z1, end=Z2)" in result
+    # Legacy order: own properties, then the mother's (Surface)
+    assert "SurfLine(line_list=lines, point_ref=0, label='label')" in result

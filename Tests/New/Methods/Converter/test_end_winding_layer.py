@@ -1,10 +1,10 @@
 import pytest
 from numpy import pi
-from pyleecan.Classes_new.winding import Winding
-from pyleecan.Classes_new.rule_complex import RuleComplex
-from pyleecan.Classes_new.machine_sipmsm import MachineSIPMSM
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.end_winding import EndWinding
+from pyleecan.Classes_new.machine.winding import Winding
+from pyleecan.Classes_new.converter.rule_complex import RuleComplex
+from pyleecan.Classes_new.machine.machine_sipmsm import MachineSIPMSM
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.end_winding import EndWinding
 
 
 winding_test = list()

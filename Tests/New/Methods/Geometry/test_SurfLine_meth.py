@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 from mock import MagicMock
-from pyleecan.Classes_new.arc_1 import Arc1
-from pyleecan.Classes_new.arc_2 import Arc2
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.surf_line import SurfLine
+from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from pyleecan.Classes_new.geometry.arc_2 import Arc2
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.geometry.surf_line import SurfLine
 from numpy import pi
 
 

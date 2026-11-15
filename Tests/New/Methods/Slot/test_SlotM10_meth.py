@@ -3,10 +3,10 @@
 import pytest
 from numpy import exp, arcsin
 
-from pyleecan.Classes_new.lam_slot_mag import LamSlotMag
-from pyleecan.Classes_new.slot_m_10 import SlotM10
-from pyleecan.Classes_new.segment import Segment
-from pyleecan.Classes_new.slot import Slot
+from pyleecan.Classes_new.machine.lam_slot_mag import LamSlotMag
+from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
+from pyleecan.Classes_new.geometry.segment import Segment
+from pyleecan.Classes_new.slot.slot import Slot
 from pyleecan.Methods import ParentMissingError
 
 Mag10_test = list()

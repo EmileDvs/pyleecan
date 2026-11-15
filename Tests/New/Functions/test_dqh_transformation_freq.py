@@ -3,9 +3,9 @@ from numpy import abs as np_abs
 from numpy import angle, array, cos, exp, linspace, pi, zeros
 from numpy.testing import assert_array_almost_equal
 
-from pyleecan.Classes_new.data_1d import Data1D
-from pyleecan.Classes_new.data_time import DataTime
-from pyleecan.Classes_new.norm_ref import NormRef as Norm_ref
+from pyleecan.Classes_new.scidatatool.data_1d import Data1D
+from pyleecan.Classes_new.scidatatool.data_time import DataTime
+from pyleecan.Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 from pyleecan.Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from pyleecan.Functions_new.Electrical.dqh_transformation_freq import (
     dqh2n_DataFreq,

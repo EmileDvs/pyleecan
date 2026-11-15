@@ -3,12 +3,12 @@ from os.path import join, isdir
 import pytest
 from numpy import array, linspace, ones, pi, zeros, sqrt, cos
 from Tests.New._test_paths import save_plot_path
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.mag_elmer import MagElmer
-from pyleecan.Classes_new.slot_m_10 import SlotM10
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.output import Output
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.magnetics.mag_elmer import MagElmer
+from pyleecan.Classes_new.slot.slot_m_10 import SlotM10
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.output.output import Output
 from pyleecan.Functions_new.load import load
 from pyleecan.Functions_new.Plot import dict_2D
 from pyleecan.definitions import DATA_DIR

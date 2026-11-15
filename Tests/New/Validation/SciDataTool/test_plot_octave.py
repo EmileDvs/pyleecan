@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 from numpy.random import default_rng
 
-from pyleecan.Classes_new.data_1d import Data1D
-from pyleecan.Classes_new.data_freq import DataFreq
-from pyleecan.Classes_new.norm_ref import NormRef as Norm_ref
+from pyleecan.Classes_new.scidatatool.data_1d import Data1D
+from pyleecan.Classes_new.scidatatool.data_freq import DataFreq
+from pyleecan.Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_validation_path
 

@@ -5,16 +5,20 @@ serialized object. When the class name is known when writing the code, use a
 regular import instead (in a function to avoid an import cycle), that linters
 and type checkers can follow::
 
-    from .arc_1 import Arc1
+    from ..geometry.arc_1 import Arc1  # in a class module of another sub-package
 
 The module of a class is derived from its name by ``class_module_name``
 (``LamSlotWind`` -> ``lam_slot_wind``): a class must be defined in the module
-of this package named accordingly.
+named accordingly, in one of the sub-packages of this package
+(``machine/lam_slot_wind.py``). The sub-package of a module is found by
+walking the sub-packages (``module_path``), no generated table is needed.
 """
 
 import re
+from functools import cache
 from importlib import import_module
 from keyword import iskeyword
+from pathlib import Path
 
 SPECIAL_MODULE_NAMES = {
     "Data1D": "data_1d",
@@ -59,6 +63,50 @@ def class_module_name(class_name):
     return name
 
 
+@cache
+def _module_paths():
+    """Path in this package of each class module: {"arc_1": "geometry.arc_1"}.
+
+    The class modules are the public modules of the public sub-packages; names
+    starting with "_" are support modules or vendored packages.
+    """
+    paths = {}
+    for subpackage in sorted(Path(__file__).parent.iterdir()):
+        if (
+            not subpackage.is_dir()
+            or subpackage.name.startswith(("_", "."))
+            or not (subpackage / "__init__.py").is_file()
+        ):
+            continue
+        for module_file in sorted(subpackage.glob("*.py")):
+            module = module_file.stem
+            if module.startswith("_"):
+                continue
+            if module in paths:
+                raise ImportError(
+                    f"Class module {module!r} is defined in both "
+                    f"{paths[module]!r} and {subpackage.name}.{module!r}"
+                )
+            paths[module] = f"{subpackage.name}.{module}"
+    return paths
+
+
+def module_path(module_name):
+    """Path of a class module in this package ("arc_1" -> "geometry.arc_1").
+
+    Parameters
+    ----------
+    module_name : str
+        Name of the class module (see class_module_name)
+
+    Returns
+    -------
+    path : str or None
+        "subpackage.module", None if there is no such class module
+    """
+    return _module_paths().get(module_name)
+
+
 def _find_class(class_name):
     """Return the class defined in the module named after it, or None."""
     if (
@@ -67,7 +115,10 @@ def _find_class(class_name):
         or class_name.startswith("_")
     ):
         return None
-    target = __package__ + "." + class_module_name(class_name)
+    path = module_path(class_module_name(class_name))
+    if path is None:
+        return None
+    target = __package__ + "." + path
     try:
         module = import_module(target)
     except ModuleNotFoundError as error:

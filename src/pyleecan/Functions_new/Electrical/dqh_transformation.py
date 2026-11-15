@@ -1,10 +1,10 @@
 import numpy as np
 
-from ...Classes_new.data_1d import Data1D
-from ...Classes_new.data_dual import DataDual
-from ...Classes_new.data_freq import DataFreq
-from ...Classes_new.data_nd import DataND
-from ...Classes_new.data_time import DataTime
+from ...Classes_new.scidatatool.data_1d import Data1D
+from ...Classes_new.scidatatool.data_dual import DataDual
+from ...Classes_new.scidatatool.data_freq import DataFreq
+from ...Classes_new.scidatatool.data_nd import DataND
+from ...Classes_new.scidatatool.data_time import DataTime
 from ..Winding.gen_phase_list import gen_name
 
 

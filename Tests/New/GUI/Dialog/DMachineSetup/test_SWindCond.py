@@ -5,13 +5,13 @@ import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
-from pyleecan.Classes_new.cond_type_11 import CondType11
-from pyleecan.Classes_new.cond_type_12 import CondType12
-from pyleecan.Classes_new.lam_slot_wind import LamSlotWind
-from pyleecan.Classes_new.machine_scim import MachineSCIM
-from pyleecan.Classes_new.material import Material
-from pyleecan.Classes_new.slot_w_22 import SlotW22
-from pyleecan.Classes_new.winding import Winding
+from pyleecan.Classes_new.machine.cond_type_11 import CondType11
+from pyleecan.Classes_new.machine.cond_type_12 import CondType12
+from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+from pyleecan.Classes_new.machine.machine_scim import MachineSCIM
+from pyleecan.Classes_new.material.material import Material
+from pyleecan.Classes_new.slot.slot_w_22 import SlotW22
+from pyleecan.Classes_new.machine.winding import Winding
 from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.SWindCond import SWindCond
 from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.PCondType12.PCondType12 import (
     PCondType12,

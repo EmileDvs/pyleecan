@@ -1,5 +1,5 @@
-from ...Classes_new.data_time import DataTime
-from ...Classes_new.solution_data import SolutionData
+from ...Classes_new.mesh.solution_data import SolutionData
+from ...Classes_new.scidatatool.data_time import DataTime
 
 
 def build_solution_data(

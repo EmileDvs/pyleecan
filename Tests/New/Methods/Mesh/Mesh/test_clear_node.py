@@ -2,10 +2,10 @@
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.element_mat import ElementMat
-from pyleecan.Classes_new.mesh_mat import MeshMat
-from pyleecan.Classes_new.mesh_solution import MeshSolution
-from pyleecan.Classes_new.node_mat import NodeMat
+from pyleecan.Classes_new.mesh.element_mat import ElementMat
+from pyleecan.Classes_new.mesh.mesh_mat import MeshMat
+from pyleecan.Classes_new.mesh.mesh_solution import MeshSolution
+from pyleecan.Classes_new.mesh.node_mat import NodeMat
 
 DELTA = 1e-10
 

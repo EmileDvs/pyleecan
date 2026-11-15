@@ -15,17 +15,17 @@ except ImportError as error:
 from Tests.New._test_paths import save_plot_path
 from Tests.New.Plot.LamWind import wind_mat
 from pyleecan.Functions_new.load import load
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.simu_1 import Simu1
-from pyleecan.Classes_new.output import Output
-from pyleecan.Classes_new.slot_ud_2 import SlotUD2
-from pyleecan.Classes_new.opti_design_var_interval import OptiDesignVarInterval
-from pyleecan.Classes_new.opti_objective import OptiObjective
-from pyleecan.Classes_new.opti_problem import OptiProblem
-from pyleecan.Classes_new.import_matrix_val import ImportMatrixVal
-from pyleecan.Classes_new.import_gen_vect_lin import ImportGenVectLin
-from pyleecan.Classes_new.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
+from pyleecan.Classes_new.output.output import Output
+from pyleecan.Classes_new.slot.slot_ud_2 import SlotUD2
+from pyleecan.Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
+from pyleecan.Classes_new.optimization.opti_objective import OptiObjective
+from pyleecan.Classes_new.optimization.opti_problem import OptiProblem
+from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
+from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
+from pyleecan.Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
 import numpy as np
 import random

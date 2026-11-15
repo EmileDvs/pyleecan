@@ -3,10 +3,10 @@
 from os.path import join
 import pytest
 
-from pyleecan.Classes_new.lamination import Lamination
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.machine.lamination import Lamination
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
 from pyleecan.Methods.Slot.VentilationCirc import CircleBuildGeometryError
-from pyleecan.Classes_new.hole import Hole
+from pyleecan.Classes_new.slot.hole import Hole
 
 """unittest for VentilationCirc"""
 

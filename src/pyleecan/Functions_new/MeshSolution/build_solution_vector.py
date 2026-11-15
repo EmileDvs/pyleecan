@@ -1,8 +1,8 @@
 import numpy as np
 
-from ...Classes_new.data_time import DataTime
-from ...Classes_new.solution_vector import SolutionVector
-from ...Classes_new.vector_field import VectorField
+from ...Classes_new.mesh.solution_vector import SolutionVector
+from ...Classes_new.scidatatool.data_time import DataTime
+from ...Classes_new.scidatatool.vector_field import VectorField
 
 
 def build_solution_vector(

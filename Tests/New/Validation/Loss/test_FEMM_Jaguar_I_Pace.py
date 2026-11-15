@@ -3,15 +3,15 @@ from os.path import join
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.input_current import InputCurrent
-from pyleecan.Classes_new.loss import Loss
-from pyleecan.Classes_new.loss_model_joule import LossModelJoule
-from pyleecan.Classes_new.loss_model_magnet import LossModelMagnet
-from pyleecan.Classes_new.loss_model_proximity import LossModelProximity
-from pyleecan.Classes_new.loss_model_steinmetz import LossModelSteinmetz
-from pyleecan.Classes_new.mag_femm import MagFEMM
-from pyleecan.Classes_new.op_dq import OPdq
-from pyleecan.Classes_new.simu_1 import Simu1
+from pyleecan.Classes_new.simulation.input_current import InputCurrent
+from pyleecan.Classes_new.loss.loss import Loss
+from pyleecan.Classes_new.loss.loss_model_joule import LossModelJoule
+from pyleecan.Classes_new.loss.loss_model_magnet import LossModelMagnet
+from pyleecan.Classes_new.loss.loss_model_proximity import LossModelProximity
+from pyleecan.Classes_new.loss.loss_model_steinmetz import LossModelSteinmetz
+from pyleecan.Classes_new.magnetics.mag_femm import MagFEMM
+from pyleecan.Classes_new.simulation.op_dq import OPdq
+from pyleecan.Classes_new.simulation.simu_1 import Simu1
 from pyleecan.definitions import DATA_DIR
 from pyleecan.Functions_new.load import load
 
@@ -21,7 +21,7 @@ is_show_fig = False
 def find_best_phi0_jaguar():
     from numpy import array, linspace, ones, pi, sqrt, zeros
 
-    from pyleecan.Classes_new.var_load_current import VarLoadCurrent
+    from pyleecan.Classes_new.simulation.var_load_current import VarLoadCurrent
 
     Tem_av_ref = array(
         [79, 125, 160, 192, 237, 281, 319, 343, 353, 332, 266, 164, 22]

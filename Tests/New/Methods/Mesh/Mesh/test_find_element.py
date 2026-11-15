@@ -2,11 +2,11 @@
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.element_mat import ElementMat
-from pyleecan.Classes_new.mesh_mat import MeshMat
-from pyleecan.Classes_new.node_mat import NodeMat
-from pyleecan.Classes_new.ref_segment_p_1 import RefSegmentP1
-from pyleecan.Classes_new.ref_triangle_3 import RefTriangle3
+from pyleecan.Classes_new.mesh.element_mat import ElementMat
+from pyleecan.Classes_new.mesh.mesh_mat import MeshMat
+from pyleecan.Classes_new.mesh.node_mat import NodeMat
+from pyleecan.Classes_new.mesh.ref_segment_p_1 import RefSegmentP1
+from pyleecan.Classes_new.mesh.ref_triangle_3 import RefTriangle3
 
 
 @pytest.mark.MeshSol

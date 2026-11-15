@@ -2,9 +2,9 @@ import cmath
 
 import numpy as np
 
-from ...Classes_new.arc import Arc
-from ...Classes_new.arc_1 import Arc1
-from ...Classes_new.arc_2 import Arc2
+from ...Classes_new.geometry.arc import Arc
+from ...Classes_new.geometry.arc_1 import Arc1
+from ...Classes_new.geometry.arc_2 import Arc2
 from ..labels import BOUNDARY_PROP_LAB
 from .get_boundary_condition import get_boundary_condition
 

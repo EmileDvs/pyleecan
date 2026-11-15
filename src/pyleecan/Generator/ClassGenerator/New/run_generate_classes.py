@@ -1,13 +1,15 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from os import cpu_count, listdir, remove
+from os import cpu_count, listdir, makedirs, remove
 from os.path import basename, isdir, isfile, join
+from shutil import rmtree
 
 from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _shared_error_definitions,
     _write_shared_errors,
+    class_subpackage,
     generate_class,
     get_class_import_graph,
     parent_type_mapping,
@@ -27,6 +29,14 @@ Use ``Classes_new._class_info.ClassInfo().get_dict()`` to get the class
 information (built from the dataclasses themselves).
 """
 '''
+
+SUBPACKAGE_INIT = '''"""Generated classes of the {subpackage} sub-package.
+
+Import a class from its module: this file does not import the classes, to
+avoid import cycles.
+"""
+'''
+
 
 def _validate_import_style(import_style):
     if import_style not in ("relative", "absolute"):
@@ -84,7 +94,7 @@ def generate_code(
         join(root_path, "Classes"), gen_dict, soft_name
     )
 
-    for support_module in ("_pyleecan_class.py", "_import.py"):
+    for support_module in ("_pyleecan_class.py", "_pyleecan_model.py", "_import.py"):
         # Hand-written support modules (not generated)
         if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, support_module)):
             raise FileNotFoundError(
@@ -103,11 +113,17 @@ def generate_code(
     _write_shared_errors(CLASS_DIR, shared_errors)
 
     if class_list is None:
-        # Deleting all the previous class
+        # Deleting all the previous class modules and sub-packages
+        # (the names starting with "_" are support modules or vendored code)
         print("Deleting old class files...")
         for file_name in listdir(CLASS_DIR):
             if file_name[0] != "_":
-                remove(join(CLASS_DIR, file_name))
+                path = join(CLASS_DIR, file_name)
+                if isdir(path):
+                    rmtree(path)
+                else:
+                    remove(path)
+    _write_subpackages(CLASS_DIR, gen_dict, generation_names)
     _generate_classes(
         gen_dict,
         generation_names,
@@ -119,6 +135,18 @@ def generate_code(
         shared_error_definitions=shared_errors,
     )
     _write_experimental_bookkeeping(CLASS_DIR, gen_dict, soft_name, import_style)
+
+
+def _write_subpackages(class_dir, gen_dict, generation_names):
+    """Create the sub-packages of the generated classes (before the threads)."""
+    for subpackage in sorted(
+        {class_subpackage(name, gen_dict) for name in generation_names}
+    ):
+        makedirs(join(class_dir, subpackage), exist_ok=True)
+        with open(
+            join(class_dir, subpackage, "__init__.py"), "w", encoding="utf-8"
+        ) as init_file:
+            init_file.write(SUBPACKAGE_INIT.format(subpackage=subpackage))
 
 
 def _write_experimental_bookkeeping(class_dir, gen_dict, soft_name, import_style):

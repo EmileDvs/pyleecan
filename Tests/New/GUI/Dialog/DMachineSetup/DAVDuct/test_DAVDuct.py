@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 import pytest
 from PySide6 import QtWidgets
 
-from pyleecan.Classes_new.lamination import Lamination
-from pyleecan.Classes_new.ventilation_circ import VentilationCirc
-from pyleecan.Classes_new.ventilation_polar import VentilationPolar
-from pyleecan.Classes_new.ventilation_trap import VentilationTrap
+from pyleecan.Classes_new.machine.lamination import Lamination
+from pyleecan.Classes_new.slot.ventilation_circ import VentilationCirc
+from pyleecan.Classes_new.slot.ventilation_polar import VentilationPolar
+from pyleecan.Classes_new.slot.ventilation_trap import VentilationTrap
 from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
 from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.PVentCirc.PVentCirc import (
     PVentCirc,

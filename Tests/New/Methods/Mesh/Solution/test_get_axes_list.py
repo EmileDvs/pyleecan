@@ -3,13 +3,13 @@ from unittest import TestCase
 import numpy as np
 import pytest
 
-from pyleecan.Classes_new.data_1d import Data1D
-from pyleecan.Classes_new.data_linspace import DataLinspace
-from pyleecan.Classes_new.data_time import DataTime
-from pyleecan.Classes_new.solution_data import SolutionData
-from pyleecan.Classes_new.solution_mat import SolutionMat
-from pyleecan.Classes_new.solution_vector import SolutionVector
-from pyleecan.Classes_new.vector_field import VectorField
+from pyleecan.Classes_new.scidatatool.data_1d import Data1D
+from pyleecan.Classes_new.scidatatool.data_linspace import DataLinspace
+from pyleecan.Classes_new.scidatatool.data_time import DataTime
+from pyleecan.Classes_new.mesh.solution_data import SolutionData
+from pyleecan.Classes_new.mesh.solution_mat import SolutionMat
+from pyleecan.Classes_new.mesh.solution_vector import SolutionVector
+from pyleecan.Classes_new.scidatatool.vector_field import VectorField
 
 
 @pytest.mark.MeshSol

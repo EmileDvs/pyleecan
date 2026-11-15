@@ -1,7 +1,7 @@
 import numpy as np
 
-from ...Classes_new.data_1d import Data1D
-from ...Classes_new.data_freq import DataFreq
+from ...Classes_new.scidatatool.data_1d import Data1D
+from ...Classes_new.scidatatool.data_freq import DataFreq
 from ..SciDataTool.set_routines import union1d_tol
 from ..Winding.gen_phase_list import gen_name
 from .dqh_transformation import _check_data, abc2n, n2abc
