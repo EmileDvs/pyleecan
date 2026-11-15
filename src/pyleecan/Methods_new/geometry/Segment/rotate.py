@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import exp
-from ....Methods.Geometry.Segment import AngleRotationSegmentError
+from . import AngleRotationSegmentError
 
 
 def rotate(self, angle):

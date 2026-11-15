@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import exp
-from ....Methods.Geometry.Circle import AngleRotationCircleError
+from . import AngleRotationCircleError
 
 
 def rotate(self, angle):

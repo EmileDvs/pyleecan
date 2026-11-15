@@ -1,1 +1,28 @@
-"""Hand-written methods of the Arc1 class (see PLAN.md Step 5)."""
+class PointArc1Error(Exception):
+    """ """
+
+    pass
+
+
+class RadiusArc1Error(Exception):
+    """ """
+
+    pass
+
+
+class NbPointArc1DError(Exception):
+    """ """
+
+    pass
+
+
+class AngleRotationArc1Error(Exception):
+    """ """
+
+    pass
+
+
+class PointTranslateArc1Error(Exception):
+    """ """
+
+    pass

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....Methods.Geometry.Arc3 import *
+from . import *
 
 
 def check(self):

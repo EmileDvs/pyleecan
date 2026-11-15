@@ -72,9 +72,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - **Shared errors**: every method error is defined once in
   `classes_common/errors.py` (255 errors) and raised by both implementations;
   previously each class held its own nested copy.
-- **`Methods_new`**: hand-written methods, bootstrapped from the legacy
-  `Methods` one package at a time (`bootstrap_methods.py`) and read by the
-  class generator instead of the legacy ones. Geometry is bootstrapped.
+- **`Methods_new`**: the methods of the new classes, written by a method
+  generator (`generate_methods_new.py`) from the legacy `Methods` for all
+  packages, self-contained, and read by the class generator. It will gather
+  the method-level modernizations (shared with the functions generator); a
+  package needing hand-written changes can be frozen.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,
@@ -132,7 +134,7 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 | 2. Type, min and max validation for dataclasses | done |
 | 3. `Functions_pydantic` | done |
 | 4. Phase 1 test architecture (`--backend`) | done (method results: with Step 5) |
-| 5. Package refactor pass (`Methods_new`, no parent links) | in progress: Geometry bootstrapped, shared method errors |
+| 5. Package refactor pass (`Methods_new`, no parent links) | in progress: method generator, shared method errors |
 | 6. Remaining utility functions | to do |
 
 Legacy class tests (`Tests/New/Classes`), with each backend: 2855 passed,

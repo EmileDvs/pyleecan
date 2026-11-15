@@ -1,1 +1,16 @@
-"""Hand-written methods of the Circle class (see PLAN.md Step 5)."""
+class RadiusCircleError(Exception):
+    """ """
+
+    pass
+
+
+class AngleRotationCircleError(Exception):
+    """ """
+
+    pass
+
+
+class PointTranslateCircleError(Exception):
+    """ """
+
+    pass

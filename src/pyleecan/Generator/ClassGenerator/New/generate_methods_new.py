@@ -1,0 +1,230 @@
+"""Generate Methods_new from the legacy Methods (method generator).
+
+``Methods_new`` holds the methods of the new classes, one module per method as
+in the legacy ``Methods``, in the class sub-packages:
+``Methods_new/<sub-package>/<Class>/<method>.py``. The class generator inlines
+them in the classes of each implementation (``Classes_new``,
+``Classes_pydantic``).
+
+The method generator modernizes the method modules (PLAN.md Step 5): the
+method-level transformations move here from the class generator, so that the
+class generator only assembles the classes. Methods and functions share the
+same modernization pipeline.
+
+A frozen package (FROZEN_PACKAGES) is hand-written: the method generator does
+not write it (e.g. the parent-link refactor, which is not mechanical).
+
+Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_methods_new``
+(before the class generation). Methods_new is written again, frozen packages
+excepted: do not edit the other packages by hand.
+"""
+
+import argparse
+import ast
+import shutil
+import tokenize
+from importlib.util import resolve_name
+from pathlib import Path
+
+from pyleecan.definitions import DOC_DIR, MAIN_DIR
+from pyleecan.Generator.ClassGenerator.New.class_generator import (
+    METHODS_NEW_PACKAGE,
+    _bootstrapped_method_dirs,
+    _methods_location,
+    _methods_new_maps,
+    class_subpackage,
+)
+from pyleecan.Generator.read_fct import read_all
+
+FROZEN_PACKAGES = frozenset()
+"""Sub-packages of Methods_new written by hand (not generated)"""
+
+PACKAGE_INIT = '"""Methods of the {name} sub-package (generated, see generate_methods_new.py)."""\n'
+
+
+def generate_methods(root=None, gen_dict=None, frozen=FROZEN_PACKAGES):
+    """Write Methods_new from the legacy Methods.
+
+    Parameters
+    ----------
+    root : str or Path, optional
+        Folder of the pyleecan package (default: MAIN_DIR)
+    gen_dict : dict, optional
+        Generation dictionary (contains all the csv data)
+    frozen : set, optional
+        Sub-packages of Methods_new written by hand, left unchanged
+
+    Returns
+    -------
+    written : dict
+        {class name: number of method modules written}
+    """
+    root = Path(root) if root is not None else Path(MAIN_DIR)
+    gen_dict = gen_dict if gen_dict is not None else read_all(DOC_DIR)
+    source_root = root / "Methods"
+    target_root = root / METHODS_NEW_PACKAGE
+
+    # Sub-packages of the classes with methods, and their legacy packages
+    classes = {}
+    legacy_packages = {}
+    for name, info in sorted(gen_dict.items()):
+        source = source_root.joinpath(*info["package"].split("."), name)
+        if not source.is_dir():
+            continue  # No method module (methods reported missing by the generator)
+        subpackage = class_subpackage(name, gen_dict)
+        classes[name] = (source, subpackage)
+        legacy_packages.setdefault(subpackage, set()).add(info["package"])
+
+    target_root.mkdir(exist_ok=True)
+    for path in target_root.iterdir():
+        if path.is_dir() and path.name not in frozen and not path.name.startswith("_"):
+            shutil.rmtree(path)
+    (target_root / "__init__.py").write_text(
+        '"""Methods of the new classes (see generate_methods_new.py)."""\n',
+        encoding="utf-8",
+    )
+
+    for subpackage, packages in sorted(legacy_packages.items()):
+        if subpackage in frozen:
+            continue
+        (target_root / subpackage).mkdir()
+        (target_root / subpackage / "__init__.py").write_text(
+            _package_init(source_root, sorted(packages), subpackage), encoding="utf-8"
+        )
+
+    written = {}
+    for name, (source, subpackage) in classes.items():
+        if subpackage in frozen:
+            continue
+        target = target_root / subpackage / name
+        shutil.copytree(source, target, ignore=shutil.ignore_patterns("__pycache__"))
+        written[name] = sum(
+            1 for path in target.rglob("*.py") if path.name != "__init__.py"
+        )
+    _bootstrapped_method_dirs.cache_clear()
+    _methods_new_maps.cache_clear()
+
+    # Modernization of the generated modules (frozen packages excluded)
+    class_dir = str(root / "Classes_new")
+    for path in sorted(target_root.rglob("*.py")):
+        relative = path.relative_to(target_root)
+        if len(relative.parts) < 2 or relative.parts[0] in frozen:
+            continue
+        parts = list(relative.with_suffix("").parts)
+        package_parts = parts[:-1] if parts[-1] != "__init__" else parts[:-1]
+        package = ".".join(["pyleecan", METHODS_NEW_PACKAGE, *package_parts])
+        with tokenize.open(path) as source_file:
+            source = source_file.read()
+            encoding = source_file.encoding
+        modernized = modernize_method_source(source, package, class_dir)
+        if modernized != source:
+            path.write_text(modernized, encoding=encoding, newline="")
+    return written
+
+
+def modernize_method_source(source, package, class_dir):
+    """Apply the method-level transformations to a method module.
+
+    Parameters
+    ----------
+    source : str
+        Source of the module
+    package : str
+        Package of the module (e.g. "pyleecan.Methods_new.geometry.Segment")
+    class_dir : str
+        Folder of the class package (Classes_new), to locate Methods_new
+
+    Returns
+    -------
+    source : str
+        Modernized source
+    """
+    return _redirect_methods_imports(source, package, class_dir)
+
+
+def _redirect_methods_imports(source, package, class_dir):
+    """Import the other method modules from Methods_new instead of Methods.
+
+    ``from ....Methods.Geometry.Circle import X`` becomes
+    ``from ....Methods_new.geometry.Circle import X`` (same relative level).
+    """
+    encoded = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(encoded):
+        if value == 10:  # newline
+            offsets.append(index + 1)
+    bootstrapped = _bootstrapped_method_dirs(str(Path(class_dir).parent))
+    replacements = []
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.ImportFrom) or not node.module:
+            continue
+        absolute = (
+            resolve_name("." * node.level + node.module, package)
+            if node.level
+            else node.module
+        )
+        if not absolute.startswith("pyleecan.Methods."):
+            continue
+        # Legacy path: "Package.Class[.module...]" or "Package[.module...]"
+        rest = absolute[len("pyleecan.Methods.") :].split(".")
+        head = rest[:2] if len(rest) > 1 and rest[1] in bootstrapped else rest[:1]
+        new_parts = _methods_location(class_dir, ".".join(head))[1]
+        if new_parts[0] != METHODS_NEW_PACKAGE:
+            continue  # Not in Methods_new (no method module)
+        new_absolute = ".".join(["pyleecan", *new_parts, *rest[len(head) :]])
+        if node.level:
+            package_parts = package.split(".")
+            target_parts = new_absolute.split(".")
+            common = 0
+            while (
+                common < len(package_parts)
+                and common < len(target_parts)
+                and package_parts[common] == target_parts[common]
+            ):
+                common += 1
+            replacement = ast.ImportFrom(
+                module=".".join(target_parts[common:]) or None,
+                names=node.names,
+                level=len(package_parts) - common + 1,
+            )
+        else:
+            replacement = ast.ImportFrom(module=new_absolute, names=node.names, level=0)
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append((start, end, ast.unparse(replacement).encode("utf-8")))
+    for start, end, replacement in sorted(replacements, reverse=True):
+        encoded = encoded[:start] + replacement + encoded[end:]
+    return encoded.decode("utf-8")
+
+
+def _package_init(source_root, packages, subpackage):
+    """Source of a sub-package __init__: the legacy package __init__ (constants).
+
+    A sub-package gathering several legacy packages (none has an __init__ with
+    code today) gets the concatenation of their __init__ modules.
+    """
+    sources = [
+        (source_root / package / "__init__.py").read_text(encoding="utf-8")
+        for package in packages
+        if (source_root / package / "__init__.py").is_file()
+    ]
+    sources = [source for source in sources if source.strip()]
+    if not sources:
+        return PACKAGE_INIT.format(name=subpackage)
+    if len(sources) > 1:
+        raise ValueError(f"Several legacy package __init__ for {subpackage}: {packages}")
+    return sources[0]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args()
+    written = generate_methods()
+    print(
+        f"Wrote {sum(written.values())} method modules of {len(written)} classes "
+        f"in {METHODS_NEW_PACKAGE}."
+    )
+
+
+if __name__ == "__main__":
+    main()

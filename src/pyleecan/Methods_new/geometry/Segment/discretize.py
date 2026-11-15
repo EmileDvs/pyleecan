@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from numpy import linspace
 
-from ....Methods.Machine import LINE_NPOINT_D
-from ....Methods.Geometry.Segment import NbPointSegmentDError
+from ...machine import LINE_NPOINT_D
+from . import NbPointSegmentDError
 
 
 def discretize(self, nb_point=LINE_NPOINT_D):

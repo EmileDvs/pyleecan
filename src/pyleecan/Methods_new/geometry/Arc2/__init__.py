@@ -1,1 +1,28 @@
-"""Hand-written methods of the Arc2 class (see PLAN.md Step 5)."""
+class PointArc2Error(Exception):
+    """ """
+
+    pass
+
+
+class AngleArc2Error(Exception):
+    """ """
+
+    pass
+
+
+class NbPointArc2DError(Exception):
+    """ """
+
+    pass
+
+
+class AngleRotationArc2Error(Exception):
+    """ """
+
+    pass
+
+
+class PointTranslateArc2Error(Exception):
+    """ """
+
+    pass

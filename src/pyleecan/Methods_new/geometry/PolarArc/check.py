@@ -1,4 +1,4 @@
-from ....Methods.Geometry.PolarArc import *
+from . import *
 
 
 def check(self):

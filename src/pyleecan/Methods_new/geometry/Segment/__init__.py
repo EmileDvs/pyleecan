@@ -1,1 +1,22 @@
-"""Hand-written methods of the Segment class (see PLAN.md Step 5)."""
+class PointSegmentError(Exception):
+    """ """
+
+    pass
+
+
+class AngleRotationSegmentError(Exception):
+    """ """
+
+    pass
+
+
+class PointTranslateSegmentError(Exception):
+    """ """
+
+    pass
+
+
+class NbPointSegmentDError(Exception):
+    """ """
+
+    pass

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import exp
-from ....Methods.Geometry.Arc1 import AngleRotationArc1Error
+from . import AngleRotationArc1Error
 
 
 def rotate(self, angle):

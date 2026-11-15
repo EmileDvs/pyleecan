@@ -1,1 +1,1 @@
-"""Hand-written methods of the geometry sub-package (see PLAN.md Step 5)."""
+"""Methods of the geometry sub-package (generated, see generate_methods_new.py)."""

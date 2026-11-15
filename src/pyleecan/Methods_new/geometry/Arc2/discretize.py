@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from numpy import angle as np_angle, exp, linspace
 
-from ....Methods.Machine import ARC_NPOINT_D
-from ....Methods.Geometry.Arc2 import NbPointArc2DError
+from ...machine import ARC_NPOINT_D
+from . import NbPointArc2DError
 
 
 def discretize(self, nb_point=ARC_NPOINT_D):

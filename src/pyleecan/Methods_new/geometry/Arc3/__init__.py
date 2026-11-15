@@ -1,1 +1,22 @@
-"""Hand-written methods of the Arc3 class (see PLAN.md Step 5)."""
+class PointArc3Error(Exception):
+    """ """
+
+    pass
+
+
+class NbPointArc3DError(Exception):
+    """ """
+
+    pass
+
+
+class AngleRotationArc3Error(Exception):
+    """ """
+
+    pass
+
+
+class PointTranslateArc3Error(Exception):
+    """ """
+
+    pass

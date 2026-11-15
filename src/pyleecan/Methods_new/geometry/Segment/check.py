@@ -1,4 +1,4 @@
-from ....Methods.Geometry.Segment import *
+from . import *
 
 
 def check(self):

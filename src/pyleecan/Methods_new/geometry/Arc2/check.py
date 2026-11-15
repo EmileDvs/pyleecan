@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import pi
-from ....Methods.Geometry.Arc2 import *
+from . import *
 
 
 def check(self):

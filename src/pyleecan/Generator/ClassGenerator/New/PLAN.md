@@ -272,22 +272,48 @@ Creation time with validation (GC on, 2026-11-15): `Segment` 1.8 us (legacy),
 Each legacy package is refactored in a single pass, so it is opened, reviewed
 and validated once.
 
-`Methods_new` conventions:
+`Methods_new` structure (decided 2026-11-15):
 
-- Bootstrap: `python -m pyleecan.Generator.ClassGenerator.New.bootstrap_methods <Package>`
-  copies the legacy method modules to `Methods_new/<sub-package>/<Class>/`
-  (never overwrites); the class generator then reads the methods of these
-  classes there (`class_generator.method_source_location`).
-- The modules keep the legacy import style (`from ....Classes.Segment import
-  Segment`, `....Functions...`): the class generator maps it to each
-  implementation. Same folder depth as `Methods`, so relative imports resolve
-  the same way.
-- The shared error classes and constants stay in the legacy package
-  `__init__` files for now (read by the generator); they move to
-  `Methods_new` before Phase 2.
-- No `from __future__ import annotations` (the generator does not inline such
-  modules): Python 3.14 evaluates annotations lazily, so type hints can name
-  classes imported under `if TYPE_CHECKING:`.
+- A **method generator** writes `Methods_new` for all packages from the legacy
+  `Methods` (reproducible, like `Functions_new` from `Functions`). It applies
+  the method-level modernizations the class generator does today when it
+  inlines the methods (numpy/os/pyvista import styles, empty containers,
+  keyword calls, static class imports, renamed function modules, shared
+  errors...), plus the Step 5 transformations (class-specific functions moved
+  into their class, type hints).
+- Methods and functions are modernized by **one shared pipeline** (the
+  functions generator uses the same transformations).
+- The **class generator** keeps the class assembly only: fields, inlining of
+  the method bodies, class constants, import hoisting, self imports, default
+  factories, sub-package and backend relocation, formatting.
+- `Methods_new` uses the new import names (`Classes_new`, `Functions_new`), so
+  it can be imported and type-checked; the class generator relocates them to
+  the pydantic packages.
+- A package is **frozen** (hand-written, skipped by the method generator) only
+  for changes that cannot be automated, such as the parent-link removal.
+- Each pass moved from the class generator to the method generator keeps the
+  generated classes byte-identical; the passes are idempotent.
+- No `from __future__ import annotations` (the class generator does not inline
+  such modules): Python 3.14 evaluates annotations lazily, so type hints can
+  name classes imported under `if TYPE_CHECKING:`.
+
+Order:
+
+1. Method generator skeleton: `Methods_new` written for all packages
+   (copy, then the new import names); generated classes byte-identical.
+   - [x] `generate_methods_new.py` writes `Methods_new` for the 247 classes with
+     methods (1773 modules), package and class `__init__` (errors, constants)
+     included; the imports of the legacy `Methods` point to `Methods_new`, so
+     it is self-contained. The class generator translates the `Methods_new`
+     paths for its configuration tables (`_legacy_methods_module`,
+     `_methods_location`). Generated classes byte-identical.
+   - [ ] New import names for the classes and functions (`Classes_new`,
+     `Functions_new`) in `Methods_new`.
+2. The method-level passes moved one by one from the class generator to the
+   shared pipeline, each byte-identical.
+3. Step 5 transformations: class-specific functions moved into their class,
+   then type hints.
+4. Frozen packages for the parent-link refactor.
 
 Steps of a package:
 
@@ -369,8 +395,8 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
 
 #### Order
 
-- [ ] Geometry: bootstrapped (129 method modules); generated classes
-      byte-identical. Parent links: none read. Method errors shared (below):
+- [ ] Geometry: in `Methods_new` (method generator); parent links: none
+      read. Method errors shared (below):
       `Tests/New/Methods/Geometry` 282 passed with each backend (33 failures
       before). Hints and functions to do.
 

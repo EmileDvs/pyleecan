@@ -158,6 +158,77 @@ def method_source_location(path_to_gen, class_pack, class_name):
     )
 
 
+@lru_cache
+def _methods_new_maps(root):
+    """Mappings between the legacy Methods and Methods_new folders of root.
+
+    Returns ({class: legacy package}, {sub-package: legacy package},
+    {legacy package: sub-package}) for the classes of Methods_new.
+    """
+    legacy_classes = {}
+    legacy_dir = join(root, "Methods")
+    if isdir(legacy_dir):
+        for package in sorted(listdir(legacy_dir)):
+            if isdir(join(legacy_dir, package)) and not package.startswith(("_", ".")):
+                for class_name in listdir(join(legacy_dir, package)):
+                    if isdir(join(legacy_dir, package, class_name)):
+                        legacy_classes.setdefault(class_name, package)
+    class_packages = {}
+    sub_packages = {}
+    package_subs = {}
+    for class_name, (subpackage, _) in _bootstrapped_method_dirs(root).items():
+        package = legacy_classes.get(class_name)
+        if package is None:
+            continue
+        class_packages[class_name] = package
+        sub_packages.setdefault(subpackage, package)
+        package_subs.setdefault(package, subpackage)
+    return class_packages, sub_packages, package_subs
+
+
+def _default_root():
+    from ....definitions import MAIN_DIR
+
+    return MAIN_DIR
+
+
+def _legacy_methods_module(module, root=None):
+    """Legacy name of a Methods_new module, to look up the configuration tables.
+
+    "Methods_new.machine.Skew.comp" -> "Methods.Machine.Skew.comp"; other
+    module names are returned unchanged. The tables of this module
+    (METHOD_IMPORT_REDIRECTS, CLASS_METHOD_HELPERS...) use the legacy names.
+    """
+    parts = module.split(".")
+    if not parts or parts[0] != METHODS_NEW_PACKAGE or len(parts) < 2:
+        return module
+    class_packages, sub_packages, _ = _methods_new_maps(root or _default_root())
+    if len(parts) > 2 and parts[2] in class_packages:
+        return ".".join(["Methods", class_packages[parts[2]], *parts[2:]])
+    if parts[1] in sub_packages:
+        return ".".join(["Methods", sub_packages[parts[1]], *parts[2:]])
+    return module
+
+
+def _methods_location(path_to_gen, legacy_path):
+    """(folder, package parts) of a legacy method path ("Output.XOutput").
+
+    The Methods_new copy when it exists, the legacy Methods folder otherwise.
+    """
+    root = dirname(path_to_gen.rstrip("/\\"))
+    parts = legacy_path.split(".")
+    bootstrapped = _bootstrapped_method_dirs(root)
+    _, _, package_subs = _methods_new_maps(root)
+    if len(parts) > 1 and parts[1] in bootstrapped:
+        subpackage, _ = bootstrapped[parts[1]]
+        new_parts = [METHODS_NEW_PACKAGE, subpackage, *parts[1:]]
+    elif len(parts) == 1 and parts[0] in package_subs:
+        new_parts = [METHODS_NEW_PACKAGE, package_subs[parts[0]]]
+    else:
+        new_parts = ["Methods", *parts]
+    return join(root, *new_parts), new_parts
+
+
 def _is_methods_module(module_name, soft_name):
     """True for a method module, legacy (Methods) or hand-written (Methods_new)."""
     return module_name.startswith(
@@ -587,7 +658,7 @@ def _get_exception_classes(module):
 
 def _section_module_classes(path_to_gen):
     """Read Section's non-exception helper classes from its method package."""
-    path = join(dirname(path_to_gen), "Methods", "Elmer", "Section", "__init__.py")
+    path = join(_methods_location(path_to_gen, "Elmer.Section")[0], "__init__.py")
     with open(path, encoding="utf-8") as source_file:
         module = ast.parse(source_file.read(), filename=path)
     exceptions = _get_exception_classes(module)
@@ -1505,7 +1576,7 @@ def _expand_error_wildcard_imports(
     package_exports = {}
     for node in wildcard_nodes:
         module_parts = _get_absolute_import_module(node, source_package)
-        if len(module_parts) < 3 or module_parts[1] != "Methods":
+        if len(module_parts) < 3 or module_parts[1] not in ("Methods", METHODS_NEW_PACKAGE):
             return (
                 None,
                 "module uses a wildcard import whose names cannot be resolved safely",
@@ -1926,7 +1997,9 @@ def _get_method_source(
                 ast.alias(name=name)
                 for name in helper_names
                 if name not in inline_helper_names
-                and METHOD_IMPORT_REDIRECTS.get((".".join(helper_module[1:]), name))
+                and METHOD_IMPORT_REDIRECTS.get(
+                    (_legacy_methods_module(".".join(helper_module[1:])), name)
+                )
                 is None
             ]
             if imported_helpers:
@@ -1939,7 +2012,7 @@ def _get_method_source(
                 )
             for name in helper_names:
                 target_class = METHOD_IMPORT_REDIRECTS.get(
-                    (".".join(helper_module[1:]), name)
+                    (_legacy_methods_module(".".join(helper_module[1:])), name)
                 )
                 if target_class is None:
                     continue
@@ -1975,10 +2048,12 @@ def _get_method_source(
                 continue
 
             absolute_module_parts = _get_absolute_import_module(node, source_package)
-            redirect_module = ".".join(
-                absolute_module_parts[1:]
-                if absolute_module_parts[:1] == [soft_name]
-                else absolute_module_parts
+            redirect_module = _legacy_methods_module(  # Keys of the tables
+                ".".join(
+                    absolute_module_parts[1:]
+                    if absolute_module_parts[:1] == [soft_name]
+                    else absolute_module_parts
+                )
             )
             redirected_aliases = {}
             local_aliases = []
@@ -2452,6 +2527,12 @@ def _prepare_class_methods(
             absolute_module = ".".join(
                 _get_absolute_import_module(import_node, target_package)
             )
+            if absolute_module.startswith(soft_name + "."):  # Keys of the tables
+                absolute_module = (
+                    soft_name
+                    + "."
+                    + _legacy_methods_module(absolute_module[len(soft_name) + 1 :])
+                )
             retained_aliases = []
             for alias in import_node.names:
                 configured_module_classes = CLASS_MODULE_CLASS_DEFINITIONS.get(
@@ -2483,9 +2564,7 @@ def _prepare_class_methods(
                     retained_aliases.append(alias)
                     continue
                 helper_path = join(
-                    dirname(path_to_gen),
-                    "Methods",
-                    *configured_helper[0].split("."),
+                    _methods_location(path_to_gen, configured_helper[0])[0],
                     "__init__.py",
                 )
                 with open(helper_path, encoding="utf-8") as helper_file:
@@ -2540,8 +2619,7 @@ def _prepare_class_methods(
                             continue
                         helper_package = [
                             soft_name,
-                            "Methods",
-                            *configured_helper[0].split("."),
+                            *_methods_location(path_to_gen, configured_helper[0])[1],
                         ]
                         absolute_helper_module = _get_absolute_import_module(
                             helper_import, helper_package

@@ -1,4 +1,4 @@
-from ....Methods.Geometry.Trapeze import *
+from . import *
 
 
 def check(self):

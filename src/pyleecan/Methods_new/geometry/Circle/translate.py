@@ -1,4 +1,4 @@
-from ....Methods.Geometry.Circle import PointTranslateCircleError
+from . import PointTranslateCircleError
 
 
 def translate(self, Zt):

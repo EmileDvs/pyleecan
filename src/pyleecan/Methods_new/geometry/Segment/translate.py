@@ -1,4 +1,4 @@
-from ....Methods.Geometry.Segment import PointTranslateSegmentError
+from . import PointTranslateSegmentError
 
 
 def translate(self, Zt):

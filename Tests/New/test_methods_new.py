@@ -1,34 +1,60 @@
-"""Hand-written methods (Methods_new) read by the class generator (PLAN.md Step 5)."""
+"""Methods_new: written by the method generator, read by the class generator."""
 
 import re
 from pathlib import Path
 
 import pytest
 
-from pyleecan.definitions import MAIN_DIR
-from pyleecan.Generator.ClassGenerator.New.bootstrap_methods import bootstrap_methods
+from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _bootstrapped_method_dirs,
+    _legacy_methods_module,
+    _methods_new_maps,
     method_source_location,
 )
+from pyleecan.Generator.ClassGenerator.New.generate_methods_new import (
+    generate_methods,
+    modernize_method_source,
+)
+from pyleecan.Generator.read_fct import read_all
 
 ROOT = Path(MAIN_DIR)
 
 
-def test_bootstrapped_class_read_from_methods_new():
+def test_classes_read_from_methods_new():
     method_dir, package = method_source_location(
-        str(ROOT / "Classes_new"), "Geometry", "Segment"
+        str(ROOT / "Classes_new"), "Simulation", "MagFEMM"
     )
-    assert Path(method_dir) == ROOT / "Methods_new" / "geometry" / "Segment"
-    assert package == ["Methods_new", "geometry", "Segment"]
+    assert Path(method_dir) == ROOT / "Methods_new" / "magnetics" / "MagFEMM"
+    assert package == ["Methods_new", "magnetics", "MagFEMM"]
 
 
-def test_other_class_read_from_legacy_methods():
-    method_dir, package = method_source_location(
-        str(ROOT / "Classes_new"), "Machine", "LamSlotWind"
+def test_every_class_with_methods_is_in_methods_new():
+    gen_dict = read_all(DOC_DIR)
+    for name, info in gen_dict.items():
+        legacy = ROOT.joinpath("Methods", *info["package"].split("."), name)
+        if legacy.is_dir():
+            assert name in _bootstrapped_method_dirs(str(ROOT)), name
+
+
+def test_methods_new_is_self_contained():
+    """No module of Methods_new imports the legacy Methods"""
+    pattern = re.compile(r"^\s*from\s+(\.+|pyleecan\.)Methods\.", re.M)
+    found = [
+        str(path.relative_to(ROOT))
+        for path in (ROOT / "Methods_new").rglob("*.py")
+        if pattern.search(path.read_text("utf-8"))
+    ]
+    assert not found
+
+
+def test_legacy_names_for_the_tables():
+    assert _legacy_methods_module("Methods_new.machine") == "Methods.Machine"
+    assert (
+        _legacy_methods_module("Methods_new.magnetics.MagFEMM.comp_flux")
+        == "Methods.Simulation.MagFEMM.comp_flux"
     )
-    assert Path(method_dir) == ROOT / "Methods" / "Machine" / "LamSlotWind"
-    assert package == ["Methods", "Machine", "LamSlotWind"]
+    assert _legacy_methods_module("Functions_new.x") == "Functions_new.x"
 
 
 @pytest.mark.parametrize("package", ["Classes_new", "Classes_pydantic"])
@@ -43,38 +69,65 @@ def test_no_runtime_import_of_method_sources(package):
     assert not found
 
 
-def _fake_package(root):
-    """Legacy Methods of a class "Segment" (package Geometry) in root."""
-    methods = root / "Methods" / "Geometry" / "Segment"
-    methods.mkdir(parents=True)
-    (methods / "__init__.py").write_text("class SegmentError(Exception):\n    pass\n")
-    (methods / "comp_length.py").write_text("def comp_length(self):\n    return 1\n")
-    return {
-        "Segment": {"package": "Geometry", "mother": "Line", "methods": ["comp_length"]},
-        "Line": {"package": "Geometry", "mother": "", "methods": []},
-    }
-
-
-def test_bootstrap_copies_the_method_modules(tmp_path):
-    gen_dict = _fake_package(tmp_path)
-    assert bootstrap_methods("Geometry", root=tmp_path, gen_dict=gen_dict) == {
-        "Segment": 1
-    }
-    target = tmp_path / "Methods_new" / "geometry" / "Segment"
-    assert (target / "comp_length.py").read_text() == (
-        "def comp_length(self):\n    return 1\n"
+def _fake_tree(root):
+    """Legacy Methods of two classes of the Geometry package in root."""
+    for name in ("Segment", "Circle"):
+        folder = root / "Methods" / "Geometry" / name
+        folder.mkdir(parents=True)
+        (folder / "__init__.py").write_text(f"class {name}Error(Exception):\n    pass\n")
+    (root / "Methods" / "Geometry" / "__init__.py").write_text("NB = 2\n")
+    (root / "Methods" / "Geometry" / "Segment" / "comp_length.py").write_text(
+        "from ....Methods.Geometry.Circle import CircleError\n"
+        "from ....Methods.Geometry import NB\n"
+        "from . import SegmentError\n"
+        "\n\ndef comp_length(self):\n    return NB\n"
     )
-    # The legacy package __init__ (shared errors) is not copied
-    assert "SegmentError" not in (target / "__init__.py").read_text()
-    _bootstrapped_method_dirs.cache_clear()
+    (root / "Classes_new").mkdir()
+    return {
+        "Segment": {"package": "Geometry", "mother": "", "methods": ["comp_length"]},
+        "Circle": {"package": "Geometry", "mother": "", "methods": []},
+    }
 
 
-def test_bootstrap_never_overwrites(tmp_path):
-    gen_dict = _fake_package(tmp_path)
-    bootstrap_methods("Geometry", root=tmp_path, gen_dict=gen_dict)
-    edited = tmp_path / "Methods_new" / "geometry" / "Segment" / "comp_length.py"
-    edited.write_text("def comp_length(self) -> float:\n    return 1.0\n")
-    with pytest.raises(FileExistsError):
-        bootstrap_methods("Geometry", root=tmp_path, gen_dict=gen_dict)
-    assert "-> float" in edited.read_text()
-    _bootstrapped_method_dirs.cache_clear()
+def test_generate_methods(tmp_path):
+    gen_dict = _fake_tree(tmp_path)
+    try:
+        assert generate_methods(root=tmp_path, gen_dict=gen_dict) == {
+            "Circle": 0,
+            "Segment": 1,
+        }
+        target = tmp_path / "Methods_new" / "geometry"
+        # Package and class __init__ (errors, constants) copied
+        assert (target / "__init__.py").read_text() == "NB = 2\n"
+        assert "SegmentError" in (target / "Segment" / "__init__.py").read_text()
+        # Imports of the legacy Methods redirected to Methods_new
+        assert (target / "Segment" / "comp_length.py").read_text().startswith(
+            "from ..Circle import CircleError\n"
+            "from .. import NB\n"
+            "from . import SegmentError\n"
+        )
+    finally:
+        _bootstrapped_method_dirs.cache_clear()
+        _methods_new_maps.cache_clear()
+
+
+def test_frozen_package_is_kept(tmp_path):
+    gen_dict = _fake_tree(tmp_path)
+    try:
+        generate_methods(root=tmp_path, gen_dict=gen_dict)
+        edited = tmp_path / "Methods_new" / "geometry" / "Segment" / "comp_length.py"
+        edited.write_text("def comp_length(self) -> int:\n    return 2\n")
+        generate_methods(root=tmp_path, gen_dict=gen_dict, frozen={"geometry"})
+        assert "-> int" in edited.read_text()
+        generate_methods(root=tmp_path, gen_dict=gen_dict)
+        assert "-> int" not in edited.read_text()
+    finally:
+        _bootstrapped_method_dirs.cache_clear()
+        _methods_new_maps.cache_clear()
+
+
+def test_modernize_is_idempotent():
+    path = ROOT / "Methods_new" / "geometry" / "Segment" / "translate.py"
+    source = path.read_text(encoding="utf-8")
+    package = "pyleecan.Methods_new.geometry.Segment"
+    assert modernize_method_source(source, package, str(ROOT / "Classes_new")) == source

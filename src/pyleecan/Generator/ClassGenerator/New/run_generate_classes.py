@@ -23,6 +23,9 @@ from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import 
 from pyleecan.Generator.ClassGenerator.New.generate_function_pydantic import (
     generate_functions_pydantic,
 )
+from pyleecan.Generator.ClassGenerator.New.generate_methods_new import (
+    generate_methods,
+)
 from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
     generate_tests,
 )
@@ -323,6 +326,9 @@ def run_generate_classes(
 
 
 if __name__ == "__main__":
+    # Methods_new from the legacy Methods (read by the class generator)
+    generate_methods()
+
     # To generate all classes, for each backend
     for backend in ("dataclass", "pydantic"):
         run_generate_classes(

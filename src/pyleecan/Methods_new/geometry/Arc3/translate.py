@@ -1,4 +1,4 @@
-from ....Methods.Geometry.Arc3 import PointTranslateArc3Error
+from . import PointTranslateArc3Error
 
 
 def translate(self, Zt):

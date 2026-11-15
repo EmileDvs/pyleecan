@@ -1,4 +1,4 @@
-from ....Methods.Geometry.Circle import *
+from . import *
 
 
 def check(self):

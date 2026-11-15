@@ -1,1 +1,1 @@
-"""Hand-written methods of the SurfRing class (see PLAN.md Step 5)."""
+# -*- coding: utf-8 -*-
