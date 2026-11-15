@@ -49,6 +49,15 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   unknown keys, `as_dict`/`from_dict`/`copy`/`compare`) are in `LegacyClass` /
   `LegacyModel`, which the generated classes derive from during Phase 1. A
   contract test suite checks both target bases with the same specification.
+- **Validation of the dataclasses**: the type of every field and its bounds
+  (min/max) are checked at construction and on assignment, with the same
+  rules as the pydantic models (bool is not a number, an int is accepted for a
+  float, list and dict items are checked, a dict builds the declared class).
+  Errors are the shared `CheckTypeError`/`CheckMinError`/`CheckMaxError`.
+- **Legacy value rules** in both legacy layers: None everywhere, integral float
+  for an int field, function given by its source (lambda or path to a python
+  file, saved by its source), file path or array for an object / ImportMatrix
+  field, `-1` for the declared class.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,
@@ -70,6 +79,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   is, in pydantic models, a field without the `_` whose legacy name is kept as
   alias (files) and as a property (methods).
 - `pydantic>=2.12` is a dependency.
+- The legacy `compare` of both implementations is shared and reports the
+  legacy paths (`name.list[0]`, `name.dict[key]`, `len(name.list)`).
+- Loading a dataclass no longer type-checks with dacite: the fields are
+  validated by the class itself.
 - Pydantic `complex` fields use the native pydantic type (int, float and the
   string form accepted); the legacy string serialization is done by
   `LegacyModel.as_dict`.
@@ -96,13 +109,13 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 |---|---|
 | 0. Separate the implementations in the generator | done |
 | 1. Split the bases (target / legacy layer) | done |
-| 2. Type, min and max validation for dataclasses | to do |
+| 2. Type, min and max validation for dataclasses | done |
 | 3. `Functions_pydantic` | to do |
 | 4. Phase 1 test architecture (`--backend`) | to do |
 | 5. Package refactor pass (`Methods_new`, no parent links) | to do |
 | 6. Remaining utility functions | to do |
 
-Legacy class tests (`Tests/New/Classes`, run on `Classes_new`): 2352 passed,
-472 failed. The failures are the type, min and max checks that the
-dataclasses do not implement yet (Step 2); `Classes_pydantic` is tested by the
-same suite from Step 4 (`--backend`).
+Legacy class tests (`Tests/New/Classes`, run on `Classes_new`): 2855 passed,
+1 failed (`test_copy_out`: custom property setter of `ParamExplorer`, planned
+in Step 5). `Classes_pydantic` is tested by the same suite from Step 4
+(`--backend`).

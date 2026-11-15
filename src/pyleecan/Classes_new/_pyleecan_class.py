@@ -15,7 +15,9 @@ API (shared with the pydantic base ``PyleecanModel``):
 - ``model_copy(update=None, deep=False)``
 - ``==``: field by field, numpy arrays compared by values.
 
-The type, min and max validation is added by Step 2 of PLAN.md.
+Validation: the type of every field, and its bounds (``min``/``max`` field
+metadata), are checked at construction AND on assignment, with the rules of
+the pydantic models (``_validation.py``).
 """
 
 from copy import copy as shallow_copy
@@ -23,7 +25,7 @@ from copy import deepcopy
 from dataclasses import dataclass, fields
 from pathlib import Path
 from sys import getsizeof
-from typing import Any, get_args, get_origin, get_type_hints
+from typing import Any, ClassVar, get_args, get_origin, get_type_hints
 
 import numpy as np
 from dacite import Config, from_dict
@@ -33,6 +35,7 @@ from pyleecan.Functions.save import save
 
 from ..classes_common.base import PyleecanBase
 from ..classes_common.equality import values_equal
+from ._validation import field_checkers
 
 
 def _to_complex(value):
@@ -60,10 +63,19 @@ def _dump_value(value, mode):
 class PyleecanClass(PyleecanBase):
     """Target base of the Pyleecan classes built on stdlib dataclasses."""
 
+    _lenient_validation: ClassVar[bool] = False
+    """True for the legacy validation rules (see _validation.field_checkers)"""
+
     def __new__(cls, *args, **kwargs):
         if cls is PyleecanClass:
             raise TypeError("PyleecanClass cannot be instantiated directly")
         return super().__new__(cls)
+
+    def __setattr__(self, name, value):
+        checker = field_checkers(type(self), self._lenient_validation).get(name)  # cached
+        if checker is not None:
+            value = checker(value)  # Validated (and converted) value
+        super().__setattr__(name, value)
 
     # Serialization
     def model_dump(self, mode="python"):
@@ -152,7 +164,9 @@ class PyleecanClass(PyleecanBase):
                         if isinstance(value, target)
                         else cls._construct_from_dict(target, value, base_path)
                     )
-        return from_dict(cls, values, config=Config(type_hooks=hooks, strict=strict))
+        # The types are checked by the validation of the fields (_validation.py)
+        config = Config(type_hooks=hooks, strict=strict, check_types=False)
+        return from_dict(cls, values, config=config)
 
     @classmethod
     def _load_nested(cls, target, data, base_path):

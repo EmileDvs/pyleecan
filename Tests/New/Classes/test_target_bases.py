@@ -13,13 +13,15 @@ import pytest
 from dacite import DaciteError
 from pydantic import Field
 
+from pyleecan.classes_common.errors import CheckError
 from pyleecan.Classes_new import _import as dataclass_import
 from pyleecan.Classes_new._pyleecan_class import PyleecanClass
 from pyleecan.Classes_pydantic import _import as pydantic_import
 from pyleecan.Classes_pydantic._pyleecan_model import Complex, NDArray, PyleecanModel
 
-INVALID = (ValueError, TypeError, DaciteError)
-"""Errors of an invalid dump (pydantic ValidationError is a ValueError)"""
+INVALID = (ValueError, TypeError, DaciteError, CheckError)
+"""Errors of an invalid value or dump: pydantic ValidationError (a ValueError),
+dacite errors and the shared check errors (CheckTypeError, CheckMinError...)"""
 
 
 # Dataclass models
@@ -170,29 +172,39 @@ def test_equality(models):
     assert circle() != shape()
 
 
-@pytest.fixture(params=sorted(MODELS))
-def validating_models(request, monkeypatch):
-    if request.param == "dataclass":
-        request.applymarker(
-            pytest.mark.xfail(
-                reason="dataclass type/min/max validation: PLAN.md Step 2",
-                strict=True,
-            )
-        )
-    return MODELS[request.param][2]
-
-
-def test_type_validation(validating_models):
+def test_type_validation(models):
+    _, circle, drawing = models
     with pytest.raises(INVALID):
-        validating_models(radius="a")
-    obj = validating_models()
+        circle(radius="a")
+    obj = circle()
     with pytest.raises(INVALID):
         obj.radius = "a"
-
-
-def test_min_validation(validating_models):
     with pytest.raises(INVALID):
-        validating_models(radius=-1.0)
+        obj.name = None  # not optional
+    with pytest.raises(INVALID):
+        drawing(shapes=[circle(), "a"])  # list items are checked
+
+
+def test_int_and_bool_strict(models):
+    _, circle, _ = models
+    with pytest.raises(INVALID):
+        circle(radius=True)  # bool is not a number
+    circle(radius=2)  # int accepted for float
+
+
+def test_min_validation(models):
+    _, circle, _ = models
+    with pytest.raises(INVALID):
+        circle(radius=-1.0)
+    obj = circle(radius=0.0)  # bound included
+    with pytest.raises(INVALID):
+        obj.radius = -0.5
+
+
+def test_nested_dict_is_built(models):
+    _, circle, drawing = models
+    obj = drawing(main=circle(radius=4.0).model_dump())
+    assert type(obj.main) is circle and obj.main.radius == 4.0
 
 
 def test_native_complex(models):

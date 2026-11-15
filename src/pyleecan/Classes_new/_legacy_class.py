@@ -22,12 +22,22 @@ dataclass allows it natively.
 from copy import deepcopy
 from dataclasses import dataclass, field, fields
 from functools import cache
-from typing import Any, get_args, get_type_hints
+from typing import Any, ClassVar, get_args, get_type_hints
 
 import numpy as np
 
+from ..classes_common.equality import compare_values
+from ..classes_common.functions import SourceFunction
 from ..classes_common.parents import assert_parent_type
 from ._pyleecan_class import PyleecanClass
+
+
+@cache
+def _lookup():
+    """Class lookup of this package (imported once, not at module import)."""
+    from ._import import LOOKUP
+
+    return LOOKUP
 
 
 @cache
@@ -52,6 +62,9 @@ class LegacyClass(PyleecanClass):
         metadata={"serialize": False, "compare": False},
     )
 
+    _lenient_validation: ClassVar[bool] = True
+    """Legacy validation: None everywhere, integral float for int"""
+
     def __new__(cls, *args, **kwargs):
         if cls is LegacyClass:
             raise TypeError("LegacyClass cannot be instantiated directly")
@@ -61,14 +74,14 @@ class LegacyClass(PyleecanClass):
         self._set_child_parents()
 
     def __setattr__(self, name, value):
-        if name != "parent" and name in self.__dataclass_fields__:
-            field_info = self.__dataclass_fields__[name]
-            if type(value) is int and value == -1:
-                class_name = field_info.metadata.get("default_class")
-                if class_name is not None:
-                    value = self._construct_default_class(class_name)
-            self._set_parent_links(value, self)
-        super().__setattr__(name, value)
+        is_field = name != "parent" and name in self.__dataclass_fields__
+        if is_field and type(value) is int and value == -1:
+            class_name = self.__dataclass_fields__[name].metadata.get("default_class")
+            if class_name is not None:
+                value = self._construct_default_class(class_name)
+        super().__setattr__(name, value)  # Validated by PyleecanClass
+        if is_field:
+            self._set_parent_links(getattr(self, name), self)
 
     @staticmethod
     def _construct_default_class(class_name):
@@ -148,9 +161,7 @@ class LegacyClass(PyleecanClass):
 
     def _assert_parent_type(self, parent):
         """Validate a parent against the generated rules inherited by this class."""
-        from ._import import LOOKUP
-
-        assert_parent_type(self, parent, LOOKUP)
+        assert_parent_type(self, parent, _lookup())
 
     @staticmethod
     def _set_parent_links(value, parent):
@@ -208,33 +219,15 @@ class LegacyClass(PyleecanClass):
         for field_info in fields(self):
             if not field_info.metadata.get("compare", True):
                 continue
-            left = getattr(self, field_info.name)
-            right = getattr(other, field_info.name)
-            field_name = f"{name}.{field_info.name}"
-            if left is None or right is None:
-                if left is not right:
-                    differences.append(field_name + " None mismatch")
-                continue
-            if hasattr(left, "compare"):
-                differences.extend(
-                    left.compare(
-                        right,
-                        name=field_name,
-                        ignore_list=ignore_list,
-                        is_add_value=is_add_value,
-                    )
+            differences.extend(
+                compare_values(
+                    getattr(self, field_info.name),
+                    getattr(other, field_info.name),
+                    f"{name}.{field_info.name}",
+                    ignore_list,
+                    is_add_value,
                 )
-                continue
-            if isinstance(left, np.ndarray) or isinstance(right, np.ndarray):
-                equal = np.array_equal(left, right, equal_nan=True)
-            else:
-                try:
-                    equal = bool(left == right)
-                except TypeError, ValueError:
-                    equal = False
-            if not equal:
-                suffix = f" (self={left}, other={right})" if is_add_value else ""
-                differences.append(field_name + suffix)
+            )
         return [item for item in differences if item not in ignored]
 
     def copy(self):
@@ -268,6 +261,8 @@ class LegacyClass(PyleecanClass):
     def _serialize_value(value, type_handle_ndarray, keep_function, kwargs):
         if value is None:
             return None
+        if isinstance(value, SourceFunction):
+            return value.source  # Legacy: functions are saved by their source
         if isinstance(value, np.ndarray):
             if type_handle_ndarray == 0:
                 return value.tolist()

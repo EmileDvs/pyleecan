@@ -9,6 +9,11 @@ Legacy behaviours:
 
 - every field accepts None (legacy setters skipped the checks for None),
 - ``-1`` sets the default value (e.g. a default object) of a field,
+- an int field accepts a float with an integer value (converted to int),
+- a function field accepts its source (lambda or path to a python file,
+  converted to a ``SourceFunction`` and saved by its source),
+- an object field accepts the path of a file to load, or an array for an
+  ImportMatrix (``classes_common.legacy_values``),
 - nested objects get a ``parent`` link to the object holding them,
 - an existing method can be replaced on an object (e.g. a mock in tests),
 - loading ignores the unknown keys (old files, serialization keys),
@@ -24,6 +29,9 @@ from typing import Any
 import numpy as np
 from pydantic import PrivateAttr, field_validator
 
+from ..classes_common.equality import compare_values
+from ..classes_common.functions import SourceFunction, is_function_annotation
+from ..classes_common.legacy_values import annotation_classes, legacy_object_value
 from ._pyleecan_model import PyleecanModel
 
 
@@ -82,13 +90,31 @@ class LegacyModel(PyleecanModel):
     @field_validator("*", mode="wrap")
     @classmethod
     def _legacy_values(cls, value, handler, info):
-        """None is accepted by every field, -1 sets the default value."""
+        """Legacy values: None, -1, integral float for int, function source."""
         if value is None:
             return None
+        field_info = cls.model_fields[info.field_name]
         if type(value) is int and value == -1:
-            factory = cls.model_fields[info.field_name].default_factory
-            if factory is not None:
-                return factory()
+            if field_info.default_factory is not None:
+                return field_info.default_factory()
+            classes = annotation_classes(field_info.annotation)
+            if classes:  # Like the legacy setters: the declared class
+                return classes[0]()
+        if (
+            isinstance(value, (float, np.floating))
+            and value % 1 == 0
+            and field_info.annotation in (int, int | None)
+        ):
+            value = int(value)
+        elif isinstance(value, str) and is_function_annotation(field_info.annotation):
+            try:
+                value = SourceFunction(value)
+            except ValueError:
+                pass  # Rejected by the pydantic validation
+        else:
+            from ._import import import_class
+
+            value = legacy_object_value(value, field_info.annotation, import_class)
         return handler(value)
 
     @classmethod
@@ -145,7 +171,9 @@ class LegacyModel(PyleecanModel):
             left = getattr(self, field_name)
             right = getattr(other, field_name)
             path = f"{name}.{field_name}"
-            differences.extend(_compare(left, right, path, ignore_list, is_add_value))
+            differences.extend(
+                compare_values(left, right, path, ignore_list, is_add_value)
+            )
         ignored = set(ignore_list or ())
         return [item for item in differences if item not in ignored]
 
@@ -168,6 +196,8 @@ def _legacy_dump(value, type_handle_ndarray, keep_function):
         }
     if isinstance(value, (list, tuple)):
         return [_legacy_dump(item, type_handle_ndarray, keep_function) for item in value]
+    if isinstance(value, SourceFunction):
+        return value.source  # Legacy: functions are saved by their source
     if isinstance(value, np.ndarray):
         if type_handle_ndarray == 0:
             return value.tolist()
@@ -177,39 +207,3 @@ def _legacy_dump(value, type_handle_ndarray, keep_function):
     if callable(value) and not keep_function:
         return None
     return value
-
-
-def _compare(left, right, path, ignore_list, is_add_value):
-    """Differences between two field values (recursing into lists and dicts)."""
-    if left is None or right is None:
-        return [] if left is right else [path + " None mismatch"]
-    if isinstance(left, LegacyModel):
-        return left.compare(right, path, ignore_list, is_add_value)
-    if isinstance(left, (list, tuple)) and isinstance(right, (list, tuple)):
-        if len(left) != len(right):
-            return [path + " length mismatch"]
-        return [
-            item
-            for index, (a, b) in enumerate(zip(left, right))
-            for item in _compare(a, b, f"{path}[{index}]", ignore_list, is_add_value)
-        ]
-    if isinstance(left, dict) and isinstance(right, dict):
-        if left.keys() != right.keys():
-            return [path + " keys mismatch"]
-        return [
-            item
-            for key in left
-            for item in _compare(
-                left[key], right[key], f"{path}[{key!r}]", ignore_list, is_add_value
-            )
-        ]
-    if isinstance(left, np.ndarray) or isinstance(right, np.ndarray):
-        equal = np.array_equal(left, right, equal_nan=True)
-    else:
-        try:
-            equal = bool(left == right)
-        except (TypeError, ValueError):
-            equal = False
-    if equal:
-        return []
-    return [path + (f" (self={left}, other={right})" if is_add_value else "")]

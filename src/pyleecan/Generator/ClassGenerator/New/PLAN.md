@@ -215,11 +215,24 @@ Note: `Classes_pydantic` still uses `Functions_new`, whose functions build
 
 ### Step 2: type, min and max validation for dataclasses
 
-- [ ] Validate in `PyleecanClass.__setattr__`, which also covers `__init__`, from
-      the resolved annotations (cached per class) and the min/max field metadata.
-- [ ] Target: `Tests/New/Classes/test_classes.py` passes. Baseline on 2026-11-15:
-      453 failures, all type/min/max (`test_class_type_float` 240,
-      `test_class_min` 143, `test_class_max` 70).
+- [x] Validate in `PyleecanClass.__setattr__`, which also covers `__init__`, from
+      the resolved annotations and the min/max field metadata
+      (`Classes_new/_validation.py`, one checker per class and field). Same
+      rules as the pydantic models: the contract tests run both backends with
+      no exception.
+- [x] Legacy rules in the lenient mode of `LegacyClass`, and the same rules in
+      `LegacyModel` (`Tests/New/test_legacy_layers.py`): None everywhere,
+      integral float for int, function source (`classes_common.functions.SourceFunction`),
+      file path or array for an object / ImportMatrix field
+      (`classes_common.legacy_values`), `-1` for the declared class.
+- [x] Legacy `compare` shared by both legacy layers, with the legacy paths
+      (`name.list[0]`, `len(name.list)`): `classes_common.equality.compare_values`.
+- [x] `Tests/New/Classes/test_classes.py` passes: 470 type/min/max failures fixed.
+      `Tests/New/Classes`: 1 failure left, `test_copy_out` (custom setter of
+      `ParamExplorer`, see Step 5).
+
+Creation time with validation (GC on, 2026-11-15): `Segment` 1.8 us (legacy),
+4.3 us (dataclass), 11.6 us (pydantic); `LamSlotWind` 165, 295 and 482 us.
 
 ### Step 3: `Functions_pydantic`
 
@@ -305,6 +318,17 @@ legacy functions are fully hinted.
   rewriting between backends keeps working).
 - A type checker (pyright basic mode, or mypy) runs on the refactored packages
   only, made stricter step by step. A `py.typed` marker publishes the hints.
+
+#### Custom property setters and getters
+
+Seven legacy classes define their own property setter or getter methods,
+inlined in the new classes but not wired to the fields (a dataclass or
+pydantic field has no property): `ParamExplorer._set_getter`/`_set_setter`
+(e.g. `setter="simu.input"`, which fails `Tests/New/Classes/test_copy.py`),
+`DataND._set_values`/`_get_field`/`_get_freqs`, `Data._set_normalizations`,
+`DataKeeper._set_keeper`, `VarLoad._set_OP_matrix`, `RuleComplex._set_fct_name`
+and `SlotUD2._set_split_active_surf_dict`. Their conversions become explicit
+in `Methods_new` (e.g. a field validator, or a method building the value).
 
 #### Order
 

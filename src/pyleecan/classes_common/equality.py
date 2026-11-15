@@ -39,3 +39,59 @@ def values_equal(left, right):
         return bool(left == right)
     except (TypeError, ValueError):
         return False
+
+
+def compare_values(left, right, path, ignore_list=None, is_add_value=False):
+    """Paths of the differences between two field values (legacy compare).
+
+    Same format as the legacy compare methods: Pyleecan objects are compared
+    with their own compare, lists and dicts of objects item by item
+    ("name.list[0]", "name.dict[key]", "len(name.list)" for a length
+    difference), the other values as a whole.
+
+    Parameters
+    ----------
+    left, right : object
+        Values to compare
+    path : str
+        Path of the value (e.g. "self.stator")
+    ignore_list : list, optional
+        Paths of the differences to ignore (applied by the caller)
+    is_add_value : bool
+        True to add the values to the differences
+
+    Returns
+    -------
+    differences : list
+        Paths of the differences
+    """
+    if left is None or right is None:
+        return [] if left is right else [path + " None mismatch"]
+    if hasattr(left, "compare") and not isinstance(left, type):
+        return left.compare(
+            right, name=path, ignore_list=ignore_list, is_add_value=is_add_value
+        )
+    if _holds_objects(left) and type(right) is type(left):
+        if len(left) != len(right):
+            return ["len(" + path + ")"]
+        keys = left if isinstance(left, dict) else range(len(left))
+        if isinstance(left, dict) and left.keys() != right.keys():
+            return ["len(" + path + ")"]
+        return [
+            difference
+            for key in keys
+            for difference in compare_values(
+                left[key], right[key], f"{path}[{key}]", ignore_list, is_add_value
+            )
+        ]
+    if values_equal(left, right):
+        return []
+    return [path + (f" (self={left}, other={right})" if is_add_value else "")]
+
+
+def _holds_objects(value):
+    """True for a non empty list or dict holding objects with a compare."""
+    items = value.values() if isinstance(value, dict) else value
+    return isinstance(value, (list, tuple, dict)) and any(
+        hasattr(item, "compare") for item in items
+    )
