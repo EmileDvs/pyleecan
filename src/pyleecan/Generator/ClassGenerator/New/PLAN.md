@@ -436,6 +436,19 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
       `Tests/New/Methods/Geometry` 282 passed with each backend (33 failures
       before).
 
+#### Slot
+
+- [x] Legacy getters set the parent of the items of a list or dict field on
+      each read (`lam.hole.append(HoleM50())`): the legacy layers store these
+      fields in `ParentList` / `ParentDict` (`classes_common.parent_containers`),
+      which set the parent of the added items, without a cost on reads (a
+      `__getattribute__` was 3.5x slower). `Tests/New/Methods/Slot`: 104 -> 16
+      failures with each backend.
+- [ ] Remaining Slot failures: the legacy constructor argument `init_dict=`
+      (5, legacy API to support in the legacy layers), objects built without
+      their lamination (7), one `S50_NoneError`, three tests expecting
+      different values after a copy.
+
 #### Method errors
 
 Every error class of the method modules is written once in

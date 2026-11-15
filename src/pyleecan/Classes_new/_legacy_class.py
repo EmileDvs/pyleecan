@@ -9,7 +9,9 @@ Legacy behaviours:
 
 - every field accepts None (legacy setters skipped the checks for None),
 - ``-1`` sets the default value (e.g. a default object) of a field,
-- nested objects get a ``parent`` link to the object holding them,
+- nested objects get a ``parent`` link to the object holding them, also
+  when they are added to a list or a dict field (``ParentList``,
+  ``ParentDict``: the legacy getters set it on each read),
 - loading ignores the unknown keys (old files, serialization keys) and
   resolves the objects saved in separate files (split JSON, ``base_path``),
 - legacy API: ``as_dict`` (complex as str, ``type_handle_ndarray``, ``as_dict``
@@ -26,6 +28,7 @@ from typing import Any, ClassVar, get_args, get_type_hints
 
 from ..classes_common.equality import compare_values
 from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
+from ..classes_common.parent_containers import with_parent
 from ..classes_common.parents import assert_parent_type
 from ._pyleecan_class import PyleecanClass
 
@@ -79,7 +82,9 @@ class LegacyClass(PyleecanClass):
                 value = self._construct_default_class(class_name)
         super().__setattr__(name, value)  # Validated by PyleecanClass
         if is_field:
-            self._set_parent_links(getattr(self, name), self)
+            stored = with_parent(object.__getattribute__(self, name), self)
+            object.__setattr__(self, name, stored)  # Lists, dicts: ParentList...
+            self._set_parent_links(stored, self)
 
     @staticmethod
     def _construct_default_class(class_name):

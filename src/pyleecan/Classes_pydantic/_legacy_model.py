@@ -14,7 +14,9 @@ Legacy behaviours:
   converted to a ``SourceFunction`` and saved by its source),
 - an object field accepts the path of a file to load, or an array for an
   ImportMatrix (``classes_common.legacy_values``),
-- nested objects get a ``parent`` link to the object holding them,
+- nested objects get a ``parent`` link to the object holding them, also
+  when they are added to a list or a dict field (``ParentList``,
+  ``ParentDict``: the legacy getters set it on each read),
 - an existing method can be replaced on an object (e.g. a mock in tests),
 - loading ignores the unknown keys (old files, serialization keys),
 - legacy API: ``as_dict`` (complex as str, ``type_handle_ndarray``),
@@ -33,6 +35,7 @@ from ..classes_common.equality import compare_values
 from ..classes_common.functions import SourceFunction, is_function_annotation
 from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
 from ..classes_common.legacy_values import annotation_classes, legacy_object_value
+from ..classes_common.parent_containers import with_parent
 from ._pyleecan_model import PyleecanModel
 
 
@@ -53,7 +56,14 @@ class LegacyModel(PyleecanModel):
 
     def model_post_init(self, context):
         for name in type(self).model_fields:
-            self._set_parent_links(getattr(self, name))
+            self._store_with_parent(name)
+
+    def _store_with_parent(self, name):
+        """Lists and dicts of a field set the parent of the objects added later."""
+        stored = with_parent(self.__dict__.get(name), self)
+        if stored is not self.__dict__.get(name):
+            self.__dict__[name] = stored  # Validated value, wrapped (ParentList...)
+        self._set_parent_links(stored)
 
     def __setattr__(self, name, value):
         attribute = getattr_static(type(self), name, None)
@@ -68,7 +78,7 @@ class LegacyModel(PyleecanModel):
             return
         super().__setattr__(name, value)  # Validated by pydantic
         if name in type(self).model_fields:
-            self._set_parent_links(getattr(self, name))
+            self._store_with_parent(name)
 
     def _set_parent_links(self, value):
         if isinstance(value, LegacyModel):
