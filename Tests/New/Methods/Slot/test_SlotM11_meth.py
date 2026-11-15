@@ -10,7 +10,7 @@ from backend_classes.machine.lam_slot_mag import LamSlotMag
 from backend_classes.slot.slot_m_11 import SlotM11
 from numpy import pi, exp, angle, array, arcsin
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods import ParentMissingError
+from pyleecan.classes_common.errors import ParentMissingError
 
 Mag11_test = list()
 # Internal Slot surface

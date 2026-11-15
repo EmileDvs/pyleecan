@@ -142,3 +142,17 @@ def test_redirect_legacy_method_error_import():
     )
     assert "from pyleecan.Methods.Geometry.Segment import helper" in result
     assert "import PointSegmentError" in result and "_error" in result
+
+
+def test_redirect_legacy_methods_package_error_import():
+    """Errors defined in pyleecan/Methods/__init__.py are shared too"""
+    from pyleecan.Generator.ClassGenerator.New.modernize import (
+        _redirect_shared_error_imports,
+    )
+
+    source = "from pyleecan.Methods import ParentMissingError\n"
+    result = _redirect_shared_error_imports(
+        source, "Tests", method_error_names={"ParentMissingError"}
+    )
+    assert "pyleecan.Methods" not in result
+    assert "_error import ParentMissingError" in result

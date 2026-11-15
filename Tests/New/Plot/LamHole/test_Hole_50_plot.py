@@ -18,7 +18,7 @@ from backend_classes.slot.hole_m_50 import HoleM50
 from backend_classes.machine.bore_flower import BoreFlower
 from Tests.New._test_paths import save_plot_path as save_path
 
-from pyleecan.Methods import ParentMissingError
+from pyleecan.classes_common.errors import ParentMissingError
 
 
 """unittest for Machine with Hole 50 plot"""

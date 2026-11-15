@@ -7,7 +7,7 @@ from backend_classes.machine.lam_slot_mag import LamSlotMag
 from backend_classes.slot.slot_m_10 import SlotM10
 from backend_classes.geometry.segment import Segment
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods import ParentMissingError
+from pyleecan.classes_common.errors import ParentMissingError
 
 Mag10_test = list()
 # Internal Slot

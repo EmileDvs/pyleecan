@@ -4,7 +4,7 @@ import sys
 
 from backend_classes.slot.hole_m_50 import HoleM50
 from backend_classes.machine.lam_hole import LamHole
-from pyleecan.Methods import ParentMissingError
+from pyleecan.classes_common.errors import ParentMissingError
 
 import pytest
 

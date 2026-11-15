@@ -449,9 +449,11 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
       `__init__` is generated for each class, ~4% on a construction), an
       `__init__` in `LegacyModel`; the init_dict values override the keyword
       arguments, the class called is built. 16 -> 11 failures.
-- [ ] Remaining Slot failures: objects built without their lamination (7),
-      one `S50_NoneError`, three tests expecting different values after a
-      copy.
+- [x] `from pyleecan.Methods import ParentMissingError` (errors of the
+      `Methods` package itself) redirected by the test generator to the shared
+      errors, like the method module errors (7 Slot failures). 11 -> 4.
+- [ ] Remaining Slot failures: one `S50_NoneError`, three tests expecting
+      different values after a copy.
 - [x] Type hints (`slot` in `HINTED_SUBPACKAGES`): 817/886 parameters and
       582/694 returns hinted. Container types recognized: `[X]`, `{X}` (as in
       the CSV files) and `list of X`, when the item type is recognized

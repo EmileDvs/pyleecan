@@ -18,7 +18,7 @@ from backend_classes.machine.winding_ud import WindingUD
 from backend_classes.slot.slot_w_10 import SlotW10
 from backend_classes.geometry.surf_line import SurfLine
 
-from pyleecan.Methods import ParentMissingError, NotImplementedYetError
+from pyleecan.classes_common.errors import ParentMissingError, NotImplementedYetError
 
 from Tests.New._test_paths import save_plot_path as save_path
 from Tests.New.Plot.LamWind import wind_mat

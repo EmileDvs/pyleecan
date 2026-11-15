@@ -1098,7 +1098,8 @@ def _redirect_shared_error_imports(
         if (
             errors is None
             and method_error_names
-            and module.startswith(f"{soft_name}.Methods.")
+            # The package itself defines ParentMissingError, NotImplementedYetError
+            and (module == f"{soft_name}.Methods" or module.startswith(f"{soft_name}.Methods."))
             and not any(alias.name == "*" for alias in node.names)
         ):
             from .class_generator import _shared_error_name

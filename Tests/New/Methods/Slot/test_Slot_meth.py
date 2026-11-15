@@ -4,7 +4,7 @@ import sys
 
 from backend_classes.slot.slot_w_10 import SlotW10
 from backend_classes.machine.lam_slot_wind import LamSlotWind
-from pyleecan.Methods import ParentMissingError
+from pyleecan.classes_common.errors import ParentMissingError
 
 import pytest
 
