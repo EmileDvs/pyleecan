@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_m2(self, value):
     """Convert the value the correct m² unit (to display in GUI)
 

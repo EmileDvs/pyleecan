@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def build_geometry(self, sym=1, alpha=0, delta=0):
     """Build the geometry of the machine
 

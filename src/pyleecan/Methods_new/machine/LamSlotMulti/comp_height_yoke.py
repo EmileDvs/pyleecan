@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_height_yoke(self):
     """Compute the yoke height
 

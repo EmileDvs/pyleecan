@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import S30_W0Error
 from . import S30_W3Error
 from . import S30_R1Error

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle

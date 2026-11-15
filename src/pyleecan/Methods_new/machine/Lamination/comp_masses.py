@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_masses(self):
     """Compute the masses of the Lamination
 

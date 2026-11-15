@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_height_active(self):
     """Compute the height of the winding area
 

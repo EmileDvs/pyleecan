@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ...simulation.Input import InputError
 
 

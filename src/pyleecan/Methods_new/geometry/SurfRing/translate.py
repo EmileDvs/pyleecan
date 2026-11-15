@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def translate(self, Zt: complex):
     """Translate the surface
 

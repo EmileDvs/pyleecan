@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_radius(self):
     """Compute the radius of the two circle that contains all the ventilation
     ducts

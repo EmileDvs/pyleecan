@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_dim_wind(self):
     """Get the two first dimension of the winding matrix
 

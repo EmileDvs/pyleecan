@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....Classes_new._smoot.smoot import MOO
 from copy import deepcopy
 from datetime import datetime

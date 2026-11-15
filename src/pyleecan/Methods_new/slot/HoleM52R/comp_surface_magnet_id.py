@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface_magnet_id(self, index):
     """Compute the surface of the hole magnet of the corresponding index
 

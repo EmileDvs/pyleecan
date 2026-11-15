@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 
 from ....Classes_new.geometry.arc_3 import Arc3

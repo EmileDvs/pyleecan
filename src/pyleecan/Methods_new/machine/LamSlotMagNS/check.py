@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ..LamSlotMag import LMC_SlotTooLong
 
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 
 from ....Functions_new.make_ndarray_equal import make_ndarray_equal

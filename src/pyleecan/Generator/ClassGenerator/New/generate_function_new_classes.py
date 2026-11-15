@@ -197,10 +197,9 @@ def _function_import_style(source, package, import_style):
 
 def _format_function_source(source, path):
     """Apply the same import styles and Ruff formatting as generated classes."""
-    lines = source.splitlines(keepends=True)
-    if lines and lines[0].strip() == "# -*- coding: utf-8 -*-":
-        del lines[0]
-        source = "".join(lines)
+    from .modernize import remove_coding_declaration  # Shared with the methods
+
+    source = remove_coding_declaration(source)
     source = _replace_empty_containers(source, include_tuple=True)
     from .modernize import apply_import_styles  # Shared with the methods
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from deap.tools import selNSGA2
 from copy import deepcopy
 from datetime import datetime

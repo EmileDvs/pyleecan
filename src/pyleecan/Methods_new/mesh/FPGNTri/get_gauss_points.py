@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_gauss_points(self):
     """Return the gauss points and weights for Triangle3 element"""
 

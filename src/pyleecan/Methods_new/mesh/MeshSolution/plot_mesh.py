@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....Classes_new.mesh.mesh_mat import MeshMat
 from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
 

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_m_name(self):
     """Return the name of the length unit ([m] by default)
 

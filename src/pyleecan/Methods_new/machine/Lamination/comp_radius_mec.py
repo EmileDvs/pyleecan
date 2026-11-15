@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_radius_mec(self):
     """Compute the mechanical radius of the Lamination [m]
 

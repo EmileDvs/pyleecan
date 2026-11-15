@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_Rgap_mec(self):
     """Returns the radius of the center of the mecanical airgap
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # List of all the direct variable translation matlab <=> python
 trad_list = list()
 

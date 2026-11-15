@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 
 from ....Classes_new.mesh.node_mat import NodeMat

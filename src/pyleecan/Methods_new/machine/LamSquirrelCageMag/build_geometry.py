@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from ....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index

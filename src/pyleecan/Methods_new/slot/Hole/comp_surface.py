@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface(self):
     """Compute the Hole total surface (by numerical computation).
 

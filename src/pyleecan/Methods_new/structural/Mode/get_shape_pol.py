@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....Functions_new.Structural.conversions import cart2pol
 
 

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_width(self):
     """Compute the width of the conductor
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Functions_new.labels import HOLEM_LAB
 
 

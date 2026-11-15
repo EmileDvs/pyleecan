@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface_ring(self):
     """Computation of the ring cross-section surface area
 

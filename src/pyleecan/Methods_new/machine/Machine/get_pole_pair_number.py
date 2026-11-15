@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_pole_pair_number(self):
     """Returns the number of pole pairs of the machine
 

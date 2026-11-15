@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....Classes_new.mesh.solution_vector import SolutionVector
 from ....Classes_new.mesh.mesh_mat import MeshMat
 from ....Classes_new.mesh.mesh_vtk import MeshVTK

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_middle(self) -> complex:
     """Return the point at the middle of the Segment
 

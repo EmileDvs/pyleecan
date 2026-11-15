@@ -58,7 +58,6 @@ class PolarArc(Surface):
             raise AnglePolarArcError("The angle of a polar arc must be different to 0")
 
     # Inlined from Methods.Geometry.PolarArc.comp_length
-    # -*-- coding: utf-8 -*
     def comp_length(self) -> float:
         """Returns the length of the PolarArc
 
@@ -126,7 +125,6 @@ class PolarArc(Surface):
         return (np.pi * Rext**2 - np.pi * Rint**2) * (self.angle / (2 * np.pi))
 
     # Inlined from Methods.Geometry.PolarArc.discretize
-    # -*-- coding: utf-8 -*
     def discretize(self, nb_point: int) -> list:
         """Returns the discretize version of the PolarArc
 

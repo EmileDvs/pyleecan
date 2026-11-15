@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface_active(self, Ndisc=200):
     """Compute the Slot active surface (by numerical computation).
     Caution, the bottom of the Slot is an Arc

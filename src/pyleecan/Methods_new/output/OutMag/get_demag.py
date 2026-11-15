@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Functions_new.MeshSolution.get_area import get_area
 from ....Functions_new.MeshSolution.get_indices_limited import get_indices_limited
 

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_end(self) -> complex:
     """Return the end point of the segment
 

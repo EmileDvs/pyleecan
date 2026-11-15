@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_data(self):
     """Return the object's matrix
 

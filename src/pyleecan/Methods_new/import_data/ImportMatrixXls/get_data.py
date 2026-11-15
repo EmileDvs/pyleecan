@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from pandas import read_excel, ExcelFile
 from . import XlsFileError
 import os

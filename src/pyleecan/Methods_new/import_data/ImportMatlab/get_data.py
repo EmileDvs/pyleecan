@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from scipy.io import loadmat
 from . import MatFileError
 import os

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 
 from ....Functions_new.Winding.comp_cond_function import comp_cond_function

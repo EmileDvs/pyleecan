@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_height(self):
     """Compute the height of the conductor
 

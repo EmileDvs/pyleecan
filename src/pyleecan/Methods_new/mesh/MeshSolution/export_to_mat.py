@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from scipy.io import savemat
 import os
 from ....Functions_new.GUI.log_error import log_error

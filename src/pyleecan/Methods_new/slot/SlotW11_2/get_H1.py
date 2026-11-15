@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 

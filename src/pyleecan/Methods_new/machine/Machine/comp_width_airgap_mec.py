@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_width_airgap_mec(self):
     """Compute the mechanical airgap (mag_airgap - magnet or ring)
 

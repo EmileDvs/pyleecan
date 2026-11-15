@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface_opening(self):
     """Compute the Slot opening surface (by analytical computation).
     Caution, the bottom of the Slot is an Arc

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def check(self):
     """Check that the Slot object is correct
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....classes_common.check import check_var
 
 

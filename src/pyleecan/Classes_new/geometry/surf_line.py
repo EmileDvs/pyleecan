@@ -35,7 +35,6 @@ class SurfLine(Surface):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.SurfLine.check
-    # -*- coding: utf-8 -*-
     def check(self):
         """assert the Surface is correct
 
@@ -53,7 +52,6 @@ class SurfLine(Surface):
                 line.check()
 
     # Inlined from Methods.Geometry.SurfLine.comp_length
-    # -*- coding: utf-8 -*-
     def comp_length(self) -> float:
         """Compute the length of the SurfLine object
 
@@ -135,7 +133,6 @@ class SurfLine(Surface):
         return comp_surface_num(point_list)
 
     # Inlined from Methods.Geometry.SurfLine.discretize
-    # -*-- coding: utf-8 -*
     def discretize(self, Npoint: int = -1) -> list:
         """Returns the discretize version of the SurfLine
 
@@ -174,7 +171,6 @@ class SurfLine(Surface):
         return point_list
 
     # Inlined from Methods.Geometry.SurfLine.get_lines
-    # -*- coding: utf-8 -*-
     def get_lines(self) -> list:
         """The list returned contains all the Line of the SurfLine
 

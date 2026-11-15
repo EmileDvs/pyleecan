@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from deap import base, creator, tools
 from ....Classes_new.output.output import Output
 from ....Classes_new.output.xoutput import XOutput

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import GetOutError
 from .....Classes_new.output.out_geo_lam import OutGeoLam
 

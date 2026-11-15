@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_field(self, *args, is_squeeze=False, node=None, is_rthetaz=False):
     """Get the value of variables stored in Solution.
 

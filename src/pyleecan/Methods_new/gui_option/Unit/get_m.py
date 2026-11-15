@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_m(self, value):
     """Convert the value the correct m unit (to display in GUI)
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Classes_new.geometry.circle import Circle
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment

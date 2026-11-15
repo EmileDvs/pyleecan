@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import S15InnerError
 
 

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_parameters(self, output, Tsta=None, Trot=None):
     """Compute the parameters dict for the equivalent electrical circuit:
     resistance, inductance and back electromotive force

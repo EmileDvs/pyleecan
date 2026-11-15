@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Functions_new.Geometry.comp_surface_num import comp_surface_num
 
 

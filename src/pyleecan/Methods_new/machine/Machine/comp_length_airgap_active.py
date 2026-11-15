@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_length_airgap_active(self):
     """Compute the airgap active length
 

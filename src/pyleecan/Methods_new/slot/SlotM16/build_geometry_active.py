@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine

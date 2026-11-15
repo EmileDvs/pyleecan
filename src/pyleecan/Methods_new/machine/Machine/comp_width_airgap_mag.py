@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_width_airgap_mag(self):
     """Compute the magnetic airgap (distance beetween the two Lamination)
 

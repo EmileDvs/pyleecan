@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 def check(self):
     """assert the Surface is correct
 

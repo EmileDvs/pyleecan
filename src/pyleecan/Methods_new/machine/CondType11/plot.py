@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from matplotlib.patches import Patch, Rectangle
 from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict

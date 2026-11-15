@@ -65,7 +65,6 @@ class Section(Elmer):
         self.comments = value
 
     # Inlined from Methods.Elmer.Section.__delitem__
-    # -*- coding: utf-8 -*-
     def __delitem__(self, key):
         """Called to implement deletion of self[key]."""
         self._statements.__delitem__(key)

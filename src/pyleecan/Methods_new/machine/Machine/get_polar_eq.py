@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_polar_eq(self):
     """Returns a polar equivalent of the machine
 

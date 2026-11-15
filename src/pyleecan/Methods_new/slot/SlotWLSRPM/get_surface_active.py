@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.surf_line import SurfLine
 

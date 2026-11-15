@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def set_m2(self, value):
     """Convert the value the correct m² unit (to set in the object in m²)
 

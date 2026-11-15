@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_radius_mid_active(self):
     """Compute the radius at the middle of the active part of the slot
 

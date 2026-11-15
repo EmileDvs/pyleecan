@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import subprocess
 
 from ....Functions_new.get_path_binary import get_path_binary

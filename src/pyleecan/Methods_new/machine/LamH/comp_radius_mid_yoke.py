@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Classes_new.slot.hole import Hole
 
 

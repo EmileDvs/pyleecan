@@ -150,7 +150,11 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     source : str
         Modernized source
     """
-    from .modernize import apply_import_styles, modernize_names
+    from .modernize import (
+        apply_import_styles,
+        modernize_names,
+        remove_coding_declaration,
+    )
     from .source_names import name_maps
     from .type_hints import add_type_hints
 
@@ -159,6 +163,7 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     parts = package.split(".")
     # The class of a method module: Methods_new.<sub-package>.<Class>[...]
     class_name = parts[3] if len(parts) > 3 and parts[3] in gen_dict else None
+    source = remove_coding_declaration(source)
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
     source = modernize_names(source, package, gen_dict, class_name)

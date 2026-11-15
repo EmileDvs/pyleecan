@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_Ryoke(self):
     """Return the yoke lamination radius
 

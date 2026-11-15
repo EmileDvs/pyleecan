@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def set_m(self, value):
     """Convert the value the correct m unit (to set in the object in m)
 

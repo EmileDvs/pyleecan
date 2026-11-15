@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.arc_1 import Arc1
 

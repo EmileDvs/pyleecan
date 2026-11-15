@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_m2_name(self):
     """Return the name of the current area unit
 

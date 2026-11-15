@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface_axial_vent(self):
     """Compute the Lamination axial vent
 

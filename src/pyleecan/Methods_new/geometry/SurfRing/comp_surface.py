@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface(self) -> float:
     """Compute the SurfRing surface
 

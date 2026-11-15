@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_height_magnet_id(self, index):
     """Get the height of the hole magnet of the corresponding index
 

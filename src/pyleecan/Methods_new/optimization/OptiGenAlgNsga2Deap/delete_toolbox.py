@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Classes_new.output.output import Output
 from deap import base, creator, tools
 

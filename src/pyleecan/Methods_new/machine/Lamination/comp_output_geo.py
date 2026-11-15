@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....Classes_new.output.out_geo_lam import OutGeoLam
 
 

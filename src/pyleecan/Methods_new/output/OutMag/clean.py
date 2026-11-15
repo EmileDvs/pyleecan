@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def clean(self, clean_level=1):
     """Clean Magnetics standard outputs depending on cleaning level
 

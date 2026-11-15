@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def build_geometry(self):
     """Compute the curve (Line) needed to plot the Slot.
     The ending point of a curve is the starting point of the next curve in

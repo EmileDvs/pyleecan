@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 from ....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
 from .. import MachineCheckError

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_magnet_list(self):
     """Return the list of magnet (including None)
 

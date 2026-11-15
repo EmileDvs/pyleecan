@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from ....Functions_new.GMSH.draw_gmsh import draw_GMSH

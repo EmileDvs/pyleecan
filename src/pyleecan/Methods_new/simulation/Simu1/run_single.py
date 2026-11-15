@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ..Input import InputError
 from ....Classes_new.post.post_function import PostFunction
 from ....Classes_new.post.post_method import PostMethod

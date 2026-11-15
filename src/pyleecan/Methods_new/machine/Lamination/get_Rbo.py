@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_Rbo(self):
     """Return the bore lamination radius
 

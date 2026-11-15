@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def has_magnet(self):
     """Return if the Hole has magnet
 

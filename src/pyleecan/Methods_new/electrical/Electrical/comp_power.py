@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_power(self, out_dict, machine):
     """Compute the electrical average power
 

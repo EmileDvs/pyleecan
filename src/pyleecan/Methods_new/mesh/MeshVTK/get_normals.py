@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_normals(self, indices=None, loc="center"):
     """Return the array of the normals coordinates.
 

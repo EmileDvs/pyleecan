@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_number_phase_eq(self):
     """Compute the equivalent number of phase
 

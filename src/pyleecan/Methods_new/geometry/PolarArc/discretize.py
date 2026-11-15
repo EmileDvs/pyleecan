@@ -1,4 +1,3 @@
-# -*-- coding: utf-8 -*
 def discretize(self, nb_point: int) -> list:
     """Returns the discretize version of the PolarArc
 

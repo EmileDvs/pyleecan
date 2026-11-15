@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_height_gap(self):
     """Computation of the Height of the gap between the Frame and Outer Lamination
 

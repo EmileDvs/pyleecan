@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from matplotlib.patches import Circle
 
 from ....definitions import config_dict

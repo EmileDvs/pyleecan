@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ..Slot import SlotCheckError
 from . import *
 

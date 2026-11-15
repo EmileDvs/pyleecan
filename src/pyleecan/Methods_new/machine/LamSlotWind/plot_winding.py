@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, subplots

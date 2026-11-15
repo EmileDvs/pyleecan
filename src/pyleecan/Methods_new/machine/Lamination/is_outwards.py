@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def is_outwards(self):
     """Return if the slot is outwards (on an external lamination) or inwards
     (on an internal lamination)

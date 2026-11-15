@@ -1,4 +1,3 @@
-# -*-- coding: utf-8 -*
 def discretize(self, Npoint: int = -1) -> list:
     """Returns the discretize version of the SurfRing
 

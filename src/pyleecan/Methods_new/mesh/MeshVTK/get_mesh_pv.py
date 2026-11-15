@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pyvista as pv
 from meshio import read
 import numpy as np

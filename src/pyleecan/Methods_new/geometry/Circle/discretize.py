@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def discretize(self) -> list:
     """Return the discretize version of the Circle.
 

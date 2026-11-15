@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....definitions import config_dict
 
 PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]

@@ -67,7 +67,6 @@ class Trapeze(Surface):
             raise TrapezeError("the W2 base of Trapeze must be greater than 0")
 
     # Inlined from Methods.Geometry.Trapeze.comp_length
-    # -*-- coding: utf-8 -*
     def comp_length(self) -> float:
         """Returns the length of the Trapeze
 
@@ -132,7 +131,6 @@ class Trapeze(Surface):
         return self.height * (self.W2 + self.W1) / 2
 
     # Inlined from Methods.Geometry.Trapeze.discretize
-    # -*-- coding: utf-8 -*
     def discretize(self) -> list:
         """It returns the discretize version of the Trapeze
 

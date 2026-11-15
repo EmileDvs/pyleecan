@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_height_eq(self):
     """Computation of the Frame equivalent Height for the mechanical model
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from matplotlib.patches import Polygon
 
 from ....definitions import config_dict

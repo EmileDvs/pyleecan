@@ -11,12 +11,33 @@ changes nothing.
 """
 
 import ast
+import re
 
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _apply_numpy_import_style,
     _apply_os_import_style,
     _apply_pyvista_import_style,
 )
+
+CODING_DECLARATION = re.compile(r"^[ \t\f]*#.*?coding[:=][ \t]*utf-?8\b.*$", re.I)
+"""UTF-8 encoding declaration (PEP 263), useless: UTF-8 is the default"""
+
+
+def remove_coding_declaration(source):
+    """Remove a UTF-8 encoding declaration (``# -*- coding: utf-8 -*-``).
+
+    Only the first two lines can hold a declaration (PEP 263); a declaration
+    of another encoding is kept. The blank lines left at the top are removed.
+    """
+    lines = source.splitlines(keepends=True)
+    for index in range(min(2, len(lines))):
+        if CODING_DECLARATION.match(lines[index]):
+            del lines[index]
+            while lines and not lines[0].strip():
+                del lines[0]
+            return "".join(lines)
+    return source
+
 
 REFLECTIVE_CALLS = frozenset({"eval", "exec", "globals", "locals"})
 """Calls reading names dynamically: their modules keep their imports as written"""

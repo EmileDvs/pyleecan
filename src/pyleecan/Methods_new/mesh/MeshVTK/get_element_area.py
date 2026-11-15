@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_element_area(self, indices=None):
     """Return the area of the elements on the outer surface.
 

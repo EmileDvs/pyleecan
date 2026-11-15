@@ -36,7 +36,6 @@ class SurfRing(Surface):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.SurfRing.check
-    # -*- coding: utf-8 -*-
     def check(self):
         """assert the Surface is correct
 
@@ -53,7 +52,6 @@ class SurfRing(Surface):
         self.in_surf.check()
 
     # Inlined from Methods.Geometry.SurfRing.comp_length
-    # -*- coding: utf-8 -*-
     def comp_length(self) -> float:
         """Compute the length of the SurfRing object (length of both surfaces)
 
@@ -126,7 +124,6 @@ class SurfRing(Surface):
         return Sout - Sin
 
     # Inlined from Methods.Geometry.SurfRing.discretize
-    # -*-- coding: utf-8 -*
     def discretize(self, Npoint: int = -1) -> list:
         """Returns the discretize version of the SurfRing
 
@@ -151,7 +148,6 @@ class SurfRing(Surface):
         return point_list
 
     # Inlined from Methods.Geometry.SurfRing.get_lines
-    # -*- coding: utf-8 -*-
     def get_lines(self) -> list:
         """The list returned contains all the Line of the SurRing
 

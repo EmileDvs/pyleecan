@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Functions_new.labels import WIND_LAB, BAR_LAB
 
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind

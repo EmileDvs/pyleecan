@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_machine_type(self):
     """Return a string with the main information about the machine architecture
 

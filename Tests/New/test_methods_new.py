@@ -189,3 +189,18 @@ def test_methods_new_imports():
         if parts[-1] == "__init__":
             parts = parts[:-1]
         importlib.import_module(".".join(["pyleecan", "Methods_new", *parts]))
+
+
+@pytest.mark.parametrize(
+    "source, expected",
+    [
+        ("# -*- coding: utf-8 -*-\n\nimport os\n", "import os\n"),
+        ("#!/usr/bin/env python\n# -*-- coding: utf-8 -*\nx = 1\n", "#!/usr/bin/env python\nx = 1\n"),
+        ("# -*- coding: latin-1 -*-\nx = 1\n", "# -*- coding: latin-1 -*-\nx = 1\n"),
+        ("x = 1\n\n# coding: utf-8\n", "x = 1\n\n# coding: utf-8\n"),  # Not a declaration
+    ],
+)
+def test_remove_coding_declaration(source, expected):
+    from pyleecan.Generator.ClassGenerator.New.modernize import remove_coding_declaration
+
+    assert remove_coding_declaration(source) == expected

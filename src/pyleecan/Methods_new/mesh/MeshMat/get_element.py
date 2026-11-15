@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np

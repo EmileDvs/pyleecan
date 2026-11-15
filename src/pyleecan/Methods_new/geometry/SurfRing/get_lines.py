@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 def get_lines(self) -> list:
     """The list returned contains all the Line of the SurRing
 

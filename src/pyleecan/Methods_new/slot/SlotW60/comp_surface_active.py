@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface_active(self):
     """Compute the Slot inner surface for winding
 

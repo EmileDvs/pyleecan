@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_length(self):
     """Compute the total length of the Lamination (including radial
     ventilations duct)

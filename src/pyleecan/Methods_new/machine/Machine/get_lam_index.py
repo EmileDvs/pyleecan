@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_lam_index(self, label):
     """Returns list index of the lamination with the given label
     corresponding to machine.get_lam_list(is_int_to_ext=True, key=None).

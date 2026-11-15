@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface(self, Ndisc=200):
     """Compute the Slot total surface (by numerical computation).
     Caution, the bottom of the Slot is an Arc

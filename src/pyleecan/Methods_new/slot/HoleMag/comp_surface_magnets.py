@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def comp_surface_magnets(self):
     """Compute the surface of all the magnet(s)
 

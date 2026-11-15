@@ -541,7 +541,6 @@ class MeshMat(Mesh):
         return node_coordinates
 
     # Inlined from Methods.Mesh.MeshMat.get_element_nb
-    # -*- coding: utf-8 -*-
     def get_element_nb(self) -> int:
         """Return the total number of element of all kind
 

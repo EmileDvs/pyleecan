@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_surf(self, indices=None):
     """Return the surf object if it was already extracted, or extracts it from the mesh.
 

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def is_inside(self, element_coordinate, point, normal_t=None):
     """Check if a point is inside the element defined by its coordinates.
 

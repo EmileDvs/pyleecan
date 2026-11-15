@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from ....Classes_new.elmer.elmer_results_vtu import ElmerResultsVTU

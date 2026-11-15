@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 
 from ....Functions_new.Structural.conversions import pol2cart

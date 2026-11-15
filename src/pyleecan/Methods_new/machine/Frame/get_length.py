@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_length(self):
     """Return the length of the Frame
 

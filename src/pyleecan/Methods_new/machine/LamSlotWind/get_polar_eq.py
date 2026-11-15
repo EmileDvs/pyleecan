@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ....Classes_new.slot.slot_w_22 import SlotW22
 
 

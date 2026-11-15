@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Optional
 
 from ....Classes_new.mesh.solution import Solution
