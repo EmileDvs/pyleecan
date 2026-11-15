@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import NotImplementedYetError
+from ...classes_common.errors import NotImplementedYetError
 from .force import Force
 
 

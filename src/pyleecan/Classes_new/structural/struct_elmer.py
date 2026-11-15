@@ -9,6 +9,7 @@ from typing import Any, ClassVar
 import gmsh
 import numpy as np
 
+from ...classes_common.errors import InputError
 from ...Functions_new.get_path_binary import get_path_binary
 from ...Functions_new.GMSH.draw_gmsh import draw_GMSH
 from ...Functions_new.labels import (
@@ -43,7 +44,6 @@ from ...Functions_new.labels import (
     YSR_LAB,
     decode_label,
 )
-from .._error import InputError
 from ..elmer.elmer_results_vtu import ElmerResultsVTU
 from ..elmer.section import MATC, File, Section, Variable
 from ..elmer.solver_input_file import SolverInputFile

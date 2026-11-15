@@ -1,4 +1,4 @@
-from ..Classes_new._error import FormatError
+from ..classes_common.errors import FormatError
 from .Save.save_hdf5 import save_hdf5
 from .Save.save_json import save_json
 from .Save.save_pkl import save_pkl

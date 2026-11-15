@@ -1,6 +1,6 @@
 import numpy as np
 
-from ...Classes_new._error import AxisError
+from ...classes_common.errors import AxisError
 
 
 def rebuild_symmetries(values, axis_index, symmetries):

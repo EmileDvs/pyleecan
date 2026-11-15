@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
-from .._check import check_var
+from ...classes_common.check import check_var
 from .rule import Rule
 
 

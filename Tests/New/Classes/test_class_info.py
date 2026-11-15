@@ -4,7 +4,7 @@ import pytest
 
 from pyleecan.Classes_new._class_info import PYLEECAN_BASES, ClassInfo
 from pyleecan.definitions import DOC_DIR
-from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _property_description,
     _property_metadata,

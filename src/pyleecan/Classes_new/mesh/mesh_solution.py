@@ -9,6 +9,7 @@ from typing import Any, ClassVar, Hashable, Iterator, Optional
 import numpy as np
 from scipy.io import savemat
 
+from ...classes_common.errors import DimError
 from ...definitions import config_dict
 from ...Functions_new.GUI.log_error import log_error
 from ...Functions_new.Plot.Pyvista.configure_plot import configure_plot
@@ -16,7 +17,6 @@ from ...Functions_new.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
 from ...Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 from ...Functions_new.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
 from ...Functions_new.Structural.conversions import cart2pol, pol2cart
-from .._error import DimError
 from .._pyleecan_class import PyleecanClass
 from .element_mat import ElementMat
 from .mesh import Mesh

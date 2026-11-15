@@ -7,11 +7,11 @@ from typing import Any, ClassVar
 import numpy as np
 from matplotlib.patches import Patch
 
+from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
 from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
-from .._error import ParentMissingError
 from .._pyleecan_class import PyleecanClass
 from ..material.material import Material
 

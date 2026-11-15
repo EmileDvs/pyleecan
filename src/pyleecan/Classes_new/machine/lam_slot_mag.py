@@ -6,6 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import LMC_SlotTooLong
 from ...Functions_new.labels import (
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
@@ -17,7 +18,6 @@ from ...Functions_new.labels import (
     decode_label,
     update_RTS_index,
 )
-from .._error import LMC_SlotTooLong
 from .lam_slot import LamSlot
 from .lam_slot_m import LamSlotM
 from .magnet import Magnet

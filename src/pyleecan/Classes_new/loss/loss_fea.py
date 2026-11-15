@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from .loss import Loss
 from .loss_model_joule import LossModelJoule
 from .loss_model_magnet import LossModelMagnet

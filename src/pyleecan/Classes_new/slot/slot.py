@@ -7,6 +7,7 @@ from typing import ClassVar
 import numpy as np
 from matplotlib.patches import Patch, Polygon
 
+from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import (
@@ -23,7 +24,6 @@ from ...Functions_new.labels import (
 )
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.Winding.gen_phase_list import gen_name
-from .._error import ParentMissingError
 from .._pyleecan_class import PyleecanClass
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment

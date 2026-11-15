@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from .._pyleecan_class import PyleecanClass
 from ..output.out_struct import OutStruct
 

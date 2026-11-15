@@ -6,10 +6,10 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
 from ...Functions_new.Geometry.cut_lines_between_angle import cut_lines_between_angles
 from ...Functions_new.init_fig import init_fig
-from .._error import ParentMissingError
 from .._pyleecan_class import PyleecanClass
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

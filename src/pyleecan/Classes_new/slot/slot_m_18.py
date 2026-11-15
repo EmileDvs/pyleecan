@@ -7,6 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ...classes_common.errors import ParentMissingError
 from ...Functions_new.labels import COND_BOUNDARY_PROP_LAB, YOKE_LAB, YSML_LAB, YSMR_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -18,7 +19,6 @@ from ...Functions_new.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from .._error import ParentMissingError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

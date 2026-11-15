@@ -1,6 +1,6 @@
 import os
 
-from ..Classes_new._error import (
+from ..classes_common.errors import (
     LoadMissingFolderError,
     LoadWrongDictClassError,
     LoadWrongTypeError,

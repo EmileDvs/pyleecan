@@ -7,6 +7,8 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ...classes_common.check import check_var
+from ...classes_common.errors import ParentMissingError, SlotCheckError
 from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
@@ -20,8 +22,6 @@ from ...Functions_new.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from .._check import check_var
-from .._error import ParentMissingError, SlotCheckError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

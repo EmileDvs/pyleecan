@@ -2,7 +2,7 @@ from importlib import import_module
 
 from numpy import array, expand_dims, int32, int64
 
-from ._error import CheckDimError, CheckMaxError, CheckMinError, CheckTypeError
+from .errors import CheckDimError, CheckMaxError, CheckMinError, CheckTypeError
 
 
 def set_array(obj, prop, value):

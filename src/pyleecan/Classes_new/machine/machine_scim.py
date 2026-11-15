@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .._error import MachineCheckError
+from ...classes_common.errors import MachineCheckError
 from .lam_slot_wind import LamSlotWind
 from .lam_squirrel_cage import LamSquirrelCage
 from .machine_dfim import MachineDFIM

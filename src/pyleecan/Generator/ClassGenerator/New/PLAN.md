@@ -186,7 +186,9 @@ Methods receive their context explicitly instead, for example
 
 ### Step 1: split the bases
 
-- [ ] Create the shared support module.
+- [x] Create the shared support package `classes_common` (lookup, `ClassInfo`,
+      checks, errors, parent rules, FEMM handler; done with Step 0 since
+      `Classes_pydantic` needs it).
 - [ ] Create `LegacyClass` and `LegacyModel`; move the legacy behaviours there.
 - [ ] Slim the target bases; use native `complex` and a minimal `NDArray` in `PyleecanModel`.
 - [ ] Contract tests for the target bases: one behaviour specification that

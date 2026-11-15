@@ -1,6 +1,6 @@
 from numpy import inf, pi  # import pi for eval  # noqa: F401
 
-from ...Classes_new._error import AxisError
+from ...classes_common.errors import AxisError
 from ...Classes_new.scidatatool.requested_axis import RequestedAxis
 
 

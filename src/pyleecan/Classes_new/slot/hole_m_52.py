@@ -7,6 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ...classes_common.errors import ParentMissingError, SlotCheckError
 from ...definitions import config_dict
 from ...Functions_new.labels import HOLEM_LAB
 from ...Functions_new.Plot import (
@@ -20,7 +21,6 @@ from ...Functions_new.Plot import (
     TEXT_BOX,
     plot_quote,
 )
-from .._error import ParentMissingError, SlotCheckError
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..machine.lam_hole import LamHole

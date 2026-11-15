@@ -10,10 +10,10 @@ import numpy as np
 from matplotlib.patches import Patch, Polygon
 from matplotlib.pyplot import subplots
 
+from ...classes_common.errors import MachineCheckError
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB, STATOR_LAB_S
-from .._error import MachineCheckError
 from .._pyleecan_class import PyleecanClass
 from ..material.material import Material
 from ..output.out_geo import OutGeo

@@ -7,9 +7,9 @@ from typing import Any, ClassVar
 import numpy as np
 from scipy.stats import norm
 
+from ...classes_common.errors import InputError
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from .._error import InputError
 from .._pyleecan_class import PyleecanClass
 from ..scidatatool.data_pattern import DataPattern
 from ..scidatatool.norm_ref import NormRef

@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import NormError
+from ...classes_common.errors import NormError
 from .normalization import Normalization
 
 

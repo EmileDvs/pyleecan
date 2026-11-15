@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .._error import AxisError
+from ...classes_common.errors import AxisError
 from .data_1d import Data1D
 from .data_nd import DataND
 

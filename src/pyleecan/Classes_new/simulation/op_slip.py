@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from .op import OP
 
 

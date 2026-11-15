@@ -14,7 +14,7 @@ from pyleecan.Classes_new.scidatatool.norm_func import NormFunc as Norm_func
 from pyleecan.Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
 from pyleecan.Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 from pyleecan.Classes_new.scidatatool.norm_vector import NormVector as Norm_vector
-from pyleecan.Classes_new._error import NormError
+from pyleecan.classes_common.errors import NormError
 from Tests import TEST_DATA_DIR
 
 

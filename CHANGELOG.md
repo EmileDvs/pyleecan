@@ -40,6 +40,13 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   child classes are taken out of `simulation`.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
+- **`pyleecan.classes_common`**: support shared by the class implementations,
+  independent of dataclasses or pydantic: class naming rules and lookup
+  (`class_lookup`), `ClassInfo` (`class_info`), legacy checks (`check`),
+  errors (`errors`, generated), parent rules (`parent_types`, generated) and
+  the FEMM handler. One exception class per error, whatever the implementation
+  that raises it. Each class package binds the lookup and `ClassInfo` to its
+  own classes (`_import.py`, `_class_info.py`).
 
 ### Changed
 
@@ -52,7 +59,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   (unit, min, max) and descriptions follow the legacy definitions.
 - The load function returns objects of the new classes.
 - Normalization classes follow the class naming convention (`Norm_ref` ->
-  `NormRef`); the legacy names remain accepted when loading files.
+  `NormRef`); the legacy names remain accepted when loading files. The
+  mapping is defined once in `classes_common.class_lookup`.
+- The class generator no longer imports generated code (it read the legacy
+  class names from the generated `Functions_new`).
 
 ### Fixed
 
@@ -64,7 +74,7 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 
 | Step | Status |
 |---|---|
-| 0. Separate the implementations in the generator | in progress: class sub-packages done |
+| 0. Separate the implementations in the generator | in progress: class sub-packages and `classes_common` done |
 | 1. Split the bases (target / legacy layer) | to do |
 | 2. Type, min and max validation for dataclasses | to do |
 | 3. `Functions_pydantic` | to do |

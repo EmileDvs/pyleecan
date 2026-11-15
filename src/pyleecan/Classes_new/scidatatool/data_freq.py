@@ -6,13 +6,13 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import AxisError
 from ...Functions_new.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
     get_sum_amplitudes,
     get_sum_indices,
 )
-from .._error import AxisError
 from .data_1d import Data1D
 from .data_nd import DataND
 

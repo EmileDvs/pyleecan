@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import ParentMissingError
+from ...classes_common.errors import ParentMissingError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .bore import Bore

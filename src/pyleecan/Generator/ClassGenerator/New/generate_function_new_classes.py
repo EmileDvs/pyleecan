@@ -4,7 +4,7 @@ Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_function_new_clas
 after generating Classes_new. Existing generated copies are overwritten. Legacy
 load/save compatibility and unsupported dynamic imports are reported for review.
 Use ``--import-style absolute`` for absolute Pyleecan imports; relative is the default.
-Selected function exceptions are imported directly from Classes_new._error;
+Selected function exceptions are imported directly from classes_common.errors;
 regenerate the classes first when those shared definitions change.
 
 Experimental adaptations are implemented as targeted source transformations
@@ -22,7 +22,7 @@ from importlib.util import resolve_name
 from pathlib import Path
 
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
-from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     VENDORED_CLASS_PACKAGES,
     _apply_numpy_import_style,
@@ -33,6 +33,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _replace_empty_containers,
     _static_local_class_imports,
     class_module_name,
+    common_dir,
     generated_module_paths,
     relocate_class_imports,
 )
@@ -95,7 +96,7 @@ def _redirect_function_errors(source, path, relative_path, class_dir):
         raise ValueError(
             f"{path}: missing function exceptions: {', '.join(sorted(missing))}"
         )
-    error_path = class_dir / "_error.py"
+    error_path = Path(common_dir(str(class_dir))) / "errors.py"
     if not error_path.is_file():
         raise FileNotFoundError(
             f"Shared exceptions not generated: {error_path}; generate classes first"
@@ -907,7 +908,8 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                         existing_tree = ast.parse(existing.read(), filename=str(destination))
                     if any(
                         not isinstance(node, ast.ImportFrom)
-                        or node.module != "pyleecan.Classes_new._error"
+                        or node.module
+                        not in ("pyleecan.Classes_new._error", "pyleecan.classes_common.errors")
                         for node in existing_tree.body
                     ):
                         raise ValueError(f"{destination}: refusing to remove modified module")

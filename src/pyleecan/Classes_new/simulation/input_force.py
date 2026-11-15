@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from ..import_data.import_vector_field import ImportVectorField
 from ..output.out_force import OutForce
 from .input import Input

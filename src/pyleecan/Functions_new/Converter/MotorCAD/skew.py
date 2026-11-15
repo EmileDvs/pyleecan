@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Classes_new._error import ConvertionError
+from ....classes_common.errors import ConvertionError
 
 
 def other_to_P(self, machine, other_dict, other_unit_dict):

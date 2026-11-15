@@ -5,7 +5,7 @@ import sys
 import gmsh
 import numpy as np
 
-from ...Classes_new._error import GMSHInputError as InputError
+from ...classes_common.errors import GMSHInputError as InputError
 from ...Classes_new.geometry.arc import Arc
 from ...Classes_new.geometry.arc_2 import Arc2
 from ...Classes_new.machine.machine_scim import MachineSCIM

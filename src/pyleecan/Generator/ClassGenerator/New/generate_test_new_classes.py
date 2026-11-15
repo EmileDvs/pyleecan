@@ -16,8 +16,9 @@ import tokenize
 from pathlib import Path
 
 from pyleecan.definitions import TEST_DIR
-from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
+    SHARED_SUPPORT_MODULES,
     VENDORED_CLASS_PACKAGES,
     _keyword_geometry_calls,
     class_module_name,
@@ -107,6 +108,7 @@ def _rewrite_source(source, path, class_dir):
             module_path = class_dir.joinpath(*module_name.split("."))
             if (
                 module_name not in generated_module_paths(class_dir)
+                and module_name not in SHARED_SUPPORT_MODULES
                 and not module_path.with_suffix(".py").is_file()
                 and not (module_path / "__init__.py").is_file()
             ):

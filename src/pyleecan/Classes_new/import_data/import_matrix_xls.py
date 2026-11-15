@@ -7,8 +7,8 @@ from typing import Any, ClassVar
 
 from pandas import ExcelFile, read_excel
 
+from ...classes_common.errors import PyleecanImportError as ImportError
 from ...Functions_new.path_tools import abs_file_path
-from .._error import PyleecanImportError as ImportError
 from .import_matrix import ImportMatrix
 
 

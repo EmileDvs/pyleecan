@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._error import ParentMissingError
+from ...classes_common.errors import ParentMissingError
 from .._pyleecan_class import PyleecanClass
 from ..material.material import Material
 

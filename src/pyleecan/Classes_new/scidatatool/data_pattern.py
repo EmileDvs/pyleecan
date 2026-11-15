@@ -7,8 +7,8 @@ from typing import Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import NormError
 from ...Functions_new.SciDataTool.conversions import convert
-from .._error import NormError
 from .data import Data
 
 

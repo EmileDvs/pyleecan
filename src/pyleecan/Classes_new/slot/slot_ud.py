@@ -4,8 +4,8 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
+from ...classes_common.errors import SlotCheckError
 from ...Functions_new.labels import SOP_LAB, WIND_LAB
-from .._error import SlotCheckError
 from ..geometry.arc_1 import Arc1
 from ..geometry.line import Line
 from ..geometry.segment import Segment

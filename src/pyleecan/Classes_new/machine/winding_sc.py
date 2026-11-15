@@ -6,9 +6,9 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import WindingError
 from ...Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
 from ...Functions_new.Winding.shift_wind_mat import shift_wind_mat
-from .._error import WindingError
 from .lamination import Lamination
 from .winding import Winding
 

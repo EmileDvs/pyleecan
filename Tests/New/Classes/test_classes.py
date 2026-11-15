@@ -4,12 +4,16 @@ import pytest
 from cloudpickle import dumps
 from pydantic import ValidationError
 
-from pyleecan.Classes_new._check import CheckMaxError, CheckMinError, CheckTypeError
 from pyleecan.Classes_new._class_info import PYLEECAN_BASES
-from pyleecan.Classes_new._error import InitUnKnowClassError
 from pyleecan.Classes_new._import import import_class
+from pyleecan.classes_common.errors import (
+    CheckMaxError,
+    CheckMinError,
+    CheckTypeError,
+    InitUnKnowClassError,
+)
 from pyleecan.definitions import DOC_DIR
-from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator import PYTHON_TYPE
 from pyleecan.Generator.ClassGenerator.init_method_generator import get_mother_attr
 from pyleecan.Generator.read_fct import read_all

@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from .._pyleecan_class import PyleecanClass
 from ..mesh.mesh_solution import MeshSolution
 from ..simulation.slice_model import SliceModel

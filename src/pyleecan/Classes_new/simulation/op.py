@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import OPMatrixException
+from ...classes_common.errors import OPMatrixException
 from .._pyleecan_class import PyleecanClass
 
 

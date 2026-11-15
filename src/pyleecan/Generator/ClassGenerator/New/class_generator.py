@@ -13,9 +13,8 @@ from os.path import basename, dirname, isdir, isfile, join
 from pathlib import Path
 from textwrap import indent
 
-from ....Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
-# The module naming rule of the classes is defined in Classes_new (single source)
-from ....Classes_new._import import class_module_name
+# The naming rules of the classes are defined once (classes_common)
+from ....classes_common.class_lookup import NORMALIZATION_CLASS_NAMES, class_module_name
 from ....Generator import PYTHON_TYPE, TAB
 from ....Generator.read_fct import (
     find_import_type,
@@ -61,6 +60,23 @@ SIMULATION_SUBPACKAGES = {
 }
 """Classes of the legacy Simulation package moved to their own sub-package,
 with their child classes"""
+
+
+COMMON_PACKAGE = "classes_common"
+"""Package of the support shared by the class implementations"""
+
+SHARED_SUPPORT_MODULES = {
+    "_check": "check",
+    "_error": "errors",
+    "_femm_handler": "femm_handler",
+    "_parent_types": "parent_types",
+}
+"""Support modules of a class package moved to COMMON_PACKAGE (old: new name)"""
+
+
+def common_dir(path_to_gen):
+    """Folder of COMMON_PACKAGE, next to the class package folder path_to_gen."""
+    return join(dirname(path_to_gen.rstrip("/\\")), COMMON_PACKAGE)
 
 
 def class_subpackage(class_name, gen_dict):
@@ -146,7 +162,9 @@ def relocate_class_imports(source, soft_name, class_package, module_paths):
     ``from pyleecan.Classes_new.arc_1 import Arc1`` becomes
     ``from pyleecan.Classes_new.geometry.arc_1 import Arc1``; string constants
     naming a class module (e.g. for import_module) are updated the same way.
-    Support modules (``_import``, ``_error``...) and vendored packages are kept.
+    The shared support modules (SHARED_SUPPORT_MODULES, e.g. ``_error``) go to
+    COMMON_PACKAGE (``pyleecan.classes_common.errors``); the other support
+    modules (``_import``, ``_pyleecan_class``...) and vendored packages are kept.
     Relative imports are not modified: apply the absolute style first.
     """
     prefix = f"{soft_name}.{class_package}."
@@ -155,9 +173,12 @@ def relocate_class_imports(source, soft_name, class_package, module_paths):
         if not module.startswith(prefix):
             return None
         first, _, rest = module[len(prefix) :].partition(".")
+        rest = "." + rest if rest else ""
+        if first in SHARED_SUPPORT_MODULES:
+            return f"{soft_name}.{COMMON_PACKAGE}.{SHARED_SUPPORT_MODULES[first]}{rest}"
         if first not in module_paths:
             return None
-        return prefix + module_paths[first] + ("." + rest if rest else "")
+        return prefix + module_paths[first] + rest
 
     encoded = source.encode("utf-8")
     offsets = [0]
@@ -710,10 +731,11 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
     for definition in _sort_error_class_definitions(all_definitions):
         chunks.append(ast.unparse(definition) + "\n\n\n")
     source = "".join(chunks).rstrip() + "\n"
-    ast.parse(source, filename=join(path_to_gen, "_error.py"))
+    error_path = join(common_dir(path_to_gen), "errors.py")
+    ast.parse(source, filename=error_path)
     if definitions:
-        source = _format_source_with_ruff(source, join(path_to_gen, "_error.py"))
-    with open(join(path_to_gen, "_error.py"), "w", encoding="utf-8") as error_file:
+        source = _format_source_with_ruff(source, error_path)
+    with open(error_path, "w", encoding="utf-8") as error_file:
         error_file.write(source)
 
 
@@ -4967,7 +4989,7 @@ def generate_class(
         Defaults to the snake_case class name.
     shared_error_definitions : dict, optional
         Precomputed shared exceptions for experimental generation. If omitted,
-        derive them from the complete gen_dict and write Classes_new/_error.py.
+        derive them from the complete gen_dict and write classes_common/errors.py.
         Provide the complete generation dictionary even for a single class.
 
     Returns

@@ -4,8 +4,8 @@
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
-from .._check import check_var
-from .._error import SlotCheckError
+from ...classes_common.check import check_var
+from ...classes_common.errors import SlotCheckError
 from .._import import import_class
 from ..geometry.line import Line
 from ..geometry.surface import Surface

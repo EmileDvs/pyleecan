@@ -16,7 +16,7 @@ import pytest
 from pyleecan.Classes.Magnetics import Magnetics
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.Functions.Load.import_class import import_class
-from pyleecan.Functions_new.Load.retrocompatibility import NORMALIZATION_CLASS_NAMES
+from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _apply_import_style,
     _remove_redundant_experimental_class_imports,

@@ -10,6 +10,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import FancyArrowPatch, Patch
 from matplotlib.pyplot import plot, subplots
 
+from ...classes_common.errors import Lam_WindCheckError
 from ...definitions import config_dict
 from ...Functions_new.Electrical.dqh_transformation import dqh2n
 from ...Functions_new.init_fig import init_fig
@@ -31,7 +32,6 @@ from ...Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
 from ...Functions_new.Winding.comp_cond_function import comp_cond_function
 from ...Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
 from ...Functions_new.Winding.gen_phase_list import gen_color, gen_name
-from .._error import Lam_WindCheckError
 from .._swat_em import datamodel
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq

@@ -7,6 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
 from ...Functions_new.Geometry.comp_flower_arc import comp_flower_arc
 from ...Functions_new.Plot import (
@@ -17,7 +18,6 @@ from ...Functions_new.Plot import (
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
 )
-from .._error import ParentMissingError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .bore import Bore

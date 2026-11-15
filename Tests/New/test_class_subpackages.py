@@ -97,7 +97,7 @@ def test_relocate_class_imports():
     )
     expected = (
         "from pyleecan.Classes_new.geometry.arc_1 import Arc1\n"
-        "from pyleecan.Classes_new._error import CheckTypeError\n"
+        "from pyleecan.classes_common.errors import CheckTypeError\n"
         "from pyleecan.Classes_new._swat_em import datamodel\n"
         "from pyleecan.Functions_new.init_fig import init_fig\n"
         "from pyleecan.Classes_new.arc_10 import Arc10\n"
@@ -134,14 +134,16 @@ def test_relative_style_in_subpackage():
     source = (
         "from pyleecan.Classes_new.geometry.line import Line\n"
         "from pyleecan.Classes_new.machine.lam_slot import LamSlot\n"
-        "from pyleecan.Classes_new._error import CheckTypeError\n"
+        "from pyleecan.Classes_new._import import import_class\n"
+        "from pyleecan.classes_common.errors import CheckTypeError\n"
         "from pyleecan.Functions_new.init_fig import init_fig\n"
         "from pyleecan.definitions import config_dict\n"
     )
     expected = (
         "from .line import Line\n"
         "from ..machine.lam_slot import LamSlot\n"
-        "from .._error import CheckTypeError\n"
+        "from .._import import import_class\n"
+        "from ...classes_common.errors import CheckTypeError\n"
         "from ...Functions_new.init_fig import init_fig\n"
         "from ...definitions import config_dict\n"
     )

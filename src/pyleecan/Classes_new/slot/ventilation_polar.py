@@ -7,6 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ...classes_common.errors import ParentMissingError
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -17,7 +18,6 @@ from ...Functions_new.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from .._error import ParentMissingError
 from ..geometry.arc_1 import Arc1
 from ..geometry.polar_arc import PolarArc
 from ..geometry.segment import Segment

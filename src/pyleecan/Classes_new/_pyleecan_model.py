@@ -47,12 +47,13 @@ from pydantic_core import PydanticCustomError
 
 from ..Functions.get_logger import get_logger
 from ..Functions.save import save
+from ..classes_common.base import PyleecanBase
 from ._import import import_class
 
 
 def _import_model(class_name):
     """Class of serialized data ("__class__" key), only known at runtime."""
-    from ._error import InitUnKnowClassError
+    from ..classes_common.errors import InitUnKnowClassError
 
     try:
         return import_class(class_name)
@@ -107,7 +108,7 @@ Complex = Annotated[
 """complex number; int and float are accepted, serialized as str (legacy)"""
 
 
-class PyleecanModel(BaseModel):
+class PyleecanModel(BaseModel, PyleecanBase):
     """Base of the Pyleecan classes built on pydantic."""
 
     model_config = ConfigDict(

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ...Classes_new._error import UnitError
+from ...classes_common.errors import UnitError
 from .fft_functions import comp_fft_freqs, comp_fft_time, comp_nthoctave_axis
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"

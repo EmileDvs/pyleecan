@@ -14,7 +14,8 @@ from dacite import Config, from_dict
 from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.save import save
 
-from ._parent_types import PARENT_TYPES
+from ..classes_common.base import PyleecanBase
+from ..classes_common.parent_types import PARENT_TYPES
 
 
 @cache
@@ -41,7 +42,7 @@ def _to_complex(value):
 
 
 @dataclass(eq=False)
-class PyleecanClass:
+class PyleecanClass(PyleecanBase):
     """Base providing common behavior for generated Pyleecan dataclasses."""
 
     parent: Any = field(

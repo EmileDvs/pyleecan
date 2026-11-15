@@ -6,8 +6,8 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import InputError
 from ...Functions_new.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
-from .._error import InputError
 from ..electrical.elec_lut_dq import ElecLUTdq
 from ..import_data.import_data import ImportData
 from ..import_data.import_matrix import ImportMatrix

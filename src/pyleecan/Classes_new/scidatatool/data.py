@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._check import check_var
+from ...classes_common.check import check_var
 from .._import import import_class
 from .._pyleecan_class import PyleecanClass
 from .normalization import Normalization

@@ -1,4 +1,4 @@
-from ...Classes_new._error import FEMMError
+from ...classes_common.errors import FEMMError
 from ...Classes_new.geometry.circle import Circle
 from ...Classes_new.machine.lamination import Lamination
 from ..labels import NO_MESH_LAB

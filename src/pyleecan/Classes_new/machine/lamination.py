@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
+from ...classes_common.errors import LaminationCheckError, NotImplementedYetError
 from ...definitions import config_dict
 from ...Functions_new.Geometry.merge_notch_list import merge_notch_list
 from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
@@ -32,7 +33,6 @@ from ...Functions_new.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 from ...Functions_new.Winding.gen_phase_list import gen_name
-from .._error import LaminationCheckError, NotImplementedYetError
 from .._pyleecan_class import PyleecanClass
 from ..geometry.arc_1 import Arc1
 from ..geometry.arc_3 import Arc3

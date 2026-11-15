@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import fsolve
 
+from ...classes_common.errors import ParentMissingError, SlotCheckError
 from ...definitions import config_dict
 from ...Functions_new.labels import HOLEM_LAB, MAGNET_PROP_LAB
 from ...Functions_new.Plot import (
@@ -20,7 +21,6 @@ from ...Functions_new.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
-from .._error import ParentMissingError, SlotCheckError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

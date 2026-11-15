@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from .._pyleecan_class import PyleecanClass
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq

@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from ..electrical.electrical import Electrical
 from ..force.force import Force
 from ..loss.loss import Loss

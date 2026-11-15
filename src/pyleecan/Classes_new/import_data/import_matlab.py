@@ -8,7 +8,7 @@ from typing import ClassVar
 import numpy as np
 from scipy.io import loadmat
 
-from .._error import PyleecanImportError as ImportError
+from ...classes_common.errors import PyleecanImportError as ImportError
 from .import_matrix import ImportMatrix
 
 

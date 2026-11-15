@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import SlotCheckError
+from ...classes_common.errors import SlotCheckError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .slot import Slot

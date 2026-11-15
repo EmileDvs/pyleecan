@@ -6,8 +6,8 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.check import check_var
 from ...Functions.load import load_init_dict
-from .._check import check_var
 from .._import import import_class
 from .op_matrix import OPMatrix
 from .var_simu import VarSimu

@@ -7,8 +7,8 @@ from typing import Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import AxisError
 from ...Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
-from .._error import AxisError
 from .._pyleecan_class import PyleecanClass
 from .data_pattern import DataPattern
 

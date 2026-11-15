@@ -10,6 +10,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _shared_error_definitions,
     _write_shared_errors,
     class_subpackage,
+    common_dir,
     generate_class,
     get_class_import_graph,
     parent_type_mapping,
@@ -94,12 +95,23 @@ def generate_code(
         join(root_path, "Classes"), gen_dict, soft_name
     )
 
-    for support_module in ("_pyleecan_class.py", "_pyleecan_model.py", "_import.py"):
+    for support_module in (
+        "_pyleecan_class.py",
+        "_pyleecan_model.py",
+        "_import.py",
+        "_class_info.py",
+    ):
         # Hand-written support modules (not generated)
         if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, support_module)):
             raise FileNotFoundError(
                 f"Experimental output requires Classes_new/{support_module}: "
                 + CLASS_DIR
+            )
+    for support_module in ("class_lookup.py", "class_info.py", "check.py", "base.py"):
+        # Hand-written shared support (classes_common)
+        if not isfile(join(common_dir(CLASS_DIR), support_module)):
+            raise FileNotFoundError(
+                f"Experimental output requires classes_common/{support_module}"
             )
     class_names = (
         set(basename(csv_path)[:-4] for csv_path in class_list)
@@ -162,7 +174,7 @@ def _write_parent_types(class_dir, gen_dict):
     """Write parent rules for all generated classes."""
     mapping = parent_type_mapping(gen_dict)
     with open(
-        join(class_dir, "_parent_types.py"), "w", encoding="utf-8"
+        join(common_dir(class_dir), "parent_types.py"), "w", encoding="utf-8"
     ) as parent_file:
         parent_file.write('"""Generated parent type rules; do not edit by hand."""\n\n')
         parent_file.write("PARENT_TYPES = {\n")
@@ -235,8 +247,9 @@ def run_generate_classes(
 
     Experimental generation writes only selected modules in ``Classes_new``
     with snake_case names and does not rewrite CSVs or legacy bookkeeping.
-    It also writes an initializer, the full ``_parent_types.py`` mapping and
-    shared ``_error.py`` definitions, even for partial generation. Existing
+    It also writes an initializer, the full ``classes_common/parent_types.py``
+    mapping and shared ``classes_common/errors.py`` definitions, even for
+    partial generation. Existing
     classes need a full regeneration to use the shared exceptions.
     The class information is no longer written: it is rebuilt from the
     dataclasses by ``Classes_new._class_info.ClassInfo``.

@@ -2,7 +2,7 @@ from logging import getLogger
 
 import numpy as np
 
-from ...Classes_new._error import RetroCompatibilityError
+from ...classes_common.errors import RetroCompatibilityError
 from ...loggers import GUI_LOG_NAME
 from ..labels import HOLEM_LAB, HOLEV_LAB
 

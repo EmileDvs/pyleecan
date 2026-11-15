@@ -2,7 +2,7 @@ import gzip
 import os
 from json import load as jload
 
-from ...Classes_new._error import LoadMissingFileError
+from ...classes_common.errors import LoadMissingFileError
 from ...definitions import PYTHON_DEFAULT_ENCODING
 
 

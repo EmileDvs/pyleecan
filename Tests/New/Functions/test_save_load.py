@@ -6,7 +6,7 @@ from unittest.mock import patch  # for unittest of input
 
 import pytest
 from numpy import array, ones, pi
-from pyleecan.Classes_new._check import InitUnKnowClassError
+from pyleecan.classes_common.check import InitUnKnowClassError
 from pyleecan.Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
 from pyleecan.Classes_new.import_data.import_matrix_val import ImportMatrixVal
 from pyleecan.Classes_new.simulation.input_current import InputCurrent
@@ -26,8 +26,8 @@ from pyleecan.Classes_new.slot.slot_ud import SlotUD
 from pyleecan.Classes_new.slot.hole_ud import HoleUD
 from pyleecan.Classes_new.machine.winding import Winding
 from pyleecan.Classes_new.simulation.op_dq import OPdq
-from pyleecan.Functions_new.load import load, load_dict, load_list; from pyleecan.Classes_new._error import LoadWrongDictClassError, LoadWrongTypeError
-from pyleecan.Classes_new._error import LoadMissingFileError
+from pyleecan.Functions_new.load import load, load_dict, load_list; from pyleecan.classes_common.errors import LoadWrongDictClassError, LoadWrongTypeError
+from pyleecan.classes_common.errors import LoadMissingFileError
 from pyleecan.Functions_new.Save.save_json import save_json
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_load_path as save_path

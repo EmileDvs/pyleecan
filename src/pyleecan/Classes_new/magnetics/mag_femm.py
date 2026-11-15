@@ -10,6 +10,7 @@ from typing import Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.femm_handler import _FEMMHandler
 from ...definitions import MAIN_DIR
 from ...Functions_new.FEMM import FEMM_GROUPS
 from ...Functions_new.FEMM.comp_femm_phi_wind import comp_FEMM_Phi_wind
@@ -20,7 +21,6 @@ from ...Functions_new.labels import STATOR_LAB
 from ...Functions_new.MeshSolution.build_meshsolution import build_meshsolution
 from ...Functions_new.MeshSolution.build_solution_data import build_solution_data
 from ...Functions_new.MeshSolution.build_solution_vector import build_solution_vector
-from .._femm_handler import _FEMMHandler
 from ..mesh.element_mat import ElementMat
 from ..mesh.fpgn_tri import FPGNTri
 from ..mesh.mesh_mat import MeshMat

@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from ntpath import basename
 from typing import Any, Callable, ClassVar
 
+from ...classes_common.errors import CheckTypeError
 from ...definitions import PYTHON_DEFAULT_ENCODING
 from ...Functions_new.path_tools import abs_file_path
-from .._error import CheckTypeError
 from .._pyleecan_class import PyleecanClass
 
 

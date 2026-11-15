@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from .._error import InputError
+from ...classes_common.errors import InputError
 from ..import_data.import_gen_pwm import ImportGenPWM
 from ..output.out_elec import OutElec
 from .input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF, Input

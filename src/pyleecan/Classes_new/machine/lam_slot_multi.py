@@ -7,11 +7,11 @@ from typing import Any, ClassVar
 import numpy as np
 from matplotlib.patches import Patch
 
+from ...classes_common.errors import LaminationCheckError
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
-from .._error import LaminationCheckError
 from ..slot.slot import Slot
 from .lamination import Lamination
 

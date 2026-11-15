@@ -1,8 +1,8 @@
 import re
 from os.path import isfile, join
 
-from ..Classes_new._error import FileError
-from ..Classes_new._error import PathImportError as ImportError
+from ..classes_common.errors import FileError
+from ..classes_common.errors import PathImportError as ImportError
 
 
 def importName(modulename, name, ignore_error=False):

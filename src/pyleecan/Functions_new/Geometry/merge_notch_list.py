@@ -1,4 +1,4 @@
-from ...Classes_new._error import NotchError
+from ...classes_common.errors import NotchError
 
 
 def merge_notch_list(notch_list_1, notch_list_2):
