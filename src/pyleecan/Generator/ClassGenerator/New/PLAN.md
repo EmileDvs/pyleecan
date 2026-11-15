@@ -3,6 +3,10 @@
 Status of the migration from the legacy CSV-generated classes to modern Python
 class models. Branch: `switch_to_dataclass`. Last update: 2026-11-15.
 
+Working rules: one commit per increment; each new generator feature gets small
+unit tests; the older generator tests (`Tests/New/test_*.py`) are run for the
+final validation only.
+
 ## Goal
 
 Pyleecan classes are today generated from CSV files (`Generator/ClassesRef`) into
@@ -121,8 +125,10 @@ names this base in a single place.
 ### Shared support modules
 
 Modules that do not depend on the implementation (class import, `ClassInfo`
-metadata, errors, checks) are written once in a shared module and used by both
-`Classes_new` and `Classes_pydantic`. Only the base classes differ per folder.
+metadata, errors, checks) are written once in the `pyleecan/classes_common`
+package (lowercase, PEP 8) and used by both `Classes_new` and
+`Classes_pydantic`; the lookup and `ClassInfo` take the class package as a
+parameter. Only the base classes differ per folder.
 
 ## Decisions
 
@@ -165,14 +171,15 @@ Methods receive their context explicitly instead, for example
 
 - [ ] Replace the per-package pydantic switch with a `backend="dataclass"|"pydantic"`
       option that also selects the output folder.
-- [ ] Write the classes into their sub-package (see Class sub-packages): legacy
+- [x] Write the classes into their sub-package (see Class sub-packages): legacy
       package mapped to its lowercase name, plus the moved physics classes.
-- [ ] Runtime class lookup by name (`import_class`, for serialized `__class__`)
+- [x] Runtime class lookup by name (`import_class`, for serialized `__class__`)
       and `ClassInfo` walk the sub-packages; no generated lookup table.
-- [ ] Class, function and test generators write the new module paths in imports.
-- [ ] Regenerate `Classes_new` entirely as dataclasses (Geometry included), in the
-      new sub-packages. Done once, together with the backend split, to avoid a
-      second full regeneration.
+- [x] Class, function and test generators write the new module paths in imports.
+- [x] Regenerate `Classes_new` in the new sub-packages (commit 4e9e7fac4;
+      `Tests/New/Classes` identical to the baseline; unit tests in
+      `Tests/New/test_class_subpackages.py`).
+- [ ] Regenerate `Classes_new` entirely as dataclasses (Geometry included).
 - [ ] Generate `Classes_pydantic`. It imports the vendored code (`_smoot`,
       `_swat_em`) from `Classes_new` instead of generating a third copy.
 - [ ] Declare `pydantic>=2.12` (and `dacite`) in `pyproject.toml` / `uv.lock`.
