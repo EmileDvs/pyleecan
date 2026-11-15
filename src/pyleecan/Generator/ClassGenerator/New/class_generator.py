@@ -1812,8 +1812,8 @@ def _get_method_source(
             and isinstance(node.value.value, str)
         ):
             continue
-        if isinstance(node, ast.Import):
-            continue
+        if isinstance(node, ast.Import) or _is_type_checking_block(node):
+            continue  # Type-checking imports: collected below
         elif isinstance(node, ast.ImportFrom):
             if any(alias.name == "*" for alias in node.names):
                 return (
@@ -2356,6 +2356,33 @@ def _get_method_source(
         method_source, method_imports = _normalize_method_package_imports(
             method_source, method_imports, "os", "os"
         )
+    # Imports for the type hints only (if TYPE_CHECKING:), used by the method
+    type_checking_imports = []
+    for node in module.body:
+        if not _is_type_checking_block(node):
+            continue
+        for statement in node.body:
+            aliases = [
+                alias
+                for alias in statement.names
+                if (alias.asname or alias.name.split(".")[0]) in used_names
+            ]
+            if not aliases:
+                continue
+            if isinstance(statement, ast.Import):
+                type_checking_imports.append(ast.Import(names=aliases))
+            else:
+                module_parts = _get_absolute_import_module(statement, source_package)
+                type_checking_imports.append(
+                    ast.ImportFrom(module=".".join(module_parts), names=aliases, level=0)
+                )
+    if type_checking_imports:
+        method_imports.append(
+            ast.ImportFrom(module="typing", names=[ast.alias("TYPE_CHECKING")], level=0)
+        )
+        method_imports.append(
+            ast.If(test=ast.Name(id="TYPE_CHECKING", ctx=ast.Load()), body=type_checking_imports, orelse=[])
+        )
     return (
         method_source,
         method_imports,
@@ -2363,6 +2390,51 @@ def _get_method_source(
         default_overrides,
         None,
     )
+
+
+def _is_type_checking_block(node):
+    """True for ``if TYPE_CHECKING:`` holding only imports (no else)."""
+    test = node.test if isinstance(node, ast.If) else None
+    return (
+        isinstance(node, ast.If)
+        and not node.orelse
+        and (
+            isinstance(test, ast.Name)
+            and test.id == "TYPE_CHECKING"
+            or isinstance(test, ast.Attribute)
+            and test.attr == "TYPE_CHECKING"
+        )
+        and all(isinstance(item, (ast.Import, ast.ImportFrom)) for item in node.body)
+    )
+
+
+def _merge_type_checking_blocks(imports):
+    """One ``if TYPE_CHECKING:`` block for the import nodes of a class module.
+
+    Parameters
+    ----------
+    imports : list
+        Import nodes of the class module (ast.Import, ast.ImportFrom, ast.If)
+
+    Returns
+    -------
+    imports : list
+        The same imports, the ``if TYPE_CHECKING:`` blocks merged into one
+        (after the other imports, duplicates removed)
+    """
+    blocks = [node for node in imports if _is_type_checking_block(node)]
+    if not blocks:
+        return imports
+    seen = {}
+    for block in blocks:
+        for statement in block.body:
+            seen.setdefault(ast.unparse(statement), statement)
+    merged = ast.If(
+        test=ast.Name(id="TYPE_CHECKING", ctx=ast.Load()),
+        body=[seen[key] for key in sorted(seen)],
+        orelse=[],
+    )
+    return [node for node in imports if not _is_type_checking_block(node)] + [merged]
 
 
 def _find_repeated_method_assignments(path_to_gen, class_pack, class_name, methods):
@@ -2489,6 +2561,7 @@ def _prepare_class_methods(
     class_error_definitions = {}
     class_method_definitions = {}
     class_method_imports = []
+    type_checking_blocks = []
     method_default_overrides = {}
     repeated_assignments = _find_repeated_method_assignments(
         path_to_gen, class_pack, class_name, methods
@@ -2537,6 +2610,13 @@ def _prepare_class_methods(
             fallback_reasons[meth] = reason
             continue
 
+        # Imports for the type hints: one block for the class, added at the end
+        type_checking_blocks.extend(
+            node for node in method_imports if _is_type_checking_block(node)
+        )
+        method_imports = [
+            node for node in method_imports if not _is_type_checking_block(node)
+        ]
         filtered_method_imports = []
         for import_node in method_imports:
             if not isinstance(import_node, ast.ImportFrom):
@@ -2916,7 +2996,8 @@ def _prepare_class_methods(
             prepared[name] = _replace_empty_containers(method_source, blocked_containers)
     return (
         prepared,
-        [node for node in imports if node.names],
+        [node for node in imports if node.names]
+        + _merge_type_checking_blocks(type_checking_blocks),
         fallback_reasons,
         assignments,
         method_default_overrides,
@@ -6034,7 +6115,10 @@ def _generate_dataclass_class(
         + class_dict["path"][class_dict["path"].find("Generator") :]
         + "\n",
         f'"""Generated experimental {kind}; do not edit by hand."""\n\n',
-        "\n".join(sorted(imports)) + "\n\n",
+        "\n".join(sorted(line for line in imports if not line.startswith("if ")))
+        + "\n\n"
+        # The imports for the type hints only, after the other imports
+        + "".join(line + "\n\n" for line in sorted(imports) if line.startswith("if ")),
         "".join(
             f"{name} = {value!r}\n"
             for name, value in CLASS_MODULE_CONSTANTS.get(class_name, {}).items()
