@@ -52,7 +52,7 @@ class ImportMeshMat(Import):
         # Get mesh data (nodes and elements)
         file_extension = os.path.splitext(self.file_path)[1]
         if file_extension == ".unv":
-            nodes, elements = ImportMeshUnv(self.file_path).get_data()
+            nodes, elements = ImportMeshUnv(file_path=self.file_path).get_data()
         else:
             raise Exception(f"{file_extension} files are not supported")
 

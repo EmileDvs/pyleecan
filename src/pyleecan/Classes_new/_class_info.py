@@ -6,9 +6,8 @@ this package.
 
 from ..classes_common.class_info import ClassInfo as _ClassInfo
 from ._pyleecan_class import PyleecanClass
-from ._pyleecan_model import PyleecanModel
 
-PYLEECAN_BASES = (PyleecanClass, PyleecanModel)
+PYLEECAN_BASES = (PyleecanClass,)
 """Bases of the classes of this package"""
 
 

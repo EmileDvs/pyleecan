@@ -62,6 +62,29 @@ SIMULATION_SUBPACKAGES = {
 with their child classes"""
 
 
+BACKENDS = {"dataclass": "Classes_new", "pydantic": "Classes_pydantic"}
+"""Class implementation -> class package written by the generator
+
+- "dataclass": stdlib dataclasses (+ dacite), base ``PyleecanClass``
+  (``Classes_new/_pyleecan_class.py``)
+- "pydantic": pydantic models, base ``PyleecanModel``
+  (``Classes_pydantic/_pyleecan_model.py``)
+
+The generation pipeline works on ``Classes_new`` module names; the last pass
+(relocate_class_imports) moves the imports to the package of the backend.
+"""
+
+VENDORED_SOURCE_PACKAGE = "Classes_new"
+"""Package holding the vendored code (_smoot, _swat_em) for every backend"""
+
+
+def backend_package(backend):
+    """Class package of a backend ("dataclass" -> "Classes_new")."""
+    if backend not in BACKENDS:
+        raise ValueError(f"backend must be one of {sorted(BACKENDS)}: {backend!r}")
+    return BACKENDS[backend]
+
+
 COMMON_PACKAGE = "classes_common"
 """Package of the support shared by the class implementations"""
 
@@ -156,7 +179,9 @@ def _generated_module_paths(class_dir):
 generated_module_paths.cache_clear = _generated_module_paths.cache_clear
 
 
-def relocate_class_imports(source, soft_name, class_package, module_paths):
+def relocate_class_imports(
+    source, soft_name, class_package, module_paths, target_package=None
+):
     """Point the absolute imports of flat class modules to their sub-package.
 
     ``from pyleecan.Classes_new.arc_1 import Arc1`` becomes
@@ -166,8 +191,12 @@ def relocate_class_imports(source, soft_name, class_package, module_paths):
     COMMON_PACKAGE (``pyleecan.classes_common.errors``); the other support
     modules (``_import``, ``_pyleecan_class``...) and vendored packages are kept.
     Relative imports are not modified: apply the absolute style first.
+    With target_package (e.g. "Classes_pydantic"), the class modules and the
+    other support modules move to that package; vendored code stays in
+    class_package.
     """
     prefix = f"{soft_name}.{class_package}."
+    target_prefix = f"{soft_name}.{target_package or class_package}."
 
     def relocate(module):
         if not module.startswith(prefix):
@@ -176,9 +205,11 @@ def relocate_class_imports(source, soft_name, class_package, module_paths):
         rest = "." + rest if rest else ""
         if first in SHARED_SUPPORT_MODULES:
             return f"{soft_name}.{COMMON_PACKAGE}.{SHARED_SUPPORT_MODULES[first]}{rest}"
-        if first not in module_paths:
+        if first in module_paths:
+            return target_prefix + module_paths[first] + rest
+        if first in VENDORED_CLASS_PACKAGES or target_prefix == prefix:
             return None
-        return prefix + module_paths[first] + rest
+        return target_prefix + first + rest  # other support modules (_import...)
 
     encoded = source.encode("utf-8")
     offsets = [0]
@@ -2882,8 +2913,9 @@ def _keyword_geometry_calls(source, soft_name, gen_dict=None):
     """Preserve legacy geometry constructor arguments in generated methods.
 
     Positional arguments become keyword arguments (in the legacy constructor
-    order) for Segment, Arc1, Arc2, Arc3 and, given gen_dict, for every class
-    generated as a pydantic model (which only accepts keyword arguments).
+    order) for Segment, Arc1, Arc2, Arc3 and, given gen_dict, for every
+    generated class: pydantic models only accept keyword arguments, and both
+    implementations share the same method code.
     """
     arguments = {
         "Segment": ("begin", "end", "prop_dict"),
@@ -2893,11 +2925,10 @@ def _keyword_geometry_calls(source, soft_name, gen_dict=None):
     }
     if gen_dict is not None:
         for name in gen_dict:
-            if gen_dict[name]["package"] in PYDANTIC_PACKAGES:
-                arguments.setdefault(
-                    NORMALIZATION_CLASS_NAMES.get(name, name),
-                    _legacy_init_arguments(name, gen_dict),
-                )
+            arguments.setdefault(
+                NORMALIZATION_CLASS_NAMES.get(name, name),
+                _legacy_init_arguments(name, gen_dict),
+            )
 
     def imported_geometry(node, alias):
         module = class_module_name(alias.name) if alias.name in arguments else None
@@ -4960,8 +4991,9 @@ def generate_class(
     class_import_graph=None,
     output_name=None,
     shared_error_definitions=None,
+    backend="dataclass",
 ):
-    """Generate a dataclass using the ``Classes_new`` inheritance hierarchy.
+    """Generate a class using the ``Classes_new`` inheritance hierarchy.
 
     Configured module constants remain importable from the generated module;
     CSV and class-body constants remain class attributes. Static imports of
@@ -5049,6 +5081,7 @@ def generate_class(
         method_default_overrides,
         class_error_definitions,
         shared_error_definitions,
+        backend,
     )
 
 
@@ -5221,6 +5254,15 @@ def _property_metadata(prop):
     return metadata
 
 
+def _with_field_alias(default, field_name, alias):
+    """Add an alias to a field default source ("Field(...)" or a plain value)."""
+    prefix = field_name + "("
+    if default.startswith(prefix) and default.endswith(")"):
+        arguments = default[len(prefix) : -1]
+        return f"{prefix}alias={alias!r}" + (f", {arguments}" if arguments else "") + ")"
+    return f"{prefix}default={default}, alias={alias!r})"
+
+
 def _field_default(prop, field_name="field", gen_dict=None, pydantic=False):
     """Format a field default, using field() only when it is required.
 
@@ -5319,12 +5361,6 @@ def _field_default(prop, field_name="field", gen_dict=None, pydantic=False):
     return f"{field_name}({field_args})"
 
 
-PYDANTIC_PACKAGES = frozenset({"Geometry"})
-"""Legacy packages whose classes are pydantic models (Classes_new/_pyleecan_model.py)
-
-The classes of the other packages are stdlib dataclasses (_pyleecan_class.py).
-A package is switched as a whole: a class and its mother have the same base.
-"""
 
 PYDANTIC_FIELD_TYPES = {"complex": "Complex", "np.ndarray": "NDArray"}
 """Annotations replaced by the pydantic field types of _pyleecan_model.py"""
@@ -5342,16 +5378,6 @@ def _pydantic_annotation(annotation):
     return annotation, names
 
 
-def _is_pydantic_class(class_name, gen_dict):
-    """True if the class is generated as a pydantic model (PYDANTIC_PACKAGES)."""
-    is_pydantic = gen_dict[class_name]["package"] in PYDANTIC_PACKAGES
-    mother = gen_dict[class_name]["mother"]
-    if mother in gen_dict and _is_pydantic_class(mother, gen_dict) != is_pydantic:
-        raise ValueError(
-            f"{class_name} and its mother {mother} must have the same base "
-            "(pydantic model or dataclass): check PYDANTIC_PACKAGES"
-        )
-    return is_pydantic
 
 
 def _use_static_default_factories(source, soft_name, gen_dict, class_name):
@@ -5623,8 +5649,9 @@ def _generate_dataclass_class(
     method_default_overrides,
     class_error_definitions,
     shared_error_definitions,
+    backend="dataclass",
 ):
-    """Write an experimental dataclass using the prepared class methods."""
+    """Write a class of the backend using the prepared class methods."""
     constant_references = {}
     redirected_imports = []
     for node in method_imports:
@@ -5673,8 +5700,8 @@ def _generate_dataclass_class(
     generated_name = NORMALIZATION_CLASS_NAMES.get(class_name, class_name)
     output_module_name = output_name or class_module_name(class_name)
     class_pack = class_dict["package"]
-    # Pydantic model (PYDANTIC_PACKAGES) or stdlib dataclass
-    is_pydantic = _is_pydantic_class(class_name, gen_dict)
+    # Pydantic model or stdlib dataclass (backend)
+    is_pydantic = backend_package(backend) == BACKENDS["pydantic"]
 
     subpackage = class_subpackage(class_name, gen_dict)
     class_path = join(path_to_gen, subpackage, output_module_name + ".py")
@@ -5865,20 +5892,26 @@ def _generate_dataclass_class(
     )
 
     fields_source = []  # (name, source) of the dataclass fields
+    legacy_names = []  # (legacy name, field name) of the renamed pydantic fields
     for prop in class_dict["properties"]:
         annotation, _ = _field_type(
             prop["type"], prop["value"], gen_dict, soft_name, class_name, prop["name"]
         )
         if is_pydantic:
             annotation = _pydantic_annotation(annotation)[0]
-        source = (
-            f"{TAB}{prop['name']}: {annotation} = "
-            f"{_field_default(prop, field_name, gen_dict, pydantic=is_pydantic)}\n"
-        )
+        name = prop["name"]
+        default = _field_default(prop, field_name, gen_dict, pydantic=is_pydantic)
+        if is_pydantic and name.startswith("_"):
+            # A pydantic field cannot start with "_": public field name, with the
+            # legacy name as alias (loading, serialization) and as a property
+            name = name.lstrip("_")
+            default = _with_field_alias(default, field_name, prop["name"])
+            legacy_names.append((prop["name"], name))
+        source = f"{TAB}{name}: {annotation} = {default}\n"
         description = _property_description(prop)
         if description:
             source += f"{TAB}{_attribute_docstring(description)}\n"
-        fields_source.append((prop["name"], source))
+        fields_source.append((name, source))
 
     attribute_groups = [
         [source for name, source in class_level if not name.startswith("_")],
@@ -5891,6 +5924,16 @@ def _generate_dataclass_class(
         ],
     ]
     body = ["\n".join("".join(group) for group in attribute_groups if group)]
+    for legacy_name, name in legacy_names:
+        body.append(
+            f"\n{TAB}@property\n"
+            f"{TAB}def {legacy_name}(self):\n"
+            f'{TAB}{TAB}"""Legacy name of {name}"""\n'
+            f"{TAB}{TAB}return self.{name}\n"
+            f"\n{TAB}@{legacy_name}.setter\n"
+            f"{TAB}def {legacy_name}(self, value):\n"
+            f"{TAB}{TAB}self.{name} = value\n"
+        )
 
     for method in class_dict["methods"]:
         if method_sources[method] is None:
@@ -5994,11 +6037,12 @@ def _generate_dataclass_class(
     # The passes above work on flat module names: move the class imports to
     # their sub-package last, then apply the import style of the sub-package
     source = _apply_import_style(source, soft_name, "absolute", "Classes_new")
+    package = backend_package(backend)
     source = relocate_class_imports(
-        source, soft_name, "Classes_new", class_module_paths(gen_dict)
+        source, soft_name, "Classes_new", class_module_paths(gen_dict), package
     )
     source = _apply_import_style(
-        source, soft_name, import_style, f"Classes_new.{subpackage}"
+        source, soft_name, import_style, f"{package}.{subpackage}"
     )
     source = _sort_imports_with_ruff(source, class_path)
     source = _format_source_with_ruff(source, class_path)

@@ -1,8 +1,7 @@
 """Base of the Pyleecan classes built on pydantic ``BaseModel`` (hand-written).
 
-The classes of the legacy packages listed in the class generator
-(``PYDANTIC_PACKAGES``) derive from ``PyleecanModel``; the other classes are
-stdlib dataclasses deriving from ``PyleecanClass`` (``_pyleecan_class.py``).
+Every class of ``Classes_pydantic`` derives from ``PyleecanModel`` (backend
+"pydantic" of the class generator).
 
 Compared to ``Classes_new/_pyleecan_class.py`` (stdlib dataclass + dacite):
 
@@ -119,6 +118,11 @@ class PyleecanModel(BaseModel, PyleecanBase):
         use_attribute_docstrings=True,  # Attribute docstring -> field description
         revalidate_instances="never",  # Keep the given (sub)class objects
         polymorphic_serialization=True,  # Dump subclass objects with their fields
+        # A legacy field name starting with "_" is the alias of the field (the
+        # generator removes the "_"): both names are accepted, the alias is dumped
+        validate_by_name=True,
+        validate_by_alias=True,
+        serialize_by_alias=True,
     )
 
     _parent: Any = PrivateAttr(default=None)
@@ -191,9 +195,11 @@ class PyleecanModel(BaseModel, PyleecanBase):
         """
         if isinstance(data, dict) and "__class__" in data:
             target = _import_model(data["__class__"])
-            data = {
-                key: value for key, value in data.items() if key in target.model_fields
-            }
+            keys = set(target.model_fields)
+            keys.update(  # Legacy names of the renamed fields (e.g. "_statements")
+                info.alias for info in target.model_fields.values() if info.alias
+            )
+            data = {key: value for key, value in data.items() if key in keys}
             if target is not cls:
                 if not issubclass(target, cls):
                     raise PydanticCustomError(
@@ -261,10 +267,11 @@ class PyleecanModel(BaseModel, PyleecanBase):
     __hash__ = None
 
     def _assert_parent_type(self, parent):
-        """Check the parent against the generated rules (_parent_types.py)."""
-        from ._pyleecan_class import PyleecanClass
+        """Check the parent against the generated rules (classes_common)."""
+        from ..classes_common.parents import assert_parent_type
+        from ._import import LOOKUP
 
-        PyleecanClass._assert_parent_type(self, parent)
+        assert_parent_type(self, parent, LOOKUP)
 
     def get_logger(self):
         return get_logger(self)

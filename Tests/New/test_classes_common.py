@@ -13,8 +13,9 @@ from pyleecan.classes_common.class_lookup import (
 from pyleecan.classes_common.errors import CheckTypeError, InitUnKnowClassError
 from pyleecan.Classes_new import _import
 from pyleecan.Classes_new._class_info import PYLEECAN_BASES, ClassInfo
-from pyleecan.Classes_new._pyleecan_class import PyleecanClass
-from pyleecan.Classes_new._pyleecan_model import PyleecanModel
+from pyleecan.Classes_pydantic import _import as _import_pydantic
+from pyleecan.Classes_pydantic._class_info import PYLEECAN_BASES as PYDANTIC_BASES
+from pyleecan.Classes_pydantic._class_info import ClassInfo as PydanticClassInfo
 from pyleecan.definitions import MAIN_DIR
 
 CLASS_DIR = Path(MAIN_DIR) / "Classes_new"
@@ -37,19 +38,30 @@ def test_class_module_name(class_name, module_name):
 
 
 def test_bases_share_the_marker():
-    for base in PYLEECAN_BASES:
+    for base in PYLEECAN_BASES + PYDANTIC_BASES:
         assert issubclass(base, PyleecanBase)
         assert not is_generated_class(base)
 
 
 def test_is_generated_class():
     from pyleecan.Classes_new.geometry.segment import Segment
-    from pyleecan.Classes_new.machine.lam_slot_wind import LamSlotWind
+    from pyleecan.Classes_pydantic.geometry.segment import Segment as PydanticSegment
 
-    assert is_generated_class(Segment)  # pydantic model (WiP)
-    assert is_generated_class(LamSlotWind)  # dataclass
+    assert is_generated_class(Segment)  # dataclass
+    assert is_generated_class(PydanticSegment)  # pydantic model
     assert not is_generated_class(Segment())
     assert not is_generated_class(int)
+
+
+@pytest.mark.parametrize("backend", ["dataclass", "pydantic"])
+def test_backend_bases(backend):
+    """Each package holds only classes of its own base"""
+    lookup, bases = {
+        "dataclass": (_import.LOOKUP, PYLEECAN_BASES),
+        "pydantic": (_import_pydantic.LOOKUP, PYDANTIC_BASES),
+    }[backend]
+    for name in ("Segment", "SurfLine", "LamSlotWind", "Simu1", "MagFEMM"):
+        assert issubclass(lookup.import_class(name), bases), name
 
 
 def test_lookup_bound_to_package():
@@ -81,10 +93,15 @@ def test_lookup_rejects_duplicate_module(tmp_path):
         find_module_paths(tmp_path)
 
 
-def test_class_info_bound_to_package():
-    class_dict = ClassInfo().get_dict()
-    assert len(class_dict) == len(find_module_paths(CLASS_DIR))
-    assert class_dict["LamSlotWind"]["module"].startswith("pyleecan.Classes_new.")
+@pytest.mark.parametrize("backend", ["dataclass", "pydantic"])
+def test_class_info_bound_to_package(backend):
+    info_class, package = {
+        "dataclass": (ClassInfo, "Classes_new"),
+        "pydantic": (PydanticClassInfo, "Classes_pydantic"),
+    }[backend]
+    class_dict = info_class().get_dict()
+    assert len(class_dict) == len(find_module_paths(Path(MAIN_DIR) / package))
+    assert class_dict["LamSlotWind"]["module"].startswith(f"pyleecan.{package}.")
     assert class_dict["LamSlotWind"]["mother"] == "LamSlot"
     assert "LamSlotWind" in class_dict["Lamination"]["daughters"]
 

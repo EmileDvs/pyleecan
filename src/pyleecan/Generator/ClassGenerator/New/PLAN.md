@@ -169,8 +169,8 @@ Methods receive their context explicitly instead, for example
 
 ### Step 0: separate the implementations in the generator
 
-- [ ] Replace the per-package pydantic switch with a `backend="dataclass"|"pydantic"`
-      option that also selects the output folder.
+- [x] Replace the per-package pydantic switch with a `backend="dataclass"|"pydantic"`
+      option that also selects the output folder (`class_generator.BACKENDS`).
 - [x] Write the classes into their sub-package (see Class sub-packages): legacy
       package mapped to its lowercase name, plus the moved physics classes.
 - [x] Runtime class lookup by name (`import_class`, for serialized `__class__`)
@@ -179,10 +179,22 @@ Methods receive their context explicitly instead, for example
 - [x] Regenerate `Classes_new` in the new sub-packages (commit 4e9e7fac4;
       `Tests/New/Classes` identical to the baseline; unit tests in
       `Tests/New/test_class_subpackages.py`).
-- [ ] Regenerate `Classes_new` entirely as dataclasses (Geometry included).
-- [ ] Generate `Classes_pydantic`. It imports the vendored code (`_smoot`,
+- [x] Regenerate `Classes_new` entirely as dataclasses (Geometry included).
+- [x] Generate `Classes_pydantic`. It imports the vendored code (`_smoot`,
       `_swat_em`) from `Classes_new` instead of generating a third copy.
-- [ ] Declare `pydantic>=2.12` (and `dacite`) in `pyproject.toml` / `uv.lock`.
+      All 281 classes import, build a default object and round-trip through
+      `as_dict`/`from_dict` (`Tests/New/test_class_backends.py`).
+- [x] Declare `pydantic>=2.12` in `pyproject.toml` / `uv.lock` (`dacite` was
+      already declared).
+- [x] Constructor calls of every generated class use keyword arguments, in both
+      backends (pydantic models are keyword-only; shared method code).
+- [x] Pydantic fields cannot start with "_": such a legacy property (`Section._statements`,
+      `_comments`) becomes a field without the "_", with the legacy name as alias
+      (files) and as a property (methods).
+
+Note: `Classes_pydantic` still uses `Functions_new`, whose functions build
+`Classes_new` objects; it becomes fully consistent with `Functions_pydantic`
+(Step 3).
 
 ### Step 1: split the bases
 

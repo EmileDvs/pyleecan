@@ -1,4 +1,4 @@
-"""Pydantic base of the classes of the PYDANTIC_PACKAGES (Geometry)."""
+"""Pydantic base of the classes of Classes_pydantic (PyleecanModel)."""
 
 import json
 from unittest.mock import MagicMock
@@ -7,14 +7,14 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from pyleecan.Classes_new._pyleecan_model import PyleecanModel
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
-from pyleecan.Classes_new.geometry.polar_arc import PolarArc
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.surf_line import SurfLine
-from pyleecan.Classes_new.geometry.surf_ring import SurfRing
-from pyleecan.Classes_new.geometry.trapeze import Trapeze
-from pyleecan.Classes_new.slot.slot_ud import SlotUD
+from pyleecan.Classes_pydantic._pyleecan_model import PyleecanModel
+from pyleecan.Classes_pydantic.geometry.arc_1 import Arc1
+from pyleecan.Classes_pydantic.geometry.polar_arc import PolarArc
+from pyleecan.Classes_pydantic.geometry.segment import Segment
+from pyleecan.Classes_pydantic.geometry.surf_line import SurfLine
+from pyleecan.Classes_pydantic.geometry.surf_ring import SurfRing
+from pyleecan.Classes_pydantic.geometry.trapeze import Trapeze
+from pyleecan.Classes_pydantic.slot.slot_ud import SlotUD
 
 
 def test_geometry_classes_are_pydantic_models():
@@ -48,12 +48,12 @@ def test_parent_links():
     lines = [Segment(begin=0, end=1), Segment(begin=1, end=1j)]
     surface = SurfLine(line_list=lines)
     assert all(line.parent is surface for line in surface.line_list)
-    # A dataclass holding pydantic objects
+    # A pydantic model of another sub-package holding geometry objects
     slot = SlotUD(line_list=[Segment(begin=0, end=1)])
     assert slot.line_list[0].parent is slot
 
 
-def test_round_trip_through_a_dataclass():
+def test_round_trip_through_a_container():
     slot = SlotUD(line_list=[Segment(begin=0, end=1j), Arc1(begin=1j, end=1, radius=1)])
     data = json.loads(json.dumps(slot.as_dict()))
     assert data["line_list"][0] == {

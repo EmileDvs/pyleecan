@@ -1,17 +1,18 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/PolarArc.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/PolarArc.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Polygon
-from pydantic import Field
 
 from .arc_1 import Arc1
 from .segment import Segment
 from .surface import Surface
 
 
+@dataclass(eq=False)
 class PolarArc(Surface):
     """PolarArc defined by  the center of object(point_ref), the label, the angle and the height
 
@@ -25,9 +26,9 @@ class PolarArc(Surface):
         Unit: m; Default: 1; Minimum: 0
     """
 
-    angle: float = Field(default=1, ge=0)
+    angle: float = field(default=1, metadata={"min": 0})
     """Polar angle"""
-    height: float = Field(default=1, ge=0, json_schema_extra={"unit": "m"})
+    height: float = field(default=1, metadata={"unit": "m", "min": 0})
     """The Heigth of the PolarAngle"""
 
     _package: ClassVar[str] = "Geometry"

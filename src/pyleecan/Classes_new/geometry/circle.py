@@ -1,17 +1,17 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Circle.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Circle.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
 import numpy as np
 from matplotlib.patches import Circle
-from pydantic import Field
 
-from .._pyleecan_model import Complex
 from .arc_3 import Arc3
 from .surface import Surface
 
 
+@dataclass(eq=False)
 class Circle(Surface):
     """Circle define by  the center of circle(point_ref), the label and the radius
 
@@ -28,11 +28,11 @@ class Circle(Surface):
         Default: {}
     """
 
-    radius: float = Field(default=1, ge=0)
+    radius: float = field(default=1, metadata={"min": 0})
     """Radius of the circle"""
-    center: Complex = 0
+    center: complex = 0
     """center of the Circle"""
-    prop_dict: dict[str, Any] | None = Field(default_factory=dict)
+    prop_dict: dict[str, Any] | None = field(default_factory=dict)
     """Property dict to apply on the lines"""
 
     _package: ClassVar[str] = "Geometry"

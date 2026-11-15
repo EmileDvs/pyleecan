@@ -1,16 +1,17 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Trapeze.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Trapeze.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Polygon
-from pydantic import Field
 
 from .segment import Segment
 from .surface import Surface
 
 
+@dataclass(eq=False)
 class Trapeze(Surface):
     """Trapeze defined by  the center of symmetry(point_ref), the label, the polar angle, the height and the big and small weight
 
@@ -27,11 +28,11 @@ class Trapeze(Surface):
         Unit: m; Default: 1; Minimum: 0
     """
 
-    height: float = Field(default=1, ge=0, json_schema_extra={"unit": "m"})
+    height: float = field(default=1, metadata={"unit": "m", "min": 0})
     """the height of the Trapeze"""
-    W2: float = Field(default=1, ge=0, json_schema_extra={"unit": "m"})
+    W2: float = field(default=1, metadata={"unit": "m", "min": 0})
     """the big base of Trapeze"""
-    W1: float = Field(default=1, ge=0, json_schema_extra={"unit": "m"})
+    W1: float = field(default=1, metadata={"unit": "m", "min": 0})
     """the small base of the Trapeze"""
 
     _package: ClassVar[str] = "Geometry"

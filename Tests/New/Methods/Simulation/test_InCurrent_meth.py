@@ -30,10 +30,10 @@ from Tests.New._test_paths import save_plot_path as save_path
 Toyota_Prius = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))
 InputCurrent_Error_test = list()
 time_wrong = ImportMatrixVal(value=zeros((10, 2)))
-time = ImportGenVectLin(0, 10, 100)
+time = ImportGenVectLin(start=0, stop=10, num=100)
 
 angle_wrong = ImportMatrixVal(value=zeros((10, 4)))
-angle = ImportGenVectLin(0, 2 * pi, 1024)
+angle = ImportGenVectLin(start=0, stop=2 * pi, num=1024)
 
 I_1 = ImportMatrixVal(value=zeros((100, 3)))
 I_2 = ImportMatrixVal(value=zeros((100, 2)))

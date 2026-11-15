@@ -1,0 +1,141 @@
+# Experimental pydantic model generated from Generator/ClassesRef/Machine/BoreLSRPM.csv
+"""Generated experimental pydantic model; do not edit by hand."""
+
+from typing import ClassVar
+
+import numpy as np
+from pydantic import Field
+
+from ...classes_common.errors import ParentMissingError
+from ..geometry.arc_1 import Arc1
+from ..geometry.segment import Segment
+from .bore import Bore
+
+
+class BoreLSRPM(Bore):
+    """Class for Bore LSRPM
+
+    Attributes
+    ----------
+    N : int
+        Number of flower arc
+        Default: 8; Minimum: 0
+    Rarc : float
+        Radius of the flower arc
+        Unit: m; Default: 0.0375; Minimum: 0
+    W1 : float
+        Width of segement
+        Unit: m; Default: 0.0035
+    """
+
+    N: int = Field(default=8, ge=0)
+    """Number of flower arc"""
+    Rarc: float = Field(default=0.0375, ge=0, json_schema_extra={"unit": "m"})
+    """Radius of the flower arc"""
+    W1: float = Field(default=0.0035, json_schema_extra={"unit": "m"})
+    """Width of segement"""
+
+    _package: ClassVar[str] = "Machine"
+    """Name of the package of the legacy class module"""
+
+    # Inlined from Methods.Machine.BoreLSRPM.comp_periodicity_spatial
+    def comp_periodicity_spatial(self):
+        """Compute the periodicity factor of the Bore
+
+        Parameters
+        ----------
+        self : BoreLSRPM
+            A BoreLSRPM object
+
+        Returns
+        -------
+        per_a : int
+            Number of spatial periodicities of the bore
+        is_antiper_a : bool
+            True if an spatial anti-periodicity is possible after the periodicities
+        """
+
+        return self.N, False
+
+    # Inlined from Methods.Machine.BoreLSRPM.get_bore_line
+    def get_bore_line(self, prop_dict=None):
+        """Return the bore line description
+
+        Parameters
+        ----------
+        self : BoreLSRPM
+            A BoreLSRPM object
+        prop_dict : dict
+            Property dictionary to apply on the lines
+
+        Returns
+        -------
+        bore_list : list
+            List of bore lines
+        """
+
+        if self.parent is not None:
+            if self.is_yoke():
+                R = self.parent.get_Ryoke()
+            else:
+                R = self.parent.get_Rbo()
+        else:
+            raise ParentMissingError(
+                "Error: The Bore object is not inside a Lamination"
+            )
+
+        # Compute the shape
+
+        alpha1 = np.pi / self.N
+
+        # Z1
+        Z1 = R * np.exp(-1j * alpha1)
+
+        # ZC1
+        ZC1 = (R - self.Rarc) * np.exp(-1j * alpha1)
+        XC1 = ZC1.real
+        YC1 = ZC1.imag
+
+        # Z2
+        X2 = np.sqrt(self.Rarc**2 - (self.W1 + YC1) ** 2) + XC1
+        Y2 = -self.W1
+        Z2 = X2 + 1j * Y2
+
+        Z3 = Z2.conjugate()
+        Z4 = Z1.conjugate()
+
+        # Create the lines
+        bore_list = []
+        for ii in range(self.N):
+            bore_list.append(
+                Arc1(
+                    begin=Z1
+                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    end=Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    radius=self.Rarc,
+                    is_trigo_direction=True,
+                    prop_dict=prop_dict,
+                )
+            )
+
+            bore_list.append(
+                Segment(
+                    begin=Z2
+                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    end=Z3 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    prop_dict=prop_dict,
+                )
+            )
+
+            bore_list.append(
+                Arc1(
+                    begin=Z3
+                    * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    end=Z4 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                    radius=self.Rarc,
+                    is_trigo_direction=True,
+                    prop_dict=prop_dict,
+                )
+            )
+
+        return bore_list

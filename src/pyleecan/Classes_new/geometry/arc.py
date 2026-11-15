@@ -1,6 +1,7 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Arc.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Arc.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass
 from typing import ClassVar
 
 import numpy as np
@@ -13,6 +14,7 @@ from .line import Line
 from .segment import Segment
 
 
+@dataclass(eq=False)
 class Arc(Line):
     """Abstract class for arc
 

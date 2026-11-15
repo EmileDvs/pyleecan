@@ -235,7 +235,7 @@ def test_multi_multi():
     varload.set_OP_array(OP_matrix, "N0", "Id", "Iq")
 
     # Post-process
-    Post1 = PostFunction(join(dirname(__file__), "plot_save.py"))
+    Post1 = PostFunction(run=join(dirname(__file__), "plot_save.py"))
     simu.postproc_list = [Post1]  # For all simulation save a png
     # Plot Max(f6) = f(W0)
     Post2 = PostPlot(
@@ -256,7 +256,7 @@ def test_multi_multi():
         },
     )
     # Generate gif once all the simulation are done
-    Post4 = PostFunction(join(dirname(__file__), "make_gif.py"))
+    Post4 = PostFunction(run=join(dirname(__file__), "make_gif.py"))
     simu.var_simu.postproc_list = [Post2, Post3, Post4]
     # Execute every simulation
     results = simu.run()

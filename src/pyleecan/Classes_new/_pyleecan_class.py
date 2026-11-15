@@ -3,7 +3,6 @@
 from copy import deepcopy
 from dataclasses import dataclass, field, fields
 from functools import cache
-from importlib import import_module
 from pathlib import Path
 from sys import getsizeof
 from typing import Any, get_args, get_origin, get_type_hints
@@ -15,7 +14,7 @@ from pyleecan.Functions.get_logger import get_logger
 from pyleecan.Functions.save import save
 
 from ..classes_common.base import PyleecanBase
-from ..classes_common.parent_types import PARENT_TYPES
+from ..classes_common.parents import assert_parent_type
 
 
 @cache
@@ -26,14 +25,6 @@ def _complex_field_names(cls):
         for name, hint in get_type_hints(cls).items()
         if hint is complex or complex in get_args(hint)
     )
-
-
-@cache
-def _pyleecan_bases():
-    """Bases of the generated classes: dataclasses and pydantic models."""
-    from ._pyleecan_model import PyleecanModel
-
-    return (PyleecanClass, PyleecanModel)
 
 
 def _to_complex(value):
@@ -127,7 +118,7 @@ class PyleecanClass(PyleecanBase):
     @staticmethod
     def _construct_from_dict(target, data):
         """Build a generated class, or another class (SciDataTool) by init_dict."""
-        if issubclass(target, _pyleecan_bases()):
+        if issubclass(target, PyleecanBase):
             return target.from_dict(data)
         return target(init_dict=data)
 
@@ -138,7 +129,7 @@ class PyleecanClass(PyleecanBase):
         candidates = tuple(
             candidate
             for candidate in cls._walk_types(annotation)
-            if isinstance(candidate, type) and issubclass(candidate, _pyleecan_bases())
+            if isinstance(candidate, type) and issubclass(candidate, PyleecanBase)
         )
         if isinstance(value, str) and candidates and base_path is not None:
             path = Path(base_path) / value
@@ -194,29 +185,9 @@ class PyleecanClass(PyleecanBase):
 
     def _assert_parent_type(self, parent):
         """Validate a parent against the generated rules inherited by this class."""
-        if parent is None:
-            return
-        from ._import import module_path
+        from ._import import LOOKUP
 
-        for cls in type(self).__mro__:
-            module_prefix = __package__ + "."
-            if not cls.__module__.startswith(module_prefix):
-                continue
-            # The rules use the class module names (without sub-package)
-            key = (cls.__module__.rpartition(".")[2], cls.__name__)
-            if key in PARENT_TYPES:
-                parent_names = PARENT_TYPES[key]
-                parent_types = tuple(
-                    getattr(import_module("." + module_path(module), __package__), name)
-                    for module, name in parent_names
-                )
-                if not isinstance(parent, parent_types):
-                    expected = " or ".join(name for _, name in parent_names)
-                    raise TypeError(
-                        f"{cls.__name__} parent must be an instance of {expected}, "
-                        f"or None; got {type(parent).__name__}"
-                    )
-                return
+        assert_parent_type(self, parent, LOOKUP)
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """Serialize dataclass fields using Pyleecan's object dictionary format."""

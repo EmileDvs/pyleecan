@@ -47,7 +47,7 @@ class _ClassNamespace(Mapping):
 CLASSES = _ClassNamespace()
 
 # Errors raised by an invalid value: legacy check errors (dataclasses) or
-# pydantic ValidationError (classes of the PYDANTIC_PACKAGES)
+# pydantic ValidationError (Classes_pydantic, once the tests take --backend)
 TYPE_ERRORS = (CheckTypeError, ValidationError)
 MIN_ERRORS = (CheckMinError, ValidationError)
 MAX_ERRORS = (CheckMaxError, ValidationError)

@@ -380,8 +380,10 @@ def _class_fields(cls):
 def _prop_info(cls, field: _FieldRecord, desc=""):
     annotation = _resolve_annotation(cls, field.annotation)
     metadata = field.metadata
+    # A pydantic field renamed by the generator keeps its legacy name as alias
+    legacy_name = getattr(field.field, "alias", None)
     return {
-        "name": field.name,
+        "name": legacy_name or field.name,
         "type": _type_name(annotation),
         "annotation": annotation,
         "desc": desc,

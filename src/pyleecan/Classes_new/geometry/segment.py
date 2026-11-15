@@ -1,6 +1,7 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Segment.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Segment.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass
 from typing import ClassVar
 
 import numpy as np
@@ -9,10 +10,10 @@ from ...Functions_new.Geometry.inter_line_circle import inter_line_circle
 from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import TEXT_BOX
-from .._pyleecan_model import Complex
 from .line import Line
 
 
+@dataclass(eq=False)
 class Segment(Line):
     """A segment between two points
 
@@ -26,9 +27,9 @@ class Segment(Line):
         Default: 0
     """
 
-    begin: Complex = 0
+    begin: complex = 0
     """begin point of the line"""
-    end: Complex = 0
+    end: complex = 0
     """end point of the line"""
 
     _package: ClassVar[str] = "Geometry"

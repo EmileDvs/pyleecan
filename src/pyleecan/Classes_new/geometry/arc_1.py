@@ -1,14 +1,15 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Arc1.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Arc1.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass
 from typing import ClassVar
 
 import numpy as np
 
-from .._pyleecan_model import Complex
 from .arc import Arc
 
 
+@dataclass(eq=False)
 class Arc1(Arc):
     """An arc between two points (defined by a radius)
 
@@ -28,9 +29,9 @@ class Arc1(Arc):
         Default: True
     """
 
-    begin: Complex = 0
+    begin: complex = 0
     """begin point of the arc"""
-    end: Complex = 0
+    end: complex = 0
     """end point of the arc"""
     radius: float = 0
     """Radius of the arc (can be + or -)"""

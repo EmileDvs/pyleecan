@@ -22,9 +22,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   (`LamSlotWind` -> `lam_slot_wind.py`).
 - **`Classes_new`**: classes based on stdlib dataclasses (+ dacite for
   loading), on the `PyleecanClass` base.
-- **`PyleecanModel`** (pydantic v2) base and generation of the Geometry
-  package as pydantic models (work in progress, to be moved to
-  `Classes_pydantic`).
+- **`Classes_pydantic`**: the same classes as pydantic v2 models, on the
+  `PyleecanModel` base. The class generator has a `backend` option
+  (`"dataclass"` -> `Classes_new`, `"pydantic"` -> `Classes_pydantic`); both
+  packages have the same class tree and share the vendored code of
+  `Classes_new`. All 281 classes build and round-trip through
+  `as_dict`/`from_dict`.
 - **`Functions_new`**: copy of the legacy `Functions` targeting the new
   classes, with snake_case module names and shared errors in
   `Classes_new/_error.py`.
@@ -53,8 +56,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - Generated classes use regular (function-local) imports for known class
   names instead of dynamic imports; `import_class` is kept for names known at
   runtime only (serialized `__class__`).
-- `Segment`, `Arc1`, `Arc2` and `Arc3` are built with keyword arguments in
-  the new methods and functions.
+- Every generated class is built with keyword arguments in the new methods,
+  functions and tests (pydantic models only accept keyword arguments).
+- A legacy property starting with `_` (`Section._statements`, `_comments`)
+  is, in pydantic models, a field without the `_` whose legacy name is kept as
+  alias (files) and as a property (methods).
+- `pydantic>=2.12` is a dependency.
 - Class constants refactored to avoid circular imports; attribute metadata
   (unit, min, max) and descriptions follow the legacy definitions.
 - The load function returns objects of the new classes.
@@ -74,7 +81,7 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 
 | Step | Status |
 |---|---|
-| 0. Separate the implementations in the generator | in progress: class sub-packages and `classes_common` done |
+| 0. Separate the implementations in the generator | done |
 | 1. Split the bases (target / legacy layer) | to do |
 | 2. Type, min and max validation for dataclasses | to do |
 | 3. `Functions_pydantic` | to do |
@@ -82,6 +89,7 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 | 5. Package refactor pass (`Methods_new`, no parent links) | to do |
 | 6. Remaining utility functions | to do |
 
-Legacy class tests (`Tests/New/Classes`): 2369 passed, 455 failed. The
-failures are the type, min and max checks that the dataclasses do not
-implement yet (Step 2).
+Legacy class tests (`Tests/New/Classes`, run on `Classes_new`): 2352 passed,
+472 failed. The failures are the type, min and max checks that the
+dataclasses do not implement yet (Step 2); `Classes_pydantic` is tested by the
+same suite from Step 4 (`--backend`).

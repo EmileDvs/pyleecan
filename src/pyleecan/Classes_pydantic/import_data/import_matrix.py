@@ -1,0 +1,47 @@
+# Experimental pydantic model generated from Generator/ClassesRef/Import/ImportMatrix.csv
+"""Generated experimental pydantic model; do not edit by hand."""
+
+from typing import ClassVar
+
+import numpy as np
+
+from .import_ import Import
+
+
+class ImportMatrix(Import):
+    """Abstract class to Import/Generate 1D or D matrix
+
+    Attributes
+    ----------
+    is_transpose : bool
+        True to transpose the Imported/Generated matrix
+        Default: False
+    """
+
+    is_transpose: bool = False
+    """True to transpose the Imported/Generated matrix"""
+
+    _package: ClassVar[str] = "Import"
+    """Name of the package of the legacy class module"""
+
+    # Inlined from Methods.Import.ImportMatrix.edit_matrix
+    def edit_matrix(self, matrix):
+        """To apply transformation on the matrix
+
+        Parameters
+        ----------
+        self : ImportMatrix
+            An ImportMatrix object
+        matrix: ndarray
+            The matrix to edit
+
+        Returns
+        -------
+        matrix: ndarray
+            The edited matrix
+
+        """
+
+        if self.is_transpose:
+            return np.transpose(matrix)
+        return matrix

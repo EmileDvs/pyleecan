@@ -1,11 +1,11 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/SurfLine.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/SurfLine.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
 from matplotlib.patches import Polygon
-from pydantic import Field
 
 from ...Functions_new.Geometry.comp_surface_num import comp_surface_num
 from ...Functions_new.init_fig import init_fig
@@ -13,6 +13,7 @@ from .line import Line
 from .surface import Surface
 
 
+@dataclass(eq=False)
 class SurfLine(Surface):
     """SurfLine defined by list of lines that delimit it, label and point reference.
 
@@ -23,7 +24,7 @@ class SurfLine(Surface):
         Default: []
     """
 
-    line_list: list[Line] = Field(default_factory=list)
+    line_list: list[Line] = field(default_factory=list)
     """List of Lines """
 
     _package: ClassVar[str] = "Geometry"

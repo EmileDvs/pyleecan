@@ -1,15 +1,16 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/SurfRing.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/SurfRing.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
-from pydantic import Field
 
 from ...Functions_new.init_fig import init_fig
 from .surface import Surface
 
 
+@dataclass(eq=False)
 class SurfRing(Surface):
     """SurfRing is a surface between two closed surfaces (lamination surfaces for instance)
 
@@ -23,9 +24,13 @@ class SurfRing(Surface):
         Default: Surface()
     """
 
-    out_surf: Surface | None = Field(default_factory=lambda: Surface())
+    out_surf: Surface | None = field(
+        default_factory=lambda: Surface(), metadata={"default_class": "Surface"}
+    )
     """Outter surface"""
-    in_surf: Surface | None = Field(default_factory=lambda: Surface())
+    in_surf: Surface | None = field(
+        default_factory=lambda: Surface(), metadata={"default_class": "Surface"}
+    )
     """Inner surface"""
 
     _package: ClassVar[str] = "Geometry"

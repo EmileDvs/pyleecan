@@ -9,6 +9,7 @@ from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _shared_error_definitions,
     _write_shared_errors,
+    backend_package,
     class_subpackage,
     common_dir,
     generate_class,
@@ -24,12 +25,23 @@ from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
 )
 from pyleecan.Generator.read_fct import read_all
 
-EXPERIMENTAL_INIT = '''"""Experimental dataclass-based Pyleecan classes.
+PACKAGE_INIT = '''"""Experimental Pyleecan classes based on {kind}.
 
-Use ``Classes_new._class_info.ClassInfo().get_dict()`` to get the class
-information (built from the dataclasses themselves).
+Use ``{package}._class_info.ClassInfo().get_dict()`` to get the class
+information (built from the classes themselves).
 """
 '''
+
+PACKAGE_INIT_KINDS = {
+    "dataclass": "stdlib dataclasses (+ dacite)",
+    "pydantic": "pydantic models",
+}
+
+BACKEND_SUPPORT_MODULES = {
+    "dataclass": ("_pyleecan_class.py", "_import.py", "_class_info.py"),
+    "pydantic": ("_pyleecan_model.py", "_import.py", "_class_info.py"),
+}
+"""Hand-written support modules required in the class package of a backend"""
 
 SUBPACKAGE_INIT = '''"""Generated classes of the {subpackage} sub-package.
 
@@ -51,8 +63,11 @@ def generate_code(
     class_list=None,
     max_workers=None,
     import_style="absolute",
+    backend="dataclass",
 ):
-    """Generate dataclasses in Classes_new without modifying legacy outputs.
+    """Generate the classes of a backend without modifying legacy outputs.
+
+    backend "dataclass" writes Classes_new, "pydantic" writes Classes_pydantic.
 
     The initializer, class dictionary, parent mapping, and shared exceptions
     are generated from the full CSV dictionary and legacy Functions tree even
@@ -76,13 +91,16 @@ def generate_code(
         Maximum number of classes to generate concurrently. Defaults to at most 8.
     import_style : str, optional
         "relative" or "absolute" imports from the generated package in class files.
+    backend : str, optional
+        "dataclass" (Classes_new) or "pydantic" (Classes_pydantic)
 
     Returns
     -------
     None
     """
     _validate_import_style(import_style)
-    CLASS_DIR = join(root_path, "Classes_new")
+    package = backend_package(backend)
+    CLASS_DIR = join(root_path, package)
     DOC_DIR = join(root_path, "Generator", "ClassesRef")
     print("Reading classes csv in: " + DOC_DIR)
     print("Saving generated files in: " + CLASS_DIR)
@@ -95,16 +113,11 @@ def generate_code(
         join(root_path, "Classes"), gen_dict, soft_name
     )
 
-    for support_module in (
-        "_pyleecan_class.py",
-        "_pyleecan_model.py",
-        "_import.py",
-        "_class_info.py",
-    ):
+    for support_module in BACKEND_SUPPORT_MODULES[backend]:
         # Hand-written support modules (not generated)
         if not isdir(CLASS_DIR) or not isfile(join(CLASS_DIR, support_module)):
             raise FileNotFoundError(
-                f"Experimental output requires Classes_new/{support_module}: "
+                f"Experimental output requires {package}/{support_module}: "
                 + CLASS_DIR
             )
     for support_module in ("class_lookup.py", "class_info.py", "check.py", "base.py"):
@@ -145,8 +158,9 @@ def generate_code(
         max_workers,
         import_style=import_style,
         shared_error_definitions=shared_errors,
+        backend=backend,
     )
-    _write_experimental_bookkeeping(CLASS_DIR, gen_dict, soft_name, import_style)
+    _write_experimental_bookkeeping(CLASS_DIR, gen_dict, backend)
 
 
 def _write_subpackages(class_dir, gen_dict, generation_names):
@@ -161,13 +175,17 @@ def _write_subpackages(class_dir, gen_dict, generation_names):
             init_file.write(SUBPACKAGE_INIT.format(subpackage=subpackage))
 
 
-def _write_experimental_bookkeeping(class_dir, gen_dict, soft_name, import_style):
+def _write_experimental_bookkeeping(class_dir, gen_dict, backend):
     """Write the experimental package API and full generated metadata."""
     with open(join(class_dir, "__init__.py"), "w", encoding="utf-8") as init_file:
-        init_file.write(EXPERIMENTAL_INIT)
+        init_file.write(
+            PACKAGE_INIT.format(
+                kind=PACKAGE_INIT_KINDS[backend], package=backend_package(backend)
+            )
+        )
     _write_parent_types(class_dir, gen_dict)
-    # Classes_new/_import.py is hand-written: the module of a class is derived
-    # from its name (class_module_name), no generated class table is needed
+    # _import.py is hand-written: the module of a class is derived from its
+    # name (class_module_name), no generated class table is needed
 
 
 def _write_parent_types(class_dir, gen_dict):
@@ -202,6 +220,7 @@ def _generate_classes(
     max_workers,
     import_style="absolute",
     shared_error_definitions=None,
+    backend="dataclass",
 ):
     def generate_one_class(class_name, import_graph=None):
         print("Generation of " + class_name + " class")
@@ -209,6 +228,7 @@ def _generate_classes(
             "soft_name": soft_name,
             "import_style": import_style,
             "shared_error_definitions": shared_error_definitions,
+            "backend": backend,
         }
         if import_graph is not None:
             generation_kwargs["class_import_graph"] = import_graph
@@ -242,8 +262,12 @@ def run_generate_classes(
     class_list=None,
     max_workers=None,
     import_style="absolute",
+    backend="dataclass",
 ):
-    """Generate experimental dataclasses.
+    """Generate the experimental classes of a backend.
+
+    backend "dataclass" writes ``Classes_new``, "pydantic" writes
+    ``Classes_pydantic`` (see class_generator.BACKENDS).
 
     Experimental generation writes only selected modules in ``Classes_new``
     with snake_case names and does not rewrite CSVs or legacy bookkeeping.
@@ -271,6 +295,7 @@ def run_generate_classes(
         class_list=class_list,
         max_workers=max_workers,
         import_style=import_style,
+        backend=backend,
     )
 
     now = datetime.now()
@@ -278,8 +303,11 @@ def run_generate_classes(
 
 
 if __name__ == "__main__":
-    # To generate all classes
-    run_generate_classes(max_workers=cpu_count(), import_style="relative")
+    # To generate all classes, for each backend
+    for backend in ("dataclass", "pydantic"):
+        run_generate_classes(
+            max_workers=cpu_count(), import_style="relative", backend=backend
+        )
 
     generate_functions()
 

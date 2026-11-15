@@ -1,6 +1,7 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Surface.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Surface.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass
 from math import ceil
 from typing import ClassVar
 
@@ -17,14 +18,15 @@ from ...Functions_new.labels import (
     YOKE_LAB,
     decode_label,
 )
-from .._pyleecan_model import Complex, PyleecanModel
+from .._pyleecan_class import PyleecanClass
 from .arc_1 import Arc1
 from .arc_2 import Arc2
 from .arc_3 import Arc3
 from .segment import Segment
 
 
-class Surface(PyleecanModel):
+@dataclass(eq=False)
+class Surface(PyleecanClass):
     """SurfLine define by list of lines that delimit it
 
     Attributes
@@ -42,7 +44,7 @@ class Surface(PyleecanModel):
     PATCH_EDGE: ClassVar[str] = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
     PATCH_EDGE_ALPHA: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
-    point_ref: Complex = 0
+    point_ref: complex = 0
     """Center of symmetry"""
     label: str = ""
     """Label of the surface"""

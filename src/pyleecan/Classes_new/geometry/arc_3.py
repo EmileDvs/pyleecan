@@ -1,16 +1,17 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Arc3.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Arc3.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass
 from typing import ClassVar
 
 import numpy as np
 
-from .._pyleecan_model import Complex
 from .arc import Arc
 from .arc_1 import Arc1
 from .arc_2 import Arc2
 
 
+@dataclass(eq=False)
 class Arc3(Arc):
     """Half circle define by two points
 
@@ -27,9 +28,9 @@ class Arc3(Arc):
         Default: True
     """
 
-    begin: Complex = 0
+    begin: complex = 0
     """begin point of the arc"""
-    end: Complex = 0
+    end: complex = 0
     """end of the arc"""
     is_trigo_direction: bool = True
     """Rotation direction of the arc"""

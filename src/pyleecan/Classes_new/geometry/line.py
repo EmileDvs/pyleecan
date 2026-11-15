@@ -1,14 +1,16 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Line.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Line.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass
 from typing import Any, ClassVar
 
 import numpy as np
 
-from .._pyleecan_model import PyleecanModel
+from .._pyleecan_class import PyleecanClass
 
 
-class Line(PyleecanModel):
+@dataclass(eq=False)
+class Line(PyleecanClass):
     """Abstract geometry class (A line between two points)
 
     Attributes

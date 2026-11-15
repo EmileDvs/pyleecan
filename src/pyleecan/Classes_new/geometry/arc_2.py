@@ -1,15 +1,15 @@
-# Experimental pydantic model generated from Generator/ClassesRef/Geometry/Arc2.csv
-"""Generated experimental pydantic model; do not edit by hand."""
+# Experimental dataclass generated from Generator/ClassesRef/Geometry/Arc2.csv
+"""Generated experimental dataclass; do not edit by hand."""
 
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import numpy as np
-from pydantic import Field
 
-from .._pyleecan_model import Complex
 from .arc import Arc
 
 
+@dataclass(eq=False)
 class Arc2(Arc):
     """An arc between two points (defined by the begin  point and a center and angle)
 
@@ -26,15 +26,13 @@ class Arc2(Arc):
         Unit: rad; Default: 1.57079633; Minimum: -6.283185308; Maximum: 6.283185308
     """
 
-    begin: Complex = 0
+    begin: complex = 0
     """begin point of the arc"""
-    center: Complex = 0
+    center: complex = 0
     """center of the arc"""
-    angle: float = Field(
+    angle: float = field(
         default=1.57079633,
-        ge=-6.283185308,
-        le=6.283185308,
-        json_schema_extra={"unit": "rad"},
+        metadata={"unit": "rad", "min": -6.283185308, "max": 6.283185308},
     )
     """opening angle of the arc"""
 
