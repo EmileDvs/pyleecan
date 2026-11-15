@@ -270,7 +270,26 @@ Creation time with validation (GC on, 2026-11-15): `Segment` 1.8 us (legacy),
 ### Step 5: package refactor pass (`Methods_new`)
 
 Each legacy package is refactored in a single pass, so it is opened, reviewed
-and validated once:
+and validated once.
+
+`Methods_new` conventions:
+
+- Bootstrap: `python -m pyleecan.Generator.ClassGenerator.New.bootstrap_methods <Package>`
+  copies the legacy method modules to `Methods_new/<sub-package>/<Class>/`
+  (never overwrites); the class generator then reads the methods of these
+  classes there (`class_generator.method_source_location`).
+- The modules keep the legacy import style (`from ....Classes.Segment import
+  Segment`, `....Functions...`): the class generator maps it to each
+  implementation. Same folder depth as `Methods`, so relative imports resolve
+  the same way.
+- The shared error classes and constants stay in the legacy package
+  `__init__` files for now (read by the generator); they move to
+  `Methods_new` before Phase 2.
+- No `from __future__ import annotations` (the generator does not inline such
+  modules): Python 3.14 evaluates annotations lazily, so type hints can name
+  classes imported under `if TYPE_CHECKING:`.
+
+Steps of a package:
 
 1. Bootstrap: copy the package's legacy methods into `Methods_new`, and its
    functions into `Functions_new` (now hand-written).
@@ -331,9 +350,9 @@ legacy functions are fully hinted.
 
 - Draft hints are produced from the numpydoc `Parameters`/`Returns` sections, then
   reviewed.
-- Class annotations use `from __future__ import annotations` and imports under
-  `if TYPE_CHECKING:`, so they add no runtime import (no cycle, and the import
-  rewriting between backends keeps working).
+- Class annotations use imports under `if TYPE_CHECKING:` (lazy annotations of
+  Python 3.14, no `__future__` import), so they add no runtime import (no
+  cycle, and the import rewriting between backends keeps working).
 - A type checker (pyright basic mode, or mypy) runs on the refactored packages
   only, made stricter step by step. A `py.typed` marker publishes the hints.
 
@@ -350,7 +369,8 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
 
 #### Order
 
-- [ ] Geometry: drop parent links from the target bases; hints and functions.
+- [ ] Geometry: bootstrapped (129 method modules); generated classes
+      byte-identical. Parent links: none read. Hints and functions to do.
 - [ ] Slot
 - [ ] Machine
 - [ ] Simulation, Loss, Output, Optimization

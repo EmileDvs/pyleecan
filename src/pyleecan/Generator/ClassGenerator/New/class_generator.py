@@ -8,7 +8,7 @@ import tokenize
 import warnings
 from bisect import bisect_left
 from functools import lru_cache
-from os import makedirs
+from os import listdir, makedirs
 from os.path import basename, dirname, isdir, isfile, join
 from pathlib import Path
 from textwrap import indent
@@ -98,6 +98,71 @@ def backend_package(backend):
     if backend not in BACKENDS:
         raise ValueError(f"backend must be one of {sorted(BACKENDS)}: {backend!r}")
     return BACKENDS[backend]
+
+
+METHODS_NEW_PACKAGE = "Methods_new"
+"""Hand-written methods (PLAN.md Step 5), read instead of the legacy Methods for
+the classes bootstrapped there: Methods_new/<sub-package>/<Class>/<method>.py"""
+
+
+@lru_cache
+def _bootstrapped_method_dirs(root):
+    """{class name: (sub-package, folder)} of the classes of Methods_new."""
+    methods_dir = join(root, METHODS_NEW_PACKAGE)
+    dirs = {}
+    if isdir(methods_dir):
+        for subpackage in sorted(listdir(methods_dir)):
+            sub_dir = join(methods_dir, subpackage)
+            if subpackage.startswith(("_", ".")) or not isdir(sub_dir):
+                continue
+            for class_name in sorted(listdir(sub_dir)):
+                if not class_name.startswith(("_", ".")) and isdir(join(sub_dir, class_name)):
+                    dirs[class_name] = (subpackage, join(sub_dir, class_name))
+    return dirs
+
+
+def method_source_location(path_to_gen, class_pack, class_name):
+    """Folder and package of the method modules of a class.
+
+    The methods of a class bootstrapped in Methods_new (hand-written, see
+    PLAN.md Step 5) are read there; the other ones from the legacy Methods.
+    Both folders have the same depth, so the relative imports of a method
+    module resolve the same way.
+
+    Parameters
+    ----------
+    path_to_gen : str
+        Folder of the generated class package (e.g. .../pyleecan/Classes_new)
+    class_pack : str
+        Legacy package of the class (e.g. "Geometry")
+    class_name : str
+        Name of the class
+
+    Returns
+    -------
+    method_dir : str
+        Folder of the method modules of the class
+    package_parts : list
+        Package of these modules below the software package
+        (e.g. ["Methods_new", "geometry", "Segment"])
+    """
+    root = dirname(path_to_gen.rstrip("/\\"))
+    bootstrapped = _bootstrapped_method_dirs(root)
+    if class_name in bootstrapped:
+        subpackage, method_dir = bootstrapped[class_name]
+        return method_dir, [METHODS_NEW_PACKAGE, subpackage, class_name]
+    package_parts = [part for part in (class_pack or "").split(".") if part]
+    return (
+        join(root, "Methods", *package_parts, class_name),
+        ["Methods", *package_parts, class_name],
+    )
+
+
+def _is_methods_module(module_name, soft_name):
+    """True for a method module, legacy (Methods) or hand-written (Methods_new)."""
+    return module_name.startswith(
+        (f"{soft_name}.Methods.", f"{soft_name}.{METHODS_NEW_PACKAGE}.")
+    )
 
 
 COMMON_PACKAGE = "classes_common"
@@ -471,7 +536,11 @@ CONFIGURED_PLOT_CONSTANT_NAMES = {
 def _load_method_error_module(path_to_gen, module_name):
     """Load a Methods or Functions module for error-class lookup."""
     module_parts = module_name.split(".")
-    if len(module_parts) < 2 or module_parts[1] not in ("Methods", "Functions"):
+    if len(module_parts) < 2 or module_parts[1] not in (
+        "Methods",
+        METHODS_NEW_PACKAGE,
+        "Functions",
+    ):
         return None, None
     methods_path = join(dirname(path_to_gen), *module_parts[1:])
     module_path = methods_path + ".py"
@@ -1535,9 +1604,8 @@ def _get_method_source(
     """
     if class_constants is None:
         class_constants = CLASS_BODY_CONSTANTS.get(class_name, {})
-    method_parts = [part for part in (class_pack or "").split(".") if part]
-    method_parts.extend([class_name, *meth.split(".")])
-    method_path = join(dirname(path_to_gen), "Methods", *method_parts) + ".py"
+    method_dir, method_package = method_source_location(path_to_gen, class_pack, class_name)
+    method_path = join(method_dir, *meth.split(".")) + ".py"
 
     try:
         with open(method_path, encoding="utf-8") as method_file:
@@ -1576,13 +1644,7 @@ def _get_method_source(
     ):
         return None, [], [], [], "module has a __future__ import"
 
-    source_package = [
-        soft_name,
-        "Methods",
-        *[part for part in (class_pack or "").split(".") if part],
-        class_name,
-        *meth.split(".")[:-1],
-    ]
+    source_package = [soft_name, *method_package, *meth.split(".")[:-1]]
     used_names = {
         node.id
         for node in ast.walk(method_node)
@@ -2210,10 +2272,9 @@ def _find_repeated_method_assignments(path_to_gen, class_pack, class_name, metho
     default_assignments = {}
     configured_plot_assignments = set()
 
+    method_dir = method_source_location(path_to_gen, class_pack, class_name)[0]
     for meth in methods:
-        method_parts = [part for part in (class_pack or "").split(".") if part]
-        method_parts.extend([class_name, *meth.split(".")])
-        method_path = join(dirname(path_to_gen), "Methods", *method_parts) + ".py"
+        method_path = join(method_dir, *meth.split(".")) + ".py"
         try:
             with open(method_path, encoding="utf-8") as method_file:
                 module = ast.parse(method_file.read(), filename=method_path)
@@ -2567,7 +2628,7 @@ def _prepare_class_methods(
                 module_name = ".".join(
                     _get_absolute_import_module(import_node, target_package)
                 )
-                if not module_name.startswith(soft_name + ".Methods."):
+                if not _is_methods_module(module_name, soft_name):
                     continue
                 for alias in import_node.names:
                     definitions = _get_error_class_definitions(
@@ -2633,7 +2694,7 @@ def _prepare_class_methods(
                 module_name = ".".join(
                     _get_absolute_import_module(import_node, target_package)
                 )
-                if module_name.startswith(soft_name + ".Methods."):
+                if _is_methods_module(module_name, soft_name):
                     retained_aliases = [
                         alias
                         for alias in import_node.names
