@@ -1,5 +1,5 @@
 # -*-- coding: utf-8 -*
-def discretize(self):
+def discretize(self) -> list:
     """It returns the discretize version of the Trapeze
 
     Parameters

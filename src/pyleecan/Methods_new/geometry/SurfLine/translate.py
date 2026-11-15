@@ -1,4 +1,4 @@
-def translate(self, Zt):
+def translate(self, Zt: complex):
     """Translate the surface
 
     Parameters

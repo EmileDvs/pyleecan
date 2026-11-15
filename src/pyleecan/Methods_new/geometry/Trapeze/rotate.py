@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def rotate(self, angle):
+def rotate(self, angle: float):
     """Rotate the surface
 
     Parameters

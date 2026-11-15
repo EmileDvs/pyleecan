@@ -1,4 +1,4 @@
-def intersect_line(self, Z1, Z2):
+def intersect_line(self, Z1: complex, Z2: complex):
     """Return all the intersection of a line with the surfaces
 
     Parameters

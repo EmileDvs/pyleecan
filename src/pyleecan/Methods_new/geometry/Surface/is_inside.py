@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def is_inside(self, Z, if_online=False):
+def is_inside(self, Z: complex, if_online: bool = False):
     """Determine if a given point is inside the surface.
        If the point is on the line defining the surface, by default it will be considered as outside
 

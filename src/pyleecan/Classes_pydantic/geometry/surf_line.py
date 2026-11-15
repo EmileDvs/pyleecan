@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Geometry/SurfLine.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from matplotlib.patches import Polygon
@@ -11,6 +11,10 @@ from ...Functions_pydantic.Geometry.comp_surface_num import comp_surface_num
 from ...Functions_pydantic.init_fig import init_fig
 from .line import Line
 from .surface import Surface
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 class SurfLine(Surface):
@@ -49,7 +53,7 @@ class SurfLine(Surface):
 
     # Inlined from Methods.Geometry.SurfLine.comp_length
     # -*- coding: utf-8 -*-
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the length of the SurfLine object
 
         Parameters
@@ -73,7 +77,7 @@ class SurfLine(Surface):
         return length
 
     # Inlined from Methods.Geometry.SurfLine.comp_point_ref
-    def comp_point_ref(self, is_set=False):
+    def comp_point_ref(self, is_set: bool = False) -> complex:
         """Compute the point ref of the Surface
 
         Parameters
@@ -107,7 +111,7 @@ class SurfLine(Surface):
         return point_ref
 
     # Inlined from Methods.Geometry.SurfLine.comp_surface
-    def comp_surface(self, Ndisc=200):
+    def comp_surface(self, Ndisc: int = 200) -> float:
         """Compute the SurfLine surface
 
         Parameters
@@ -131,7 +135,7 @@ class SurfLine(Surface):
 
     # Inlined from Methods.Geometry.SurfLine.discretize
     # -*-- coding: utf-8 -*
-    def discretize(self, Npoint=-1):
+    def discretize(self, Npoint: int = -1) -> list:
         """Returns the discretize version of the SurfLine
 
         Parameters
@@ -170,7 +174,7 @@ class SurfLine(Surface):
 
     # Inlined from Methods.Geometry.SurfLine.get_lines
     # -*- coding: utf-8 -*-
-    def get_lines(self):
+    def get_lines(self) -> list:
         """The list returned contains all the Line of the SurfLine
 
         Parameters
@@ -194,9 +198,9 @@ class SurfLine(Surface):
         self,
         color=None,
         edgecolor=None,
-        is_edge_only=False,
-        linestyle=None,
-        hatch=None,
+        is_edge_only: bool = False,
+        linestyle: str | None = None,
+        hatch: str | None = None,
     ):
         """Returns the PolarArc Patch to be display in matplotlib
 
@@ -271,7 +275,12 @@ class SurfLine(Surface):
     )
 
     # Inlined from Methods.Geometry.SurfLine.plot_lines
-    def plot_lines(self, fig=None, ax=None, is_show_fig=True):
+    def plot_lines(
+        self,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_show_fig: bool = True,
+    ) -> tuple[Figure, Axes]:
         """Plot the SurfLine-Contour in a matplotlib fig
         (For plotting unclosed contour, for Polygon use plot method from Surface object)
 
@@ -309,7 +318,7 @@ class SurfLine(Surface):
         return fig, ax
 
     # Inlined from Methods.Geometry.SurfLine.rotate
-    def rotate(self, angle):
+    def rotate(self, angle: float):
         """Rotate the surface
 
         Parameters
@@ -335,7 +344,7 @@ class SurfLine(Surface):
             self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.SurfLine.scale
-    def scale(self, scale_factor):
+    def scale(self, scale_factor: float):
         """Scale the coordinates of the lines
 
         Parameters
@@ -355,7 +364,7 @@ class SurfLine(Surface):
         self.point_ref = self.point_ref * scale_factor
 
     # Inlined from Methods.Geometry.SurfLine.translate
-    def translate(self, Zt):
+    def translate(self, Zt: complex):
         """Translate the surface
 
         Parameters

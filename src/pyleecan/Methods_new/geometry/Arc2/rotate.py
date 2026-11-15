@@ -3,7 +3,7 @@ import numpy as np
 from . import AngleRotationArc2Error
 
 
-def rotate(self, angle):
+def rotate(self, angle: float):
     """Rotation of the Arc2 of angle
 
     Parameters

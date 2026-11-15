@@ -5,7 +5,7 @@ from ...machine import LINE_NPOINT_D
 from . import NbPointSegmentDError
 
 
-def discretize(self, nb_point=LINE_NPOINT_D):
+def discretize(self, nb_point: int = LINE_NPOINT_D) -> list:
     """Return the discretize version of the Segment.
     Begin and end are always returned
 

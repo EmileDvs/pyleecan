@@ -1,4 +1,4 @@
-def is_arc(self):
+def is_arc(self) -> bool:
     """Check if the line is an Arc
 
     Parameters

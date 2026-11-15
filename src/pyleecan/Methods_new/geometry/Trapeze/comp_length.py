@@ -1,5 +1,5 @@
 # -*-- coding: utf-8 -*
-def comp_length(self):
+def comp_length(self) -> float:
     """Returns the length of the Trapeze
 
     Parameters

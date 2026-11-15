@@ -1,20 +1,25 @@
 import numpy as np
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.Plot import TEXT_BOX
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 def plot(
     self,
-    fig=None,
-    ax=None,
-    is_arrow=False,
-    linestyle="solid",
-    linewidth=1,
-    color="black",
-    label=None,
-    offset_label=0,
-    fontsize=12,
-):
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_arrow: bool = False,
+    linestyle: str = "solid",
+    linewidth: int = 1,
+    color: str = "black",
+    label: str | None = None,
+    offset_label: complex = 0,
+    fontsize: int = 12,
+) -> tuple[Figure, Axes]:
     """Plot the segment
 
     Parameters

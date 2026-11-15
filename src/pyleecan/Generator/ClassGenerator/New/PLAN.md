@@ -330,6 +330,21 @@ Order:
      header or function-local imports, against import cycles).
 3. Step 5 transformations: class-specific functions moved into their class,
    then type hints.
+   - [x] Type hints drafted from the numpydoc docstrings (`type_hints.py`, a
+     pass of the method generator for the sub-packages of
+     `HINTED_SUBPACKAGES`): recognized types only (builtins, numpy arrays,
+     Pyleecan classes, matplotlib figures and axes, FEMM handler), `| None`
+     for a None default, hint skipped when a literal default contradicts the
+     docstring; class names imported under `if TYPE_CHECKING:` (supported by
+     the class generator: one block per class module). The other documented
+     types are reported for review.
+   - Geometry: 125/164 parameters and 72/131 returns hinted; no function to
+     move (`comp_surface_num` computes the area of any polygon: a utility).
+     `ty check src/pyleecan/Methods_new/geometry`: 21 diagnostics, all in the
+     legacy code (review list): `get_patches` uses `"--" in linestyle` with a
+     None default (PolarArc, SurfLine, Trapeze); `Segment.intersect_line` can
+     return None; `Segment.intersect_obj` calls methods (`is_arc`,
+     `get_center`...) that the `Line` base does not declare.
 4. Frozen packages for the parent-link refactor.
 
 Steps of a package:
@@ -412,10 +427,11 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
 
 #### Order
 
-- [ ] Geometry: in `Methods_new` (method generator); parent links: none
-      read. Method errors shared (below):
+- [x] Geometry: in `Methods_new` (method generator); parent links: none
+      read; no class-specific function; type hints (see point 3). Method
+      errors shared (below):
       `Tests/New/Methods/Geometry` 282 passed with each backend (33 failures
-      before). Hints and functions to do.
+      before).
 
 #### Method errors
 

@@ -1,13 +1,17 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....classes_common.femm_handler import _FEMMHandler
 def draw_FEMM(
     self,
-    femm,
+    femm: _FEMMHandler,
     nodeprop=None,
     propname=None,
     element_size=None,
     automesh=None,
     hide=False,
     group=None,
-    is_draw=True,
+    is_draw: bool = True,
 ):
     """<   Draw the segment in FEMM and assign the property
 

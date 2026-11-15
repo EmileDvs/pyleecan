@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-def comp_length(self):
+def comp_length(self) -> float:
     """Compute the length of the SurfRing object (length of both surfaces)
 
     Parameters

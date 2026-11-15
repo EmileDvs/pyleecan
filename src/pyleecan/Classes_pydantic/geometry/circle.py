@@ -66,7 +66,7 @@ class Circle(Surface):
             raise RadiusCircleError("The radius of a circle must be >= 0")
 
     # Inlined from Methods.Geometry.Circle.comp_length
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the length of the circle
 
         Parameters
@@ -88,7 +88,7 @@ class Circle(Surface):
         return length
 
     # Inlined from Methods.Geometry.Circle.comp_point_ref
-    def comp_point_ref(self, is_set=False):
+    def comp_point_ref(self, is_set: bool = False) -> complex:
         """Compute the point ref of the Surface
 
         Parameters
@@ -110,7 +110,7 @@ class Circle(Surface):
         return point_ref
 
     # Inlined from Methods.Geometry.Circle.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the circle surface
 
         Parameters
@@ -128,7 +128,7 @@ class Circle(Surface):
         return np.pi * self.radius**2
 
     # Inlined from Methods.Geometry.Circle.discretize
-    def discretize(self):
+    def discretize(self) -> list:
         """Return the discretize version of the Circle.
 
         Parameters
@@ -158,7 +158,7 @@ class Circle(Surface):
         return point_list
 
     # Inlined from Methods.Geometry.Circle.get_lines
-    def get_lines(self):
+    def get_lines(self) -> list:
         """Get the lines needed to draw the surface (2 Arc3)
 
         Parameters
@@ -188,7 +188,11 @@ class Circle(Surface):
 
     # Inlined from Methods.Geometry.Circle.get_patches
     def get_patches(
-        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
+        self,
+        color=None,
+        edgecolor=None,
+        is_edge_only: bool = False,
+        linestyle: str | None = None,
     ):
         """Returns the Circle Patch to be display in matplotlib
 
@@ -245,7 +249,7 @@ class Circle(Surface):
     )
 
     # Inlined from Methods.Geometry.Circle.rotate
-    def rotate(self, angle):
+    def rotate(self, angle: float):
         """Rotation of the Circle of angle
 
         Parameters
@@ -279,7 +283,7 @@ class Circle(Surface):
             self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Circle.translate
-    def translate(self, Zt):
+    def translate(self, Zt: complex):
         """Translate the Circle object
 
         Parameters

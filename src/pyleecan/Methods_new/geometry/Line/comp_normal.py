@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_normal(self):
+def comp_normal(self) -> float:
     """Compute the normal direction of the Line
     Normal point is "on top" (begin=O and end on Ox)
 

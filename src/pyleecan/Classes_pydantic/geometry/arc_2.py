@@ -81,7 +81,7 @@ class Arc2(Arc):
             raise AngleArc2Error("You can't draw a circle with an Arc2")
 
     # Inlined from Methods.Geometry.Arc2.comp_length
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the length of the arc
 
         Parameters
@@ -103,7 +103,7 @@ class Arc2(Arc):
         return float(2 * np.pi * R * (abs(angle) / (2 * np.pi)))
 
     # Inlined from Methods.Geometry.Arc2.comp_radius
-    def comp_radius(self):
+    def comp_radius(self) -> float:
         """Compute the radius of the arc
 
         Parameters
@@ -124,7 +124,7 @@ class Arc2(Arc):
         return float(np.abs(z1 - zc))  # Radius of the arc
 
     # Inlined from Methods.Geometry.Arc2.discretize
-    def discretize(self, nb_point=Arc.ARC_NPOINT_D):
+    def discretize(self, nb_point: int = Arc.ARC_NPOINT_D) -> list:
         """Return the discretize version of the Arc.
         Begin and end are always returned
 
@@ -169,7 +169,7 @@ class Arc2(Arc):
         return list_point
 
     # Inlined from Methods.Geometry.Arc2.get_angle
-    def get_angle(self, is_deg=False):
+    def get_angle(self, is_deg: bool = False) -> float:
         """Return the angle of the arc
 
         Parameters
@@ -191,7 +191,7 @@ class Arc2(Arc):
             return self.angle
 
     # Inlined from Methods.Geometry.Arc2.get_begin
-    def get_begin(self):
+    def get_begin(self) -> complex:
         """Return the begin point of the arc
 
         Parameters
@@ -208,7 +208,7 @@ class Arc2(Arc):
         return self.begin
 
     # Inlined from Methods.Geometry.Arc2.get_center
-    def get_center(self):
+    def get_center(self) -> complex:
         """Return the center point of the arc
 
         Parameters
@@ -225,7 +225,7 @@ class Arc2(Arc):
         return self.center
 
     # Inlined from Methods.Geometry.Arc2.get_end
-    def get_end(self):
+    def get_end(self) -> complex:
         """Return the end of the arc
 
         Parameters
@@ -257,7 +257,7 @@ class Arc2(Arc):
         return z2
 
     # Inlined from Methods.Geometry.Arc2.get_middle
-    def get_middle(self):
+    def get_middle(self) -> complex:
         """Return the point at the middle of the arc
 
         Parameters
@@ -309,7 +309,7 @@ class Arc2(Arc):
         self.angle = -self.angle
 
     # Inlined from Methods.Geometry.Arc2.rotate
-    def rotate(self, angle):
+    def rotate(self, angle: float):
         """Rotation of the Arc2 of angle
 
         Parameters
@@ -335,7 +335,7 @@ class Arc2(Arc):
         self.center = self.center * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Arc2.scale
-    def scale(self, scale_factor):
+    def scale(self, scale_factor: float):
         """Scale the coordinates of the begin/end
 
         Parameters
@@ -354,7 +354,7 @@ class Arc2(Arc):
         self.center = self.center * scale_factor
 
     # Inlined from Methods.Geometry.Arc2.split_half
-    def split_half(self, is_begin=True):
+    def split_half(self, is_begin: bool = True):
         """Cut the line in half (modify the object)
 
         Parameters
@@ -373,7 +373,7 @@ class Arc2(Arc):
         self.angle = self.angle / 2
 
     # Inlined from Methods.Geometry.Arc2.split_point
-    def split_point(self, Z1, is_begin=True):
+    def split_point(self, Z1: complex, is_begin: bool = True):
         """Cut the Arc according to a point on the arc
 
         Parameters
@@ -402,7 +402,7 @@ class Arc2(Arc):
             self.begin = Z1
 
     # Inlined from Methods.Geometry.Arc2.translate
-    def translate(self, Zt):
+    def translate(self, Zt: complex):
         """Translate the Arc2 object with
 
         Parameters

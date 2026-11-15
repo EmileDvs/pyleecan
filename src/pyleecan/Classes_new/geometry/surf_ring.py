@@ -2,12 +2,16 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...Functions_new.init_fig import init_fig
 from .surface import Surface
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -55,7 +59,7 @@ class SurfRing(Surface):
 
     # Inlined from Methods.Geometry.SurfRing.comp_length
     # -*- coding: utf-8 -*-
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the length of the SurfRing object (length of both surfaces)
 
         Parameters
@@ -73,7 +77,7 @@ class SurfRing(Surface):
         return self.out_surf.comp_length() + self.in_surf.comp_length()
 
     # Inlined from Methods.Geometry.SurfRing.comp_point_ref
-    def comp_point_ref(self, is_set=False):
+    def comp_point_ref(self, is_set: bool = False) -> complex:
         """Compute the point ref of the Surface
 
         Parameters
@@ -104,7 +108,7 @@ class SurfRing(Surface):
         return point_ref
 
     # Inlined from Methods.Geometry.SurfRing.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the SurfRing surface
 
         Parameters
@@ -128,7 +132,7 @@ class SurfRing(Surface):
 
     # Inlined from Methods.Geometry.SurfRing.discretize
     # -*-- coding: utf-8 -*
-    def discretize(self, Npoint=-1):
+    def discretize(self, Npoint: int = -1) -> list:
         """Returns the discretize version of the SurfRing
 
         Parameters
@@ -153,7 +157,7 @@ class SurfRing(Surface):
 
     # Inlined from Methods.Geometry.SurfRing.get_lines
     # -*- coding: utf-8 -*-
-    def get_lines(self):
+    def get_lines(self) -> list:
         """The list returned contains all the Line of the SurRing
 
         Parameters
@@ -175,7 +179,11 @@ class SurfRing(Surface):
 
     # Inlined from Methods.Geometry.SurfRing.get_patches
     def get_patches(
-        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
+        self,
+        color=None,
+        edgecolor=None,
+        is_edge_only: bool = False,
+        linestyle: str | None = None,
     ):
         """Returns the PolarArc Patch to be display in matplotlib
 
@@ -219,7 +227,9 @@ class SurfRing(Surface):
     )
 
     # Inlined from Methods.Geometry.SurfRing.plot_lines
-    def plot_lines(self, fig=None, ax=None):
+    def plot_lines(
+        self, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
         """Plot the SurfRing-Contour in a matplotlib fig
         (For plotting unclosed contour, for Polygon use plot method from Surface object)
 
@@ -271,7 +281,7 @@ class SurfRing(Surface):
         return fig, ax
 
     # Inlined from Methods.Geometry.SurfRing.rotate
-    def rotate(self, angle):
+    def rotate(self, angle: float):
         """Rotate the surface
 
         Parameters
@@ -297,7 +307,7 @@ class SurfRing(Surface):
             self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.SurfRing.translate
-    def translate(self, Zt):
+    def translate(self, Zt: complex):
         """Translate the surface
 
         Parameters

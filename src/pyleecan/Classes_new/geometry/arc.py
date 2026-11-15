@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -12,6 +12,13 @@ from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import TEXT_BOX
 from .line import Line
 from .segment import Segment
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ...classes_common.femm_handler import _FEMMHandler
+    from .line import Line
 
 
 @dataclass(eq=False)
@@ -28,7 +35,7 @@ class Arc(Line):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Arc.comp_distance
-    def comp_distance(self, Z):
+    def comp_distance(self, Z: complex) -> float:
         """Compute the distance of a point to the Arc
 
         Parameters
@@ -61,7 +68,9 @@ class Arc(Line):
             return min([D2, D3, D4])
 
     # Inlined from Methods.Geometry.Arc.comp_maxseg
-    def comp_maxseg(self, elementsize, maxseg_amp, *, MAXSEG_default=5):
+    def comp_maxseg(
+        self, elementsize: float, maxseg_amp: float, *, MAXSEG_default=5
+    ) -> float:
         """
         Computes the number of segments per arc degrees in
         function of the elementsize of the region
@@ -108,14 +117,14 @@ class Arc(Line):
     # Inlined from Methods.Geometry.Arc.draw_FEMM
     def draw_FEMM(
         self,
-        femm,
+        femm: _FEMMHandler,
         nodeprop=None,
         maxseg=None,
         element_size=None,
         propname=None,
         hide=False,
         group=None,
-        is_draw=True,
+        is_draw: bool = True,
     ):
         """Draw the Arc object in FEMM and assign the property
 
@@ -205,7 +214,7 @@ class Arc(Line):
         femm.mi_clearselected()
 
     # Inlined from Methods.Geometry.Arc.intersect_line
-    def intersect_line(self, Z1, Z2):
+    def intersect_line(self, Z1, Z2) -> list:
         """Return a list (0, 1 or 2 complex) of coordinates of the
         intersection of the arc with a line defined by two complex
 
@@ -254,7 +263,7 @@ class Arc(Line):
         return Zlist
 
     # Inlined from Methods.Geometry.Arc.intersect_obj
-    def intersect_obj(self, other, is_on_line=True):
+    def intersect_obj(self, other: Line, is_on_line: bool = True) -> list:
         """Find the intersection points between this line
         and another line object
 
@@ -305,7 +314,7 @@ class Arc(Line):
         return Z_list
 
     # Inlined from Methods.Geometry.Arc.is_arc
-    def is_arc(self):
+    def is_arc(self) -> bool:
         """Check if the line is an Arc
 
         Parameters
@@ -322,7 +331,7 @@ class Arc(Line):
         return True
 
     # Inlined from Methods.Geometry.Arc.is_on_line
-    def is_on_line(self, Z):
+    def is_on_line(self, Z: complex) -> bool:
         """Check is a point defined by its complex coordinate is on the arc
 
         Parameters
@@ -372,15 +381,15 @@ class Arc(Line):
     # Inlined from Methods.Geometry.Arc.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        linestyle="solid",
-        linewidth=1,
-        color="black",
-        label=None,
-        offset_label=0,
-        fontsize=12,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        linestyle: str = "solid",
+        linewidth: int = 1,
+        color: str = "black",
+        label: str | None = None,
+        offset_label: complex = 0,
+        fontsize: int = 12,
+    ) -> tuple[Figure, Axes]:
         """Plot the Arc
 
         Parameters
@@ -439,7 +448,15 @@ class Arc(Line):
         return fig, ax
 
     # Inlined from Methods.Geometry.Arc.split_line
-    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None, *, DELTA=1e-07):
+    def split_line(
+        self,
+        Z1: complex,
+        Z2: complex,
+        is_join: bool = False,
+        prop_dict_join: dict | None = None,
+        *,
+        DELTA=1e-07,
+    ):
         """Cut the Arc according to a line defined by two complex
         "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
 

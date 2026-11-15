@@ -6,17 +6,21 @@ from ....Classes_new.geometry.arc_3 import Arc3
 from ....Functions_new.FEMM.get_mesh_param import get_mesh_param
 from ....Functions_new.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
 from ....Functions_new.labels import DRAW_PROP_LAB, decode_label, BOUNDARY_PROP_LAB, RADIUS_PROP_LAB, YOKE_LAB, BORE_LAB, LAM_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....classes_common.femm_handler import _FEMMHandler
 
 
 def draw_FEMM(
     self,
-    femm,
+    femm: _FEMMHandler,
     nodeprop=None,
     maxseg=None,
-    FEMM_dict=None,
+    FEMM_dict: dict | None = None,
     hide=False,
-    BC_dict=None,
-    is_draw=True,
+    BC_dict: dict | None = None,
+    is_draw: bool = True,
     type_set_BC=0,
 ):
     """draw the Surface in FEMM

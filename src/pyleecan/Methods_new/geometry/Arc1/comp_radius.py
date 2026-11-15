@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-def comp_radius(self):
+def comp_radius(self) -> float:
     """Compute the Radius of the Arc1 (for unification with other arc objects)
 
     Parameters

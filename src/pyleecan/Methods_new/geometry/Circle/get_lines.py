@@ -2,7 +2,7 @@
 from ....Classes_new.geometry.arc_3 import Arc3
 
 
-def get_lines(self):
+def get_lines(self) -> list:
     """Get the lines needed to draw the surface (2 Arc3)
 
     Parameters

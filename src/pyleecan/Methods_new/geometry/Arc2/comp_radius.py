@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def comp_radius(self):
+def comp_radius(self) -> float:
     """Compute the radius of the arc
 
     Parameters

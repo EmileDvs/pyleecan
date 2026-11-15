@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-def get_center(self):
+def get_center(self) -> complex:
     """Return the center point of the arc
 
     Parameters

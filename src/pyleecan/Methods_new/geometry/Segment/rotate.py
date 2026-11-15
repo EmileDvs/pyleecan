@@ -3,7 +3,7 @@ import numpy as np
 from . import AngleRotationSegmentError
 
 
-def rotate(self, angle):
+def rotate(self, angle: float):
     """Rotation of the Segment of angle
 
     Parameters

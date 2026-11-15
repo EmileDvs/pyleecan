@@ -3,7 +3,7 @@ import numpy as np
 DELTA = 1e-9  # To remove computing noise
 
 
-def split_point(self, Z1, is_begin=True):
+def split_point(self, Z1: complex, is_begin: bool = True):
     """Cut the Arc according to a point on the arc
 
     Parameters

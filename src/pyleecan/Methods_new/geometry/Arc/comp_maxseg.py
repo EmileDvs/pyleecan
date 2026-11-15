@@ -4,7 +4,7 @@ import numpy as np
 MAXSEG_default = 5
 
 
-def comp_maxseg(self, elementsize, maxseg_amp):
+def comp_maxseg(self, elementsize: float, maxseg_amp: float) -> float:
     """
     Computes the number of segments per arc degrees in
     function of the elementsize of the region

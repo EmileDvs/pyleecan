@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def comp_distance(self, Z):
+def comp_distance(self, Z: complex) -> float:
     """Compute the distance of a point to the Arc
 
     Parameters

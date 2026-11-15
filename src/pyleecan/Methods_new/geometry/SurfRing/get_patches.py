@@ -8,7 +8,7 @@ PATCH_EDGE_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE_ALPHA"]
 
 
 def get_patches(
-    self, color=PATCH_COLOR, edgecolor=None, is_edge_only=False, linestyle=None
+    self, color=PATCH_COLOR, edgecolor=None, is_edge_only: bool = False, linestyle: str | None = None
 ):
     """Returns the PolarArc Patch to be display in matplotlib
 

@@ -5,7 +5,7 @@ import numpy as np
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
-def intersect_line(self, Z1, Z2):
+def intersect_line(self, Z1, Z2) -> list:
     """Return a list (0, 1 or 2 complex) of coordinates of the
     intersection of the segment with a line defined by two complex
 

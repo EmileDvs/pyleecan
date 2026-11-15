@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def comp_length(self):
+def comp_length(self) -> float:
     """Compute the length of the arc
 
     Parameters

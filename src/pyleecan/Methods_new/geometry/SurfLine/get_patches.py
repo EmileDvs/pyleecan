@@ -13,9 +13,9 @@ def get_patches(
     self,
     color=PATCH_COLOR,
     edgecolor=None,
-    is_edge_only=False,
-    linestyle=None,
-    hatch=None,
+    is_edge_only: bool = False,
+    linestyle: str | None = None,
+    hatch: str | None = None,
 ):
     """Returns the PolarArc Patch to be display in matplotlib
 

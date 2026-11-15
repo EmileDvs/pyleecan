@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def get_angle(self, is_deg=False):
+def get_angle(self, is_deg: bool = False) -> float:
     """Return the angle of the arc
 
     Parameters

@@ -27,7 +27,7 @@ class Line(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Line.comp_normal
-    def comp_normal(self):
+    def comp_normal(self) -> float:
         """Compute the normal direction of the Line
         Normal point is "on top" (begin=O and end on Ox)
 

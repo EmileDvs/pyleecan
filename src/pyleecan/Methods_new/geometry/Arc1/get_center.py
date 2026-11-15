@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def get_center(self):
+def get_center(self) -> complex:
     """Return the center of the arc
 
     Parameters

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_point_ref(self, is_set=False):
+def comp_point_ref(self, is_set: bool = False) -> complex:
     """Compute the point ref of the Surface
 
     Parameters

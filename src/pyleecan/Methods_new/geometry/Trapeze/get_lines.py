@@ -4,7 +4,7 @@ import numpy as np
 from ....Classes_new.geometry.segment import Segment
 
 
-def get_lines(self):
+def get_lines(self) -> list:
     """Returns the Lines that delimit the Trapeze
 
     Parameters

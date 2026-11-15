@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def split_half(self, is_begin=True):
+def split_half(self, is_begin: bool = True):
     """Cut the line in half (modify the object)
 
     Parameters

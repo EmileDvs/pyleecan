@@ -5,7 +5,7 @@ from ...machine import ARC_NPOINT_D
 from . import NbPointArc2DError
 
 
-def discretize(self, nb_point=ARC_NPOINT_D):
+def discretize(self, nb_point: int = ARC_NPOINT_D) -> list:
     """Return the discretize version of the Arc.
     Begin and end are always returned
 

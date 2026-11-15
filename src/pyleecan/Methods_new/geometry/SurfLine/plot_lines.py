@@ -1,9 +1,14 @@
 import numpy as np
 
 from ....Functions_new.init_fig import init_fig
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
-def plot_lines(self, fig=None, ax=None, is_show_fig=True):
+def plot_lines(self, fig: Figure | None = None, ax: Axes | None = None, is_show_fig: bool = True) -> tuple[Figure, Axes]:
     """Plot the SurfLine-Contour in a matplotlib fig
     (For plotting unclosed contour, for Polygon use plot method from Surface object)
 

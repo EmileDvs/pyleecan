@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-def is_on_line(self, Z):
+def is_on_line(self, Z: complex) -> bool:
     """Check is a point defined by its complex coordinate is on the segment
 
     Parameters

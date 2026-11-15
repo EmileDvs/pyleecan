@@ -58,7 +58,7 @@ class PolarArc(Surface):
 
     # Inlined from Methods.Geometry.PolarArc.comp_length
     # -*-- coding: utf-8 -*
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Returns the length of the PolarArc
 
         Parameters
@@ -82,7 +82,7 @@ class PolarArc(Surface):
         return length
 
     # Inlined from Methods.Geometry.PolarArc.comp_point_ref
-    def comp_point_ref(self, is_set=False):
+    def comp_point_ref(self, is_set: bool = False) -> complex:
         """Compute the point ref of the Surface
 
         Parameters
@@ -104,7 +104,7 @@ class PolarArc(Surface):
         return point_ref
 
     # Inlined from Methods.Geometry.PolarArc.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the PolarArc surface
 
         Parameters
@@ -126,7 +126,7 @@ class PolarArc(Surface):
 
     # Inlined from Methods.Geometry.PolarArc.discretize
     # -*-- coding: utf-8 -*
-    def discretize(self, nb_point):
+    def discretize(self, nb_point: int) -> list:
         """Returns the discretize version of the PolarArc
 
         Parameters
@@ -158,7 +158,7 @@ class PolarArc(Surface):
         return point_list
 
     # Inlined from Methods.Geometry.PolarArc.get_lines
-    def get_lines(self):
+    def get_lines(self) -> list:
         """return the list of lines that delimits the PolarArc
 
         Parameters
@@ -194,7 +194,11 @@ class PolarArc(Surface):
 
     # Inlined from Methods.Geometry.PolarArc.get_patches
     def get_patches(
-        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
+        self,
+        color=None,
+        edgecolor=None,
+        is_edge_only: bool = False,
+        linestyle: str | None = None,
     ):
         """Returns the PolarArc Patch to be display in matplotlib
         Parameters
@@ -258,7 +262,7 @@ class PolarArc(Surface):
     )
 
     # Inlined from Methods.Geometry.PolarArc.rotate
-    def rotate(self, angle):
+    def rotate(self, angle: float):
         """Do the rotation of the PolarArc
 
         Parameters
@@ -279,7 +283,7 @@ class PolarArc(Surface):
         self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.PolarArc.translate
-    def translate(self, Zt):
+    def translate(self, Zt: complex):
         """Do the translation of the PolarArc
 
         Parameters

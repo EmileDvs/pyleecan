@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-def get_begin(self):
+def get_begin(self) -> complex:
     """Return the begin point of the segment
 
     Parameters

@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def rotate(self, angle):
+def rotate(self, angle: float):
     """Do the rotation of the PolarArc
 
     Parameters

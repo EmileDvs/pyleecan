@@ -15,7 +15,7 @@ def distance_numpy(A, B, P):
     return np.linalg.norm(np.cross(A - B, A - P)) / np.linalg.norm(B - A)
 
 
-def comp_distance(self, Z):
+def comp_distance(self, Z: complex) -> float:
     """Compute the distance of a point to the Segment
 
     Parameters

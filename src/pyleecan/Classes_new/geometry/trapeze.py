@@ -69,7 +69,7 @@ class Trapeze(Surface):
 
     # Inlined from Methods.Geometry.Trapeze.comp_length
     # -*-- coding: utf-8 -*
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Returns the length of the Trapeze
 
         Parameters
@@ -93,7 +93,7 @@ class Trapeze(Surface):
         return length
 
     # Inlined from Methods.Geometry.Trapeze.comp_point_ref
-    def comp_point_ref(self, is_set=False):
+    def comp_point_ref(self, is_set: bool = False) -> complex:
         """Compute the point ref of the Surface
 
         Parameters
@@ -115,7 +115,7 @@ class Trapeze(Surface):
         return point_ref
 
     # Inlined from Methods.Geometry.Trapeze.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Trapeze surface
 
         Parameters
@@ -134,7 +134,7 @@ class Trapeze(Surface):
 
     # Inlined from Methods.Geometry.Trapeze.discretize
     # -*-- coding: utf-8 -*
-    def discretize(self):
+    def discretize(self) -> list:
         """It returns the discretize version of the Trapeze
 
         Parameters
@@ -159,7 +159,7 @@ class Trapeze(Surface):
         return point_list
 
     # Inlined from Methods.Geometry.Trapeze.get_lines
-    def get_lines(self):
+    def get_lines(self) -> list:
         """Returns the Lines that delimit the Trapeze
 
         Parameters
@@ -197,7 +197,11 @@ class Trapeze(Surface):
 
     # Inlined from Methods.Geometry.Trapeze.get_patches
     def get_patches(
-        self, color=None, edgecolor=None, is_edge_only=False, linestyle=None
+        self,
+        color=None,
+        edgecolor=None,
+        is_edge_only: bool = False,
+        linestyle: str | None = None,
     ):
         """Returns the Trapeze Patch to be display in matplotlib
 
@@ -268,7 +272,7 @@ class Trapeze(Surface):
     )
 
     # Inlined from Methods.Geometry.Trapeze.rotate
-    def rotate(self, angle):
+    def rotate(self, angle: float):
         """Rotate the surface
 
         Parameters
@@ -291,7 +295,7 @@ class Trapeze(Surface):
         self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Trapeze.translate
-    def translate(self, Zt):
+    def translate(self, Zt: complex):
         """Translate the Trapeze
 
         Parameters

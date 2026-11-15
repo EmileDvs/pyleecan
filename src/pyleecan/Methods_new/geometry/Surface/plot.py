@@ -1,5 +1,10 @@
 from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
 PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
@@ -11,12 +16,12 @@ def plot(
     ax=None,
     color=PATCH_COLOR,
     edgecolor=PATCH_EDGE,
-    is_edge_only=False,
-    linestyle=None,
-    is_disp_point_ref=False,
-    is_disp_line_index=False,
-    is_show_fig=True,
-):
+    is_edge_only: bool = False,
+    linestyle: str | None = None,
+    is_disp_point_ref: bool = False,
+    is_disp_line_index: bool = False,
+    is_show_fig: bool = True,
+) -> tuple[Figure, Axes]:
     """Plot the Surface patch in a matplotlib fig
 
     Parameters

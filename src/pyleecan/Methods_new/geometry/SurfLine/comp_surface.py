@@ -2,7 +2,7 @@
 from ....Functions_new.Geometry.comp_surface_num import comp_surface_num
 
 
-def comp_surface(self, Ndisc=200):
+def comp_surface(self, Ndisc: int = 200) -> float:
     """Compute the SurfLine surface
 
     Parameters

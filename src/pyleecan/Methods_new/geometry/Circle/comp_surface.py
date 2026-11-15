@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Compute the circle surface
 
     Parameters

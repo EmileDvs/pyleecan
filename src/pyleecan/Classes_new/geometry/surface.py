@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from math import ceil
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...definitions import config_dict
 from ...Functions_new.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
@@ -23,6 +23,12 @@ from .arc_1 import Arc1
 from .arc_2 import Arc2
 from .arc_3 import Arc3
 from .segment import Segment
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ...classes_common.femm_handler import _FEMMHandler
 
 
 @dataclass(eq=False)
@@ -53,7 +59,7 @@ class Surface(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Surface.comp_mesh_dict
-    def comp_mesh_dict(self, element_size, prefix=""):
+    def comp_mesh_dict(self, element_size: float, prefix: str = "") -> dict:
         """Returns the number of mesh elements on each line of the surface
         to match the element_size.
 
@@ -87,13 +93,13 @@ class Surface(LegacyClass):
     # Inlined from Methods.Geometry.Surface.draw_FEMM
     def draw_FEMM(
         self,
-        femm,
+        femm: _FEMMHandler,
         nodeprop=None,
         maxseg=None,
-        FEMM_dict=None,
+        FEMM_dict: dict | None = None,
         hide=False,
-        BC_dict=None,
-        is_draw=True,
+        BC_dict: dict | None = None,
+        is_draw: bool = True,
         type_set_BC=0,
     ):
         """draw the Surface in FEMM
@@ -195,7 +201,7 @@ class Surface(LegacyClass):
                 )
 
     # Inlined from Methods.Geometry.Surface.intersect_line
-    def intersect_line(self, Z1, Z2):
+    def intersect_line(self, Z1: complex, Z2: complex):
         """Return all the intersection of a line with the surfaces
 
         Parameters
@@ -221,7 +227,7 @@ class Surface(LegacyClass):
         return Z_list
 
     # Inlined from Methods.Geometry.Surface.is_inside
-    def is_inside(self, Z, if_online=False):
+    def is_inside(self, Z: complex, if_online: bool = False):
         """Determine if a given point is inside the surface.
            If the point is on the line defining the surface, by default it will be considered as outside
 
@@ -299,12 +305,12 @@ class Surface(LegacyClass):
         ax=None,
         color=None,
         edgecolor=None,
-        is_edge_only=False,
-        linestyle=None,
-        is_disp_point_ref=False,
-        is_disp_line_index=False,
-        is_show_fig=True,
-    ):
+        is_edge_only: bool = False,
+        linestyle: str | None = None,
+        is_disp_point_ref: bool = False,
+        is_disp_line_index: bool = False,
+        is_show_fig: bool = True,
+    ) -> tuple[Figure, Axes]:
         """Plot the Surface patch in a matplotlib fig
 
         Parameters
@@ -368,7 +374,13 @@ class Surface(LegacyClass):
     plot.__defaults__ = plot.__defaults__[:3] + (PATCH_EDGE,) + plot.__defaults__[4:]
 
     # Inlined from Methods.Geometry.Surface.split_line
-    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
+    def split_line(
+        self,
+        Z1: complex,
+        Z2: complex,
+        is_join: bool = False,
+        prop_dict_join: dict | None = None,
+    ):
         """Cut the Surface in two part according to a line defined by two complex
         "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
 

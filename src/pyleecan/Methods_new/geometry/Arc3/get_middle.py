@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def get_middle(self):
+def get_middle(self) -> complex:
     """Return the point at the middle of the arc
 
     Parameters

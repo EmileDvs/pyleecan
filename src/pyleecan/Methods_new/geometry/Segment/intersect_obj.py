@@ -1,7 +1,11 @@
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
-def intersect_obj(self, other, is_on_line=True):
+def intersect_obj(self, other: Line, is_on_line: bool = True) -> list:
     """Find the intersection points between this line
     and another line object
 

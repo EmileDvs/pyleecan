@@ -21,6 +21,7 @@ excepted: do not edit the other packages by hand.
 
 import argparse
 import ast
+from collections import Counter
 import shutil
 import tokenize
 from importlib.util import resolve_name
@@ -38,6 +39,13 @@ from pyleecan.Generator.read_fct import read_all
 
 FROZEN_PACKAGES = frozenset()
 """Sub-packages of Methods_new written by hand (not generated)"""
+
+HINTED_SUBPACKAGES = frozenset({"geometry"})
+"""Sub-packages whose methods get the type hints of their docstrings
+(type_hints.py), package by package (PLAN.md Step 5)"""
+
+UNRECOGNIZED_TYPES = Counter()
+"""Documented types not turned into a hint by the last generation (review)"""
 
 PACKAGE_INIT = '"""Methods of the {name} sub-package (generated, see generate_methods_new.py)."""\n'
 
@@ -105,6 +113,7 @@ def generate_methods(root=None, gen_dict=None, frozen=FROZEN_PACKAGES):
     _methods_new_maps.cache_clear()
 
     # Modernization of the generated modules (frozen packages excluded)
+    UNRECOGNIZED_TYPES.clear()
     class_dir = str(root / "Classes_new")
     for path in sorted(target_root.rglob("*.py")):
         relative = path.relative_to(target_root)
@@ -143,6 +152,7 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     """
     from .modernize import apply_import_styles, modernize_names
     from .source_names import name_maps
+    from .type_hints import add_type_hints
 
     if gen_dict is None:
         gen_dict = name_maps().gen_dict
@@ -151,7 +161,12 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     class_name = parts[3] if len(parts) > 3 and parts[3] in gen_dict else None
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
-    return modernize_names(source, package, gen_dict, class_name)
+    source = modernize_names(source, package, gen_dict, class_name)
+    if len(parts) > 2 and parts[2] in HINTED_SUBPACKAGES:
+        source = add_type_hints(
+            source, package, gen_dict, class_name, unrecognized=UNRECOGNIZED_TYPES
+        )
+    return source
 
 
 def _redirect_methods_imports(source, package, class_dir):
@@ -236,6 +251,10 @@ def main():
         f"Wrote {sum(written.values())} method modules of {len(written)} classes "
         f"in {METHODS_NEW_PACKAGE}."
     )
+    if UNRECOGNIZED_TYPES:
+        print("Documented types without hint (review the docstrings):")
+        for text, count in UNRECOGNIZED_TYPES.most_common():
+            print(f"  {count:3d}  {text}")
 
 
 if __name__ == "__main__":

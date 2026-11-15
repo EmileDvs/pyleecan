@@ -1,7 +1,7 @@
 # -*-- coding: utf-8 -*
 
 
-def translate(self, Zt):
+def translate(self, Zt: complex):
     """Do the translation of the PolarArc
 
     Parameters

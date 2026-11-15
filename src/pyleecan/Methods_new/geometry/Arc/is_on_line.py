@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def is_on_line(self, Z):
+def is_on_line(self, Z: complex) -> bool:
     """Check is a point defined by its complex coordinate is on the arc
 
     Parameters

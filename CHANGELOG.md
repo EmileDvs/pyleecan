@@ -79,6 +79,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   gathers the method-level modernizations (shared with the functions
   generator: `source_names.py`); a package needing hand-written changes can
   be frozen.
+- **Type hints** drafted from the numpydoc docstrings by the method generator
+  (Geometry first: 125 of 164 parameters, 72 of 131 returns), with the class
+  names imported under `if TYPE_CHECKING:`; `Methods_new` is checked with
+  `ty`.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,
@@ -136,7 +140,7 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 | 2. Type, min and max validation for dataclasses | done |
 | 3. `Functions_pydantic` | done |
 | 4. Phase 1 test architecture (`--backend`) | done (method results: with Step 5) |
-| 5. Package refactor pass (`Methods_new`, no parent links) | in progress: method generator, shared method errors |
+| 5. Package refactor pass (`Methods_new`, no parent links) | in progress: method generator, shared pipeline, Geometry done (hints) |
 | 6. Remaining utility functions | to do |
 
 Legacy class tests (`Tests/New/Classes`), with each backend: 2855 passed,

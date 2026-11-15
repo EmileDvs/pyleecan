@@ -1,16 +1,20 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....classes_common.femm_handler import _FEMMHandler
 
 
 def draw_FEMM(
     self,
-    femm,
+    femm: _FEMMHandler,
     nodeprop=None,
     maxseg=None,
     element_size=None,
     propname=None,
     hide=False,
     group=None,
-    is_draw=True,
+    is_draw: bool = True,
 ):
     """Draw the Arc object in FEMM and assign the property
 

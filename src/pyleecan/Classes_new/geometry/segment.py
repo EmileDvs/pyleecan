@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -17,6 +17,13 @@ from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import TEXT_BOX
 from .line import Line
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ...classes_common.femm_handler import _FEMMHandler
+    from .line import Line
 
 
 @dataclass(eq=False)
@@ -68,7 +75,7 @@ class Segment(Line):
             )
 
     # Inlined from Methods.Geometry.Segment.comp_distance
-    def comp_distance(self, Z):
+    def comp_distance(self, Z: complex) -> float:
         """Compute the distance of a point to the Segment
 
         Parameters
@@ -112,7 +119,7 @@ class Segment(Line):
         return np.linalg.norm(np.cross(A - B, A - P)) / np.linalg.norm(B - A)
 
     # Inlined from Methods.Geometry.Segment.comp_length
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the length of the line
 
         Parameters
@@ -140,7 +147,7 @@ class Segment(Line):
         return float(abs(z2 - z1))
 
     # Inlined from Methods.Geometry.Segment.discretize
-    def discretize(self, nb_point=Line.LINE_NPOINT_D):
+    def discretize(self, nb_point: int = Line.LINE_NPOINT_D) -> list:
         """Return the discretize version of the Segment.
         Begin and end are always returned
 
@@ -182,14 +189,14 @@ class Segment(Line):
     # Inlined from Methods.Geometry.Segment.draw_FEMM
     def draw_FEMM(
         self,
-        femm,
+        femm: _FEMMHandler,
         nodeprop=None,
         propname=None,
         element_size=None,
         automesh=None,
         hide=False,
         group=None,
-        is_draw=True,
+        is_draw: bool = True,
     ):
         """<   Draw the segment in FEMM and assign the property
 
@@ -252,7 +259,7 @@ class Segment(Line):
         femm.mi_clearselected()
 
     # Inlined from Methods.Geometry.Segment.get_begin
-    def get_begin(self):
+    def get_begin(self) -> complex:
         """Return the begin point of the segment
 
         Parameters
@@ -269,7 +276,7 @@ class Segment(Line):
         return self.begin
 
     # Inlined from Methods.Geometry.Segment.get_end
-    def get_end(self):
+    def get_end(self) -> complex:
         """Return the end point of the segment
 
         Parameters
@@ -286,7 +293,7 @@ class Segment(Line):
         return self.end
 
     # Inlined from Methods.Geometry.Segment.get_middle
-    def get_middle(self):
+    def get_middle(self) -> complex:
         """Return the point at the middle of the Segment
 
         Parameters
@@ -310,7 +317,7 @@ class Segment(Line):
         return Zmid
 
     # Inlined from Methods.Geometry.Segment.intersect_line
-    def intersect_line(self, Z1, Z2):
+    def intersect_line(self, Z1, Z2) -> list:
         """Return a list (0, 1 or 2 complex) of coordinates of the
         intersection of the segment with a line defined by two complex
 
@@ -349,7 +356,7 @@ class Segment(Line):
             return [Z3, Z4]
 
     # Inlined from Methods.Geometry.Segment.intersect_obj
-    def intersect_obj(self, other, is_on_line=True):
+    def intersect_obj(self, other: Line, is_on_line: bool = True) -> list:
         """Find the intersection points between this line
         and another line object
 
@@ -390,7 +397,7 @@ class Segment(Line):
         return Z_list
 
     # Inlined from Methods.Geometry.Segment.is_arc
-    def is_arc(self):
+    def is_arc(self) -> bool:
         """Check if the line is an Arc
 
         Parameters
@@ -407,7 +414,7 @@ class Segment(Line):
         return False
 
     # Inlined from Methods.Geometry.Segment.is_on_line
-    def is_on_line(self, Z):
+    def is_on_line(self, Z: complex) -> bool:
         """Check is a point defined by its complex coordinate is on the segment
 
         Parameters
@@ -439,16 +446,16 @@ class Segment(Line):
     # Inlined from Methods.Geometry.Segment.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_arrow=False,
-        linestyle="solid",
-        linewidth=1,
-        color="black",
-        label=None,
-        offset_label=0,
-        fontsize=12,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_arrow: bool = False,
+        linestyle: str = "solid",
+        linewidth: int = 1,
+        color: str = "black",
+        label: str | None = None,
+        offset_label: complex = 0,
+        fontsize: int = 12,
+    ) -> tuple[Figure, Axes]:
         """Plot the segment
 
         Parameters
@@ -535,7 +542,7 @@ class Segment(Line):
         self.begin = end
 
     # Inlined from Methods.Geometry.Segment.rotate
-    def rotate(self, angle):
+    def rotate(self, angle: float):
         """Rotation of the Segment of angle
 
         Parameters
@@ -562,7 +569,7 @@ class Segment(Line):
         self.end = self.end * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Segment.scale
-    def scale(self, scale_factor):
+    def scale(self, scale_factor: float):
         """Scale the coordinates of the begin/end
 
         Parameters
@@ -581,7 +588,7 @@ class Segment(Line):
         self.end = self.end * scale_factor
 
     # Inlined from Methods.Geometry.Segment.split_half
-    def split_half(self, is_begin=True):
+    def split_half(self, is_begin: bool = True):
         """Cut the line in half (modify the object)
 
         Parameters
@@ -601,7 +608,15 @@ class Segment(Line):
             self.begin = self.get_middle()
 
     # Inlined from Methods.Geometry.Segment.split_line
-    def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None, *, DELTA=1e-09):
+    def split_line(
+        self,
+        Z1: complex,
+        Z2: complex,
+        is_join: bool = False,
+        prop_dict_join: dict | None = None,
+        *,
+        DELTA=1e-09,
+    ):
         """Cut the Segment according to a line defined by two complex
         "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
 
@@ -672,7 +687,7 @@ class Segment(Line):
             return [self.copy()], [self.copy()]
 
     # Inlined from Methods.Geometry.Segment.split_point
-    def split_point(self, Z1, is_begin=True):
+    def split_point(self, Z1: complex, is_begin: bool = True):
         """Cut the Segment according to a point on the segment
 
         Parameters
@@ -697,7 +712,7 @@ class Segment(Line):
             self.begin = Z1
 
     # Inlined from Methods.Geometry.Segment.translate
-    def translate(self, Zt):
+    def translate(self, Zt: complex):
         """Translate the Segment object
 
         Parameters

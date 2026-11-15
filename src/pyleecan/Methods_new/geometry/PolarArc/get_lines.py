@@ -5,7 +5,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 
 
-def get_lines(self):
+def get_lines(self) -> list:
     """return the list of lines that delimits the PolarArc
 
     Parameters

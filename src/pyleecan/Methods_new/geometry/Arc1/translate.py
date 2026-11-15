@@ -1,7 +1,7 @@
 from . import PointTranslateArc1Error
 
 
-def translate(self, Zt):
+def translate(self, Zt: complex):
     """Translate the Arc1 object
 
     Parameters

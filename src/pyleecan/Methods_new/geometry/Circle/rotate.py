@@ -3,7 +3,7 @@ import numpy as np
 from . import AngleRotationCircleError
 
 
-def rotate(self, angle):
+def rotate(self, angle: float):
     """Rotation of the Circle of angle
 
     Parameters

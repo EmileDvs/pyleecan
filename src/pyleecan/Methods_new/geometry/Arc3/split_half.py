@@ -3,7 +3,7 @@ import numpy as np
 from ....Classes_new.geometry.arc_2 import Arc2
 
 
-def split_half(self, is_begin=True):
+def split_half(self, is_begin: bool = True):
     """Cut the line in half (modify the object Arc3 => Arc2)
 
     Parameters

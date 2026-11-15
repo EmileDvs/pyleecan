@@ -3,7 +3,7 @@ import numpy as np
 DELTA = 1e-9  # To remove computing noise
 
 
-def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
+def split_line(self, Z1: complex, Z2: complex, is_join: bool = False, prop_dict_join: dict | None = None):
     """Cut the Segment according to a line defined by two complex
     "Above" is in the coordinate system with Z1 in 0 and Z2 on the X>0 axis
 

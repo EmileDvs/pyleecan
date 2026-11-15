@@ -1,7 +1,7 @@
 from math import ceil
 
 
-def comp_mesh_dict(self, element_size, prefix=""):
+def comp_mesh_dict(self, element_size: float, prefix: str = "") -> dict:
     """Returns the number of mesh elements on each line of the surface
     to match the element_size.
 

@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def get_end(self):
+def get_end(self) -> complex:
     """Return the end of the arc
 
     Parameters
