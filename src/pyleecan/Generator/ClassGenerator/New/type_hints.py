@@ -40,7 +40,10 @@ IMPORTED_TYPES = {
     "numpy array": ("np.ndarray", ("numpy", "np")),
     "matplotlib.figure.figure": ("Figure", ("matplotlib.figure", "Figure")),
     "matplotlib.axes.axes": ("Axes", ("matplotlib.axes", "Axes")),
-    "femmhandler": ("_FEMMHandler", ("pyleecan.classes_common.femm_handler", "_FEMMHandler")),
+    "femmhandler": (
+        "_FEMMHandler",
+        ("pyleecan.classes_common.femm_handler", "_FEMMHandler"),
+    ),
     "matplotlib.patches.polygon": ("Polygon", ("matplotlib.patches", "Polygon")),
     "matplotlib.patches.circle": ("Circle", ("matplotlib.patches", "Circle")),
 }
@@ -48,6 +51,24 @@ IMPORTED_TYPES = {
 ("numpy", "np") import is ``import numpy as np``"""
 
 NONE_SUFFIXES = (" or none", ", optional", " (optional)", " or None")
+
+_SCHEMATICS_RETURNS = (
+    ("matplotlib.figure.Figure", "matplotlib.axes.Axes"),
+    ("Lamination",),
+)
+RETURN_OVERRIDES = {
+    # is_return_default=True returns the default lamination of the schematics
+    ("slot", name): _SCHEMATICS_RETURNS
+    for name in (
+        "plot_schematics",
+        "plot_schematics_constant_tooth",
+        "plot_schematics_radial",
+        "plot_schematics_top_flat",
+    )
+}
+"""(sub-package, function) -> returns whose docstring is incomplete: the
+alternatives of the union, each a tuple of documented types (a tuple hint
+when there are several)"""
 
 
 def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None):
@@ -72,6 +93,7 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
         Annotated source
     """
     tree = ast.parse(source)
+    subpackage = package.split(".")[2] if package.count(".") >= 2 else None
     class_names = {NORMALIZATION_CLASS_NAMES.get(name, name): name for name in gen_dict}
     edits = []  # (start, end, text) in characters of a line, by line
     imports = {}  # name -> (module, name)
@@ -84,7 +106,8 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
         defaults = dict(
             zip(
                 [arg.arg for arg in node.args.posonlyargs + node.args.args][
-                    len(node.args.posonlyargs + node.args.args) - len(node.args.defaults) :
+                    len(node.args.posonlyargs + node.args.args)
+                    - len(node.args.defaults) :
                 ],
                 node.args.defaults,
             )
@@ -108,7 +131,9 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
                 continue
             if not _default_matches(hint, default):
                 if unrecognized is not None:  # The docstring contradicts the code
-                    unrecognized[f"{documented[arg.arg]} (default {ast.unparse(default)})"] += 1
+                    unrecognized[
+                        f"{documented[arg.arg]} (default {ast.unparse(default)})"
+                    ] += 1
                 continue
             if is_none and not hint.endswith("| None"):
                 hint += " | None"
@@ -120,15 +145,18 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
             else:
                 edits.append((arg.end_lineno, arg.end_col_offset, ": " + hint))
         if node.returns is None:
-            returned = _section_types(docstring, "Returns")
-            hints = [
-                _annotation(text, class_names, imports, unrecognized)
-                for text in returned.values()
+            override = RETURN_OVERRIDES.get((subpackage, node.name))
+            if override is None:
+                returned = [tuple(_section_types(docstring, "Returns").values())]
+            else:
+                returned = list(override)
+            alternatives = [
+                _return_hint(texts, class_names, imports, unrecognized)
+                for texts in returned
             ]
-            if hints and all(hint is not None for hint in hints):
-                hint = hints[0] if len(hints) == 1 else f"tuple[{', '.join(hints)}]"
+            if all(hint is not None for hint in alternatives):
                 line, column = _signature_end(source, node)
-                edits.append((line, column, " -> " + hint))
+                edits.append((line, column, " -> " + " | ".join(alternatives)))
     if not edits:
         return source
     lines = source.splitlines(keepends=True)
@@ -165,7 +193,7 @@ def _section_types(docstring, section):
     match = re.search(
         rf"^\s*{section}\s*\n\s*-+\s*\n(.*?)(?=^\s*[A-Z][A-Za-z ]+\s*\n\s*-+\s*$|\Z)",
         docstring,
-        re.S | re.M,
+        re.DOTALL | re.MULTILINE,
     )
     if match is None:
         return {}
@@ -196,7 +224,7 @@ def _annotation(text, class_names, imports, unrecognized):
     container = (
         re.fullmatch(r"\[(.+)\]", text)
         or re.fullmatch(r"\{(.+)\}", text)
-        or re.fullmatch(r"list of (.+)", text, re.I)
+        or re.fullmatch(r"list of (.+)", text, re.IGNORECASE)
     )
     if container is not None:
         item = _annotation(container.group(1), class_names, imports, None)
@@ -215,6 +243,14 @@ def _annotation(text, class_names, imports, unrecognized):
             unrecognized[text] += 1
         return None
     return hint + " | None" if optional else hint
+
+
+def _return_hint(texts, class_names, imports, unrecognized):
+    """Hint of documented returns (a tuple when several), or None."""
+    hints = [_annotation(text, class_names, imports, unrecognized) for text in texts]
+    if not hints or any(hint is None for hint in hints):
+        return None
+    return hints[0] if len(hints) == 1 else f"tuple[{', '.join(hints)}]"
 
 
 def _signature_end(source, node):

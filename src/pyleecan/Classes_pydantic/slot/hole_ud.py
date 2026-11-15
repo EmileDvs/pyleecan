@@ -42,7 +42,9 @@ class HoleUD(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleUD.build_geometry
-    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+    def build_geometry(
+        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+    ) -> list:
         """Compute the curve (Segment) needed to plot the Hole.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -117,7 +119,7 @@ class HoleUD(HoleMag):
                 )
 
     # Inlined from Methods.Slot.HoleUD.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index):
+    def comp_surface_magnet_id(self, index: int) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -151,7 +153,7 @@ class HoleUD(HoleMag):
                 return 0
 
     # Inlined from Methods.Slot.HoleUD.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if the Hole has magnets
 
         Parameters

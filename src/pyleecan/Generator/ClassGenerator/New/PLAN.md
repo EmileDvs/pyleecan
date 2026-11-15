@@ -453,14 +453,17 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
       the CSV files) and `list of X`, when the item type is recognized
       (`list[Line]`, `dict[str, Magnet]`, `list[Polygon]`). Test results
       unchanged.
-- [ ] `ty check src/pyleecan/Methods_new/slot`: 259 diagnostics (review list):
+- [x] `plot_schematics` (and its `_radial`, `_top_flat`, `_constant_tooth`
+      variants) returns the default lamination when `is_return_default`: the
+      documented return (`fig, ax`) is incomplete, `RETURN_OVERRIDES` of
+      `type_hints.py` gives `tuple[Figure, Axes] | Lamination`.
+- [ ] `ty check src/pyleecan/Methods_new/slot`: 198 diagnostics (review list):
       - ~108 `list[Line]` expected, `list[Segment | Arc1]` found: locals built
         from a list literal, `list` is invariant (`SurfLine(line_list=...)`);
       - ~70 `**kwargs` built from a dict literal (`Unknown | str | int`) passed
         to typed parameters (`plot_schematics`);
-      - 61 `plot_schematics` returns the lamination when `is_return_default`:
-        the documented return (`fig, ax`) is incomplete;
-      - 8 implicit `None` returns (`comp_surface_opening`, `get_H1`...),
+      - 8 implicit `None` returns (`comp_surface_opening`, `get_H1`,
+        `HoleM52R.plot_schematics`...),
         `split_line` not declared on the `Line` base (SlotW21/22/25/29),
         `Legend | None`, `point_ref` on a None default (`Hole.plot`).
 

@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Slot/SlotUD2.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import Field
 
@@ -11,6 +11,9 @@ from .._import import import_class
 from ..geometry.line import Line
 from ..geometry.surface import Surface
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from ..geometry.surface import Surface
 
 
 class SlotUD2(Slot):
@@ -34,7 +37,9 @@ class SlotUD2(Slot):
 
     line_list: list[Line] | None = Field(default_factory=list)
     """list of line to draw the edges of the slot"""
-    active_surf: Surface | None = Field(default_factory=lambda: Surface())
+    active_surf: Surface | None = Field(
+        default_factory=lambda: import_class("Surface")()
+    )
     """Active surface of the Slot"""
     split_active_surf_dict: dict[str, Any] | None = None
     """Dictionary to enforced the split active surface (key="Nrad=1, Ntan=2"). Labels set according to list order (loop on Nrad then Ntan)"""
@@ -62,7 +67,7 @@ class SlotUD2(Slot):
         self._split_active_surf_dict = value
 
     # Inlined from Methods.Slot.SlotUD2.build_geometry
-    def build_geometry(self):
+    def build_geometry(self) -> list:
         """Compute the curve (Line) needed to plot the object.
         The ending point of a curve is the starting point of the next curve
         in the list
@@ -82,7 +87,14 @@ class SlotUD2(Slot):
         return [line.copy() for line in self.line_list]
 
     # Inlined from Methods.Slot.SlotUD2.build_geometry_active
-    def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):
+    def build_geometry_active(
+        self,
+        Nrad: int,
+        Ntan: int,
+        is_simplified: bool = False,
+        alpha: float = 0,
+        delta: complex = 0,
+    ):
         """Split the slot active area in several zone
         This method assume that the active area is centered on X axis and symetrical
         Otherwise a dedicated build_geometry_active method must be provided
@@ -153,7 +165,7 @@ class SlotUD2(Slot):
                 )
 
     # Inlined from Methods.Slot.SlotUD2.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
+    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         """Return the full winding surface
 
         Parameters

@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Slot/SlotW22.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,6 +29,13 @@ from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..machine.lam_slot import LamSlot
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.surface import Surface
+    from ..machine.lamination import Lamination
 
 
 class SlotW22(Slot):
@@ -65,7 +72,7 @@ class SlotW22(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW22._comp_line_dict
-    def _comp_line_dict(self):
+    def _comp_line_dict(self) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -137,7 +144,7 @@ class SlotW22(Slot):
         return line_dict
 
     # Inlined from Methods.Slot.SlotW22._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -208,7 +215,9 @@ class SlotW22(Slot):
         return [line for line in curve_list if line is not None]
 
     # Inlined from Methods.Slot.SlotW22.build_geometry_active
-    def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
+    def build_geometry_active(
+        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+    ):
         """Split the slot winding area in several zone
 
         Parameters
@@ -363,7 +372,7 @@ class SlotW22(Slot):
             raise S22_SpCheckError("You must have W2 < 2*pi/Zs")
 
     # Inlined from Methods.Slot.SlotW22.comp_angle_opening
-    def comp_angle_opening(self):
+    def comp_angle_opening(self) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
@@ -381,7 +390,7 @@ class SlotW22(Slot):
         return self.W0
 
     # Inlined from Methods.Slot.SlotW22.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -400,7 +409,7 @@ class SlotW22(Slot):
         return self.H0 + self.H2
 
     # Inlined from Methods.Slot.SlotW22.comp_height_active
-    def comp_height_active(self):
+    def comp_height_active(self) -> float:
         """Compute the height of the winding area
 
         Parameters
@@ -418,7 +427,7 @@ class SlotW22(Slot):
         return self.H2
 
     # Inlined from Methods.Slot.SlotW22.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -436,7 +445,7 @@ class SlotW22(Slot):
         return self.comp_surface_active() + self.comp_surface_opening()
 
     # Inlined from Methods.Slot.SlotW22.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the Slot inner surface for winding (by analytical computation)
 
         Parameters
@@ -472,7 +481,7 @@ class SlotW22(Slot):
         return Sring * self.W2 / (2 * np.pi)
 
     # Inlined from Methods.Slot.SlotW22.comp_surface_opening
-    def comp_surface_opening(self):
+    def comp_surface_opening(self) -> float:
         """Compute the Slot opening surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -509,7 +518,7 @@ class SlotW22(Slot):
         return Sring * self.W0 / (2 * np.pi)
 
     # Inlined from Methods.Slot.SlotW22.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
+    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -560,7 +569,7 @@ class SlotW22(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotW22.get_surface_opening
-    def get_surface_opening(self, alpha=0, delta=0):
+    def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -615,17 +624,17 @@ class SlotW22(Slot):
     # Inlined from Methods.Slot.SlotW22.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        type_add_active=1,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
+        type_add_active: int = 1,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
         Parameters

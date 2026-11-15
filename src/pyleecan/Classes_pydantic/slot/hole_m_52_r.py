@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Slot/HoleM52R.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,6 +33,12 @@ from ..geometry.surf_line import SurfLine
 from ..machine.lam_hole import LamHole
 from ..machine.magnet import Magnet
 from .hole_mag import HoleMag
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..machine.lamination import Lamination
 
 
 class HoleM52R(HoleMag):
@@ -85,7 +91,7 @@ class HoleM52R(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM52R._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -136,7 +142,9 @@ class HoleM52R(HoleMag):
         return point_dict
 
     # Inlined from Methods.Slot.HoleM52R.build_geometry
-    def build_geometry(self, alpha=0, delta=0, is_simplified=False):
+    def build_geometry(
+        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+    ) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -318,7 +326,7 @@ class HoleM52R(HoleMag):
             )
 
     # Inlined from Methods.Slot.HoleM52R.comp_alpha
-    def comp_alpha(self):
+    def comp_alpha(self) -> float:
         """The opening angle incl. W1 width and a Rext - H0 radius
 
         Parameters
@@ -339,7 +347,7 @@ class HoleM52R(HoleMag):
         return alpha
 
     # Inlined from Methods.Slot.HoleM52R.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True):
+    def comp_magnetization_dict(self, is_north=True) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -400,7 +408,7 @@ class HoleM52R(HoleMag):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM52R.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the Hole
 
         Parameters
@@ -422,7 +430,7 @@ class HoleM52R(HoleMag):
         return Smag + 2 * Srect
 
     # Inlined from Methods.Slot.HoleM52R.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index):
+    def comp_surface_magnet_id(self, index: int) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -440,7 +448,7 @@ class HoleM52R(HoleMag):
         return self.W0 * self.H1 if index == 0 and self.magnet_0 else 0
 
     # Inlined from Methods.Slot.HoleM52R.get_height_magnet_id
-    def get_height_magnet_id(self, index):
+    def get_height_magnet_id(self, index: int) -> float:
         """Get the height of the hole magnet of the corresponding index
 
         Parameters
@@ -461,7 +469,7 @@ class HoleM52R(HoleMag):
         return 0
 
     # Inlined from Methods.Slot.HoleM52R.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if the Hole has magnets
 
         Parameters
@@ -480,15 +488,15 @@ class HoleM52R(HoleMag):
     # Inlined from Methods.Slot.HoleM52R.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+    ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
         Parameters

@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.lamination import Lamination
 
 MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
@@ -29,7 +30,7 @@ def plot_schematics(
     is_show_fig: bool = True,
     fig: Figure | None = None,
     ax: Axes | None = None,
-) -> tuple[Figure, Axes]:
+) -> tuple[Figure, Axes] | Lamination:
     """Plot the schematics of the slot
 
     Parameters

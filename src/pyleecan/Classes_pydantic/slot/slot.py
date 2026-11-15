@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Slot/Slot.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch, Polygon
@@ -29,6 +29,13 @@ from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..material.material import Material
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.surface import Surface
+    from .slot_ud_2 import SlotUD2
 
 
 class Slot(LegacyModel):
@@ -65,7 +72,9 @@ class Slot(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Slot.build_geometry_active
-    def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
+    def build_geometry_active(
+        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+    ):
         """Split the slot active area in several zone
         This method assume that the active area is centered on X axis and symetrical
         Otherwise a dedicated build_geometry_active method must be provided
@@ -175,7 +184,9 @@ class Slot(LegacyModel):
         return surf_list
 
     # Inlined from Methods.Slot.Slot.build_geometry_half_tooth
-    def build_geometry_half_tooth(self, is_top=False, alpha=0, delta=0):
+    def build_geometry_half_tooth(
+        self, is_top: bool = False, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of a Half Tooth
 
         Parameters
@@ -282,7 +293,7 @@ class Slot(LegacyModel):
         pass
 
     # Inlined from Methods.Slot.Slot.comp_angle_active_eq
-    def comp_angle_active_eq(self):
+    def comp_angle_active_eq(self) -> float:
         """Compute the equivalent angle of the active part of the slot
         (Ideal polar shape with the same surface and height)
 
@@ -307,7 +318,7 @@ class Slot(LegacyModel):
         return Swind * 2 * np.pi / (np.pi * Rext**2 - np.pi * Rint**2)
 
     # Inlined from Methods.Slot.Slot.comp_angle_opening
-    def comp_angle_opening(self):
+    def comp_angle_opening(self) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
@@ -329,7 +340,7 @@ class Slot(LegacyModel):
         return np.angle(Z2) - np.angle(Z1)
 
     # Inlined from Methods.Slot.Slot.comp_height
-    def comp_height(self, Ndisc=200):
+    def comp_height(self, Ndisc: int = 200) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -359,7 +370,7 @@ class Slot(LegacyModel):
             return Rbo - min(abs(point_list))
 
     # Inlined from Methods.Slot.Slot.comp_height_active
-    def comp_height_active(self, Ndisc=200):
+    def comp_height_active(self, Ndisc: int = 200) -> float:
         """Compute the height of the active area
 
         Parameters
@@ -384,7 +395,7 @@ class Slot(LegacyModel):
         return max(point_list) - min(point_list)
 
     # Inlined from Methods.Slot.Slot.comp_height_opening
-    def comp_height_opening(self, Ndisc=200):
+    def comp_height_opening(self, Ndisc: int = 200) -> float:
         """Compute the height of the opening area (Hslot - Hactive)
 
         Parameters
@@ -436,7 +447,7 @@ class Slot(LegacyModel):
                 return (Rbo - H, Rbo)
 
     # Inlined from Methods.Slot.Slot.comp_radius_mid_active
-    def comp_radius_mid_active(self):
+    def comp_radius_mid_active(self) -> float:
         """Compute the radius at the middle of the active part of the slot
 
         Parameters
@@ -460,7 +471,7 @@ class Slot(LegacyModel):
             return Rbo - Hslot + Hwind / 2
 
     # Inlined from Methods.Slot.Slot.comp_surface
-    def comp_surface(self, Ndisc=200):
+    def comp_surface(self, Ndisc: int = 200) -> float:
         """Compute the Slot total surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -481,7 +492,7 @@ class Slot(LegacyModel):
         return surf.comp_surface(Ndisc=Ndisc)
 
     # Inlined from Methods.Slot.Slot.comp_surface_active
-    def comp_surface_active(self, Ndisc=200):
+    def comp_surface_active(self, Ndisc: int = 200) -> float:
         """Compute the Slot active surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -504,7 +515,7 @@ class Slot(LegacyModel):
         return surf.comp_surface(Ndisc=Ndisc)
 
     # Inlined from Methods.Slot.Slot.comp_surface_opening
-    def comp_surface_opening(self, Ndisc=200):
+    def comp_surface_opening(self, Ndisc: int = 200) -> float:
         """Compute the Slot opening surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -530,7 +541,7 @@ class Slot(LegacyModel):
         return S
 
     # Inlined from Methods.Slot.Slot.comp_surface_wedges
-    def comp_surface_wedges(self, Ndisc=200):
+    def comp_surface_wedges(self, Ndisc: int = 200) -> float:
         """Compute the Slot wedges surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -556,7 +567,7 @@ class Slot(LegacyModel):
         return S
 
     # Inlined from Methods.Slot.Slot.comp_width
-    def comp_width(self):
+    def comp_width(self) -> float:
         """Compute the average width of the Slot by dividing its surface by its height
 
         Parameters
@@ -577,7 +588,7 @@ class Slot(LegacyModel):
         return S / H
 
     # Inlined from Methods.Slot.Slot.comp_width_opening
-    def comp_width_opening(self, is_curved=False):
+    def comp_width_opening(self, is_curved: bool = False) -> float:
         """Compute the average opening width of the Slot
 
         Parameters
@@ -605,7 +616,7 @@ class Slot(LegacyModel):
             return abs(Z2 - Z1)
 
     # Inlined from Methods.Slot.Slot.convert_to_SlotUD2
-    def convert_to_SlotUD2(self):
+    def convert_to_SlotUD2(self) -> SlotUD2:
         """Convert the slot to the equivalent SlotUD2
 
         Parameters
@@ -629,7 +640,7 @@ class Slot(LegacyModel):
         return new_slot
 
     # Inlined from Methods.Slot.Slot.get_is_stator
-    def get_is_stator(self):
+    def get_is_stator(self) -> bool:
         """Return True if the parent lamination is stator and False if is a rotor
 
         Parameters
@@ -650,7 +661,7 @@ class Slot(LegacyModel):
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
     # Inlined from Methods.Slot.Slot.get_name_lam
-    def get_name_lam(self):
+    def get_name_lam(self) -> str:
         """Return the name of the parent lamination
 
         Parameters
@@ -671,7 +682,7 @@ class Slot(LegacyModel):
             return "NoLam"
 
     # Inlined from Methods.Slot.Slot.get_Rbo
-    def get_Rbo(self):
+    def get_Rbo(self) -> float:
         """Return the parent lamination bore radius
 
         Parameters
@@ -695,7 +706,7 @@ class Slot(LegacyModel):
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
     # Inlined from Methods.Slot.Slot.get_surface
-    def get_surface(self):
+    def get_surface(self) -> SurfLine:
         """Returns the surface delimiting the slot
 
         Parameters
@@ -730,7 +741,7 @@ class Slot(LegacyModel):
         return surf
 
     # Inlined from Methods.Slot.Slot.get_surface_tooth
-    def get_surface_tooth(self):
+    def get_surface_tooth(self) -> SurfLine:
         """Returns the surface delimiting the tooth (including yoke part)
 
         Parameters
@@ -793,7 +804,7 @@ class Slot(LegacyModel):
         return SurfLine(line_list=curve_list, label=label)
 
     # Inlined from Methods.Slot.Slot.get_surface_wedges
-    def get_surface_wedges(self, alpha=0, delta=0):
+    def get_surface_wedges(self, alpha: float = 0, delta: complex = 0) -> list:
         """Return the list of surfaces defining the wedges area of the Slot
 
         Parameters
@@ -843,7 +854,7 @@ class Slot(LegacyModel):
         return surf_list
 
     # Inlined from Methods.Slot.Slot.is_airgap_active
-    def is_airgap_active(self):
+    def is_airgap_active(self) -> bool:
         """Return True if a part or the full active surface is in the airgap
 
         Parameters
@@ -860,7 +871,7 @@ class Slot(LegacyModel):
         return False
 
     # Inlined from Methods.Slot.Slot.is_full_pitch_active
-    def is_full_pitch_active(self):
+    def is_full_pitch_active(self) -> bool:
         """Returns True if the active surface angular width
         matches the slot pitch (like SlotM17 or SlotM18)
         (used to set Boundary conditions in FEMM airgap)
@@ -879,7 +890,7 @@ class Slot(LegacyModel):
         return False
 
     # Inlined from Methods.Slot.Slot.is_outwards
-    def is_outwards(self):
+    def is_outwards(self) -> bool:
         """Return if the slot is outwards (on an external lamination) or inwards
         (on an internal lamination)
 
@@ -904,7 +915,7 @@ class Slot(LegacyModel):
             )
 
     # Inlined from Methods.Slot.Slot.plot
-    def plot(self, fig=None, ax=None, is_show_fig=True):
+    def plot(self, fig=None, ax=None, is_show_fig=True) -> tuple[Figure, Axes]:
         """Plot the Slot in a matplotlib fig
 
         Parameters
@@ -947,15 +958,15 @@ class Slot(LegacyModel):
     # Inlined from Methods.Slot.Slot.plot_active
     def plot_active(
         self,
-        wind_mat=None,
+        wind_mat: np.ndarray | None = None,
         fig=None,
         ax=None,
-        is_bar=False,
-        is_show_fig=True,
-        enforced_default_color=None,
-        alpha=0,
-        delta=0,
-        is_add_wedge=False,
+        is_bar: bool = False,
+        is_show_fig: bool = True,
+        enforced_default_color: str | None = None,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_add_wedge: bool = False,
     ):
         """Plot the active area of the lamination according to the wind_mat
 
@@ -1123,7 +1134,7 @@ class Slot(LegacyModel):
         return "w"  # If all the phase are at 0 : the zone is empty => white
 
     # Inlined from Methods.Slot.Slot.set_label
-    def set_label(self, surf_list, Nrad, Ntan, lam_label):
+    def set_label(self, surf_list: list[Surface], Nrad: int, Ntan: int, lam_label: str):
         """Set the normalized label on the active surface
         (internal method of build_geometry_active)
 

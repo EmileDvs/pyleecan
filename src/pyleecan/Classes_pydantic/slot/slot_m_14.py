@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Slot/SlotM14.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,6 +24,13 @@ from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..machine.lam_slot import LamSlot
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.surface import Surface
+    from ..machine.lamination import Lamination
 
 
 class SlotM14(Slot):
@@ -65,7 +72,7 @@ class SlotM14(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM14._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -121,7 +128,7 @@ class SlotM14(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotM14.build_geometry
-    def build_geometry(self):
+    def build_geometry(self) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -178,7 +185,7 @@ class SlotM14(Slot):
             raise SlotCheckError("You must have W1 <= W0")
 
     # Inlined from Methods.Slot.SlotM14.comp_angle_opening
-    def comp_angle_opening(self):
+    def comp_angle_opening(self) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
@@ -196,7 +203,7 @@ class SlotM14(Slot):
         return self.W0
 
     # Inlined from Methods.Slot.SlotM14.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -215,7 +222,7 @@ class SlotM14(Slot):
         return self.H0
 
     # Inlined from Methods.Slot.SlotM14.comp_height_active
-    def comp_height_active(self):
+    def comp_height_active(self) -> float:
         """Compute the height of the active area
 
         Parameters
@@ -233,7 +240,7 @@ class SlotM14(Slot):
         return self.H1
 
     # Inlined from Methods.Slot.SlotM14.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -262,7 +269,7 @@ class SlotM14(Slot):
         return abs(S1 - S2)
 
     # Inlined from Methods.Slot.SlotM14.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the Slot inner active surface (by analytical computation)
 
         Parameters
@@ -298,7 +305,7 @@ class SlotM14(Slot):
         return abs(S1 - S2) - Sarc1 + Sarc2
 
     # Inlined from Methods.Slot.SlotM14.get_surface_active
-    def get_surface_active(self, alpha=0, delta=0):
+    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         """Return the full active surface
 
         Parameters
@@ -378,7 +385,7 @@ class SlotM14(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotM14.is_airgap_active
-    def is_airgap_active(self):
+    def is_airgap_active(self) -> bool:
         """Return True if a part or the full active surface is in the airgap
 
         Parameters
@@ -395,7 +402,7 @@ class SlotM14(Slot):
         return self.comp_height_active() > self.H0
 
     # Inlined from Methods.Slot.SlotM14.is_full_pitch_active
-    def is_full_pitch_active(self):
+    def is_full_pitch_active(self) -> bool:
         """Returns True if the active surface angular width
         matches the slot pitch (like SlotM17 or SlotM18)
         (used to set Boundary conditions in FEMM airgap)
@@ -416,17 +423,17 @@ class SlotM14(Slot):
     # Inlined from Methods.Slot.SlotM14.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_return_default=False,
-        is_add_point_label=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
+        is_default: bool = False,
+        is_return_default: bool = False,
+        is_add_point_label: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
         type_add_active=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
         Parameters

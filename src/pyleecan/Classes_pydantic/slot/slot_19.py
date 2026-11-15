@@ -46,7 +46,7 @@ class Slot19(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Slot19._comp_point_coordinate
-    def _comp_point_coordinate(self):
+    def _comp_point_coordinate(self) -> list:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
@@ -82,7 +82,7 @@ class Slot19(Slot):
         return [Z3, Z2, Z1, Z0]
 
     # Inlined from Methods.Slot.Slot19.build_geometry
-    def build_geometry(self):
+    def build_geometry(self) -> list:
         """Compute the curve (Line) needed to plot the object.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -135,7 +135,7 @@ class Slot19(Slot):
             raise S19_W1CheckError("W1 must be larger than zero")
 
     # Inlined from Methods.Slot.Slot19.comp_angle_bottom
-    def comp_angle_bottom(self):
+    def comp_angle_bottom(self) -> float:
         """Compute the slot bottom angle of the Slot
 
         Parameters
@@ -163,7 +163,7 @@ class Slot19(Slot):
         return alpha
 
     # Inlined from Methods.Slot.Slot19.comp_angle_opening
-    def comp_angle_opening(self):
+    def comp_angle_opening(self) -> float:
         """Compute the slot opening angle of the Slot
 
         Parameters
@@ -186,7 +186,7 @@ class Slot19(Slot):
             return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.Slot19.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -205,7 +205,7 @@ class Slot19(Slot):
         return self.H0
 
     # Inlined from Methods.Slot.Slot19.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 

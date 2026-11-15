@@ -42,6 +42,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..geometry.surface import Surface
+    from ..machine.lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -797,7 +798,7 @@ class SlotW11_2(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
-    ) -> tuple[Figure, Axes]:
+    ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
         Parameters
@@ -1118,7 +1119,7 @@ class SlotW11_2(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
-    ) -> tuple[Figure, Axes]:
+    ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
         Parameters

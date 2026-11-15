@@ -39,7 +39,10 @@ def test_builtin_hints_and_pep8_default():
     return 1.0
 '''
     result, _ = _hint(source)
-    assert "def f(self, a: complex, n: int = 2, flag: bool | None = None) -> float:" in result
+    assert (
+        "def f(self, a: complex, n: int = 2, flag: bool | None = None) -> float:"
+        in result
+    )
 
 
 def test_class_hint_imported_for_type_checking():
@@ -55,7 +58,10 @@ def test_class_hint_imported_for_type_checking():
 '''
     result, _ = _hint(source)
     assert result.startswith("from typing import TYPE_CHECKING\n")
-    assert "if TYPE_CHECKING:\n    from ....Classes_new.geometry.arc_1 import Arc1\n" in result
+    assert (
+        "if TYPE_CHECKING:\n    from ....Classes_new.geometry.arc_1 import Arc1\n"
+        in result
+    )
     assert "def f(self, other: Arc1):" in result
 
 
@@ -141,3 +147,32 @@ def test_container_hints():
     assert "from matplotlib.patches import Polygon" in result
     assert ", other):" in result  # Unrecognized item type: no hint
     assert unrecognized["[unknown thing]"] == 1
+
+
+def test_return_override():
+    source = '''def plot_schematics(self, is_return_default=False):
+    """Doc
+
+    Returns
+    -------
+    fig : Matplotlib.figure.Figure
+        Figure containing the schematics
+    ax : Matplotlib.axes.Axes object
+        Axis containing the schematics
+    """
+    pass
+
+
+def g(self):
+    """No Returns section"""
+    pass
+'''
+    result = add_type_hints(
+        source, "pyleecan.Methods_new.slot.SlotW10", name_maps().gen_dict, "SlotW10"
+    )
+    assert "-> tuple[Figure, Axes] | Lamination:" in result
+    assert "from ....Classes_new.machine.lamination import Lamination" in result
+    assert "def g(self):" in result
+    # Other sub-packages keep the documented return
+    result, _ = _hint(source)  # geometry
+    assert "-> tuple[Figure, Axes]:" in result

@@ -12,6 +12,7 @@ from .surface import Surface
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from matplotlib.patches import Polygon
 
 
 class SurfRing(Surface):
@@ -175,7 +176,7 @@ class SurfRing(Surface):
         edgecolor=None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
-    ):
+    ) -> list[Polygon]:
         """Returns the PolarArc Patch to be display in matplotlib
 
         Parameters

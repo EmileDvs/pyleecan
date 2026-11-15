@@ -197,7 +197,7 @@ class SurfLine(Surface):
         is_edge_only: bool = False,
         linestyle: str | None = None,
         hatch: str | None = None,
-    ):
+    ) -> list[Polygon]:
         """Returns the PolarArc Patch to be display in matplotlib
 
         Parameters

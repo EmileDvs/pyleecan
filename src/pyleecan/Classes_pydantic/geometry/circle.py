@@ -1,6 +1,8 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Geometry/Circle.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 from typing import Any, ClassVar
 
 import numpy as np
@@ -193,7 +195,7 @@ class Circle(Surface):
         edgecolor=None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
-    ):
+    ) -> list[Circle]:
         """Returns the Circle Patch to be display in matplotlib
 
         Parameters
