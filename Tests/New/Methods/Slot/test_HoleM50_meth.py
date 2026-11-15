@@ -6,7 +6,7 @@ from backend_classes.slot.hole_m_50 import HoleM50
 from backend_classes.machine.lam_hole import LamHole
 from backend_classes.geometry.surf_line import SurfLine
 from backend_classes.machine.magnet import Magnet
-from pyleecan.Methods.Slot.HoleM50 import *
+from pyleecan.Methods.Slot.HoleM50 import *; from pyleecan.classes_common.errors import S50_NoneError, S50_W01CheckError, S50_H23CheckError, S50_H01CheckError, S50_W5CheckError, S50_W3CheckError, S50_SpCheckError
 
 # For AlmostEqual
 DELTA = 1e-4

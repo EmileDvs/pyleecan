@@ -156,3 +156,17 @@ def test_redirect_legacy_methods_package_error_import():
     )
     assert "pyleecan.Methods" not in result
     assert "_error import ParentMissingError" in result
+
+
+def test_redirect_legacy_method_wildcard_error_import():
+    """A wildcard import is kept, the shared errors of the module follow it"""
+    from pyleecan.Generator.ClassGenerator.New.modernize import (
+        _redirect_shared_error_imports,
+    )
+
+    source = "from pyleecan.Methods.Slot.HoleM50 import *\n"
+    result = _redirect_shared_error_imports(
+        source, "Tests", method_error_names={"S50_NoneError"}
+    )
+    assert result.startswith("from pyleecan.Methods.Slot.HoleM50 import *; ")
+    assert "_error import S50_NoneError\n" in result

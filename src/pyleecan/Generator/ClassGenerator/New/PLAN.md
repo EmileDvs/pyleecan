@@ -425,7 +425,8 @@ pydantic field has no property): `ParamExplorer._set_getter`/`_set_setter`
 (e.g. `setter="simu.input"`, which fails `Tests/New/Classes/test_copy.py`),
 `DataND._set_values`/`_get_field`/`_get_freqs`, `Data._set_normalizations`,
 `DataKeeper._set_keeper`, `VarLoad._set_OP_matrix`, `RuleComplex._set_fct_name`
-and `SlotUD2._set_split_active_surf_dict`. Their conversions become explicit
+`SlotUD2._set_split_active_surf_dict` and `SlotW11`/`SlotW11_2`/`SlotW23._set_W3`
+(side effect: W1 and W2 recomputed). Their conversions become explicit
 in `Methods_new` (e.g. a field validator, or a method building the value).
 
 #### Order
@@ -452,8 +453,13 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
 - [x] `from pyleecan.Methods import ParentMissingError` (errors of the
       `Methods` package itself) redirected by the test generator to the shared
       errors, like the method module errors (7 Slot failures). 11 -> 4.
-- [ ] Remaining Slot failures: one `S50_NoneError`, three tests expecting
-      different values after a copy.
+- [x] Wildcard import of a legacy method module (`from
+      pyleecan.Methods.Slot.HoleM50 import *`): kept, followed by the import
+      of the shared errors of the module (1 Slot failure). 4 -> 3.
+- [ ] Remaining Slot failures (3, `test_comp_surface_change_W3` of SlotW11,
+      SlotW11_2, SlotW23): the legacy `_set_W3` property setter recomputes W1
+      and W2 (`_comp_W`, constant tooth width); inlined in the new classes but
+      not called on assignment (see "Custom property setters and getters").
 - [x] Type hints (`slot` in `HINTED_SUBPACKAGES`): 817/886 parameters and
       582/694 returns hinted. Container types recognized: `[X]`, `{X}` (as in
       the CSV files) and `list of X`, when the item type is recognized

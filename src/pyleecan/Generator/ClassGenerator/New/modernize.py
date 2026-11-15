@@ -1066,6 +1066,18 @@ def _function_import_style(source, package, import_style):
     return data.decode("utf-8")
 
 
+def _legacy_module_class_names(module, soft_name="pyleecan"):
+    """Classes defined in a legacy module (parsed, not imported), in order."""
+    from pyleecan.definitions import MAIN_DIR
+
+    path = Path(MAIN_DIR).joinpath(*module.split(".")[1:])
+    path = path / "__init__.py" if path.is_dir() else path.with_suffix(".py")
+    if module.split(".")[0] != soft_name or not path.is_file():
+        return []
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    return [node.name for node in tree.body if isinstance(node, ast.ClassDef)]
+
+
 def _redirect_shared_error_imports(
     source, package, soft_name="pyleecan", method_error_names=None
 ):
@@ -1095,13 +1107,34 @@ def _redirect_shared_error_imports(
             if module.startswith(prefix):
                 errors = FUNCTION_ERRORS.get(module[len(prefix) :])
                 break
-        if (
-            errors is None
-            and method_error_names
+        is_method_module = bool(method_error_names) and (
             # The package itself defines ParentMissingError, NotImplementedYetError
-            and (module == f"{soft_name}.Methods" or module.startswith(f"{soft_name}.Methods."))
-            and not any(alias.name == "*" for alias in node.names)
-        ):
+            module == f"{soft_name}.Methods" or module.startswith(f"{soft_name}.Methods.")
+        )
+        if errors is None and is_method_module and any(alias.name == "*" for alias in node.names):
+            # Wildcard: kept for the other names, the shared errors of the
+            # module are imported after it (their bindings replace the legacy ones)
+            from .class_generator import _shared_error_name
+
+            shared = [
+                ast.alias(
+                    name=_shared_error_name((module, name)),
+                    asname=name if _shared_error_name((module, name)) != name else None,
+                )
+                for name in _legacy_module_class_names(module, soft_name)
+                if _shared_error_name((module, name)) in method_error_names
+            ]
+            if shared:
+                error_import = ast.ImportFrom(
+                    module=f"{soft_name}.Classes_new._error", names=shared, level=0
+                )
+                replacements.append(
+                    (offsets[node.lineno - 1] + node.col_offset,
+                     offsets[node.end_lineno - 1] + node.end_col_offset,
+                     f"{ast.unparse(node)}; {ast.unparse(error_import)}".encode("utf-8"))
+                )
+            continue
+        if errors is None and is_method_module:
             from .class_generator import _shared_error_name
 
             errors = {
