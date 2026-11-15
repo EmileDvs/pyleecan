@@ -14,6 +14,8 @@ Legacy behaviours:
   converted to a ``SourceFunction`` and saved by its source),
 - an object field accepts the path of a file to load, or an array for an
   ImportMatrix (``classes_common.legacy_values``),
+- the legacy custom property setters (``_set_W3``: W1 and W2 recomputed) are
+  called when their field is assigned (``_custom_setters``),
 - nested objects get a ``parent`` link to the object holding them, also
   when they are added to a list or a dict field (``ParentList``,
   ``ParentDict``: the legacy getters set it on each read),
@@ -26,11 +28,12 @@ Legacy behaviours:
 from copy import deepcopy
 from inspect import getattr_static
 from types import FunctionType
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from pydantic import PrivateAttr, field_validator
 
+from ..classes_common.custom_setters import call_custom_setter, in_custom_setter
 from ..classes_common.equality import compare_values
 from ..classes_common.functions import SourceFunction, is_function_annotation
 from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
@@ -43,6 +46,9 @@ class LegacyModel(PyleecanModel):
     """Legacy layer of the Pyleecan classes built on pydantic."""
 
     _parent: Any = PrivateAttr(default=None)
+
+    _custom_setters: ClassVar[tuple[str, ...]] = ()
+    """Fields set by a legacy custom setter (_set_<field>, generated)"""
 
     # Parent link (not a field: not validated, serialized, copied or compared)
     @property
@@ -75,6 +81,8 @@ class LegacyModel(PyleecanModel):
     def model_post_init(self, context):
         for name in type(self).model_fields:
             self._store_with_parent(name)
+        for name in self._custom_setters:  # Called by the legacy constructor
+            call_custom_setter(self, name, getattr(self, name))
 
     def _store_with_parent(self, name):
         """Lists and dicts of a field set the parent of the objects added later."""
@@ -84,6 +92,9 @@ class LegacyModel(PyleecanModel):
         self._set_parent_links(stored)
 
     def __setattr__(self, name, value):
+        if name in self._custom_setters and not in_custom_setter(self, name):
+            call_custom_setter(self, name, value)
+            return
         attribute = getattr_static(type(self), name, None)
         if (
             name not in type(self).model_fields

@@ -13,7 +13,7 @@ def _set_W3(self, value: float):
     """
 
     check_var("W3", value, "float", Vmin=0)
-    self._W3 = value
+    self.W3 = value
 
     # Compute W1 and W2 to match W3 tooth constraint
     try:

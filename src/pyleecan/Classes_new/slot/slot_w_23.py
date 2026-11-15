@@ -96,6 +96,8 @@ class SlotW23(Slot):
     W3: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Tooth width"""
 
+    _custom_setters: ClassVar[tuple[str, ...]] = ("W3",)
+    """Fields set by a legacy custom setter (_set_<field>)"""
     _package: ClassVar[str] = "Slot"
     """Name of the package of the legacy class module"""
 
@@ -252,7 +254,7 @@ class SlotW23(Slot):
     def _set_W3(self, value):
         """setter of W3"""
         check_var("W3", value, "float", Vmin=0)
-        self._W3 = value
+        self.W3 = value
 
         # Compute W1 and W2 to match W3 tooth constraint
         try:

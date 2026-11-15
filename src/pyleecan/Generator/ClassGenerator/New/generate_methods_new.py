@@ -154,6 +154,7 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
         apply_import_styles,
         modernize_names,
         remove_coding_declaration,
+        wire_custom_setter,
     )
     from .source_names import name_maps
     from .type_hints import add_type_hints
@@ -167,6 +168,8 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
     source = modernize_names(source, package, gen_dict, class_name)
+    if class_name is not None:
+        source = wire_custom_setter(source, class_name, gen_dict)
     if len(parts) > 2 and parts[2] in HINTED_SUBPACKAGES:
         source = add_type_hints(
             source, package, gen_dict, class_name, unrecognized=UNRECOGNIZED_TYPES

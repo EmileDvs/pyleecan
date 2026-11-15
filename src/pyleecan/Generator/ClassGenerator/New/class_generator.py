@@ -5442,11 +5442,31 @@ def _generate_dataclass_class(
         # Grouped by the legacy name (a renamed "_x" field stays with the "_" ones)
         fields_source.append((prop["name"], source))
 
+    from .modernize import custom_setter_field
+
+    custom_setters = tuple(
+        name
+        for method in class_dict["methods"]
+        if method_sources[method] is not None
+        for name in [custom_setter_field(method.split(".")[-1], class_name, gen_dict)]
+        if name is not None
+    )
+    custom_setters_source = (
+        [
+            (
+                f"{TAB}_custom_setters: ClassVar[tuple[str, ...]] = {custom_setters!r}\n"
+                f'{TAB}"""Fields set by a legacy custom setter (_set_<field>)"""\n'
+            )
+        ]
+        if custom_setters
+        else []
+    )
     attribute_groups = [
         [source for name, source in class_level if not name.startswith("_")],
         [source for name, source in fields_source if not name.startswith("_")],
         [source for name, source in class_level if name.startswith("_")]
         + [source for name, source in fields_source if name.startswith("_")]
+        + custom_setters_source
         + [
             f"{TAB}_package: ClassVar[str] = {class_pack!r}\n"
             f'{TAB}"""Name of the package of the legacy class module"""\n'

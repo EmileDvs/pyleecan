@@ -104,3 +104,18 @@ def test_init_str(import_class, tmp_path):
     path = str(tmp_path / "slot.json")
     SlotW10(W0=1.5).save(path)
     assert SlotW10(init_str=path).W0 == 1.5
+
+
+def test_custom_setter(import_class):
+    """Assigning W3 runs the legacy setter SlotW11._set_W3 (W1, W2 recomputed)"""
+    slot = import_class("SlotW11")(
+        W3=0.01, is_cstt_tooth=True, Zs=12, H0=1e-3, W0=2e-3, H1=1e-3, H2=0.02, R1=1e-3
+    )
+    import_class("LamSlotWind")(Rint=0.1, Rext=0.2, is_internal=False, slot=slot)
+    slot.W3 = 0.01
+    W1, W2 = slot.W1, slot.W2
+    assert W1 is not None and W2 is not None  # Computed by the setter
+    slot.W3 = 0.005
+    assert slot.W3 == 0.005 and (slot.W1, slot.W2) != (W1, W2)
+    with pytest.raises(INVALID):
+        slot.W3 = -1.0  # The inner assignment is still validated

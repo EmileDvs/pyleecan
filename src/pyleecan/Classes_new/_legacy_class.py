@@ -9,6 +9,8 @@ Legacy behaviours:
 
 - every field accepts None (legacy setters skipped the checks for None),
 - ``-1`` sets the default value (e.g. a default object) of a field,
+- the legacy custom property setters (``_set_W3``: W1 and W2 recomputed) are
+  called when their field is assigned (``_custom_setters``),
 - nested objects get a ``parent`` link to the object holding them, also
   when they are added to a list or a dict field (``ParentList``,
   ``ParentDict``: the legacy getters set it on each read),
@@ -27,6 +29,7 @@ from dataclasses import dataclass, field, fields
 from functools import cache
 from typing import Any, ClassVar, get_args, get_type_hints
 
+from ..classes_common.custom_setters import call_custom_setter, in_custom_setter
 from ..classes_common.equality import compare_values
 from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
 from ..classes_common.parent_containers import with_parent
@@ -89,6 +92,9 @@ class LegacyClass(PyleecanClass, metaclass=_LegacyConstructor):
     _lenient_validation: ClassVar[bool] = True
     """Legacy validation: None everywhere, integral float for int"""
 
+    _custom_setters: ClassVar[tuple[str, ...]] = ()
+    """Fields set by a legacy custom setter (_set_<field>, generated)"""
+
     def __new__(cls, *args, **kwargs):
         if cls is LegacyClass:
             raise TypeError("LegacyClass cannot be instantiated directly")
@@ -98,6 +104,9 @@ class LegacyClass(PyleecanClass, metaclass=_LegacyConstructor):
         self._set_child_parents()
 
     def __setattr__(self, name, value):
+        if name in self._custom_setters and not in_custom_setter(self, name):
+            call_custom_setter(self, name, value)
+            return
         is_field = name != "parent" and name in self.__dataclass_fields__
         if is_field and type(value) is int and value == -1:
             class_name = self.__dataclass_fields__[name].metadata.get("default_class")

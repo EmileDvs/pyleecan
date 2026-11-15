@@ -81,6 +81,65 @@ def apply_import_styles(source):
     return _apply_os_import_style(source)
 
 
+WIRED_SETTER_SUBPACKAGES = frozenset({"slot"})
+"""Sub-packages whose legacy custom property setters (``_set_<field>`` method
+modules) are called by the legacy layers when the field is assigned, package by
+package (PLAN.md "Custom property setters and getters")"""
+
+
+def custom_setter_field(method_name, class_name, gen_dict):
+    """Field of a wired legacy custom setter method, or None.
+
+    A method ``_set_<field>`` of a class of WIRED_SETTER_SUBPACKAGES, <field>
+    being a property of the class (CSV), sets this field like the legacy
+    property setter (``W3 = property(fset=_set_W3)``).
+    """
+    from .class_generator import class_subpackage
+
+    if class_name not in gen_dict or not method_name.startswith("_set_"):
+        return None
+    if class_subpackage(class_name, gen_dict) not in WIRED_SETTER_SUBPACKAGES:
+        return None
+    name = method_name[len("_set_") :]
+    properties = {prop["name"] for prop in gen_dict[class_name]["properties"]}
+    return name if name in properties else None
+
+
+def wire_custom_setter(source, class_name, gen_dict):
+    """The legacy storage ``self._<field>`` of a custom setter becomes the field.
+
+    In a wired custom setter (see custom_setter_field), ``self._W3 = value``
+    becomes ``self.W3 = value``: the legacy layers store and validate it (the
+    setter is not called again for this assignment).
+    """
+    replacements = []  # (line, start column, end column) of the attribute names
+    for node in ast.parse(source).body:
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        name = custom_setter_field(node.name, class_name, gen_dict)
+        if name is None:
+            continue
+        for sub in ast.walk(node):
+            if (
+                isinstance(sub, ast.Attribute)
+                and sub.attr == "_" + name
+                and isinstance(sub.value, ast.Name)
+                and sub.value.id == "self"
+                and sub.end_lineno == sub.lineno
+                and sub.end_col_offset is not None
+            ):
+                replacements.append(
+                    (sub.end_lineno, sub.end_col_offset - len(sub.attr), sub.end_col_offset)
+                )
+    if not replacements:
+        return source
+    lines = source.splitlines(keepends=True)
+    for line, start, end in sorted(replacements, reverse=True):
+        text = lines[line - 1].encode("utf-8")  # ast columns are utf-8 offsets
+        lines[line - 1] = (text[:start] + text[start + 1 : end] + text[end:]).decode("utf-8")
+    return "".join(lines)
+
+
 NAME_PASSES = (
     "dynamic_imports",
     "errors",

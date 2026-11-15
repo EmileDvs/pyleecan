@@ -456,10 +456,17 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
 - [x] Wildcard import of a legacy method module (`from
       pyleecan.Methods.Slot.HoleM50 import *`): kept, followed by the import
       of the shared errors of the module (1 Slot failure). 4 -> 3.
-- [ ] Remaining Slot failures (3, `test_comp_surface_change_W3` of SlotW11,
-      SlotW11_2, SlotW23): the legacy `_set_W3` property setter recomputes W1
-      and W2 (`_comp_W`, constant tooth width); inlined in the new classes but
-      not called on assignment (see "Custom property setters and getters").
+- [x] Legacy custom property setters (`_set_W3` of SlotW11, SlotW11_2,
+      SlotW23: W1 and W2 recomputed; `SlotUD2._set_split_active_surf_dict`),
+      option 1 (Phase 1 parity, the modern design is left to Phase 2): wired
+      sub-package by sub-package (`WIRED_SETTER_SUBPACKAGES` of `modernize.py`,
+      `slot`). The method generator rewrites the legacy storage `self._W3` to
+      the field `self.W3`; the class generator lists the field in
+      `_custom_setters`; the legacy layers call the setter when the field is
+      assigned (and `LegacyModel` at construction, like the legacy
+      constructor), its inner assignment being the normal validated one
+      (`classes_common/custom_setters.py`). No cost on the other assignments.
+      `Tests/New/Methods/Slot`: 1052 passed with each backend.
 - [x] Type hints (`slot` in `HINTED_SUBPACKAGES`): 817/886 parameters and
       582/694 returns hinted. Container types recognized: `[X]`, `{X}` (as in
       the CSV files) and `list of X`, when the item type is recognized

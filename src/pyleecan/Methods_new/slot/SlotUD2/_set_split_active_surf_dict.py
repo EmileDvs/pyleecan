@@ -18,4 +18,4 @@ def _set_split_active_surf_dict(self, value):
     if value == -1:
         value = dict()
     check_var("split_active_surf_dict", value, "dict")
-    self._split_active_surf_dict = value
+    self.split_active_surf_dict = value

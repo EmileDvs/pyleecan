@@ -170,3 +170,20 @@ def test_redirect_legacy_method_wildcard_error_import():
     )
     assert result.startswith("from pyleecan.Methods.Slot.HoleM50 import *; ")
     assert "_error import S50_NoneError\n" in result
+
+
+def test_wire_custom_setter():
+    """The legacy storage of a wired custom setter becomes the field"""
+    from pyleecan.Generator.ClassGenerator.New.modernize import (
+        custom_setter_field,
+        wire_custom_setter,
+    )
+    from pyleecan.Generator.ClassGenerator.New.source_names import name_maps
+
+    gen_dict = name_maps().gen_dict
+    assert custom_setter_field("_set_W3", "SlotW11", gen_dict) == "W3"
+    assert custom_setter_field("_set_None", "SlotW11", gen_dict) is None  # Not a field
+    assert custom_setter_field("_set_W0", "Segment", gen_dict) is None  # Not wired
+    source = "def _set_W3(self, value):\n    self._W3 = value\n    self._W2 = 1\n"
+    result = wire_custom_setter(source, "SlotW11", gen_dict)
+    assert result == "def _set_W3(self, value):\n    self.W3 = value\n    self._W2 = 1\n"

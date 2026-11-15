@@ -105,6 +105,8 @@ class SlotW11_2(Slot):
     R1: float | None = Field(default=None, ge=0, json_schema_extra={"unit": "m"})
     """Slot bottom radius"""
 
+    _custom_setters: ClassVar[tuple[str, ...]] = ("W3",)
+    """Fields set by a legacy custom setter (_set_<field>)"""
     _package: ClassVar[str] = "Slot"
     """Name of the package of the legacy class module"""
 
@@ -376,7 +378,7 @@ class SlotW11_2(Slot):
         """
 
         check_var("W3", value, "float", Vmin=0)
-        self._W3 = value
+        self.W3 = value
 
         # Compute W1 and W2 to match W3 tooth constraint
         try:

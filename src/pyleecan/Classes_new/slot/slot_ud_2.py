@@ -47,6 +47,8 @@ class SlotUD2(Slot):
     name: str = ""
     """Name of the slot (for save)"""
 
+    _custom_setters: ClassVar[tuple[str, ...]] = ("split_active_surf_dict",)
+    """Fields set by a legacy custom setter (_set_<field>)"""
     _package: ClassVar[str] = "Slot"
     """Name of the package of the legacy class module"""
 
@@ -65,7 +67,7 @@ class SlotUD2(Slot):
         if value == -1:
             value = {}
         check_var("split_active_surf_dict", value, "dict")
-        self._split_active_surf_dict = value
+        self.split_active_surf_dict = value
 
     # Inlined from Methods.Slot.SlotUD2.build_geometry
     def build_geometry(self) -> list:
