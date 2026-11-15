@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import arcsin, pi, sin
+import numpy as np
 
 
 def comp_surface_active(self):

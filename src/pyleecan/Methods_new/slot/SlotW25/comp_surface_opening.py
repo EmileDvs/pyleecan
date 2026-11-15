@@ -1,4 +1,4 @@
-from numpy import pi, arcsin, sin
+import numpy as np
 
 
 def comp_surface_opening(self):
@@ -29,15 +29,15 @@ def comp_surface_opening(self):
         Rext = abs(Z1)
 
     # Surface of a slot pitch
-    Sring = (pi * Rext**2 - pi * Rint**2) * 1 / self.Zs
+    Sring = (np.pi * Rext**2 - np.pi * Rint**2) * 1 / self.Zs
 
     # Tooth surface
     St = self.H1 * self.W4
 
-    alpha_bore = 2 * arcsin(self.W4 / (2 * Rint))
-    Sarc_bore = (Rint**2.0) / 2.0 * (alpha_bore - sin(alpha_bore))
+    alpha_bore = 2 * np.arcsin(self.W4 / (2 * Rint))
+    Sarc_bore = (Rint**2.0) / 2.0 * (alpha_bore - np.sin(alpha_bore))
 
-    alpha_yoke = 2 * arcsin(self.W4 / (2 * Rext))
-    Sarc_yoke = (Rext**2.0) / 2.0 * (alpha_yoke - sin(alpha_yoke))
+    alpha_yoke = 2 * np.arcsin(self.W4 / (2 * Rext))
+    Sarc_yoke = (Rext**2.0) / 2.0 * (alpha_yoke - np.sin(alpha_yoke))
 
     return Sring - (St + Sarc_yoke - Sarc_bore)

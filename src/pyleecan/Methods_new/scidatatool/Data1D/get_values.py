@@ -1,8 +1,8 @@
 from importlib import import_module
 
-from numpy import array
+import numpy as np
 
-from pyleecan.classes_common.errors import AxisError, NormError
+from ....classes_common.errors import AxisError, NormError
 from ....Functions_new.SciDataTool.conversions import convert
 from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
 
@@ -89,9 +89,9 @@ def get_values(
 
     # fft/ifft
     if operation is not None:
-        module = import_module("pyleecan.Functions.SciDataTool.conversions")
+        module = import_module("pyleecan.Functions_new.SciDataTool.conversions")
         func = getattr(module, operation)  # Conversion function
-        values = array(func(values, is_real=is_real))
+        values = np.array(func(values, is_real=is_real))
         if is_full and (self.name == "freqs" or self.name == "wavenumber"):
             if "period" in self.symmetries:
                 if self.name != "time":

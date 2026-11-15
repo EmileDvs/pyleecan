@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 
 
 def comp_length(self):
@@ -19,6 +19,6 @@ def comp_length(self):
     # Check if the circle is correct
     self.check()
 
-    length = self.radius * 2 * pi
+    length = self.radius * 2 * np.pi
 
     return length

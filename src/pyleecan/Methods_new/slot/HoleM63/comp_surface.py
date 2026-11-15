@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import sqrt, arctan, sin, arcsin
+import numpy as np
 
 
 def comp_surface(self):
@@ -22,6 +22,6 @@ def comp_surface(self):
 
     else:
         Rbo = self.get_Rbo()
-        alpha = 2 * arcsin((self.W0 / 2) / (Rbo - self.H1))
+        alpha = 2 * np.arcsin((self.W0 / 2) / (Rbo - self.H1))
 
-        return self.H0 * self.W0 + (((Rbo - self.H1) ** 2) * (alpha - sin(alpha)) / 2)
+        return self.H0 * self.W0 + (((Rbo - self.H1) ** 2) * (alpha - np.sin(alpha)) / 2)

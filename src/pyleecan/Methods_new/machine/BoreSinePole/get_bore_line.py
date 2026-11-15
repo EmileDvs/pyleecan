@@ -1,6 +1,6 @@
 from ....Classes_new.geometry.segment import Segment
 from ....Methods import ParentMissingError
-from numpy import linspace, pi, cos, tan, exp
+import numpy as np
 from scipy.optimize import fmin
 
 NN = 30  # number of segments per half pole
@@ -33,7 +33,7 @@ def get_bore_line(self, prop_dict=None):
     logger = self.get_logger()
 
     # Compute the shape
-    alpha1 = pi / self.N  # Half bore pitch [rad]
+    alpha1 = np.pi / self.N  # Half bore pitch [rad]
 
     # Checking max width and W0
     w_max = _get_pole_width_max(self)  # [m]
@@ -43,17 +43,17 @@ def get_bore_line(self, prop_dict=None):
         logger.warning("Enforcing permissible pole width (W0).")
 
     phi_max = _get_phi(self, w_max)
-    phi = linspace(-phi_max, phi_max, 2 * NN + 1)
+    phi = np.linspace(-phi_max, phi_max, 2 * NN + 1)
 
     Zedge = self.get_pole_shape(-phi_max)
-    xedge = (Zedge * exp(1j * alpha1)).real
+    xedge = (Zedge * np.exp(1j * alpha1)).real
     Rq = Rbo + self.delta_d - self.delta_q
 
     # Create the first pole bore line
     Z = [self.get_pole_shape(p) for p in phi]
 
     if self.delta_q is not None and Rq < xedge:
-        line = Segment(Zedge * exp(1j * alpha1), 1j * Zedge.imag * exp(1j * alpha1))
+        line = Segment(begin=Zedge * np.exp(1j * alpha1), end=1j * Zedge.imag * np.exp(1j * alpha1))
         inter = line.intersect_line(Rq, Rq + 1j * Rq)
         if len(inter) != 1:
             raise ()  # TODO
@@ -64,17 +64,17 @@ def get_bore_line(self, prop_dict=None):
                 raise ()  # TODO
 
             logger.warning("Enforcing permissible q axis air gap (delta_q).")
-            Z.insert(0, inter[0] * exp(-1j * alpha1))
+            Z.insert(0, inter[0] * np.exp(-1j * alpha1))
             Z.append(Z[0].conjugate())
 
         else:
-            Z.insert(0, inter[0] * exp(-1j * alpha1))
+            Z.insert(0, inter[0] * np.exp(-1j * alpha1))
             Z.append(Z[0].conjugate())
-            Z.insert(0, Rq * exp(-1j * alpha1))
+            Z.insert(0, Rq * np.exp(-1j * alpha1))
             Z.append(Z[0].conjugate())
 
     else:
-        Z.append(xedge * exp(1j * alpha1))
+        Z.append(xedge * np.exp(1j * alpha1))
         Z.insert(0, Z[-1].conjugate())
 
     # Create the lines
@@ -83,8 +83,8 @@ def get_bore_line(self, prop_dict=None):
         for jj in range(len(Z) - 1):
             bore_list.append(
                 Segment(
-                    Z[jj] * exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
-                    Z[jj + 1] * exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
+                    begin=Z[jj] * np.exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
+                    end=Z[jj + 1] * np.exp(1j * (2 * alpha1 * (ii - 1 / 2) + self.alpha)),
                     prop_dict=prop_dict,
                 )
             )
@@ -95,7 +95,7 @@ def get_bore_line(self, prop_dict=None):
 def _get_phi_max(obj):
     """ "Internal method to get max. pole angle."""
     phi_max = fmin(lambda x: -obj.get_pole_shape(x).imag, 0, disp=False)[0]
-    return min(pi / 2, phi_max)
+    return min(np.pi / 2, phi_max)
 
 
 def _get_pole_width_max(obj):

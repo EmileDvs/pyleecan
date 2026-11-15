@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, pi
+import numpy as np
 
 from ..Slot import SlotCheckError
 from . import *
@@ -67,9 +67,9 @@ def check(self):
     if self.comp_W5() < 0:
         raise S50_W5CheckError("You must have W5 >=0")
 
-    alpha_0 = 2 * arcsin(self.W0 / (2 * (Rext - self.H1)))  # W0 in rad
-    alpha_3 = 2 * arcsin(self.W3 / (2 * (Rext - self.H1)))  # W3 in rad
-    if alpha_0 + alpha_3 > 2 * pi / self.Zh:
+    alpha_0 = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # W0 in rad
+    alpha_3 = 2 * np.arcsin(self.W3 / (2 * (Rext - self.H1)))  # W3 in rad
+    if alpha_0 + alpha_3 > 2 * np.pi / self.Zh:
         raise S50_SpCheckError("Slot pitch too small for the slot, reduce Zh, W3 or W0")
 
     point_dict = self._comp_point_coordinate()

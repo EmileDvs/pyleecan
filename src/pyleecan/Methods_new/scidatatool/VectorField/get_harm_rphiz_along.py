@@ -1,6 +1,6 @@
-from numpy import zeros
+import numpy as np
 
-from pyleecan.classes_common.errors import AxisError
+from ....classes_common.errors import AxisError
 from ....Functions_new.SciDataTool.conversions import cart2pol
 
 
@@ -106,7 +106,7 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
-            field_z = zeros(shape)
+            field_z = np.zeros(shape)
         return_dict = dict(resultr)
         del return_dict[self.components["comp_x"].symbol]
 
@@ -122,7 +122,7 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
             )
             field_r = resultphi[self.components["radial"].symbol]
         else:
-            field_r = zeros(shape)
+            field_r = np.zeros(shape)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_harmonics(
                 N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
@@ -134,7 +134,7 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
-            field_z = zeros(shape)
+            field_z = np.zeros(shape)
         return_dict = dict(resultphi)
         del return_dict[self.components["tangential"].symbol]
 
@@ -144,8 +144,8 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
         )
         field_z = resultz[self.components["axial"].symbol]
         shape = field_z.shape
-        field_r = zeros(shape)
-        field_t = zeros(shape)
+        field_r = np.zeros(shape)
+        field_t = np.zeros(shape)
         return_dict = dict(resultz)
         del return_dict[self.components["axial"].symbol]
 
@@ -155,8 +155,8 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
         )
         field_z = resultz[self.components["comp_z"].symbol]
         shape = field_z.shape
-        field_r = zeros(shape)
-        field_t = zeros(shape)
+        field_r = np.zeros(shape)
+        field_t = np.zeros(shape)
         return_dict = resultz
         del return_dict[self.components["comp_z"].symbol]
 

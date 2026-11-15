@@ -1,5 +1,5 @@
 import os
-from os.path import join
+
 
 import numpy as np
 
@@ -50,9 +50,9 @@ def get_meshsolution(
 
     idworker = str(id_worker)  # For parallelization TODO
 
-    path_txt = join(MAIN_DIR, "Functions", "FEMM") + "\\"
-    path_lua_in = join(path_txt, "get_mesh_data_FEMM.lua")
-    path_lua_out = join(save_path, "get_mesh_data_FEMM" + idworker + ".lua")
+    path_txt = os.path.join(MAIN_DIR, "Functions", "FEMM") + "\\"
+    path_lua_in = os.path.join(path_txt, "get_mesh_data_FEMM.lua")
+    path_lua_out = os.path.join(save_path, "get_mesh_data_FEMM" + idworker + ".lua")
     path_txt_out = save_path + "\\"
     path_txt_out = path_txt_out.replace("\\", "/")
 
@@ -76,8 +76,8 @@ def get_meshsolution(
     os.remove(path_lua_out)
 
     # Save MeshMat for only 1 time step with sliding band
-    path_node = join(save_path, "nodes" + idworker + ".txt")
-    path_element = join(save_path, "elements" + idworker + ".txt")
+    path_node = os.path.join(save_path, "nodes" + idworker + ".txt")
+    path_element = os.path.join(save_path, "elements" + idworker + ".txt")
     results_nodes = np.loadtxt(path_node, delimiter=" ")
     if is_get_mesh:
         # Read the nodes and elements files
@@ -146,7 +146,7 @@ def get_meshsolution(
     os.remove(path_element)
 
     # Read the results file
-    path_results = join(save_path, "results" + idworker + ".txt")
+    path_results = os.path.join(save_path, "results" + idworker + ".txt")
     results = np.loadtxt(path_results, delimiter=" ")
 
     # Delete text files

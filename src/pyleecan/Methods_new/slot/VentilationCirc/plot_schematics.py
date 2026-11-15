@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_hole import LamHole
@@ -99,7 +99,7 @@ def plot_schematics(
             fig=fig,
             ax=ax,
         )  # center hole on Ox axis
-        sp = 2 * pi / self.Zh
+        sp = 2 * np.pi / self.Zh
         Rbo = self.get_Rbo()
         point_dict = self._comp_point_coordinate()
 
@@ -117,7 +117,7 @@ def plot_schematics(
         # Adding schematics
         if is_add_schematics:
             # H0
-            line = Segment(0, point_dict["Zc"])
+            line = Segment(begin=0, end=point_dict["Zc"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -130,8 +130,8 @@ def plot_schematics(
             )
             # D0
             line = Segment(
-                point_dict["Z1"] * exp(1j * 2 * pi / self.Zh),
-                point_dict["Z2"] * exp(1j * 2 * pi / self.Zh),
+                begin=point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
+                end=point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
             )
             line.plot(
                 fig=fig,
@@ -162,7 +162,7 @@ def plot_schematics(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -171,7 +171,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Center axis
-            line = Segment(0, lam.Rext * 1.5 * exp(1j * self.Alpha0))
+            line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -181,8 +181,8 @@ def plot_schematics(
             )
             # H0 radius
             line = Arc1(
-                begin=self.H0 * exp(-1j * pi / 2 * 0.9),
-                end=self.H0 * exp(1j * pi / 2 * 0.9),
+                begin=self.H0 * np.exp(-1j * np.pi / 2 * 0.9),
+                end=self.H0 * np.exp(1j * np.pi / 2 * 0.9),
                 radius=self.H0,
                 is_trigo_direction=True,
             )

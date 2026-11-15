@@ -1,4 +1,4 @@
-from numpy import log, pi, sqrt
+import numpy as np
 
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
@@ -50,15 +50,15 @@ def comp_inductance(self):
             )
 
     # End winding is a circle whose radius is half the coil pitch distance
-    Re = pi / Zs * Rmid * coil_pitch
+    Re = np.pi / Zs * Rmid * coil_pitch
 
     # Eq(5.49) p.234
     Scond = self.parent.conductor.comp_surface()
-    R = 0.4394 * sqrt(Scond)
+    R = 0.4394 * np.sqrt(Scond)
 
     # Eq (5.48) p 233
     Ntcoil = self.parent.Ntcoil
-    mu0 = 4 * pi * 1e-7
-    Lw = mu0 * Re * Ntcoil**2 * (log(8 * Re / R) - 2)
+    mu0 = 4 * np.pi * 1e-7
+    Lw = mu0 * Re * Ntcoil**2 * (np.log(8 * Re / R) - 2)
 
     return Lw

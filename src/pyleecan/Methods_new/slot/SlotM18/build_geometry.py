@@ -26,6 +26,6 @@ def build_geometry(self):
 
     # Creation of curve
     curve_list = list()
-    curve_list.append(Arc1(Z1, Z2, Rbo, is_trigo_direction=True))
+    curve_list.append(Arc1(begin=Z1, end=Z2, radius=Rbo, is_trigo_direction=True))
 
     return curve_list

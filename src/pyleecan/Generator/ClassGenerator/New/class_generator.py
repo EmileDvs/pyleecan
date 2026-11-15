@@ -3651,16 +3651,20 @@ def _redirect_experimental_loader_imports(source, soft_name):
         return node.module in loader_modules and alias.name == "import_class"
 
     bindings = set()
+    modern_bindings = set()  # Already the new loader: calls in the new form
     for node in ast.walk(tree):
         if (
             isinstance(node, ast.ImportFrom)
             and node.level == 0
             and node.module in loader_modules
         ):
-            bindings.update(
+            loaders = {
                 alias.asname or alias.name
                 for alias in node.names if is_loader(node, alias)
-            )
+            }
+            bindings.update(loaders)
+            if node.module == soft_name + ".Classes_new._import":
+                modern_bindings.update(loaders)
     can_use_plain = not any(
         isinstance(node, ast.Name) and node.id == "import_class"
         and isinstance(node.ctx, (ast.Store, ast.Del))
@@ -3738,6 +3742,8 @@ def _redirect_experimental_loader_imports(source, soft_name):
             and isinstance(package.right, ast.Constant)
             and package.right.value == ".Classes"
         )
+        if not is_package and node.func.id in modern_bindings:
+            continue  # New form import_class(name, prop_name): idempotent pass
         if not is_package:
             raise ValueError(f"Unsupported experimental class loader call: {ast.unparse(node)}")
         if node.keywords:

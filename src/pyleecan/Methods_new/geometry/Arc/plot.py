@@ -1,4 +1,4 @@
-from numpy import array
+import numpy as np
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.Plot import TEXT_BOX
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.change_referential import change_referential_spectrum, change_referential_waveform
 
 

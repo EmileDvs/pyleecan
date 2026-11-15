@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp, pi, angle, abs as np_abs
+import numpy as np
 
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 
@@ -32,20 +32,20 @@ def intersect_line(self, Z1, Z2):
     # Order the intersection points (begin=>intersect1=>intersection2=>end)
     if len(Zlist) == 2:
         begin = self.get_begin()
-        if np_abs(Zlist[0] - begin) < 1e-6:
+        if np.abs(Zlist[0] - begin) < 1e-6:
             # First point is begin
             return Zlist
-        if np_abs(Zlist[1] - begin) < 1e-6:
+        if np.abs(Zlist[1] - begin) < 1e-6:
             # Second point is begin
             return Zlist[::-1]
 
         # Go to the coordinate system Zc as center, begin on X > 0 axis
-        Z1 = (Zlist[0] - Zc) * exp(-1j * angle(begin - Zc))
-        Z2 = (Zlist[1] - Zc) * exp(-1j * angle(begin - Zc))
+        Z1 = (Zlist[0] - Zc) * np.exp(-1j * np.angle(begin - Zc))
+        Z2 = (Zlist[1] - Zc) * np.exp(-1j * np.angle(begin - Zc))
 
         alpha = self.get_angle()
-        A1 = angle(Z1) % (2 * pi)
-        A2 = angle(Z2) % (2 * pi)
+        A1 = np.angle(Z1) % (2 * np.pi)
+        A2 = np.angle(Z2) % (2 * np.pi)
         # Check if Zlist needs to be reversed
         if alpha > 0 and A1 > A2:
             return Zlist[::-1]

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from numpy.typing import ArrayLike
+
 from typing import Union
 
 
-def add_node(self, coordinate: ArrayLike) -> Union[None, int]:
+def add_node(self, coordinate: np.typing.ArrayLike) -> Union[None, int]:
     """Add a new node defined by its coordinates to the NodeMat
     (if a node of this coordinate already exist, do nothing)
 

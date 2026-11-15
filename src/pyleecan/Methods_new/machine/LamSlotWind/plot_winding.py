@@ -3,7 +3,7 @@
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, subplots
-from numpy import array, linspace, meshgrid
+import numpy as np
 
 from ....Functions_new.Winding.gen_phase_list import gen_color, gen_name
 
@@ -64,7 +64,7 @@ def plot_winding(
     H = 1
 
     # Coordinate of the First Slot   (center on 0)
-    Slot_tan = array(
+    Slot_tan = np.array(
         [-Wt / 2 - W0 / 2, -W0 / 2, -W0 / 2, W0 / 2, W0 / 2, W0 / 2 + Wt / 2]
     )
     Slot_rad = [0, 0, H, H, 0, 0]
@@ -81,10 +81,10 @@ def plot_winding(
     plot(x, y, "r-")
 
     # First Winding Grid (Coordinate of the winding mark)
-    range_x = linspace(-W0 / 2, W0 / 2, Ntan + 1, endpoint=False)
-    range_y = linspace(0, H, Nrad + 1, endpoint=False)
+    range_x = np.linspace(-W0 / 2, W0 / 2, Ntan + 1, endpoint=False)
+    range_y = np.linspace(0, H, Nrad + 1, endpoint=False)
     # We don't want the first and last point of the linespace
-    Grid_x, Grid_y = meshgrid(range_x[1:], range_y[1:])
+    Grid_x, Grid_y = np.meshgrid(range_x[1:], range_y[1:])
 
     # Plot the Winding Grid point by point by reading wind_mat
     for Zs in range(0, Nplot):  # For "every" Slot

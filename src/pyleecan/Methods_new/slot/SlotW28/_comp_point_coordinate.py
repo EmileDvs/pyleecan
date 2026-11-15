@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, pi, sqrt
+import numpy as np
 from ....Classes_new.geometry.arc_1 import Arc1
 
 
@@ -18,18 +18,18 @@ def _comp_point_coordinate(self):
     Rbo = self.get_Rbo()
 
     # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
-    alpha = float(arcsin(self.W0 / (2 * Rbo)))
-    slot_pitch = 2 * pi / self.Zs
+    alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
+    slot_pitch = 2 * np.pi / self.Zs
 
     # comp point coordinate (in complex)
-    Z0 = Rbo * exp(1j * 0)
-    Z8 = Z0 * exp(-1j * alpha)
+    Z0 = Rbo * np.exp(1j * 0)
+    Z8 = Z0 * np.exp(-1j * alpha)
 
     if self.is_outwards():
         Z7 = Z8 + self.H0
         # Rotation to get the tooth on X axis
-        Z7 = Z7 * exp(1j * slot_pitch / 2)
-        Z8 = Z8 * exp(1j * slot_pitch / 2)
+        Z7 = Z7 * np.exp(1j * slot_pitch / 2)
+        Z8 = Z8 * np.exp(1j * slot_pitch / 2)
         # Z7 = x7 + 1j*y7
         # Z6 = x + 1j * W3/2
         # C2,Z6 _|_ Z6,Z5 => Re(C2) = Re(Z6)
@@ -41,7 +41,7 @@ def _comp_point_coordinate(self):
         # x = x7 + sqrt(-4((y7-(W3/2+R1))²-R1²))/2
         Z6 = (
             Z7.real
-            + sqrt(-4 * ((Z7.imag - (self.W3 / 2.0 + self.R1)) ** 2 - self.R1**2)) / 2
+            + np.sqrt(-4 * ((Z7.imag - (self.W3 / 2.0 + self.R1)) ** 2 - self.R1**2)) / 2
             + 1j * self.W3 / 2.0
         )
         Z5 = Z6 + self.H3
@@ -49,11 +49,11 @@ def _comp_point_coordinate(self):
     else:  # inward slot
         Z7 = Z8 - self.H0
         # Rotation to get the tooth on X axis
-        Z7 = Z7 * exp(1j * slot_pitch / 2)
-        Z8 = Z8 * exp(1j * slot_pitch / 2)
+        Z7 = Z7 * np.exp(1j * slot_pitch / 2)
+        Z8 = Z8 * np.exp(1j * slot_pitch / 2)
         Z6 = (
             Z7.real
-            - sqrt(-4 * ((Z7.imag - (self.W3 / 2.0 + self.R1)) ** 2 - self.R1**2)) / 2
+            - np.sqrt(-4 * ((Z7.imag - (self.W3 / 2.0 + self.R1)) ** 2 - self.R1**2)) / 2
             + 1j * self.W3 / 2.0
         )
         Z5 = Z6 - self.H3
@@ -61,10 +61,10 @@ def _comp_point_coordinate(self):
 
     # Tooth ref to slot
     Z1, Z2, Z3, Z4 = (
-        Z8 * exp(-1j * slot_pitch / 2),
-        Z7 * exp(-1j * slot_pitch / 2),
-        Z6 * exp(-1j * slot_pitch / 2),
-        Z5 * exp(-1j * slot_pitch / 2),
+        Z8 * np.exp(-1j * slot_pitch / 2),
+        Z7 * np.exp(-1j * slot_pitch / 2),
+        Z6 * np.exp(-1j * slot_pitch / 2),
+        Z5 * np.exp(-1j * slot_pitch / 2),
     )
 
     point_dict = dict()
@@ -78,7 +78,7 @@ def _comp_point_coordinate(self):
     point_dict["Z7"] = Z2.conjugate()
     point_dict["Z8"] = Z1.conjugate()
     # Center
-    A = Arc1(Z2, Z3, rot_sign * self.R1, self.is_outwards())
+    A = Arc1(begin=Z2, end=Z3, radius=rot_sign * self.R1, is_trigo_direction=self.is_outwards())
     point_dict["Zc1"] = A.get_center()
     point_dict["Zc2"] = (point_dict["Z4"] + point_dict["Z5"]) / 2
     point_dict["Zc3"] = point_dict["Zc1"].conjugate()

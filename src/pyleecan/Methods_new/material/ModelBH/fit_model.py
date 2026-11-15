@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from numpy import array, linspace, pi
 import numpy as np
+
 from scipy.optimize import curve_fit, root_scalar
 
 
@@ -32,7 +32,7 @@ def fit_model(self, BH):
     B = BH[:, 1]
 
     # Find the optimum parameter for curve fitting
-    popt, _ = curve_fit(self.BH_func, H, B, p0=array([self.param1, self.param2]))
+    popt, _ = curve_fit(self.BH_func, H, B, p0=np.array([self.param1, self.param2]))
 
     param1 = popt[0]
     param2 = popt[1]

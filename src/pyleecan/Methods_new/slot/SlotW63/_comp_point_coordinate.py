@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi, exp, arcsin, sin
+import numpy as np
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
@@ -19,21 +19,21 @@ def _comp_point_coordinate(self):
     """
 
     Rbo = self.get_Rbo()
-    hsp = pi / self.Zs  # Half slot pitch
+    hsp = np.pi / self.Zs  # Half slot pitch
 
-    alpha = arcsin(self.W1 / (2 * Rbo))
+    alpha = np.arcsin(self.W1 / (2 * Rbo))
 
     # Point used to define geometry of slot
-    Z1 = Rbo * exp(1j * alpha)
+    Z1 = Rbo * np.exp(1j * alpha)
     Z2 = Z1 - self.H2
-    Z3 = Z2 - ((self.W1 - self.W0) / 2) * sin(self.H1) - 1j * ((self.W1 - self.W0) / 2)
+    Z3 = Z2 - ((self.W1 - self.W0) / 2) * np.sin(self.H1) - 1j * ((self.W1 - self.W0) / 2)
     Z4 = Z3 - self.H0
 
     # Set points in correct base with a rotation
-    Z1 = Z1 * exp(-1j * hsp)
-    Z2 = Z2 * exp(-1j * hsp)
-    Z3 = Z3 * exp(-1j * hsp)
-    Z4 = Z4 * exp(-1j * hsp)
+    Z1 = Z1 * np.exp(-1j * hsp)
+    Z2 = Z2 * np.exp(-1j * hsp)
+    Z3 = Z3 * np.exp(-1j * hsp)
+    Z4 = Z4 * np.exp(-1j * hsp)
 
     Z5 = Z4.conjugate()
     Z6 = Z3.conjugate()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_3 import Arc3
 from ....Classes_new.geometry.segment import Segment

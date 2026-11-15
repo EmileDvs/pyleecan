@@ -1,4 +1,4 @@
-from numpy import angle, pi
+import numpy as np
 
 
 def get_U0_UPhi0(self):
@@ -18,4 +18,4 @@ def get_U0_UPhi0(self):
 
     else:
         Z = self.Ud_ref + 1j * self.Uq_ref
-        return {"U0": abs(Z), "UPhi0": angle(Z) % (2 * pi)}
+        return {"U0": abs(Z), "UPhi0": np.angle(Z) % (2 * np.pi)}

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import transpose
+import numpy as np
 
 
 def edit_matrix(self, matrix):
@@ -21,5 +21,5 @@ def edit_matrix(self, matrix):
     """
 
     if self.is_transpose:
-        return transpose(matrix)
+        return np.transpose(matrix)
     return matrix

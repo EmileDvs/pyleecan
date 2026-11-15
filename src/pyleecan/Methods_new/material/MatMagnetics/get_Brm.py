@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def get_Brm(self, T_op=None, T_ref=20):

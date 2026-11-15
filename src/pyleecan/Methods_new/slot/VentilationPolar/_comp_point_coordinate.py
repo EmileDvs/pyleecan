@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, sqrt
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -15,11 +15,11 @@ def _comp_point_coordinate(self):
         A dict of the slot point coordinates
     """
 
-    Z1 = (self.H0) * exp(1j * (self.Alpha0 - self.W1 / 2))
-    Z2 = (self.H0 + self.D0) * exp(1j * (self.Alpha0 - self.W1 / 2))
-    Z3 = (self.H0 + self.D0) * exp(1j * (self.Alpha0 + self.W1 / 2))
-    Z4 = (self.H0) * exp(1j * (self.Alpha0 + self.W1 / 2))
-    Zc = (self.H0 + (self.D0 / 2)) * exp(1j * self.Alpha0)
+    Z1 = (self.H0) * np.exp(1j * (self.Alpha0 - self.W1 / 2))
+    Z2 = (self.H0 + self.D0) * np.exp(1j * (self.Alpha0 - self.W1 / 2))
+    Z3 = (self.H0 + self.D0) * np.exp(1j * (self.Alpha0 + self.W1 / 2))
+    Z4 = (self.H0) * np.exp(1j * (self.Alpha0 + self.W1 / 2))
+    Zc = (self.H0 + (self.D0 / 2)) * np.exp(1j * self.Alpha0)
 
     point_dict = dict()
     # symetry

@@ -30,7 +30,7 @@ def get_surface(self):
     # Add closing Arc
     Zbegin = curve_list[-1].get_end()
     Zend = curve_list[0].get_begin()
-    curve_list.append(Arc1(Zbegin, Zend, -Rbo, is_trigo_direction=False))
+    curve_list.append(Arc1(begin=Zbegin, end=Zend, radius=-Rbo, is_trigo_direction=False))
 
     surf = SurfLine(line_list=curve_list, label="Slot")
     surf.comp_point_ref(is_set=True)

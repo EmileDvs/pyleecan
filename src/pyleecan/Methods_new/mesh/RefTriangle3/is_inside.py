@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from typing import Optional, Tuple
 
-from numpy import dot, ndarray
+import numpy as np
 
 
 def is_inside(
-    self, node: ndarray, point: ndarray, normal_t: Optional[ndarray] = None
+    self, node: np.ndarray, point: np.ndarray, normal_t: Optional[np.ndarray] = None
 ) -> Tuple[bool, float, float]:
     """Check if a point is inside the element defined by the nodes.
 
@@ -36,7 +36,7 @@ def is_inside(
     # Optional : Check that normals are almost aligned
     if normal_t is not None:
         normal_s = self.get_normal(node)
-        scal_st = dot(normal_t[0:2], normal_s)
+        scal_st = np.dot(normal_t[0:2], normal_s)
         is_colinear = abs(scal_st) > 1 - 2 * self.epsilon
         is_inside = is_inside & is_colinear
 

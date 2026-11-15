@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from typing import Optional
 
-from numpy.typing import ArrayLike
+import numpy as np
 
 
-def get_node_indice(self, coordinates: Optional[ArrayLike] = None) -> ArrayLike:
+def get_node_indice(self, coordinates: Optional[np.typing.ArrayLike] = None) -> np.typing.ArrayLike:
     """Return a matrix of nodes coordinates.
 
     Parameters

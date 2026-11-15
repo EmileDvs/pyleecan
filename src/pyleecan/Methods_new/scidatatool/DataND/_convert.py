@@ -1,6 +1,6 @@
 import numpy as np
 
-from pyleecan.classes_common.errors import NormError, UnitError
+from ....classes_common.errors import NormError, UnitError
 from ....Functions_new.SciDataTool.conversions import convert as convert_unit
 from ....Functions_new.SciDataTool.conversions import to_dB, to_dBA
 

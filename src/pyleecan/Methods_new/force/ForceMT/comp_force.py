@@ -1,4 +1,4 @@
-from numpy import pi, all as np_all
+import numpy as np
 
 
 def comp_force(self, output, axes_dict):
@@ -66,7 +66,7 @@ def comp_force(self, output, axes_dict):
     Br = Brphiz["radial"]
 
     # Magnetic void permeability
-    mu_0 = 4 * pi * 1e-7
+    mu_0 = 4 * np.pi * 1e-7
 
     # Get flux density component lists
     comp_list = list(output.mag.B.components.keys())

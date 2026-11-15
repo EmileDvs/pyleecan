@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, pi
+import numpy as np
 
 
 def comp_alpha(self):
@@ -19,7 +19,7 @@ def comp_alpha(self):
     """
     Rext = self.get_Rext()
 
-    alpha_tooth = 2 * arcsin(self.W3 / (2 * (Rext - self.H0)))
-    slot_pitch = 2 * pi / self.Zh
+    alpha_tooth = 2 * np.arcsin(self.W3 / (2 * (Rext - self.H0)))
+    slot_pitch = 2 * np.pi / self.Zh
 
     return slot_pitch - alpha_tooth

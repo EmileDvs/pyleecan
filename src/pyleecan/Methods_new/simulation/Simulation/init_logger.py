@@ -1,6 +1,6 @@
 from ....loggers import gen_logger_config_dict, DEFAULT_LOG_NAME
 from logging.config import dictConfig
-from os.path import join
+import os
 
 
 def init_logger(self, output):
@@ -23,7 +23,7 @@ def init_logger(self, output):
         log_dict = gen_logger_config_dict(log_name)
 
         # Update log file
-        log_path = join(output.get_path_result(), log_name + ".log")
+        log_path = os.path.join(output.get_path_result(), log_name + ".log")
         log_dict["handlers"]["file_handler"]["filename"] = log_path
         # Create the loggers
         dictConfig(log_dict)

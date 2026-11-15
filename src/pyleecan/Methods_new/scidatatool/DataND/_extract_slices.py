@@ -1,4 +1,4 @@
-from numpy import take
+import numpy as np
 
 
 def _extract_slices(self, values, axes_list):
@@ -29,8 +29,8 @@ def _extract_slices(self, values, axes_list):
                     axis_requested.indices is not None
                     and axis_requested.transform != "fft"
                 ):
-                    values = take(values, axis_requested.indices, axis=index)
+                    values = np.take(values, axis_requested.indices, axis=index)
         if not is_match:  # Axis was not specified -> take slice at the first value
             axes_dict_other[axis.name] = [axis.get_values()[0], axis.unit]
-            values = take(values, [0], axis=index)
+            values = np.take(values, [0], axis=index)
     return values, axes_dict_other

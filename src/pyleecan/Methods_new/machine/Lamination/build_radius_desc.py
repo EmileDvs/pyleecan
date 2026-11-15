@@ -1,4 +1,4 @@
-from numpy import exp, pi, angle
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.arc_3 import Arc3
@@ -48,8 +48,8 @@ def build_radius_desc(self, is_bore, sym=1):
             radius_lines.append(arc1)
             radius_lines.append(arc2)
         else:
-            end_angle = 2 * pi / sym
-            rot = exp(1j * end_angle)
+            end_angle = 2 * np.pi / sym
+            rot = np.exp(1j * end_angle)
             arc = Arc1(begin=R, end=R * rot, radius=R, is_trigo_direction=True)
             radius_lines.append(arc)
         radius_desc.append(
@@ -98,8 +98,8 @@ def build_radius_desc(self, is_bore, sym=1):
                     "obj": None,
                     "lines": [
                         Arc1(
-                            begin=R * exp(1j * begin),
-                            end=R * exp(1j * end),
+                            begin=R * np.exp(1j * begin),
+                            end=R * np.exp(1j * end),
                             radius=R,
                             is_trigo_direction=True,
                         )
@@ -111,9 +111,9 @@ def build_radius_desc(self, is_bore, sym=1):
     radius_desc.append(all_desc_list[-1])
     # Add first and last radius line if required
     if all_desc_list[0]["begin_angle"] > 0:
-        if sym == 1 and all_desc_list[-1]["end_angle"] > 2 * pi:
+        if sym == 1 and all_desc_list[-1]["end_angle"] > 2 * np.pi:
             # Alpha >0, last notch cross Ox
-            begin = all_desc_list[-1]["end_angle"] - 2 * pi
+            begin = all_desc_list[-1]["end_angle"] - 2 * np.pi
             radius_desc.insert(
                 0,
                 {
@@ -122,8 +122,8 @@ def build_radius_desc(self, is_bore, sym=1):
                     "obj": None,
                     "lines": [
                         Arc1(
-                            begin=R * exp(1j * begin),
-                            end=R * exp(1j * all_desc_list[0]["begin_angle"]),
+                            begin=R * np.exp(1j * begin),
+                            end=R * np.exp(1j * all_desc_list[0]["begin_angle"]),
                             radius=R,
                             is_trigo_direction=True,
                         )
@@ -140,8 +140,8 @@ def build_radius_desc(self, is_bore, sym=1):
                     "obj": None,
                     "lines": [
                         Arc1(
-                            begin=R * exp(1j * 0),
-                            end=R * exp(1j * all_desc_list[0]["begin_angle"]),
+                            begin=R * np.exp(1j * 0),
+                            end=R * np.exp(1j * all_desc_list[0]["begin_angle"]),
                             radius=R,
                             is_trigo_direction=True,
                         )
@@ -149,19 +149,19 @@ def build_radius_desc(self, is_bore, sym=1):
                     "label": "Radius",
                 },
             )
-    if all_desc_list[-1]["end_angle"] < 2 * pi / sym:
+    if all_desc_list[-1]["end_angle"] < 2 * np.pi / sym:
         if all_desc_list[0]["begin_angle"] < 0 and sym == 1:
             # Full lamination with slot/notch on Ox
             radius_desc.append(
                 {
                     "begin_angle": all_desc_list[-1]["end_angle"],
-                    "end_angle": 2 * pi + all_desc_list[0]["begin_angle"],
+                    "end_angle": 2 * np.pi + all_desc_list[0]["begin_angle"],
                     "obj": None,
                     "lines": [
                         Arc1(
-                            begin=R * exp(1j * all_desc_list[-1]["end_angle"]),
+                            begin=R * np.exp(1j * all_desc_list[-1]["end_angle"]),
                             end=R
-                            * exp(1j * (2 * pi + all_desc_list[0]["begin_angle"])),
+                            * np.exp(1j * (2 * np.pi + all_desc_list[0]["begin_angle"])),
                             radius=R,
                             is_trigo_direction=True,
                         )
@@ -173,12 +173,12 @@ def build_radius_desc(self, is_bore, sym=1):
             radius_desc.append(
                 {
                     "begin_angle": all_desc_list[-1]["end_angle"],
-                    "end_angle": 2 * pi / sym,
+                    "end_angle": 2 * np.pi / sym,
                     "obj": None,
                     "lines": [
                         Arc1(
-                            begin=R * exp(1j * all_desc_list[-1]["end_angle"]),
-                            end=R * exp(1j * 2 * pi / sym),
+                            begin=R * np.exp(1j * all_desc_list[-1]["end_angle"]),
+                            end=R * np.exp(1j * 2 * np.pi / sym),
                             radius=R,
                             is_trigo_direction=True,
                         )

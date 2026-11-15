@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from pyleecan.Functions_new.make_ndarray_equal import make_ndarray_equal
+from ....Functions_new.make_ndarray_equal import make_ndarray_equal
 
 
 def get_axes_list(self, *args):

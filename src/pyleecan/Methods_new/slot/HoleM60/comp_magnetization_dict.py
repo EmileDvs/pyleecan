@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 from ....Classes_new.geometry.segment import Segment
 
 
@@ -23,14 +23,14 @@ def comp_magnetization_dict(self, is_north=True):
     point_dict = self._comp_point_coordinate()
 
     mag_dict = dict()
-    S0 = Segment(point_dict["ZM4s"], point_dict["ZM3s"])
+    S0 = Segment(begin=point_dict["ZM4s"], end=point_dict["ZM3s"])
     mag_dict["magnet_0"] = S0.comp_normal()
-    S1 = Segment(point_dict["ZM3"], point_dict["ZM4"])
+    S1 = Segment(begin=point_dict["ZM3"], end=point_dict["ZM4"])
     mag_dict["magnet_1"] = S1.comp_normal()
 
     if not is_north:
-        mag_dict["magnet_0"] += pi
-        mag_dict["magnet_1"] += pi
+        mag_dict["magnet_0"] += np.pi
+        mag_dict["magnet_1"] += np.pi
 
     if self.magnetization_dict_offset is not None:
         for key, value in self.magnetization_dict_offset:

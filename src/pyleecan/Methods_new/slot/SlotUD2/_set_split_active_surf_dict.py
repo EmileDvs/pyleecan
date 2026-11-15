@@ -1,5 +1,5 @@
-from ....Functions_new.Load.import_class import import_class
-from ....Classes._check import check_var
+from ....Functions.Load.import_class import import_class
+from ....classes_common.check import check_var
 
 
 def _set_split_active_surf_dict(self, value):

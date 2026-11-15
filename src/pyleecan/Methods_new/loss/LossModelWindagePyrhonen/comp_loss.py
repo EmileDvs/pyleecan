@@ -1,6 +1,6 @@
-from numpy import array, pi
-from numpy import sum as np_sum
-from numpy import zeros
+import numpy as np
+
+
 
 
 def comp_loss(self):
@@ -41,7 +41,7 @@ def comp_loss(self):
     p = machine.get_pole_pair_number()
     rho = 1.225  # air density
     k = 1
-    omega = 2 * pi / p * felec
+    omega = 2 * np.pi / p * felec
     delta = machine.comp_length_airgap_active()
     mu = 18.5e-6  # Dynamic viscosity of air
     # Couette Reynolds number
@@ -60,7 +60,7 @@ def comp_loss(self):
     else:
         C_M = 0.065 * (2 * delta / Dr) ** 0.3 / Re_delta**0.2
 
-    P1 = 1 / 32 * k * C_M * pi * rho * omega**3 * Dr**4 * L
+    P1 = 1 / 32 * k * C_M * np.pi * rho * omega**3 * Dr**4 * L
 
     Dri = machine.rotor.Rint
 
@@ -89,9 +89,9 @@ def comp_loss(self):
     Se = ms.mesh.get_element_area()[ms.group["rotor core"]]
 
     # Constant component and twice the electrical frequency have same joule density values
-    freqs = array([felec])
-    P_density = zeros((freqs.size, Se.size))
-    P_density[0, :] = Ploss / (per_a * L * np_sum(Se))
+    freqs = np.array([felec])
+    P_density = np.zeros((freqs.size, Se.size))
+    P_density[0, :] = Ploss / (per_a * L * np.sum(Se))
 
     self.coeff_dict = {str(power): coeff}
 

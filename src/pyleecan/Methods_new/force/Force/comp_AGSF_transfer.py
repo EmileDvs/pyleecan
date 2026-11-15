@@ -1,4 +1,4 @@
-from numpy import multiply, newaxis, power, repeat, where
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
@@ -45,21 +45,21 @@ def comp_AGSF_transfer(self, output, rnoise=None):
     Ratio = Rag / Rsbo
 
     # Transfer coefficients Eq. (46)
-    Sn = (Ratio**2) * (power(Ratio, wavenumber) + power(Ratio, -wavenumber)) / 2
-    Cn = (Ratio**2) * (power(Ratio, wavenumber) - power(Ratio, -wavenumber)) / 2
+    Sn = (Ratio**2) * (np.power(Ratio, wavenumber) + np.power(Ratio, -wavenumber)) / 2
+    Cn = (Ratio**2) * (np.power(Ratio, wavenumber) - np.power(Ratio, -wavenumber)) / 2
 
     # Noise filtering (useful with magnetic FEA)
     if rnoise is not None:
-        Inoise = where(abs(wavenumber) > rnoise)[0]
+        Inoise = np.where(abs(wavenumber) > rnoise)[0]
         Sn[Inoise] = 1
         Cn[Inoise] = 0
 
-    XSn = repeat(Sn[..., newaxis], Nf, axis=1).transpose()
-    XCn = repeat(Cn[..., newaxis], Nf, axis=1).transpose()
+    XSn = np.repeat(Sn[..., np.newaxis], Nf, axis=1).transpose()
+    XCn = np.repeat(Cn[..., np.newaxis], Nf, axis=1).transpose()
 
     # Transfer law Eq. (45)
-    Prad_wr_TR = multiply(XSn, Prad_wr) + 1j * multiply(XCn, Ptan_wr)
-    Ptan_wr_TR = multiply(XSn, Ptan_wr) - 1j * multiply(XCn, Prad_wr)
+    Prad_wr_TR = np.multiply(XSn, Prad_wr) + 1j * np.multiply(XCn, Ptan_wr)
+    Ptan_wr_TR = np.multiply(XSn, Ptan_wr) - 1j * np.multiply(XCn, Prad_wr)
 
     # Save results as Data objects
     Datafreqs = Data1D(name="freqs", values=freqs)

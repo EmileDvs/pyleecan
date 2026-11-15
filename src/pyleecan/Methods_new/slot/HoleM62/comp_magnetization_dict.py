@@ -1,6 +1,6 @@
-from numpy import pi
+import numpy as np
 from ....Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_1 import Arc1
 
 
 def comp_magnetization_dict(self, is_north=True):
@@ -35,7 +35,7 @@ def comp_magnetization_dict(self, is_north=True):
     mag_dict["magnet_0"] = S0.comp_normal()
 
     if not is_north:
-        mag_dict["magnet_0"] += pi
+        mag_dict["magnet_0"] += np.pi
 
     if self.magnetization_dict_offset is not None:
         for key, value in self.magnetization_dict_offset:

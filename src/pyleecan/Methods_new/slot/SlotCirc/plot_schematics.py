@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_slot import LamSlot
@@ -100,7 +100,7 @@ def plot_schematics(
             raise ParentMissingError("Error: The slot is not inside a Lamination")
         lam = self.parent
         fig, ax = lam.plot(
-            alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+            alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
         point_dict = self._comp_point_coordinate()
 
@@ -118,7 +118,7 @@ def plot_schematics(
         # Adding schematics
         if is_add_schematics:
             # W0
-            line = Segment(point_dict["Z1"], point_dict["Z2"])
+            line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
             if self.is_outwards():
                 offset_label = -1 * self.H0 * 0.9 + 1j * 0.3 * self.W0
             else:
@@ -134,7 +134,7 @@ def plot_schematics(
                 fontsize=SC_FONT_SIZE,
             )
             # H0
-            line = Segment(point_dict["ZH"], point_dict["ZM"])
+            line = Segment(begin=point_dict["ZH"], end=point_dict["ZM"])
             line.plot(
                 fig=fig,
                 ax=ax,

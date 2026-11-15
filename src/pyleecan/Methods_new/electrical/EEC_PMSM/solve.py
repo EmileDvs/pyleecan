@@ -1,5 +1,5 @@
-from numpy import array, pi
-import numpy.linalg as np_lin
+import numpy as np
+
 
 
 def solve(self):
@@ -28,14 +28,14 @@ def solve(self):
         Dict containing all magnetic quantities that have been calculated in EEC
     """
 
-    ws = 2 * pi * self.OP.get_felec()
+    ws = 2 * np.pi * self.OP.get_felec()
 
     out_dict = dict()
 
     if self.OP.get_Ud_Uq()["Ud"] is not None:
         # Voltage driven
         # Impedance matrix
-        XR = array(
+        XR = np.array(
             [
                 [self.R1, -ws * self.Lq],
                 [ws * self.Ld, self.R1],
@@ -43,13 +43,13 @@ def solve(self):
         )
         # Back emf array
         if self.Phid_mag is not None:
-            XE = array([-ws * self.Phiq_mag, ws * self.Phid_mag])
+            XE = np.array([-ws * self.Phiq_mag, ws * self.Phid_mag])
         else:
-            XE = array([0, 0])
+            XE = np.array([0, 0])
         # Voltage array
-        XU = array([self.OP.get_Ud_Uq()["Ud"], self.OP.get_Ud_Uq()["Uq"]])
+        XU = np.array([self.OP.get_Ud_Uq()["Ud"], self.OP.get_Ud_Uq()["Uq"]])
         # Solve system to get current array
-        XI = np_lin.solve(XR, XU - XE)
+        XI = np.linalg.solve(XR, XU - XE)
 
         # Store values in out_dict
         out_dict["Id"] = XI[0]

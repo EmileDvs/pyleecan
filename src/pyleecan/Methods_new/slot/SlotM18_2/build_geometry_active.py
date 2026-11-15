@@ -47,26 +47,26 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
         surf_list = list()
         curve_list = list()
         curve_list.append(
-            Segment(ZM1, ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
+            Segment(begin=ZM1, end=ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
         )
 
         if self.is_outwards():
             curve_list.append(
-                Arc1(ZM2, ZM5, (Rbo - self.H0_bore), is_trigo_direction=True)
+                Arc1(begin=ZM2, end=ZM5, radius=(Rbo - self.H0_bore), is_trigo_direction=True)
             )
         else:
             curve_list.append(
-                Arc1(ZM2, ZM5, (Rbo + self.H0_bore), is_trigo_direction=True)
+                Arc1(begin=ZM2, end=ZM5, radius=(Rbo + self.H0_bore), is_trigo_direction=True)
             )
 
         curve_list.append(
-            Segment(ZM5, ZM6, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
+            Segment(begin=ZM5, end=ZM6, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
         )
 
         if self.is_outwards():
-            curve_list.append(Arc1(ZM6, ZM1, -Rbo, is_trigo_direction=False))
+            curve_list.append(Arc1(begin=ZM6, end=ZM1, radius=-Rbo, is_trigo_direction=False))
         else:
-            curve_list.append(Arc1(ZM6, ZM1, -Rbo, is_trigo_direction=False))
+            curve_list.append(Arc1(begin=ZM6, end=ZM1, radius=-Rbo, is_trigo_direction=False))
         # If no lamination, BC is required on bore
         curve_list[-1].prop_dict = {COND_BOUNDARY_PROP_LAB: YOKE_LAB}
 
@@ -83,39 +83,39 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
         # Airgap magnet
         curve_list = list()
         curve_list.append(
-            Segment(ZM2, ZM3, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
+            Segment(begin=ZM2, end=ZM3, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
         )
 
         if self.is_outwards():
             curve_list.append(
                 Arc1(
-                    ZM3,
-                    ZM4,
-                    (Rbo - self.H0_bore - self.H0_gap),
+                    begin=ZM3,
+                    end=ZM4,
+                    radius=(Rbo - self.H0_bore - self.H0_gap),
                     is_trigo_direction=True,
                 )
             )
         else:
             curve_list.append(
                 Arc1(
-                    ZM3,
-                    ZM4,
-                    (Rbo + self.H0_bore + self.H0_gap),
+                    begin=ZM3,
+                    end=ZM4,
+                    radius=(Rbo + self.H0_bore + self.H0_gap),
                     is_trigo_direction=True,
                 )
             )
 
         curve_list.append(
-            Segment(ZM4, ZM5, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
+            Segment(begin=ZM4, end=ZM5, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
         )
 
         if self.is_outwards():
             curve_list.append(
-                Arc1(ZM5, ZM2, -Rbo + self.H0_bore, is_trigo_direction=False)
+                Arc1(begin=ZM5, end=ZM2, radius=-Rbo + self.H0_bore, is_trigo_direction=False)
             )
         else:
             curve_list.append(
-                Arc1(ZM5, ZM2, -Rbo - self.H0_bore, is_trigo_direction=False)
+                Arc1(begin=ZM5, end=ZM2, radius=-Rbo - self.H0_bore, is_trigo_direction=False)
             )
 
         Zmid = (abs(ZM2) + abs(ZM3)) / 2

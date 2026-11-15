@@ -1,5 +1,5 @@
 import csv
-from os.path import join
+import os
 
 import numpy as np
 
@@ -142,7 +142,7 @@ def export_along(
                 file_name_i = file_name
                 slices_i = slices
             with open(
-                join(save_path, file_name_i + "." + file_format), "w+", newline=""
+                os.path.join(save_path, file_name_i + "." + file_format), "w+", newline=""
             ) as my_csv:
                 csvWriter = csv.writer(my_csv, delimiter=",")
                 # First line: meta-data

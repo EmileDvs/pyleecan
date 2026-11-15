@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace, zeros
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
@@ -36,33 +36,33 @@ def get_surface_active(self, alpha=0, delta=0):
     ZM4 = point_dict["ZM6"]
 
     curve_list = list()
-    curve_list.append(Segment(ZM1, ZM2))
+    curve_list.append(Segment(begin=ZM1, end=ZM2))
 
     if self.is_outwards():
         curve_list.append(
             Arc1(
-                ZM2,
-                ZM3,
-                (Rbo - self.H0_bore - self.H0_gap),
+                begin=ZM2,
+                end=ZM3,
+                radius=(Rbo - self.H0_bore - self.H0_gap),
                 is_trigo_direction=True,
             )
         )
     else:
         curve_list.append(
             Arc1(
-                ZM2,
-                ZM3,
-                (Rbo + self.H0_bore + self.H0_gap),
+                begin=ZM2,
+                end=ZM3,
+                radius=(Rbo + self.H0_bore + self.H0_gap),
                 is_trigo_direction=True,
             )
         )
 
-    curve_list.append(Segment(ZM3, ZM4))
+    curve_list.append(Segment(begin=ZM3, end=ZM4))
 
     if self.is_outwards():
-        curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
+        curve_list.append(Arc1(begin=ZM4, end=ZM1, radius=-Rbo, is_trigo_direction=False))
     else:
-        curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
+        curve_list.append(Arc1(begin=ZM4, end=ZM1, radius=-Rbo, is_trigo_direction=False))
 
     Zmid = (abs(ZM1) + abs(ZM3)) / 2
 

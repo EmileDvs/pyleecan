@@ -1,4 +1,4 @@
-from numpy import exp, pi, cos, sin, tan, angle, sqrt
+import numpy as np
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
@@ -24,15 +24,15 @@ def _comp_point_coordinate(self):
     Z1 = (Rbo - self.H0) + 1j * self.W0 / 2
     Z2 = Z1 + self.H1
 
-    Zc61 = -1j * self.W3 / 2 * exp(1j * pi / self.Zh)
-    Zc62 = (1 - 1j * self.W3 / 2) * exp(1j * pi / self.Zh)
+    Zc61 = -1j * self.W3 / 2 * np.exp(1j * np.pi / self.Zh)
+    Zc62 = (1 - 1j * self.W3 / 2) * np.exp(1j * np.pi / self.Zh)
 
     Zc63 = Z1 + 1j
     Z6 = inter_line_line(Z1, Zc63, Zc61, Zc62)
     Z6 = Z6[0]
 
-    Zc31 = -1j * (self.W3 / 2 + self.H1) * exp(1j * pi / self.Zh)
-    Zc32 = (1 - 1j * (self.W3 / 2 + self.H1)) * exp(1j * pi / self.Zh)
+    Zc31 = -1j * (self.W3 / 2 + self.H1) * np.exp(1j * np.pi / self.Zh)
+    Zc32 = (1 - 1j * (self.W3 / 2 + self.H1)) * np.exp(1j * np.pi / self.Zh)
 
     Zc33 = Z2 + 1j
     Z3 = inter_line_line(Z2, Zc33, Zc31, Zc32)
@@ -62,13 +62,13 @@ def _comp_point_coordinate(self):
         Zm3 = Z2 + 1j * self.W1
         Zm4 = Z1 + 1j * self.W1
 
-        Zcm1 = ((Z3 + Z4) / 2) * exp(-1j * pi / self.Zh)
+        Zcm1 = ((Z3 + Z4) / 2) * np.exp(-1j * np.pi / self.Zh)
         Zcm2 = Zcm1 + 1j * self.H1
 
-        Zm5 = (Zcm1 - self.W2 / 2) * exp(1j * pi / self.Zh)
-        Zm6 = (Zcm1 + self.W2 / 2) * exp(1j * pi / self.Zh)
-        Zm7 = (Zcm2 + self.W2 / 2) * exp(1j * pi / self.Zh)
-        Zm8 = (Zcm2 - self.W2 / 2) * exp(1j * pi / self.Zh)
+        Zm5 = (Zcm1 - self.W2 / 2) * np.exp(1j * np.pi / self.Zh)
+        Zm6 = (Zcm1 + self.W2 / 2) * np.exp(1j * np.pi / self.Zh)
+        Zm7 = (Zcm2 + self.W2 / 2) * np.exp(1j * np.pi / self.Zh)
+        Zm8 = (Zcm2 - self.W2 / 2) * np.exp(1j * np.pi / self.Zh)
 
     point_dict = dict()
     point_dict["Z1"] = Z1

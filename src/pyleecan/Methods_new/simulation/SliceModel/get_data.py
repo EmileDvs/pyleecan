@@ -1,4 +1,4 @@
-from numpy import array, unique
+import numpy as np
 
 from ....Classes_new.scidatatool.data_pattern import DataPattern
 from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
@@ -20,10 +20,10 @@ def get_data(self):
     """
 
     # Get all z values
-    values_whole = array(self.z_list)
+    values_whole = np.array(self.z_list)
 
     # Keep only unique values of relative skew between stator and rotor
-    (_, unique_indices, rebuild_indices) = unique(
+    (_, unique_indices, rebuild_indices) = np.unique(
         (self.angle_stator - self.angle_rotor).round(decimals=4),
         return_index=True,
         return_inverse=True,

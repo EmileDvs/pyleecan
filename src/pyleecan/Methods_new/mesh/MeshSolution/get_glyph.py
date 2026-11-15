@@ -1,8 +1,4 @@
-from numpy import (
-    zeros,
-    hstack,
-    real,
-)
+import numpy as np
 
 
 def get_glyph(self, *args, label, indices, field_name):
@@ -49,7 +45,7 @@ def get_glyph(self, *args, label, indices, field_name):
     # Add third dimension if needed
     ind = axes_list[0].index("component")
     if axes_list[1][ind] == 2:
-        vect_field = hstack((vect_field, zeros((vect_field.shape[0], 1))))
+        vect_field = np.hstack((vect_field, np.zeros((vect_field.shape[0], 1))))
         is_2D = True
     else:
         is_2D = False

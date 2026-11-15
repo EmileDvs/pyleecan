@@ -1,4 +1,4 @@
-from numpy import arcsin, exp
+import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.arc_1 import Arc1

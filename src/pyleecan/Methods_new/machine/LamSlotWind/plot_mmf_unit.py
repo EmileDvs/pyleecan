@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import min as np_min, max as np_max
+import numpy as np
 
 
 from ....Functions_new.Plot import dict_2D

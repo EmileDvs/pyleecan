@@ -1,4 +1,4 @@
-from numpy import angle, arcsin, arctan, cos, exp, pi, sin, sqrt
+import numpy as np
 
 from . import S15InnerError
 
@@ -19,11 +19,11 @@ def _comp_point_coordinate(self):
     Rbo = self.get_Rbo()
 
     # alpha is the angle to rotate Z0 so ||Z1,Z13|| = W0
-    alpha = arcsin(self.W0 / (2 * Rbo))
-    hsp = pi / self.Zs  # Half slot pitch
+    alpha = np.arcsin(self.W0 / (2 * Rbo))
+    hsp = np.pi / self.Zs  # Half slot pitch
 
-    Z0 = Rbo * exp(1j * 0)
-    Z13 = Z0 * exp(1j * alpha)
+    Z0 = Rbo * np.exp(1j * 0)
+    Z13 = Z0 * np.exp(1j * alpha)
     if self.is_outwards():
         Z12 = Z0 + self.H0 + 1j * Z13.imag
         Z7 = Z0 + self.H0 + self.H1 + self.H2
@@ -32,20 +32,20 @@ def _comp_point_coordinate(self):
         # In tooth ref: Im(Zc3') = -W3/2 - R2
         A = Rbo + self.H0 + self.H1 + self.H2 - self.R2
         B = -self.W3 / 2 - self.R2
-        xc2 = B * sin(-hsp) + sqrt(-(B**2) + A**2) * cos(-hsp)
-        yc2 = B * cos(-hsp) - sqrt(-(B**2) + A**2) * sin(-hsp)
+        xc2 = B * np.sin(-hsp) + np.sqrt(-(B**2) + A**2) * np.cos(-hsp)
+        yc2 = B * np.cos(-hsp) - np.sqrt(-(B**2) + A**2) * np.sin(-hsp)
         Zc3 = xc2 + 1j * yc2
-        Z9 = (Zc3 * exp(1j * -hsp) + self.R2 * 1j) * exp(1j * hsp)
+        Z9 = (Zc3 * np.exp(1j * -hsp) + self.R2 * 1j) * np.exp(1j * hsp)
 
         # Zc3, Z8 and (0,0) are align, |Zc3, Z8| = R2
-        Z8 = (Zc3 * exp(1j * -angle(Zc3)) + self.R2) * exp(1j * angle(Zc3))
+        Z8 = (Zc3 * np.exp(1j * -np.angle(Zc3)) + self.R2) * np.exp(1j * np.angle(Zc3))
 
         # Real(Zc4) = Rbo+H0+H1
         # In tooth ref: Im(Zc4') = -W3/2 - R1
         xc1 = Rbo + self.H0 + self.H1
-        yc1 = (-self.W3 / 2 - self.R1 - xc1 * sin(-hsp)) / cos(-hsp)
+        yc1 = (-self.W3 / 2 - self.R1 - xc1 * np.sin(-hsp)) / np.cos(-hsp)
         Zc4 = xc1 + 1j * yc1
-        Z10 = (Zc4 * exp(1j * -hsp) + self.R1 * 1j) * exp(1j * hsp)
+        Z10 = (Zc4 * np.exp(1j * -hsp) + self.R1 * 1j) * np.exp(1j * hsp)
 
         # Ref center at Zc4, (Z11,Z12) and (Z11,Zc4) are orthogonal
         # Z11 = R1*exp(1i*theta)
@@ -53,8 +53,8 @@ def _comp_point_coordinate(self):
         R1 = self.R1
         y2 = (Z12 - Zc4).imag
         x2 = (Z12 - Zc4).real
-        theta = 2 * arctan((y2 - sqrt(-(R1**2) + x2**2 + y2**2)) / (R1 + x2))
-        Z11 = R1 * exp(1j * theta) + Zc4
+        theta = 2 * np.arctan((y2 - np.sqrt(-(R1**2) + x2**2 + y2**2)) / (R1 + x2))
+        Z11 = R1 * np.exp(1j * theta) + Zc4
     else:
         raise S15InnerError("Slot Type 15 can't be used on inner lamination")
 

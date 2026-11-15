@@ -1,6 +1,6 @@
-from numpy import add, apply_along_axis, take
+import numpy as np
 
-from pyleecan.classes_common.errors import AxisError, NormError, UnitError
+from ....classes_common.errors import AxisError, NormError, UnitError
 from ....Functions_new.SciDataTool.conversions import convert, to_dB, to_dBA, to_noct
 from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
 
@@ -178,7 +178,7 @@ def get_magnitude_along(
             if axis.name == "freqs" or axis.corr_name == "freqs":
                 index = axis.index
                 if axis.noct is not None:
-                    (values, foct) = apply_along_axis(
+                    (values, foct) = np.apply_along_axis(
                         to_noct, index, values, return_dict["freqs"], noct=axis.noct
                     )
                     return_dict[axis.name] = foct
@@ -212,7 +212,7 @@ def get_magnitude_along(
                         index_list.append(ii)
                 A_weight = self.normalizations["A-weight"].vector
                 for index in index_list:
-                    A_weight = take(
+                    A_weight = np.take(
                         A_weight,
                         axes_list[index].indices,
                         axis=index,
@@ -224,7 +224,7 @@ def get_magnitude_along(
                     A_weight.shape
                     + shape[len(self.normalizations["A-weight"].vector.shape) :]
                 )
-                values = apply_along_axis(add, 0, values, A_weight)
+                values = np.apply_along_axis(np.add, 0, values, A_weight)
                 values = values.reshape(shape)
             elif "freqs" in return_dict.keys():
                 for axis in return_dict["axes_list"]:
@@ -241,7 +241,7 @@ def get_magnitude_along(
                     freqs = return_dict["axes_list"][index].corr_values
                 else:
                     freqs = return_dict["freqs"]
-                values = apply_along_axis(
+                values = np.apply_along_axis(
                     to_dBA, index, values, freqs, self.unit, ref_value
                 )
             elif "frequency" in return_dict.keys():
@@ -259,7 +259,7 @@ def get_magnitude_along(
                     freqs = return_dict["axes_list"][index].corr_values
                 else:
                     freqs = return_dict["frequency"]
-                values = apply_along_axis(
+                values = np.apply_along_axis(
                     to_dBA, index, values, freqs, self.unit, ref_value
                 )
             elif "order" in return_dict:
@@ -267,7 +267,7 @@ def get_magnitude_along(
                 freqs = freqs.ravel("C")
                 shape = values.shape
                 values = values.reshape(freqs.shape + shape[2:])
-                values = apply_along_axis(
+                values = np.apply_along_axis(
                     to_dBA, 0, values, freqs, self.unit, ref_value
                 )
                 values = values.reshape(shape)

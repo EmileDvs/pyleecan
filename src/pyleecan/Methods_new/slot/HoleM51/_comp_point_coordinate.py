@@ -1,4 +1,4 @@
-from numpy import exp, pi, cos, sin, tan
+import numpy as np
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 
 
@@ -21,8 +21,8 @@ def _comp_point_coordinate(self):
     # comp point coordinate (in complex)
     alpha = self.comp_alpha()
 
-    Wslot = 2 * sin(self.W1 / 2) * (Rext - self.H1)
-    L = 0.5 * (Wslot - self.W0) / cos(alpha)  # ||P2,P5||
+    Wslot = 2 * np.sin(self.W1 / 2) * (Rext - self.H1)
+    L = 0.5 * (Wslot - self.W0) / np.cos(alpha)  # ||P2,P5||
 
     # Center of the hole
     Z0 = Rext - self.H0
@@ -34,26 +34,26 @@ def _comp_point_coordinate(self):
     Z12 = Z2 - self.H2
     Z13 = Z12 - 1j * self.W2
     Z14 = Z13 - 1j * self.W3
-    Z11 = Z12 + 1j * tan(alpha / 2) * self.H2
-    Z16 = Z15 - 1j * tan(alpha / 2) * self.H2
+    Z11 = Z12 + 1j * np.tan(alpha / 2) * self.H2
+    Z16 = Z15 - 1j * np.tan(alpha / 2) * self.H2
 
     # Draw the left side with center P2, and X axis =(P2,P5), Y axis=(P2,P10)
-    Z3 = self.W4 * exp(1j * (pi / 2 - alpha)) + Z2
-    Z4 = (self.W4 + self.W5) * exp(1j * (pi / 2 - alpha)) + Z2
-    Z5 = (Rext - self.H1) * exp(1j * self.W1 / 2)
-    Z10 = (1j * self.H2) * exp(1j * (pi / 2 - alpha)) + Z2
-    Z9 = (1j * self.H2 + self.W4) * exp(1j * (pi / 2 - alpha)) + Z2
-    Z8 = (1j * self.H2 + self.W4 + self.W5) * exp(1j * (pi / 2 - alpha)) + Z2
-    Z7 = (1j * self.H2 + L) * exp(1j * (pi / 2 - alpha)) + Z2
+    Z3 = self.W4 * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+    Z4 = (self.W4 + self.W5) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+    Z5 = (Rext - self.H1) * np.exp(1j * self.W1 / 2)
+    Z10 = (1j * self.H2) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+    Z9 = (1j * self.H2 + self.W4) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+    Z8 = (1j * self.H2 + self.W4 + self.W5) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
+    Z7 = (1j * self.H2 + L) * np.exp(1j * (np.pi / 2 - alpha)) + Z2
 
     # Draw the right side with center P25, X axis (P25,P23), Y axis(P25,P17)
-    Z24 = self.W6 * exp(-1j * (pi / 2 - alpha)) + Z25
-    Z23 = (self.W6 + self.W7) * exp(-1j * (pi / 2 - alpha)) + Z25
-    Z22 = (Rext - self.H1) * exp(-1j * self.W1 / 2)
-    Z17 = (-1j * self.H2) * exp(-1j * (pi / 2 - alpha)) + Z25
-    Z18 = (-1j * self.H2 + self.W6) * exp(-1j * (pi / 2 - alpha)) + Z25
-    Z19 = (-1j * self.H2 + self.W6 + self.W7) * exp(-1j * (pi / 2 - alpha)) + Z25
-    Z20 = (-1j * self.H2 + L) * exp(-1j * (pi / 2 - alpha)) + Z25
+    Z24 = self.W6 * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+    Z23 = (self.W6 + self.W7) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+    Z22 = (Rext - self.H1) * np.exp(-1j * self.W1 / 2)
+    Z17 = (-1j * self.H2) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+    Z18 = (-1j * self.H2 + self.W6) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+    Z19 = (-1j * self.H2 + self.W6 + self.W7) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
+    Z20 = (-1j * self.H2 + L) * np.exp(-1j * (np.pi / 2 - alpha)) + Z25
 
     # Z6 is the intersection of the line [Z7,Z10] and Circle centre
     # (0,0) radius Rext - H1

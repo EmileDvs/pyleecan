@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_power(self):
@@ -16,6 +16,6 @@ def comp_power(self):
         and self.parent.elec.OP.get_N0() is not None
         and self.Tem_av is not None
     ):
-        self.Pem_av = 2 * pi * self.parent.elec.OP.get_N0() / 60 * self.Tem_av
+        self.Pem_av = 2 * np.pi * self.parent.elec.OP.get_N0() / 60 * self.Tem_av
     else:
         self.Pem_av = None

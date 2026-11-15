@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, arctan, cos
+import numpy as np
 
 
 def comp_alpha(self):
@@ -18,7 +18,7 @@ def comp_alpha(self):
     """
     Rext = self.get_Rext()
 
-    alpham = 2 * arcsin(self.W0 / (2 * (Rext - self.H1)))
+    alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))
 
-    Harc = (Rext - self.H1) * (1 - cos(alpham / 2))
-    return arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2 - self.W1 / 2))
+    Harc = (Rext - self.H1) * (1 - np.cos(alpham / 2))
+    return np.arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2 - self.W1 / 2))

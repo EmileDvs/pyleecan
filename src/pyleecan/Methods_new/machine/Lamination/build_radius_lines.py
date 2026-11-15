@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.arc_3 import Arc3
@@ -51,12 +51,12 @@ def build_radius_lines(self, is_bore, sym=1, is_reversed=False, prop_dict=None):
                 radius_desc_list[0]["begin_angle"] = 0
                 radius_desc_list[0]["lines"] = lines
             # Cut last desc (if needed)
-            if radius_desc_list[-1]["end_angle"] > 2 * pi / sym:
+            if radius_desc_list[-1]["end_angle"] > 2 * np.pi / sym:
                 lines = list()
                 for line in radius_desc_list[-1]["lines"]:
-                    _, bot_split_list = line.split_line(0, exp(1j * 2 * pi / sym))
+                    _, bot_split_list = line.split_line(0, np.exp(1j * 2 * np.pi / sym))
                     lines.extend(bot_split_list)
-                radius_desc_list[-1]["end_angle"] = 2 * pi / sym
+                radius_desc_list[-1]["end_angle"] = 2 * np.pi / sym
                 radius_desc_list[-1]["lines"] = lines
         # Extract the line list
         radius_lines = list()
@@ -81,7 +81,7 @@ def build_radius_lines(self, is_bore, sym=1, is_reversed=False, prop_dict=None):
         if sym > 2:
             lines = list()
             for line in radius_lines:
-                _, bot_split_list = line.split_line(0, exp(1j * 2 * pi / sym))
+                _, bot_split_list = line.split_line(0, np.exp(1j * 2 * np.pi / sym))
                 lines.extend(bot_split_list)
             radius_lines = lines
         # Only radius lines => prop_dict on all lines

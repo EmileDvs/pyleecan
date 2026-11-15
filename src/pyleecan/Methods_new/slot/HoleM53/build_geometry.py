@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import cos, exp, sin
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
@@ -65,9 +65,9 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Air surface with magnet_0
     curve_list = list()
-    curve_list.append(Segment(Z1, Z2))
-    curve_list.append(Segment(Z2, Z10))
-    curve_list.append(Segment(Z10, Z11))
+    curve_list.append(Segment(begin=Z1, end=Z2))
+    curve_list.append(Segment(begin=Z2, end=Z10))
+    curve_list.append(Segment(begin=Z10, end=Z11))
     curve_list.append(
         Arc1(begin=Z11, end=Z1, radius=-Rext + self.H1, is_trigo_direction=False)
     )
@@ -77,13 +77,13 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     # magnet_0 surface
     curve_list = list()
     if is_simplified:
-        curve_list.append(Segment(Z5, Z9))
-        curve_list.append(Segment(Z2, Z10))
+        curve_list.append(Segment(begin=Z5, end=Z9))
+        curve_list.append(Segment(begin=Z2, end=Z10))
     else:
-        curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Segment(Z4, Z9))
-        curve_list.append(Segment(Z9, Z10))
-        curve_list.append(Segment(Z10, Z3))
+        curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(Segment(begin=Z4, end=Z9))
+        curve_list.append(Segment(begin=Z9, end=Z10))
+        curve_list.append(Segment(begin=Z10, end=Z3))
     point_ref = (Z3 + Z4 + Z9 + Z10) / 4
 
     S2 = SurfLine(line_list=curve_list, label=mag_label + "T0-S0", point_ref=point_ref)
@@ -91,169 +91,169 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     # Air suface with magnet_0 and W1 > 0
     curve_list = list()
     if self.W2 > 0:
-        curve_list.append(Segment(Z5, Z6))
-    curve_list.append(Segment(Z6, Z7))
-    curve_list.append(Segment(Z7, Z8))
+        curve_list.append(Segment(begin=Z5, end=Z6))
+    curve_list.append(Segment(begin=Z6, end=Z7))
+    curve_list.append(Segment(begin=Z7, end=Z8))
     if self.W2 > 0:
-        curve_list.append(Segment(Z8, Z9))
-        curve_list.append(Segment(Z9, Z5))
+        curve_list.append(Segment(begin=Z8, end=Z9))
+        curve_list.append(Segment(begin=Z9, end=Z5))
         point_ref = (Z5 + Z6 + Z7 + Z8 + Z9) / 5
     else:
-        curve_list.append(Segment(Z8, Z6))
+        curve_list.append(Segment(begin=Z8, end=Z6))
         point_ref = (Z6 + Z7 + Z8) / 3
     S3 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # Air surface with magnet_1
     curve_list = list()
-    curve_list.append(Segment(Z1s, Z2s))
-    curve_list.append(Segment(Z2s, Z10s))
-    curve_list.append(Segment(Z10s, Z11s))
-    curve_list.append(Arc1(Z11s, Z1s, Rext - self.H1, is_trigo_direction=True))
+    curve_list.append(Segment(begin=Z1s, end=Z2s))
+    curve_list.append(Segment(begin=Z2s, end=Z10s))
+    curve_list.append(Segment(begin=Z10s, end=Z11s))
+    curve_list.append(Arc1(begin=Z11s, end=Z1s, radius=Rext - self.H1, is_trigo_direction=True))
     point_ref = (Z1s + Z2s + Z10s + Z11s) / 4
     S4 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # magnet_1 surface
     curve_list = list()
     if is_simplified:
-        curve_list.append(Segment(Z5s, Z9s))
-        curve_list.append(Segment(Z2s, Z10s))
+        curve_list.append(Segment(begin=Z5s, end=Z9s))
+        curve_list.append(Segment(begin=Z2s, end=Z10s))
     else:
-        curve_list.append(Segment(Z3s, Z4s))
-        curve_list.append(Segment(Z4s, Z9s))
-        curve_list.append(Segment(Z9s, Z10s))
-        curve_list.append(Segment(Z10s, Z3s))
+        curve_list.append(Segment(begin=Z3s, end=Z4s))
+        curve_list.append(Segment(begin=Z4s, end=Z9s))
+        curve_list.append(Segment(begin=Z9s, end=Z10s))
+        curve_list.append(Segment(begin=Z10s, end=Z3s))
     point_ref = (Z3s + Z4s + Z9s + Z10s) / 4
     S5 = SurfLine(line_list=curve_list, label=mag_label + "T1-S0", point_ref=point_ref)
 
     # Air suface with magnet_1 and W1 > 0
     curve_list = list()
     if self.W2 > 0:
-        curve_list.append(Segment(Z5s, Z6s))
-    curve_list.append(Segment(Z6s, Z7s))
-    curve_list.append(Segment(Z7s, Z8s))
+        curve_list.append(Segment(begin=Z5s, end=Z6s))
+    curve_list.append(Segment(begin=Z6s, end=Z7s))
+    curve_list.append(Segment(begin=Z7s, end=Z8s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z8s, Z9s))
-        curve_list.append(Segment(Z9s, Z5s))
+        curve_list.append(Segment(begin=Z8s, end=Z9s))
+        curve_list.append(Segment(begin=Z9s, end=Z5s))
         point_ref = (Z5s + Z6s + Z7s + Z8s + Z9s) / 5
     else:
-        curve_list.append(Segment(Z8s, Z6s))
+        curve_list.append(Segment(begin=Z8s, end=Z6s))
         point_ref = (Z6s + Z7s + Z8s) / 3
     S6 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # Air with both magnet and W1 = 0
     curve_list = list()
     if self.W2 > 0:
-        curve_list.append(Segment(Z5, Z6))
-    curve_list.append(Segment(Z6, Z6s))
+        curve_list.append(Segment(begin=Z5, end=Z6))
+    curve_list.append(Segment(begin=Z6, end=Z6s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z6s, Z5s))
-    curve_list.append(Segment(Z5s, Z9s))
+        curve_list.append(Segment(begin=Z6s, end=Z5s))
+    curve_list.append(Segment(begin=Z5s, end=Z9s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z9s, Z8s))
-        curve_list.append(Segment(Z8s, Z9))
-    curve_list.append(Segment(Z9, Z5))
+        curve_list.append(Segment(begin=Z9s, end=Z8s))
+        curve_list.append(Segment(begin=Z8s, end=Z9))
+    curve_list.append(Segment(begin=Z9, end=Z5))
     point_ref = (Z6 + Z6s + Z8) / 3
     S7 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # first hole without magnet_0 and W1 > 0
     curve_list = list()
-    curve_list.append(Segment(Z1, Z2))
+    curve_list.append(Segment(begin=Z1, end=Z2))
     if self.H3 > 0:
-        curve_list.append(Segment(Z2, Z3))
-    curve_list.append(Segment(Z3, Z4))
+        curve_list.append(Segment(begin=Z2, end=Z3))
+    curve_list.append(Segment(begin=Z3, end=Z4))
     if self.H3 > 0:
-        curve_list.append(Segment(Z4, Z5))
+        curve_list.append(Segment(begin=Z4, end=Z5))
     if self.W2 > 0:
-        curve_list.append(Segment(Z5, Z6))
-    curve_list.append(Segment(Z6, Z7))
-    curve_list.append(Segment(Z7, Z8))
-    curve_list.append(Segment(Z8, Z11))
-    curve_list.append(Arc1(Z11, Z1, -Rext + self.H1, is_trigo_direction=False))
+        curve_list.append(Segment(begin=Z5, end=Z6))
+    curve_list.append(Segment(begin=Z6, end=Z7))
+    curve_list.append(Segment(begin=Z7, end=Z8))
+    curve_list.append(Segment(begin=Z8, end=Z11))
+    curve_list.append(Arc1(begin=Z11, end=Z1, radius=-Rext + self.H1, is_trigo_direction=False))
     point_ref = (Z3 + Z4 + Z9 + Z10) / 4
     S8 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # second hole without magnet_1 and W1 > 0
     curve_list = list()
-    curve_list.append(Segment(Z1s, Z2s))
+    curve_list.append(Segment(begin=Z1s, end=Z2s))
     if self.H3 > 0:
-        curve_list.append(Segment(Z2s, Z3s))
-    curve_list.append(Segment(Z3s, Z4s))
+        curve_list.append(Segment(begin=Z2s, end=Z3s))
+    curve_list.append(Segment(begin=Z3s, end=Z4s))
     if self.H3 > 0:
-        curve_list.append(Segment(Z4s, Z5s))
+        curve_list.append(Segment(begin=Z4s, end=Z5s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z5s, Z6s))
-    curve_list.append(Segment(Z6s, Z7s))
-    curve_list.append(Segment(Z7s, Z8s))
-    curve_list.append(Segment(Z8s, Z11s))
-    curve_list.append(Arc1(Z11s, Z1s, -Rext + self.H1, is_trigo_direction=False))
+        curve_list.append(Segment(begin=Z5s, end=Z6s))
+    curve_list.append(Segment(begin=Z6s, end=Z7s))
+    curve_list.append(Segment(begin=Z7s, end=Z8s))
+    curve_list.append(Segment(begin=Z8s, end=Z11s))
+    curve_list.append(Arc1(begin=Z11s, end=Z1s, radius=-Rext + self.H1, is_trigo_direction=False))
     point_ref = (Z3s + Z4s + Z9s + Z10s) / 4
     S9 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # No magnet_1 and W1 = 0
     curve_list = list()
-    curve_list.append(Segment(Z1s, Z2s))
+    curve_list.append(Segment(begin=Z1s, end=Z2s))
     if self.H3 > 0:
-        curve_list.append(Segment(Z2s, Z3s))
-    curve_list.append(Segment(Z3s, Z4s))
+        curve_list.append(Segment(begin=Z2s, end=Z3s))
+    curve_list.append(Segment(begin=Z3s, end=Z4s))
     if self.H3 > 0:
-        curve_list.append(Segment(Z4s, Z5s))
+        curve_list.append(Segment(begin=Z4s, end=Z5s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z5s, Z6s))
-    curve_list.append(Segment(Z6s, Z6))
+        curve_list.append(Segment(begin=Z5s, end=Z6s))
+    curve_list.append(Segment(begin=Z6s, end=Z6))
     if self.W2 > 0:
-        curve_list.append(Segment(Z6, Z5))
-    curve_list.append(Segment(Z5, Z9))
+        curve_list.append(Segment(begin=Z6, end=Z5))
+    curve_list.append(Segment(begin=Z5, end=Z9))
     if self.W2 > 0:
-        curve_list.append(Segment(Z9, Z8))
-    curve_list.append(Segment(Z8s, Z11s))
-    curve_list.append(Arc1(Z11s, Z1s, -Rext + self.H1, is_trigo_direction=False))
+        curve_list.append(Segment(begin=Z9, end=Z8))
+    curve_list.append(Segment(begin=Z8s, end=Z11s))
+    curve_list.append(Arc1(begin=Z11s, end=Z1s, radius=-Rext + self.H1, is_trigo_direction=False))
     point_ref = (Z3s + Z4s + Z9s + Z10s) / 4
     S10 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # No magnet_0 and W1 = 0
     curve_list = list()
-    curve_list.append(Segment(Z1, Z2))
+    curve_list.append(Segment(begin=Z1, end=Z2))
     if self.H3 > 0:
-        curve_list.append(Segment(Z2, Z3))
-    curve_list.append(Segment(Z3, Z4))
+        curve_list.append(Segment(begin=Z2, end=Z3))
+    curve_list.append(Segment(begin=Z3, end=Z4))
     if self.H3 > 0:
-        curve_list.append(Segment(Z4, Z5))
+        curve_list.append(Segment(begin=Z4, end=Z5))
     if self.W2 > 0:
-        curve_list.append(Segment(Z5, Z6))
-    curve_list.append(Segment(Z6, Z6s))
+        curve_list.append(Segment(begin=Z5, end=Z6))
+    curve_list.append(Segment(begin=Z6, end=Z6s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z6s, Z5s))
-    curve_list.append(Segment(Z5s, Z9s))
+        curve_list.append(Segment(begin=Z6s, end=Z5s))
+    curve_list.append(Segment(begin=Z5s, end=Z9s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z9s, Z8s))
-    curve_list.append(Segment(Z8, Z11))
-    curve_list.append(Arc1(Z11, Z1, -Rext + self.H1, is_trigo_direction=False))
+        curve_list.append(Segment(begin=Z9s, end=Z8s))
+    curve_list.append(Segment(begin=Z8, end=Z11))
+    curve_list.append(Arc1(begin=Z11, end=Z1, radius=-Rext + self.H1, is_trigo_direction=False))
     point_ref = (Z3 + Z4 + Z9 + Z10) / 4
     S11 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # No magnet and W1 = 0
     curve_list = list()
-    curve_list.append(Arc1(Z1, Z11, Rext - self.H1, is_trigo_direction=True))
-    curve_list.append(Segment(Z11, Z8))
-    curve_list.append(Segment(Z8, Z11s))
-    curve_list.append(Arc1(Z11s, Z1s, Rext - self.H1, is_trigo_direction=True))
-    curve_list.append(Segment(Z1s, Z2s))
+    curve_list.append(Arc1(begin=Z1, end=Z11, radius=Rext - self.H1, is_trigo_direction=True))
+    curve_list.append(Segment(begin=Z11, end=Z8))
+    curve_list.append(Segment(begin=Z8, end=Z11s))
+    curve_list.append(Arc1(begin=Z11s, end=Z1s, radius=Rext - self.H1, is_trigo_direction=True))
+    curve_list.append(Segment(begin=Z1s, end=Z2s))
     if self.H3 > 0:
-        curve_list.append(Segment(Z2s, Z3s))
-    curve_list.append(Segment(Z3s, Z4s))
+        curve_list.append(Segment(begin=Z2s, end=Z3s))
+    curve_list.append(Segment(begin=Z3s, end=Z4s))
     if self.H3 > 0:
-        curve_list.append(Segment(Z4s, Z5s))
+        curve_list.append(Segment(begin=Z4s, end=Z5s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z5s, Z6s))
-    curve_list.append(Segment(Z6s, Z6))
+        curve_list.append(Segment(begin=Z5s, end=Z6s))
+    curve_list.append(Segment(begin=Z6s, end=Z6))
     if self.W2 > 0:
-        curve_list.append(Segment(Z6, Z5))
+        curve_list.append(Segment(begin=Z6, end=Z5))
     if self.H3 > 0:
-        curve_list.append(Segment(Z5, Z4))
-    curve_list.append(Segment(Z4, Z3))
+        curve_list.append(Segment(begin=Z5, end=Z4))
+    curve_list.append(Segment(begin=Z4, end=Z3))
     if self.H3 > 0:
-        curve_list.append(Segment(Z3, Z2))
-    curve_list.append(Segment(Z2, Z1))
+        curve_list.append(Segment(begin=Z3, end=Z2))
+    curve_list.append(Segment(begin=Z2, end=Z1))
 
     point_ref = (Z6 + Z8 + Z6s) / 3
     S12 = SurfLine(line_list=curve_list, point_ref=point_ref)

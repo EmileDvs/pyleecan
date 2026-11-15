@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_length_ring(self):
@@ -21,4 +21,4 @@ def comp_length_ring(self):
     # calculation of the average radius of the center of the end-ring (distance to z-axis of the electrical machine)
     Rmw = self.slot.comp_radius_mid_active()
 
-    return 2 * pi * Rmw
+    return 2 * np.pi * Rmw

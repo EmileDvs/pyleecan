@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import tan
+import numpy as np
 
 
 def get_H1(self):
@@ -19,6 +19,6 @@ def get_H1(self):
     """
 
     if self.H1_is_rad:  # H1 in rad
-        return ((self.W1 - self.W0) / 2.0) * tan(self.H1)  # convertion to m
+        return ((self.W1 - self.W0) / 2.0) * np.tan(self.H1)  # convertion to m
     else:  # H1 in m
         return self.H1

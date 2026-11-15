@@ -1,4 +1,4 @@
-from numpy import angle, pi
+import numpy as np
 
 
 def get_I0_Phi0(self):
@@ -18,4 +18,4 @@ def get_I0_Phi0(self):
         return {"I0": None, "Phi0": None}
     else:
         Z = self.Id_ref + 1j * self.Iq_ref
-        return {"I0": abs(Z), "Phi0": angle(Z) % (2 * pi)}
+        return {"I0": abs(Z), "Phi0": np.angle(Z) % (2 * np.pi)}

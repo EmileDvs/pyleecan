@@ -1,13 +1,13 @@
-from ....Functions_new.load import load_init_dict
-from ....Functions_new.Load.import_class import import_class
-from ....Classes._check import check_var
-from numpy import ndarray, array
+from ....Functions.load import load_init_dict
+from ....Functions.Load.import_class import import_class
+from ....classes_common.check import check_var
+import numpy as np
 
 
 def _set_OP_matrix(self, value):
     """setter of OP_matrix"""
     if isinstance(value, list):
-        value = array(value)
+        value = np.array(value)
     if isinstance(value, str):  # Load from file
         try:
             value = load_init_dict(value)[1]
@@ -21,7 +21,7 @@ def _set_OP_matrix(self, value):
             "pyleecan.Classes", value.get("__class__"), "OP_matrix"
         )
         value = class_obj(init_dict=value)
-    elif isinstance(value, ndarray):
+    elif isinstance(value, np.ndarray):
         # Conver matrix to OP_matrix object
         class_obj = import_class("pyleecan.Classes", "OPMatrix", "OP_matrix")
         value_obj = class_obj()

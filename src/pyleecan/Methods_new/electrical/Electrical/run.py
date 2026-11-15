@@ -1,4 +1,4 @@
-from numpy import angle
+import numpy as np
 
 from ....Classes_new.electrical.eec_scim import EEC_SCIM
 from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
@@ -70,7 +70,7 @@ def run(self):
             out_dict = eec_out.solve()
             U0c = out_dict["Ud"] + 1j * out_dict["Uq"]
             output.elec.PWM.U0 = abs(U0c)
-            output.elec.PWM.Phi0 = angle(U0c)
+            output.elec.PWM.Phi0 = np.angle(U0c)
 
             # Calculate PWM voltage
             self.gen_drive(output)

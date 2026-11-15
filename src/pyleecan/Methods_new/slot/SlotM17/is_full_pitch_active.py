@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def is_full_pitch_active(self):

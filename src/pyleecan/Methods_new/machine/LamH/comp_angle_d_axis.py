@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_angle_d_axis(self):
@@ -19,6 +19,6 @@ def comp_angle_d_axis(self):
 
     p = self.get_pole_pair_number()
     if self.has_magnet():
-        return pi / p / 2
+        return np.pi / p / 2
     else:
         return 0

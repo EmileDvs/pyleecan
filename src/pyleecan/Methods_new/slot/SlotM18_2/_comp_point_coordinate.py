@@ -1,4 +1,4 @@
-from numpy import pi, exp
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -17,16 +17,16 @@ def _comp_point_coordinate(self):
 
     Rbo = self.get_Rbo()
 
-    sp = 2 * pi / self.Zs
-    Z1 = Rbo * exp(-1j * sp / 2)
-    ZM1 = Rbo * exp(-1j * sp / 2)
+    sp = 2 * np.pi / self.Zs
+    Z1 = Rbo * np.exp(-1j * sp / 2)
+    ZM1 = Rbo * np.exp(-1j * sp / 2)
 
     if self.is_outwards():
-        ZM2 = (Rbo - self.H0_bore) * exp(-1j * sp / 2)
-        ZM3 = (Rbo - self.H0_bore - self.H0_gap) * exp(-1j * sp / 2)
+        ZM2 = (Rbo - self.H0_bore) * np.exp(-1j * sp / 2)
+        ZM3 = (Rbo - self.H0_bore - self.H0_gap) * np.exp(-1j * sp / 2)
     else:  # inward slot
-        ZM2 = (Rbo + self.H0_bore) * exp(-1j * sp / 2)
-        ZM3 = (Rbo + self.H0_bore + self.H0_gap) * exp(-1j * sp / 2)
+        ZM2 = (Rbo + self.H0_bore) * np.exp(-1j * sp / 2)
+        ZM3 = (Rbo + self.H0_bore + self.H0_gap) * np.exp(-1j * sp / 2)
 
     point_dict = dict()
     point_dict["Z1"] = Z1

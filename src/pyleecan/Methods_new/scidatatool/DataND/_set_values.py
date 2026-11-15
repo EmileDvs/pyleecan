@@ -1,21 +1,21 @@
-from numpy import array, squeeze
+import numpy as np
 
-from ....Classes._check import check_dimensions, check_var
+from ....classes_common.check import check_dimensions, check_var
 
 
 def _set_values(self, value):
     """setter of values"""
     if type(value) is int and value == -1:
-        value = array([])
+        value = np.array([])
     elif type(value) is list:
         try:
-            value = array(value)
+            value = np.array(value)
         except:
             pass
     check_var("values", value, "ndarray")
 
     # Check dimensions
     if value is not None:
-        value = squeeze(value)
+        value = np.squeeze(value)
     value = check_dimensions(value, self.axes)
     self._values = value

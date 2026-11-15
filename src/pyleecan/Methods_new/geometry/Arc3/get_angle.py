@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def get_angle(self, is_deg=False):
@@ -27,4 +27,4 @@ def get_angle(self, is_deg=False):
     if is_deg:
         return sign * 180
     else:
-        return sign * pi
+        return sign * np.pi

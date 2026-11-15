@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 from . import *
 
 
@@ -29,5 +29,5 @@ def check(self):
         ("The beginning point and the center of an Arc2 can't be the same")
     if self.angle == 0:
         raise AngleArc2Error("An arc can't have a null opening angle")
-    if self.angle == 2 * pi:
+    if self.angle == 2 * np.pi:
         raise AngleArc2Error("You can't draw a circle with an Arc2")

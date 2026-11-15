@@ -1,4 +1,4 @@
-from numpy import arcsin, cos, exp, angle, pi, sin, tan
+import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
@@ -72,11 +72,11 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     # (with/without magnet W1>0 or W1=0)
     # Air surface (W3) with magnet_0
     curve_list = list()
-    curve_list.append(Segment(Z1, Z2))
-    curve_list.append(Segment(Z2, Z7))
+    curve_list.append(Segment(begin=Z1, end=Z2))
+    curve_list.append(Segment(begin=Z2, end=Z7))
     if self.W2 > 0:
-        curve_list.append(Segment(Z7, Z8))
-    curve_list.append(Segment(Z8, Z1))
+        curve_list.append(Segment(begin=Z7, end=Z8))
+    curve_list.append(Segment(begin=Z8, end=Z1))
 
     # initiating the label of the line on the air surface
     # curve_list = set_name_line(curve_list, "hole_1_line")
@@ -86,13 +86,13 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     # Magnet_0 surface
     curve_list = list()
     if is_simplified:
-        curve_list.append(Segment(Z7, Z2))
-        curve_list.append(Segment(Z3, Z6))
+        curve_list.append(Segment(begin=Z7, end=Z2))
+        curve_list.append(Segment(begin=Z3, end=Z6))
     else:
-        curve_list.append(Segment(Z2, Z3))
-        curve_list.append(Segment(Z3, Z6))
-        curve_list.append(Segment(Z6, Z7))
-        curve_list.append(Segment(Z7, Z2))
+        curve_list.append(Segment(begin=Z2, end=Z3))
+        curve_list.append(Segment(begin=Z3, end=Z6))
+        curve_list.append(Segment(begin=Z6, end=Z7))
+        curve_list.append(Segment(begin=Z7, end=Z2))
 
     # initiating the label of the line of the magnet surface
     # curve_list = set_name_line(curve_list, "magnet_1_line")
@@ -105,11 +105,11 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Air surface with magnet_0 and W1 > 0
     curve_list = list()
-    curve_list.append(Segment(Z4, Z5))
-    curve_list.append(Segment(Z5, Z6))
-    curve_list.append(Segment(Z6, Z3))
+    curve_list.append(Segment(begin=Z4, end=Z5))
+    curve_list.append(Segment(begin=Z5, end=Z6))
+    curve_list.append(Segment(begin=Z6, end=Z3))
     if abs(Z4 - Z3) > 1e-6:
-        curve_list.append(Segment(Z3, Z4))
+        curve_list.append(Segment(begin=Z3, end=Z4))
 
     # initiating the label of the line on the air surface
     # curve_list = set_name_line(curve_list, "hole_2_line")
@@ -119,11 +119,11 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Symmetry Air surface (W3) with magnet_1
     curve_list = list()
-    curve_list.append(Segment(Z2s, Z1s))
-    curve_list.append(Segment(Z1s, Z8s))
+    curve_list.append(Segment(begin=Z2s, end=Z1s))
+    curve_list.append(Segment(begin=Z1s, end=Z8s))
     if self.W2 > 0:
-        curve_list.append(Segment(Z8s, Z7s))
-    curve_list.append(Segment(Z7s, Z2s))
+        curve_list.append(Segment(begin=Z8s, end=Z7s))
+    curve_list.append(Segment(begin=Z7s, end=Z2s))
     point_ref = (Z1s + Z2s + Z8s + Z7s) / 4
     # initiating the label of the line on the air surface
     # curve_list = set_name_line(curve_list, "hole_3_line")
@@ -132,13 +132,13 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     # magnet_1 surface
     curve_list = list()
     if is_simplified:
-        curve_list.append(Segment(Z2s, Z7s))
-        curve_list.append(Segment(Z6s, Z3s))
+        curve_list.append(Segment(begin=Z2s, end=Z7s))
+        curve_list.append(Segment(begin=Z6s, end=Z3s))
     else:
-        curve_list.append(Segment(Z3s, Z2s))
-        curve_list.append(Segment(Z2s, Z7s))
-        curve_list.append(Segment(Z7s, Z6s))
-        curve_list.append(Segment(Z6s, Z3s))
+        curve_list.append(Segment(begin=Z3s, end=Z2s))
+        curve_list.append(Segment(begin=Z2s, end=Z7s))
+        curve_list.append(Segment(begin=Z7s, end=Z6s))
+        curve_list.append(Segment(begin=Z6s, end=Z3s))
     point_ref = (Z3s + Z2s + Z7s + Z6s) / 4
 
     # initiating the label of the line on the magnet surface
@@ -151,11 +151,11 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Air surface with magnet_1 and W1 > 0
     curve_list = list()
-    curve_list.append(Segment(Z3s, Z6s))
-    curve_list.append(Segment(Z6s, Z5s))
-    curve_list.append(Segment(Z5s, Z4s))
+    curve_list.append(Segment(begin=Z3s, end=Z6s))
+    curve_list.append(Segment(begin=Z6s, end=Z5s))
+    curve_list.append(Segment(begin=Z5s, end=Z4s))
     if abs(Z4 - Z3) > 1e-6:
-        curve_list.append(Segment(Z4s, Z3s))
+        curve_list.append(Segment(begin=Z4s, end=Z3s))
 
     point_ref = (Z3s + Z6s + Z5s) / 3
 
@@ -165,12 +165,12 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Air surface between magnet_0 and magnet_1 with W1 == 0
     curve_list = list()
-    curve_list.append(Segment(Z3, Z4))
-    curve_list.append(Segment(Z4, Z3s))
-    curve_list.append(Segment(Z3s, Z6s))
-    curve_list.append(Segment(Z6s, Z5))
-    curve_list.append(Segment(Z5, Z6))
-    curve_list.append(Segment(Z6, Z3))
+    curve_list.append(Segment(begin=Z3, end=Z4))
+    curve_list.append(Segment(begin=Z4, end=Z3s))
+    curve_list.append(Segment(begin=Z3s, end=Z6s))
+    curve_list.append(Segment(begin=Z6s, end=Z5))
+    curve_list.append(Segment(begin=Z5, end=Z6))
+    curve_list.append(Segment(begin=Z6, end=Z3))
 
     # initiating the label of the line on the air surface
     # curve_list = set_name_line(curve_list, "hole_2_line")
@@ -180,10 +180,10 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Air surface without magnet_0 and W1 > 0
     curve_list = list()
-    curve_list.append(Segment(Z1, Z8))
-    curve_list.append(Segment(Z8, Z5))
-    curve_list.append(Segment(Z5, Z4))
-    curve_list.append(Segment(Z4, Z1))
+    curve_list.append(Segment(begin=Z1, end=Z8))
+    curve_list.append(Segment(begin=Z8, end=Z5))
+    curve_list.append(Segment(begin=Z5, end=Z4))
+    curve_list.append(Segment(begin=Z4, end=Z1))
 
     # initiating the label of the line on the air surface
     # curve_list = set_name_line(curve_list, "hole_1_line")
@@ -193,10 +193,10 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Air surface without magnet_1 and W1 > 0
     curve_list = list()
-    curve_list.append(Segment(Z1s, Z8s))
-    curve_list.append(Segment(Z8s, Z5s))
-    curve_list.append(Segment(Z5s, Z4s))
-    curve_list.append(Segment(Z4s, Z1s))
+    curve_list.append(Segment(begin=Z1s, end=Z8s))
+    curve_list.append(Segment(begin=Z8s, end=Z5s))
+    curve_list.append(Segment(begin=Z5s, end=Z4s))
+    curve_list.append(Segment(begin=Z4s, end=Z1s))
 
     # initiating the label of the line on the air surface
     # curve_list = set_name_line(curve_list, "hole_2_line")
@@ -206,12 +206,12 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Air surface No magnet and W1 == 0
     curve_list = list()
-    curve_list.append(Segment(Z4, Z1))
-    curve_list.append(Segment(Z1, Z8))
-    curve_list.append(Segment(Z8, Z5))
-    curve_list.append(Segment(Z5, Z8s))
-    curve_list.append(Segment(Z8s, Z1s))
-    curve_list.append(Segment(Z1s, Z4))
+    curve_list.append(Segment(begin=Z4, end=Z1))
+    curve_list.append(Segment(begin=Z1, end=Z8))
+    curve_list.append(Segment(begin=Z8, end=Z5))
+    curve_list.append(Segment(begin=Z5, end=Z8s))
+    curve_list.append(Segment(begin=Z8s, end=Z1s))
+    curve_list.append(Segment(begin=Z1s, end=Z4))
 
     # initiating the label of the line on the air surface
     # curve_list = set_name_line(curve_list, "hole_1_line")

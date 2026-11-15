@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pyleecan.Classes._check import check_var, raise_
+from ....classes_common.check import check_var, raise_
 
 
 def _set_W3(self, value):

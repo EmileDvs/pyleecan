@@ -2,10 +2,10 @@
 
 import numpy as np
 from typing import Union
-from numpy.typing import ArrayLike
 
 
-def add_element(self, node_indices: Union[ArrayLike, int], new_index: int) -> bool:
+
+def add_element(self, node_indices: Union[np.typing.ArrayLike, int], new_index: int) -> bool:
     """Add a new element defined by node indices
 
     Parameters

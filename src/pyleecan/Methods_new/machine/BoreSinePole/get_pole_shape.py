@@ -1,5 +1,5 @@
 from ....Methods import ParentMissingError
-from numpy import arccos, cos, sin
+import numpy as np
 
 
 def get_pole_shape(self, phi):
@@ -24,14 +24,14 @@ def get_pole_shape(self, phi):
         raise ParentMissingError("Error: The slot is not inside a Lamination")
 
     # limit phi to valid values
-    phi_max = arccos(self.delta_d / (self.delta_d + Rbo)) / self.k
+    phi_max = np.arccos(self.delta_d / (self.delta_d + Rbo)) / self.k
     phi = max(-phi_max, phi)
     phi = min(phi_max, phi)
 
     # compute the point on the bore radius arc
-    delta = self.delta_d / cos(phi * self.k)
+    delta = self.delta_d / np.cos(phi * self.k)
     r = Rbo + self.delta_d - delta
-    x = r * cos(2 * phi / self.N)
-    y = r * sin(2 * phi / self.N)
+    x = r * np.cos(2 * phi / self.N)
+    y = r * np.sin(2 * phi / self.N)
 
     return x + 1j * y

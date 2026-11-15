@@ -1,8 +1,4 @@
-from numpy import (
-    argsort,
-    negative,
-    meshgrid,
-)
+import numpy as np
 
 
 def get_harmonics(
@@ -40,11 +36,11 @@ def get_harmonics(
         f = return_dict["freqs"]
         # Flatten the data
         values_flat = values.flatten()
-        R, F = meshgrid(r, f)
+        R, F = np.meshgrid(r, f)
         f = F.flatten()
         r = R.flatten()
         # Get the N_harm largest peaks
-        indices = argsort(negative(values_flat))
+        indices = np.argsort(np.negative(values_flat))
         indices = indices[:N_harm]
         values = values_flat[indices]
         f = f[indices]
@@ -60,7 +56,7 @@ def get_harmonics(
     # 1D cases
     elif "freqs" in return_dict:
         f = return_dict["freqs"]
-        indices = argsort(negative(values))
+        indices = np.argsort(np.negative(values))
         indices = indices[:N_harm]
         f = f[indices]
         values = values[indices]
@@ -68,7 +64,7 @@ def get_harmonics(
         return_dict[self.symbol] = values
     elif "wavenumber" in return_dict:
         r = return_dict["wavenumber"]
-        indices = argsort(negative(values))
+        indices = np.argsort(np.negative(values))
         indices = indices[:N_harm]
         r = r[indices]
         values = values[indices]

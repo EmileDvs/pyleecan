@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import angle, exp, linspace, pi, sum, zeros
+import numpy as np
 from . import WindingError
 
 
@@ -43,15 +43,15 @@ def comp_phasor_angle(self, Zs=None):
     qs = self.qs  # number of phases
 
     slot_ang = (
-        linspace(0, Zs, num=Zs, endpoint=False) * 2 * pi / Zs * p
+        np.linspace(0, Zs, num=Zs, endpoint=False) * 2 * np.pi / Zs * p
     )  # slot electrical angle
-    phasor = exp(1j * slot_ang)  # slot voltage phasor
+    phasor = np.exp(1j * slot_ang)  # slot voltage phasor
 
-    angle_vec = zeros(qs)
+    angle_vec = np.zeros(qs)
 
     for phase in range(qs):
-        wind_sum = sum(wind_mat[:, :, :, phase], (0, 1))
-        phasor_sum = sum(wind_sum * phasor)
-        angle_vec[phase] = angle(phasor_sum)
+        wind_sum = np.sum(wind_mat[:, :, :, phase], (0, 1))
+        phasor_sum = np.sum(wind_sum * phasor)
+        angle_vec[phase] = np.angle(phasor_sum)
 
     return angle_vec

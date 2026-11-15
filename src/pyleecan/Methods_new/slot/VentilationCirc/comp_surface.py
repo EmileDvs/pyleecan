@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_surface(self):
@@ -20,4 +20,4 @@ def comp_surface(self):
 
     self.check()
 
-    return pi * ((self.D0 / 2.0) ** 2)
+    return np.pi * ((self.D0 / 2.0) ** 2)

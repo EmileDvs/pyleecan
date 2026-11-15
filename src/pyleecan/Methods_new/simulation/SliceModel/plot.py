@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Functions_new.Plot import dict_2D
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
@@ -27,7 +27,7 @@ def plot(
 
     plot_2D(
         [z_list],
-        [[a * 180 / pi for a in angle_list]],
+        [[a * 180 / np.pi for a in angle_list]],
         xlabel="Axial direction [m]",
         ylabel=lam_name + " skew angle [°]",
         type_plot="curve_point",

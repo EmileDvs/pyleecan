@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs, angle as np_angle, exp
+import numpy as np
 
 
 def get_middle(self):
@@ -23,17 +23,17 @@ def get_middle(self):
     zc = self.get_center()
 
     # Geometric transformation : center is the origine, angle(begin) = 0
-    Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
+    Zstart = (z1 - zc) * np.exp(-1j * np.angle(z1 - zc))
 
     # Generation of the point by rotation
     alpha = self.get_angle()
-    Zmid = Zstart * exp(1j * alpha / 2)
+    Zmid = Zstart * np.exp(1j * alpha / 2)
 
     # Geometric transformation : return to the main axis
-    Zmid = Zmid * exp(1j * np_angle(z1 - zc)) + zc
+    Zmid = Zmid * np.exp(1j * np.angle(z1 - zc)) + zc
 
     # Return (0,0) if the point is too close from 0
-    if np_abs(Zmid) < 1e-6:
+    if np.abs(Zmid) < 1e-6:
         Zmid = 0
 
     return Zmid

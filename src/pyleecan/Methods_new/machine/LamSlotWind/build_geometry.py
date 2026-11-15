@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Classes_new.machine.lam_slot import LamSlot
 from ....Functions_new.labels import update_RTS_index
@@ -36,7 +36,7 @@ def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
         # getting number of slot
         Zs = self.slot.Zs
         # getting angle between Slot
-        slot_pitch = 2 * pi / Zs
+        slot_pitch = 2 * np.pi / Zs
         # getting Nrad and Ntan
         if self.winding is None or self.winding.conductor is None:
             Nrad, Ntan = 1, 1
@@ -126,7 +126,7 @@ def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
                     surf_list.append(new_surf)
         # Shift to have a tooth center on Ox
         for surf in surf_list:
-            surf.rotate(pi / Zs)
+            surf.rotate(np.pi / Zs)
 
     surf_list = surf_lam + surf_list
 

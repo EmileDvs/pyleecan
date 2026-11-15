@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 
 
 def comp_length(self):
@@ -25,4 +25,4 @@ def comp_length(self):
 
     # 2*pi*R is the length of the total circle
     # The arc is an alpha / 2pi portion of the cercle
-    return float(2 * pi * R * (alpha / (2 * pi)))
+    return float(2 * np.pi * R * (alpha / (2 * np.pi)))

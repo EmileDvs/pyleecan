@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, pi
+import numpy as np
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 
@@ -19,22 +19,22 @@ def _comp_point_coordinate(self):
     Rbo = self.get_Rbo()
 
     # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W0
-    alpha = arcsin(self.W0 / (2 * Rbo))
-    hsp = pi / self.Zs  # Half slot pitch
+    alpha = np.arcsin(self.W0 / (2 * Rbo))
+    hsp = np.pi / self.Zs  # Half slot pitch
 
-    Z0 = Rbo * exp(1j * 0)
-    Z12 = Z0 * exp(1j * alpha)
+    Z0 = Rbo * np.exp(1j * 0)
+    Z12 = Z0 * np.exp(1j * alpha)
 
     if self.is_outwards():
         Z11 = Z12 + self.H0
 
-        Zp1 = Rbo * exp(1j * hsp)
-        Zp2 = 2 * Rbo * exp(1j * hsp)
-        Zp1 = Zp1 * exp(-1j * hsp) - (self.W3 / 2) * 1j
-        Zp2 = Zp2 * exp(-1j * hsp) - (self.W3 / 2) * 1j
+        Zp1 = Rbo * np.exp(1j * hsp)
+        Zp2 = 2 * Rbo * np.exp(1j * hsp)
+        Zp1 = Zp1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
+        Zp2 = Zp2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
 
-        Zp1 = Zp1 * exp(1j * hsp)
-        Zp2 = Zp2 * exp(1j * hsp)
+        Zp1 = Zp1 * np.exp(1j * hsp)
+        Zp2 = Zp2 * np.exp(1j * hsp)
 
         Zp3 = Z12.real + self.H0 + self.H1
         Zp4 = Z12.real + self.H0 + self.H1 + 1j
@@ -44,13 +44,13 @@ def _comp_point_coordinate(self):
             Z80 = Zc1[0]
 
         else:
-            ZR1 = Rbo * exp(1j * hsp)
-            ZR2 = 2 * Rbo * exp(1j * hsp)
-            ZR1 = ZR1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
-            ZR2 = ZR2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+            ZR1 = Rbo * np.exp(1j * hsp)
+            ZR2 = 2 * Rbo * np.exp(1j * hsp)
+            ZR1 = ZR1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+            ZR2 = ZR2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
 
-            ZR1 = ZR1 * exp(1j * hsp)
-            ZR2 = ZR2 * exp(1j * hsp)
+            ZR1 = ZR1 * np.exp(1j * hsp)
+            ZR2 = ZR2 * np.exp(1j * hsp)
 
             ZR3 = Z12.real + self.H0 + self.H1 - self.R2
             ZR4 = Z12.real + self.H0 + self.H1 - self.R2 + 1j
@@ -79,13 +79,13 @@ def _comp_point_coordinate(self):
             Z100 = Zc2[0]
 
         else:
-            Zt1 = Rbo * exp(1j * hsp)
-            Zt2 = 2 * Rbo * exp(1j * hsp)
-            Zt1 = Zt1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
-            Zt2 = Zt2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+            Zt1 = Rbo * np.exp(1j * hsp)
+            Zt2 = 2 * Rbo * np.exp(1j * hsp)
+            Zt1 = Zt1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+            Zt2 = Zt2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
 
-            Zt1 = Zt1 * exp(1j * hsp)
-            Zt2 = Zt2 * exp(1j * hsp)
+            Zt1 = Zt1 * np.exp(1j * hsp)
+            Zt2 = Zt2 * np.exp(1j * hsp)
 
             Zt3 = Z12.real + self.H0 + self.R1
             Zt4 = Z12.real + self.H0 + self.R1 + 1j
@@ -110,13 +110,13 @@ def _comp_point_coordinate(self):
     else:
         Z11 = Z12 - self.H0
 
-        Zp1 = Rbo * exp(1j * hsp)
-        Zp2 = 2 * Rbo * exp(1j * hsp)
-        Zp1 = Zp1 * exp(-1j * hsp) - (self.W3 / 2) * 1j
-        Zp2 = Zp2 * exp(-1j * hsp) - (self.W3 / 2) * 1j
+        Zp1 = Rbo * np.exp(1j * hsp)
+        Zp2 = 2 * Rbo * np.exp(1j * hsp)
+        Zp1 = Zp1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
+        Zp2 = Zp2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j
 
-        Zp1 = Zp1 * exp(1j * hsp)
-        Zp2 = Zp2 * exp(1j * hsp)
+        Zp1 = Zp1 * np.exp(1j * hsp)
+        Zp2 = Zp2 * np.exp(1j * hsp)
 
         Zp3 = Z12.real - self.H0 - self.H1
         Zp4 = Z12.real - self.H0 - self.H1 + 1j
@@ -126,13 +126,13 @@ def _comp_point_coordinate(self):
             Z80 = Zc1[0]
 
         else:
-            ZR1 = Rbo * exp(1j * hsp)
-            ZR2 = 2 * Rbo * exp(1j * hsp)
-            ZR1 = ZR1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
-            ZR2 = ZR2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+            ZR1 = Rbo * np.exp(1j * hsp)
+            ZR2 = 2 * Rbo * np.exp(1j * hsp)
+            ZR1 = ZR1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
+            ZR2 = ZR2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R2 * 1j
 
-            ZR1 = ZR1 * exp(1j * hsp)
-            ZR2 = ZR2 * exp(1j * hsp)
+            ZR1 = ZR1 * np.exp(1j * hsp)
+            ZR2 = ZR2 * np.exp(1j * hsp)
 
             ZR3 = Z12.real - self.H0 - self.H1 + self.R2
             ZR4 = Z12.real - self.H0 - self.H1 + self.R2 + 1j
@@ -161,13 +161,13 @@ def _comp_point_coordinate(self):
             Z100 = Zc2[0]
 
         else:
-            Zt1 = Rbo * exp(1j * hsp)
-            Zt2 = 2 * Rbo * exp(1j * hsp)
-            Zt1 = Zt1 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
-            Zt2 = Zt2 * exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+            Zt1 = Rbo * np.exp(1j * hsp)
+            Zt2 = 2 * Rbo * np.exp(1j * hsp)
+            Zt1 = Zt1 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
+            Zt2 = Zt2 * np.exp(-1j * hsp) - (self.W3 / 2) * 1j - self.R1 * 1j
 
-            Zt1 = Zt1 * exp(1j * hsp)
-            Zt2 = Zt2 * exp(1j * hsp)
+            Zt1 = Zt1 * np.exp(1j * hsp)
+            Zt2 = Zt2 * np.exp(1j * hsp)
 
             Zt3 = Z12.real - self.H0 - self.R1
             Zt4 = Z12.real - self.H0 - self.R1 + 1j

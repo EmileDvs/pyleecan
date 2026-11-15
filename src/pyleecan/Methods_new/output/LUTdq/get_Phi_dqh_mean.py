@@ -1,4 +1,4 @@
-from numpy import zeros, array
+import numpy as np
 
 from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
 
@@ -22,7 +22,7 @@ def get_Phi_dqh_mean(self):
     if self.Phi_dqh_mean is None:
         N_OP = len(self.output_list)
 
-        Phi_dqh_mean = zeros((N_OP, 3))
+        Phi_dqh_mean = np.zeros((N_OP, 3))
 
         stator_label = self.simu.machine.stator.get_label()
 
@@ -33,7 +33,7 @@ def get_Phi_dqh_mean(self):
 
             if eec_i is not None and eec_i.Phid is not None and eec_i.Phiq is not None:
                 # Get values from eec
-                Phi_dqh_mean[ii, :] = array([eec_i.Phid, eec_i.Phiq, 0])
+                Phi_dqh_mean[ii, :] = np.array([eec_i.Phid, eec_i.Phiq, 0])
 
             else:
                 # Integrate stator winding flux contained in LUT over z

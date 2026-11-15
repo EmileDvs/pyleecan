@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from numpy import zeros, arange, sign
+import numpy as np
 
 from ..Winding import WindingError
 from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
@@ -50,7 +50,7 @@ def init_as_DWL(self, Zs=None, nlay=1):
     ms = Zs / 2.0 / float(p) / float(qs)
     tausp = Zs / 2.0 / float(p)
     Ntcoil = self.Ntcoil  # number of turns per coils
-    wind_mat = zeros((nlay, 1, Zs, qs))
+    wind_mat = np.zeros((nlay, 1, Zs, qs))
 
     if qs == 3:
         phase_order = [1, -3, 2]
@@ -70,7 +70,7 @@ def init_as_DWL(self, Zs=None, nlay=1):
                 ph = abs(phase_order[k])
                 # cf Gieras p36
                 z = (
-                    arange(1, ms + 1)
+                    np.arange(1, ms + 1)
                     + i * (Zs / p)
                     + k * ms
                     + nl * (coil_pitch - tausp)
@@ -79,11 +79,11 @@ def init_as_DWL(self, Zs=None, nlay=1):
                 sp = ((z - 1) % Zs).astype(int)  # positive pole
                 sm = ((z + Zs / 2 / p - 1) % Zs).astype(int)  # negative pole
                 for s in sp:
-                    wind_mat[nl, 0, s, ph - 1] = Ntcoil * sign(
+                    wind_mat[nl, 0, s, ph - 1] = Ntcoil * np.sign(
                         phase_order[k]
                     )  # Accumulation for a single slot
                 for s in sm:
-                    wind_mat[nl, 0, s, ph - 1] = -Ntcoil * sign(
+                    wind_mat[nl, 0, s, ph - 1] = -Ntcoil * np.sign(
                         phase_order[k]
                     )  # Accumulation for a single slot
 

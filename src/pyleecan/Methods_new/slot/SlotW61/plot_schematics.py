@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
 import numpy as np
+
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_slot import LamSlot
@@ -106,12 +106,12 @@ def plot_schematics(
         point_dict = dict()
         point_dict_temp = self._comp_point_coordinate()
         for key in point_dict_temp:
-            point_dict[key] = point_dict_temp[key] * exp(
-                1j * (pi / self.Zs + 4 * pi / self.Zs)
+            point_dict[key] = point_dict_temp[key] * np.exp(
+                1j * (np.pi / self.Zs + 4 * np.pi / self.Zs)
             )
-            point_dict[key + "d"] = point_dict[key] * exp(1j * (2 * pi / self.Zs))
-            point_dict[key + "dd"] = point_dict[key + "d"] * exp(
-                1j * (2 * pi / self.Zs)
+            point_dict[key + "d"] = point_dict[key] * np.exp(1j * (2 * np.pi / self.Zs))
+            point_dict[key + "dd"] = point_dict[key + "d"] * np.exp(
+                1j * (2 * np.pi / self.Zs)
             )
 
         if self.is_outwards():
@@ -159,8 +159,8 @@ def plot_schematics(
             )
             # W1
             line = Segment(
-                (point_dict["Z2d"] + point_dict["Z3d"]) / 2,
-                (point_dict["Z9"] + point_dict["Z8"]) / 2,
+                begin=(point_dict["Z2d"] + point_dict["Z3d"]) / 2,
+                end=(point_dict["Z9"] + point_dict["Z8"]) / 2,
             )
             line.plot(
                 fig=fig,
@@ -200,8 +200,8 @@ def plot_schematics(
             )
             # W2
             line = Segment(
-                (point_dict["Z4dd"] + point_dict["Z5dd"]) / 2,
-                (point_dict["Z7d"] + point_dict["Z6d"]) / 2,
+                begin=(point_dict["Z4dd"] + point_dict["Z5dd"]) / 2,
+                end=(point_dict["Z7d"] + point_dict["Z6d"]) / 2,
             )
             line.plot(
                 fig=fig,
@@ -242,8 +242,8 @@ def plot_schematics(
             if type_add_active != 0:
                 # W3
                 line = Segment(
-                    ((point_dict["Zw5"] + point_dict["Z3"]) / 2),
-                    ((point_dict["Zw4"] + point_dict["Zw3"]) / 2),
+                    begin=((point_dict["Zw5"] + point_dict["Z3"]) / 2),
+                    end=((point_dict["Zw4"] + point_dict["Zw3"]) / 2),
                 )
                 line.plot(
                     fig=fig,
@@ -257,8 +257,8 @@ def plot_schematics(
                 )
                 # H3
                 line = Segment(
-                    ((point_dict["Z8"] + point_dict["Z7"]) / 2) - (0.008 + 0j),
-                    ((point_dict["Zw4s"] + point_dict["Zw1s"]) / 2),
+                    begin=((point_dict["Z8"] + point_dict["Z7"]) / 2) - (0.008 + 0j),
+                    end=((point_dict["Zw4s"] + point_dict["Zw1s"]) / 2),
                 )
                 line.plot(
                     fig=fig,
@@ -272,8 +272,8 @@ def plot_schematics(
                 )
                 # H4
                 line = Segment(
-                    ((point_dict["Z6"] + point_dict["Zw5s"]) / 2) - (0.008 + 0j),
-                    ((point_dict["Zw2s"] + point_dict["Zw3s"]) / 2),
+                    begin=((point_dict["Z6"] + point_dict["Zw5s"]) / 2) - (0.008 + 0j),
+                    end=((point_dict["Zw2s"] + point_dict["Zw3s"]) / 2),
                 )
                 line.plot(
                     fig=fig,
@@ -288,7 +288,7 @@ def plot_schematics(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -319,7 +319,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=pi / self.Zs + 2 * pi / self.Zs,
+                alpha=np.pi / self.Zs + 2 * np.pi / self.Zs,
             )
             self.plot_active(
                 fig=fig,
@@ -327,7 +327,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=pi / self.Zs + 4 * pi / self.Zs,
+                alpha=np.pi / self.Zs + 4 * np.pi / self.Zs,
             )
             self.plot_active(
                 fig=fig,
@@ -335,7 +335,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=pi / self.Zs + 6 * pi / self.Zs,
+                alpha=np.pi / self.Zs + 6 * np.pi / self.Zs,
             )
             self.plot_active(
                 fig=fig,
@@ -343,7 +343,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=pi / self.Zs + 8 * pi / self.Zs,
+                alpha=np.pi / self.Zs + 8 * np.pi / self.Zs,
             )
         elif type_add_active == 2:  # Magnet
             self.plot_active(

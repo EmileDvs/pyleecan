@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_magnetization_dict(self, is_north=True):
@@ -22,7 +22,7 @@ def comp_magnetization_dict(self, is_north=True):
         mag_dict = self.magnetization_dict_offset.copy()
         if not is_north:
             for key in mag_dict.keys():
-                mag_dict[key] += pi
+                mag_dict[key] += np.pi
         return mag_dict
     else:
         return dict()

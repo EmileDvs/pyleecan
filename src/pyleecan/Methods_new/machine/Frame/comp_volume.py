@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_volume(self):

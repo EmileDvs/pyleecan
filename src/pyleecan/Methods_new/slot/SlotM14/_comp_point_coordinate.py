@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, angle
+import numpy as np
 from ....Functions_new.Geometry.comp_flower_arc import comp_flower_arc
 
 
@@ -18,26 +18,26 @@ def _comp_point_coordinate(self):
 
     Rbo = self.get_Rbo()
 
-    Z1 = Rbo * exp(-1j * self.W0 / 2)
-    Z4 = Rbo * exp(+1j * self.W0 / 2)
+    Z1 = Rbo * np.exp(-1j * self.W0 / 2)
+    Z4 = Rbo * np.exp(+1j * self.W0 / 2)
 
     if self.is_outwards():
-        Z2 = (Rbo + self.H0) * exp(-1j * self.W0 / 2)
-        Z3 = (Rbo + self.H0) * exp(+1j * self.W0 / 2)
-        ZM1 = (Rbo + self.H0) * exp(-1j * self.W1 / 2)
-        ZM4 = (Rbo + self.H0) * exp(+1j * self.W1 / 2)
+        Z2 = (Rbo + self.H0) * np.exp(-1j * self.W0 / 2)
+        Z3 = (Rbo + self.H0) * np.exp(+1j * self.W0 / 2)
+        ZM1 = (Rbo + self.H0) * np.exp(-1j * self.W1 / 2)
+        ZM4 = (Rbo + self.H0) * np.exp(+1j * self.W1 / 2)
         (alpha_lim, ZM3, ZM2) = comp_flower_arc(
-            abs(angle(ZM1) - angle(ZM4)), self.Rtopm, abs(ZM1) - self.H1
+            abs(np.angle(ZM1) - np.angle(ZM4)), self.Rtopm, abs(ZM1) - self.H1
         )
         ZM0 = Rbo + self.H0 - self.H1
         Zc = ZM0 + self.Rtopm
     else:
-        Z2 = (Rbo - self.H0) * exp(-1j * self.W0 / 2)
-        Z3 = (Rbo - self.H0) * exp(+1j * self.W0 / 2)
-        ZM1 = (Rbo - self.H0) * exp(-1j * self.W1 / 2)
-        ZM4 = (Rbo - self.H0) * exp(+1j * self.W1 / 2)
+        Z2 = (Rbo - self.H0) * np.exp(-1j * self.W0 / 2)
+        Z3 = (Rbo - self.H0) * np.exp(+1j * self.W0 / 2)
+        ZM1 = (Rbo - self.H0) * np.exp(-1j * self.W1 / 2)
+        ZM4 = (Rbo - self.H0) * np.exp(+1j * self.W1 / 2)
         (alpha_lim, ZM3, ZM2) = comp_flower_arc(
-            abs(angle(ZM1) - angle(ZM4)), self.Rtopm, abs(ZM1) + self.H1
+            abs(np.angle(ZM1) - np.angle(ZM4)), self.Rtopm, abs(ZM1) + self.H1
         )
         ZM0 = Rbo - self.H0 + self.H1
         Zc = ZM0 - self.Rtopm

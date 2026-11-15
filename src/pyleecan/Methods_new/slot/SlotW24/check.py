@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, pi
+import numpy as np
 
 from ..Slot import SlotCheckError
 from . import *
@@ -27,11 +27,11 @@ def check(self):
     """
     Rbo = self.get_Rbo()
 
-    if 2 * arcsin(self.W3 / (2 * Rbo)) > 2 * pi / self.Zs:
+    if 2 * np.arcsin(self.W3 / (2 * Rbo)) > 2 * np.pi / self.Zs:
         raise S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
 
     if (
         not self.is_outwards()
-        and 2 * arcsin(self.W3 / (2 * Rbo - self.H2)) > 2 * pi / self.Zs
+        and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2)) > 2 * np.pi / self.Zs
     ):
         raise S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")

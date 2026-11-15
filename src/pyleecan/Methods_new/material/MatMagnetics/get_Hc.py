@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def get_Hc(self, T_op=None, T_ref=20):
@@ -28,7 +28,7 @@ def get_Hc(self, T_op=None, T_ref=20):
         raise Exception("Cannot calculate Hc if Brm20 or mur_lin is None")
 
     # Magnet coercitivity
-    Hc20 = self.Brm20 / (4 * pi * 1e-7 * self.mur_lin)
+    Hc20 = self.Brm20 / (4 * np.pi * 1e-7 * self.mur_lin)
 
     # Update magnetic coercitivity
     Hc = Hc20 * (1 + self.alpha_Br * (T_op - T_ref))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_mass(self):
@@ -19,4 +19,4 @@ def comp_mass(self):
     if self.Lshaft is None:
         return 0
     else:
-        return self.Lshaft * pi * ((self.Drsh / 2) ** 2) * self.mat_type.struct.rho
+        return self.Lshaft * np.pi * ((self.Drsh / 2) ** 2) * self.mat_type.struct.rho

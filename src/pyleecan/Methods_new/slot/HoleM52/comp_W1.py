@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp, pi, tan
+import numpy as np
 
 
 def comp_W1(self):
@@ -24,12 +24,12 @@ def comp_W1(self):
 
     # Angle between (P1,P2) and (0,P0) is slot_pitch /2
     # It is also the angle (P1,P2,S)
-    hsp = pi / self.Zh  # Half Slot Pitch
+    hsp = np.pi / self.Zh  # Half Slot Pitch
 
     # Distance P1,P9
-    D19 = ((Rext - self.H0) * exp(1j * alpha / 2)).imag * 2
+    D19 = ((Rext - self.H0) * np.exp(1j * alpha / 2)).imag * 2
 
     # S is the intersectioni between (P1,P9) and the parallel to x passing by P2
-    D1S = tan(hsp) * (self.H1 - self.H2)
+    D1S = np.tan(hsp) * (self.H1 - self.H2)
 
     return D19 / 2.0 - D1S - self.W0 / 2.0

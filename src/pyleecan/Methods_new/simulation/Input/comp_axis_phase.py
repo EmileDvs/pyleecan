@@ -1,4 +1,4 @@
-from numpy import array, pi
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
@@ -47,7 +47,7 @@ def comp_axis_phase(self, lamination, per_a=None, is_apera=None, Phase_in=None):
                     name="phase",
                     unit="rad",
                     initial=0,
-                    final=2 * pi / per_a,
+                    final=2 * np.pi / per_a,
                     number=int(len(name_phase) / per_a),
                     include_endpoint=False,
                     symmetries=sym_dict,
@@ -60,7 +60,7 @@ def comp_axis_phase(self, lamination, per_a=None, is_apera=None, Phase_in=None):
                 Phase = Data1D(
                     name="phase",
                     unit="rad",
-                    values=array(name_phase),
+                    values=np.array(name_phase),
                     is_components=True,
                     is_overlay=True,
                     filter={"Phase": []},
@@ -71,7 +71,7 @@ def comp_axis_phase(self, lamination, per_a=None, is_apera=None, Phase_in=None):
                 name="phase",
                 unit="rad",
                 initial=0,
-                final=2 * pi,
+                final=2 * np.pi,
                 number=1,
                 include_endpoint=False,
                 normalizations={"bar_id": Norm_indices()},

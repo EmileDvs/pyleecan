@@ -1,6 +1,6 @@
 import imageio
 import matplotlib.pyplot as plt
-from numpy import arange, frombuffer, nanmax, nanmin
+import numpy as np
 
 from ....Functions_new.SciDataTool.Plot import PARAM_3D, fft_dict, ifft_dict
 
@@ -64,23 +64,23 @@ def plot_2D_Data_Animated(
         ]
         fps = 1
     else:
-        value_max = nanmax(result[animated_axis])
-        value_min = nanmin(result[animated_axis])
+        value_max = np.nanmax(result[animated_axis])
+        value_min = np.nanmin(result[animated_axis])
         variation_step = (value_max - value_min) / nb_frames
 
-        frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+        frames_list = np.arange(start=value_min, stop=value_max, step=variation_step)
         frames_list = ["=" + str(frame) for frame in frames_list]
 
     # detecting if we are animating a regular plot (=> computing limit for y) or a "fft" plot (=> limit already set)
     if plot_options["y_min"] == None or plot_options["y_max"] == None:
         # Setting the options of the plot
-        y_max = nanmax(result[self.symbol])
-        y_min = nanmin(result[self.symbol])
+        y_max = np.nanmax(result[self.symbol])
+        y_min = np.nanmin(result[self.symbol])
         marge = (
             y_max - y_min
         ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-        plot_options["y_min"] = nanmin(result[self.symbol]) - abs(marge)
-        plot_options["y_max"] = nanmax(result[self.symbol]) + abs(marge)
+        plot_options["y_min"] = np.nanmin(result[self.symbol]) - abs(marge)
+        plot_options["y_max"] = np.nanmax(result[self.symbol]) + abs(marge)
 
     plot_options["is_show_fig"] = False
 
@@ -102,7 +102,7 @@ def plot_2D_Data_Animated(
             fig.suptitle(suptitle_ref)
 
         fig.canvas.draw()
-        image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         images.append(image)
 

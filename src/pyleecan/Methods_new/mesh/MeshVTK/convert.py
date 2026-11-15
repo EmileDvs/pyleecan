@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Literal
 
-from numpy import arange, array
+import numpy as np
 
 from ....Classes_new.mesh.element_mat import ElementMat
 from ....Classes_new.mesh.fpgn_seg import FPGNSeg
@@ -47,20 +47,20 @@ def convert(
         new_mesh = MeshMat(dimension=self.dimension)
 
         connect_all = self.get_element()[0]
-        nodes = array(self.get_node_coordinate())
+        nodes = np.array(self.get_node_coordinate())
         nb_node = nodes.shape[0]
 
         new_mesh.node = NodeMat(
             coordinate=scale * nodes,
             nb_node=nb_node,
-            indice=arange(nb_node),
+            indice=np.arange(nb_node),
         )
 
         min_indice = 0
         for key in connect_all:
             connect = connect_all[key]
             nb_element = connect.shape[0]
-            indices = arange(min_indice, min_indice + nb_element)
+            indices = np.arange(min_indice, min_indice + nb_element)
             min_indice += nb_element
 
             if key == "line":

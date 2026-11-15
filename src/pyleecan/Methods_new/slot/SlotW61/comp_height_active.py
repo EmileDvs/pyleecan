@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi, exp
+import numpy as np
 
 
 def comp_height_active(self):
@@ -23,9 +23,9 @@ def comp_height_active(self):
     Z5 = point_dict["Z5"]
 
     # Compute the point in the tooth ref
-    hsp = pi / self.Zs
-    Z4t = Z4 * exp(1j * hsp)
-    Z5t = Z5 * exp(1j * hsp)
+    hsp = np.pi / self.Zs
+    Z4t = Z4 * np.exp(1j * hsp)
+    Z5t = Z5 * np.exp(1j * hsp)
     Zw4t = Z4t - self.H3 + 1j * ((self.W1 - self.W2) / 2 - self.W3)
     Zw2t = Z5t + self.H4
 

@@ -2,7 +2,7 @@
 from itertools import repeat
 from typing import List, Optional, Union
 
-from numpy import array, ndarray
+import numpy as np
 
 from .get_element import _check_element_name
 
@@ -11,7 +11,7 @@ def get_element_area(
     self,
     element_indices: Optional[List[int]] = None,
     element_name: Union[List[str], str] = [],
-) -> ndarray:
+) -> np.ndarray:
     """
     Return the area of the elements on the outer surface.
     #TODO address multiple element type issue, i.e. distracted indices
@@ -57,4 +57,4 @@ def get_element_area(
 
             area.extend(A)
 
-    return array(area)
+    return np.array(area)

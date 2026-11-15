@@ -2,8 +2,8 @@
 import gmsh
 import sys
 
-from os import replace
-from os.path import splitext
+import os
+
 from ....Functions_new.labels import SHAFT_LAB, decode_label, HOLEM_LAB_S, HOLEV_LAB_S, ROTOR_LAB_S, STATOR_LAB_S, LAM_LAB_S, WIND_LAB_S, SHAFT_LAB
 
 
@@ -328,11 +328,11 @@ def process_mesh(
     # gmsh.model.mesh.refine()
 
     # save mesh or geo file depending on file extension
-    filename, file_extension = splitext(file_out)
+    filename, file_extension = os.path.splitext(file_out)
 
     if file_extension == ".geo":
         gmsh.write(filename + ".geo_unrolled")
-        replace(filename + ".geo_unrolled", filename + file_extension)
+        os.replace(filename + ".geo_unrolled", filename + file_extension)
     else:
         gmsh.model.mesh.generate(2)
         gmsh.write(file_out)

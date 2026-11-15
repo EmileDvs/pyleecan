@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace
+import numpy as np
 
 
 def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
@@ -76,7 +76,7 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
 
     # Rad split
     surf_list = list()
-    X_list = linspace(Ztan1, Ztan2, Nrad + 1, True).tolist()[1:-1]
+    X_list = np.linspace(Ztan1, Ztan2, Nrad + 1, True).tolist()[1:-1]
     for ii in range(Ntan):
         surf = tan_list[ii]
         if Nrad > 1:

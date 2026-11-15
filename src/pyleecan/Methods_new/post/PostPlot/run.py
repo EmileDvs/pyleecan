@@ -1,5 +1,5 @@
 from inspect import signature
-from os.path import join
+import os
 
 from ....Functions_new.Plot import dict_2D, dict_3D
 
@@ -40,7 +40,7 @@ def run(self, output):
                 str_format = "." + self.save_format
 
             # Build save_path of the picture
-            self.param_dict["save_path"] = join(result_path, self.name + str_format)
+            self.param_dict["save_path"] = os.path.join(result_path, self.name + str_format)
         # Disabling the display of the figure when plotting
         if "is_show_fig" not in self.param_dict:
             self.param_dict["is_show_fig"] = False

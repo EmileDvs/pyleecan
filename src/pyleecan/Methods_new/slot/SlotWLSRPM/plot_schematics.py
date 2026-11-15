@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_slot import LamSlot
@@ -96,14 +96,14 @@ def plot_schematics(
             raise ParentMissingError("Error: The slot is not inside a Lamination")
         lam = self.parent
         fig, ax = lam.plot(
-            alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+            alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
         point_dict = self._comp_point_coordinate()
         if self.is_outwards():
             sign = 1
         else:
             sign = -1
-        sp = 2 * pi / self.Zs  # Slot pitch
+        sp = 2 * np.pi / self.Zs  # Slot pitch
         # Adding point label
         if is_add_point_label:
             for name, Z in point_dict.items():
@@ -119,8 +119,8 @@ def plot_schematics(
         if is_add_schematics:
             # W1
             line = Segment(
-                point_dict["Z4"] + 0.005 - 1j * 0.002,
-                point_dict["Z2"] + 0.005 - 1j * 0.002,
+                begin=point_dict["Z4"] + 0.005 - 1j * 0.002,
+                end=point_dict["Z2"] + 0.005 - 1j * 0.002,
             )
             line.plot(
                 fig=fig,
@@ -134,8 +134,8 @@ def plot_schematics(
             )
             # W3
             line = Segment(
-                point_dict["Z2"],
-                point_dict["Z2"] + self.W3 * exp(1j * -(pi / 2 + 15 / 180 * pi)),
+                begin=point_dict["Z2"],
+                end=point_dict["Z2"] + self.W3 * np.exp(1j * -(np.pi / 2 + 15 / 180 * np.pi)),
             )
             line.plot(
                 fig=fig,
@@ -149,7 +149,7 @@ def plot_schematics(
             )
 
             # H2
-            line = Segment(point_dict["Zch"], point_dict["Zcl"])
+            line = Segment(begin=point_dict["Zch"], end=point_dict["Zcl"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -162,8 +162,8 @@ def plot_schematics(
             )
             # H3
             line = Segment(
-                point_dict["Zcm"] + 1j * 0.003 - 0.0001,
-                point_dict["Zcl"] + 1j * 0.003 - 0.0001,
+                begin=point_dict["Zcm"] + 1j * 0.003 - 0.0001,
+                end=point_dict["Zcl"] + 1j * 0.003 - 0.0001,
             )
             line.plot(
                 fig=fig,
@@ -177,7 +177,7 @@ def plot_schematics(
             )
 
             # R1
-            line = Segment(point_dict["Zc1"], point_dict["Z7"])
+            line = Segment(begin=point_dict["Zc1"], end=point_dict["Z7"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -191,7 +191,7 @@ def plot_schematics(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -222,7 +222,7 @@ def plot_schematics(
             )
 
         # Zooming and cleaning
-        W = (point_dict["Zch"] * exp(1j * sp)).imag
+        W = (point_dict["Zch"] * np.exp(1j * sp)).imag
         Rint = min(point_dict["Z2"].real, point_dict["Z1"].real)
         Rext = max(point_dict["Z2"].real, point_dict["Z1"].real)
 

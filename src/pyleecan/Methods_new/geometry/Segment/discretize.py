@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import linspace
+import numpy as np
 
 from ...machine import LINE_NPOINT_D
 from . import NbPointSegmentDError
@@ -35,7 +35,7 @@ def discretize(self, nb_point=LINE_NPOINT_D):
 
     # t start by 0 (begin) and end by 1 (end)
     # len(t) = nb_point +2 : begin + end + nb_point between
-    t = linspace(0, 1, nb_point + 2)
+    t = np.linspace(0, 1, nb_point + 2)
 
     # We use the complex representation of the point
     z1 = self.begin

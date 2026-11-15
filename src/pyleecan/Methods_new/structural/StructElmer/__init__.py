@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from os.path import join
+import os
 import subprocess
 
 from ....Functions_new.get_path_binary import get_path_binary

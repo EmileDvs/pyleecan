@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs
+import numpy as np
 
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_1 import Arc1
 
 
 def comp_radius(self):
@@ -25,7 +25,7 @@ def comp_radius(self):
 
     if not self.W0_is_rad:
         point_dict = self._comp_point_coordinate()
-        Rmin = abs(point_dict["Z1"])
+        Rmin = np.abs(point_dict["Z1"])
     else:
         Rmin = Rbo - self.H1 - self.H0
 

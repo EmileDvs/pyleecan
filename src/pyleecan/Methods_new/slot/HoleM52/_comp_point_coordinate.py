@@ -1,4 +1,4 @@
-from numpy import exp, pi, cos, sin, tan
+import numpy as np
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 
 
@@ -19,8 +19,8 @@ def _comp_point_coordinate(self):
     Rext = self.get_Rext()
 
     alpha1 = self.comp_alpha()
-    Z1 = (Rext - self.H0) * exp(1j * alpha1 / 2)
-    Z9 = (Rext - self.H0) * exp(-1j * alpha1 / 2)
+    Z1 = (Rext - self.H0) * np.exp(1j * alpha1 / 2)
+    Z9 = (Rext - self.H0) * np.exp(-1j * alpha1 / 2)
 
     Z0 = (Z1 + Z9) / 2
     Z5 = Z0 - self.H1

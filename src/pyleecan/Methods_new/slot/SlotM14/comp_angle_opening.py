@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin
+import numpy as np
 
 
 def comp_angle_opening(self):

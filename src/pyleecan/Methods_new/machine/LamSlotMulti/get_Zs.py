@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi, angle, exp
+import numpy as np
 
 from ....Classes_new.geometry.circle import Circle
 from ....Classes_new.geometry.surf_line import SurfLine

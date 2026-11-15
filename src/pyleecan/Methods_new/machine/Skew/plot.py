@@ -1,6 +1,6 @@
-from numpy import pi
+import numpy as np
 
-from ....Functions_new.load import import_class
+from ....Functions.load import import_class
 from ....Functions_new.Plot import dict_2D
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 
@@ -26,7 +26,7 @@ def plot(
     angle_list, z_list = self.comp_pattern()
 
     legend_list = ["Skew pattern"]
-    y_list = [[a * 180 / pi for a in angle_list]]
+    y_list = [[a * 180 / np.pi for a in angle_list]]
     linestyle_list = ["solid"]
 
     LamSlotM = import_class("pyleecan.Classes", "LamSlotM")

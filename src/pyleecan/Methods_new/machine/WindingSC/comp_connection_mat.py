@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import zeros
+import numpy as np
 
 from ..Winding import WindingError
 from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
@@ -63,7 +63,7 @@ def comp_connection_mat(self, Zs=None, p=None):
             "wrong winding definition, you must have " "qs = Zs !"
         )
 
-    wind_mat = zeros((1, 1, Zs, self.qs))
+    wind_mat = np.zeros((1, 1, Zs, self.qs))
 
     for ii in range(Zs):
         # phase n°ii

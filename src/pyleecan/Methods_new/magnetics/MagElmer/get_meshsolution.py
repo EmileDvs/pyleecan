@@ -1,8 +1,8 @@
-from os.path import join
+import os
 
 from meshio import read
-from numpy import append as np_append
-from numpy import arange
+import numpy as np
+
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_time import DataTime
@@ -39,13 +39,13 @@ def get_meshsolution(self, output):
     meshvtk = MeshVTK(path=elmermesh_folder, name="step_t0002", format="vtu")
     meshsol.mesh = meshvtk
 
-    result_filename = join(elmermesh_folder, "step_t0002.vtu")
+    result_filename = os.path.join(elmermesh_folder, "step_t0002.vtu")
     meshsolvtu = read(result_filename)
     # pt_data = meshsolvtu.point_data
     cell_data = meshsolvtu.cell_data
 
     # indices = arange(meshsolvtu.points.shape[0])
-    indices = arange(
+    indices = np.arange(
         meshsolvtu.cells[0].data.shape[0] + meshsolvtu.cells[1].data.shape[0]
     )
 
@@ -114,7 +114,7 @@ def get_meshsolution(self, output):
                 siz = 3
             components = []
             comp_name = []
-            values = np_append(value[0], value[1], axis=0)
+            values = np.append(value[0], value[1], axis=0)
             for i in range(siz):
                 if siz == 1:
                     ext = ""

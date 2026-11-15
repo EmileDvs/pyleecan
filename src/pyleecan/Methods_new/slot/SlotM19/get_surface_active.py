@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace, zeros
-from numpy import abs as np_abs
-from numpy import sqrt
+import numpy as np
+
+
 
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.arc_1 import Arc1
@@ -38,14 +38,14 @@ def get_surface_active(self, alpha=0, delta=0):
     Z4 = point_dict["Z4"]
 
     curve_list = list()
-    curve_list.append(Segment(Z1, Z2))
-    curve_list.append(Segment(Z2, Z3))
-    curve_list.append(Segment(Z3, Z4))
+    curve_list.append(Segment(begin=Z1, end=Z2))
+    curve_list.append(Segment(begin=Z2, end=Z3))
+    curve_list.append(Segment(begin=Z3, end=Z4))
 
     if self.is_outwards():
-        curve_list.append(Arc1(Z4, Z1, -Rbo, is_trigo_direction=False))
+        curve_list.append(Arc1(begin=Z4, end=Z1, radius=-Rbo, is_trigo_direction=False))
     else:
-        curve_list.append(Arc1(Z4, Z1, -Rbo, is_trigo_direction=False))
+        curve_list.append(Arc1(begin=Z4, end=Z1, radius=-Rbo, is_trigo_direction=False))
 
     surface = SurfLine(
         line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=(Z1 + Z3) / 2

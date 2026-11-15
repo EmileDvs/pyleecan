@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Functions_new.SciDataTool.derivation_integration import integrate
 
@@ -44,7 +44,7 @@ def comp_torque_MT(self):
             R = self.Rag
 
         # Magnetic void permeability
-        mu_0 = 4 * pi * 1e-7
+        mu_0 = 4 * np.pi * 1e-7
 
         # Integrate over angle to get the electromagnetic torque per slice
         Nper, _ = B.get_axes()[1].get_periodicity()

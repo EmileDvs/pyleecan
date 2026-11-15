@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, sqrt
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -16,9 +16,9 @@ def _comp_point_coordinate(self):
     """
     Rbo = self.get_Rbo()
 
-    Z1 = (self.H0 - self.D0 / 2) * exp(1j * self.Alpha0)
-    Z2 = (self.H0 + self.D0 / 2) * exp(1j * self.Alpha0)
-    Zc = (self.H0) * exp(1j * self.Alpha0)
+    Z1 = (self.H0 - self.D0 / 2) * np.exp(1j * self.Alpha0)
+    Z2 = (self.H0 + self.D0 / 2) * np.exp(1j * self.Alpha0)
+    Zc = (self.H0) * np.exp(1j * self.Alpha0)
 
     point_dict = dict()
     # symetry

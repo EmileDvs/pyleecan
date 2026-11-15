@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from os.path import join, split
-from numpy import pi
+import os
+import numpy as np
 
 from ....Classes_new.elmer.section import Section
 from ....Classes_new.elmer.solver_input_file import SolverInputFile
@@ -23,13 +23,13 @@ def gen_case(self, output, mesh_names):
     # get the save path
     save_dir = self.get_path_save_fea(output)
 
-    sif_file = join(save_dir, "case.sif")
+    sif_file = os.path.join(save_dir, "case.sif")
 
     # save solver start info
-    start_file = join(save_dir, "ELMERSOLVER_STARTINFO")
+    start_file = os.path.join(save_dir, "ELMERSOLVER_STARTINFO")
 
     with open(start_file, "wt") as fout:
-        fout.write(split(sif_file)[1])
+        fout.write(os.path.split(sif_file)[1])
 
     # generate list of mesh names
     names = []
@@ -272,7 +272,7 @@ def gen_case(self, output, mesh_names):
     boundaries.append(bnd)
 
     # --- body force ----------------------------------------------------------------- #
-    omega = 2 * pi * self.parent.input.OP.N0 / 60
+    omega = 2 * np.pi * self.parent.input.OP.N0 / 60
     bfs = []
 
     ID_list = [

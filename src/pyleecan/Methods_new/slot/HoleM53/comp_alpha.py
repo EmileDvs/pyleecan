@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 
 
 def comp_alpha(self):
@@ -15,4 +15,4 @@ def comp_alpha(self):
     alpha: float
         magnet angle [rad]
     """
-    return pi / 2 - self.W4
+    return np.pi / 2 - self.W4

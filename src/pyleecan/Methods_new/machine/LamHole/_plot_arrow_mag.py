@@ -1,4 +1,4 @@
-from numpy import exp, pi
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
@@ -51,15 +51,15 @@ def _plot_arrow_mag(
                 # Create arrow coordinates
                 Zh = hole.Zh
                 for ii in range(int(Zh / sym)):
-                    off = pi if ii % 2 == 1 else 0
+                    off = np.pi if ii % 2 == 1 else 0
                     if mag is not None and mag.type_magnetization == 3:
-                        off -= pi / 2
-                    Z1 = (mag_surf.point_ref + delta) * exp(
-                        1j * (ii * 2 * pi / Zh + pi / Zh + alpha)
+                        off -= np.pi / 2
+                    Z1 = (mag_surf.point_ref + delta) * np.exp(
+                        1j * (ii * 2 * np.pi / Zh + np.pi / Zh + alpha)
                     )
                     Z2 = (
-                        mag_surf.point_ref + delta + H / 5 * exp(1j * (mag_dir + off))
-                    ) * exp(1j * (ii * 2 * pi / Zh + pi / Zh + alpha))
+                        mag_surf.point_ref + delta + H / 5 * np.exp(1j * (mag_dir + off))
+                    ) * np.exp(1j * (ii * 2 * np.pi / Zh + np.pi / Zh + alpha))
                     ax.annotate(
                         text="",
                         xy=(Z2.real, Z2.imag),

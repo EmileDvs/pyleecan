@@ -1,4 +1,4 @@
-from numpy import exp, angle, abs as np_abs
+import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
 from ....definitions import PACKAGE_NAME
@@ -36,8 +36,8 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
     # Get the intersection point
     Z_int = self.intersect_line(Z1, Z2)
     # Begin and end point in the line coordonate system
-    Zb = (self.get_begin() - Z1) * exp(-1j * angle(Z2 - Z1))
-    Ze = (self.get_end() - Z1) * exp(-1j * angle(Z2 - Z1))
+    Zb = (self.get_begin() - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
+    Ze = (self.get_end() - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
     # Center of the arc (for later check)
     Zc = self.get_center()
 
@@ -63,8 +63,8 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
         )
         # Fix radius if needed
         if (
-            np_abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
-            and np_abs(line1.get_center() - Zc) > 1e-6
+            np.abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
+            and np.abs(line1.get_center() - Zc) > 1e-6
         ):
             line1.radius = -1 * line1.radius
         # Intersection => End
@@ -76,8 +76,8 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
         )
         # Fix radius if needed
         if (
-            np_abs(line2.begin - line2.end) > 1e-6
-            and np_abs(line2.get_center() - Zc) > 1e-6  # Avoid error for center
+            np.abs(line2.begin - line2.end) > 1e-6
+            and np.abs(line2.get_center() - Zc) > 1e-6  # Avoid error for center
         ):
             line2.radius = -1 * line2.radius
 
@@ -123,8 +123,8 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
         )
         # Fix radius if needed
         if (
-            np_abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
-            and np_abs(line1.get_center() - Zc) > 1e-6
+            np.abs(line1.begin - line1.end) > 1e-6  # Avoid error for center
+            and np.abs(line1.get_center() - Zc) > 1e-6
         ):
             line1.radius = -1 * line1.radius
         # Intersection 1 => Intersection 2
@@ -136,8 +136,8 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
         )
         # Fix radius if needed
         if (
-            np_abs(line2.begin - line2.end) > 1e-6  # Avoid error for center
-            and np_abs(line2.get_center() - Zc) > 1e-6
+            np.abs(line2.begin - line2.end) > 1e-6  # Avoid error for center
+            and np.abs(line2.get_center() - Zc) > 1e-6
         ):
             line2.radius = -1 * line2.radius
         # Intersection 2 => End
@@ -149,8 +149,8 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
         )
         # Fix radius if needed
         if (
-            np_abs(line3.begin - line3.end) > 1e-6  # Avoid error for center
-            and np_abs(line3.get_center() - Zc) > 1e-6
+            np.abs(line3.begin - line3.end) > 1e-6  # Avoid error for center
+            and np.abs(line3.get_center() - Zc) > 1e-6
         ):
             line3.radius = -1 * line3.radius
         # Line Intersection 1 => Intersection 2 for join
@@ -161,17 +161,17 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
             line_list = [line1, seg_join, line3]
         else:
             line_list = [line1, line3]
-        if np_abs(Z_int[0] - self.get_begin()) < DELTA:  # Begin==Int1
+        if np.abs(Z_int[0] - self.get_begin()) < DELTA:  # Begin==Int1
             line_list.pop(0)
-        if np_abs(Z_int[1] - self.get_end()) < DELTA:
+        if np.abs(Z_int[1] - self.get_end()) < DELTA:
             line_list.pop(-1)
 
         # If the intersetion points are begin and end
         if (
-            np_abs(Z_int[0] - self.get_begin()) < DELTA
-            and np_abs(Z_int[1] - self.get_end()) < DELTA
+            np.abs(Z_int[0] - self.get_begin()) < DELTA
+            and np.abs(Z_int[1] - self.get_end()) < DELTA
         ):
-            Zm = (self.get_middle() - Z1) * exp(-1j * angle(Z2 - Z1))
+            Zm = (self.get_middle() - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
             # begin and end are on the line => Zm.imag != 0
             if Zm.imag > 0:
                 return [line4], []

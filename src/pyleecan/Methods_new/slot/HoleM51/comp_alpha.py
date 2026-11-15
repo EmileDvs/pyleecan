@@ -1,4 +1,4 @@
-from numpy import arctan, cos, sin
+import numpy as np
 
 
 def comp_alpha(self):
@@ -17,10 +17,10 @@ def comp_alpha(self):
     """
     Rext = self.get_Rext()
 
-    alpha = -arctan(
+    alpha = -np.arctan(
         2
-        * (self.H0 - self.H1 * cos(0.5 * self.W1) + Rext * cos(0.5 * self.W1) - Rext)
-        / (2.0 * self.H1 * sin(0.5 * self.W1) - 2 * Rext * sin(0.5 * self.W1) + self.W0)
+        * (self.H0 - self.H1 * np.cos(0.5 * self.W1) + Rext * np.cos(0.5 * self.W1) - Rext)
+        / (2.0 * self.H1 * np.sin(0.5 * self.W1) - 2 * Rext * np.sin(0.5 * self.W1) + self.W0)
     )
 
     return alpha

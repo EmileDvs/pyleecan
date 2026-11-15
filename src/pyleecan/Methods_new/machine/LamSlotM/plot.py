@@ -1,6 +1,6 @@
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.labels import decode_label, MAG_LAB, LAM_LAB
 from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
@@ -107,11 +107,11 @@ def plot(
                 for ii in range(Zs // sym):
                     # if mag is not None and mag.type_magnetization == 3:
                     #     off -= pi / 2
-                    Z1 = (abs(surf.point_ref) + delta - H / 4) * exp(
-                        1j * (ii * 2 * pi / Zs + pi / Zs + alpha)
+                    Z1 = (abs(surf.point_ref) + delta - H / 4) * np.exp(
+                        1j * (ii * 2 * np.pi / Zs + np.pi / Zs + alpha)
                     )
-                    Z2 = (abs(surf.point_ref) + delta + H / 4) * exp(
-                        1j * (ii * 2 * pi / Zs + pi / Zs + alpha)
+                    Z2 = (abs(surf.point_ref) + delta + H / 4) * np.exp(
+                        1j * (ii * 2 * np.pi / Zs + np.pi / Zs + alpha)
                     )
                     # Change arrow direction for North/South
                     if ii % 2 == 1:

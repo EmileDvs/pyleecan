@@ -1,4 +1,4 @@
-from numpy import exp, hstack, zeros
+import numpy as np
 from . import OPMatrixException
 
 
@@ -65,14 +65,14 @@ def set_OP_array(self, OP_matrix, *arg_list):
             Phi0_index = arg_list_lower.index("iphi0")
         I0 = OP_matrix[:, I0_index]
         Phi0 = OP_matrix[:, Phi0_index]
-        Z = I0 * exp(1j * Phi0)
+        Z = I0 * np.exp(1j * Phi0)
         OP_matrix[:, I0_index] = Z.real
         OP_matrix[:, Phi0_index] = Z.imag
         arg_list[I0_index] = "Id"
         arg_list[Phi0_index] = "Iq"
     # Convertion I0 to Id (assume Phi0=0)
     elif "i0" in arg_list_lower and "phi0" not in arg_list_lower:
-        OP_matrix = hstack((OP_matrix, zeros((OP_matrix.shape[0], 1))))
+        OP_matrix = np.hstack((OP_matrix, np.zeros((OP_matrix.shape[0], 1))))
         arg_list[arg_list_lower.index("i0")] = "Id"
         arg_list.append("Iq")
 
@@ -84,14 +84,14 @@ def set_OP_array(self, OP_matrix, *arg_list):
         )
         U0 = OP_matrix[:, U0_index]
         UPhi0 = OP_matrix[:, UPhi0_index]
-        Z = U0 * exp(1j * UPhi0)
+        Z = U0 * np.exp(1j * UPhi0)
         OP_matrix[:, U0_index] = Z.real
         OP_matrix[:, UPhi0_index] = Z.imag
         arg_list[U0_index] = "Ud"
         arg_list[UPhi0_index] = "Uq"
     # Convertion U0 to Ud (assume UPhi0=0)
     elif "u0" in arg_list_lower and "uphi0" not in arg_list_lower:
-        OP_matrix = hstack((OP_matrix, zeros((OP_matrix.shape[0], 1))))
+        OP_matrix = np.hstack((OP_matrix, np.zeros((OP_matrix.shape[0], 1))))
         arg_list[arg_list_lower.index("u0")] = "Ud"
         arg_list.append("Uq")
 

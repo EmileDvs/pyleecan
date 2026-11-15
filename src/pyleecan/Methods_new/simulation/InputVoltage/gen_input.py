@@ -1,4 +1,4 @@
-from numpy import angle, pi
+import numpy as np
 
 from ....Classes_new.output.out_elec import OutElec
 
@@ -105,7 +105,7 @@ def gen_input(self):
         and outelec.OP.Pem_av_in is not None
     ):
         # Get reference torque function of reference power and speed
-        outelec.OP.Tem_av_ref = outelec.OP.Pem_av_in / (2 * pi * outelec.OP.N0 / 60)
+        outelec.OP.Tem_av_ref = outelec.OP.Pem_av_in / (2 * np.pi * outelec.OP.N0 / 60)
 
     if (
         not self.is_generator
@@ -113,7 +113,7 @@ def gen_input(self):
         and outelec.OP.Pem_av_ref is not None
     ):
         # Get reference torque function of reference power and speed
-        outelec.OP.Tem_av_ref = outelec.OP.Pem_av_ref / (2 * pi * outelec.OP.N0 / 60)
+        outelec.OP.Tem_av_ref = outelec.OP.Pem_av_ref / (2 * np.pi * outelec.OP.N0 / 60)
 
     # Generate PWM signal
     if self.PWM is not None:
@@ -126,11 +126,11 @@ def gen_input(self):
             if (
                 self.PWM.U0 is not None
                 and outelec.PWM.Phi0 is not None
-                and (outelec.PWM.U0 != abs(U0c) or outelec.PWM.Phi0 != angle(U0c))
+                and (outelec.PWM.U0 != abs(U0c) or outelec.PWM.Phi0 != np.angle(U0c))
             ):
                 logger.warning("Enforcing PWM.U0 = Ud_ref + jUq_ref")
             outelec.PWM.U0 = abs(U0c)
-            outelec.PWM.Phi0 = angle(U0c)
+            outelec.PWM.Phi0 = np.angle(U0c)
         # Fill generator with simu data
         felec = self.OP.get_felec()
         qs = simu.machine.stator.winding.qs

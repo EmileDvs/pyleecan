@@ -1,4 +1,4 @@
-from numpy import cos
+import numpy as np
 
 
 def comp_height(self):
@@ -20,7 +20,7 @@ def comp_height(self):
 
     # Computation of the arc height (P1,0,P8)
     alpha = self.comp_angle_opening() / 2
-    Harc = float(Rbo * (1 - cos(alpha)))
+    Harc = float(Rbo * (1 - np.cos(alpha)))
 
     # Height of the arc (P2,C1,P7)
     Hwind = self.comp_height_active()

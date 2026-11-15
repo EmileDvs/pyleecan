@@ -1,6 +1,6 @@
-from numpy import max as np_max
-from numpy import mean as np_mean
-from numpy import min as np_min
+import numpy as np
+
+
 
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
@@ -117,11 +117,11 @@ def store(self, out_dict, axes_dict):
         self.Tem.name = "Electromagnetic torque"
 
         # Calculate average torque in Nm
-        self.Tem_av = np_mean(self.Tem.values)
+        self.Tem_av = np.mean(self.Tem.values)
         # self.Tem_av = float(self.Tem.get_along("time=mean")[self.Tem.symbol])
 
         # Calculate peak to peak torque in absolute value [N.m]
-        self.Tem_rip_pp = abs(np_max(self.Tem.values) - np_min(self.Tem.values))
+        self.Tem_rip_pp = abs(np.max(self.Tem.values) - np.min(self.Tem.values))
 
         # Calculate torque ripple in percentage [%]
         if self.Tem_av != 0:

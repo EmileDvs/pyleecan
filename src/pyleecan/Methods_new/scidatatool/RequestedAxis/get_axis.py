@@ -1,9 +1,9 @@
 from importlib import import_module
 
-from numpy import argsort, array
+import numpy as np
 
 from ....Classes_new.scidatatool.data_pattern import DataPattern
-from pyleecan.classes_common.errors import AxisError
+from ....classes_common.errors import AxisError
 from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
 
 operation_list = [
@@ -31,7 +31,7 @@ def get_axis(self, axis, is_real):
     """
 
     if self.operation is not None:
-        module = import_module("pyleecan.Functions.SciDataTool.conversions")
+        module = import_module("pyleecan.Functions_new.SciDataTool.conversions")
         func = getattr(module, self.operation)  # Conversion function
     if isinstance(axis, DataPattern):
         self.is_pattern = True
@@ -57,7 +57,7 @@ def get_axis(self, axis, is_real):
                     self.indices = axis.sort_indices[:N]
                     self.values = values[self.indices]
                 else:
-                    self.indices = argsort(values)[::-1][:N].tolist()
+                    self.indices = np.argsort(values)[::-1][:N].tolist()
                     self.values = values[self.indices]
             else:
                 self.values = values[self.indices]
@@ -158,7 +158,7 @@ def get_axis(self, axis, is_real):
             and self.unit != "SI"
             or self.operation is not None
         ):
-            self.corr_values = array(
+            self.corr_values = np.array(
                 axis.get_values(
                     is_oneperiod=is_oneperiod,
                     is_antiperiod=is_antiperiod,
@@ -233,7 +233,7 @@ def get_axis(self, axis, is_real):
                 if hasattr(axis, "sort_indices") and axis.sort_indices is not None:
                     self.indices = axis.sort_indices[:N]
                 else:
-                    self.indices = argsort(values)[::-1][:N].tolist()
+                    self.indices = np.argsort(values)[::-1][:N].tolist()
             self.values = values[self.indices]
             if self.extension in operation_list:
                 self.indices = None

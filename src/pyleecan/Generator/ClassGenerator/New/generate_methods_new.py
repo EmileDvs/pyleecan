@@ -116,13 +116,13 @@ def generate_methods(root=None, gen_dict=None, frozen=FROZEN_PACKAGES):
         with tokenize.open(path) as source_file:
             source = source_file.read()
             encoding = source_file.encoding
-        modernized = modernize_method_source(source, package, class_dir)
+        modernized = modernize_method_source(source, package, class_dir, gen_dict)
         if modernized != source:
             path.write_text(modernized, encoding=encoding, newline="")
     return written
 
 
-def modernize_method_source(source, package, class_dir):
+def modernize_method_source(source, package, class_dir, gen_dict=None):
     """Apply the method-level transformations to a method module.
 
     Parameters
@@ -133,21 +133,25 @@ def modernize_method_source(source, package, class_dir):
         Package of the module (e.g. "pyleecan.Methods_new.geometry.Segment")
     class_dir : str
         Folder of the class package (Classes_new), to locate Methods_new
+    gen_dict : dict, optional
+        Generation dictionary (default: the one of the CSV files)
 
     Returns
     -------
     source : str
         Modernized source
     """
-    from .class_generator import relocate_class_imports
-    from .generate_function_new_classes import _redirect_shared_error_imports
-    from .source_names import to_new_names
+    from .modernize import apply_import_styles, modernize_names
+    from .source_names import name_maps
 
+    if gen_dict is None:
+        gen_dict = name_maps().gen_dict
+    parts = package.split(".")
+    # The class of a method module: Methods_new.<sub-package>.<Class>[...]
+    class_name = parts[3] if len(parts) > 3 and parts[3] in gen_dict else None
     source = _redirect_methods_imports(source, package, class_dir)
-    # Errors of the function modules: shared errors (classes_common.errors)
-    source = _redirect_shared_error_imports(source, package)
-    source = relocate_class_imports(source, "pyleecan", "Classes_new", {})
-    return to_new_names(source, package)  # Classes_new / Functions_new names
+    source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
+    return modernize_names(source, package, gen_dict, class_name)
 
 
 def _redirect_methods_imports(source, package, class_dir):

@@ -1,4 +1,4 @@
-from numpy import zeros, sqrt, tile
+import numpy as np
 from multiprocessing import cpu_count
 
 from ....Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
@@ -6,7 +6,7 @@ from ....Classes_new.import_data.import_matrix_val import ImportMatrixVal
 
 from ....Functions_new.Electrical.dqh_transformation import abc2n
 
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 
 
 def _comp_Lm_FEA(self, machine, K21Z, Xke_skinS):
@@ -62,7 +62,7 @@ def _comp_Lm_FEA(self, machine, K21Z, Xke_skinS):
     Nrev = self.Nrev
 
     T = Nrev / (N0 / 60)
-    Ir = ImportMatrixVal(value=zeros((self.Nt_tot, qsr)))
+    Ir = ImportMatrixVal(value=np.zeros((self.Nt_tot, qsr)))
     time = ImportGenVectLin(start=0, stop=T, num=self.Nt_tot, endpoint=False)
 
     # TODO estimate magnetizing current if self.I == None
@@ -109,11 +109,11 @@ def _comp_Lm_FEA(self, machine, K21Z, Xke_skinS):
     par["L1"] = L1 * Xke_skinS
 
     # set current values
-    Ir_ = zeros([self.Nt_tot, 2])
-    Ir_[:, 0] = self.I * K21Z * sqrt(2)
+    Ir_ = np.zeros([self.Nt_tot, 2])
+    Ir_[:, 0] = self.I * K21Z * np.sqrt(2)
     Ir = abc2n(Ir_, n=qsr // p)  # TODO no rotation for now
 
-    Ir = ImportMatrixVal(value=tile(Ir, (1, p)))
+    Ir = ImportMatrixVal(value=np.tile(Ir, (1, p)))
 
     simu.input.Is = None
     simu.input.Id_ref = 0

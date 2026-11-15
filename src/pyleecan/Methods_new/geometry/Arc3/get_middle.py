@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs, angle as np_angle, exp, pi
+import numpy as np
 
 
 def get_middle(self):
@@ -24,15 +24,15 @@ def get_middle(self):
 
     # Generation of the point by rotation
     if self.is_trigo_direction:  # Top
-        Zmid = R * exp(1j * pi / 2.0)
+        Zmid = R * np.exp(1j * np.pi / 2.0)
     else:  # Bottom
-        Zmid = R * exp(-1j * pi / 2.0)
+        Zmid = R * np.exp(-1j * np.pi / 2.0)
 
     # Geometric transformation : return to the main axis
-    Zmid = Zmid * exp(1j * np_angle(z1 - zc)) + zc
+    Zmid = Zmid * np.exp(1j * np.angle(z1 - zc)) + zc
 
     # Return (0,0) if the point is too close from 0
-    if np_abs(Zmid) < 1e-6:
+    if np.abs(Zmid) < 1e-6:
         Zmid = 0
 
     return Zmid

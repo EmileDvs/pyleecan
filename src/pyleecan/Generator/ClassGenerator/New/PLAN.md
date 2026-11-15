@@ -317,6 +317,17 @@ Order:
      Generated classes byte-identical.
 2. The method-level passes moved one by one from the class generator to the
    shared pipeline, each byte-identical.
+   - [x] Shared pipeline `modernize.py` (method and function generators):
+     numpy/pyvista/os import styles, shared errors, class imports
+     (`Classes` -> `Classes_new`, normalization classes imported with their
+     legacy binding), keyword calls, function imports and renamed modules,
+     all with the class generator's own functions. The functions generator
+     uses the same import styles. Only change in the generated classes: a
+     helper of `XOutput` is now styled like the rest (`np.array`).
+   - Kept in the class generator, because they depend on the class assembly:
+     the chain dynamic imports -> normalization renames -> loaders -> static
+     class imports (it uses the imports of the whole class and decides
+     header or function-local imports, against import cycles).
 3. Step 5 transformations: class-specific functions moved into their class,
    then type hints.
 4. Frozen packages for the parent-link refactor.

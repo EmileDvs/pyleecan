@@ -1,4 +1,4 @@
-from numpy import sin
+import numpy as np
 
 
 def comp_surface(self):
@@ -28,11 +28,11 @@ def comp_surface(self):
     else:
         R1 = Rbo - self.H0
 
-    W0 = 2 * Rbo * sin(alpha0 / 2)
-    W1 = 2 * R1 * sin(alpha1 / 2)
+    W0 = 2 * Rbo * np.sin(alpha0 / 2)
+    W1 = 2 * R1 * np.sin(alpha1 / 2)
 
     Str = 1 / 2 * (W0 + W1) * self.H0
-    S0 = Rbo**2 / 2 * (alpha0 - sin(alpha0))
-    S1 = R1**2 / 2 * (alpha1 - sin(alpha1))
+    S0 = Rbo**2 / 2 * (alpha0 - np.sin(alpha0))
+    S1 = R1**2 / 2 * (alpha1 - np.sin(alpha1))
 
     return Str + S1 - S0

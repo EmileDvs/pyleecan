@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def is_full_pitch_active(self):
@@ -17,4 +17,4 @@ def is_full_pitch_active(self):
         True if the active surface angular width matches the slot pitch
     """
 
-    return self.W1 == 2 * pi / self.Zs
+    return self.W1 == 2 * np.pi / self.Zs

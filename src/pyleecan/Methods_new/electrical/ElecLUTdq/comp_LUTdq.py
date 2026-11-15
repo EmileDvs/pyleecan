@@ -1,4 +1,4 @@
-from numpy import meshgrid, linspace, zeros, array
+import numpy as np
 
 from ....Classes_new.output.lut_dq import LUTdq
 from ....Classes_new.simulation.op_matrix import OPMatrix
@@ -27,22 +27,22 @@ def comp_LUTdq(self):
 
     if self.is_grid_dq:
         N_OP = self.n_Id * self.n_Iq
-        Id, Iq = meshgrid(
-            linspace(self.Id_min, self.Id_max, self.n_Id),
-            linspace(self.Iq_min, self.Iq_max, self.n_Iq),
+        Id, Iq = np.meshgrid(
+            np.linspace(self.Id_min, self.Id_max, self.n_Id),
+            np.linspace(self.Iq_min, self.Iq_max, self.n_Iq),
         )
     else:
-        Id0 = linspace(self.Id_min, self.Id_max, self.n_Id)
-        Iq0 = linspace(self.Iq_min, self.Iq_max, self.n_Iq)
+        Id0 = np.linspace(self.Id_min, self.Id_max, self.n_Id)
+        Iq0 = np.linspace(self.Iq_min, self.Iq_max, self.n_Iq)
         if 0 in Id0 and 0 in Iq0:
-            Iq0 = array([val for val in Iq0 if val != 0])
+            Iq0 = np.array([val for val in Iq0 if val != 0])
         N_OP = self.n_Id + Iq0.size
-        Id = zeros(N_OP)
-        Iq = zeros(N_OP)
+        Id = np.zeros(N_OP)
+        Iq = np.zeros(N_OP)
         Id[: self.n_Id] = Id0
         Iq[self.n_Id :] = Iq0
 
-    OP_matrix = zeros((N_OP, 3))
+    OP_matrix = np.zeros((N_OP, 3))
     OP_matrix[:, 0] = N0
     OP_matrix[:, 1] = Id.ravel()
     OP_matrix[:, 2] = Iq.ravel()

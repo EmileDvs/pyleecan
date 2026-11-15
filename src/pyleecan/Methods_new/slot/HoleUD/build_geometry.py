@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
 
 
@@ -53,7 +53,7 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # Apply the transformations
     # Modulo on Alpha0 for sym
-    Alpha0 = self.Alpha0 % (2 * pi / self.Zh)
+    Alpha0 = self.Alpha0 % (2 * np.pi / self.Zh)
     for surf in surf_list:
         surf.rotate(alpha + Alpha0)
         surf.translate(delta)

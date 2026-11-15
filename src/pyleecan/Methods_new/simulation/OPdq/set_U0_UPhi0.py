@@ -1,4 +1,4 @@
-from numpy import exp
+import numpy as np
 
 
 def set_U0_UPhi0(self, U0, UPhi0):
@@ -17,6 +17,6 @@ def set_U0_UPhi0(self, U0, UPhi0):
         self.Ud_ref = 0
         self.Uq_ref = 0
     else:
-        Z = U0 * exp(1j * UPhi0)
+        Z = U0 * np.exp(1j * UPhi0)
         self.Ud_ref = Z.real
         self.Uq_ref = Z.imag

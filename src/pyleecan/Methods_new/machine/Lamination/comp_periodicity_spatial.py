@@ -1,4 +1,4 @@
-from numpy import gcd
+import numpy as np
 
 
 def comp_periodicity_spatial(self):
@@ -33,9 +33,9 @@ def comp_periodicity_spatial(self):
             nb_list.append(self.yoke.comp_periodicity_spatial()[0])
 
         # compute the gcd of the list
-        per_a = gcd(nb_list[0], nb_list[1])
+        per_a = np.gcd(nb_list[0], nb_list[1])
         for ii in range(2, len(nb_list)):
-            per_a = gcd(per_a, nb_list[ii])
+            per_a = np.gcd(per_a, nb_list[ii])
 
         nb_list.pop(0)
         is_antiper_a = all([nb / per_a % 2 == 0 for nb in nb_list])

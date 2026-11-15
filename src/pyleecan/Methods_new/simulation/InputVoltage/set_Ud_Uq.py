@@ -1,4 +1,4 @@
-from numpy import cos, sin
+import numpy as np
 
 
 def set_Ud_Uq(self, U0, Phi0):
@@ -14,8 +14,8 @@ def set_Ud_Uq(self, U0, Phi0):
         Voltage phase [rad]
     """
 
-    self.OP.Ud_ref = U0 * cos(Phi0)
-    self.OP.Uq_ref = U0 * sin(Phi0)
+    self.OP.Ud_ref = U0 * np.cos(Phi0)
+    self.OP.Uq_ref = U0 * np.sin(Phi0)
     if abs(self.OP.Ud_ref) < 1e-10:
         self.OP.Ud_ref = 0
     if abs(self.OP.Uq_ref) < 1e-10:

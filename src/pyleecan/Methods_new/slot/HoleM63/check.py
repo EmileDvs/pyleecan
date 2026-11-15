@@ -1,6 +1,6 @@
 from ..Slot import SlotCheckError
 from . import *
-from numpy import sqrt
+import numpy as np
 
 
 def check(self):

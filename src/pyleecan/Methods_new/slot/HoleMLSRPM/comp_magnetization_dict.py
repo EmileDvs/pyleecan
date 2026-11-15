@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 from ....Classes_new.geometry.segment import Segment
 
 
@@ -30,13 +30,13 @@ def comp_magnetization_dict(self, is_north=True):
 
     Zch = (Z3 + Z4) / 2
     Zcl = (Z7 + Z8) / 2
-    S0 = Segment(Zch, Zcl)
+    S0 = Segment(begin=Zch, end=Zcl)
     mag_dict["magnet_0"] = S0.comp_normal()
 
     ####Comp_normal direction?
 
     if not is_north:
-        mag_dict["magnet_0"] += pi
+        mag_dict["magnet_0"] += np.pi
 
     if self.magnetization_dict_offset is not None:
         for key, value in self.magnetization_dict_offset:

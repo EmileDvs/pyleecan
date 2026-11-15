@@ -2,8 +2,8 @@
 
 from scipy.io import loadmat
 from . import MatFileError
-from os.path import isfile
-from numpy import squeeze
+import os
+import numpy as np
 
 
 def get_data(self):
@@ -22,7 +22,7 @@ def get_data(self):
 
     if self.file_path[-4:] != ".mat":
         self.file_path += ".mat"
-    if not isfile(self.file_path):
+    if not os.path.isfile(self.file_path):
         raise MatFileError("ERROR: The mat file doesn't exist " + self.file_path)
 
     data_dict = loadmat(self.file_path)
@@ -34,4 +34,4 @@ def get_data(self):
             + self.file_path
         )
 
-    return squeeze(data_dict[self.var_name])
+    return np.squeeze(data_dict[self.var_name])

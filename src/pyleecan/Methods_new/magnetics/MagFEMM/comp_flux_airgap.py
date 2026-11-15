@@ -1,6 +1,6 @@
-from numpy import zeros
+import numpy as np
 
-from ....Classes._FEMMHandler import _FEMMHandler
+from ....classes_common.femm_handler import _FEMMHandler
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.output.out_mag_femm import OutMagFEMM
 from ....Functions_new.FEMM.draw_femm import draw_FEMM
@@ -115,11 +115,11 @@ def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
             FEMM_dict = self.FEMM_dict_enforced
 
     # Init flux arrays in out_dict
-    out_dict["B_{rad}"] = zeros((Nt, Na))
-    out_dict["B_{circ}"] = zeros((Nt, Na))
+    out_dict["B_{rad}"] = np.zeros((Nt, Na))
+    out_dict["B_{circ}"] = np.zeros((Nt, Na))
     if self.is_calc_torque_energy:
         # Init torque array in out_dict
-        out_dict["Tem"] = zeros(Nt)
+        out_dict["Tem"] = np.zeros(Nt)
     # Init lamination winding flux list of arrays in out_dict
     machine = output.simu.machine
     out_dict["Phi_wind"] = {}
@@ -127,7 +127,7 @@ def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
     for label in machine.get_lam_list_label():
         if "phase_" + label in axes_dict_elec:
             qs = axes_dict_elec["phase_" + label].get_length(is_smallestperiod=True)
-            out_dict["Phi_wind"][label] = zeros((Nt, qs))
+            out_dict["Phi_wind"][label] = np.zeros((Nt, qs))
     # delete 'Phi_wind' if empty
     if len(out_dict["Phi_wind"]) == 0:
         out_dict.pop("Phi_wind")

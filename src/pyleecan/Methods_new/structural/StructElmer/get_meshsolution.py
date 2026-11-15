@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from os.path import join
+import os
 
 from ....Classes_new.elmer.elmer_results_vtu import ElmerResultsVTU
 
@@ -52,7 +52,7 @@ def get_meshsolution(self, output):
     }
 
     ElmerVtu.label = "Elmer Structural"
-    ElmerVtu.file_path = join(fea_path, "Results", "case_t0001.vtu")
+    ElmerVtu.file_path = os.path.join(fea_path, "Results", "case_t0001.vtu")
 
     output.struct.meshsolution = ElmerVtu.build_meshsolution()
 

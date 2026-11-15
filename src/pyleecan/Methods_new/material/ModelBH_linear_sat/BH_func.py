@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import cosh, sinh, ndarray, argwhere, isnan as np_isnan
+import numpy as np
 
 
 from math import isnan
@@ -22,8 +22,8 @@ def BH_func(self, H, Bs, mu_a):
     """
     B = mu_a * H
 
-    if isinstance(B, ndarray):
-        B[argwhere(B >= Bs)] = Bs
+    if isinstance(B, np.ndarray):
+        B[np.argwhere(B >= Bs)] = Bs
     elif B >= Bs:
         B = Bs
 

@@ -49,10 +49,10 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     surf_list = list()
     curve_list_mag = list()
-    curve_list_mag.append(Segment(Z3, Z4))
-    curve_list_mag.append(Segment(Z4, Z7))
-    curve_list_mag.append(Segment(Z7, Z8))
-    curve_list_mag.append(Segment(Z8, Z3))
+    curve_list_mag.append(Segment(begin=Z3, end=Z4))
+    curve_list_mag.append(Segment(begin=Z4, end=Z7))
+    curve_list_mag.append(Segment(begin=Z7, end=Z8))
+    curve_list_mag.append(Segment(begin=Z8, end=Z3))
 
     point_ref = (Z3 + Z4 + Z7 + Z8) / 4
 
@@ -96,9 +96,9 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     curve_list_air.append(
         Arc1(begin=Z1, end=Z2, radius=self.R1, is_trigo_direction=True)
     )
-    curve_list_air.append(Segment(Z2, Z3))
-    curve_list_air.append(Segment(Z3, Z8))
-    curve_list_air.append(Segment(Z8, Z9))
+    curve_list_air.append(Segment(begin=Z2, end=Z3))
+    curve_list_air.append(Segment(begin=Z3, end=Z8))
+    curve_list_air.append(Segment(begin=Z8, end=Z9))
     curve_list_air.append(
         Arc1(begin=Z9, end=Z10, radius=self.R1, is_trigo_direction=True)
     )
@@ -114,12 +114,12 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     curve_list_air.append(
         Arc1(begin=Z4, end=Z5, radius=self.R1, is_trigo_direction=True)
     )
-    curve_list_air.append(Segment(Z5, Z6))
+    curve_list_air.append(Segment(begin=Z5, end=Z6))
 
     curve_list_air.append(
         Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
     )
-    curve_list_air.append(Segment(Z7, Z4))
+    curve_list_air.append(Segment(begin=Z7, end=Z4))
 
     point_ref = (Z4 + Z5 + Z6 + Z7) / 4
 
@@ -130,17 +130,17 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     curve_list_air.append(
         Arc1(begin=Z1, end=Z2, radius=self.R1, is_trigo_direction=True)
     )
-    curve_list_air.append(Segment(Z2, Z3))
-    curve_list_air.append(Segment(Z3, Z4))
+    curve_list_air.append(Segment(begin=Z2, end=Z3))
+    curve_list_air.append(Segment(begin=Z3, end=Z4))
     curve_list_air.append(
         Arc1(begin=Z4, end=Z5, radius=self.R1, is_trigo_direction=True)
     )
-    curve_list_air.append(Segment(Z5, Z6))
+    curve_list_air.append(Segment(begin=Z5, end=Z6))
     curve_list_air.append(
         Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
     )
-    curve_list_air.append(Segment(Z7, Z8))
-    curve_list_air.append(Segment(Z8, Z9))
+    curve_list_air.append(Segment(begin=Z7, end=Z8))
+    curve_list_air.append(Segment(begin=Z8, end=Z9))
     curve_list_air.append(
         Arc1(begin=Z9, end=Z10, radius=self.R1, is_trigo_direction=True)
     )

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pandas import read_excel, ExcelFile
 from . import XlsFileError
-from os.path import isfile
+import os
 
 from ....Functions_new.path_tools import abs_file_path
 
@@ -21,7 +21,7 @@ def get_data(self):
 
     """
     file_path = abs_file_path(self.file_path, is_check=False)
-    if not isfile(file_path):
+    if not os.path.isfile(file_path):
         raise XlsFileError("ERROR: The xls file doesn't exist " + self.file_path)
     if self.usecols == "":
         self.usecols = None

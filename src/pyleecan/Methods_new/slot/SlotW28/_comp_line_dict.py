@@ -35,24 +35,24 @@ def _comp_line_dict(self):
     # Creation of curve
     line_dict = dict()
     if self.H0 > 0:
-        line_dict["1-2"] = Segment(Z1, Z2)
+        line_dict["1-2"] = Segment(begin=Z1, end=Z2)
     else:
         line_dict["1-2"] = None
-    line_dict["2-3"] = Arc1(Z2, Z3, rot_sign * self.R1, self.is_outwards())
-    line_dict["3-4"] = Segment(Z3, Z4)
-    line_dict["4-5"] = Arc3(Z4, Z5, self.is_outwards())
-    line_dict["5-6"] = Segment(Z5, Z6)
-    line_dict["6-7"] = Arc1(Z6, Z7, rot_sign * self.R1, self.is_outwards())
+    line_dict["2-3"] = Arc1(begin=Z2, end=Z3, radius=rot_sign * self.R1, is_trigo_direction=self.is_outwards())
+    line_dict["3-4"] = Segment(begin=Z3, end=Z4)
+    line_dict["4-5"] = Arc3(begin=Z4, end=Z5, is_trigo_direction=self.is_outwards())
+    line_dict["5-6"] = Segment(begin=Z5, end=Z6)
+    line_dict["6-7"] = Arc1(begin=Z6, end=Z7, radius=rot_sign * self.R1, is_trigo_direction=self.is_outwards())
     if self.H0 > 0:
-        line_dict["7-8"] = Segment(Z7, Z8)
+        line_dict["7-8"] = Segment(begin=Z7, end=Z8)
     else:
         line_dict["7-8"] = None
 
     # Closing Arc (Rbo)
-    line_dict["8-1"] = Arc1(Z8, Z1, -self.get_Rbo(), is_trigo_direction=False)
+    line_dict["8-1"] = Arc1(begin=Z8, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False)
 
     # Closing Active part
-    line_dict["2-7"] = Segment(Z2, Z7)
-    line_dict["7-2"] = Segment(Z7, Z2)
+    line_dict["2-7"] = Segment(begin=Z2, end=Z7)
+    line_dict["7-2"] = Segment(begin=Z7, end=Z2)
 
     return line_dict

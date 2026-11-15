@@ -1,11 +1,11 @@
 from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool
-from os import remove
+import os
 from shutil import copyfile
 
-from numpy import concatenate
+import numpy as np
 
-from ....Classes._FEMMHandler import _FEMMHandler
+from ....classes_common.femm_handler import _FEMMHandler
 
 
 def solve_FEMM_parallel(
@@ -199,24 +199,24 @@ def solve_FEMM_parallel(
 
     # Building mesh solution
     if self.is_get_meshsolution:
-        B_elem = concatenate([res[0] for res in results], axis=0)
-        H_elem = concatenate([res[1] for res in results], axis=0)
-        mu_elem = concatenate([res[2] for res in results], axis=0)
-        A_node = concatenate([res[3] for res in results], axis=0)
+        B_elem = np.concatenate([res[0] for res in results], axis=0)
+        H_elem = np.concatenate([res[1] for res in results], axis=0)
+        mu_elem = np.concatenate([res[2] for res in results], axis=0)
+        A_node = np.concatenate([res[3] for res in results], axis=0)
         meshFEMM = results[0][4]
         groups = results[0][5]
-        A_elem = concatenate([res[6] for res in results], axis=0)
+        A_elem = np.concatenate([res[6] for res in results], axis=0)
 
     # Remove temporary .fem and .ans files
     for w in range(nb_worker, 0, -1):
         try:
-            remove(fem_file[:-4] + "_" + str(w) + ".fem")
+            os.remove(fem_file[:-4] + "_" + str(w) + ".fem")
         except Exception:
             filename = fem_file[:-4] + "_" + str(w) + ".fem"
             self.get_logger().warning("Could not remove file: " + filename)
 
         try:
-            remove(fem_file[:-4] + "_" + str(w) + ".ans")
+            os.remove(fem_file[:-4] + "_" + str(w) + ".ans")
         except Exception:
             filename = fem_file[:-4] + "_" + str(w) + ".ans"
             self.get_logger().warning("Could not remove file: " + filename)

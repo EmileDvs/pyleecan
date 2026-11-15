@@ -1,5 +1,5 @@
 from matplotlib.patches import Patch, Polygon
-from numpy import array, exp, pi
+import numpy as np
 
 from ....Classes_new.material.material import Material
 from ....definitions import config_dict
@@ -70,7 +70,7 @@ def plot_active(
         point_list = list()
         for curve in surf_list[ii].get_lines():
             point_list.extend(curve.discretize().tolist())
-        point_list = array(point_list)
+        point_list = np.array(point_list)
 
         for jj in range(Zs):
             if wind_mat is None or len(surf_list) != Ntan * Nrad:
@@ -81,7 +81,7 @@ def plot_active(
                 color = get_color(wind_mat, ii % Nrad, ii // Nrad, jj)
                 x, y = point_list.real, point_list.imag
                 patches.append(Polygon(list(zip(x, y)), color=color))
-            point_list = point_list * exp(1j * (2 * pi) / self.Zs)
+            point_list = point_list * np.exp(1j * (2 * np.pi) / self.Zs)
 
     # Display the result
     (fig, ax, patch_leg, label_leg) = init_fig(fig, ax=ax)
@@ -100,7 +100,7 @@ def plot_active(
         for surf in wedge_surf_list:
             for ii in range(Zs):
                 surf2 = surf.copy()
-                surf2.rotate(angle=ii * (2 * pi) / self.Zs)
+                surf2.rotate(angle=ii * (2 * np.pi) / self.Zs)
                 surf2.plot(fig=fig, ax=ax, color=WEDGE_COLOR, is_show_fig=False)
         # Remove tmp blanck wedge
         if to_clean:

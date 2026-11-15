@@ -1,4 +1,4 @@
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 
 
 def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=0):

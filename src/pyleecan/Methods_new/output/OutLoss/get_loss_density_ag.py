@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def get_loss_density_ag(self):
@@ -21,7 +21,7 @@ def get_loss_density_ag(self):
     machine = self.parent.simu.machine
 
     Rag = machine.comp_Rgap_mec()
-    Sag = 2 * pi * Rag * machine.stator.L1
+    Sag = 2 * np.pi * Rag * machine.stator.L1
 
     loss_density_ag = loss / Sag
 

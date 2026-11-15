@@ -6,7 +6,7 @@ from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
 
-from numpy import pi, exp
+import numpy as np
 
 
 def get_notches_surf(self, sym):

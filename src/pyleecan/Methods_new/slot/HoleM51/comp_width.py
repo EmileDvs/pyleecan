@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import sin
+import numpy as np
 
 
 def comp_width(self):
@@ -19,4 +19,4 @@ def comp_width(self):
     """
 
     Rext = self.get_Rext()
-    return 2 * sin(self.W1 / 2) * (Rext - self.H1)
+    return 2 * np.sin(self.W1 / 2) * (Rext - self.H1)

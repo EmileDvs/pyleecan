@@ -1,6 +1,6 @@
-from numpy import array
-from numpy import sum as np_sum
-from numpy import zeros
+import numpy as np
+
+
 
 
 def comp_loss(self):
@@ -65,9 +65,9 @@ def comp_loss(self):
     Se = ms.mesh.get_element_area()[ms.group[self.group]]
 
     # Constant component and twice the electrical frequency have same joule density values
-    freqs = array([felec])
-    Pjoule_density = zeros((freqs.size, Se.size))
-    Pjoule_density[0, :] = Pjoule / (per_a * Lst * np_sum(Se))
+    freqs = np.array([felec])
+    Pjoule_density = np.zeros((freqs.size, Se.size))
+    Pjoule_density[0, :] = Pjoule / (per_a * Lst * np.sum(Se))
 
     A = coeff * k
     B = coeff

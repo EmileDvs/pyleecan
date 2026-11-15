@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, pi, sqrt, sin, cos
+import numpy as np
 
 
 def comp_angle_opening(self):
@@ -16,4 +16,4 @@ def comp_angle_opening(self):
 
     """
     Rbo = self.get_Rbo()
-    return 2 * (pi / self.Zs - arcsin(self.W3 / 2 / Rbo))
+    return 2 * (np.pi / self.Zs - np.arcsin(self.W3 / 2 / Rbo))

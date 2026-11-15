@@ -1,4 +1,4 @@
-from numpy import cos, sin
+import numpy as np
 
 
 def set_Id_Iq(self, I0, Phi0):
@@ -14,8 +14,8 @@ def set_Id_Iq(self, I0, Phi0):
         Current phase [rad]
     """
 
-    self.OP.Id_ref = I0 * cos(Phi0)
-    self.OP.Iq_ref = I0 * sin(Phi0)
+    self.OP.Id_ref = I0 * np.cos(Phi0)
+    self.OP.Iq_ref = I0 * np.sin(Phi0)
     if abs(self.OP.Id_ref) < 1e-10:
         self.OP.Id_ref = 0
     if abs(self.OP.Iq_ref) < 1e-10:

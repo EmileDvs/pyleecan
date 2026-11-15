@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import zeros, linspace
+import numpy as np
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 
@@ -35,12 +35,12 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
 
     [Z12, Z11, Z10, Z9, Z8, Z7, Z6, Z5, Z4, Z3, Z2, Z1] = self._comp_point_coordinate()
 
-    X = linspace(Z8, Z7, Nrad + 1)
+    X = np.linspace(Z8, Z7, Nrad + 1)
 
     # Nrad+1 and Ntan+1 because 3 points => 2 zones
-    Z = zeros((Nrad + 1, Ntan + 1), dtype=complex)
+    Z = np.zeros((Nrad + 1, Ntan + 1), dtype=complex)
     for ii in range(Nrad + 1):
-        Z[ii][:] = linspace(X[ii], X[ii].conjugate(), Ntan + 1)
+        Z[ii][:] = np.linspace(X[ii], X[ii].conjugate(), Ntan + 1)
 
     assert Z[0][0] == Z8
     assert Z[Nrad][0] == Z7
@@ -62,16 +62,16 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
                 curve_list = list()
                 if ii == 0:
                     if Z1 > Z_8 and Z_5 < Z2 < Z_8:
-                        curve_list.append(Segment(Z_8, Z2))
+                        curve_list.append(Segment(begin=Z_8, end=Z2))
                     elif Z_5 < Z1 < Z_8 and Z_5 < Z2 < Z_8:
-                        curve_list.append(Segment(Z1, Z2))
+                        curve_list.append(Segment(begin=Z1, end=Z2))
                     elif Z2 < Z_5 and Z_5 < Z1 < Z_8:
-                        curve_list.append(Segment(Z1, Z_5))
+                        curve_list.append(Segment(begin=Z1, end=Z_5))
 
                 if jj != Ntan - 1:
-                    curve_list.append(Segment(Z2, Z3))
+                    curve_list.append(Segment(begin=Z2, end=Z3))
                 if ii != Nrad - 1:
-                    curve_list.append(Segment(Z3, Z4))
+                    curve_list.append(Segment(begin=Z3, end=Z4))
                 label = "Wind_" + st + "_R" + str(ii) + "_T" + str(jj) + "_S0"
                 surface = SurfLine(
                     line_list=curve_list, label=label, point_ref=point_ref
@@ -79,10 +79,10 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
                 surf_list.append(surface)
             else:
                 curve_list = list()
-                curve_list.append(Segment(Z1, Z2))
-                curve_list.append(Segment(Z2, Z3))
-                curve_list.append(Segment(Z3, Z4))
-                curve_list.append(Segment(Z4, Z1))
+                curve_list.append(Segment(begin=Z1, end=Z2))
+                curve_list.append(Segment(begin=Z2, end=Z3))
+                curve_list.append(Segment(begin=Z3, end=Z4))
+                curve_list.append(Segment(begin=Z4, end=Z1))
                 surface = SurfLine(
                     line_list=curve_list,
                     label="Wind_" + st + "_R" + str(ii) + "_T" + str(jj) + "_S0",

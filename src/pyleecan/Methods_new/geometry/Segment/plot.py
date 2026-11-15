@@ -1,4 +1,4 @@
-from numpy import array
+import numpy as np
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.Plot import TEXT_BOX
 
@@ -61,7 +61,7 @@ def plot(
             arrowprops=dict(arrowstyle="<->", linewidth=linewidth, color=color),
         )
     else:  # Plot as a line
-        points = array([begin, end])
+        points = np.array([begin, end])
         ax.plot(
             points.real,
             points.imag,

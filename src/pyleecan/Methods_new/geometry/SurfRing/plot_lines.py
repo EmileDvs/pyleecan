@@ -1,4 +1,4 @@
-from numpy import real, imag
+import numpy as np
 
 from ....Functions_new.init_fig import init_fig
 
@@ -32,20 +32,20 @@ def plot_lines(self, fig=None, ax=None):
     for idx in range(len(points) - 1):
         z1 = points[idx]
         z2 = points[idx + 1]
-        x1 = real(z1)
-        y1 = imag(z1)
-        x2 = real(z2)
-        y2 = imag(z2)
+        x1 = np.real(z1)
+        y1 = np.imag(z1)
+        x2 = np.real(z2)
+        y2 = np.imag(z2)
         ax.plot([x1, x2], [y1, y2], "k")
 
     points = self.in_surf.discretize(10)
     for idx in range(len(points) - 1):
         z1 = points[idx]
         z2 = points[idx + 1]
-        x1 = real(z1)
-        y1 = imag(z1)
-        x2 = real(z2)
-        y2 = imag(z2)
+        x1 = np.real(z1)
+        y1 = np.imag(z1)
+        x2 = np.real(z2)
+        y2 = np.imag(z2)
         ax.plot([x1, x2], [y1, y2], "k")
 
     # Axis Setup

@@ -1,4 +1,4 @@
-from numpy import where
+import numpy as np
 
 
 class VarSimuError(Exception):

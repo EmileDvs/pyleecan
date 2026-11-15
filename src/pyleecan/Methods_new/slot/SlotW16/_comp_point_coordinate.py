@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, pi, sqrt
+import numpy as np
 
 from . import S16OutterError
 from ....Functions_new.Geometry.inter_circle_circle import inter_circle_circle
@@ -20,19 +20,19 @@ def _comp_point_coordinate(self):
 
     Rbo = self.get_Rbo()
 
-    hsp = pi / self.Zs  # Half slot pitch
+    hsp = np.pi / self.Zs  # Half slot pitch
 
     if self.is_outwards():
         raise S16OutterError("Slot Type 16 can't be used on outer lamination")
 
     # ZXt => Complex coordinate in the tooth ref
-    Z1 = Rbo * exp(-1j * self.W0 / 2)
-    Z2 = (Rbo - self.H0) * exp(-1j * self.W0 / 2)
+    Z1 = Rbo * np.exp(-1j * self.W0 / 2)
+    Z2 = (Rbo - self.H0) * np.exp(-1j * self.W0 / 2)
 
     # Tooth angular width
 
-    alphaT = 2 * arcsin(self.W3 * 0.5 / (Rbo - self.H0 - self.H2))
-    Z5 = (Rbo - self.H0 - self.H2) * exp(-1j * (hsp - alphaT / 2))
+    alphaT = 2 * np.arcsin(self.W3 * 0.5 / (Rbo - self.H0 - self.H2))
+    Z5 = (Rbo - self.H0 - self.H2) * np.exp(-1j * (hsp - alphaT / 2))
     R2 = Rbo - self.H0
     R3 = Rbo - self.H0 - self.R1
 
@@ -50,13 +50,13 @@ def _comp_point_coordinate(self):
 
     # xct = sqrt(R3**2-yct**2) and yct = y5t + R1
 
-    xct = sqrt(R3**2 - yct**2)
+    xct = np.sqrt(R3**2 - yct**2)
     x4t = xct
     Z4t = x4t + 1j * y4t
     Zct = xct + 1j * yct
     Z3t = inter_circle_circle(Zct, self.R1, 0, R2)[0]
-    Z4 = Z4t * exp(-1j * hsp)
-    Z3 = Z3t * exp(-1j * hsp)
+    Z4 = Z4t * np.exp(-1j * hsp)
+    Z3 = Z3t * np.exp(-1j * hsp)
 
     point_dict = dict()
 
@@ -73,7 +73,7 @@ def _comp_point_coordinate(self):
     point_dict["Z10"] = Z1.conjugate()
 
     # Compute center
-    point_dict["Zc1"] = Zct * exp(-1j * hsp)
+    point_dict["Zc1"] = Zct * np.exp(-1j * hsp)
     point_dict["Zc2"] = point_dict["Zc1"].conjugate()
 
     return point_dict

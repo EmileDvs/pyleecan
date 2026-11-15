@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 from ..Slot import SlotCheckError
 from . import *
@@ -33,5 +33,5 @@ def check(self):
     if self.W1 < self.W2:
         raise S13_W12CheckError("You must have W2 <= W1")
 
-    if self.H1_is_rad and self.H1 >= pi / 2:
+    if self.H1_is_rad and self.H1 >= np.pi / 2:
         raise S13_H1rCheckError("With H1 in radian, you must have H1 < pi/2")

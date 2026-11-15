@@ -1,4 +1,4 @@
-from pyleecan.classes_common.errors import NormError
+from ....classes_common.errors import NormError
 
 
 def normalize(

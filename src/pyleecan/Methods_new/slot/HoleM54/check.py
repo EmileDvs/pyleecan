@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 from ..Slot import SlotCheckError
 from . import *
@@ -36,7 +36,7 @@ def check(self):
     elif self.H1 is None:
         raise S54_NoneError("You must set H1 !")
 
-    if 2 * pi / self.Zh <= self.W0:
+    if 2 * np.pi / self.Zh <= self.W0:
         raise H54_W0CheckError("You must have W0 < 2*pi/Zh")
 
     if self.R1 <= self.H0:

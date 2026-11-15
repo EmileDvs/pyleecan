@@ -1,4 +1,4 @@
-from numpy import concatenate, unique
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 
@@ -28,7 +28,7 @@ def comp_axes(self, output):
         Time_per = Time.copy()
         Time_per.symmetries = {"period": Time.symmetries["antiperiod"]}
         freqs_per = Time_per.get_values(is_oneperiod=True, operation="time_to_freqs")
-        freqs = unique(concatenate((freqs, freqs_per)))
+        freqs = np.unique(np.concatenate((freqs, freqs_per)))
 
     Freqs = Data1D(
         name="freqs", unit="Hz", values=freqs, normalizations=Time.normalizations.copy()

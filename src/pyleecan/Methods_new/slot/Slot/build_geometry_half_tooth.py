@@ -1,5 +1,5 @@
-from numpy import abs as np_abs
-from numpy import imag, pi, exp
+import numpy as np
+
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Functions_new.labels import BORE_LAB, BOUNDARY_PROP_LAB
@@ -38,9 +38,9 @@ def build_geometry_half_tooth(self, is_top=False, alpha=0, delta=0):
         Zbegin = line.get_begin()
         Zend = line.get_end()
         # append line
-        if imag(Zbegin) <= 0 and imag(Zend) <= 0:
+        if np.imag(Zbegin) <= 0 and np.imag(Zend) <= 0:
             top_list.append(line)
-        elif imag(Zbegin) >= 0 and imag(Zend) >= 0:
+        elif np.imag(Zbegin) >= 0 and np.imag(Zend) >= 0:
             bot_list.append(line)
         else:  # The line cross the X axis => split
             # Copy the line (split_half modify the object)
@@ -48,7 +48,7 @@ def build_geometry_half_tooth(self, is_top=False, alpha=0, delta=0):
             # Split the lines
             line.split_half(is_begin=True)
             line2.split_half(is_begin=False)
-            if imag(Zbegin) < 0:
+            if np.imag(Zbegin) < 0:
                 top_list.append(line)
                 bot_list.append(line2)
             else:
@@ -56,24 +56,24 @@ def build_geometry_half_tooth(self, is_top=False, alpha=0, delta=0):
                 bot_list.append(line)
 
     # add bore lines
-    Zbo = Rbo * exp(-1j * pi / Zs)
-    if np_abs(Zbo - top_list[0].get_begin()) > 1e-6:
+    Zbo = Rbo * np.exp(-1j * np.pi / Zs)
+    if np.abs(Zbo - top_list[0].get_begin()) > 1e-6:
         top_list.insert(
             0,
             Arc1(
-                Zbo,
-                top_list[0].get_begin(),
-                Rbo,
+                begin=Zbo,
+                end=top_list[0].get_begin(),
+                radius=Rbo,
                 prop_dict={BOUNDARY_PROP_LAB: BORE_LAB},
             ),
         )
-    Zbo = Rbo * exp(1j * pi / Zs)
-    if np_abs(Zbo - bot_list[-1].get_end()) > 1e-6:
+    Zbo = Rbo * np.exp(1j * np.pi / Zs)
+    if np.abs(Zbo - bot_list[-1].get_end()) > 1e-6:
         bot_list.append(
             Arc1(
-                bot_list[-1].get_end(),
-                Zbo,
-                Rbo,
+                begin=bot_list[-1].get_end(),
+                end=Zbo,
+                radius=Rbo,
                 prop_dict={BOUNDARY_PROP_LAB: BORE_LAB},
             )
         )
@@ -81,10 +81,10 @@ def build_geometry_half_tooth(self, is_top=False, alpha=0, delta=0):
     # Select the lines to return
     if is_top:
         tooth_list = top_list
-        T_angle = pi / Zs
+        T_angle = np.pi / Zs
     else:
         tooth_list = bot_list
-        T_angle = -pi / Zs
+        T_angle = -np.pi / Zs
 
     # rotate
     for line in tooth_list:

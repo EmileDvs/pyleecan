@@ -37,12 +37,12 @@ def build_geometry(self):
 
     # Creation of curve
     curve_list = list()
-    curve_list.append(Segment(Z1, Z2))
-    curve_list.append(Arc1(Z2, Z3, self.R1, is_trigo_direction=True))
-    curve_list.append(Segment(Z3, Z4))
-    curve_list.append(Segment(Z4, Z5))
-    curve_list.append(Segment(Z5, Z6))
-    curve_list.append(Arc1(Z6, Z7, self.R1, is_trigo_direction=True))
-    curve_list.append(Segment(Z7, Z8))
+    curve_list.append(Segment(begin=Z1, end=Z2))
+    curve_list.append(Arc1(begin=Z2, end=Z3, radius=self.R1, is_trigo_direction=True))
+    curve_list.append(Segment(begin=Z3, end=Z4))
+    curve_list.append(Segment(begin=Z4, end=Z5))
+    curve_list.append(Segment(begin=Z5, end=Z6))
+    curve_list.append(Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True))
+    curve_list.append(Segment(begin=Z7, end=Z8))
 
     return curve_list

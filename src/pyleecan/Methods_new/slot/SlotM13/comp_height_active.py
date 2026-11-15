@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
+import numpy as np
 
 
 def comp_height_active(self):
@@ -26,8 +26,8 @@ def comp_height_active(self):
     ZM4 = point_dict["ZM4"]
 
     if self.is_outwards():
-        R1 = np_abs(ZM0)
-        R2 = np_abs(ZM1)
+        R1 = np.abs(ZM0)
+        R2 = np.abs(ZM1)
         return R2 - R1
     else:
         return self.H1

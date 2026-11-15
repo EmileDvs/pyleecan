@@ -76,7 +76,7 @@ def plot_schematics(
         if is_add_schematics:
             if is_single:
                 # Wwire
-                line = Segment(-self.Wwire / 2, self.Wwire / 2)
+                line = Segment(begin=-self.Wwire / 2, end=self.Wwire / 2)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -89,7 +89,7 @@ def plot_schematics(
                 )
                 # Wins_wire
                 line = Segment(
-                    1j * (self.Wwire / 2 + self.Wins_wire), 1j * self.Wwire / 2
+                    begin=1j * (self.Wwire / 2 + self.Wins_wire), end=1j * self.Wwire / 2
                 )
                 line.plot(
                     fig=fig,
@@ -103,7 +103,7 @@ def plot_schematics(
                 )
             else:
                 # Wwire
-                line = Segment(a - self.Wwire / 2 + 1j * a, a + self.Wwire / 2 + 1j * a)
+                line = Segment(begin=a - self.Wwire / 2 + 1j * a, end=a + self.Wwire / 2 + 1j * a)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -116,8 +116,8 @@ def plot_schematics(
                 )
                 # Wins_wire
                 line = Segment(
-                    -self.Wwire / 2 - self.Wins_wire + 1j * self.Wins_wire,
-                    -self.Wwire / 2 - self.Wins_wire,
+                    begin=-self.Wwire / 2 - self.Wins_wire + 1j * self.Wins_wire,
+                    end=-self.Wwire / 2 - self.Wins_wire,
                 )
                 line.plot(
                     fig=fig,
@@ -130,7 +130,7 @@ def plot_schematics(
                     fontsize=SC_FONT_SIZE,
                 )
                 # Wins_cond
-                line = Segment(-1j * self.Wins_cond / 2, 1j * self.Wins_cond / 2)
+                line = Segment(begin=-1j * self.Wins_cond / 2, end=1j * self.Wins_cond / 2)
                 line.plot(
                     fig=fig,
                     ax=ax,

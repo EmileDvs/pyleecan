@@ -1,9 +1,9 @@
-from numpy import pi
+import numpy as np
 
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.Classes_new.geometry.surf_line import SurfLine
-from pyleecan.Functions_new.labels import HOLEV_LAB, HOLEM_LAB
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.segment import Segment
+from ....Classes_new.geometry.surf_line import SurfLine
+from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
 
 
 def build_geometry(self, alpha=0, delta=0, is_simplified=False):
@@ -48,7 +48,7 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
 
     # surface Hole Radial
     curve_list = list()
-    curve_list.append(Segment(Z1, Z2))
+    curve_list.append(Segment(begin=Z1, end=Z2))
     curve_list.append(
         Arc1(
             begin=Z2,
@@ -57,7 +57,7 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
             is_trigo_direction=True,
         )
     )
-    curve_list.append(Segment(Z3, Z4))
+    curve_list.append(Segment(begin=Z3, end=Z4))
     curve_list.append(
         Arc1(
             begin=Z4,

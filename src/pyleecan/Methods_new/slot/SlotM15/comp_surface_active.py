@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import arcsin, sin
+import numpy as np
 
 
 def comp_surface_active(self):
@@ -24,11 +24,11 @@ def comp_surface_active(self):
     S1 = abs(ZM1 - ZM2) * self.W1
 
     # Top Arc
-    alpha = 2 * float(arcsin(self.W1 / (2 * self.Rtopm)))
-    Sarc = (self.Rtopm**2.0) / 2.0 * (alpha - sin(alpha))
+    alpha = 2 * float(np.arcsin(self.W1 / (2 * self.Rtopm)))
+    Sarc = (self.Rtopm**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     # Bottom polar to remove
-    alpha = 2 * float(arcsin(self.W1 / (2 * abs(ZM1))))
-    Sarc2 = (abs(ZM1) ** 2.0) / 2.0 * (alpha - sin(alpha))
+    alpha = 2 * float(np.arcsin(self.W1 / (2 * abs(ZM1))))
+    Sarc2 = (abs(ZM1) ** 2.0) / 2.0 * (alpha - np.sin(alpha))
 
     return S1 + Sarc - Sarc2

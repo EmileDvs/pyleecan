@@ -1,4 +1,4 @@
-from numpy import arcsin, exp
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -17,16 +17,16 @@ def _comp_point_coordinate(self):
     Rbo = self.get_Rbo()
 
     # comp point coordinate (in complex)
-    Z1 = Rbo * exp(-1j * self.W0 / 2)
+    Z1 = Rbo * np.exp(-1j * self.W0 / 2)
     if self.is_outwards():
         R1 = Rbo + self.H0
         R2 = Rbo + self.H0 + self.H2
     else:  # inward slot
         R1 = Rbo - self.H0
         R2 = Rbo - self.H0 - self.H2
-    Z2 = R1 * exp(-1j * self.W0 / 2.0)
-    Z3 = R1 * exp(-1j * self.W2 / 2.0)
-    Z4 = R2 * exp(-1j * self.W2 / 2.0)
+    Z2 = R1 * np.exp(-1j * self.W0 / 2.0)
+    Z3 = R1 * np.exp(-1j * self.W2 / 2.0)
+    Z4 = R2 * np.exp(-1j * self.W2 / 2.0)
 
     point_dict = dict()
     # symetry

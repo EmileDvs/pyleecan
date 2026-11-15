@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import exp, arcsin, tan, cos, sqrt, sin
+import numpy as np
 
 
 def comp_mass_magnet(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import sin, cos
+import numpy as np
 
 from ..Slot import SlotCheckError
 
@@ -20,7 +20,7 @@ def check(self):
     Rbo = self.get_Rbo()
 
     # conversion W0 rad -> m
-    W0_m = 2 * (Rbo - self.H0) * sin(self.W0 / 2)
+    W0_m = 2 * (Rbo - self.H0) * np.sin(self.W0 / 2)
 
     if W0_m < self.W1:
         raise SlotCheckError("You must have W1 <= W0")

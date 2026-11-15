@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, sqrt
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -17,21 +17,21 @@ def _comp_point_coordinate(self):
     Rbo = self.get_Rbo()
 
     # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
-    alpha = float(arcsin(self.W0 / (2 * Rbo)))
+    alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
     # comp point coordinate (in complex)
-    Z0 = Rbo * exp(1j * 0)
-    Z1 = Z0 * exp(-1j * alpha)
+    Z0 = Rbo * np.exp(1j * 0)
+    Z1 = Z0 * np.exp(-1j * alpha)
 
     if self.is_outwards():
         Z2 = Z1 + self.H0
-        Zc1 = Z2.real + sqrt(self.R1**2 - (self.W0 / 2.0) ** 2)
+        Zc1 = Z2.real + np.sqrt(self.R1**2 - (self.W0 / 2.0) ** 2)
         Z3 = Zc1 - self.R1 * 1j
         Zc2 = Zc1 + self.H1
         Z4 = Zc2 - 1j * self.R2
         Zbot = Zc2 + self.R2
     else:  # inward slot
         Z2 = Z1 - self.H0
-        Zc1 = Z2.real - sqrt(self.R1**2 - (self.W0 / 2.0) ** 2)
+        Zc1 = Z2.real - np.sqrt(self.R1**2 - (self.W0 / 2.0) ** 2)
         Z3 = Zc1 - self.R1 * 1j
         Zc2 = Zc1 - self.H1
         Z4 = Zc2 - 1j * self.R2

@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, pi, sqrt, sin, cos
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -17,7 +17,7 @@ def _comp_point_coordinate(self):
 
     Rbo = self.get_Rbo()
 
-    hsp = pi / self.Zs  # Half slot pitch
+    hsp = np.pi / self.Zs  # Half slot pitch
 
     # ZXt => Complex coordinate in the tooth ref
     # ZX => Complex coordinate in the slot ref
@@ -28,13 +28,13 @@ def _comp_point_coordinate(self):
     Zcl = Rbo
 
     # relation bewteen the axis tooth and the axis slot
-    Zcht = Zch * exp(1j * hsp)
-    xcht = Zch * cos(hsp)
-    ycht = Zch * sin(hsp)
+    Zcht = Zch * np.exp(1j * hsp)
+    xcht = Zch * np.cos(hsp)
+    ycht = Zch * np.sin(hsp)
 
-    Zclt = Zcl * exp(1j * hsp)
-    xclt = Zcl * cos(hsp)
-    yclt = Zcl * sin(hsp)
+    Zclt = Zcl * np.exp(1j * hsp)
+    xclt = Zcl * np.cos(hsp)
+    yclt = Zcl * np.sin(hsp)
 
     # Line Zch Zcl
     # y=-(xcht-xclt)/(ycht-yclt)*x+ycht+xcht*(xcht-xclt)/(ycht-yclt)
@@ -51,29 +51,29 @@ def _comp_point_coordinate(self):
         + xcht * (xcht - xclt) / (ycht - yclt)
     )
     Z4t = x4t + 1j * y4t
-    Z4 = Z4t * exp(-1j * hsp)
+    Z4 = Z4t * np.exp(-1j * hsp)
     # Z3
     x3t = x4t
     y3t = y4t - self.W1 + self.R1
     Z3t = x3t + 1j * y3t
-    Z3 = Z3t * exp(-1j * hsp)
+    Z3 = Z3t * np.exp(-1j * hsp)
     # Z2
     x2t = x3t - self.R1
     y2t = self.W3 / 2
     Z2t = x2t + 1j * y2t
-    Z2 = Z2t * exp(-1j * hsp)
+    Z2 = Z2t * np.exp(-1j * hsp)
     # Z1
     y1t = self.W3 / 2
-    x1t = sqrt((Rbo) ** 2 - (y1t) ** 2)
+    x1t = np.sqrt((Rbo) ** 2 - (y1t) ** 2)
     Z1t = x1t + 1j * y1t
-    Z1 = Z1t * exp(-1j * hsp)
+    Z1 = Z1t * np.exp(-1j * hsp)
 
     # Z9 damper winding point
 
     x9t = x1t + self.H3
     y9t = self.W3 / 2
     Z9t = x9t + 1j * y9t
-    Z9 = Z9t * exp(-1j * hsp)
+    Z9 = Z9t * np.exp(-1j * hsp)
 
     point_dict = dict()
     # symetry

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 from ....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
 
@@ -48,9 +48,9 @@ def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
             + " holes and sym="
             + str(sym)
         )  # For now only
-        angle = 2 * pi / Zh
+        angle = 2 * np.pi / Zh
         # Create the first hole surface(s)
-        surf_hole = hole.build_geometry(alpha=pi / Zh)
+        surf_hole = hole.build_geometry(alpha=np.pi / Zh)
 
         hole_surf_list = list()
         # Copy the hole for Zh / sym

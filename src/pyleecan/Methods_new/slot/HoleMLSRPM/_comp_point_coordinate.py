@@ -1,4 +1,4 @@
-from numpy import exp, arcsin, tan, cos, sqrt, sin, pi
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -16,29 +16,29 @@ def _comp_point_coordinate(self):
     """
     Rbo = self.get_Rbo()
     # Z1
-    delta1 = arcsin((self.R1 + self.W2) / (self.R1 + self.R3))
+    delta1 = np.arcsin((self.R1 + self.W2) / (self.R1 + self.R3))
     alpha1 = self.W1 - delta1
-    Z1 = self.R3 * exp(-1j * alpha1)
+    Z1 = self.R3 * np.exp(-1j * alpha1)
 
     # Zc1
-    Zc1 = (self.R3 + self.R1) * exp(-1j * alpha1)
-    xc1 = (self.R3 + self.R1) * cos(alpha1)
-    yc1 = -(self.R3 + self.R1) * sin(alpha1)
+    Zc1 = (self.R3 + self.R1) * np.exp(-1j * alpha1)
+    xc1 = (self.R3 + self.R1) * np.cos(alpha1)
+    yc1 = -(self.R3 + self.R1) * np.sin(alpha1)
 
     # Z2
-    x2 = (-1 / tan(self.W1) * xc1 + yc1 - self.W2 / cos(self.W1)) / -(
-        tan(self.W1) + 1 / tan(self.W1)
+    x2 = (-1 / np.tan(self.W1) * xc1 + yc1 - self.W2 / np.cos(self.W1)) / -(
+        np.tan(self.W1) + 1 / np.tan(self.W1)
     )
-    y2 = -tan(self.W1) * x2 + self.W2 / cos(self.W1)
+    y2 = -np.tan(self.W1) * x2 + self.W2 / np.cos(self.W1)
     Z2 = x2 + 1j * y2
 
     # Z3
-    a3 = 1 + tan(self.W1) ** 2
-    b3 = -2 * tan(self.W1) * self.W2 / cos(self.W1)
-    c3 = (self.W2 / cos(self.W1)) ** 2 - self.R2**2
+    a3 = 1 + np.tan(self.W1) ** 2
+    b3 = -2 * np.tan(self.W1) * self.W2 / np.cos(self.W1)
+    c3 = (self.W2 / np.cos(self.W1)) ** 2 - self.R2**2
 
-    x3 = (-b3 + sqrt(b3**2 - 4 * a3 * c3)) / (2 * a3)
-    y3 = -tan(self.W1) * x3 + self.W2 / cos(self.W1)
+    x3 = (-b3 + np.sqrt(b3**2 - 4 * a3 * c3)) / (2 * a3)
+    y3 = -np.tan(self.W1) * x3 + self.W2 / np.cos(self.W1)
     Z3 = x3 + 1j * y3
     # Z5
     x5 = Rbo - self.H1
@@ -52,12 +52,12 @@ def _comp_point_coordinate(self):
     a4 = (xc2 - x3) ** 2 - self.R1**2
     b4 = 2 * (xc2 - x3) * (y3 - yc2)
     c4 = (y3 - yc2) ** 2 - self.R1**2
-    alpha2 = (-b4 - sqrt(b4**2 - 4 * a4 * c4)) / (2 * a4)
+    alpha2 = (-b4 - np.sqrt(b4**2 - 4 * a4 * c4)) / (2 * a4)
     x4 = (xc2 / alpha2 + yc2 + alpha2 * x3 - y3) / (alpha2 + 1 / alpha2)
     y4 = alpha2 * (x4 - x3) + y3
     Z4 = x4 + 1j * y4
-    Zw1 = self.R2 * exp(1j * self.W1)
-    Zw2 = Zw1 + self.W2 * exp(1j * -(pi / 2 - self.W1))
+    Zw1 = self.R2 * np.exp(1j * self.W1)
+    Zw2 = Zw1 + self.W2 * np.exp(1j * -(np.pi / 2 - self.W1))
     # symmetry
     Z6 = Z5.conjugate()
     Z7 = Z4.conjugate()

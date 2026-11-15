@@ -1,5 +1,5 @@
-from ....Functions_new.Load.import_class import import_class
-from numpy import pi
+from ....Functions.Load.import_class import import_class
+import numpy as np
 from ....definitions import config_dict
 from matplotlib.patches import Patch
 
@@ -64,7 +64,7 @@ def plot_preview_notch(self, index, fig=None, ax=None):
         ax=ax,
         is_edge_only=True,
         edgecolor="r--",
-        alpha=-pi / self.notch[index].notch_shape.Zs + self.notch[index].alpha,
+        alpha=-np.pi / self.notch[index].notch_shape.Zs + self.notch[index].alpha,
     )
     # Setup legend
     if self.is_stator:

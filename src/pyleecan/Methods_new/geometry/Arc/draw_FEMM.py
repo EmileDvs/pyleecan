@@ -1,4 +1,4 @@
-from numpy import abs, exp
+import numpy as np
 
 
 def draw_FEMM(
@@ -65,7 +65,7 @@ def draw_FEMM(
     femm.mi_setnodeprop(nodeprop, group)
     femm.mi_clearselected()
 
-    if abs(angle) > 180:
+    if np.abs(angle) > 180:
         if is_draw:
             femm.mi_addnode(X2, Y2)
 
@@ -88,8 +88,8 @@ def draw_FEMM(
     # Set Arc properties
     if angle > 180:
         cent = self.get_center()
-        mid1 = cent + (mid - cent) * exp(1j * angle / 4)
-        mid2 = cent + (mid - cent) * exp(-1j * angle / 4)
+        mid1 = cent + (mid - cent) * np.exp(1j * angle / 4)
+        mid2 = cent + (mid - cent) * np.exp(-1j * angle / 4)
         femm.mi_selectarcsegment(mid1.real, mid1.imag)
         femm.mi_selectarcsegment(mid2.real, mid1.imag)
     else:

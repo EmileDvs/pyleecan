@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
+import numpy as np
 
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
@@ -32,9 +32,9 @@ def intersect_line(self, Z1, Z2):
         # One intersect. Is it between begin and end or not ?
         Z_int = Z_list[0]
         Seg_len = self.comp_length()
-        if np_abs(Z_int - Z3) <= Seg_len and np_abs(Z_int - Z4) <= Seg_len:
+        if np.abs(Z_int - Z3) <= Seg_len and np.abs(Z_int - Z4) <= Seg_len:
             return [Z_int]
-        elif np_abs(Z_int - Z3) <= 1e-6 or np_abs(Z_int - Z4) <= 1e-6:
+        elif np.abs(Z_int - Z3) <= 1e-6 or np.abs(Z_int - Z4) <= 1e-6:
             # Zint is begin or end
             return [Z_int]
         else:

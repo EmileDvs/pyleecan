@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import exp
+import numpy as np
 from . import AngleRotationCircleError
 
 
@@ -32,6 +32,6 @@ def rotate(self, angle):
     self.check()
 
     # Modification of the object from the rotation
-    self.center = self.center * exp(1j * angle)
+    self.center = self.center * np.exp(1j * angle)
     if self.point_ref is not None:
-        self.point_ref = self.point_ref * exp(1j * angle)
+        self.point_ref = self.point_ref * np.exp(1j * angle)

@@ -8,7 +8,6 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
-from numpy import array
 
 from ...classes_common.errors import PlotError, XOutputError
 from ...definitions import config_dict
@@ -80,10 +79,10 @@ class XOutput(Output):
         """Helper function to get data and label by symbol to avoid duplicate code."""
         if symbol in self.keys():
             data = self[symbol]
-            values = array(data.result)[index]
+            values = np.array(data.result)[index]
         elif symbol in [pe.symbol for pe in self.paramexplorer_list]:
             data = self.get_paramexplorer(symbol)
-            values = array(data.value)[index]
+            values = np.array(data.value)[index]
         else:
             symbol_ = next(iter(self.keys()))
             self.get_logger().warning(
@@ -92,7 +91,7 @@ class XOutput(Output):
             )
             symbol = symbol_
             data = self[symbol]
-            values = array(data.result)[index]
+            values = np.array(data.result)[index]
         label = symbol
         if data.unit not in ["", None]:
             label += " [{}]".format(data.unit)

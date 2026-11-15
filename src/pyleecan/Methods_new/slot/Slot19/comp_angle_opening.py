@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin
+import numpy as np
 
 
 def comp_angle_opening(self):
@@ -23,4 +23,4 @@ def comp_angle_opening(self):
     if self.Wx_is_rad:
         return self.W0
     else:
-        return float(2 * arcsin(self.W0 / (2 * Rbo)))
+        return float(2 * np.arcsin(self.W0 / (2 * Rbo)))

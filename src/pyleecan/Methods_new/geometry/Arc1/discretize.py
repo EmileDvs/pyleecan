@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import angle as np_angle, exp, linspace
+import numpy as np
 
 from ...machine import ARC_NPOINT_D
 from . import NbPointArc1DError
@@ -41,18 +41,18 @@ def discretize(self, nb_point=ARC_NPOINT_D):
     zc = self.get_center()
 
     # Geometric transformation : center is the origin, angle(begin) = 0
-    Zstart = (z1 - zc) * exp(-1j * np_angle(z1 - zc))
-    Zend = (z2 - zc) * exp(-1j * np_angle(z1 - zc))
+    Zstart = (z1 - zc) * np.exp(-1j * np.angle(z1 - zc))
+    Zend = (z2 - zc) * np.exp(-1j * np.angle(z1 - zc))
 
     # Generation of the point by rotation
     if self.is_trigo_direction:
         sign = 1
     else:
         sign = -1
-    t = linspace(0, self.get_angle(), nb_point + 2)
-    list_point = Zstart * exp(1j * t)
+    t = np.linspace(0, self.get_angle(), nb_point + 2)
+    list_point = Zstart * np.exp(1j * t)
 
     # Geometric transformation : return to the main axis
-    list_point = list_point * exp(1j * np_angle(z1 - zc)) + zc
+    list_point = list_point * np.exp(1j * np.angle(z1 - zc)) + zc
 
     return list_point

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import array, power, zeros
+import numpy as np
 
 from ..Winding import WindingError
 from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
@@ -60,13 +60,13 @@ def init_as_CW1L(self, Zs=None):
 
     # first strategy - checked with Umbra_08 motor and Umbra_05: the winding
     # direction of each tooth is reversed
-    wind_mat = zeros((1, 1, Zs, qs))
+    wind_mat = np.zeros((1, 1, Zs, qs))
 
     for k in range(0, int(Nt)):  # winding alternatively the teeth
         for q in range(0, qs):
-            xenc = q * 4 + k * 2 * qs + array([1, 2])
-            wind_mat[0][0][int((xenc[0] - 1) % Zs)][q] = power(-1, xenc[0] + k + 1)
-            wind_mat[0][0][int((xenc[1] - 1) % Zs)][q] = power(-1, xenc[1] + k + 1)
+            xenc = q * 4 + k * 2 * qs + np.array([1, 2])
+            wind_mat[0][0][int((xenc[0] - 1) % Zs)][q] = np.power(-1, xenc[0] + k + 1)
+            wind_mat[0][0][int((xenc[1] - 1) % Zs)][q] = np.power(-1, xenc[1] + k + 1)
 
     wind_mat *= Ntcoil
 

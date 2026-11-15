@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 from ..Slot import SlotCheckError
 from . import *
@@ -56,7 +56,7 @@ def check(self):
     if Rext <= self.H1:
         raise S53_Rext1CheckError("You must have H1 < Rext")
 
-    if pi / 2 <= self.W4:
+    if np.pi / 2 <= self.W4:
         raise S53_W4CheckError("You must have W4 < pi/2")
 
     if self.comp_W5() < 0:

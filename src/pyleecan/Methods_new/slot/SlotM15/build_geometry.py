@@ -29,12 +29,12 @@ def build_geometry(self):
     # Creation of curve
     curve_list = list()
     if self.H0 > 0:
-        curve_list.append(Segment(Z1, Z2))
+        curve_list.append(Segment(begin=Z1, end=Z2))
     if self.is_outwards():
-        curve_list.append(Arc1(Z2, Z3, Rbo + self.H0, is_trigo_direction=True))
+        curve_list.append(Arc1(begin=Z2, end=Z3, radius=Rbo + self.H0, is_trigo_direction=True))
     else:
-        curve_list.append(Arc1(Z2, Z3, Rbo - self.H0, is_trigo_direction=True))
+        curve_list.append(Arc1(begin=Z2, end=Z3, radius=Rbo - self.H0, is_trigo_direction=True))
     if self.H0 > 0:
-        curve_list.append(Segment(Z3, Z4))
+        curve_list.append(Segment(begin=Z3, end=Z4))
 
     return curve_list

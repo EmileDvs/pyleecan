@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_inductance(self):
@@ -24,7 +24,7 @@ def comp_inductance(self):
     p = winding.p
     Ntcoil = winding.Ntcoil
 
-    mu0 = 4 * pi * 1e-7
+    mu0 = 4 * np.pi * 1e-7
 
     if winding.Lewout is not None:
         l_ew = winding.Lewout

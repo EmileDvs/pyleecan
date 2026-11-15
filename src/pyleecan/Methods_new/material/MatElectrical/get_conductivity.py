@@ -1,4 +1,4 @@
-from numpy import inf
+import numpy as np
 
 
 def get_conductivity(self, T_op=None, T_ref=20):
@@ -26,7 +26,7 @@ def get_conductivity(self, T_op=None, T_ref=20):
         raise Exception("Cannot calculate conductivity if rh0 is None")
 
     if self.rho == 0:
-        sigma = inf
+        sigma = np.inf
 
     else:
         rho = self.get_resistivity(T_op, T_ref)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import vstack, column_stack
+import numpy as np
 from . import GenSinEmptyError, GenSinDimError, GenSinTransposeError
 
 
@@ -47,7 +47,7 @@ def get_data(self):
                 + ")"
             )
     if is_T:  # Conctenate the columns
-        matrix = column_stack([sin_obj.get_data() for sin_obj in self.sin_list])
+        matrix = np.column_stack([sin_obj.get_data() for sin_obj in self.sin_list])
     else:  # Concatenate the lines
-        matrix = vstack([sin_obj.get_data() for sin_obj in self.sin_list])
+        matrix = np.vstack([sin_obj.get_data() for sin_obj in self.sin_list])
     return self.edit_matrix(matrix)

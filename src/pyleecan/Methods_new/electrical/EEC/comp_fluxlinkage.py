@@ -1,7 +1,7 @@
-from os.path import join
+import os
 
 from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 
 
 def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):
@@ -44,7 +44,7 @@ def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):
     if isinstance(machine.parent, Simu1) and machine.parent.name not in [None, ""]:
         simu_name = machine.parent.name + "_FluxLinkFEMM"
         path_result = (
-            join(machine.parent.path_result, "FluxLinkFEMM")
+            os.path.join(machine.parent.path_result, "FluxLinkFEMM")
             if machine.parent.path_result not in [None, ""]
             else None
         )

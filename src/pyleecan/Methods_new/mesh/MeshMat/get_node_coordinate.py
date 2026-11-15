@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from typing import Optional
-from numpy.typing import ArrayLike
 import numpy as np
 
 
-def get_node_coordinate(self, indices: Optional[ArrayLike] = None) -> np.ndarray:
+
+def get_node_coordinate(self, indices: Optional[np.typing.ArrayLike] = None) -> np.ndarray:
     """Return the coordinates of the node with provided indices.
     If indices is not specified, returns every node coordinates
 

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_slot import LamSlot
@@ -64,7 +64,7 @@ def plot_schematics(
 
     # Use some default parameter
     if is_default:
-        slot = type(self)(Zs=2, W0=60 * pi / 180, H0=0.03, H1=0.02, W1=0.05, Rtopm=0.05)
+        slot = type(self)(Zs=2, W0=60 * np.pi / 180, H0=0.03, H1=0.02, W1=0.05, Rtopm=0.05)
         lam = LamSlot(
             Rint=40e-3, Rext=0.11, is_internal=True, is_stator=False, slot=slot
         )
@@ -89,7 +89,7 @@ def plot_schematics(
             raise ParentMissingError("Error: The slot is not inside a Lamination")
         lam = self.parent
         fig, ax = lam.plot(
-            alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+            alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
         point_dict = self._comp_point_coordinate()
         if self.is_outwards():
@@ -114,8 +114,8 @@ def plot_schematics(
             # W0
             R = Rbo + sign * self.H0 * 1.1
             line = Arc1(
-                begin=R * exp(-1j * self.W0 / 2),
-                end=R * exp(1j * self.W0 / 2),
+                begin=R * np.exp(-1j * self.W0 / 2),
+                end=R * np.exp(1j * self.W0 / 2),
                 radius=R,
                 is_trigo_direction=True,
             )
@@ -140,7 +140,7 @@ def plot_schematics(
                 label="W1",
             )
             # H0
-            line = Segment(point_dict["Z1"], point_dict["Z2"])
+            line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -163,7 +163,7 @@ def plot_schematics(
                 label="H1",
             )
             # Rtopm
-            line = Segment(point_dict["Zc"], point_dict["ZM0"])
+            line = Segment(begin=point_dict["Zc"], end=point_dict["ZM0"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -178,7 +178,7 @@ def plot_schematics(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -187,7 +187,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Z1 Line
-            line = Segment(0, Rbo * 2 * exp(-1j * self.W0 / 2))
+            line = Segment(begin=0, end=Rbo * 2 * np.exp(-1j * self.W0 / 2))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -196,7 +196,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Z2 Line
-            line = Segment(0, Rbo * 2 * exp(1j * self.W0 / 2))
+            line = Segment(begin=0, end=Rbo * 2 * np.exp(1j * self.W0 / 2))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -219,7 +219,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Magnet Arc
-            line = Segment(point_dict["Zc"], point_dict["ZM2"])
+            line = Segment(begin=point_dict["Zc"], end=point_dict["ZM2"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -227,7 +227,7 @@ def plot_schematics(
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(point_dict["Zc"], point_dict["ZM3"])
+            line = Segment(begin=point_dict["Zc"], end=point_dict["ZM3"])
             line.plot(
                 fig=fig,
                 ax=ax,

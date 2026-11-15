@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import max as np_max, min as np_min
+import numpy as np
 
 
 def plot(self, i):
@@ -20,7 +20,7 @@ def plot(self, i):
     """
 
     radial_shape = self.get_shape_pol()[:, 0]
-    clim = [np_min(radial_shape), np_max(radial_shape)]
+    clim = [np.min(radial_shape), np.max(radial_shape)]
     self.parent.mesh.plot_contour(
         radial_shape, field_name="Radial displacement", clim=clim
     )

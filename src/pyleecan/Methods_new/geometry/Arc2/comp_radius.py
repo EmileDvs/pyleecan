@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
+import numpy as np
 
 
 def comp_radius(self):
@@ -21,4 +21,4 @@ def comp_radius(self):
 
     z1 = self.begin
     zc = self.center
-    return float(np_abs(z1 - zc))  # Radius of the arc
+    return float(np.abs(z1 - zc))  # Radius of the arc

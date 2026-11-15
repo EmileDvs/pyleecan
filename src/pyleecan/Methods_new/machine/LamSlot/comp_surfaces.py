@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 from ....Classes_new.machine.lamination import Lamination
 
 
@@ -28,9 +28,9 @@ def comp_surfaces(self):
     Ryoke = self.get_Ryoke()
     Hyoke = self.comp_height_yoke()
     if self.is_internal:
-        S_dict["Syoke"] = pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
+        S_dict["Syoke"] = np.pi * ((Ryoke + Hyoke) ** 2 - Ryoke**2) - S_dict["Svent"]
     else:
-        S_dict["Syoke"] = pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
+        S_dict["Syoke"] = np.pi * (Ryoke**2 - (Ryoke - Hyoke) ** 2) - S_dict["Svent"]
 
     S_dict["Sslot"] = Sslot
     S_dict["Slam"] -= Sslot

@@ -1,4 +1,4 @@
-from numpy import angle
+import numpy as np
 
 
 def set_Ud_Uq(self, Ud, Uq):
@@ -20,4 +20,4 @@ def set_Ud_Uq(self, Ud, Uq):
     else:
         Z = Ud + 1j * Uq
         self.U0_ref = abs(Z)
-        self.UPhi0_ref = angle(Z)
+        self.UPhi0_ref = np.angle(Z)

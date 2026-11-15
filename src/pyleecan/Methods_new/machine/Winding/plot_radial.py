@@ -1,4 +1,4 @@
-from ....Classes._swat_em import datamodel
+from ....Classes_new._swat_em import datamodel
 from ....definitions import config_dict
 from ....Functions_new._swat_em import plots
 from ....Functions_new._swat_em.config import config

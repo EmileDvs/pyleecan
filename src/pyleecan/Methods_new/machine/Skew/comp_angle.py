@@ -1,4 +1,4 @@
-from numpy import pi, array, linspace, mean as np_mean, floor, flip, concatenate, arange
+import numpy as np
 
 from . import TYPE_SKEW_LIST
 
@@ -30,7 +30,7 @@ def comp_angle(self):
     else:
         Z = self.parent.parent.rotor.get_Zs()
 
-    sp = 2 * pi / Z
+    sp = 2 * np.pi / Z
 
     if rate is None and angle_overall is None:
         # Set rate value by default
@@ -61,34 +61,34 @@ def comp_angle(self):
                     + str(type_skew)
                 )
 
-            z_list = linspace(-0.5, 0.5, Nstep + 1)
+            z_list = np.linspace(-0.5, 0.5, Nstep + 1)
 
             if type_skew == "linear" or Nstep == 2:
-                angle_list = linspace(-angle_overall / 2, angle_overall / 2, Nstep)
+                angle_list = np.linspace(-angle_overall / 2, angle_overall / 2, Nstep)
 
             elif type_skew == "vshape":
-                Nhalf = int(floor((Nstep + 1) / 2))
+                Nhalf = int(np.floor((Nstep + 1) / 2))
 
-                angles_half = linspace(-angle_overall, 0, Nhalf)
+                angles_half = np.linspace(-angle_overall, 0, Nhalf)
 
                 if Nstep % 2 == 0:
-                    angle_list = concatenate((angles_half, flip(angles_half)))
+                    angle_list = np.concatenate((angles_half, np.flip(angles_half)))
                 else:
-                    angle_list = concatenate((angles_half[:-1], flip(angles_half)))
+                    angle_list = np.concatenate((angles_half[:-1], np.flip(angles_half)))
 
             elif type_skew == "zig-zag":
-                angle_list = 0.5 * angle_overall * (-1) ** arange(Nstep)
+                angle_list = 0.5 * angle_overall * (-1) ** np.arange(Nstep)
 
             elif type_skew == "function":
                 if self.function is None:
                     raise Exception("Function must be defined if type_skew == function")
                 try:
-                    angle_list = self.function(array(z_list))
+                    angle_list = self.function(np.array(z_list))
                 except Exception:
                     raise Exception("Error in skew function definition")
 
             # Put average skew angle to zero
-            angle_list = list(array(angle_list) - np_mean(angle_list))
+            angle_list = list(np.array(angle_list) - np.mean(angle_list))
 
         elif type_skew == "user-defined":
             if angle_list is None:
@@ -98,7 +98,7 @@ def comp_angle(self):
 
             if z_list is None:
                 # Init as linear skew type
-                z_list = linspace(-0.5, 0.5, Nstep + 1)
+                z_list = np.linspace(-0.5, 0.5, Nstep + 1)
 
             else:
                 if len(angle_list) != len(z_list) - 1:
@@ -122,7 +122,7 @@ def comp_angle(self):
     else:
         if type_skew == "linear":
             Nstep = 2
-            z_list = linspace(-0.5, 0.5, Nstep)
+            z_list = np.linspace(-0.5, 0.5, Nstep)
             angle_list = [z * angle_overall for z in z_list]
 
         else:

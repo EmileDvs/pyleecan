@@ -1,4 +1,4 @@
-from numpy import unique
+import numpy as np
 
 
 def get_all_mag_obj(self):
@@ -19,7 +19,7 @@ def get_all_mag_obj(self):
     if self.mur_lin_matrix is None and self.Brm20_matrix is None:
         return [self.magnet]
     elif self.mur_lin_matrix is not None:
-        _, index_unique = unique(self.mur_lin_matrix, return_index=True)
+        _, index_unique = np.unique(self.mur_lin_matrix, return_index=True)
         for ii, flat_index in enumerate(index_unique):
             mag_list.append(self.magnet.copy())
             mag_list[-1].mat_type.name = "Magnet_" + str(ii + 1)
@@ -29,7 +29,7 @@ def get_all_mag_obj(self):
             if self.Brm20_matrix is not None:
                 mag_list[-1].mat_type.mag.Brm20 = self.Brm20_matrix.flat[flat_index]
     else:  # Only change Brm20
-        Brm20_val = unique(self.Brm20_matrix)
+        Brm20_val = np.unique(self.Brm20_matrix)
         for ii, Brm20 in enumerate(Brm20_val):
             mag_list.append(self.magnet.copy())
             mag_list[-1].mat_type.mag.Brm20 = Brm20

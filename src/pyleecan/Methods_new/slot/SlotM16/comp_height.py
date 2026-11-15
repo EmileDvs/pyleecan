@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import cos
+import numpy as np
 
 
 def comp_height(self):

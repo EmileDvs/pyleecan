@@ -1,4 +1,4 @@
-from ....Classes._check import CheckTypeError
+from ....classes_common.errors import CheckTypeError
 from ntpath import basename
 from ....Functions_new.path_tools import abs_file_path
 from ....definitions import PYTHON_DEFAULT_ENCODING

@@ -1,4 +1,4 @@
-from numpy import sqrt, exp
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -26,7 +26,7 @@ def _comp_point_coordinate(self):
     Z7 = Z6 - 1j * self.W1
     Z8 = Z5 - 1j * self.W0
 
-    Zc1 = (Rext - self.H1 - self.R0) * exp(1j * self.W3 / 2)
+    Zc1 = (Rext - self.H1 - self.R0) * np.exp(1j * self.W3 / 2)
 
     # Z3 is the tangent point of the circle for (Z3,Z2)
     # (X3 - X2) * (X3 - Xc) + (Y3 - Y2) * (Y3 - Yc)
@@ -43,10 +43,10 @@ def _comp_point_coordinate(self):
         - R0**2 * Xc
         - R0
         * Y2
-        * sqrt(-(R0**2) + X2**2 - 2 * X2 * Xc + Xc**2 + Y2**2 - 2 * Y2 * Yc + Yc**2)
+        * np.sqrt(-(R0**2) + X2**2 - 2 * X2 * Xc + Xc**2 + Y2**2 - 2 * Y2 * Yc + Yc**2)
         + R0
         * Yc
-        * sqrt(-(R0**2) + X2**2 - 2 * X2 * Xc + Xc**2 + Y2**2 - 2 * Y2 * Yc + Yc**2)
+        * np.sqrt(-(R0**2) + X2**2 - 2 * X2 * Xc + Xc**2 + Y2**2 - 2 * Y2 * Yc + Yc**2)
         + X2**2 * Xc
         - 2 * X2 * Xc**2
         + Xc**3
@@ -59,7 +59,7 @@ def _comp_point_coordinate(self):
         - R0**2 * Yc
         + R0
         * (X2 - Xc)
-        * sqrt(-(R0**2) + X2**2 - 2 * X2 * Xc + Xc**2 + Y2**2 - 2 * Y2 * Yc + Yc**2)
+        * np.sqrt(-(R0**2) + X2**2 - 2 * X2 * Xc + Xc**2 + Y2**2 - 2 * Y2 * Yc + Yc**2)
         + X2**2 * Yc
         - 2 * X2 * Xc * Yc
         + Xc**2 * Yc
@@ -77,10 +77,10 @@ def _comp_point_coordinate(self):
         - R0**2 * Xc
         + R0
         * Y5
-        * sqrt(-(R0**2) + X5**2 - 2 * X5 * Xc + Xc**2 + Y5**2 - 2 * Y5 * Yc + Yc**2)
+        * np.sqrt(-(R0**2) + X5**2 - 2 * X5 * Xc + Xc**2 + Y5**2 - 2 * Y5 * Yc + Yc**2)
         - R0
         * Yc
-        * sqrt(-(R0**2) + X5**2 - 2 * X5 * Xc + Xc**2 + Y5**2 - 2 * Y5 * Yc + Yc**2)
+        * np.sqrt(-(R0**2) + X5**2 - 2 * X5 * Xc + Xc**2 + Y5**2 - 2 * Y5 * Yc + Yc**2)
         + X5**2 * Xc
         - 2 * X5 * Xc**2
         + Xc**3
@@ -93,7 +93,7 @@ def _comp_point_coordinate(self):
         - R0**2 * Yc
         - R0
         * (X5 - Xc)
-        * sqrt(-(R0**2) + X5**2 - 2 * X5 * Xc + Xc**2 + Y5**2 - 2 * Y5 * Yc + Yc**2)
+        * np.sqrt(-(R0**2) + X5**2 - 2 * X5 * Xc + Xc**2 + Y5**2 - 2 * Y5 * Yc + Yc**2)
         + X5**2 * Yc
         - 2 * X5 * Xc * Yc
         + Xc**2 * Yc

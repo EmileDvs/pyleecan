@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import cosh, sinh, ndarray, argwhere, isnan as np_isnan
+import numpy as np
 
 
 from math import isnan
@@ -20,11 +20,11 @@ def BH_func(self, H, Bs, a):
         B(H) values
 
     """
-    B = Bs * (cosh(H / a) / sinh(H / a) - a / H)
+    B = Bs * (np.cosh(H / a) / np.sinh(H / a) - a / H)
 
-    if isinstance(B, ndarray):
-        B[argwhere(np_isnan(B))] = Bs
-        B[argwhere(H == 0)] = 0
+    if isinstance(B, np.ndarray):
+        B[np.argwhere(np.isnan(B))] = Bs
+        B[np.argwhere(H == 0)] = 0
     elif isnan(B):
         if H == 0:
             B = 0

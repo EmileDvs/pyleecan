@@ -1,4 +1,4 @@
-from numpy import any as np_any
+import numpy as np
 
 from ....Functions_new.SciDataTool.sum_convolution import get_sum_amplitudes, get_sum_indices
 
@@ -50,14 +50,14 @@ def sum(
         raise Exception("self axis is not frequency axis")
     else:
         freqs1 = self.axes[0].get_values()
-        if np_any(freqs1) < 0:
+        if np.any(freqs1) < 0:
             raise Exception("self contains negative frequency values")
 
     if other.axes[0].name != "freqs":
         raise Exception("other axis is not frequency axis")
     else:
         freqs2 = other.axes[0].get_values()
-        if np_any(freqs2) < 0:
+        if np.any(freqs2) < 0:
             raise Exception("other contains negative frequency values")
 
     # Fill metadata

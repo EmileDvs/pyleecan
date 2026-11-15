@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import abs as np_abs, exp
+import numpy as np
 
 
 def get_end(self):
@@ -26,9 +26,9 @@ def get_end(self):
     # Geometric transformation : center is the origine (-zc)
     # Then rotation of begin of the correct angle (*exp(i*pi*angle))
     # Then return to the main axis (+zc)
-    z2 = (z1 - zc) * exp(1j * angle) + zc
+    z2 = (z1 - zc) * np.exp(1j * angle) + zc
 
     # Return (0,0) if the point is too close from 0
-    if np_abs(z2) < 1e-6:
+    if np.abs(z2) < 1e-6:
         z2 = 0
     return z2

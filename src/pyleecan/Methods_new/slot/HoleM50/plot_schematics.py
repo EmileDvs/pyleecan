@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_hole import LamHole
@@ -115,16 +115,16 @@ def plot_schematics(
         if self.parent is None:
             raise ParentMissingError("Error: The hole is not inside a Lamination")
         lam = self.parent
-        alpha = pi / 2  # To rotate the schematics
-        rot = exp(1j * alpha)
+        alpha = np.pi / 2  # To rotate the schematics
+        rot = np.exp(1j * alpha)
         fig, ax = lam.plot(
-            alpha=pi / self.Zh + alpha,
+            alpha=np.pi / self.Zh + alpha,
             is_show_fig=False,
             is_lam_only=type_add_active == 0,
             fig=fig,
             ax=ax,
         )  # center hole on Ox axis
-        sp = 2 * pi / self.Zh
+        sp = 2 * np.pi / self.Zh
         Rbo = self.get_Rbo()
         point_dict = self._comp_point_coordinate()
 
@@ -145,65 +145,65 @@ def plot_schematics(
                 fontsize=SC_FONT_SIZE,
             )
             # W0
-            line = Segment(point_dict["Z9"] * rot, point_dict["Z9s"] * rot)
+            line = Segment(begin=point_dict["Z9"] * rot, end=point_dict["Z9s"] * rot)
             line.plot(
                 label="W0", offset_label=self.W0 * 0.3 + 1j * self.H3 * 0.2, **kwargs
             )
             # W1
             line = Segment(
-                (point_dict["Z8"] + point_dict["Z7"]) / 2 * rot,
-                (point_dict["Z8s"] + point_dict["Z7s"]) / 2 * rot,
+                begin=(point_dict["Z8"] + point_dict["Z7"]) / 2 * rot,
+                end=(point_dict["Z8s"] + point_dict["Z7s"]) / 2 * rot,
             )
             line.plot(label="W1", offset_label=-1j * self.H3 * 0.4, **kwargs)
             # W2
-            line = Segment(point_dict["Z8"] * rot, point_dict["Z8b"] * rot)
+            line = Segment(begin=point_dict["Z8"] * rot, end=point_dict["Z8b"] * rot)
             line.plot(label="W2", offset_label=1j * self.H3 * 0.2, **kwargs)
             # W3
             line = Segment(
-                (point_dict["Z1s"] + point_dict["Z11s"]) * 0.5 * rot,
-                (point_dict["Z1"] + point_dict["Z11"]) * 0.5 * rot * exp(1j * sp),
+                begin=(point_dict["Z1s"] + point_dict["Z11s"]) * 0.5 * rot,
+                end=(point_dict["Z1"] + point_dict["Z11"]) * 0.5 * rot * np.exp(1j * sp),
             )
             line.plot(label="W3", offset_label=-1j * self.H3 * 0.3, **kwargs)
             # W4
-            line = Segment(point_dict["Z5"] * rot, point_dict["Z4"] * rot)
+            line = Segment(begin=point_dict["Z5"] * rot, end=point_dict["Z4"] * rot)
             line.plot(label="W4", offset_label=-1j * self.H3 * 0.3, **kwargs)
             # H0
-            line = Segment(Rbo * rot, point_dict["Z8"].real * rot)
+            line = Segment(begin=Rbo * rot, end=point_dict["Z8"].real * rot)
             line.plot(
                 label="H0", offset_label=self.W0 * 0.05 + 1j * self.H3 * 0.2, **kwargs
             )
             # H1
             line = Segment(
-                Rbo * exp(-1j * sp / 2) * rot,
-                (Rbo - self.H1) * exp(-1j * sp / 2) * rot,
+                begin=Rbo * np.exp(-1j * sp / 2) * rot,
+                end=(Rbo - self.H1) * np.exp(-1j * sp / 2) * rot,
             )
             line.plot(label="H1", offset_label=self.H3 * 0.2, **kwargs)
             # H2
             line = Segment(
-                (point_dict["Z3s"] + point_dict["Z6s"]) * 0.5 * rot,
-                (point_dict["Z4s"] + point_dict["Z5s"]) * 0.5 * rot,
+                begin=(point_dict["Z3s"] + point_dict["Z6s"]) * 0.5 * rot,
+                end=(point_dict["Z4s"] + point_dict["Z5s"]) * 0.5 * rot,
             )
             line.plot(label="H2", offset_label=self.H3 * 0.2, **kwargs)
             # H3
-            line = Segment(point_dict["Z4s"] * rot, point_dict["Z8cs"] * rot)
+            line = Segment(begin=point_dict["Z4s"] * rot, end=point_dict["Z8cs"] * rot)
             line.plot(label="H3", offset_label=self.H3 * 0.2, **kwargs)
             # H4
-            line = Segment(point_dict["Z9s"] * rot, point_dict["Z10s"] * rot)
+            line = Segment(begin=point_dict["Z9s"] * rot, end=point_dict["Z10s"] * rot)
             line.plot(label="H4", offset_label=self.H3 * 0.2, **kwargs)
 
         if is_add_main_line:
             lines = []
             # Ox axis
-            lines.append(Segment(0, lam.Rext * 1.5 * rot))
+            lines.append(Segment(begin=0, end=lam.Rext * 1.5 * rot))
 
             # Tooth axis
-            lines.append(Segment(0, lam.Rext * 1.5 * exp(1j * sp / 2) * rot))
+            lines.append(Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * sp / 2) * rot))
 
-            lines.append(Segment(0, lam.Rext * 1.5 * exp(-1j * sp / 2) * rot))
+            lines.append(Segment(begin=0, end=lam.Rext * 1.5 * np.exp(-1j * sp / 2) * rot))
             # H1 radius
             R = Rbo - self.H1
-            rot_N = exp(-1j * pi / 2 * 0.9) * rot
-            rot_P = exp(1j * pi / 2 * 0.9) * rot
+            rot_N = np.exp(-1j * np.pi / 2 * 0.9) * rot
+            rot_P = np.exp(1j * np.pi / 2 * 0.9) * rot
             lines.append(
                 Arc1(begin=R * rot_N, end=R * rot_P, radius=R, is_trigo_direction=True)
             )
@@ -213,13 +213,13 @@ def plot_schematics(
                 Arc1(begin=R * rot_N, end=R * rot_P, radius=R, is_trigo_direction=True)
             )
             # W1 lines
-            lines.append(Segment(point_dict["Z7"] * rot, point_dict["Z7s"] * rot))
-            lines.append(Segment(point_dict["Z8"] * rot, point_dict["Z8s"] * rot))
+            lines.append(Segment(begin=point_dict["Z7"] * rot, end=point_dict["Z7s"] * rot))
+            lines.append(Segment(begin=point_dict["Z8"] * rot, end=point_dict["Z8s"] * rot))
             # W2 lines
-            lines.append(Segment(point_dict["Z8"] * rot, point_dict["Z8a"] * rot))
-            lines.append(Segment(point_dict["Z8s"] * rot, point_dict["Z8as"] * rot))
+            lines.append(Segment(begin=point_dict["Z8"] * rot, end=point_dict["Z8a"] * rot))
+            lines.append(Segment(begin=point_dict["Z8s"] * rot, end=point_dict["Z8as"] * rot))
             # H2 lines
-            lines.append(Segment(point_dict["Z3s"] * rot, point_dict["Z6s"] * rot))
+            lines.append(Segment(begin=point_dict["Z3s"] * rot, end=point_dict["Z6s"] * rot))
 
             for line in lines:
                 line.plot(

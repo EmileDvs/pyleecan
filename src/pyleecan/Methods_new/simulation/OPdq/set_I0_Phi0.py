@@ -1,4 +1,4 @@
-from numpy import exp
+import numpy as np
 
 
 def set_I0_Phi0(self, I0, Phi0):
@@ -18,6 +18,6 @@ def set_I0_Phi0(self, I0, Phi0):
         self.Id_ref = 0
         self.Iq_ref = 0
     else:
-        Z = I0 * exp(1j * Phi0)
+        Z = I0 * np.exp(1j * Phi0)
         self.Id_ref = Z.real
         self.Iq_ref = Z.imag

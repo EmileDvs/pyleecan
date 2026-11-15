@@ -1,4 +1,4 @@
-from numpy import zeros, angle
+import numpy as np
 from . import OPMatrixException
 
 
@@ -44,7 +44,7 @@ def get_OP_array(self, *arg_list):
 
     # Init OP_matrix
     N_OP = self.get_N_OP()
-    OP_matrix = zeros((N_OP, len(arg_list)))
+    OP_matrix = np.zeros((N_OP, len(arg_list)))
 
     # Setup default argument (N0, Id, Iq, Tem, Pem)
     if len(arg_list) == 0:
@@ -116,9 +116,9 @@ def get_OP_array(self, *arg_list):
     if is_convert_I0:
         Z = OP_matrix[:, I0_index] + 1j * OP_matrix[:, Phi0_index]
         OP_matrix[:, I0_index] = abs(Z)
-        OP_matrix[:, Phi0_index] = angle(Z)
+        OP_matrix[:, Phi0_index] = np.angle(Z)
     if is_convert_U0:
         Z = OP_matrix[:, U0_index] + 1j * OP_matrix[:, UPhi0_index]
         OP_matrix[:, U0_index] = abs(Z)
-        OP_matrix[:, UPhi0_index] = angle(Z)
+        OP_matrix[:, UPhi0_index] = np.angle(Z)
     return OP_matrix

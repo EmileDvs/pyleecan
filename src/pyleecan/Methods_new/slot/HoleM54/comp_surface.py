@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 
 
 def comp_surface(self):
@@ -17,8 +17,8 @@ def comp_surface(self):
 
     """
 
-    Sint = pi * self.R1**2
-    Sext = pi * (self.R1 + self.H1) ** 2
-    Sarc = (Sext - Sint) * (self.W0 / (2 * pi))
+    Sint = np.pi * self.R1**2
+    Sext = np.pi * (self.R1 + self.H1) ** 2
+    Sarc = (Sext - Sint) * (self.W0 / (2 * np.pi))
 
-    return Sarc + pi * (self.H1 / 2) ** 2
+    return Sarc + np.pi * (self.H1 / 2) ** 2

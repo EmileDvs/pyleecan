@@ -1,4 +1,4 @@
-from numpy import transpose
+import numpy as np
 
 
 def comp_I_mag(self, output, Time):
@@ -50,7 +50,7 @@ def comp_I_mag(self, output, Time):
             Npcp = 1
 
         # Interpolate stator currents on input time vector
-        Is_val = transpose(
+        Is_val = np.transpose(
             Is.get_along(
                 "time=axis_data",
                 "phase",
@@ -87,7 +87,7 @@ def comp_I_mag(self, output, Time):
             str_phase = "phase"
 
         # Interpolate stator currents on input time vector
-        Ir_val = transpose(
+        Ir_val = np.transpose(
             Ir.get_along(
                 "time=axis_data",
                 str_phase,

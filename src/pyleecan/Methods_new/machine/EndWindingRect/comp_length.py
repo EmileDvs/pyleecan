@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
@@ -50,6 +50,6 @@ def comp_length(self):
             )
 
     # end winding length is half the distance between two slots separated by the coil pitch
-    end_wind_length = coil_pitch * pi / Zs * Rmid
+    end_wind_length = coil_pitch * np.pi / Zs * Rmid
 
     return end_wind_length

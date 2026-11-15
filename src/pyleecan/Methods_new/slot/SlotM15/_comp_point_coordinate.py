@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, cos
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -17,17 +17,17 @@ def _comp_point_coordinate(self):
 
     Rbo = self.get_Rbo()
 
-    Z1 = Rbo * exp(-1j * self.W0 / 2)
+    Z1 = Rbo * np.exp(-1j * self.W0 / 2)
 
     # alpha_lim = 2 * arcsin(self.W1 * 0.5 / self.Rtopm)  # Angle of the top arc
     # H_top_arc = self.Rtopm * (1 - cos(alpha_lim / 2))  # Height of the top arc
     if self.is_outwards():
-        Z2 = (Rbo + self.H0) * exp(-1j * self.W0 / 2)
+        Z2 = (Rbo + self.H0) * np.exp(-1j * self.W0 / 2)
     else:  # inward slot
-        Z2 = (Rbo - self.H0) * exp(-1j * self.W0 / 2)
+        Z2 = (Rbo - self.H0) * np.exp(-1j * self.W0 / 2)
 
-    alpha_M = float(arcsin(self.W1 / (2 * abs(Z2))))
-    ZM1 = abs(Z2) * exp(-1j * alpha_M)
+    alpha_M = float(np.arcsin(self.W1 / (2 * abs(Z2))))
+    ZM1 = abs(Z2) * np.exp(-1j * alpha_M)
     if self.is_outwards():
         ZM0 = abs(Z2) - self.H1
         Zc = ZM0 + self.Rtopm

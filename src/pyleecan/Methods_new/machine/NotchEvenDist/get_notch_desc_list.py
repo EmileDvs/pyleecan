@@ -1,4 +1,4 @@
-from numpy import pi, exp, angle
+import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
 
@@ -28,12 +28,12 @@ def get_notch_desc_list(self, sym=1):
     op = self.notch_shape.comp_angle_opening()
     Zs = self.notch_shape.Zs
     # No need to rotate more than a notch pitch
-    alpha = self.alpha % (2 * pi / Zs)
+    alpha = self.alpha % (2 * np.pi / Zs)
 
     for ii in range(Zs // sym):
         notch_dict = dict()
-        notch_dict["begin_angle"] = 2 * pi / Zs * ii + alpha - op / 2
-        notch_dict["end_angle"] = 2 * pi / Zs * ii + alpha + op / 2
+        notch_dict["begin_angle"] = 2 * np.pi / Zs * ii + alpha - op / 2
+        notch_dict["end_angle"] = 2 * np.pi / Zs * ii + alpha + op / 2
         notch_dict["obj"] = self.notch_shape
         notch_dict["lines"] = self.notch_shape.build_geometry()
         # Apply rotation
@@ -45,8 +45,8 @@ def get_notch_desc_list(self, sym=1):
     # If first notch is on Ox, then sym+1 notch are required (half on both yoke side)
     if notch_list[0]["begin_angle"] < 0 and sym != 1:
         notch_dict = dict()
-        notch_dict["begin_angle"] = 2 * pi / Zs * (ii + 1) + alpha - op / 2
-        notch_dict["end_angle"] = 2 * pi / Zs * (ii + 1) + alpha + op / 2
+        notch_dict["begin_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha - op / 2
+        notch_dict["end_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha + op / 2
         notch_dict["obj"] = self.notch_shape
         notch_dict["lines"] = self.notch_shape.build_geometry()
         # Apply rotation

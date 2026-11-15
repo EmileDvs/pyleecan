@@ -1,4 +1,4 @@
-from numpy import allclose, linspace
+import numpy as np
 
 
 def to_linspace(self):
@@ -22,9 +22,9 @@ def to_linspace(self):
     if (
         number > 1
         and values.dtype.kind not in {"U", "S"}
-        and allclose(
+        and np.allclose(
             values,
-            linspace(values[0], values[-1], number, endpoint=True),
+            np.linspace(values[0], values[-1], number, endpoint=True),
             rtol=1e-5,
             atol=1e-8,
             equal_nan=False,

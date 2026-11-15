@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, pi
+import numpy as np
 
 from ..Slot import SlotCheckError
 from . import *
@@ -51,7 +51,7 @@ def check(self):
             "R1 is too high comparing to the lamination bore radius (Rbo)"
         )
 
-    alpha = 2 * arcsin((2 * self.R1 + self.W3) * 0.5 / R1)
+    alpha = 2 * np.arcsin((2 * self.R1 + self.W3) * 0.5 / R1)
 
-    if alpha > 2 * pi / self.Zs:
+    if alpha > 2 * np.pi / self.Zs:
         raise S28_ZsCheckError("There are too many slots to match W3 and R1")

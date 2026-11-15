@@ -1,7 +1,7 @@
-from os.path import split, splitext
+import os
 
 from meshio import read
-from numpy import arange
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_time import DataTime
@@ -34,8 +34,8 @@ def build_meshsolution(self):
     meshsol = MeshSolution(label=self.label)
 
     # get the mesh
-    save_path, fn = split(self.file_path)
-    file_name, file_ext = splitext(fn)
+    save_path, fn = os.path.split(self.file_path)
+    file_name, file_ext = os.path.splitext(fn)
     if file_ext != ".vtu":
         raise ElmerResultsVTUError("ElmerResultsVTU: Results file must be of type VTU.")
 
@@ -48,7 +48,7 @@ def build_meshsolution(self):
     pt_data = meshsolvtu.point_data  # point_data is of type dict
 
     # setup axes
-    indices = arange(meshsolvtu.points.shape[0])
+    indices = np.arange(meshsolvtu.points.shape[0])
     Indices = Data1D(name="indice", values=indices, is_components=True)
 
     # store only data from store dict if available

@@ -1,4 +1,4 @@
-from numpy import zeros, sqrt, isnan
+import numpy as np
 
 from ....Functions_new.Electrical.dqh_transformation import n2abc
 from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
@@ -41,7 +41,7 @@ def _comp_flux_mean(self, out):
         if is_anti_per:
             qsr_eff = qsr // (sym * (1 + is_anti_per))
             for ii in range(qsr_eff):
-                if not all(isnan(Phi[:, ii + qsr_eff]).tolist()):
+                if not all(np.isnan(Phi[:, ii + qsr_eff]).tolist()):
                     logger.warning(
                         f"{type(self).__name__}: "
                         + f"Rotor fluxlinkage of bar {ii + qsr_eff} will be overridden."
@@ -50,7 +50,7 @@ def _comp_flux_mean(self, out):
         # reconstruct periodicity
         if sym != 1:
             qsr_eff = qsr // sym
-            if not all(isnan(Phi[:, qsr_eff:]).tolist()):
+            if not all(np.isnan(Phi[:, qsr_eff:]).tolist()):
                 logger.warning(
                     f"{type(self).__name__}: "
                     + f"Rotor fluxlinkage of bar "
@@ -65,7 +65,7 @@ def _comp_flux_mean(self, out):
         Phi = Phi / (sym * (1 + is_anti_per))
 
     # compute mean value of periodic bar flux linkage
-    Phi_ab = zeros([Phi.shape[0], 2])
+    Phi_ab = np.zeros([Phi.shape[0], 2])
     if (qsr % p) == 0:
         qsr_per_pole = qsr // p
         for ii in range(p):
@@ -76,10 +76,10 @@ def _comp_flux_mean(self, out):
         logger.warning(f"{type(self).__name__}: " + "Not Implemented Yet")
 
     # compute rotor and stator flux linkage
-    Phi_r = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / sqrt(2)
+    Phi_r = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / np.sqrt(2)
     Phi_ab = n2abc(
         out.mag.Phi_wind[STATOR_LAB + "-0"].get_along("time", "phase")["Phi_{wind}"]
     )
-    Phi_s = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / sqrt(2)
+    Phi_s = abs(Phi_ab[:, 0] + 1j * Phi_ab[:, 1]).mean() / np.sqrt(2)
 
     return Phi_s, Phi_r

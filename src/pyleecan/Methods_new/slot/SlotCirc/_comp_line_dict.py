@@ -49,7 +49,7 @@ def _comp_line_dict(self):
     line_dict["M-2"].split_half(is_begin=False)
     # Closing arc
     line_dict["2-1"] = Arc1(
-        point_dict["Z2"], point_dict["Z1"], -self.get_Rbo(), is_trigo_direction=False
+        begin=point_dict["Z2"], end=point_dict["Z1"], radius=-self.get_Rbo(), is_trigo_direction=False
     )
 
     return line_dict

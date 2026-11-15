@@ -1,4 +1,4 @@
-from numpy import exp
+import numpy as np
 
 
 def rotate(self, angle):
@@ -24,4 +24,4 @@ def rotate(self, angle):
     for line in self.line_list:
         line.rotate(angle)
     if self.point_ref is not None:
-        self.point_ref = self.point_ref * exp(1j * angle)
+        self.point_ref = self.point_ref * np.exp(1j * angle)

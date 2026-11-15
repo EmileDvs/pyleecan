@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
@@ -64,54 +64,54 @@ def build_geometry(self, alpha=0, delta=0, is_simplified=False):
     # Creation of the air curve
     curve_list = list()
     if is_radius:
-        curve_list.append(Arc1(Z1R, Z1L, self.R0))
-    curve_list.append(Segment(Z1L if is_radius else Z1, Z2))
-    curve_list.append(Segment(Z2, Z3))
-    curve_list.append(Segment(Z3, Z11))
-    curve_list.append(Segment(Z11, Z1R if is_radius else Z1))
+        curve_list.append(Arc1(begin=Z1R, end=Z1L, radius=self.R0))
+    curve_list.append(Segment(begin=Z1L if is_radius else Z1, end=Z2))
+    curve_list.append(Segment(begin=Z2, end=Z3))
+    curve_list.append(Segment(begin=Z3, end=Z11))
+    curve_list.append(Segment(begin=Z11, end=Z1R if is_radius else Z1))
     point_ref = (Z1 + Z2 + Z3 + Z11) / 4
     S1 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # Creation of the magnet curve
     curve_list = list()
     if is_simplified:
-        curve_list.append(Segment(Z3, Z11))
-        curve_list.append(Segment(Z7, Z10))
+        curve_list.append(Segment(begin=Z3, end=Z11))
+        curve_list.append(Segment(begin=Z7, end=Z10))
     else:
-        curve_list.append(Segment(Z4, Z11))
-        curve_list.append(Segment(Z11, Z10))
-        curve_list.append(Segment(Z10, Z6))
-        curve_list.append(Segment(Z6, Z4))
+        curve_list.append(Segment(begin=Z4, end=Z11))
+        curve_list.append(Segment(begin=Z11, end=Z10))
+        curve_list.append(Segment(begin=Z10, end=Z6))
+        curve_list.append(Segment(begin=Z6, end=Z4))
     point_ref = (Z11 + Z4 + Z6 + Z10) / 4
     S2 = SurfLine(line_list=curve_list, label=mag_label + "T0-S0", point_ref=point_ref)
 
     # Creation of the second air curve
     curve_list = list()
-    curve_list.append(Segment(Z7, Z8))
-    curve_list.append(Segment(Z8, Z9R if is_radius else Z9))
+    curve_list.append(Segment(begin=Z7, end=Z8))
+    curve_list.append(Segment(begin=Z8, end=Z9R if is_radius else Z9))
     if is_radius:
-        curve_list.append(Arc1(Z9R, Z9L, self.R0))
-    curve_list.append(Segment(Z9L if is_radius else Z9, Z10))
-    curve_list.append(Segment(Z10, Z7))
+        curve_list.append(Arc1(begin=Z9R, end=Z9L, radius=self.R0))
+    curve_list.append(Segment(begin=Z9L if is_radius else Z9, end=Z10))
+    curve_list.append(Segment(begin=Z10, end=Z7))
     point_ref = (Z7 + Z8 + Z9 + Z10) / 4
     S3 = SurfLine(line_list=curve_list, point_ref=point_ref)
 
     # Area with no magnet (S1 + S2 + S3)
     curve_list = list()
     if is_radius:
-        curve_list.append(Arc1(Z1R, Z1L, self.R0))
-    curve_list.append(Segment(Z1L if is_radius else Z1, Z2))
-    curve_list.append(Segment(Z2, Z3))
+        curve_list.append(Arc1(begin=Z1R, end=Z1L, radius=self.R0))
+    curve_list.append(Segment(begin=Z1L if is_radius else Z1, end=Z2))
+    curve_list.append(Segment(begin=Z2, end=Z3))
     if self.H2 > 0:
-        curve_list.append(Segment(Z3, Z4))
-    curve_list.append(Segment(Z4, Z6))
+        curve_list.append(Segment(begin=Z3, end=Z4))
+    curve_list.append(Segment(begin=Z4, end=Z6))
     if self.H2 > 0:
-        curve_list.append(Segment(Z6, Z7))
-    curve_list.append(Segment(Z7, Z8))
-    curve_list.append(Segment(Z8, Z9R if is_radius else Z9))
+        curve_list.append(Segment(begin=Z6, end=Z7))
+    curve_list.append(Segment(begin=Z7, end=Z8))
+    curve_list.append(Segment(begin=Z8, end=Z9R if is_radius else Z9))
     if is_radius:
-        curve_list.append(Arc1(Z9R, Z9L, self.R0))
-    curve_list.append(Segment(Z9L if is_radius else Z9, Z1R if is_radius else Z1))
+        curve_list.append(Arc1(begin=Z9R, end=Z9L, radius=self.R0))
+    curve_list.append(Segment(begin=Z9L if is_radius else Z9, end=Z1R if is_radius else Z1))
     point_ref = (Z11 + Z4 + Z6 + Z10) / 4
     S4 = SurfLine(line_list=curve_list, point_ref=point_ref)
 

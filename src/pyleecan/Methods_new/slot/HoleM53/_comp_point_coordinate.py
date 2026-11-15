@@ -1,4 +1,4 @@
-from numpy import cos, exp, sin
+import numpy as np
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 from . import Slot53InterError
 
@@ -19,16 +19,16 @@ def _comp_point_coordinate(self):
     Rext = self.get_Rext()
 
     Z7 = Rext - self.H0 - 1j * self.W1 / 2
-    Z6 = Z7 - 1j * (self.H2 - self.H3) * cos(self.W4)
-    Z8 = Z7 + (self.H2 - self.H3) * sin(self.W4)
+    Z6 = Z7 - 1j * (self.H2 - self.H3) * np.cos(self.W4)
+    Z8 = Z7 + (self.H2 - self.H3) * np.sin(self.W4)
 
     # Compute the coordinate in the ref of Z6 with rotation -W4
-    Z5 = self.W2 * exp(-1j * self.W4) + Z6
-    Z4 = (self.W2 - 1j * self.H3) * exp(-1j * self.W4) + Z6
-    Z3 = (self.W2 + self.W3 - 1j * self.H3) * exp(-1j * self.W4) + Z6
-    Z2 = (self.W2 + self.W3) * exp(-1j * self.W4) + Z6
-    Z9 = (self.W2 + 1j * (self.H2 - self.H3)) * exp(-1j * self.W4) + Z6
-    Z10 = (self.W2 + self.W3 + 1j * (self.H2 - self.H3)) * exp(-1j * self.W4) + Z6
+    Z5 = self.W2 * np.exp(-1j * self.W4) + Z6
+    Z4 = (self.W2 - 1j * self.H3) * np.exp(-1j * self.W4) + Z6
+    Z3 = (self.W2 + self.W3 - 1j * self.H3) * np.exp(-1j * self.W4) + Z6
+    Z2 = (self.W2 + self.W3) * np.exp(-1j * self.W4) + Z6
+    Z9 = (self.W2 + 1j * (self.H2 - self.H3)) * np.exp(-1j * self.W4) + Z6
+    Z10 = (self.W2 + self.W3 + 1j * (self.H2 - self.H3)) * np.exp(-1j * self.W4) + Z6
 
     # Z1 and Z11 are defined as intersection between line and circle
     Zlist = inter_line_circle(Z8, Z10, Rext - self.H1)

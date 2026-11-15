@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def get_slot_desc_list(self, sym=1, is_bore=True):
@@ -35,8 +35,8 @@ def get_slot_desc_list(self, sym=1, is_bore=True):
     for ii in range(Zs // sym):
         if ii % 2 == 0 and self.slot.is_bore == is_bore:  # North
             slot_dict = dict()
-            slot_dict["begin_angle"] = 2 * pi / Zs * ii - opN / 2 + pi / Zs
-            slot_dict["end_angle"] = 2 * pi / Zs * ii + opN / 2 + pi / Zs
+            slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opN / 2 + np.pi / Zs
+            slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opN / 2 + np.pi / Zs
             slot_dict["obj"] = self.slot
             slot_dict["lines"] = self.slot.build_geometry()
             # Apply rotation
@@ -46,8 +46,8 @@ def get_slot_desc_list(self, sym=1, is_bore=True):
             slot_list.append(slot_dict)
         elif ii % 2 == 1 and self.slot_south.is_bore == is_bore:  # South
             slot_dict = dict()
-            slot_dict["begin_angle"] = 2 * pi / Zs * ii - opS / 2 + pi / Zs
-            slot_dict["end_angle"] = 2 * pi / Zs * ii + opS / 2 + pi / Zs
+            slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opS / 2 + np.pi / Zs
+            slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opS / 2 + np.pi / Zs
             slot_dict["obj"] = self.slot_south
             slot_dict["lines"] = self.slot_south.build_geometry()
             # Apply rotation

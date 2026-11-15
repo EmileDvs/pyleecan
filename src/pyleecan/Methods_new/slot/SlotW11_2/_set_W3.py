@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ....Classes._check import check_var
+from ....classes_common.check import check_var
 
 
 def _set_W3(self, value):

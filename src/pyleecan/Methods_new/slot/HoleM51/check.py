@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 from . import *
 
 
@@ -48,5 +48,5 @@ def check(self):
     if Rext < self.H0 + self.H2:
         raise S51_RHCheckError("You must have H0+H2 < Rext")
 
-    if alpha > pi / 2:
+    if alpha > np.pi / 2:
         raise S51_AlphaCheckError("You must have alpha < pi/2")

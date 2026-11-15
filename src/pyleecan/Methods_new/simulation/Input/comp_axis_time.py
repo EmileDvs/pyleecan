@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
@@ -36,9 +36,9 @@ def comp_axis_time(self, p, per_t=None, is_antiper_t=None, Time_in=None):
     norm_time = {
         "elec_order": Norm_ref(ref=f_elec),
         "mech_order": Norm_ref(ref=N0 / 60),
-        "angle_elec": Norm_ref(ref=self.current_dir / (2 * pi * f_elec)),
+        "angle_elec": Norm_ref(ref=self.current_dir / (2 * np.pi * f_elec)),
         "angle_rotor": Norm_affine(
-            slope=self.rot_dir * N0 * 360 / 60, offset=A0 * 180 / pi
+            slope=self.rot_dir * N0 * 360 / 60, offset=A0 * 180 / np.pi
         ),
     }
 

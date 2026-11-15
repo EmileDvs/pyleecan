@@ -1,4 +1,4 @@
-from numpy import arcsin, exp
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -19,11 +19,11 @@ def _comp_point_coordinate(self):
     H1 = self.get_H1()
 
     # alpha is the angle to rotate Z0 so ||Z1,Z10|| = W0
-    alpha = float(arcsin(self.W0 / (2 * Rbo)))
+    alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
 
     # comp point coordinate (in complex)
-    Z0 = Rbo * exp(1j * 0)
-    Z1 = Z0 * exp(-1j * alpha)
+    Z0 = Rbo * np.exp(1j * 0)
+    Z1 = Z0 * np.exp(-1j * alpha)
 
     if self.is_outwards():
         Z2 = Z1 + self.H0

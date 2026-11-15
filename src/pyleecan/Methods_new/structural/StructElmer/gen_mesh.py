@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from os.path import join
+import os
 
 from ....Functions_new.GMSH.draw_gmsh import draw_GMSH
 from . import _execute, _get_BP_dict
@@ -30,7 +30,7 @@ def gen_mesh(self, output):
     save_dir = self.get_path_save_fea(output)
 
     # draw initial gmsh model
-    file_gmsh_geo = join(save_dir, "GMSH_Machine_Model.geo")
+    file_gmsh_geo = os.path.join(save_dir, "GMSH_Machine_Model.geo")
 
     draw_GMSH(
         output=output,
@@ -51,7 +51,7 @@ def gen_mesh(self, output):
     names = {}
     _, _, names["Lamination"] = self.process_mesh(
         file_gmsh_geo,
-        join(save_dir, lam_name),
+        os.path.join(save_dir, lam_name),
         is_get_lam=True,
         is_get_magnet=False,
     )
@@ -59,7 +59,7 @@ def gen_mesh(self, output):
     if self.include_magnets:
         _, _, names["Magnets"] = self.process_mesh(
             file_gmsh_geo,
-            join(save_dir, mag_name),
+            os.path.join(save_dir, mag_name),
             is_get_lam=False,
             is_get_magnet=True,
         )

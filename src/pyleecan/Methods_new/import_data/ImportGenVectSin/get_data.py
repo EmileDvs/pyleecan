@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace, sin, pi
+import numpy as np
 
 
 def get_data(self):
@@ -18,7 +18,7 @@ def get_data(self):
 
     """
 
-    time = linspace(start=0, stop=self.Tf, num=self.N, endpoint=False)
+    time = np.linspace(start=0, stop=self.Tf, num=self.N, endpoint=False)
 
-    vect = self.A * sin(2 * pi * self.f * time + self.Phi)
+    vect = self.A * np.sin(2 * np.pi * self.f * time + self.Phi)
     return self.edit_matrix(vect)

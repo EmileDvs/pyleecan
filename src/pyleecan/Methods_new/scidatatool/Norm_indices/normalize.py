@@ -1,4 +1,4 @@
-from numpy import array
+import numpy as np
 
 
 def normalize(
@@ -16,4 +16,4 @@ def normalize(
     -------
     Vector of axis values
     """
-    return array([i for i in range(len(values))])
+    return np.array([i for i in range(len(values))])

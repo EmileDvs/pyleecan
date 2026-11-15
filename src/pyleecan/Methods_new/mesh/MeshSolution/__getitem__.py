@@ -1,4 +1,4 @@
-from pyleecan.Classes_new.mesh.solution import Solution
+from ....Classes_new.mesh.solution import Solution
 from typing import Hashable
 
 

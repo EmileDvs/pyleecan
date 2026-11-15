@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 
 
 def get_Jrms(self):
@@ -24,6 +24,6 @@ def get_Jrms(self):
 
         Idq_dict = self.OP.get_Id_Iq()
 
-        self.Jrms = sqrt(Idq_dict["Id"] ** 2 + Idq_dict["Iq"] ** 2) / (Swire * Npcp)
+        self.Jrms = np.sqrt(Idq_dict["Id"] ** 2 + Idq_dict["Iq"] ** 2) / (Swire * Npcp)
 
     return self.Jrms

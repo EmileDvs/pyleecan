@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import cos, exp, arcsin, array
+import numpy as np
 from ....Classes_new.geometry.arc_1 import Arc1
 
 
@@ -29,7 +29,7 @@ def comp_height(self):
         if self.R1 * 2 == self.W2:
             # Computation of the arc height
             alpha = self.comp_angle_opening() / 2
-            Harc = float(Rbo * (1 - cos(alpha)))
+            Harc = float(Rbo * (1 - np.cos(alpha)))
             return self.H0 + self.get_H1() + self.H2 - Harc
 
         else:
@@ -37,11 +37,11 @@ def comp_height(self):
             Arc = line_dict["6-7"]
             Ndisc = 200
             point_list = Arc.discretize(Ndisc)
-            point_list = array(point_list)
+            point_list = np.array(point_list)
             return max(abs(point_list)) - Rbo
 
     else:
         # Computation of the arc height
         alpha = self.comp_angle_opening() / 2
-        Harc = float(Rbo * (1 - cos(alpha)))
+        Harc = float(Rbo * (1 - np.cos(alpha)))
         return self.H0 + self.get_H1() + self.H2 + Harc

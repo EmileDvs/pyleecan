@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import sin, pi
+import numpy as np
 
 
 def comp_surface(self):
@@ -18,7 +18,7 @@ def comp_surface(self):
 
     """
     # Two discus of radius H0 / 2
-    S1 = 2 * (pi * (self.H0 / 2) ** 2)
+    S1 = 2 * (np.pi * (self.H0 / 2) ** 2)
     # Two rectangles of dimensions (W2 - H0) x H0
     S2 = 2 * ((self.W2 - self.H0) * self.H0)
 

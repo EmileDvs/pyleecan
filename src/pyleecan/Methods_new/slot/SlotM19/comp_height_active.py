@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
-from numpy import sqrt
+import numpy as np
+
 
 
 def comp_height_active(self):

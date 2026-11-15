@@ -1,5 +1,6 @@
 """Methods_new: written by the method generator, read by the class generator."""
 
+import ast
 import re
 from pathlib import Path
 
@@ -84,8 +85,20 @@ def _fake_tree(root):
     )
     (root / "Classes_new").mkdir()
     return {
-        "Segment": {"package": "Geometry", "mother": "", "methods": ["comp_length"]},
-        "Circle": {"package": "Geometry", "mother": "", "methods": []},
+        "Segment": {
+            "package": "Geometry",
+            "mother": "",
+            "methods": ["comp_length"],
+            "properties": [],
+            "constants": [],
+        },
+        "Circle": {
+            "package": "Geometry",
+            "mother": "",
+            "methods": [],
+            "properties": [],
+            "constants": [],
+        },
     }
 
 
@@ -134,9 +147,10 @@ def test_modernize_is_idempotent():
 
 
 def test_new_names():
+    from pyleecan.Generator.ClassGenerator.New.modernize import modernize_names
     from pyleecan.Generator.ClassGenerator.New.source_names import (
+        name_maps,
         to_legacy_names,
-        to_new_names,
     )
 
     package = "pyleecan.Methods_new.geometry.Segment"
@@ -151,13 +165,19 @@ def test_new_names():
     new = (
         "from ....Classes_new.geometry.segment import Segment\n"
         "from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref\n"
-        "from ....Classes._check import check_var\n"  # Support module: kept
+        "from ....classes_common.check import check_var\n"  # Shared support
         "from ....Functions_new.FEMM.comp_femm_dict import comp_FEMM_dict\n"
         "from ....Functions_new.FEMM import comp_femm_dict as femm\n"
-        "from pyleecan.Functions_new.init_fig import init_fig\n"
+        "from ....Functions_new.init_fig import init_fig\n"  # Made relative
     )
-    assert to_new_names(legacy, package) == new
-    assert to_legacy_names(new, package) == legacy
+    modernized = modernize_names(legacy, package, name_maps().gen_dict, "Segment")
+    assert ast.dump(ast.parse(modernized)) == ast.dump(ast.parse(new))
+    # Back to the legacy names (the relative form is kept)
+    back = to_legacy_names(modernized, package).splitlines()
+    expected = legacy.splitlines()
+    expected[2] = "from ....classes_common.check import check_var"  # Not legacy
+    expected[5] = "from ....Functions.init_fig import init_fig"
+    assert back == expected
 
 
 def test_methods_new_imports():

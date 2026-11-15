@@ -1,4 +1,4 @@
-from numpy import exp
+import numpy as np
 
 
 def comp_parameters(self):

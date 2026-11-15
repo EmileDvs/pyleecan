@@ -1,27 +1,11 @@
-from numpy import (
-    any as np_any,
-)
-from numpy import (
-    array,
-    array2string,
-    ceil,
-    floor,
-    linspace,
-    log10,
-    logical_and,
-    meshgrid,
-    where,
-)
-from numpy import (
-    nanmax as np_max,
-)
-from numpy import (
-    nanmin as np_min,
-)
-from numpy.core.numeric import zeros_like
+import numpy as np
+
+
+
+
 
 from ....Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
 from ....Functions_new.SciDataTool.parser import read_input_strings
 from ....Functions_new.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
@@ -208,11 +192,11 @@ def plot_3D_Data(
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
     if axes_list[list(result.keys()).index(axes_names[0])].is_components:
-        Xdata = linspace(0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]]))
+        Xdata = np.linspace(0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]]))
     else:
         Xdata = result[axes_names[0]]
     if axes_list[list(result.keys()).index(axes_names[1])].is_components:
-        Ydata = linspace(0, len(result[axes_names[1]]) - 1, len(result[axes_names[1]]))
+        Ydata = np.linspace(0, len(result[axes_names[1]]) - 1, len(result[axes_names[1]]))
     else:
         Ydata = result[axes_names[1]]
     Zdata = result[self.symbol]
@@ -226,7 +210,7 @@ def plot_3D_Data(
         Z_flat = Zdata
 
     else:
-        Y_map, X_map = meshgrid(Ydata, Xdata)
+        Y_map, X_map = np.meshgrid(Ydata, Xdata)
         X_flat = X_map.flatten()
         Y_flat = Y_map.flatten()
         Z_flat = Zdata.flatten()
@@ -236,17 +220,17 @@ def plot_3D_Data(
                 z_min = 0
             else:
                 if "dB" in unit:
-                    z_min = floor(np_min(Zdata))
+                    z_min = np.floor(np.nanmin(Zdata))
                 else:
-                    z_min = np_min(Zdata)
+                    z_min = np.nanmin(Zdata)
         if z_max is None:
-            z_max = np_max(Zdata)
+            z_max = np.nanmax(Zdata)
     else:
         if z_min is None and z_max is None:
             if "dB" in unit:
-                z_max = ceil(np_max(Zdata))
+                z_max = np.ceil(np.nanmax(Zdata))
             else:
-                z_max = np_max(Zdata)
+                z_max = np.nanmax(Zdata)
         if z_max is None:
             z_max = z_min + z_range
         if z_min is None:
@@ -273,24 +257,24 @@ def plot_3D_Data(
     if (
         axis.name == "angle"
         and axis.unit == "°"
-        and round(np_max(axis.values) / 6) % 5 == 0
+        and round(np.nanmax(axis.values) / 6) % 5 == 0
     ):
-        xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
+        xticks = [i * round(np.nanmax(axis.values) / 6) for i in range(7)]
     else:
         xticks = None
     if axis.is_components:
         xticklabels = result[axis.name]
         xticks = Xdata
         if annotation_delim is not None and annotation_delim in xticklabels[0]:
-            annotations_x = array(
+            annotations_x = np.array(
                 [label.split(annotation_delim)[1] for label in xticklabels]
             )
-            xticklabels = array(
+            xticklabels = np.array(
                 [label.split(annotation_delim)[0] for label in xticklabels]
             )
     else:
         xticklabels = None
-        annotations_x = zeros_like(Xdata)
+        annotations_x = np.core.numeric.zeros_like(Xdata)
 
     axis = axes_list[list(result.keys()).index(axes_names[1])]
     if axis.name in axes_dict:
@@ -311,29 +295,29 @@ def plot_3D_Data(
     if (
         axis.name == "angle"
         and axis.unit == "°"
-        and round(np_max(axis.values) / 6) % 5 == 0
+        and round(np.nanmax(axis.values) / 6) % 5 == 0
     ):
-        yticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
+        yticks = [i * round(np.nanmax(axis.values) / 6) for i in range(7)]
     else:
         yticks = None
     if axis.is_components:
         yticklabels = result[axis.name]
         yticks = Ydata
         if annotation_delim is not None and annotation_delim in yticklabels[0]:
-            annotations_y = array(
+            annotations_y = np.array(
                 [label.split(annotation_delim)[1] for label in yticklabels]
             )
-            yticklabels = array(
+            yticklabels = np.array(
                 [label.split(annotation_delim)[0] for label in yticklabels]
             )
         else:
-            annotations_y = zeros_like(Ydata)
+            annotations_y = np.core.numeric.zeros_like(Ydata)
     else:
         yticklabels = None
-        annotations_y = zeros_like(Ydata)
+        annotations_y = np.core.numeric.zeros_like(Ydata)
 
     if is_fft and is_2D_view and annotation_delim is not None:
-        _, annotations = meshgrid(annotations_y, annotations_x)
+        _, annotations = np.meshgrid(annotations_y, annotations_x)
         annotations = annotations.flatten()
     else:
         annotations = None
@@ -388,7 +372,7 @@ def plot_3D_Data(
                     else:
                         fmt = "{:.3g}"
                     axis_str = (
-                        array2string(
+                        np.array2string(
                             result[axis.name],
                             formatter={"float_kind": fmt.format},
                         )
@@ -428,7 +412,7 @@ def plot_3D_Data(
                 else:
                     fmt = "{:.3g}"
                 axis_str = (
-                    array2string(
+                    np.array2string(
                         axes_dict_other[axis_name][0],
                         formatter={"float_kind": fmt.format},
                     ).replace(" ", ", ")
@@ -459,11 +443,11 @@ def plot_3D_Data(
                 thresh = 0.02
 
         if "dB" in unit:
-            threshold = max(10 * log10(thresh) + abs(np_max(Zdata)), 0)
+            threshold = max(10 * np.log10(thresh) + abs(np.nanmax(Zdata)), 0)
         else:
-            threshold = abs(thresh * np_max(Zdata))
-        indices_x = np_any(where(Zdata > threshold, True, False), axis=1)
-        indices_y = np_any(where(Zdata > threshold, True, False), axis=0)
+            threshold = abs(thresh * np.nanmax(Zdata))
+        indices_x = np.any(np.where(Zdata > threshold, True, False), axis=1)
+        indices_y = np.any(np.where(Zdata > threshold, True, False), axis=0)
 
         if is_filter_x:
             xticks = Xdata[indices_x]
@@ -493,13 +477,13 @@ def plot_3D_Data(
                     x_max = min(x_max, xticks[-1])
             else:
                 if x_min is None:
-                    x_min = np_min(Xdata)
+                    x_min = np.nanmin(Xdata)
                 else:
-                    x_min = max(x_min, np_min(Xdata))
+                    x_min = max(x_min, np.nanmin(Xdata))
                 if x_max is None:
-                    x_max = np_max(Xdata)
+                    x_max = np.nanmax(Xdata)
                 else:
-                    x_max = min(x_max, np_max(Xdata))
+                    x_max = min(x_max, np.nanmax(Xdata))
             if len(yticks) > 1:
                 if y_min is None:
                     if (
@@ -523,22 +507,22 @@ def plot_3D_Data(
                     y_max = min(y_max, yticks[-1])
             else:
                 if y_min is None:
-                    y_min = max(np_min(Ydata), -100)
+                    y_min = max(np.nanmin(Ydata), -100)
                 else:
-                    y_min = max(y_min, np_min(Ydata))
+                    y_min = max(y_min, np.nanmin(Ydata))
                 if y_max is None:
-                    y_max = min(np_max(Ydata), 100)
+                    y_max = min(np.nanmax(Ydata), 100)
                 else:
-                    y_max = min(y_max, np_max(Ydata))
+                    y_max = min(y_max, np.nanmax(Ydata))
         else:
             if x_min is None:
-                x_min = np_min(Xdata)
+                x_min = np.nanmin(Xdata)
             if x_max is None:
-                x_max = np_max(Xdata)
+                x_max = np.nanmax(Xdata)
             if y_min is None:
-                y_min = np_min(Ydata)
+                y_min = np.nanmin(Ydata)
             if y_max is None:
-                y_max = np_max(Ydata)
+                y_max = np.nanmax(Ydata)
 
         x_min = x_min - x_max * 0.05
         x_max = x_max * 1.05
@@ -546,12 +530,12 @@ def plot_3D_Data(
         y_max = y_max * 1.2
 
         if len(xticks) == 0 or (
-            logical_and(xticks > x_min, xticks < x_max).sum() > 20
+            np.logical_and(xticks > x_min, xticks < x_max).sum() > 20
             and not axes_list[list(result.keys()).index(axes_names[0])].is_components
         ):
             xticks = None
         if len(yticks) == 0 or (
-            logical_and(yticks > y_min, yticks < y_max).sum() > 20
+            np.logical_and(yticks > y_min, yticks < y_max).sum() > 20
             and not axes_list[list(result.keys()).index(axes_names[1])].is_components
         ):
             yticks = None
@@ -642,13 +626,13 @@ def plot_3D_Data(
             )
     else:
         if x_min is None:
-            x_min = np_min(Xdata)
+            x_min = np.nanmin(Xdata)
         if x_max is None:
-            x_max = np_max(Xdata)
+            x_max = np.nanmax(Xdata)
         if y_min is None:
-            y_min = np_min(Ydata)
+            y_min = np.nanmin(Ydata)
         if y_max is None:
-            y_max = np_max(Ydata)
+            y_max = np.nanmax(Ydata)
         if is_2D_view:
             if type_plot is None:
                 type_plot = "pcolor"
@@ -662,7 +646,7 @@ def plot_3D_Data(
                     Ydata = Ydata - 0.5
                     y_min -= 0.5
                     y_max -= 0.5
-                Ydata, Xdata = meshgrid(Ydata, Xdata)
+                Ydata, Xdata = np.meshgrid(Ydata, Xdata)
             if type_plot == "pcolor":
                 Zdata = Zdata.T
             plot_3D(

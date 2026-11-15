@@ -1,7 +1,7 @@
 from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ....Functions_new.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 
-from numpy import pi, exp
+import numpy as np
 
 
 def build_geometry_key(self, index=0, sym=1, alpha=0, delta=0):

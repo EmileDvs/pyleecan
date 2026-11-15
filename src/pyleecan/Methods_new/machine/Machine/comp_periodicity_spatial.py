@@ -1,4 +1,4 @@
-from numpy import gcd
+import numpy as np
 
 
 def comp_periodicity_spatial(self):
@@ -26,7 +26,7 @@ def comp_periodicity_spatial(self):
     pera_r, is_antipera_r = self.rotor.comp_periodicity_spatial()
 
     # Get machine spatial periodicity
-    pera = int(gcd(gcd(pera_s, pera_r), p))
+    pera = int(np.gcd(np.gcd(pera_s, pera_r), p))
 
     # Get machine time and spatial anti-periodicities
     is_apera = bool(is_antipera_s and is_antipera_r)

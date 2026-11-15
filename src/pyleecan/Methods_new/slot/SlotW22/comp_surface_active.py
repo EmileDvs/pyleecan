@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_surface_active(self):
@@ -21,19 +21,19 @@ def comp_surface_active(self):
 
     if self.is_outwards():
         # Surface of the external disk
-        Sext = ((self.H2 + self.H0 + Rbo) ** 2) * pi
+        Sext = ((self.H2 + self.H0 + Rbo) ** 2) * np.pi
 
         # Surface of the internal disk
-        Sint = ((self.H0 + Rbo) ** 2) * pi
+        Sint = ((self.H0 + Rbo) ** 2) * np.pi
     else:
         # Surface of the external disk
-        Sext = ((Rbo - self.H0) ** 2) * pi
+        Sext = ((Rbo - self.H0) ** 2) * np.pi
 
         # Surface of the internal disk
-        Sint = ((Rbo - self.H2 - self.H0) ** 2) * pi
+        Sint = ((Rbo - self.H2 - self.H0) ** 2) * np.pi
 
     # Surface of the ring
     Sring = Sext - Sint
 
     # Only an W2 angle of the ring
-    return Sring * self.W2 / (2 * pi)
+    return Sring * self.W2 / (2 * np.pi)

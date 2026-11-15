@@ -1,5 +1,5 @@
-from pyleecan.Classes_new.converter.rule_simple import RuleSimple
-from pyleecan.Classes_new.converter.rule_complex import RuleComplex
+from ......Classes_new.converter.rule_simple import RuleSimple
+from ......Classes_new.converter.rule_complex import RuleComplex
 
 
 def add_rule_slotM14(self):

@@ -1,4 +1,4 @@
-from numpy import linspace, zeros
+import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
@@ -37,11 +37,11 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
     Z6 = point_dict["Z6"]
     Z7 = point_dict["Z7"]
 
-    X = linspace(Z4, Z5, Nrad + 1)
+    X = np.linspace(Z4, Z5, Nrad + 1)
     # Nrad+1 and Ntan+1 because 3 points => 2 zones
-    Z = zeros((Nrad + 1, Ntan + 1), dtype=complex)
+    Z = np.zeros((Nrad + 1, Ntan + 1), dtype=complex)
     for ii in range(Nrad + 1):
-        Z[ii][:] = linspace(X[ii], X[ii].conjugate(), Ntan + 1)
+        Z[ii][:] = np.linspace(X[ii], X[ii].conjugate(), Ntan + 1)
 
     assert Z[0][0] == Z4
     assert Z[Nrad][0] == Z5
@@ -59,25 +59,25 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
             point_ref = (Z1 + Z2 + Z3 + Z4) / 4
             # With one zone the order would be [Z7,Z4,Z5,Z6]
             curve_list = list()
-            curve_list.append(Segment(Z1, Z2))
+            curve_list.append(Segment(begin=Z1, end=Z2))
             curve_list.append(
                 Segment(
-                    Z2,
-                    Z3,
+                    begin=Z2,
+                    end=Z3,
                     prop_dict={DRAW_PROP_LAB: False},
                 )
             )
             curve_list.append(
                 Segment(
-                    Z3,
-                    Z4,
+                    begin=Z3,
+                    end=Z4,
                     prop_dict={DRAW_PROP_LAB: False},
                 )
             )
             curve_list.append(
                 Segment(
-                    Z4,
-                    Z1,
+                    begin=Z4,
+                    end=Z1,
                     prop_dict={DRAW_PROP_LAB: jj != 0},
                 )
             )

@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def get_angle_rotor(self, Time=None):
@@ -30,7 +30,7 @@ def get_angle_rotor(self, Time=None):
 
     if "angle_rotor" in Time.normalizations:
         # angle rotor is stored in degrees as normalization of Time axis
-        angle_rotor = Time.get_values(normalization="angle_rotor") * pi / 180
+        angle_rotor = Time.get_values(normalization="angle_rotor") * np.pi / 180
     else:
         # Recalculate rotor angular position over time (should not happen)
         self.get_logger().warning(

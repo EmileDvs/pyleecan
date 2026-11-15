@@ -1,4 +1,4 @@
-from numpy import exp
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -22,13 +22,13 @@ def _comp_point_coordinate(self):
     alpha1 = self.comp_angle_bottom() / 2
 
     # comp point coordinate (in complex)
-    Z_ = Rbo * exp(1j * 0)
-    Z0 = Z_ * exp(1j * alpha0)
+    Z_ = Rbo * np.exp(1j * 0)
+    Z0 = Z_ * np.exp(1j * alpha0)
 
     if self.is_outwards():
-        Z1 = (Rbo + self.H0) * exp(1j * alpha1)
+        Z1 = (Rbo + self.H0) * np.exp(1j * alpha1)
     else:  # inward slot
-        Z1 = (Rbo - self.H0) * exp(1j * alpha1)
+        Z1 = (Rbo - self.H0) * np.exp(1j * alpha1)
 
     # symetry
     Z2 = Z1.conjugate()

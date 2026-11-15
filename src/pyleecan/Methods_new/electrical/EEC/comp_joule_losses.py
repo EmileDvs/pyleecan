@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ..EEC import AbstractClassError
+from . import AbstractClassError
 
 
 def comp_joule_losses(self, out_dict, machine):

@@ -1,4 +1,4 @@
-from numpy import arange, array
+import numpy as np
 
 from ....Classes_new.scidatatool.data_pattern import DataPattern
 from ....Classes_new.import_data.import_matrix_val import ImportMatrixVal
@@ -54,7 +54,7 @@ def gen_input(self):
                 if self.slice is not None:
                     axes_values["slice"] = self.slice
                 else:
-                    axes_values["slice"] = arange(len(comp))
+                    axes_values["slice"] = np.arange(len(comp))
             elif isinstance(comp, ImportMatrixXls):
                 # Only this one is used to import flux from excel files
                 logger.info(
@@ -107,10 +107,10 @@ def gen_input(self):
             Slice = DataPattern(
                 name="z",
                 unit="m",
-                values=array([-L1 / 2], dtype=float),
+                values=np.array([-L1 / 2], dtype=float),
                 rebuild_indices=[0, 0],
                 unique_indices=[0],
-                values_whole=array([-L1 / 2, L1 / 2], dtype=float),
+                values_whole=np.array([-L1 / 2, L1 / 2], dtype=float),
             )
 
         # Store in axes_dict

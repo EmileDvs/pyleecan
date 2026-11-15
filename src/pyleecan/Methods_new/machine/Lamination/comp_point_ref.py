@@ -1,4 +1,4 @@
-from numpy import exp, pi
+import numpy as np
 from ....Classes_new.geometry.arc import Arc
 
 
@@ -36,7 +36,7 @@ def comp_point_ref(self, sym=1):
 
     # Find an angle without notches on the yoke
     if not self.has_notch(is_bore=False):
-        angle = pi / sym
+        angle = np.pi / sym
     else:
         yoke_desc_list = self.build_radius_desc(sym=sym, is_bore=False)
         ii = 0
@@ -50,4 +50,4 @@ def comp_point_ref(self, sym=1):
             yoke_desc_list[ii]["begin_angle"] + yoke_desc_list[ii]["end_angle"]
         ) / 2
 
-    return Rref * exp(1j * angle)
+    return Rref * np.exp(1j * angle)

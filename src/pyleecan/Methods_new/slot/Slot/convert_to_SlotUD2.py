@@ -1,4 +1,4 @@
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 
 
 def convert_to_SlotUD2(self):

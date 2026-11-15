@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def get_slot_desc_list(self, sym=1, is_bore=True):
@@ -33,8 +33,8 @@ def get_slot_desc_list(self, sym=1, is_bore=True):
 
     for ii in range(Zs // sym):
         slot_dict = dict()
-        slot_dict["begin_angle"] = 2 * pi / Zs * ii - op / 2 + pi / Zs
-        slot_dict["end_angle"] = 2 * pi / Zs * ii + op / 2 + pi / Zs
+        slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - op / 2 + np.pi / Zs
+        slot_dict["end_angle"] = 2 * np.pi / Zs * ii + op / 2 + np.pi / Zs
         slot_dict["obj"] = self.slot
         slot_dict["lines"] = self.slot.build_geometry()
         # Apply rotation

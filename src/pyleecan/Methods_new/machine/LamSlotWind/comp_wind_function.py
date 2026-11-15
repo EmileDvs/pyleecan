@@ -1,4 +1,4 @@
-from numpy import linspace, meshgrid, pi, repeat, sum as np_sum, zeros, mean
+import numpy as np
 
 from ....Functions_new.Winding.comp_cond_function import comp_cond_function
 
@@ -28,7 +28,7 @@ def comp_wind_function(self, angle=None, Na=2048, alpha_mmf0=0, per_a=1):
 
     # Space discretization
     if angle is None:
-        angle = linspace(0, pi * 2 / per_a, Na, endpoint=False)
+        angle = np.linspace(0, np.pi * 2 / per_a, Na, endpoint=False)
     else:
         Na = angle.size
 
@@ -43,35 +43,35 @@ def comp_wind_function(self, angle=None, Na=2048, alpha_mmf0=0, per_a=1):
 
     wind_mat = self.winding.get_connection_mat(Zs)
     # sum wind_mat along Nlay_rad axis
-    wind_mat = np_sum(wind_mat, axis=0)
+    wind_mat = np.sum(wind_mat, axis=0)
 
     # angle of the center of the slots
     # By convention a tooth is centered on the X axis
-    alpha_slot = linspace(0, 2 * pi / per_a, Zs0, endpoint=False) + pi / Zs
+    alpha_slot = np.linspace(0, 2 * np.pi / per_a, Zs0, endpoint=False) + np.pi / Zs
 
     # angle of the lay in a slot (Nlay point, end and begin excluded)
-    alpha_lay = linspace(-slot_angle / 2, slot_angle / 2, Ntan + 1, endpoint=False)[1:]
+    alpha_lay = np.linspace(-slot_angle / 2, slot_angle / 2, Ntan + 1, endpoint=False)[1:]
 
     if alpha_mmf0 != 0:
-        angle = (angle - alpha_mmf0) % (2 * pi)
+        angle = (angle - alpha_mmf0) % (2 * np.pi)
 
-    wf = zeros((qs, Na))
+    wf = np.zeros((qs, Na))
     for n in range(Ntan):
         # [Na, Zs]
-        Xalpha_slot, Xangle = meshgrid(alpha_slot + alpha_lay[n], angle)
+        Xalpha_slot, Xangle = np.meshgrid(alpha_slot + alpha_lay[n], angle)
 
-        Xwind = zeros((1, Zs0, qs))
+        Xwind = np.zeros((1, Zs0, qs))
         Xwind[0, :, :] = wind_mat[n, 0:Zs0, :]
         # Extended winding matrix [Na, Zs, qs]
-        Xwind = repeat(Xwind, Na, axis=0)
+        Xwind = np.repeat(Xwind, Na, axis=0)
         # Single winding function in every slot and angle for nth layer [Na, Zs]
         Xwf = -0.5 * comp_cond_function(Xalpha_slot, slot_opening, Xangle)
 
         for q in range(qs):
             # winding function of qth phase (sum over layers) [qs, Na]
-            wf[q, :] += np_sum(Xwind[:, :, q] * Xwf, axis=1)
+            wf[q, :] += np.sum(Xwind[:, :, q] * Xwf, axis=1)
 
     if per_a > 1:
-        wf = wf - mean(wf, axis=1)[:, None]
+        wf = wf - np.mean(wf, axis=1)[:, None]
 
     return wf

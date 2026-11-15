@@ -1,7 +1,7 @@
-from numpy import float32, float64, int32, int64, ndarray
+import numpy as np
 
-from ....Classes._check import check_var
-from ....Functions_new.Load.import_class import import_class
+from ....classes_common.check import check_var
+from ....Functions.Load.import_class import import_class
 
 
 def _set_normalizations(self, value):
@@ -13,12 +13,12 @@ def _set_normalizations(self, value):
                     "pyleecan.Classes", obj.get("__class__"), "normalizations"
                 )
                 value[key] = class_obj(init_dict=obj)
-            elif isinstance(obj, (float, int, int32, int64, float32, float64)):
+            elif isinstance(obj, (float, int, np.int32, np.int64, np.float32, np.float64)):
                 Norm_ref = import_class(
                     "pyleecan.Classes", "Norm_ref", "normalizations"
                 )
                 value[key] = Norm_ref(ref=obj)
-            elif isinstance(obj, (ndarray, list)):
+            elif isinstance(obj, (np.ndarray, list)):
                 Norm_vector = import_class(
                     "pyleecan.Classes", "Norm_vector", "normalizations"
                 )

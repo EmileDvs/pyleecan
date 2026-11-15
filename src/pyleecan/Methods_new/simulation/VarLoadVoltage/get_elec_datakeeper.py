@@ -1,4 +1,4 @@
-from numpy import isnan
+import numpy as np
 from ....Classes_new.simulation.simulation import Simulation
 from ....Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import get_elec_datakeeper_dict
 

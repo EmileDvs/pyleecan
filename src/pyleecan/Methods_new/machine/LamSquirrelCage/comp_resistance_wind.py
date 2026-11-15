@@ -1,4 +1,4 @@
-from numpy import pi, sin
+import numpy as np
 
 
 def comp_resistance_wind(self, T=20):
@@ -37,6 +37,6 @@ def comp_resistance_wind(self, T=20):
     Rrod = rho * lrod / Srod
 
     # average physical resistance per rotor bar (not yet transfered on stator side, per stator phase)
-    Rtot = Rrod + Rring / Zr / (2 * sin(pi * P / Zr) ** 2)
+    Rtot = Rrod + Rring / Zr / (2 * np.sin(np.pi * P / Zr) ** 2)
 
     return Rtot

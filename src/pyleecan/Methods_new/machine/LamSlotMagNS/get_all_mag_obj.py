@@ -1,4 +1,4 @@
-from numpy import unique
+import numpy as np
 
 
 def get_all_mag_obj(self):

@@ -1,4 +1,4 @@
-from numpy import ones
+import numpy as np
 
 
 def get_Nr(self, Time=None):
@@ -27,6 +27,6 @@ def get_Nr(self, Time=None):
         raise Exception('You must define "N0" before calling get_Nr')
 
     # Same speed for every timestep
-    Nr = self.OP.get_N0() * ones(Time.get_length(is_smallestperiod=True))
+    Nr = self.OP.get_N0() * np.ones(Time.get_length(is_smallestperiod=True))
 
     return Nr

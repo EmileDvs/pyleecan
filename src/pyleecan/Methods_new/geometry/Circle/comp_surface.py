@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 
 
 def comp_surface(self):
@@ -17,4 +17,4 @@ def comp_surface(self):
 
     """
 
-    return pi * self.radius**2
+    return np.pi * self.radius**2

@@ -1,6 +1,6 @@
-from numpy import array, array2string, column_stack, exp, real, squeeze
+import numpy as np
 
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.conversions import rphiz_to_xyz, rphiz_to_xyz_field, xyz_to_rphiz
 from ....Functions_new.SciDataTool.Plot import REV_COMP_DICT
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
@@ -137,16 +137,16 @@ def plot_2D_Data(
             )
 
             if "x" in result and "y" in result:
-                Xdatas = column_stack((result["x"], result["y"]))
+                Xdatas = np.column_stack((result["x"], result["y"]))
             else:
                 if radius is None:
                     radius = 1
                 phi = result["angle"]
-                rphi = column_stack((array([radius] * len(phi)), phi))
+                rphi = np.column_stack((np.array([radius] * len(phi)), phi))
                 Xdatas = rphiz_to_xyz(rphi)
 
-            Ydatas = column_stack(
-                (squeeze(result["comp_x"]), squeeze(result["comp_y"]))
+            Ydatas = np.column_stack(
+                (np.squeeze(result["comp_x"]), np.squeeze(result["comp_y"]))
             )
         else:
             title = REV_COMP_DICT[component_list[0]].capitalize() + " " + self.name
@@ -159,20 +159,20 @@ def plot_2D_Data(
                     is_norm=is_norm,
                 )
                 if "x" in result and "y" in result:
-                    Xdatas = column_stack((result["x"], result["y"]))
+                    Xdatas = np.column_stack((result["x"], result["y"]))
                 else:
                     if radius is None:
                         radius = 1
                     phi = result["angle"]
-                    rphi = column_stack((array([radius] * len(phi)), phi))
+                    rphi = np.column_stack((np.array([radius] * len(phi)), phi))
                     Xdatas = rphiz_to_xyz(rphi)
                 Y_comp = result[vecfield.components[component_list[0]].symbol]
                 if component_list[0] == "comp_x":
                     Y_comp[Xdatas[:, 0] < 0] = -Y_comp[Xdatas[:, 0] < 0]
-                    Ydatas = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                    Ydatas = np.column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                 else:
                     Y_comp[Xdatas[:, 1] < 0] = -Y_comp[Xdatas[:, 1] < 0]
-                    Ydatas = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+                    Ydatas = np.column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
             else:
                 vecfield = self.to_rphiz()
                 result = vecfield.components[component_list[0]].get_along(
@@ -184,13 +184,13 @@ def plot_2D_Data(
                 Y_comp = result[vecfield.components[component_list[0]].symbol]
 
                 if "x" in result and "y" in result:
-                    Xdatas = column_stack((result["x"], result["y"]))
+                    Xdatas = np.column_stack((result["x"], result["y"]))
                     rphiz = xyz_to_rphiz(Xdatas)
 
                     if component_list[0] == "radial":
-                        Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                        Y_3d = np.column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                     else:
-                        Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+                        Y_3d = np.column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
 
                     Ydatas = rphiz_to_xyz_field(Y_3d, rphiz[:, 1])
 
@@ -198,23 +198,23 @@ def plot_2D_Data(
                     if radius is None:
                         radius = 1
                     phi = result["angle"]
-                    rphi = column_stack((array([radius] * len(phi)), phi))
+                    rphi = np.column_stack((np.array([radius] * len(phi)), phi))
                     Xdatas = rphiz_to_xyz(rphi)
                     if component_list[0] == "radial":
-                        Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                        Y_3d = np.column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                     else:
-                        Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+                        Y_3d = np.column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
 
                     Ydatas = rphiz_to_xyz_field(Y_3d, phi)
 
-        Ydatas = real(Ydatas * exp(1j * phase))
+        Ydatas = np.real(Ydatas * np.exp(1j * phase))
 
         title2 = " for "
         if "time" in result:
             if isinstance(result["time"], str):
                 time_str = result["time"]
             else:
-                time_str = array2string(
+                time_str = np.array2string(
                     result["time"], formatter={"float_kind": "{:.3g}".format}
                 )
             title2 += (
@@ -225,7 +225,7 @@ def plot_2D_Data(
         elif "freqs" in result:
             title2 += (
                 "freqs="
-                + array2string(
+                + np.array2string(
                     result["freqs"], formatter={"float_kind": "{:.5g}".format}
                 )
                 .replace(" ", ", ")
@@ -249,7 +249,7 @@ def plot_2D_Data(
                     title3 += (
                         axis_name
                         + "="
-                        + array2string(
+                        + np.array2string(
                             axes_dict_other[axis_name][0],
                             formatter={"float_kind": "{:.3g}".format},
                         )

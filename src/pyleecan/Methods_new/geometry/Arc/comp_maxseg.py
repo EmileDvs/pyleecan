@@ -1,4 +1,4 @@
-from numpy import abs, pi, sqrt, sin
+import numpy as np
 
 
 MAXSEG_default = 5
@@ -33,17 +33,17 @@ def comp_maxseg(self, elementsize, maxseg_amp):
         begin = self.get_begin()
         end = self.get_end()
 
-        if abs(angle) == 180:
-            l_arc = pi * abs(begin - end) / 2
-        elif abs(angle) == 90:
-            l_arc = pi / 2 * abs(begin - end) / sqrt(2)
+        if np.abs(angle) == 180:
+            l_arc = np.pi * np.abs(begin - end) / 2
+        elif np.abs(angle) == 90:
+            l_arc = np.pi / 2 * np.abs(begin - end) / np.sqrt(2)
         else:
-            l_arc = abs((begin - end) / (2 * sin(angle / 2 * pi / 180))) * abs(
-                angle * pi / 180
+            l_arc = np.abs((begin - end) / (2 * np.sin(angle / 2 * np.pi / 180))) * np.abs(
+                angle * np.pi / 180
             )
 
         n_seg = l_arc / elementsize
 
-        maxseg = abs(min(MAXSEG_default, abs(angle / n_seg * maxseg_amp)))
+        maxseg = np.abs(min(MAXSEG_default, np.abs(angle / n_seg * maxseg_amp)))
 
     return maxseg

@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Classes_new.machine.lam_slot import LamSlot
 from ....Functions_new.labels import update_RTS_index
@@ -48,7 +48,7 @@ def build_geometry(
     )
 
     Zs = self.slot.Zs
-    slot_pitch = 2 * pi / Zs
+    slot_pitch = 2 * np.pi / Zs
 
     # Add the magnet surface(s)
     if is_magnet and self.magnet is not None:
@@ -128,7 +128,7 @@ def build_geometry(
 
         # Shift to have a tooth center on Ox
         for surf in mag_surf_list:
-            surf.rotate(pi / Zs)
+            surf.rotate(np.pi / Zs)
         surf_list.extend(mag_surf_list)
 
     return surf_list

@@ -1,6 +1,6 @@
 from matplotlib.patches import Circle, Patch
 from ....Functions_new.init_fig import init_fig
-from numpy import exp, pi, sqrt
+import numpy as np
 
 from ....definitions import config_dict
 
@@ -56,11 +56,11 @@ def plot(self, is_show_fig=True, fig=None, ax=None):
         # The 3 centers are on the edges of an Equilateral Triangle
         # (side length : a = Dwire + 2Wins_wire)
         # The Radius of the circumscribed cercle is : a *sqrt(3)/3
-        R = (self.Wwire + 2 * self.Wins_wire) * sqrt(3) / 3.0
+        R = (self.Wwire + 2 * self.Wins_wire) * np.sqrt(3) / 3.0
         center_list.append((0, R))
         # We found the coordinate of the other center by complex rotation
-        Z2 = R * 1j * exp(1j * 2 * pi / 3)
-        Z3 = R * 1j * exp(-1j * 2 * pi / 3)
+        Z2 = R * 1j * np.exp(1j * 2 * np.pi / 3)
+        Z3 = R * 1j * np.exp(-1j * 2 * np.pi / 3)
         center_list.append((Z2.real, Z2.imag))
         center_list.append((Z3.real, Z3.imag))
     elif self.Nwppc == 4:

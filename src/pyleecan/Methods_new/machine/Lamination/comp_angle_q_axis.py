@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_angle_q_axis(self):
@@ -19,4 +19,4 @@ def comp_angle_q_axis(self):
 
     q_angle = self.comp_angle_d_axis()
     p = self.get_pole_pair_number()
-    return q_angle + pi / p / 2
+    return q_angle + np.pi / p / 2

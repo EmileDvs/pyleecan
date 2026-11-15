@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import max as np_max, min as np_min
+import numpy as np
 
 
 def plot_animated(self, i):
@@ -21,7 +21,7 @@ def plot_animated(self, i):
 
     radial_shape = self.get_shape_pol()[:, 0]
     shape_xyz = self.get_shape_xyz()
-    clim = [np_min(radial_shape), np_max(radial_shape)]
+    clim = [np.min(radial_shape), np.max(radial_shape)]
     self.parent.mesh.plot_deformation_animated(
         shape_xyz,
         radial_shape,

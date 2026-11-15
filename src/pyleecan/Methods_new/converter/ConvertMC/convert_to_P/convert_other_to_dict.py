@@ -1,5 +1,5 @@
-from os.path import join, isfile
-from numpy import pi
+import os
+import numpy as np
 
 
 def convert_other_to_dict(self, file_path):
@@ -23,10 +23,10 @@ def convert_other_to_dict(self, file_path):
     list_path = file_path.split(".")
     if not list_path[-1] == "mot":
         raise ValueError("The file is not a .mot, please select a .mot to convert")
-    if not isfile(file_path):
+    if not os.path.isfile(file_path):
         raise ValueError(f"Error: This file doesn't exist: {file_path}")
     else:
-        with open(join(file_path, file_path)) as file:
+        with open(os.path.join(file_path, file_path)) as file:
             ####
             # .mot files are organized as follow:
             # the file is compose different part, with a title into [], and after a list of value, after restart an other part, we have a space
@@ -102,11 +102,11 @@ def convert_other_to_dict(self, file_path):
                 other_unit_dict["m"] = 1
 
             other_unit_dict["rad"] = 1
-            other_unit_dict["deg"] = pi / 180
+            other_unit_dict["deg"] = np.pi / 180
 
             pole_number = other_dict["[Dimensions]"]["Pole_Number"]
 
-            other_unit_dict["ED"] = (2 / pole_number) * (pi / 180)
+            other_unit_dict["ED"] = (2 / pole_number) * (np.pi / 180)
             # we want to have rad so we need to multiply by 2/pole_number
             other_unit_dict[None] = 1  # No unit => No scale
             other_unit_dict[""] = 1  # No unit => No scale

@@ -1,4 +1,4 @@
-from numpy import pi, arcsin
+import numpy as np
 
 
 def comp_surface_bar(self):
@@ -25,7 +25,7 @@ def comp_surface_bar(self):
     r_out = self._get_Rint()
     h_gap = self.comp_height_gap()
     r_in = r_out - h_gap
-    rot_angle = 2 * arcsin(self.wbar / 2.0 / r_in)
-    Sbar = self.Nbar * pi * (r_out**2 - r_in**2) * rot_angle / (2 * pi)
+    rot_angle = 2 * np.arcsin(self.wbar / 2.0 / r_in)
+    Sbar = self.Nbar * np.pi * (r_out**2 - r_in**2) * rot_angle / (2 * np.pi)
 
     return Sbar

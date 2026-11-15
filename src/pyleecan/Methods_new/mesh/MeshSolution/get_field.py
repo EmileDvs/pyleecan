@@ -3,19 +3,8 @@
 from ....Classes_new.mesh.solution_vector import SolutionVector
 from ....Classes_new.mesh.mesh_mat import MeshMat
 from ....Classes_new.mesh.mesh_vtk import MeshVTK
-from ....Functions_new.Structural.conversions import cart2pol, pol2cart; from pyleecan.classes_common.errors import DimError
-from numpy import (
-    einsum,
-    sqrt,
-    zeros,
-    squeeze,
-    real,
-    imag,
-    sum as np_sum,
-    abs as np_abs,
-    swapaxes,
-    reshape,
-)
+from ....Functions_new.Structural.conversions import cart2pol, pol2cart; from ....classes_common.errors import DimError
+import numpy as np
 
 
 def get_field(
@@ -108,7 +97,7 @@ def get_field(
                 axes_list[1][ind_indices0],
                 axes_list[1][0],
             )  # length swap
-            field = swapaxes(field, 0, ind_indices0)  # field axis swap
+            field = np.swapaxes(field, 0, ind_indices0)  # field axis swap
             ind_indices = 0
 
         else:
@@ -127,7 +116,7 @@ def get_field(
                 axes_list[1][ind_component0],
                 axes_list[1][1],
             )  # length swap
-            field = swapaxes(field, 1, ind_component0)  # field axis swap
+            field = np.swapaxes(field, 1, ind_component0)  # field axis swap
             ind_component = 1
         else:
             ind_component = None
@@ -232,11 +221,11 @@ def get_field(
 
     # Reverse axes swaps (to match with get_axes_list)
     if ind_component is not None:
-        result = swapaxes(result, 1, ind_component0)
-    result = swapaxes(result, 0, ind_indices0)
+        result = np.swapaxes(result, 1, ind_component0)
+    result = np.swapaxes(result, 0, ind_indices0)
 
     if is_squeeze:
-        result = squeeze(result)
+        result = np.squeeze(result)
         if shape_result[ind_indices] == 1:
             # Re add node dimension which has been squeezed if there is only one node
             result = result[None, ...]
@@ -306,8 +295,8 @@ def apply_normal_center_surf_vectorfield(
             if field.dtype == float:
                 mesh_pv["real"] = field
             else:
-                mesh_pv["real"] = real(field)
-                mesh_pv["imag"] = imag(field)
+                mesh_pv["real"] = np.real(field)
+                mesh_pv["imag"] = np.imag(field)
             if is_center:
                 # Points to centers
                 mesh_cell = mesh_pv.point_data_to_cell_data()
@@ -328,10 +317,10 @@ def apply_normal_center_surf_vectorfield(
 
         # Project on normals if necessary
         if is_normal:
-            field = einsum("ij,ij->i", normals, field)
+            field = np.einsum("ij,ij->i", normals, field)
         # rms computation
         if is_rms:
-            field = sqrt(np_sum(np_abs(field**2) * cell_area) / np_sum(cell_area))
+            field = np.sqrt(np.sum(np.abs(field**2) * cell_area) / np.sum(cell_area))
         # Coordinates
         if is_rthetaz:
             field = cart2pol(field, points)
@@ -340,12 +329,12 @@ def apply_normal_center_surf_vectorfield(
         if is_pol2cart and not is_radial:
             field = pol2cart(field, points)
 
-        field = reshape(field, shape_result)
+        field = np.reshape(field, shape_result)
 
         return field
 
     else:
-        result = zeros(shape_result, dtype=dtype)
+        result = np.zeros(shape_result, dtype=dtype)
 
         for i in range(shape_otherdim[-1]):
             field_i = field.take((i), axis=new_ind_otherdim[-1])

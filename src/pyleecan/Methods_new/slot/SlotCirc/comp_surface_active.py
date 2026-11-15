@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi, sin, arcsin
+import numpy as np
 
 
 def comp_surface_active(self):
@@ -18,14 +18,14 @@ def comp_surface_active(self):
     """
 
     R0 = self._comp_R0()
-    alpha = float(2 * arcsin(self.W0 / (2 * R0)))
+    alpha = float(2 * np.arcsin(self.W0 / (2 * R0)))
     # Area of the full circle
-    S1 = pi * (R0**2)
+    S1 = np.pi * (R0**2)
     # Area of the top Arc
-    S2 = (R0**2.0) / 2.0 * (alpha - sin(alpha))
+    S2 = (R0**2.0) / 2.0 * (alpha - np.sin(alpha))
     # Arc of the bore
     alpha_op = self.comp_angle_opening()
-    S3 = (self.get_Rbo() ** 2.0) / 2.0 * (alpha_op - sin(alpha_op))
+    S3 = (self.get_Rbo() ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
 
     if self.H0 < self.W0 / 2:
         # Center is in airgap

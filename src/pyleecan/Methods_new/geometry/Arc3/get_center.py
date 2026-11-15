@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
+import numpy as np
 
 
 def get_center(self):
@@ -26,7 +26,7 @@ def get_center(self):
     Zc = (z1 + z2) / 2.0
 
     # Return (0,0) if the point is too close from 0
-    if np_abs(Zc) < 1e-6:
+    if np.abs(Zc) < 1e-6:
         Zc = 0
 
     return Zc

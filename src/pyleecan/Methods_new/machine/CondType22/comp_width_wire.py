@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 
 
 def comp_width_wire(self):
@@ -20,6 +20,6 @@ def comp_width_wire(self):
         Wbar = self.parent.parent.slot.comp_width()
 
     else:
-        Wbar = sqrt(self.Sbar)
+        Wbar = np.sqrt(self.Sbar)
 
     return Wbar

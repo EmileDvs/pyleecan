@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
-from numpy import array, conjugate, delete, imag, insert, ones, real, round
+import numpy as np
 
-from ....Classes._swat_em import datamodel
+from ....Classes_new._swat_em import datamodel
 from ....definitions import config_dict
 from ....Functions_new._swat_em.config import config
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
@@ -112,7 +112,7 @@ def plot_linear(
 
     # Step 2-1: Adding slot surface as rectangural patches
     xy = [(k - 0.5 - bz / 2, -hz / 2) for k in range(Zs_per + 1)]
-    width = ones([Zs_per + 1]) * bz
+    width = np.ones([Zs_per + 1]) * bz
     height = hz
 
     # First tooth is cut in half so we have two surfaces instead of 1
@@ -172,7 +172,7 @@ def plot_linear(
             P5 = db1 - 1j * h1
 
             point_list = [P0, P1, P2, P3, P4, P5]
-            x_, y_ = real(point_list), imag(point_list)
+            x_, y_ = np.real(point_list), np.imag(point_list)
 
             # Step 2-2-2: Shifting the coil pattern to the right slot according to the direction of the winding and the potential winding transformation
             direct = coil[2]
@@ -230,11 +230,11 @@ def plot_linear(
                 # Listing the point corrected and its conjugate
                 point_corrected = list()
                 point_corrected.append(point_correct[0])
-                point_corrected.append(conjugate(point_correct[0]))
+                point_corrected.append(np.conjugate(point_correct[0]))
 
                 # Putting the corrected point on the left border to complete the coil
-                point_to_add = array(point_corrected) - Zs_per
-                point_to_add = insert(point_to_add, 1, wrong_points - Zs_per)
+                point_to_add = np.array(point_corrected) - Zs_per
+                point_to_add = np.insert(point_to_add, 1, wrong_points - Zs_per)
 
                 # Replacing the incorrect point by the new P2 and P3
                 for idx_point, _ in enumerate(idx_point_too_far):
@@ -244,7 +244,7 @@ def plot_linear(
 
                 # Removing point that are not necessary (when more that 2 point are out of bounds)
                 if idx_point_to_remove != list():
-                    point_list_updated = delete(point_list_updated, idx_point_to_remove)
+                    point_list_updated = np.delete(point_list_updated, idx_point_to_remove)
 
                 coils.append(point_list_updated)
                 coils.append(point_to_add)
@@ -319,13 +319,13 @@ def plot_linear(
 
                 # Adding condition to make sure that we do not draw lines between two point on the left or  the right border
                 if (
-                    round(real(begin), decimals=1) != -0.5
-                    or round(real(end), decimals=1) != -0.5
+                    np.round(np.real(begin), decimals=1) != -0.5
+                    or np.round(np.real(end), decimals=1) != -0.5
                 ) and (
-                    round(real(begin), decimals=1) != Zs_per - 0.5
-                    or round(real(end), decimals=1) != Zs_per - 0.5
+                    np.round(np.real(begin), decimals=1) != Zs_per - 0.5
+                    or np.round(np.real(end), decimals=1) != Zs_per - 0.5
                 ):
-                    points = array([begin, end])
+                    points = np.array([begin, end])
                     ax.plot(
                         points.real,
                         points.imag,

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import arcsin, pi, sin
+import numpy as np
 
 
 def comp_surface(self):
@@ -25,7 +25,7 @@ def comp_surface(self):
 
     # The bottom is an arc
     alpha = self.comp_angle_opening()
-    Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+    Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     S1 = abs(Z1.real - Z2.real) * (self.W1 + self.W0) / 2
 

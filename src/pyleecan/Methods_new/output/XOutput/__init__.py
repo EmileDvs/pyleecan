@@ -1,4 +1,4 @@
-from numpy import array
+import numpy as np
 
 
 class XOutputError(Exception):
@@ -10,10 +10,10 @@ def _get_symbol_data_(self, symbol, index):
     # Get the data
     if symbol in self.keys():  # DataKeeper or OptiObjective
         data = self[symbol]
-        values = array(data.result)[index]
+        values = np.array(data.result)[index]
     elif symbol in [pe.symbol for pe in self.paramexplorer_list]:  # ParamSetter
         data = self.get_paramexplorer(symbol)
-        values = array(data.value)[index]
+        values = np.array(data.value)[index]
     else:  # ParamSetter
         symbol_ = next(iter(self.keys()))
         self.get_logger().warning(
@@ -22,7 +22,7 @@ def _get_symbol_data_(self, symbol, index):
         )
         symbol = symbol_
         data = self[symbol]
-        values = array(data.result)[index]
+        values = np.array(data.result)[index]
 
     # label definition
     label = symbol

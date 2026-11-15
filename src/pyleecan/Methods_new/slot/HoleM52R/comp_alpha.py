@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, pi
+import numpy as np
 
 
 def comp_alpha(self):
@@ -19,6 +19,6 @@ def comp_alpha(self):
     """
     Rext = self.get_Rext()
 
-    alpha = 2 * arcsin((2 * self.W1 + self.W0) / (2 * (Rext - self.H0)))
+    alpha = 2 * np.arcsin((2 * self.W1 + self.W0) / (2 * (Rext - self.H0)))
 
     return alpha

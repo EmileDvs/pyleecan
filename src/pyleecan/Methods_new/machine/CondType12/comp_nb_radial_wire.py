@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 
 
 def comp_nb_radial_wire(self):
@@ -16,4 +16,4 @@ def comp_nb_radial_wire(self):
 
     """
 
-    return int(sqrt(self.Nwppc))
+    return int(np.sqrt(self.Nwppc))

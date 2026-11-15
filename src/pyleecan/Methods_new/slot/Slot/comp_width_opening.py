@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_width_opening(self, is_curved=False):
@@ -21,7 +21,7 @@ def comp_width_opening(self, is_curved=False):
         R = self.get_Rbo()
         alpha = self.comp_angle_opening()
         Zs = self.parent.get_Zs()
-        return 2 * pi * R / Zs - alpha * R
+        return 2 * np.pi * R / Zs - alpha * R
     else:
         line_list = self.build_geometry()
         Z1 = line_list[0].get_begin()

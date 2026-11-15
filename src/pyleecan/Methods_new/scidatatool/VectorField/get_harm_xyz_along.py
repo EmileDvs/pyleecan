@@ -1,6 +1,6 @@
-from numpy import zeros
+import numpy as np
 
-from pyleecan.classes_common.errors import AxisError
+from ....classes_common.errors import AxisError
 
 
 def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]):
@@ -105,7 +105,7 @@ def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
-            field_z = zeros(shape)
+            field_z = np.zeros(shape)
         # Build return dict
         return_dict = dict(resultx)
         del return_dict[self.components["radial"].symbol]
@@ -130,7 +130,7 @@ def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
             )
             field_y = resulty[self.components["comp_y"].symbol]
         else:
-            field_y = zeros(shape)
+            field_y = np.zeros(shape)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_harmonics(
                 N_harm,
@@ -150,7 +150,7 @@ def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
-            field_z = zeros(shape)
+            field_z = np.zeros(shape)
         return_dict = dict(resultx)
         del return_dict[self.components["comp_x"].symbol]
 
@@ -174,7 +174,7 @@ def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
             )
             field_x = resultx[self.components["comp_x"].symbol]
         else:
-            field_x = zeros(shape)
+            field_x = np.zeros(shape)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_harmonics(
                 N_harm,
@@ -194,7 +194,7 @@ def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
-            field_z = zeros(shape)
+            field_z = np.zeros(shape)
         return_dict = dict(resulty)
         del return_dict[self.components["comp_y"].symbol]
 
@@ -208,8 +208,8 @@ def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
         )
         field_z = resultz[self.components["axial"].symbol]
         shape = field_z.shape
-        field_x = zeros(shape)
-        field_y = zeros(shape)
+        field_x = np.zeros(shape)
+        field_y = np.zeros(shape)
         return_dict = dict(resultz)
         del return_dict[self.components["axial"].symbol]
 
@@ -223,8 +223,8 @@ def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
         )
         field_z = resultz[self.components["comp_z"].symbol]
         shape = field_z.shape
-        field_x = zeros(shape)
-        field_y = zeros(shape)
+        field_x = np.zeros(shape)
+        field_y = np.zeros(shape)
         return_dict = resultz
         del return_dict[self.components["comp_z"].symbol]
 

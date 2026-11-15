@@ -1,4 +1,4 @@
-from numpy import angle, exp
+import numpy as np
 
 
 def comp_normal(self):
@@ -22,9 +22,9 @@ def comp_normal(self):
     L = self.comp_length() / 3
 
     # In ref begin=O and end on Ox
-    Zm2 = (Zm - Zb) * exp(-1j * angle(Ze - Zb))
+    Zm2 = (Zm - Zb) * np.exp(-1j * np.angle(Ze - Zb))
     Zn2 = Zm2 + 1j * L
 
-    Zn = Zn2 * exp(1j * angle(Ze - Zb)) + Zb
+    Zn = Zn2 * np.exp(1j * np.angle(Ze - Zb)) + Zb
 
-    return angle(Zn - Zm)
+    return np.angle(Zn - Zm)

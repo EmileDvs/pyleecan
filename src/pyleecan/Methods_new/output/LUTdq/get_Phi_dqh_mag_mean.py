@@ -1,4 +1,4 @@
-from numpy import array
+import numpy as np
 
 from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
 from ....Classes_new.electrical.electrical import Electrical
@@ -21,7 +21,7 @@ def get_Phi_dqh_mag_mean(self):
     eec = self.get_eec()
 
     if eec is not None and eec.Phid_mag is not None and eec.Phiq_mag is not None:
-        Phi_dqh_mag_mean = array([eec.Phid_mag, eec.Phiq_mag, 0])
+        Phi_dqh_mag_mean = np.array([eec.Phid_mag, eec.Phiq_mag, 0])
     else:
         # Get stator winding flux due to magnets
         Phi_dqh_mag = self.get_Phi_dqh_mag()

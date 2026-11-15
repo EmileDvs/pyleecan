@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp, angle
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lamination import Lamination
@@ -77,7 +77,7 @@ def plot_schematics(
         Zq1 = lines[0].get_end()
         Zq2 = lines[-1].get_begin()
         Rbo = self.parent.get_Rbo()
-        alpha = pi / self.N
+        alpha = np.pi / self.N
         # H = self.Rarc / 8  # Small distance for label placement
 
         # Adding schematics
@@ -85,7 +85,7 @@ def plot_schematics(
             # delta_q
             p1 = Rbo + self.delta_d - self.delta_q
             p2 = Rbo + self.delta_d
-            line = Segment(p1 * exp(2j * alpha), p2 * exp(2j * alpha))
+            line = Segment(begin=p1 * np.exp(2j * alpha), end=p2 * np.exp(2j * alpha))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -97,7 +97,7 @@ def plot_schematics(
                 fontsize=SC_FONT_SIZE,
             )
             # W0
-            line = Segment(Zq1 * exp(2 * 1j * alpha), Zq2 * exp(4 * 1j * alpha))
+            line = Segment(begin=Zq1 * np.exp(2 * 1j * alpha), end=Zq2 * np.exp(4 * 1j * alpha))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -109,7 +109,7 @@ def plot_schematics(
                 fontsize=SC_FONT_SIZE,
             )
             # Rbo + delta_d
-            line = Segment(0, Rbo + self.delta_d)
+            line = Segment(begin=0, end=Rbo + self.delta_d)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -150,19 +150,19 @@ def plot_schematics(
             #     linewidth=MAIN_LINE_WIDTH,
             # )
             # Machine center
-            line = Segment(0, Rbo * exp(1j * alpha))
+            line = Segment(begin=0, end=Rbo * np.exp(1j * alpha))
             line.plot(**plot_args)
             # Rbo circle arc
-            Z1 = Rbo * exp(-1j * pi / 2)
-            Z2 = Rbo * exp(1j * pi / 2)
+            Z1 = Rbo * np.exp(-1j * np.pi / 2)
+            Z2 = Rbo * np.exp(1j * np.pi / 2)
             line = Arc1(begin=Z1, end=Z2, radius=Rbo, is_trigo_direction=True)
             line.plot(**plot_args)
             line = Arc1(begin=Z2, end=Z1, radius=Rbo, is_trigo_direction=True)
             line.plot(**plot_args)
             # Rbo + delta_d circle arc
             R = Rbo + self.delta_d
-            Z1 = R * exp(-1j * pi / 2)
-            Z2 = R * exp(1j * pi / 2)
+            Z1 = R * np.exp(-1j * np.pi / 2)
+            Z2 = R * np.exp(1j * np.pi / 2)
             line = Arc1(begin=Z1, end=Z2, radius=R, is_trigo_direction=True)
             line.plot(**plot_args)
             line = Arc1(begin=Z2, end=Z1, radius=R, is_trigo_direction=True)

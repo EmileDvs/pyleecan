@@ -1,17 +1,9 @@
 import subprocess
-from os.path import join
+import os
 
 import numpy as np
-from numpy import (
-    angle as np_angle,
-)
-from numpy import (
-    floor_divide,
-    loadtxt,
-    pi,
-    sign,
-    zeros,
-)
+
+
 
 from .... import __version__
 from ....Classes_new.machine.machine_ipmsm import MachineIPMSM
@@ -49,7 +41,7 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
 
     project_name = self.get_path_save_fea(output)
     elmermesh_folder = project_name
-    mesh_names_file = join(project_name, "mesh.names")
+    mesh_names_file = os.path.join(project_name, "mesh.names")
     boundaries = {}
     bodies = {}
     machine = output.simu.machine
@@ -58,8 +50,8 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
     # Is = output.elec.Is  # Stator currents waveforms
     # Ir = output.elec.Ir  # Rotor currents waveforms
     Speed = output.elec.OP.get_N0()
-    rotor_mat_file = join(project_name, "rotor_material.pmf")
-    stator_mat_file = join(project_name, "stator_material.pmf")
+    rotor_mat_file = os.path.join(project_name, "rotor_material.pmf")
+    stator_mat_file = os.path.join(project_name, "stator_material.pmf")
 
     # TO-DO: Time vector must be greater than one
     timesize_str = np.array2string(
@@ -122,7 +114,7 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
         )
         ro.write("End\n")
 
-    elmer_sim_file = join(project_name, "pyleecan_elmer.sif")
+    elmer_sim_file = os.path.join(project_name, "pyleecan_elmer.sif")
     pp = machine.stator.winding.p
     wind_mat = machine.stator.winding.get_connection_mat(machine.stator.slot.Zs)
     surf_wind = machine.stator.slot.comp_surface_active()
@@ -174,11 +166,11 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
                     Zh = hole.Zh
                     alpha_p = 360 / Zh
                     mag_0 = (
-                        floor_divide(np_angle(point_ref, deg=True), alpha_p) + 0.5
+                        np.floor_divide(np.angle(point_ref, deg=True), alpha_p) + 0.5
                     ) * alpha_p
 
                     mag_dict = hole.comp_magnetization_dict()
-                    mag = mag_0 + mag_dict["magnet_" + str(T_id)] * 180 / pi
+                    mag = mag_0 + mag_dict["magnet_" + str(T_id)] * 180 / np.pi
                     # modifiy magnetisation of south poles
                     if (label_dict["S_id"] % 2) == 1:
                         mag = mag + 180
@@ -202,10 +194,10 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
                     mag = 180  # South pole magnet
                     magnetization_type = "radial"
                 elif mag_obj.type_magnetization == 1 and (label_dict["S_id"] % 2) == 0:
-                    mag = np_angle(point_ref) * 180 / pi  # North pole magnet
+                    mag = np.angle(point_ref) * 180 / np.pi  # North pole magnet
                     magnetization_type = "parallel"
                 elif mag_obj.type_magnetization == 1:
-                    mag = np_angle(point_ref) * 180 / pi + 180  # South pole magnet
+                    mag = np.angle(point_ref) * 180 / np.pi + 180  # South pole magnet
                     magnetization_type = "parallel"
                 elif mag_obj.type_magnetization == 2:
                     Zs = mag_obj.parent.slot.Zs
@@ -229,7 +221,7 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
                 # Get the phase value in the correct slot zone
                 q_id = get_phase_id(wind_mat, Nrad_id, Ntan_id, Zs_id)
                 Ncond = wind_mat[Nrad_id, Ntan_id, Zs_id, q_id]
-                s = sign(Ncond)
+                s = np.sign(Ncond)
                 if bodies.get(label, None) is not None:
                     bodies[label]["mat"] = 5
                     bodies[label]["eq"] = 1
@@ -319,7 +311,7 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
         current_angle = 0 - pp * degrees_step * skip_steps
         angle_shift = self.angle_rotor_shift - self.angle_stator_shift
         rotor_init_pos = machine.comp_angle_rotor_initial() + angle_shift
-        rotor_d_axis = machine.rotor.comp_angle_d_axis() * 180.0 / pi
+        rotor_d_axis = machine.rotor.comp_angle_d_axis() * 180.0 / np.pi
         Ncond = 1  # Fixed for Now
         Cp = 1  # Fixed for Now
         qs = len(machine.stator.get_name_phase())
@@ -345,7 +337,7 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
         fo.write(f"$ Nsteps = {2}            !\n")
         fo.write(f"$ StepDegrees = {degrees_step}       !\n")
         fo.write("$ DegreesPerSec = WM*180.0/pi  !\n")
-        fo.write(f"$ RotorInitPos = {round(rotor_init_pos * 180.0 / pi, 2)}!\n")
+        fo.write(f"$ RotorInitPos = {round(rotor_init_pos * 180.0 / np.pi, 2)}!\n")
 
         fo.write(
             "\nHeader\n"
@@ -497,7 +489,7 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
             "\t\t0.0\t\t0.0\n"
         )
         fo.writelines(
-            f"\t\t{time[tt]:.2e}\t\t{angle_rotor[tt - 1] * 180.0 / pi:.3f}\n"
+            f"\t\t{time[tt]:.2e}\t\t{angle_rotor[tt - 1] * 180.0 / np.pi:.3f}\n"
             for tt in range(1, timelen + 1)
         )
         fo.write("\tEnd\nEnd\n")
@@ -855,7 +847,7 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
     # setup Elmer solver
     # ElmerSolver v8.4 must be installed and in the PATH
 
-    elmer_settings = join(project_name, "pyleecan_elmer.sif")
+    elmer_settings = os.path.join(project_name, "pyleecan_elmer.sif")
     ElmerSolver_binary = get_path_binary("ElmerSolver")
     cmd_elmersolver = [
         ElmerSolver_binary,
@@ -885,8 +877,8 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
     L1 = output.simu.machine.stator.comp_length()
     save_path = self.get_path_save(output)
 
-    scalars_file = join(elmermesh_folder, "scalars.dat")
-    ecp, mfe, agt, iv, im, tq = loadtxt(
+    scalars_file = os.path.join(elmermesh_folder, "scalars.dat")
+    ecp, mfe, agt, iv, im, tq = np.loadtxt(
         scalars_file, unpack=True, usecols=(0, 1, 2, 3, 4, 5)
     )
     # ecp: eddy current power
@@ -905,14 +897,14 @@ def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
         and output.simu.machine.stator.winding is not None
     ):
         qs = output.simu.machine.stator.winding.qs  # Winding phase number
-        Phi_wind_stator = zeros((Nt, qs))
+        Phi_wind_stator = np.zeros((Nt, qs))
     else:
         Phi_wind_stator = None
 
     # Initialize results matrix
-    Br = zeros((Nt, Na))
-    Bt = zeros((Nt, Na))
-    Bz = zeros((Nt, Na))
+    Br = np.zeros((Nt, Na))
+    Bt = np.zeros((Nt, Na))
+    Bz = np.zeros((Nt, Na))
     Tem = tq * sym * L1
 
     # Phi_wind_stator = zeros((Nt, qs))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import cos
+import numpy as np
 
 
 def comp_W5(self):
@@ -21,6 +21,6 @@ def comp_W5(self):
     alpha = self.comp_alpha()
 
     # Distance fromZ8 to Z9
-    L89 = (self.W0 / 2 - self.W1 / 2) / cos(alpha)
+    L89 = (self.W0 / 2 - self.W1 / 2) / np.cos(alpha)
 
     return L89 - self.W4 - self.W2

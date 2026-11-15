@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace, zeros
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
@@ -37,19 +37,19 @@ def get_surface_active(self, alpha=0, delta=0):
     ZM4 = point_dict["ZM4"]
 
     curve_list = list()
-    curve_list.append(Segment(ZM1, ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB}))
+    curve_list.append(Segment(begin=ZM1, end=ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB}))
 
     if self.is_outwards():
-        curve_list.append(Arc1(ZM2, ZM3, (Rbo - self.H0), is_trigo_direction=True))
+        curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=(Rbo - self.H0), is_trigo_direction=True))
     else:
-        curve_list.append(Arc1(ZM2, ZM3, (Rbo + self.H0), is_trigo_direction=True))
+        curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=(Rbo + self.H0), is_trigo_direction=True))
 
-    curve_list.append(Segment(ZM3, ZM4, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB}))
+    curve_list.append(Segment(begin=ZM3, end=ZM4, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB}))
 
     if self.is_outwards():
-        curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
+        curve_list.append(Arc1(begin=ZM4, end=ZM1, radius=-Rbo, is_trigo_direction=False))
     else:
-        curve_list.append(Arc1(ZM4, ZM1, -Rbo, is_trigo_direction=False))
+        curve_list.append(Arc1(begin=ZM4, end=ZM1, radius=-Rbo, is_trigo_direction=False))
     # If no lamination, BC is required on bore
     curve_list[-1].prop_dict = {COND_BOUNDARY_PROP_LAB: YOKE_LAB}
 

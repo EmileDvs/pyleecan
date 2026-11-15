@@ -1,4 +1,4 @@
-from numpy import linspace
+import numpy as np
 
 
 def get_value(self):
@@ -10,7 +10,7 @@ def get_value(self):
             dtype = float
         elif self.type_value == 1:
             dtype = int
-        value = linspace(
+        value = np.linspace(
             start=self.min_value,
             stop=self.max_value,
             num=self.N,

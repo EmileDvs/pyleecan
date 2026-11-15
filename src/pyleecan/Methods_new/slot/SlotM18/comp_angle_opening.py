@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_angle_opening(self):
@@ -18,4 +18,4 @@ def comp_angle_opening(self):
 
     """
 
-    return 2 * pi / self.Zs
+    return 2 * np.pi / self.Zs

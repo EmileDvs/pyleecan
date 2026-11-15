@@ -1,4 +1,4 @@
-from numpy import exp, angle, abs as np_abs
+import numpy as np
 
 DELTA = 1e-9  # To remove computing noise
 
@@ -28,8 +28,8 @@ def split_line(self, Z1, Z2, is_join=False, prop_dict_join=None):
 
     Z_int = self.intersect_line(Z1, Z2)
     # Begin and end point in the line coordonate system
-    Zb = (self.begin - Z1) * exp(-1j * angle(Z2 - Z1))
-    Ze = (self.end - Z1) * exp(-1j * angle(Z2 - Z1))
+    Zb = (self.begin - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
+    Ze = (self.end - Z1) * np.exp(-1j * np.angle(Z2 - Z1))
 
     if len(Z_int) == 0:
         # No intersection copy the line

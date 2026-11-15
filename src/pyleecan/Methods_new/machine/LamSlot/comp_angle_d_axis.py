@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_angle_d_axis(self):

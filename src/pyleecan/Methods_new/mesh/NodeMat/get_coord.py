@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from numpy.typing import ArrayLike
 
 
-def get_coord(self, node_indices: ArrayLike) -> np.ndarray:
+
+def get_coord(self, node_indices: np.typing.ArrayLike) -> np.ndarray:
     """Return the coordinates of node(s).
 
     Parameters

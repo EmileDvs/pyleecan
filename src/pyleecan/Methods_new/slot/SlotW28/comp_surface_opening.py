@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import sin
+import numpy as np
 
 
 def comp_surface_opening(self):
@@ -24,7 +24,7 @@ def comp_surface_opening(self):
 
     # The bottom is an arc
     alpha = self.comp_angle_opening()
-    Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
+    Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     # Because Slamination = S - Zs * Sslot
     if self.is_outwards():

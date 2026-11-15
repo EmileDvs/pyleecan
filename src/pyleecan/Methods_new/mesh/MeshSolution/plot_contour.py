@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 
-from numpy import exp, linspace
-from numpy import max as np_max
-from numpy import min as np_min
-from numpy import pi, real
+import numpy as np
+
+
+
 
 from ....definitions import config_dict
 from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
@@ -111,7 +111,7 @@ def plot_contour(
     #     mesh_pv[field_name] = real(field)
     #     mesh_field = mesh_pv
     if clim is None:
-        clim = [np_min(real(field)), np_max(real(field))]
+        clim = [np.min(np.real(field)), np.max(np.real(field))]
         if abs((clim[1] - clim[0]) / clim[1]) < 0.01:
             clim[0] = -abs(clim[1])
             clim[1] = abs(clim[1])
@@ -153,7 +153,7 @@ def plot_contour(
             nframe = 25
             mesh_pv_B, field_B, field_name_B = self.get_mesh_field_pv(args)
             is_time = False
-            t = linspace(0.0, 1.0, nframe + 1)[:nframe]
+            t = np.linspace(0.0, 1.0, nframe + 1)[:nframe]
 
         for i in range(nframe):
             # Compute colorbar boundaries
@@ -163,7 +163,7 @@ def plot_contour(
                 phase = 1
             else:
                 field = field_B
-                phase = exp(1j * 2 * pi * t[i])
+                phase = np.exp(1j * 2 * np.pi * t[i])
             # Compute pyvista object
             plot_mesh_field(
                 pv_plotter,

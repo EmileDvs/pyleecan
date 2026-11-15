@@ -1,6 +1,6 @@
-from numpy import sign, swapaxes, zeros
+import numpy as np
 
-from ....Classes._swat_em import datamodel
+from ....Classes_new._swat_em import datamodel
 from . import WindingError
 
 
@@ -70,7 +70,7 @@ def comp_connection_mat(self, Zs=None, p=None):
     wdg.genwdg(Q=Zs, P=2 * p, m=qs, layers=Nlayer, turns=Ntcoil, w=self.coil_pitch)
 
     # init connexion matrix
-    wind_mat = zeros((Nlayer, 1, Zs, qs))
+    wind_mat = np.zeros((Nlayer, 1, Zs, qs))
 
     # get connexion matrix from swat-em
     wind_mat_swat = wdg.get_phases()
@@ -97,12 +97,12 @@ def comp_connection_mat(self, Zs=None, p=None):
             if len(layer) > 0:
                 for cond in layer:
                     wind_mat[Nlayer - ll - 1, 0, abs(cond) - 1, qq] = (
-                        sign(cond) * Ntcoil
+                        np.sign(cond) * Ntcoil
                     )
 
     # permute radial and tangential layers if coil span is 1
     if wdg.get_coilspan() == 1:
-        wind_mat = swapaxes(wind_mat, 0, 1)
+        wind_mat = np.swapaxes(wind_mat, 0, 1)
 
     # check that requested number of parallel connections is feasible
     Npcp_list = wdg.get_parallel_connections()

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp, angle as np_angle
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_hole import LamHole
@@ -68,7 +68,7 @@ def plot_schematics(
             Zh=8,
             Alpha0=0.3,
             D0=0.05,
-            W1=2 * pi / 16,
+            W1=2 * np.pi / 16,
         )
         lam = LamHole(
             Rint=0.1, Rext=0.2, is_internal=True, is_stator=False, hole=[hole]
@@ -116,7 +116,7 @@ def plot_schematics(
         # Adding schematics
         if is_add_schematics:
             # H0
-            line = Segment(0, point_dict["Z1"])
+            line = Segment(begin=0, end=point_dict["Z1"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -129,8 +129,8 @@ def plot_schematics(
             )
             # D0
             line = Segment(
-                point_dict["Z1"] * exp(1j * 2 * pi / self.Zh),
-                point_dict["Z2"] * exp(1j * 2 * pi / self.Zh),
+                begin=point_dict["Z1"] * np.exp(1j * 2 * np.pi / self.Zh),
+                end=point_dict["Z2"] * np.exp(1j * 2 * np.pi / self.Zh),
             )
             line.plot(
                 fig=fig,
@@ -162,8 +162,8 @@ def plot_schematics(
             Rtop = self.H0 + self.D0
             Rarc = (Rtop + lam.Rext) / 2
             line = Arc1(
-                begin=Rarc * exp(1j * (self.Alpha0 - self.W1 / 2)),
-                end=Rarc * exp(1j * (self.Alpha0 + self.W1 / 2)),
+                begin=Rarc * np.exp(1j * (self.Alpha0 - self.W1 / 2)),
+                end=Rarc * np.exp(1j * (self.Alpha0 + self.W1 / 2)),
                 radius=Rarc,
                 is_trigo_direction=True,
             )
@@ -179,7 +179,7 @@ def plot_schematics(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -188,7 +188,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Center axis
-            line = Segment(0, lam.Rext * 1.5 * exp(1j * self.Alpha0))
+            line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * self.Alpha0))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -198,8 +198,8 @@ def plot_schematics(
             )
             # H0 radius
             line = Arc1(
-                begin=self.H0 * exp(-1j * pi / 2 * 0.9),
-                end=self.H0 * exp(1j * pi / 2 * 0.9),
+                begin=self.H0 * np.exp(-1j * np.pi / 2 * 0.9),
+                end=self.H0 * np.exp(1j * np.pi / 2 * 0.9),
                 radius=self.H0,
                 is_trigo_direction=True,
             )
@@ -212,8 +212,8 @@ def plot_schematics(
             )
             # H0+D0 radius
             line = Arc1(
-                begin=(self.H0 + self.D0) * exp(-1j * pi / 2 * 0.9),
-                end=(self.H0 + self.D0) * exp(1j * pi / 2 * 0.9),
+                begin=(self.H0 + self.D0) * np.exp(-1j * np.pi / 2 * 0.9),
+                end=(self.H0 + self.D0) * np.exp(1j * np.pi / 2 * 0.9),
                 radius=(self.H0 + self.D0),
                 is_trigo_direction=True,
             )
@@ -225,7 +225,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Vent side 1 axis
-            line = Segment(0, lam.Rext * 1.5 * exp(1j * np_angle(point_dict["Z1"])))
+            line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z1"])))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -234,7 +234,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Vent side 2 axis
-            line = Segment(0, lam.Rext * 1.5 * exp(1j * np_angle(point_dict["Z3"])))
+            line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * np.angle(point_dict["Z3"])))
             line.plot(
                 fig=fig,
                 ax=ax,

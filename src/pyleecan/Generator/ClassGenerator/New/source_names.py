@@ -12,8 +12,10 @@ legacy                                    new
 ``pyleecan.Functions.FEMM.comp_FEMM_dict``  ``pyleecan.Functions_new.FEMM.comp_femm_dict``
 ========================================  ===============================================
 
-``to_new_names`` translates a legacy source; ``to_legacy_names`` translates
-back. Relative imports stay relative (same form), absolute ones absolute.
+The new names are written by the modernization passes (``modernize.py``,
+which reuse the passes of the class generator); ``to_legacy_names``
+translates them back for the class generator (compatibility shim, PLAN.md
+Step 5). Relative imports stay relative (same form), absolute ones absolute.
 """
 
 import ast
@@ -51,6 +53,7 @@ class NameMaps:
     """
 
     def __init__(self, gen_dict, function_mapping=None):
+        self.gen_dict = gen_dict
         self.class_modules = {}  # legacy class name -> new module path
         self.module_classes = {}  # new module path -> legacy class name
         for name in gen_dict:
@@ -73,63 +76,11 @@ def name_maps():
     return NameMaps(read_all(DOC_DIR))
 
 
-def to_new_names(source, package, maps=None):
-    """Import the classes and the functions with their new names.
-
-    Parameters
-    ----------
-    source : str
-        Source with legacy names
-    package : str
-        Package of the module (to resolve its relative imports)
-    maps : NameMaps, optional
-        Default: name_maps()
-
-    Returns
-    -------
-    source : str
-        Source with the new names
-    """
-    maps = maps or name_maps()
-
-    def translate(module, names):
-        if module.startswith(LEGACY_CLASSES + "."):
-            class_name = module[len(LEGACY_CLASSES) + 1 :]
-            if class_name not in maps.class_modules:
-                return None  # Support module (_check, _frozen...) or vendored
-            new_names = [
-                ast.alias(
-                    name=NORMALIZATION_CLASS_NAMES.get(alias.name, alias.name),
-                    asname=alias.asname
-                    or (alias.name if alias.name in NORMALIZATION_CLASS_NAMES else None),
-                )
-                for alias in names
-            ]
-            return f"{NEW_CLASSES}.{maps.class_modules[class_name]}", new_names
-        if module == LEGACY_FUNCTIONS or module.startswith(LEGACY_FUNCTIONS + "."):
-            path = module[len(LEGACY_FUNCTIONS) + 1 :]
-            if path.split(".")[0] in VENDORED_CLASS_PACKAGES:
-                return f"{NEW_FUNCTIONS}.{path}", names
-            new_path = maps.function_modules.get(path, path)
-            new_names = []
-            for alias in names:  # from pyleecan.Functions.FEMM import comp_FEMM_dict
-                submodule = maps.function_modules.get(f"{path}.{alias.name}" if path else alias.name)
-                if submodule is not None:
-                    alias = ast.alias(
-                        name=submodule.split(".")[-1], asname=alias.asname or alias.name
-                    )
-                new_names.append(alias)
-            return ".".join(filter(None, [NEW_FUNCTIONS, new_path])), new_names
-        return None
-
-    return _translate_imports(source, package, translate)
-
-
 def to_legacy_names(source, package, maps=None):
     """Import the classes and the functions with their legacy names.
 
-    Inverse of to_new_names (used by the class generator, whose passes still
-    use the legacy names: PLAN.md Step 5).
+    Inverse of the name passes of modernize.modernize_names (used by the class
+    generator, whose passes still use the legacy names: PLAN.md Step 5).
     """
     maps = maps or name_maps()
     legacy_class_names = {new: old for old, new in NORMALIZATION_CLASS_NAMES.items()}

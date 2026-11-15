@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from numpy import abs, array, ndarray, newaxis
+import numpy as np
 
 
-def get_element_area(self, element_coordinate: ndarray) -> ndarray:
+def get_element_area(self, element_coordinate: np.ndarray) -> np.ndarray:
     """Return the area of the elements.
 
     Parameters

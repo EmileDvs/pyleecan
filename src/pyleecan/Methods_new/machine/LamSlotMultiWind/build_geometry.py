@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 
 from ....Classes_new.machine.winding import Winding
 from ....Methods import NotImplementedYetError

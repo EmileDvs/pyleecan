@@ -1,4 +1,4 @@
-from numpy import exp, pi
+import numpy as np
 from . import *
 from ....Functions_new.labels import VENT_LAB
 
@@ -38,9 +38,9 @@ def build_geometry(self, alpha=0, delta=0):
 
     surf_list = list()
     # Modulo on Alpha0 for sym
-    Alpha0 = self.Alpha0 % (2 * pi / self.Zh)
+    Alpha0 = self.Alpha0 % (2 * np.pi / self.Zh)
     # The center
-    Zc = self.H0 * exp(1j * Alpha0)
+    Zc = self.H0 * np.exp(1j * Alpha0)
     # the radius of the circle on the VentilationCirc
     R = self.D0 / 2
     surf_list.append(

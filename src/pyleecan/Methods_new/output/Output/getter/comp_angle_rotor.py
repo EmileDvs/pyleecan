@@ -1,4 +1,4 @@
-from numpy import array, cumsum, pi, roll, unique
+import numpy as np
 
 from .....Classes_new.scidatatool.norm_affine import NormAffine as Norm_affine
 from .....Classes_new.scidatatool.norm_vector import NormVector as Norm_vector
@@ -34,26 +34,26 @@ def comp_angle_rotor(self, Time):
     A0 = self.get_angle_rotor_initial()
 
     # Case where normalization is a constant
-    if unique(Nr).size == 1:
+    if np.unique(Nr).size == 1:
         # Define affine normalization between time and rotor angle
         Time.normalizations["angle_rotor"] = Norm_affine(
-            slope=rot_dir * Nr[0] * 360 / 60, offset=A0 * 180 / pi
+            slope=rot_dir * Nr[0] * 360 / 60, offset=A0 * 180 / np.pi
         )
         # Compute rotor angle array from normalization
-        angle_rotor = Time.get_values(normalization="angle_rotor") * pi / 180
+        angle_rotor = Time.get_values(normalization="angle_rotor") * np.pi / 180
 
     else:
         # Calculate rotor angle from spee
         time = Time.get_values(is_smallestperiod=True)
         if time.size == 1:
             # Only one time step, no need to compute the position
-            angle_rotor = array([A0])
+            angle_rotor = np.array([A0])
         else:
             deltaT = time[1] - time[0]
             # Convert Nr from [rpm] to [rad/s] (time in [s] and angle_rotor in [rad])
-            Ar = cumsum(rot_dir * deltaT * Nr * 2 * pi / 60)
+            Ar = np.cumsum(rot_dir * deltaT * Nr * 2 * np.pi / 60)
             # Enforce first position to 0
-            Ar = roll(Ar, 1)
+            Ar = np.roll(Ar, 1)
             Ar[0] = 0
             angle_rotor = Ar + A0
         # Define vector normalization between time and rotor angle

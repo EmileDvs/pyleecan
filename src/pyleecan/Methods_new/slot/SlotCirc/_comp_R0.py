@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 from ....Functions_new.Geometry.circle_from_3_points import circle_from_3_points
 
 

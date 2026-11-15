@@ -1,4 +1,4 @@
-from numpy import take
+import numpy as np
 
 from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries
 
@@ -41,7 +41,7 @@ def _get_field(self, axes_list):
             and max(axis_requested.indices) >= values.shape[axis_requested.index]
         ):
             # DataPattern case where all values are requested
-            values = take(values, axis_requested.rebuild_indices, axis_requested.index)
+            values = np.take(values, axis_requested.rebuild_indices, axis_requested.index)
         elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
             # FFT case if axis is anti-periodic
             nper = axis_symmetries["antiperiod"]

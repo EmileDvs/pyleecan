@@ -1,4 +1,4 @@
-from numpy import zeros, angle
+import numpy as np
 from ..OPMatrix import OPMatrixException
 
 
@@ -25,7 +25,7 @@ def get_OP_array(self, *arg_list):
         arg_list = arg_list[0]
 
     # Init OP_matrix
-    OP_matrix = zeros((1, len(arg_list)))
+    OP_matrix = np.zeros((1, len(arg_list)))
 
     # Setup default argument (N0, Id, Iq, Tem, Pem)
     Idq_dict = self.get_Id_Iq()

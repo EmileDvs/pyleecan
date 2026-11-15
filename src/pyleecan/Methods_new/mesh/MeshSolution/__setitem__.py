@@ -1,5 +1,5 @@
 from typing import Hashable
-from pyleecan.Classes_new.mesh.solution import Solution
+from ....Classes_new.mesh.solution import Solution
 
 
 def __setitem__(self, label: Hashable, solution: Solution) -> None:

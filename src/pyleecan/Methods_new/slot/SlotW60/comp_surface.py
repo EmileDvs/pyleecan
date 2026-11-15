@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi, arcsin, sin
+import numpy as np
 
 
 def comp_surface(self):
@@ -28,7 +28,7 @@ def comp_surface(self):
     Rint = abs(Z5)
 
     # Surface of a slot pitch
-    Sring = (pi * Rext**2 - pi * Rint**2) * 1 / self.Zs
+    Sring = (np.pi * Rext**2 - np.pi * Rint**2) * 1 / self.Zs
 
     # Surface of the isocele triangle Z5 Z6 Z7
     D75 = abs(Z7 - Z5)
@@ -39,13 +39,13 @@ def comp_surface(self):
     # Tooth surface
     St = self.H1 * self.W1 + self.H2 * self.W2
 
-    alpha_top = 2 * arcsin(self.W1 / (2 * self.R1))
-    Sarc_top = (self.R1**2.0) / 2.0 * (alpha_top - sin(alpha_top))
+    alpha_top = 2 * np.arcsin(self.W1 / (2 * self.R1))
+    Sarc_top = (self.R1**2.0) / 2.0 * (alpha_top - np.sin(alpha_top))
 
-    alpha_bot1 = 2 * arcsin(self.W2 / (2 * Rint))
-    Sarc_bot1 = (Rint**2.0) / 2.0 * (alpha_bot1 - sin(alpha_bot1))
+    alpha_bot1 = 2 * np.arcsin(self.W2 / (2 * Rint))
+    Sarc_bot1 = (Rint**2.0) / 2.0 * (alpha_bot1 - np.sin(alpha_bot1))
 
-    alpha_bot2 = 2 * arcsin(D75 / (2 * Rint))
-    Sarc_bot2 = (Rint**2.0) / 2.0 * (alpha_bot2 - sin(alpha_bot2))
+    alpha_bot2 = 2 * np.arcsin(D75 / (2 * Rint))
+    Sarc_bot2 = (Rint**2.0) / 2.0 * (alpha_bot2 - np.sin(alpha_bot2))
 
     return Sring - (St + Sarc_top + Stri - Sarc_bot1 - Sarc_bot2)

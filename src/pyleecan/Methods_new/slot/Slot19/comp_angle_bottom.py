@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin
+import numpy as np
 
 
 def comp_angle_bottom(self):
@@ -24,8 +24,8 @@ def comp_angle_bottom(self):
         return self.W1
     else:
         if self.is_outwards():
-            alpha = 2 * float(arcsin(self.W1 / (2 * Rbo + 2 * self.H0)))
+            alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo + 2 * self.H0)))
         else:  # inward slot
-            alpha = 2 * float(arcsin(self.W1 / (2 * Rbo - 2 * self.H0)))
+            alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo - 2 * self.H0)))
 
     return alpha

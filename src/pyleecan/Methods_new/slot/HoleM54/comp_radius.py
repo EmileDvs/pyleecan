@@ -1,4 +1,4 @@
-from numpy import abs as np_abs
+import numpy as np
 
 
 def comp_radius(self):
@@ -23,6 +23,6 @@ def comp_radius(self):
     for curve in surf_list[0].line_list:
         point_list.extend(curve.discretize())
 
-    Rmax = max([np_abs(point) for point in point_list])
+    Rmax = max([np.abs(point) for point in point_list])
     Rmin = Rext - self.H0 - self.H1
     return (Rmin, Rmax)

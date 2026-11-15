@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import array, mod, zeros
+import numpy as np
 
 from ..Winding import WindingError
 from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
@@ -50,15 +50,15 @@ def init_as_CW2LR(self, Zs=None):
     # Ntspc = self.Ntcoil * Ncspc #Number of turns in series per phase
     Ntcoil = self.Ntcoil  # Number of turns per coils
 
-    wind_mat = zeros((2, 1, Zs, self.qs))
+    wind_mat = np.zeros((2, 1, Zs, self.qs))
     # creates highest harmonic at Zs/2+1 and Zs/2-1
     if ms == 0.5:  # then Zs/qs is integer
         # traditional non overlapping all teeth wound winding
         for q in range(0, self.qs):
             for k in range(0, Zs // self.qs):  # number of Ncgr coils
-                xenc = q + array([1, 0]) + k * qs
-                wind_mat[0, 0, int(mod(xenc[0] - 1, Zs)), q] = +Ntcoil  # right/top/2
-                wind_mat[1, 0, int(mod(xenc[1] - 1, Zs)), q] = -Ntcoil  # left/bottom/1
+                xenc = q + np.array([1, 0]) + k * qs
+                wind_mat[0, 0, int(np.mod(xenc[0] - 1, Zs)), q] = +Ntcoil  # right/top/2
+                wind_mat[1, 0, int(np.mod(xenc[1] - 1, Zs)), q] = -Ntcoil  # left/bottom/1
     elif (
         ms != 0.5 and Ncgr % 1 == 0
     ):  # ms!=0.5 and Ncgr is an integer (ms>0.25 && ms<0.5)
@@ -66,8 +66,8 @@ def init_as_CW2LR(self, Zs=None):
         for q in range(0, self.qs):
             for k in range(0, int((Zs // self.qs) // Ncgr)):  # number of Ncgr coils
                 for l in range(0, int(Ncgr)):
-                    id0 = int(mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
-                    id1 = int(mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
+                    id0 = int(np.mod(q * Ncgr + 0 + k * qs * Ncgr - 1 + l, Zs))
+                    id1 = int(np.mod(q * Ncgr + 1 + k * qs * Ncgr - 1 + l, Zs))
                     # left / bottom / 1
                     wind_mat[1, 0, id0, q] = -((-1) ** (l + q - 1 + k)) * Ntcoil
                     # right / top / 2

@@ -1,5 +1,5 @@
-from pyleecan.Classes_new.converter.rule_simple import RuleSimple
-from pyleecan.Classes_new.converter.rule_equation import RuleEquation
+from ......Classes_new.converter.rule_simple import RuleSimple
+from ......Classes_new.converter.rule_equation import RuleEquation
 
 
 def add_rule_ventilationCirc(self, is_stator, duct_id):

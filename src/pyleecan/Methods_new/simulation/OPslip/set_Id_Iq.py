@@ -1,4 +1,4 @@
-from numpy import angle
+import numpy as np
 
 
 def set_Id_Iq(self, Id, Iq):
@@ -20,4 +20,4 @@ def set_Id_Iq(self, Id, Iq):
     else:
         Z = Id + 1j * Iq
         self.I0_ref = abs(Z)
-        self.IPhi0_ref = angle(Z)
+        self.IPhi0_ref = np.angle(Z)

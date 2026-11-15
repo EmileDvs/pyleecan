@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from os.path import join, isdir
+
 
 
 def get_path_save_fea(self, output):
@@ -35,4 +35,4 @@ def get_path_save_fea(self, output):
     #     file_name = "FEMM_simulation.fem"
     file_name = "ELMER_simulation"
 
-    return join(save_dir, file_name)
+    return os.path.join(save_dir, file_name)

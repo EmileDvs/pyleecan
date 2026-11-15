@@ -1,6 +1,6 @@
-from numpy import zeros, ndarray, iscomplexobj, tile
+import numpy as np
 
-from pyleecan.Classes_new.mesh.mesh_solution import MeshSolution
+from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 from ...simulation.Input import InputError
 
@@ -57,7 +57,7 @@ def run(self):
                     break
         if is_resize:
             for key in out_dict:
-                if isinstance(out_dict[key], ndarray):
+                if isinstance(out_dict[key], np.ndarray):
                     out_dict[key] = out_dict[key][..., None]
                 elif key == "Phi_wind":
                     for phi_key in out_dict[key]:
@@ -83,25 +83,25 @@ def run(self):
 
     if is_loop:
         for key in out_dict:
-            if isinstance(out_dict[key], ndarray):
+            if isinstance(out_dict[key], np.ndarray):
                 field = out_dict[key].copy()
-                if iscomplexobj(field):
+                if np.iscomplexobj(field):
                     dtype = complex
                 else:
                     dtype = float
-                out_dict[key] = zeros(
+                out_dict[key] = np.zeros(
                     tuple([s for s in field.shape] + [Nslices]), dtype=dtype
                 )
                 out_dict[key][..., 0] = field
             elif isinstance(out_dict[key], dict):
                 for key2 in out_dict[key]:
-                    if isinstance(out_dict[key][key2], ndarray):
-                        if iscomplexobj(out_dict[key][key2]):
+                    if isinstance(out_dict[key][key2], np.ndarray):
+                        if np.iscomplexobj(out_dict[key][key2]):
                             dtype = complex
                         else:
                             dtype = float
                         field = out_dict[key][key2].copy()
-                        out_dict[key][key2] = zeros(
+                        out_dict[key][key2] = np.zeros(
                             tuple([s for s in field.shape] + [Nslices]), dtype=dtype
                         )
                         out_dict[key][key2][..., 0] = field
@@ -125,7 +125,7 @@ def run(self):
 
             # Store in out_dict matrices
             for key in out_dict_index:
-                if isinstance(out_dict_index[key], ndarray):
+                if isinstance(out_dict_index[key], np.ndarray):
                     out_dict[key][..., ii + 1] = out_dict_index[key]
                 elif isinstance(out_dict[key], dict):
                     for key2 in out_dict[key]:

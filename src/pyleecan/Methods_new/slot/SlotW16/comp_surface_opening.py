@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_surface_opening(self):
@@ -18,6 +18,6 @@ def comp_surface_opening(self):
     """
     Rbo = self.get_Rbo()
 
-    S0 = (pi * Rbo**2 - pi * (Rbo - self.H0) ** 2) * self.W0 / (2 * pi)
+    S0 = (np.pi * Rbo**2 - np.pi * (Rbo - self.H0) ** 2) * self.W0 / (2 * np.pi)
 
     return S0

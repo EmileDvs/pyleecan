@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import array
+import numpy as np
 
 
 def comp_height(self, Ndisc=200):
@@ -26,7 +26,7 @@ def comp_height(self, Ndisc=200):
     surf = self.get_surface()
 
     point_list = surf.discretize(Ndisc)
-    point_list = array(point_list)
+    point_list = np.array(point_list)
     if self.is_outwards():
         return max(abs(point_list)) - Rbo
     else:

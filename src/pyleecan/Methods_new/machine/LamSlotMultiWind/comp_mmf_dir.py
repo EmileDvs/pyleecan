@@ -1,4 +1,4 @@
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 
 
 def comp_mmf_dir(self, current_dir=None, phase_dir=None, is_plot=False):

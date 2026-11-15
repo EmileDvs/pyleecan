@@ -1,4 +1,4 @@
-from numpy import exp, pi, cos, sin, tan, angle, sqrt
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -19,12 +19,12 @@ def _comp_point_coordinate(self):
 
     # comp point coordinate (in complex)
     # Draw the left side with center P
-    Z0 = 1j * self.H0 / (2 * sin(self.W0 / 2))
-    Z1 = -self.W3 / 2 + 1j * (Z0.imag + (self.W3 / 2) / tan(self.W0 / 2))
+    Z0 = 1j * self.H0 / (2 * np.sin(self.W0 / 2))
+    Z1 = -self.W3 / 2 + 1j * (Z0.imag + (self.W3 / 2) / np.tan(self.W0 / 2))
     Z2 = (
         Z1.real
-        - sin(self.W0 / 2) * (self.W2 - self.H0)
-        + 1j * (Z1.imag + cos(self.W0 / 2) * (self.W2 - self.H0))
+        - np.sin(self.W0 / 2) * (self.W2 - self.H0)
+        + 1j * (Z1.imag + np.cos(self.W0 / 2) * (self.W2 - self.H0))
     )
 
     # Draw the left hole with center P2
@@ -39,17 +39,17 @@ def _comp_point_coordinate(self):
     ZM3h = (w - self.W1) / 2 - 1j * self.H0
 
     # Revert translation and rotation to center left hole in P
-    Z3 = Z3h * exp(1j * angle(Z1 - Z2)) + Z2
-    Z4 = Z4h * exp(1j * angle(Z1 - Z2)) + Z2
-    Z5 = Z5h * exp(1j * angle(Z1 - Z2)) + Z2
-    Z6 = Z6h * exp(1j * angle(Z1 - Z2)) + Z2
-    ZM1 = ZM1h * exp(1j * angle(Z1 - Z2)) + Z2
-    ZM2 = ZM2h * exp(1j * angle(Z1 - Z2)) + Z2
-    ZM3 = ZM3h * exp(1j * angle(Z1 - Z2)) + Z2
-    ZM4 = ZM4h * exp(1j * angle(Z1 - Z2)) + Z2
+    Z3 = Z3h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+    Z4 = Z4h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+    Z5 = Z5h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+    Z6 = Z6h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+    ZM1 = ZM1h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+    ZM2 = ZM2h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+    ZM3 = ZM3h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
+    ZM4 = ZM4h * np.exp(1j * np.angle(Z1 - Z2)) + Z2
 
     # Revert translation to center left hole in machine's center
-    Z = 1j * (sqrt((Rbo - self.H1) ** 2 - Z3.real**2) - Z3.imag)
+    Z = 1j * (np.sqrt((Rbo - self.H1) ** 2 - Z3.real**2) - Z3.imag)
     Z0 += Z
     Z1 += Z
     Z2 += Z
@@ -63,18 +63,18 @@ def _comp_point_coordinate(self):
     ZM4 += Z
 
     # Rotation of angle -pi / 2 to respect slot conventions
-    Z *= exp(-1j * pi / 2)
-    Z0 *= exp(-1j * pi / 2)
-    Z1 *= exp(-1j * pi / 2)
-    Z2 *= exp(-1j * pi / 2)
-    Z3 *= exp(-1j * pi / 2)
-    Z4 *= exp(-1j * pi / 2)
-    Z5 *= exp(-1j * pi / 2)
-    Z6 *= exp(-1j * pi / 2)
-    ZM1 *= exp(-1j * pi / 2)
-    ZM2 *= exp(-1j * pi / 2)
-    ZM3 *= exp(-1j * pi / 2)
-    ZM4 *= exp(-1j * pi / 2)
+    Z *= np.exp(-1j * np.pi / 2)
+    Z0 *= np.exp(-1j * np.pi / 2)
+    Z1 *= np.exp(-1j * np.pi / 2)
+    Z2 *= np.exp(-1j * np.pi / 2)
+    Z3 *= np.exp(-1j * np.pi / 2)
+    Z4 *= np.exp(-1j * np.pi / 2)
+    Z5 *= np.exp(-1j * np.pi / 2)
+    Z6 *= np.exp(-1j * np.pi / 2)
+    ZM1 *= np.exp(-1j * np.pi / 2)
+    ZM2 *= np.exp(-1j * np.pi / 2)
+    ZM3 *= np.exp(-1j * np.pi / 2)
+    ZM4 *= np.exp(-1j * np.pi / 2)
 
     # Draw the right hole by symmetry
     Z1s = Z1.conjugate()

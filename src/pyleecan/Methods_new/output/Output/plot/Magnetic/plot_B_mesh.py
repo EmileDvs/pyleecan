@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
-from numpy import exp, linspace
-from numpy import max as np_max
-from numpy import min as np_min
-from numpy import pi, real
-from numpy.linalg import norm
+import numpy as np
 
-from pyleecan.definitions import config_dict
-from pyleecan.Functions_new.Plot.Pyvista.configure_plot import configure_plot
-from pyleecan.Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+
+
+
+
+
+from ......definitions import config_dict
+from ......Functions_new.Plot.Pyvista.configure_plot import configure_plot
+from ......Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 
 COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
@@ -119,7 +119,7 @@ def plot_B_mesh(
     #     mesh_pv[field_name] = real(field)
     #     mesh_field = mesh_pv
     if clim is None:
-        clim = [np_min(real(field)), np_max(real(field))]
+        clim = [np.min(np.real(field)), np.max(np.real(field))]
         if (clim[1] - clim[0]) / clim[1] < 0.01:
             clim[0] = -abs(clim[1])
             clim[1] = abs(clim[1])
@@ -189,7 +189,7 @@ def plot_B_mesh(
             nframe = 25
             mesh_pv_B, field_B, field_name_B = MS_B_plot.get_mesh_field_pv(args)
             is_time = False
-            t = linspace(0.0, 1.0, nframe + 1)[:nframe]
+            t = np.linspace(0.0, 1.0, nframe + 1)[:nframe]
 
         for i in range(nframe):
             # Compute colorbar boundaries
@@ -201,7 +201,7 @@ def plot_B_mesh(
                     field_At = field_A[i, :]
             else:
                 field = field_B
-                phase = exp(1j * 2 * pi * t[i])
+                phase = np.exp(1j * 2 * np.pi * t[i])
 
                 if is_contour:
                     field_At = field_A
@@ -217,7 +217,7 @@ def plot_B_mesh(
             )
 
             if is_contour:
-                mesh_pv_Az[field_name_A] = real(field_At * phase)
+                mesh_pv_Az[field_name_A] = np.real(field_At * phase)
                 contours = mesh_pv_Az.contour()
                 pv_plotter.add_mesh(contours, color="black", line_width=5)
 

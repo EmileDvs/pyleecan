@@ -1,16 +1,16 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp, angle, floor_divide
+import numpy as np
 
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
-from pyleecan.Classes_new.machine.lam_hole import LamHole
-from pyleecan.Classes_new.geometry.segment import Segment
-from pyleecan.definitions import config_dict
+from ....Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.machine.lam_hole import LamHole
+from ....Classes_new.geometry.segment import Segment
+from ....definitions import config_dict
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
-from pyleecan.Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, MAIN_LINE_COLOR, MAIN_LINE_STYLE, MAIN_LINE_WIDTH, P_FONT_SIZE, SC_FONT_SIZE, SC_LINE_COLOR, SC_LINE_STYLE, SC_LINE_WIDTH, TEXT_BOX, plot_quote
+from ....Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, MAIN_LINE_COLOR, MAIN_LINE_STYLE, MAIN_LINE_WIDTH, P_FONT_SIZE, SC_FONT_SIZE, SC_LINE_COLOR, SC_LINE_STYLE, SC_LINE_WIDTH, TEXT_BOX, plot_quote
 
 from ....Functions_new.FEMM.get_mesh_param import get_mesh_param
 from ....Functions_new.labels import decode_label, HOLEM_LAB
-from pyleecan.Methods import ParentMissingError
+from ....Methods import ParentMissingError
 
 MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 
@@ -105,22 +105,22 @@ def plot_schematics(
     if type_add_active == 0:
         lam.hole[0].remove_magnet()
 
-    alpha = pi / 2  # To rotate the schematics
+    alpha = np.pi / 2  # To rotate the schematics
     fig, ax = lam.plot(
-        alpha=pi / self.Zh + alpha,
+        alpha=np.pi / self.Zh + alpha,
         is_show_fig=False,
         is_lam_only=type_add_active == 0,
         fig=fig,
         ax=ax,
     )  # center hole on Ox axis
-    sp = 2 * pi / self.Zh
+    sp = 2 * np.pi / self.Zh
     Rbo = self.get_Rbo()
     point_dict = self._comp_point_coordinate()
 
     # Adding point label
     if is_add_point_label:
         for name, Z in point_dict.items():
-            Z = Z * exp(1j * alpha)
+            Z = Z * np.exp(1j * alpha)
             ax.text(
                 Z.real,
                 Z.imag,
@@ -144,8 +144,8 @@ def plot_schematics(
 
         # H2
         line = Segment(
-            (point_dict["Z5"] + point_dict["Z4"]) / 2 * exp(1j * alpha),
-            Zc * exp(1j * alpha),
+            begin=(point_dict["Z5"] + point_dict["Z4"]) / 2 * np.exp(1j * alpha),
+            end=Zc * np.exp(1j * alpha),
         )
         line.plot(
             fig=fig,
@@ -171,8 +171,8 @@ def plot_schematics(
 
         # H2
         line = Segment(
-            (point_dict["Z10"] + point_dict["Z11"]) / 2 * exp(1j * alpha),
-            Zc * exp(1j * alpha),
+            begin=(point_dict["Z10"] + point_dict["Z11"]) / 2 * np.exp(1j * alpha),
+            end=Zc * np.exp(1j * alpha),
         )
         line.plot(
             fig=fig,
@@ -186,11 +186,11 @@ def plot_schematics(
         )
         # W3
         line = Segment(
-            (point_dict["Z5"] + point_dict["Z6"]) / 2 * exp(1j * alpha),
-            (point_dict["Z12"] + point_dict["Z11"])
+            begin=(point_dict["Z5"] + point_dict["Z6"]) / 2 * np.exp(1j * alpha),
+            end=(point_dict["Z12"] + point_dict["Z11"])
             / 2
-            * exp(1j * sp)
-            * exp(1j * alpha),
+            * np.exp(1j * sp)
+            * np.exp(1j * alpha),
         )
         line.plot(
             fig=fig,
@@ -203,8 +203,8 @@ def plot_schematics(
             fontsize=SC_FONT_SIZE,
         )
         line = Segment(
-            (point_dict["Z12"] + point_dict["Z11"]) / 2 * exp(1j * alpha),
-            (point_dict["Z5"] + point_dict["Z6"]) / 2 * exp(-1j * sp) * exp(1j * alpha),
+            begin=(point_dict["Z12"] + point_dict["Z11"]) / 2 * np.exp(1j * alpha),
+            end=(point_dict["Z5"] + point_dict["Z6"]) / 2 * np.exp(-1j * sp) * np.exp(1j * alpha),
         )
         line.plot(
             fig=fig,
@@ -227,7 +227,7 @@ def plot_schematics(
 
                 if HOLEM_LAB in label_dict["surf_type"]:  # LamHole
                     T_id = label_dict["T_id"]
-                    point_ref = point_ref * exp(1j * alpha)
+                    point_ref = point_ref * np.exp(1j * alpha)
                     ax.text(
                         point_ref.real,
                         point_ref.imag,
@@ -236,8 +236,8 @@ def plot_schematics(
 
             # W2
             line = Segment(
-                point_dict["ZM6"] * exp(1j * alpha),
-                point_dict["ZM5"] * exp(1j * alpha),
+                begin=point_dict["ZM6"] * np.exp(1j * alpha),
+                end=point_dict["ZM5"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -251,8 +251,8 @@ def plot_schematics(
             )
 
             line = Segment(
-                point_dict["ZM13"] * exp(1j * alpha),
-                point_dict["ZM14"] * exp(1j * alpha),
+                begin=point_dict["ZM13"] * np.exp(1j * alpha),
+                end=point_dict["ZM14"] * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -269,10 +269,10 @@ def plot_schematics(
             Zlim1 = point_dict["ZM1"] - self.H1
             Zlim2 = point_dict["ZM4"] - self.H1
             plot_quote(
-                point_dict["ZM1"] * exp(1j * alpha),
-                Zlim1 * exp(1j * alpha),
-                Zlim2 * exp(1j * alpha),
-                point_dict["ZM4"] * exp(1j * alpha),
+                point_dict["ZM1"] * np.exp(1j * alpha),
+                Zlim1 * np.exp(1j * alpha),
+                Zlim2 * np.exp(1j * alpha),
+                point_dict["ZM4"] * np.exp(1j * alpha),
                 offset_label=-1j * self.H1 * 0.6 - 0.2 * self.W2,
                 fig=fig,
                 ax=ax,
@@ -282,10 +282,10 @@ def plot_schematics(
             Zlim1 = point_dict["ZM9"] - self.H1
             Zlim2 = point_dict["ZM12"] - self.H1
             plot_quote(
-                point_dict["ZM9"] * exp(1j * alpha),
-                Zlim1 * exp(1j * alpha),
-                Zlim2 * exp(1j * alpha),
-                point_dict["ZM12"] * exp(1j * alpha),
+                point_dict["ZM9"] * np.exp(1j * alpha),
+                Zlim1 * np.exp(1j * alpha),
+                Zlim2 * np.exp(1j * alpha),
+                point_dict["ZM12"] * np.exp(1j * alpha),
                 offset_label=-1j * self.H1 * 0.6 - 0.2 * self.W2,
                 fig=fig,
                 ax=ax,
@@ -294,8 +294,8 @@ def plot_schematics(
 
         # W0
         line = Segment(
-            (point_dict["Z1"] + point_dict["Z2"]) * exp(1j * alpha) / 2,
-            (point_dict["Z8"] + point_dict["Z7"]) * exp(1j * alpha) / 2,
+            begin=(point_dict["Z1"] + point_dict["Z2"]) * np.exp(1j * alpha) / 2,
+            end=(point_dict["Z8"] + point_dict["Z7"]) * np.exp(1j * alpha) / 2,
         )
         line.plot(
             fig=fig,
@@ -309,8 +309,8 @@ def plot_schematics(
         )
         # H0
         line = Segment(
-            Rbo * exp(1j * alpha),
-            (point_dict["Z1"] + point_dict["Z7"]) * exp(1j * alpha) / 2,
+            begin=Rbo * np.exp(1j * alpha),
+            end=(point_dict["Z1"] + point_dict["Z7"]) * np.exp(1j * alpha) / 2,
         )
         line.plot(
             fig=fig,
@@ -324,8 +324,8 @@ def plot_schematics(
         )
         # H1
         line = Segment(
-            (point_dict["Z3"] + point_dict["Z2"]) * exp(1j * alpha) / 2,
-            (point_dict["Z3"] + point_dict["Z2"]) * exp(1j * alpha) / 2 - 1j * self.H1,
+            begin=(point_dict["Z3"] + point_dict["Z2"]) * np.exp(1j * alpha) / 2,
+            end=(point_dict["Z3"] + point_dict["Z2"]) * np.exp(1j * alpha) / 2 - 1j * self.H1,
         )
         line.plot(
             fig=fig,
@@ -339,8 +339,8 @@ def plot_schematics(
         )
 
         line = Segment(
-            (point_dict["Z8"] + point_dict["Z9"]) * exp(1j * alpha) / 2,
-            (point_dict["Z8"] + point_dict["Z9"]) * exp(1j * alpha) / 2 - 1j * self.H1,
+            begin=(point_dict["Z8"] + point_dict["Z9"]) * np.exp(1j * alpha) / 2,
+            end=(point_dict["Z8"] + point_dict["Z9"]) * np.exp(1j * alpha) / 2 - 1j * self.H1,
         )
         line.plot(
             fig=fig,
@@ -355,7 +355,7 @@ def plot_schematics(
 
     if is_add_main_line:
         # Ox axis
-        line = Segment(0, lam.Rext * 1.5 * exp(1j * alpha))
+        line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * alpha))
         line.plot(
             fig=fig,
             ax=ax,
@@ -364,7 +364,7 @@ def plot_schematics(
             linewidth=MAIN_LINE_WIDTH,
         )
         # Tooth axis
-        line = Segment(0, lam.Rext * 1.5 * exp(1j * sp / 2) * exp(1j * alpha))
+        line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * sp / 2) * np.exp(1j * alpha))
         line.plot(
             fig=fig,
             ax=ax,
@@ -372,7 +372,7 @@ def plot_schematics(
             linestyle=MAIN_LINE_STYLE,
             linewidth=MAIN_LINE_WIDTH,
         )
-        line = Segment(0, lam.Rext * 1.5 * exp(-1j * sp / 2) * exp(1j * alpha))
+        line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(-1j * sp / 2) * np.exp(1j * alpha))
         line.plot(
             fig=fig,
             ax=ax,
@@ -383,8 +383,8 @@ def plot_schematics(
 
         # H2
         line = Arc1(
-            begin=point_dict["Z11"] * exp(1j * alpha * 0.8),
-            end=point_dict["Z5"] * exp(1.2 * 1j * alpha),
+            begin=point_dict["Z11"] * np.exp(1j * alpha * 0.8),
+            end=point_dict["Z5"] * np.exp(1.2 * 1j * alpha),
             radius=Rbo - self.H2,
             is_trigo_direction=True,
         )
@@ -398,7 +398,7 @@ def plot_schematics(
 
         # H0 lines
         line = Segment(
-            point_dict["Z2"] * exp(1j * alpha), point_dict["Z8"] * exp(1j * alpha)
+            begin=point_dict["Z2"] * np.exp(1j * alpha), end=point_dict["Z8"] * np.exp(1j * alpha)
         )
         line.plot(
             fig=fig,
@@ -409,7 +409,7 @@ def plot_schematics(
         )
 
         line = Segment(
-            point_dict["Z1"] * exp(1j * alpha), point_dict["Z7"] * exp(1j * alpha)
+            begin=point_dict["Z1"] * np.exp(1j * alpha), end=point_dict["Z7"] * np.exp(1j * alpha)
         )
         line.plot(
             fig=fig,
@@ -422,8 +422,8 @@ def plot_schematics(
         if type_add_active == 2:
             # W2 lines
             line = Segment(
-                (point_dict["ZM6"] + point_dict["ZM5"]) * exp(1j * alpha) / 2,
-                (point_dict["ZM7"] + point_dict["ZM8"]) * exp(1j * alpha) / 2,
+                begin=(point_dict["ZM6"] + point_dict["ZM5"]) * np.exp(1j * alpha) / 2,
+                end=(point_dict["ZM7"] + point_dict["ZM8"]) * np.exp(1j * alpha) / 2,
             )
             line.plot(
                 fig=fig,
@@ -433,8 +433,8 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             line = Segment(
-                (point_dict["ZM13"] + point_dict["ZM14"]) * exp(1j * alpha) / 2,
-                (point_dict["ZM15"] + point_dict["ZM16"]) * exp(1j * alpha) / 2,
+                begin=(point_dict["ZM13"] + point_dict["ZM14"]) * np.exp(1j * alpha) / 2,
+                end=(point_dict["ZM15"] + point_dict["ZM16"]) * np.exp(1j * alpha) / 2,
             )
             line.plot(
                 fig=fig,
@@ -446,8 +446,8 @@ def plot_schematics(
 
         # W3 parralel
         line = Segment(
-            point_dict["Z6"] * exp(1j * alpha),
-            point_dict["Z12"] * exp(1j * sp) * exp(1j * alpha),
+            begin=point_dict["Z6"] * np.exp(1j * alpha),
+            end=point_dict["Z12"] * np.exp(1j * sp) * np.exp(1j * alpha),
         )
         line.plot(
             fig=fig,
@@ -458,8 +458,8 @@ def plot_schematics(
         )
         if type_add_active == 2:
             line = Segment(
-                point_dict["ZM8"] * exp(1j * alpha),
-                point_dict["ZM16"] * exp(1j * sp) * exp(1j * alpha),
+                begin=point_dict["ZM8"] * np.exp(1j * alpha),
+                end=point_dict["ZM16"] * np.exp(1j * sp) * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -469,8 +469,8 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             line = Segment(
-                point_dict["ZM7"] * exp(1j * alpha),
-                point_dict["ZM15"] * exp(1j * sp) * exp(1j * alpha),
+                begin=point_dict["ZM7"] * np.exp(1j * alpha),
+                end=point_dict["ZM15"] * np.exp(1j * sp) * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -481,8 +481,8 @@ def plot_schematics(
             )
 
         line = Segment(
-            point_dict["Z12"] * exp(1j * alpha),
-            point_dict["Z6"] * exp(-1j * sp) * exp(1j * alpha),
+            begin=point_dict["Z12"] * np.exp(1j * alpha),
+            end=point_dict["Z6"] * np.exp(-1j * sp) * np.exp(1j * alpha),
         )
         line.plot(
             fig=fig,
@@ -493,8 +493,8 @@ def plot_schematics(
         )
         if type_add_active == 2:
             line = Segment(
-                point_dict["ZM16"] * exp(1j * alpha),
-                point_dict["ZM8"] * exp(-1j * sp) * exp(1j * alpha),
+                begin=point_dict["ZM16"] * np.exp(1j * alpha),
+                end=point_dict["ZM8"] * np.exp(-1j * sp) * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -504,8 +504,8 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             line = Segment(
-                point_dict["ZM15"] * exp(1j * alpha),
-                point_dict["ZM7"] * exp(-1j * sp) * exp(1j * alpha),
+                begin=point_dict["ZM15"] * np.exp(1j * alpha),
+                end=point_dict["ZM7"] * np.exp(-1j * sp) * np.exp(1j * alpha),
             )
             line.plot(
                 fig=fig,
@@ -516,7 +516,7 @@ def plot_schematics(
             )
 
     # Zooming and cleaning
-    W = (point_dict["Z1"] * exp(1j * sp)).imag
+    W = (point_dict["Z1"] * np.exp(1j * sp)).imag
     Rint = self.parent.Rint
     Rext = self.parent.Rext
 

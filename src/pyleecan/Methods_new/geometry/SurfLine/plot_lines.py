@@ -1,4 +1,4 @@
-from numpy import real, imag
+import numpy as np
 
 from ....Functions_new.init_fig import init_fig
 

@@ -1,4 +1,4 @@
-from numpy import exp
+import numpy as np
 
 
 def get_Id_Iq(self):
@@ -20,6 +20,6 @@ def get_Id_Iq(self):
     else:
         IPhi0_ref = self.IPhi0_ref
 
-    Z = self.I0_ref * exp(1j * IPhi0_ref)
+    Z = self.I0_ref * np.exp(1j * IPhi0_ref)
 
     return {"Id": Z.real, "Iq": Z.imag}

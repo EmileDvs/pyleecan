@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def init_other_unit(self):
@@ -17,11 +17,11 @@ def init_other_unit(self):
     self.other_unit_dict["m"] = 0.001
 
     self.other_unit_dict["rad"] = 1
-    self.other_unit_dict["deg"] = 180 / pi
+    self.other_unit_dict["deg"] = 180 / np.pi
 
     # conversion electrical degree
     pole_pair_number = self.machine.get_pole_pair_number()
-    self.other_unit_dict["ED"] = (4 / pole_pair_number) * (pi / 180)
+    self.other_unit_dict["ED"] = (4 / pole_pair_number) * (np.pi / 180)
 
     self.other_unit_dict[None] = 1  # No unit => No scale
     self.other_unit_dict[""] = 1  # No unit => No scale

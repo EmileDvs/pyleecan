@@ -1,4 +1,4 @@
-from numpy import arctan, exp, ones, pi, sqrt, zeros
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
@@ -41,30 +41,30 @@ def gen_input(self):
     # Load and check Is
     if qs > 0:
         if qs == 6 and simu.machine.stator.winding.dual_tri_phase_shift is not None:
-            Is_val = zeros((1, 6), dtype=complex)
+            Is_val = np.zeros((1, 6), dtype=complex)
             Id = self.OP.get_Id_Iq()["Id"]
             Iq = self.OP.get_Id_Iq()["Iq"]
-            I0 = sqrt(Id**2 + Iq**2) * sqrt(2)
+            I0 = np.sqrt(Id**2 + Iq**2) * np.sqrt(2)
             if Iq == 0:
-                phi0 = 0 if Id >= 0 else -pi
+                phi0 = 0 if Id >= 0 else -np.pi
             else:
-                phi0 = arctan(Id / Iq) - pi / 2
+                phi0 = np.arctan(Id / Iq) - np.pi / 2
             if not simu.machine.stator.winding.is_wye:
-                I0 = I0 / sqrt(3)
-                phi0 = phi0 + pi / 6
-            Is_val[0, 0] = I0 * exp(1j * phi0)
-            Is_val[0, 1] = I0 * exp(
+                I0 = I0 / np.sqrt(3)
+                phi0 = phi0 + np.pi / 6
+            Is_val[0, 0] = I0 * np.exp(1j * phi0)
+            Is_val[0, 1] = I0 * np.exp(
                 1j * (phi0 + simu.machine.stator.winding.dual_tri_phase_shift)
             )
-            Is_val[0, 2] = I0 * exp(1j * (phi0 + 2 * pi / 3))
-            Is_val[0, 3] = I0 * exp(
+            Is_val[0, 2] = I0 * np.exp(1j * (phi0 + 2 * np.pi / 3))
+            Is_val[0, 3] = I0 * np.exp(
                 1j
-                * (phi0 + 2 * pi / 3 + simu.machine.stator.winding.dual_tri_phase_shift)
+                * (phi0 + 2 * np.pi / 3 + simu.machine.stator.winding.dual_tri_phase_shift)
             )
-            Is_val[0, 4] = I0 * exp(1j * (phi0 + 4 * pi / 3))
-            Is_val[0, 5] = I0 * exp(
+            Is_val[0, 4] = I0 * np.exp(1j * (phi0 + 4 * np.pi / 3))
+            Is_val[0, 5] = I0 * np.exp(
                 1j
-                * (phi0 + 4 * pi / 3 + simu.machine.stator.winding.dual_tri_phase_shift)
+                * (phi0 + 4 * np.pi / 3 + simu.machine.stator.winding.dual_tri_phase_shift)
             )
             felec = self.OP.N0 * simu.machine.get_pole_pair_number() / 60
             # Create Data object
@@ -163,9 +163,9 @@ def gen_input(self):
         Phase_R = outelec.axes_dict["phase_" + simu.machine.rotor.get_label()]
         qr_per = Phase_R.get_length(is_smallestperiod=True)
         if hasattr(self.OP, "If_ref"):  # WRSM case
-            Ir_val = ones((Nt_per, qr_per)) * self.OP.If_ref
+            Ir_val = np.ones((Nt_per, qr_per)) * self.OP.If_ref
         elif self.Ir is None:
-            Ir_val = zeros((Nt_per, qr_per))
+            Ir_val = np.zeros((Nt_per, qr_per))
         else:
             Ir_val = self.Ir.get_data()
             if Ir_val.ndim == 1:

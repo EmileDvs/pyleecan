@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 from ....Functions_new.labels import update_RTS_index
 from ....Classes_new.machine.lamination import Lamination
 
@@ -24,7 +24,7 @@ def get_surfaces_closing(self, sym=1):
     if not hasattr(self.slot, "get_surface_opening"):
         return close_list
     else:  # Get slot closing surfaces (no surface if wedges)
-        slot_pitch = 2 * pi / self.slot.Zs
+        slot_pitch = 2 * np.pi / self.slot.Zs
         # for slot to draw
         for ii in range(self.slot.Zs // sym):
             slot_surf = self.slot.get_surface_opening(

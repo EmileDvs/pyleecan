@@ -1,4 +1,4 @@
-from numpy import pi, all as np_all
+import numpy as np
 
 
 def comp_force(self, output, axes_dict):

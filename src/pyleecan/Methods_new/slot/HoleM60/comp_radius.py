@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
+import numpy as np
 
-from pyleecan.Classes_new.geometry.arc_3 import Arc3
+from ....Classes_new.geometry.arc_3 import Arc3
 
 
 def comp_radius(self):
@@ -27,7 +27,7 @@ def comp_radius(self):
     curve = Arc3(begin=point_dict["Z5"], end=point_dict["Z1"], is_trigo_direction=True)
     point_list.extend(curve.discretize())
 
-    abs_list = [np_abs(point) for point in point_list]
+    abs_list = [np.abs(point) for point in point_list]
     Rmax = max(abs_list)
     Rmin = min(abs_list)
 

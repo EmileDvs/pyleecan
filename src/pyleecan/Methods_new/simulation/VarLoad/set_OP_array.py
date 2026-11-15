@@ -1,4 +1,4 @@
-from numpy import ndarray
+import numpy as np
 from ....Classes_new.simulation.op_matrix import OPMatrix
 
 
@@ -21,7 +21,7 @@ def set_OP_array(self, OP_matrix, *arg_list, is_update_input=True, input_index=0
         Index of the OP from the OP_matrix to set in the input (if is_update_input)
     """
 
-    if isinstance(OP_matrix, ndarray):
+    if isinstance(OP_matrix, np.ndarray):
         self.OP_matrix = OPMatrix()
         self.OP_matrix.set_OP_array(OP_matrix, *arg_list)
     else:

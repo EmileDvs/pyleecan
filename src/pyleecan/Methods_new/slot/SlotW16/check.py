@@ -1,5 +1,5 @@
 from . import S16OutterError, S16AlphaT
-from numpy import pi, arcsin
+import numpy as np
 
 
 def check(self):
@@ -24,8 +24,8 @@ def check(self):
 
     # Check W3 at min radius
     Rbo = self.get_Rbo()
-    sp = 2 * pi / self.Zs  # slot pitch
-    alphaT = 2 * arcsin(self.W3 * 0.5 / (Rbo - self.H0 - self.H2))
+    sp = 2 * np.pi / self.Zs  # slot pitch
+    alphaT = 2 * np.arcsin(self.W3 * 0.5 / (Rbo - self.H0 - self.H2))
 
     if alphaT >= sp:
         raise S16AlphaT(

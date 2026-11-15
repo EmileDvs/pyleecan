@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp, pi
+import numpy as np
 
 from ....Classes_new.geometry.polar_arc import PolarArc
 from . import *
@@ -49,8 +49,8 @@ def build_geometry(self, alpha=0, delta=0):
 
     surf_list = list()
     # Modulo on Alpha for sym
-    Alpha0 = self.Alpha0 % (2 * pi / self.Zh)
-    Zc = (self.H0 + (self.D0 / 2)) * exp(1j * Alpha0)
+    Alpha0 = self.Alpha0 % (2 * np.pi / self.Zh)
+    Zc = (self.H0 + (self.D0 / 2)) * np.exp(1j * Alpha0)
     surf_list.append(
         PolarArc(
             point_ref=Zc,

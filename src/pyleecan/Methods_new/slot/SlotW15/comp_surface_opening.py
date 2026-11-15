@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import cos, sin
+import numpy as np
 
 
 def comp_surface_opening(self):
@@ -23,8 +23,8 @@ def comp_surface_opening(self):
 
     # The bottom is an arc
     alpha = self.comp_angle_opening()
-    Sarc = (Rbo**2.0) / 2.0 * (alpha - sin(alpha))
-    Harc = float(Rbo * (1 - cos(alpha / 2)))
+    Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
+    Harc = float(Rbo * (1 - np.cos(alpha / 2)))
     S1 = (self.H0 + Harc) * self.W0
 
     # Because Slamination = S - Zs * Sslot

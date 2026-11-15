@@ -1,4 +1,4 @@
-from numpy import arcsin, exp, pi, sqrt
+import numpy as np
 
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 
@@ -22,11 +22,11 @@ def _comp_point_coordinate(self):
 
     # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W1
     # alpha = self.comp_angle_opening()
-    alpha = 2 * float(arcsin(self.W1 / (2 * Rbo)))
+    alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo)))
 
     # Compute all points coordinates
-    Z0 = Rbo * exp(1j * 0)
-    Z1 = Rbo * exp(-1j * alpha / 2)
+    Z0 = Rbo * np.exp(1j * 0)
+    Z1 = Rbo * np.exp(-1j * alpha / 2)
     if self.is_outwards():
         sign = +1
     else:
@@ -36,9 +36,9 @@ def _comp_point_coordinate(self):
     Zc2 = Zc1 + sign * self.H2
     Zc3 = Zc2 + sign * self.H3
 
-    Z2 = Zc1 - sign * sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2) - 1j * (self.W1 / 2)
-    Z3 = Zc1 + sign * sqrt((self.D1 / 2) ** 2 - (self.W2 / 2) ** 2) - 1j * (self.W2 / 2)
-    Z4 = Zc2 - sign * sqrt((self.D2 / 2) ** 2 - (self.W2 / 2) ** 2) - 1j * (self.W2 / 2)
+    Z2 = Zc1 - sign * np.sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2) - 1j * (self.W1 / 2)
+    Z3 = Zc1 + sign * np.sqrt((self.D1 / 2) ** 2 - (self.W2 / 2) ** 2) - 1j * (self.W2 / 2)
+    Z4 = Zc2 - sign * np.sqrt((self.D2 / 2) ** 2 - (self.W2 / 2) ** 2) - 1j * (self.W2 / 2)
 
     Z5 = Zc2.real - 1j * self.D2 / 2
     Z6 = Zc3.real - 1j * self.R3

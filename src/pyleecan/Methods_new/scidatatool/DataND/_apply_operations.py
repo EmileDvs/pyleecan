@@ -1,5 +1,5 @@
-from numpy import abs as np_abs
-from numpy import nanmax, nanmin
+import numpy as np
+
 
 from ....Functions_new.SciDataTool.derivation_integration import antiderivate, derivate, integrate, integrate_local, integrate_local_pattern
 from ....Functions_new.SciDataTool.sum_mean import my_mean, my_sum, root_mean_square, root_sum_square
@@ -21,7 +21,7 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
 
     # Take magnitude before summing
     if is_magnitude and "dB" not in unit:
-        values = np_abs(values)
+        values = np.abs(values)
 
     # Apply sums, means, etc
     for axis_requested in axes_list:
@@ -48,10 +48,10 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
             is_fft = False
         # max over max axes
         if extension in "max":
-            values = nanmax(values, axis=index)
+            values = np.nanmax(values, axis=index)
         # min over max axes
         elif extension in "min":
-            values = nanmin(values, axis=index)
+            values = np.nanmin(values, axis=index)
         # sum over sum axes
         elif extension in "sum":
             values = my_sum(
@@ -101,6 +101,6 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
 
     if is_magnitude and "dB" in unit:  # Correction for negative/small dB/dBA
         values[values < 2] = 0
-        values = np_abs(values)
+        values = np.abs(values)
 
     return values

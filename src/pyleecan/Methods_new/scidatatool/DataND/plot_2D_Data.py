@@ -1,32 +1,10 @@
-from numpy import (
-    argmax,
-    argsort,
-    array,
-    array2string,
-    insert,
-    linspace,
-    log10,
-    nan,
-    split,
-    sqrt,
-    squeeze,
-    take,
-    unique,
-    where,
-    zeros,
-)
-from numpy import (
-    nanmax as np_max,
-)
-from numpy import (
-    nanmin as np_min,
-)
-from numpy import (
-    sum as np_sum,
-)
+import numpy as np
+
+
+
 
 from ....Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
 from ....Functions_new.SciDataTool.parser import read_input_strings
 from ....Functions_new.SciDataTool.Plot import COLORS, axes_dict, norm_dict, unit_dict
@@ -236,7 +214,7 @@ def plot_2D_Data(
             axes_list[list(result.keys()).index(axes_names[0])].is_components
             and axes_list[list(result.keys()).index(axes_names[0])].extension != "list"
         ):
-            xdata = linspace(
+            xdata = np.linspace(
                 0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]])
             )
         else:
@@ -290,9 +268,9 @@ def plot_2D_Data(
             if (
                 axis.name == "angle"
                 and axis.unit == "°"
-                and round(np_max(axis.values) / 6) % 5 == 0
+                and round(np.nanmax(axis.values) / 6) % 5 == 0
             ):
-                xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
+                xticks = [i * round(np.nanmax(axis.values) / 6) for i in range(7)]
             else:
                 xticks = None
             if (
@@ -325,7 +303,7 @@ def plot_2D_Data(
                         fmt = "{:.5g}"
                     else:
                         fmt = "{:.3g}"
-                    axis_str = array2string(
+                    axis_str = np.array2string(
                         result_0[axis.name], formatter={"float_kind": fmt.format}
                     ).replace(" ", ", ")
 
@@ -363,7 +341,7 @@ def plot_2D_Data(
                 title3 += (
                     axis_name
                     + "="
-                    + array2string(
+                    + np.array2string(
                         axes_dict_other[axis_name][0],
                         formatter={"float_kind": fmt.format},
                     ).replace(" ", ", ")
@@ -447,13 +425,13 @@ def plot_2D_Data(
         Ydata = []
         for d in Ydatas:
             if d.ndim != 1:
-                axis_index = where(array(d.shape) == n_curves)[0]
+                axis_index = np.where(np.array(d.shape) == n_curves)[0]
                 if axis_index.size > 1:
                     print("WARNING, several axes with same dimensions")
-                Ydata += split(d, n_curves, axis=axis_index[-1])
+                Ydata += np.split(d, n_curves, axis=axis_index[-1])
             else:
                 Ydata += [d]
-        Ydatas = [squeeze(d) for d in Ydata]
+        Ydatas = [np.squeeze(d) for d in Ydata]
         Xdata = []
         for i in range(len(data_list2)):
             Xdata += [Xdatas[i] for x in range(n_curves)]
@@ -516,7 +494,7 @@ def plot_2D_Data(
             axes_list[list(result.keys()).index(axes_names[0])].is_components
             and axes_list[list(result.keys()).index(axes_names[0])].extension != "list"
         ):
-            xdata = linspace(
+            xdata = np.linspace(
                 0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]])
             )
         else:
@@ -541,7 +519,7 @@ def plot_2D_Data(
         contrib_index = None
         if contribution_name in [axis.name for axis in axes_list]:
             contrib_index = [axis.name for axis in axes_list].index(contribution_name)
-        contrib_array = zeros((contrib_axis.get_length(), len(Y_overall)))
+        contrib_array = np.zeros((contrib_axis.get_length(), len(Y_overall)))
         for i in range(contrib_axis.get_length()):
             if unit == "dBA":
                 arg_list_new = [
@@ -562,7 +540,7 @@ def plot_2D_Data(
                     - self.get_magnitude_along(*arg_list_new, unit="dB")[self.symbol]
                 )
                 if self.unit == "W":
-                    upper_sum = np_sum(
+                    upper_sum = np.sum(
                         10 ** (0.1 * A_weighting)
                         * contrib
                         / self.normalizations["ref"].ref,
@@ -570,7 +548,7 @@ def plot_2D_Data(
                     )
                     cont = upper_sum / (10 ** (0.1 * OVL))
                 else:
-                    upper_sum = np_sum(
+                    upper_sum = np.sum(
                         10 ** (0.1 * A_weighting) * contrib**2, axis=sum_index
                     )
                     cont = upper_sum / (
@@ -615,7 +593,7 @@ def plot_2D_Data(
         # Remove small contributions
         # Iloads = where(sqrt(np_sum(contrib_array ** 2, 1)) > 1e-2)[0]
         # Sort in decreasing order
-        Isort = argsort(-sqrt(np_sum(contrib_array**2, 1)), axis=0)
+        Isort = np.argsort(-np.sqrt(np.sum(contrib_array**2, 1)), axis=0)
         Ydatas = [Ydatas[0]]
         legends = [r"100% (overall $" + symbol + "$)"]
         new_color_list = [new_color_list[0]]
@@ -657,7 +635,7 @@ def plot_2D_Data(
 
     if "dB" in unit:  # Replace <=0 by nans
         for ydata in Ydatas:
-            ydata[ydata <= 0] = nan
+            ydata[ydata <= 0] = np.nan
 
     # Call generic plot function
     if is_fft:
@@ -672,7 +650,7 @@ def plot_2D_Data(
             indices = [
                 ind
                 for ind, y in enumerate(Ydatas[0])
-                if abs(y) > max(10 * log10(thresh) + abs(np_max(Ydatas[0])), 0)
+                if abs(y) > max(10 * np.log10(thresh) + abs(np.nanmax(Ydatas[0])), 0)
             ]
         else:
             if Ydatas[0].size == 1:
@@ -681,9 +659,9 @@ def plot_2D_Data(
                 indices = [
                     ind
                     for ind, y in enumerate(Ydatas[0])
-                    if abs(y) > abs(thresh * np_max(Ydatas[0]))
+                    if abs(y) > abs(thresh * np.nanmax(Ydatas[0]))
                 ]
-        xticks = unique(insert(freqs[indices], 0, 0))
+        xticks = np.unique(np.insert(freqs[indices], 0, 0))
 
         if is_auto_range:
             if len(xticks) > 1:
@@ -697,19 +675,19 @@ def plot_2D_Data(
                     x_max = min(x_max, xticks[-1])
             else:
                 if x_min is None:
-                    x_min = np_min(freqs)
+                    x_min = np.nanmin(freqs)
                 else:
-                    x_min = max(x_min, np_min(freqs))
+                    x_min = max(x_min, np.nanmin(freqs))
                 if x_max is None:
-                    x_max = np_max(freqs)
+                    x_max = np.nanmax(freqs)
                 else:
-                    x_max = min(x_max, np_max(freqs))
+                    x_max = min(x_max, np.nanmax(freqs))
 
         else:
             if x_min is None:
-                x_min = np_min(freqs)
+                x_min = np.nanmin(freqs)
             if x_max is None:
-                x_max = np_max(freqs)
+                x_max = np.nanmax(freqs)
 
         x_min = x_min - x_max * 0.05
         x_max = x_max * 1.05
@@ -792,10 +770,10 @@ def plot_2D_Data(
                 annot = list()
                 for ii in range(len(self.get_axes(annotations[0])[0].get_values())):
                     if annotations[2] == "max":
-                        index = argmax(take(result[self.symbol], ii, axis=0))
+                        index = np.argmax(np.take(result[self.symbol], ii, axis=0))
                         annot.append("main " + annotations[1].rstrip("s") + ": ")
                 # Keep only requested indices
-                annot = array(annot)[
+                annot = np.array(annot)[
                     axes_list[
                         [axis.name for axis in axes_list].index(annotations[0])
                     ].indices

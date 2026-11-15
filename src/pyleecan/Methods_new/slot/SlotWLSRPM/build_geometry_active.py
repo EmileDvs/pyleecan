@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import angle
+import numpy as np
 from scipy.optimize import fsolve
 
 from ....Classes_new.geometry.arc_1 import Arc1
@@ -58,12 +58,12 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
     surf_list = list()
     if Nrad == 1 and Ntan == 2:
         # Part 1 (0,0)
-        line1 = Segment(Z3, Z4)
-        line2 = Segment(Z4, Zch)
-        line3 = Segment(Zch, Zcl)
-        line4 = Arc1(Zcl, Z1, -Rbo, is_trigo_direction=False)
-        line5 = Segment(Z1, Z2)
-        line6 = Arc1(Z2, Z3, self.R1, is_trigo_direction=True)
+        line1 = Segment(begin=Z3, end=Z4)
+        line2 = Segment(begin=Z4, end=Zch)
+        line3 = Segment(begin=Zch, end=Zcl)
+        line4 = Arc1(begin=Zcl, end=Z1, radius=-Rbo, is_trigo_direction=False)
+        line5 = Segment(begin=Z1, end=Z2)
+        line6 = Arc1(begin=Z2, end=Z3, radius=self.R1, is_trigo_direction=True)
         point_ref = (Z3 + Z4 + Zch + Zcl + Z1 + Z2) / 6
 
         surface = SurfLine(
@@ -74,12 +74,12 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
         surf_list.append(surface)
 
         # Part2 (0,1)
-        line1 = Segment(Zch, Z5)
-        line2 = Segment(Z5, Z6)
-        line3 = Arc1(Z6, Z7, self.R1, is_trigo_direction=True)
-        line4 = Segment(Z7, Z8)
-        line5 = Arc1(Z8, Zcl, -Rbo, is_trigo_direction=False)
-        line6 = Segment(Zcl, Zch)
+        line1 = Segment(begin=Zch, end=Z5)
+        line2 = Segment(begin=Z5, end=Z6)
+        line3 = Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+        line4 = Segment(begin=Z7, end=Z8)
+        line5 = Arc1(begin=Z8, end=Zcl, radius=-Rbo, is_trigo_direction=False)
+        line6 = Segment(begin=Zcl, end=Zch)
         point_ref = (Zch + Z5 + Z6 + Z7 + Z8 + Zcl) / 6
         surface = SurfLine(
             line_list=[line1, line2, line3, line4, line5, line6],
@@ -90,12 +90,12 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
 
     if Nrad == 2 and Ntan == 2:
         # Part 1 (0,0)
-        line1 = Segment(Z3, Z4)
-        line2 = Segment(Z4, Zch)
-        line3 = Segment(Zch, Zcm)
-        line4 = Arc1(Zcm, Z9, -(Rbo + self.H3), is_trigo_direction=False)
-        line5 = Segment(Z9, Z2)
-        line6 = Arc1(Z2, Z3, self.R1, is_trigo_direction=True)
+        line1 = Segment(begin=Z3, end=Z4)
+        line2 = Segment(begin=Z4, end=Zch)
+        line3 = Segment(begin=Zch, end=Zcm)
+        line4 = Arc1(begin=Zcm, end=Z9, radius=-(Rbo + self.H3), is_trigo_direction=False)
+        line5 = Segment(begin=Z9, end=Z2)
+        line6 = Arc1(begin=Z2, end=Z3, radius=self.R1, is_trigo_direction=True)
         point_ref = (Z3 + Z4 + Zch + Zcm + Z9 + Z2) / 6
 
         surface = SurfLine(
@@ -106,12 +106,12 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
         surf_list.append(surface)
 
         # Part2 (0,1)
-        line1 = Segment(Zch, Z5)
-        line2 = Segment(Z5, Z6)
-        line3 = Arc1(Z6, Z7, self.R1, is_trigo_direction=True)
-        line4 = Segment(Z7, Z10)
-        line5 = Arc1(Z10, Zcm, -(Rbo + self.H3), is_trigo_direction=False)
-        line6 = Segment(Zcm, Zch)
+        line1 = Segment(begin=Zch, end=Z5)
+        line2 = Segment(begin=Z5, end=Z6)
+        line3 = Arc1(begin=Z6, end=Z7, radius=self.R1, is_trigo_direction=True)
+        line4 = Segment(begin=Z7, end=Z10)
+        line5 = Arc1(begin=Z10, end=Zcm, radius=-(Rbo + self.H3), is_trigo_direction=False)
+        line6 = Segment(begin=Zcm, end=Zch)
         point_ref = (Zch + Z5 + Z6 + Z7 + Z10 + Zcm) / 6
         surface = SurfLine(
             line_list=[line1, line2, line3, line4, line5, line6],
@@ -121,10 +121,10 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
         surf_list.append(surface)
 
         # Part3 (1,1)
-        line1 = Arc1(Zcm, Z10, Rbo + self.H3, is_trigo_direction=True)
-        line2 = Segment(Z10, Z8)
-        line3 = Arc1(Z8, Zcl, -Rbo, is_trigo_direction=False)
-        line4 = Segment(Zcl, Zcm)
+        line1 = Arc1(begin=Zcm, end=Z10, radius=Rbo + self.H3, is_trigo_direction=True)
+        line2 = Segment(begin=Z10, end=Z8)
+        line3 = Arc1(begin=Z8, end=Zcl, radius=-Rbo, is_trigo_direction=False)
+        line4 = Segment(begin=Zcl, end=Zcm)
         point_ref = (Zcm + Z10 + Z8 + Zcl) / 4
         surface = SurfLine(
             line_list=[line1, line2, line3, line4],
@@ -134,10 +134,10 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
         surf_list.append(surface)
 
         # Part4 (1,0)
-        line1 = Arc1(Z9, Zcm, Rbo + self.H3, is_trigo_direction=True)
-        line2 = Segment(Zcm, Zcl)
-        line3 = Arc1(Zcl, Z1, -Rbo, is_trigo_direction=False)
-        line4 = Segment(Z1, Z9)
+        line1 = Arc1(begin=Z9, end=Zcm, radius=Rbo + self.H3, is_trigo_direction=True)
+        line2 = Segment(begin=Zcm, end=Zcl)
+        line3 = Arc1(begin=Zcl, end=Z1, radius=-Rbo, is_trigo_direction=False)
+        line4 = Segment(begin=Z1, end=Z9)
         point_ref = (Z9 + Zcm + Zcl + Z1) / 4
         surface = SurfLine(
             line_list=[line1, line2, line3, line4],
@@ -152,9 +152,9 @@ def build_geometry_active(self, Nrad, Ntan, is_simplified=False, alpha=0, delta=
         # Add a line to close the winding area
         lines = [
             Arc1(
-                curve_list[-1].end,
-                curve_list[0].begin,
-                -Rbo,
+                begin=curve_list[-1].end,
+                end=curve_list[0].begin,
+                radius=-Rbo,
                 is_trigo_direction=False,
             )
         ]

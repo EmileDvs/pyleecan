@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
@@ -50,7 +50,7 @@ def comp_length(self):
 
     # calculate the EW length as a quarter circle base on the circumferential length
     # TODO do better aprox. based on tooth width / slot width for tooth coil winding
-    circ_length = 2 * pi * Rmid * coil_pitch / Zs
-    end_wind_length = pi * circ_length / 4
+    circ_length = 2 * np.pi * Rmid * coil_pitch / Zs
+    end_wind_length = np.pi * circ_length / 4
 
     return end_wind_length

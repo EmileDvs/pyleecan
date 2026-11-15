@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Patch
-from numpy import sqrt
+import numpy as np
 
-from ....Classes._swat_em import datamodel
+from ....Classes_new._swat_em import datamodel
 from ....Classes_new.machine.winding_sc import WindingSC
 from ....Classes_new.machine.winding_ud import WindingUD
 from ....definitions import config_dict
@@ -278,7 +278,7 @@ def plot(
                 ]
 
                 # Computing the angle of the arc and its sign
-                dist_AB = sqrt(
+                dist_AB = np.sqrt(
                     (end_point[0] - start_point[0]) ** 2
                     + (end_point[1] - start_point[1]) ** 2
                 )

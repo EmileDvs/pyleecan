@@ -1,4 +1,4 @@
-from pyleecan.classes_common.errors import ConvertionError
+from ....classes_common.errors import ConvertionError
 from .... import __version__
 
 

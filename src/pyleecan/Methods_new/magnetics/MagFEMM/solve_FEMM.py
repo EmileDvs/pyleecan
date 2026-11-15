@@ -1,9 +1,9 @@
-from os import remove, rename
-from os.path import isfile, splitext
+import os
 
-from numpy import pi, roll, sin, zeros, cos, all
 
-from ....Classes._FEMMHandler import _FEMMHandler
+import numpy as np
+
+from ....classes_common.femm_handler import _FEMMHandler
 from ....Functions_new.FEMM.comp_femm_phi_wind import comp_FEMM_Phi_wind
 from ....Functions_new.FEMM.comp_femm_torque import comp_FEMM_torque
 from ....Functions_new.FEMM.update_femm_simulation import update_FEMM_simulation
@@ -110,11 +110,11 @@ def solve_FEMM(
     if is_sliding_band and self.is_set_previous:
         # Check result .ans file existence and delete it if it exists
         ans_file = (
-            (splitext(filename)[0] + ".ans").replace("\\", "/").replace("//", "/")
+            (os.path.splitext(filename)[0] + ".ans").replace("\\", "/").replace("//", "/")
         )
-        if isfile(ans_file):
+        if os.path.isfile(ans_file):
             logger.debug("Delete existing result .ans file at: " + ans_file)
-            remove(ans_file)
+            os.remove(ans_file)
 
     if not is_sliding_band:
         fileinit_fem = self.get_path_save_fem(output)
@@ -160,9 +160,9 @@ def solve_FEMM(
     A_elem = None
 
     # Check current values
-    if all(Is == 0):
+    if np.all(Is == 0):
         Is = None
-    if all(Ir == 0):
+    if np.all(Ir == 0):
         Ir = None
 
     k1 = 0
@@ -199,7 +199,7 @@ def solve_FEMM(
 
         # Check if there is a previous solution file to speed up non-linear iterations
         if is_sliding_band and self.is_set_previous and ii > start_t:
-            if isfile(ans_file):
+            if os.path.isfile(ans_file):
                 # Setup .ans file path in FEMM model
                 femm.mi_setprevious(ans_file, 0)
             else:
@@ -220,14 +220,14 @@ def solve_FEMM(
                 (
                     out_dict["B_{rad}"][ii, jj],
                     out_dict["B_{circ}"][ii, jj],
-                ) = femm.mo_getgapb("bc_ag2", angle[jj] * 180 / pi)
+                ) = femm.mo_getgapb("bc_ag2", angle[jj] * 180 / np.pi)
         else:
             for jj in range(Na):
-                B = femm.mo_getb(Rag * cos(angle[jj]), Rag * sin(angle[jj]))
-                out_dict["B_{rad}"][ii, jj] = B[0] * cos(angle[jj]) + B[1] * sin(
+                B = femm.mo_getb(Rag * np.cos(angle[jj]), Rag * np.sin(angle[jj]))
+                out_dict["B_{rad}"][ii, jj] = B[0] * np.cos(angle[jj]) + B[1] * np.sin(
                     angle[jj]
                 )
-                out_dict["B_{circ}"][ii, jj] = -B[0] * sin(angle[jj]) + B[1] * cos(
+                out_dict["B_{circ}"][ii, jj] = -B[0] * np.sin(angle[jj]) + B[1] * np.cos(
                     angle[jj]
                 )
 
@@ -274,11 +274,11 @@ def solve_FEMM(
                 Nelem = meshFEMM.element_dict["triangle"].nb_element
                 Nnode = meshFEMM.node.nb_node
                 Nt0 = end_t - start_t
-                B_elem = zeros([Nt0, Nelem, 3])
-                H_elem = zeros([Nt0, Nelem, 3])
-                mu_elem = zeros([Nt0, Nelem])
-                A_node = zeros([Nt0, Nnode])
-                A_elem = zeros([Nt0, Nelem])
+                B_elem = np.zeros([Nt0, Nelem, 3])
+                H_elem = np.zeros([Nt0, Nelem, 3])
+                mu_elem = np.zeros([Nt0, Nelem])
+                A_node = np.zeros([Nt0, Nnode])
+                A_elem = np.zeros([Nt0, Nelem])
 
             # Shift time index ii in case start_t is not 0 (parallelization)
             ii0 = ii - start_t
@@ -298,20 +298,20 @@ def solve_FEMM(
 
     # Shift to take into account stator position
     if self.angle_stator_shift != 0:
-        roll_id = int(self.angle_stator_shift * Na / (2 * pi))
-        out_dict["B_{rad}"] = roll(out_dict["B_{rad}"], roll_id, axis=1)
-        out_dict["B_{circ}"] = roll(out_dict["B_{circ}"], roll_id, axis=1)
+        roll_id = int(self.angle_stator_shift * Na / (2 * np.pi))
+        out_dict["B_{rad}"] = np.roll(out_dict["B_{rad}"], roll_id, axis=1)
+        out_dict["B_{circ}"] = np.roll(out_dict["B_{circ}"], roll_id, axis=1)
 
     if not is_sliding_band:
         # Remove initial .fem
-        if isfile(fileinit_fem):
-            remove(fileinit_fem)
+        if os.path.isfile(fileinit_fem):
+            os.remove(fileinit_fem)
         # Remove initial .fem
-        if isfile(fileinit_ans):
-            remove(fileinit_ans)
+        if os.path.isfile(fileinit_ans):
+            os.remove(fileinit_ans)
         # Rename .fem and .ans files to initial names
-        rename(filetemp_fem, fileinit_fem)
-        rename(filetemp_ans, fileinit_ans)
+        os.rename(filetemp_fem, fileinit_fem)
+        os.rename(filetemp_ans, fileinit_ans)
 
     # Close FEMM handler
     if is_close_femm:

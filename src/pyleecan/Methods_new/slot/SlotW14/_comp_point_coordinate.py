@@ -1,4 +1,4 @@
-from numpy import arcsin, cos, exp, pi, sin
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -15,14 +15,14 @@ def _comp_point_coordinate(self):
         A dict of the slot point coordinates
     """
     Rbo = self.get_Rbo()
-    hssp = pi / self.Zs
+    hssp = np.pi / self.Zs
 
     # alpha is the angle to rotate P0 so ||P1,P9|| = W0
-    alpha = arcsin(self.W0 / (2 * Rbo))
-    Harc = float(Rbo * (1 - cos(alpha)))
+    alpha = np.arcsin(self.W0 / (2 * Rbo))
+    Harc = float(Rbo * (1 - np.cos(alpha)))
     H1 = self.get_H1()
 
-    Z1 = Rbo * exp(-1j * alpha)
+    Z1 = Rbo * np.exp(-1j * alpha)
     if self.is_outwards():
         R1 = Rbo - Harc + self.H0 + H1
         Z2 = Z1 + self.H0
@@ -33,10 +33,10 @@ def _comp_point_coordinate(self):
     # In the tooth ref: Zt7 = xt7 + j*yt7 with yt7 = W3/2
     # Zt7 = Z3 * exp(1j*hsp) = (x7+jy7)*(cos(hsp)+1j*sin(hsp))
     # yt7 = W3/2 = x7*sin(hsp)+y7*cos(hsp)
-    Z3 = R1 + 1j * (self.W3 / 2 - R1 * sin(hssp)) / cos(hssp)
+    Z3 = R1 + 1j * (self.W3 / 2 - R1 * np.sin(hssp)) / np.cos(hssp)
 
     # Z3t is Z3 in tooth ref
-    Z3t = Z3 * exp(1j * hssp)
+    Z3t = Z3 * np.exp(1j * hssp)
     if self.is_outwards():
         Z4t = Z3t + self.H3
     else:
@@ -46,8 +46,8 @@ def _comp_point_coordinate(self):
     # Zt5 = Z5 * exp(1j*hsp) = x5*cos(hsp)+1j*x5*sin(hsp)
     # x5 = real(Z4t)/cos(hsp)
 
-    Z5 = Z4t.real / cos(hssp)
-    Z4 = Z4t * exp(-1j * hssp)
+    Z5 = Z4t.real / np.cos(hssp)
+    Z4 = Z4t * np.exp(-1j * hssp)
 
     point_dict = dict()
     # symetry

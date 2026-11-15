@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_angle_d_axis(self):
@@ -17,7 +17,7 @@ def comp_angle_d_axis(self):
         angle between the X axis and the first d+ axis
     """
 
-    angle = pi / self.get_pole_pair_number() / 2
+    angle = np.pi / self.get_pole_pair_number() / 2
 
     if self.has_magnet():
         if hasattr(self, "magnet") and self.magnet.type_magnetization == 3:

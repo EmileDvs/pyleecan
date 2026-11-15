@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp, linspace, meshgrid
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
@@ -38,14 +38,14 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
 
     # Polar Meshgrid
     if self.is_outwards():
-        r = linspace(Rbo + self.H0, Rbo + self.H0 + self.H2, Nrad + 1)
+        r = np.linspace(Rbo + self.H0, Rbo + self.H0 + self.H2, Nrad + 1)
     else:
-        r = linspace(Rbo - self.H0, Rbo - self.H0 - self.H2, Nrad + 1)
+        r = np.linspace(Rbo - self.H0, Rbo - self.H0 - self.H2, Nrad + 1)
 
-    theta = linspace(-self.W2 / 2.0, self.W2 / 2.0, Ntan + 1)
-    Z = meshgrid(r, theta)
+    theta = np.linspace(-self.W2 / 2.0, self.W2 / 2.0, Ntan + 1)
+    Z = np.meshgrid(r, theta)
 
-    Z = Z[0] * exp(1j * Z[1])
+    Z = Z[0] * np.exp(1j * Z[1])
     Z = Z.T
     # if self.is_outwards():
     #     assert Z[0][0] == (Rbo + self.H0) * exp(-1j * self.W2 * 0.5)  # Z6
@@ -75,32 +75,32 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
             curve_list = list()
             curve_list.append(
                 Arc1(
-                    Z1,
-                    Z2,
-                    abs(Z1),
+                    begin=Z1,
+                    end=Z2,
+                    radius=abs(Z1),
                     is_trigo_direction=True,
                 )
             )
             curve_list.append(
                 Segment(
-                    Z2,
-                    Z3,
+                    begin=Z2,
+                    end=Z3,
                     prop_dict={DRAW_PROP_LAB: False},
                 )
             )
             curve_list.append(
                 Arc1(
-                    Z3,
-                    Z4,
-                    -abs(Z3),
+                    begin=Z3,
+                    end=Z4,
+                    radius=-abs(Z3),
                     is_trigo_direction=False,
                     prop_dict={DRAW_PROP_LAB: False},
                 )
             )
             curve_list.append(
                 Segment(
-                    Z4,
-                    Z1,
+                    begin=Z4,
+                    end=Z1,
                     prop_dict={DRAW_PROP_LAB: jj != 0},
                 )
             )
@@ -122,12 +122,12 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
     if (Ntan == 2 and Nrad == 1) and self.W0 != self.W2:
         # Cut Ox- surface
         arc_to_cut = surf_list[0].line_list[0]
-        arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * exp(-1j * self.W0 / 2))
+        arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * np.exp(-1j * self.W0 / 2))
         surf_list[0].line_list = [arc1[0], arc2[0]] + surf_list[0].line_list[1:]
         surf_list[0].line_list[1].prop_dict = {DRAW_PROP_LAB: False}
         # Cut Ox+ surface
         arc_to_cut = surf_list[1].line_list[0]
-        arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * exp(1j * self.W0 / 2))
+        arc1, arc2 = arc_to_cut.split_line(Z1=0, Z2=Rbo * np.exp(1j * self.W0 / 2))
         surf_list[1].line_list = [arc1[0], arc2[0]] + surf_list[1].line_list[1:]
         surf_list[1].line_list[0].prop_dict = {DRAW_PROP_LAB: False}
 

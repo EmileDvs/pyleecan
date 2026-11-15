@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi
+import numpy as np
 
 
 def comp_surface_active(self):
@@ -24,7 +24,7 @@ def comp_surface_active(self):
     R1 = abs(ZM1)
     R2 = abs(ZM2)
 
-    S1 = pi * R1**2 / self.Zs
-    S2 = pi * R2**2 / self.Zs
+    S1 = np.pi * R1**2 / self.Zs
+    S2 = np.pi * R2**2 / self.Zs
 
     return abs(S1 - S2)

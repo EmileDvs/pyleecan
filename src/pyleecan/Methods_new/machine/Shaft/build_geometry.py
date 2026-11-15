@@ -3,7 +3,7 @@ from ....Classes_new.geometry.circle import Circle
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
-from numpy import exp, pi
+import numpy as np
 from ....Functions_new.labels import SHAFT_LAB, NO_LAM_LAB, BOUNDARY_PROP_LAB, SHAFTSR_LAB, SHAFTSL_LAB, SHAFTR_LAB
 
 
@@ -40,14 +40,14 @@ def build_geometry(self, sym=1, alpha=0, delta=0):
         )
     else:
         begin = self.Drsh / 2
-        end = begin * exp(1j * 2 * pi / sym)
+        end = begin * np.exp(1j * 2 * np.pi / sym)
         surface = SurfLine(
             line_list=[
-                Segment(0, begin, prop_dict={BOUNDARY_PROP_LAB: SHAFTSR_LAB}),
+                Segment(begin=0, end=begin, prop_dict={BOUNDARY_PROP_LAB: SHAFTSR_LAB}),
                 Arc1(
-                    begin, end, self.Drsh / 2, prop_dict={BOUNDARY_PROP_LAB: SHAFTR_LAB}
+                    begin=begin, end=end, radius=self.Drsh / 2, prop_dict={BOUNDARY_PROP_LAB: SHAFTR_LAB}
                 ),
-                Segment(end, 0, prop_dict={BOUNDARY_PROP_LAB: SHAFTSL_LAB}),
+                Segment(begin=end, end=0, prop_dict={BOUNDARY_PROP_LAB: SHAFTSL_LAB}),
             ],
             label=NO_LAM_LAB + "_" + SHAFT_LAB,
             point_ref=0,

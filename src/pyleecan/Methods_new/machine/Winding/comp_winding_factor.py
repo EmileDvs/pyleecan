@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import abs, exp, pi, sum, array, linspace
+import numpy as np
 from . import WindingError
 
 
@@ -39,17 +39,17 @@ def comp_winding_factor(self, Harmonics=[1]):
     p = self.p
 
     # slot electrical angle
-    slot_ang = linspace(0, Zs, num=Zs, endpoint=False) * 2 * pi / Zs * p
+    slot_ang = np.linspace(0, Zs, num=Zs, endpoint=False) * 2 * np.pi / Zs * p
 
     phase = 0
-    wind_ph1 = sum(wind_mat[:, :, :, phase], (0, 1))
-    wind_ref = sum(abs(wind_mat[:, :, :, phase]))
+    wind_ph1 = np.sum(wind_mat[:, :, :, phase], (0, 1))
+    wind_ref = np.sum(np.abs(wind_mat[:, :, :, phase]))
 
     xi = list()
 
     for harm in Harmonics:
-        xi.append(abs(sum(exp(1j * slot_ang * harm) * wind_ph1)) / wind_ref)
+        xi.append(np.abs(np.sum(np.exp(1j * slot_ang * harm) * wind_ph1)) / wind_ref)
 
-    xi = array(xi)
+    xi = np.array(xi)
 
     return xi

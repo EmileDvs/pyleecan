@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
-from numpy import exp, linspace
-from numpy import max as np_max
-from numpy import pi
+import numpy as np
+
+
+
 
 from ....definitions import config_dict
 from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
@@ -87,7 +87,7 @@ def plot_glyph(
 
     # Compute factor
     if factor is None:
-        factor = 0.2 * np_max(np_abs(mesh_pv.bounds)) / np_max(np_abs(vect_field))
+        factor = 0.2 * np.max(np.abs(mesh_pv.bounds)) / np.max(np.abs(vect_field))
 
     # Plot mesh
     pv_plotter.add_mesh(
@@ -121,8 +121,8 @@ def plot_glyph(
         nframe = 25
         pv_plotter.open_gif(save_path)
         pv_plotter.clear()
-        for t in linspace(0.0, 1.0, nframe, endpoint=False):
-            phase = exp(1j * 2 * pi * t)
+        for t in np.linspace(0.0, 1.0, nframe, endpoint=False):
+            phase = np.exp(1j * 2 * np.pi * t)
 
             pv_plotter.add_mesh(
                 mesh_pv,

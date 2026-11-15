@@ -25,9 +25,6 @@ from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     VENDORED_CLASS_PACKAGES,
-    _apply_numpy_import_style,
-    _apply_os_import_style,
-    _apply_pyvista_import_style,
     _format_source_with_ruff,
     _keyword_geometry_calls,
     _replace_empty_containers,
@@ -205,17 +202,9 @@ def _format_function_source(source, path):
         del lines[0]
         source = "".join(lines)
     source = _replace_empty_containers(source, include_tuple=True)
-    tree = ast.parse(source, filename=str(path))
-    reflective = any(
-        isinstance(node, ast.Call)
-        and isinstance(node.func, ast.Name)
-        and node.func.id in {"eval", "exec", "globals", "locals"}
-        for node in ast.walk(tree)
-    )
-    if not reflective:
-        source = _apply_numpy_import_style(source)
-        source = _apply_pyvista_import_style(source)
-        source = _apply_os_import_style(source)
+    from .modernize import apply_import_styles  # Shared with the methods
+
+    source = apply_import_styles(source)
     result = subprocess.run(
         ["ruff", "check", "--select", "I001", "--fix", "--quiet",
          "--stdin-filename", str(path), "-"],

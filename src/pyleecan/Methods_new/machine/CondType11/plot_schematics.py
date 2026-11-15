@@ -80,8 +80,8 @@ def plot_schematics(
             if is_single:
                 # Wwire
                 line = Segment(
-                    self.Wins_wire + 1j * (self.Wins_wire + self.Hwire / 2),
-                    self.Wins_wire
+                    begin=self.Wins_wire + 1j * (self.Wins_wire + self.Hwire / 2),
+                    end=self.Wins_wire
                     + self.Wwire
                     + 1j * (self.Wins_wire + self.Hwire / 2),
                 )
@@ -97,8 +97,8 @@ def plot_schematics(
                 )
                 # Hwire
                 line = Segment(
-                    1j * (self.Wins_wire) + (self.Wins_wire + self.Wwire / 2),
-                    1j * (self.Wins_wire + self.Hwire)
+                    begin=1j * (self.Wins_wire) + (self.Wins_wire + self.Wwire / 2),
+                    end=1j * (self.Wins_wire + self.Hwire)
                     + (self.Wins_wire + self.Wwire / 2),
                 )
                 line.plot(
@@ -113,8 +113,8 @@ def plot_schematics(
                 )
                 # Wins_wire
                 line = Segment(
-                    2 * self.Wins_wire + 1j * (2 * self.Wins_wire + self.Hwire),
-                    2 * self.Wins_wire + 1j * (self.Wins_wire + self.Hwire),
+                    begin=2 * self.Wins_wire + 1j * (2 * self.Wins_wire + self.Hwire),
+                    end=2 * self.Wins_wire + 1j * (self.Wins_wire + self.Hwire),
                 )
                 line.plot(
                     fig=fig,
@@ -129,10 +129,10 @@ def plot_schematics(
             else:
                 # Wwire
                 line = Segment(
-                    3 * self.Wins_wire
+                    begin=3 * self.Wins_wire
                     + self.Wwire
                     + 1j * (3 * self.Wins_wire + self.Hwire * 3 / 2),
-                    3 * self.Wins_wire
+                    end=3 * self.Wins_wire
                     + 2 * self.Wwire
                     + 1j * (3 * self.Wins_wire + self.Hwire * 3 / 2),
                 )
@@ -148,9 +148,9 @@ def plot_schematics(
                 )
                 # Hwire
                 line = Segment(
-                    1j * (3 * self.Wins_wire + self.Hwire)
+                    begin=1j * (3 * self.Wins_wire + self.Hwire)
                     + (self.Wins_wire + self.Wwire / 2),
-                    1j * (3 * self.Wins_wire + 2 * self.Hwire)
+                    end=1j * (3 * self.Wins_wire + 2 * self.Hwire)
                     + (self.Wins_wire + self.Wwire / 2),
                 )
                 line.plot(
@@ -165,10 +165,10 @@ def plot_schematics(
                 )
                 # Wins_wire
                 line = Segment(
-                    2 * self.Wins_wire
+                    begin=2 * self.Wins_wire
                     + self.Wwire
                     + 1j * (self.Wins_wire + self.Hwire / 2),
-                    3 * self.Wins_wire
+                    end=3 * self.Wins_wire
                     + 1 * self.Wwire
                     + 1j * (self.Wins_wire + self.Hwire / 2),
                 )
@@ -194,8 +194,8 @@ def plot_schematics(
         if is_add_main_line:
             for ii in range(1, self.Nwppc_tan):
                 line = Segment(
-                    ii * (self.Wwire + 2 * self.Wins_wire),
-                    ii * (self.Wwire + 2 * self.Wins_wire) + 1j * self.comp_height(),
+                    begin=ii * (self.Wwire + 2 * self.Wins_wire),
+                    end=ii * (self.Wwire + 2 * self.Wins_wire) + 1j * self.comp_height(),
                 )
                 line.plot(
                     fig=fig,
@@ -206,8 +206,8 @@ def plot_schematics(
                 )
             for ii in range(1, self.Nwppc_rad):
                 line = Segment(
-                    1j * ii * (self.Hwire + 2 * self.Wins_wire),
-                    1j * ii * (self.Hwire + 2 * self.Wins_wire) + self.comp_width(),
+                    begin=1j * ii * (self.Hwire + 2 * self.Wins_wire),
+                    end=1j * ii * (self.Hwire + 2 * self.Wins_wire) + self.comp_width(),
                 )
                 line.plot(
                     fig=fig,

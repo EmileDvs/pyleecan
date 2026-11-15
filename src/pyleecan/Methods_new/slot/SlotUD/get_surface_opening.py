@@ -39,9 +39,9 @@ def get_surface_opening(self, alpha=0, delta=0):
             is_trigo_direction=True,
         )
     bot_line = Arc1(
-        curve_list_end[-1].get_end(),
-        curve_list_start[0].get_begin(),
-        -self.get_Rbo(),
+        begin=curve_list_end[-1].get_end(),
+        end=curve_list_start[0].get_begin(),
+        radius=-self.get_Rbo(),
         is_trigo_direction=False,
     )
 

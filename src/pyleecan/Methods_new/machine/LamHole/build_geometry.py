@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.machine.lamination import Lamination
 from ....Classes_new.geometry.circle import Circle
@@ -42,7 +42,7 @@ def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
     # Holes surface(s)
     for hole in self.hole:
         # Create the first hole surface(s)
-        surf_hole = hole.build_geometry(alpha=pi / hole.Zh)
+        surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh)
         surf_list.extend(
             transform_hole_surf(
                 hole_surf_list=surf_hole, Zh=hole.Zh, sym=sym, alpha=0, delta=0

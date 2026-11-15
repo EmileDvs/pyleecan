@@ -1,4 +1,4 @@
-from numpy import exp, pi, cos, sin, tan, angle, sqrt
+import numpy as np
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 
 
@@ -20,10 +20,10 @@ def _comp_point_coordinate(self):
     point_dict = dict()
     # comp point coordinate (in complex)
     if self.W0_is_rad:
-        Z1 = (Rbo - self.H1 - self.H0) * exp(-1j * self.W0 / 2)
-        Z2 = (Rbo - self.H1) * exp(-1j * self.W0 / 2)
-        Z3 = (Rbo - self.H1) * exp(1j * self.W0 / 2)
-        Z4 = (Rbo - self.H1 - self.H0) * exp(1j * self.W0 / 2)
+        Z1 = (Rbo - self.H1 - self.H0) * np.exp(-1j * self.W0 / 2)
+        Z2 = (Rbo - self.H1) * np.exp(-1j * self.W0 / 2)
+        Z3 = (Rbo - self.H1) * np.exp(1j * self.W0 / 2)
+        Z4 = (Rbo - self.H1 - self.H0) * np.exp(1j * self.W0 / 2)
         point_dict["Z1"] = Z1
         point_dict["Z2"] = Z2
         point_dict["Z3"] = Z3
@@ -31,7 +31,7 @@ def _comp_point_coordinate(self):
 
     else:
         Zc1 = ((Rbo - self.H1) ** 2) - ((self.W0 / 2) ** 2)
-        Zc = sqrt(Zc1)
+        Zc = np.sqrt(Zc1)
 
         Z7 = Zc + 1j * self.W0 / 2
         Z6 = Zc - 1j * self.W0 / 2

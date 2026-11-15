@@ -1,4 +1,4 @@
-from numpy import sin
+import numpy as np
 
 
 def comp_surface(self):

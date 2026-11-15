@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ..EEC import AbstractClassError
+from . import AbstractClassError
 
 
 def solve(self):

@@ -1,4 +1,4 @@
-from numpy import interp, zeros
+import numpy as np
 
 from ....Classes_new.simulation.slice_model import SliceModel
 
@@ -36,7 +36,7 @@ def get_slice_model(self):
             Nslices = 2
             z_list = [-0.5 * L, 0.5 * L]
             is_step = True
-            angle_rotor = zeros(Nslices)
+            angle_rotor = np.zeros(Nslices)
 
         elif is_rotor_skew:
             # Slice model is given by skew slices
@@ -65,7 +65,7 @@ def get_slice_model(self):
                 z_norm = slice_model.get_distribution()
                 z_list = [z * L for z in z_norm]
                 # Interpolating rotor skew angle given new slice distribution
-                angle_rotor = interp(z_list, z_skew, angle_skew)
+                angle_rotor = np.interp(z_list, z_skew, angle_skew)
 
             else:
                 if self.Nslices_enforced is not None:
@@ -81,7 +81,7 @@ def get_slice_model(self):
         slice_model.z_list = z_list
         slice_model.Nslices = Nslices
         slice_model.angle_rotor = angle_rotor
-        slice_model.angle_stator = zeros(Nslices)
+        slice_model.angle_stator = np.zeros(Nslices)
         slice_model.is_step = is_step
         slice_model.is_skew = is_rotor_skew
 

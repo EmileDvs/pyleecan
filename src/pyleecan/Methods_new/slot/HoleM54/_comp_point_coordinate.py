@@ -1,4 +1,4 @@
-from numpy import pi, exp
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -20,10 +20,10 @@ def _comp_point_coordinate(self):
     # Compute point coordinates
     Zc0 = Rext - self.H0 + self.R1
     Z0 = Rext - self.H0
-    Z1 = (self.R1 * exp(1j * (-pi + self.W0 / 2))) + Zc0
-    Z2 = (self.R1 * exp(1j * (pi - self.W0 / 2))) + Zc0
-    Z4 = ((self.R1 + self.H1) * exp(1j * (-pi + self.W0 / 2))) + Zc0
-    Z3 = ((self.R1 + self.H1) * exp(1j * (pi - self.W0 / 2))) + Zc0
+    Z1 = (self.R1 * np.exp(1j * (-np.pi + self.W0 / 2))) + Zc0
+    Z2 = (self.R1 * np.exp(1j * (np.pi - self.W0 / 2))) + Zc0
+    Z4 = ((self.R1 + self.H1) * np.exp(1j * (-np.pi + self.W0 / 2))) + Zc0
+    Z3 = ((self.R1 + self.H1) * np.exp(1j * (np.pi - self.W0 / 2))) + Zc0
 
     point_dict = dict()
     point_dict["Z0"] = Z0

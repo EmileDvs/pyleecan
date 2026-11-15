@@ -1,5 +1,5 @@
 from matplotlib.patches import Patch
-from numpy import exp
+import numpy as np
 
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.labels import HOLEM_LAB, decode_label
@@ -101,7 +101,7 @@ def plot(
                     break
             # Create arrow coordinates
             Z1 = mag_surf.point_ref
-            Z2 = mag_surf.point_ref + H / 5 * exp(1j * mag_dir)
+            Z2 = mag_surf.point_ref + H / 5 * np.exp(1j * mag_dir)
             ax.annotate(
                 text="",
                 xy=(Z2.real, Z2.imag),

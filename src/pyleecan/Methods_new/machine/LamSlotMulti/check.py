@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from . import LamSlotMultiAlphaError
-from numpy import pi
+import numpy as np
 
 
 def check(self):
@@ -37,7 +37,7 @@ def check(self):
             raise LamSlotMultiAlphaError(
                 "Alpha should be an ordered array with values between 0 and 2*pi"
             )
-    if self.alpha[-1] > 2 * pi:
+    if self.alpha[-1] > 2 * np.pi:
         raise LamSlotMultiAlphaError(
             "Alpha should be an ordered array with values between 0 and 2*pi"
         )

@@ -1,4 +1,4 @@
-from numpy import array
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
@@ -26,7 +26,7 @@ def get_wave(self):
     Phase = Data1D(
         name="phase",
         unit="",
-        values=array(gen_name(wave.shape[0])),
+        values=np.array(gen_name(wave.shape[0])),
         is_components=True,
     )
     # Ouput.Simulation.Electrical.EEC.Drive

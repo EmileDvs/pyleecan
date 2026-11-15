@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.pyplot import subplots
@@ -37,7 +37,7 @@ def plot_anim_rotor(self, Nframe, Tanim, Nrot=1, is_loop=True):
     Rsurf = self.rotor.build_geometry(sym=1, alpha=0, delta=0)
 
     # Rotation angle between each frame
-    Dalpha = 2 * pi * Nrot / Nframe
+    Dalpha = 2 * np.pi * Nrot / Nframe
 
     def init():
         """Create the patches for the first image"""

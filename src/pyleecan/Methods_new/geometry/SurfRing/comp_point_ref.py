@@ -1,4 +1,4 @@
-from numpy import array, sum
+import numpy as np
 
 
 def comp_point_ref(self, is_set=False):
@@ -25,7 +25,7 @@ def comp_point_ref(self, is_set=False):
         point_list.append(line.get_middle())
     for line in in_lines[: len(in_lines) / 2]:
         point_list.append(line.get_middle())
-    point_ref = sum(array(point_list)) / len(point_list)
+    point_ref = np.sum(np.array(point_list)) / len(point_list)
 
     if is_set:
         self.point_ref = point_ref

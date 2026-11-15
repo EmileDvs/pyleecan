@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, exp
+import numpy as np
 
 
 def comp_height(self):

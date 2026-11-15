@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_2 import Arc2
 from ....Classes_new.geometry.segment import Segment

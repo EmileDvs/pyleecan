@@ -1,7 +1,7 @@
-from numpy import abs as np_abs
-from numpy import matmul
-from numpy import sqrt as np_sqrt
-from numpy import sum as np_sum
+import numpy as np
+
+
+
 
 
 def comp_loss(self):
@@ -86,7 +86,7 @@ def comp_loss(self):
     # Compute magnetic flux density FFT
     Bfft = Bvect.get_xyz_along("freqs", "indice=" + str(Igrp), "z=mean")
     freqs = Bfft["freqs"]
-    Bfft_magnitude = np_sqrt(np_abs(Bfft["comp_x"]) ** 2 + np_abs(Bfft["comp_y"]) ** 2)
+    Bfft_magnitude = np.sqrt(np.abs(Bfft["comp_x"]) ** 2 + np.abs(Bfft["comp_y"]) ** 2)
 
     # Proximity loss density for each frequency and element
     Pcore_density = k_p * freqs[:, None] ** 2 * Bfft_magnitude**2
@@ -100,8 +100,8 @@ def comp_loss(self):
     n = freqs / felec
 
     # Integrate loss density over group volume to get polynomial coefficients
-    coeff = Lst * per_a * matmul(Bfft_magnitude**2, Se)
-    A = np_sum(k_p * coeff * n**2)
+    coeff = Lst * per_a * np.matmul(Bfft_magnitude**2, Se)
+    A = np.sum(k_p * coeff * n**2)
     self.coeff_dict = {"2": A}
 
     return Pcore_density, freqs

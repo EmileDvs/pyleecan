@@ -1,4 +1,4 @@
-from numpy import arcsin, exp
+import numpy as np
 from ....Functions_new.Geometry.circle_from_3_points import circle_from_3_points
 
 
@@ -21,8 +21,8 @@ def _comp_point_coordinate(self):
     Rbo = self.get_Rbo()
     alpha = self.comp_angle_opening()
 
-    Z1 = Rbo * exp(-1j * alpha / 2)
-    Z2 = Rbo * exp(1j * alpha / 2)
+    Z1 = Rbo * np.exp(-1j * alpha / 2)
+    Z2 = Rbo * np.exp(1j * alpha / 2)
     if self.is_H0_bore:
         if self.is_outwards():
             ZM = Rbo + self.H0

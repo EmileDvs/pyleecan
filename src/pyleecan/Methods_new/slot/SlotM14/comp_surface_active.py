@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi, sin, arcsin, angle
+import numpy as np
 
 
 def comp_surface_active(self):
@@ -24,15 +24,15 @@ def comp_surface_active(self):
     R1 = abs(ZM1)
     R2 = abs(ZM2)
 
-    S1 = pi * R1**2 * (self.W1 / (2 * pi))
-    S2 = pi * R2**2 * (self.W1 / (2 * pi))
+    S1 = np.pi * R1**2 * (self.W1 / (2 * np.pi))
+    S2 = np.pi * R2**2 * (self.W1 / (2 * np.pi))
 
     # Arc (Zm1,0,Zm2)
-    alpha = -2 * angle(ZM2)
-    Sarc1 = (R2**2.0) / 2.0 * (alpha - sin(alpha))
+    alpha = -2 * np.angle(ZM2)
+    Sarc1 = (R2**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     # Arc (ZM1, Zc, ZM2)
-    alpha = 2 * float(arcsin(-ZM2.imag / self.Rtopm))
-    Sarc2 = (self.Rtopm**2.0) / 2.0 * (alpha - sin(alpha))
+    alpha = 2 * float(np.arcsin(-ZM2.imag / self.Rtopm))
+    Sarc2 = (self.Rtopm**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     return abs(S1 - S2) - Sarc1 + Sarc2

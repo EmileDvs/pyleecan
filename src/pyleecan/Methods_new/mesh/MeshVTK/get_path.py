@@ -1,4 +1,4 @@
-from os.path import join
+import os
 from ....definitions import RESULT_DIR
 
 
@@ -28,4 +28,4 @@ def get_path(self, name=None, file_format="vtk"):
     else:
         filename = name + "." + file_format
 
-    return join(self.path, filename).replace("\\", "/")
+    return os.path.join(self.path, filename).replace("\\", "/")

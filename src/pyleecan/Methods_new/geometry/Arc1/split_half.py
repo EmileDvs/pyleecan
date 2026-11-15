@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def split_half(self, is_begin=True):

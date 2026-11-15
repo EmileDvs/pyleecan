@@ -1,4 +1,4 @@
-from pyleecan.classes_common.errors import AxisError
+from ....classes_common.errors import AxisError
 
 
 def get_length(self, is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False):

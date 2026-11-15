@@ -1,4 +1,4 @@
-from numpy import sign
+import numpy as np
 
 
 def comp_mmf_dir(self, current_dir=None, phase_dir=None, is_plot=False):
@@ -43,7 +43,7 @@ def comp_mmf_dir(self, current_dir=None, phase_dir=None, is_plot=False):
 
     # Rotating direction is the sign of the mechanical speed of the magnetomotive force fundamental,
     # i.e frequency over wavenumber
-    mmf_dir = int(sign(f / r))
+    mmf_dir = int(np.sign(f / r))
 
     if is_plot:
         MMF.plot_3D_Data("freqs", "wavenumber")

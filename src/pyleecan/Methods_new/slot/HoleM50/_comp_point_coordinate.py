@@ -1,5 +1,5 @@
-from numpy import arcsin, arctan, cos, exp, array, angle, pi
-from numpy import imag as np_imag
+import numpy as np
+
 from scipy.optimize import fsolve
 
 
@@ -20,21 +20,21 @@ def _comp_point_coordinate(self):
     Rext = self.get_Rext()
 
     # magnet pole pitch angle, must be <2*pi/2*p
-    alpham = 2 * arcsin(self.W0 / (2 * (Rext - self.H1)))  # angle (Z9,0,Z9')
+    alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # angle (Z9,0,Z9')
 
-    Harc = (Rext - self.H1) * (1 - cos(alpham / 2))
+    Harc = (Rext - self.H1) * (1 - np.cos(alpham / 2))
     # alpha on schematics
-    gammam = arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2.0 - self.W1 / 2.0))
+    gammam = np.arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2.0 - self.W1 / 2.0))
     #  betam = pi/2-alpham/2-gammam;#40.5
-    hssp = pi / self.Zh
+    hssp = np.pi / self.Zh
 
-    x78 = (self.H3 - self.H2) / cos(gammam)  # distance from 7 to 8
+    x78 = (self.H3 - self.H2) / np.cos(gammam)  # distance from 7 to 8
     Z9 = Rext - Harc - self.H1 - 1j * self.W0 / 2
     Z8 = Rext - self.H0 - 1j * self.W1 / 2
     Z7 = Rext - self.H0 - x78 - 1j * self.W1 / 2
-    Z1 = (Rext - self.H1) * exp(1j * (-hssp + arcsin(self.W3 / (2 * (Rext - self.H1)))))
-    Z11 = (Z1 * exp(1j * hssp) + self.H4) * exp(-1j * hssp)
-    Z10 = (Z9 * exp(1j * hssp) + self.H4) * exp(-1j * hssp)
+    Z1 = (Rext - self.H1) * np.exp(1j * (-hssp + np.arcsin(self.W3 / (2 * (Rext - self.H1)))))
+    Z11 = (Z1 * np.exp(1j * hssp) + self.H4) * np.exp(-1j * hssp)
+    Z10 = (Z9 * np.exp(1j * hssp) + self.H4) * np.exp(-1j * hssp)
 
     # Magnet coordinate with Z8 as center and x as the top edge of the magnet
     Z8a = -1j * (self.H3 - self.H2)
@@ -45,18 +45,18 @@ def _comp_point_coordinate(self):
     Z6 = Z5 + 1j * self.H2
     Z3 = Z4 + 1j * self.H2
 
-    Zmag = array([Z8a, Z8b, Z6, Z5, Z4, Z3, Z8c])
-    Zmag = Zmag * exp(1j * angle(Z9 - Z8))
+    Zmag = np.array([Z8a, Z8b, Z6, Z5, Z4, Z3, Z8c])
+    Zmag = Zmag * np.exp(1j * np.angle(Z9 - Z8))
     Zmag = Zmag + Z8
 
     # final complex numbers Zmag=[Z8b Z6 Z5 Z4 Z3 Z8c]
     (Z8a, Z8b, Z6, Z5, Z4, Z3, Z8c) = Zmag
 
     # Rotation so [Z1,Z2] is parallel to the x axis
-    Z3r, Z1r, Z6r = Z3 * exp(1j * hssp), Z1 * exp(1j * hssp), Z6 * exp(1j * hssp)
+    Z3r, Z1r, Z6r = Z3 * np.exp(1j * hssp), Z1 * np.exp(1j * hssp), Z6 * np.exp(1j * hssp)
     # numerical resolution to find the last point Z2
-    x = fsolve(lambda x: np_imag((Z3r - (Z1r - x)) / (Z6r - Z3r)), self.H3 - self.H2)
-    Z2 = (Z1r - x[0]) * exp(-1j * hssp)
+    x = fsolve(lambda x: np.imag((Z3r - (Z1r - x)) / (Z6r - Z3r)), self.H3 - self.H2)
+    Z2 = (Z1r - x[0]) * np.exp(-1j * hssp)
 
     point_dict = dict()
     point_dict["Z1"] = Z1

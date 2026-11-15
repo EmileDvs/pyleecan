@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 from ..Slot import SlotCheckError
 
@@ -22,7 +22,7 @@ def check(self):
 
     if self.W1 is not None and self.W0 < self.W1:
         raise SlotCheckError("You must have W1 <= W0")
-    if self.W1 is not None and self.W1 >= slot_pitch_tol * 2 * pi / self.Zs:
+    if self.W1 is not None and self.W1 >= slot_pitch_tol * 2 * np.pi / self.Zs:
         raise SlotCheckError("You must have W1 < pi/p (use ring magnet instead)")
-    if self.W0 >= slot_pitch_tol * 2 * pi / self.Zs:
+    if self.W0 >= slot_pitch_tol * 2 * np.pi / self.Zs:
         raise SlotCheckError("You must have W0 < pi/p")

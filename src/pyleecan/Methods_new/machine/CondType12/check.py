@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi, power
+import numpy as np
 
 from . import *
 
@@ -25,7 +25,7 @@ def check(self):
         The wires are too big to fit in the conductor
     """
 
-    Swire = power((self.Wwire + 2 * self.Wins_wire) / 2.0, 2) * pi * self.Nwppc
+    Swire = np.power((self.Wwire + 2 * self.Wins_wire) / 2.0, 2) * np.pi * self.Nwppc
     Scond = self.comp_surface()
 
     if Swire > Scond:

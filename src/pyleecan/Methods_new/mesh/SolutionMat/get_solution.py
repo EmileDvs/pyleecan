@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import take, where, array
+import numpy as np
 
 
 def get_solution(self, indice=None):
@@ -44,11 +44,11 @@ def get_solution(self, indice=None):
     new_indice = [ii for ii in indice if ii in s_indice]
 
     # get array index of new_indice
-    array_indice = [where(array(s_indice) == ii)[0][0] for ii in new_indice]
+    array_indice = [np.where(np.array(s_indice) == ii)[0][0] for ii in new_indice]
 
     # setup requested solution
     axis_size[Iindice] = len(new_indice)
-    new_field_sol = take(field_sol, array_indice, axis=Iindice)
+    new_field_sol = np.take(field_sol, array_indice, axis=Iindice)
 
     solution = type(self)(
         label=self.label,

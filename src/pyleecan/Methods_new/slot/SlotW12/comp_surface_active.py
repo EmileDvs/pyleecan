@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_surface_active(self):
@@ -19,6 +19,6 @@ def comp_surface_active(self):
     """
 
     S3 = 2 * self.R2 * self.H1
-    S4 = pi * self.R2**2 / 2.0
+    S4 = np.pi * self.R2**2 / 2.0
 
     return S3 + S4

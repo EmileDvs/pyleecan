@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp, pi
+import numpy as np
 
 
 def get_center(self):
@@ -21,7 +21,7 @@ def get_center(self):
     Zc_list = list()
 
     for ii in range(self.Zh):
-        Zc = self.H0 * exp(1j * self.Alpha0) * exp(ii * 1j * 2 * pi / self.Zh)
+        Zc = self.H0 * np.exp(1j * self.Alpha0) * np.exp(ii * 1j * 2 * np.pi / self.Zh)
         Zc_list.append(Zc)
 
     return Zc_list

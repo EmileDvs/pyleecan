@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import angle
+import numpy as np
 from scipy.optimize import fsolve
 
 from ....Classes_new.geometry.arc_1 import Arc1

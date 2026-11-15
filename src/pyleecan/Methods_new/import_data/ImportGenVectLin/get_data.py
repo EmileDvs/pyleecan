@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace
+import numpy as np
 
 
 def get_data(self):
@@ -18,7 +18,7 @@ def get_data(self):
 
     """
 
-    vect = linspace(
+    vect = np.linspace(
         start=self.start, stop=self.stop, num=int(self.num), endpoint=self.endpoint
     )
 

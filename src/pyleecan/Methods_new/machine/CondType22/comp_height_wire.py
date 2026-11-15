@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 
 
 def comp_height_wire(self):
@@ -20,6 +20,6 @@ def comp_height_wire(self):
         Hbar = self.parent.parent.slot.comp_height()
 
     else:
-        Hbar = sqrt(self.Sbar)
+        Hbar = np.sqrt(self.Sbar)
 
     return Hbar

@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from os import makedirs, remove
-from os.path import dirname, isdir
+import os
+
 from typing import List, Optional
 
 import meshio
 import pyvista as pv
-from pyvista.core.pointset import UnstructuredGrid
+
 
 from ....definitions import RESULT_DIR
 
 
 def get_mesh_pv(
     self, path: str = f"{RESULT_DIR}/temp.vtk", indices: Optional[List[int]] = None
-) -> UnstructuredGrid:
+) -> pv.core.pointset.UnstructuredGrid:
     """Return the pyvista mesh object (or submesh).
 
     Parameters
@@ -42,8 +42,8 @@ def get_mesh_pv(
         # Write .vtk file using meshio
 
     # Make sure that the file exists
-    if not isdir(dirname(path)):
-        makedirs(dirname(path))
+    if not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
 
     meshio.write_points_cells(filename=path, points=nodes, cells=cells_meshio)
 
@@ -54,6 +54,6 @@ def get_mesh_pv(
     if indices is not None:
         mesh = mesh.extract_points(indices)
 
-    remove(path)
+    os.remove(path)
 
     return mesh

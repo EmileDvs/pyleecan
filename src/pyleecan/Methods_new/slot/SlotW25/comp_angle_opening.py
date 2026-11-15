@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, pi
+import numpy as np
 
 
 def comp_angle_opening(self):
@@ -19,7 +19,7 @@ def comp_angle_opening(self):
     """
     Rbo = self.get_Rbo()
 
-    slot_pitch = 2 * pi / self.Zs
+    slot_pitch = 2 * np.pi / self.Zs
 
-    alpha_4 = float(2 * arcsin(self.W4 / (2 * Rbo)))
+    alpha_4 = float(2 * np.arcsin(self.W4 / (2 * Rbo)))
     return slot_pitch - alpha_4

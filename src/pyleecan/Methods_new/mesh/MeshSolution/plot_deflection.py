@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs as np_abs
-from numpy import exp, linspace
-from numpy import max as np_max
-from numpy import min as np_min
-from numpy import pi, real
+import numpy as np
+
+
+
+
 
 from ....Classes_new.mesh.mesh_vtk import MeshVTK
 from ....definitions import config_dict
@@ -86,14 +86,14 @@ def plot_deflection(
 
     # Compute colorbar boundaries
     if clim is None:
-        clim = [np_min(real(field_normal_amp)), np_max(real(field_normal_amp))]
+        clim = [np.min(np.real(field_normal_amp)), np.max(np.real(field_normal_amp))]
         if (clim[1] - clim[0]) / clim[1] < 0.01:
             clim[0] = -abs(clim[1])
             clim[1] = abs(clim[1])
 
     # Compute deformation factor
     if factor is None:
-        factor = 0.2 * np_max(np_abs(mesh_pv.bounds)) / np_max(np_abs(vect_field))
+        factor = 0.2 * np.max(np.abs(mesh_pv.bounds)) / np.max(np.abs(vect_field))
 
     field_name += (
         " \n(x " + format(factor, ".3g") + " [" + self.get_solution().unit + "])"
@@ -138,8 +138,8 @@ def plot_deflection(
         nframe = 25
         pv_plotter.open_gif(save_path)
         pv_plotter.clear()
-        for t in linspace(0.0, 1.0, nframe, endpoint=False):
-            phase = exp(1j * 2 * pi * t)
+        for t in np.linspace(0.0, 1.0, nframe, endpoint=False):
+            phase = np.exp(1j * 2 * np.pi * t)
 
             # Compute pyvista object
             plot_surf_deflection(

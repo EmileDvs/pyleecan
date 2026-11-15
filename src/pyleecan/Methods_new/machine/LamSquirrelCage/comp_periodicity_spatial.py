@@ -1,4 +1,4 @@
-from ....Functions_new.load import import_class
+from ....Functions.load import import_class
 
 
 def comp_periodicity_spatial(self):

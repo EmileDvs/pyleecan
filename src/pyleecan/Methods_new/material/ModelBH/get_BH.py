@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from numpy import array, linspace, pi
 import numpy as np
+
 from scipy.optimize import curve_fit, root_scalar
 
 

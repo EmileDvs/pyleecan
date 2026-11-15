@@ -1,11 +1,11 @@
-from numpy import dot, exp, ones, pi, sqrt, squeeze, zeros
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.simulation.op_dq import OPdq
 from ....Functions_new.Electrical.dqh_transformation import dqh2n
-from ....Functions_new.Load.import_class import import_class
+from ....Functions.Load.import_class import import_class
 from ...simulation.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
 
 
@@ -88,23 +88,23 @@ def comp_mmf_unit(self, Na=None, Nt=None, felec=1, current_dir=None, phase_dir=N
     )
 
     if qs == 6 and self.winding.dual_tri_phase_shift is not None:
-        Is_val = zeros((1, 6), dtype=complex)
+        Is_val = np.zeros((1, 6), dtype=complex)
         Id = 1
         Iq = 0
-        I0 = sqrt(Id**2 + Iq**2) * sqrt(2)
+        I0 = np.sqrt(Id**2 + Iq**2) * np.sqrt(2)
         phi0 = 0
         if not self.winding.is_wye:
-            I0 = I0 / sqrt(3)
-            phi0 = phi0 + pi / 6
-        Is_val[0, 0] = I0 * exp(1j * phi0)
-        Is_val[0, 1] = I0 * exp(1j * (phi0 + self.winding.dual_tri_phase_shift))
-        Is_val[0, 2] = I0 * exp(1j * (phi0 + 2 * pi / 3))
-        Is_val[0, 3] = I0 * exp(
-            1j * (phi0 + 2 * pi / 3 + self.winding.dual_tri_phase_shift)
+            I0 = I0 / np.sqrt(3)
+            phi0 = phi0 + np.pi / 6
+        Is_val[0, 0] = I0 * np.exp(1j * phi0)
+        Is_val[0, 1] = I0 * np.exp(1j * (phi0 + self.winding.dual_tri_phase_shift))
+        Is_val[0, 2] = I0 * np.exp(1j * (phi0 + 2 * np.pi / 3))
+        Is_val[0, 3] = I0 * np.exp(
+            1j * (phi0 + 2 * np.pi / 3 + self.winding.dual_tri_phase_shift)
         )
-        Is_val[0, 4] = I0 * exp(1j * (phi0 + 4 * pi / 3))
-        Is_val[0, 5] = I0 * exp(
-            1j * (phi0 + 4 * pi / 3 + self.winding.dual_tri_phase_shift)
+        Is_val[0, 4] = I0 * np.exp(1j * (phi0 + 4 * np.pi / 3))
+        Is_val[0, 5] = I0 * np.exp(
+            1j * (phi0 + 4 * np.pi / 3 + self.winding.dual_tri_phase_shift)
         )
         # Create Data object
         Phases = Data1D(
@@ -132,12 +132,12 @@ def comp_mmf_unit(self, Na=None, Nt=None, felec=1, current_dir=None, phase_dir=N
             axis_data={"time": axes_dict["time"].get_values(is_oneperiod=True)},
         )["I_s"]
     else:
-        Idq = zeros((angle_elec.size, 3))
-        Idq[:, 0] = ones(angle_elec.size)
+        Idq = np.zeros((angle_elec.size, 3))
+        Idq[:, 0] = np.ones(angle_elec.size)
         I = dqh2n(Idq, angle_elec, n=qs, is_n_rms=False, phase_dir=phase_dir)
 
     # Compute unit mmf
-    mmf_u = squeeze(dot(I, wf))
+    mmf_u = np.squeeze(np.dot(I, wf))
 
     # Create a Data object
 

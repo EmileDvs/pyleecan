@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, cos
+import numpy as np
 
 
 def comp_height_active(self):
@@ -19,7 +19,7 @@ def comp_height_active(self):
     """
 
     # Height of the arc (P2,C1,P7)
-    alpha2 = arcsin(self.W0 / (2.0 * self.R1))
-    Harc2 = float(self.R1 * (1 - cos(alpha2)))
+    alpha2 = np.arcsin(self.W0 / (2.0 * self.R1))
+    Harc2 = float(self.R1 * (1 - np.cos(alpha2)))
 
     return self.H1 + self.R2 + self.R1 - Harc2

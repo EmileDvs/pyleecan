@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin, cos, pi, sin
+import numpy as np
 
 
 def comp_surface_wedge(self):

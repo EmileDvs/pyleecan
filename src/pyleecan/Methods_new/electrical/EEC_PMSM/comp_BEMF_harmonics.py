@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy import cos, pi, sin
+
 from pylab import False_
 
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
@@ -26,18 +26,18 @@ def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time, is_test=False_):
         2
         / 3
         * (
-            Phi_A * cos(delta)
-            + Phi_B * cos(delta - 2 * pi / 3)
-            + Phi_C * cos(delta + 2 * pi / 3)
+            Phi_A * np.cos(delta)
+            + Phi_B * np.cos(delta - 2 * np.pi / 3)
+            + Phi_C * np.cos(delta + 2 * np.pi / 3)
         )
     )
     Phi_q = (
         2
         / 3
         * (
-            -Phi_A * sin(delta)
-            - Phi_B * sin(delta - 2 * pi / 3)
-            - Phi_C * sin(delta + 2 * pi / 3)
+            -Phi_A * np.sin(delta)
+            - Phi_B * np.sin(delta - 2 * np.pi / 3)
+            - Phi_C * np.sin(delta + 2 * np.pi / 3)
         )
     )
     Phi_h = 2 / 3 * 1 / 2 * (Phi_A + Phi_B + Phi_C)
@@ -123,9 +123,9 @@ def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time, is_test=False_):
     complx_h = h["Phi_h"]
 
     # Calculate back-emf (E) on dq0 frame
-    E_d = -2 * pi * freqs_q * complx_q + 2 * pi * freqs_d * complx_d * 1j
-    E_q = 2 * pi * freqs_d * complx_d + 2 * pi * freqs_q * complx_q * 1j
-    E_h = 2 * pi * freqs_h * complx_h * 1j
+    E_d = -2 * np.pi * freqs_q * complx_q + 2 * np.pi * freqs_d * complx_d * 1j
+    E_q = 2 * np.pi * freqs_d * complx_d + 2 * np.pi * freqs_q * complx_q * 1j
+    E_h = 2 * np.pi * freqs_h * complx_h * 1j
 
     if is_test:
         # Example:
@@ -139,14 +139,14 @@ def comp_BEMF_harmonics(Phi_A, Phi_B, Phi_C, delta, time, is_test=False_):
             + 0.0009 * np.cos(150 * 2.0 * np.pi * time)
         )
         Phi_B = (
-            0.5 * np.cos(50.0 * 2.0 * np.pi * time - 2 * pi / 3)
-            + 0.001 * np.cos(100 * 2.0 * np.pi * time - 2 * pi / 3)
-            + 0.0009 * np.cos(150 * 2.0 * np.pi * time - 2 * pi / 3)
+            0.5 * np.cos(50.0 * 2.0 * np.pi * time - 2 * np.pi / 3)
+            + 0.001 * np.cos(100 * 2.0 * np.pi * time - 2 * np.pi / 3)
+            + 0.0009 * np.cos(150 * 2.0 * np.pi * time - 2 * np.pi / 3)
         )
         Phi_C = (
-            0.5 * np.cos(50.0 * 2.0 * np.pi * time + 2 * pi / 3)
-            + 0.001 * np.cos(100 * 2.0 * np.pi * time + 2 * pi / 3)
-            + 0.0009 * np.cos(150 * 2.0 * np.pi * time + 2 * pi / 3)
+            0.5 * np.cos(50.0 * 2.0 * np.pi * time + 2 * np.pi / 3)
+            + 0.001 * np.cos(100 * 2.0 * np.pi * time + 2 * np.pi / 3)
+            + 0.0009 * np.cos(150 * 2.0 * np.pi * time + 2 * np.pi / 3)
         )
         delta = 50.0 * 2.0 * np.pi * time
 

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import array
+import numpy as np
 
 
 def is_inside(self, Z, if_online=False):

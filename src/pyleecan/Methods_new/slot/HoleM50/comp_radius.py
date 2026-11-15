@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import angle, arcsin, arctan, array, cos, exp
+import numpy as np
 
 
 def comp_radius(self):

@@ -1,6 +1,6 @@
-from numpy import angle as np_angle
+import numpy as np
 
-from pyleecan.classes_common.errors import NormError
+from ....classes_common.errors import NormError
 from ....Functions_new.SciDataTool.conversions import convert
 
 
@@ -27,7 +27,7 @@ def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     return_dict = self.get_along(args, axis_data=axis_data)
     values = return_dict[self.symbol]
     # Compute magnitude
-    values = np_angle(values)
+    values = np.angle(values)
     # Convert into right unit (apart because of degree conversion)
     if unit == self.unit or unit == "SI":
         if is_norm:

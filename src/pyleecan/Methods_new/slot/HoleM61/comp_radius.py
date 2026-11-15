@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs
+import numpy as np
 
-from pyleecan.Classes_new.geometry.arc_1 import Arc1
+from ....Classes_new.geometry.arc_1 import Arc1
 
 
 def comp_radius(self):
@@ -22,6 +22,6 @@ def comp_radius(self):
     Rbo = self.get_Rbo()
 
     Rmax = Rbo - self.H2
-    Rmin = abs((Rbo - self.H0) + 1j * self.W0 / 2)
+    Rmin = np.abs((Rbo - self.H0) + 1j * self.W0 / 2)
 
     return (Rmin, Rmax)

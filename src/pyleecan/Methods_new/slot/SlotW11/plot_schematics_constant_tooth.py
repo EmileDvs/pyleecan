@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_slot import LamSlot
@@ -97,7 +97,7 @@ def plot_schematics_constant_tooth(
             raise ParentMissingError("Error: The slot is not inside a Lamination")
         lam = self.parent
         fig, ax = lam.plot(
-            alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+            alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
         point_dict = self._comp_point_coordinate()
         if self.is_outwards():
@@ -114,12 +114,12 @@ def plot_schematics_constant_tooth(
                     fontsize=P_FONT_SIZE,
                     bbox=TEXT_BOX,
                 )
-        sp = 2 * pi / self.Zs
+        sp = 2 * np.pi / self.Zs
 
         # Adding schematics
         if is_add_schematics:
             # W0
-            line = Segment(point_dict["Z1"], point_dict["Z10"])
+            line = Segment(begin=point_dict["Z1"], end=point_dict["Z10"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -132,8 +132,8 @@ def plot_schematics_constant_tooth(
             )
             # W3
             line = Segment(
-                (point_dict["Z3"] + point_dict["Z4"]) / 2,
-                (point_dict["Z7"] + point_dict["Z8"]) / 2 * exp(-1j * sp),
+                begin=(point_dict["Z3"] + point_dict["Z4"]) / 2,
+                end=(point_dict["Z7"] + point_dict["Z8"]) / 2 * np.exp(-1j * sp),
             )
             line.plot(
                 fig=fig,
@@ -146,7 +146,7 @@ def plot_schematics_constant_tooth(
                 fontsize=SC_FONT_SIZE,
             )
             # H0
-            line = Segment(point_dict["Z10"], point_dict["Z9"])
+            line = Segment(begin=point_dict["Z10"], end=point_dict["Z9"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -158,7 +158,7 @@ def plot_schematics_constant_tooth(
                 fontsize=SC_FONT_SIZE,
             )
             # H1[m]
-            line = Segment(point_dict["Z2"].real, point_dict["Z3"].real)
+            line = Segment(begin=point_dict["Z2"].real, end=point_dict["Z3"].real)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -189,7 +189,7 @@ def plot_schematics_constant_tooth(
                 fontsize=SC_FONT_SIZE,
             )
             # H2
-            line = Segment(point_dict["Z3"].real, point_dict["Z5"].real)
+            line = Segment(begin=point_dict["Z3"].real, end=point_dict["Z5"].real)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -201,7 +201,7 @@ def plot_schematics_constant_tooth(
                 fontsize=SC_FONT_SIZE,
             )
             # R1
-            line = Segment(point_dict["Zc1"], point_dict["Z5"])
+            line = Segment(begin=point_dict["Zc1"], end=point_dict["Z5"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -215,7 +215,7 @@ def plot_schematics_constant_tooth(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -238,7 +238,7 @@ def plot_schematics_constant_tooth(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # H1 line
-            line = Segment(point_dict["Z2"], point_dict["Z9"])
+            line = Segment(begin=point_dict["Z2"], end=point_dict["Z9"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -247,7 +247,7 @@ def plot_schematics_constant_tooth(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # R1 circle
-            line = Segment(point_dict["Zc1"], point_dict["Z5"])
+            line = Segment(begin=point_dict["Zc1"], end=point_dict["Z5"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -255,7 +255,7 @@ def plot_schematics_constant_tooth(
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(point_dict["Zc1"], point_dict["Z4"])
+            line = Segment(begin=point_dict["Zc1"], end=point_dict["Z4"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -263,7 +263,7 @@ def plot_schematics_constant_tooth(
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(point_dict["Zc2"], point_dict["Z6"])
+            line = Segment(begin=point_dict["Zc2"], end=point_dict["Z6"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -271,7 +271,7 @@ def plot_schematics_constant_tooth(
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(point_dict["Zc2"], point_dict["Z7"])
+            line = Segment(begin=point_dict["Zc2"], end=point_dict["Z7"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -280,7 +280,7 @@ def plot_schematics_constant_tooth(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # W3 parralel
-            line = Segment(point_dict["Z3"] * exp(1j * sp), point_dict["Z8"])
+            line = Segment(begin=point_dict["Z3"] * np.exp(1j * sp), end=point_dict["Z8"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -289,7 +289,7 @@ def plot_schematics_constant_tooth(
                 linewidth=MAIN_LINE_WIDTH,
             )
 
-            line = Segment(point_dict["Z3"], point_dict["Z8"] * exp(-1j * sp))
+            line = Segment(begin=point_dict["Z3"], end=point_dict["Z8"] * np.exp(-1j * sp))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -299,7 +299,7 @@ def plot_schematics_constant_tooth(
             )
 
             # H0 lines
-            line = Segment(0, point_dict["Z1"])
+            line = Segment(begin=0, end=point_dict["Z1"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -307,7 +307,7 @@ def plot_schematics_constant_tooth(
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(0, point_dict["Z10"])
+            line = Segment(begin=0, end=point_dict["Z10"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -316,7 +316,7 @@ def plot_schematics_constant_tooth(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # H1
-            line = Segment(point_dict["Z2"] - 1j, point_dict["Z9"])
+            line = Segment(begin=point_dict["Z2"] - 1j, end=point_dict["Z9"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -325,7 +325,7 @@ def plot_schematics_constant_tooth(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # axis between Slot
-            line = Segment(0, lam.Rext * 1.5 * exp(-1j * sp / 2))
+            line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(-1j * sp / 2))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -334,7 +334,7 @@ def plot_schematics_constant_tooth(
                 linewidth=MAIN_LINE_WIDTH,
             )
 
-            line = Segment(0, lam.Rext * 1.5 * exp(1j * sp / 2))
+            line = Segment(begin=0, end=lam.Rext * 1.5 * np.exp(1j * sp / 2))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -358,7 +358,7 @@ def plot_schematics_constant_tooth(
 
         # Zooming and cleaning
         # W = max([self.W1, self.W0, self.W2]) * 0.6
-        W = (point_dict["Z4"] * exp(1j * sp)).imag * 1.1
+        W = (point_dict["Z4"] * np.exp(1j * sp)).imag * 1.1
         Rint = min(point_dict["Z6"].real, point_dict["Z1"].real)
         Rext = max(point_dict["Z6"].real, point_dict["Z1"].real)
 

@@ -1,4 +1,4 @@
-from numpy import array, pi
+import numpy as np
 from scipy import linalg
 
 
@@ -30,7 +30,7 @@ def solve(self, output):
     """
 
     felec = output.elec.felec
-    ws = 2 * pi * felec
+    ws = 2 * np.pi * felec
 
     R_s = self.parameters["R_s"]
     Rr_a = self.parameters["Rr_a"]
@@ -59,7 +59,7 @@ def solve(self, output):
 
     # Solve system
     if "U_ds" in self.parameters:
-        XR = array(
+        XR = np.array(
             [
                 [R_s, -ws * (L_qss + L_qmu), 0, -ws * L_qmu],
                 [ws * (L_dss + L_dmu + L_dsa), R_s, -ws * (L_dmu + L_dsa), 0],
@@ -72,8 +72,8 @@ def solve(self, output):
                 ],
             ]
         )
-        XE = array([0, ws * Phi_m, 0, ws * Phi_m])
-        XU = array([U_ds, U_qs, 0, 0])
+        XE = np.array([0, ws * Phi_m, 0, ws * Phi_m])
+        XU = np.array([U_ds, U_qs, 0, 0])
         XI = linalg.solve(XR, XU - XE)
 
         output.elec.Ids_ref = XI[0]

@@ -1,4 +1,4 @@
-from numpy import angle, exp, linspace, zeros
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
@@ -36,13 +36,13 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
     Z4 = point_dict["Z4"]
     Z5 = point_dict["Z5"]
     Z6 = point_dict["Z6"]
-    X = linspace(Z3, Z4, Nrad + 1)
+    X = np.linspace(Z3, Z4, Nrad + 1)
 
     # Nrad+1 and Ntan+1 because 3 points => 2 zones
-    Z = zeros((Nrad + 1, Ntan + 1), dtype=complex)
+    Z = np.zeros((Nrad + 1, Ntan + 1), dtype=complex)
     for ii in range(Nrad + 1):
-        Z[ii][:] = abs(X[ii]) * exp(
-            1j * linspace(angle(X[ii]), angle(X[ii].conjugate()), Ntan + 1)
+        Z[ii][:] = abs(X[ii]) * np.exp(
+            1j * np.linspace(np.angle(X[ii]), np.angle(X[ii].conjugate()), Ntan + 1)
         )
 
     if self.is_outwards():
@@ -64,27 +64,27 @@ def build_geometry_active(self, Nrad, Ntan, alpha=0, delta=0):
             point_ref = (Z1 + Z2 + Z3 + Z4) / 4  # reference point of the surface
             # With one zone the order would be [Z7,Z4,Z5,Z6]
             curve_list = list()
-            curve_list.append(Arc1(Z1, Z2, abs(Z1), is_trigo_direction=True))
+            curve_list.append(Arc1(begin=Z1, end=Z2, radius=abs(Z1), is_trigo_direction=True))
             curve_list.append(
                 Segment(
-                    Z2,
-                    Z3,
+                    begin=Z2,
+                    end=Z3,
                     prop_dict={DRAW_PROP_LAB: False},
                 )
             )
             curve_list.append(
                 Arc1(
-                    Z3,
-                    Z4,
-                    -abs(Z3),
+                    begin=Z3,
+                    end=Z4,
+                    radius=-abs(Z3),
                     is_trigo_direction=False,
                     prop_dict={DRAW_PROP_LAB: False},
                 )
             )
             curve_list.append(
                 Segment(
-                    Z4,
-                    Z1,
+                    begin=Z4,
+                    end=Z1,
                     prop_dict={DRAW_PROP_LAB: jj != 0},
                 )
             )

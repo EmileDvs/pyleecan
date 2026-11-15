@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_surface(self):
@@ -18,4 +18,4 @@ def comp_surface(self):
 
     """
 
-    return pi * ((self.comp_width() / 2.0) ** 2)
+    return np.pi * ((self.comp_width() / 2.0) ** 2)

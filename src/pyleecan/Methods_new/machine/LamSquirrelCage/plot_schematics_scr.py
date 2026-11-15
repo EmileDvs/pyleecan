@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.slot.slot_w_22 import SlotW22
@@ -86,7 +86,7 @@ def plot_schematics_scr(
         # Adding schematics
         if is_add_schematics:
             # Rext
-            line = Segment(Lt / 2 - Lt / 5, Lt / 2 - Lt / 5 + 1j * self.Rext)
+            line = Segment(begin=Lt / 2 - Lt / 5, end=Lt / 2 - Lt / 5 + 1j * self.Rext)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -128,7 +128,7 @@ def plot_schematics_scr(
                 label="Lscr",
             )
             # Hscr
-            line = Segment(ZL2, ZL2 - 1j * Hscr)
+            line = Segment(begin=ZL2, end=ZL2 - 1j * Hscr)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -142,7 +142,7 @@ def plot_schematics_scr(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, Lt + Le + Lscr)
+            line = Segment(begin=0, end=Lt + Le + Lscr)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -151,7 +151,7 @@ def plot_schematics_scr(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Hscr lines
-            line = Segment(ZL1 - 1j * Hscr, ZL2 - 1j * Hscr)
+            line = Segment(begin=ZL1 - 1j * Hscr, end=ZL2 - 1j * Hscr)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -159,7 +159,7 @@ def plot_schematics_scr(
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(ZL1.conjugate() + 1j * Hscr, ZL2.conjugate() + 1j * Hscr)
+            line = Segment(begin=ZL1.conjugate() + 1j * Hscr, end=ZL2.conjugate() + 1j * Hscr)
             line.plot(
                 fig=fig,
                 ax=ax,

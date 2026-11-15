@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 from ....Classes_new.geometry.segment import Segment
 
 

@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 
 
 def comp_height_active(self):
@@ -16,4 +16,4 @@ def comp_height_active(self):
 
     """
 
-    return self.R3 + self.H3 + self.H2 + sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)
+    return self.R3 + self.H3 + self.H2 + np.sqrt((self.D1 / 2) ** 2 - (self.W1 / 2) ** 2)

@@ -1,4 +1,4 @@
-from numpy import append, concatenate
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Functions_new.MeshSolution.build_meshsolution import build_meshsolution
@@ -49,7 +49,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
             field_x = comp_x.values
             comp_y = solution.field.components["comp_y"]
             field_y = comp_y.values
-            field = concatenate((field_x[..., None], field_y[..., None]), axis=-1)
+            field = np.concatenate((field_x[..., None], field_y[..., None]), axis=-1)
 
             axes_list = comp_x.axes
 
@@ -58,7 +58,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
             new_field_x = new_comp_x.values
             new_comp_y = new_solution.field.components["comp_y"]
             new_field_y = new_comp_y.values
-            new_field = concatenate(
+            new_field = np.concatenate(
                 (new_field_x[..., None], new_field_y[..., None]), axis=-1
             )
         else:
@@ -71,11 +71,11 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
 
         if "z" in name:
             axis_slice = axes_list[2].copy()
-            axis_slice.values = append(axis_slice.values, ii)
-            new_field = concatenate((field, new_field[:, :, None]), axis=2)
+            axis_slice.values = np.append(axis_slice.values, ii)
+            new_field = np.concatenate((field, new_field[:, :, None]), axis=2)
         else:
             axis_slice = Data1D(name="z", values=[ii - 1, ii])
-            new_field = concatenate((field[:, :, None], new_field[:, :, None]), axis=2)
+            new_field = np.concatenate((field[:, :, None], new_field[:, :, None]), axis=2)
 
         if ii == Nslices:
             axis_slice = axes_dict["z"]

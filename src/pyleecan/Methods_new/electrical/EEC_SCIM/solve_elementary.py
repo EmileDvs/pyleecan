@@ -1,4 +1,4 @@
-from numpy import pi, interp, inf, exp
+import numpy as np
 import scipy.interpolate as scp_int
 
 
@@ -21,7 +21,7 @@ def solve_elementary(self):
 
     felec = self.OP.get_felec()
     slip = self.OP.get_slip()
-    ws = 2 * pi * felec
+    ws = 2 * np.pi * felec
 
     Xm = ws * self.Lm
     X1 = ws * self.L1
@@ -32,7 +32,7 @@ def solve_elementary(self):
 
     # rotor impedance
     if slip == 0:
-        Z2 = inf
+        Z2 = np.inf
     else:
         Z2 = 1j * X2 + self.R2 / slip
 
@@ -45,13 +45,13 @@ def solve_elementary(self):
     U_dict, I_dict = self.OP.get_U0_UPhi0(), self.OP.get_I0_Phi0()
     if U_dict["U0"] is not None:  # Voltage driven
         UPhi0_ref = 0 if U_dict["UPhi0"] is None else U_dict["UPhi0"]
-        U1 = U_dict["U0"] * exp(1j * UPhi0_ref)
+        U1 = U_dict["U0"] * np.exp(1j * UPhi0_ref)
         I1 = (U1 + 1j * 0) / Ztot
         E = U1 - Z1 * I1
         Im = E / Zm
     elif I_dict["I0"] is not None:  # Current driven
         IPhi0_ref = 0 if I_dict["Phi0"] is None else I_dict["Phi0"]
-        I1 = I_dict["I0"] * exp(1j * IPhi0_ref)
+        I1 = I_dict["I0"] * np.exp(1j * IPhi0_ref)
         Im = I1 / (1 + Zm / Z2 + Zm / self.Rfe)
         E = Zm * Im
         U1 = E + Z1 * I1
@@ -67,7 +67,7 @@ def solve_elementary(self):
         self.Im_table, self.Lm_table, kind="linear", fill_value="extrapolate"
     )(abs(Im))
     # linear interpolation with nearest extrapolation if Im is outside Im_table
-    Lm2 = interp(abs(Im), self.Im_table, self.Lm_table)
+    Lm2 = np.interp(abs(Im), self.Im_table, self.Lm_table)
     # magnetizing inductance is the average of both to simulate the saturation increase
     Lm = 0.5 * (Lm1 + Lm2)
 

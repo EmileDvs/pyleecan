@@ -4,7 +4,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.surf_ring import SurfRing
-from numpy import exp, pi
+import numpy as np
 
 
 def build_geometry(self, sym=1, alpha=0, delta=0):
@@ -50,14 +50,14 @@ def build_geometry(self, sym=1, alpha=0, delta=0):
             ]
         else:  # Part of the frame
             Z0 = self.Rint
-            Z3 = Z0 * exp(1j * 2 * pi / sym)
+            Z3 = Z0 * np.exp(1j * 2 * np.pi / sym)
             Z1 = self.Rext
-            Z2 = Z1 * exp(1j * 2 * pi / sym)
+            Z2 = Z1 * np.exp(1j * 2 * np.pi / sym)
             curve_list = list()
-            curve_list.append(Segment(Z0, Z1))
-            curve_list.append(Arc1(Z1, Z2, self.Rext))
-            curve_list.append(Segment(Z2, Z3))
-            curve_list.append(Arc1(Z3, Z0, -self.Rint, is_trigo_direction=False))
+            curve_list.append(Segment(begin=Z0, end=Z1))
+            curve_list.append(Arc1(begin=Z1, end=Z2, radius=self.Rext))
+            curve_list.append(Segment(begin=Z2, end=Z3))
+            curve_list.append(Arc1(begin=Z3, end=Z0, radius=-self.Rint, is_trigo_direction=False))
             surf_frame = SurfLine(
                 line_list=curve_list,
                 label="Frame",

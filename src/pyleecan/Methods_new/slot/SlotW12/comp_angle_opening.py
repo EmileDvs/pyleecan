@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import arcsin
+import numpy as np
 
 
 def comp_angle_opening(self):
@@ -20,4 +20,4 @@ def comp_angle_opening(self):
 
     Rbo = self.get_Rbo()
 
-    return float(2 * arcsin(self.R2 / Rbo))
+    return float(2 * np.arcsin(self.R2 / Rbo))

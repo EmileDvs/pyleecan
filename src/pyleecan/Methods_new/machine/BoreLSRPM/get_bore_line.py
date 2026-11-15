@@ -2,7 +2,7 @@ from ....Functions_new.Geometry.comp_flower_arc import comp_flower_arc
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Methods import ParentMissingError
-from numpy import pi, sqrt, exp
+import numpy as np
 
 
 def get_bore_line(self, prop_dict=None):
@@ -31,18 +31,18 @@ def get_bore_line(self, prop_dict=None):
 
     # Compute the shape
 
-    alpha1 = pi / self.N
+    alpha1 = np.pi / self.N
 
     # Z1
-    Z1 = R * exp(-1j * alpha1)
+    Z1 = R * np.exp(-1j * alpha1)
 
     # ZC1
-    ZC1 = (R - self.Rarc) * exp(-1j * alpha1)
+    ZC1 = (R - self.Rarc) * np.exp(-1j * alpha1)
     XC1 = ZC1.real
     YC1 = ZC1.imag
 
     # Z2
-    X2 = sqrt(self.Rarc**2 - (self.W1 + YC1) ** 2) + XC1
+    X2 = np.sqrt(self.Rarc**2 - (self.W1 + YC1) ** 2) + XC1
     Y2 = -self.W1
     Z2 = X2 + 1j * Y2
 
@@ -54,8 +54,8 @@ def get_bore_line(self, prop_dict=None):
     for ii in range(self.N):
         bore_list.append(
             Arc1(
-                begin=Z1 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
-                end=Z2 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
+                begin=Z1 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                end=Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
                 radius=self.Rarc,
                 is_trigo_direction=True,
                 prop_dict=prop_dict,
@@ -64,16 +64,16 @@ def get_bore_line(self, prop_dict=None):
 
         bore_list.append(
             Segment(
-                Z2 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
-                Z3 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
+                begin=Z2 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                end=Z3 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
                 prop_dict=prop_dict,
             )
         )
 
         bore_list.append(
             Arc1(
-                begin=Z3 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
-                end=Z4 * exp(1j * (2 * pi / self.N * (ii - 1) + self.alpha)),
+                begin=Z3 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
+                end=Z4 * np.exp(1j * (2 * np.pi / self.N * (ii - 1) + self.alpha)),
                 radius=self.Rarc,
                 is_trigo_direction=True,
                 prop_dict=prop_dict,

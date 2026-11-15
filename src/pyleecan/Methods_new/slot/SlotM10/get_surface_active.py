@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace, zeros
+import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
@@ -36,22 +36,22 @@ def get_surface_active(self, alpha=0, delta=0):
     Z4 = point_dict["Z4"]
 
     curve_list = list()
-    curve_list.append(Segment(ZM1, ZM2))
+    curve_list.append(Segment(begin=ZM1, end=ZM2))
     # Case Z2-Z1 overlapping with ZM1-ZM2
     if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-        curve_list.append(Segment(ZM1, Z1))
-        curve_list.append(Segment(Z1, ZM2))
+        curve_list.append(Segment(begin=ZM1, end=Z1))
+        curve_list.append(Segment(begin=Z1, end=ZM2))
     else:
-        curve_list.append(Segment(ZM1, ZM2))
-    curve_list.append(Segment(ZM2, ZM3))
+        curve_list.append(Segment(begin=ZM1, end=ZM2))
+    curve_list.append(Segment(begin=ZM2, end=ZM3))
 
     # Case Z3-Z4 overlapping with ZM3-ZM4
     if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
-        curve_list.append(Segment(ZM3, Z4))
-        curve_list.append(Segment(Z4, ZM4))
+        curve_list.append(Segment(begin=ZM3, end=Z4))
+        curve_list.append(Segment(begin=Z4, end=ZM4))
     else:
-        curve_list.append(Segment(ZM3, ZM4))
-    curve_list.append(Segment(ZM4, ZM1))
+        curve_list.append(Segment(begin=ZM3, end=ZM4))
+    curve_list.append(Segment(begin=ZM4, end=ZM1))
 
     Zmid = (ZM1 + ZM3) / 2
 

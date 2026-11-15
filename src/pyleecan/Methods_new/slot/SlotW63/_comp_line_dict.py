@@ -35,36 +35,36 @@ def _comp_line_dict(self):
 
     # Creation of curve
     line_dict = dict()
-    line_dict["1-2"] = Segment(Z1, Z2)
-    line_dict["2-3"] = Segment(Z2, Z3)
-    line_dict["3-4"] = Segment(Z3, Z4)
-    line_dict["4-5"] = Segment(Z4, Z5)
-    line_dict["5-6"] = Segment(Z5, Z6)
-    line_dict["6-7"] = Segment(Z6, Z7)
-    line_dict["7-8"] = Segment(Z7, Z8)
+    line_dict["1-2"] = Segment(begin=Z1, end=Z2)
+    line_dict["2-3"] = Segment(begin=Z2, end=Z3)
+    line_dict["3-4"] = Segment(begin=Z3, end=Z4)
+    line_dict["4-5"] = Segment(begin=Z4, end=Z5)
+    line_dict["5-6"] = Segment(begin=Z5, end=Z6)
+    line_dict["6-7"] = Segment(begin=Z6, end=Z7)
+    line_dict["7-8"] = Segment(begin=Z7, end=Z8)
 
     # Winding lines
-    line_dict["w1-2"] = Segment(Zw1, Z2)
-    line_dict["2-w1"] = Segment(Z2, Zw1)
-    line_dict["4-w2"] = Segment(Z4, Zw2)
-    line_dict["w2-w1"] = Segment(Zw2, Zw1)
-    line_dict["w1-w2"] = Segment(Zw1, Zw2)
+    line_dict["w1-2"] = Segment(begin=Zw1, end=Z2)
+    line_dict["2-w1"] = Segment(begin=Z2, end=Zw1)
+    line_dict["4-w2"] = Segment(begin=Z4, end=Zw2)
+    line_dict["w2-w1"] = Segment(begin=Zw2, end=Zw1)
+    line_dict["w1-w2"] = Segment(begin=Zw1, end=Zw2)
 
-    line_dict["w2s-5"] = Segment(Zw2s, Z5)
-    line_dict["7-w1s"] = Segment(Z7, Zw1s)
-    line_dict["w1s-w2s"] = Segment(Zw1s, Zw2s)
+    line_dict["w2s-5"] = Segment(begin=Zw2s, end=Z5)
+    line_dict["7-w1s"] = Segment(begin=Z7, end=Zw1s)
+    line_dict["w1s-w2s"] = Segment(begin=Zw1s, end=Zw2s)
 
-    line_dict["w1s-7"] = Segment(Zw1s, Z7)
+    line_dict["w1s-7"] = Segment(begin=Zw1s, end=Z7)
 
-    line_dict["w2s-w1s"] = Segment(Zw2s, Zw1s)
-    line_dict["w2-w2s"] = Segment(Zw2, Zw2s)
+    line_dict["w2s-w1s"] = Segment(begin=Zw2s, end=Zw1s)
+    line_dict["w2-w2s"] = Segment(begin=Zw2, end=Zw2s)
 
-    line_dict["7-2"] = Segment(Z7, Z2)
-    line_dict["2-7"] = Segment(Z2, Z7)
+    line_dict["7-2"] = Segment(begin=Z7, end=Z2)
+    line_dict["2-7"] = Segment(begin=Z2, end=Z7)
 
-    line_dict["8-1"] = Arc1(Z8, Z1, -abs(Z8), is_trigo_direction=False)
+    line_dict["8-1"] = Arc1(begin=Z8, end=Z1, radius=-abs(Z8), is_trigo_direction=False)
 
     if self.H2 == 0:
-        line_dict["7w-2w"] = Arc1(Z7, Z2, -abs(Z7), is_trigo_direction=False)
+        line_dict["7w-2w"] = Arc1(begin=Z7, end=Z2, radius=-abs(Z7), is_trigo_direction=False)
 
     return line_dict

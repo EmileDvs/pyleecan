@@ -1,11 +1,11 @@
-from numpy import exp, pi
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Methods import ParentMissingError
 from ....Functions_new.labels import BOUNDARY_PROP_LAB, YSR_LAB, YSL_LAB, YOKE_LAB, NO_LAM_LAB, TOOTH_LAB
-from numpy import exp, pi
+
 
 
 def get_surface_tooth(self):
@@ -33,10 +33,10 @@ def get_surface_tooth(self):
     top_list = self.build_geometry_half_tooth(is_top=True)
     bot_list = self.build_geometry_half_tooth(is_top=False)
     # Yoke lines
-    Z1 = Ryoke * exp(1j * pi / self.Zs)
-    Z2 = Ryoke * exp(-1j * pi / self.Zs)
+    Z1 = Ryoke * np.exp(1j * np.pi / self.Zs)
+    Z2 = Ryoke * np.exp(-1j * np.pi / self.Zs)
     curve_list.append(
-        Segment(top_list[-1].get_end(), Z1, prop_dict={BOUNDARY_PROP_LAB: YSL_LAB})
+        Segment(begin=top_list[-1].get_end(), end=Z1, prop_dict={BOUNDARY_PROP_LAB: YSL_LAB})
     )
     if Ryoke > 0:
         curve_list.append(
@@ -49,7 +49,7 @@ def get_surface_tooth(self):
             )
         )
     curve_list.append(
-        Segment(Z2, bot_list[0].get_begin(), prop_dict={BOUNDARY_PROP_LAB: YSR_LAB})
+        Segment(begin=Z2, end=bot_list[0].get_begin(), prop_dict={BOUNDARY_PROP_LAB: YSR_LAB})
     )
     # Second half of the tooth
     curve_list.extend(bot_list)

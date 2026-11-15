@@ -1,4 +1,4 @@
-from numpy import gcd
+import numpy as np
 
 
 def comp_periodicity_spatial(self):
@@ -34,9 +34,9 @@ def comp_periodicity_spatial(self):
     if len(nb_list) == 1:
         per_a = nb_list[0]
     else:
-        per_a = gcd(nb_list[0], nb_list[1])
+        per_a = np.gcd(nb_list[0], nb_list[1])
         for ii in range(2, len(nb_list)):
-            per_a = gcd(per_a, nb_list[ii])
+            per_a = np.gcd(per_a, nb_list[ii])
     is_antiper_a = False
 
     # Account for duct periodicity

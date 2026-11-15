@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import cos, exp
+import numpy as np
 
 
 def comp_radius(self):
@@ -22,8 +22,8 @@ def comp_radius(self):
 
     Rmax = Rext - self.H1
     Z7 = Rext - self.H0 - 1j * self.W1 / 2
-    Z6 = Z7 - 1j * (self.H2 - self.H3) * cos(self.W4)
-    Z4 = (self.W2 - 1j * self.H3) * exp(-1j * self.W4) + Z6
+    Z6 = Z7 - 1j * (self.H2 - self.H3) * np.cos(self.W4)
+    Z4 = (self.W2 - 1j * self.H3) * np.exp(-1j * self.W4) + Z6
 
     Rmin = min(abs(Z7), abs(Z4))
     return (Rmin, Rmax)

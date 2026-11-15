@@ -1,5 +1,5 @@
-from numpy import abs as np_abs
-from numpy import argmin, array, zeros
+import numpy as np
+
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
@@ -68,7 +68,7 @@ def get_electrical(
                 unit="Hz",
                 normalizations=Time.normalizations.copy(),
                 is_components=Time.is_components,
-                values=array([0]),
+                values=np.array([0]),
             )
             axes_list = [Freqs, Phase]
             DataClass = DataFreq
@@ -89,12 +89,12 @@ def get_electrical(
             and (data_dict["Ad"] != 0 or data_dict["Aq"] != 0)
         ):
             # Generate constant dqh values along time
-            A_val = zeros((N, 3))
+            A_val = np.zeros((N, 3))
             A_val[:, 0] = data_dict["Ad"]
             A_val[:, 1] = data_dict["Aq"]
         else:
             # Enforce zero values in quantity
-            A_val = zeros((N, qs))
+            A_val = np.zeros((N, qs))
 
         A_dqh = DataClass(
             name=data_dict["name"],
@@ -155,7 +155,7 @@ def get_electrical(
         # Get index of fundamental frequency
         Freqs = obj.axes[0]
         freqs = Freqs.get_values()
-        ifund = argmin(np_abs(freqs - felec))
+        ifund = np.argmin(np.abs(freqs - felec))
 
         if is_fund_only:
             # Keep only fundamental frequency
@@ -165,7 +165,7 @@ def get_electrical(
                 unit=Freqs.unit,
                 normalizations=Freqs.normalizations,
                 is_components=Freqs.is_components,
-                values=array([freqs[ifund]]),
+                values=np.array([freqs[ifund]]),
             )
             obj.axes[0] = Freqs_fund
             obj.values = obj.values[ifund, ...]

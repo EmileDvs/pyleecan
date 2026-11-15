@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp, angle
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lamination import Lamination
@@ -52,7 +52,7 @@ def plot_schematics(
 
     # Use some default parameter
     if is_default:
-        bore = type(self)(N=8, Rarc=0.2, alpha=pi / 8)
+        bore = type(self)(N=8, Rarc=0.2, alpha=np.pi / 8)
         lam = Lamination(
             Rint=0.135, Rext=0.3, is_internal=True, is_stator=False, bore=bore
         )
@@ -85,7 +85,7 @@ def plot_schematics(
         # Adding schematics
         if is_add_schematics:
             # Rarc
-            line = Segment(Zc, Zm0)
+            line = Segment(begin=Zc, end=Zm0)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -115,7 +115,7 @@ def plot_schematics(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -124,7 +124,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Rarc
-            line = Segment(Zc, Z1)
+            line = Segment(begin=Zc, end=Z1)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -132,7 +132,7 @@ def plot_schematics(
                 linestyle=MAIN_LINE_STYLE,
                 linewidth=MAIN_LINE_WIDTH,
             )
-            line = Segment(Zc, Z2)
+            line = Segment(begin=Zc, end=Z2)
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -141,7 +141,7 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             # Machine center
-            line = Segment(0, Rbo * exp(1j * angle(Z2)))
+            line = Segment(begin=0, end=Rbo * np.exp(1j * np.angle(Z2)))
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -151,8 +151,8 @@ def plot_schematics(
             )
             # Rbo circle arc
             line = Arc1(
-                begin=Rbo * exp(-1j * pi / 2),
-                end=Rbo * exp(1j * pi / 2),
+                begin=Rbo * np.exp(-1j * np.pi / 2),
+                end=Rbo * np.exp(1j * np.pi / 2),
                 radius=Rbo,
                 is_trigo_direction=True,
             )
@@ -164,8 +164,8 @@ def plot_schematics(
                 linewidth=MAIN_LINE_WIDTH,
             )
             line = Arc1(
-                begin=Rbo * exp(1j * pi / 2),
-                end=Rbo * exp(-1j * pi / 2),
+                begin=Rbo * np.exp(1j * np.pi / 2),
+                end=Rbo * np.exp(-1j * np.pi / 2),
                 radius=Rbo,
                 is_trigo_direction=True,
             )

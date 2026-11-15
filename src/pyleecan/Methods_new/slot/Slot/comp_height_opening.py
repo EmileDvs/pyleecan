@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import array
+import numpy as np
 
 
 def comp_height_opening(self, Ndisc=200):

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import pi, exp
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_slot import LamSlot
@@ -89,7 +89,7 @@ def plot_schematics(
             raise ParentMissingError("Error: The slot is not inside a Lamination")
         lam = self.parent
         fig, ax = lam.plot(
-            alpha=pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
+            alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
         point_dict = self._comp_point_coordinate()
         if self.is_outwards():
@@ -111,7 +111,7 @@ def plot_schematics(
         # Adding schematics
         if is_add_schematics:
             # W0
-            line = Segment(point_dict["Z3"], point_dict["Z2"])
+            line = Segment(begin=point_dict["Z3"], end=point_dict["Z2"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -136,7 +136,7 @@ def plot_schematics(
                 )
                 # H1
                 mid = (point_dict["ZM1"] + point_dict["ZM4"]) / 2
-                line = Segment(mid, mid - sign * self.H1)
+                line = Segment(begin=mid, end=mid - sign * self.H1)
                 line.plot(
                     fig=fig,
                     ax=ax,
@@ -149,7 +149,7 @@ def plot_schematics(
                 )
 
             # H0
-            line = Segment(point_dict["Z1"], point_dict["Z2"])
+            line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
             line.plot(
                 fig=fig,
                 ax=ax,
@@ -163,7 +163,7 @@ def plot_schematics(
 
         if is_add_main_line:
             # Ox axis
-            line = Segment(0, lam.Rext * 1.5)
+            line = Segment(begin=0, end=lam.Rext * 1.5)
             line.plot(
                 fig=fig,
                 ax=ax,

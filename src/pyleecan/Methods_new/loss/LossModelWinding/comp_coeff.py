@@ -1,4 +1,4 @@
-from numpy import pi, sqrt, sin, cos, sinh, cosh
+import numpy as np
 
 
 def comp_coeff(self, T_op=20, T_ref=20):
@@ -49,14 +49,14 @@ def comp_coeff(self, T_op=20, T_ref=20):
     sigma = conductor.cond_mat.elec.get_conductivity(T_op=T_op, T_ref=T_ref)
 
     # Magnetic permeability
-    mu0 = 4 * pi * 1e-7
+    mu0 = 4 * np.pi * 1e-7
     if conductor.cond_mat.mag is None or conductor.cond_mat.mag.mur_lin is None:
         mur = 1
     else:
         mur = conductor.cond_mat.mag.mur_lin
 
     # reduced conductor height Eq(5.24) p.270 divided by the frequency + adding relative permeatibility
-    ksi = hc * sqrt(pi * mu0 * mur * sigma * za * bc0 / b)
+    ksi = hc * np.sqrt(np.pi * mu0 * mur * sigma * za * bc0 / b)
 
     if not isinstance(ksi, float):
         # Avoid numerical error with 0

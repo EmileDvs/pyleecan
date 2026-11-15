@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi, exp, arcsin
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -18,14 +18,14 @@ def _comp_point_coordinate(self):
     """
 
     Rbo = self.get_Rbo()
-    hsp = pi / self.Zs  # Half slot pitch
+    hsp = np.pi / self.Zs  # Half slot pitch
 
-    alpha2 = arcsin(self.W1 / (2 * Rbo))
+    alpha2 = np.arcsin(self.W1 / (2 * Rbo))
 
     # Point used to define geometry of slot
-    Z1 = Rbo * exp(-1j * hsp)
-    Z1 = Z1 * exp(1j * hsp)
-    Z1 = Z1 * exp(1j * alpha2)
+    Z1 = Rbo * np.exp(-1j * hsp)
+    Z1 = Z1 * np.exp(1j * hsp)
+    Z1 = Z1 * np.exp(1j * alpha2)
 
     Z2 = Z1 - self.H1
     Z3 = Z2 - ((self.W1 - self.W0) / 2) * 1j
@@ -38,14 +38,14 @@ def _comp_point_coordinate(self):
     Zw4 = Zw1 + self.W2 * 1j
 
     # Set points in correct base with a rotation
-    Z1 = Z1 * exp(-1j * hsp)
-    Z2 = Z2 * exp(-1j * hsp)
-    Z3 = Z3 * exp(-1j * hsp)
-    Z4 = Z4 * exp(-1j * hsp)
-    Zw1 = Zw1 * exp(-1j * hsp)
-    Zw2 = Zw2 * exp(-1j * hsp)
-    Zw3 = Zw3 * exp(-1j * hsp)
-    Zw4 = Zw4 * exp(-1j * hsp)
+    Z1 = Z1 * np.exp(-1j * hsp)
+    Z2 = Z2 * np.exp(-1j * hsp)
+    Z3 = Z3 * np.exp(-1j * hsp)
+    Z4 = Z4 * np.exp(-1j * hsp)
+    Zw1 = Zw1 * np.exp(-1j * hsp)
+    Zw2 = Zw2 * np.exp(-1j * hsp)
+    Zw3 = Zw3 * np.exp(-1j * hsp)
+    Zw4 = Zw4 * np.exp(-1j * hsp)
 
     # symetry
     Z5 = Z4.conjugate()

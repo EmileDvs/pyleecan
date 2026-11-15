@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import angle
+import numpy as np
 
 
 def comp_angle_opening(self):
@@ -22,4 +22,4 @@ def comp_angle_opening(self):
     Z1 = line_list[0].get_begin()
     Z2 = line_list[-1].get_end()
 
-    return angle(Z2) - angle(Z1)
+    return np.angle(Z2) - np.angle(Z1)

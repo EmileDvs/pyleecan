@@ -1,6 +1,6 @@
-from numpy import array, meshgrid
+import numpy as np
 
-from pyleecan.classes_common.errors import AxisError
+from ....classes_common.errors import AxisError
 
 
 def _get_freqs(self):
@@ -52,8 +52,8 @@ def _get_freqs(self):
             normalization = None
         speed = self.get_axes()[index_speed].get_values(normalization=normalization)
         order_strings = self.get_axes()[index_order].get_values().tolist()
-        orders = array([int(s.split(";")[0].replace("H", "")) for s in order_strings])
-        os, so = meshgrid(orders, speed)
+        orders = np.array([int(s.split(";")[0].replace("H", "")) for s in order_strings])
+        os, so = np.meshgrid(orders, speed)
         freqs = so * 60 / os
 
     return freqs

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from os import makedirs
-from os.path import join, exists
+import os
+
 
 # TODO improve path
 
@@ -24,8 +24,8 @@ def get_path_save_fea(self, output):
     """
     path_res = output.get_path_result()
 
-    save_dir = join(path_res, "Elmer_Elasticity")
-    if not exists(save_dir):
-        makedirs(save_dir)
+    save_dir = os.path.join(path_res, "Elmer_Elasticity")
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
 
     return save_dir

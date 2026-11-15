@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from numpy import tan
-from numpy import arcsin, exp, sqrt, pi
+import numpy as np
+
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 
 
@@ -23,18 +23,18 @@ def get_H1(self):
     Rbo = self.get_Rbo()
 
     # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
-    alpha = float(arcsin(self.W0 / (2 * Rbo)))
+    alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
 
     if self.is_outwards():
-        Z2 = (Rbo + self.H0) * exp(-1j * alpha)
+        Z2 = (Rbo + self.H0) * np.exp(-1j * alpha)
 
     else:  # inward slot
-        Z2 = (Rbo - self.H0) * exp(-1j * alpha)
+        Z2 = (Rbo - self.H0) * np.exp(-1j * alpha)
 
     if self.H1_is_rad:  # H1 in rad
         if self.is_cstt_tooth:
-            Z2t = Z2 * exp(1j * pi / self.Zs)
-            Zangle = exp(-1j * ((pi / 2) - self.H1)) + Z2t
+            Z2t = Z2 * np.exp(1j * np.pi / self.Zs)
+            Zangle = np.exp(-1j * ((np.pi / 2) - self.H1)) + Z2t
 
             Zt1 = 1j * (self.W3 / 2)
             Zt2 = 1 + (1j * self.W3) / 2
@@ -43,7 +43,7 @@ def get_H1(self):
             return abs(Z3.real - Z2.real)
 
         else:
-            return (self.W1 - self.W0) * tan(self.H1) / 2.0  # convertion to m
+            return (self.W1 - self.W0) * np.tan(self.H1) / 2.0  # convertion to m
 
     else:  # H1 in m
         return self.H1

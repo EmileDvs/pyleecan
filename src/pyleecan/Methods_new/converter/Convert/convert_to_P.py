@@ -1,6 +1,6 @@
-from pyleecan.classes_common.errors import ConvertionError
+from ....classes_common.errors import ConvertionError
 from .... import __version__
-from os import path
+import os
 
 
 def convert_to_P(self, file_path):
@@ -51,8 +51,8 @@ def convert_to_P(self, file_path):
     # Example :
     #   file_path = \path\to\your\mot\file\SCIM.mot
     #   => self.machine.name = SCIM
-    file_name_extension = path.basename(file_path)
-    self.machine.name = path.splitext(file_name_extension)[0]
+    file_name_extension = os.path.basename(file_path)
+    self.machine.name = os.path.splitext(file_name_extension)[0]
 
     self.get_logger().info("End of conversion, obj machine is create\n\n\n")
 

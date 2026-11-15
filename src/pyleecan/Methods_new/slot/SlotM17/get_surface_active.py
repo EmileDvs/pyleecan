@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import linspace, zeros
+import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
@@ -35,18 +35,18 @@ def get_surface_active(self, alpha=0, delta=0):
     Z2 = Rext
     Z3 = Rext * 1j
     curve_list = list()
-    curve_list.append(Arc1(Z1, Z2, Rext, True))
-    curve_list.append(Arc1(Z2, Z3, Rext, True))
+    curve_list.append(Arc1(begin=Z1, end=Z2, radius=Rext, is_trigo_direction=True))
+    curve_list.append(Arc1(begin=Z2, end=Z3, radius=Rext, is_trigo_direction=True))
     if Rint == 0:
-        curve_list.append(Segment(Z3, Z1))
+        curve_list.append(Segment(begin=Z3, end=Z1))
     else:
         Z4 = Rint * 1j
         Z5 = Rint
         Z6 = -Rint * 1j
-        curve_list.append(Segment(Z3, Z4))
-        curve_list.append(Arc1(Z4, Z5, -Rint, False))
-        curve_list.append(Arc1(Z5, Z6, -Rint, False))
-        curve_list.append(Segment(Z6, Z1))
+        curve_list.append(Segment(begin=Z3, end=Z4))
+        curve_list.append(Arc1(begin=Z4, end=Z5, radius=-Rint, is_trigo_direction=False))
+        curve_list.append(Arc1(begin=Z5, end=Z6, radius=-Rint, is_trigo_direction=False))
+        curve_list.append(Segment(begin=Z6, end=Z1))
 
     surface = SurfLine(
         line_list=curve_list,

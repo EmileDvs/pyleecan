@@ -1,4 +1,4 @@
-from pyleecan.classes_common.errors import AxisError
+from ....classes_common.errors import AxisError
 
 
 def check_filter(self):

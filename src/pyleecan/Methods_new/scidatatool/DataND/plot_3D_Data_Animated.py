@@ -1,6 +1,6 @@
 import imageio
 import matplotlib.pyplot as plt
-from numpy import arange, frombuffer, nanmax, nanmin
+import numpy as np
 
 from ....Functions_new.SciDataTool.Plot import PARAM_2D, ifft_dict
 
@@ -62,11 +62,11 @@ def plot_3D_Data_Animated(
         ]
         fps = 1
     else:
-        value_max = nanmax(result[animated_axis])
-        value_min = nanmin(result[animated_axis])
+        value_max = np.nanmax(result[animated_axis])
+        value_min = np.nanmin(result[animated_axis])
         variation_step = (value_max - value_min) / nb_frames
 
-        frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+        frames_list = np.arange(start=value_min, stop=value_max, step=variation_step)
         frames_list = ["=" + str(frame) for frame in frames_list]
 
     plot_options["is_show_fig"] = False
@@ -89,7 +89,7 @@ def plot_3D_Data_Animated(
             fig.suptitle(suptitle_ref)
 
         fig.canvas.draw()
-        image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         images.append(image)
 

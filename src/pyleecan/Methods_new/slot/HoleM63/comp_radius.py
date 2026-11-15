@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import abs
+import numpy as np
 
 
 def comp_radius(self):
@@ -20,10 +20,10 @@ def comp_radius(self):
     Rbo = self.get_Rbo()
 
     if self.top_flat:
-        Rmax = abs(point_dict["Z2"])
-        Rmin = abs((point_dict["Z1"] + point_dict["Z4"]) / 2)
+        Rmax = np.abs(point_dict["Z2"])
+        Rmin = np.abs((point_dict["Z1"] + point_dict["Z4"]) / 2)
 
     else:
         Rmax = Rbo - self.H1
-        Rmin = abs((point_dict["Z1"] + point_dict["Z4"]) / 2)
+        Rmin = np.abs((point_dict["Z1"] + point_dict["Z4"]) / 2)
     return (Rmin, Rmax)

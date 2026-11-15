@@ -1,6 +1,6 @@
-from numpy import sqrt, array
-from numpy import arccos, array, dot, pi, cross
-from numpy.linalg import det, norm
+import numpy as np
+
+
 
 
 def distance_numpy(A, B, P):
@@ -8,11 +8,11 @@ def distance_numpy(A, B, P):
     """segment line AB, point P, where each one is an array([x, y])"""
     if all(A == P) or all(B == P):
         return 0
-    if arccos(dot((P - A) / norm(P - A), (B - A) / norm(B - A))) > pi / 2:
-        return norm(P - A)
-    if arccos(dot((P - B) / norm(P - B), (A - B) / norm(A - B))) > pi / 2:
-        return norm(P - B)
-    return norm(cross(A - B, A - P)) / norm(B - A)
+    if np.arccos(np.dot((P - A) / np.linalg.norm(P - A), (B - A) / np.linalg.norm(B - A))) > np.pi / 2:
+        return np.linalg.norm(P - A)
+    if np.arccos(np.dot((P - B) / np.linalg.norm(P - B), (A - B) / np.linalg.norm(A - B))) > np.pi / 2:
+        return np.linalg.norm(P - B)
+    return np.linalg.norm(np.cross(A - B, A - P)) / np.linalg.norm(B - A)
 
 
 def comp_distance(self, Z):
@@ -31,7 +31,7 @@ def comp_distance(self, Z):
         distance of a point to the Segment
     """
 
-    Z1 = array([self.begin.real, self.begin.imag, 0])
-    Z2 = array([self.end.real, self.end.imag, 0])
-    Z3 = array([Z.real, Z.imag, 0])
+    Z1 = np.array([self.begin.real, self.begin.imag, 0])
+    Z2 = np.array([self.end.real, self.end.imag, 0])
+    Z3 = np.array([Z.real, Z.imag, 0])
     return distance_numpy(Z1, Z2, Z3)

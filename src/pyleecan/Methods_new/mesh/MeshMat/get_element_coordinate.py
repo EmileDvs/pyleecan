@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Union
 
-from numpy import array, ndarray
+import numpy as np
 
 from .get_element import _check_element_name
 
@@ -11,7 +11,7 @@ def get_element_coordinate(
     self,
     element_indices: Optional[List[int]] = None,
     element_name: Union[List[str], str] = [],
-) -> Dict[str, ndarray]:
+) -> Dict[str, np.ndarray]:
     """Return a connectivity matrix where the nodes indices are replaced by their coordinates.
 
     Parameters
@@ -40,7 +40,7 @@ def get_element_coordinate(
     node_coordinates = {}
     for key, connectivity in element_connectivity_dict.items():
         if connectivity.ndim > 1:
-            node_coordinates[key] = array(
+            node_coordinates[key] = np.array(
                 [self.get_node_coordinate(nodes) for nodes in connectivity]
             )
         else:

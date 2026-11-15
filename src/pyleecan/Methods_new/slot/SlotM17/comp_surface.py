@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import sin, pi
+import numpy as np
 
 
 def comp_surface(self):
@@ -19,4 +19,4 @@ def comp_surface(self):
 
     """
 
-    return pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
+    return np.pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)

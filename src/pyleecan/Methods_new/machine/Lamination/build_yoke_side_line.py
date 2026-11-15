@@ -1,5 +1,5 @@
 from ....Functions_new.labels import BOUNDARY_PROP_LAB, YS_LAB, YSR_LAB, YSL_LAB
-from numpy import exp, pi, angle as np_angle
+import numpy as np
 
 DELTA = 1e-6
 from ....Classes_new.geometry.segment import Segment
@@ -43,18 +43,18 @@ def build_yoke_side_line(
                 and YS_LAB in line.prop_dict[BOUNDARY_PROP_LAB]
             ):
                 # Find if the line collide on right or left
-                if abs(np_angle(line.get_middle())) < DELTA:
+                if abs(np.angle(line.get_middle())) < DELTA:
                     inter_line_list_R.append(line)
                 else:
                     inter_line_list_L.append(line)
 
     # Yoke Limit point
     if ZBR is None:
-        alpha = 2 * pi / sym
+        alpha = 2 * np.pi / sym
         ZBR = self.Rint
         ZTR = self.Rext
-        ZBL = ZBR * exp(1j * alpha)
-        ZTL = ZTR * exp(1j * alpha)
+        ZBL = ZBR * np.exp(1j * alpha)
+        ZTL = ZTR * np.exp(1j * alpha)
 
     lam_lab = self.get_label()
     if self.is_internal:
@@ -94,8 +94,8 @@ def merge_line_list(Z1, Z2, label, inter_list):
     for line in inter_list:
         line_list.append(
             Segment(
-                Zb,
-                line.get_begin(),
+                begin=Zb,
+                end=line.get_begin(),
                 prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)},
             )
         )
@@ -105,7 +105,7 @@ def merge_line_list(Z1, Z2, label, inter_list):
         Zb = line.get_end()
     # Add last line (or Z1 to Z2 if no intersection)
     line_list.append(
-        Segment(Zb, Z2, prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)})
+        Segment(begin=Zb, end=Z2, prop_dict={BOUNDARY_PROP_LAB: label + "-" + str(ii)})
     )
     # reverse the lines if needed
     if not is_int_to_ext:

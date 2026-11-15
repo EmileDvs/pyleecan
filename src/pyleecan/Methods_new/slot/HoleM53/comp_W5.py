@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp, sin
+import numpy as np
 
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 from . import Slot53InterError
@@ -28,8 +28,8 @@ def comp_W5(self):
     Rext = self.get_Rext()
 
     Z7 = Rext - self.H0 - 1j * self.W1 / 2
-    Z8 = Z7 + (self.H2 - self.H3) * sin(self.W4)
-    Z10 = (self.W2 + self.W3) * exp(-1j * self.W4) + Z8
+    Z8 = Z7 + (self.H2 - self.H3) * np.sin(self.W4)
+    Z10 = (self.W2 + self.W3) * np.exp(-1j * self.W4) + Z8
 
     # Z1 and Z11 are defined as intersection between line and circle
     Zlist = inter_line_circle(Z8, Z10, Rext - self.H1)

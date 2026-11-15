@@ -1,4 +1,4 @@
-from ....Classes._check import check_var
+from ....classes_common.check import check_var
 
 
 def _set_fct_name(self, value):
@@ -21,7 +21,7 @@ def _set_fct_name(self, value):
     # Load the function
     if self._fct_name is not None:
         module = __import__(
-            f"pyleecan.Functions.Converter.MotorCAD.{self.fct_name}",
+            f"pyleecan.Functions_new.Converter.MotorCAD.{('curve_bh' if self.fct_name == 'curve_B(H)' else self.fct_name.lower().replace('(', '_').replace(')', ''))}",
             fromlist=(self.fct_name),
         )
         self.other_to_P = getattr(module, "other_to_P")

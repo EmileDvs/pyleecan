@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 
 
 def _comp_point_coordinate(self):
@@ -30,7 +30,7 @@ def _comp_point_coordinate(self):
         point_dict["Z4"] = Z8
     else:
         Zc1 = ((Rbo - self.H1) ** 2) - ((self.W0 / 2) ** 2)
-        Zc = sqrt(Zc1)
+        Zc = np.sqrt(Zc1)
         Z3 = Zc + 1j * self.W0 / 2
         Z2 = Zc - 1j * self.W0 / 2
         Z4 = Z3 - self.H0

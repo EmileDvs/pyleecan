@@ -1,4 +1,4 @@
-from numpy import array, linspace
+import numpy as np
 
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 
@@ -19,14 +19,14 @@ def plot_losses(self, N0_array=None, save_path=None, is_show_fig=True):
     """
 
     if N0_array is None:
-        N0_array = linspace(10, 8000, 100)
+        N0_array = np.linspace(10, 8000, 100)
     if self.parent is None:
         raise Exception("Error: OutLoss is not in Output object")
 
     p = self.parent.simu.machine.get_pole_pair_number()
 
     array_list = [
-        array([out_loss.get_loss_scalar(speed / 60 * p) for speed in N0_array])
+        np.array([out_loss.get_loss_scalar(speed / 60 * p) for speed in N0_array])
         for out_loss in self.loss_dict.values()
     ]
 

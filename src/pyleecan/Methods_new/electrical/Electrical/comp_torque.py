@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 
 def comp_torque(self, out_dict, N0):
@@ -12,7 +12,7 @@ def comp_torque(self, out_dict, N0):
         Dict containing all magnetic quantities that have been calculated in comp_parameters of EEC
     """
 
-    omega = 2 * pi * N0 / 60
+    omega = 2 * np.pi * N0 / 60
 
     P = out_dict["Pem_av"]
 

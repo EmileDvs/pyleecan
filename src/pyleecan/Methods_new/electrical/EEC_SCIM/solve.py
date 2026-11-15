@@ -1,4 +1,4 @@
-from numpy import sqrt, where
+import numpy as np
 
 
 def solve(self):
@@ -29,7 +29,7 @@ def solve(self):
     Im_table = self.Im_table
 
     # solving elementary system, initial start with unsaturated inductance
-    i_start = where(Im_table > 0)[0][0]
+    i_start = np.where(Im_table > 0)[0][0]
     self.Lm = Lm_table[i_start]
     delta_Lm = self.solve_elementary()
     if Lm_table.size > 1:
@@ -51,6 +51,6 @@ def solve(self):
     out_dict["Uq"] = self.U1.imag
     out_dict["Id"] = self.I1.real
     out_dict["Iq"] = self.I1.imag
-    out_dict["Ir"] = self.I2 * self.K21I * sqrt(2)
+    out_dict["Ir"] = self.I2 * self.K21I * np.sqrt(2)
 
     return out_dict

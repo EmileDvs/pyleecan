@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import exp
+import numpy as np
 
 
 def rotate(self, angle):
@@ -26,4 +26,4 @@ def rotate(self, angle):
     self.out_surf.rotate(angle)
     self.in_surf.rotate(angle)
     if self.point_ref is not None:
-        self.point_ref = self.point_ref * exp(1j * angle)
+        self.point_ref = self.point_ref * np.exp(1j * angle)

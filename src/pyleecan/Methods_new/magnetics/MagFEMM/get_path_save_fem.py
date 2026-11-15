@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from os.path import join
+import os
 
 
 def get_path_save_fem(self, output):
@@ -33,4 +33,4 @@ def get_path_save_fem(self, output):
     else:  # Default name
         file_name = "FEMM_simulation.fem"
 
-    return join(save_dir, file_name)
+    return os.path.join(save_dir, file_name)

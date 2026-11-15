@@ -1,4 +1,4 @@
-from numpy import pi
+import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
@@ -49,7 +49,7 @@ def comp_axis_angle(self, p, Rag, per_a=None, is_antiper_a=None, Angle_in=None):
             name="angle",
             unit="rad",
             initial=0,
-            final=2 * pi,
+            final=2 * np.pi,
             number=self.Na_tot,
             include_endpoint=False,
             normalizations=norm_angle,

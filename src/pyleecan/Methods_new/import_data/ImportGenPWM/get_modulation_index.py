@@ -1,4 +1,4 @@
-from numpy import sqrt
+import numpy as np
 
 
 def get_modulation_index(self):
@@ -22,4 +22,4 @@ def get_modulation_index(self):
     if self.Vdc1 is None:
         raise Exception("Cannot calculate modulation index if self.Vdc1 is None")
 
-    return 2 * sqrt(2) * self.U0 / self.Vdc1
+    return 2 * np.sqrt(2) * self.U0 / self.Vdc1

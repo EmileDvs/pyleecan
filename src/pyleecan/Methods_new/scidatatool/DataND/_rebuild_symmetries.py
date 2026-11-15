@@ -1,4 +1,4 @@
-from numpy import take
+import numpy as np
 
 from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries as rebuild_symmetries_fct
 
@@ -43,7 +43,7 @@ def _rebuild_symmetries(
                 and axis.indices is None
             )
         ):
-            values = take(values, axis.rebuild_indices, axis.index)
+            values = np.take(values, axis.rebuild_indices, axis.index)
         elif axis.transform != "fft" and axis.extension in [
             "whole",
             "interval",

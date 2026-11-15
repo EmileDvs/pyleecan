@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi
+import numpy as np
 
 
 def comp_length(self):
@@ -22,4 +22,4 @@ def comp_length(self):
     R = self.comp_radius()
 
     # Half circle
-    return float(pi * R)
+    return float(np.pi * R)

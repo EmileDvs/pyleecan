@@ -1,5 +1,5 @@
 # -*-- coding: utf-8 -*
-from numpy import exp
+import numpy as np
 
 
 def rotate(self, angle):
@@ -22,4 +22,4 @@ def rotate(self, angle):
         return  # Nothing to do
     # check if the Trapeze is correct
     self.check()
-    self.point_ref = self.point_ref * exp(1j * angle)
+    self.point_ref = self.point_ref * np.exp(1j * angle)

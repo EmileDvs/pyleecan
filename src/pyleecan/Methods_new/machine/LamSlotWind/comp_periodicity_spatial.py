@@ -1,4 +1,4 @@
-from numpy import gcd
+import numpy as np
 
 
 def comp_periodicity_spatial(self):
@@ -22,7 +22,7 @@ def comp_periodicity_spatial(self):
     # Angular periodicity
     if self.winding is not None and self.winding.conductor is not None:
         per_a_w, is_antiper_a_w = self.winding.get_periodicity()
-        per_a = int(gcd(per_a, per_a_w))
+        per_a = int(np.gcd(per_a, per_a_w))
         is_antiper_a = is_antiper_a and is_antiper_a_w
 
     per_a, is_antiper_a = self.comp_periodicity_duct_spatial(per_a, is_antiper_a)
