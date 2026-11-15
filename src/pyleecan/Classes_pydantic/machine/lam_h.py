@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Plot.get_color_legend_from_surface import (
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 from ..slot.hole import Hole

@@ -11,8 +11,8 @@ from numpy import array
 from pydantic import Field
 
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from ..optimization.opti_objective import OptiObjective
 from ..simulation.data_keeper import DataKeeper
 from ..simulation.param_explorer import ParamExplorer

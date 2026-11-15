@@ -6,7 +6,7 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import AxisError
-from ...Functions_new.SciDataTool.sum_convolution import (
+from ...Functions_pydantic.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
     get_sum_amplitudes,

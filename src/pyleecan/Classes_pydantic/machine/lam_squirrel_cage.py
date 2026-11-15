@@ -10,9 +10,9 @@ from pydantic import Field
 
 from ...classes_common.errors import Lam_WindCheckError
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import BAR_LAB, WIND_LAB
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import BAR_LAB, WIND_LAB
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

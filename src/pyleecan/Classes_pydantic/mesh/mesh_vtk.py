@@ -12,7 +12,7 @@ from pydantic import Field
 from vtk import vtkPointSet
 
 from ...definitions import RESULT_DIR
-from ...Functions_new.GUI.log_error import log_error
+from ...Functions_pydantic.GUI.log_error import log_error
 from .._pyleecan_model import NDArray
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg

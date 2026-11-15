@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, Rectangle
 from pydantic import Field
 
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

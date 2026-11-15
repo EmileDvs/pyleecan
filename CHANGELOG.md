@@ -31,6 +31,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - **`Functions_new`**: copy of the legacy `Functions` targeting the new
   classes, with snake_case module names and shared errors in
   `Classes_new/_error.py`.
+- **`Functions_pydantic`**: the new functions for the pydantic classes,
+  generated from `Functions_new` by rewriting the imports only
+  (`generate_function_pydantic.py`): one source for the function code. All 37
+  machine files of `Data/Machine` load the same with the legacy, dataclass and
+  pydantic `load`.
 - **`Tests/New`**: copy of the legacy tests targeting the new classes and
   functions; test data gathered in `Tests/Data`.
 - **`ClassInfo`** (`Classes_new/_class_info.py`): the class information
@@ -88,6 +93,8 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `LegacyModel.as_dict`.
 - The new functions test `isinstance(obj, PyleecanBase)` (marker of both
   bases) instead of the dataclass base.
+- The class bases save and log with the functions of their own backend
+  (`Functions_new` / `Functions_pydantic`) instead of the legacy `Functions`.
 - Class constants refactored to avoid circular imports; attribute metadata
   (unit, min, max) and descriptions follow the legacy definitions.
 - The load function returns objects of the new classes.
@@ -110,7 +117,7 @@ Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.m
 | 0. Separate the implementations in the generator | done |
 | 1. Split the bases (target / legacy layer) | done |
 | 2. Type, min and max validation for dataclasses | done |
-| 3. `Functions_pydantic` | to do |
+| 3. `Functions_pydantic` | done |
 | 4. Phase 1 test architecture (`--backend`) | to do |
 | 5. Package refactor pass (`Methods_new`, no parent links) | to do |
 | 6. Remaining utility functions | to do |

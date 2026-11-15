@@ -6,7 +6,7 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.Structural.conversions import cart2pol, pol2cart
+from ...Functions_pydantic.Structural.conversions import cart2pol, pol2cart
 from ..mesh.solution_mat import SolutionMat
 
 

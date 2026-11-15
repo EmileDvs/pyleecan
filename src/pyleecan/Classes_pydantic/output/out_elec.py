@@ -6,11 +6,11 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.Electrical.dqh_transformation import (
+from ...Functions_pydantic.Electrical.dqh_transformation import (
     dqh2n_DataTime,
     n2dqh_DataTime,
 )
-from ...Functions_new.Electrical.dqh_transformation_freq import (
+from ...Functions_pydantic.Electrical.dqh_transformation_freq import (
     dqh2n_DataFreq,
     n2dqh_DataFreq,
 )

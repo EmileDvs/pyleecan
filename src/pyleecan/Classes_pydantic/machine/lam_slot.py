@@ -8,9 +8,9 @@ from matplotlib.patches import Patch
 from pydantic import Field
 
 from ...classes_common.errors import LaminationCheckError
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import update_RTS_index
-from ...Functions_new.Plot.get_color_legend_from_surface import (
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import update_RTS_index
+from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 from ..slot.slot import Slot

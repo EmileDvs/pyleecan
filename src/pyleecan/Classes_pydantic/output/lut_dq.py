@@ -7,7 +7,7 @@ import numpy as np
 import scipy.interpolate as scp_int
 from pydantic import Field
 
-from ...Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
+from ...Functions_pydantic.Electrical.dqh_transformation import n2dqh_DataTime
 from .._pyleecan_model import NDArray
 from ..electrical.eec_pmsm import EEC_PMSM
 from ..electrical.electrical import Electrical

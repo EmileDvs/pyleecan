@@ -20,6 +20,9 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     generate_functions,
 )
+from pyleecan.Generator.ClassGenerator.New.generate_function_pydantic import (
+    generate_functions_pydantic,
+)
 from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
     generate_tests,
 )
@@ -327,6 +330,7 @@ if __name__ == "__main__":
         )
 
     generate_functions()
+    generate_functions_pydantic()  # From Functions_new
 
     generate_tests()
 

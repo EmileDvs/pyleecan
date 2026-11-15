@@ -9,9 +9,9 @@ from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError, SlotCheckError
 from ...definitions import config_dict
-from ...Functions_new.Geometry.inter_line_circle import inter_line_circle
-from ...Functions_new.labels import HOLEM_LAB
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.Geometry.inter_line_circle import inter_line_circle
+from ...Functions_pydantic.labels import HOLEM_LAB
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

@@ -12,12 +12,12 @@ from pydantic import Field
 
 from ...classes_common.check import check_dimensions, check_var
 from ...classes_common.errors import AxisError, NormError, UnitError
-from ...Functions_new.SciDataTool import axes_dict_transformation, rev_axes_dict
-from ...Functions_new.SciDataTool.change_referential import (
+from ...Functions_pydantic.SciDataTool import axes_dict_transformation, rev_axes_dict
+from ...Functions_pydantic.SciDataTool.change_referential import (
     change_referential_spectrum,
     change_referential_waveform,
 )
-from ...Functions_new.SciDataTool.conversions import (
+from ...Functions_pydantic.SciDataTool.conversions import (
     convert,
     get_unit_derivate,
     get_unit_integrate,
@@ -25,27 +25,27 @@ from ...Functions_new.SciDataTool.conversions import (
     to_dBA,
     to_noct,
 )
-from ...Functions_new.SciDataTool.conversions import convert as convert_unit
-from ...Functions_new.SciDataTool.derivation_integration import (
+from ...Functions_pydantic.SciDataTool.conversions import convert as convert_unit
+from ...Functions_pydantic.SciDataTool.derivation_integration import (
     antiderivate,
     derivate,
     integrate,
     integrate_local,
     integrate_local_pattern,
 )
-from ...Functions_new.SciDataTool.fft_functions import comp_fftn, comp_ifftn
-from ...Functions_new.SciDataTool.filter_spectral_leakage import (
+from ...Functions_pydantic.SciDataTool.fft_functions import comp_fftn, comp_ifftn
+from ...Functions_pydantic.SciDataTool.filter_spectral_leakage import (
     filter_spectral_leakage as filter_spectral_leakage_fct,
 )
-from ...Functions_new.SciDataTool.fix_axes_order import fix_axes_order
-from ...Functions_new.SciDataTool.interpolations import (
+from ...Functions_pydantic.SciDataTool.fix_axes_order import fix_axes_order
+from ...Functions_pydantic.SciDataTool.interpolations import (
     get_common_base,
     get_interpolation,
     get_interpolation_step,
 )
-from ...Functions_new.SciDataTool.omp import comp_undersampled_axe, omp
-from ...Functions_new.SciDataTool.parser import read_input_strings
-from ...Functions_new.SciDataTool.Plot import (
+from ...Functions_pydantic.SciDataTool.omp import comp_undersampled_axe, omp
+from ...Functions_pydantic.SciDataTool.parser import read_input_strings
+from ...Functions_pydantic.SciDataTool.Plot import (
     COLORS,
     PARAM_2D,
     PARAM_3D,
@@ -55,17 +55,17 @@ from ...Functions_new.SciDataTool.Plot import (
     norm_dict,
     unit_dict,
 )
-from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
-from ...Functions_new.SciDataTool.Plot.plot_3d import plot_3D
-from ...Functions_new.SciDataTool.Plot.plot_4d import plot_4D
-from ...Functions_new.SciDataTool.sum_mean import (
+from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
+from ...Functions_pydantic.SciDataTool.Plot.plot_3d import plot_3D
+from ...Functions_pydantic.SciDataTool.Plot.plot_4d import plot_4D
+from ...Functions_pydantic.SciDataTool.sum_mean import (
     my_mean,
     my_sum,
     root_mean_square,
     root_sum_square,
 )
-from ...Functions_new.SciDataTool.symmetries import rebuild_symmetries
-from ...Functions_new.SciDataTool.symmetries import (
+from ...Functions_pydantic.SciDataTool.symmetries import rebuild_symmetries
+from ...Functions_pydantic.SciDataTool.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 from .._import import import_class

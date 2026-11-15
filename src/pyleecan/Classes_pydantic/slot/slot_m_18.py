@@ -8,8 +8,13 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
-from ...Functions_new.labels import COND_BOUNDARY_PROP_LAB, YOKE_LAB, YSML_LAB, YSMR_LAB
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.labels import (
+    COND_BOUNDARY_PROP_LAB,
+    YOKE_LAB,
+    YSML_LAB,
+    YSMR_LAB,
+)
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

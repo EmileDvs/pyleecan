@@ -7,7 +7,7 @@ from typing import Any, ClassVar
 
 from pydantic import Field
 
-from ...Functions_new.Plot import dict_2D, dict_3D
+from ...Functions_pydantic.Plot import dict_2D, dict_3D
 from .post_method import PostMethod
 
 

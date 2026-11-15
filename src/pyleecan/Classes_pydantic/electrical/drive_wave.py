@@ -6,8 +6,8 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.check_parent import check_parent
-from ...Functions_new.Winding.gen_phase_list import gen_name
+from ...Functions_pydantic.check_parent import check_parent
+from ...Functions_pydantic.Winding.gen_phase_list import gen_name
 from ..import_data.import_ import Import
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_linspace import DataLinspace

@@ -193,9 +193,7 @@ Methods receive their context explicitly instead, for example
       `_comments`) becomes a field without the "_", with the legacy name as alias
       (files) and as a property (methods).
 
-Note: `Classes_pydantic` still uses `Functions_new`, whose functions build
-`Classes_new` objects; it becomes fully consistent with `Functions_pydantic`
-(Step 3).
+Note: since Step 3, `Classes_pydantic` uses `Functions_pydantic`.
 
 ### Step 1: split the bases
 
@@ -236,8 +234,14 @@ Creation time with validation (GC on, 2026-11-15): `Segment` 1.8 us (legacy),
 
 ### Step 3: `Functions_pydantic`
 
-- [ ] Add the backend option to the functions generator (class imports,
-      load/save, retrocompatibility).
+- [x] `generate_function_pydantic.py` writes `Functions_pydantic` from
+      `Functions_new` by rewriting the imports only (`Classes_new` ->
+      `Classes_pydantic`, `Functions_new` -> `Functions_pydantic`; vendored code
+      not copied). The pydantic classes import `Functions_pydantic`, and each
+      base saves and logs with the functions of its own backend.
+- [x] All 37 machine files of `Data/Machine` load the same with the legacy,
+      dataclass and pydantic `load` (same `as_dict`), and save/load round-trip
+      per backend (`Tests/New/test_functions_pydantic.py`).
 
 ### Step 4: Phase 1 test architecture
 

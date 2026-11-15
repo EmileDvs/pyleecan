@@ -9,7 +9,7 @@ from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError, SlotCheckError
 from ...definitions import config_dict
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

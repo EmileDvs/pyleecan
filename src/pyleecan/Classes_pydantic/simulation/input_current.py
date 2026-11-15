@@ -7,7 +7,10 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
-from ...Functions_new.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
+from ...Functions_pydantic.Electrical.dqh_transformation import (
+    get_phase_dir,
+    n2dqh_DataTime,
+)
 from ..electrical.elec_lut_dq import ElecLUTdq
 from ..import_data.import_data import ImportData
 from ..import_data.import_matrix import ImportMatrix

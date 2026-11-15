@@ -11,9 +11,9 @@ from pydantic import Field
 
 from ... import __version__
 from ...classes_common.errors import NotImplementedYetError
-from ...Functions_new.get_path_binary import get_path_binary
-from ...Functions_new.GMSH.draw_gmsh import draw_GMSH
-from ...Functions_new.labels import (
+from ...Functions_pydantic.get_path_binary import get_path_binary
+from ...Functions_pydantic.GMSH.draw_gmsh import draw_GMSH
+from ...Functions_pydantic.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,
     AIRBOX_SR_LAB,
@@ -50,7 +50,7 @@ from ...Functions_new.labels import (
     get_obj_from_label,
     short_label,
 )
-from ...Functions_new.Winding.find_wind_phase_color import get_phase_id
+from ...Functions_pydantic.Winding.find_wind_phase_color import get_phase_id
 from ..machine.machine_ipmsm import MachineIPMSM
 from ..machine.machine_sipmsm import MachineSIPMSM
 from ..mesh.mesh_solution import MeshSolution

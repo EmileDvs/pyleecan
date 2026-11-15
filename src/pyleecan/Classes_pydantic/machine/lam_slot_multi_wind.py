@@ -9,14 +9,14 @@ from matplotlib.patches import Patch
 from pydantic import Field
 
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import BAR_LAB, WIND_LAB, decode_label
-from ...Functions_new.Plot.get_color_legend_from_surface import (
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import BAR_LAB, WIND_LAB, decode_label
+from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
-from ...Functions_new.Winding.comp_cond_function import comp_cond_function
-from ...Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
-from ...Functions_new.Winding.gen_phase_list import gen_name
+from ...Functions_pydantic.Winding.comp_cond_function import comp_cond_function
+from ...Functions_pydantic.Winding.find_wind_phase_color import find_wind_phase_color
+from ...Functions_pydantic.Winding.gen_phase_list import gen_name
 from .lam_slot import LamSlot
 from .lam_slot_multi import LamSlotMulti
 from .winding import Winding

@@ -10,8 +10,8 @@ from pydantic import Field
 
 from ...classes_common.errors import Lam_WindCheckError
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 from ..geometry.segment import Segment
 from .conductor import Conductor
 

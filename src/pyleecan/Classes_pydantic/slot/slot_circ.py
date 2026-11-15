@@ -8,9 +8,9 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
-from ...Functions_new.Geometry.circle_from_3_points import circle_from_3_points
-from ...Functions_new.labels import DRAW_PROP_LAB, WIND_LAB
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.Geometry.circle_from_3_points import circle_from_3_points
+from ...Functions_pydantic.labels import DRAW_PROP_LAB, WIND_LAB
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

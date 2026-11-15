@@ -10,16 +10,16 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import AxisError
-from ...Functions_new.SciDataTool.conversions import (
+from ...Functions_pydantic.SciDataTool.conversions import (
     cart2pol,
     pol2cart,
     rphiz_to_xyz,
     rphiz_to_xyz_field,
     xyz_to_rphiz,
 )
-from ...Functions_new.SciDataTool.Plot import REV_COMP_DICT
-from ...Functions_new.SciDataTool.Plot.init_fig import copy_fig, init_fig
-from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
+from ...Functions_pydantic.SciDataTool.Plot import REV_COMP_DICT
+from ...Functions_pydantic.SciDataTool.Plot.init_fig import copy_fig, init_fig
+from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_model import LegacyModel
 from .data_nd import DataND
 

@@ -10,9 +10,9 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
-from ...Functions_new.get_path_binary import get_path_binary
-from ...Functions_new.GMSH.draw_gmsh import draw_GMSH
-from ...Functions_new.labels import (
+from ...Functions_pydantic.get_path_binary import get_path_binary
+from ...Functions_pydantic.GMSH.draw_gmsh import draw_GMSH
+from ...Functions_pydantic.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,
     AIRBOX_SR_LAB,

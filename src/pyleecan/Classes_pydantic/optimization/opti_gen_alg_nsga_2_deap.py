@@ -13,10 +13,10 @@ from deap import base, creator, tools
 from deap.base import Toolbox
 from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 
-from ...Functions_new.Optimization.check_cstr import check_cstr
-from ...Functions_new.Optimization.evaluate import evaluate
-from ...Functions_new.Optimization.tournamentdcd import tournamentDCD
-from ...Functions_new.Optimization.update import update
+from ...Functions_pydantic.Optimization.check_cstr import check_cstr
+from ...Functions_pydantic.Optimization.evaluate import evaluate
+from ...Functions_pydantic.Optimization.tournamentdcd import tournamentDCD
+from ...Functions_pydantic.Optimization.update import update
 from ..output.output import Output
 from ..output.xoutput import XOutput
 from ..simulation.data_keeper import DataKeeper

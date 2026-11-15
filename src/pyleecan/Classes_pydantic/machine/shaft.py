@@ -8,8 +8,8 @@ from matplotlib.patches import Patch
 from pydantic import Field
 
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import (
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import (
     BOUNDARY_PROP_LAB,
     NO_LAM_LAB,
     SHAFT_LAB,

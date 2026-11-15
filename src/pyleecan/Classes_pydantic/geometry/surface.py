@@ -5,10 +5,10 @@ from math import ceil
 from typing import ClassVar
 
 from ...definitions import config_dict
-from ...Functions_new.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
-from ...Functions_new.FEMM.get_mesh_param import get_mesh_param
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import (
+from ...Functions_pydantic.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
+from ...Functions_pydantic.FEMM.get_mesh_param import get_mesh_param
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
     DRAW_PROP_LAB,

@@ -30,9 +30,6 @@ from typing import Any, ClassVar, get_args, get_origin, get_type_hints
 import numpy as np
 from dacite import Config, from_dict
 
-from pyleecan.Functions.get_logger import get_logger
-from pyleecan.Functions.save import save
-
 from ..classes_common.base import PyleecanBase
 from ..classes_common.equality import values_equal
 from ._validation import field_checkers
@@ -283,7 +280,11 @@ class PyleecanClass(PyleecanBase):
         return self.__repr__()
 
     def get_logger(self):
+        from ..Functions_new.get_logger import get_logger
+
         return get_logger(self)
 
     def save(self, *args, **kwargs):
+        from ..Functions_new.save import save
+
         return save(self, *args, **kwargs)

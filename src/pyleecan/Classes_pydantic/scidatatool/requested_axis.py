@@ -7,7 +7,7 @@ from typing import Any, ClassVar
 import numpy as np
 
 from ...classes_common.errors import AxisError
-from ...Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
+from ...Functions_pydantic.SciDataTool.symmetries import rebuild_symmetries_axis
 from .._legacy_model import LegacyModel
 from .._pyleecan_model import NDArray
 from .data_pattern import DataPattern
@@ -138,7 +138,9 @@ class RequestedAxis(LegacyModel):
         """
 
         if self.operation is not None:
-            module = import_module("pyleecan.Functions_new.SciDataTool.conversions")
+            module = import_module(
+                "pyleecan.Functions_pydantic.SciDataTool.conversions"
+            )
             func = getattr(module, self.operation)  # Conversion function
         if isinstance(axis, DataPattern):
             self.is_pattern = True

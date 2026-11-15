@@ -37,8 +37,6 @@ from pydantic_core import PydanticCustomError
 
 from ..classes_common.base import PyleecanBase
 from ..classes_common.equality import values_equal
-from ..Functions.get_logger import get_logger
-from ..Functions.save import save
 from ._import import import_class
 
 
@@ -132,7 +130,11 @@ class PyleecanModel(BaseModel, PyleecanBase):
     __hash__ = None
 
     def get_logger(self):
+        from ..Functions_pydantic.get_logger import get_logger
+
         return get_logger(self)
 
     def save(self, *args, **kwargs):
+        from ..Functions_pydantic.save import save
+
         return save(self, *args, **kwargs)

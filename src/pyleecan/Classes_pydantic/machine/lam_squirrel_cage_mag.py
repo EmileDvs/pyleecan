@@ -6,8 +6,8 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import update_RTS_index
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import update_RTS_index
 from ..slot.hole import Hole
 from .lam_slot_wind import LamSlotWind
 from .lam_squirrel_cage import LamSquirrelCage

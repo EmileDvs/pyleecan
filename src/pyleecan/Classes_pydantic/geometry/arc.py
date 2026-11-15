@@ -5,10 +5,10 @@ from typing import ClassVar
 
 import numpy as np
 
-from ...Functions_new.Geometry.inter_circle_circle import inter_circle_circle
-from ...Functions_new.Geometry.inter_line_circle import inter_line_circle
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Plot import TEXT_BOX
+from ...Functions_pydantic.Geometry.inter_circle_circle import inter_circle_circle
+from ...Functions_pydantic.Geometry.inter_line_circle import inter_line_circle
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.Plot import TEXT_BOX
 from .line import Line
 from .segment import Segment
 

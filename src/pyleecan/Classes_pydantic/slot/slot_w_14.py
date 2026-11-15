@@ -8,9 +8,9 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError, SlotCheckError
-from ...Functions_new.Geometry.inter_line_line import inter_line_line
-from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
+from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

@@ -8,13 +8,13 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import (
+from ...Functions_pydantic.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
-from ...Functions_new.Simulation.VarSimu.log_datakeeper_step_result import (
+from ...Functions_pydantic.Simulation.VarSimu.log_datakeeper_step_result import (
     log_datakeeper_step_result,
 )
-from ...Functions_new.Simulation.VarSimu.run_multisim_step import run_multisim_step
+from ...Functions_pydantic.Simulation.VarSimu.run_multisim_step import run_multisim_step
 from .._legacy_model import LegacyModel
 from ..magnetics.mag_femm import MagFEMM
 from ..post.post import Post

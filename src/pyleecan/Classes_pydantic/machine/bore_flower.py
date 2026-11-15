@@ -9,8 +9,8 @@ from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
-from ...Functions_new.Geometry.comp_flower_arc import comp_flower_arc
-from ...Functions_new.Plot import (
+from ...Functions_pydantic.Geometry.comp_flower_arc import comp_flower_arc
+from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
     MAIN_LINE_COLOR,

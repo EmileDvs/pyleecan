@@ -6,7 +6,7 @@ from typing import ClassVar
 from pydantic import Field
 
 from ...classes_common.errors import SlotCheckError
-from ...Functions_new.labels import SOP_LAB, WIND_LAB
+from ...Functions_pydantic.labels import SOP_LAB, WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.line import Line
 from ..geometry.segment import Segment

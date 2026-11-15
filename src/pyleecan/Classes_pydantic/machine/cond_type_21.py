@@ -6,7 +6,7 @@ from typing import ClassVar
 from matplotlib.patches import Patch, Rectangle
 from pydantic import Field
 
-from ...Functions_new.init_fig import init_fig
+from ...Functions_pydantic.init_fig import init_fig
 from .conductor import Conductor
 
 

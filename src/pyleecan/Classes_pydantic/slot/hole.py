@@ -9,9 +9,9 @@ from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
-from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
+from ...Functions_pydantic.Geometry.transform_hole_surf import transform_hole_surf
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import HOLEM_LAB, HOLEV_LAB, VENT_LAB, decode_label
 from .._legacy_model import LegacyModel
 from ..material.material import Material
 

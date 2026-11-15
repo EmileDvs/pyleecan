@@ -5,10 +5,10 @@ from typing import ClassVar
 
 import numpy as np
 
-from ...Functions_new.Geometry.inter_line_circle import inter_line_circle
-from ...Functions_new.Geometry.inter_line_line import inter_line_line
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Plot import TEXT_BOX
+from ...Functions_pydantic.Geometry.inter_line_circle import inter_line_circle
+from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.Plot import TEXT_BOX
 from .._pyleecan_model import Complex
 from .line import Line
 

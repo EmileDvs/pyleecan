@@ -10,9 +10,9 @@ from pydantic import Field
 from scipy.io import savemat
 
 from ...definitions import RESULT_DIR, config_dict
-from ...Functions_new.Plot import fft_dict
-from ...Functions_new.Plot.Pyvista.configure_plot import configure_plot
-from ...Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
+from ...Functions_pydantic.Plot import fft_dict
+from ...Functions_pydantic.Plot.Pyvista.configure_plot import configure_plot
+from ...Functions_pydantic.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 from .._legacy_model import LegacyModel
 from ..scidatatool.norm_affine import NormAffine
 from ..scidatatool.norm_vector import NormVector

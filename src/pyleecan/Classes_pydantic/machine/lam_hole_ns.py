@@ -6,8 +6,8 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
-from ...Functions_new.labels import HOLEM_LAB, decode_label
+from ...Functions_pydantic.Geometry.transform_hole_surf import transform_hole_surf
+from ...Functions_pydantic.labels import HOLEM_LAB, decode_label
 from ..slot.hole import Hole
 from .lam_h import LamH
 from .lamination import Lamination

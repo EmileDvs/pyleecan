@@ -8,7 +8,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import NormError
-from ...Functions_new.SciDataTool.conversions import convert
+from ...Functions_pydantic.SciDataTool.conversions import convert
 from .._pyleecan_model import NDArray
 from .data import Data
 
@@ -134,7 +134,9 @@ class DataPattern(Data):
 
         # fft/ifft
         if operation is not None:
-            module = import_module("pyleecan.Functions_new.SciDataTool.conversions")
+            module = import_module(
+                "pyleecan.Functions_pydantic.SciDataTool.conversions"
+            )
             func = getattr(module, operation)  # Conversion function
             values = np.array(func(values, is_real=is_real))
 

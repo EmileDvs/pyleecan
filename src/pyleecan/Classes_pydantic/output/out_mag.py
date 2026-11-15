@@ -6,10 +6,10 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.labels import STATOR_LAB
-from ...Functions_new.MeshSolution.get_area import get_area
-from ...Functions_new.MeshSolution.get_indices_limited import get_indices_limited
-from ...Functions_new.SciDataTool.derivation_integration import integrate
+from ...Functions_pydantic.labels import STATOR_LAB
+from ...Functions_pydantic.MeshSolution.get_area import get_area
+from ...Functions_pydantic.MeshSolution.get_indices_limited import get_indices_limited
+from ...Functions_pydantic.SciDataTool.derivation_integration import integrate
 from .._legacy_model import LegacyModel
 from ..mesh.mesh_solution import MeshSolution
 from ..scidatatool.data import Data

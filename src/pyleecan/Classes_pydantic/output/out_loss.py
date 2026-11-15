@@ -6,7 +6,7 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
+from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_model import LegacyModel
 from ..scidatatool.data import Data
 from .out_loss_model import OutLossModel

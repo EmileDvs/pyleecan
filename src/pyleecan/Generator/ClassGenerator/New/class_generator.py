@@ -85,6 +85,10 @@ Phase 1: the legacy layer (LegacyClass/LegacyModel) above the target bases
 deletes the legacy layer.
 """
 
+FUNCTION_PACKAGES = {"dataclass": "Functions_new", "pydantic": "Functions_pydantic"}
+"""Function package used by the classes of each backend (Functions_pydantic is
+generated from Functions_new, see generate_function_pydantic.py)"""
+
 VENDORED_SOURCE_PACKAGE = "Classes_new"
 """Package holding the vendored code (_smoot, _swat_em) for every backend"""
 
@@ -191,7 +195,12 @@ generated_module_paths.cache_clear = _generated_module_paths.cache_clear
 
 
 def relocate_class_imports(
-    source, soft_name, class_package, module_paths, target_package=None
+    source,
+    soft_name,
+    class_package,
+    module_paths,
+    target_package=None,
+    function_packages=None,
 ):
     """Point the absolute imports of flat class modules to their sub-package.
 
@@ -204,12 +213,24 @@ def relocate_class_imports(
     Relative imports are not modified: apply the absolute style first.
     With target_package (e.g. "Classes_pydantic"), the class modules and the
     other support modules move to that package; vendored code stays in
-    class_package.
+    class_package. With function_packages (source, target), e.g.
+    ("Functions_new", "Functions_pydantic"), the function imports move too
+    (vendored function code stays in the source package).
     """
     prefix = f"{soft_name}.{class_package}."
     target_prefix = f"{soft_name}.{target_package or class_package}."
+    function_prefix, function_target = (
+        (f"{soft_name}.{function_packages[0]}.", f"{soft_name}.{function_packages[1]}.")
+        if function_packages and function_packages[0] != function_packages[1]
+        else (None, None)
+    )
 
     def relocate(module):
+        if function_prefix is not None and module.startswith(function_prefix):
+            first = module[len(function_prefix) :].partition(".")[0]
+            if first in VENDORED_CLASS_PACKAGES:
+                return None
+            return function_target + module[len(function_prefix) :]
         if not module.startswith(prefix):
             return None
         first, _, rest = module[len(prefix) :].partition(".")
@@ -6046,7 +6067,12 @@ def _generate_dataclass_class(
     source = _apply_import_style(source, soft_name, "absolute", "Classes_new")
     package = backend_package(backend)
     source = relocate_class_imports(
-        source, soft_name, "Classes_new", class_module_paths(gen_dict), package
+        source,
+        soft_name,
+        "Classes_new",
+        class_module_paths(gen_dict),
+        package,
+        ("Functions_new", FUNCTION_PACKAGES[backend]),
     )
     source = _apply_import_style(
         source, soft_name, import_style, f"{package}.{subpackage}"

@@ -8,8 +8,8 @@ from pydantic import Field
 from scipy.stats import norm
 
 from ...classes_common.errors import InputError
-from ...Functions_new.Plot import dict_2D
-from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
+from ...Functions_pydantic.Plot import dict_2D
+from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_model import LegacyModel
 from .._pyleecan_model import NDArray
 from ..scidatatool.data_pattern import DataPattern

@@ -13,16 +13,16 @@ from ...Classes_new._swat_em import datamodel
 from ...definitions import config_dict
 from ...Functions_new._swat_em import plots
 from ...Functions_new._swat_em.config import config
-from ...Functions_new.Geometry.inter_line_line import inter_line_line
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Winding.gen_phase_list import gen_name
-from ...Functions_new.Winding.reverse_wind_mat import (
+from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.Winding.gen_phase_list import gen_name
+from ...Functions_pydantic.Winding.reverse_wind_mat import (
     change_layer,
     permute_B_C,
     reverse_layer,
     reverse_wind_mat,
 )
-from ...Functions_new.Winding.shift_wind_mat import shift_wind_mat
+from ...Functions_pydantic.Winding.shift_wind_mat import shift_wind_mat
 from .._legacy_model import LegacyModel
 from .._pyleecan_model import NDArray
 from .conductor import Conductor

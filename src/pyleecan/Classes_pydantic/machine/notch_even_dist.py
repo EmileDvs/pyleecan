@@ -6,8 +6,8 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
-from ...Functions_new.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
+from ...Functions_pydantic.Geometry.transform_hole_surf import transform_hole_surf
+from ...Functions_pydantic.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
 from ..slot.slot import Slot
 from .notch import Notch
 

@@ -8,8 +8,8 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import AxisError, NormError
-from ...Functions_new.SciDataTool.conversions import convert
-from ...Functions_new.SciDataTool.symmetries import rebuild_symmetries_axis
+from ...Functions_pydantic.SciDataTool.conversions import convert
+from ...Functions_pydantic.SciDataTool.symmetries import rebuild_symmetries_axis
 from .._pyleecan_model import NDArray
 from .data import Data
 from .norm_vector import NormVector
@@ -338,7 +338,9 @@ class Data1D(Data):
 
         # fft/ifft
         if operation is not None:
-            module = import_module("pyleecan.Functions_new.SciDataTool.conversions")
+            module = import_module(
+                "pyleecan.Functions_pydantic.SciDataTool.conversions"
+            )
             func = getattr(module, operation)  # Conversion function
             values = np.array(func(values, is_real=is_real))
             if is_full and (self.name == "freqs" or self.name == "wavenumber"):

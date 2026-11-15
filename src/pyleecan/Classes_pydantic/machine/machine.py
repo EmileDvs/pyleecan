@@ -12,8 +12,13 @@ from pydantic import Field
 
 from ...classes_common.errors import MachineCheckError
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB, STATOR_LAB_S
+from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import (
+    ROTOR_LAB,
+    ROTOR_LAB_S,
+    STATOR_LAB,
+    STATOR_LAB_S,
+)
 from .._legacy_model import LegacyModel
 from ..material.material import Material
 from ..output.out_geo import OutGeo
