@@ -25,17 +25,19 @@ from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     SHARED_SUPPORT_MODULES,
     VENDORED_CLASS_PACKAGES,
-    _keyword_geometry_calls,
     class_module_name,
     generated_module_paths,
     relocate_class_imports,
 )
+from pyleecan.Generator.ClassGenerator.New.modernize import _keyword_geometry_calls
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_mapping,
     redirect_function_module_imports,
 )
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     _class_gen_dict,
+)
+from pyleecan.Generator.ClassGenerator.New.modernize import (
     _redirect_shared_error_imports,
     shared_error_names,
 )

@@ -132,7 +132,7 @@ def test_method_errors_are_shared(backend):
 
 
 def test_redirect_legacy_method_error_import():
-    from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
+    from pyleecan.Generator.ClassGenerator.New.modernize import (
         _redirect_shared_error_imports,
     )
 

@@ -11,11 +11,11 @@ from pyleecan.Classes_pydantic._pyleecan_model import PyleecanModel
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
     BACKENDS,
-    _keyword_geometry_calls,
     _with_field_alias,
     backend_package,
     relocate_class_imports,
 )
+from pyleecan.Generator.ClassGenerator.New.modernize import _keyword_geometry_calls
 from pyleecan.Generator.read_fct import read_all
 
 GEN_DICT = read_all(DOC_DIR)

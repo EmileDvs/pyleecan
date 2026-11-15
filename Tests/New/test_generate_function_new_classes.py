@@ -8,25 +8,16 @@ from pathlib import Path
 import pytest
 
 from pyleecan.Generator.ClassGenerator.New import generate_function_new_classes
-from pyleecan.Generator.ClassGenerator.New.class_generator import (
-    _apply_import_style,
-    _redirect_experimental_function_imports,
-)
+from pyleecan.Generator.ClassGenerator.New.class_generator import _apply_import_style
+from pyleecan.Generator.ClassGenerator.New.modernize import _redirect_experimental_function_imports
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_mapping,
     function_module_name,
     redirect_function_module_imports,
     redirect_rule_module_name,
 )
-from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
-    _adapt_retrocompatibility,
-    _format_function_source,
-    _function_import_style,
-    _redirect_function_errors,
-    _redirect_shared_error_imports,
-    _rewrite_source,
-    generate_functions,
-)
+from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import _adapt_retrocompatibility, _format_function_source, _redirect_function_errors, _rewrite_source, generate_functions
+from pyleecan.Generator.ClassGenerator.New.modernize import _function_import_style, _redirect_shared_error_imports
 
 
 def test_function_module_names_and_imports(tmp_path):

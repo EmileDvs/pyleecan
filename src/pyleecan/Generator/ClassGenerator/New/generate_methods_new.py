@@ -244,7 +244,9 @@ def _package_init(source_root, packages, subpackage):
     if not sources:
         return PACKAGE_INIT.format(name=subpackage)
     if len(sources) > 1:
-        raise ValueError(f"Several legacy package __init__ for {subpackage}: {packages}")
+        raise ValueError(
+            f"Several legacy package __init__ for {subpackage}: {packages}"
+        )
     return sources[0]
 
 

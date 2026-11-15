@@ -29,9 +29,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _sort_imports_with_ruff,
     relocate_class_imports,
 )
-from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
-    _function_import_style,
-)
+from pyleecan.Generator.ClassGenerator.New.modernize import _function_import_style
 
 SOURCE_PACKAGE = FUNCTION_PACKAGES["dataclass"]
 TARGET_PACKAGE = FUNCTION_PACKAGES["pydantic"]
@@ -69,7 +67,9 @@ def rewrite_function_source(source, module_parts, import_style="relative"):
     return _function_import_style(source, target_package, import_style)
 
 
-def generate_functions_pydantic(source_dir=None, output_dir=None, import_style="relative"):
+def generate_functions_pydantic(
+    source_dir=None, output_dir=None, import_style="relative"
+):
     """Write Functions_pydantic from Functions_new.
 
     Parameters
@@ -111,7 +111,9 @@ def generate_functions_pydantic(source_dir=None, output_dir=None, import_style="
         with tokenize.open(path) as source_file:
             source = source_file.read()
             encoding = source_file.encoding
-        rewritten = rewrite_function_source(source, list(relative.parts[:-1]), import_style)
+        rewritten = rewrite_function_source(
+            source, list(relative.parts[:-1]), import_style
+        )
         if rewritten != source:
             rewritten = _sort_imports_with_ruff(rewritten, str(destination))
             rewritten = _format_source_with_ruff(rewritten, str(destination))
@@ -122,7 +124,9 @@ def generate_functions_pydantic(source_dir=None, output_dir=None, import_style="
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--import-style", choices=("relative", "absolute"), default="relative")
+    parser.add_argument(
+        "--import-style", choices=("relative", "absolute"), default="relative"
+    )
     args = parser.parse_args()
     count = generate_functions_pydantic(import_style=args.import_style)
     print(f"Wrote {count} modules in {TARGET_PACKAGE} from {SOURCE_PACKAGE}.")

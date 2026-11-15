@@ -23,23 +23,18 @@ from pathlib import Path
 
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
-from pyleecan.Generator.ClassGenerator.New.class_generator import (
-    VENDORED_CLASS_PACKAGES,
-    _format_source_with_ruff,
-    _keyword_geometry_calls,
-    _replace_empty_containers,
-    _static_local_class_imports,
-    class_module_name,
-    common_dir,
-    generated_module_paths,
-    relocate_class_imports,
-)
+from pyleecan.Generator.ClassGenerator.New.class_generator import VENDORED_CLASS_PACKAGES, _format_source_with_ruff, _static_local_class_imports, class_module_name, common_dir, generated_module_paths, relocate_class_imports
+from pyleecan.Generator.ClassGenerator.New.modernize import _keyword_geometry_calls, _replace_empty_containers
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_mapping,
     function_module_name,
     redirect_function_module_imports,
 )
 from pyleecan.Generator.read_fct import read_all
+from pyleecan.Generator.ClassGenerator.New.modernize import (
+    _function_import_style,
+    _redirect_shared_error_imports,
+)
 
 SKIPPED_FUNCTION_MODULES = {
     Path("copy.py"): (
@@ -156,45 +151,6 @@ def _redirect_function_errors(source, path, relative_path, class_dir):
     return "".join(lines)
 
 
-def _function_import_style(source, package, import_style):
-    """Convert Pyleecan from-imports relative to the generated module package."""
-    data = source.encode("utf-8")
-    offsets = [0]
-    for index, value in enumerate(data):
-        if value == 10:
-            offsets.append(index + 1)
-    replacements = []
-    for node in ast.walk(ast.parse(source)):
-        if not isinstance(node, ast.ImportFrom) or node.module == "__future__":
-            continue
-        module = node.module or ""
-        if node.level:
-            module = resolve_name("." * node.level + module, package)
-        if module != "pyleecan" and not module.startswith("pyleecan."):
-            continue
-        if import_style == "absolute":
-            new_module, level = module, 0
-        else:
-            current_parts = package.split(".")
-            module_parts = module.split(".")
-            common = 0
-            for left, right in zip(current_parts, module_parts):
-                if left != right:
-                    break
-                common += 1
-            level = len(current_parts) - common + 1
-            new_module = ".".join(module_parts[common:]) or None
-        replacement = ast.ImportFrom(module=new_module, names=node.names, level=level)
-        replacements.append((
-            offsets[node.lineno - 1] + node.col_offset,
-            offsets[node.end_lineno - 1] + node.end_col_offset,
-            ast.unparse(replacement).encode("utf-8"),
-        ))
-    for start, end, replacement in sorted(replacements, reverse=True):
-        data = data[:start] + replacement + data[end:]
-    return data.decode("utf-8")
-
-
 def _format_function_source(source, path):
     """Apply the same import styles and Ruff formatting as generated classes."""
     from .modernize import remove_coding_declaration  # Shared with the methods
@@ -212,90 +168,6 @@ def _format_function_source(source, path):
     if result.returncode:
         raise RuntimeError(f"Ruff could not organize imports in {path}: {result.stderr.strip()}")
     return _format_source_with_ruff(result.stdout, str(path))
-
-
-def shared_error_names(error_path=None):
-    """Names of the shared exceptions (classes_common/errors.py)."""
-    from pyleecan.definitions import MAIN_DIR
-
-    error_path = Path(error_path or Path(MAIN_DIR) / "classes_common" / "errors.py")
-    if not error_path.is_file():
-        return frozenset()
-    tree = ast.parse(error_path.read_text(encoding="utf-8"))
-    return frozenset(node.name for node in tree.body if isinstance(node, ast.ClassDef))
-
-
-def _redirect_shared_error_imports(
-    source, package, soft_name="pyleecan", method_error_names=None
-):
-    """Redirect imports of centralized errors, preserving bindings.
-
-    The function errors (FUNCTION_ERRORS) and, given method_error_names (see
-    shared_error_names), the errors imported from a legacy method module
-    (``from pyleecan.Methods.Geometry.Segment import PointSegmentError``) are
-    imported from the shared errors instead.
-    """
-    data = source.encode("utf-8")
-    offsets = [0]
-    for index, value in enumerate(data):
-        if value == 10:
-            offsets.append(index + 1)
-    replacements = []
-    for node in ast.walk(ast.parse(source)):
-        if not isinstance(node, ast.ImportFrom):
-            continue
-        module = node.module or ""
-        if node.level:
-            module = resolve_name("." * node.level + module, package)
-        errors = None
-        for prefix in (f"{soft_name}.Functions.", f"{soft_name}.Functions_new."):
-            if module.startswith(prefix):
-                errors = FUNCTION_ERRORS.get(module[len(prefix) :])
-                break
-        if (
-            errors is None
-            and method_error_names
-            and module.startswith(f"{soft_name}.Methods.")
-            and not any(alias.name == "*" for alias in node.names)
-        ):
-            from .class_generator import _shared_error_name
-
-            errors = {
-                alias.name: _shared_error_name((module, alias.name))
-                for alias in node.names
-                if _shared_error_name((module, alias.name)) in method_error_names
-            }
-        if not errors:
-            continue
-        if any(alias.name == "*" for alias in node.names):
-            raise ValueError(f"{module}:{node.lineno}: wildcard error import requires review")
-        selected = [alias for alias in node.names if alias.name in errors]
-        if not selected:
-            continue
-        remaining = [alias for alias in node.names if alias.name not in errors]
-        shared = [
-            ast.alias(
-                name=errors[alias.name],
-                asname=alias.asname or (
-                    alias.name if errors[alias.name] != alias.name else None
-                ),
-            )
-            for alias in selected
-        ]
-        imports = []
-        if remaining:
-            imports.append(ast.ImportFrom(module=node.module, names=remaining, level=node.level))
-        imports.append(
-            ast.ImportFrom(module=f"{soft_name}.Classes_new._error", names=shared, level=0)
-        )
-        replacement = ("; ".join(ast.unparse(item) for item in imports)).encode("utf-8")
-        replacements.append(
-            (offsets[node.lineno - 1] + node.col_offset,
-             offsets[node.end_lineno - 1] + node.end_col_offset, replacement)
-        )
-    for start, end, replacement in sorted(replacements, reverse=True):
-        data = data[:start] + replacement + data[end:]
-    return data.decode("utf-8")
 
 
 def _adapt_retrocompatibility(source, path):

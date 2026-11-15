@@ -12,10 +12,8 @@ from pyleecan.Classes_new.arc_2 import Arc2
 from pyleecan.Classes_new.arc_3 import Arc3
 from pyleecan.Classes_new.segment import Segment
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
-from pyleecan.Generator.ClassGenerator.New.class_generator import (
-    _keyword_geometry_calls,
-    generate_class,
-)
+from pyleecan.Generator.ClassGenerator.New.class_generator import generate_class
+from pyleecan.Generator.ClassGenerator.New.modernize import _keyword_geometry_calls
 from pyleecan.Generator.read_fct import read_all
 
 

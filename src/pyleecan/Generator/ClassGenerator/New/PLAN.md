@@ -324,6 +324,9 @@ Order:
      all with the class generator's own functions. The functions generator
      uses the same import styles. Only change in the generated classes: a
      helper of `XOutput` is now styled like the rest (`np.array`).
+   - [x] The modernizing helpers are defined in `modernize.py` (moved from
+     the class and functions generators, which import them); generated
+     packages and tests byte-identical.
    - Kept in the class generator, because they depend on the class assembly:
      the chain dynamic imports -> normalization renames -> loaders -> static
      class imports (it uses the imports of the whole class and decides

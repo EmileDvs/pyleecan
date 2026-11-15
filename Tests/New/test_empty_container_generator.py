@@ -8,10 +8,8 @@ from pathlib import Path
 import pytest
 
 from pyleecan.definitions import DOC_DIR
-from pyleecan.Generator.ClassGenerator.New.class_generator import (
-    _replace_empty_containers,
-    generate_class,
-)
+from pyleecan.Generator.ClassGenerator.New.class_generator import generate_class
+from pyleecan.Generator.ClassGenerator.New.modernize import _replace_empty_containers
 from pyleecan.Generator.read_fct import read_all
 
 

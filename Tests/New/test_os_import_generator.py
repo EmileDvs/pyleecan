@@ -10,11 +10,8 @@ from shutil import copy2
 import pytest
 
 from pyleecan.definitions import DOC_DIR, MAIN_DIR
-from pyleecan.Generator.ClassGenerator.New.class_generator import (
-    _apply_os_import_style,
-    _normalize_method_package_imports,
-    generate_class,
-)
+from pyleecan.Generator.ClassGenerator.New.class_generator import _normalize_method_package_imports, generate_class
+from pyleecan.Generator.ClassGenerator.New.modernize import _apply_os_import_style
 from pyleecan.Generator.read_fct import read_all
 
 
