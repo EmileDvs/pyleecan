@@ -17,9 +17,7 @@ INVALID = (ValueError, TypeError, CheckError)
 
 @pytest.fixture(params=["dataclass", "pydantic"])
 def import_class(request):
-    lookup = {"dataclass": DATACLASS_LOOKUP, "pydantic": PYDANTIC_LOOKUP}[
-        request.param
-    ]
+    lookup = {"dataclass": DATACLASS_LOOKUP, "pydantic": PYDANTIC_LOOKUP}[request.param]
     return lookup.import_class
 
 
@@ -84,3 +82,25 @@ def test_legacy_compare_paths(import_class):
     right = surf(line_list=[segment(begin=0, end=1), segment(begin=1, end=3)])
     assert left.compare(right) == ["self.line_list[1].end"]
     assert left.compare(surf(line_list=[segment()])) == ["len(self.line_list)"]
+
+
+def test_init_dict(import_class):
+    SlotW10 = import_class("SlotW10")
+    data = SlotW10(W0=1.0, H0=2.0).as_dict()
+    data["__save_date__"] = "2020_01_01"  # Serialization key: ignored
+    slot = SlotW10(init_dict=data, W1=3.0)
+    assert type(slot) is SlotW10
+    assert (slot.W0, slot.H0, slot.W1) == (1.0, 2.0, data["W1"])  # init_dict wins
+    slot = SlotW10(init_dict={"W0": 4.0}, H0=5.0)  # Keyword kept when not in init_dict
+    assert (slot.W0, slot.H0) == (4.0, 5.0)
+    lam = import_class("LamSlot")(init_dict={"slot": data})  # Nested object built
+    assert type(lam.slot) is SlotW10 and lam.slot.parent is lam
+    with pytest.raises(TypeError):
+        SlotW10(init_dict=[1.0])
+
+
+def test_init_str(import_class, tmp_path):
+    SlotW10 = import_class("SlotW10")
+    path = str(tmp_path / "slot.json")
+    SlotW10(W0=1.5).save(path)
+    assert SlotW10(init_str=path).W0 == 1.5

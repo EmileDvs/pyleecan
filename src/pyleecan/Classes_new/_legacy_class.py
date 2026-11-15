@@ -14,8 +14,9 @@ Legacy behaviours:
   ``ParentDict``: the legacy getters set it on each read),
 - loading ignores the unknown keys (old files, serialization keys) and
   resolves the objects saved in separate files (split JSON, ``base_path``),
-- legacy API: ``as_dict`` (complex as str, ``type_handle_ndarray``, ``as_dict``
-  field modes), ``from_dict``, ``copy``, ``compare`` and ``_set_None``.
+- legacy API: the ``init_dict`` and ``init_str`` constructor arguments,
+  ``as_dict`` (complex as str, ``type_handle_ndarray``, ``as_dict`` field
+  modes), ``from_dict``, ``copy``, ``compare`` and ``_set_None``.
 
 An existing method can be replaced on an object (e.g. a mock in tests): a
 dataclass allows it natively.
@@ -51,8 +52,30 @@ def _complex_field_names(cls):
     )
 
 
+class _LegacyConstructor(type):
+    """Legacy constructor arguments: init_str (file to load) and init_dict.
+
+    A metaclass, as the dataclass ``__init__`` is generated for each class. The
+    values of init_dict override the keyword arguments; the class built is the
+    class called (``from_dict``: "__class__" and the unknown keys are ignored).
+    """
+
+    def __call__(cls, *args, init_dict=None, init_str=None, **kwargs):
+        if init_str is not None:  # Load from a file
+            from ..Functions_new.load import load_init_dict
+
+            init_dict = load_init_dict(init_str)[1]
+        if init_dict is None:
+            return super().__call__(*args, **kwargs)
+        if args:
+            raise TypeError(f"{cls.__name__}: init_dict with positional arguments")
+        if not isinstance(init_dict, dict):
+            raise TypeError(f"init_dict must be a dict, not {type(init_dict).__name__}")
+        return cls.from_dict({**kwargs, **init_dict})
+
+
 @dataclass(eq=False)
-class LegacyClass(PyleecanClass):
+class LegacyClass(PyleecanClass, metaclass=_LegacyConstructor):
     """Legacy layer of the Pyleecan classes built on stdlib dataclasses."""
 
     parent: Any = field(
@@ -112,7 +135,9 @@ class LegacyClass(PyleecanClass):
         if isinstance(data, cls):
             return data
         if not isinstance(data, dict):
-            raise TypeError(f"{cls.__name__} cannot be built from {type(data).__name__}")
+            raise TypeError(
+                f"{cls.__name__} cannot be built from {type(data).__name__}"
+            )
         return cls._target_class(data).from_dict(data)
 
     @classmethod

@@ -444,10 +444,14 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
       which set the parent of the added items, without a cost on reads (a
       `__getattribute__` was 3.5x slower). `Tests/New/Methods/Slot`: 104 -> 16
       failures with each backend.
-- [ ] Remaining Slot failures: the legacy constructor argument `init_dict=`
-      (5, legacy API to support in the legacy layers), objects built without
-      their lamination (7), one `S50_NoneError`, three tests expecting
-      different values after a copy.
+- [x] Legacy constructor arguments `init_dict=` and `init_str=` (5 Slot
+      failures): a metaclass `__call__` in `LegacyClass` (the dataclass
+      `__init__` is generated for each class, ~4% on a construction), an
+      `__init__` in `LegacyModel`; the init_dict values override the keyword
+      arguments, the class called is built. 16 -> 11 failures.
+- [ ] Remaining Slot failures: objects built without their lamination (7),
+      one `S50_NoneError`, three tests expecting different values after a
+      copy.
 - [x] Type hints (`slot` in `HINTED_SUBPACKAGES`): 817/886 parameters and
       582/694 returns hinted. Container types recognized: `[X]`, `{X}` (as in
       the CSV files) and `list of X`, when the item type is recognized

@@ -54,6 +54,24 @@ class LegacyModel(PyleecanModel):
     def parent(self, value):
         self._parent = value
 
+    def __init__(self, /, *, init_dict=None, init_str=None, **data):
+        """Legacy constructor arguments: init_str (file to load) and init_dict.
+
+        The values of init_dict override the keyword arguments; the class built
+        is the class called ("__class__" and the unknown keys are ignored).
+        """
+        if init_str is not None:  # Load from a file
+            from ..Functions_pydantic.load import load_init_dict
+
+            init_dict = load_init_dict(init_str)[1]
+        if init_dict is not None:
+            if not isinstance(init_dict, dict):
+                raise TypeError(
+                    f"init_dict must be a dict, not {type(init_dict).__name__}"
+                )
+            data.update(type(self)._loaded_values(init_dict))
+        super().__init__(**data)
+
     def model_post_init(self, context):
         for name in type(self).model_fields:
             self._store_with_parent(name)
@@ -168,7 +186,11 @@ class LegacyModel(PyleecanModel):
             raise ValueError(f"Unknown type_handle_ndarray: {type_handle_ndarray}")
         values = {}
         for name, info in type(self).model_fields.items():
-            extra = info.json_schema_extra if isinstance(info.json_schema_extra, dict) else {}
+            extra = (
+                info.json_schema_extra
+                if isinstance(info.json_schema_extra, dict)
+                else {}
+            )
             values[info.alias or name] = legacy_field(  # Legacy name of a renamed field
                 getattr(self, name),
                 is_complex_annotation(info.annotation),
