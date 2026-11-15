@@ -7,7 +7,11 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError
+from ...classes_common.errors import (
+    ParentMissingError,
+    TrapezeBuildGeometryError,
+    VentilationTrapInstanceError,
+)
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -117,11 +121,11 @@ class VentilationTrap(Hole):
 
         # checking if the param have good type
         if type(alpha) not in [int, float]:
-            raise self.TrapezeBuildGeometryError(
+            raise TrapezeBuildGeometryError(
                 "The parameter 'alpha' must be an int or float"
             )
         if type(delta) not in [complex, int, float]:
-            raise self.TrapezeBuildGeometryError(
+            raise TrapezeBuildGeometryError(
                 "The parameter 'delta' must be a complex or float or int number"
             )
 
@@ -151,13 +155,13 @@ class VentilationTrap(Hole):
         """
 
         if not isinstance(self.Zh, int):
-            raise self.VentilationTrapInstanceError("Zh must be a integer")
+            raise VentilationTrapInstanceError("Zh must be a integer")
         if not isinstance(self.H0, float) and not isinstance(self.H0, int):
-            raise self.VentilationTrapInstanceError("H0 must be a float or int")
+            raise VentilationTrapInstanceError("H0 must be a float or int")
         if not isinstance(self.D0, float) and not isinstance(self.D0, int):
-            raise self.VentilationTrapInstanceError("D0 must be a float or int")
+            raise VentilationTrapInstanceError("D0 must be a float or int")
         if not isinstance(self.Alpha0, float) and not isinstance(self.Alpha0, int):
-            raise self.VentilationTrapInstanceError("Alpha0 must be a float or int")
+            raise VentilationTrapInstanceError("Alpha0 must be a float or int")
 
     # Inlined from Methods.Slot.VentilationTrap.comp_radius
     def comp_radius(self):
@@ -449,9 +453,3 @@ class VentilationTrap(Hole):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class TrapezeBuildGeometryError(Exception):
-        """raised when the parameter have not good type"""
-
-    class VentilationTrapInstanceError(Exception):
-        """Raised when a Ventilation Trap parameter is not int or float"""

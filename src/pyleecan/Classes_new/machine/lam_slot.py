@@ -7,7 +7,7 @@ from typing import ClassVar
 import numpy as np
 from matplotlib.patches import Patch
 
-from ...classes_common.errors import LaminationCheckError
+from ...classes_common.errors import LSC_SlotTooLong
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import update_RTS_index
 from ...Functions_new.Plot.get_color_legend_from_surface import (
@@ -64,9 +64,7 @@ class LamSlot(Lamination):
         self.slot.check()
 
         if self.comp_height_yoke() < 0:
-            raise self.LSC_SlotTooLong(
-                "The Slot is too long for the lamination (HYoke <0)"
-            )
+            raise LSC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
 
         """
         Wt = self.slot.comp_tooth_widths()["WTooth_min"]
@@ -474,9 +472,3 @@ class LamSlot(Lamination):
         """
 
         self.slot.Zs = 2 * p
-
-    class Lam_SlotCheckError(LaminationCheckError):
-        """ """
-
-    class LSC_SlotTooLong(Lam_SlotCheckError):
-        """ """

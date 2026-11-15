@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib.patches import Patch
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError
+from ...classes_common.errors import MagnetIndexError, ParentMissingError
 from ...definitions import config_dict
 from ...Functions_pydantic.Geometry.transform_hole_surf import transform_hole_surf
 from ...Functions_pydantic.init_fig import init_fig
@@ -207,7 +207,7 @@ class Hole(LegacyModel):
         elif hasattr(self, "magnet_dict") and label in self.magnet_dict:
             return self.magnet_dict[label]
         else:
-            raise self.MagnetIndexError(
+            raise MagnetIndexError(
                 "Hole of type " + str(type(self)) + " has no magnet " + label
             )
 
@@ -469,9 +469,6 @@ class Hole(LegacyModel):
         elif hasattr(self, "magnet_dict") and label in self.magnet_dict:
             self.magnet_dict[label] = magnet
         else:
-            raise self.MagnetIndexError(
+            raise MagnetIndexError(
                 "Hole of type " + str(type(self)) + " has no magnet " + label
             )
-
-    class MagnetIndexError(Exception):
-        """Raise when trying to access a non existing magnet"""

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S61_NoneError, S61_WCheckError
 from ...definitions import config_dict
 from ...Functions_pydantic.Geometry.inter_line_circle import inter_line_circle
 from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
@@ -593,7 +593,7 @@ class HoleM61(HoleMag):
         """
         # Check that everything is set
         if self.W0 is None:
-            raise self.S61_NoneError("You must set W0 !")
+            raise S61_NoneError("You must set W0 !")
 
         # add possibility to create hole without magnet
         # elif self.W1 is None:
@@ -601,19 +601,19 @@ class HoleM61(HoleMag):
         # elif self.W2 is None:
         #    raise S61_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise self.S61_NoneError("You must set W3 !")
+            raise S61_NoneError("You must set W3 !")
         elif self.H0 is None:
-            raise self.S61_NoneError("You must set H0 !")
+            raise S61_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S61_NoneError("You must set H1 !")
+            raise S61_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise self.S61_NoneError("You must set H2 !")
+            raise S61_NoneError("You must set H2 !")
 
         if self.H1 > self.H0:
-            raise self.S61_WCheckError("You must have H1 < H0")
+            raise S61_WCheckError("You must have H1 < H0")
 
         if self.H2 > self.H0:
-            raise self.S61_WCheckError("You must have H2 < H0")
+            raise S61_WCheckError("You must have H2 < H0")
 
     # Inlined from Methods.Slot.HoleM61.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -1288,9 +1288,3 @@ class HoleM61(HoleMag):
         self.magnet_1 = None
         self.magnet_2 = None
         self.magnet_3 = None
-
-    class S61_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM58 is None"""
-
-    class S61_WCheckError(SlotCheckError):
-        """ """

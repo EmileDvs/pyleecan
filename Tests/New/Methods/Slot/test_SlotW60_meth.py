@@ -5,12 +5,7 @@ from numpy import pi
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot_w_60 import SlotW60
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW60 import (
-    S60_InnerCheckError,
-    S60_RCheckError,
-    S60_WindWError,
-    S60_WindError,
-)
+from pyleecan.classes_common.errors import S60_InnerCheckError, S60_RCheckError, S60_WindWError, S60_WindError
 
 # For AlmostEqual
 DELTA = 1e-5

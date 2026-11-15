@@ -6,7 +6,7 @@ from backend_classes.slot.slot_circ import SlotCirc
 from numpy import ndarray, pi, exp
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotCirc import SlotCheckError
+from pyleecan.classes_common.errors import SlotCheckError
 import matplotlib.pyplot as plt
 from backend_functions.load import load
 from Tests.New._test_paths import save_load_path

@@ -6,6 +6,13 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import (
+    AngleArc2Error,
+    AngleRotationArc2Error,
+    NbPointArc2DError,
+    PointArc2Error,
+    PointTranslateArc2Error,
+)
 from .arc import Arc
 
 
@@ -64,12 +71,12 @@ class Arc2(Arc):
         if self.begin == self.center or (
             abs(self.begin) == 0 and abs(self.center) == 0
         ):
-            raise self.PointArc2Error
+            raise PointArc2Error
             ("The beginning point and the center of an Arc2 can't be the same")
         if self.angle == 0:
-            raise self.AngleArc2Error("An arc can't have a null opening angle")
+            raise AngleArc2Error("An arc can't have a null opening angle")
         if self.angle == 2 * np.pi:
-            raise self.AngleArc2Error("You can't draw a circle with an Arc2")
+            raise AngleArc2Error("You can't draw a circle with an Arc2")
 
     # Inlined from Methods.Geometry.Arc2.comp_length
     def comp_length(self):
@@ -139,9 +146,9 @@ class Arc2(Arc):
 
         self.check()
         if not isinstance(nb_point, int):
-            raise self.NbPointArc2DError("discretize : nb_point must be an integer")
+            raise NbPointArc2DError("discretize : nb_point must be an integer")
         if nb_point < 0:
-            raise self.NbPointArc2DError("nb_point must be >=0")
+            raise NbPointArc2DError("nb_point must be >=0")
 
         # We use the complex representation of the point
         z1 = self.begin
@@ -316,7 +323,7 @@ class Arc2(Arc):
         None
         """
         if not isinstance(angle, float) and not isinstance(angle, int):
-            raise self.AngleRotationArc2Error("The angle must be a float or int")
+            raise AngleRotationArc2Error("The angle must be a float or int")
 
         # check if Arc2 is correct"
         self.check()
@@ -413,7 +420,7 @@ class Arc2(Arc):
             and not isinstance(Zt, int)
             and not isinstance(Zt, float)
         ):
-            raise self.PointTranslateArc2Error(
+            raise PointTranslateArc2Error(
                 "The point must be a complex number or int or float"
             )
 
@@ -423,18 +430,3 @@ class Arc2(Arc):
         # Modification from the translation of Arc2
         self.begin = self.begin + Zt
         self.center = self.center + Zt
-
-    class AngleArc2Error(Exception):
-        """ """
-
-    class AngleRotationArc2Error(Exception):
-        """ """
-
-    class NbPointArc2DError(Exception):
-        """ """
-
-    class PointArc2Error(Exception):
-        """ """
-
-    class PointTranslateArc2Error(Exception):
-        """ """

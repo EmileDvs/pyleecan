@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Circle, Patch
 
-from ...classes_common.errors import Lam_WindCheckError
+from ...classes_common.errors import C12_WireDontFit, NotPlotableError
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
@@ -83,13 +83,9 @@ class CondType12(Conductor):
 
         if Swire > Scond:
             if self.Nwppc == 1:
-                raise self.C12_WireDontFit(
-                    "The wire is too big to fit in the conductor"
-                )
+                raise C12_WireDontFit("The wire is too big to fit in the conductor")
             else:
-                raise self.C12_WireDontFit(
-                    "The wires are too big to fit in the conductor"
-                )
+                raise C12_WireDontFit("The wires are too big to fit in the conductor")
 
     # Inlined from Methods.Machine.CondType12.comp_height
     def comp_height(self):
@@ -326,7 +322,7 @@ class CondType12(Conductor):
             center_list.append((-a, a))
             center_list.append((-a, -a))
         else:
-            raise self.NotPlotableError("You can't plot a coil with Nwppc>4")
+            raise NotPlotableError("You can't plot a coil with Nwppc>4")
 
         # Creation of the wires
         for center in center_list:
@@ -545,15 +541,3 @@ class CondType12(Conductor):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class CondCheckError(Lam_WindCheckError):
-        """ """
-
-    class Cond12CheckError(CondCheckError):
-        """ """
-
-    class C12_WireDontFit(Cond12CheckError):
-        """ """
-
-    class NotPlotableError(Exception):
-        """ """

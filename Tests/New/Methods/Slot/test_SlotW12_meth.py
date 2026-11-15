@@ -9,7 +9,7 @@ from backend_classes.geometry.surf_line import SurfLine
 from backend_classes.geometry.arc_1 import Arc1
 from backend_classes.geometry.arc_3 import Arc3
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW12 import S12_R20CheckError
+from pyleecan.classes_common.errors import S12_R20CheckError
 
 # For AlmostEqual
 DELTA = 1e-4

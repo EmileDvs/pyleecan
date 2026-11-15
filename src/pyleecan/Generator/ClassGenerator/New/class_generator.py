@@ -741,7 +741,11 @@ def _sort_error_class_definitions(definitions):
 
 
 def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_graph):
-    """Find exception definitions used by more than one generated class."""
+    """Find the exception definitions of the method modules (all shared).
+
+    Every method error is written once in classes_common/errors.py, for both
+    class implementations (one error class per error, see PLAN.md).
+    """
     from .generate_function_new_classes import FUNCTION_ERRORS
 
     definitions = {}
@@ -769,11 +773,7 @@ def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_gra
             origin = definition.error_origin
             definitions[origin] = definition
             owners.setdefault(origin, set()).add(name)
-    shared = {
-        origin: definitions[origin]
-        for origin, uses in owners.items()
-        if len(uses) > 1
-    }
+    shared = {origin: definitions[origin] for origin in owners}
     if isdir(join(dirname(path_to_gen), "Functions")):
         for module, errors in FUNCTION_ERRORS.items():
             module_name = f"{soft_name}.Functions.{module}"
@@ -802,13 +802,17 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
     dependencies = {}
     names = {}
     check_errors = _check_error_definitions()
+    duplicates = set()  # Same definition in several method modules
     for origin in sorted(definitions):
         name = _shared_error_name(origin)
         if name in names:
-            raise ValueError(
-                f"Shared exception name {name!r} has different sources: "
-                f"{names[name]!r} and {origin!r}"
-            )
+            if ast.dump(definitions[origin]) != ast.dump(definitions[names[name]]):
+                raise ValueError(
+                    f"Shared exception name {name!r} has different sources: "
+                    f"{names[name]!r} and {origin!r}"
+                )
+            duplicates.add(origin)
+            continue
         if name in CLASS_ERROR_NAMES or name in check_errors:
             raise ValueError(f"Shared exception name {name!r} is already defined")
         names[name] = origin
@@ -842,6 +846,8 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
     ).body
     all_definitions.extend(check_errors.values())
     for origin, source_definition in definitions.items():
+        if origin in duplicates:
+            continue
         definition = ast.parse(ast.unparse(source_definition)).body[0]
         definition.name = _shared_error_name(origin)
         for index, base in enumerate(definition.bases):

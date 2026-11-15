@@ -5,6 +5,7 @@ import os
 from dataclasses import dataclass, field
 from typing import ClassVar
 
+from ...classes_common.errors import AbstractClassError
 from ...Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from .._legacy_class import LegacyClass
 from ..magnetics.magnetics import Magnetics
@@ -172,7 +173,7 @@ class EEC(LegacyClass):
             Dict containing all magnetic quantities that have been calculated in EEC
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -187,7 +188,7 @@ class EEC(LegacyClass):
 
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -297,7 +298,7 @@ class EEC(LegacyClass):
             Dict containing all magnetic quantities that have been calculated in EEC
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -319,7 +320,7 @@ class EEC(LegacyClass):
         Is_PWM : DataFreq
             Stator current harmonics as DataFreq
         """
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -336,9 +337,6 @@ class EEC(LegacyClass):
 
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
-
-    class AbstractClassError(Exception):
-        pass

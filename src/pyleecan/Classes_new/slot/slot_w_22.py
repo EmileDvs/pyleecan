@@ -7,7 +7,11 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S22_A02CheckError,
+    S22_SpCheckError,
+)
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -354,10 +358,10 @@ class SlotW22(Slot):
             You must have W2 < 2*pi/Zs
         """
         if self.W2 < self.W0:
-            raise self.S22_A02CheckError("You must have W0 <= W2")
+            raise S22_A02CheckError("You must have W0 <= W2")
 
         if 2 * np.pi / self.Zs <= self.W2:
-            raise self.S22_SpCheckError("You must have W2 < 2*pi/Zs")
+            raise S22_SpCheckError("You must have W2 < 2*pi/Zs")
 
     # Inlined from Methods.Slot.SlotW22.comp_angle_opening
     def comp_angle_opening(self):
@@ -903,9 +907,3 @@ class SlotW22(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S22_A02CheckError(SlotCheckError):
-        """ """
-
-    class S22_SpCheckError(SlotCheckError):
-        """ """

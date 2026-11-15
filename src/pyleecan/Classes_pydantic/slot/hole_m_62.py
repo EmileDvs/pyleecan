@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S62_NoneError
 from ...definitions import config_dict
 from ...Functions_pydantic.labels import HOLEM_LAB
 from ...Functions_pydantic.Plot import (
@@ -210,11 +210,11 @@ class HoleM62(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise self.S62_NoneError("You must set W0 !")
+            raise S62_NoneError("You must set W0 !")
         elif self.H0 is None:
-            raise self.S62_NoneError("You must set H0 !")
+            raise S62_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S62_NoneError("You must set H1 !")
+            raise S62_NoneError("You must set H1 !")
 
     # Inlined from Methods.Slot.HoleM62.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -860,6 +860,3 @@ class HoleM62(HoleMag):
         """
 
         self.magnet_0 = None
-
-    class S62_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM62 is None"""

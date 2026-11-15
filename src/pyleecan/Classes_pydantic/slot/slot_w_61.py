@@ -7,7 +7,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S61_InnerCheckError,
+    S61_W21CheckError,
+    S61_WindError,
+    S61_WindHError,
+    S61_WindWError,
+)
 from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -304,7 +311,7 @@ class SlotW61(Slot):
         """
 
         if Nrad != 1 or Ntan != 2:
-            raise self.S61_WindError(
+            raise S61_WindError(
                 "Slot 61 can use only for winding with Nrad=1 and Ntan=2"
             )
         self.check()
@@ -379,16 +386,16 @@ class SlotW61(Slot):
         """
 
         if self.is_outwards():
-            raise self.S61_InnerCheckError("Slot 61 is for inner lamination only")
+            raise S61_InnerCheckError("Slot 61 is for inner lamination only")
 
         if self.W1 <= self.W2:
-            raise self.S61_W21CheckError("You must have W2 < W1")
+            raise S61_W21CheckError("You must have W2 < W1")
 
         if self.H3 + self.H4 >= self.H2:
-            raise self.S61_WindHError("You must have W3+W4 < H2")
+            raise S61_WindHError("You must have W3+W4 < H2")
 
         if self.W3 >= (self.W1 - self.W2) / 2:
-            raise self.S61_WindWError("You must have W3 < (W1-W2)/2")
+            raise S61_WindWError("You must have W3 < (W1-W2)/2")
 
     # Inlined from Methods.Slot.SlotW61.comp_angle_opening
     def comp_angle_opening(self):
@@ -979,31 +986,3 @@ class SlotW61(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S61_InnerCheckError(SlotCheckError):
-        """ """
-
-    class S61_W21CheckError(SlotCheckError):
-        """ """
-
-    class S61_WindError(SlotCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        winding
-
-
-        """
-
-    class S61_WindHError(SlotCheckError):
-        """ """
-
-    class S61_WindWError(SlotCheckError):
-        """ """

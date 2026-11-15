@@ -5,12 +5,7 @@ import pytest
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot_w_63 import SlotW63
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW63 import (
-    S63_InnerCheckError,
-    S63_WindError,
-    S63_W0CheckError,
-    S63_H0CheckError,
-)
+from pyleecan.classes_common.errors import S63_InnerCheckError, S63_WindError, S63_W0CheckError, S63_H0CheckError
 
 
 # For AlmostEqual

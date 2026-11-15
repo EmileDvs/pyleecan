@@ -7,7 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, SLSRPM_NoneError
 from ...definitions import config_dict
 from ...Functions_new.labels import HOLEM_LAB, update_RTS_index
 from ...Functions_new.Plot import (
@@ -347,21 +347,21 @@ class HoleMLSRPM(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise self.SLSRPM_NoneError("You must set W0 !")
+            raise SLSRPM_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise self.SLSRPM_NoneError("You must set W1 !")
+            raise SLSRPM_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise self.SLSRPM_NoneError("You must set W2 !")
+            raise SLSRPM_NoneError("You must set W2 !")
         elif self.H1 is None:
-            raise self.SLSRPM_NoneError("You must set H1 !")
+            raise SLSRPM_NoneError("You must set H1 !")
         elif self.R1 is None:
-            raise self.SLSRPM_NoneError("You must set R1 !")
+            raise SLSRPM_NoneError("You must set R1 !")
         elif self.R2 is None:
-            raise self.SLSRPM_NoneError("You must set R2 !")
+            raise SLSRPM_NoneError("You must set R2 !")
         elif self.R3 is None:
-            raise self.SLSRPM_NoneError("You must set R3 !")
+            raise SLSRPM_NoneError("You must set R3 !")
         elif self.magnet_0 is None:
-            raise self.SLSRPM_NoneError("You must set magnet_0 !")
+            raise SLSRPM_NoneError("You must set magnet_0 !")
 
     # Inlined from Methods.Slot.HoleMLSRPM.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -887,6 +887,3 @@ class HoleMLSRPM(HoleMag):
         """
 
         self.magnet_0 = None
-
-    class SLSRPM_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM52 is None"""

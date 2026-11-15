@@ -10,7 +10,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import FancyArrowPatch, Patch
 from matplotlib.pyplot import plot, subplots
 
-from ...classes_common.errors import Lam_WindCheckError
+from ...classes_common.errors import LWC_SlotTooLong
 from ...definitions import config_dict
 from ...Functions_new.Electrical.dqh_transformation import dqh2n
 from ...Functions_new.init_fig import init_fig
@@ -233,9 +233,7 @@ class LamSlotWind(LamSlot):
         self.slot.check()
 
         if self.comp_height_yoke() < 0:
-            raise self.LWC_SlotTooLong(
-                "The Slot is too long for the lamination (HYoke <0)"
-            )
+            raise LWC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
 
         """
         Wt = self.slot.comp_tooth_widths()["WTooth_min"]
@@ -1627,6 +1625,3 @@ class LamSlotWind(LamSlot):
             self.winding.p = p
             # Enforce call to redefine winding matrix
             self.winding.clean()
-
-    class LWC_SlotTooLong(Lam_WindCheckError):
-        """ """

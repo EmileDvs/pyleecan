@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
-from ...classes_common.errors import WindingError
+from ...classes_common.errors import WindingError, WindingT10DefQsError
 from ...Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
 from ...Functions_new.Winding.shift_wind_mat import shift_wind_mat
 from .lamination import Lamination
@@ -79,7 +79,7 @@ class WindingSC(Winding):
         assert Zs % 1 == 0, "Zs must be an integer"
 
         if self.qs != Zs:
-            raise self.WindingT10DefQsError(
+            raise WindingT10DefQsError(
                 "wrong winding definition, you must have qs = Zs !"
             )
 
@@ -155,6 +155,3 @@ class WindingSC(Winding):
         """
 
         return (1, 1)
-
-    class WindingT10DefQsError(WindingError):
-        """ """

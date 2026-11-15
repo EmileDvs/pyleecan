@@ -7,7 +7,11 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S25_HWCheckError,
+    S25_W4CheckError,
+)
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -341,23 +345,21 @@ class SlotW25(Slot):
         Rbo = self.get_Rbo()
 
         if self.H1 == 0:
-            raise self.S25_W4CheckError("You must have H1>0 (use Slot 24 for H1=0)")
+            raise S25_W4CheckError("You must have H1>0 (use Slot 24 for H1=0)")
         if self.H2 == 0:
-            raise self.S25_W4CheckError("You must have H2>0 (use Slot 24 for H2=0)")
+            raise S25_W4CheckError("You must have H2>0 (use Slot 24 for H2=0)")
         if self.W4 == self.W3:
-            raise self.S25_W4CheckError(
-                "You must have W4 != W3 (use Slot 24 for W4=W3)"
-            )
+            raise S25_W4CheckError("You must have W4 != W3 (use Slot 24 for W4=W3)")
 
         if 2 * np.arcsin(self.W4 / (2 * Rbo)) > 2 * np.pi / self.Zs:
-            raise self.S25_W4CheckError("The teeth are too wide, reduce Zs or W4")
+            raise S25_W4CheckError("The teeth are too wide, reduce Zs or W4")
 
         if (
             not self.is_outwards()
             and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2 - self.H1))
             > 2 * np.pi / self.Zs
         ):
-            raise self.S25_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
+            raise S25_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
 
     # Inlined from Methods.Slot.SlotW25.comp_angle_opening
     def comp_angle_opening(self):
@@ -892,9 +894,3 @@ class SlotW25(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S25_HWCheckError(SlotCheckError):
-        """ """
-
-    class S25_W4CheckError(SlotCheckError):
-        """ """

@@ -9,7 +9,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
-from ...classes_common.errors import LaminationCheckError, NotImplementedYetError
+from ...classes_common.errors import (
+    LC_RadiusError,
+    LC_VentYokeIn,
+    LC_VentYokeOut,
+    NotImplementedYetError,
+)
 from ...definitions import config_dict
 from ...Functions_new.Geometry.merge_notch_list import merge_notch_list
 from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
@@ -732,9 +737,7 @@ class Lamination(LegacyClass):
         """
 
         if self.Rint > self.Rext:
-            raise self.LC_RadiusError(
-                "The internal radius is greater than the external one"
-            )
+            raise LC_RadiusError("The internal radius is greater than the external one")
 
         for vent in self.axial_vent:
             vent.check()
@@ -751,11 +754,11 @@ class Lamination(LegacyClass):
                 (Rmin, Rmax) = vent.comp_radius()
 
                 if Rmin < Rin:
-                    raise self.LC_VentYokeIn(
+                    raise LC_VentYokeIn(
                         "The ventilation ducts cross the yoke internal radius"
                     )
                 if Rmax > Rout:
-                    raise self.LC_VentYokeOut(
+                    raise LC_VentYokeOut(
                         "The ventilation ducts cross the yoke external radius"
                     )
 
@@ -1688,12 +1691,3 @@ class Lamination(LegacyClass):
         ax.legend(patch_leg, label_leg)
 
         return fig, ax
-
-    class LC_RadiusError(LaminationCheckError):
-        """ """
-
-    class LC_VentYokeIn(LaminationCheckError):
-        """ """
-
-    class LC_VentYokeOut(LaminationCheckError):
-        """ """

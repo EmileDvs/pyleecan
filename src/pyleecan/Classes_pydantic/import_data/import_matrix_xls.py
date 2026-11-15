@@ -7,7 +7,7 @@ from typing import Any, ClassVar
 from pandas import ExcelFile, read_excel
 from pydantic import Field
 
-from ...classes_common.errors import PyleecanImportError as ImportError
+from ...classes_common.errors import XlsFileError
 from ...Functions_pydantic.path_tools import abs_file_path
 from .import_matrix import ImportMatrix
 
@@ -70,9 +70,7 @@ class ImportMatrixXls(ImportMatrix):
         """
         file_path = abs_file_path(self.file_path, is_check=False)
         if not os.path.isfile(file_path):
-            raise self.XlsFileError(
-                "ERROR: The xls file doesn't exist " + self.file_path
-            )
+            raise XlsFileError("ERROR: The xls file doesn't exist " + self.file_path)
         if self.usecols == "":
             self.usecols = None
 
@@ -175,6 +173,3 @@ class ImportMatrixXls(ImportMatrix):
                 return values, axes_dict
             else:
                 return values
-
-    class XlsFileError(ImportError):
-        """Raised when the file_path is wrong"""

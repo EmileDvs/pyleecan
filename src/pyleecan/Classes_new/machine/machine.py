@@ -10,7 +10,20 @@ import numpy as np
 from matplotlib.patches import Patch, Polygon
 from matplotlib.pyplot import subplots
 
-from ...classes_common.errors import MachineCheckError
+from ...classes_common.errors import (
+    KeyInputError,
+    LabelInputError,
+    MC_AbstractError,
+    MC_BothExternal,
+    MC_BothInternal,
+    MC_MecAirgapError,
+    MC_RotorDontFit,
+    MC_RotorIsStator,
+    MC_ShaftTooBig,
+    MC_ShaftTooSmall,
+    MC_StatorDontFit,
+    MC_StatorNotStator,
+)
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB, STATOR_LAB_S
@@ -159,39 +172,37 @@ class Machine(LegacyClass):
         """
 
         if type(self).__name__ == "Machine":
-            raise self.MC_AbstractError("Machine is an abstract class")
+            raise MC_AbstractError("Machine is an abstract class")
 
         if not self.stator.is_stator:
-            raise self.MC_StatorNotStator("self.stator.is_stator must be True")
+            raise MC_StatorNotStator("self.stator.is_stator must be True")
 
         if self.rotor.is_stator:
-            raise self.MC_RotorIsStator("self.rotor.is_stator must be False")
+            raise MC_RotorIsStator("self.rotor.is_stator must be False")
 
         if self.rotor.is_internal and self.stator.is_internal:
-            raise self.MC_BothInternal(
+            raise MC_BothInternal(
                 "self.rotor.is_internal and self.rotor.is_internal can't be both True"
             )
 
         if (not self.rotor.is_internal) and (not self.stator.is_internal):
-            raise self.MC_BothExternal(
+            raise MC_BothExternal(
                 "self.rotor.is_internal and self.rotor.is_internal can't be both False"
             )
 
         if self.rotor.is_internal:
             if self.rotor.Rext > self.stator.Rint:
-                raise self.MC_RotorDontFit("The Rotor is too big to fit in the Stator")
+                raise MC_RotorDontFit("The Rotor is too big to fit in the Stator")
             if self.shaft.Drsh / 2.0 > self.rotor.Rint:
-                raise self.MC_ShaftTooBig("The Shaft is too big to fit in the Rotor")
+                raise MC_ShaftTooBig("The Shaft is too big to fit in the Rotor")
             if self.shaft.Drsh / 2.0 < self.rotor.Rint:
-                raise self.MC_ShaftTooSmall(
-                    "The Shaft is too small to fit in the Rotor"
-                )
+                raise MC_ShaftTooSmall("The Shaft is too small to fit in the Rotor")
         else:
             if self.stator.Rext > self.rotor.Rint:
-                raise self.MC_StatorDontFit("The Stator is too big to fit in the Rotor")
+                raise MC_StatorDontFit("The Stator is too big to fit in the Rotor")
 
         if self.comp_width_airgap_mec() <= 0:
-            raise self.MC_MecAirgapError(
+            raise MC_MecAirgapError(
                 "The Stator and the rotor don't fit because "
                 "of magnet or short circuit ring"
             )
@@ -723,13 +734,13 @@ class Machine(LegacyClass):
 
         # check that 'Rotor' or 'Stator' is in label
         if lam_str[0] not in [STATOR_LAB, ROTOR_LAB]:
-            raise self.LabelInputError(err_msg)
+            raise LabelInputError(err_msg)
 
         # get the requested lamination index
         try:
             index = self.get_lam_list_label().index(label)
         except:
-            raise self.LabelInputError(err_msg)
+            raise LabelInputError(err_msg)
 
         # return requested lamination
         return self.get_lam_list(is_int_to_ext=True, key=None)[index]
@@ -806,7 +817,7 @@ class Machine(LegacyClass):
             elif key == ROTOR_LAB:
                 is_stator = False
             else:
-                raise self.KeyInputError(
+                raise KeyInputError(
                     f"'{key}' is not a valid input argument for key (only 'Stator' or 'Rotor' accepted for now)"
                 )
 
@@ -1277,91 +1288,3 @@ class Machine(LegacyClass):
                     + ":\n"
                     + str(e)
                 )
-
-    class KeyInputError(Exception):
-        """ """
-
-    class LabelInputError(Exception):
-        """ """
-
-    class MC_AbstractError(MachineCheckError):
-        """ """
-
-    class MC_BothExternal(MachineCheckError):
-        """ """
-
-    class MC_BothInternal(MachineCheckError):
-        """ """
-
-    class MC_MecAirgapError(MachineCheckError):
-        """ """
-
-    class MC_RotorDontFit(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        stator
-
-
-        """
-
-    class MC_RotorIsStator(MachineCheckError):
-        """ """
-
-    class MC_ShaftTooBig(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        rotor
-
-
-        """
-
-    class MC_ShaftTooSmall(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        rotor
-
-
-        """
-
-    class MC_StatorDontFit(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        rotor
-
-
-        """
-
-    class MC_StatorNotStator(MachineCheckError):
-        """ """

@@ -6,6 +6,7 @@ from typing import Any, ClassVar
 
 from pydantic import Field
 
+from ...classes_common.errors import ElmerSectionError
 from .elmer import Elmer
 
 
@@ -121,7 +122,7 @@ class Section(Elmer):
         Remove the item with the given key and return it.
         """
         if key not in self.keys():
-            raise self.ElmerSectionError("Key doesn't exist.")
+            raise ElmerSectionError("Key doesn't exist.")
 
         value = self._statements.pop(key)
         comment = self._comments.pop(key)
@@ -201,9 +202,6 @@ class Section(Elmer):
 
         if isinstance(value, MATC):
             return f'Real MATC "{value.expr}"'
-
-    class ElmerSectionError(Exception):
-        pass
 
 
 class File(str):

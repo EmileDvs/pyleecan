@@ -23,7 +23,7 @@ from backend_classes.simulation.op_dq import OPdq
 from pyleecan.definitions import DATA_DIR
 from backend_functions.load import load
 from backend_functions.Plot import dict_2D
-from pyleecan.Methods.Simulation.Input import CURRENT_DIR_REF, ROT_DIR_REF, InputError
+from pyleecan.Methods.Simulation.Input import CURRENT_DIR_REF, ROT_DIR_REF; from pyleecan.classes_common.errors import InputError
 import pytest
 from Tests.New._test_paths import save_plot_path as save_path
 

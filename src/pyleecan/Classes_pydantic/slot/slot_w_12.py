@@ -7,7 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S12_R20CheckError,
+    S12_RboCheckError,
+)
 from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -242,10 +246,10 @@ class SlotW12(Slot):
         Rbo = self.get_Rbo()
 
         if self.R2 <= 0:
-            raise self.S12_R20CheckError("You must have R2 > 0")
+            raise S12_R20CheckError("You must have R2 > 0")
 
         if self.R2 / Rbo >= 1:
-            raise self.S12_RboCheckError("You must have R2 < Rbo")
+            raise S12_RboCheckError("You must have R2 < Rbo")
 
     # Inlined from Methods.Slot.SlotW12.comp_angle_opening
     def comp_angle_opening(self):
@@ -744,9 +748,3 @@ class SlotW12(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S12_R20CheckError(SlotCheckError):
-        """ """
-
-    class S12_RboCheckError(SlotCheckError):
-        """ """

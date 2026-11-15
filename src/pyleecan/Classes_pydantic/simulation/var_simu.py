@@ -8,6 +8,7 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.errors import VarSimuError
 from ...Functions_pydantic.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
 )
@@ -98,13 +99,13 @@ class VarSimu(LegacyModel):
         from .simulation import Simulation
 
         if type(self).__name__ == "VarSimu":
-            raise self.VarSimuError(
+            raise VarSimuError(
                 "VarSimu is an abstract class, please create one of its daughters."
             )
 
         # Check for simulation or VarSimu
         if self.parent is None or not isinstance(self.parent, Simulation):
-            raise self.VarSimuError("VarSimu object must be inside a Simulation object")
+            raise VarSimuError("VarSimu object must be inside a Simulation object")
 
     # Inlined from Methods.Simulation.VarSimu.gen_datakeeper_list
     def gen_datakeeper_list(self, ref_simu):
@@ -162,7 +163,7 @@ class VarSimu(LegacyModel):
         multisim_dict : dict
             dictionary containing the simulation and paramexplorer list
         """
-        raise self.VarSimuError(
+        raise VarSimuError(
             "VarSimu is an abstract class, please create one of its daughters."
         )
 
@@ -622,6 +623,3 @@ class VarSimu(LegacyModel):
                     TAB + simu_type + ": Using same LUT for all simulations"
                 )
             simu.elec.LUT_enforced = output.simu.elec.LUT_enforced
-
-    class VarSimuError(Exception):
-        pass

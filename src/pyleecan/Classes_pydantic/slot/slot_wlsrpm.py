@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, SLSRPMOutterError
 from ...Functions_pydantic.labels import WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -402,9 +402,7 @@ class SlotWLSRPM(Slot):
         """
 
         if self.is_outwards():
-            raise self.SLSRPMOutterError(
-                "Slot Type LSRPM can’t be used on outer lamination"
-            )
+            raise SLSRPMOutterError("Slot Type LSRPM can’t be used on outer lamination")
 
     # Inlined from Methods.Slot.SlotWLSRPM.comp_angle_opening
     def comp_angle_opening(self):
@@ -765,6 +763,3 @@ class SlotWLSRPM(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class SLSRPMOutterError(SlotCheckError):
-        """ """

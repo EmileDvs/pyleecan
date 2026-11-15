@@ -3,7 +3,7 @@ import pytest
 
 from backend_classes.geometry.segment import Segment
 
-from pyleecan.Methods.Geometry.Segment import PointSegmentError, NbPointSegmentDError
+from pyleecan.classes_common.errors import PointSegmentError, NbPointSegmentDError
 from numpy import pi, array, exp
 
 

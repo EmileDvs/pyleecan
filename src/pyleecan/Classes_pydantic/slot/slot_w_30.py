@@ -7,7 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S30_R1Error,
+    S30_R2Error,
+    S30_W0Error,
+    S30_W3Error,
+)
 from ...Functions_pydantic.Geometry.inter_line_circle import inter_line_circle
 from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
 from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
@@ -544,10 +550,10 @@ class SlotW30(Slot):
         Rbo = self.get_Rbo()
 
         if self.W0 == 0:
-            raise self.S30_W0Error("You must have W0 > 0")
+            raise S30_W0Error("You must have W0 > 0")
 
         if self.W0 * 0.5 / Rbo >= 1:
-            raise self.S30_W0Error("You must have W0/2 < Rbo")
+            raise S30_W0Error("You must have W0/2 < Rbo")
 
         if self.is_outwards():
             R1 = Rbo + self.H0 + self.R1
@@ -555,12 +561,12 @@ class SlotW30(Slot):
             R1 = Rbo - self.H0 - self.R1
 
         if self.W3 * 0.5 / R1 >= 1:
-            raise self.S30_W3Error(
+            raise S30_W3Error(
                 "W3 is too high comparing to the lamination bore radius (Rbo)"
             )
 
         if self.H1 < self.R1 + self.R2:
-            raise self.S30_R1Error("You must have R1 + R2 < H1")
+            raise S30_R1Error("You must have R1 + R2 < H1")
 
         R1 = self.R1
         R2 = self.R2
@@ -580,13 +586,13 @@ class SlotW30(Slot):
         lr1 = abs(Z100 - Z40) - self.W0
 
         if R2 >= lr2 / 2:
-            raise self.S30_R2Error("R2 is too high")
+            raise S30_R2Error("R2 is too high")
 
         if R1 >= lr1 / 2:
             if self.R1 != 0:
-                raise self.S30_R1Error("R1 is too high")
+                raise S30_R1Error("R1 is too high")
             else:
-                raise self.S30_W3Error("W3 is too high")
+                raise S30_W3Error("W3 is too high")
 
     # Inlined from Methods.Slot.SlotW30.comp_angle_opening
     def comp_angle_opening(self):
@@ -1182,15 +1188,3 @@ class SlotW30(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S30_R1Error(SlotCheckError):
-        """ """
-
-    class S30_R2Error(SlotCheckError):
-        """ """
-
-    class S30_W0Error(SlotCheckError):
-        """ """
-
-    class S30_W3Error(SlotCheckError):
-        """ """

@@ -5,7 +5,7 @@ from backend_classes.slot.slot_w_11_2 import SlotW11_2
 from numpy import arcsin, exp, pi
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW11_2 import S11_2_H1rCheckError, S11_2_R1CheckError
+from pyleecan.classes_common.errors import S11_2_H1rCheckError, S11_2_R1CheckError
 
 
 # For AlmostEqual

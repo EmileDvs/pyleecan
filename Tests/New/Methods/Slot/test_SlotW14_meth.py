@@ -5,7 +5,7 @@ from backend_classes.slot.slot_w_14 import SlotW14
 from numpy import arcsin, pi
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW14 import S14_Rbo1CheckError
+from pyleecan.classes_common.errors import S14_Rbo1CheckError
 
 from backend_functions.load import load
 from os.path import join

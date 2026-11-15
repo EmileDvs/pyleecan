@@ -5,7 +5,7 @@ from backend_classes.slot.slot_w_16 import SlotW16
 from numpy import ndarray, arcsin, pi, angle
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW16 import S16OutterError
+from pyleecan.classes_common.errors import S16OutterError
 import matplotlib.pyplot as plt
 from backend_classes.geometry.arc_1 import Arc1
 

@@ -7,7 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S16_W01CheckError
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -166,7 +166,7 @@ class SlotM16(Slot):
 
         """
         if self.W1 <= self.W0:
-            raise self.S16_W01CheckError("You must have W0 < W1")
+            raise S16_W01CheckError("You must have W0 < W1")
 
     # Inlined from Methods.Slot.SlotM16.comp_angle_opening
     def comp_angle_opening(self):
@@ -542,6 +542,3 @@ class SlotM16(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S16_W01CheckError(SlotCheckError):
-        """ """

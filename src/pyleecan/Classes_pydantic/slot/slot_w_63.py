@@ -7,7 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S63_H0CheckError,
+    S63_InnerCheckError,
+    S63_W0CheckError,
+    S63_WindError,
+)
 from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
 from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
@@ -286,7 +292,7 @@ class SlotW63(Slot):
         """
 
         if Nrad != 1 or Ntan != 2:
-            raise self.S63_WindError(
+            raise S63_WindError(
                 "Slot 63 can use only for winding with Nrad=1 and Ntan=2"
             )
         self.check()
@@ -381,16 +387,16 @@ class SlotW63(Slot):
 
         """
         if self.is_outwards():
-            raise self.S63_InnerCheckError("Slot 63 is for inner lamination only")
+            raise S63_InnerCheckError("Slot 63 is for inner lamination only")
 
         if self.W0 >= self.W1:
-            raise self.S63_W0CheckError("You must have W1 > W0")
+            raise S63_W0CheckError("You must have W1 > W0")
 
         if self.H0 == 0:
-            raise self.S63_H0CheckError("You must have H0 > 0")
+            raise S63_H0CheckError("You must have H0 > 0")
 
         if self.W0 == 0:
-            raise self.S63_W0CheckError("You must have W0 > 0")
+            raise S63_W0CheckError("You must have W0 > 0")
 
     # Inlined from Methods.Slot.SlotW63.comp_angle_opening
     def comp_angle_opening(self):
@@ -972,28 +978,3 @@ class SlotW63(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S63_H0CheckError(SlotCheckError):
-        """ """
-
-    class S63_InnerCheckError(SlotCheckError):
-        """ """
-
-    class S63_W0CheckError(SlotCheckError):
-        """ """
-
-    class S63_WindError(SlotCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        winding
-
-
-        """

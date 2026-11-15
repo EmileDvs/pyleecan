@@ -5,7 +5,7 @@ from backend_classes.slot.slot_w_25 import SlotW25
 from numpy import ndarray, angle
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW25 import S25_HWCheckError
+from pyleecan.classes_common.errors import S25_HWCheckError
 
 # For AlmostEqual
 DELTA = 1e-4

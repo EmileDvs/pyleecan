@@ -37,6 +37,7 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
     _class_gen_dict,
     _redirect_shared_error_imports,
+    shared_error_names,
 )
 
 TEST_FOLDERS = (
@@ -134,7 +135,9 @@ def alias_backend_imports(source):
 
 def _rewrite_source(source, path, class_dir):
     """Rewrite imports without modifying unrelated code, comments or strings."""
-    source = _redirect_shared_error_imports(source, "Tests")
+    source = _redirect_shared_error_imports(
+        source, "Tests", method_error_names=shared_error_names()
+    )
     tree = ast.parse(source, filename=str(path))
     encoded = source.encode("utf-8")
     offsets = [0]

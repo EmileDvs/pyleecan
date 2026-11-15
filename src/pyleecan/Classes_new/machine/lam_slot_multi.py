@@ -7,7 +7,7 @@ from typing import Any, ClassVar
 import numpy as np
 from matplotlib.patches import Patch
 
-from ...classes_common.errors import LaminationCheckError
+from ...classes_common.errors import LamSlotMultiAlphaError
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
@@ -65,24 +65,22 @@ class LamSlotMulti(Lamination):
 
         #
         if len(self.alpha.shape) > 1:
-            raise self.LamSlotMultiAlphaError(
-                "Alpha should have be a vector (1D array)"
-            )
+            raise LamSlotMultiAlphaError("Alpha should have be a vector (1D array)")
         if len(self.alpha) != len(self.slot_list):
-            raise self.LamSlotMultiAlphaError(
+            raise LamSlotMultiAlphaError(
                 "Alpha should have the same length as slot_list"
             )
         if self.alpha[0] < 0:
-            raise self.LamSlotMultiAlphaError(
+            raise LamSlotMultiAlphaError(
                 "Alpha should be an ordered array with values between 0 and 2*pi"
             )
         for ii in range(len(self.alpha) - 1):
             if self.alpha[ii] > self.alpha[ii + 1]:
-                raise self.LamSlotMultiAlphaError(
+                raise LamSlotMultiAlphaError(
                     "Alpha should be an ordered array with values between 0 and 2*pi"
                 )
         if self.alpha[-1] > 2 * np.pi:
-            raise self.LamSlotMultiAlphaError(
+            raise LamSlotMultiAlphaError(
                 "Alpha should be an ordered array with values between 0 and 2*pi"
             )
 
@@ -378,6 +376,3 @@ class LamSlotMulti(Lamination):
             return fig, ax
         else:
             return patches
-
-    class LamSlotMultiAlphaError(LaminationCheckError):
-        """ """

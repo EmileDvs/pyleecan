@@ -7,7 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S58_NoneError, S58_WCheckError
 from ...definitions import config_dict
 from ...Functions_new.labels import HOLEM_LAB
 from ...Functions_new.Plot import (
@@ -369,26 +369,26 @@ class HoleM58(HoleMag):
         """
         # Check that everything is set
         if self.W0 is None:
-            raise self.S58_NoneError("You must set W0 !")
+            raise S58_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise self.S58_NoneError("You must set W1 !")
+            raise S58_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise self.S58_NoneError("You must set W2 !")
+            raise S58_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise self.S58_NoneError("You must set W3 !")
+            raise S58_NoneError("You must set W3 !")
         elif self.R0 is None:
-            raise self.S58_NoneError("You must set R0 !")
+            raise S58_NoneError("You must set R0 !")
         elif self.H0 is None:
-            raise self.S58_NoneError("You must set H0 !")
+            raise S58_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S58_NoneError("You must set H1 !")
+            raise S58_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise self.S58_NoneError("You must set H2 !")
+            raise S58_NoneError("You must set H2 !")
 
         Rext = self.get_Rext()
 
         if self.W0 < self.W1 + self.W2:
-            raise self.S58_WCheckError("You must have W1+W2 <= W0")
+            raise S58_WCheckError("You must have W1+W2 <= W0")
 
     # Inlined from Methods.Slot.HoleM58.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -862,9 +862,3 @@ class HoleM58(HoleMag):
         """
 
         self.magnet_0 = None
-
-    class S58_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM58 is None"""
-
-    class S58_WCheckError(SlotCheckError):
-        """ """

@@ -5,7 +5,7 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from ...classes_common.errors import MachineCheckError
+from ...classes_common.errors import SRM_WrongRotor, SRM_WrongStator
 from .lam_slot import LamSlot
 from .lam_slot_wind import LamSlotWind
 from .machine_sync import MachineSync
@@ -58,11 +58,9 @@ class MachineSRM(MachineSync):
         super(type(self), self).check()
 
         if not isinstance(self.rotor, LamSlot):
-            raise self.SRM_WrongRotor("The Rotor of a MachineSRM must be a LamSlot")
+            raise SRM_WrongRotor("The Rotor of a MachineSRM must be a LamSlot")
         if not isinstance(self.stator, LamSlotWind):
-            raise self.SRM_WrongStator(
-                "The Stator of a MachineSRM must be a LamSlotWind"
-            )
+            raise SRM_WrongStator("The Stator of a MachineSRM must be a LamSlotWind")
 
     # Inlined from Methods.Machine.MachineSRM.get_machine_type
     def get_machine_type(self):
@@ -138,9 +136,3 @@ class MachineSRM(MachineSync):
 
         # Set pole pair number for stator only
         self.stator.set_pole_pair_number(p)
-
-    class SRM_WrongRotor(MachineCheckError):
-        pass
-
-    class SRM_WrongStator(MachineCheckError):
-        pass

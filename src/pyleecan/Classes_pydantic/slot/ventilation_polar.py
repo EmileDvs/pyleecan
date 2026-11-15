@@ -7,7 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError
+from ...classes_common.errors import (
+    ParentMissingError,
+    PolarArcBuildGeometryError,
+    VentilationPolarInstanceError,
+)
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -114,11 +118,11 @@ class VentilationPolar(Hole):
 
         # checking if the param have good type
         if type(alpha) not in [int, float]:
-            raise self.PolarArcBuildGeometryError(
+            raise PolarArcBuildGeometryError(
                 "The parameter 'alpha' must be an int or float"
             )
         if type(delta) not in [complex, int, float]:
-            raise self.PolarArcBuildGeometryError(
+            raise PolarArcBuildGeometryError(
                 "The parameter 'delta' must be a complex or float or int number"
             )
 
@@ -160,13 +164,13 @@ class VentilationPolar(Hole):
         """
 
         if not isinstance(self.Zh, int):
-            raise self.VentilationPolarInstanceError("Zh must be a integer")
+            raise VentilationPolarInstanceError("Zh must be a integer")
         if not isinstance(self.H0, float) and not isinstance(self.H0, int):
-            raise self.VentilationPolarInstanceError("H0 must be a float or int")
+            raise VentilationPolarInstanceError("H0 must be a float or int")
         if not isinstance(self.D0, float) and not isinstance(self.D0, int):
-            raise self.VentilationPolarInstanceError("D0 must be a float or int")
+            raise VentilationPolarInstanceError("D0 must be a float or int")
         if not isinstance(self.Alpha0, float) and not isinstance(self.Alpha0, int):
-            raise self.VentilationPolarInstanceError("Alpha0 must be a float or int")
+            raise VentilationPolarInstanceError("Alpha0 must be a float or int")
 
     # Inlined from Methods.Slot.VentilationPolar.comp_radius
     def comp_radius(self):
@@ -503,9 +507,3 @@ class VentilationPolar(Hole):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class PolarArcBuildGeometryError(Exception):
-        """ """
-
-    class VentilationPolarInstanceError(Exception):
-        """ """

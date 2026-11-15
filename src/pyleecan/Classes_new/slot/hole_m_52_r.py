@@ -7,7 +7,13 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S52R_H12CheckError,
+    S52R_NoneError,
+    S52R_R0CheckError,
+    S52R_widthCheckError,
+)
 from ...definitions import config_dict
 from ...Functions_new.labels import HOLEM_LAB
 from ...Functions_new.Plot import (
@@ -284,33 +290,33 @@ class HoleM52R(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise self.S52R_NoneError("You must set W0 !")
+            raise S52R_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise self.S52R_NoneError("You must set W1 !")
+            raise S52R_NoneError("You must set W1 !")
         elif self.H0 is None:
-            raise self.S52R_NoneError("You must set H0 !")
+            raise S52R_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S52R_NoneError("You must set H1 !")
+            raise S52R_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise self.S52R_NoneError("You must set H2 !")
+            raise S52R_NoneError("You must set H2 !")
         elif self.R0 is None:
-            raise self.S52R_NoneError("You must set R0 !")
+            raise S52R_NoneError("You must set R0 !")
 
         if self.H2 >= self.H1:
-            raise self.S52R_H12CheckError("You must have H2 < H1")
+            raise S52R_H12CheckError("You must have H2 < H1")
 
         if self.R0 >= self.H1:
-            raise self.S52R_R0CheckError("You must have R0 < H1")
+            raise S52R_R0CheckError("You must have R0 < H1")
 
         if self.R0 >= self.H1 - self.H2:
-            raise self.S52R_R0CheckError("You must have R0 < H1")
+            raise S52R_R0CheckError("You must have R0 < H1")
 
         h = self.H1 - self.H2
         w = self.W0 + self.W1
         Z2 = np.sqrt((self.get_Rext() - self.H0) ** 2 - h**2) - h + 1j * w / 2
 
         if np.angle(Z2) >= np.pi / self.Zh:
-            raise self.S52R_widthCheckError(
+            raise S52R_widthCheckError(
                 "The hole is too wide for the lamination (reduce W1, H0 or W0)"
             )
 
@@ -853,15 +859,3 @@ class HoleM52R(HoleMag):
         """
 
         self.magnet_0 = None
-
-    class S52R_H12CheckError(SlotCheckError):
-        """ """
-
-    class S52R_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM52R is None"""
-
-    class S52R_R0CheckError(SlotCheckError):
-        """ """
-
-    class S52R_widthCheckError(SlotCheckError):
-        """ """

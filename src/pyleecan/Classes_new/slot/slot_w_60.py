@@ -7,7 +7,15 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S60_InnerCheckError,
+    S60_RCheckError,
+    S60_W21CheckError,
+    S60_WindError,
+    S60_WindHError,
+    S60_WindWError,
+)
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -316,7 +324,7 @@ class SlotW60(Slot):
         """
 
         if Nrad != 1 or Ntan != 2:
-            raise self.S60_WindError(
+            raise S60_WindError(
                 "Slot 60 can use only for winding with Nrad=1 and Ntan=2"
             )
         self.check()
@@ -396,19 +404,19 @@ class SlotW60(Slot):
         """
 
         if self.is_outwards():
-            raise self.S60_InnerCheckError("Slot 60 is for inner lamination only")
+            raise S60_InnerCheckError("Slot 60 is for inner lamination only")
 
         if self.W1 <= self.W2:
-            raise self.S60_W21CheckError("You must have W2 < W1")
+            raise S60_W21CheckError("You must have W2 < W1")
 
         if self.R1 > self.get_Rbo():
-            raise self.S60_RCheckError("You must have R1 <= Rbo")
+            raise S60_RCheckError("You must have R1 <= Rbo")
 
         if self.H3 + self.H4 >= self.H2:
-            raise self.S60_WindHError("You must have W3+W4 < H2")
+            raise S60_WindHError("You must have W3+W4 < H2")
 
         if self.W3 >= (self.W1 - self.W2) / 2:
-            raise self.S60_WindWError("You must have W3 < (W1-W2)/2")
+            raise S60_WindWError("You must have W3 < (W1-W2)/2")
 
     # Inlined from Methods.Slot.SlotW60.comp_angle_opening
     def comp_angle_opening(self):
@@ -992,34 +1000,3 @@ class SlotW60(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S60_InnerCheckError(SlotCheckError):
-        """ """
-
-    class S60_RCheckError(SlotCheckError):
-        """ """
-
-    class S60_W21CheckError(SlotCheckError):
-        """ """
-
-    class S60_WindError(SlotCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        winding
-
-
-        """
-
-    class S60_WindHError(SlotCheckError):
-        """ """
-
-    class S60_WindWError(SlotCheckError):
-        """ """

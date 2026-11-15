@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S26_WCheckError, Slot26_H1
 from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -141,7 +141,7 @@ class SlotW26(Slot):
                 is_trigo_direction=self.is_outwards(),
             )
         else:  # Should never be called
-            raise self.Slot26_H1(self.Slot26_H1, "H1 can't be <0")
+            raise Slot26_H1(Slot26_H1, "H1 can't be <0")
 
         if self.H0 > 0:
             line_dict["7-8"] = Segment(begin=Z7, end=Z8)
@@ -260,7 +260,7 @@ class SlotW26(Slot):
             You must have W0 < 2*R1
         """
         if self.R1 * 2 <= self.W0:
-            raise self.S26_WCheckError("You must have W0 < 2*R1")
+            raise S26_WCheckError("You must have W0 < 2*R1")
 
     # Inlined from Methods.Slot.SlotW26.comp_angle_opening
     def comp_angle_opening(self):
@@ -799,9 +799,3 @@ class SlotW26(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class Slot26_H1(Exception):
-        """ """
-
-    class S26_WCheckError(SlotCheckError):
-        """ """

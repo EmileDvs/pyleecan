@@ -8,7 +8,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import fsolve
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S50_H01CheckError,
+    S50_H23CheckError,
+    S50_NoneError,
+    S50_SpCheckError,
+    S50_W01CheckError,
+    S50_W3CheckError,
+    S50_W5CheckError,
+)
 from ...definitions import config_dict
 from ...Functions_new.labels import HOLEM_LAB, MAGNET_PROP_LAB
 from ...Functions_new.Plot import (
@@ -681,52 +690,52 @@ class HoleM50(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise self.S50_NoneError("You must set W0 !")
+            raise S50_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise self.S50_NoneError("You must set W1 !")
+            raise S50_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise self.S50_NoneError("You must set W2 !")
+            raise S50_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise self.S50_NoneError("You must set W3 !")
+            raise S50_NoneError("You must set W3 !")
         elif self.W4 is None:
-            raise self.S50_NoneError("You must set W4 !")
+            raise S50_NoneError("You must set W4 !")
         elif self.H0 is None:
-            raise self.S50_NoneError("You must set H0 !")
+            raise S50_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S50_NoneError("You must set H1 !")
+            raise S50_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise self.S50_NoneError("You must set H2 !")
+            raise S50_NoneError("You must set H2 !")
         elif self.H3 is None:
-            raise self.S50_NoneError("You must set H3 !")
+            raise S50_NoneError("You must set H3 !")
         elif self.H4 is None:
-            raise self.S50_NoneError("You must set H4 !")
+            raise S50_NoneError("You must set H4 !")
 
         if self.W0 <= self.W1:
-            raise self.S50_W01CheckError("You must have W1 < W0")
+            raise S50_W01CheckError("You must have W1 < W0")
 
         if self.H3 <= self.H2:
-            raise self.S50_H23CheckError("You must have H2 < H3")
+            raise S50_H23CheckError("You must have H2 < H3")
 
         if self.H0 <= self.H1:
-            raise self.S50_H01CheckError("You must have H1 < H0")
+            raise S50_H01CheckError("You must have H1 < H0")
 
         if self.comp_W5() < 0:
-            raise self.S50_W5CheckError("You must have W5 >=0")
+            raise S50_W5CheckError("You must have W5 >=0")
 
         alpha_0 = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # W0 in rad
         alpha_3 = 2 * np.arcsin(self.W3 / (2 * (Rext - self.H1)))  # W3 in rad
         if alpha_0 + alpha_3 > 2 * np.pi / self.Zh:
-            raise self.S50_SpCheckError(
+            raise S50_SpCheckError(
                 "Slot pitch too small for the slot, reduce Zh, W3 or W0"
             )
 
         point_dict = self._comp_point_coordinate()
         if abs(point_dict["Z1"]) > abs(point_dict["Z11"]):
-            raise self.S50_W3CheckError(
+            raise S50_W3CheckError(
                 "Points are colliding: unable to fulfill W3 constraints, for instance try increasing W3"
             )
         if abs(point_dict["Z2"]) > abs(point_dict["Z1"]):
-            raise self.S50_W3CheckError(
+            raise S50_W3CheckError(
                 "Points are colliding: unable to fulfill W3 constraints, for instance try increasing W3"
             )
 
@@ -1173,24 +1182,3 @@ class HoleM50(HoleMag):
 
         self.magnet_0 = None
         self.magnet_1 = None
-
-    class S50_H01CheckError(SlotCheckError):
-        """ """
-
-    class S50_H23CheckError(SlotCheckError):
-        """ """
-
-    class S50_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM50 is None"""
-
-    class S50_SpCheckError(SlotCheckError):
-        """ """
-
-    class S50_W01CheckError(SlotCheckError):
-        """ """
-
-    class S50_W3CheckError(SlotCheckError):
-        """ """
-
-    class S50_W5CheckError(SlotCheckError):
-        """ """

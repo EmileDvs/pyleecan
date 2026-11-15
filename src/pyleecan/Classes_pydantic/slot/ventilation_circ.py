@@ -7,7 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError
+from ...classes_common.errors import (
+    CircleBuildGeometryError,
+    ParentMissingError,
+    VentilationCircInstanceError,
+)
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -99,11 +103,11 @@ class VentilationCirc(Hole):
 
         # checking if the param have good type
         if type(alpha) not in [int, float]:
-            raise self.CircleBuildGeometryError(
+            raise CircleBuildGeometryError(
                 "The parameter 'alpha' must be an int or float"
             )
         if type(delta) not in [complex, int, float]:
-            raise self.CircleBuildGeometryError(
+            raise CircleBuildGeometryError(
                 "The parameter 'delta' must be a complex or float or int number"
             )
 
@@ -148,13 +152,13 @@ class VentilationCirc(Hole):
         """
 
         if not isinstance(self.Zh, (int, np.int32)):
-            raise self.VentilationCircInstanceError("Zh must be an integer")
+            raise VentilationCircInstanceError("Zh must be an integer")
         if not isinstance(self.H0, (float, int)):
-            raise self.VentilationCircInstanceError("H0 must be a float ot int ")
+            raise VentilationCircInstanceError("H0 must be a float ot int ")
         if not isinstance(self.D0, (float, int)):
-            raise self.VentilationCircInstanceError("D0 must be a float or int ")
+            raise VentilationCircInstanceError("D0 must be a float or int ")
         if not isinstance(self.Alpha0, (float, int)):
-            raise self.VentilationCircInstanceError("Alpha0 must be a float ot int")
+            raise VentilationCircInstanceError("Alpha0 must be a float ot int")
 
     # Inlined from Methods.Slot.VentilationCirc.comp_radius
     def comp_radius(self):
@@ -438,9 +442,3 @@ class VentilationCirc(Hole):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class CircleBuildGeometryError(Exception):
-        """ """
-
-    class VentilationCircInstanceError(Exception):
-        """ """

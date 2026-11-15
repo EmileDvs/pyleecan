@@ -9,11 +9,7 @@ from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
 from backend_classes.import_data.import_gen_vect_sin import ImportGenVectSin
 from backend_classes.import_data.import_matrix_val import ImportMatrixVal
 from backend_classes.import_data.import_matrix_xls import ImportMatrixXls
-from pyleecan.Methods.Import.ImportGenMatrixSin import (
-    GenSinDimError,
-    GenSinEmptyError,
-    GenSinTransposeError,
-)
+from pyleecan.classes_common.errors import GenSinDimError, GenSinEmptyError, GenSinTransposeError
 from Tests.New.Methods.Import import test_file
 import pytest
 

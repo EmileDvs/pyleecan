@@ -6,6 +6,7 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.errors import BHShapeError
 from ...Functions_pydantic.init_fig import init_fig
 from .._legacy_model import LegacyModel
 from ..import_data.import_matrix import ImportMatrix
@@ -88,12 +89,12 @@ class MatMagnetics(LegacyModel):
             BH = self.BH_curve.get_data()
 
             if len(BH.shape) != 2:
-                raise self.BHShapeError(
+                raise BHShapeError(
                     "BH must be a two colums matrix: H and B(H). Return shape: "
                     + str(BH.shape)
                 )
             if BH.shape[1] != 2:
-                raise self.BHShapeError(
+                raise BHShapeError(
                     "BH must be a two colums matrix: H and B(H). Return shape: "
                     + str(BH.shape)
                 )
@@ -105,7 +106,7 @@ class MatMagnetics(LegacyModel):
             BH = self.ModelBH.get_BH()
 
         if self.mur_lin is None and BH is None:
-            raise self.BHShapeError("There are no BH data availible. Check input data.")
+            raise BHShapeError("There are no BH data availible. Check input data.")
 
         return BH
 
@@ -207,6 +208,3 @@ class MatMagnetics(LegacyModel):
                 fig.show()
 
         return fig
-
-    class BHShapeError(Exception):
-        """Raised when the BH curve has not the expected shape"""

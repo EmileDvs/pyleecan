@@ -5,6 +5,13 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import (
+    AngleRotationArc1Error,
+    NbPointArc1DError,
+    PointArc1Error,
+    PointTranslateArc1Error,
+    RadiusArc1Error,
+)
 from .._pyleecan_model import Complex
 from .arc import Arc
 
@@ -64,13 +71,13 @@ class Arc1(Arc):
         """
 
         if self.begin == self.end or (abs(self.begin) == 0 and abs(self.end) == 0):
-            raise self.PointArc1Error(
+            raise PointArc1Error(
                 "The beginning point and the ending "
                 + "point of an Arc1 can't be "
                 + "the same"
             )
         if self.radius == 0:
-            raise self.RadiusArc1Error("An Arc1 can't have a null radius")
+            raise RadiusArc1Error("An Arc1 can't have a null radius")
 
     # Inlined from Methods.Geometry.Arc1.comp_length
     def comp_length(self):
@@ -143,9 +150,9 @@ class Arc1(Arc):
         # Check that the Arc is correct
         self.check()
         if not isinstance(nb_point, int):
-            raise self.NbPointArc1DError("discretize : nb_point must be an integer")
+            raise NbPointArc1DError("discretize : nb_point must be an integer")
         if nb_point < 0:
-            raise self.NbPointArc1DError("nb_point must be >=0")
+            raise NbPointArc1DError("nb_point must be >=0")
 
         # We use the complex representation of the point
         z1 = self.begin
@@ -356,7 +363,7 @@ class Arc1(Arc):
         None
         """
         if not isinstance(angle, float) and not isinstance(angle, int):
-            raise self.AngleRotationArc1Error("The angle must be a float or int ")
+            raise AngleRotationArc1Error("The angle must be a float or int ")
 
         # check if Arc1 is correct"
         self.check()
@@ -467,7 +474,7 @@ class Arc1(Arc):
             and not isinstance(Zt, int)
             and not isinstance(Zt, float)
         ):
-            raise self.PointTranslateArc1Error(
+            raise PointTranslateArc1Error(
                 "The point must be a complex number or int or float"
             )
 
@@ -477,18 +484,3 @@ class Arc1(Arc):
         # Modification from the translation of Arc1
         self.begin = self.begin + Zt
         self.end = self.end + Zt
-
-    class AngleRotationArc1Error(Exception):
-        """ """
-
-    class NbPointArc1DError(Exception):
-        """ """
-
-    class PointArc1Error(Exception):
-        """ """
-
-    class PointTranslateArc1Error(Exception):
-        """ """
-
-    class RadiusArc1Error(Exception):
-        """ """

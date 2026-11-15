@@ -2,12 +2,7 @@
 
 from backend_classes.geometry.arc_3 import Arc3
 from backend_classes.geometry.arc_2 import Arc2
-from pyleecan.Methods.Geometry.Arc3 import (
-    AngleRotationArc3Error,
-    NbPointArc3DError,
-    PointTranslateArc3Error,
-    PointArc3Error,
-)
+from pyleecan.classes_common.errors import AngleRotationArc3Error, NbPointArc3DError, PointTranslateArc3Error, PointArc3Error
 from numpy import pi, exp, sqrt, linspace
 
 import pytest

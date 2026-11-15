@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from ...classes_common.errors import MachineCheckError
+from ...classes_common.errors import M4C_PError, M4C_WrongRotor, M4C_WrongStator
 from .lam_slot_wind import LamSlotWind
 from .machine_sync import MachineSync
 
@@ -61,15 +61,11 @@ class MachineWRSM(MachineSync):
         super(type(self), self).check()
 
         if not isinstance(self.rotor, LamSlotWind):
-            raise self.M4C_WrongRotor(
-                "The Rotor of a MachineWRSM must be a LamSlotWind"
-            )
+            raise M4C_WrongRotor("The Rotor of a MachineWRSM must be a LamSlotWind")
         if not isinstance(self.stator, LamSlotWind):
-            raise self.M4C_WrongStator(
-                "The Stator of a MachineWRSM must be a LamSlotWind"
-            )
+            raise M4C_WrongStator("The Stator of a MachineWRSM must be a LamSlotWind")
         if self.rotor.winding.p != self.stator.winding.p:
-            raise self.M4C_PError(
+            raise M4C_PError(
                 "The stator and the rotor winding must have the same value for p"
             )
 
@@ -107,51 +103,3 @@ class MachineWRSM(MachineSync):
             type_str += " (int rotor)"
 
         return type_str
-
-    class M4C_PError(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        different
-            p value
-
-        """
-
-    class M4C_WrongRotor(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """
-
-    class M4C_WrongStator(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """

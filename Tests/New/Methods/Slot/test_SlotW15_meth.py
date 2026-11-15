@@ -5,7 +5,7 @@ from backend_classes.slot.slot_w_15 import SlotW15
 from numpy import arcsin, exp, pi
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW15 import S15InnerError
+from pyleecan.classes_common.errors import S15InnerError
 
 # For AlmostEqual
 DELTA = 1e-4

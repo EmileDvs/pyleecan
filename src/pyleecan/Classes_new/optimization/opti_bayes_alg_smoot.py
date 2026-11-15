@@ -8,6 +8,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ...classes_common.errors import OptimizationAttributeError
 from .._smoot.smoot import MOO
 from ..output.output import Output
 from ..output.xoutput import XOutput
@@ -54,7 +55,7 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
 
         # Check problem existence
         if self.problem == None:
-            raise self.OptimizationAttributeError(
+            raise OptimizationAttributeError(
                 "The problem has not been defined, please add a problem to OptiGenAlgNsga2Deap."
             )
 
@@ -62,7 +63,7 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
         if self.problem.obj_func == None or (
             isinstance(self.problem.obj_func, dict) and len(self.problem.obj_func) == 0
         ):
-            raise self.OptimizationAttributeError(
+            raise OptimizationAttributeError(
                 "Optimization problem must contain at least one objective function"
             )
 
@@ -78,7 +79,7 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
                     mess = "The objective function '{}' is not callable, please define the attribute 'keeper'.".format(
                         obj_func.name
                     )
-                    raise self.OptimizationAttributeError(mess)
+                    raise OptimizationAttributeError(mess)
 
             # Check if objectives and other datakeepers have different symbol
             if isinstance(self.problem.datakeeper_list, list):
@@ -92,14 +93,14 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
                 mess = (
                     "Every objective function and datakeeper must have a unique symbol."
                 )
-                raise self.OptimizationAttributeError(mess)
+                raise OptimizationAttributeError(mess)
 
         # Check the problem contains at least one objective function
         if self.problem.design_var == None or (
             isinstance(self.problem.design_var, list)
             and len(self.problem.design_var) == 0
         ):
-            raise self.OptimizationAttributeError(
+            raise OptimizationAttributeError(
                 "Optimization problem must contain at least one design variable"
             )
         else:
@@ -110,22 +111,22 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
                     mess = "The design variable '{}' is expected to be an OptiDesignVarSet or an OptiDesignVarInterval.".format(
                         design_var.name
                     )
-                    raise self.OptimizationAttributeError(mess)
+                    raise OptimizationAttributeError(mess)
                 elif design_var.symbol in [None, ""]:
                     mess = "The design variable '{}' has no symbol.".format(
                         design_var.name
                     )
-                    raise self.OptimizationAttributeError(mess)
+                    raise OptimizationAttributeError(mess)
                 elif not callable(design_var.get_value):
                     mess = "OptiDesignVar '{}' get_value is not callable.".format(
                         design_var.name
                     )
-                    raise self.OptimizationAttributeError(mess)
+                    raise OptimizationAttributeError(mess)
                 elif not callable(design_var.setter):
                     mess = "OptiDesignVar '{}' setter is not callable.".format(
                         design_var.name
                     )
-                    raise self.OptimizationAttributeError(mess)
+                    raise OptimizationAttributeError(mess)
 
         # Check constraints type
         if self.problem.constraint != None:
@@ -135,7 +136,7 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
                     mess = "The constraint '{}' has a wrong type: expected one of {} received '{}'.".format(
                         cstr.name, ["<=", "<", "==", "=", ">=", ">"], cstr.type_const
                     )
-                    raise self.OptimizationAttributeError(mess)
+                    raise OptimizationAttributeError(mess)
                 # Check getter
                 elif not callable(cstr.keeper):
                     mess = (
@@ -143,7 +144,7 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
                             cstr.name
                         )
                     )
-                    raise self.OptimizationAttributeError(mess)
+                    raise OptimizationAttributeError(mess)
 
     # Inlined from Methods.Optimization.OptiBayesAlgSmoot.eval_const
     def eval_const(self, constraint, input_x):
@@ -417,9 +418,3 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
         except Exception as err:
             logger.error("{}: {}".format(type(err).__name__, err))
             raise err
-
-    class OptimizationAttributeError(Exception):
-        """Class to Raise an error"""
-
-        def __init__(self, message):
-            self.message = message

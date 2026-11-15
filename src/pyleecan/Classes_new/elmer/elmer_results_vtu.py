@@ -8,6 +8,7 @@ from typing import Any, ClassVar
 import numpy as np
 from meshio import read
 
+from ...classes_common.errors import ElmerResultsVTUError
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.mesh_vtk import MeshVTK
 from ..mesh.solution_data import SolutionData
@@ -68,7 +69,7 @@ class ElmerResultsVTU(Elmer):
         save_path, fn = os.path.split(self.file_path)
         file_name, file_ext = os.path.splitext(fn)
         if file_ext != ".vtu":
-            raise self.ElmerResultsVTUError(
+            raise ElmerResultsVTUError(
                 "ElmerResultsVTU: Results file must be of type VTU."
             )
 
@@ -156,6 +157,3 @@ class ElmerResultsVTU(Elmer):
                     meshsol.add_solution(solution=solution, label=label)
 
         return meshsol
-
-    class ElmerResultsVTUError(Exception):
-        pass

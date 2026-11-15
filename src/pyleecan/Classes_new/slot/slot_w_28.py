@@ -7,7 +7,13 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S28_R1R1CheckError,
+    S28_R1W3CheckError,
+    S28_RboW0CheckError,
+    S28_ZsCheckError,
+)
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -287,7 +293,7 @@ class SlotW28(Slot):
         #        raise S28_WCheckError("You must have W0 < 2*R1")
 
         if self.W0 * 0.5 / Rbo >= 1:
-            raise self.S28_RboW0CheckError("You must have W0/2 < Rbo")
+            raise S28_RboW0CheckError("You must have W0/2 < Rbo")
 
         if self.is_outwards():
             R1 = Rbo + self.H0 + self.R1
@@ -295,19 +301,19 @@ class SlotW28(Slot):
             R1 = Rbo - self.H0
 
         if self.W3 * 0.5 / R1 >= 1:
-            raise self.S28_R1W3CheckError(
+            raise S28_R1W3CheckError(
                 "W3 is too high comparing to the lamination bore radius (Rbo)"
             )
 
         if self.R1 / R1 >= 1:
-            raise self.S28_R1R1CheckError(
+            raise S28_R1R1CheckError(
                 "R1 is too high comparing to the lamination bore radius (Rbo)"
             )
 
         alpha = 2 * np.arcsin((2 * self.R1 + self.W3) * 0.5 / R1)
 
         if alpha > 2 * np.pi / self.Zs:
-            raise self.S28_ZsCheckError("There are too many slots to match W3 and R1")
+            raise S28_ZsCheckError("There are too many slots to match W3 and R1")
 
     # Inlined from Methods.Slot.SlotW28.comp_angle_opening
     def comp_angle_opening(self):
@@ -826,15 +832,3 @@ class SlotW28(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S28_R1R1CheckError(SlotCheckError):
-        """ """
-
-    class S28_R1W3CheckError(SlotCheckError):
-        """ """
-
-    class S28_RboW0CheckError(SlotCheckError):
-        """ """
-
-    class S28_ZsCheckError(SlotCheckError):
-        """ """

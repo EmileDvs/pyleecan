@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S57_NoneError
 from ...definitions import config_dict
 from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
 from ...Functions_pydantic.labels import HOLEM_LAB
@@ -441,19 +441,19 @@ class HoleM57(HoleMag):
         """
         # Check that everything is set
         if self.W0 is None:
-            raise self.S57_NoneError("You must set W0 !")
+            raise S57_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise self.S57_NoneError("You must set W1 !")
+            raise S57_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise self.S57_NoneError("You must set W2 !")
+            raise S57_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise self.S57_NoneError("You must set W3 !")
+            raise S57_NoneError("You must set W3 !")
         elif self.W4 is None:
-            raise self.S57_NoneError("You must set W4 !")
+            raise S57_NoneError("You must set W4 !")
         elif self.H1 is None:
-            raise self.S57_NoneError("You must set H1 !")
+            raise S57_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise self.S57_NoneError("You must set H2 !")
+            raise S57_NoneError("You must set H2 !")
 
     # Inlined from Methods.Slot.HoleM57.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -936,6 +936,3 @@ class HoleM57(HoleMag):
 
         self.magnet_0 = None
         self.magnet_1 = None
-
-    class S57_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM57 is None"""

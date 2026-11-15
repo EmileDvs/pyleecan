@@ -6,7 +6,7 @@ from numpy import pi
 
 from backend_classes.machine.lamination import Lamination
 from backend_classes.slot.ventilation_trap import VentilationTrap
-from pyleecan.Methods.Slot.VentilationTrap import TrapezeBuildGeometryError
+from pyleecan.classes_common.errors import TrapezeBuildGeometryError
 from backend_classes.slot.hole import Hole
 
 """unittest for VentilationTrap"""

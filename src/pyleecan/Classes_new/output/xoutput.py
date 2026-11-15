@@ -10,6 +10,7 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from numpy import array
 
+from ...classes_common.errors import PlotError, XOutputError
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
@@ -183,7 +184,7 @@ class XOutput(Output):
             if paramexplorer.symbol == symbol:
                 return paramexplorer
 
-        raise self.XOutputError("Unknown symbol {}".format(symbol))
+        raise XOutputError("Unknown symbol {}".format(symbol))
 
     # Inlined from Methods.Output.XOutput.get_pareto_index
     def get_pareto_index(self):
@@ -448,7 +449,7 @@ class XOutput(Output):
             idx = slice(None)
 
         if plot_type not in ["point", "curve"]:
-            raise self.PlotError(f"Unknown plot_type {plot_type}.")
+            raise PlotError(f"Unknown plot_type {plot_type}.")
 
         # get data and labels
         x_values, x_label = self._get_symbol_data_(self, x_symbol, idx)
@@ -624,9 +625,3 @@ class XOutput(Output):
         It raises a ValueError if there is no such item.
         """
         return self.output_list.remove(x)
-
-    class PlotError(Exception):
-        pass
-
-    class XOutputError(Exception):
-        pass

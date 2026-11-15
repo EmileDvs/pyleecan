@@ -6,7 +6,7 @@ from numpy import pi
 
 from backend_classes.machine.lamination import Lamination
 from backend_classes.slot.ventilation_polar import VentilationPolar
-from pyleecan.Methods.Slot.VentilationPolar import PolarArcBuildGeometryError
+from pyleecan.classes_common.errors import PolarArcBuildGeometryError
 from backend_classes.slot.hole import Hole
 
 """unittest for VentilationPolar"""

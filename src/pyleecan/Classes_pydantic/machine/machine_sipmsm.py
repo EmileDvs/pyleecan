@@ -5,7 +5,12 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from ...classes_common.errors import MachineCheckError
+from ...classes_common.errors import (
+    M2C_MagnetTooLarge,
+    M2C_PError,
+    M2C_WrongRotor,
+    M2C_WrongStator,
+)
 from .lam_slot_m import LamSlotM
 from .lam_slot_wind import LamSlotWind
 from .lamination import Lamination
@@ -61,25 +66,21 @@ class MachineSIPMSM(MachineSync):
         super(type(self), self).check()
 
         if not isinstance(self.rotor, LamSlotM):
-            raise self.M2C_WrongRotor(
-                "The Rotor of a Machine_Type_2 must be a LamSlotM"
-            )
+            raise M2C_WrongRotor("The Rotor of a Machine_Type_2 must be a LamSlotM")
         if not isinstance(self.stator, LamSlotWind):
-            raise self.M2C_WrongStator(
+            raise M2C_WrongStator(
                 "The Stator of a Machine_Type_2 must be a LamSlotWind"
             )
 
         if self.rotor.get_pole_pair_number() != self.stator.get_pole_pair_number():
-            raise self.M2C_PError(
-                "The stator and the rotor must have the same value for p"
-            )
+            raise M2C_PError("The stator and the rotor must have the same value for p")
 
         if self.rotor.is_internal and (
             self.rotor.w_slot.comp_radius_mid_active(self.rotor.Rext)
             + self.rotor.Hscr / 2.0
             > self.stator.Rint
         ):
-            raise self.M2C_MagnetTooLarge("The airgap is too small for the magnet")
+            raise M2C_MagnetTooLarge("The airgap is too small for the magnet")
 
     # Inlined from Methods.Machine.MachineSIPMSM.get_machine_type
     def get_machine_type(self):
@@ -115,54 +116,3 @@ class MachineSIPMSM(MachineSync):
             type_str += " (int rotor)"
 
         return type_str
-
-    class M2C_MagnetTooLarge(MachineCheckError):
-        """ """
-
-    class M2C_PError(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        values
-
-
-        """
-
-    class M2C_WrongRotor(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        Magnet
-
-
-        """
-
-    class M2C_WrongStator(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """

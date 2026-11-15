@@ -7,7 +7,11 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S21_H1rCheckError,
+    S21_W01CheckError,
+)
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -330,10 +334,10 @@ class SlotW21(Slot):
             With H1 in radian, you must have H1 < pi/2
         """
         if self.W1 < self.W0:
-            raise self.S21_W01CheckError("You must have W0 <= W1")
+            raise S21_W01CheckError("You must have W0 <= W1")
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise self.S21_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise S21_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # Inlined from Methods.Slot.SlotW21.comp_angle_opening
     def comp_angle_opening(self):
@@ -841,9 +845,3 @@ class SlotW21(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S21_H1rCheckError(SlotCheckError):
-        """ """
-
-    class S21_W01CheckError(SlotCheckError):
-        """ """

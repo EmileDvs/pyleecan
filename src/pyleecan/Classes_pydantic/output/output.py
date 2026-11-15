@@ -9,6 +9,7 @@ import numpy as np
 from pydantic import Field
 from scipy.io import savemat
 
+from ...classes_common.errors import GetOutError
 from ...definitions import RESULT_DIR, config_dict
 from ...Functions_pydantic.Plot import fft_dict
 from ...Functions_pydantic.Plot.Pyvista.configure_plot import configure_plot
@@ -303,12 +304,12 @@ class Output(LegacyModel):
             or self.simu.machine.rotor is None
             or self.simu.machine.rotor.mat_type is None
         ):
-            raise self.GetOutError(
+            raise GetOutError(
                 "Output.simu.machine.rotor.mat_type is not Set, can't get the B(H) curve"
             )
         mat_type = self.simu.machine.rotor.mat_type
         if mat_type.mag is None:
-            raise self.GetOutError("rotor materials magnetic property is not set")
+            raise GetOutError("rotor materials magnetic property is not set")
 
         # Compute and store the BH curve
         BH = mat_type.mag.get_BH()
@@ -350,12 +351,12 @@ class Output(LegacyModel):
             or self.simu.machine.stator is None
             or self.simu.machine.stator.mat_type is None
         ):
-            raise self.GetOutError(
+            raise GetOutError(
                 "Output.simu.machine.stator.mat_type is not Set, can't get the B(H) curve"
             )
         mat_type = self.simu.machine.stator.mat_type
         if mat_type.mag is None:
-            raise self.GetOutError("stator materials magnetic property is not set")
+            raise GetOutError("stator materials magnetic property is not set")
 
         # Compute and store the BH curve
         BH = mat_type.mag.get_BH()
@@ -888,6 +889,3 @@ class Output(LegacyModel):
                     + " o\n"
                 )
         return mem_str
-
-    class GetOutError(Exception):
-        """Raised when an output can't be returned"""

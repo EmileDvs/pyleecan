@@ -7,7 +7,7 @@ from typing import ClassVar
 import numpy as np
 from scipy.io import loadmat
 
-from ...classes_common.errors import PyleecanImportError as ImportError
+from ...classes_common.errors import MatFileError
 from .import_matrix import ImportMatrix
 
 
@@ -50,13 +50,11 @@ class ImportMatlab(ImportMatrix):
         if self.file_path[-4:] != ".mat":
             self.file_path += ".mat"
         if not os.path.isfile(self.file_path):
-            raise self.MatFileError(
-                "ERROR: The mat file doesn't exist " + self.file_path
-            )
+            raise MatFileError("ERROR: The mat file doesn't exist " + self.file_path)
 
         data_dict = loadmat(self.file_path)
         if self.var_name not in data_dict:
-            raise self.MatFileError(
+            raise MatFileError(
                 "ERROR: The variable "
                 + self.var_name
                 + " is not available in the file "
@@ -64,6 +62,3 @@ class ImportMatlab(ImportMatrix):
             )
 
         return np.squeeze(data_dict[self.var_name])
-
-    class MatFileError(ImportError):
-        """Raised when the file_path is wrong or the variable is missing"""

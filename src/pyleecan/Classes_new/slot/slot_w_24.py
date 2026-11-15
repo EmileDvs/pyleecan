@@ -7,7 +7,11 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S24_HWCheckError,
+    S24_W3CheckError,
+)
 from ...Functions_new.labels import DRAW_PROP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -281,13 +285,13 @@ class SlotW24(Slot):
         Rbo = self.get_Rbo()
 
         if 2 * np.arcsin(self.W3 / (2 * Rbo)) > 2 * np.pi / self.Zs:
-            raise self.S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
+            raise S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
 
         if (
             not self.is_outwards()
             and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2)) > 2 * np.pi / self.Zs
         ):
-            raise self.S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
+            raise S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
 
     # Inlined from Methods.Slot.SlotW24.comp_angle_opening
     def comp_angle_opening(self):
@@ -721,9 +725,3 @@ class SlotW24(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S24_HWCheckError(SlotCheckError):
-        """ """
-
-    class S24_W3CheckError(SlotCheckError):
-        """ """

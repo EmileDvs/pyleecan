@@ -5,7 +5,7 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from ...classes_common.errors import MachineCheckError
+from ...classes_common.errors import MSy_PError, MSy_WrongRotor, MSy_WrongStator
 from .lam_hole import LamHole
 from .lam_slot_wind import LamSlotWind
 from .machine_sync import MachineSync
@@ -60,16 +60,12 @@ class MachineSyRM(MachineSync):
         super(type(self), self).check()
 
         if not isinstance(self.rotor, LamHole):
-            raise self.MSy_WrongRotor("The Rotor of a MachineSyRM must be a LamHole")
+            raise MSy_WrongRotor("The Rotor of a MachineSyRM must be a LamHole")
         if not isinstance(self.stator, LamSlotWind):
-            raise self.MSy_WrongStator(
-                "The Stator of a MachineSyRM must be a LamSlotWind"
-            )
+            raise MSy_WrongStator("The Stator of a MachineSyRM must be a LamSlotWind")
 
         if self.rotor.get_pole_pair_number() != self.stator.get_pole_pair_number():
-            raise self.MSy_PError(
-                "The stator and the rotor must have the same value for p"
-            )
+            raise MSy_PError("The stator and the rotor must have the same value for p")
 
     # Inlined from Methods.Machine.MachineSyRM.get_machine_type
     def get_machine_type(self):
@@ -104,51 +100,3 @@ class MachineSyRM(MachineSync):
             type_str += " (int rotor)"
 
         return type_str
-
-    class MSy_PError(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        values
-
-
-        """
-
-    class MSy_WrongRotor(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Magnet
-
-        """
-
-    class MSy_WrongStator(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """

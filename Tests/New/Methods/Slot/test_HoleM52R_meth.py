@@ -8,11 +8,7 @@ from backend_classes.geometry.surf_line import SurfLine
 from backend_classes.machine.lam_hole import LamHole
 from backend_classes.slot.hole_m_52_r import HoleM52R
 from backend_classes.machine.magnet import Magnet
-from pyleecan.Methods.Slot.HoleM52R import (
-    S52R_NoneError,
-    S52R_R0CheckError,
-    S52R_widthCheckError,
-)
+from pyleecan.classes_common.errors import S52R_NoneError, S52R_R0CheckError, S52R_widthCheckError
 
 from numpy import exp, arcsin, ndarray, pi, angle
 

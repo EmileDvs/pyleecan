@@ -6,7 +6,12 @@ from typing import ClassVar
 
 import numpy as np
 
-from ...classes_common.errors import PyleecanImportError as ImportError
+from ...classes_common.errors import (
+    GenSinDimError,
+    GenSinEmptyError,
+    GenSinTransposeError,
+    InitSinMatDimError,
+)
 from .import_gen_vect_sin import ImportGenVectSin
 from .import_matrix import ImportMatrix
 
@@ -45,14 +50,14 @@ class ImportGenMatrixSin(ImportMatrix):
         """
 
         if len(self.sin_list) == 0:
-            raise self.GenSinEmptyError("ERROR: The sinus list is empty")
+            raise GenSinEmptyError("ERROR: The sinus list is empty")
 
         N = self.sin_list[0].N
         is_T = self.sin_list[0].is_transpose
 
         for ii in range(1, len(self.sin_list)):
             if self.sin_list[ii].N != N:
-                raise self.GenSinDimError(
+                raise GenSinDimError(
                     "ERROR: Dimension mismatch between ImportGenVectSin 0 (N="
                     + str(N)
                     + ") and ImportGenVectSin "
@@ -62,7 +67,7 @@ class ImportGenMatrixSin(ImportMatrix):
                     + ")"
                 )
             if self.sin_list[ii].is_transpose != is_T:
-                raise self.GenSinTransposeError(
+                raise GenSinTransposeError(
                     "ERROR: is_transpose mismatch between ImportGenVectSin 0 ("
                     + str(is_T)
                     + ") and ImportGenVectSin "
@@ -98,24 +103,12 @@ class ImportGenMatrixSin(ImportMatrix):
         """
 
         if len(f) != len(A):
-            raise self.InitSinMatDimError("ERROR: f and A have different dimensions")
+            raise InitSinMatDimError("ERROR: f and A have different dimensions")
         if len(f) != len(Phi):
-            raise self.InitSinMatDimError("ERROR: f and Phi have different dimensions")
+            raise InitSinMatDimError("ERROR: f and Phi have different dimensions")
 
         self.sin_list = []
         for ii in range(len(f)):
             self.sin_list.append(
                 ImportGenVectSin(f=f[ii], A=A[ii], Phi=Phi[ii], N=N, Tf=Tf)
             )
-
-    class GenSinDimError(ImportError):
-        """Raised when the ImportGenVectSin of the sin_list has different size (N)"""
-
-    class GenSinEmptyError(ImportError):
-        """Raised when the sin_list is empty"""
-
-    class GenSinTransposeError(ImportError):
-        """Raised when the ImportGenVectSin of the sin_list has different is_transpose"""
-
-    class InitSinMatDimError(ImportError):
-        """Raised when the init_vector is called with wrong arguments"""

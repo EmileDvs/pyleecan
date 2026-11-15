@@ -7,7 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S52_alphaCheckError,
+    S52_H12CheckError,
+    S52_NoneError,
+    S52_W1CheckError,
+)
 from ...definitions import config_dict
 from ...Functions_pydantic.labels import HOLEM_LAB
 from ...Functions_pydantic.Plot import (
@@ -253,28 +259,28 @@ class HoleM52(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise self.S52_NoneError("You must set W0 !")
+            raise S52_NoneError("You must set W0 !")
         elif self.W3 is None:
-            raise self.S52_NoneError("You must set W3 !")
+            raise S52_NoneError("You must set W3 !")
         elif self.H0 is None:
-            raise self.S52_NoneError("You must set H0 !")
+            raise S52_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S52_NoneError("You must set H1 !")
+            raise S52_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise self.S52_NoneError("You must set H2 !")
+            raise S52_NoneError("You must set H2 !")
 
         if self.H2 >= self.H1:
-            raise self.S52_H12CheckError("You must have H2 < H1")
+            raise S52_H12CheckError("You must have H2 < H1")
 
         alpha = self.comp_alpha()
         if alpha <= 0:
-            raise self.S52_alphaCheckError(
+            raise S52_alphaCheckError(
                 "The teeth are too wide for the lamination (reduce W3 or H0)"
             )
 
         W1 = self.comp_W1()
         if W1 <= 0:
-            raise self.S52_W1CheckError("W1 is <=0, you must reduce W0 or W3")
+            raise S52_W1CheckError("W1 is <=0, you must reduce W0 or W3")
 
     # Inlined from Methods.Slot.HoleM52.comp_alpha
     def comp_alpha(self):
@@ -795,15 +801,3 @@ class HoleM52(HoleMag):
         """
 
         self.magnet_0 = None
-
-    class S52_H12CheckError(SlotCheckError):
-        """ """
-
-    class S52_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM52 is None"""
-
-    class S52_W1CheckError(SlotCheckError):
-        """ """
-
-    class S52_alphaCheckError(SlotCheckError):
-        """ """

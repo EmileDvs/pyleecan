@@ -119,3 +119,26 @@ def test_support_moved_out_of_classes_new():
         assert not (CLASS_DIR / name).exists(), name
     for name in ("check.py", "errors.py", "femm_handler.py", "parent_types.py"):
         assert (COMMON_DIR / name).is_file(), name
+
+
+@pytest.mark.parametrize("backend", ["dataclass", "pydantic"])
+def test_method_errors_are_shared(backend):
+    """Both implementations raise the same error class (classes_common.errors)"""
+    from pyleecan.classes_common.errors import PointSegmentError
+
+    lookup = {"dataclass": _import.LOOKUP, "pydantic": _import_pydantic.LOOKUP}[backend]
+    with pytest.raises(PointSegmentError):
+        lookup.import_class("Segment")(begin=0, end=0).check()
+
+
+def test_redirect_legacy_method_error_import():
+    from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
+        _redirect_shared_error_imports,
+    )
+
+    source = "from pyleecan.Methods.Geometry.Segment import PointSegmentError, helper\n"
+    result = _redirect_shared_error_imports(
+        source, "Tests", method_error_names={"PointSegmentError"}
+    )
+    assert "from pyleecan.Methods.Geometry.Segment import helper" in result
+    assert "import PointSegmentError" in result and "_error" in result

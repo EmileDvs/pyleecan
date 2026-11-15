@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch, Rectangle, Wedge
 
-from ...classes_common.errors import Lam_WindCheckError
+from ...classes_common.errors import SCC_NotARotor, SCC_WrongCond
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import BAR_LAB, WIND_LAB
@@ -124,10 +124,10 @@ class LamSquirrelCage(LamSlotWind):
         LamSlotWind.check(self)
 
         if self.is_stator:
-            raise self.SCC_NotARotor("A LamSquirrelCage Lamination can't be a stator")
+            raise SCC_NotARotor("A LamSquirrelCage Lamination can't be a stator")
 
         if not isinstance(self.winding.conductor, CondType21):
-            raise self.SCC_WrongCond("A LamSquirrelCage's conductor must be a type 2_1")
+            raise SCC_WrongCond("A LamSquirrelCage's conductor must be a type 2_1")
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_angle_d_axis
     def comp_angle_d_axis(self):
@@ -816,12 +816,3 @@ class LamSquirrelCage(LamSlotWind):
             fig.savefig(save_path)
             plt.close(fig=fig)
         return fig, ax
-
-    class SquirrelCageCheckError(Lam_WindCheckError):
-        """ """
-
-    class SCC_NotARotor(SquirrelCageCheckError):
-        """ """
-
-    class SCC_WrongCond(SquirrelCageCheckError):
-        """ """

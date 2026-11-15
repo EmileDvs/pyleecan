@@ -370,7 +370,17 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
 #### Order
 
 - [ ] Geometry: bootstrapped (129 method modules); generated classes
-      byte-identical. Parent links: none read. Hints and functions to do.
+      byte-identical. Parent links: none read. Method errors shared (below):
+      `Tests/New/Methods/Geometry` 282 passed with each backend (33 failures
+      before). Hints and functions to do.
+
+#### Method errors
+
+Every error class of the method modules is written once in
+`classes_common/errors.py` (255 errors, shared by both implementations; the
+same definition in several modules is written once). The classes raise it
+directly; the test generator redirects the legacy imports
+(`from pyleecan.Methods.Geometry.Segment import PointSegmentError`) to it.
 - [ ] Slot
 - [ ] Machine
 - [ ] Simulation, Loss, Output, Optimization

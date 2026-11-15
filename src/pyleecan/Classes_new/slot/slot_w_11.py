@@ -8,7 +8,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.check import check_var
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S11_H1rCheckError,
+    S11_R1CheckError,
+    S11_RHCheckError,
+    S11_RWCheckError,
+    S11_W01CheckError,
+)
 from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
@@ -404,27 +411,27 @@ class SlotW11(Slot):
             return "In constant tooth mode, you must set W3 !"
 
         if self.R1 <= 0:
-            raise self.S11_R1CheckError("You must have R1 > 0")
+            raise S11_R1CheckError("You must have R1 > 0")
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise self.S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
             # return "With H1 in radian, you must have H1 < pi/2"
 
         if self.W1 is None or self.W0 is None:
             pass
         else:
             if self.W1 < self.W0:
-                raise self.S11_W01CheckError("You must have W0 <= W1")
+                raise S11_W01CheckError("You must have W0 <= W1")
 
         if not self.W1 is None or not self.W2 is None:
             if 2 * self.R1 > self.W2 and (not self.W2 is None or not self.R1 is None):
-                raise self.S11_RWCheckError("You must have 2*R1 <= W2")
+                raise S11_RWCheckError("You must have 2*R1 <= W2")
 
         if self.R1 > self.H2:
-            raise self.S11_RHCheckError("You must have R1 <= H2")
+            raise S11_RHCheckError("You must have R1 <= H2")
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise self.S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise S11_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # Inlined from Methods.Slot.SlotW11.comp_angle_opening
     def comp_angle_opening(self):
@@ -1448,18 +1455,3 @@ class SlotW11(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S11_H1rCheckError(SlotCheckError):
-        """ """
-
-    class S11_R1CheckError(SlotCheckError):
-        """ """
-
-    class S11_RHCheckError(SlotCheckError):
-        """ """
-
-    class S11_RWCheckError(SlotCheckError):
-        """ """
-
-    class S11_W01CheckError(SlotCheckError):
-        """ """

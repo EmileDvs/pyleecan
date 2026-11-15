@@ -7,7 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S15InnerError
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -187,7 +187,7 @@ class SlotW15(Slot):
             theta = 2 * np.arctan((y2 - np.sqrt(-(R1**2) + x2**2 + y2**2)) / (R1 + x2))
             Z11 = R1 * np.exp(1j * theta) + Zc4
         else:
-            raise self.S15InnerError("Slot Type 15 can't be used on inner lamination")
+            raise S15InnerError("Slot Type 15 can't be used on inner lamination")
 
         point_dict = {}
         # symetry
@@ -265,7 +265,7 @@ class SlotW15(Slot):
         """
 
         if not self.is_outwards():
-            raise self.S15InnerError("Slot Type 15 can't be used on inner lamination")
+            raise S15InnerError("Slot Type 15 can't be used on inner lamination")
 
     # Inlined from Methods.Slot.SlotW15.comp_angle_opening
     def comp_angle_opening(self):
@@ -879,6 +879,3 @@ class SlotW15(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S15InnerError(SlotCheckError):
-        """ """

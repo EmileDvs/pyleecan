@@ -7,6 +7,11 @@ import numpy as np
 from matplotlib.patches import Circle
 from pydantic import Field
 
+from ...classes_common.errors import (
+    AngleRotationCircleError,
+    PointTranslateCircleError,
+    RadiusCircleError,
+)
 from .._pyleecan_model import Complex
 from .arc_3 import Arc3
 from .surface import Surface
@@ -58,7 +63,7 @@ class Circle(Surface):
 
         """
         if self.radius < 0:
-            raise self.RadiusCircleError("The radius of a circle must be >= 0")
+            raise RadiusCircleError("The radius of a circle must be >= 0")
 
     # Inlined from Methods.Geometry.Circle.comp_length
     def comp_length(self):
@@ -261,7 +266,7 @@ class Circle(Surface):
             The angle must be a float or int
         """
         if not isinstance(angle, float) and not isinstance(angle, int):
-            raise self.AngleRotationCircleError("The angle must be a float or int ")
+            raise AngleRotationCircleError("The angle must be a float or int ")
 
         if angle == 0:
             return  # Nothing to do
@@ -301,7 +306,7 @@ class Circle(Surface):
             and not isinstance(Zt, int)
             and not isinstance(Zt, float)
         ):
-            raise self.PointTranslateCircleError(
+            raise PointTranslateCircleError(
                 "The point must be a complex number or int or float"
             )
 
@@ -315,12 +320,3 @@ class Circle(Surface):
         if self.point_ref is not None:
             self.point_ref = self.point_ref + Zt
         self.center = self.center + Zt
-
-    class AngleRotationCircleError(Exception):
-        """ """
-
-    class PointTranslateCircleError(Exception):
-        """ """
-
-    class RadiusCircleError(Exception):
-        """ """

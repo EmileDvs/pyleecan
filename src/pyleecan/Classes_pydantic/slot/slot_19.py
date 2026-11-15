@@ -6,7 +6,7 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import SlotCheckError
+from ...classes_common.errors import S19_W1CheckError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .slot import Slot
@@ -132,7 +132,7 @@ class Slot19(Slot):
             W1 must be > 0
         """
         if self.W1 < 0:
-            raise self.S19_W1CheckError("W1 must be larger than zero")
+            raise S19_W1CheckError("W1 must be larger than zero")
 
     # Inlined from Methods.Slot.Slot19.comp_angle_bottom
     def comp_angle_bottom(self):
@@ -240,6 +240,3 @@ class Slot19(Slot):
         S1 = R1**2 / 2 * (alpha1 - np.sin(alpha1))
 
         return Str + S1 - S0
-
-    class S19_W1CheckError(SlotCheckError):
-        """ """

@@ -5,12 +5,7 @@ from backend_classes.slot.slot_w_30 import SlotW30
 from numpy import arcsin, exp, pi
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW30 import (
-    S30_R1Error,
-    S30_R2Error,
-    S30_W3Error,
-    S30_W0Error,
-)
+from pyleecan.classes_common.errors import S30_R1Error, S30_R2Error, S30_W3Error, S30_W0Error
 
 # For AlmostEqual
 DELTA = 1e-4

@@ -5,7 +5,7 @@ from typing import ClassVar
 
 from pydantic import Field
 
-from ...classes_common.errors import MachineCheckError
+from ...classes_common.errors import M3C_PError, M3C_WrongRotor, M3C_WrongStator
 from .lam_h import LamH
 from .lam_hole import LamHole
 from .lam_slot_wind import LamSlotWind
@@ -62,16 +62,14 @@ class MachineIPMSM(MachineSync):
         super(type(self), self).check()
 
         if not isinstance(self.rotor, LamHole):
-            raise self.M3C_WrongRotor("The Rotor of a Machine_Type_3 must be a LamHole")
+            raise M3C_WrongRotor("The Rotor of a Machine_Type_3 must be a LamHole")
         if not isinstance(self.stator, LamSlotWind):
-            raise self.M3C_WrongStator(
+            raise M3C_WrongStator(
                 "The Stator of a Machine_Type_3 must be a LamSlotWind"
             )
 
         if self.rotor.get_pole_pair_number() != self.stator.get_pole_pair_number():
-            raise self.M3C_PError(
-                "The stator and the rotor must have the same value for p"
-            )
+            raise M3C_PError("The stator and the rotor must have the same value for p")
 
     # Inlined from Methods.Machine.MachineIPMSM.get_machine_type
     def get_machine_type(self):
@@ -106,51 +104,3 @@ class MachineIPMSM(MachineSync):
             type_str += " (int rotor)"
 
         return type_str
-
-    class M3C_PError(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        values
-
-
-        """
-
-    class M3C_WrongRotor(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Magnet
-
-        """
-
-    class M3C_WrongStator(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """

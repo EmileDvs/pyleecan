@@ -5,6 +5,7 @@ import itertools
 from dataclasses import dataclass
 from typing import ClassVar
 
+from ...classes_common.errors import DataKeeperError, ParamExplorerError
 from .param_explorer_set import ParamExplorerSet
 from .var_param import VarParam
 
@@ -38,16 +39,14 @@ class VarParamSweep(VarParam):
         # Check ParamExplorers
         for paramexplorer in self.paramexplorer_list:
             if paramexplorer.setter is None:
-                raise self.ParamExplorerError("ParamExplorer.setter must be defined")
+                raise ParamExplorerError("ParamExplorer.setter must be defined")
             elif len(paramexplorer.symbol) == 0:
-                raise self.ParamExplorerError("ParamExplorer.symbol cannot be empty")
+                raise ParamExplorerError("ParamExplorer.symbol cannot be empty")
             elif (
                 isinstance(paramexplorer, ParamExplorerSet)
                 and len(paramexplorer.value) == 0
             ):
-                raise self.ParamExplorerError(
-                    "ParamExplorer.value_list cannot be empty"
-                )
+                raise ParamExplorerError("ParamExplorer.value_list cannot be empty")
 
         # Default simulation index
         N_simu = self.get_simu_number()
@@ -63,9 +62,9 @@ class VarParamSweep(VarParam):
         # Check DataKeepers
         for datakeeper in self.datakeeper_list:
             if datakeeper.symbol in ["", None]:
-                raise self.DataKeeperError("DataKeeper.symbol cannot be empty")
+                raise DataKeeperError("DataKeeper.symbol cannot be empty")
             elif datakeeper.keeper is None:
-                raise self.DataKeeperError("DataKeeper.keeper must be defined")
+                raise DataKeeperError("DataKeeper.keeper must be defined")
 
     # Inlined from Methods.Simulation.VarParamSweep.generate_simulation_list
     def generate_simulation_list(self, ref_simu=None):
@@ -160,9 +159,3 @@ class VarParamSweep(VarParam):
             nb_simu *= paramexplorer.get_N()
 
         return nb_simu
-
-    class DataKeeperError(Exception):
-        pass
-
-    class ParamExplorerError(Exception):
-        pass

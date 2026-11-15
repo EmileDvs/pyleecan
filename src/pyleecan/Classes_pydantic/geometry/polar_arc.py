@@ -7,6 +7,7 @@ import numpy as np
 from matplotlib.patches import Polygon
 from pydantic import Field
 
+from ...classes_common.errors import AnglePolarArcError, NbPointPolarArcError
 from .arc_1 import Arc1
 from .segment import Segment
 from .surface import Surface
@@ -53,9 +54,7 @@ class PolarArc(Surface):
 
         """
         if self.angle == 0:
-            raise self.AnglePolarArcError(
-                "The angle of a polar arc must be different to 0"
-            )
+            raise AnglePolarArcError("The angle of a polar arc must be different to 0")
 
     # Inlined from Methods.Geometry.PolarArc.comp_length
     # -*-- coding: utf-8 -*
@@ -145,11 +144,9 @@ class PolarArc(Surface):
         self.check()
 
         if not isinstance(nb_point, int):
-            raise self.NbPointPolarArcError(
-                "Discretize : the nb_point must be an integer"
-            )
+            raise NbPointPolarArcError("Discretize : the nb_point must be an integer")
         if nb_point < 0:
-            raise self.NbPointPolarArcError("Discretize: nb_point must be >= 0")
+            raise NbPointPolarArcError("Discretize: nb_point must be >= 0")
 
         # getting lines that delimit the PolarArc
         lines = self.get_lines()
@@ -302,9 +299,3 @@ class PolarArc(Surface):
         # check if the PolarArc is correct
         self.check()
         self.point_ref += Zt
-
-    class AnglePolarArcError(Exception):
-        """ """
-
-    class NbPointPolarArcError(Exception):
-        """ """

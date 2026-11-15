@@ -7,7 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S16AlphaT, S16OutterError
 from ...Functions_new.Geometry.inter_circle_circle import inter_circle_circle
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
@@ -159,7 +159,7 @@ class SlotW16(Slot):
         hsp = np.pi / self.Zs  # Half slot pitch
 
         if self.is_outwards():
-            raise self.S16OutterError("Slot Type 16 can't be used on outer lamination")
+            raise S16OutterError("Slot Type 16 can't be used on outer lamination")
 
         # ZXt => Complex coordinate in the tooth ref
         Z1 = Rbo * np.exp(-1j * self.W0 / 2)
@@ -266,7 +266,7 @@ class SlotW16(Slot):
             Slot 16 must be on internal lamination only
         """
         if self.is_outwards():
-            raise self.S16OutterError("Slot 16 must be on internal lamination only")
+            raise S16OutterError("Slot 16 must be on internal lamination only")
 
         # Check W3 at min radius
         Rbo = self.get_Rbo()
@@ -274,7 +274,7 @@ class SlotW16(Slot):
         alphaT = 2 * np.arcsin(self.W3 * 0.5 / (Rbo - self.H0 - self.H2))
 
         if alphaT >= sp:
-            raise self.S16AlphaT(
+            raise S16AlphaT(
                 "Tooth is larger than the slot pitch angle: reduce W3, H2 or Zs"
             )
 
@@ -787,9 +787,3 @@ class SlotW16(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S16AlphaT(SlotCheckError):
-        """ """
-
-    class S16OutterError(SlotCheckError):
-        """ """

@@ -7,7 +7,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S10_H1rCheckError,
+    S10_W01CheckError,
+    S10_W02CheckError,
+)
 from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -357,13 +362,13 @@ class SlotW10(Slot):
             With H1 in radian, you must have H1 < pi/2
         """
         if self.W1 < self.W0:
-            raise self.S10_W01CheckError("You must have W0 <= W1")
+            raise S10_W01CheckError("You must have W0 <= W1")
 
         if self.W2 < self.W0:
-            raise self.S10_W02CheckError("You must have W0 <= W2")
+            raise S10_W02CheckError("You must have W0 <= W2")
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise self.S10_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise S10_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # Inlined from Methods.Slot.SlotW10.comp_angle_opening
     def comp_angle_opening(self):
@@ -873,12 +878,3 @@ class SlotW10(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S10_H1rCheckError(SlotCheckError):
-        """ """
-
-    class S10_W01CheckError(SlotCheckError):
-        """ """
-
-    class S10_W02CheckError(SlotCheckError):
-        """ """

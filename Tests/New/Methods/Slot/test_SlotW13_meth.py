@@ -5,7 +5,7 @@ from backend_classes.slot.slot_w_13 import SlotW13
 from numpy import ndarray, arcsin, pi
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW13 import S13_H1rCheckError
+from pyleecan.classes_common.errors import S13_H1rCheckError
 
 # For AlmostEqual
 DELTA = 1e-4

@@ -5,7 +5,7 @@ from backend_classes.slot.slot_w_24 import SlotW24
 from numpy import ndarray, pi, exp
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW24 import S24_HWCheckError
+from pyleecan.classes_common.errors import S24_HWCheckError
 
 # For AlmostEqual
 DELTA = 1e-4

@@ -4,7 +4,7 @@ from numpy import arcsin, pi
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.slot.slot import Slot
 from backend_classes.slot.slot_w_21 import SlotW21
-from pyleecan.Methods.Slot.SlotW21 import S21_H1rCheckError
+from pyleecan.classes_common.errors import S21_H1rCheckError
 
 # For AlmostEqual
 DELTA = 1e-4

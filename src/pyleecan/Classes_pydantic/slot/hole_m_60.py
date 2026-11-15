@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S60_NoneError, S60_WCheckError
 from ...definitions import config_dict
 from ...Functions_pydantic.labels import HOLEM_LAB
 from ...Functions_pydantic.Plot import (
@@ -378,20 +378,20 @@ class HoleM60(HoleMag):
         """
         # Check that everything is set
         if self.W0 is None:
-            raise self.S60_NoneError("You must set W0 !")
+            raise S60_NoneError("You must set W0 !")
         elif self.W1 is None:
-            raise self.S60_NoneError("You must set W1 !")
+            raise S60_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise self.S60_NoneError("You must set W2 !")
+            raise S60_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise self.S60_NoneError("You must set W3 !")
+            raise S60_NoneError("You must set W3 !")
         elif self.H0 is None:
-            raise self.S60_NoneError("You must set H0 !")
+            raise S60_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S60_NoneError("You must set H1 !")
+            raise S60_NoneError("You must set H1 !")
 
         if (self.W1 + self.H0) > self.W2:
-            raise self.S60_WCheckError("You must have (W1 + H0) <= W2")
+            raise S60_WCheckError("You must have (W1 + H0) <= W2")
 
     # Inlined from Methods.Slot.HoleM60.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -844,9 +844,3 @@ class HoleM60(HoleMag):
 
         self.magnet_0 = None
         self.magnet_1 = None
-
-    class S60_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM58 is None"""
-
-    class S60_WCheckError(SlotCheckError):
-        """ """

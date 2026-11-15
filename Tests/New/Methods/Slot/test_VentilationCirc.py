@@ -5,7 +5,7 @@ import pytest
 
 from backend_classes.machine.lamination import Lamination
 from backend_classes.slot.ventilation_circ import VentilationCirc
-from pyleecan.Methods.Slot.VentilationCirc import CircleBuildGeometryError
+from pyleecan.classes_common.errors import CircleBuildGeometryError
 from backend_classes.slot.hole import Hole
 
 """unittest for VentilationCirc"""

@@ -7,7 +7,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import ParentMissingError, S63_NoneError
 from ...definitions import config_dict
 from ...Functions_new.labels import HOLEM_LAB
 from ...Functions_new.Plot import (
@@ -210,11 +210,11 @@ class HoleM63(HoleMag):
 
         # Check that everything is set
         if self.W0 is None:
-            raise self.S63_NoneError("You must set W0 !")
+            raise S63_NoneError("You must set W0 !")
         elif self.H0 is None:
-            raise self.S63_NoneError("You must set H0 !")
+            raise S63_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S63_NoneError("You must set H1 !")
+            raise S63_NoneError("You must set H1 !")
 
     # Inlined from Methods.Slot.HoleM63.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -804,6 +804,3 @@ class HoleM63(HoleMag):
         """
 
         self.magnet_0 = None
-
-    class S63_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM63 is None"""

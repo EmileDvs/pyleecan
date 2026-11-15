@@ -226,8 +226,27 @@ def _format_function_source(source, path):
     return _format_source_with_ruff(result.stdout, str(path))
 
 
-def _redirect_shared_error_imports(source, package, soft_name="pyleecan"):
-    """Redirect imports of centralized function errors, preserving bindings."""
+def shared_error_names(error_path=None):
+    """Names of the shared exceptions (classes_common/errors.py)."""
+    from pyleecan.definitions import MAIN_DIR
+
+    error_path = Path(error_path or Path(MAIN_DIR) / "classes_common" / "errors.py")
+    if not error_path.is_file():
+        return frozenset()
+    tree = ast.parse(error_path.read_text(encoding="utf-8"))
+    return frozenset(node.name for node in tree.body if isinstance(node, ast.ClassDef))
+
+
+def _redirect_shared_error_imports(
+    source, package, soft_name="pyleecan", method_error_names=None
+):
+    """Redirect imports of centralized errors, preserving bindings.
+
+    The function errors (FUNCTION_ERRORS) and, given method_error_names (see
+    shared_error_names), the errors imported from a legacy method module
+    (``from pyleecan.Methods.Geometry.Segment import PointSegmentError``) are
+    imported from the shared errors instead.
+    """
     data = source.encode("utf-8")
     offsets = [0]
     for index, value in enumerate(data):
@@ -245,6 +264,19 @@ def _redirect_shared_error_imports(source, package, soft_name="pyleecan"):
             if module.startswith(prefix):
                 errors = FUNCTION_ERRORS.get(module[len(prefix) :])
                 break
+        if (
+            errors is None
+            and method_error_names
+            and module.startswith(f"{soft_name}.Methods.")
+            and not any(alias.name == "*" for alias in node.names)
+        ):
+            from .class_generator import _shared_error_name
+
+            errors = {
+                alias.name: _shared_error_name((module, alias.name))
+                for alias in node.names
+                if _shared_error_name((module, alias.name)) in method_error_names
+            }
         if not errors:
             continue
         if any(alias.name == "*" for alias in node.names):

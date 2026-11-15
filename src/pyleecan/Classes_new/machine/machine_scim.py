@@ -4,7 +4,12 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ...classes_common.errors import MachineCheckError
+from ...classes_common.errors import (
+    M1C_RingTooLarge,
+    M1C_SquirrelCagePError,
+    M1C_WrongRotor,
+    M1C_WrongStator,
+)
 from .lam_slot_wind import LamSlotWind
 from .lam_squirrel_cage import LamSquirrelCage
 from .machine_dfim import MachineDFIM
@@ -49,24 +54,18 @@ class MachineSCIM(MachineDFIM):
         self.__class__.__bases__[0].__bases__[0].check(self)
 
         if not isinstance(self.rotor, LamSquirrelCage):
-            raise self.M1C_WrongRotor(
-                "The Rotor of a MachineSCIM must be a LamSquirrelCage"
-            )
+            raise M1C_WrongRotor("The Rotor of a MachineSCIM must be a LamSquirrelCage")
         if not isinstance(self.stator, LamSlotWind):
-            raise self.M1C_WrongStator(
-                "The Stator of a MachineSCIM must be a LamSlotWind"
-            )
+            raise M1C_WrongStator("The Stator of a MachineSCIM must be a LamSlotWind")
         if self.rotor.winding.p != self.stator.winding.p:
-            raise self.M1C_SquirrelCagePError(
+            raise M1C_SquirrelCagePError(
                 "The stator and the rotor winding must have the same value for p"
             )
         if self.rotor.is_internal and (
             self.rotor.slot.comp_radius_mid_active() + self.rotor.Hscr / 2.0
             > self.stator.Rint
         ):
-            raise self.M1C_RingTooLarge(
-                "The Ring is larger than the stator internal radius"
-            )
+            raise M1C_RingTooLarge("The Ring is larger than the stator internal radius")
 
     # Inlined from Methods.Machine.MachineSCIM.get_machine_type
     def get_machine_type(self):
@@ -107,41 +106,3 @@ class MachineSCIM(MachineDFIM):
             type_str += " (int rotor)"
 
         return type_str
-
-    class M1C_RingTooLarge(MachineCheckError):
-        """ """
-
-    class M1C_SquirrelCagePError(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        winding
-            have a different p value as the rotor one
-
-        """
-
-    class M1C_WrongRotor(MachineCheckError):
-        """ """
-
-    class M1C_WrongStator(MachineCheckError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        with
-            Winding
-
-        """

@@ -9,7 +9,7 @@ from backend_classes.slot.hole_m_53 import HoleM53
 from backend_classes.machine.magnet import Magnet
 from numpy import exp, arcsin, ndarray, pi
 
-from pyleecan.Methods.Slot.HoleM53 import Slot53InterError
+from pyleecan.classes_common.errors import Slot53InterError
 
 # For AlmostEqual
 DELTA = 1e-6

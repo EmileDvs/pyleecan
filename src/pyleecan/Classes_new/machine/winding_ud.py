@@ -8,7 +8,13 @@ from typing import ClassVar
 
 import numpy as np
 
-from ...classes_common.errors import WindingError
+from ...classes_common.errors import (
+    WindingDefMsError,
+    WindingError,
+    WindingT1DefMsError,
+    WindingT2DefNtError,
+    WindingT5DefMsError,
+)
 from ...Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
 from ...Functions_new.Winding.shift_wind_mat import shift_wind_mat
 from .winding import Winding
@@ -150,7 +156,7 @@ class WindingUD(Winding):
         Ntcoil = self.Ntcoil  # number of turns per coils
 
         if round(Nt) != Nt:  # Nt must be an integer
-            raise self.WindingT2DefNtError(
+            raise WindingT2DefNtError(
                 "wrong winding definition, cannot wind all "
                 "the teeth (Zs/qs/2 is not an integer)!"
             )
@@ -262,7 +268,7 @@ class WindingUD(Winding):
 
             wind_mat = wind_mat[:, :, ::-1, :]
         else:
-            raise self.WindingT5DefMsError(
+            raise WindingT5DefMsError(
                 "Winding geometry not handled yet, enter "
                 "your own winding matrix with "
                 "type_winding=0 and contact EOMYS"
@@ -358,7 +364,7 @@ class WindingUD(Winding):
                         wind_mat[0, 0, id1, q] = +((-1) ** (l + q - 1 + k)) * Ntcoil
 
         else:
-            raise self.WindingT1DefMsError(
+            raise WindingT1DefMsError(
                 "Winding geometry not handled yet. Enter "
                 "your own winding matrix with WindingUD"
                 " and contact EOMYS"
@@ -431,7 +437,7 @@ class WindingUD(Winding):
         else:
             phase_order = range(1, qs + 1)
         if ms % 1 != 0:  # if ms isn't an integer
-            raise self.WindingDefMsError(
+            raise WindingDefMsError(
                 "wrong winding definition, Zs/2/p/qs must be an integer !"
             )
         ms = int(ms)
@@ -477,54 +483,3 @@ class WindingUD(Winding):
         # Matrix changed, compute again periodicity
         self.per_a = None
         self.is_aper_a = None
-
-    class WindingDefMsError(WindingError):
-        """ """
-
-    class WindingT1DefMsError(WindingError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        must
-            be 0
-
-        """
-
-    class WindingT2DefNtError(WindingError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        must
-            be 0
-
-        """
-
-    class WindingT5DefMsError(WindingError):
-        """
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Raises
-        ------
-        must
-            be 0
-
-        """

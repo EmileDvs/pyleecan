@@ -8,7 +8,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.check import check_var
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S23_H1rCheckError,
+    S23_W01CheckError,
+)
 from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
@@ -303,10 +307,10 @@ class SlotW23(Slot):
         """
 
         if self.H1_is_rad and self.H1 >= np.pi / 2:
-            raise self.S23_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
+            raise S23_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
         if self.W1 is not None and self.W1 < self.W0:
-            raise self.S23_W01CheckError("You must have W0 <= W1")
+            raise S23_W01CheckError("You must have W0 <= W1")
 
     # Inlined from Methods.Slot.SlotW23.comp_angle_opening
     def comp_angle_opening(self):
@@ -1282,9 +1286,3 @@ class SlotW23(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S23_H1rCheckError(SlotCheckError):
-        """ """
-
-    class S23_W01CheckError(SlotCheckError):
-        """ """

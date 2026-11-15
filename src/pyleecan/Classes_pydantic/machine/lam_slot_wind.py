@@ -10,7 +10,7 @@ from matplotlib.patches import FancyArrowPatch, Patch
 from matplotlib.pyplot import plot, subplots
 from pydantic import Field
 
-from ...classes_common.errors import Lam_WindCheckError
+from ...classes_common.errors import LWC_SlotTooLong
 from ...Classes_new._swat_em import datamodel
 from ...definitions import config_dict
 from ...Functions_pydantic.Electrical.dqh_transformation import dqh2n
@@ -230,9 +230,7 @@ class LamSlotWind(LamSlot):
         self.slot.check()
 
         if self.comp_height_yoke() < 0:
-            raise self.LWC_SlotTooLong(
-                "The Slot is too long for the lamination (HYoke <0)"
-            )
+            raise LWC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
 
         """
         Wt = self.slot.comp_tooth_widths()["WTooth_min"]
@@ -1624,6 +1622,3 @@ class LamSlotWind(LamSlot):
             self.winding.p = p
             # Enforce call to redefine winding matrix
             self.winding.clean()
-
-    class LWC_SlotTooLong(Lam_WindCheckError):
-        """ """

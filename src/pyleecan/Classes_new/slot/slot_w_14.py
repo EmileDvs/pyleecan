@@ -7,7 +7,11 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S14_Rbo0CheckError,
+    S14_Rbo1CheckError,
+)
 from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
@@ -258,7 +262,7 @@ class SlotW14(Slot):
         H1 = self.get_H1()
 
         if self.W0 * 0.5 / Rbo >= 1:
-            raise self.S14_Rbo0CheckError("You must have W0/2 < Rbo")
+            raise S14_Rbo0CheckError("You must have W0/2 < Rbo")
 
         if self.is_outwards():
             R1 = Rbo + self.H0 + H1
@@ -266,7 +270,7 @@ class SlotW14(Slot):
             R1 = Rbo - self.H0 - H1
 
         if self.W3 * 0.5 / R1 >= 1:
-            raise self.S14_Rbo1CheckError(
+            raise S14_Rbo1CheckError(
                 "W3 is too high comparing to the lamination bore radius (Rbo)"
             )
 
@@ -1080,9 +1084,3 @@ class SlotW14(Slot):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class S14_Rbo0CheckError(SlotCheckError):
-        """ """
-
-    class S14_Rbo1CheckError(SlotCheckError):
-        """ """

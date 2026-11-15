@@ -5,13 +5,7 @@ import matplotlib.pyplot as plt
 from numpy import array, exp, pi, sqrt
 
 from backend_classes.geometry.arc_1 import Arc1
-from pyleecan.Methods.Geometry.Arc1 import (
-    PointArc1Error,
-    RadiusArc1Error,
-    NbPointArc1DError,
-    AngleRotationArc1Error,
-    PointTranslateArc1Error,
-)
+from pyleecan.classes_common.errors import PointArc1Error, RadiusArc1Error, NbPointArc1DError, AngleRotationArc1Error, PointTranslateArc1Error
 from Tests.New._test_paths import save_plot_path as save_path
 import pytest
 

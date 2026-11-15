@@ -7,7 +7,15 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    ParentMissingError,
+    S53_NoneError,
+    S53_Rext0CheckError,
+    S53_Rext1CheckError,
+    S53_W4CheckError,
+    S53_W5CheckError,
+    Slot53InterError,
+)
 from ...definitions import config_dict
 from ...Functions_new.Geometry.inter_line_circle import inter_line_circle
 from ...Functions_new.labels import HOLEM_LAB
@@ -135,7 +143,7 @@ class HoleM53(HoleMag):
         elif len(Zlist) == 2 and Zlist[1].imag < 0 and Zlist[1].real > 0:
             Z11 = Zlist[1]
         else:
-            raise self.Slot53InterError("ERROR: Slot 53, Can't find Z11 coordinates")
+            raise Slot53InterError("ERROR: Slot 53, Can't find Z11 coordinates")
 
         Zlist = inter_line_circle(Z2, Z6, Rext - self.H1)
         if len(Zlist) == 2 and Zlist[0].imag < 0 and Zlist[0].real > 0:
@@ -143,7 +151,7 @@ class HoleM53(HoleMag):
         elif len(Zlist) == 2 and Zlist[1].imag < 0 and Zlist[1].real > 0:
             Z1 = Zlist[1]
         else:
-            raise self.Slot53InterError("ERROR: Slot 53, Can't find Z1 coordinates")
+            raise Slot53InterError("ERROR: Slot 53, Can't find Z1 coordinates")
 
         point_dict = {}
         point_dict["Z1"] = Z1
@@ -511,38 +519,38 @@ class HoleM53(HoleMag):
 
         # Check that everything is set
         if self.W1 is None:
-            raise self.S53_NoneError("You must set W1 !")
+            raise S53_NoneError("You must set W1 !")
         elif self.W2 is None:
-            raise self.S53_NoneError("You must set W2 !")
+            raise S53_NoneError("You must set W2 !")
         elif self.W3 is None:
-            raise self.S53_NoneError("You must set W3 !")
+            raise S53_NoneError("You must set W3 !")
         elif self.W4 is None:
-            raise self.S53_NoneError("You must set W4 !")
+            raise S53_NoneError("You must set W4 !")
         elif self.H0 is None:
-            raise self.S53_NoneError("You must set H0 !")
+            raise S53_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S53_NoneError("You must set H1 !")
+            raise S53_NoneError("You must set H1 !")
         elif self.H2 is None:
-            raise self.S53_NoneError("You must set H2 !")
+            raise S53_NoneError("You must set H2 !")
         elif self.H3 is None:
-            raise self.S53_NoneError("You must set H3 !")
+            raise S53_NoneError("You must set H3 !")
 
         Rext = self.get_Rext()
 
         if Rext <= self.H0:
-            raise self.S53_Rext0CheckError("You must have H0 < Rext")
+            raise S53_Rext0CheckError("You must have H0 < Rext")
 
         if Rext <= self.H1:
-            raise self.S53_Rext1CheckError("You must have H1 < Rext")
+            raise S53_Rext1CheckError("You must have H1 < Rext")
 
         if np.pi / 2 <= self.W4:
-            raise self.S53_W4CheckError("You must have W4 < pi/2")
+            raise S53_W4CheckError("You must have W4 < pi/2")
 
         if self.comp_W5() < 0:
-            raise self.S53_W5CheckError("You must have W5 >=0")
+            raise S53_W5CheckError("You must have W5 >=0")
 
         if self.H2 < self.H3:
-            raise self.S53_W5CheckError("You must have H3 < H2")
+            raise S53_W5CheckError("You must have H3 < H2")
 
     # Inlined from Methods.Slot.HoleM53.comp_alpha
     def comp_alpha(self):
@@ -679,7 +687,7 @@ class HoleM53(HoleMag):
         elif len(Zlist) == 2 and Zlist[1].imag < 0 and Zlist[1].real > 0:
             Z11 = Zlist[1]
         else:
-            raise self.Slot53InterError("ERROR: Slot 53, Can't find Z11 coordinates")
+            raise Slot53InterError("ERROR: Slot 53, Can't find Z11 coordinates")
 
         return abs(Z11 - Z8) - self.W2 - self.W3
 
@@ -1077,21 +1085,3 @@ class HoleM53(HoleMag):
 
         self.magnet_0 = None
         self.magnet_1 = None
-
-    class S53_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM53 is None"""
-
-    class S53_Rext0CheckError(SlotCheckError):
-        """ """
-
-    class S53_Rext1CheckError(SlotCheckError):
-        """ """
-
-    class S53_W4CheckError(SlotCheckError):
-        """ """
-
-    class S53_W5CheckError(SlotCheckError):
-        """ """
-
-    class Slot53InterError(SlotCheckError):
-        """ """

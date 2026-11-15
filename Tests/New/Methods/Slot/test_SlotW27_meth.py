@@ -6,7 +6,7 @@ from numpy import ndarray, arcsin, exp
 from backend_classes.machine.lam_slot import LamSlot
 from backend_classes.geometry.segment import Segment
 from backend_classes.slot.slot import Slot
-from pyleecan.Methods.Slot.SlotW27 import S27_W03CheckError
+from pyleecan.classes_common.errors import S27_W03CheckError
 
 # For AlmostEqual
 DELTA = 1e-4

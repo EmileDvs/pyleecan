@@ -6,6 +6,7 @@ from typing import ClassVar
 
 from pydantic import Field
 
+from ...classes_common.errors import AbstractClassError
 from ...Functions_pydantic.Electrical.dqh_transformation import n2dqh_DataTime
 from .._legacy_model import LegacyModel
 from ..magnetics.magnetics import Magnetics
@@ -170,7 +171,7 @@ class EEC(LegacyModel):
             Dict containing all magnetic quantities that have been calculated in EEC
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -185,7 +186,7 @@ class EEC(LegacyModel):
 
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -295,7 +296,7 @@ class EEC(LegacyModel):
             Dict containing all magnetic quantities that have been calculated in EEC
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -317,7 +318,7 @@ class EEC(LegacyModel):
         Is_PWM : DataFreq
             Stator current harmonics as DataFreq
         """
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
 
@@ -334,9 +335,6 @@ class EEC(LegacyModel):
 
         """
 
-        raise self.AbstractClassError(
+        raise AbstractClassError(
             "EEC is an abstract class, please create one of its daughters."
         )
-
-    class AbstractClassError(Exception):
-        pass

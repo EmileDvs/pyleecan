@@ -7,7 +7,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.errors import (
+    H54_R1CheckError,
+    H54_W0CheckError,
+    ParentMissingError,
+    S54_NoneError,
+)
 from ...definitions import config_dict
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -177,19 +182,19 @@ class HoleM54(Hole):
 
         # Check that everything is set
         if self.W0 is None:
-            raise self.S54_NoneError("You must set W0 !")
+            raise S54_NoneError("You must set W0 !")
         elif self.R1 is None:
-            raise self.S54_NoneError("You must set R1 !")
+            raise S54_NoneError("You must set R1 !")
         elif self.H0 is None:
-            raise self.S54_NoneError("You must set H0 !")
+            raise S54_NoneError("You must set H0 !")
         elif self.H1 is None:
-            raise self.S54_NoneError("You must set H1 !")
+            raise S54_NoneError("You must set H1 !")
 
         if 2 * np.pi / self.Zh <= self.W0:
-            raise self.H54_W0CheckError("You must have W0 < 2*pi/Zh")
+            raise H54_W0CheckError("You must have W0 < 2*pi/Zh")
 
         if self.R1 <= self.H0:
-            raise self.H54_R1CheckError("You must have H0 < R1")
+            raise H54_R1CheckError("You must have H0 < R1")
 
     # Inlined from Methods.Slot.HoleM54.comp_magnetization_dict
     def comp_magnetization_dict(self, is_north=True):
@@ -515,12 +520,3 @@ class HoleM54(Hole):
             if is_show_fig:
                 fig.show()
             return fig, ax
-
-    class H54_R1CheckError(SlotCheckError):
-        """ """
-
-    class H54_W0CheckError(SlotCheckError):
-        """ """
-
-    class S54_NoneError(SlotCheckError):
-        """Raised when a propery of HoleM54 is None"""
