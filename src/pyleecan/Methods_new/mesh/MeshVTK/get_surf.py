@@ -1,4 +1,4 @@
-def get_surf(self, indices=None):
+def get_surf(self, indices: list | None = None):
     """Return the surf object if it was already extracted, or extracts it from the mesh.
 
     Parameters

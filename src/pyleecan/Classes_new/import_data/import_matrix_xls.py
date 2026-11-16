@@ -3,13 +3,16 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pandas import ExcelFile, read_excel
 
 from ...classes_common.errors import XlsFileError
 from ...Functions_new.path_tools import abs_file_path
 from .import_matrix import ImportMatrix
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 @dataclass(eq=False)
@@ -55,7 +58,7 @@ class ImportMatrixXls(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrixXls.get_data
-    def get_data(self):
+    def get_data(self) -> np.ndarray:
         """Return the object's matrix
 
         Parameters

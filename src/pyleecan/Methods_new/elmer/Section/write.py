@@ -46,7 +46,7 @@ def write(self, stream=None):
     return stream
 
 
-def _convert(value, get_type=True):
+def _convert(value, get_type: bool = True):
     """internal method to convert the data corresponding to Elmer SIF needs"""
     if isinstance(value, File):  # check before str due to inheretance
         return "File " * get_type + f'"{value}"'

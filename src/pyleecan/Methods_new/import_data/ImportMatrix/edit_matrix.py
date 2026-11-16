@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def edit_matrix(self, matrix):
+def edit_matrix(self, matrix: np.ndarray) -> np.ndarray:
     """To apply transformation on the matrix
 
     Parameters

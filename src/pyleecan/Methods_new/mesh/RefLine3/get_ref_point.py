@@ -1,4 +1,10 @@
-def get_ref_point(self, element_coordinate, point):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def get_ref_point(self, element_coordinate, point: np.ndarray) -> np.ndarray | None:
     """Return the coordinate of the equivalent point in the ref element
 
     Parameters

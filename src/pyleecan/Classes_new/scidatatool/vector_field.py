@@ -1,9 +1,11 @@
 # Experimental dataclass generated from Generator/ClassesRef/SciDataTool/VectorField.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from copy import copy
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import imageio
 import matplotlib.pyplot as plt
@@ -22,6 +24,13 @@ from ...Functions_new.SciDataTool.Plot.init_fig import copy_fig, init_fig
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_class import LegacyClass
 from .data_nd import DataND
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from .data_nd import DataND
+    from .vector_field import VectorField
 
 
 @dataclass(eq=False)
@@ -53,8 +62,12 @@ class VectorField(LegacyClass):
 
     # Inlined from Methods.SciDataTool.VectorField.change_periodicity
     def change_periodicity(
-        self, per_a_new, per_t_new, is_aper_a_new=None, is_aper_t_new=False
-    ):
+        self,
+        per_a_new: int,
+        per_t_new: int,
+        is_aper_a_new: bool | None = None,
+        is_aper_t_new: bool = False,
+    ) -> VectorField:
         """Change (anti-)periodicities of vectorfield given input periodicities before changing referential
 
         Parameters
@@ -201,8 +214,13 @@ class VectorField(LegacyClass):
 
     # Inlined from Methods.SciDataTool.VectorField.change_referential
     def change_referential(
-        self, rotation_speed, is_waveform, atol=1e-9, sym_t_new={}, atol_freq=1e-6
-    ):
+        self,
+        rotation_speed: float,
+        is_waveform: bool,
+        atol: float = 1e-9,
+        sym_t_new: dict = {},
+        atol_freq: float = 1e-6,
+    ) -> VectorField:
         """Change referential of vectorfield given input rotation speed (algebric to include rotation direction)
 
         Parameters
@@ -285,7 +303,7 @@ class VectorField(LegacyClass):
         return vf_new
 
     # Inlined from Methods.SciDataTool.VectorField.filter_spectral_leakage
-    def filter_spectral_leakage(self, freqs_th):
+    def filter_spectral_leakage(self, freqs_th: np.ndarray) -> VectorField:
         """Filter spectral leakage from a SciDataTool VectorField object
 
         Parameters
@@ -338,7 +356,7 @@ class VectorField(LegacyClass):
         a VectorField object
         """
 
-        comp_dict = {}
+        comp_dict: dict[str, DataND] = {}
         for key, comp in self.components.items():
             comp_dict[key] = comp.freq_to_time()
 
@@ -373,7 +391,12 @@ class VectorField(LegacyClass):
 
     # Inlined from Methods.SciDataTool.VectorField.get_harm_rphiz_along
     def get_harm_rphiz_along(
-        self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]
+        self,
+        N_harm,
+        *args,
+        unit: str = "SI",
+        is_norm: bool = False,
+        axis_data: list = [],
     ):
         """Returns the list of the cylindrical (r,phi,z) components of the field, using conversions and symmetries if needed.
         Parameters
@@ -542,7 +565,14 @@ class VectorField(LegacyClass):
         return return_dict
 
     # Inlined from Methods.SciDataTool.VectorField.get_harm_xyz_along
-    def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]):
+    def get_harm_xyz_along(
+        self,
+        N_harm,
+        *args,
+        unit: str = "SI",
+        is_norm: bool = False,
+        axis_data: list = [],
+    ):
         """Returns the list of the cartesian (x,y,z) components of the field, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -782,7 +812,9 @@ class VectorField(LegacyClass):
         return return_dict
 
     # Inlined from Methods.SciDataTool.VectorField.get_mag_rphiz_along
-    def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+    def get_mag_rphiz_along(
+        self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []
+    ):
         """Returns the list of the cylindrical (r,phi,z) components of the field, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -973,7 +1005,9 @@ class VectorField(LegacyClass):
         return return_dict
 
     # Inlined from Methods.SciDataTool.VectorField.get_mag_xyz_along
-    def get_mag_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+    def get_mag_xyz_along(
+        self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []
+    ):
         """Returns the list of the cartesian (comp_x,comp_y,comp_z) components of the field, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -1169,7 +1203,12 @@ class VectorField(LegacyClass):
 
     # Inlined from Methods.SciDataTool.VectorField.get_rphiz_along
     def get_rphiz_along(
-        self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True
+        self,
+        *args,
+        unit: str = "SI",
+        is_norm: bool = False,
+        axis_data: list = [],
+        is_squeeze: bool = True,
     ):
         """Returns the list of the cylindrical (r,phi,z) components of the field, using conversions and symmetries if needed.
         Parameters
@@ -1412,7 +1451,9 @@ class VectorField(LegacyClass):
         return return_dict
 
     # Inlined from Methods.SciDataTool.VectorField.get_vectorfield_along
-    def get_vectorfield_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+    def get_vectorfield_along(
+        self, *args, unit="SI", is_norm: bool = False, axis_data=[]
+    ):
         """Returns the sliced or interpolated version of the data, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -1423,7 +1464,7 @@ class VectorField(LegacyClass):
         a VectorField object
         """
 
-        comp_dict = {}
+        comp_dict: dict[str, DataND] = {}
 
         for comp in self.components:  # Call get_data_along on each component
             comp_dict[comp] = self.components[comp].get_data_along(
@@ -1434,7 +1475,12 @@ class VectorField(LegacyClass):
 
     # Inlined from Methods.SciDataTool.VectorField.get_xyz_along
     def get_xyz_along(
-        self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True
+        self,
+        *args,
+        unit: str = "SI",
+        is_norm: bool = False,
+        axis_data: list = [],
+        is_squeeze: bool = True,
     ):
         """Returns the list of the cartesian (comp_x,comp_y,comp_z) components of the field, using conversions and symmetries if needed.
         Parameters
@@ -1689,46 +1735,46 @@ class VectorField(LegacyClass):
         self,
         *arg_list,
         axis_data=None,
-        radius=None,
-        is_norm=False,
-        unit="SI",
-        component_list=None,
-        data_list=[],
-        legend_list=[],
-        color_list=None,
+        radius: float | None = None,
+        is_norm: bool = False,
+        unit: str = "SI",
+        component_list: list | None = None,
+        data_list: list = [],
+        legend_list: list = [],
+        color_list: list | None = None,
         linestyles=None,
         linewidth_list=[1.5],
-        save_path=None,
-        x_min=None,
-        x_max=None,
-        y_min=None,
-        y_max=None,
-        is_logscale_x=False,
-        is_logscale_y=False,
-        is_disp_title=True,
-        is_grid=True,
-        is_auto_ticks=True,
-        is_auto_range=False,
-        fig=None,
-        ax=None,
-        barwidth=100,
-        type_plot=None,
-        fund_harm_dict=None,
-        is_show_fig=None,
-        win_title=None,
-        thresh=None,
+        save_path: str | None = None,
+        x_min: float | None = None,
+        x_max: float | None = None,
+        y_min: float | None = None,
+        y_max: float | None = None,
+        is_logscale_x: bool = False,
+        is_logscale_y: bool = False,
+        is_disp_title: bool = True,
+        is_grid: bool = True,
+        is_auto_ticks: bool = True,
+        is_auto_range: bool = False,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        barwidth: float = 100,
+        type_plot: str | None = None,
+        fund_harm_dict: dict | None = None,
+        is_show_fig: bool | None = None,
+        win_title: str | None = None,
+        thresh: float | None = None,
         font_name="arial",
         font_size_title=12,
         font_size_label=10,
         font_size_legend=8,
-        scale_units="x",
-        scale=None,
-        width=0.005,
+        scale_units: str = "x",
+        scale: float | None = None,
+        width: float = 0.005,
         phase=0,
-        is_show_legend=True,
-        is_outside_legend=False,
-        is_frame_legend=True,
-    ):
+        is_show_legend: bool = True,
+        is_outside_legend: bool = False,
+        is_frame_legend: bool = True,
+    ) -> None:
         """Plots a field as a function of time
 
         Parameters
@@ -2033,52 +2079,52 @@ class VectorField(LegacyClass):
     # Inlined from Methods.SciDataTool.VectorField.plot_2D_Data_Animated
     def plot_2D_Data_Animated(
         self,
-        animated_axis,
+        animated_axis: str,
         *arg_list,
-        nb_frames=50,
-        fps=10,
+        nb_frames: int = 50,
+        fps: int = 10,
         axis_data=None,
-        radius=None,
-        is_norm=False,
-        unit="SI",
-        component_list=None,
-        data_list=[],
-        legend_list=[],
-        color_list=None,
+        radius: float | None = None,
+        is_norm: bool = False,
+        unit: str = "SI",
+        component_list: list | None = None,
+        data_list: list = [],
+        legend_list: list = [],
+        color_list: list | None = None,
         linestyles=None,
         linewidth_list=[1.5],
-        save_path=None,
-        x_min=None,
-        x_max=None,
-        y_min=None,
-        y_max=None,
-        is_logscale_x=False,
-        is_logscale_y=False,
-        is_disp_title=True,
-        is_grid=True,
-        is_auto_ticks=True,
-        is_auto_range=False,
-        fig=None,
-        ax=None,
-        barwidth=100,
-        type_plot=None,
-        fund_harm_dict=None,
-        is_show_fig=None,
-        win_title=None,
-        thresh=0.02,
+        save_path: str | None = None,
+        x_min: float | None = None,
+        x_max: float | None = None,
+        y_min: float | None = None,
+        y_max: float | None = None,
+        is_logscale_x: bool = False,
+        is_logscale_y: bool = False,
+        is_disp_title: bool = True,
+        is_grid: bool = True,
+        is_auto_ticks: bool = True,
+        is_auto_range: bool = False,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        barwidth: float = 100,
+        type_plot: str | None = None,
+        fund_harm_dict: dict | None = None,
+        is_show_fig: bool | None = None,
+        win_title: str | None = None,
+        thresh: float = 0.02,
         font_name="arial",
         font_size_title=12,
         font_size_label=10,
         font_size_legend=8,
         scale_units="x",
-        scale=None,
-        width=0.005,
+        scale: float | None = None,
+        width: float = 0.005,
         phase=0,
-        is_show_legend=True,
-        is_outside_legend=False,
-        is_frame_legend=True,
-        is_plot_only=False,
-    ):
+        is_show_legend: bool = True,
+        is_outside_legend: bool = False,
+        is_frame_legend: bool = True,
+        is_plot_only: bool = False,
+    ) -> None:
         """Plots a field as a function of time
 
         Parameters
@@ -2335,37 +2381,37 @@ class VectorField(LegacyClass):
         self,
         *arg_list,
         axis_data=None,
-        is_norm=False,
-        unit="SI",
+        is_norm: bool = False,
+        unit: str = "SI",
         component_list=None,
-        save_path=None,
-        x_min=None,
-        x_max=None,
-        y_min=None,
-        y_max=None,
-        z_min=None,
-        z_max=None,
+        save_path: str | None = None,
+        x_min: float | None = None,
+        x_max: float | None = None,
+        y_min: float | None = None,
+        y_max: float | None = None,
+        z_min: float | None = None,
+        z_max: float | None = None,
         z_range=None,
-        is_auto_ticks=True,
-        is_auto_range=False,
-        is_2D_view=True,
-        is_same_size=False,
-        N_stem=100,
-        fig=None,
-        ax=None,
-        is_show_fig=None,
-        is_logscale_x=False,
-        is_logscale_y=False,
-        is_logscale_z=False,
-        thresh=None,
-        is_switch_axes=False,
+        is_auto_ticks: bool = True,
+        is_auto_range: bool = False,
+        is_2D_view: bool = True,
+        is_same_size: bool = False,
+        N_stem: int = 100,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_show_fig: bool | None = None,
+        is_logscale_x: bool = False,
+        is_logscale_y: bool = False,
+        is_logscale_z: bool = False,
+        thresh: float | None = None,
+        is_switch_axes: bool = False,
         colormap="jet",
-        win_title=None,
+        win_title: str | None = None,
         font_name="arial",
         font_size_title=12,
         font_size_label=10,
         font_size_legend=8,
-    ):
+    ) -> None:
         """Plots a field as a function of time
 
         Parameters
@@ -2478,7 +2524,7 @@ class VectorField(LegacyClass):
         a VectorField object
         """
 
-        comp_dict = {}
+        comp_dict: dict[str, DataND] = {}
         for key, comp in self.components.items():
             comp_dict[key] = comp.time_to_freq()
 
@@ -2515,7 +2561,7 @@ class VectorField(LegacyClass):
             ]
             result = self.get_rphiz_along(*arg_list)
             # Store in new VectorField
-            comp_dict = {}
+            comp_dict: dict[str, DataND] = {}
 
             Comp_r = self.components["comp_x"].copy()
             Comp_r.name = "Radial " + self.components["comp_x"].name.lower().replace(
@@ -2566,7 +2612,7 @@ class VectorField(LegacyClass):
             ]
             result = self.get_xyz_along(*arg_list, is_squeeze=False)
             # Store in new VectorField
-            comp_dict = {}
+            comp_dict: dict[str, DataND] = {}
 
             Comp_x = self.components["radial"].copy()
             Comp_x.name = (

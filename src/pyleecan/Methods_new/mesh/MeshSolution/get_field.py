@@ -8,17 +8,17 @@ import numpy as np
 def get_field(
     self,
     *args_list,
-    label=None,
-    indices=None,
-    is_rthetaz=False,
-    is_pol2cart=False,
-    is_radial=False,
-    is_normal=False,
-    is_rms=False,
-    is_center=False,
-    is_surf=False,
-    is_squeeze=True,
-):
+    label: str | None = None,
+    indices: list | None = None,
+    is_rthetaz: bool = False,
+    is_pol2cart: bool = False,
+    is_radial: bool = False,
+    is_normal: bool = False,
+    is_rms: bool = False,
+    is_center: bool = False,
+    is_surf: bool = False,
+    is_squeeze: bool = True,
+) -> np.ndarray:
     """Return the solution corresponding to a label.
 
     Parameters
@@ -232,15 +232,15 @@ def get_field(
 
 
 def apply_normal_center_surf_vectorfield(
-    field,
+    field: np.ndarray,
     ind_otherdim,
     shape_otherdim,
-    is_center,
-    is_normal,
-    is_surf,
-    is_rms,
-    is_rthetaz,
-    is_radial,
+    is_center: bool,
+    is_normal: bool,
+    is_surf: bool,
+    is_rms: bool,
+    is_rthetaz: bool,
+    is_radial: bool,
     is_pol2cart,
     mesh_pv,
     normals,
@@ -248,9 +248,9 @@ def apply_normal_center_surf_vectorfield(
     cell_area,
     shape_result,
     dtype,
-    indices,
+    indices: list,
     ind_indices,
-):
+) -> np.ndarray:
     """Perform the required operation on the input field by performing a recursive call on all axes.
     This function is necessary as pyvista operators require field with only indice axis (and component axis).
 

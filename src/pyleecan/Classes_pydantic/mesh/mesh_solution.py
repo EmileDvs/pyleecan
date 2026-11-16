@@ -1,9 +1,11 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Mesh/MeshSolution.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 import os
 from collections.abc import ItemsView, KeysView, ValuesView
-from typing import Any, ClassVar, Hashable, Iterator, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, Hashable, Iterator, Optional
 
 import numpy as np
 from pydantic import Field
@@ -25,6 +27,9 @@ from .mesh_vtk import MeshVTK
 from .node_mat import NodeMat
 from .solution import Solution
 from .solution_vector import SolutionVector
+
+if TYPE_CHECKING:
+    from .mesh_solution import MeshSolution
 
 
 class MeshSolution(LegacyModel):
@@ -138,7 +143,7 @@ class MeshSolution(LegacyModel):
         self.solution_dict[label] = solution
 
     # Inlined from Methods.Mesh.MeshSolution.export_to_mat
-    def export_to_mat(self, save_path):
+    def export_to_mat(self, save_path: str) -> None:
         """Save mesh and all solutions to a .mat file
 
         Parameters
@@ -188,7 +193,7 @@ class MeshSolution(LegacyModel):
         savemat(save_path, mesh_dict)
 
     @staticmethod
-    def del_value_None(mesh_dict):
+    def del_value_None(mesh_dict: dict):
         """Delate value set at None in dict
 
         Parameters
@@ -220,7 +225,7 @@ class MeshSolution(LegacyModel):
         return mesh_dict
 
     # Inlined from Methods.Mesh.MeshSolution.get_deflection
-    def get_deflection(self, *args, label, indices, field_name):
+    def get_deflection(self, *args, label: str, indices: list, field_name: str):
         """Get the vector field, the field name and the corresponding pyvista mesh in format adapted to a glyph plot.
 
         Parameters
@@ -294,17 +299,17 @@ class MeshSolution(LegacyModel):
     def get_field(
         self,
         *args_list,
-        label=None,
-        indices=None,
-        is_rthetaz=False,
-        is_pol2cart=False,
-        is_radial=False,
-        is_normal=False,
-        is_rms=False,
-        is_center=False,
-        is_surf=False,
-        is_squeeze=True,
-    ):
+        label: str | None = None,
+        indices: list | None = None,
+        is_rthetaz: bool = False,
+        is_pol2cart: bool = False,
+        is_radial: bool = False,
+        is_normal: bool = False,
+        is_rms: bool = False,
+        is_center: bool = False,
+        is_surf: bool = False,
+        is_squeeze: bool = True,
+    ) -> np.ndarray:
         """Return the solution corresponding to a label.
 
         Parameters
@@ -518,15 +523,15 @@ class MeshSolution(LegacyModel):
 
     @staticmethod
     def apply_normal_center_surf_vectorfield(
-        field,
+        field: np.ndarray,
         ind_otherdim,
         shape_otherdim,
-        is_center,
-        is_normal,
-        is_surf,
-        is_rms,
-        is_rthetaz,
-        is_radial,
+        is_center: bool,
+        is_normal: bool,
+        is_surf: bool,
+        is_rms: bool,
+        is_rthetaz: bool,
+        is_radial: bool,
         is_pol2cart,
         mesh_pv,
         normals,
@@ -534,9 +539,9 @@ class MeshSolution(LegacyModel):
         cell_area,
         shape_result,
         dtype,
-        indices,
+        indices: list,
         ind_indices,
-    ):
+    ) -> np.ndarray:
         """Perform the required operation on the input field by performing a recursive call on all axes.
         This function is necessary as pyvista operators require field with only indice axis (and component axis).
 
@@ -656,7 +661,7 @@ class MeshSolution(LegacyModel):
             return result
 
     # Inlined from Methods.Mesh.MeshSolution.get_glyph
-    def get_glyph(self, *args, label, indices, field_name):
+    def get_glyph(self, *args, label: str, indices: list, field_name: str):
         """Get the vector field, the field name and the corresponding pyvista mesh in format adapted to a glyph plot.
 
         Parameters
@@ -713,7 +718,7 @@ class MeshSolution(LegacyModel):
         return vect_field, field_name, mesh_pv, is_2D
 
     # Inlined from Methods.Mesh.MeshSolution.get_group
-    def get_group(self, group_names):
+    def get_group(self, group_names) -> MeshSolution:
         """Return all attributes of a MeshSolution object with only the elements, nodes
         and corresponding solutions of the group.
 
@@ -837,14 +842,14 @@ class MeshSolution(LegacyModel):
     def get_mesh_field_pv(
         self,
         *args,
-        label=None,
-        indices=None,
-        is_surf=False,
-        is_radial=False,
-        is_center=False,
-        is_normal=False,
-        field_name=None,
-        itimefreq=0,
+        label: str | None = None,
+        indices: list | None = None,
+        is_surf: bool = False,
+        is_radial: bool = False,
+        is_center: bool = False,
+        is_normal: bool = False,
+        field_name: str | None = None,
+        itimefreq: int = 0,
     ):
         """Return the mesh and field adapted to pyvista plots.
 
@@ -967,8 +972,8 @@ class MeshSolution(LegacyModel):
     # Inlined from Methods.Mesh.MeshSolution.perm_coord
     def perm_coord(
         self,
-        perm_coord_list=[0, 1, 2],
-    ):
+        perm_coord_list: list = [0, 1, 2],
+    ) -> None:
         """Permute coordinates of Mesh Solution in place
 
         Parameters
@@ -999,21 +1004,21 @@ class MeshSolution(LegacyModel):
     def plot_contour(
         self,
         *args,
-        label=None,
-        indices=None,
-        is_surf=False,
-        is_radial=False,
-        is_center=False,
-        clim=None,
-        field_name=None,
-        save_path=None,
-        is_show_fig=True,
-        win_title=None,
-        is_animated=False,
-        title="",
+        label: str | None = None,
+        indices: list | None = None,
+        is_surf: bool = False,
+        is_radial: bool = False,
+        is_center: bool = False,
+        clim: list | None = None,
+        field_name: str | None = None,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        win_title: str | None = None,
+        is_animated: bool = False,
+        title: str = "",
         pv_plotter=None,
-        colormap=None,
-    ):
+        colormap: str = None,
+    ) -> None:
         """Plot the contour of a field on a mesh using pyvista plotter.
 
         Parameters
@@ -1183,21 +1188,21 @@ class MeshSolution(LegacyModel):
     def plot_deflection(
         self,
         *args,
-        label=None,
-        indices=None,
-        clim=None,
-        factor=None,
-        field_name=None,
-        save_path=None,
+        label: str | None = None,
+        indices: list | None = None,
+        clim: list | None = None,
+        factor: float | None = None,
+        field_name: str | None = None,
+        save_path: str | None = None,
         title="",
-        win_title="",
-        is_surf=True,
-        is_show_fig=True,
+        win_title: str = "",
+        is_surf: bool = True,
+        is_show_fig: bool = True,
         pv_plotter=None,
         sargs=None,
-        is_animated=False,
+        is_animated: bool = False,
         phase=1,
-        is_return_plot_args=False,
+        is_return_plot_args: bool = False,
     ):
         """Plot the operational deflection shape using pyvista plotter.
 
@@ -1362,19 +1367,19 @@ class MeshSolution(LegacyModel):
     def plot_glyph(
         self,
         *args,
-        label=None,
-        indices=None,
-        factor=None,
-        field_name=None,
-        save_path=None,
-        is_point_arrow=False,
-        is_show_fig=True,
+        label: str | None = None,
+        indices: list | None = None,
+        factor: float | None = None,
+        field_name: str | None = None,
+        save_path: str | None = None,
+        is_point_arrow: bool = False,
+        is_show_fig: bool = True,
         pv_plotter=None,
-        win_title="",
+        win_title: str = "",
         title="",
-        is_animated=False,
+        is_animated: bool = False,
         phase=1,
-        is_return_plot_args=False,
+        is_return_plot_args: bool = False,
     ):
         """Plot the vector field as a glyph (or quiver) over the mesh.
 
@@ -1515,12 +1520,12 @@ class MeshSolution(LegacyModel):
     def plot_mesh(
         self,
         pv_plotter=None,
-        indices=None,
-        save_path=None,
-        is_show_axes=False,
-        is_show_fig=True,
-        is_show_grid=False,
-        win_title=None,
+        indices: list | None = None,
+        save_path: str | None = None,
+        is_show_axes: bool = False,
+        is_show_fig: bool = True,
+        is_show_grid: bool = False,
+        win_title: str | None = None,
     ):
         """Plot the mesh using pyvista plotter.
 
@@ -1620,7 +1625,7 @@ class MeshSolution(LegacyModel):
         return self.solution_dict.pop(label)
 
     # Inlined from Methods.Mesh.MeshSolution.replace_solution
-    def replace_solution(self, solution: Solution, label: Optional[str] = ""):
+    def replace_solution(self, solution: Solution, label: Optional[str] = "") -> None:
         """Replace the solution in the solution_didct
 
         Parameters

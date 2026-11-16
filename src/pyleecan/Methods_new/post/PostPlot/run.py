@@ -2,9 +2,13 @@ from inspect import signature
 import os
 
 from ....Functions_new.Plot import dict_2D, dict_3D
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def run(self, output):
+def run(self, output: Output) -> None:
     """Execute the plot contained in the PostPlot object and save it to save_path
 
     Parameters

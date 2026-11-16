@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_modulation_index(self):
+def get_modulation_index(self) -> float:
     """Function to compute the carrier
 
     Parameters

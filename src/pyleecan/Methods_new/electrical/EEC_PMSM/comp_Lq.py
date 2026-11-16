@@ -1,4 +1,4 @@
-def comp_Lq(self):
+def comp_Lq(self) -> None:
     """Compute and set the stator winding inductance along q-axis for the EEC
 
     Parameters

@@ -2,9 +2,12 @@
 """Generated experimental pydantic model; do not edit by hand."""
 
 import os
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .post_method import PostMethod
+
+if TYPE_CHECKING:
+    from ..output.lut import LUT
 
 
 class PostLUT(PostMethod):
@@ -29,7 +32,7 @@ class PostLUT(PostMethod):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Post.PostLUT.run
-    def run(self, LUT):
+    def run(self, LUT: LUT) -> None:
         """PostProcessing to clean a LUT from un-necessary output
         after the corresponding simulation
 

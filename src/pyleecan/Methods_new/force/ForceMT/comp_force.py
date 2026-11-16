@@ -1,7 +1,12 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
 
 
-def comp_force(self, output, axes_dict):
+def comp_force(self, output: Output, axes_dict: dict[str, Data]) -> dict:
     """Compute the air-gap surface force based on Maxwell Tensor (MT).
 
     Parameters

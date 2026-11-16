@@ -165,6 +165,7 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
     class_names = {NORMALIZATION_CLASS_NAMES.get(name, name): name for name in gen_dict}
     edits = []  # (start, end, text) in characters of a line, by line
     imports = {}  # name -> (module, name)
+    string_annotations = False  # Classes of string annotations to import
     for node in tree.body:
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
@@ -188,6 +189,16 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
                 if default is not None
             }
         )
+        # Classes named by the existing (legacy) string annotations
+        # (``other: "MeshMat"``): imported for type checking too
+        for annotation in [arg.annotation for arg in arguments] + [node.returns]:
+            if (
+                isinstance(annotation, ast.Constant)
+                and isinstance(annotation.value, str)
+                and annotation.value in class_names
+            ):
+                imports[annotation.value] = ("class", class_names[annotation.value])
+                string_annotations = True
         for arg in arguments:
             if arg.annotation is not None or arg.arg in ("self", "cls"):
                 continue
@@ -255,7 +266,7 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
                 line, column = _signature_end(source, node)
                 edits.append((line, column, " -> " + " | ".join(alternatives)))
         edits.extend(_container_local_edits(node, class_names, gen_dict, imports))
-    if not edits:
+    if not edits and not string_annotations:
         return source
     lines = source.splitlines(keepends=True)
     for line, column, text in sorted(edits, reverse=True):

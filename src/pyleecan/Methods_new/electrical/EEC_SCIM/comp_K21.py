@@ -1,4 +1,4 @@
-def comp_K21(self):
+def comp_K21(self) -> None:
     """Compute and set winding transformation ratios
 
     Parameters

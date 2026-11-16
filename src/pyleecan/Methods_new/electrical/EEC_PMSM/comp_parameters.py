@@ -1,4 +1,4 @@
-def comp_parameters(self):
+def comp_parameters(self) -> None:
     """Compute and set the parameter attributes of the EEC that are not set:
     resistance, skin effect factors, inductance, fluxlinkage and back emf
 

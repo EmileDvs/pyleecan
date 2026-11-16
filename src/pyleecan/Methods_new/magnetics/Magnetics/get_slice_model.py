@@ -1,9 +1,13 @@
 import numpy as np
 
 from ....Classes_new.simulation.slice_model import SliceModel
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_pattern import DataPattern
 
 
-def get_slice_model(self):
+def get_slice_model(self) -> DataPattern:
     """Compute the slice axis required in any Magnetics module
 
     Parameters

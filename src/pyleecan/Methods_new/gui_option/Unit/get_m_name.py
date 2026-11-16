@@ -1,4 +1,4 @@
-def get_m_name(self):
+def get_m_name(self) -> str:
     """Return the name of the length unit ([m] by default)
 
     Parameters

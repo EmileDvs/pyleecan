@@ -1,7 +1,11 @@
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.lut import LUT
 
 
-def run(self, LUT):
+def run(self, LUT: LUT) -> None:
     """PostProcessing to clean a LUT from un-necessary output
     after the corresponding simulation
 

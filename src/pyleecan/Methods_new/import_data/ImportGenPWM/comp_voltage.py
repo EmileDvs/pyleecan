@@ -3,7 +3,7 @@ import numpy as np
 from scipy import signal, integrate
 
 
-def comp_voltage(self, Tpwmu, PF_angle=0, is_sin=True, is_norm=True):
+def comp_voltage(self, Tpwmu: np.ndarray, PF_angle: float = 0, is_sin: bool = True, is_norm=True) -> tuple[np.ndarray, np.ndarray, float, np.ndarray]:
     """Generalized DPWM using numerical method according to
     'Impact of Modulation Schemes on DC-Link Capacitor of VSI in HEV Applications'
 

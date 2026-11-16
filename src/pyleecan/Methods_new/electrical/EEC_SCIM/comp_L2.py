@@ -1,4 +1,4 @@
-def comp_L2(self, L2_ref=None):
+def comp_L2(self, L2_ref: float | None = None) -> None:
     """Compute and set the Rotor phase inductance for the equivalent electrical circuit
 
     Parameters

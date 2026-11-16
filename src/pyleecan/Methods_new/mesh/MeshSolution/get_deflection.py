@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_deflection(self, *args, label, indices, field_name):
+def get_deflection(self, *args, label: str, indices: list, field_name: str):
     """Get the vector field, the field name and the corresponding pyvista mesh in format adapted to a glyph plot.
 
     Parameters

@@ -9,7 +9,7 @@ from ....Classes_new.machine.machine_ipmsm import MachineIPMSM
 from ...simulation.Input import InputError
 
 
-def run(self):
+def run(self) -> None:
     """Run the Electrical module"""
     if self.parent is None:
         raise InputError("The Electrical object must be in a Simulation object to run")

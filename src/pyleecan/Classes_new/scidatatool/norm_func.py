@@ -2,9 +2,12 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import Any, Callable, ClassVar
+from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 from .normalization import Normalization
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 @dataclass(eq=False)
@@ -27,7 +30,7 @@ class NormFunc(Normalization):
     # Inlined from Methods.SciDataTool.Norm_func.normalize
     def normalize(
         self,
-        values,
+        values: np.ndarray,
     ):
         """Normalizes axis values
         Parameters

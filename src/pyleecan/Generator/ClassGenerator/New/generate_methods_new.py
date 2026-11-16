@@ -44,14 +44,24 @@ FROZEN_PACKAGES = frozenset()
 HINTED_SUBPACKAGES = frozenset(
     {
         "converter",
+        "electrical",
+        "elmer",
+        "force",
         "geometry",
+        "gui_option",
+        "import_data",
         "loss",
         "machine",
+        "magnetics",
         "material",
+        "mesh",
         "optimization",
         "output",
+        "post",
+        "scidatatool",
         "simulation",
         "slot",
+        "structural",
     }
 )
 """Sub-packages whose methods get the type hints of their docstrings

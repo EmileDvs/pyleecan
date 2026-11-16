@@ -1,7 +1,11 @@
 from ....Functions_new.Structural.conversions import pol2cart
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
-def get_shape_xyz(self):
+def get_shape_xyz(self) -> np.ndarray:
     """Return the mode shape in cartesian coordinates.
 
     Parameters

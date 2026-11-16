@@ -1,4 +1,4 @@
-def comp_Ld(self):
+def comp_Ld(self) -> None:
     """Compute and set the stator winding inductance along d-axis for the EEC
 
     Parameters

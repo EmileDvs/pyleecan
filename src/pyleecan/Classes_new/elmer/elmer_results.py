@@ -48,7 +48,7 @@ class ElmerResults(Elmer):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.ElmerResults.get_data
-    def get_data(self):
+    def get_data(self) -> None:
         """Method to return the Elmer simulation results
 
         Parameters
@@ -79,7 +79,7 @@ class ElmerResults(Elmer):
         pass
 
     # Inlined from Methods.Elmer.ElmerResults.load_data
-    def load_data(self):
+    def load_data(self) -> list:
         """Method to load the Elmer simulation results (as an alternative for direct input)
 
         Parameters

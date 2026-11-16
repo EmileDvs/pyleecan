@@ -5,6 +5,10 @@ import numpy as np
 from ....Classes_new.mesh.element_mat import ElementMat
 from ....Classes_new.mesh.fpgn_seg import FPGNSeg
 from ....Classes_new.mesh.ref_segment_p_1 import RefSegmentP1
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_mat import MeshMat
 
 
 def interface(self, other_mesh: "MeshMat") -> "MeshMat":

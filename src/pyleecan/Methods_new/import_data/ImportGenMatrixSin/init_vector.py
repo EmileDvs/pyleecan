@@ -2,7 +2,7 @@ from ....Classes_new.import_data.import_gen_vect_sin import ImportGenVectSin
 from . import InitSinMatDimError
 
 
-def init_vector(self, f, A, Phi, N, Tf):
+def init_vector(self, f: list, A: list, Phi: list, N: int, Tf: float) -> None:
     """Create the sin_list according to the input list
 
     Parameters

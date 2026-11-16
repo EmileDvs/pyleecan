@@ -1,9 +1,14 @@
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.scidatatool.data_nd import DataND
 
 
-def get_data(self):
+def get_data(self) -> DataND:
     """Generate Data objects
 
     Parameters
@@ -18,7 +23,7 @@ def get_data(self):
 
     """
 
-    axes_list = []
+    axes_list: list[Data] = []
     is_freq = False
     for axis in self.axes:
         if axis.name == "freqs" or axis.name == "wavenumber":

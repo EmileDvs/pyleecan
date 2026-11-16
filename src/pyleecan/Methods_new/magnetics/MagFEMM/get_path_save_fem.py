@@ -1,7 +1,11 @@
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def get_path_save_fem(self, output):
+def get_path_save_fem(self, output: Output) -> str:
     """Return the path to save the FEMM simulation
 
     Parameters

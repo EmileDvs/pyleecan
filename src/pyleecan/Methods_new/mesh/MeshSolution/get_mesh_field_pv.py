@@ -1,18 +1,22 @@
 from ....Classes_new.mesh.solution_vector import SolutionVector
 from ....Classes_new.mesh.mesh_vtk import MeshVTK
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 def get_mesh_field_pv(
     self,
     *args,
-    label=None,
-    indices=None,
-    is_surf=False,
-    is_radial=False,
-    is_center=False,
-    is_normal=False,
-    field_name=None,
-    itimefreq=0,
+    label: str | None = None,
+    indices: list | None = None,
+    is_surf: bool = False,
+    is_radial: bool = False,
+    is_center: bool = False,
+    is_normal: bool = False,
+    field_name: str | None = None,
+    itimefreq: int = 0,
 ):
     """Return the mesh and field adapted to pyvista plots.
 

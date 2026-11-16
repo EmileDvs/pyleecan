@@ -1,4 +1,10 @@
-def get_machine_from_parent(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
+
+
+def get_machine_from_parent(self) -> Machine | None:
     """Get machine object from parent
 
     Parameters

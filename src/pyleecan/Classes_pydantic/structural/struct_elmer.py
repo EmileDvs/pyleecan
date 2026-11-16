@@ -3,7 +3,7 @@
 
 import os
 import subprocess
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import gmsh
 import numpy as np
@@ -48,6 +48,9 @@ from ..elmer.elmer_results_vtu import ElmerResultsVTU
 from ..elmer.section import MATC, File, Section, Variable
 from ..elmer.solver_input_file import SolverInputFile
 from .structural import Structural
+
+if TYPE_CHECKING:
+    from ..output.output import Output
 
 
 class StructElmer(Structural):
@@ -97,7 +100,7 @@ class StructElmer(Structural):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.StructElmer.gen_case
-    def gen_case(self, output, mesh_names, *, ID_LAM=1, ID_MAG=2):
+    def gen_case(self, output, mesh_names, *, ID_LAM=1, ID_MAG=2) -> None:
         """Setup the Elmer Case file (.sif file)"""
 
         # get the save path
@@ -449,7 +452,7 @@ class StructElmer(Structural):
         }
 
     # Inlined from Methods.Simulation.StructElmer.gen_mesh
-    def gen_mesh(self, output):
+    def gen_mesh(self, output: Output):
         """Initialize the FEA simulation model
 
         Parameters
@@ -546,7 +549,7 @@ class StructElmer(Structural):
         return True
 
     # Inlined from Methods.Simulation.StructElmer.get_meshsolution
-    def get_meshsolution(self, output):
+    def get_meshsolution(self, output) -> bool:
         """Get and set the mesh data and solution data.
 
         Parameters
@@ -599,7 +602,7 @@ class StructElmer(Structural):
         return True
 
     # Inlined from Methods.Simulation.StructElmer.get_path_save_fea
-    def get_path_save_fea(self, output):
+    def get_path_save_fea(self, output: Output) -> str:
         """Return the path to save the FEA simulation
 
         Parameters
@@ -625,7 +628,12 @@ class StructElmer(Structural):
 
     # Inlined from Methods.Simulation.StructElmer.process_mesh
     def process_mesh(
-        self, file_in, file_out, is_get_lam=True, is_get_magnet=False, is_hole_air=True
+        self,
+        file_in,
+        file_out,
+        is_get_lam: bool = True,
+        is_get_magnet: bool = False,
+        is_hole_air: bool = True,
     ):
         """Preprocess the GMSH model, i.e. remove unused parts, rename boundaries, ..."""
         # TODO utilize 'translation' dict
@@ -899,7 +907,7 @@ class StructElmer(Structural):
         return names
 
     @staticmethod
-    def _remove_entities(gmsh, labels):
+    def _remove_entities(gmsh, labels: list) -> None:
         """
         Remove model entities that have one of the given labels in their physical
         groups names.
@@ -969,7 +977,7 @@ class StructElmer(Structural):
         gmsh.model.geo.synchronize()
 
     # Inlined from Methods.Simulation.StructElmer.run
-    def run(self):
+    def run(self) -> None:
         """Run the Structural module"""
         if self.parent is None:
             raise InputError(
@@ -997,7 +1005,7 @@ class StructElmer(Structural):
         self.get_meshsolution(output)
 
     # Inlined from Methods.Simulation.StructElmer.solve_FEA
-    def solve_FEA(self, output):
+    def solve_FEA(self, output) -> None:
         """Solve the FEA simulation
 
         Parameters

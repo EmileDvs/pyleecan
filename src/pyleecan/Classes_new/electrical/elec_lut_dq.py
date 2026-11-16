@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -12,6 +12,9 @@ from ..output.out_loss import OutLoss
 from ..simulation.simulation import Simulation
 from .eec_pmsm import EEC_PMSM
 from .electrical import Electrical
+
+if TYPE_CHECKING:
+    from ..output.lut_dq import LUTdq
 
 
 @dataclass(eq=False)
@@ -94,7 +97,7 @@ class ElecLUTdq(Electrical):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ElecLUTdq.comp_LUTdq
-    def comp_LUTdq(self):
+    def comp_LUTdq(self) -> LUTdq:
         """Compute Look up table function of Id / Iq
 
         Parameters
@@ -149,7 +152,7 @@ class ElecLUTdq(Electrical):
         return LUT
 
     # Inlined from Methods.Simulation.ElecLUTdq.run
-    def run(self):
+    def run(self) -> None:
         """Run the ElecLUTdq module"""
         if self.parent is None:
             raise InputError(
@@ -303,7 +306,7 @@ class ElecLUTdq(Electrical):
             output.mag.Tem_rip_norm = out_dict["Tem_rip_norm"]
 
     # Inlined from Methods.Simulation.ElecLUTdq.solve_MTPA
-    def solve_MTPA(self, LUT, Rs):
+    def solve_MTPA(self, LUT: LUTdq, Rs: float) -> dict:
         """Solve EEC using Maximum Torque Per Ampere strategy with respect to voltage and current constraints
 
         Parameters
@@ -516,7 +519,7 @@ class ElecLUTdq(Electrical):
         return out_dict
 
     # Inlined from Methods.Simulation.ElecLUTdq.solve_power
-    def solve_power(self, LUT, Rs):
+    def solve_power(self, LUT: LUTdq, Rs: float) -> dict:
         """Solve EEC to achieve given input / output power with respect to voltage and current constraints
 
         Parameters

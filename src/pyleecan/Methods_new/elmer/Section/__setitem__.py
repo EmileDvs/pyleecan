@@ -1,4 +1,4 @@
-def __setitem__(self, key, value):
+def __setitem__(self, key, value) -> None:
     """Called to implement assignment to self[key]."""
     if isinstance(value, tuple):
         self._statements.__setitem__(key, value[0])

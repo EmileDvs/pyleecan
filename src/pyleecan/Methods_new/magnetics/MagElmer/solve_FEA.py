@@ -12,9 +12,13 @@ from ....Functions_new.get_path_binary import get_path_binary
 from ....Functions_new.labels import AIRGAP_LAB, BOT_LAB, HOLEM_LAB_S, HOLEV_LAB_S, LAM_LAB_S, MAG_LAB, NO_LAM_LAB, ROTOR_LAB, ROTOR_LAB_S, SHAFT_LAB, SLID_LAB, STATOR_LAB_S, WIND_LAB_S, decode_label, get_obj_from_label, short_label
 from ....Functions_new.Winding.find_wind_phase_color import get_phase_id
 from ....Methods import NotImplementedYetError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
+def solve_FEA(self, output: Output, sym: int, angle: np.ndarray, time: np.ndarray, angle_rotor: np.ndarray, Is: np.ndarray, Ir: np.ndarray):
     """
     Solve Elmer model to calculate airgap flux density, torque instantaneous/average/ripple values,
     flux induced in stator windings and flux density, field and permeability maps

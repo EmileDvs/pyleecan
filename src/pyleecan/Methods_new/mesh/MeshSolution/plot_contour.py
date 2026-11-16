@@ -14,21 +14,21 @@ FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 def plot_contour(
     self,
     *args,
-    label=None,
-    indices=None,
-    is_surf=False,
-    is_radial=False,
-    is_center=False,
-    clim=None,
-    field_name=None,
-    save_path=None,
-    is_show_fig=True,
-    win_title=None,
-    is_animated=False,
-    title="",
+    label: str | None = None,
+    indices: list | None = None,
+    is_surf: bool = False,
+    is_radial: bool = False,
+    is_center: bool = False,
+    clim: list | None = None,
+    field_name: str | None = None,
+    save_path: str | None = None,
+    is_show_fig: bool = True,
+    win_title: str | None = None,
+    is_animated: bool = False,
+    title: str = "",
     pv_plotter=None,
-    colormap=COLOR_MAP
-):
+    colormap: str = COLOR_MAP
+) -> None:
     """Plot the contour of a field on a mesh using pyvista plotter.
 
     Parameters

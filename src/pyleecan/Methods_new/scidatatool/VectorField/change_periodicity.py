@@ -1,11 +1,15 @@
 import numpy as np
 
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.vector_field import VectorField
 
 
 def change_periodicity(
-    self, per_a_new, per_t_new, is_aper_a_new=None, is_aper_t_new=False
-):
+    self, per_a_new: int, per_t_new: int, is_aper_a_new: bool | None = None, is_aper_t_new: bool = False
+) -> VectorField:
     """Change (anti-)periodicities of vectorfield given input periodicities before changing referential
 
     Parameters

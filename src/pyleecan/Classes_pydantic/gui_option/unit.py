@@ -35,7 +35,7 @@ class Unit(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.GUI_Option.Unit.get_m
-    def get_m(self, value):
+    def get_m(self, value: float) -> float | None:
         """Convert the value the correct m unit (to display in GUI)
 
         Parameters
@@ -59,7 +59,7 @@ class Unit(LegacyModel):
             return value
 
     # Inlined from Methods.GUI_Option.Unit.get_m2
-    def get_m2(self, value):
+    def get_m2(self, value: float) -> float | None:
         """Convert the value the correct m² unit (to display in GUI)
 
         Parameters
@@ -82,7 +82,7 @@ class Unit(LegacyModel):
             return value
 
     # Inlined from Methods.GUI_Option.Unit.get_m2_name
-    def get_m2_name(self):
+    def get_m2_name(self) -> str:
         """Return the name of the current area unit
 
         Parameters
@@ -101,7 +101,7 @@ class Unit(LegacyModel):
             return "m²"
 
     # Inlined from Methods.GUI_Option.Unit.get_m_name
-    def get_m_name(self):
+    def get_m_name(self) -> str:
         """Return the name of the length unit ([m] by default)
 
         Parameters
@@ -120,7 +120,7 @@ class Unit(LegacyModel):
             return "m"
 
     # Inlined from Methods.GUI_Option.Unit.set_m
-    def set_m(self, value):
+    def set_m(self, value: float) -> float:
         """Convert the value the correct m unit (to set in the object in m)
 
         Parameters
@@ -141,7 +141,7 @@ class Unit(LegacyModel):
             return value
 
     # Inlined from Methods.GUI_Option.Unit.set_m2
-    def set_m2(self, value):
+    def set_m2(self, value: float) -> float:
         """Convert the value the correct m² unit (to set in the object in m²)
 
         Parameters

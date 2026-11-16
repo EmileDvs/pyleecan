@@ -113,7 +113,7 @@ class ImportGenPWM(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenPWM.comp_carrier
-    def comp_carrier(self, time):
+    def comp_carrier(self, time: np.ndarray) -> np.ndarray:
         """Function to compute the carrier
 
         Parameters
@@ -170,7 +170,9 @@ class ImportGenPWM(ImportMatrix):
         return Y
 
     # Inlined from Methods.Import.ImportGenPWM.comp_voltage
-    def comp_voltage(self, Tpwmu, PF_angle=0, is_sin=True, is_norm=True):
+    def comp_voltage(
+        self, Tpwmu: np.ndarray, PF_angle: float = 0, is_sin: bool = True, is_norm=True
+    ) -> tuple[np.ndarray, np.ndarray, float, np.ndarray]:
         """Generalized DPWM using numerical method according to
         'Impact of Modulation Schemes on DC-Link Capacitor of VSI in HEV Applications'
 
@@ -447,7 +449,9 @@ class ImportGenPWM(ImportMatrix):
         return v_pwm, Vas, M_I, carrier
 
     # Inlined from Methods.Import.ImportGenPWM.get_data
-    def get_data(self, is_norm=True, is_plot=False, Time=None):
+    def get_data(
+        self, is_norm: bool = True, is_plot: bool = False, Time=None
+    ) -> tuple[np.ndarray, np.ndarray, float, np.ndarray, np.ndarray]:
         """Generate the PWM matrix
 
         Parameters
@@ -521,7 +525,7 @@ class ImportGenPWM(ImportMatrix):
         return Vpwm, Vas, MI, carrier, Tpwmu
 
     # Inlined from Methods.Import.ImportGenPWM.get_modulation_index
-    def get_modulation_index(self):
+    def get_modulation_index(self) -> float:
         """Function to compute the carrier
 
         Parameters

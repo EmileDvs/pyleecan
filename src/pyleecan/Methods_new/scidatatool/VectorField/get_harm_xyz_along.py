@@ -3,7 +3,7 @@ import numpy as np
 from ....classes_common.errors import AxisError
 
 
-def get_harm_xyz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_harm_xyz_along(self, N_harm, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []):
     """Returns the list of the cartesian (x,y,z) components of the field, using conversions and symmetries if needed.
     Parameters
     ----------

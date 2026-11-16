@@ -5,7 +5,7 @@ from ....Classes_new.mesh.mesh_solution import MeshSolution
 from ...simulation.Input import InputError
 
 
-def run(self):
+def run(self) -> None:
     """Run the Magnetics module"""
     if self.parent is None:
         raise InputError("The Magnetic object must be in a Simulation object to run")

@@ -3,7 +3,7 @@ import os
 from ....Functions_new.GUI.log_error import log_error
 
 
-def export_to_mat(self, save_path):
+def export_to_mat(self, save_path: str) -> None:
     """Save mesh and all solutions to a .mat file
 
     Parameters
@@ -53,7 +53,7 @@ def export_to_mat(self, save_path):
     savemat(save_path, mesh_dict)
 
 
-def del_value_None(mesh_dict):
+def del_value_None(mesh_dict: dict):
     """Delate value set at None in dict
 
     Parameters

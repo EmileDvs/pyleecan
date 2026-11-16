@@ -7,9 +7,13 @@ from ....Classes_new.import_data.import_matrix_val import ImportMatrixVal
 from ....Functions_new.Electrical.dqh_transformation import abc2n
 
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def _comp_Lm_FEA(self, machine, K21Z, Xke_skinS):
+def _comp_Lm_FEA(self, machine: Machine, K21Z: float, Xke_skinS: float) -> tuple[float, float]:
     """Calculate magnetizing flux (not used)
 
     Parameters

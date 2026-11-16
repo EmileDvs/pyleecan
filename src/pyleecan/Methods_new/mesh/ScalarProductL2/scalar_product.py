@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def scalar_product(self, funca, funcb, detJ, weights, nb_gauss_points):
+def scalar_product(self, funca: np.ndarray, funcb: np.ndarray, detJ: np.ndarray, weights: np.ndarray, nb_gauss_points: int) -> np.ndarray:
     """Scalar product of shape functions with L2 gauss integration
 
     Parameters

@@ -1,7 +1,7 @@
 from . import AbstractClassError
 
 
-def solve(self):
+def solve(self) -> dict:
     """Compute the parameters dict for the equivalent electrical circuit
 
     Parameters

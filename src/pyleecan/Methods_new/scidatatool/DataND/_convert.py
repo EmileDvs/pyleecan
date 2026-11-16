@@ -5,7 +5,7 @@ from ....Functions_new.SciDataTool.conversions import convert as convert_unit
 from ....Functions_new.SciDataTool.conversions import to_dB, to_dBA
 
 
-def _convert(self, values, unit, is_norm, is_squeeze, axes_list):
+def _convert(self, values: np.ndarray, unit: str, is_norm: bool, is_squeeze, axes_list) -> np.ndarray:
     """Returns the values of the field transformed or converted.
     Parameters
     ----------

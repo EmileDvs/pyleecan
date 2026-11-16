@@ -20,7 +20,7 @@ operation_list = [
 ]
 
 
-def get_axis(self, axis, is_real):
+def get_axis(self, axis, is_real) -> None:
     """Computes the vector 'axis' in the unit required, using conversions and symmetries if needed.
     Parameters
     ----------

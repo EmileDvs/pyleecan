@@ -6,11 +6,11 @@ from ....Functions_new.SciDataTool.parser import read_input_strings
 def get_along(
     self,
     *args,
-    unit="SI",
-    is_norm=False,
-    axis_data=[],
-    is_squeeze=True,
-    is_magnitude=False,
+    unit: str = "SI",
+    is_norm: bool = False,
+    axis_data: list = [],
+    is_squeeze: bool = True,
+    is_magnitude: bool = False,
     corr_unit=None,
 ):
     """Returns the ndarray of the field, using conversions and symmetries if needed.

@@ -1,13 +1,16 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Import/ImportVectorField.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import Field
 
 from .._legacy_model import LegacyModel
 from ..scidatatool.vector_field import VectorField
 from .import_data import ImportData
+
+if TYPE_CHECKING:
+    from ..scidatatool.data_nd import DataND
 
 
 class ImportVectorField(LegacyModel):
@@ -37,7 +40,7 @@ class ImportVectorField(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportVectorField.get_data
-    def get_data(self):
+    def get_data(self) -> VectorField:
         """Generate VectorField object
 
         Parameters
@@ -52,7 +55,7 @@ class ImportVectorField(LegacyModel):
 
         """
 
-        comp_dict = {}
+        comp_dict: dict[str, DataND] = {}
         for key, component in self.components.items():
             comp_dict[key] = component.get_data()
 

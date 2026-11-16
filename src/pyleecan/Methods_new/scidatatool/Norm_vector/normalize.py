@@ -1,9 +1,13 @@
 from ....classes_common.errors import NormError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 def normalize(
     self,
-    values,
+    values: np.ndarray,
 ):
     """Normalizes axis values
     Parameters

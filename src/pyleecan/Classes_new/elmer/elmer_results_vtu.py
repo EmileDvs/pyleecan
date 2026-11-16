@@ -3,7 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from meshio import read
@@ -18,6 +18,9 @@ from ..scidatatool.data_time import DataTime
 from ..scidatatool.norm_ref import NormRef
 from ..scidatatool.vector_field import VectorField
 from .elmer import Elmer
+
+if TYPE_CHECKING:
+    from ..scidatatool.data_nd import DataND
 
 
 @dataclass(eq=False)
@@ -48,7 +51,7 @@ class ElmerResultsVTU(Elmer):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.ElmerResultsVTU.build_meshsolution
-    def build_meshsolution(self):
+    def build_meshsolution(self) -> bool:
         """Get the mesh and solution data from an Elmer VTU results file
 
         Parameters
@@ -139,7 +142,7 @@ class ElmerResultsVTU(Elmer):
                     meshsol.add_solution(solution=solution, label=label)
 
                 else:
-                    comps = {}
+                    comps: dict[str, DataND] = {}
                     for i in range(siz):
                         comps[comp_name[i]] = components[i]
                     field = VectorField(

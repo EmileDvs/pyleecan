@@ -4,7 +4,7 @@ from ....classes_common.errors import AxisError
 from ....Functions_new.SciDataTool.conversions import cart2pol
 
 
-def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_harm_rphiz_along(self, N_harm, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []):
     """Returns the list of the cylindrical (r,phi,z) components of the field, using conversions and symmetries if needed.
     Parameters
     ----------

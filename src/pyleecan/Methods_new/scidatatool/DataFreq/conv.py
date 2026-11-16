@@ -2,19 +2,24 @@ import numpy as np
 
 
 from ....Functions_new.SciDataTool.sum_convolution import get_conv_amplitudes, get_conv_indices
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_freq import DataFreq
+    from ....Classes_new.scidatatool.normalization import Normalization
 
 
 def conv(
     self,
-    other,
-    f_min=None,
-    f_max=np.inf,
-    tol_freq=1e-4,
-    name=None,
-    symbol=None,
-    unit=None,
-    normalizations=None,
-):
+    other: DataFreq,
+    f_min: float | None = None,
+    f_max: float = np.inf,
+    tol_freq: float = 1e-4,
+    name: str | None = None,
+    symbol: str | None = None,
+    unit: str | None = None,
+    normalizations: dict[str, Normalization] | None = None,
+) -> DataFreq:
     """Convolution of two DataFreq objects
 
     Parameters

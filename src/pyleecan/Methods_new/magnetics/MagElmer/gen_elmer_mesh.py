@@ -1,9 +1,13 @@
 import subprocess
 
 from ....Functions_new.get_path_binary import get_path_binary
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def gen_elmer_mesh(self, output):
+def gen_elmer_mesh(self, output: Output) -> dict[str, bool]:
     """Call ElmerGrid process to convert mesh from Gmsh format to Elmer's compatible
 
     Parameters

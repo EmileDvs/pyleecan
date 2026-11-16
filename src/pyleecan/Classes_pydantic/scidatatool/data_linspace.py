@@ -1,8 +1,10 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/DataLinspace.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 from importlib import import_module
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -12,6 +14,9 @@ from ...Functions_pydantic.SciDataTool.conversions import convert
 from ...Functions_pydantic.SciDataTool.symmetries import rebuild_symmetries_axis
 from .data import Data
 from .norm_vector import NormVector
+
+if TYPE_CHECKING:
+    from .data_linspace import DataLinspace
 
 
 class DataLinspace(Data):
@@ -66,7 +71,7 @@ class DataLinspace(Data):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.DataLinspace.get_axis_periodic
-    def get_axis_periodic(self, Nper, is_aper=False):
+    def get_axis_periodic(self, Nper: int, is_aper: bool = False) -> DataLinspace:
         """Returns the vector 'axis' taking symmetries into account.
 
         Parameters
@@ -130,7 +135,10 @@ class DataLinspace(Data):
 
     # Inlined from Methods.SciDataTool.DataLinspace.get_length
     def get_length(
-        self, is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False
+        self,
+        is_oneperiod: bool = False,
+        is_antiperiod: bool = False,
+        is_smallestperiod: bool = False,
     ):
         """Returns the length of the axis taking symmetries into account.
         Parameters
@@ -202,15 +210,15 @@ class DataLinspace(Data):
     # Inlined from Methods.SciDataTool.DataLinspace.get_values
     def get_values(
         self,
-        unit="SI",
-        is_oneperiod=False,
-        is_antiperiod=False,
-        is_smallestperiod=False,
-        normalization=None,
-        operation=None,
-        is_real=True,
+        unit: str = "SI",
+        is_oneperiod: bool = False,
+        is_antiperiod: bool = False,
+        is_smallestperiod: bool = False,
+        normalization: str | None = None,
+        operation: str | None = None,
+        is_real: bool = True,
         corr_unit=None,
-        is_full=False,
+        is_full: bool = False,
     ):
         """Returns the vector 'axis' by rebuilding the linspace, symmetries and unit included.
         Parameters

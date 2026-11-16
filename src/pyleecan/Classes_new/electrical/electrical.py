@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -17,6 +17,9 @@ from ..scidatatool.data_time import DataTime
 from .eec import EEC
 from .eec_pmsm import EEC_PMSM
 from .eec_scim import EEC_SCIM
+
+if TYPE_CHECKING:
+    from ..output.output import Output
 
 
 @dataclass(eq=False)
@@ -72,7 +75,7 @@ class Electrical(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Electrical.comp_power
-    def comp_power(self, out_dict, machine):
+    def comp_power(self, out_dict: dict, machine):
         """Compute the electrical average power
 
         Parameters
@@ -95,7 +98,7 @@ class Electrical(LegacyClass):
         return out_dict
 
     # Inlined from Methods.Simulation.Electrical.comp_torque
-    def comp_torque(self, out_dict, N0):
+    def comp_torque(self, out_dict: dict, N0):
         """Compute the electrical average torque
 
         Parameters
@@ -117,7 +120,7 @@ class Electrical(LegacyClass):
         return out_dict
 
     # Inlined from Methods.Simulation.Electrical.gen_drive
-    def gen_drive(self, output):
+    def gen_drive(self, output: Output) -> None:
         """Generate the drive for the equivalent electrical circuit (only PWM drive for now)
 
         Parameters
@@ -203,7 +206,7 @@ class Electrical(LegacyClass):
         output.elec.axes_dict["time"] = Time_PWM
 
     # Inlined from Methods.Simulation.Electrical.run
-    def run(self):
+    def run(self) -> None:
         """Run the Electrical module"""
         if self.parent is None:
             raise InputError(

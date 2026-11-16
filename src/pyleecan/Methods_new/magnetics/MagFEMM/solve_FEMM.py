@@ -7,26 +7,31 @@ from ....classes_common.femm_handler import _FEMMHandler
 from ....Functions_new.FEMM.comp_femm_phi_wind import comp_FEMM_Phi_wind
 from ....Functions_new.FEMM.comp_femm_torque import comp_FEMM_torque
 from ....Functions_new.FEMM.update_femm_simulation import update_FEMM_simulation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_mat import MeshMat
+    from ....Classes_new.output.output import Output
 
 
 def solve_FEMM(
     self,
     femm,
-    output,
-    out_dict,
-    FEMM_dict,
-    sym,
-    Nt,
-    angle,
-    Is,
-    Ir,
-    angle_rotor,
-    is_close_femm,
-    filename=None,
-    start_t=0,
-    end_t=None,
+    output: Output,
+    out_dict: dict,
+    FEMM_dict: dict,
+    sym: int,
+    Nt: int,
+    angle: np.ndarray,
+    Is: np.ndarray,
+    Ir: np.ndarray,
+    angle_rotor: np.ndarray,
+    is_close_femm: bool,
+    filename: str | None = None,
+    start_t: int = 0,
+    end_t: int | None = None,
     Nmess=4,
-):
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, MeshMat, dict]:
     """
     Solve FEMM model to calculate airgap flux density, torque instantaneous/average/ripple values,
     flux induced in stator windings and flux density, field and permeability maps

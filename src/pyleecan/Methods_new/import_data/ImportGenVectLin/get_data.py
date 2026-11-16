@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_data(self):
+def get_data(self) -> np.ndarray:
     """Generate the linspace vector
 
     Parameters

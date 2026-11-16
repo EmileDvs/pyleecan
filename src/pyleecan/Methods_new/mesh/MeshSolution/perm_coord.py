@@ -1,7 +1,7 @@
 def perm_coord(
     self,
-    perm_coord_list=[0, 1, 2],
-):
+    perm_coord_list: list = [0, 1, 2],
+) -> None:
     """Permute coordinates of Mesh Solution in place
 
     Parameters

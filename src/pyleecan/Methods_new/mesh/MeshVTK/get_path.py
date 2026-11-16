@@ -2,7 +2,7 @@ import os
 from ....definitions import RESULT_DIR
 
 
-def get_path(self, name=None, file_format="vtk"):
+def get_path(self, name: str | None = None, file_format: str = "vtk") -> str:
     """return the path to the file to save the mesh
 
     Parameters

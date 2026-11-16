@@ -3,12 +3,15 @@
 
 import os
 from inspect import signature
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import Field
 
 from ...Functions_pydantic.Plot import dict_2D, dict_3D
 from .post_method import PostMethod
+
+if TYPE_CHECKING:
+    from ..output.output import Output
 
 
 class PostPlot(PostMethod):
@@ -53,7 +56,7 @@ class PostPlot(PostMethod):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Post.PostPlot.run
-    def run(self, output):
+    def run(self, output: Output) -> None:
         """Execute the plot contained in the PostPlot object and save it to save_path
 
         Parameters

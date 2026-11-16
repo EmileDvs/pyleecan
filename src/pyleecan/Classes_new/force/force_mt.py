@@ -2,12 +2,16 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...classes_common.errors import NotImplementedYetError
 from .force import Force
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from ..scidatatool.data import Data
 
 
 @dataclass(eq=False)
@@ -22,7 +26,7 @@ class ForceMT(Force):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ForceMT.comp_force
-    def comp_force(self, output, axes_dict):
+    def comp_force(self, output: Output, axes_dict: dict[str, Data]) -> dict:
         """Compute the air-gap surface force based on Maxwell Tensor (MT).
 
         Parameters
@@ -112,7 +116,7 @@ class ForceMT(Force):
         return out_dict
 
     # Inlined from Methods.Simulation.ForceMT.comp_force_nodal
-    def comp_force_nodal(self, output):
+    def comp_force_nodal(self, output: Output):
         """Compute the nodal air-gap surface force based on Maxwell Tensor (MT).
 
         Parameters

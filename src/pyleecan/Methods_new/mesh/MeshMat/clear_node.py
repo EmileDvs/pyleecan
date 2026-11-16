@@ -3,7 +3,7 @@ import numpy as np
 from ....Classes_new.mesh.node_mat import NodeMat
 
 
-def clear_node(self):
+def clear_node(self) -> None:
     """Remove non-used nodes based on elements connectivity.
 
     Parameters

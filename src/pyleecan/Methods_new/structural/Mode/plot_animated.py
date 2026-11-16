@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def plot_animated(self, i):
+def plot_animated(self, i: int) -> None:
     """Return the pyvista mesh object.
 
     Parameters

@@ -568,6 +568,17 @@ hint pass is over for all packages.
     without check; `convert_slot_to_P`: `init_dict=` constructor argument,
     `wedge_mat` assigned on an optional slot;
   - `add_rule_winding`: dict with bool keys given to `dict[str, Any]`.
+- Legacy bugs found by ty in the remaining packages (exception in the
+  branch):
+  - `VectorField.get_harm_xyz_along`: `pol2cart` not imported (NameError);
+  - `EEC_SCIM._comp_flux_mean`: `n2abc(..., n=...)`, `n2abc` has no `n`
+    parameter (TypeError);
+  - `DataND.compare_along` / `compare_magnitude_along` /
+    `compare_phase_along`: `get_interpolation` called without its `index`
+    argument (TypeError; SciDataTool internals);
+  - `ElecLUTdq.run`: `Pjoule`, `Pstator`... given to a constructor without
+    these fields (to check); `Electrical.gen_drive`: input built with
+    `type(output.simu.input)(...)` (ty false positive).
 - Methods_new still uses the legacy dynamic loaders
   (`import_class("pyleecan.Classes", "X")`, 29 modules): the class generator
   turns them into static imports when inlining ("loaders"/"static_imports"
@@ -624,6 +635,26 @@ In the order a simulation is built:
       list). Recognized: `boolean`, `slice`, classes documented by their
       module path (`....Classes.Output`), special method returns (`__len__`
       -> int...); parameter override `LUT.set_default_simulation`.
+- [x] Remaining packages (all of `Methods_new` in `HINTED_SUBPACKAGES`),
+      parameters / returns hinted, `ty` diagnostics (review list):
+
+      | Package | Parameters | Returns | ty |
+      |---|---|---|---|
+      | electrical | 35/46 | 41/46 | 143 |
+      | magnetics | 50/61 | 15/17 | 144 |
+      | force | 11/21 | 5/9 | 68 |
+      | structural | 9/23 | 12/16 | 19 |
+      | mesh | 205/248 | 87/113 | 44 |
+      | post | 2/3 | 2/3 | 5 |
+      | elmer | 1/11 | 7/17 | 5 |
+      | import_data | 12/14 | 17/19 | 5 |
+      | gui_option | 4/4 | 6/6 | 0 |
+      | scidatatool | 318/398 | 26/78 | 32 |
+
+      Mostly optional fields used without check and methods not declared
+      on a base class (as in the other packages). Fixed: the classes named by
+      legacy string annotations (`other: "MeshMat"`) are imported under
+      `TYPE_CHECKING`.
 - [x] Converter (`converter` in `HINTED_SUBPACKAGES`): 77/95 parameters and
       86/100 returns hinted; `ty`: 26 diagnostics (review list).
       Fixed in type_hints.py: the end of a signature followed by a comment

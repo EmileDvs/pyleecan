@@ -5,8 +5,8 @@ from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries as rebui
 
 def _rebuild_symmetries(
     self,
-    values,
-    axes_list,
+    values: np.ndarray,
+    axes_list: list,
 ):
     """Reconstructs the field of a Data object taking symmetries into account
     Parameters

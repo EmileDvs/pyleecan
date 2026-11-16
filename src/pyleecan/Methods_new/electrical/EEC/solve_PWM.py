@@ -1,7 +1,12 @@
 from . import AbstractClassError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_freq import DataFreq
+    from ....Classes_new.output.output import Output
 
 
-def solve_PWM(self, output):
+def solve_PWM(self, output: Output) -> DataFreq:
     """Get stator current harmonics due to PWM harmonics
 
     Parameters

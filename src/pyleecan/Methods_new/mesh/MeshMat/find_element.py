@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def find_element(self, points, normal_t=None):
+def find_element(self, points: np.ndarray, normal_t=None) -> list:
     """Return the elements containing the target point(s)
 
     Parameters

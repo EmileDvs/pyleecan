@@ -1,3 +1,9 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
+
+
 def to_rphiz(self):
     """Performs the corrdinate change and stores the resulting field in a VectorField object.
     Parameters
@@ -32,7 +38,7 @@ def to_rphiz(self):
         ]
         result = self.get_rphiz_along(*arg_list)
         # Store in new VectorField
-        comp_dict = dict()
+        comp_dict: dict[str, DataND] = dict()
 
         Comp_r = self.components["comp_x"].copy()
         Comp_r.name = "Radial " + self.components["comp_x"].name.lower().replace(

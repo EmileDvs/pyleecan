@@ -1,8 +1,12 @@
 from ....Classes_new.scidatatool.norm_vector import NormVector as Norm_vector
 from ....classes_common.errors import AxisError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_linspace import DataLinspace
 
 
-def get_axis_periodic(self, Nper, is_aper=False):
+def get_axis_periodic(self, Nper: int, is_aper: bool = False) -> DataLinspace:
     """Returns the vector 'axis' taking symmetries into account.
 
     Parameters

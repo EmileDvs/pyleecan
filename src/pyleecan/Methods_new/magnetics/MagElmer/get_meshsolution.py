@@ -12,9 +12,14 @@ from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 from ....Classes_new.mesh.solution_data import SolutionData
 from ....Classes_new.mesh.solution_vector import SolutionVector
 from ....Classes_new.scidatatool.vector_field import VectorField
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
+    from ....Classes_new.output.output import Output
 
 
-def get_meshsolution(self, output):
+def get_meshsolution(self, output: Output) -> MeshSolution:
     """Build the MeshSolution objects from the FEA outputs.
 
     Parameters
@@ -143,7 +148,7 @@ def get_meshsolution(self, output):
                     label=store_dict[key]["symbol"],
                 )
             else:
-                comps = {}
+                comps: dict[str, DataND] = {}
                 for i in range(siz):
                     comps[comp_name[i]] = components[i]
                 field = VectorField(

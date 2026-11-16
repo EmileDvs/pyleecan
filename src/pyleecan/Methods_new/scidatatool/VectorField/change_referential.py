@@ -1,9 +1,13 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.vector_field import VectorField
 
 
 def change_referential(
-    self, rotation_speed, is_waveform, atol=1e-9, sym_t_new=dict(), atol_freq=1e-6
-):
+    self, rotation_speed: float, is_waveform: bool, atol: float = 1e-9, sym_t_new: dict = dict(), atol_freq: float = 1e-6
+) -> VectorField:
     """Change referential of vectorfield given input rotation speed (algebric to include rotation direction)
 
     Parameters

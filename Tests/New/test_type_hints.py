@@ -439,3 +439,12 @@ def test_documented_return_of_a_function_returning_nothing():
 '''
     result, _ = _hint(source)
     assert "def f(self) -> None:" in result
+
+
+def test_class_of_a_string_annotation_is_imported():
+    source = '''def f(self, other: "Arc1") -> "Arc1":
+    """Doc"""
+    return other
+'''
+    result, _ = _hint(source)
+    assert "    from ....Classes_new.geometry.arc_1 import Arc1\n" in result

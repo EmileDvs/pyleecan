@@ -1,4 +1,4 @@
-def get_length(self, is_pattern=False, is_smallestperiod=False):
+def get_length(self, is_pattern: bool = False, is_smallestperiod: bool = False):
     """Returns the length of the axis taking symmetries into account.
     Parameters
     ----------

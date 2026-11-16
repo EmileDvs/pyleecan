@@ -1,4 +1,10 @@
-def get_axes_list(self, *args):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def get_axes_list(self, *args) -> np.ndarray:
     """Get the axis of variables stored in Solution.
 
     Parameters

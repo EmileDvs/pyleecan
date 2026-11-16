@@ -5,7 +5,7 @@ from ....Classes_new.elmer.elmer_results_vtu import ElmerResultsVTU
 # TODO define "Results" dir, etc. in __init__
 
 
-def get_meshsolution(self, output):
+def get_meshsolution(self, output) -> bool:
     """Get and set the mesh data and solution data.
 
     Parameters

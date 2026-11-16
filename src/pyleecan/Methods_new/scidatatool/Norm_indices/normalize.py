@@ -3,7 +3,7 @@ import numpy as np
 
 def normalize(
     self,
-    values,
+    values: np.ndarray,
 ):
     """Normalizes axis values
     Parameters

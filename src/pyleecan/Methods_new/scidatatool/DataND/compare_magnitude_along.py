@@ -1,7 +1,7 @@
 from ....Functions_new.SciDataTool.interpolations import get_common_base, get_interpolation
 
 
-def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False):
+def compare_magnitude_along(self, *args, unit: str = "SI", data_list: list = [], is_norm: bool = False):
     """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
     Parameters
     ----------

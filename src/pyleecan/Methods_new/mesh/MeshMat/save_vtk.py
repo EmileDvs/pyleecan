@@ -2,7 +2,7 @@ import os
 from ....Functions_new.GUI.log_error import log_error
 
 
-def save_vtk(self, save_path):
+def save_vtk(self, save_path: str) -> None:
     """Save mesh to a .vtk file
 
     Parameters

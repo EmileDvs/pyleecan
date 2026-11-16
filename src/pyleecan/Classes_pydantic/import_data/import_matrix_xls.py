@@ -2,7 +2,7 @@
 """Generated experimental pydantic model; do not edit by hand."""
 
 import os
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pandas import ExcelFile, read_excel
 from pydantic import Field
@@ -10,6 +10,9 @@ from pydantic import Field
 from ...classes_common.errors import XlsFileError
 from ...Functions_pydantic.path_tools import abs_file_path
 from .import_matrix import ImportMatrix
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 class ImportMatrixXls(ImportMatrix):
@@ -54,7 +57,7 @@ class ImportMatrixXls(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrixXls.get_data
-    def get_data(self):
+    def get_data(self) -> np.ndarray:
         """Return the object's matrix
 
         Parameters

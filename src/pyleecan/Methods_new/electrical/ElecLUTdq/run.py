@@ -6,7 +6,7 @@ from ....Classes_new.output.out_loss import OutLoss
 from ...simulation.Input import InputError
 
 
-def run(self):
+def run(self) -> None:
     """Run the ElecLUTdq module"""
     if self.parent is None:
         raise InputError("The Electrical object must be in a Simulation object to run")

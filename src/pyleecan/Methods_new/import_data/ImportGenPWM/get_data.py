@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_data(self, is_norm=True, is_plot=False, Time=None):
+def get_data(self, is_norm: bool = True, is_plot: bool = False, Time=None) -> tuple[np.ndarray, np.ndarray, float, np.ndarray, np.ndarray]:
     """Generate the PWM matrix
 
     Parameters

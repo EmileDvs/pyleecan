@@ -1,4 +1,10 @@
-def comp_parameters(self, output, Tsta=None, Trot=None):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
+
+
+def comp_parameters(self, output: Output, Tsta=None, Trot=None) -> None:
     """Compute the parameters dict for the equivalent electrical circuit:
     resistance, inductance and back electromotive force
     Parameters

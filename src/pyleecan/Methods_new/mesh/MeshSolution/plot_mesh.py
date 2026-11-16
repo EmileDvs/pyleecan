@@ -5,12 +5,12 @@ from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
 def plot_mesh(
     self,
     pv_plotter=None,
-    indices=None,
-    save_path=None,
-    is_show_axes=False,
-    is_show_fig=True,
-    is_show_grid=False,
-    win_title=None,
+    indices: list | None = None,
+    save_path: str | None = None,
+    is_show_axes: bool = False,
+    is_show_fig: bool = True,
+    is_show_grid: bool = False,
+    win_title: str | None = None,
 ):
     """Plot the mesh using pyvista plotter.
 

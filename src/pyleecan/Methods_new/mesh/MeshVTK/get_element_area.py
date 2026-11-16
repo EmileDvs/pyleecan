@@ -1,4 +1,10 @@
-def get_element_area(self, indices=None):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def get_element_area(self, indices: list | None = None) -> np.ndarray:
     """Return the area of the elements on the outer surface.
 
     Parameters

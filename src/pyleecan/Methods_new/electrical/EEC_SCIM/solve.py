@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def solve(self):
+def solve(self) -> dict:
     """Solve the equivalent electrical circuit of SCIM
 
                   --->                     ---->

@@ -2,7 +2,7 @@
 """Generated experimental pydantic model; do not edit by hand."""
 
 import os
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import Field
 
@@ -10,7 +10,18 @@ from ...classes_common.errors import AbstractClassError
 from ...Functions_pydantic.Electrical.dqh_transformation import n2dqh_DataTime
 from .._legacy_model import LegacyModel
 from ..magnetics.magnetics import Magnetics
+from ..simulation.op import OP
 from ..simulation.op import OP as _field_type_OP
+
+if TYPE_CHECKING:
+    import numpy as np
+
+    from ..machine.machine import Machine
+    from ..output.lut_dq import LUTdq
+    from ..output.output import Output
+    from ..scidatatool.data_freq import DataFreq
+    from ..scidatatool.data_nd import DataND
+    from ..simulation.op import OP
 
 
 class EEC(LegacyModel):
@@ -75,7 +86,9 @@ class EEC(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC.comp_fluxlinkage
-    def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):
+    def comp_fluxlinkage(
+        self, machine: Machine | None = None, OP: OP | None = None, Nt_tot=None
+    ) -> tuple[np.ndarray, DataND]:
         """Compute flux linkage using magnetic model in self.fluxlink
 
         Parameters
@@ -153,7 +166,7 @@ class EEC(LegacyModel):
         return Phi_dqh_mean, Phi_wind
 
     # Inlined from Methods.Simulation.EEC.comp_joule_losses
-    def comp_joule_losses(self, out_dict, machine):
+    def comp_joule_losses(self, out_dict: dict, machine: Machine) -> dict:
         """Compute the electrical Joule losses
 
         Parameters
@@ -191,7 +204,7 @@ class EEC(LegacyModel):
         )
 
     # Inlined from Methods.Simulation.EEC.comp_R1
-    def comp_R1(self, R1_ref=None, T_ref=None):
+    def comp_R1(self, R1_ref: float | None = None, T_ref: float | None = None) -> None:
         """Compute the stator phase resistance for the equivalent electrical circuit
 
         Parameters
@@ -224,7 +237,7 @@ class EEC(LegacyModel):
         self.R1 = R1_ref * self.Xkr_skinS
 
     # Inlined from Methods.Simulation.EEC.comp_skin_effect
-    def comp_skin_effect(self):
+    def comp_skin_effect(self) -> None:
         """Compute the skin effect factors (update value in object)
 
         Parameters
@@ -250,7 +263,7 @@ class EEC(LegacyModel):
         )
 
     # Inlined from Methods.Simulation.EEC.get_machine_from_parent
-    def get_machine_from_parent(self):
+    def get_machine_from_parent(self) -> Machine | None:
         """Get machine object from parent
 
         Parameters
@@ -282,7 +295,7 @@ class EEC(LegacyModel):
                 return None
 
     # Inlined from Methods.Simulation.EEC.solve
-    def solve(self):
+    def solve(self) -> dict:
         """Compute the parameters dict for the equivalent electrical circuit
 
         Parameters
@@ -301,7 +314,7 @@ class EEC(LegacyModel):
         )
 
     # Inlined from Methods.Simulation.EEC.solve_PWM
-    def solve_PWM(self, output):
+    def solve_PWM(self, output: Output) -> DataFreq:
         """Get stator current harmonics due to PWM harmonics
 
         Parameters
@@ -323,7 +336,7 @@ class EEC(LegacyModel):
         )
 
     # Inlined from Methods.Simulation.EEC.update_from_ref
-    def update_from_ref(self, LUT_ref):
+    def update_from_ref(self, LUT_ref: LUTdq):
         """Compute and set the parameter attributes of the EEC from a reference LUT
 
         Parameters

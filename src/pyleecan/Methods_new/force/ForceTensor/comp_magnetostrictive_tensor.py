@@ -3,7 +3,7 @@ import numpy as np
 
 def comp_magnetostrictive_tensor(
     self,
-    M,
+    M: np.ndarray,
     Nt_tot,
     polynomial_coeffs=[[0.719, -0.078, -0.042], [-0.391, 0.114, 0.004]],
 ):

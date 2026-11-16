@@ -2,9 +2,13 @@ import numpy as np
 
 from ....Functions_new.Electrical.dqh_transformation import n2abc
 from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def _comp_flux_mean(self, out):
+def _comp_flux_mean(self, out: Output) -> tuple[float, float]:
     """Calculate magnetizing flux (not used)
 
     Parameters

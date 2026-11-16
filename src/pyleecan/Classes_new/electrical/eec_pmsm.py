@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,6 +14,12 @@ from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_linspace import DataLinspace
 from ..scidatatool.data_time import DataTime
 from .eec import EEC
+
+if TYPE_CHECKING:
+    from ..machine.machine import Machine
+    from ..output.lut_dq import LUTdq
+    from ..output.output import Output
+    from ..scidatatool.normalization import Normalization
 
 
 @dataclass(eq=False)
@@ -59,7 +65,7 @@ class EEC_PMSM(EEC):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC_PMSM.clear_parameters
-    def clear_parameters(self):
+    def clear_parameters(self) -> None:
         """Clear all the parameters of an EEC_PMSM
 
         Parameters
@@ -235,7 +241,7 @@ class EEC_PMSM(EEC):
         return E_d, E_q, E_h, freqs_d, freqs_q, freqs_h
 
     # Inlined from Methods.Simulation.EEC_PMSM.comp_joule_losses
-    def comp_joule_losses(self, out_dict, machine):
+    def comp_joule_losses(self, out_dict: dict, machine: Machine) -> dict:
         """Compute the electrical Joule losses
 
         Parameters
@@ -265,7 +271,7 @@ class EEC_PMSM(EEC):
         return out_dict
 
     # Inlined from Methods.Simulation.EEC_PMSM.comp_Ld
-    def comp_Ld(self):
+    def comp_Ld(self) -> None:
         """Compute and set the stator winding inductance along d-axis for the EEC
 
         Parameters
@@ -286,7 +292,7 @@ class EEC_PMSM(EEC):
             self.Ld = None
 
     # Inlined from Methods.Simulation.EEC_PMSM.comp_Lq
-    def comp_Lq(self):
+    def comp_Lq(self) -> None:
         """Compute and set the stator winding inductance along q-axis for the EEC
 
         Parameters
@@ -307,7 +313,7 @@ class EEC_PMSM(EEC):
             self.Lq = None
 
     # Inlined from Methods.Simulation.EEC_PMSM.comp_parameters
-    def comp_parameters(self):
+    def comp_parameters(self) -> None:
         """Compute and set the parameter attributes of the EEC that are not set:
         resistance, skin effect factors, inductance, fluxlinkage and back emf
 
@@ -347,7 +353,7 @@ class EEC_PMSM(EEC):
             self.comp_Lq()
 
     # Inlined from Methods.Simulation.EEC_PMSM.comp_Phidq
-    def comp_Phidq(self):
+    def comp_Phidq(self) -> None:
         """Compute and set the stator winding flux for the equivalent electrical circuit
 
         Parameters
@@ -382,7 +388,7 @@ class EEC_PMSM(EEC):
         self.Phiq = Phiq
 
     # Inlined from Methods.Simulation.EEC_PMSM.comp_Phidq_mag
-    def comp_Phidq_mag(self):
+    def comp_Phidq_mag(self) -> None:
         """Compute and set the stator winding flux in open-circuit for the EEC
 
         Parameters
@@ -401,7 +407,7 @@ class EEC_PMSM(EEC):
         self.Phiq_mag = float(Phi_dqh_mag_mean[1])
 
     # Inlined from Methods.Simulation.EEC_PMSM.comp_torque_sync_rel
-    def comp_torque_sync_rel(self):
+    def comp_torque_sync_rel(self) -> tuple[float | np.ndarray, float | np.ndarray]:
         """Calculate synchronous and reluctant torque
 
         Parameters
@@ -443,7 +449,7 @@ class EEC_PMSM(EEC):
         return Tem_sync, Tem_rel
 
     # Inlined from Methods.Simulation.EEC_PMSM.solve
-    def solve(self):
+    def solve(self) -> dict:
         """Compute the parameters dict for the equivalent electrical circuit
         cf "Advanced Electrical Drives, analysis, modeling, control"
         Rik de doncker, Duco W.J. Pulle, Andre Veltman, Springer edition
@@ -513,7 +519,12 @@ class EEC_PMSM(EEC):
         return out_dict
 
     # Inlined from Methods.Simulation.EEC_PMSM.solve_PWM
-    def solve_PWM(self, output, is_dqh_freq=False, is_skin_effect_inductance=False):
+    def solve_PWM(
+        self,
+        output: Output,
+        is_dqh_freq: bool = False,
+        is_skin_effect_inductance: bool = False,
+    ) -> DataFreq:
         """Get stator current harmonics due to PWM harmonics
         TODO: validation with transient FEA simulation
 
@@ -629,7 +640,7 @@ class EEC_PMSM(EEC):
         # Create frequency axis
         Freqs_PWM = Us_PWM.axes[0]
 
-        norm_freq = {}
+        norm_freq: dict[str, Normalization] = {}
         if Freqs_PWM.normalizations is not None and len(Freqs_PWM.normalizations) > 0:
             for key, val in Freqs_PWM.normalizations.items():
                 norm_freq[key] = val.copy()
@@ -670,7 +681,7 @@ class EEC_PMSM(EEC):
         return Is_PWM_n
 
     # Inlined from Methods.Simulation.EEC_PMSM.update_from_ref
-    def update_from_ref(self, LUT_ref):
+    def update_from_ref(self, LUT_ref: LUTdq) -> None:
         """Compute and set the parameter attributes of the EEC from a reference LUT:
         resistance, skin effect factors, inductance, fluxlinkage and back emf
 

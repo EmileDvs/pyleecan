@@ -1,3 +1,9 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
+
+
 def to_xyz(self):
     """Performs the corrdinate change and stores the resulting field in a VectorField object.
     Parameters
@@ -28,7 +34,7 @@ def to_xyz(self):
         ]
         result = self.get_xyz_along(*arg_list, is_squeeze=False)
         # Store in new VectorField
-        comp_dict = dict()
+        comp_dict: dict[str, DataND] = dict()
 
         Comp_x = self.components["radial"].copy()
         Comp_x.name = (

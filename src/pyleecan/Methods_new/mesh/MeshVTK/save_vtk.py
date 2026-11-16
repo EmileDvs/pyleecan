@@ -3,7 +3,7 @@ from ....Functions_new.GUI.log_error import log_error
 import shutil
 
 
-def save_vtk(self, save_path):
+def save_vtk(self, save_path: str) -> None:
     """Copy file vtk use for object meshVTK into path give by save_path
 
     Parameters

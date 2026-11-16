@@ -4,7 +4,7 @@ from ....classes_common.check import check_var
 from ....Functions.Load.import_class import import_class
 
 
-def _set_normalizations(self, value):
+def _set_normalizations(self, value) -> None:
     """setter of normalizations"""
     if type(value) is dict:
         for key, obj in value.items():

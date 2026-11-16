@@ -1,8 +1,12 @@
 from ...simulation.Input import InputError
 from ....Classes_new.output.out_struct import OutStruct
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def comp_axes(self, output):
+def comp_axes(self, output: Output) -> None:
     """Compute axes used for the Structural module
 
     Parameters

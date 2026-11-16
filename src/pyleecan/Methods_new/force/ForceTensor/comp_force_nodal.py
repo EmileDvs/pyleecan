@@ -5,9 +5,14 @@ from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.mesh.mesh_solution import MeshSolution
 from ....Classes_new.mesh.solution_vector import SolutionVector
 from ....Classes_new.scidatatool.vector_field import VectorField
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
+    from ....Classes_new.output.output import Output
 
 
-def comp_force_nodal(self, output, axes_dict):
+def comp_force_nodal(self, output: Output, axes_dict):
     """Run the nodal forces calculation based on a tensor.
 
     from publications:
@@ -100,7 +105,7 @@ def comp_force_nodal(self, output, axes_dict):
     # Time axis goes back to first axis
     f = np.moveaxis(f, -1, 0)
 
-    components = {}
+    components: dict[str, DataND] = {}
 
     fx_data = DataTime(
         name="Nodal force (x)",

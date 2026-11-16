@@ -1,10 +1,12 @@
 # Experimental dataclass generated from Generator/ClassesRef/Mesh/MeshVTK.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 import os
 import shutil
 from dataclasses import dataclass, field
-from typing import ClassVar, Literal, Optional
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional
 
 import numpy as np
 import pyvista as pv
@@ -24,6 +26,9 @@ from .ref_quad_9 import RefQuad9
 from .ref_segment_p_1 import RefSegmentP1
 from .ref_triangle_3 import RefTriangle3
 from .scalar_product_l2 import ScalarProductL2
+
+if TYPE_CHECKING:
+    from .mesh_vtk import MeshVTK
 
 
 @dataclass(eq=False)
@@ -184,7 +189,7 @@ class MeshVTK(Mesh):
         return new_mesh
 
     # Inlined from Methods.Mesh.MeshVTK.get_element
-    def get_element(self, indices=None):
+    def get_element(self, indices: list | None = None):
         """Return the elements (connectivities).
 
         Parameters
@@ -233,7 +238,7 @@ class MeshVTK(Mesh):
         return elements, mesh.n_cells, {}
 
     # Inlined from Methods.Mesh.MeshVTK.get_element_area
-    def get_element_area(self, indices=None):
+    def get_element_area(self, indices: list | None = None) -> np.ndarray:
         """Return the area of the elements on the outer surface.
 
         Parameters
@@ -254,7 +259,7 @@ class MeshVTK(Mesh):
         return surf.compute_element_sizes(area=True)["Area"]
 
     # Inlined from Methods.Mesh.MeshVTK.get_mesh_pv
-    def get_mesh_pv(self, indices=None):
+    def get_mesh_pv(self, indices: list | None = None):
         """Return the pyvista mesh object (or submesh).
 
         Parameters
@@ -333,7 +338,9 @@ class MeshVTK(Mesh):
         return mesh.points
 
     # Inlined from Methods.Mesh.MeshVTK.get_normals
-    def get_normals(self, indices=None, loc="center"):
+    def get_normals(
+        self, indices: list | None = None, loc: str = "center"
+    ) -> np.ndarray:
         """Return the array of the normals coordinates.
 
         Parameters
@@ -374,7 +381,7 @@ class MeshVTK(Mesh):
             return normals[indices, :]
 
     # Inlined from Methods.Mesh.MeshVTK.get_path
-    def get_path(self, name=None, file_format="vtk"):
+    def get_path(self, name: str | None = None, file_format: str = "vtk") -> str:
         """return the path to the file to save the mesh
 
         Parameters
@@ -403,7 +410,7 @@ class MeshVTK(Mesh):
         return os.path.join(self.path, filename).replace("\\", "/")
 
     # Inlined from Methods.Mesh.MeshVTK.get_surf
-    def get_surf(self, indices=None):
+    def get_surf(self, indices: list | None = None):
         """Return the surf object if it was already extracted, or extracts it from the mesh.
 
         Parameters
@@ -443,9 +450,9 @@ class MeshVTK(Mesh):
     # Inlined from Methods.Mesh.MeshVTK.perm_coord
     def perm_coord(
         self,
-        perm_coord_list=[0, 1, 2],
-        path_meshVTK=None,
-    ):
+        perm_coord_list: list = [0, 1, 2],
+        path_meshVTK: str | None = None,
+    ) -> MeshVTK:
         """Returns the current MeshVTK object with permuted coordinates
 
         Parameters
@@ -479,7 +486,7 @@ class MeshVTK(Mesh):
         nodemat = NodeMat(coordinate=mesh_mat_node, nb_node=nb_node)
 
         # 2. create ElementMat
-        elementMatDict = {}
+        elementMatDict: dict[str, ElementMat] = {}
 
         for key in mesh_mat_element[0]:
             element_mat = ElementMat(
@@ -503,7 +510,7 @@ class MeshVTK(Mesh):
         return self
 
     # Inlined from Methods.Mesh.MeshVTK.save_vtk
-    def save_vtk(self, save_path):
+    def save_vtk(self, save_path: str) -> None:
         """Copy file vtk use for object meshVTK into path give by save_path
 
         Parameters

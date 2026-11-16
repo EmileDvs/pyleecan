@@ -2,7 +2,7 @@ import numpy as np
 import pyvista as pv
 
 
-def get_element(self, indices=None):
+def get_element(self, indices: list | None = None):
     """Return the elements (connectivities).
 
     Parameters

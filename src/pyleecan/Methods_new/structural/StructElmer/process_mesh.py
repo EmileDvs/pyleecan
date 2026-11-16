@@ -6,7 +6,7 @@ import os
 from ....Functions_new.labels import SHAFT_LAB, decode_label, HOLEM_LAB_S, HOLEV_LAB_S, ROTOR_LAB_S, STATOR_LAB_S, LAM_LAB_S, WIND_LAB_S, SHAFT_LAB
 
 
-def _remove_entities(gmsh, labels):
+def _remove_entities(gmsh, labels: list) -> None:
     """
     Remove model entities that have one of the given labels in their physical
     groups names.
@@ -82,7 +82,7 @@ def _get_names_physical(gmsh, dimtag):
 
 
 def process_mesh(
-    self, file_in, file_out, is_get_lam=True, is_get_magnet=False, is_hole_air=True
+    self, file_in, file_out, is_get_lam: bool = True, is_get_magnet: bool = False, is_hole_air: bool = True
 ):
     """Preprocess the GMSH model, i.e. remove unused parts, rename boundaries, ..."""
     # TODO utilize 'translation' dict

@@ -3,9 +3,13 @@ from . import XlsFileError
 import os
 
 from ....Functions_new.path_tools import abs_file_path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
-def get_data(self):
+def get_data(self) -> np.ndarray:
     """Return the object's matrix
 
     Parameters

@@ -8,11 +8,11 @@ from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
 def get_magnitude_along(
     self,
     *args,
-    unit="SI",
-    is_norm=False,
-    axis_data=[],
-    is_squeeze=True,
-    is_sum=True,
+    unit: str = "SI",
+    is_norm: bool = False,
+    axis_data: list = [],
+    is_squeeze: bool = True,
+    is_sum: bool = True,
     corr_unit=None,
 ):
     """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.

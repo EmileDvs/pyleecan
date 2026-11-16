@@ -1,4 +1,10 @@
-def comp_joule_losses(self, out_dict, machine):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
+
+
+def comp_joule_losses(self, out_dict: dict, machine: Machine) -> dict:
     """Compute the electrical Joule losses
 
     Parameters

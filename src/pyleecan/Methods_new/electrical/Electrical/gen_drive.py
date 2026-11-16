@@ -2,9 +2,13 @@ import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_time import DataTime
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def gen_drive(self, output):
+def gen_drive(self, output: Output) -> None:
     """Generate the drive for the equivalent electrical circuit (only PWM drive for now)
 
     Parameters

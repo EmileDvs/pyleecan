@@ -5,7 +5,7 @@ import os
 from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool
 from shutil import copyfile
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -33,6 +33,12 @@ from ..output.out_mag_femm import OutMagFEMM
 from ..scidatatool.data_1d import Data1D
 from ..simulation.dxf_import import DXFImport
 from .magnetics import Magnetics
+
+if TYPE_CHECKING:
+    from ...classes_common.femm_handler import _FEMMHandler
+    from ..mesh.mesh_mat import MeshMat
+    from ..output.output import Output
+    from ..scidatatool.data import Data
 
 
 class MagFEMM(Magnetics):
@@ -137,7 +143,9 @@ class MagFEMM(Magnetics):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.MagFEMM.build_MS_sliced
-    def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
+    def build_MS_sliced(
+        self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
+    ) -> dict:
         """Build and solve FEMM model to calculate and store magnetic quantities
 
         Parameters
@@ -248,7 +256,9 @@ class MagFEMM(Magnetics):
         return MS_sliced_new
 
     # Inlined from Methods.Simulation.MagFEMM.comp_flux_airgap
-    def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
+    def comp_flux_airgap(
+        self, output: Output, axes_dict: dict[str, Data], Is_val=None, Ir_val=None
+    ) -> dict:
         """Build and solve FEMM model to calculate and store magnetic quantities
 
         Parameters
@@ -497,8 +507,14 @@ class MagFEMM(Magnetics):
 
     # Inlined from Methods.Simulation.MagFEMM.get_meshsolution
     def get_meshsolution(
-        self, femm, FEMM_dict, save_path, j_t0, id_worker=0, is_get_mesh=False
-    ):
+        self,
+        femm: _FEMMHandler,
+        FEMM_dict,
+        save_path: str,
+        j_t0: int,
+        id_worker: int = 0,
+        is_get_mesh: bool = False,
+    ) -> tuple[MeshMat, np.ndarray, np.ndarray, np.ndarray, dict]:
         """Load the mesh data and solution data. FEMM must be working and a simulation must have been solved.
 
         Parameters
@@ -646,7 +662,7 @@ class MagFEMM(Magnetics):
         return mesh, B, H, mu, A, groups, A_elem
 
     # Inlined from Methods.Simulation.MagFEMM.get_path_save
-    def get_path_save(self, output):
+    def get_path_save(self, output: Output) -> str:
         """Return the path to save the FEMM simulation
 
         Parameters
@@ -671,7 +687,7 @@ class MagFEMM(Magnetics):
         return save_dir
 
     # Inlined from Methods.Simulation.MagFEMM.get_path_save_fem
-    def get_path_save_fem(self, output):
+    def get_path_save_fem(self, output: Output) -> str:
         """Return the path to save the FEMM simulation
 
         Parameters
@@ -707,21 +723,21 @@ class MagFEMM(Magnetics):
     def solve_FEMM(
         self,
         femm,
-        output,
-        out_dict,
-        FEMM_dict,
-        sym,
-        Nt,
-        angle,
-        Is,
-        Ir,
-        angle_rotor,
-        is_close_femm,
-        filename=None,
-        start_t=0,
-        end_t=None,
+        output: Output,
+        out_dict: dict,
+        FEMM_dict: dict,
+        sym: int,
+        Nt: int,
+        angle: np.ndarray,
+        Is: np.ndarray,
+        Ir: np.ndarray,
+        angle_rotor: np.ndarray,
+        is_close_femm: bool,
+        filename: str | None = None,
+        start_t: int = 0,
+        end_t: int | None = None,
         Nmess=4,
-    ):
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, MeshMat, dict]:
         """
         Solve FEMM model to calculate airgap flux density, torque instantaneous/average/ripple values,
         flux induced in stator windings and flux density, field and permeability maps
@@ -1024,18 +1040,18 @@ class MagFEMM(Magnetics):
     # Inlined from Methods.Simulation.MagFEMM.solve_FEMM_parallel
     def solve_FEMM_parallel(
         self,
-        femm,
-        output,
-        out_dict,
-        FEMM_dict,
-        sym,
-        Nt,
-        angle,
-        Is,
-        Ir,
-        angle_rotor,
-        filename,
-    ):
+        femm: _FEMMHandler,
+        output: Output,
+        out_dict: dict,
+        FEMM_dict: dict,
+        sym: int,
+        Nt: int,
+        angle: np.ndarray,
+        Is: np.ndarray,
+        Ir: np.ndarray,
+        angle_rotor: np.ndarray,
+        filename: str,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, MeshMat, dict]:
         """
         Same as solve_FEMM including parallelization on several workers
 

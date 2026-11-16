@@ -1,10 +1,15 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Import/ImportMatrixVal.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
+
+import numpy as np
 
 from .._pyleecan_model import NDArray
 from .import_matrix import ImportMatrix
+
+if TYPE_CHECKING:
+    pass
 
 
 class ImportMatrixVal(ImportMatrix):
@@ -24,7 +29,7 @@ class ImportMatrixVal(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrixVal.get_data
-    def get_data(self):
+    def get_data(self) -> np.ndarray:
         """Return the object's matrix
 
         Parameters

@@ -1,19 +1,23 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_mat import MeshMat
 
 
 
 def element_loop(
     self,
-    mesh,
+    mesh: MeshMat,
     B,
     H,
     mu,
     indice,
     dim,
     Nt_tot,
-    polynomial_coeffs=[[0.719, -0.078, -0.042], [-0.391, 0.114, 0.004]],
+    polynomial_coeffs: list = [[0.719, -0.078, -0.042], [-0.391, 0.114, 0.004]],
 ):
     """compute nodal forces with a loop on elements and nodes
 

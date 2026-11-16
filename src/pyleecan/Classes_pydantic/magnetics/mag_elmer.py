@@ -3,7 +3,7 @@
 
 import os
 import subprocess
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from meshio import read
@@ -64,6 +64,11 @@ from ..scidatatool.norm_ref import NormRef
 from ..scidatatool.vector_field import VectorField
 from ..simulation.dxf_import import DXFImport
 from .magnetics import Magnetics
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from ..scidatatool.data import Data
+    from ..scidatatool.data_nd import DataND
 
 
 class MagElmer(Magnetics):
@@ -133,7 +138,9 @@ class MagElmer(Magnetics):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.MagElmer.comp_flux_airgap
-    def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
+    def comp_flux_airgap(
+        self, output: Output, axes_dict: dict[str, Data], Is_val=None, Ir_val=None
+    ):
         """Build and solve Elmer model to calculate and store magnetic quantities
 
         Parameters
@@ -275,7 +282,7 @@ class MagElmer(Magnetics):
         }
 
     # Inlined from Methods.Simulation.MagElmer.gen_elmer_mesh
-    def gen_elmer_mesh(self, output):
+    def gen_elmer_mesh(self, output: Output) -> dict[str, bool]:
         """Call ElmerGrid process to convert mesh from Gmsh format to Elmer's compatible
 
         Parameters
@@ -324,7 +331,7 @@ class MagElmer(Magnetics):
         return True
 
     # Inlined from Methods.Simulation.MagElmer.get_meshsolution
-    def get_meshsolution(self, output):
+    def get_meshsolution(self, output: Output) -> MeshSolution:
         """Build the MeshSolution objects from the FEA outputs.
 
         Parameters
@@ -453,7 +460,7 @@ class MagElmer(Magnetics):
                         label=store_dict[key]["symbol"],
                     )
                 else:
-                    comps = {}
+                    comps: dict[str, DataND] = {}
                     for i in range(siz):
                         comps[comp_name[i]] = components[i]
                     field = VectorField(
@@ -474,7 +481,7 @@ class MagElmer(Magnetics):
         return True
 
     # Inlined from Methods.Simulation.MagElmer.get_path_save
-    def get_path_save(self, output):
+    def get_path_save(self, output: Output) -> str:
         """Return the path to save the Elmer simulation
 
         Parameters
@@ -499,7 +506,7 @@ class MagElmer(Magnetics):
         return save_dir
 
     # Inlined from Methods.Simulation.MagElmer.get_path_save_fea
-    def get_path_save_fea(self, output):
+    def get_path_save_fea(self, output: Output) -> str:
         """Return the path to save the Elmer simulation
 
         Parameters
@@ -533,7 +540,16 @@ class MagElmer(Magnetics):
         return os.path.join(save_dir, file_name)
 
     # Inlined from Methods.Simulation.MagElmer.solve_FEA
-    def solve_FEA(self, output, sym, angle, time, angle_rotor, Is, Ir):
+    def solve_FEA(
+        self,
+        output: Output,
+        sym: int,
+        angle: np.ndarray,
+        time: np.ndarray,
+        angle_rotor: np.ndarray,
+        Is: np.ndarray,
+        Ir: np.ndarray,
+    ):
         """
         Solve Elmer model to calculate airgap flux density, torque instantaneous/average/ripple values,
         flux induced in stator windings and flux density, field and permeability maps

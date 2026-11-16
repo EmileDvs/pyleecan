@@ -2,11 +2,14 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .._legacy_class import LegacyClass
 from ..scidatatool.vector_field import VectorField
 from .import_data import ImportData
+
+if TYPE_CHECKING:
+    from ..scidatatool.data_nd import DataND
 
 
 @dataclass(eq=False)
@@ -37,7 +40,7 @@ class ImportVectorField(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportVectorField.get_data
-    def get_data(self):
+    def get_data(self) -> VectorField:
         """Generate VectorField object
 
         Parameters
@@ -52,7 +55,7 @@ class ImportVectorField(LegacyClass):
 
         """
 
-        comp_dict = {}
+        comp_dict: dict[str, DataND] = {}
         for key, component in self.components.items():
             comp_dict[key] = component.get_data()
 

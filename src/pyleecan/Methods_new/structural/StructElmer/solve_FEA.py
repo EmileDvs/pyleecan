@@ -1,7 +1,7 @@
 from . import _execute
 
 
-def solve_FEA(self, output):
+def solve_FEA(self, output) -> None:
     """Solve the FEA simulation
 
     Parameters

@@ -1,7 +1,12 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
 
 
-def comp_I_mag(self, output, Time):
+def comp_I_mag(self, output: Output, Time: Data) -> tuple[np.ndarray, np.ndarray]:
     """Compute the currents on both stator and rotor laminations for given Magnetics time axis
     Phase currents are divided by the number of parallel circuits per pole and per phase to account
     for actual current in slot conductors

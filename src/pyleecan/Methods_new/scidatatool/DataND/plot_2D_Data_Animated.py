@@ -6,8 +6,8 @@ from ....Functions_new.SciDataTool.Plot import PARAM_3D, fft_dict, ifft_dict
 
 
 def plot_2D_Data_Animated(
-    self, animated_axis, suptitle_ref, *param_list, nb_frames=50, fps=10, **param_dict
-):
+    self, animated_axis: str, suptitle_ref, *param_list, nb_frames: int = 50, fps: int = 10, **param_dict
+) -> None:
     """Gen
 
     Parameters

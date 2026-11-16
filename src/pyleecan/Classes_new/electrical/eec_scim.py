@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from multiprocessing import cpu_count
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 import scipy.interpolate as scp_int
@@ -13,6 +13,11 @@ from ...Functions_new.labels import ROTOR_LAB, STATOR_LAB
 from ..import_data.import_gen_vect_lin import ImportGenVectLin
 from ..import_data.import_matrix_val import ImportMatrixVal
 from .eec import EEC
+
+if TYPE_CHECKING:
+    from ..machine.machine import Machine
+    from ..output.lut_slip import LUTslip
+    from ..output.output import Output
 
 
 @dataclass(eq=False)
@@ -103,7 +108,7 @@ class EEC_SCIM(EEC):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC_SCIM._comp_flux_mean
-    def _comp_flux_mean(self, out):
+    def _comp_flux_mean(self, out: Output) -> tuple[float, float]:
         """Calculate magnetizing flux (not used)
 
         Parameters
@@ -186,7 +191,9 @@ class EEC_SCIM(EEC):
         return Phi_s, Phi_r
 
     # Inlined from Methods.Simulation.EEC_SCIM._comp_Lm_FEA
-    def _comp_Lm_FEA(self, machine, K21Z, Xke_skinS):
+    def _comp_Lm_FEA(
+        self, machine: Machine, K21Z: float, Xke_skinS: float
+    ) -> tuple[float, float]:
         """Calculate magnetizing flux (not used)
 
         Parameters
@@ -310,7 +317,7 @@ class EEC_SCIM(EEC):
         return Phi_s, I_m
 
     # Inlined from Methods.Simulation.EEC_SCIM.clear_parameters
-    def clear_parameters(self):
+    def clear_parameters(self) -> None:
         """Clear all the parameters of an EEC_SCIM
 
         Parameters
@@ -331,7 +338,7 @@ class EEC_SCIM(EEC):
         self.Xkr_skinR, self.Xke_skinR = 1, 1
 
     # Inlined from Methods.Simulation.EEC_SCIM.comp_joule_losses
-    def comp_joule_losses(self, out_dict, machine):
+    def comp_joule_losses(self, out_dict: dict, machine: Machine) -> dict:
         """Compute the electrical Joule losses
 
         Parameters
@@ -361,7 +368,7 @@ class EEC_SCIM(EEC):
         return out_dict
 
     # Inlined from Methods.Simulation.EEC_SCIM.comp_K21
-    def comp_K21(self):
+    def comp_K21(self) -> None:
         """Compute and set winding transformation ratios
 
         Parameters
@@ -387,7 +394,7 @@ class EEC_SCIM(EEC):
         self.K21I = (qs / Zr) * K21
 
     # Inlined from Methods.Simulation.EEC_SCIM.comp_L1
-    def comp_L1(self, L1_ref=None):
+    def comp_L1(self, L1_ref: float | None = None) -> None:
         """Compute and set the Stator phase inductance for the equivalent electrical circuit
 
         Parameters
@@ -413,7 +420,7 @@ class EEC_SCIM(EEC):
         self.L1 = L1_ref * self.Xke_skinS
 
     # Inlined from Methods.Simulation.EEC_SCIM.comp_L2
-    def comp_L2(self, L2_ref=None):
+    def comp_L2(self, L2_ref: float | None = None) -> None:
         """Compute and set the Rotor phase inductance for the equivalent electrical circuit
 
         Parameters
@@ -439,7 +446,7 @@ class EEC_SCIM(EEC):
         self.L2 = L2_ref * self.Xke_skinR
 
     # Inlined from Methods.Simulation.EEC_SCIM.comp_parameters
-    def comp_parameters(self):
+    def comp_parameters(self) -> None:
         """Compute and set the parameter attributes of the equivalent electrical circuit:
         resistance, skin effect factors and inductance according to OP/T
 
@@ -495,7 +502,7 @@ class EEC_SCIM(EEC):
             raise Exception("Lm_table and Im_table must be enforced for EEC_SCIM")
 
     # Inlined from Methods.Simulation.EEC_SCIM.comp_R2
-    def comp_R2(self, R2_ref=None, T_ref=None):
+    def comp_R2(self, R2_ref: float | None = None, T_ref: float | None = None) -> None:
         """Compute and set the rotor phase resistance for the equivalent electrical circuit
 
         Parameters
@@ -532,7 +539,7 @@ class EEC_SCIM(EEC):
         self.R2 = R2_ref * self.Xkr_skinR
 
     # Inlined from Methods.Simulation.EEC_SCIM.comp_skin_effect
-    def comp_skin_effect(self):
+    def comp_skin_effect(self) -> None:
         """Compute and set the skin effect factors (update value in object)
 
         Parameters
@@ -572,7 +579,7 @@ class EEC_SCIM(EEC):
             self.Xkr_skinR, self.Xke_skinR = 1, 1
 
     # Inlined from Methods.Simulation.EEC_SCIM.solve
-    def solve(self):
+    def solve(self) -> dict:
         """Solve the equivalent electrical circuit of SCIM
 
                       --->                     ---->
@@ -627,7 +634,7 @@ class EEC_SCIM(EEC):
         return out_dict
 
     # Inlined from Methods.Simulation.EEC_SCIM.solve_elementary
-    def solve_elementary(self):
+    def solve_elementary(self) -> float:
         """Solve the EEC, set the resulting currents and voltages and update the
         magnetizing inductance.
 
@@ -711,7 +718,7 @@ class EEC_SCIM(EEC):
         return delta_Lm
 
     # Inlined from Methods.Simulation.EEC_SCIM.update_from_ref
-    def update_from_ref(self, LUT_ref):
+    def update_from_ref(self, LUT_ref: LUTslip) -> None:
         """Update the equivalent circuit according to the LUT
 
         Parameters

@@ -11,11 +11,15 @@ from ....Classes_new.mesh.ref_triangle_3 import RefTriangle3
 from ....Classes_new.mesh.scalar_product_l2 import ScalarProductL2
 from ....definitions import MAIN_DIR
 from ....Functions_new.FEMM import FEMM_GROUPS
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....classes_common.femm_handler import _FEMMHandler
 
 
 def get_meshsolution(
-    self, femm, FEMM_dict, save_path, j_t0, id_worker=0, is_get_mesh=False
-):
+    self, femm: _FEMMHandler, FEMM_dict, save_path: str, j_t0: int, id_worker: int = 0, is_get_mesh: bool = False
+) -> tuple[MeshMat, np.ndarray, np.ndarray, np.ndarray, dict]:
     """Load the mesh data and solution data. FEMM must be working and a simulation must have been solved.
 
     Parameters

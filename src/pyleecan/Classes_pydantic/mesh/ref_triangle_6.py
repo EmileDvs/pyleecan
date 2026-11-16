@@ -1,9 +1,12 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Mesh/Interpolation/RefTriangle6.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .ref_element import RefElement
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 class RefTriangle6(RefElement):
@@ -17,7 +20,9 @@ class RefTriangle6(RefElement):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.RefTriangle6.get_real_point
-    def get_real_point(self, element_coordinate, ref_pt, nb_ref_pt=1):
+    def get_real_point(
+        self, element_coordinate: np.ndarray, ref_pt: np.ndarray, nb_ref_pt: int = 1
+    ) -> np.ndarray | None:
         """Return the coordinates in the element of a point in the reference element.
 
         Parameters
@@ -41,7 +46,9 @@ class RefTriangle6(RefElement):
         return None
 
     # Inlined from Methods.Mesh.RefTriangle6.get_ref_point
-    def get_ref_point(self, element_coordinate, point):
+    def get_ref_point(
+        self, element_coordinate: np.ndarray, point: np.ndarray
+    ) -> np.ndarray | None:
         """Return the coordinate of the equivalent point in the ref element
 
         Parameters
@@ -68,7 +75,12 @@ class RefTriangle6(RefElement):
         return None
 
     # Inlined from Methods.Mesh.RefTriangle6.is_inside
-    def is_inside(self, element_coordinate, point, normal_t=None):
+    def is_inside(
+        self,
+        element_coordinate: np.ndarray,
+        point: np.ndarray,
+        normal_t: np.ndarray | None = None,
+    ) -> bool | None:
         """Check if a point is inside the element defined by its coordinates.
 
         Parameters

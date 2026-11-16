@@ -4,7 +4,7 @@ from ....classes_common.errors import NormError
 from ....Functions_new.SciDataTool.conversions import convert
 
 
-def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_phase_along(self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []):
     """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
     Parameters
     ----------

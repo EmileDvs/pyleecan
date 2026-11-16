@@ -41,7 +41,7 @@ class ImportGenVectLin(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenVectLin.check
-    def check(self):
+    def check(self) -> None:
         """Check that the object is correctly set"""
         if self.start is None:
             raise ImportError("Start must not be None")
@@ -63,7 +63,7 @@ class ImportGenVectLin(ImportMatrix):
         return data[1] - data[0]
 
     # Inlined from Methods.Import.ImportGenVectLin.get_data
-    def get_data(self):
+    def get_data(self) -> np.ndarray:
         """Generate the linspace vector
 
         Parameters

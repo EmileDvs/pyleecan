@@ -1,4 +1,4 @@
-def clear_parameters(self):
+def clear_parameters(self) -> None:
     """Clear all the parameters of an EEC_SCIM
 
     Parameters

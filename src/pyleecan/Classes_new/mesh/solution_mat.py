@@ -1,12 +1,17 @@
 # Experimental dataclass generated from Generator/ClassesRef/Mesh/SolutionMat.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
 from .solution import Solution
+
+if TYPE_CHECKING:
+    from .solution_mat import SolutionMat
 
 
 @dataclass(eq=False)
@@ -42,7 +47,7 @@ class SolutionMat(Solution):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.SolutionMat.get_axes_list
-    def get_axes_list(self, *args):
+    def get_axes_list(self, *args) -> list:
         """Get the value of variables stored in Solution.
 
         Parameters
@@ -70,7 +75,9 @@ class SolutionMat(Solution):
         return axis_name, axis_size
 
     # Inlined from Methods.Mesh.SolutionMat.get_field
-    def get_field(self, *args, is_squeeze=False, node=None, is_rthetaz=False):
+    def get_field(
+        self, *args, is_squeeze: bool = False, node=None, is_rthetaz: bool = False
+    ) -> np.ndarray:
         """Get the value of variables stored in Solution.
 
         Parameters
@@ -138,7 +145,7 @@ class SolutionMat(Solution):
         return field_new
 
     # Inlined from Methods.Mesh.SolutionMat.get_solution
-    def get_solution(self, indice=None):
+    def get_solution(self, indice=None) -> SolutionMat:
         """Return a copy of the solution with the option to only include specified indices.
 
         Parameters

@@ -3,7 +3,7 @@ import numpy as np
 from ....Functions_new.make_ndarray_equal import make_ndarray_equal
 
 
-def get_axes_list(self, *args):
+def get_axes_list(self, *args) -> np.ndarray:
     """Get the axis of variables stored in Solution.
 
     Parameters

@@ -4,9 +4,13 @@ from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Functions_new.MeshSolution.build_meshsolution import build_meshsolution
 from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
 from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
 
 
-def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
+def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii) -> dict:
     """Build and solve FEMM model to calculate and store magnetic quantities
 
     Parameters

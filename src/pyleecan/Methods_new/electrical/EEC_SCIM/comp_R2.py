@@ -1,4 +1,4 @@
-def comp_R2(self, R2_ref=None, T_ref=None):
+def comp_R2(self, R2_ref: float | None = None, T_ref: float | None = None) -> None:
     """Compute and set the rotor phase resistance for the equivalent electrical circuit
 
     Parameters

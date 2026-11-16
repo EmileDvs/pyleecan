@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import Field
 
@@ -12,6 +12,10 @@ from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_time import DataTime
 from .import_ import Import
+
+if TYPE_CHECKING:
+    from ..scidatatool.data import Data
+    from ..scidatatool.data_nd import DataND
 
 
 class ImportData(LegacyModel):
@@ -61,7 +65,7 @@ class ImportData(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportData.get_data
-    def get_data(self):
+    def get_data(self) -> DataND:
         """Generate Data objects
 
         Parameters
@@ -76,7 +80,7 @@ class ImportData(LegacyModel):
 
         """
 
-        axes_list = []
+        axes_list: list[Data] = []
         is_freq = False
         for axis in self.axes:
             if axis.name == "freqs" or axis.name == "wavenumber":

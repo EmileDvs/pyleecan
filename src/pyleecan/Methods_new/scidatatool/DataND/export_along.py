@@ -11,14 +11,14 @@ CHAR_LIST = ["$", "{", "}"]
 def export_along(
     self,
     *args,
-    is_2D=True,
-    unit="SI",
-    save_path=None,
+    is_2D: bool = True,
+    unit: str = "SI",
+    save_path: str | None = None,
     file_name=None,
-    file_format="csv",
-    is_multiple_files=False,
+    file_format: str = "csv",
+    is_multiple_files: bool = False,
     plot_options={},
-):
+) -> None:
     """Exports the sliced or interpolated version of the data, using conversions and symmetries if needed, in a file.
     Parameters
     ----------

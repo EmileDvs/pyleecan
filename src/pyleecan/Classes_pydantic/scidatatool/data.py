@@ -44,7 +44,7 @@ class Data(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Data._set_normalizations
-    def _set_normalizations(self, value):
+    def _set_normalizations(self, value) -> None:
         """setter of normalizations"""
         if type(value) is dict:
             for key, obj in value.items():

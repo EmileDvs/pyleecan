@@ -4,7 +4,7 @@ from ....Classes_new.output.lut_dq import LUTdq
 from ....Classes_new.simulation.op_matrix import OPMatrix
 
 
-def comp_LUTdq(self):
+def comp_LUTdq(self) -> LUTdq:
     """Compute Look up table function of Id / Iq
 
     Parameters

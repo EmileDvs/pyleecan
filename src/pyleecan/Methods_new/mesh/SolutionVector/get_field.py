@@ -3,7 +3,7 @@ import numpy as np
 from ....Functions_new.Structural.conversions import pol2cart
 
 
-def get_field(self, *args, is_squeeze=False, node=None, is_rthetaz=False):
+def get_field(self, *args, is_squeeze: bool = False, node=None, is_rthetaz: bool = False) -> np.ndarray:
     """Get the value of variables stored in Solution.
 
     Parameters

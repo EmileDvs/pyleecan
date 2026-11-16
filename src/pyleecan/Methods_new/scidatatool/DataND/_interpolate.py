@@ -1,7 +1,11 @@
 from ....Functions_new.SciDataTool.interpolations import get_interpolation, get_interpolation_step
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
-def _interpolate(self, values, axes_list):
+def _interpolate(self, values: np.ndarray, axes_list: list) -> np.ndarray:
     """Returns the values of the field interpolated over the axes values.
     Parameters
     ----------

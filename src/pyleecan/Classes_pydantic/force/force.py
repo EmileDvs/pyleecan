@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Simulation/Force.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -10,6 +10,10 @@ from .._legacy_model import LegacyModel
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.vector_field import VectorField
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from ..scidatatool.data import Data
 
 
 class Force(LegacyModel):
@@ -54,7 +58,7 @@ class Force(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Force.comp_AGSF_transfer
-    def comp_AGSF_transfer(self, output, rnoise=None):
+    def comp_AGSF_transfer(self, output: Output, rnoise=None) -> None:
         """Method to compute Air-Gap Surface Force transfer from middle air-gap
         radius to stator bore radius.
 
@@ -122,7 +126,7 @@ class Force(LegacyModel):
         Datafreqs = Data1D(name="freqs", values=freqs)
         Datawavenumbers = Data1D(name="wavenumber", values=wavenumber)
 
-        axes_list = [Datafreqs, Datawavenumbers]
+        axes_list: list[Data] = [Datafreqs, Datawavenumbers]
 
         AGSF_TR = VectorField(
             name="Air gap Surface Force",
@@ -150,7 +154,7 @@ class Force(LegacyModel):
         output.force.Rag = Rsbo
 
     # Inlined from Methods.Simulation.Force.comp_axes
-    def comp_axes(self, output):
+    def comp_axes(self, output: Output) -> dict[str, Data]:
         """Compute the axes required in any Force module
 
         Parameters
@@ -229,7 +233,7 @@ class Force(LegacyModel):
         return axes_dict
 
     # Inlined from Methods.Simulation.Force.run
-    def run(self):
+    def run(self) -> None:
         """Run the Force module"""
         if self.parent is None:
             raise InputError(

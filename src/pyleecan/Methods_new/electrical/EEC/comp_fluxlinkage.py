@@ -2,9 +2,16 @@ import os
 
 from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
+    from ....Classes_new.machine.machine import Machine
+    from ....Classes_new.simulation.op import OP
+    import numpy as np
 
 
-def comp_fluxlinkage(self, machine=None, OP=None, Nt_tot=None):
+def comp_fluxlinkage(self, machine: Machine | None = None, OP: OP | None = None, Nt_tot=None) -> tuple[np.ndarray, DataND]:
     """Compute flux linkage using magnetic model in self.fluxlink
 
     Parameters

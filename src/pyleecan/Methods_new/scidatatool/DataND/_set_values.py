@@ -3,7 +3,7 @@ import numpy as np
 from ....classes_common.check import check_dimensions, check_var
 
 
-def _set_values(self, value):
+def _set_values(self, value) -> None:
     """setter of values"""
     if type(value) is int and value == -1:
         value = np.array([])

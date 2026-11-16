@@ -12,11 +12,15 @@ from ....Classes_new.mesh.solution_data import SolutionData
 from ....Classes_new.mesh.solution_vector import SolutionVector
 from ....Classes_new.scidatatool.vector_field import VectorField
 from . import ElmerResultsVTUError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
 
 # TODO add groups, see get_meshsolution of MagFEMM
 
 
-def build_meshsolution(self):
+def build_meshsolution(self) -> bool:
     """Get the mesh and solution data from an Elmer VTU results file
 
     Parameters
@@ -103,7 +107,7 @@ def build_meshsolution(self):
                 meshsol.add_solution(solution=solution, label=label)
 
             else:
-                comps = {}
+                comps: dict[str, DataND] = {}
                 for i in range(siz):
                     comps[comp_name[i]] = components[i]
                 field = VectorField(

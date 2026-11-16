@@ -1,4 +1,4 @@
-def get_m2(self, value):
+def get_m2(self, value: float) -> float | None:
     """Convert the value the correct m² unit (to display in GUI)
 
     Parameters

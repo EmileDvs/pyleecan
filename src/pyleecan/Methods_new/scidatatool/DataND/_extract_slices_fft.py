@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def _extract_slices_fft(self, values, axes_list):
+def _extract_slices_fft(self, values: np.ndarray, axes_list: list) -> np.ndarray:
     """Returns the values of the field (with symmetries and transformations).
     Parameters
     ----------

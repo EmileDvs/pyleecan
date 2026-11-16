@@ -114,7 +114,7 @@ class MeshMat(Mesh):
         raise NotImplementedError("The clear_element method is not yet implemented")
 
     # Inlined from Methods.Mesh.MeshMat.clear_node
-    def clear_node(self):
+    def clear_node(self) -> None:
         """Remove non-used nodes based on elements connectivity.
 
         Parameters
@@ -232,7 +232,7 @@ class MeshMat(Mesh):
         return mesh_vtk
 
     # Inlined from Methods.Mesh.MeshMat.find_element
-    def find_element(self, points, normal_t=None):
+    def find_element(self, points: np.ndarray, normal_t=None) -> list:
         """Return the elements containing the target point(s)
 
         Parameters
@@ -758,7 +758,7 @@ class MeshMat(Mesh):
         return new_mesh
 
     # Inlined from Methods.Mesh.MeshMat.renum
-    def renum(self):
+    def renum(self) -> None:
         """Restart point indices from 0, and update connectivity. Indices of elements stay the same.
 
         Parameters
@@ -805,7 +805,7 @@ class MeshMat(Mesh):
             self._is_renum = False
 
     # Inlined from Methods.Mesh.MeshMat.save_vtk
-    def save_vtk(self, save_path):
+    def save_vtk(self, save_path: str) -> None:
         """Save mesh to a .vtk file
 
         Parameters

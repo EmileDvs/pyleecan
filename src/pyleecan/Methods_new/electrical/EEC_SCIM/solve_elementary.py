@@ -2,7 +2,7 @@ import numpy as np
 import scipy.interpolate as scp_int
 
 
-def solve_elementary(self):
+def solve_elementary(self) -> float:
     """Solve the EEC, set the resulting currents and voltages and update the
     magnetizing inductance.
 

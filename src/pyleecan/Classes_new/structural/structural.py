@@ -2,11 +2,14 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import InputError
 from .._legacy_class import LegacyClass
 from ..output.out_struct import OutStruct
+
+if TYPE_CHECKING:
+    from ..output.output import Output
 
 
 @dataclass(eq=False)
@@ -27,7 +30,7 @@ class Structural(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Structural.comp_axes
-    def comp_axes(self, output):
+    def comp_axes(self, output: Output) -> None:
         """Compute axes used for the Structural module
 
         Parameters
@@ -54,7 +57,7 @@ class Structural(LegacyClass):
             output.struct.axes_dict[key] = val
 
     # Inlined from Methods.Simulation.Structural.run
-    def run(self):
+    def run(self) -> None:
         """Run the Structural module"""
         if self.parent is None:
             raise InputError(

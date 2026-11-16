@@ -2,12 +2,15 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...Functions_new.Structural.conversions import cart2pol, pol2cart
 from ..mesh.solution_mat import SolutionMat
+
+if TYPE_CHECKING:
+    pass
 
 
 @dataclass(eq=False)
@@ -38,7 +41,7 @@ class Mode(SolutionMat):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Mode.get_shape_pol
-    def get_shape_pol(self):
+    def get_shape_pol(self) -> np.ndarray:
         """Return the mode shape in cartesian coordinates.
 
         Parameters
@@ -60,7 +63,7 @@ class Mode(SolutionMat):
             return cart2pol(shape_xyz, points)
 
     # Inlined from Methods.Simulation.Mode.get_shape_xyz
-    def get_shape_xyz(self):
+    def get_shape_xyz(self) -> np.ndarray:
         """Return the mode shape in cartesian coordinates.
 
         Parameters
@@ -82,7 +85,7 @@ class Mode(SolutionMat):
             return pol2cart(shape_pol, points)
 
     # Inlined from Methods.Simulation.Mode.plot
-    def plot(self, i):
+    def plot(self, i: int) -> None:
         """Return the pyvista mesh object.
 
         Parameters
@@ -105,7 +108,7 @@ class Mode(SolutionMat):
         )
 
     # Inlined from Methods.Simulation.Mode.plot_animated
-    def plot_animated(self, i):
+    def plot_animated(self, i: int) -> None:
         """Return the pyvista mesh object.
 
         Parameters

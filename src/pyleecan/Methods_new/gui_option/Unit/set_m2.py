@@ -1,4 +1,4 @@
-def set_m2(self, value):
+def set_m2(self, value: float) -> float:
     """Convert the value the correct m² unit (to set in the object in m²)
 
     Parameters

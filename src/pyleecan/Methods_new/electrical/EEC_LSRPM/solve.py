@@ -1,8 +1,12 @@
 import numpy as np
 from scipy import linalg
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def solve(self, output):
+def solve(self, output: Output) -> None:
     """Compute the parameters dict for the equivalent electrical circuit
       cf PhD thesis of SIJIE NI
       "Damper winding for noise and vibration reductionof Permanent Magnet Synchronous Machine"

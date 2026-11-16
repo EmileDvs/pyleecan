@@ -2,7 +2,7 @@ import numpy as np
 from . import GenSinEmptyError, GenSinDimError, GenSinTransposeError
 
 
-def get_data(self):
+def get_data(self) -> np.ndarray:
     """Generate the sinus matrix
 
     Parameters

@@ -6,22 +6,27 @@ from shutil import copyfile
 import numpy as np
 
 from ....classes_common.femm_handler import _FEMMHandler
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_mat import MeshMat
+    from ....Classes_new.output.output import Output
 
 
 def solve_FEMM_parallel(
     self,
-    femm,
-    output,
-    out_dict,
-    FEMM_dict,
-    sym,
-    Nt,
-    angle,
-    Is,
-    Ir,
-    angle_rotor,
-    filename,
-):
+    femm: _FEMMHandler,
+    output: Output,
+    out_dict: dict,
+    FEMM_dict: dict,
+    sym: int,
+    Nt: int,
+    angle: np.ndarray,
+    Is: np.ndarray,
+    Ir: np.ndarray,
+    angle_rotor: np.ndarray,
+    filename: str,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, MeshMat, dict]:
     """
     Same as solve_FEMM including parallelization on several workers
 

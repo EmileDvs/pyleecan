@@ -1,4 +1,4 @@
-def comp_Phidq(self):
+def comp_Phidq(self) -> None:
     """Compute and set the stator winding flux for the equivalent electrical circuit
 
     Parameters

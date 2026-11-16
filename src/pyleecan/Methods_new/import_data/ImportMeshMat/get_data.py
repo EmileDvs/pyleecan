@@ -10,7 +10,7 @@ from ....Classes_new.mesh.ref_quad_4 import RefQuad4
 from ....Classes_new.mesh.ref_triangle_3 import RefTriangle3
 
 
-def get_data(self):
+def get_data(self) -> MeshMat:
     """Import mesh and generate MeshMat object
 
     Parameters

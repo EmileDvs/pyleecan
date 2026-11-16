@@ -3,9 +3,13 @@ import numpy as np
 from ....Classes_new.mesh.element_mat import ElementMat
 from ....Classes_new.mesh.mesh_mat import MeshMat
 from ....Classes_new.mesh.node_mat import NodeMat
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 
-def get_group(self, group_names):
+def get_group(self, group_names) -> MeshSolution:
     """Return all attributes of a MeshSolution object with only the elements, nodes
     and corresponding solutions of the group.
 

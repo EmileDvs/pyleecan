@@ -27,7 +27,7 @@ class ImportMatrix(Import):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrix.edit_matrix
-    def edit_matrix(self, matrix):
+    def edit_matrix(self, matrix: np.ndarray) -> np.ndarray:
         """To apply transformation on the matrix
 
         Parameters

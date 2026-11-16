@@ -34,7 +34,7 @@ class ImportMeshMat(Import):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMeshMat.get_data
-    def get_data(self):
+    def get_data(self) -> MeshMat:
         """Import mesh and generate MeshMat object
 
         Parameters

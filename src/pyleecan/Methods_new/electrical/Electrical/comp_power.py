@@ -1,4 +1,4 @@
-def comp_power(self, out_dict, machine):
+def comp_power(self, out_dict: dict, machine):
     """Compute the electrical average power
 
     Parameters

@@ -1,4 +1,10 @@
-def comp_joule_losses(self, output):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
+
+
+def comp_joule_losses(self, output: Output) -> None:
     """Compute the electrical Joule losses
 
     Parameters

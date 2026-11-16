@@ -1,4 +1,4 @@
-def get_data(self):
+def get_data(self) -> None:
     """Method to return the Elmer simulation results
 
     Parameters

@@ -4,7 +4,7 @@ from ....classes_common.errors import AxisError
 from ....Functions_new.SciDataTool.conversions import pol2cart
 
 
-def get_mag_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_mag_xyz_along(self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []):
     """Returns the list of the cartesian (comp_x,comp_y,comp_z) components of the field, using conversions and symmetries if needed.
     Parameters
     ----------

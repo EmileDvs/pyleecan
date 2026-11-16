@@ -3,7 +3,7 @@ import numpy as np
 from ....Functions_new.SciDataTool.symmetries import rebuild_symmetries
 
 
-def _get_field(self, axes_list):
+def _get_field(self, axes_list: list) -> np.ndarray:
     """Returns the values of the field (with symmetries and sums).
     Parameters
     ----------

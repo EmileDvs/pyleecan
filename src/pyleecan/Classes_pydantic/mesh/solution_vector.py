@@ -1,13 +1,16 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Mesh/SolutionVector.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.vector_field import VectorField
 from .solution import Solution
+
+if TYPE_CHECKING:
+    from .solution_mat import SolutionMat
 
 
 class SolutionVector(Solution):
@@ -27,7 +30,7 @@ class SolutionVector(Solution):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.SolutionVector.get_axes_list
-    def get_axes_list(self, *args):
+    def get_axes_list(self, *args) -> np.ndarray:
         """Get the axis of variables stored in Solution.
 
         Parameters
@@ -69,7 +72,9 @@ class SolutionVector(Solution):
         return ax_name, ax_size
 
     # Inlined from Methods.Mesh.SolutionVector.get_field
-    def get_field(self, *args, is_squeeze=False, node=None, is_rthetaz=False):
+    def get_field(
+        self, *args, is_squeeze: bool = False, node=None, is_rthetaz: bool = False
+    ) -> np.ndarray:
         """Get the value of variables stored in Solution.
 
         Parameters
@@ -134,7 +139,7 @@ class SolutionVector(Solution):
         return field
 
     # Inlined from Methods.Mesh.SolutionVector.get_solution
-    def get_solution(self, indice=None):
+    def get_solution(self, indice=None) -> SolutionMat:
         """Return a copy of the solution with the option to only include specified indices.
 
         Parameters

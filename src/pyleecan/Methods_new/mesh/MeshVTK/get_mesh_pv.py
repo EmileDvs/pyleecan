@@ -3,7 +3,7 @@ from meshio import read
 import numpy as np
 
 
-def get_mesh_pv(self, indices=None):
+def get_mesh_pv(self, indices: list | None = None):
     """Return the pyvista mesh object (or submesh).
 
     Parameters

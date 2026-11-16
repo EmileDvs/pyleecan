@@ -1,11 +1,16 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/DataTime.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import AxisError
+from .data import Data
 from .data_1d import Data1D
 from .data_nd import DataND
+
+if TYPE_CHECKING:
+    from .data import Data
+    from .data_freq import DataFreq
 
 
 class DataTime(DataND):
@@ -53,7 +58,7 @@ class DataTime(DataND):
         else:
             results = self.get_along(*axes_str)
             values = results.pop(self.symbol)
-            Axes = []
+            Axes: list[Data] = []
             for axis in self.axes:
                 if axis.name == "time":
                     if "antiperiod" in axis.symmetries:
@@ -95,7 +100,7 @@ class DataTime(DataND):
             )
 
     # Inlined from Methods.SciDataTool.DataTime.to_datadual
-    def to_datadual(self, datafreq=None):
+    def to_datadual(self, datafreq: DataFreq | None = None):
         """Creates a DataDual object.
         Parameters
         ----------

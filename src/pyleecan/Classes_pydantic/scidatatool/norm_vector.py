@@ -1,11 +1,16 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/Norm_vector.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
+
+import numpy as np
 
 from ...classes_common.errors import NormError
 from .._pyleecan_model import NDArray
 from .normalization import Normalization
+
+if TYPE_CHECKING:
+    pass
 
 
 class NormVector(Normalization):
@@ -27,7 +32,7 @@ class NormVector(Normalization):
     # Inlined from Methods.SciDataTool.Norm_vector.normalize
     def normalize(
         self,
-        values,
+        values: np.ndarray,
     ):
         """Normalizes axis values
         Parameters

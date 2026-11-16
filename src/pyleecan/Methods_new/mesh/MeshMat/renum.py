@@ -5,7 +5,7 @@ import numpy as np
 from ....Classes_new.mesh.element_mat import ElementMat
 
 
-def renum(self):
+def renum(self) -> None:
     """Restart point indices from 0, and update connectivity. Indices of elements stay the same.
 
     Parameters

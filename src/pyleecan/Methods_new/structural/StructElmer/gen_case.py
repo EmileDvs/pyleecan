@@ -15,7 +15,7 @@ ID_LAM = 1
 ID_MAG = 2
 
 
-def gen_case(self, output, mesh_names):
+def gen_case(self, output, mesh_names) -> None:
     """Setup the Elmer Case file (.sif file)"""
 
     # get the save path

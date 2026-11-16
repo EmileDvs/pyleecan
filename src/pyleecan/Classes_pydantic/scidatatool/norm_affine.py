@@ -1,9 +1,12 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/Norm_affine.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .normalization import Normalization
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 class NormAffine(Normalization):
@@ -30,7 +33,7 @@ class NormAffine(Normalization):
     # Inlined from Methods.SciDataTool.Norm_affine.normalize
     def normalize(
         self,
-        values,
+        values: np.ndarray,
     ):
         """Normalizes axis values
         Parameters

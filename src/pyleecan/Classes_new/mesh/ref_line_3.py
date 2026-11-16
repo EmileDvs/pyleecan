@@ -2,9 +2,12 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .ref_element import RefElement
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 @dataclass(eq=False)
@@ -19,7 +22,9 @@ class RefLine3(RefElement):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.RefLine3.get_real_point
-    def get_real_point(self, element_coordinate, ref_pt, nb_ref_pt=1):
+    def get_real_point(
+        self, element_coordinate: np.ndarray, ref_pt: np.ndarray, nb_ref_pt: int = 1
+    ) -> np.ndarray | None:
         """Return the coordinates in the element of a point in the reference element.
 
         Parameters
@@ -43,7 +48,7 @@ class RefLine3(RefElement):
         return None
 
     # Inlined from Methods.Mesh.RefLine3.get_ref_point
-    def get_ref_point(self, element_coordinate, point):
+    def get_ref_point(self, element_coordinate, point: np.ndarray) -> np.ndarray | None:
         """Return the coordinate of the equivalent point in the ref element
 
         Parameters
@@ -70,7 +75,12 @@ class RefLine3(RefElement):
         return None
 
     # Inlined from Methods.Mesh.RefLine3.is_inside
-    def is_inside(self, element_coordinate, point, normal_t=None):
+    def is_inside(
+        self,
+        element_coordinate: np.ndarray,
+        point: np.ndarray,
+        normal_t: np.ndarray | None = None,
+    ) -> bool | None:
         """Check if a point is inside the element defined its coordinates.
 
         Parameters

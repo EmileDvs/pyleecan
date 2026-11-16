@@ -1,7 +1,11 @@
 from ....Methods import NotImplementedYetError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def comp_force_nodal(self, output):
+def comp_force_nodal(self, output: Output):
     """Compute the nodal air-gap surface force based on Maxwell Tensor (MT).
 
     Parameters

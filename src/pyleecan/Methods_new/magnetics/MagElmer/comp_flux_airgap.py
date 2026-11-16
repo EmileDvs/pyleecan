@@ -4,9 +4,14 @@ import subprocess
 from ....Functions_new.GMSH.draw_gmsh import draw_GMSH
 from ....Classes_new.output.out_mag_elmer import OutMagElmer
 from . import _get_BP_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
 
 
-def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
+def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=None, Ir_val=None):
     """Build and solve Elmer model to calculate and store magnetic quantities
 
     Parameters

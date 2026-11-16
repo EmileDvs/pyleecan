@@ -1,4 +1,10 @@
-def update_from_ref(self, LUT_ref):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.lut_slip import LUTslip
+
+
+def update_from_ref(self, LUT_ref: LUTslip) -> None:
     """Update the equivalent circuit according to the LUT
 
     Parameters

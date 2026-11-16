@@ -1,5 +1,9 @@
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....classes_common.errors import AxisError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
 
 
 def freq_to_time(self):
@@ -39,7 +43,7 @@ def freq_to_time(self):
     else:
         results = self.get_along(*axes_str)
         values = results.pop(self.symbol)
-        Axes = []
+        Axes: list[Data] = []
         for axis in self.axes:
             if axis.name == "freqs":
                 axis_new = Data1D(

@@ -1,4 +1,10 @@
-def to_datadual(self, datafreq=None):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_freq import DataFreq
+
+
+def to_datadual(self, datafreq: DataFreq | None = None):
     """Creates a DataDual object.
     Parameters
     ----------

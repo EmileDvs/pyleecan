@@ -26,7 +26,7 @@ class ImportMeshUnv(Import):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMeshUnv.get_data
-    def get_data(self):
+    def get_data(self) -> tuple[np.ndarray, dict]:
         """Return mesh data (nodes and elements) from a .unv file
 
         Parameters

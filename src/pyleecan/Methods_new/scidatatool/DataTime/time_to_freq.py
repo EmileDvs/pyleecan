@@ -1,5 +1,9 @@
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....classes_common.errors import AxisError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
 
 
 def time_to_freq(self):
@@ -39,7 +43,7 @@ def time_to_freq(self):
     else:
         results = self.get_along(*axes_str)
         values = results.pop(self.symbol)
-        Axes = []
+        Axes: list[Data] = []
         for axis in self.axes:
             if axis.name == "time":
                 if "antiperiod" in axis.symmetries:

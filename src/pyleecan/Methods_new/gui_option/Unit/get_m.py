@@ -1,4 +1,4 @@
-def get_m(self, value):
+def get_m(self, value: float) -> float | None:
     """Convert the value the correct m unit (to display in GUI)
 
     Parameters

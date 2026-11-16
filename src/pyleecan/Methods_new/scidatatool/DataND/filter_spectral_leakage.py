@@ -1,17 +1,22 @@
 import numpy as np
 
 from ....Functions_new.SciDataTool.filter_spectral_leakage import filter_spectral_leakage as filter_spectral_leakage_fct
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.scidatatool.data_nd import DataND
 
 
 def filter_spectral_leakage(
     self,
-    freqs_th,
-    axes_list_filt=list(),
-    arg_list=list(),
-    Wmatf=np.array([]),
-    If=np.array([]),
-    is_return_calc_data=False,
-):
+    freqs_th: np.ndarray,
+    axes_list_filt: list[Data] = list(),
+    arg_list: list = list(),
+    Wmatf: np.ndarray = np.array([]),
+    If: np.ndarray = np.array([]),
+    is_return_calc_data: bool = False,
+) -> tuple[DataND, list[Data], list, np.ndarray, np.ndarray, np.ndarray]:
     """Filter spectral leakage from a SciDataTool DataND object
 
     Parameters
@@ -143,7 +148,7 @@ def filter_spectral_leakage(
         freqs_th_store = np.array(freqs_th)
 
     if len(axes_list_filt) == 0:
-        axes_list_filt = list()  # Reinstantiate a different list
+        axes_list_filt: list[Data] = list()  # Reinstantiate a different list
         axes_list_filt.append(
             Data1D(
                 name="freqs",

@@ -128,7 +128,7 @@ class RequestedAxis(LegacyClass):
             "derivate",
             "antiderivate",
         ],
-    ):
+    ) -> None:
         """Computes the vector 'axis' in the unit required, using conversions and symmetries if needed.
         Parameters
         ----------

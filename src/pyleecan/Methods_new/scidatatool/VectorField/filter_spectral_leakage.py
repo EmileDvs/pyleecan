@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.vector_field import VectorField
 
 
-def filter_spectral_leakage(self, freqs_th):
+def filter_spectral_leakage(self, freqs_th: np.ndarray) -> VectorField:
     """Filter spectral leakage from a SciDataTool VectorField object
 
     Parameters

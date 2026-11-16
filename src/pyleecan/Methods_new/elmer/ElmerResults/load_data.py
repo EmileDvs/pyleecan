@@ -3,7 +3,7 @@ import numpy as np
 from . import ElmerResultsError
 
 
-def load_data(self):
+def load_data(self) -> list:
     """Method to load the Elmer simulation results (as an alternative for direct input)
 
     Parameters

@@ -8,16 +8,16 @@ from ....Functions_new.SciDataTool.conversions import convert
 
 def get_values(
     self,
-    unit="SI",
-    is_oneperiod=False,
-    is_antiperiod=False,
-    is_smallestperiod=False,
-    is_pattern=False,
-    normalization=None,
-    operation=None,
-    is_real=True,
+    unit: str = "SI",
+    is_oneperiod: bool = False,
+    is_antiperiod: bool = False,
+    is_smallestperiod: bool = False,
+    is_pattern: bool = False,
+    normalization: str | None = None,
+    operation: str | None = None,
+    is_real: bool = True,
     corr_unit=None,
-    is_full=False,
+    is_full: bool = False,
 ):
     """Returns the vector 'axis' taking symmetries into account.
     Parameters

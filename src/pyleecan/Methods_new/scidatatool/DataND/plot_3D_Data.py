@@ -11,38 +11,43 @@ from ....Functions_new.SciDataTool.parser import read_input_strings
 from ....Functions_new.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
 from ....Functions_new.SciDataTool.Plot.plot_3d import plot_3D
 from ....Functions_new.SciDataTool.Plot.plot_4d import plot_4D
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 def plot_3D_Data(
     self,
     *arg_list,
     axis_data=None,
-    is_norm=False,
-    unit="SI",
-    save_path=None,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    z_min=None,
-    z_max=None,
-    z_range=None,
-    is_auto_ticks=True,
-    is_auto_range=True,
-    is_2D_view=True,
-    is_contour=False,
-    is_same_size=True,
-    N_stem=100,
-    fig=None,
-    ax=None,
-    is_show_fig=None,
-    is_logscale_x=False,
-    is_logscale_y=False,
-    is_logscale_z=False,
-    thresh=None,
-    is_switch_axes=False,
+    is_norm: bool = False,
+    unit: str = "SI",
+    save_path: str | None = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    y_min: float | None = None,
+    y_max: float | None = None,
+    z_min: float | None = None,
+    z_max: float | None = None,
+    z_range: float | None = None,
+    is_auto_ticks: bool = True,
+    is_auto_range: bool = True,
+    is_2D_view: bool = True,
+    is_contour: bool = False,
+    is_same_size: bool = True,
+    N_stem: int = 100,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_show_fig: bool | None = None,
+    is_logscale_x: bool = False,
+    is_logscale_y: bool = False,
+    is_logscale_z: bool = False,
+    thresh: float | None = None,
+    is_switch_axes: bool = False,
     colormap="jet",
-    win_title=None,
+    win_title: str | None = None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
@@ -51,15 +56,15 @@ def plot_3D_Data(
     ylabel=None,
     zlabel=None,
     title=None,
-    is_disp_title=True,
+    is_disp_title: bool = True,
     type_plot=None,
     annotation_delim=None,
     marker_color="k",
-    is_shading_flat=None,
-    is_hide_annotation=False,
-    is_filter_x=True,
-    is_filter_y=True,
-):
+    is_shading_flat: bool | None = None,
+    is_hide_annotation: bool = False,
+    is_filter_x: bool = True,
+    is_filter_y: bool = True,
+) -> None:
     """Plots a field as a function of two axes
 
     Parameters

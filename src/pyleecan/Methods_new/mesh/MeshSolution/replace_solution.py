@@ -3,7 +3,7 @@ from typing import Optional
 from ....Classes_new.mesh.solution import Solution
 
 
-def replace_solution(self, solution: Solution, label: Optional[str] = ""):
+def replace_solution(self, solution: Solution, label: Optional[str] = "") -> None:
     """Replace the solution in the solution_didct
 
     Parameters

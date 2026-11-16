@@ -2,9 +2,13 @@ import os
 
 from ....Functions_new.GMSH.draw_gmsh import draw_GMSH
 from . import _execute, _get_BP_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def gen_mesh(self, output):
+def gen_mesh(self, output: Output):
     """Initialize the FEA simulation model
 
     Parameters

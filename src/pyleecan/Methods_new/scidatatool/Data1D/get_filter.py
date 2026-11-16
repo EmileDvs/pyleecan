@@ -1,7 +1,7 @@
 from ....classes_common.errors import AxisError
 
 
-def get_filter(self, filter_dict):
+def get_filter(self, filter_dict: dict) -> list:
     """Get filtering indices
     Parameters
     ----------

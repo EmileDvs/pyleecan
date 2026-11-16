@@ -33,7 +33,7 @@ class ImportGenMatrixSin(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenMatrixSin.get_data
-    def get_data(self):
+    def get_data(self) -> np.ndarray:
         """Generate the sinus matrix
 
         Parameters
@@ -82,7 +82,7 @@ class ImportGenMatrixSin(ImportMatrix):
         return self.edit_matrix(matrix)
 
     # Inlined from Methods.Import.ImportGenMatrixSin.init_vector
-    def init_vector(self, f, A, Phi, N, Tf):
+    def init_vector(self, f: list, A: list, Phi: list, N: int, Tf: float) -> None:
         """Create the sin_list according to the input list
 
         Parameters

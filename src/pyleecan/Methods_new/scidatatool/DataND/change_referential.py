@@ -2,23 +2,28 @@ import numpy as np
 
 from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.change_referential import change_referential_spectrum, change_referential_waveform
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.scidatatool.data_nd import DataND
 
 
 def change_referential(
     self,
-    rotation_speed,
-    is_waveform,
-    atol=1e-9,
-    axes_list_change=list(),
-    arg_list=list(),
-    freqs_new=np.array([]),
-    I1=np.array([]),
-    Irf_un=np.array([]),
+    rotation_speed: float,
+    is_waveform: bool,
+    atol: float = 1e-9,
+    axes_list_change: list[Data] = list(),
+    arg_list: list = list(),
+    freqs_new: np.ndarray = np.array([]),
+    I1: np.ndarray = np.array([]),
+    Irf_un: np.ndarray = np.array([]),
     sym_t_new=dict(),
-    ta_in=tuple(),
-    ta_out=tuple(),
-    atol_freq=1e-6,
-):
+    ta_in: tuple = tuple(),
+    ta_out: tuple = tuple(),
+    atol_freq: float = 1e-6,
+) -> tuple[DataND, list[Data], list, np.ndarray, np.ndarray, np.ndarray, tuple, tuple]:
     """Change referential of a SciDataTool DataND object
 
     Parameters

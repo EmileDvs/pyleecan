@@ -5,7 +5,7 @@ from ....Functions_new.SciDataTool.derivation_integration import antiderivate, d
 from ....Functions_new.SciDataTool.sum_mean import my_mean, my_sum, root_mean_square, root_sum_square
 
 
-def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
+def _apply_operations(self, values: np.ndarray, axes_list, is_magnitude, unit, corr_unit) -> np.ndarray:
     """Returns the values of the field transformed or converted
     Parameters
     ----------

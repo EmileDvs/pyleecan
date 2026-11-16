@@ -1,10 +1,14 @@
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
 # TODO improve path
 
 
-def get_path_save_fea(self, output):
+def get_path_save_fea(self, output: Output) -> str:
     """Return the path to save the FEA simulation
 
     Parameters

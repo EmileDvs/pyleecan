@@ -1,7 +1,7 @@
 from ....classes_common.errors import AxisError
 
 
-def get_length(self, is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False):
+def get_length(self, is_oneperiod: bool = False, is_antiperiod: bool = False, is_smallestperiod: bool = False):
     """Returns the length of the axis taking symmetries into account.
     Parameters
     ----------

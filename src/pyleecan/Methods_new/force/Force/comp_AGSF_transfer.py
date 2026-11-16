@@ -3,9 +3,14 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.vector_field import VectorField
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
 
 
-def comp_AGSF_transfer(self, output, rnoise=None):
+def comp_AGSF_transfer(self, output: Output, rnoise=None) -> None:
     """Method to compute Air-Gap Surface Force transfer from middle air-gap
     radius to stator bore radius.
 
@@ -65,7 +70,7 @@ def comp_AGSF_transfer(self, output, rnoise=None):
     Datafreqs = Data1D(name="freqs", values=freqs)
     Datawavenumbers = Data1D(name="wavenumber", values=wavenumber)
 
-    axes_list = [Datafreqs, Datawavenumbers]
+    axes_list: list[Data] = [Datafreqs, Datawavenumbers]
 
     AGSF_TR = VectorField(
         name="Air gap Surface Force",

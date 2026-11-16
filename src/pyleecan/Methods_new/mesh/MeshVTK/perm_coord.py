@@ -1,13 +1,17 @@
 from ....Classes_new.mesh.element_mat import ElementMat
 from ....Classes_new.mesh.mesh_mat import MeshMat
 from ....Classes_new.mesh.node_mat import NodeMat
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_vtk import MeshVTK
 
 
 def perm_coord(
     self,
-    perm_coord_list=[0, 1, 2],
-    path_meshVTK=None,
-):
+    perm_coord_list: list = [0, 1, 2],
+    path_meshVTK: str | None = None,
+) -> MeshVTK:
     """Returns the current MeshVTK object with permuted coordinates
 
     Parameters
@@ -41,7 +45,7 @@ def perm_coord(
     nodemat = NodeMat(coordinate=mesh_mat_node, nb_node=nb_node)
 
     # 2. create ElementMat
-    elementMatDict = dict()
+    elementMatDict: dict[str, ElementMat] = dict()
 
     for key in mesh_mat_element[0]:
         element_mat = ElementMat(

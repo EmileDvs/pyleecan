@@ -1,4 +1,10 @@
-def to_datadual(self, datatime=None):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_time import DataTime
+
+
+def to_datadual(self, datatime: DataTime | None = None):
     """Creates a DataDual object.
     Parameters
     ----------

@@ -52,7 +52,7 @@ class ImportGenToothSaw(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenToothSaw.get_data
-    def get_data(self):
+    def get_data(self) -> np.ndarray:
         """Generate the toothsaw vector
 
         Parameters

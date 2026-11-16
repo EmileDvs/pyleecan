@@ -47,7 +47,7 @@ class Section(Elmer):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.Section.__delitem__
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         """Called to implement deletion of self[key]."""
         self._statements.__delitem__(key)
         self._comments.__delitem__(key)
@@ -65,7 +65,7 @@ class Section(Elmer):
         return self._statements.__iter__()
 
     # Inlined from Methods.Elmer.Section.__len__
-    def __len__(self):
+    def __len__(self) -> int:
         """Method to behave like a dict and the number of keys"""
         return self._statements.__len__()
 
@@ -80,7 +80,7 @@ class Section(Elmer):
         return self._statements.__reversed__()
 
     # Inlined from Methods.Elmer.Section.__setitem__
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         """Called to implement assignment to self[key]."""
         if isinstance(value, tuple):
             self._statements.__setitem__(key, value[0])
@@ -148,7 +148,7 @@ class Section(Elmer):
         return stream
 
     @staticmethod
-    def _convert(value, get_type=True):
+    def _convert(value, get_type: bool = True):
         """internal method to convert the data corresponding to Elmer SIF needs"""
         if isinstance(value, File):  # check before str due to inheretance
             return "File " * get_type + f'"{value}"'

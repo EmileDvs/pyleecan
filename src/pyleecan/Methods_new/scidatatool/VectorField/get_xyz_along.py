@@ -4,7 +4,7 @@ from ....classes_common.errors import AxisError
 from ....Functions_new.SciDataTool.conversions import pol2cart
 
 
-def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True):
+def get_xyz_along(self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = [], is_squeeze: bool = True):
     """Returns the list of the cartesian (comp_x,comp_y,comp_z) components of the field, using conversions and symmetries if needed.
     Parameters
     ----------

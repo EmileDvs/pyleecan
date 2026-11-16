@@ -1,7 +1,9 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/DataFreq.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -12,8 +14,16 @@ from ...Functions_pydantic.SciDataTool.sum_convolution import (
     get_sum_amplitudes,
     get_sum_indices,
 )
+from .data import Data
 from .data_1d import Data1D
 from .data_nd import DataND
+from .normalization import Normalization
+
+if TYPE_CHECKING:
+    from .data import Data
+    from .data_freq import DataFreq
+    from .data_time import DataTime
+    from .normalization import Normalization
 
 
 class DataFreq(DataND):
@@ -29,15 +39,15 @@ class DataFreq(DataND):
     # Inlined from Methods.SciDataTool.DataFreq.conv
     def conv(
         self,
-        other,
-        f_min=None,
-        f_max=np.inf,
-        tol_freq=1e-4,
-        name=None,
-        symbol=None,
-        unit=None,
-        normalizations=None,
-    ):
+        other: DataFreq,
+        f_min: float | None = None,
+        f_max: float = np.inf,
+        tol_freq: float = 1e-4,
+        name: str | None = None,
+        symbol: str | None = None,
+        unit: str | None = None,
+        normalizations: dict[str, Normalization] | None = None,
+    ) -> DataFreq:
         """Convolution of two DataFreq objects
 
         Parameters
@@ -159,7 +169,7 @@ class DataFreq(DataND):
         else:
             results = self.get_along(*axes_str)
             values = results.pop(self.symbol)
-            Axes = []
+            Axes: list[Data] = []
             for axis in self.axes:
                 if axis.name == "freqs":
                     axis_new = Data1D(
@@ -196,12 +206,12 @@ class DataFreq(DataND):
     # Inlined from Methods.SciDataTool.DataFreq.sum
     def sum(
         self,
-        other,
-        tol_freq=1e-4,
-        name=None,
-        symbol=None,
-        unit=None,
-        normalizations=None,
+        other: DataFreq,
+        tol_freq: float = 1e-4,
+        name: str | None = None,
+        symbol: str | None = None,
+        unit: str | None = None,
+        normalizations: dict[str, Normalization] | None = None,
     ):
         """Merge two DataFreq objects
 
@@ -284,7 +294,7 @@ class DataFreq(DataND):
         return result
 
     # Inlined from Methods.SciDataTool.DataFreq.to_datadual
-    def to_datadual(self, datatime=None):
+    def to_datadual(self, datatime: DataTime | None = None):
         """Creates a DataDual object.
         Parameters
         ----------

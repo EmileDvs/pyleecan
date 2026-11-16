@@ -3,7 +3,7 @@ from ....Functions_new.SciDataTool import axes_dict, rev_axes_dict
 from ....Functions_new.SciDataTool.conversions import get_unit_derivate, get_unit_integrate
 
 
-def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_data_along(self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []):
     """Returns the sliced or interpolated version of the data, using conversions and symmetries if needed.
     Parameters
     ----------

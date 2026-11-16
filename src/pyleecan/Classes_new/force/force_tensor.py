@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
@@ -12,6 +12,12 @@ from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_time import DataTime
 from ..scidatatool.vector_field import VectorField
 from .force import Force
+
+if TYPE_CHECKING:
+    from ..mesh.mesh_mat import MeshMat
+    from ..output.output import Output
+    from ..scidatatool.data import Data
+    from ..scidatatool.data_nd import DataND
 
 
 @dataclass(eq=False)
@@ -37,7 +43,7 @@ class ForceTensor(Force):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ForceTensor.comp_force
-    def comp_force(self, output, axes_dict):
+    def comp_force(self, output: Output, axes_dict: dict[str, Data]) -> dict:
         """Compute the air-gap surface force based on Maxwell Tensor (MT).
 
         Parameters
@@ -69,7 +75,7 @@ class ForceTensor(Force):
         return out_dict
 
     # Inlined from Methods.Simulation.ForceTensor.comp_force_nodal
-    def comp_force_nodal(self, output, axes_dict):
+    def comp_force_nodal(self, output: Output, axes_dict):
         """Run the nodal forces calculation based on a tensor.
 
         from publications:
@@ -162,7 +168,7 @@ class ForceTensor(Force):
         # Time axis goes back to first axis
         f = np.moveaxis(f, -1, 0)
 
-        components = {}
+        components: dict[str, DataND] = {}
 
         fx_data = DataTime(
             name="Nodal force (x)",
@@ -194,7 +200,7 @@ class ForceTensor(Force):
     # Inlined from Methods.Simulation.ForceTensor.comp_magnetostrictive_tensor
     def comp_magnetostrictive_tensor(
         self,
-        M,
+        M: np.ndarray,
         Nt_tot,
         polynomial_coeffs=[[0.719, -0.078, -0.042], [-0.391, 0.114, 0.004]],
     ):
@@ -257,14 +263,14 @@ class ForceTensor(Force):
     # Inlined from Methods.Simulation.ForceTensor.element_loop
     def element_loop(
         self,
-        mesh,
+        mesh: MeshMat,
         B,
         H,
         mu,
         indice,
         dim,
         Nt_tot,
-        polynomial_coeffs=[[0.719, -0.078, -0.042], [-0.391, 0.114, 0.004]],
+        polynomial_coeffs: list = [[0.719, -0.078, -0.042], [-0.391, 0.114, 0.004]],
     ):
         """compute nodal forces with a loop on elements and nodes
 

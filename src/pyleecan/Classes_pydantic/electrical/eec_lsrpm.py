@@ -1,12 +1,15 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Simulation/EEC_LSRPM.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from scipy import linalg
 
 from .eec import EEC
+
+if TYPE_CHECKING:
+    from ..output.output import Output
 
 
 class EEC_LSRPM(EEC):
@@ -20,7 +23,7 @@ class EEC_LSRPM(EEC):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.EEC_LSRPM.comp_joule_losses
-    def comp_joule_losses(self, output):
+    def comp_joule_losses(self, output: Output) -> None:
         """Compute the electrical Joule losses
 
         Parameters
@@ -46,7 +49,7 @@ class EEC_LSRPM(EEC):
         output.elec.Pj_losses = Pj_losses
 
     # Inlined from Methods.Simulation.EEC_LSRPM.comp_parameters
-    def comp_parameters(self, output, Tsta=None, Trot=None):
+    def comp_parameters(self, output: Output, Tsta=None, Trot=None) -> None:
         """Compute the parameters dict for the equivalent electrical circuit:
         resistance, inductance and back electromotive force
         Parameters
@@ -149,7 +152,7 @@ class EEC_LSRPM(EEC):
             print("Please input all variables")
 
     # Inlined from Methods.Simulation.EEC_LSRPM.solve
-    def solve(self, output):
+    def solve(self, output: Output) -> None:
         """Compute the parameters dict for the equivalent electrical circuit
           cf PhD thesis of SIJIE NI
           "Damper winding for noise and vibration reductionof Permanent Magnet Synchronous Machine"

@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.lut_dq import LUTdq
 
 
-def solve_power(self, LUT, Rs):
+def solve_power(self, LUT: LUTdq, Rs: float) -> dict:
     """Solve EEC to achieve given input / output power with respect to voltage and current constraints
 
     Parameters

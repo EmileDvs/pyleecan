@@ -8,9 +8,14 @@ from ....Functions_new.labels import STATOR_LAB
 from ....Functions_new.MeshSolution.build_meshsolution import build_meshsolution
 from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
 from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
 
 
-def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
+def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=None, Ir_val=None) -> dict:
     """Build and solve FEMM model to calculate and store magnetic quantities
 
     Parameters

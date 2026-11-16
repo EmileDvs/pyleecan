@@ -1,4 +1,4 @@
-def comp_L1(self, L1_ref=None):
+def comp_L1(self, L1_ref: float | None = None) -> None:
     """Compute and set the Stator phase inductance for the equivalent electrical circuit
 
     Parameters

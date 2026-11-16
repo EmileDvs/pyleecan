@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.solution_mat import SolutionMat
 
 
-def get_solution(self, indice=None):
+def get_solution(self, indice=None) -> SolutionMat:
     """Return a copy of the solution with the option to only include specified indices.
 
     Parameters

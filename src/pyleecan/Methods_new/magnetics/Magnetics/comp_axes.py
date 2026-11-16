@@ -1,4 +1,11 @@
-def comp_axes(self, output):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
+
+
+def comp_axes(self, output: Output) -> dict[str, Data]:
     """Compute the axes required in any Magnetics module
 
     Parameters

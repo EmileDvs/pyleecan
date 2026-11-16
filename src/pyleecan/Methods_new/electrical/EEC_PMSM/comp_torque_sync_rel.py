@@ -1,4 +1,10 @@
-def comp_torque_sync_rel(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def comp_torque_sync_rel(self) -> tuple[float | np.ndarray, float | np.ndarray]:
     """Calculate synchronous and reluctant torque
 
     Parameters

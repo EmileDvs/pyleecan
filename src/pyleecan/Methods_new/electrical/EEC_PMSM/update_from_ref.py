@@ -1,4 +1,10 @@
-def update_from_ref(self, LUT_ref):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.lut_dq import LUTdq
+
+
+def update_from_ref(self, LUT_ref: LUTdq) -> None:
     """Compute and set the parameter attributes of the EEC from a reference LUT:
     resistance, skin effect factors, inductance, fluxlinkage and back emf
 

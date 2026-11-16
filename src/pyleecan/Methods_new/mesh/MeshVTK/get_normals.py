@@ -1,4 +1,10 @@
-def get_normals(self, indices=None, loc="center"):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def get_normals(self, indices: list | None = None, loc: str = "center") -> np.ndarray:
     """Return the array of the normals coordinates.
 
     Parameters

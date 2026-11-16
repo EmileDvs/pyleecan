@@ -3,9 +3,14 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Functions_new.Electrical.dqh_transformation_freq import dqh2n_DataFreq
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.normalization import Normalization
+    from ....Classes_new.output.output import Output
 
 
-def solve_PWM(self, output, is_dqh_freq=False, is_skin_effect_inductance=False):
+def solve_PWM(self, output: Output, is_dqh_freq: bool = False, is_skin_effect_inductance: bool = False) -> DataFreq:
     """Get stator current harmonics due to PWM harmonics
     TODO: validation with transient FEA simulation
 
@@ -121,7 +126,7 @@ def solve_PWM(self, output, is_dqh_freq=False, is_skin_effect_inductance=False):
     # Create frequency axis
     Freqs_PWM = Us_PWM.axes[0]
 
-    norm_freq = dict()
+    norm_freq: dict[str, Normalization] = dict()
     if Freqs_PWM.normalizations is not None and len(Freqs_PWM.normalizations) > 0:
         for key, val in Freqs_PWM.normalizations.items():
             norm_freq[key] = val.copy()

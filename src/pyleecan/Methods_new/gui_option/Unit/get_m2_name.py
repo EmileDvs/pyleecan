@@ -1,4 +1,4 @@
-def get_m2_name(self):
+def get_m2_name(self) -> str:
     """Return the name of the current area unit
 
     Parameters

@@ -2,7 +2,7 @@ import numpy as np
 
 
 def get_harmonics(
-    self, N_harm, *args, unit="SI", is_norm=False, axis_data=None, is_flat=False
+    self, N_harm: int, *args, unit: str = "SI", is_norm: bool = False, axis_data=None, is_flat: bool = False
 ):
     """Returns the complex Fourier Transform of the field, using conversions and symmetries if needed.
     Parameters

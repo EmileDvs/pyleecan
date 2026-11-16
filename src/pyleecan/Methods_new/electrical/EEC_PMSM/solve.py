@@ -2,7 +2,7 @@ import numpy as np
 
 
 
-def solve(self):
+def solve(self) -> dict:
     """Compute the parameters dict for the equivalent electrical circuit
     cf "Advanced Electrical Drives, analysis, modeling, control"
     Rik de doncker, Duco W.J. Pulle, Andre Veltman, Springer edition

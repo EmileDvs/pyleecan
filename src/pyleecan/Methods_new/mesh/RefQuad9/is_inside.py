@@ -1,4 +1,10 @@
-def is_inside(self, element_coordinate, point, normal_t=None):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def is_inside(self, element_coordinate: np.ndarray, point: np.ndarray, normal_t: np.ndarray | None = None) -> bool | None:
     """Check if a point is inside the element defined by the coordinates.
 
     Parameters

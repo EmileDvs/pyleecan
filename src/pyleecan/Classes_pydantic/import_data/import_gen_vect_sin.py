@@ -46,7 +46,7 @@ class ImportGenVectSin(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportGenVectSin.get_data
-    def get_data(self):
+    def get_data(self) -> np.ndarray:
         """Generate the sinus vector
 
         Parameters

@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -10,6 +10,11 @@ from ...classes_common.errors import InputError
 from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..simulation.slice_model import SliceModel
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from ..scidatatool.data import Data
+    from ..scidatatool.data_pattern import DataPattern
 
 
 @dataclass(eq=False)
@@ -122,7 +127,7 @@ class Magnetics(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Magnetics.comp_axes
-    def comp_axes(self, output):
+    def comp_axes(self, output: Output) -> dict[str, Data]:
         """Compute the axes required in any Magnetics module
 
         Parameters
@@ -206,7 +211,7 @@ class Magnetics(LegacyClass):
         return axes_dict
 
     # Inlined from Methods.Simulation.Magnetics.comp_I_mag
-    def comp_I_mag(self, output, Time):
+    def comp_I_mag(self, output: Output, Time: Data) -> tuple[np.ndarray, np.ndarray]:
         """Compute the currents on both stator and rotor laminations for given Magnetics time axis
         Phase currents are divided by the number of parallel circuits per pole and per phase to account
         for actual current in slot conductors
@@ -308,7 +313,7 @@ class Magnetics(LegacyClass):
         return Is_val, Ir_val
 
     # Inlined from Methods.Simulation.Magnetics.get_slice_model
-    def get_slice_model(self):
+    def get_slice_model(self) -> DataPattern:
         """Compute the slice axis required in any Magnetics module
 
         Parameters
@@ -395,7 +400,7 @@ class Magnetics(LegacyClass):
         return self.Slice_enforced
 
     # Inlined from Methods.Simulation.Magnetics.run
-    def run(self):
+    def run(self) -> None:
         """Run the Magnetics module"""
         if self.parent is None:
             raise InputError(

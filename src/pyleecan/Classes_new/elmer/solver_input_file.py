@@ -45,7 +45,7 @@ class SolverInputFile(Elmer):
         return stream
 
     @staticmethod
-    def _write_header(f):
+    def _write_header(f) -> None:
         f.write(SolverInputFile.COMMENT + f"-" * 80 + SolverInputFile.NEWLINE)
         f.write(
             SolverInputFile.COMMENT

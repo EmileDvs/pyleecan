@@ -5,7 +5,7 @@ from ....Functions_new.SciDataTool.conversions import cart2pol
 
 
 def get_rphiz_along(
-    self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True
+    self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = [], is_squeeze: bool = True
 ):
     """Returns the list of the cylindrical (r,phi,z) components of the field, using conversions and symmetries if needed.
     Parameters

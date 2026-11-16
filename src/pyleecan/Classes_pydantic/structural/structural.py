@@ -1,11 +1,14 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Simulation/Structural.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import InputError
 from .._legacy_model import LegacyModel
 from ..output.out_struct import OutStruct
+
+if TYPE_CHECKING:
+    from ..output.output import Output
 
 
 class Structural(LegacyModel):
@@ -25,7 +28,7 @@ class Structural(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Structural.comp_axes
-    def comp_axes(self, output):
+    def comp_axes(self, output: Output) -> None:
         """Compute axes used for the Structural module
 
         Parameters
@@ -52,7 +55,7 @@ class Structural(LegacyModel):
             output.struct.axes_dict[key] = val
 
     # Inlined from Methods.Simulation.Structural.run
-    def run(self):
+    def run(self) -> None:
         """Run the Structural module"""
         if self.parent is None:
             raise InputError(

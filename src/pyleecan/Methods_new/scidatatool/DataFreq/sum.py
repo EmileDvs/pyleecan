@@ -1,16 +1,21 @@
 import numpy as np
 
 from ....Functions_new.SciDataTool.sum_convolution import get_sum_amplitudes, get_sum_indices
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_freq import DataFreq
+    from ....Classes_new.scidatatool.normalization import Normalization
 
 
 def sum(
     self,
-    other,
-    tol_freq=1e-4,
-    name=None,
-    symbol=None,
-    unit=None,
-    normalizations=None,
+    other: DataFreq,
+    tol_freq: float = 1e-4,
+    name: str | None = None,
+    symbol: str | None = None,
+    unit: str | None = None,
+    normalizations: dict[str, Normalization] | None = None,
 ):
     """Merge two DataFreq objects
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_parameters(self):
+def comp_parameters(self) -> None:
     """Compute and set the parameter attributes of the equivalent electrical circuit:
     resistance, skin effect factors and inductance according to OP/T
 

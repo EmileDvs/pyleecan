@@ -1,4 +1,4 @@
-def comp_skin_effect(self):
+def comp_skin_effect(self) -> None:
     """Compute the skin effect factors (update value in object)
 
     Parameters

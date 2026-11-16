@@ -1,4 +1,4 @@
-def comp_R1(self, R1_ref=None, T_ref=None):
+def comp_R1(self, R1_ref: float | None = None, T_ref: float | None = None) -> None:
     """Compute the stator phase resistance for the equivalent electrical circuit
 
     Parameters

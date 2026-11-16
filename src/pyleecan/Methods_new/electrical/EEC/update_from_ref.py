@@ -1,7 +1,11 @@
 from . import AbstractClassError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.lut_dq import LUTdq
 
 
-def update_from_ref(self, LUT_ref):
+def update_from_ref(self, LUT_ref: LUTdq):
     """Compute and set the parameter attributes of the EEC from a reference LUT
 
     Parameters

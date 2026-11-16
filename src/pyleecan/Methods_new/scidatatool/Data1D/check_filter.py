@@ -1,7 +1,7 @@
 from ....classes_common.errors import AxisError
 
 
-def check_filter(self):
+def check_filter(self) -> list:
     """Check if filter is correctly defined
     Parameters
     ----------

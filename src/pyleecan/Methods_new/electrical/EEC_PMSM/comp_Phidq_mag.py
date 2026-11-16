@@ -1,4 +1,4 @@
-def comp_Phidq_mag(self):
+def comp_Phidq_mag(self) -> None:
     """Compute and set the stator winding flux in open-circuit for the EEC
 
     Parameters

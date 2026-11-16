@@ -3,7 +3,7 @@ import numpy as np
 from scipy import signal
 
 
-def comp_carrier(self, time):
+def comp_carrier(self, time: np.ndarray) -> np.ndarray:
     """Function to compute the carrier
 
     Parameters

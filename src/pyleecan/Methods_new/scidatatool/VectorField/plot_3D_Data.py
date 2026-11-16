@@ -1,38 +1,45 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+
 def plot_3D_Data(
     self,
     *arg_list,
     axis_data=None,
-    is_norm=False,
-    unit="SI",
+    is_norm: bool = False,
+    unit: str = "SI",
     component_list=None,
-    save_path=None,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    z_min=None,
-    z_max=None,
+    save_path: str | None = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    y_min: float | None = None,
+    y_max: float | None = None,
+    z_min: float | None = None,
+    z_max: float | None = None,
     z_range=None,
-    is_auto_ticks=True,
-    is_auto_range=False,
-    is_2D_view=True,
-    is_same_size=False,
-    N_stem=100,
-    fig=None,
-    ax=None,
-    is_show_fig=None,
-    is_logscale_x=False,
-    is_logscale_y=False,
-    is_logscale_z=False,
-    thresh=None,
-    is_switch_axes=False,
+    is_auto_ticks: bool = True,
+    is_auto_range: bool = False,
+    is_2D_view: bool = True,
+    is_same_size: bool = False,
+    N_stem: int = 100,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_show_fig: bool | None = None,
+    is_logscale_x: bool = False,
+    is_logscale_y: bool = False,
+    is_logscale_z: bool = False,
+    thresh: float | None = None,
+    is_switch_axes: bool = False,
     colormap="jet",
-    win_title=None,
+    win_title: str | None = None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
-):
+) -> None:
     """Plots a field as a function of time
 
     Parameters

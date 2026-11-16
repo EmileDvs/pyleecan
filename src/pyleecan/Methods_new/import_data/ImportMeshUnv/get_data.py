@@ -4,7 +4,7 @@ import pyuff
 
 
 
-def get_data(self):
+def get_data(self) -> tuple[np.ndarray, dict]:
     """Return mesh data (nodes and elements) from a .unv file
 
     Parameters

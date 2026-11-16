@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def plot(self, i):
+def plot(self, i: int) -> None:
     """Return the pyvista mesh object.
 
     Parameters

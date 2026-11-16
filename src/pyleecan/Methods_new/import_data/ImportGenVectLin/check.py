@@ -1,7 +1,7 @@
 from .. import ImportError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the object is correctly set"""
     if self.start is None:
         raise ImportError("Start must not be None")

@@ -21,7 +21,7 @@ class NormIndices(Normalization):
     # Inlined from Methods.SciDataTool.Norm_indices.normalize
     def normalize(
         self,
-        values,
+        values: np.ndarray,
     ):
         """Normalizes axis values
         Parameters

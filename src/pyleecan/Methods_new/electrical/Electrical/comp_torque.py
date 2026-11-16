@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_torque(self, out_dict, N0):
+def comp_torque(self, out_dict: dict, N0):
     """Compute the electrical average torque
 
     Parameters

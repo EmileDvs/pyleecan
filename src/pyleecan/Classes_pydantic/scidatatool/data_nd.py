@@ -1,9 +1,11 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/DataND.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 import csv
 import os
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import imageio
 import matplotlib.pyplot as plt
@@ -74,6 +76,13 @@ from .data import Data
 from .data_1d import Data1D
 from .norm_indices import NormIndices
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from .data import Data
+    from .data_nd import DataND
+
 
 class DataND(Data):
     """Abstract class for fields (time or frequency domain)
@@ -107,7 +116,9 @@ class DataND(Data):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.DataND._apply_operations
-    def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
+    def _apply_operations(
+        self, values: np.ndarray, axes_list, is_magnitude, unit, corr_unit
+    ) -> np.ndarray:
         """Returns the values of the field transformed or converted
         Parameters
         ----------
@@ -210,7 +221,7 @@ class DataND(Data):
         return values
 
     # Inlined from Methods.SciDataTool.DataND._comp_axes
-    def _comp_axes(self, axes_list):
+    def _comp_axes(self, axes_list: list):
         """Completes the RequestedAxis objects in axes_list.
         Parameters
         ----------
@@ -287,7 +298,9 @@ class DataND(Data):
         return axes_list, transforms
 
     # Inlined from Methods.SciDataTool.DataND._convert
-    def _convert(self, values, unit, is_norm, is_squeeze, axes_list):
+    def _convert(
+        self, values: np.ndarray, unit: str, is_norm: bool, is_squeeze, axes_list
+    ) -> np.ndarray:
         """Returns the values of the field transformed or converted.
         Parameters
         ----------
@@ -371,7 +384,7 @@ class DataND(Data):
         return values
 
     # Inlined from Methods.SciDataTool.DataND._extract_slices
-    def _extract_slices(self, values, axes_list):
+    def _extract_slices(self, values: np.ndarray, axes_list: list) -> np.ndarray:
         """Returns the values of the field (with symmetries and transformations).
         Parameters
         ----------
@@ -406,7 +419,7 @@ class DataND(Data):
         return values, axes_dict_other
 
     # Inlined from Methods.SciDataTool.DataND._extract_slices_fft
-    def _extract_slices_fft(self, values, axes_list):
+    def _extract_slices_fft(self, values: np.ndarray, axes_list: list) -> np.ndarray:
         """Returns the values of the field (with symmetries and transformations).
         Parameters
         ----------
@@ -438,7 +451,7 @@ class DataND(Data):
         return values
 
     # Inlined from Methods.SciDataTool.DataND._get_field
-    def _get_field(self, axes_list):
+    def _get_field(self, axes_list: list) -> np.ndarray:
         """Returns the values of the field (with symmetries and sums).
         Parameters
         ----------
@@ -558,7 +571,7 @@ class DataND(Data):
         return freqs
 
     # Inlined from Methods.SciDataTool.DataND._interpolate
-    def _interpolate(self, values, axes_list):
+    def _interpolate(self, values: np.ndarray, axes_list: list) -> np.ndarray:
         """Returns the values of the field interpolated over the axes values.
         Parameters
         ----------
@@ -598,8 +611,8 @@ class DataND(Data):
     # Inlined from Methods.SciDataTool.DataND._rebuild_symmetries
     def _rebuild_symmetries(
         self,
-        values,
-        axes_list,
+        values: np.ndarray,
+        axes_list: list,
     ):
         """Reconstructs the field of a Data object taking symmetries into account
         Parameters
@@ -685,7 +698,7 @@ class DataND(Data):
         return values
 
     # Inlined from Methods.SciDataTool.DataND._set_values
-    def _set_values(self, value):
+    def _set_values(self, value) -> None:
         """setter of values"""
         if type(value) is int and value == -1:
             value = np.array([])
@@ -705,19 +718,21 @@ class DataND(Data):
     # Inlined from Methods.SciDataTool.DataND.change_referential
     def change_referential(
         self,
-        rotation_speed,
-        is_waveform,
-        atol=1e-9,
-        axes_list_change=[],
-        arg_list=[],
-        freqs_new=np.array([]),
-        I1=np.array([]),
-        Irf_un=np.array([]),
+        rotation_speed: float,
+        is_waveform: bool,
+        atol: float = 1e-9,
+        axes_list_change: list[Data] = [],
+        arg_list: list = [],
+        freqs_new: np.ndarray = np.array([]),
+        I1: np.ndarray = np.array([]),
+        Irf_un: np.ndarray = np.array([]),
         sym_t_new={},
-        ta_in=tuple(),
-        ta_out=tuple(),
-        atol_freq=1e-6,
-    ):
+        ta_in: tuple = tuple(),
+        ta_out: tuple = tuple(),
+        atol_freq: float = 1e-6,
+    ) -> tuple[
+        DataND, list[Data], list, np.ndarray, np.ndarray, np.ndarray, tuple, tuple
+    ]:
         """Change referential of a SciDataTool DataND object
 
         Parameters
@@ -948,7 +963,9 @@ class DataND(Data):
         )
 
     # Inlined from Methods.SciDataTool.DataND.compare_along
-    def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):
+    def compare_along(
+        self, *args, data_list: list = [], unit: str = "SI", is_norm: bool = False
+    ):
         """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -1008,7 +1025,9 @@ class DataND(Data):
             return return_dict
 
     # Inlined from Methods.SciDataTool.DataND.compare_magnitude_along
-    def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False):
+    def compare_magnitude_along(
+        self, *args, unit: str = "SI", data_list: list = [], is_norm: bool = False
+    ):
         """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -1068,7 +1087,9 @@ class DataND(Data):
             return return_dict
 
     # Inlined from Methods.SciDataTool.DataND.compare_phase_along
-    def compare_phase_along(self, *args, unit="SI", data_list=[], is_norm=False):
+    def compare_phase_along(
+        self, *args, unit: str = "SI", data_list: list = [], is_norm: bool = False
+    ):
         """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -1131,15 +1152,15 @@ class DataND(Data):
     def export_along(
         self,
         *args,
-        is_2D=True,
-        unit="SI",
-        save_path=None,
+        is_2D: bool = True,
+        unit: str = "SI",
+        save_path: str | None = None,
         file_name=None,
-        file_format="csv",
-        is_multiple_files=False,
+        file_format: str = "csv",
+        is_multiple_files: bool = False,
         plot_options={},
         CHAR_LIST=["$", "{", "}"],
-    ):
+    ) -> None:
         """Exports the sliced or interpolated version of the data, using conversions and symmetries if needed, in a file.
         Parameters
         ----------
@@ -1375,13 +1396,13 @@ class DataND(Data):
     # Inlined from Methods.SciDataTool.DataND.filter_spectral_leakage
     def filter_spectral_leakage(
         self,
-        freqs_th,
-        axes_list_filt=[],
-        arg_list=[],
-        Wmatf=np.array([]),
-        If=np.array([]),
-        is_return_calc_data=False,
-    ):
+        freqs_th: np.ndarray,
+        axes_list_filt: list[Data] = [],
+        arg_list: list = [],
+        Wmatf: np.ndarray = np.array([]),
+        If: np.ndarray = np.array([]),
+        is_return_calc_data: bool = False,
+    ) -> tuple[DataND, list[Data], list, np.ndarray, np.ndarray, np.ndarray]:
         """Filter spectral leakage from a SciDataTool DataND object
 
         Parameters
@@ -1507,7 +1528,7 @@ class DataND(Data):
             freqs_th_store = np.array(freqs_th)
 
         if len(axes_list_filt) == 0:
-            axes_list_filt = []  # Reinstantiate a different list
+            axes_list_filt: list[Data] = []  # Reinstantiate a different list
             axes_list_filt.append(
                 Data1D(
                     name="freqs",
@@ -1561,11 +1582,11 @@ class DataND(Data):
     def get_along(
         self,
         *args,
-        unit="SI",
-        is_norm=False,
-        axis_data=[],
-        is_squeeze=True,
-        is_magnitude=False,
+        unit: str = "SI",
+        is_norm: bool = False,
+        axis_data: list = [],
+        is_squeeze: bool = True,
+        is_magnitude: bool = False,
         corr_unit=None,
     ):
         """Returns the ndarray of the field, using conversions and symmetries if needed.
@@ -1689,7 +1710,9 @@ class DataND(Data):
         return axes_list
 
     # Inlined from Methods.SciDataTool.DataND.get_data_along
-    def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+    def get_data_along(
+        self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []
+    ):
         """Returns the sliced or interpolated version of the data, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -1807,7 +1830,13 @@ class DataND(Data):
 
     # Inlined from Methods.SciDataTool.DataND.get_harmonics
     def get_harmonics(
-        self, N_harm, *args, unit="SI", is_norm=False, axis_data=None, is_flat=False
+        self,
+        N_harm: int,
+        *args,
+        unit: str = "SI",
+        is_norm: bool = False,
+        axis_data=None,
+        is_flat: bool = False,
     ):
         """Returns the complex Fourier Transform of the field, using conversions and symmetries if needed.
         Parameters
@@ -1882,11 +1911,11 @@ class DataND(Data):
     def get_magnitude_along(
         self,
         *args,
-        unit="SI",
-        is_norm=False,
-        axis_data=[],
-        is_squeeze=True,
-        is_sum=True,
+        unit: str = "SI",
+        is_norm: bool = False,
+        axis_data: list = [],
+        is_squeeze: bool = True,
+        is_sum: bool = True,
         corr_unit=None,
     ):
         """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
@@ -2160,7 +2189,9 @@ class DataND(Data):
             return return_dict
 
     # Inlined from Methods.SciDataTool.DataND.get_phase_along
-    def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+    def get_phase_along(
+        self, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []
+    ):
         """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
         Parameters
         ----------
@@ -2298,47 +2329,47 @@ class DataND(Data):
         self,
         *arg_list,
         axis_data=None,
-        is_norm=False,
-        unit="SI",
+        is_norm: bool = False,
+        unit: str = "SI",
         overall_axes=[],
         contribution_axis=None,
-        data_list=[],
-        legend_list=[],
-        color_list=None,
+        data_list: list = [],
+        legend_list: list = [],
+        color_list: list | None = None,
         linestyles=None,
         linewidth_list=[1.5],
-        save_path=None,
-        x_min=None,
-        x_max=None,
-        y_min=None,
-        y_max=None,
-        is_logscale_x=False,
-        is_logscale_y=False,
-        is_disp_title=True,
-        is_grid=True,
-        is_auto_ticks=True,
-        is_auto_range=True,
+        save_path: str | None = None,
+        x_min: float | None = None,
+        x_max: float | None = None,
+        y_min: float | None = None,
+        y_max: float | None = None,
+        is_logscale_x: bool = False,
+        is_logscale_y: bool = False,
+        is_disp_title: bool = True,
+        is_grid: bool = True,
+        is_auto_ticks: bool = True,
+        is_auto_range: bool = True,
         xlabel=None,
         ylabel=None,
         title=None,
-        fig=None,
-        ax=None,
-        barwidth=100,
-        type_plot=None,
-        fund_harm_dict=None,
-        is_show_fig=None,
-        win_title=None,
-        thresh=None,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        barwidth: float = 100,
+        type_plot: str | None = None,
+        fund_harm_dict: dict | None = None,
+        is_show_fig: bool | None = None,
+        win_title: str | None = None,
+        thresh: float | None = None,
         font_name="arial",
         font_size_title=12,
         font_size_label=10,
         font_size_legend=8,
-        is_show_legend=True,
-        is_outside_legend=False,
-        is_frame_legend=True,
-        is_indlabels=False,
+        is_show_legend: bool = True,
+        is_outside_legend: bool = False,
+        is_frame_legend: bool = True,
+        is_indlabels: bool = False,
         annotations=None,
-        is_export=False,
+        is_export: bool = False,
     ):
         """Plots a field as a function of time
 
@@ -3137,13 +3168,13 @@ class DataND(Data):
     # Inlined from Methods.SciDataTool.DataND.plot_2D_Data_Animated
     def plot_2D_Data_Animated(
         self,
-        animated_axis,
+        animated_axis: str,
         suptitle_ref,
         *param_list,
-        nb_frames=50,
-        fps=10,
+        nb_frames: int = 50,
+        fps: int = 10,
         **param_dict,
-    ):
+    ) -> None:
         """Gen
 
         Parameters
@@ -3252,32 +3283,32 @@ class DataND(Data):
         self,
         *arg_list,
         axis_data=None,
-        is_norm=False,
-        unit="SI",
-        save_path=None,
-        x_min=None,
-        x_max=None,
-        y_min=None,
-        y_max=None,
-        z_min=None,
-        z_max=None,
-        z_range=None,
-        is_auto_ticks=True,
-        is_auto_range=True,
-        is_2D_view=True,
-        is_contour=False,
-        is_same_size=True,
-        N_stem=100,
-        fig=None,
-        ax=None,
-        is_show_fig=None,
-        is_logscale_x=False,
-        is_logscale_y=False,
-        is_logscale_z=False,
-        thresh=None,
-        is_switch_axes=False,
+        is_norm: bool = False,
+        unit: str = "SI",
+        save_path: str | None = None,
+        x_min: float | None = None,
+        x_max: float | None = None,
+        y_min: float | None = None,
+        y_max: float | None = None,
+        z_min: float | None = None,
+        z_max: float | None = None,
+        z_range: float | None = None,
+        is_auto_ticks: bool = True,
+        is_auto_range: bool = True,
+        is_2D_view: bool = True,
+        is_contour: bool = False,
+        is_same_size: bool = True,
+        N_stem: int = 100,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_show_fig: bool | None = None,
+        is_logscale_x: bool = False,
+        is_logscale_y: bool = False,
+        is_logscale_z: bool = False,
+        thresh: float | None = None,
+        is_switch_axes: bool = False,
         colormap="jet",
-        win_title=None,
+        win_title: str | None = None,
         font_name="arial",
         font_size_title=12,
         font_size_label=10,
@@ -3286,15 +3317,15 @@ class DataND(Data):
         ylabel=None,
         zlabel=None,
         title=None,
-        is_disp_title=True,
+        is_disp_title: bool = True,
         type_plot=None,
         annotation_delim=None,
         marker_color="k",
-        is_shading_flat=None,
-        is_hide_annotation=False,
-        is_filter_x=True,
-        is_filter_y=True,
-    ):
+        is_shading_flat: bool | None = None,
+        is_hide_annotation: bool = False,
+        is_filter_x: bool = True,
+        is_filter_y: bool = True,
+    ) -> None:
         """Plots a field as a function of two axes
 
         Parameters
@@ -3977,13 +4008,13 @@ class DataND(Data):
     # Inlined from Methods.SciDataTool.DataND.plot_3D_Data_Animated
     def plot_3D_Data_Animated(
         self,
-        animated_axis,
+        animated_axis: str,
         suptitle_ref,
         *param_list,
-        nb_frames=50,
-        fps=10,
+        nb_frames: int = 50,
+        fps: int = 10,
         **param_dict,
-    ):
+    ) -> None:
         """Gen
 
         Parameters

@@ -1,8 +1,10 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/Data1D.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 from importlib import import_module
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -13,6 +15,9 @@ from ...Functions_pydantic.SciDataTool.symmetries import rebuild_symmetries_axis
 from .._pyleecan_model import NDArray
 from .data import Data
 from .norm_vector import NormVector
+
+if TYPE_CHECKING:
+    from .data_1d import Data1D
 
 
 class Data1D(Data):
@@ -67,7 +72,7 @@ class Data1D(Data):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.SciDataTool.Data1D.check_filter
-    def check_filter(self):
+    def check_filter(self) -> list:
         """Check if filter is correctly defined
         Parameters
         ----------
@@ -96,7 +101,7 @@ class Data1D(Data):
         return keys
 
     # Inlined from Methods.SciDataTool.Data1D.get_axis_periodic
-    def get_axis_periodic(self, Nper, is_aper=False):
+    def get_axis_periodic(self, Nper: int, is_aper: bool = False) -> Data1D:
         """Returns the vector 'axis' taking symmetries into account.
 
         Parameters
@@ -156,7 +161,7 @@ class Data1D(Data):
         return New_axis
 
     # Inlined from Methods.SciDataTool.Data1D.get_filter
-    def get_filter(self, filter_dict):
+    def get_filter(self, filter_dict: dict) -> list:
         """Get filtering indices
         Parameters
         ----------
@@ -194,7 +199,10 @@ class Data1D(Data):
 
     # Inlined from Methods.SciDataTool.Data1D.get_length
     def get_length(
-        self, is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False
+        self,
+        is_oneperiod: bool = False,
+        is_antiperiod: bool = False,
+        is_smallestperiod: bool = False,
     ):
         """Returns the length of the axis taking symmetries into account.
         Parameters
@@ -261,15 +269,15 @@ class Data1D(Data):
     # Inlined from Methods.SciDataTool.Data1D.get_values
     def get_values(
         self,
-        unit="SI",
-        is_oneperiod=False,
-        is_antiperiod=False,
-        is_smallestperiod=False,
-        normalization=None,
-        operation=None,
-        is_real=True,
+        unit: str = "SI",
+        is_oneperiod: bool = False,
+        is_antiperiod: bool = False,
+        is_smallestperiod: bool = False,
+        normalization: str | None = None,
+        operation: str | None = None,
+        is_real: bool = True,
         corr_unit=None,
-        is_full=False,
+        is_full: bool = False,
     ):
         """Returns the vector 'axis' taking symmetries into account.
         Parameters
