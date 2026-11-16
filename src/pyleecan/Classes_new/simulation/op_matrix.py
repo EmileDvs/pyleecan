@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
@@ -11,6 +11,9 @@ from .._legacy_class import LegacyClass
 from .op_dq import OPdq
 from .op_dqf import OPdqf
 from .op_slip import OPslip
+
+if TYPE_CHECKING:
+    from .op import OP
 
 
 @dataclass(eq=False)
@@ -81,7 +84,7 @@ class OPMatrix(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OPMatrix.get_N_OP
-    def get_N_OP(self):
+    def get_N_OP(self) -> int:
         """return the number of Operating point in the matrix
 
         Parameters
@@ -107,7 +110,7 @@ class OPMatrix(LegacyClass):
             )
 
     # Inlined from Methods.Simulation.OPMatrix.get_OP
-    def get_OP(self, index):
+    def get_OP(self, index: int) -> OP:
         """Return the OP at the corresponding index
 
         Parameters
@@ -151,7 +154,7 @@ class OPMatrix(LegacyClass):
         return OP
 
     # Inlined from Methods.Simulation.OPMatrix.get_OP_array
-    def get_OP_array(self, *arg_list):
+    def get_OP_array(self, *arg_list) -> np.ndarray:
         """get the OP_matrix by identifying the columns
         Ex: get_OP_array("N0", "Iq", "Iq", "Tem")
         get_OP_array() calls get_OP_array("N0", "Id", "Iq", "Tem", "Pem")
@@ -273,7 +276,7 @@ class OPMatrix(LegacyClass):
         return OP_matrix
 
     # Inlined from Methods.Simulation.OPMatrix.get_OP_list
-    def get_OP_list(self):
+    def get_OP_list(self) -> list[OP]:
         """Return the list of Operating Point defined by the matrix
 
         Parameters
@@ -296,7 +299,7 @@ class OPMatrix(LegacyClass):
         return OP_list
 
     # Inlined from Methods.Simulation.OPMatrix.has_Pem
-    def has_Pem(self):
+    def has_Pem(self) -> bool:
         """Check if the Power column is set
 
         Parameters
@@ -313,7 +316,7 @@ class OPMatrix(LegacyClass):
         return self.Pem_av_ref is not None
 
     # Inlined from Methods.Simulation.OPMatrix.has_slip
-    def has_slip(self):
+    def has_slip(self) -> bool:
         """Check if the slip column is set
 
         Parameters
@@ -330,7 +333,7 @@ class OPMatrix(LegacyClass):
         return self.slip_ref is not None
 
     # Inlined from Methods.Simulation.OPMatrix.has_Tem
-    def has_Tem(self):
+    def has_Tem(self) -> bool:
         """Check if the Torque column is set
 
         Parameters
@@ -347,7 +350,7 @@ class OPMatrix(LegacyClass):
         return self.Tem_av_ref is not None
 
     # Inlined from Methods.Simulation.OPMatrix.set_OP_array
-    def set_OP_array(self, OP_matrix, *arg_list):
+    def set_OP_array(self, OP_matrix: np.ndarray, *arg_list) -> None:
         """Set the OP_matrix by identifying the columns
         Ex: set_OP_array(OP_matrix, "N0", "Iq", "Iq", "Tem")
         set_OP_array(OP_matrix) calls set_OP_array(OP_matrix, "N0", "Id", "Iq", "Tem", "Pem")

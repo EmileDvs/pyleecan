@@ -1,4 +1,4 @@
-def get_U0_UPhi0(self):
+def get_U0_UPhi0(self) -> dict:
     """Return U0 and UPhi0
 
     Parameters

@@ -13,7 +13,7 @@ class DataKeeperError(Exception):
     pass
 
 
-def check_param(self):
+def check_param(self) -> None:
     """Check VarParamSweep parameters validity
 
     Raises

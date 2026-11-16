@@ -1,4 +1,4 @@
-def get_Id_Iq(self):
+def get_Id_Iq(self) -> dict:
     """Return Id and Iq
 
     Parameters

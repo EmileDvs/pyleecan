@@ -1,7 +1,7 @@
 from ..Input import InputError
 
 
-def get_N0(self, p=None):
+def get_N0(self, p: int | None = None) -> float:
     """Returns the Rotor speed
 
     Parameters

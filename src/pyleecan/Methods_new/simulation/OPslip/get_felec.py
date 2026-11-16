@@ -1,7 +1,7 @@
 from ..Input import InputError
 
 
-def get_felec(self, p=None):
+def get_felec(self, p: int | None = None) -> float:
     """Returns the electrical frequency
 
     Parameters

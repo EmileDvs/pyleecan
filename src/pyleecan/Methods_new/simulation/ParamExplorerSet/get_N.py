@@ -1,4 +1,4 @@
-def get_N(self):
+def get_N(self) -> int:
     """Return the number of value of the ParamExplorer
 
     Parameters

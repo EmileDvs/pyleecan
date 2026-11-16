@@ -5,7 +5,7 @@ from ....Classes_new.output.out_elec import OutElec
 from ..Input import CURRENT_DIR_REF, ROT_DIR_REF, InputError, PHASE_DIR_REF
 
 
-def gen_input(self):
+def gen_input(self) -> None:
     """Generate the input for the electrical module (electrical output filled with voltage)
 
     Parameters

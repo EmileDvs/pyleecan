@@ -3,11 +3,14 @@
 
 import itertools
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import DataKeeperError, ParamExplorerError
 from .param_explorer_set import ParamExplorerSet
 from .var_param import VarParam
+
+if TYPE_CHECKING:
+    from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -24,7 +27,7 @@ class VarParamSweep(VarParam):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarParamSweep.check_param
-    def check_param(self):
+    def check_param(self) -> None:
         """Check VarParamSweep parameters validity
 
         Raises
@@ -67,7 +70,7 @@ class VarParamSweep(VarParam):
                 raise DataKeeperError("DataKeeper.keeper must be defined")
 
     # Inlined from Methods.Simulation.VarParamSweep.generate_simulation_list
-    def generate_simulation_list(self, ref_simu=None):
+    def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
         """Generate all the simulation for the multi-simulation
 
         Parameters
@@ -140,7 +143,7 @@ class VarParamSweep(VarParam):
         return multisim_dict
 
     # Inlined from Methods.Simulation.VarParamSweep.get_simu_number
-    def get_simu_number(self):
+    def get_simu_number(self) -> int:
         """Return the number of simulation defined by the Param Explorer
 
         Parameters

@@ -2,12 +2,15 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...classes_common.errors import OPMatrixException
 from .._legacy_class import LegacyClass
+
+if TYPE_CHECKING:
+    from ..machine.machine import Machine
 
 
 @dataclass(eq=False)
@@ -53,7 +56,7 @@ class OP(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OP.get_machine_from_parent
-    def get_machine_from_parent(self):
+    def get_machine_from_parent(self) -> Machine | None:
         """Search in the parent to find the machine
 
         Parameters
@@ -84,7 +87,7 @@ class OP(LegacyClass):
                 return None
 
     # Inlined from Methods.Simulation.OP.get_OP_array
-    def get_OP_array(self, *arg_list):
+    def get_OP_array(self, *arg_list) -> np.ndarray:
         """get the OP_matrix by identifying the columns
         Ex: get_OP_array("N0", "Iq", "Iq", "Tem")
         get_OP_array(OP_matrix) calls get_OP_array("N0", "Id", "Iq", "Tem", "Pem")

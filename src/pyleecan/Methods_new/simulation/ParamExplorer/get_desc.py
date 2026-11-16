@@ -1,4 +1,10 @@
-def get_desc(self, simu=None, is_print=False):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def get_desc(self, simu: Simulation | None = None, is_print: bool = False) -> str:
     """Generate a string description of the ParamExplorer
 
     Parameters

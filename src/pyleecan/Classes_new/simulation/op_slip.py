@@ -48,7 +48,7 @@ class OPslip(OP):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OPslip.get_felec
-    def get_felec(self, p=None):
+    def get_felec(self, p: int | None = None) -> float:
         """Returns the electrical frequency
 
         Parameters
@@ -93,7 +93,7 @@ class OPslip(OP):
         return self.felec
 
     # Inlined from Methods.Simulation.OPslip.get_I0_Phi0
-    def get_I0_Phi0(self):
+    def get_I0_Phi0(self) -> dict:
         """Return I0 and Phi0
 
         Parameters
@@ -110,7 +110,7 @@ class OPslip(OP):
         return {"I0": self.I0_ref, "Phi0": self.IPhi0_ref}
 
     # Inlined from Methods.Simulation.OPslip.get_Id_Iq
-    def get_Id_Iq(self):
+    def get_Id_Iq(self) -> dict:
         """Return Id and Iq
 
         Parameters
@@ -134,7 +134,7 @@ class OPslip(OP):
         return {"Id": Z.real, "Iq": Z.imag}
 
     # Inlined from Methods.Simulation.OPslip.get_N0
-    def get_N0(self, p=None):
+    def get_N0(self, p: int | None = None) -> float:
         """Returns the Rotor speed
 
         Parameters
@@ -183,7 +183,7 @@ class OPslip(OP):
         return self.N0
 
     # Inlined from Methods.Simulation.OPslip.get_slip
-    def get_slip(self):
+    def get_slip(self) -> float:
         """Returns the Rotor mechanical slip
 
         Parameters
@@ -200,7 +200,7 @@ class OPslip(OP):
         return self.slip_ref
 
     # Inlined from Methods.Simulation.OPslip.get_U0_UPhi0
-    def get_U0_UPhi0(self):
+    def get_U0_UPhi0(self) -> dict:
         """Return U0 and UPhi0
 
         Parameters
@@ -217,7 +217,7 @@ class OPslip(OP):
         return {"U0": self.U0_ref, "UPhi0": self.UPhi0_ref}
 
     # Inlined from Methods.Simulation.OPslip.get_Ud_Uq
-    def get_Ud_Uq(self):
+    def get_Ud_Uq(self) -> dict:
         """Return Ud and Uq
 
         Parameters
@@ -241,7 +241,7 @@ class OPslip(OP):
         return {"Ud": Z.real, "Uq": Z.imag}
 
     # Inlined from Methods.Simulation.OPslip.set_I0_Phi0
-    def set_I0_Phi0(self, I0, Phi0):
+    def set_I0_Phi0(self, I0: float, Phi0: float) -> None:
         """Set the value for I0 and IPhi0
 
         Parameters
@@ -258,7 +258,7 @@ class OPslip(OP):
         self.IPhi0_ref = Phi0
 
     # Inlined from Methods.Simulation.OPslip.set_Id_Iq
-    def set_Id_Iq(self, Id, Iq):
+    def set_Id_Iq(self, Id: float, Iq: float) -> None:
         """Set the value for Id and Iq
 
         Parameters
@@ -280,7 +280,7 @@ class OPslip(OP):
             self.IPhi0_ref = np.angle(Z)
 
     # Inlined from Methods.Simulation.OPslip.set_U0_UPhi0
-    def set_U0_UPhi0(self, U0, UPhi0):
+    def set_U0_UPhi0(self, U0: float, UPhi0: float) -> None:
         """Set the value for I0 and IPhi0
 
         Parameters
@@ -297,7 +297,7 @@ class OPslip(OP):
         self.UPhi0_ref = UPhi0
 
     # Inlined from Methods.Simulation.OPslip.set_Ud_Uq
-    def set_Ud_Uq(self, Ud, Uq):
+    def set_Ud_Uq(self, Ud: float, Uq: float) -> None:
         """Set the value for Ud and Uq
 
         Parameters

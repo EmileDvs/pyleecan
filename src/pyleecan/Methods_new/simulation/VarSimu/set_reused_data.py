@@ -1,8 +1,13 @@
 from ....Classes_new.magnetics.mag_femm import MagFEMM
 from ....Classes_new.electrical.elec_lut_dq import ElecLUTdq
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
+    from ....Classes_new.simulation.simulation import Simulation
 
 
-def set_reused_data(self, simu, output, is_log=True, simu_type="VarSimu"):
+def set_reused_data(self, simu: Simulation, output: Output, is_log: bool = True, simu_type: str = "VarSimu") -> None:
     """Resuse some data from the reference simulation to skip computation
 
     Parameters

@@ -1,16 +1,23 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.machine.machine import Machine
+
+
 def comp_axes(
     self,
-    axes_list,
-    machine=None,
+    axes_list: list,
+    machine: Machine | None = None,
     axes_dict_in=None,
-    is_periodicity_a=None,
-    is_periodicity_t=None,
-    per_a=None,
-    is_antiper_a=None,
-    per_t=None,
-    is_antiper_t=None,
-    is_periodicity_rotor=False,
-):
+    is_periodicity_a: bool | None = None,
+    is_periodicity_t: bool | None = None,
+    per_a: int | None = None,
+    is_antiper_a: bool | None = None,
+    per_t: int | None = None,
+    is_antiper_t: bool | None = None,
+    is_periodicity_rotor: bool = False,
+) -> dict[str, Data]:
     """Compute simulation axes such as time / angle / phase axes, with or without periodicities
     and including normalizations
 

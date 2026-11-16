@@ -3,7 +3,7 @@ from ....Classes_new.simulation.input_current import InputCurrent
 from ..Input import InputError
 
 
-def gen_input(self):
+def gen_input(self) -> None:
     """Generate the input for the structural module (skip force computation)
 
     Parameters

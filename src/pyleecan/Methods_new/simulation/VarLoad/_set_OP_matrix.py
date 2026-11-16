@@ -4,7 +4,7 @@ from ....classes_common.check import check_var
 import numpy as np
 
 
-def _set_OP_matrix(self, value):
+def _set_OP_matrix(self, value) -> None:
     """setter of OP_matrix"""
     if isinstance(value, list):
         value = np.array(value)

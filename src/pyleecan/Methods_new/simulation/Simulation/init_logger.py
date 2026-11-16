@@ -1,9 +1,13 @@
 from ....loggers import gen_logger_config_dict, DEFAULT_LOG_NAME
 from logging.config import dictConfig
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.xoutput import XOutput
 
 
-def init_logger(self, output):
+def init_logger(self, output: XOutput) -> None:
     """Create all the logger for the simulation
 
     Parameters

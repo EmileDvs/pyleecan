@@ -1,4 +1,4 @@
-def set_I0_Phi0(self, I0, Phi0):
+def set_I0_Phi0(self, I0: float, Phi0: float) -> None:
     """Set the value for I0 and IPhi0
 
     Parameters

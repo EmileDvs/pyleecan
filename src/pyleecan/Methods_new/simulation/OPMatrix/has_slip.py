@@ -1,4 +1,4 @@
-def has_slip(self):
+def has_slip(self) -> bool:
     """Check if the slip column is set
 
     Parameters

@@ -51,7 +51,7 @@ class InputCurrent(InputVoltage):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputCurrent.gen_input
-    def gen_input(self):
+    def gen_input(self) -> None:
         """Generate the input for the magnetic module (electrical output)
 
         Parameters
@@ -269,7 +269,7 @@ class InputCurrent(InputVoltage):
             outelec.OP.Uq_ref = None
 
     # Inlined from Methods.Simulation.InputCurrent.set_Id_Iq
-    def set_Id_Iq(self, I0, Phi0):
+    def set_Id_Iq(self, I0: float, Phi0: float) -> None:
         """Set Id_ref and Iq_ref according to I0, Phi0
 
         Parameters

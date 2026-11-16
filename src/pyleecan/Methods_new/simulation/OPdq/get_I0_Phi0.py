@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_I0_Phi0(self):
+def get_I0_Phi0(self) -> dict:
     """Return I0 and Phi0
 
     Parameters

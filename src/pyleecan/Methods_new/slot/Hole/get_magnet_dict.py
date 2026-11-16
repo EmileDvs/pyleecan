@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.machine.magnet import Magnet
+
+
 def get_magnet_dict(self) -> dict[str, Magnet]:
     """Return a dictionary with all the magnets of the Hole
 

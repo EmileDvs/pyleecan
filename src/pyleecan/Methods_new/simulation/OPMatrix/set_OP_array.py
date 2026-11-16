@@ -2,7 +2,7 @@ import numpy as np
 from . import OPMatrixException
 
 
-def set_OP_array(self, OP_matrix, *arg_list):
+def set_OP_array(self, OP_matrix: np.ndarray, *arg_list) -> None:
     """Set the OP_matrix by identifying the columns
     Ex: set_OP_array(OP_matrix, "N0", "Iq", "Iq", "Tem")
     set_OP_array(OP_matrix) calls set_OP_array(OP_matrix, "N0", "Id", "Iq", "Tem", "Pem")

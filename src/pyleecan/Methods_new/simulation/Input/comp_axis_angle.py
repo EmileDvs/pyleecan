@@ -3,9 +3,14 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
 from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.scidatatool.normalization import Normalization
 
 
-def comp_axis_angle(self, p, Rag, per_a=None, is_antiper_a=None, Angle_in=None):
+def comp_axis_angle(self, p: int, Rag: float, per_a: int | None = None, is_antiper_a: bool | None = None, Angle_in: Data | None = None) -> Data:
     """Compute angle axis with or without periodicities and including normalizations
 
     Parameters
@@ -30,7 +35,7 @@ def comp_axis_angle(self, p, Rag, per_a=None, is_antiper_a=None, Angle_in=None):
 
     """
 
-    norm_angle = {"space_order": Norm_ref(ref=p), "distance": Norm_ref(ref=1 / Rag)}
+    norm_angle: dict[str, Normalization] = {"space_order": Norm_ref(ref=p), "distance": Norm_ref(ref=1 / Rag)}
 
     # Compute angle axis based on input one
     if Angle_in is not None:

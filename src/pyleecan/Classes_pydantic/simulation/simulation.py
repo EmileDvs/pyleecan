@@ -3,7 +3,7 @@
 
 import os
 from logging.config import dictConfig
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import Field
 
@@ -14,6 +14,12 @@ from ..post.post import Post
 from .input import Input
 from .var_load import VarLoad
 from .var_simu import VarSimu
+
+if TYPE_CHECKING:
+    import numpy as np
+
+    from ..output.output import Output
+    from ..output.xoutput import XOutput
 
 
 class Simulation(LegacyModel):
@@ -83,7 +89,7 @@ class Simulation(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Simulation.get_OP_array
-    def get_OP_array(self, *arg_list):
+    def get_OP_array(self, *arg_list) -> np.ndarray:
         """Return the OP matrix of the simulation
         Single speed simulation return a single line matrix
 
@@ -125,7 +131,7 @@ class Simulation(LegacyModel):
         return None
 
     # Inlined from Methods.Simulation.Simulation.init_logger
-    def init_logger(self, output):
+    def init_logger(self, output: XOutput) -> None:
         """Create all the logger for the simulation
 
         Parameters
@@ -179,7 +185,7 @@ class Simulation(LegacyModel):
             self.get_logger().info(msg)
 
     # Inlined from Methods.Simulation.Simulation.run
-    def run(self):
+    def run(self) -> Output:
         """Run the simulation and optionnaly its multisimulation
 
         Returns

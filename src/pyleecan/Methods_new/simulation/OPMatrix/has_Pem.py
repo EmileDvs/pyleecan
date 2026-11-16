@@ -1,4 +1,4 @@
-def has_Pem(self):
+def has_Pem(self) -> bool:
     """Check if the Power column is set
 
     Parameters

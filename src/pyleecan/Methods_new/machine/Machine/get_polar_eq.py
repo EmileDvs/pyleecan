@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.machine.machine import Machine
+
+
 def get_polar_eq(self) -> Machine:
     """Returns a polar equivalent of the machine
 

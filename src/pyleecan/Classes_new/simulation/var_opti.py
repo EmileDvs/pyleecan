@@ -51,7 +51,7 @@ class VarOpti(VarParam):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarOpti.check
-    def check(self):
+    def check(self) -> None:
         """Check VarOpti parameters validity"""
 
         from ..optimization.opti_bayes_alg_smoot import OptiBayesAlgSmoot

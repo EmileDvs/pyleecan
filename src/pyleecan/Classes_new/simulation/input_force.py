@@ -30,7 +30,7 @@ class InputForce(Input):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputForce.gen_input
-    def gen_input(self):
+    def gen_input(self) -> None:
         """Generate the input for the structural module (skip force computation)
 
         Parameters

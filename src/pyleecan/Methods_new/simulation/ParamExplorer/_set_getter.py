@@ -4,7 +4,7 @@ from ....Functions_new.path_tools import abs_file_path
 from ....definitions import PYTHON_DEFAULT_ENCODING
 
 
-def _set_getter(self, value):
+def _set_getter(self, value) -> None:
     """setter of getter"""
     # Create the function if getter is defined as a string (e.g. simu.machine.rotor.slot.W0)
     if isinstance(value, str) and value[:4] == "simu":

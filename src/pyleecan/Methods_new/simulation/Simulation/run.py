@@ -1,4 +1,10 @@
-def run(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
+
+
+def run(self) -> Output:
     """Run the simulation and optionnaly its multisimulation
 
     Returns

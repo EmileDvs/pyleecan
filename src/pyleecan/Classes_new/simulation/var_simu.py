@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -20,6 +20,12 @@ from .._legacy_class import LegacyClass
 from ..magnetics.mag_femm import MagFEMM
 from ..post.post import Post
 from .data_keeper import DataKeeper
+
+if TYPE_CHECKING:
+    from logging import Logger
+
+    from ..output.output import Output
+    from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -97,7 +103,7 @@ class VarSimu(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarSimu.check_param
-    def check_param(self):
+    def check_param(self) -> None:
         """Check VarParamSweep parameters validity"""
         from .simulation import Simulation
 
@@ -111,7 +117,7 @@ class VarSimu(LegacyClass):
             raise VarSimuError("VarSimu object must be inside a Simulation object")
 
     # Inlined from Methods.Simulation.VarSimu.gen_datakeeper_list
-    def gen_datakeeper_list(self, ref_simu):
+    def gen_datakeeper_list(self, ref_simu) -> None:
         """Generate default DataKeepers according the reference simulation type"""
         from .input_current import InputCurrent
 
@@ -151,7 +157,7 @@ class VarSimu(LegacyClass):
         self.datakeeper_list.extend(datakeeper_list)
 
     # Inlined from Methods.Simulation.VarSimu.generate_simulation_list
-    def generate_simulation_list(self, ref_simu=None):
+    def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
         """Generate all the simulation for the multi-simulation
 
         Parameters
@@ -171,7 +177,7 @@ class VarSimu(LegacyClass):
         )
 
     # Inlined from Methods.Simulation.VarSimu.get_elec_datakeeper
-    def get_elec_datakeeper(self, symbol_list, is_multi=False):
+    def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
         """Generate DataKeepers to store by default results from electric module
         Parameters
         ----------
@@ -200,7 +206,7 @@ class VarSimu(LegacyClass):
         return dk_list
 
     # Inlined from Methods.Simulation.VarSimu.get_force_datakeeper
-    def get_force_datakeeper(self, symbol_list, is_multi=False):
+    def get_force_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
         """
         Generate DataKeepers to store by default results from force module
 
@@ -223,7 +229,7 @@ class VarSimu(LegacyClass):
         return dk_list
 
     # Inlined from Methods.Simulation.VarSimu.get_mag_datakeeper
-    def get_mag_datakeeper(self, symbol_list, is_multi=False):
+    def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
         """
         Generate DataKeepers to store by default results from magnetic module
 
@@ -325,7 +331,7 @@ class VarSimu(LegacyClass):
         return dk_list
 
     # Inlined from Methods.Simulation.VarSimu.get_ref_simu_index
-    def get_ref_simu_index(self, ref_simu, simu_dict):
+    def get_ref_simu_index(self, ref_simu: Simulation, simu_dict: dict) -> int:
         """Get the index of the reference simulation (None if must be computed)
 
         Parameters
@@ -355,7 +361,7 @@ class VarSimu(LegacyClass):
         return ref_simu_index
 
     # Inlined from Methods.Simulation.VarSimu.run
-    def run(self):
+    def run(self) -> None:
         """Run the multi-simulation
         The VarSimu object must be in a Simulation object (and not a VarSimu one)
 
@@ -505,7 +511,9 @@ class VarSimu(LegacyClass):
                 postproc.run(xoutput)
 
     @staticmethod
-    def log_step_simu(index, nb_simu, paramexplorer_list, logger, layer):
+    def log_step_simu(
+        index: int, nb_simu: int, paramexplorer_list: list, logger: Logger, layer
+    ) -> None:
         """Add in the log some information about the simulation about to run
         Ex: "Running simulation 3/4 with Id=-135.41881, Iq=113.62987"
 
@@ -559,7 +567,7 @@ class VarSimu(LegacyClass):
         logger.info(msg)
 
     @staticmethod
-    def print_progress_bar(Nsimu, index, layer):
+    def print_progress_bar(Nsimu: int, index: int, layer) -> None:
         """Print the progress bar
         Ex: "[=========================                         ]  50%"
 
@@ -584,7 +592,13 @@ class VarSimu(LegacyClass):
         )
 
     # Inlined from Methods.Simulation.VarSimu.set_reused_data
-    def set_reused_data(self, simu, output, is_log=True, simu_type="VarSimu"):
+    def set_reused_data(
+        self,
+        simu: Simulation,
+        output: Output,
+        is_log: bool = True,
+        simu_type: str = "VarSimu",
+    ) -> None:
         """Resuse some data from the reference simulation to skip computation
 
         Parameters

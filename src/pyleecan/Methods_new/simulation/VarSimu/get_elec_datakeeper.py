@@ -1,7 +1,7 @@
 from ....Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import get_elec_datakeeper_dict
 
 
-def get_elec_datakeeper(self, symbol_list, is_multi=False):
+def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
     """Generate DataKeepers to store by default results from electric module
     Parameters
     ----------

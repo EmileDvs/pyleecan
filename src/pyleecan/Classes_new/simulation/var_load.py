@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -11,6 +11,9 @@ from ...Functions.load import load_init_dict
 from .._import import import_class
 from .op_matrix import OPMatrix
 from .var_simu import VarSimu
+
+if TYPE_CHECKING:
+    from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -35,7 +38,7 @@ class VarLoad(VarSimu):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarLoad._set_OP_matrix
-    def _set_OP_matrix(self, value):
+    def _set_OP_matrix(self, value) -> None:
         """setter of OP_matrix"""
         if isinstance(value, list):
             value = np.array(value)
@@ -75,7 +78,7 @@ class VarLoad(VarSimu):
             self._OP_matrix.parent = self
 
     # Inlined from Methods.Simulation.VarLoad.get_OP_array
-    def get_OP_array(self, *arg_list):
+    def get_OP_array(self, *arg_list) -> np.ndarray:
         """Return the OP matrix
 
         Parameters
@@ -92,7 +95,7 @@ class VarLoad(VarSimu):
         return self.OP_matrix.get_OP_array(*arg_list)
 
     # Inlined from Methods.Simulation.VarLoad.get_ref_simu_index
-    def get_ref_simu_index(self, ref_simu, simu_dict):
+    def get_ref_simu_index(self, ref_simu: Simulation, simu_dict: dict) -> int:
         """Get the index of the reference simulation (None if must be computed)
 
         Parameters
@@ -127,7 +130,13 @@ class VarLoad(VarSimu):
         return ref_simu_index
 
     # Inlined from Methods.Simulation.VarLoad.set_OP_array
-    def set_OP_array(self, OP_matrix, *arg_list, is_update_input=True, input_index=0):
+    def set_OP_array(
+        self,
+        OP_matrix: np.ndarray,
+        *arg_list,
+        is_update_input: bool = True,
+        input_index: int = 0,
+    ) -> None:
         """Set the OP_matrix and update the input if needed
         (To make sure that ref simu is in the OP_matrix)
         Ex: set_OP_array(OP_matrix, "N0", "Iq", "Iq", "Tem")

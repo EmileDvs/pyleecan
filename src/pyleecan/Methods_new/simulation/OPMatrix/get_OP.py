@@ -1,9 +1,13 @@
 from ....Classes_new.simulation.op_dq import OPdq
 from ....Classes_new.simulation.op_dqf import OPdqf
 from ....Classes_new.simulation.op_slip import OPslip
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.op import OP
 
 
-def get_OP(self, index):
+def get_OP(self, index: int) -> OP:
     """Return the OP at the corresponding index
 
     Parameters

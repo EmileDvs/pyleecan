@@ -1,4 +1,10 @@
-def get_OP_list(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.op import OP
+
+
+def get_OP_list(self) -> list[OP]:
     """Return the list of Operating Point defined by the matrix
 
     Parameters

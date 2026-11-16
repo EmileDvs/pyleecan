@@ -74,7 +74,7 @@ class InputFlux(InputCurrent):
         self,
         *,
         VERBOSE_KEY={"B_{rad}": "Radial", "B_{circ}": "Tangential", "B_{ax}": "Axial"},
-    ):
+    ) -> None:
         """Generate the input for the force/stress module (magnetic output)
 
         Parameters

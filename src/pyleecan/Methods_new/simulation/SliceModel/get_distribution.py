@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import norm
 
 
-def get_distribution(self):
+def get_distribution(self) -> list:
     """Returns the slice distribution
 
     Parameters

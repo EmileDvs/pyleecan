@@ -1,4 +1,4 @@
-def get_max(self):
+def get_max(self) -> float | None:
     """Return the maximum value of the ParamExplorer
 
     Parameters

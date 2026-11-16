@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Simulation/SliceModel.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -14,6 +14,12 @@ from .._legacy_model import LegacyModel
 from .._pyleecan_model import NDArray
 from ..scidatatool.data_pattern import DataPattern
 from ..scidatatool.norm_ref import NormRef
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..scidatatool.normalization import Normalization
 
 
 class SliceModel(LegacyModel):
@@ -70,7 +76,7 @@ class SliceModel(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.SliceModel.get_data
-    def get_data(self):
+    def get_data(self) -> DataPattern:
         """Return the slice data object
 
         Parameters
@@ -99,7 +105,7 @@ class SliceModel(LegacyModel):
         rebuild_indices = rebuild_indices.tolist()
 
         # Setup other parameters
-        normalizations = {"x L": NormRef(ref=self.L)}
+        normalizations: dict[str, Normalization] = {"x L": NormRef(ref=self.L)}
         is_step = self.is_step
 
         # Create DataPattern
@@ -117,7 +123,7 @@ class SliceModel(LegacyModel):
         return Slice
 
     # Inlined from Methods.Simulation.SliceModel.get_distribution
-    def get_distribution(self):
+    def get_distribution(self) -> list:
         """Returns the slice distribution
 
         Parameters
@@ -189,13 +195,13 @@ class SliceModel(LegacyModel):
     def plot(
         self,
         skew_axis=None,
-        fig=None,
-        ax=None,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
         lam_name="",
-        is_show_fig=False,
-        save_path=None,
-        win_title=None,
-    ):
+        is_show_fig: bool = False,
+        save_path: str | None = None,
+        win_title: str | None = None,
+    ) -> None:
         """Plots skew angle
 
         Parameters

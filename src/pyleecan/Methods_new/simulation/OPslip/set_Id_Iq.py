@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def set_Id_Iq(self, Id, Iq):
+def set_Id_Iq(self, Id: float, Iq: float) -> None:
     """Set the value for Id and Iq
 
     Parameters

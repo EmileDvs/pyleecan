@@ -55,7 +55,7 @@ class Simu1(Simulation):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Simu1.run_single
-    def run_single(self):
+    def run_single(self) -> None:
         """Run the simulation
 
         Parameters

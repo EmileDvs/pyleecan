@@ -1,4 +1,4 @@
-def get_slip(self):
+def get_slip(self) -> float:
     """Returns the Rotor mechanical slip
 
     Parameters

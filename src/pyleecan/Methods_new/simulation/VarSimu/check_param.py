@@ -5,7 +5,7 @@ class VarSimuError(Exception):
     pass
 
 
-def check_param(self):
+def check_param(self) -> None:
     """Check VarParamSweep parameters validity"""
     if type(self).__name__ == "VarSimu":
         raise VarSimuError(

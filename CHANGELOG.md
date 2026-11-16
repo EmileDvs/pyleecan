@@ -88,6 +88,7 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   Machine hinted (445/458 parameters, 321/337 returns), with rules for
   undocumented returns (`-> None`) and conventional parameters, unions
   (`X or Y`, Returns alternatives), `| None` for explicit `return None`.
+  Simulation hinted (86/97 parameters, 82/90 returns).
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,

@@ -25,7 +25,7 @@ class VarOptiDataKeeperError(Exception):
     pass
 
 
-def check(self):
+def check(self) -> None:
     """Check VarOpti parameters validity"""
 
     Simu1 = import_class("pyleecan.Classes", "Simu1")

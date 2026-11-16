@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def set_Ud_Uq(self, U0, Phi0):
+def set_Ud_Uq(self, U0: float, Phi0: float) -> None:
     """Set Ud_ref and Uq_ref according to U0, Phi0
 
     Parameters

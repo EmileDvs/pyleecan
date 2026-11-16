@@ -1,4 +1,4 @@
-def get_min(self):
+def get_min(self) -> float | None:
     """Return the minimum value of the ParamExplorer
 
     Parameters

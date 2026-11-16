@@ -46,7 +46,7 @@ class ParamExplorerInterval(ParamExplorer):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ParamExplorerInterval.get_max
-    def get_max(self):
+    def get_max(self) -> float:
         """Return the maximum value of the ParamExplorer
 
         Parameters
@@ -66,7 +66,7 @@ class ParamExplorerInterval(ParamExplorer):
             return int(self.max_value)
 
     # Inlined from Methods.Simulation.ParamExplorerInterval.get_min
-    def get_min(self):
+    def get_min(self) -> float:
         """Return the minimum value of the ParamExplorer
 
         Parameters
@@ -86,7 +86,7 @@ class ParamExplorerInterval(ParamExplorer):
             return int(self.min_value)
 
     # Inlined from Methods.Simulation.ParamExplorerInterval.get_N
-    def get_N(self):
+    def get_N(self) -> int:
         """Return the number of value of the ParamExplorer
 
         Parameters

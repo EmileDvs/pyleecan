@@ -25,7 +25,7 @@ class ParamExplorerSet(ParamExplorer):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ParamExplorerSet.get_max
-    def get_max(self):
+    def get_max(self) -> float | None:
         """Return the maximum value of the ParamExplorer
 
         Parameters
@@ -45,7 +45,7 @@ class ParamExplorerSet(ParamExplorer):
             return None
 
     # Inlined from Methods.Simulation.ParamExplorerSet.get_min
-    def get_min(self):
+    def get_min(self) -> float | None:
         """Return the minimum value of the ParamExplorer
 
         Parameters
@@ -65,7 +65,7 @@ class ParamExplorerSet(ParamExplorer):
             return None
 
     # Inlined from Methods.Simulation.ParamExplorerSet.get_N
-    def get_N(self):
+    def get_N(self) -> int:
         """Return the number of value of the ParamExplorer
 
         Parameters

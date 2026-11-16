@@ -2,7 +2,7 @@ import numpy as np
 from . import OPMatrixException
 
 
-def get_OP_array(self, *arg_list):
+def get_OP_array(self, *arg_list) -> np.ndarray:
     """get the OP_matrix by identifying the columns
     Ex: get_OP_array("N0", "Iq", "Iq", "Tem")
     get_OP_array() calls get_OP_array("N0", "Id", "Iq", "Tem", "Pem")

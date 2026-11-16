@@ -65,7 +65,7 @@ class InputVoltage(Input):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputVoltage.gen_input
-    def gen_input(self):
+    def gen_input(self) -> None:
         """Generate the input for the electrical module (electrical output filled with voltage)
 
         Parameters
@@ -208,7 +208,7 @@ class InputVoltage(Input):
             outelec.PWM.duration = 2 * simu.machine.get_pole_pair_number() / felec
 
     # Inlined from Methods.Simulation.InputVoltage.set_Ud_Uq
-    def set_Ud_Uq(self, U0, Phi0):
+    def set_Ud_Uq(self, U0: float, Phi0: float) -> None:
         """Set Ud_ref and Uq_ref according to U0, Phi0
 
         Parameters

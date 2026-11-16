@@ -1,4 +1,4 @@
-def get_simu_number(self):
+def get_simu_number(self) -> int:
     """Return the number of simulation defined by the Param Explorer
 
     Parameters

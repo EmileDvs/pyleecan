@@ -2,7 +2,7 @@ from ....Classes_new.simulation.data_keeper import DataKeeper
 from ....Functions.Load.import_class import import_class
 
 
-def gen_datakeeper_list(self, ref_simu):
+def gen_datakeeper_list(self, ref_simu) -> None:
     """Generate default DataKeepers according the reference simulation type"""
     datakeeper_list = []
 

@@ -64,7 +64,7 @@ class DataKeeper(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.DataKeeper._set_keeper
-    def _set_keeper(self, value):
+    def _set_keeper(self, value) -> None:
         """setter of keeper"""
         # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
         if isinstance(value, str) and value[:4] == "simu":

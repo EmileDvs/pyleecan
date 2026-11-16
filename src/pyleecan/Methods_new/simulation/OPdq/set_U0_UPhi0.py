@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def set_U0_UPhi0(self, U0, UPhi0):
+def set_U0_UPhi0(self, U0: float, UPhi0: float) -> None:
     """Set the value for U0 and UPhi0
     Parameters
     ----------

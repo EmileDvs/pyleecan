@@ -3,9 +3,14 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
 from ....Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_axis_phase(self, lamination, per_a=None, is_apera=None, Phase_in=None):
+def comp_axis_phase(self, lamination: Lamination, per_a: int | None = None, is_apera=None, Phase_in: Data | None = None) -> Data:
     """Compute phase axes for given lamination
 
     Parameters

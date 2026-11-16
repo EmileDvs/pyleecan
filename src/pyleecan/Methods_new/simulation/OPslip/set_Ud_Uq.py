@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def set_Ud_Uq(self, Ud, Uq):
+def set_Ud_Uq(self, Ud: float, Uq: float) -> None:
     """Set the value for Ud and Uq
 
     Parameters

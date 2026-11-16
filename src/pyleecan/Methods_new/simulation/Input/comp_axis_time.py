@@ -4,9 +4,14 @@ from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_linspace import DataLinspace
 from ....Classes_new.scidatatool.norm_affine import NormAffine as Norm_affine
 from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.scidatatool.normalization import Normalization
 
 
-def comp_axis_time(self, p, per_t=None, is_antiper_t=None, Time_in=None):
+def comp_axis_time(self, p: int, per_t: int | None = None, is_antiper_t: bool | None = None, Time_in: Data | None = None) -> Data:
     """Compute time axis, with or without periodicities and including normalizations
 
     Parameters
@@ -33,7 +38,7 @@ def comp_axis_time(self, p, per_t=None, is_antiper_t=None, Time_in=None):
     A0 = self.angle_rotor_initial
 
     # Setup normalizations for time and angle axes
-    norm_time = {
+    norm_time: dict[str, Normalization] = {
         "elec_order": Norm_ref(ref=f_elec),
         "mech_order": Norm_ref(ref=N0 / 60),
         "angle_elec": Norm_ref(ref=self.current_dir / (2 * np.pi * f_elec)),

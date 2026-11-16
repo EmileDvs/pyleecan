@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Simulation/Input.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -14,6 +14,12 @@ from ..scidatatool.norm_affine import NormAffine
 from ..scidatatool.norm_indices import NormIndices
 from ..scidatatool.norm_ref import NormRef
 from .op import OP as _field_type_OP
+
+if TYPE_CHECKING:
+    from ..machine.lamination import Lamination
+    from ..machine.machine import Machine
+    from ..scidatatool.data import Data
+    from ..scidatatool.normalization import Normalization
 
 ROT_DIR_REF = -1
 CURRENT_DIR_REF = -1
@@ -69,17 +75,17 @@ class Input(LegacyModel):
     # Inlined from Methods.Simulation.Input.comp_axes
     def comp_axes(
         self,
-        axes_list,
-        machine=None,
+        axes_list: list,
+        machine: Machine | None = None,
         axes_dict_in=None,
-        is_periodicity_a=None,
-        is_periodicity_t=None,
-        per_a=None,
-        is_antiper_a=None,
-        per_t=None,
-        is_antiper_t=None,
-        is_periodicity_rotor=False,
-    ):
+        is_periodicity_a: bool | None = None,
+        is_periodicity_t: bool | None = None,
+        per_a: int | None = None,
+        is_antiper_a: bool | None = None,
+        per_t: int | None = None,
+        is_antiper_t: bool | None = None,
+        is_periodicity_rotor: bool = False,
+    ) -> dict[str, Data]:
         """Compute simulation axes such as time / angle / phase axes, with or without periodicities
         and including normalizations
 
@@ -261,7 +267,14 @@ class Input(LegacyModel):
         return axes_dict
 
     # Inlined from Methods.Simulation.Input.comp_axis_angle
-    def comp_axis_angle(self, p, Rag, per_a=None, is_antiper_a=None, Angle_in=None):
+    def comp_axis_angle(
+        self,
+        p: int,
+        Rag: float,
+        per_a: int | None = None,
+        is_antiper_a: bool | None = None,
+        Angle_in: Data | None = None,
+    ) -> Data:
         """Compute angle axis with or without periodicities and including normalizations
 
         Parameters
@@ -286,7 +299,10 @@ class Input(LegacyModel):
 
         """
 
-        norm_angle = {"space_order": NormRef(ref=p), "distance": NormRef(ref=1 / Rag)}
+        norm_angle: dict[str, Normalization] = {
+            "space_order": NormRef(ref=p),
+            "distance": NormRef(ref=1 / Rag),
+        }
 
         # Compute angle axis based on input one
         if Angle_in is not None:
@@ -333,7 +349,13 @@ class Input(LegacyModel):
         return Angle
 
     # Inlined from Methods.Simulation.Input.comp_axis_phase
-    def comp_axis_phase(self, lamination, per_a=None, is_apera=None, Phase_in=None):
+    def comp_axis_phase(
+        self,
+        lamination: Lamination,
+        per_a: int | None = None,
+        is_apera=None,
+        Phase_in: Data | None = None,
+    ) -> Data:
         """Compute phase axes for given lamination
 
         Parameters
@@ -410,7 +432,13 @@ class Input(LegacyModel):
         return Phase
 
     # Inlined from Methods.Simulation.Input.comp_axis_time
-    def comp_axis_time(self, p, per_t=None, is_antiper_t=None, Time_in=None):
+    def comp_axis_time(
+        self,
+        p: int,
+        per_t: int | None = None,
+        is_antiper_t: bool | None = None,
+        Time_in: Data | None = None,
+    ) -> Data:
         """Compute time axis, with or without periodicities and including normalizations
 
         Parameters
@@ -437,7 +465,7 @@ class Input(LegacyModel):
         A0 = self.angle_rotor_initial
 
         # Setup normalizations for time and angle axes
-        norm_time = {
+        norm_time: dict[str, Normalization] = {
             "elec_order": NormRef(ref=f_elec),
             "mech_order": NormRef(ref=N0 / 60),
             "angle_elec": NormRef(ref=self.current_dir / (2 * np.pi * f_elec)),

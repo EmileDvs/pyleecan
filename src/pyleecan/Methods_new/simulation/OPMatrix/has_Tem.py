@@ -1,4 +1,4 @@
-def has_Tem(self):
+def has_Tem(self) -> bool:
     """Check if the Torque column is set
 
     Parameters

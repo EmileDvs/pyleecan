@@ -525,6 +525,22 @@ hint pass is over for all packages.
     `LamSlotWind.plot`: lists for `FancyArrowPatch` positions (tuple);
     `Machine.plot_anim_rotor`: `Patch.xy`; `NotchEvenDist.get_notch_desc_list`:
     `<` between str and int.
+- Simulation:
+  - `ParamExplorer` (`getter`, `setter`), `DataKeeper` (`keeper`): str
+    (lambda, "simu.input", path) given to callable fields, converted by the
+    unwired custom setters;
+  - `VarLoad._set_OP_matrix`: builds legacy `pyleecan.Classes` objects
+    (`import_class`, `init_dict=`), like `SlotUD2`;
+  - `VarParamSweep.generate_simulation_list`: `init_dict=` constructor
+    argument (legacy layer only);
+  - optional fields used without check: `VarSimu.set_reused_data`
+    (`simu.mag`, `simu.elec`, `output.mag.internal`),
+    `generate_simulation_list` (`ref_simu.copy`), `Input.comp_axis_*`
+    (`int | None` compared);
+  - `Input.comp_axes`: `stator`/`rotor` not declared on `Machine`;
+    `Data.get_periodicity` / `get_axis_periodic` not declared on `Data`;
+  - `OP.get_OP_array`: `append` on a tuple; `InputCurrent.gen_input`: lists
+    given to ndarray fields; `get_ref_simu_index`: `int | None` returned.
 - `ModelBH.fit_model`: the last `else` branch calls `self.BH_func(H, Bs, a)`
   with undefined `Bs` and `a` (`NameError`), and `new_BH` is unbound there.
 - Geometry: `Trapeze.get_patches` (`replace`/`in` on an optional style),
@@ -558,7 +574,15 @@ In the order a simulation is built:
       (`LamSlotWind.comp_angle_d_axis`, UnboundLocalError in Methods_new): the
       import style pass removes the local imports of a package imported by the
       module.
-- [ ] Simulation, Loss, Output, Optimization
+- [x] Simulation (`simulation` in `HINTED_SUBPACKAGES`): 86/97 parameters and
+      82/90 returns hinted; `ty`: 62 diagnostics (review list below). `Logger`
+      recognized; parameter override for the `XOuput` typo of `init_logger`.
+      Fixed: a class imported in a function body only (`Simulation.run`:
+      `Output`) is imported under `TYPE_CHECKING` for the annotations.
+      Custom setters of `ParamExplorer`, `DataKeeper`, `VarLoad` not wired:
+      two storages (`_setter_str` / `_setter_func`) and custom getters, a
+      design per backend (see "Custom property setters and getters").
+- [ ] Loss, Output, Optimization
 - [ ] Logger chain
 - [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)
 

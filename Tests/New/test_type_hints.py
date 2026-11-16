@@ -352,3 +352,21 @@ def get_p(self):
     result, _ = _hint(source)
     assert "-> list | tuple[Figure, Axes]:" in result
     assert "def get_p(self) -> int | None:" in result
+
+
+def test_class_imported_in_the_body_is_imported_for_type_checking():
+    source = '''def f(self):
+    """Doc
+
+    Returns
+    -------
+    other : Arc1
+        An arc
+    """
+    from ....Classes_new.geometry.arc_1 import Arc1
+
+    return Arc1()
+'''
+    result, _ = _hint(source)
+    assert "def f(self) -> Arc1:" in result
+    assert "if TYPE_CHECKING:\n    from ....Classes_new.geometry.arc_1 import Arc1\n" in result

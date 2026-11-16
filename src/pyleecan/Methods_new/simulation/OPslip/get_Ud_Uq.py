@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_Ud_Uq(self):
+def get_Ud_Uq(self) -> dict:
     """Return Ud and Uq
 
     Parameters

@@ -47,6 +47,7 @@ IMPORTED_TYPES = {
     ),
     "matplotlib.patches.polygon": ("Polygon", ("matplotlib.patches", "Polygon")),
     "matplotlib.patches.circle": ("Circle", ("matplotlib.patches", "Circle")),
+    "logger": ("Logger", ("logging", "Logger")),
 }
 """Documented types needing an import -> (annotation, (module, name)); a
 ("numpy", "np") import is ``import numpy as np``"""
@@ -112,6 +113,7 @@ when the docstring does not document them"""
 
 PARAMETER_OVERRIDES = {
     ("material", "BH_func"): _BH_FUNC_PARAMETERS,
+    ("simulation", "init_logger"): {"output": ("XOutput",)},  # "XOuput" (typo)
     ("material", "plot_BH"): {
         "fig": ("matplotlib.figure.Figure",),
         "grid": ("bool",),
@@ -602,10 +604,19 @@ def _add_type_checking_imports(source, package, imports, gen_dict):
     from pyleecan.Generator.ClassGenerator.New.class_generator import class_subpackage
 
     tree = ast.parse(source)
+    # Names bound for the annotations: the module imports, at runtime or for
+    # type checking (an import in a function body does not bind them)
+    module_imports = [
+        node
+        for statement in tree.body
+        for node in (
+            statement.body if _is_type_checking_block(statement) else [statement]
+        )
+        if isinstance(node, (ast.Import, ast.ImportFrom))
+    ]
     bound = {
         alias.asname or alias.name.split(".")[0]
-        for node in ast.walk(tree)
-        if isinstance(node, (ast.Import, ast.ImportFrom))
+        for node in module_imports
         for alias in node.names
     }
     statements = []
@@ -642,6 +653,8 @@ def _add_type_checking_imports(source, package, imports, gen_dict):
         + "\nif TYPE_CHECKING:\n"
         + "".join(f"    {statement}\n" for statement in statements)
     )
+    if position < len(lines) and lines[position].strip():
+        text += "\n\n"  # PEP 8: two blank lines before the next statement
     lines.insert(position, text)
     return "".join(lines)
 

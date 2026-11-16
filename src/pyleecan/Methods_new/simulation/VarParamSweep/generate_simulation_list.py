@@ -1,9 +1,13 @@
 import itertools
 import numpy as np
 from ....Classes_new.simulation.param_explorer_set import ParamExplorerSet
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
 
 
-def generate_simulation_list(self, ref_simu=None):
+def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
     """Generate all the simulation for the multi-simulation
 
     Parameters

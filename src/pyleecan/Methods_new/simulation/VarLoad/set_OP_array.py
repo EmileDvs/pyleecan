@@ -2,7 +2,7 @@ import numpy as np
 from ....Classes_new.simulation.op_matrix import OPMatrix
 
 
-def set_OP_array(self, OP_matrix, *arg_list, is_update_input=True, input_index=0):
+def set_OP_array(self, OP_matrix: np.ndarray, *arg_list, is_update_input: bool = True, input_index: int = 0) -> None:
     """Set the OP_matrix and update the input if needed
     (To make sure that ref simu is in the OP_matrix)
     Ex: set_OP_array(OP_matrix, "N0", "Iq", "Iq", "Tem")

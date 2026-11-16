@@ -1,4 +1,10 @@
-def get_OP_array(self, *arg_list):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def get_OP_array(self, *arg_list) -> np.ndarray:
     """Return the OP matrix
 
     Parameters

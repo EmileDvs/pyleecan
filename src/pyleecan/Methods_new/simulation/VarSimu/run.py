@@ -3,9 +3,13 @@ import itertools
 from ....Functions_new.Simulation.VarSimu.run_multisim_step import run_multisim_step
 from ....Functions_new.Simulation.VarSimu.log_datakeeper_step_result import log_datakeeper_step_result
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from logging import Logger
 
 
-def run(self):
+def run(self) -> None:
     """Run the multi-simulation
     The VarSimu object must be in a Simulation object (and not a VarSimu one)
 
@@ -152,7 +156,7 @@ def run(self):
             postproc.run(xoutput)
 
 
-def log_step_simu(index, nb_simu, paramexplorer_list, logger, layer):
+def log_step_simu(index: int, nb_simu: int, paramexplorer_list: list, logger: Logger, layer) -> None:
     """Add in the log some information about the simulation about to run
     Ex: "Running simulation 3/4 with Id=-135.41881, Iq=113.62987"
 
@@ -205,7 +209,7 @@ def log_step_simu(index, nb_simu, paramexplorer_list, logger, layer):
     logger.info(msg)
 
 
-def print_progress_bar(Nsimu, index, layer):
+def print_progress_bar(Nsimu: int, index: int, layer) -> None:
     """Print the progress bar
     Ex: "[=========================                         ]  50%"
 

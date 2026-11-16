@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import (
     get_elec_datakeeper_dict,
@@ -11,6 +11,9 @@ from .input_voltage import InputVoltage
 from .param_explorer_set import ParamExplorerSet
 from .simulation import Simulation
 from .var_load import VarLoad
+
+if TYPE_CHECKING:
+    from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -25,7 +28,7 @@ class VarLoadVoltage(VarLoad):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarLoadVoltage.generate_simulation_list
-    def generate_simulation_list(self, ref_simu=None):
+    def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
         """Generate all the simulation for the multi-simulation
 
         Parameters
@@ -76,7 +79,7 @@ class VarLoadVoltage(VarLoad):
         return multisim_dict
 
     # Inlined from Methods.Simulation.VarLoadVoltage.get_elec_datakeeper
-    def get_elec_datakeeper(self, symbol_list, is_multi=False):
+    def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
         """Generate DataKeepers to store by default results from electric module
         Parameters
         ----------

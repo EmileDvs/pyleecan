@@ -10,7 +10,7 @@ from ....Classes_new.output.out_mag import OutMag
 VERBOSE_KEY = {"B_{rad}": "Radial", "B_{circ}": "Tangential", "B_{ax}": "Axial"}
 
 
-def gen_input(self):
+def gen_input(self) -> None:
     """Generate the input for the force/stress module (magnetic output)
 
     Parameters

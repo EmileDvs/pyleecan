@@ -3,7 +3,7 @@ from ....Classes_new.post.post_function import PostFunction
 from ....Classes_new.post.post_method import PostMethod
 
 
-def run_single(self):
+def run_single(self) -> None:
     """Run the simulation
 
     Parameters

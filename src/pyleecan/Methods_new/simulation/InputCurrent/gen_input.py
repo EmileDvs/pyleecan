@@ -9,7 +9,7 @@ from ....Functions_new.Electrical.dqh_transformation import get_phase_dir, n2dqh
 from ..Input import InputError
 
 
-def gen_input(self):
+def gen_input(self) -> None:
     """Generate the input for the magnetic module (electrical output)
 
     Parameters

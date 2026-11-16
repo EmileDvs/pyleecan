@@ -1,7 +1,7 @@
 from ....Classes_new.simulation.data_keeper import DataKeeper
 
 
-def get_mag_datakeeper(self, symbol_list, is_multi=False):
+def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
     """
     Generate DataKeepers to store by default results from magnetic module
 

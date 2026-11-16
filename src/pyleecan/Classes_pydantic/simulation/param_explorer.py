@@ -2,12 +2,15 @@
 """Generated experimental pydantic model; do not edit by hand."""
 
 from ntpath import basename
-from typing import Any, Callable, ClassVar
+from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 from ...classes_common.errors import CheckTypeError
 from ...definitions import PYTHON_DEFAULT_ENCODING
 from ...Functions_pydantic.path_tools import abs_file_path
 from .._legacy_model import LegacyModel
+
+if TYPE_CHECKING:
+    from .simulation import Simulation
 
 
 class ParamExplorer(LegacyModel):
@@ -47,7 +50,7 @@ class ParamExplorer(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ParamExplorer._set_getter
-    def _set_getter(self, value):
+    def _set_getter(self, value) -> None:
         """setter of getter"""
         # Create the function if getter is defined as a string (e.g. simu.machine.rotor.slot.W0)
         if isinstance(value, str) and value[:4] == "simu":
@@ -86,7 +89,7 @@ class ParamExplorer(LegacyModel):
             )
 
     # Inlined from Methods.Simulation.ParamExplorer._set_setter
-    def _set_setter(self, value):
+    def _set_setter(self, value) -> None:
         """setter of setter"""
         # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
         if isinstance(value, str) and value[:4] == "simu":
@@ -126,7 +129,7 @@ class ParamExplorer(LegacyModel):
             )
 
     # Inlined from Methods.Simulation.ParamExplorer.get_desc
-    def get_desc(self, simu=None, is_print=False):
+    def get_desc(self, simu: Simulation | None = None, is_print: bool = False) -> str:
         """Generate a string description of the ParamExplorer
 
         Parameters

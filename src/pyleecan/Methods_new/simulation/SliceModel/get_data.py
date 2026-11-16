@@ -2,9 +2,13 @@ import numpy as np
 
 from ....Classes_new.scidatatool.data_pattern import DataPattern
 from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.normalization import Normalization
 
 
-def get_data(self):
+def get_data(self) -> DataPattern:
     """Return the slice data object
 
     Parameters
@@ -33,7 +37,7 @@ def get_data(self):
     rebuild_indices = rebuild_indices.tolist()
 
     # Setup other parameters
-    normalizations = {"x L": Norm_ref(ref=self.L)}
+    normalizations: dict[str, Normalization] = {"x L": Norm_ref(ref=self.L)}
     is_step = self.is_step
 
     # Create DataPattern

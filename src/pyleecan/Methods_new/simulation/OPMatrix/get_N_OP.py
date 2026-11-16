@@ -1,7 +1,7 @@
 from . import OPMatrixException
 
 
-def get_N_OP(self):
+def get_N_OP(self) -> int:
     """return the number of Operating point in the matrix
 
     Parameters

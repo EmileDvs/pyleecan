@@ -1,13 +1,16 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Simulation/OP.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import OPMatrixException
 from .._legacy_model import LegacyModel
+
+if TYPE_CHECKING:
+    from ..machine.machine import Machine
 
 
 class OP(LegacyModel):
@@ -52,7 +55,7 @@ class OP(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.OP.get_machine_from_parent
-    def get_machine_from_parent(self):
+    def get_machine_from_parent(self) -> Machine | None:
         """Search in the parent to find the machine
 
         Parameters
@@ -83,7 +86,7 @@ class OP(LegacyModel):
                 return None
 
     # Inlined from Methods.Simulation.OP.get_OP_array
-    def get_OP_array(self, *arg_list):
+    def get_OP_array(self, *arg_list) -> np.ndarray:
         """get the OP_matrix by identifying the columns
         Ex: get_OP_array("N0", "Iq", "Iq", "Tem")
         get_OP_array(OP_matrix) calls get_OP_array("N0", "Id", "Iq", "Tem", "Pem")

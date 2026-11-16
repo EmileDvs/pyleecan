@@ -4,7 +4,7 @@ from ....Functions_new.path_tools import abs_file_path
 from ....definitions import PYTHON_DEFAULT_ENCODING
 
 
-def _set_setter(self, value):
+def _set_setter(self, value) -> None:
     """setter of setter"""
     # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
     if isinstance(value, str) and value[:4] == "simu":

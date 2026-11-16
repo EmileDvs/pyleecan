@@ -8,7 +8,7 @@ import numpy as np
 from numpy import sqrt, pi
 
 
-def _set_keeper(self, value):
+def _set_keeper(self, value) -> None:
     """setter of keeper"""
     # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
     if isinstance(value, str) and value[:4] == "simu":
