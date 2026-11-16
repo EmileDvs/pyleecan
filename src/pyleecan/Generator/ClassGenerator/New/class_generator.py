@@ -4,11 +4,13 @@ import re
 import subprocess
 import tempfile
 import warnings
+from copy import deepcopy
 from functools import lru_cache
 from os import listdir, makedirs
 from os.path import basename, dirname, isdir, isfile, join
 from pathlib import Path
 from textwrap import indent
+from types import MappingProxyType
 
 # The naming rules of the classes are defined once (classes_common)
 from ....classes_common.class_lookup import NORMALIZATION_CLASS_NAMES, class_module_name
@@ -316,11 +318,26 @@ def class_module_paths(gen_dict):
     -------
     module_paths : dict
         {module name: "subpackage.module"} (e.g. {"arc_1": "geometry.arc_1"})
+        (read-only, cached for the last generation dictionary)
     """
-    return {
-        class_module_name(name): f"{class_subpackage(name, gen_dict)}.{class_module_name(name)}"
-        for name in gen_dict
-    }
+    cached = _CLASS_MODULE_PATHS.get("last")
+    if cached is not None and cached[0] is gen_dict and cached[1] == len(gen_dict):
+        return cached[2]
+    module_paths = MappingProxyType(
+        {
+            class_module_name(name): (
+                f"{class_subpackage(name, gen_dict)}.{class_module_name(name)}"
+            )
+            for name in gen_dict
+        }
+    )
+    _CLASS_MODULE_PATHS["last"] = (gen_dict, len(gen_dict), module_paths)
+    return module_paths
+
+
+_CLASS_MODULE_PATHS = {}
+"""{"last": (gen_dict, number of classes, module paths)}: the module paths are
+asked for each module of a generation, with the same generation dictionary"""
 
 
 def generated_module_paths(class_dir):
@@ -840,11 +857,39 @@ def _sort_error_class_definitions(definitions):
     return ordered
 
 
-def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_graph):
+def _prepare_methods_of(gen_dict, path_to_gen, class_name, soft_name, class_import_graph):
+    """_prepare_class_methods of a class of the generation dictionary."""
+    info = gen_dict[class_name]
+    reserved = {item["name"] for item in info["constants"]}
+    reserved.update(method.split(".")[-1] for method in info["methods"])
+    reserved.update(item["name"] for item in info["properties"])
+    return _prepare_class_methods(
+        path_to_gen,
+        info["package"],
+        class_name,
+        info["methods"],
+        soft_name,
+        reserved_names=reserved,
+        class_import_graph=class_import_graph,
+        class_constants=_class_constants(class_name, gen_dict),
+    )
+
+
+def _shared_error_definitions(
+    gen_dict, path_to_gen, soft_name, class_import_graph, prepared_methods=None
+):
     """Find the exception definitions of the method modules (all shared).
 
     Every method error is written once in classes_common/errors.py, for both
     class implementations (one error class per error, see PLAN.md).
+
+    The methods of every class are prepared (inlined) to find their errors.
+    With ``prepared_methods`` (a dict), the preparations are kept there,
+    {class name: (prepared methods, recorded warnings)}, and the classes
+    already in it are not prepared again: ``generate_class`` reuses them
+    instead of preparing the methods a second time. The preparation only
+    depends on the pyleecan folder (the parent of path_to_gen), so one dict
+    serves the generations of both backends of a run.
     """
     from .generate_function_new_classes import FUNCTION_ERRORS
 
@@ -853,22 +898,22 @@ def _shared_error_definitions(gen_dict, path_to_gen, soft_name, class_import_gra
     for name, info in sorted(gen_dict.items()):
         if not info.get("methods"):
             continue
-        reserved = {item["name"] for item in info["constants"]}
-        reserved.update(method.split(".")[-1] for method in info["methods"])
-        reserved.update(item["name"] for item in info["properties"])
-        # Actual generation reports inline fallback warnings for selected classes.
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", message=r"^Could not inline ")
-            prepared = _prepare_class_methods(
-                path_to_gen,
-                info["package"],
-                name,
-                info["methods"],
-                soft_name,
-                reserved_names=reserved,
-                class_import_graph=class_import_graph,
-                class_constants=_class_constants(name, gen_dict),
-            )
+        if prepared_methods is not None and name in prepared_methods:
+            prepared = prepared_methods[name][0]
+        else:
+            # Recorded: the class generation reports them (inline fallbacks)
+            with warnings.catch_warnings(record=True) as recorded:
+                warnings.simplefilter("always")
+                prepared = _prepare_methods_of(
+                    gen_dict, path_to_gen, name, soft_name, class_import_graph
+                )
+            recorded = [(str(item.message), item.category) for item in recorded]
+            for message, category in recorded:
+                # The inline fallbacks are reported by the class generation only
+                if not message.startswith("Could not inline "):
+                    warnings.warn(message, category, stacklevel=2)
+            if prepared_methods is not None:
+                prepared_methods[name] = (prepared, recorded)
         for definition in prepared[-1]:
             origin = definition.error_origin
             definitions[origin] = definition
@@ -4521,6 +4566,7 @@ def generate_class(
     output_name=None,
     shared_error_definitions=None,
     backend="dataclass",
+    prepared_methods=None,
 ):
     """Generate a class using the ``Classes_new`` inheritance hierarchy.
 
@@ -4552,6 +4598,11 @@ def generate_class(
         Precomputed shared exceptions for experimental generation. If omitted,
         derive them from the complete gen_dict and write classes_common/errors.py.
         Provide the complete generation dictionary even for a single class.
+    prepared_methods : dict, optional
+        {class name: (prepared methods, recorded warnings)} filled by
+        ``_shared_error_definitions`` for the same generation (see
+        ``_shared_error_definitions``); the class methods are prepared again
+        when the class is missing.
 
     Returns
     -------
@@ -4564,20 +4615,25 @@ def generate_class(
         raise ValueError("import_style must be 'relative' or 'absolute'")
     validate_class_module_names(gen_dict)
 
-    class_dict = gen_dict[class_name]
-    class_pack = class_dict["package"]
     if class_import_graph is None:
         source_class_dir = join(dirname(path_to_gen), "Classes")
         class_import_graph = get_class_import_graph(source_class_dir, gen_dict, soft_name)
     if shared_error_definitions is None:
         shared_error_definitions = _shared_error_definitions(
-            gen_dict, path_to_gen, soft_name, class_import_graph
+            gen_dict, path_to_gen, soft_name, class_import_graph, prepared_methods
         )
         _write_shared_errors(path_to_gen, shared_error_definitions)
-    reserved_names = {constant["name"] for constant in class_dict["constants"]} | {
-        method.split(".")[-1] for method in class_dict["methods"]
-    }
-    reserved_names.update(prop["name"] for prop in class_dict["properties"])
+    if prepared_methods is not None and class_name in prepared_methods:
+        # Prepared by _shared_error_definitions (same inputs): reused, with the
+        # warnings of the preparation
+        prepared, recorded = prepared_methods[class_name]
+        prepared = deepcopy(prepared)
+        for message, category in recorded:
+            warnings.warn(message, category, stacklevel=2)
+    else:
+        prepared = _prepare_methods_of(
+            gen_dict, path_to_gen, class_name, soft_name, class_import_graph
+        )
     (
         method_sources,
         method_imports,
@@ -4585,16 +4641,7 @@ def generate_class(
         class_attributes,
         method_default_overrides,
         class_error_definitions,
-    ) = _prepare_class_methods(
-        path_to_gen,
-        class_pack,
-        class_name,
-        class_dict["methods"],
-        soft_name,
-        reserved_names=reserved_names,
-        class_import_graph=class_import_graph,
-        class_constants=_class_constants(class_name, gen_dict),
-    )
+    ) = prepared
 
     return _generate_dataclass_class(
         gen_dict,

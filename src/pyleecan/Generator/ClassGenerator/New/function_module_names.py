@@ -2,8 +2,10 @@
 
 import ast
 import re
+from functools import lru_cache
 from importlib.util import resolve_name
 from pathlib import Path
+from types import MappingProxyType
 
 from pyleecan.definitions import MAIN_DIR
 
@@ -24,8 +26,19 @@ def function_module_name(name):
 
 
 def function_module_mapping(source_dir=None):
-    """Map old package-qualified module paths to their generated paths."""
+    """Map old package-qualified module paths to their generated paths.
+
+    The legacy Functions tree is not modified by the generators: the mapping is
+    computed once per folder (read-only view, ``_function_module_mapping``
+    ``.cache_clear()`` to rescan).
+    """
     root = Path(source_dir) if source_dir is not None else Path(MAIN_DIR) / "Functions"
+    return _function_module_mapping(str(root.resolve()))
+
+
+@lru_cache
+def _function_module_mapping(root):
+    root = Path(root)
     mapping = {}
     destinations = {}
     for path in root.rglob("*.py"):
@@ -39,7 +52,7 @@ def function_module_mapping(source_dir=None):
         destinations[key] = old
         if old != new:
             mapping[old] = new
-    return mapping
+    return MappingProxyType(mapping)
 
 
 def redirect_function_module_imports(source, package, mapping, soft_name="pyleecan"):

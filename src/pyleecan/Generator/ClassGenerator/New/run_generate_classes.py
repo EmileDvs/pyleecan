@@ -80,6 +80,7 @@ def generate_code(
     max_workers=None,
     import_style="absolute",
     backend="dataclass",
+    prepared_methods=None,
 ):
     """Generate the classes of a backend without modifying legacy outputs.
 
@@ -109,6 +110,11 @@ def generate_code(
         "relative" or "absolute" imports from the generated package in class files.
     backend : str, optional
         "dataclass" (Classes_new) or "pydantic" (Classes_pydantic)
+    prepared_methods : dict, optional
+        Prepared class methods, shared by the generations of a run (both
+        backends): filled by the first generation, reused by the next ones
+        (see class_generator._shared_error_definitions). Only valid while the
+        method sources (Methods_new, Methods) are unchanged.
 
     Returns
     -------
@@ -155,8 +161,10 @@ def generate_code(
         else set(gen_dict)
     )
     generation_names = sorted(name for name in gen_dict if name in class_names)
+    if prepared_methods is None:
+        prepared_methods = {}  # Shared by the error search and the generation
     shared_errors = _shared_error_definitions(
-        gen_dict, CLASS_DIR, soft_name, class_import_graph
+        gen_dict, CLASS_DIR, soft_name, class_import_graph, prepared_methods
     )
     _write_shared_errors(CLASS_DIR, shared_errors)
 
@@ -182,6 +190,7 @@ def generate_code(
         import_style=import_style,
         shared_error_definitions=shared_errors,
         backend=backend,
+        prepared_methods=prepared_methods,
     )
     _write_experimental_bookkeeping(CLASS_DIR, gen_dict, backend)
 
@@ -244,6 +253,7 @@ def _generate_classes(
     import_style="absolute",
     shared_error_definitions=None,
     backend="dataclass",
+    prepared_methods=None,
 ):
     def generate_one_class(class_name, import_graph=None):
         print("Generation of " + class_name + " class")
@@ -252,6 +262,7 @@ def _generate_classes(
             "import_style": import_style,
             "shared_error_definitions": shared_error_definitions,
             "backend": backend,
+            "prepared_methods": prepared_methods,
         }
         if import_graph is not None:
             generation_kwargs["class_import_graph"] = import_graph
@@ -286,6 +297,7 @@ def run_generate_classes(
     max_workers=None,
     import_style="absolute",
     backend="dataclass",
+    prepared_methods=None,
 ):
     """Generate the experimental classes of a backend.
 
@@ -319,6 +331,7 @@ def run_generate_classes(
         max_workers=max_workers,
         import_style=import_style,
         backend=backend,
+        prepared_methods=prepared_methods,
     )
 
     now = datetime.now()
@@ -329,10 +342,15 @@ if __name__ == "__main__":
     # Methods_new from the legacy Methods (read by the class generator)
     generate_methods()
 
-    # To generate all classes, for each backend
+    # To generate all classes, for each backend (the class methods are
+    # prepared once, for both backends)
+    prepared_methods = {}
     for backend in ("dataclass", "pydantic"):
         run_generate_classes(
-            max_workers=cpu_count(), import_style="relative", backend=backend
+            max_workers=cpu_count(),
+            import_style="relative",
+            backend=backend,
+            prepared_methods=prepared_methods,
         )
 
     generate_functions()

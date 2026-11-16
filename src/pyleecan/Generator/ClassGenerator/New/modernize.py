@@ -376,6 +376,8 @@ def _get_import_scope_info(scope_body, package):
 
 def _apply_package_import_style(source, package, package_alias):
     """Normalize package imports and their references to a shared module alias."""
+    if re.search(rf"\b{re.escape(package)}\b", source) is None:
+        return source  # Not imported: nothing to rewrite (no parse, no walk)
     tree = ast.parse(source)
     if package in ("numpy", "pyvista", "os"):
         imported_names = set()
