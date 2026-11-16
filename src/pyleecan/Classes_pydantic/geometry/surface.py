@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ...classes_common.femm_handler import _FEMMHandler
+    from .line import Line
 
 
 class Surface(LegacyModel):
@@ -407,8 +408,8 @@ class Surface(LegacyModel):
 
         # Split all the lines of the surface
         lines = self.get_lines()
-        top_split_list = []  # List of line of the top part
-        bot_split_list = []  # List of line of the bot part
+        top_split_list: list[Line] = []  # List of line of the top part
+        bot_split_list: list[Line] = []  # List of line of the bot part
         for line in lines:
             line_top, line_bot = line.split_line(
                 Z1=Z1,

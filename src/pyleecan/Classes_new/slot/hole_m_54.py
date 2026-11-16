@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -148,7 +149,7 @@ class HoleM54(Hole):
         Z4 = point_dict["Z4"]
 
         surf_list = []
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(
             Arc1(begin=Z1, end=Z2, radius=-self.R1, is_trigo_direction=False)
         )

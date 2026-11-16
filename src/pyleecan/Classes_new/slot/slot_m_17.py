@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -203,7 +204,7 @@ class SlotM17(Slot):
         Z1 = -Rext * 1j
         Z2 = Rext
         Z3 = Rext * 1j
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Arc1(begin=Z1, end=Z2, radius=Rext, is_trigo_direction=True))
         curve_list.append(Arc1(begin=Z2, end=Z3, radius=Rext, is_trigo_direction=True))
         if Rint == 0:

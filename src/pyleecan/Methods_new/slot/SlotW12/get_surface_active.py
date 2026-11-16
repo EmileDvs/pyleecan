@@ -3,6 +3,7 @@ from ....Functions_new.labels import WIND_LAB, DRAW_PROP_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
     from ....Classes_new.geometry.surface import Surface
 
 
@@ -25,7 +26,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     """
     # get the name of the lamination
     line_dict = self._comp_line_dict()
-    curve_list = [
+    curve_list: list[Line] = [
         line_dict["3-4"],
         line_dict["4-5"],
         line_dict["5-6"],

@@ -36,6 +36,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -559,7 +560,7 @@ class SlotW23(Slot):
         # Create curve list
         line_dict = self._comp_line_dict()
         if self.H1 != 0:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["3-4"],
                 line_dict["4-5"],
                 line_dict["5-6"],
@@ -568,7 +569,7 @@ class SlotW23(Slot):
         else:
             # Add 2-3 and 7-2 to make sure that FEMM handles all the lines
             # cf (Tests\Validation\Magnetics\test_FEMM_fast_draw.py)
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["2-3"],
                 line_dict["3-4"],
                 line_dict["4-5"],
@@ -623,7 +624,7 @@ class SlotW23(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-3"],
             line_dict["3-6"],

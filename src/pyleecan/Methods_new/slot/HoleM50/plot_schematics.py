@@ -10,6 +10,7 @@ from ....Methods import ParentMissingError
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from typing import Any
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
     from ....Classes_new.machine.lamination import Lamination
@@ -142,7 +143,7 @@ def plot_schematics(
 
         # Adding schematics
         if is_add_schematics:
-            kwargs = dict(
+            kwargs: dict[str, Any] = dict(
                 fig=fig,
                 ax=ax,
                 color=ARROW_COLOR,

@@ -5,6 +5,10 @@ from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Methods import ParentMissingError
 from ....Functions_new.labels import BOUNDARY_PROP_LAB, YSR_LAB, YSL_LAB, YOKE_LAB, NO_LAM_LAB, TOOTH_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 
@@ -28,7 +32,7 @@ def get_surface_tooth(self) -> SurfLine:
     else:
         raise ParentMissingError("Error: The slot is not inside a Lamination")
 
-    curve_list = list()
+    curve_list: list[Line] = list()
     # tooth lines
     top_list = self.build_geometry_half_tooth(is_top=True)
     bot_list = self.build_geometry_half_tooth(is_top=False)

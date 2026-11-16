@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -176,7 +177,7 @@ class SlotM18_2(Slot):
 
             # Bore Magnet
             surf_list = []
-            curve_list = []
+            curve_list: list[Line] = []
             curve_list.append(
                 Segment(
                     begin=ZM1, end=ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB}
@@ -445,7 +446,7 @@ class SlotM18_2(Slot):
         ZM3 = point_dict["ZM4"]
         ZM4 = point_dict["ZM6"]
 
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Segment(begin=ZM1, end=ZM2))
 
         if self.is_outwards():

@@ -1,6 +1,10 @@
 from ....Classes_new.geometry.surf_line import SurfLine
 from . import S63_WindError
 from ....Functions_new.labels import WIND_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0) -> list:
@@ -43,7 +47,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         Ref2 = (line_dict["w1s-w2s"].get_begin() + line_dict["5-6"].get_begin()) / 2
 
         # Create the surfaces
-        wind1_lines = [
+        wind1_lines: list[Line] = [
             line_dict["w1-2"],
             line_dict["2-3"],
             line_dict["3-4"],
@@ -51,7 +55,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
             line_dict["w2-w1"],
         ]
 
-        wind2_lines = [
+        wind2_lines: list[Line] = [
             line_dict["w1s-w2s"],
             line_dict["w2s-5"],
             line_dict["5-6"],
@@ -79,7 +83,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         Ref1 = (line_dict["7-2"].get_begin() + line_dict["4-5"].get_begin()) / 2
 
         # Create the surfaces
-        wind1_lines = [
+        wind1_lines: list[Line] = [
             line_dict["7-2"],
             line_dict["2-3"],
             line_dict["3-4"],

@@ -4,6 +4,10 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
@@ -47,7 +51,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
     Z4 = point_dict["Z4"]
 
     # surface
-    curve_list = list()
+    curve_list: list[Line] = list()
     curve_list.append(Segment(begin=Z1, end=Z2))
     if self.top_flat:
         curve_list.append(Segment(begin=Z2, end=Z3))

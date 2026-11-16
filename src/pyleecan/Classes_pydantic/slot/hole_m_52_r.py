@@ -38,6 +38,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -198,7 +199,7 @@ class HoleM52R(HoleMag):
                 self.get_logger().warning("Radius R0 enforced to 0.")
 
         # Creation of the air curve
-        curve_list = []
+        curve_list: list[Line] = []
         if is_radius:
             curve_list.append(Arc1(begin=Z1R, end=Z1L, radius=self.R0))
         curve_list.append(Segment(begin=Z1L if is_radius else Z1, end=Z2))

@@ -1,5 +1,9 @@
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import SOP_LAB, DRAW_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
@@ -24,7 +28,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
     line_dict = self._comp_line_dict()
     if self.W2 != 0:
         if self.H2 != 0:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["1-2"],
                 line_dict["2-w1"],
                 line_dict["w1-w2"],
@@ -36,7 +40,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
             ]
 
         else:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["2-w1"],
                 line_dict["w1-w2"],
                 line_dict["w2-w2s"],
@@ -46,7 +50,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
             ]
     else:
         if self.H2 != 0:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["1-2"],
                 line_dict["2-7"],
                 line_dict["7-8"],
@@ -54,7 +58,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
             ]
 
         else:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["2-7"],
                 line_dict["7w-2w"],
             ]

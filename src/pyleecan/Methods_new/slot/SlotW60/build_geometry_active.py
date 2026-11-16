@@ -5,6 +5,10 @@ from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from . import S60_WindError
 from ....Functions_new.labels import WIND_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0) -> list:
@@ -51,14 +55,14 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
     Ref2 = (line_dict["w3s-w4s"].get_begin() + line_dict["w1s-w2s"].get_begin()) / 2
 
     # Create the surfaces
-    wind1_lines = [
+    wind1_lines: list[Line] = [
         line_dict["w3-w4"],
         line_dict["w4-w1"],
         line_dict["w1-w2"],
         line_dict["w2-w3"],
     ]
 
-    wind2_lines = [
+    wind2_lines: list[Line] = [
         line_dict["w3s-w4s"],
         line_dict["w4s-w1s"],
         line_dict["w1s-w2s"],

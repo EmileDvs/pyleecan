@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -239,7 +240,7 @@ class HoleM57(HoleMag):
         # TODO: Create all the surfaces for all the cases
         # (with/without magnet W1>0 or W1=0)
         # Air surface (W3) with magnet_0
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Segment(begin=Z1, end=Z2))
         curve_list.append(Segment(begin=Z2, end=Z7))
         if self.W2 > 0:

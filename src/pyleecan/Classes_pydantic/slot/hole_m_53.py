@@ -40,6 +40,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -238,7 +239,7 @@ class HoleM53(HoleMag):
         Rext = self.get_Rext()
 
         # Air surface with magnet_0
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Segment(begin=Z1, end=Z2))
         curve_list.append(Segment(begin=Z2, end=Z10))
         curve_list.append(Segment(begin=Z10, end=Z11))

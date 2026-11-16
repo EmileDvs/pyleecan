@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from .slot_ud_2 import SlotUD2
 
@@ -764,7 +765,7 @@ class Slot(LegacyClass):
         else:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
-        curve_list = []
+        curve_list: list[Line] = []
         # tooth lines
         top_list = self.build_geometry_half_tooth(is_top=True)
         bot_list = self.build_geometry_half_tooth(is_top=False)

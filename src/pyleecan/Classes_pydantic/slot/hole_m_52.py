@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -180,7 +181,7 @@ class HoleM52(HoleMag):
         Z11 = point_dict["Z11"]
 
         # Creation of the air curve
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Segment(begin=Z1, end=Z2))
         curve_list.append(Segment(begin=Z2, end=Z3))
         curve_list.append(Segment(begin=Z3, end=Z11))

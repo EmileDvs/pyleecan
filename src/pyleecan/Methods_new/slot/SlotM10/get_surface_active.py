@@ -5,6 +5,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
     from ....Classes_new.geometry.surface import Surface
 
 
@@ -37,7 +38,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     Z1 = point_dict["Z1"]
     Z4 = point_dict["Z4"]
 
-    curve_list = list()
+    curve_list: list[Line] = list()
     curve_list.append(Segment(begin=ZM1, end=ZM2))
     # Case Z2-Z1 overlapping with ZM1-ZM2
     if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:

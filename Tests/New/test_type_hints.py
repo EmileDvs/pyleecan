@@ -176,3 +176,67 @@ def g(self):
     # Other sub-packages keep the documented return
     result, _ = _hint(source)  # geometry
     assert "-> tuple[Figure, Axes]:" in result
+
+
+def test_container_local_annotated_with_the_field_type():
+    source = '''def f(self):
+    curve_list = list()
+    curve_list.append(Segment())
+    surf = SurfLine(line_list=curve_list)
+    curve_list = list()
+    return surf
+'''
+    result, _ = _hint(source)
+    assert "    curve_list: list[Line] = list()\n" in result
+    assert result.count("curve_list: list[Line]") == 1  # First assignment only
+    assert "from ...surf_line" not in result  # SurfLine is not a hint
+    assert "    from ....Classes_new.geometry.line import Line\n" in result
+    assert _hint(result)[0] == result  # Idempotent
+
+
+def test_container_local_left_unchanged():
+    source = '''def f(self, given):
+    built = self.build()
+    a = SurfLine(line_list=built)
+    b = SurfLine(line_list=given)
+    c = SurfLine(label=label)
+
+    def g():
+        local = []
+        return SurfLine(line_list=local)
+'''
+    result, _ = _hint(source)
+    assert result == source  # Not a container, a parameter, a str field, a nested scope
+
+
+def test_container_local_annotated_in_each_branch():
+    source = '''def f(self, a):
+    if a:
+        curve_list = list()
+        for i in a:
+            curve_list = []
+        s = SurfLine(line_list=curve_list)
+    else:
+        curve_list = list()
+        s = SurfLine(line_list=curve_list)
+    return s
+'''
+    result, _ = _hint(source)
+    assert "        curve_list: list[Line] = list()\n" in result
+    assert "            curve_list = []\n" in result  # After the declaration
+    assert result.count("curve_list: list[Line] = list()") == 2  # if and else
+    assert _hint(result)[0] == result
+
+
+def test_unpacked_kwargs_dict_annotated():
+    source = '''def f(self, fig):
+    kwargs = dict(fig=fig, color="k", linewidth=2)
+    self.plot(label="W0", **kwargs)
+    options = self.get_options()
+    self.plot(**options)
+'''
+    result, _ = _hint(source)
+    assert "    kwargs: dict[str, Any] = dict(fig=fig" in result
+    assert "    options = self.get_options()\n" in result  # Not built here
+    assert "    from typing import Any\n" in result  # Under TYPE_CHECKING
+    assert _hint(result)[0] == result

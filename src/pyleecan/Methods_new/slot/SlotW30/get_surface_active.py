@@ -3,6 +3,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
     from ....Classes_new.geometry.surface import Surface
 
 
@@ -27,7 +28,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     # Create curve list
     line_dict = self._comp_line_dict()
     if self.R1 != 0 and self.R2 != 0:
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["2-3"],
             line_dict["3-4"],
             line_dict["4-5"],
@@ -41,7 +42,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         ]
 
     elif self.R1 == 0 and self.R2 != 0:
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["2-40"],
             line_dict["40-5"],
             line_dict["5-6"],
@@ -53,7 +54,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         ]
 
     elif self.R1 != 0 and self.R2 == 0:
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["2-3"],
             line_dict["3-4"],
             line_dict["4-60"],
@@ -65,7 +66,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         ]
 
     elif self.R1 == 0 and self.R2 == 0:
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["2-40"],
             line_dict["40-60"],
             line_dict["60-80"],

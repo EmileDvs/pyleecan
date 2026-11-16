@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -408,7 +409,7 @@ class SlotCirc(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-M"],
             line_dict["M-2"],
             line_dict["2-1"],

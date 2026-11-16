@@ -6,6 +6,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
     from ....Classes_new.geometry.surface import Surface
 
 
@@ -37,7 +38,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     ZM3 = point_dict["ZM3"]
     ZM4 = point_dict["ZM4"]
 
-    curve_list = list()
+    curve_list: list[Line] = list()
     curve_list.append(Segment(begin=ZM1, end=ZM2))
     if self.is_outwards():
         curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=-self.Rtopm, is_trigo_direction=False))

@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -282,7 +283,7 @@ class SlotW22(Slot):
                 point_ref = (
                     Z[ii][jj] + Z[ii][jj + 1] + Z[ii + 1][jj + 1] + Z[ii + 1][jj]
                 ) / 4  # the reference point of the surface
-                curve_list = []
+                curve_list: list[Line] = []
                 curve_list.append(
                     Arc1(
                         begin=Z1,
@@ -539,7 +540,7 @@ class SlotW22(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["2-3"],
             line_dict["3-4"],
             line_dict["4-5"],
@@ -594,7 +595,7 @@ class SlotW22(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-7"],
             line_dict["7-8"],

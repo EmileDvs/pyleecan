@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -317,7 +318,7 @@ class SlotW29(Slot):
                 Z4 = Z[ii + 1][jj]
                 point_ref = (Z1 + Z2 + Z3 + Z4) / 4
                 # With one zone the order would be [Z7,Z4,Z5,Z6]
-                curve_list = []
+                curve_list: list[Line] = []
                 curve_list.append(Segment(begin=Z1, end=Z2))
                 curve_list.append(
                     Segment(
@@ -610,7 +611,7 @@ class SlotW29(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["4-5"],
             line_dict["5-6"],
             line_dict["6-7"],
@@ -669,7 +670,7 @@ class SlotW29(Slot):
         if self.wedge_type == 0:
             # Create curve list
 
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["1-2"],
                 line_dict["2-3"],
                 line_dict["3-4"],
@@ -687,7 +688,7 @@ class SlotW29(Slot):
 
         else:
             # Create curve list
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["1-2"],
                 line_dict["2-11"],
                 line_dict["11-12"],
@@ -742,7 +743,7 @@ class SlotW29(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["2-3"],
             line_dict["3-4"],
             line_dict["4-9"],

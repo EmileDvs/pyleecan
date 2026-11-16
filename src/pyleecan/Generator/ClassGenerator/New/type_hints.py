@@ -157,12 +157,186 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
             if all(hint is not None for hint in alternatives):
                 line, column = _signature_end(source, node)
                 edits.append((line, column, " -> " + " | ".join(alternatives)))
+        edits.extend(_container_local_edits(node, class_names, gen_dict, imports))
     if not edits:
         return source
     lines = source.splitlines(keepends=True)
     for line, column, text in sorted(edits, reverse=True):
         lines[line - 1] = lines[line - 1][:column] + text + lines[line - 1][column:]
     return _add_type_checking_imports("".join(lines), package, imports, gen_dict)
+
+
+CONTAINER_BUILDERS = {"list": ast.List, "dict": ast.Dict}
+"""Constructor names of the containers -> their display node"""
+
+KWARGS_TYPE = "**"
+"""Marker of a local dict unpacked as keyword arguments (dict[str, Any])"""
+
+
+def _container_local_edits(function, class_names, gen_dict, imports):
+    """Annotations of the local containers passed to a container field.
+
+    ``list`` is invariant: ``curve_list = list()`` filled with segments is
+    inferred as ``list[Segment]``, which is rejected by a ``list[Line]`` field
+    (``SurfLine(line_list=curve_list)``). The first assignment of such a local
+    is annotated with the field type (``curve_list: list[Line] = list()``),
+    when it builds the container (empty or literal). A local passed to fields
+    of different types is left unchanged. A local dict unpacked as keyword
+    arguments (``line.plot(**kwargs)``) is annotated ``dict[str, Any]``.
+
+    Parameters
+    ----------
+    function : ast.FunctionDef
+        Function whose locals are annotated
+    class_names : dict
+        {class name: name in gen_dict}
+    gen_dict : dict
+        Generation dictionary (contains all the csv data)
+    imports : dict
+        Updated with the names of the hints to import (name -> (module, name))
+
+    Returns
+    -------
+    edits : list
+        (line, column, text) insertions
+    """
+    nodes = list(_walk_scope(function))
+    hints = {}  # local name -> set of field types
+    unpacked = set()  # local names unpacked as keyword arguments (**name)
+    for node in nodes:
+        if not isinstance(node, ast.Call):
+            continue
+        for keyword in node.keywords:
+            if keyword.arg is None and isinstance(keyword.value, ast.Name):
+                unpacked.add(keyword.value.id)
+        if not isinstance(node.func, ast.Name) or node.func.id not in class_names:
+            continue
+        for keyword in node.keywords:
+            if keyword.arg is None or not isinstance(keyword.value, ast.Name):
+                continue
+            field_type = _field_type(class_names[node.func.id], keyword.arg, gen_dict)
+            if field_type and field_type[0] in "[{" and field_type not in ("[]", "{}"):
+                hints.setdefault(keyword.value.id, set()).add(field_type)
+    # Keyword arguments gathered in a dict: its value type is the union of the
+    # values (e.g. str | int), rejected by every typed parameter
+    for name in unpacked:
+        hints.setdefault(name, set()).add(KWARGS_TYPE)
+    if not hints:
+        return []
+    annotated = {
+        node.target.id
+        for node in nodes
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+    }
+    positions = _statement_positions(function)
+    assigns = {}  # name -> assignments, in source order
+    for node in sorted(
+        (n for n in nodes if isinstance(n, ast.Assign) and id(n) in positions),
+        key=lambda n: (n.lineno, n.col_offset),
+    ):
+        if len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            assigns.setdefault(node.targets[0].id, []).append(node)
+    edits = []
+    for name, field_types in sorted(hints.items()):
+        if len(field_types) != 1 or name in annotated or name not in assigns:
+            continue
+        field_type = next(iter(field_types))
+        is_dict = field_type[0] == "{" or field_type == KWARGS_TYPE
+        builder = CONTAINER_BUILDERS["dict" if is_dict else "list"]
+        if not _builds_container(assigns[name][0].value, builder):
+            continue  # Declared by another value (e.g. a method call)
+        if field_type == KWARGS_TYPE:
+            hint = "dict[str, Any]"
+            imports["Any"] = ("typing", "Any")
+        else:
+            hint = _annotation(field_type, class_names, imports, None)
+        if hint is None:
+            continue
+        # A declaration reaches the statements after it in its block (and in
+        # the nested blocks): the assignments in another branch are annotated
+        declared = []
+        for node in assigns[name]:
+            if not _builds_container(node.value, builder):
+                continue
+            if any(_dominates(positions[d], positions[id(node)]) for d in declared):
+                continue
+            declared.append(id(node))
+            target = node.targets[0]
+            edits.append((target.end_lineno, target.end_col_offset, ": " + hint))
+    return edits
+
+
+def _statement_positions(function):
+    """{id(statement): ((id(block), index), ...)} from the function body down.
+
+    Nested functions and classes are not entered.
+    """
+    positions = {}
+    scopes = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+
+    def visit(block, path):
+        for index, statement in enumerate(block):
+            if isinstance(statement, scopes):
+                continue
+            here = path + ((id(block), index),)
+            positions[id(statement)] = here
+            for field in ("body", "orelse", "finalbody"):
+                visit(getattr(statement, field, []), here)
+            for handler in getattr(statement, "handlers", []):
+                visit(handler.body, here)
+            for case in getattr(statement, "cases", []):
+                visit(case.body, here)
+
+    visit(function.body, ())
+    return positions
+
+
+def _dominates(first, second):
+    """True if the statement at position first always runs before second:
+    first comes before an enclosing statement of second in the same block."""
+    if len(first) > len(second):
+        return False
+    if first[:-1] != second[: len(first) - 1]:
+        return False
+    block, index = first[-1]
+    other_block, other_index = second[len(first) - 1]
+    return block == other_block and index < other_index
+
+
+def _walk_scope(function):
+    """Nodes of a function body, without the nested functions and classes."""
+    scopes = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)
+    stack = list(function.body)
+    while stack:
+        node = stack.pop()
+        if isinstance(node, scopes):
+            continue
+        yield node
+        stack.extend(ast.iter_child_nodes(node))
+
+
+def _builds_container(value, builder):
+    """True for a container display, an empty constructor call (list()) or a
+    dict built from keyword arguments (dict(a=1))."""
+    if isinstance(value, builder):
+        return True
+    return (
+        isinstance(value, ast.Call)
+        and isinstance(value.func, ast.Name)
+        and CONTAINER_BUILDERS.get(value.func.id) is builder
+        and not value.args
+        and (builder is ast.Dict or not value.keywords)
+    )
+
+
+def _field_type(class_name, field, gen_dict):
+    """Documented type of a field (inherited fields included), or None."""
+    while class_name in gen_dict:
+        for prop in gen_dict[class_name]["properties"]:
+            if prop["name"] == field:
+                return prop["type"]
+        class_name = gen_dict[class_name].get("mother")
+    return None
 
 
 LITERAL_TYPES = {

@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -377,7 +378,7 @@ class SlotWLSRPM(Slot):
             curve_list = self.build_geometry()
 
             # Add a line to close the winding area
-            lines = [
+            lines: list[Line] = [
                 Arc1(
                     begin=curve_list[-1].end,
                     end=curve_list[0].begin,

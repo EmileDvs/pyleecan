@@ -8,6 +8,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
     from ....Classes_new.geometry.surface import Surface
 
 
@@ -39,7 +40,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     Z3 = point_dict["Z3"]
     Z4 = point_dict["Z4"]
 
-    curve_list = list()
+    curve_list: list[Line] = list()
     curve_list.append(Segment(begin=Z1, end=Z2))
     curve_list.append(Segment(begin=Z2, end=Z3))
     curve_list.append(Segment(begin=Z3, end=Z4))

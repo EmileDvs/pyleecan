@@ -3,6 +3,10 @@ import numpy as np
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import WIND_LAB, DRAW_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0) -> list:
@@ -59,7 +63,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             Z4 = Z[ii + 1][jj]
             point_ref = (Z1 + Z2 + Z3 + Z4) / 4
             # With one zone the order would be [Z7,Z4,Z5,Z6]
-            curve_list = list()
+            curve_list: list[Line] = list()
             curve_list.append(Segment(begin=Z1, end=Z2))
             curve_list.append(
                 Segment(

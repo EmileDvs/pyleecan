@@ -2,6 +2,10 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import WIND_LAB, COND_BOUNDARY_PROP_LAB, YSMR_LAB, YSML_LAB, YOKE_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0) -> list:
@@ -45,7 +49,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
 
         # Bore Magnet
         surf_list = list()
-        curve_list = list()
+        curve_list: list[Line] = list()
         curve_list.append(
             Segment(begin=ZM1, end=ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
         )

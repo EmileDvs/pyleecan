@@ -476,15 +476,51 @@ in `Methods_new` (e.g. a field validator, or a method building the value).
       variants) returns the default lamination when `is_return_default`: the
       documented return (`fig, ax`) is incomplete, `RETURN_OVERRIDES` of
       `type_hints.py` gives `tuple[Figure, Axes] | Lamination`.
-- [ ] `ty check src/pyleecan/Methods_new/slot`: 198 diagnostics (review list):
-      - ~108 `list[Line]` expected, `list[Segment | Arc1]` found: locals built
-        from a list literal, `list` is invariant (`SurfLine(line_list=...)`);
-      - ~70 `**kwargs` built from a dict literal (`Unknown | str | int`) passed
-        to typed parameters (`plot_schematics`);
-      - 8 implicit `None` returns (`comp_surface_opening`, `get_H1`,
-        `HoleM52R.plot_schematics`...),
-        `split_line` not declared on the `Line` base (SlotW21/22/25/29),
-        `Legend | None`, `point_ref` on a None default (`Hole.plot`).
+- [x] `ty check src/pyleecan/Methods_new/slot`: 198 -> 20 diagnostics with
+      local annotations (`type_hints._container_local_edits`):
+      - a local container passed to a `[X]`/`{X}` field is declared with the
+        field type at its first assignment (`curve_list: list[Line] = list()`;
+        `list` is invariant, `list[Segment]` is rejected by `list[Line]`),
+        and again in a branch the first declaration does not reach (109);
+      - a local dict unpacked as keyword arguments (`line.plot(**kwargs)`) is
+        declared `dict[str, Any]` (70).
+      The 20 remaining diagnostics need a code decision: see the frozen review
+      list below.
+
+#### Frozen review list
+
+Diagnostics that the generator cannot fix (a behaviour or a class definition
+to decide). They are handled case by case, in frozen mode, once the first type
+hint pass is over for all packages.
+
+- Implicit `None` returns (a missing case: raise an error or return 0?):
+  `SlotW14`/`SlotW15`/`SlotW29.comp_surface_opening`,
+  `SlotW14`/`SlotW29.comp_surface_wedge` (`wedge_type` other than 0 and 1),
+  `SlotW23.get_H1` (second `if self.H1_is_rad` always true),
+  `HoleUD.comp_surface_magnet_id` (unknown label),
+  `HoleM52R.plot_schematics`.
+- Methods of the daughters not declared on the `Line` base (abstract methods
+  to add to `Line`): `split_line` (SlotW21/22/25/29), and in geometry
+  `get_begin`, `get_end`, `get_center`, `is_arc`, `is_on_line`, `comp_radius`
+  (about 18 diagnostics in total).
+- `Hole.plot`: `mag_surf` stays `None` when no magnet surface matches its
+  label (an `AttributeError` follows): raise an explicit error.
+- `HoleM52R.plot_schematics`: `ax.get_legend()` may be `None`.
+- `SlotUD2._set_split_active_surf_dict`: the `Methods_new` setter still
+  imports the legacy `Functions.Load.import_class` and builds
+  `pyleecan.Classes` objects with `init_dict=` (to fix for the new backends).
+- Geometry: `Trapeze.get_patches` (`replace`/`in` on an optional style),
+  a `Polygon` returned for `list[Polygon]`, one implicit `None` return.
+
+#### Next packages
+
+In the order a simulation is built:
+
+- [ ] Material
+- [ ] Machine
+- [ ] Simulation, Loss, Output, Optimization
+- [ ] Logger chain
+- [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)
 
 #### Method errors
 
@@ -493,11 +529,6 @@ Every error class of the method modules is written once in
 same definition in several modules is written once). The classes raise it
 directly; the test generator redirects the legacy imports
 (`from pyleecan.Methods.Geometry.Segment import PointSegmentError`) to it.
-- [ ] Slot
-- [ ] Machine
-- [ ] Simulation, Loss, Output, Optimization
-- [ ] Logger chain
-- [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)
 
 ### Step 6: remaining utility functions
 

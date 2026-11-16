@@ -82,7 +82,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - **Type hints** drafted from the numpydoc docstrings by the method generator
   (Geometry first: 125 of 164 parameters, 72 of 131 returns), with the class
   names imported under `if TYPE_CHECKING:`; `Methods_new` is checked with
-  `ty`.
+  `ty`. Local containers passed to a container field are declared with the
+  field type (`curve_list: list[Line] = list()`), and local dicts unpacked as
+  keyword arguments as `dict[str, Any]` (Slot: 198 -> 20 `ty` diagnostics).
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,

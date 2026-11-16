@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -315,7 +316,7 @@ class SlotM11(Slot):
         Z1 = point_dict["Z1"]
         Z4 = point_dict["Z4"]
 
-        curve_list = []
+        curve_list: list[Line] = []
         # Case Z2-Z1 overlapping with ZM1-ZM2
         if self.H0 != 0 and self.H0 < self.H1 and self.W0 == self.W1:
             curve_list.append(Segment(begin=ZM1, end=Z1))

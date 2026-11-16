@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -336,7 +337,7 @@ class SlotM15(Slot):
         ZM3 = point_dict["ZM3"]
         ZM4 = point_dict["ZM4"]
 
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Segment(begin=ZM1, end=ZM2))
         if self.is_outwards():
             curve_list.append(

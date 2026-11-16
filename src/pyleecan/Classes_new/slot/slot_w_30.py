@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -748,7 +749,7 @@ class SlotW30(Slot):
         # Create curve list
         line_dict = self._comp_line_dict()
         if self.R1 != 0 and self.R2 != 0:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["2-3"],
                 line_dict["3-4"],
                 line_dict["4-5"],
@@ -762,7 +763,7 @@ class SlotW30(Slot):
             ]
 
         elif self.R1 == 0 and self.R2 != 0:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["2-40"],
                 line_dict["40-5"],
                 line_dict["5-6"],
@@ -774,7 +775,7 @@ class SlotW30(Slot):
             ]
 
         elif self.R1 != 0 and self.R2 == 0:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["2-3"],
                 line_dict["3-4"],
                 line_dict["4-60"],
@@ -786,7 +787,7 @@ class SlotW30(Slot):
             ]
 
         elif self.R1 == 0 and self.R2 == 0:
-            curve_list = [
+            curve_list: list[Line] = [
                 line_dict["2-40"],
                 line_dict["40-60"],
                 line_dict["60-80"],
@@ -842,7 +843,7 @@ class SlotW30(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-11"],
             line_dict["11-12"],

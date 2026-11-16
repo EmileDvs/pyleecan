@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -321,7 +322,7 @@ class SlotW63(Slot):
             Ref2 = (line_dict["w1s-w2s"].get_begin() + line_dict["5-6"].get_begin()) / 2
 
             # Create the surfaces
-            wind1_lines = [
+            wind1_lines: list[Line] = [
                 line_dict["w1-2"],
                 line_dict["2-3"],
                 line_dict["3-4"],
@@ -329,7 +330,7 @@ class SlotW63(Slot):
                 line_dict["w2-w1"],
             ]
 
-            wind2_lines = [
+            wind2_lines: list[Line] = [
                 line_dict["w1s-w2s"],
                 line_dict["w2s-5"],
                 line_dict["5-6"],
@@ -357,7 +358,7 @@ class SlotW63(Slot):
             Ref1 = (line_dict["7-2"].get_begin() + line_dict["4-5"].get_begin()) / 2
 
             # Create the surfaces
-            wind1_lines = [
+            wind1_lines: list[Line] = [
                 line_dict["7-2"],
                 line_dict["2-3"],
                 line_dict["3-4"],
@@ -614,7 +615,7 @@ class SlotW63(Slot):
         line_dict = self._comp_line_dict()
         if self.W2 != 0:
             if self.H2 != 0:
-                curve_list = [
+                curve_list: list[Line] = [
                     line_dict["1-2"],
                     line_dict["2-w1"],
                     line_dict["w1-w2"],
@@ -626,7 +627,7 @@ class SlotW63(Slot):
                 ]
 
             else:
-                curve_list = [
+                curve_list: list[Line] = [
                     line_dict["2-w1"],
                     line_dict["w1-w2"],
                     line_dict["w2-w2s"],
@@ -636,7 +637,7 @@ class SlotW63(Slot):
                 ]
         else:
             if self.H2 != 0:
-                curve_list = [
+                curve_list: list[Line] = [
                     line_dict["1-2"],
                     line_dict["2-7"],
                     line_dict["7-8"],
@@ -644,7 +645,7 @@ class SlotW63(Slot):
                 ]
 
             else:
-                curve_list = [
+                curve_list: list[Line] = [
                     line_dict["2-7"],
                     line_dict["7w-2w"],
                 ]

@@ -4,6 +4,10 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import WIND_LAB, DRAW_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0):
@@ -70,7 +74,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             point_ref = (
                 Z[ii][jj] + Z[ii][jj + 1] + Z[ii + 1][jj + 1] + Z[ii + 1][jj]
             ) / 4  # the reference point of the surface
-            curve_list = list()
+            curve_list: list[Line] = list()
             curve_list.append(
                 Arc1(
                     begin=Z1,

@@ -31,6 +31,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -214,7 +215,7 @@ class HoleMLSRPM(HoleMag):
         Z10 = point_dict["Z10"]
 
         surf_list = []
-        curve_list_mag = []
+        curve_list_mag: list[Line] = []
         curve_list_mag.append(Segment(begin=Z3, end=Z4))
         curve_list_mag.append(Segment(begin=Z4, end=Z7))
         curve_list_mag.append(Segment(begin=Z7, end=Z8))
@@ -258,7 +259,7 @@ class HoleMLSRPM(HoleMag):
 
         # Creation of the air curve (bottom)
 
-        curve_list_air = []
+        curve_list_air: list[Line] = []
         curve_list_air.append(
             Arc1(begin=Z1, end=Z2, radius=self.R1, is_trigo_direction=True)
         )

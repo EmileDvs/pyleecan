@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -261,7 +262,7 @@ class HoleM60(HoleMag):
         surf_list = []
         # Create all the surfaces for all the cases
         # Upper surface without magnet_1
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Segment(begin=Z1, end=Z2))
         curve_list.append(Arc3(begin=Z2, end=Z4, is_trigo_direction=True))
         curve_list.append(Segment(begin=Z4, end=Z5))

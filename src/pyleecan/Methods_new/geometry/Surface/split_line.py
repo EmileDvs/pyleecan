@@ -1,5 +1,9 @@
 from ....Classes_new.geometry.segment import Segment
 from ....definitions import PACKAGE_NAME
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def split_line(self, Z1: complex, Z2: complex, is_join: bool = False, prop_dict_join: dict | None = None):
@@ -32,8 +36,8 @@ def split_line(self, Z1: complex, Z2: complex, is_join: bool = False, prop_dict_
 
     # Split all the lines of the surface
     lines = self.get_lines()
-    top_split_list = list()  # List of line of the top part
-    bot_split_list = list()  # List of line of the bot part
+    top_split_list: list[Line] = list()  # List of line of the top part
+    bot_split_list: list[Line] = list()  # List of line of the bot part
     for line in lines:
         line_top, line_bot = line.split_line(
             Z1=Z1,

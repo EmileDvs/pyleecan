@@ -3,6 +3,7 @@ from ....Functions_new.labels import WIND_LAB, DRAW_PROP_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
     from ....Classes_new.geometry.surface import Surface
 
 
@@ -27,7 +28,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     # Create curve list
     line_dict = self._comp_line_dict()
     if self.H1 != 0:
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["3-4"],
             line_dict["4-5"],
             line_dict["5-6"],
@@ -38,7 +39,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
     else:
         # Add 2-3 and 9-3 to make sure that FEMM handles all the lines
         # cf (Tests\Validation\Magnetics\test_FEMM_fast_draw.py)
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["2-3"],
             line_dict["3-4"],
             line_dict["4-5"],

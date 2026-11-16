@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -160,7 +161,7 @@ class HoleM63(HoleMag):
         Z4 = point_dict["Z4"]
 
         # surface
-        curve_list = []
+        curve_list: list[Line] = []
         curve_list.append(Segment(begin=Z1, end=Z2))
         if self.top_flat:
             curve_list.append(Segment(begin=Z2, end=Z3))

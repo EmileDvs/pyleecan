@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -338,14 +339,14 @@ class SlotW61(Slot):
         Ref2 = (line_dict["w3s-w4s"].get_begin() + line_dict["w1s-w2s"].get_begin()) / 2
 
         # Create the surfaces
-        wind1_lines = [
+        wind1_lines: list[Line] = [
             line_dict["w3-w4"],
             line_dict["w4-w1"],
             line_dict["w1-w2"],
             line_dict["w2-w3"],
         ]
 
-        wind2_lines = [
+        wind2_lines: list[Line] = [
             line_dict["w3s-w4s"],
             line_dict["w4s-w1s"],
             line_dict["w1s-w2s"],
@@ -580,7 +581,7 @@ class SlotW61(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-3"],
         ]

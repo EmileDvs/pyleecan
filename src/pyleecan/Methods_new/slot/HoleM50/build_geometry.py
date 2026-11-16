@@ -2,6 +2,10 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import HOLEM_LAB, MAGNET_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
@@ -136,7 +140,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
     # Create all the surfaces for all the cases
     surf_list = list()
     # Air surface (W3) with magnet_0
-    curve_list = [L_1_2, L_2_3, L_3_8c, L_8c_9]
+    curve_list: list[Line] = [L_1_2, L_2_3, L_3_8c, L_8c_9]
     if self.H4 > 0:
         curve_list.append(L_9_10)
     curve_list.append(L_10_11)

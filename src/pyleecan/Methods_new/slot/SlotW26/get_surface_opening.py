@@ -1,5 +1,9 @@
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import SOP_LAB, DRAW_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
@@ -26,7 +30,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
 
     # Create curve list
     line_dict = self._comp_line_dict()
-    curve_list = [
+    curve_list: list[Line] = [
         line_dict["1-2"],
         line_dict["2-7"],
         line_dict["7-8"],

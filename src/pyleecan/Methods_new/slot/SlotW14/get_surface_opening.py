@@ -1,5 +1,9 @@
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import SOP_LAB, DRAW_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
@@ -31,7 +35,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
     if self.wedge_type == 0:
         # Create curve list
 
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-3"],
             line_dict["3-7"],
@@ -47,7 +51,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
 
     else:
         # Create curve list
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-8"],
             line_dict["8-9"],

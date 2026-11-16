@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
 
@@ -308,7 +309,7 @@ class SlotW13(Slot):
                     Z[ii][jj] + Z[ii][jj + 1] + Z[ii + 1][jj + 1] + Z[ii + 1][jj]
                 ) / 4  # tre reference point of the surface
                 # With one zone the order would be [Z7,Z4,Z5,Z6]
-                curve_list = []
+                curve_list: list[Line] = []
                 curve_list.append(Segment(begin=Z[ii][jj], end=Z[ii][jj + 1]))
                 curve_list.append(
                     Segment(
@@ -560,7 +561,7 @@ class SlotW13(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["4-5"],
             line_dict["5-6"],
             line_dict["6-7"],
@@ -615,7 +616,7 @@ class SlotW13(Slot):
 
         # Create curve list
         line_dict = self._comp_line_dict()
-        curve_list = [
+        curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-3"],
             line_dict["3-4"],

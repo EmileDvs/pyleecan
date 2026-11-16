@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,9 +38,12 @@ from ..machine.magnet import Magnet
 from .hole_mag import HoleMag
 
 if TYPE_CHECKING:
+    from typing import Any
+
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..geometry.line import Line
     from ..machine.lamination import Lamination
 
 
@@ -395,7 +398,7 @@ class HoleM50(HoleMag):
         # Create all the surfaces for all the cases
         surf_list = []
         # Air surface (W3) with magnet_0
-        curve_list = [L_1_2, L_2_3, L_3_8c, L_8c_9]
+        curve_list: list[Line] = [L_1_2, L_2_3, L_3_8c, L_8c_9]
         if self.H4 > 0:
             curve_list.append(L_9_10)
         curve_list.append(L_10_11)
@@ -1020,7 +1023,7 @@ class HoleM50(HoleMag):
 
             # Adding schematics
             if is_add_schematics:
-                kwargs = dict(
+                kwargs: dict[str, Any] = dict(
                     fig=fig,
                     ax=ax,
                     color=ARROW_COLOR,

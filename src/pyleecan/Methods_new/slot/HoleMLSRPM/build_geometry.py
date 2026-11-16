@@ -2,6 +2,10 @@ from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
@@ -45,7 +49,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
     Z10 = point_dict["Z10"]
 
     surf_list = list()
-    curve_list_mag = list()
+    curve_list_mag: list[Line] = list()
     curve_list_mag.append(Segment(begin=Z3, end=Z4))
     curve_list_mag.append(Segment(begin=Z4, end=Z7))
     curve_list_mag.append(Segment(begin=Z7, end=Z8))
@@ -89,7 +93,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
 
     # Creation of the air curve (bottom)
 
-    curve_list_air = list()
+    curve_list_air: list[Line] = list()
     curve_list_air.append(
         Arc1(begin=Z1, end=Z2, radius=self.R1, is_trigo_direction=True)
     )

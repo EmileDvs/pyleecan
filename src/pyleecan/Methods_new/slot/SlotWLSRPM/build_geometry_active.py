@@ -5,6 +5,10 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import WIND_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0):
@@ -148,7 +152,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         curve_list = self.build_geometry()
 
         # Add a line to close the winding area
-        lines = [
+        lines: list[Line] = [
             Arc1(
                 begin=curve_list[-1].end,
                 end=curve_list[0].begin,

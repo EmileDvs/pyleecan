@@ -1,6 +1,10 @@
 import numpy as np
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
 def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0) -> list:
@@ -57,7 +61,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
             point_ref = (Z1 + Z2 + Z3 + Z4) / 4
             # With one zone the order would be [Z7,Z4,Z5,Z6]
             if is_simplified:
-                curve_list = list()
+                curve_list: list[Line] = list()
                 if ii == 0:
                     if Z1 > Z_8 and Z_5 < Z2 < Z_8:
                         curve_list.append(Segment(begin=Z_8, end=Z2))
@@ -76,7 +80,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
                 )
                 surf_list.append(surface)
             else:
-                curve_list = list()
+                curve_list: list[Line] = list()
                 curve_list.append(Segment(begin=Z1, end=Z2))
                 curve_list.append(Segment(begin=Z2, end=Z3))
                 curve_list.append(Segment(begin=Z3, end=Z4))
