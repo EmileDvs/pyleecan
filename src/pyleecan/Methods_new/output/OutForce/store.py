@@ -1,8 +1,12 @@
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.scidatatool.vector_field import VectorField
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
 
 
-def store(self, out_dict, axes_dict):
+def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
     """Store the standard outputs of Force that are temporarily in out_dict as arrays into OutForce as Data object
 
     Parameters
@@ -22,7 +26,7 @@ def store(self, out_dict, axes_dict):
     # Store air-gap surface force as VectorField object
 
     # Axes for each component
-    axis_list = [axes_dict["time"], axes_dict["angle"]]
+    axis_list: list[Data] = [axes_dict["time"], axes_dict["angle"]]
 
     # Create VectorField with empty components
     self.AGSF = VectorField(

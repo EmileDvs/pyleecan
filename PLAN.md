@@ -550,6 +550,22 @@ hint pass is over for all packages.
   - `LossFEA.run`: ty narrows `self.model_dict` to the type of the dict
     literal assigned, then rejects `LossModelMagnet` (ty quirk, field typed
     `dict[str, LossModel]`).
+- Output:
+  - `OutLossModel.__add__`/`__radd__`/`__sub__`/`__rsub__`: `other` is also
+    `0` (`sum()` start value), not documented;
+  - `OutElec.get_electrical`: str keys checked as indices, `Data` methods
+    (`is_components`, `get_length`) not declared on `Data`;
+  - `OutMag.store`, `OutForce.store`, getters: optional fields used without
+    check; `plot_B_mesh`: decorated `plot_mesh_field` (ty: missing `self`).
+- Optimization: `OptiGenAlgNsga2Deap` / `OptiBayesAlgSmoot` (`solve`,
+  `plot_pareto`, `create_toolbox`): untyped DEAP/SMT objects, optional fields,
+  `init_dict=` constructor argument.
+- Methods_new still uses the legacy dynamic loaders
+  (`import_class("pyleecan.Classes", "X")`, 29 modules): the class generator
+  turns them into static imports when inlining ("loaders"/"static_imports"
+  passes, not moved yet), so the generated classes are not affected; ty sees
+  the legacy class types there. `VarLoad` imports the legacy
+  `Functions.load.load_init_dict` (load helpers stay legacy, by design).
 - `ModelBH.fit_model`: the last `else` branch calls `self.BH_func(H, Bs, a)`
   with undefined `Bs` and `a` (`NameError`), and `new_BH` is unbound there.
 - Geometry: `Trapeze.get_patches` (`replace`/`in` on an optional style),
@@ -593,7 +609,13 @@ In the order a simulation is built:
       design per backend (see "Custom property setters and getters").
 - [x] Loss (`loss` in `HINTED_SUBPACKAGES`): 8/8 parameters and 16/16
       returns hinted, no generator change; `ty`: 11 diagnostics (review list).
-- [ ] Output, Optimization
+- [x] Output and Optimization (`output`, `optimization` in
+      `HINTED_SUBPACKAGES`): output 100/123 parameters and 57/80 returns,
+      optimization 16/41 and 8/17 (mostly undocumented legacy code: XOutput
+      list methods, DEAP/SMT helpers); `ty`: 81 and 65 diagnostics (review
+      list). Recognized: `boolean`, `slice`, classes documented by their
+      module path (`....Classes.Output`), special method returns (`__len__`
+      -> int...); parameter override `LUT.set_default_simulation`.
 - [ ] Logger chain
 - [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)
 

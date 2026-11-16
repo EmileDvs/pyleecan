@@ -2,19 +2,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ....Classes_new.optimization.opti_objective import OptiObjective
 from . import _get_symbol_data_
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
 
 
 def plot_pareto(
     self,
-    x_symbol,
-    y_symbol,
-    c_symbol=None,
+    x_symbol: str,
+    y_symbol: str,
+    c_symbol: str | None = None,
     cmap=None,
-    ax=None,
+    ax: Axes | None = None,
     title=None,
-    grid=False,
-    is_show_fig=True,
-    save_path=None,
+    grid: bool = False,
+    is_show_fig: bool = True,
+    save_path: str | None = None,
 ):
     """Plot the pareto front for 2 objective functions
 

@@ -6,17 +6,22 @@ from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Functions_new.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
 from ....Functions_new.Electrical.dqh_transformation_freq import dqh2n_DataFreq, n2dqh_DataFreq
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.scidatatool.data_nd import DataND
 
 
 def get_electrical(
     self,
-    data_dict,
-    Time=None,
-    is_dqh=False,
-    is_fund_only=False,
-    is_harm_only=False,
-    is_freq=None,
-):
+    data_dict: str,
+    Time: Data | None = None,
+    is_dqh: bool = False,
+    is_fund_only: bool = False,
+    is_harm_only: bool = False,
+    is_freq: bool | None = None,
+) -> DataND:
     """Generic getter to return voltage/current as DataND object
 
     Parameters

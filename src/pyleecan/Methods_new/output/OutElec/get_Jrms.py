@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_Jrms(self):
+def get_Jrms(self) -> float:
     """Return the stator current density rms value
 
     Parameters

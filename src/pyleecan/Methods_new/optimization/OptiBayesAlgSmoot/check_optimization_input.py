@@ -12,7 +12,7 @@ class OptimizationAttributeError(Exception):
         self.message = message
 
 
-def check_optimization_input(self):
+def check_optimization_input(self) -> None:
     """Check optimization parameters before solving the problem
 
     Parameters

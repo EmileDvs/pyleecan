@@ -23,7 +23,7 @@ class OutMagElmer(OutInternal):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutMagElmer.clean
-    def clean(self, clean_level=1):
+    def clean(self, clean_level: int = 1) -> None:
         """Clean MagElmer outputs depending on cleaning level
 
         Parameters

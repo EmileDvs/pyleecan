@@ -1,7 +1,13 @@
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
+    from ....Classes_new.simulation.op_matrix import OPMatrix
+    import numpy as np
 
 
-def set_default_simulation(self, machine, OP_matrix=None, name=None):
+def set_default_simulation(self, machine: Machine, OP_matrix: OPMatrix | np.ndarray | None = None, name: str | None = None) -> None:
     """Set the default simulation to compute the LUT
 
     Parameters

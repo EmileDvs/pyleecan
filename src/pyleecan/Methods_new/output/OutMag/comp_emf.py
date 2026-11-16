@@ -1,4 +1,4 @@
-def comp_emf(self):
+def comp_emf(self) -> None:
     """Compute the Electromotive force [V]
 
     Parameters

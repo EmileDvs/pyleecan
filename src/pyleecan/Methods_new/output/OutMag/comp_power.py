@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_power(self):
+def comp_power(self) -> None:
     """Compute the Ouput power
 
     Parameters

@@ -1,4 +1,4 @@
-def get_loss_scalar(self, felec=None):
+def get_loss_scalar(self, felec: float | None = None) -> float:
     """Get loss power from coefficients stored in coeff_dict
 
     Parameters

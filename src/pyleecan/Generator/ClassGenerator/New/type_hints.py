@@ -21,6 +21,7 @@ from pyleecan.classes_common.class_lookup import (
 
 BUILTIN_TYPES = {
     "bool": "bool",
+    "boolean": "bool",
     "int": "int",
     "float": "float",
     "complex": "complex",
@@ -29,6 +30,7 @@ BUILTIN_TYPES = {
     "dict": "dict",
     "list": "list",
     "tuple": "tuple",
+    "slice": "slice",
     "none": "None",  # Alternative of a return override (np.ndarray | None)
 }
 """Documented builtin types (lowercase) -> annotation"""
@@ -100,6 +102,14 @@ RETURN_OVERRIDES[("material", "get_BH")] = (("ndarray",), ("None",))
 # plot_BH documents "None" but returns the figure
 RETURN_OVERRIDES[("material", "plot_BH")] = (("matplotlib.figure.Figure",),)
 
+SPECIAL_METHOD_RETURNS = {
+    "__len__": "int",
+    "__bool__": "bool",
+    "__str__": "str",
+    "__repr__": "str",
+}
+"""Return type of the special methods (Python data model), when undocumented"""
+
 CONVENTIONAL_PARAMETERS = {
     "fig": ("matplotlib.figure.Figure",),
     "ax": ("matplotlib.axes.Axes",),
@@ -114,6 +124,7 @@ when the docstring does not document them"""
 PARAMETER_OVERRIDES = {
     ("material", "BH_func"): _BH_FUNC_PARAMETERS,
     ("simulation", "init_logger"): {"output": ("XOutput",)},  # "XOuput" (typo)
+    ("output", "set_default_simulation"): {"OP_matrix": ("OPMatrix", "ndarray")},
     ("material", "plot_BH"): {
         "fig": ("matplotlib.figure.Figure",),
         "grid": ("bool",),
@@ -224,7 +235,10 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
                 returned = _documented_returns(docstring)
             else:
                 returned = list(override)
-            if returned == [()] and _returns_nothing(node):
+            if returned == [()] and node.name in SPECIAL_METHOD_RETURNS:
+                # Return type fixed by the Python data model
+                alternatives = [SPECIAL_METHOD_RETURNS[node.name]]
+            elif returned == [()] and _returns_nothing(node):
                 # No documented return and no returned value
                 alternatives = ["None"]
             else:
@@ -494,6 +508,11 @@ def _annotation(text, class_names, imports, unrecognized):
             optional = True
     lowered = re.sub(r"\s+object$", "", lowered)
     text = re.sub(r"\s+object$", "", text)
+    # Class documented by its module path ("....Classes.Output")
+    path = re.fullmatch(r"\.*(?:\w+\.)*Classes(?:_new)?\.(\w+)", text)
+    if path is not None:
+        text = path.group(1)
+        lowered = text.lower()
     hint = None
     # Containers: pyleecan notation "[X]" / "{X}" (as in the CSV files) or
     # "list of X"; the item type must be recognized

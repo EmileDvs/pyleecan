@@ -1,6 +1,13 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.scidatatool.data_nd import DataND
+
+
 def get_Us(
-    self, Time=None, is_dqh=False, is_fund_only=False, is_harm_only=False, is_freq=None
-):
+    self, Time: Data | None = None, is_dqh: bool = False, is_fund_only: bool = False, is_harm_only: bool = False, is_freq: bool | None = None
+) -> DataND:
     """Return the fundamental stator voltage as DataND object
 
     Parameters

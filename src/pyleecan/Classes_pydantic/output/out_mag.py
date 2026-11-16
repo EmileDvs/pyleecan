@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Output/OutMag.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -19,6 +19,9 @@ from ..scidatatool.norm_ref import NormRef
 from ..scidatatool.vector_field import VectorField
 from ..simulation.slice_model import SliceModel
 from .out_internal import OutInternal
+
+if TYPE_CHECKING:
+    from ..scidatatool.data import Data
 
 
 class OutMag(LegacyModel):
@@ -129,7 +132,7 @@ class OutMag(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutMag.clean
-    def clean(self, clean_level=1):
+    def clean(self, clean_level: int = 1) -> None:
         """Clean Magnetics standard outputs depending on cleaning level
 
         Parameters
@@ -182,7 +185,7 @@ class OutMag(LegacyModel):
             self.internal.clean(clean_level)
 
     # Inlined from Methods.Output.OutMag.comp_emf
-    def comp_emf(self):
+    def comp_emf(self) -> None:
         """Compute the Electromotive force [V]
 
         Parameters
@@ -204,7 +207,7 @@ class OutMag(LegacyModel):
         self.emf = EMF
 
     # Inlined from Methods.Output.OutMag.comp_power
-    def comp_power(self):
+    def comp_power(self) -> None:
         """Compute the Ouput power
 
         Parameters
@@ -224,7 +227,7 @@ class OutMag(LegacyModel):
             self.Pem_av = None
 
     # Inlined from Methods.Output.OutMag.comp_torque_MT
-    def comp_torque_MT(self):
+    def comp_torque_MT(self) -> np.ndarray:
         """Compute the rotor electromagnetic torque from Maxwell Stress Tensor.
 
         Parameters
@@ -288,7 +291,7 @@ class OutMag(LegacyModel):
         return Tem_slice
 
     # Inlined from Methods.Output.OutMag.get_demag
-    def get_demag(self, Hmax, group_name=None):
+    def get_demag(self, Hmax: float, group_name: str | None = None):
         """Get the surface area of the magnets that exceed a given field strenght H
 
         Parameters
@@ -326,7 +329,7 @@ class OutMag(LegacyModel):
         return area, area_ref, inds
 
     # Inlined from Methods.Output.OutMag.store
-    def store(self, out_dict, axes_dict):
+    def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
         """Store the standard outputs of Magnetics that are temporarily in out_dict as arrays into OutMag as Data object
 
         Parameters
@@ -365,7 +368,7 @@ class OutMag(LegacyModel):
 
         # Store airgap flux as VectorField object
         # Axes for each airgap flux component
-        axis_list = [ax1, ax2, axes_dict["z"]]
+        axis_list: list[Data] = [ax1, ax2, axes_dict["z"]]
 
         # Create VectorField with empty components
         if "B_{rad}" in out_dict or "B_{circ}" in out_dict or "B_{ax}" in out_dict:

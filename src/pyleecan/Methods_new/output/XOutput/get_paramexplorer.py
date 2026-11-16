@@ -1,7 +1,7 @@
 from . import XOutputError
 
 
-def get_paramexplorer(self, symbol):
+def get_paramexplorer(self, symbol: str):
     """Get the ParamExplorer with symbol
     Parameters
     ----------

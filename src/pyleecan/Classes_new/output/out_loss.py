@@ -45,12 +45,12 @@ class OutLoss(LegacyClass):
         return self.loss_dict.__getitem__(idx)
 
     # Inlined from Methods.Output.OutLoss.__len__
-    def __len__(self):
+    def __len__(self) -> int:
         """Method to behave like a dict and iterate in the object"""
         return len(self.loss_dict)
 
     # Inlined from Methods.Output.OutLoss.get_loss_density_ag
-    def get_loss_density_ag(self):
+    def get_loss_density_ag(self) -> float:
         """Get loss density in the airgap
 
         Parameters
@@ -77,7 +77,7 @@ class OutLoss(LegacyClass):
         return loss_density_ag
 
     # Inlined from Methods.Output.OutLoss.get_loss_overall
-    def get_loss_overall(self):
+    def get_loss_overall(self) -> float:
         """Get overall loss by summing all losses in OutLoss
 
         Parameters
@@ -101,7 +101,7 @@ class OutLoss(LegacyClass):
         return overall_loss
 
     # Inlined from Methods.Output.OutLoss.get_power_dict
-    def get_power_dict(self):
+    def get_power_dict(self) -> dict[str, float]:
         """Return a dictionnary with all the scalar losses
 
         Parameters
@@ -134,7 +134,12 @@ class OutLoss(LegacyClass):
         return power_dict
 
     # Inlined from Methods.Output.OutLoss.plot_losses
-    def plot_losses(self, N0_array=None, save_path=None, is_show_fig=True):
+    def plot_losses(
+        self,
+        N0_array: np.ndarray | None = None,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+    ) -> None:
         """Plot the losses as a fct of speed
 
         Parameters

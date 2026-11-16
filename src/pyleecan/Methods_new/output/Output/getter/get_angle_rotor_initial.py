@@ -1,4 +1,4 @@
-def get_angle_rotor_initial(self):
+def get_angle_rotor_initial(self) -> float:
     """Return the difference between the d axis angle of the stator and the rotor
 
     Parameters

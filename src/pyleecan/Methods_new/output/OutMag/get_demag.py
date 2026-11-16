@@ -2,7 +2,7 @@ from ....Functions_new.MeshSolution.get_area import get_area
 from ....Functions_new.MeshSolution.get_indices_limited import get_indices_limited
 
 
-def get_demag(self, Hmax, group_name=None):
+def get_demag(self, Hmax: float, group_name: str | None = None):
     """Get the surface area of the magnets that exceed a given field strenght H
 
     Parameters

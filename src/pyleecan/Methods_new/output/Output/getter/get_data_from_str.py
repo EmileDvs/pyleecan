@@ -1,4 +1,10 @@
-def get_data_from_str(self, data_str):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .....Classes_new.scidatatool.data import Data
+
+
+def get_data_from_str(self, data_str: str) -> Data:
     """Return the data object corresponding to the data str
 
     Parameters

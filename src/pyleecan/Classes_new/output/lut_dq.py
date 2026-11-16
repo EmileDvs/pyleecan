@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 import scipy.interpolate as scp_int
@@ -12,6 +12,9 @@ from ..electrical.eec_pmsm import EEC_PMSM
 from ..electrical.electrical import Electrical
 from ..scidatatool.data_nd import DataND
 from .lut import LUT
+
+if TYPE_CHECKING:
+    from ..scidatatool.data_nd import DataND
 
 
 @dataclass(eq=False)
@@ -39,7 +42,7 @@ class LUTdq(LUT):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.LUTdq.get_index_open_circuit
-    def get_index_open_circuit(self):
+    def get_index_open_circuit(self) -> int:
         """Get index of open circuit point in output list
 
         Parameters
@@ -64,7 +67,13 @@ class LUTdq(LUT):
         return index
 
     # Inlined from Methods.Output.LUTdq.get_L_dqh
-    def get_L_dqh(self, Id, Iq, L_endwinding=0, Phi_dqh=None):
+    def get_L_dqh(
+        self,
+        Id: float,
+        Iq: float,
+        L_endwinding: float = 0,
+        Phi_dqh: np.ndarray | None = None,
+    ) -> np.ndarray | None:
         """Get the total dqh inductance
         TODO: calculate end-winding inductance from machine
 
@@ -95,7 +104,9 @@ class LUTdq(LUT):
             return Lmdqh + L_endwinding
 
     # Inlined from Methods.Output.LUTdq.get_Lm_dqh
-    def get_Lm_dqh(self, Id, Iq, Phi_dqh=None):
+    def get_Lm_dqh(
+        self, Id: float, Iq: float, Phi_dqh: np.ndarray | None = None
+    ) -> np.ndarray:
         """Get the magnetizing dqh inductance
 
         Parameters
@@ -140,7 +151,7 @@ class LUTdq(LUT):
         return Lmdqh
 
     # Inlined from Methods.Output.LUTdq.get_Phi_dqh_mag
-    def get_Phi_dqh_mag(self):
+    def get_Phi_dqh_mag(self) -> DataND:
         """Get magnet flux linkage over time in DQH frame
 
         Parameters
@@ -183,7 +194,7 @@ class LUTdq(LUT):
         return self.Phi_dqh_mag
 
     # Inlined from Methods.Output.LUTdq.get_Phi_dqh_mag_mean
-    def get_Phi_dqh_mag_mean(self):
+    def get_Phi_dqh_mag_mean(self) -> np.ndarray:
         """Get the mean magnets flux linkage in DQH frame
 
         Parameters
@@ -225,7 +236,7 @@ class LUTdq(LUT):
         return Phi_dqh_mag_mean
 
     # Inlined from Methods.Output.LUTdq.get_Phi_dqh_mean
-    def get_Phi_dqh_mean(self):
+    def get_Phi_dqh_mean(self) -> np.ndarray:
         """Get the mean value of stator flux along dqh axes
 
         Parameters
@@ -291,7 +302,9 @@ class LUTdq(LUT):
         return self.Phi_dqh_mean
 
     # Inlined from Methods.Output.LUTdq.interp_Phi_dqh
-    def interp_Phi_dqh(self, Id, Iq):
+    def interp_Phi_dqh(
+        self, Id: float | np.ndarray, Iq: float | np.ndarray
+    ) -> float | np.ndarray:
         """Interpolate stator winding dqh flux in dq plane
 
         Parameters
@@ -392,7 +405,13 @@ class LUTdq(LUT):
         return Phi_dqh
 
     # Inlined from Methods.Output.LUTdq.interp_Ploss_dqh
-    def interp_Ploss_dqh(self, Id, Iq, N0, exclude_models=[]):
+    def interp_Ploss_dqh(
+        self,
+        Id: float | np.ndarray,
+        Iq: float | np.ndarray,
+        N0: float,
+        exclude_models: list[str] = [],
+    ) -> float | np.ndarray:
         """Interpolate losses in function of Id and Iq and for given speed
         Meant to be used with SIPMSM/IPMSM machine with LossFEA (to have the correct loss models name)
 
@@ -525,7 +544,9 @@ class LUTdq(LUT):
         return Ploss_dqh
 
     # Inlined from Methods.Output.LUTdq.interp_Tem_rip_dqh
-    def interp_Tem_rip_dqh(self, Id, Iq):
+    def interp_Tem_rip_dqh(
+        self, Id: float | np.ndarray, Iq: float | np.ndarray
+    ) -> float | np.ndarray | None:
         """Interpolate torque ripple in dq plane
 
         Parameters

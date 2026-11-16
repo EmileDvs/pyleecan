@@ -1,11 +1,13 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Optimization/OptiGenAlgNsga2Deap.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 import random
 from collections.abc import Iterable
 from copy import deepcopy
 from datetime import datetime
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,6 +30,11 @@ from .opti_design_var_set import OptiDesignVarSet
 from .opti_gen_alg import OptiGenAlg
 from .opti_objective import OptiObjective
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+
+    from .opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+
 
 class OptiGenAlgNsga2Deap(OptiGenAlg):
     """Multi-objectives optimization problem with some constraints
@@ -46,7 +53,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.check_optimization_input
-    def check_optimization_input(self):
+    def check_optimization_input(self) -> None:
         """Check optimization parameters before solving the problem
 
         Parameters
@@ -160,7 +167,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
                     raise OptimizationAttributeError(mess)
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox
-    def create_toolbox(self):
+    def create_toolbox(self) -> OptiGenAlgNsga2Deap:
         """OptiGenAlgNsga2Deap method to create DEAP toolbox
         Parameters
         ----------
@@ -207,7 +214,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         )
 
     @staticmethod
-    def create_indiv(create, output, design_var_list):
+    def create_indiv(create, output: Output, design_var_list: list):
         """Create individual using DEAP tools
 
         Parameters
@@ -257,7 +264,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         return ind
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.cross
-    def cross(self, indiv1, indiv2):
+    def cross(self, indiv1, indiv2) -> bool:
         """Perform the crossover (One crossover by default)
 
         Parameters
@@ -290,7 +297,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             return False
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.delete_toolbox
-    def delete_toolbox(self):
+    def delete_toolbox(self) -> None:
         """OptiGenAlgNsga2Deap method to delete DEAP toolbox
         Parameters
         ----------
@@ -305,7 +312,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         del creator.Individual
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.mutate
-    def mutate(self, indiv):
+    def mutate(self, indiv) -> bool:
         """Mutate the individual design variables with different strategies according to the variables types :
             - interval : Polynomial Bounded mutation or user defined
             - set : Resampling the variable according to its initialization function
@@ -358,15 +365,15 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.plot_pareto
     def plot_pareto(
         self,
-        x_symbol,
-        y_symbol,
-        c_symbol=None,
+        x_symbol: str,
+        y_symbol: str,
+        c_symbol: str | None = None,
         cmap=None,
-        ax=None,
+        ax: Axes | None = None,
         title=None,
-        grid=False,
-        is_show_fig=True,
-        save_path=None,
+        grid: bool = False,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
     ):
         """Plot the pareto front for 2 objective functions
 
@@ -807,7 +814,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             raise err
 
     @staticmethod
-    def print_gen_simu(time, gen_id, simu_id, size_pop, nb_error, to_eval):
+    def print_gen_simu(time, gen_id, simu_id, size_pop, nb_error, to_eval) -> None:
         print(
             "\r{}  gen {:>5}: simu {}/{} ({:>5.2f}%), {:>4} errors.".format(
                 time,
@@ -829,7 +836,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         print(msg[:-2])
 
     @staticmethod
-    def print_obj(obj_func, indiv):
+    def print_obj(obj_func, indiv) -> None:
         msg = "Objectives: "
         for ii in range(len(obj_func)):
             msg += (

@@ -4,7 +4,7 @@
 import os
 from dataclasses import dataclass, field
 from sys import getsizeof
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from scipy.io import savemat
@@ -26,6 +26,9 @@ from .out_loss import OutLoss
 from .out_mag import OutMag
 from .out_post import OutPost
 from .out_struct import OutStruct
+
+if TYPE_CHECKING:
+    from ..scidatatool.data import Data
 
 
 @dataclass(eq=False)
@@ -110,7 +113,7 @@ class Output(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.Output.getter.comp_angle_rotor
-    def comp_angle_rotor(self, Time):
+    def comp_angle_rotor(self, Time: Data) -> np.ndarray:
         """Computes the angular position of the rotor as a function of time and set it as normalization
         (should not happen since angle_rotor is already added in Time normalizations in Input.comp_axis_time)
 
@@ -168,7 +171,7 @@ class Output(LegacyClass):
         return angle_rotor
 
     # Inlined from Methods.Output.Output.getter.export_to_mat
-    def export_to_mat(self, file_path):
+    def export_to_mat(self, file_path: str) -> None:
         """Export the main outputs to a .mat file
 
 
@@ -228,7 +231,7 @@ class Output(LegacyClass):
         savemat(file_path, data_dict)
 
     # Inlined from Methods.Output.Output.getter.get_angle_rotor
-    def get_angle_rotor(self, Time=None):
+    def get_angle_rotor(self, Time: Data | None = None) -> np.ndarray:
         """Return the angular position of the rotor as a function of time from Time normalizations
         and or calculate angle_rotor and add it to Time normalization
 
@@ -268,7 +271,7 @@ class Output(LegacyClass):
         return angle_rotor
 
     # Inlined from Methods.Output.Output.getter.get_angle_rotor_initial
-    def get_angle_rotor_initial(self):
+    def get_angle_rotor_initial(self) -> float:
         """Return the difference between the d axis angle of the stator and the rotor
 
         Parameters
@@ -291,7 +294,7 @@ class Output(LegacyClass):
             return self.geo.angle_rotor_initial
 
     # Inlined from Methods.Output.Output.getter.get_BH_rotor
-    def get_BH_rotor(self):
+    def get_BH_rotor(self) -> np.ndarray:
         """Return the B(H) curve of the rotor material
 
         Parameters
@@ -338,7 +341,7 @@ class Output(LegacyClass):
         return BH
 
     # Inlined from Methods.Output.Output.getter.get_BH_stator
-    def get_BH_stator(self):
+    def get_BH_stator(self) -> np.ndarray:
         """Return the B(H) curve of the stator material
 
         Parameters
@@ -385,7 +388,7 @@ class Output(LegacyClass):
         return BH
 
     # Inlined from Methods.Output.Output.getter.get_data_from_str
-    def get_data_from_str(self, data_str):
+    def get_data_from_str(self, data_str: str) -> Data:
         """Return the data object corresponding to the data str
 
         Parameters
@@ -425,7 +428,7 @@ class Output(LegacyClass):
         return data2
 
     # Inlined from Methods.Output.Output.getter.get_fund_harm
-    def get_fund_harm(self, data):
+    def get_fund_harm(self, data: Data) -> dict:
         """Return the fundamental harmonic of the physical quantity in the data object
 
         Parameters
@@ -497,7 +500,9 @@ class Output(LegacyClass):
         return fund_harm
 
     # Inlined from Methods.Output.Output.getter.get_machine_periodicity
-    def get_machine_periodicity(self, is_rotor_ref=False):
+    def get_machine_periodicity(
+        self, is_rotor_ref: bool = False
+    ) -> tuple[int, bool, int, bool]:
         """Return / Compute the (anti)-periodicities of the machine in time and space domain
 
         Parameters
@@ -556,7 +561,7 @@ class Output(LegacyClass):
             )
 
     # Inlined from Methods.Output.Output.getter.get_path_result
-    def get_path_result(self):
+    def get_path_result(self) -> str:
         """Return the path to the result folder. If there is a name for the simulation, the path leads to a sub-folder of
         'Results' folder which has the same name. If this sub-folder does not exist, it creates it.
 
@@ -587,22 +592,22 @@ class Output(LegacyClass):
     def plot_B_mesh(
         self,
         *args,
-        indices=None,
-        is_surf=False,
-        is_radial=False,
-        is_center=False,
-        clim=None,
-        field_name=None,
-        group_names=None,
-        save_path=None,
-        is_show_fig=True,
-        win_title=None,
+        indices: list | None = None,
+        is_surf: bool = False,
+        is_radial: bool = False,
+        is_center: bool = False,
+        clim: list | None = None,
+        field_name: str | None = None,
+        group_names: list | None = None,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        win_title: str | None = None,
         is_animated=False,
         title="",
         pv_plotter=None,
-        is_contour=True,
-        is_2D=False,
-    ):
+        is_contour: bool = True,
+        is_2D: bool = False,
+    ) -> None:
         """Plot the contour of a field on a mesh using pyvista plotter.
 
         Parameters
@@ -810,7 +815,9 @@ class Output(LegacyClass):
                 pv_plotter.show(interactive=False, screenshot=save_path)
 
     # Inlined from Methods.Output.Output.print_memory
-    def print_memory(self, tab_level=0, detail_level=1, is_print=True):
+    def print_memory(
+        self, tab_level: int = 0, detail_level: int = 1, is_print: bool = True
+    ) -> str | None:
         """Print an estimation of the memory usage for each property of the object
 
         Parameters

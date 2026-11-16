@@ -1,4 +1,4 @@
-def clean(self, clean_level=1):
+def clean(self, clean_level: int = 1) -> None:
     """Clean MagFEMM outputs depending on cleaning level
 
     Parameters

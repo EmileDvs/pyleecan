@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,6 +17,9 @@ from .opti_bayes_alg import OptiBayesAlg
 from .opti_design_var_interval import OptiDesignVarInterval
 from .opti_design_var_set import OptiDesignVarSet
 from .opti_objective import OptiObjective
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
 
 
 @dataclass(eq=False)
@@ -42,7 +45,7 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Optimization.OptiBayesAlgSmoot.check_optimization_input
-    def check_optimization_input(self):
+    def check_optimization_input(self) -> None:
         """Check optimization parameters before solving the problem
 
         Parameters
@@ -197,15 +200,15 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
     # Inlined from Methods.Optimization.OptiBayesAlgSmoot.plot_pareto
     def plot_pareto(
         self,
-        x_symbol,
-        y_symbol,
-        c_symbol=None,
+        x_symbol: str,
+        y_symbol: str,
+        c_symbol: str | None = None,
         cmap=None,
-        ax=None,
+        ax: Axes | None = None,
         title=None,
-        grid=False,
-        is_show_fig=True,
-        save_path=None,
+        grid: bool = False,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
     ):
         """Plot the pareto front for 2 objective functions
 

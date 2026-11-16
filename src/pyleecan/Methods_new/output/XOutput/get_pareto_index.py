@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from ....Classes_new.optimization.opti_objective import OptiObjective
 
 
-def get_pareto_index(self):
+def get_pareto_index(self) -> list:
     """Return index of individuals in the pareto
 
     Parameters

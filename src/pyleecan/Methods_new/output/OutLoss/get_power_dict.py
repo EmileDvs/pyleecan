@@ -1,4 +1,4 @@
-def get_power_dict(self):
+def get_power_dict(self) -> dict[str, float]:
     """Return a dictionnary with all the scalar losses
 
     Parameters

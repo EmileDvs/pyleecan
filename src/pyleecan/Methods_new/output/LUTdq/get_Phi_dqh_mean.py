@@ -5,7 +5,7 @@ from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
 from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 
 
-def get_Phi_dqh_mean(self):
+def get_Phi_dqh_mean(self) -> np.ndarray:
     """Get the mean value of stator flux along dqh axes
 
     Parameters

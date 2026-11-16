@@ -1,9 +1,16 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Output/LUT.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .xoutput import XOutput
+
+if TYPE_CHECKING:
+    import numpy as np
+
+    from ..electrical.eec import EEC
+    from ..machine.machine import Machine
+    from ..simulation.op_matrix import OPMatrix
 
 
 class LUT(XOutput):
@@ -17,7 +24,7 @@ class LUT(XOutput):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.LUT.get_eec
-    def get_eec(self):
+    def get_eec(self) -> EEC | None:
         """Get the Electrical Equivalent Circuit
 
         Parameters
@@ -38,7 +45,7 @@ class LUT(XOutput):
         return self.simu.elec.eec
 
     # Inlined from Methods.Output.LUT.get_OP_array
-    def get_OP_array(self, *arg_list):
+    def get_OP_array(self, *arg_list) -> np.ndarray:
         """Get the Operating Point array
 
         Parameters
@@ -56,7 +63,7 @@ class LUT(XOutput):
         return OPM.get_OP_array(*arg_list)
 
     # Inlined from Methods.Output.LUT.get_OP_matrix_obj
-    def get_OP_matrix_obj(self):
+    def get_OP_matrix_obj(self) -> OPMatrix | None:
         """Get the Operating Point Matrix
 
         Parameters
@@ -78,7 +85,7 @@ class LUT(XOutput):
         return var_load.OP_matrix
 
     # Inlined from Methods.Output.LUT.get_phase_dir
-    def get_phase_dir(self):
+    def get_phase_dir(self) -> int:
         """Return the Rotation direction of the stator phases
 
         Parameters
@@ -95,7 +102,12 @@ class LUT(XOutput):
         return self.output_list[0].elec.phase_dir
 
     # Inlined from Methods.Output.LUT.set_default_simulation
-    def set_default_simulation(self, machine, OP_matrix=None, name=None):
+    def set_default_simulation(
+        self,
+        machine: Machine,
+        OP_matrix: OPMatrix | np.ndarray | None = None,
+        name: str | None = None,
+    ) -> None:
         """Set the default simulation to compute the LUT
 
         Parameters

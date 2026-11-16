@@ -1,8 +1,10 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Output/XOutput.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 from sys import getsizeof
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,7 +18,15 @@ from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from ..optimization.opti_objective import OptiObjective
 from ..simulation.data_keeper import DataKeeper
 from ..simulation.param_explorer import ParamExplorer
+from ..simulation.simulation import Simulation
 from .output import Output
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..simulation.simulation import Simulation
+    from .xoutput import XOutput
 
 
 class XOutput(Output):
@@ -108,7 +118,7 @@ class XOutput(Output):
         return iter(self.output_list)
 
     # Inlined from Methods.Output.XOutput.__len__
-    def __len__(self):
+    def __len__(self) -> int:
         """Method to behave like a list and iterate in the object"""
         if self.nb_simu != None:
             return self.nb_simu
@@ -169,7 +179,7 @@ class XOutput(Output):
         return param_value
 
     # Inlined from Methods.Output.XOutput.get_paramexplorer
-    def get_paramexplorer(self, symbol):
+    def get_paramexplorer(self, symbol: str):
         """Get the ParamExplorer with symbol
         Parameters
         ----------
@@ -183,7 +193,7 @@ class XOutput(Output):
         raise XOutputError("Unknown symbol {}".format(symbol))
 
     # Inlined from Methods.Output.XOutput.get_pareto_index
-    def get_pareto_index(self):
+    def get_pareto_index(self) -> list:
         """Return index of individuals in the pareto
 
         Parameters
@@ -226,7 +236,7 @@ class XOutput(Output):
         return idx_non_dom
 
     # Inlined from Methods.Output.XOutput.get_simu
-    def get_simu(self, index):
+    def get_simu(self, index: int) -> Simulation:
         """
         Generate a simulation according to index
 
@@ -265,7 +275,7 @@ class XOutput(Output):
         return symbol_list
 
     # Inlined from Methods.Output.XOutput.get_xoutput_ref
-    def get_xoutput_ref(self):
+    def get_xoutput_ref(self) -> XOutput:
         """Return the reference XOutput (or Output) either from xoutput_ref or output_list
 
         Parameters
@@ -307,7 +317,7 @@ class XOutput(Output):
             return self.xoutput_dict.keys()
 
     # Inlined from Methods.Output.XOutput.plot_generation
-    def plot_generation(self, x_symbol, y_symbol, ax=None):
+    def plot_generation(self, x_symbol, y_symbol, ax: Axes | None = None):
         """Plot every fitness values according to the two fitness
 
         Parameters
@@ -384,19 +394,19 @@ class XOutput(Output):
     # Inlined from Methods.Output.XOutput.plot_multi
     def plot_multi(
         self,
-        x_symbol,
-        y_symbol,
-        c_symbol=None,
+        x_symbol: str,
+        y_symbol: str,
+        c_symbol: str | None = None,
         cmap=None,
-        plot_type="point",
-        idx=None,
-        fig=None,
-        ax=None,
-        title=None,
-        is_show_fig=True,
-        save_path=None,
-        win_title=None,
-    ):
+        plot_type: str = "point",
+        idx: slice | None = None,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        title: str | None = None,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        win_title: str | None = None,
+    ) -> tuple[Figure, Axes]:
         """2D Plot from a DataKeeper / OptiObjective / ParamExplorer as a function of another
         DataKeeper / OptiObjective / ParamExplorer
 
@@ -494,15 +504,15 @@ class XOutput(Output):
     # Inlined from Methods.Output.XOutput.plot_pareto
     def plot_pareto(
         self,
-        x_symbol,
-        y_symbol,
-        c_symbol=None,
+        x_symbol: str,
+        y_symbol: str,
+        c_symbol: str | None = None,
         cmap=None,
-        ax=None,
+        ax: Axes | None = None,
         title=None,
-        grid=False,
-        is_show_fig=True,
-        save_path=None,
+        grid: bool = False,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
     ):
         """Plot the pareto front for 2 objective functions
 
@@ -544,7 +554,9 @@ class XOutput(Output):
         return self.list_output.pop(i)
 
     # Inlined from Methods.Output.XOutput.print_memory
-    def print_memory(self, tab_level=0, detail_level=1, is_print=True):
+    def print_memory(
+        self, tab_level: int = 0, detail_level: int = 1, is_print: bool = True
+    ) -> str | None:
         """Print an estimation of the memory usage for each property of the object
 
         Parameters

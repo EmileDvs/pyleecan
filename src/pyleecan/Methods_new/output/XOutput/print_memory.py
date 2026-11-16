@@ -1,7 +1,7 @@
 from sys import getsizeof
 
 
-def print_memory(self, tab_level=0, detail_level=1, is_print=True):
+def print_memory(self, tab_level: int = 0, detail_level: int = 1, is_print: bool = True) -> str | None:
     """Print an estimation of the memory usage for each property of the object
 
     Parameters

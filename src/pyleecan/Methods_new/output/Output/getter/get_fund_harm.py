@@ -1,7 +1,11 @@
 from .....Functions_new.Plot import fft_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .....Classes_new.scidatatool.data import Data
 
 
-def get_fund_harm(self, data):
+def get_fund_harm(self, data: Data) -> dict:
     """Return the fundamental harmonic of the physical quantity in the data object
 
     Parameters

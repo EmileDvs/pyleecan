@@ -3,7 +3,7 @@ import numpy as np
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 
 
-def plot_losses(self, N0_array=None, save_path=None, is_show_fig=True):
+def plot_losses(self, N0_array: np.ndarray | None = None, save_path: str | None = None, is_show_fig: bool = True) -> None:
     """Plot the losses as a fct of speed
 
     Parameters

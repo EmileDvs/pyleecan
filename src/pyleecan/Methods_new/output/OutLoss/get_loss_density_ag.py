@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_loss_density_ag(self):
+def get_loss_density_ag(self) -> float:
     """Get loss density in the airgap
 
     Parameters

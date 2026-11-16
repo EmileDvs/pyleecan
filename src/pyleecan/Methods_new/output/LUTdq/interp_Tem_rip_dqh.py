@@ -2,7 +2,7 @@ import numpy as np
 import scipy.interpolate as scp_int
 
 
-def interp_Tem_rip_dqh(self, Id, Iq):
+def interp_Tem_rip_dqh(self, Id: float | np.ndarray, Iq: float | np.ndarray) -> float | np.ndarray | None:
     """Interpolate torque ripple in dq plane
 
     Parameters

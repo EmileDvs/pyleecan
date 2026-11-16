@@ -1,4 +1,4 @@
-def __len__(self):
+def __len__(self) -> int:
     """Method to behave like a list and iterate in the object"""
     if self.nb_simu != None:
         return self.nb_simu

@@ -2,9 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from . import _get_symbol_data_
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
 
 
-def plot_generation(self, x_symbol, y_symbol, ax=None):
+def plot_generation(self, x_symbol, y_symbol, ax: Axes | None = None):
     """Plot every fitness values according to the two fitness
 
     Parameters

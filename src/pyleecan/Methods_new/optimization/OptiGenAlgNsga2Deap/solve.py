@@ -286,7 +286,7 @@ def solve(self, xoutput=None):
         raise err
 
 
-def print_gen_simu(time, gen_id, simu_id, size_pop, nb_error, to_eval):
+def print_gen_simu(time, gen_id, simu_id, size_pop, nb_error, to_eval) -> None:
     print(
         "\r{}  gen {:>5}: simu {}/{} ({:>5.2f}%), {:>4} errors.".format(
             time,
@@ -308,7 +308,7 @@ def print_gen_simu(time, gen_id, simu_id, size_pop, nb_error, to_eval):
     print(msg[:-2])
 
 
-def print_obj(obj_func, indiv):
+def print_obj(obj_func, indiv) -> None:
     msg = "Objectives: "
     for ii in range(len(obj_func)):
         msg += (

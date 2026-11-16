@@ -1,8 +1,12 @@
 from . import GetOutError
 from .....Classes_new.output.out_geo_lam import OutGeoLam
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
-def get_BH_rotor(self):
+def get_BH_rotor(self) -> np.ndarray:
     """Return the B(H) curve of the rotor material
 
     Parameters

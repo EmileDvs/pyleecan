@@ -1,4 +1,4 @@
-def get_loss_overall(self):
+def get_loss_overall(self) -> float:
     """Get overall loss by summing all losses in OutLoss
 
     Parameters

@@ -1,4 +1,4 @@
-def plot_mesh(self, group_names=None, save_path=None):
+def plot_mesh(self, group_names: list | None = None, save_path: str | None = None):
     """Plot the losses on the mesh solution
 
     Parameters

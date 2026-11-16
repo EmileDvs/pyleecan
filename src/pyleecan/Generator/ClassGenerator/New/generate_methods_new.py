@@ -42,7 +42,16 @@ FROZEN_PACKAGES = frozenset()
 """Sub-packages of Methods_new written by hand (not generated)"""
 
 HINTED_SUBPACKAGES = frozenset(
-    {"geometry", "loss", "machine", "material", "simulation", "slot"}
+    {
+        "geometry",
+        "loss",
+        "machine",
+        "material",
+        "optimization",
+        "output",
+        "simulation",
+        "slot",
+    }
 )
 """Sub-packages whose methods get the type hints of their docstrings
 (type_hints.py), package by package (PLAN.md Step 5)"""

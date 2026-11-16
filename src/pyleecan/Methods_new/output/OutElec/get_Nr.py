@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
 
 
-def get_Nr(self, Time=None):
+def get_Nr(self, Time: Data | None = None) -> np.ndarray:
     """Create speed in function of time vector Nr
 
     Parameters

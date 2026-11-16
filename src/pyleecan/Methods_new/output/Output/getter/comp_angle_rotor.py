@@ -2,9 +2,13 @@ import numpy as np
 
 from .....Classes_new.scidatatool.norm_affine import NormAffine as Norm_affine
 from .....Classes_new.scidatatool.norm_vector import NormVector as Norm_vector
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .....Classes_new.scidatatool.data import Data
 
 
-def comp_angle_rotor(self, Time):
+def comp_angle_rotor(self, Time: Data) -> np.ndarray:
     """Computes the angular position of the rotor as a function of time and set it as normalization
     (should not happen since angle_rotor is already added in Time normalizations in Input.comp_axis_time)
 

@@ -6,9 +6,13 @@ from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 from ....Classes_new.scidatatool.vector_field import VectorField
 from ....Functions_new.labels import STATOR_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
 
 
-def store(self, out_dict, axes_dict):
+def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
     """Store the standard outputs of Magnetics that are temporarily in out_dict as arrays into OutMag as Data object
 
     Parameters
@@ -47,7 +51,7 @@ def store(self, out_dict, axes_dict):
 
     # Store airgap flux as VectorField object
     # Axes for each airgap flux component
-    axis_list = [ax1, ax2, axes_dict["z"]]
+    axis_list: list[Data] = [ax1, ax2, axes_dict["z"]]
 
     # Create VectorField with empty components
     if "B_{rad}" in out_dict or "B_{circ}" in out_dict or "B_{ax}" in out_dict:

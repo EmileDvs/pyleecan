@@ -1,4 +1,10 @@
-def get_OP_matrix_obj(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.op_matrix import OPMatrix
+
+
+def get_OP_matrix_obj(self) -> OPMatrix | None:
     """Get the Operating Point Matrix
 
     Parameters

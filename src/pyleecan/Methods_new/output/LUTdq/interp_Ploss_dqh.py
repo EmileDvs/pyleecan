@@ -4,7 +4,7 @@ import scipy.interpolate as scp_int
 from ....Functions_new.Electrical.comp_loss_joule import comp_loss_joule
 
 
-def interp_Ploss_dqh(self, Id, Iq, N0, exclude_models=[]):
+def interp_Ploss_dqh(self, Id: float | np.ndarray, Iq: float | np.ndarray, N0: float, exclude_models: list[str] = []) -> float | np.ndarray:
     """Interpolate losses in function of Id and Iq and for given speed
     Meant to be used with SIPMSM/IPMSM machine with LossFEA (to have the correct loss models name)
 

@@ -16,22 +16,22 @@ FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 def plot_B_mesh(
     self,
     *args,
-    indices=None,
-    is_surf=False,
-    is_radial=False,
-    is_center=False,
-    clim=None,
-    field_name=None,
-    group_names=None,
-    save_path=None,
-    is_show_fig=True,
-    win_title=None,
+    indices: list | None = None,
+    is_surf: bool = False,
+    is_radial: bool = False,
+    is_center: bool = False,
+    clim: list | None = None,
+    field_name: str | None = None,
+    group_names: list | None = None,
+    save_path: str | None = None,
+    is_show_fig: bool = True,
+    win_title: str | None = None,
     is_animated=False,
     title="",
     pv_plotter=None,
-    is_contour=True,
-    is_2D=False
-):
+    is_contour: bool = True,
+    is_2D: bool = False
+) -> None:
     """Plot the contour of a field on a mesh using pyvista plotter.
 
     Parameters

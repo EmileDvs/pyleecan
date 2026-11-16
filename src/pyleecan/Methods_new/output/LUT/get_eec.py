@@ -1,4 +1,10 @@
-def get_eec(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.electrical.eec import EEC
+
+
+def get_eec(self) -> EEC | None:
     """Get the Electrical Equivalent Circuit
 
     Parameters

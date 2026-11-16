@@ -1,4 +1,10 @@
-def get_simu(self, index):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def get_simu(self, index: int) -> Simulation:
     """
     Generate a simulation according to index
 

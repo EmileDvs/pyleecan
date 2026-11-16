@@ -2,9 +2,13 @@ from deap import base, creator, tools
 from ....Classes_new.output.output import Output
 from ....Classes_new.output.xoutput import XOutput
 from ....Classes_new.simulation.var_simu import VarSimu
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
 
-def create_toolbox(self):
+def create_toolbox(self) -> OptiGenAlgNsga2Deap:
     """OptiGenAlgNsga2Deap method to create DEAP toolbox
     Parameters
     ----------
@@ -49,7 +53,7 @@ def create_toolbox(self):
     self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
 
 
-def create_indiv(create, output, design_var_list):
+def create_indiv(create, output: Output, design_var_list: list):
     """Create individual using DEAP tools
 
     Parameters

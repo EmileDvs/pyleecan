@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .....Classes_new.scidatatool.data import Data
 
 
-def get_angle_rotor(self, Time=None):
+def get_angle_rotor(self, Time: Data | None = None) -> np.ndarray:
     """Return the angular position of the rotor as a function of time from Time normalizations
     and or calculate angle_rotor and add it to Time normalization
 

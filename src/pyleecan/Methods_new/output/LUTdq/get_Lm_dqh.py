@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_Lm_dqh(self, Id, Iq, Phi_dqh=None):
+def get_Lm_dqh(self, Id: float, Iq: float, Phi_dqh: np.ndarray | None = None) -> np.ndarray:
     """Get the magnetizing dqh inductance
 
     Parameters

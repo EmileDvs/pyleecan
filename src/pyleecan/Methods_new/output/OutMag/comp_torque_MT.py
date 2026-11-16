@@ -3,7 +3,7 @@ import numpy as np
 from ....Functions_new.SciDataTool.derivation_integration import integrate
 
 
-def comp_torque_MT(self):
+def comp_torque_MT(self) -> np.ndarray:
     """Compute the rotor electromagnetic torque from Maxwell Stress Tensor.
 
     Parameters

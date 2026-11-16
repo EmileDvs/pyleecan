@@ -3,7 +3,7 @@ import random
 from deap.tools import cxOnePoint
 
 
-def cross(self, indiv1, indiv2):
+def cross(self, indiv1, indiv2) -> bool:
     """Perform the crossover (One crossover by default)
 
     Parameters

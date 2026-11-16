@@ -5,7 +5,7 @@ from ....Classes_new.optimization.opti_design_var_interval import OptiDesignVarI
 from ....Classes_new.optimization.opti_design_var_set import OptiDesignVarSet
 
 
-def mutate(self, indiv):
+def mutate(self, indiv) -> bool:
     """Mutate the individual design variables with different strategies according to the variables types :
         - interval : Polynomial Bounded mutation or user defined
         - set : Resampling the variable according to its initialization function

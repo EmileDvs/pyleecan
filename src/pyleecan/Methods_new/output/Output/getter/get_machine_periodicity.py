@@ -1,4 +1,4 @@
-def get_machine_periodicity(self, is_rotor_ref=False):
+def get_machine_periodicity(self, is_rotor_ref: bool = False) -> tuple[int, bool, int, bool]:
     """Return / Compute the (anti)-periodicities of the machine in time and space domain
 
     Parameters

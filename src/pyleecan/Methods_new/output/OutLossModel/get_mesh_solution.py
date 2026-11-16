@@ -3,7 +3,7 @@ from ....Classes_new.mesh.mesh_solution import MeshSolution
 from ....Classes_new.mesh.solution_data import SolutionData
 
 
-def get_mesh_solution(self):
+def get_mesh_solution(self) -> MeshSolution:
     """Returns the MeshSolution object corresponding to the losses
 
     Parameters

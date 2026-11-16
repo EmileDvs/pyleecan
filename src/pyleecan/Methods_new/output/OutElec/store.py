@@ -2,9 +2,13 @@ import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.normalization import Normalization
 
 
-def store(self, out_dict):
+def store(self, out_dict: dict) -> None:
     """Store the standard outputs of Electrical that are temporarily in out_dict as arrays into OutElec as Data object
 
     Parameters
@@ -57,7 +61,7 @@ def store(self, out_dict):
 
         felec_rot = self.OP.get_felec() * self.OP.get_slip()
 
-        norm_freq = dict()
+        norm_freq: dict[str, Normalization] = dict()
         if Time.normalizations is not None and len(Time.normalizations) > 0:
             for key, val in Time.normalizations.items():
                 norm_freq[key] = val.copy()

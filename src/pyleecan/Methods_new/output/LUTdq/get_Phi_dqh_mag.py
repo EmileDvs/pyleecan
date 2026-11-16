@@ -1,7 +1,11 @@
 from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
 
 
-def get_Phi_dqh_mag(self):
+def get_Phi_dqh_mag(self) -> DataND:
     """Get magnet flux linkage over time in DQH frame
 
     Parameters

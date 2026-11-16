@@ -1,7 +1,7 @@
 from scipy.io import savemat
 
 
-def export_to_mat(self, file_path):
+def export_to_mat(self, file_path: str) -> None:
     """Export the main outputs to a .mat file
 
 

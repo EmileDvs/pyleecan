@@ -4,7 +4,7 @@ from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
 from ....Classes_new.electrical.electrical import Electrical
 
 
-def get_Phi_dqh_mag_mean(self):
+def get_Phi_dqh_mag_mean(self) -> np.ndarray:
     """Get the mean magnets flux linkage in DQH frame
 
     Parameters

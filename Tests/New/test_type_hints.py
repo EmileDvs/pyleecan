@@ -370,3 +370,28 @@ def test_class_imported_in_the_body_is_imported_for_type_checking():
     result, _ = _hint(source)
     assert "def f(self) -> Arc1:" in result
     assert "if TYPE_CHECKING:\n    from ....Classes_new.geometry.arc_1 import Arc1\n" in result
+
+
+def test_special_methods_boolean_slice_and_class_paths():
+    source = '''def __len__(self):
+    """Doc"""
+    return len(self.items)
+
+
+def f(self, flag, idx, out):
+    """Doc
+
+    Parameters
+    ----------
+    flag : boolean
+        A flag
+    idx : slice
+        Indices
+    out : ....Classes.Output
+        An output
+    """
+    pass
+'''
+    result, _ = _hint(source)
+    assert "def __len__(self) -> int:" in result
+    assert "def f(self, flag: bool, idx: slice, out: Output):" in result

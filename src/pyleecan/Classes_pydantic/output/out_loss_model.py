@@ -1,13 +1,18 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Output/OutLossModel.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import Any, ClassVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from .._legacy_model import LegacyModel
 from .._pyleecan_model import NDArray
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData
 from ..scidatatool.data_freq import DataFreq
+
+if TYPE_CHECKING:
+    from .out_loss_model import OutLossModel
 
 
 class OutLossModel(LegacyModel):
@@ -52,7 +57,7 @@ class OutLossModel(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutLossModel.__add__
-    def __add__(self, other):
+    def __add__(self, other: OutLossModel | dict) -> OutLossModel:
         """Add two loss models output (called for: self + other)
 
         Parameters
@@ -98,7 +103,7 @@ class OutLossModel(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutLossModel.__radd__
-    def __radd__(self, other):
+    def __radd__(self, other: OutLossModel | dict) -> OutLossModel:
         """Add two loss models output (called for: other + self)
 
         Parameters
@@ -143,7 +148,7 @@ class OutLossModel(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutLossModel.__rsub__
-    def __rsub__(self, other):
+    def __rsub__(self, other: OutLossModel | dict) -> OutLossModel:
         """Substract two loss models output (called for: other - self)
 
         Parameters
@@ -189,7 +194,7 @@ class OutLossModel(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutLossModel.__sub__
-    def __sub__(self, other):
+    def __sub__(self, other: OutLossModel | dict) -> OutLossModel:
         """Substract two loss models output (called for: self - other)
 
         Parameters
@@ -234,7 +239,7 @@ class OutLossModel(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutLossModel.get_loss_scalar
-    def get_loss_scalar(self, felec=None):
+    def get_loss_scalar(self, felec: float | None = None) -> float:
         """Get loss power from coefficients stored in coeff_dict
 
         Parameters
@@ -263,7 +268,7 @@ class OutLossModel(LegacyModel):
         return self.scalar_value
 
     # Inlined from Methods.Output.OutLossModel.get_mesh_solution
-    def get_mesh_solution(self):
+    def get_mesh_solution(self) -> MeshSolution:
         """Returns the MeshSolution object corresponding to the losses
 
         Parameters
@@ -315,7 +320,7 @@ class OutLossModel(LegacyModel):
         return ms_loss
 
     # Inlined from Methods.Output.OutLossModel.plot_mesh
-    def plot_mesh(self, group_names=None, save_path=None):
+    def plot_mesh(self, group_names: list | None = None, save_path: str | None = None):
         """Plot the losses on the mesh solution
 
         Parameters

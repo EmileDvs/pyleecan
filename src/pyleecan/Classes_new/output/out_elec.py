@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -24,6 +24,11 @@ from ..scidatatool.data_nd import DataND
 from ..scidatatool.data_time import DataTime
 from ..simulation.op import OP as _field_type_OP
 from .out_internal import OutInternal
+
+if TYPE_CHECKING:
+    from ..scidatatool.data import Data
+    from ..scidatatool.data_nd import DataND
+    from ..scidatatool.normalization import Normalization
 
 
 @dataclass(eq=False)
@@ -146,13 +151,13 @@ class OutElec(LegacyClass):
     # Inlined from Methods.Output.OutElec.get_electrical
     def get_electrical(
         self,
-        data_dict,
-        Time=None,
-        is_dqh=False,
-        is_fund_only=False,
-        is_harm_only=False,
-        is_freq=None,
-    ):
+        data_dict: str,
+        Time: Data | None = None,
+        is_dqh: bool = False,
+        is_fund_only: bool = False,
+        is_harm_only: bool = False,
+        is_freq: bool | None = None,
+    ) -> DataND:
         """Generic getter to return voltage/current as DataND object
 
         Parameters
@@ -332,12 +337,12 @@ class OutElec(LegacyClass):
     # Inlined from Methods.Output.OutElec.get_Is
     def get_Is(
         self,
-        Time=None,
-        is_dqh=False,
-        is_fund_only=False,
-        is_harm_only=False,
-        is_freq=None,
-    ):
+        Time: Data | None = None,
+        is_dqh: bool = False,
+        is_fund_only: bool = False,
+        is_harm_only: bool = False,
+        is_freq: bool | None = None,
+    ) -> DataND:
         """Return the stator current DataND object
 
         Parameters
@@ -385,7 +390,7 @@ class OutElec(LegacyClass):
         return Is
 
     # Inlined from Methods.Output.OutElec.get_Jrms
-    def get_Jrms(self):
+    def get_Jrms(self) -> float:
         """Return the stator current density rms value
 
         Parameters
@@ -415,7 +420,7 @@ class OutElec(LegacyClass):
         return self.Jrms
 
     # Inlined from Methods.Output.OutElec.get_Nr
-    def get_Nr(self, Time=None):
+    def get_Nr(self, Time: Data | None = None) -> np.ndarray:
         """Create speed in function of time vector Nr
 
         Parameters
@@ -448,12 +453,12 @@ class OutElec(LegacyClass):
     # Inlined from Methods.Output.OutElec.get_Us
     def get_Us(
         self,
-        Time=None,
-        is_dqh=False,
-        is_fund_only=False,
-        is_harm_only=False,
-        is_freq=None,
-    ):
+        Time: Data | None = None,
+        is_dqh: bool = False,
+        is_fund_only: bool = False,
+        is_harm_only: bool = False,
+        is_freq: bool | None = None,
+    ) -> DataND:
         """Return the fundamental stator voltage as DataND object
 
         Parameters
@@ -501,7 +506,7 @@ class OutElec(LegacyClass):
         return Us
 
     # Inlined from Methods.Output.OutElec.store
-    def store(self, out_dict):
+    def store(self, out_dict: dict) -> None:
         """Store the standard outputs of Electrical that are temporarily in out_dict as arrays into OutElec as Data object
 
         Parameters
@@ -556,7 +561,7 @@ class OutElec(LegacyClass):
 
             felec_rot = self.OP.get_felec() * self.OP.get_slip()
 
-            norm_freq = {}
+            norm_freq: dict[str, Normalization] = {}
             if Time.normalizations is not None and len(Time.normalizations) > 0:
                 for key, val in Time.normalizations.items():
                     norm_freq[key] = val.copy()

@@ -1,4 +1,4 @@
-def get_index_open_circuit(self):
+def get_index_open_circuit(self) -> int:
     """Get index of open circuit point in output list
 
     Parameters

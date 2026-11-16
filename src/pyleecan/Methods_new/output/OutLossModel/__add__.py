@@ -1,7 +1,11 @@
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.out_loss_model import OutLossModel
 
 
-def __add__(self, other):
+def __add__(self, other: OutLossModel | dict) -> OutLossModel:
     """Add two loss models output (called for: self + other)
 
     Parameters

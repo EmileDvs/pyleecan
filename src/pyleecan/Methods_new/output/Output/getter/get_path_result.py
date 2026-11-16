@@ -3,7 +3,7 @@ import os
 from .....definitions import RESULT_DIR
 
 
-def get_path_result(self):
+def get_path_result(self) -> str:
     """Return the path to the result folder. If there is a name for the simulation, the path leads to a sub-folder of
     'Results' folder which has the same name. If this sub-folder does not exist, it creates it.
 

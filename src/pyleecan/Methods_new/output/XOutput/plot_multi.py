@@ -4,6 +4,11 @@ from ....definitions import config_dict
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from . import _get_symbol_data_
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 COLORS = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"]
 COLORMAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
@@ -19,19 +24,19 @@ class PlotError(Exception):
 
 def plot_multi(
     self,
-    x_symbol,
-    y_symbol,
-    c_symbol=None,
+    x_symbol: str,
+    y_symbol: str,
+    c_symbol: str | None = None,
     cmap=None,
-    plot_type="point",
-    idx=None,
-    fig=None,
-    ax=None,
-    title=None,
-    is_show_fig=True,
-    save_path=None,
-    win_title=None,
-):
+    plot_type: str = "point",
+    idx: slice | None = None,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    title: str | None = None,
+    is_show_fig: bool = True,
+    save_path: str | None = None,
+    win_title: str | None = None,
+) -> tuple[Figure, Axes]:
     """2D Plot from a DataKeeper / OptiObjective / ParamExplorer as a function of another
     DataKeeper / OptiObjective / ParamExplorer
 

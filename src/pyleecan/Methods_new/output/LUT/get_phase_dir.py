@@ -1,4 +1,4 @@
-def get_phase_dir(self):
+def get_phase_dir(self) -> int:
     """Return the Rotation direction of the stator phases
 
     Parameters

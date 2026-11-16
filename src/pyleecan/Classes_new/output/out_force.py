@@ -2,13 +2,16 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..scidatatool.data import Data
 from ..scidatatool.data_time import DataTime
 from ..scidatatool.vector_field import VectorField
+
+if TYPE_CHECKING:
+    from ..scidatatool.data import Data
 
 
 @dataclass(eq=False)
@@ -53,7 +56,7 @@ class OutForce(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutForce.store
-    def store(self, out_dict, axes_dict):
+    def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
         """Store the standard outputs of Force that are temporarily in out_dict as arrays into OutForce as Data object
 
         Parameters
@@ -73,7 +76,7 @@ class OutForce(LegacyClass):
         # Store air-gap surface force as VectorField object
 
         # Axes for each component
-        axis_list = [axes_dict["time"], axes_dict["angle"]]
+        axis_list: list[Data] = [axes_dict["time"], axes_dict["angle"]]
 
         # Create VectorField with empty components
         self.AGSF = VectorField(

@@ -1,4 +1,10 @@
-def get_L_dqh(self, Id, Iq, L_endwinding=0, Phi_dqh=None):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
+def get_L_dqh(self, Id: float, Iq: float, L_endwinding: float = 0, Phi_dqh: np.ndarray | None = None) -> np.ndarray | None:
     """Get the total dqh inductance
     TODO: calculate end-winding inductance from machine
 

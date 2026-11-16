@@ -1,7 +1,11 @@
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.out_loss_model import OutLossModel
 
 
-def __sub__(self, other):
+def __sub__(self, other: OutLossModel | dict) -> OutLossModel:
     """Substract two loss models output (called for: self - other)
 
     Parameters
