@@ -80,6 +80,15 @@ uv run python -m pyleecan.Generator.ClassGenerator.New.run_generate_classes
 Rules: a moved pass must keep the generated classes byte-identical; passes are
 idempotent; method sources hold no backend-specific logic.
 
+Parallel run (`worker_pool.py`): one process pool for the whole run (the
+work is pure-Python AST passes, threads would be serialized by the GIL). Task
+functions must be module-level; the state of a step goes to the workers once
+through a pickle file. A script that runs the generators must guard its code
+with `if __name__ == "__main__":` (Windows workers re-import the main module).
+Ruff is never called per class in a full run: the classes are built as drafts
+(`generate_class(..., return_draft=True)`) and finished together
+(`advance_class` / `run_ruff_requests`), one Ruff process per step.
+
 Pitfalls:
 - The generators delete and rewrite the generated folders: a shell whose
   working directory is inside one (e.g. `Methods_new/slot`) locks it on Windows

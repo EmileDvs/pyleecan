@@ -18,7 +18,6 @@ import os
 import pickle
 import tempfile
 from concurrent.futures import ProcessPoolExecutor
-from multiprocessing.context import SpawnContext, SpawnProcess
 from os import cpu_count
 from uuid import uuid4
 
@@ -39,52 +38,18 @@ def worker_count(max_workers=None, tasks=None):
     return max(count, 1)
 
 
-WORKER_START_TIMEOUT = 120
-"""Seconds to wait for a worker to start before starting the next one"""
-
-
-class _SerialStartProcess(SpawnProcess):
-    """Worker process whose start returns once the worker is ready.
-
-    Importing pyleecan.definitions reads and rewrites the user configuration
-    file (legacy Functions/init_environment.get_config_dict, not atomic):
-    workers importing it together read a truncated file and die
-    (JSONDecodeError, BrokenProcessPool). The workers are started one after
-    the other: the next one starts when the previous one has run the pool
-    initializer, i.e. after its imports.
-    """
-
-    def start(self):
-        super().start()
-        _STARTED.acquire(timeout=WORKER_START_TIMEOUT)
-
-
-class _SerialStartContext(SpawnContext):
-    Process = _SerialStartProcess
-
-
-_CONTEXT = _SerialStartContext()
-_STARTED = _CONTEXT.Semaphore(0)
-"""Released by each worker once started (pool initializer)"""
-
-
-def _worker_started(started):
-    """Pool initializer: the imports of the worker are done."""
-    started.release()
-
-
 def get_pool(max_workers):
-    """The process pool of the run (started on first use)."""
+    """The process pool of the run (started on first use).
+
+    The workers start together: each one imports pyleecan.definitions, whose
+    user config file is only read when unchanged (save_config_dict writes it
+    when its content changes, atomically).
+    """
     global _POOL, _POOL_SIZE
     if _POOL is not None and _POOL_SIZE == max_workers:
         return _POOL
     shutdown_pool()
-    _POOL = ProcessPoolExecutor(
-        max_workers=max_workers,
-        mp_context=_CONTEXT,
-        initializer=_worker_started,
-        initargs=(_STARTED,),
-    )
+    _POOL = ProcessPoolExecutor(max_workers=max_workers)
     _POOL_SIZE = max_workers
     return _POOL
 

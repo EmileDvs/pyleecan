@@ -130,6 +130,18 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 ### Fixed
 
 - Generation of the phase axis.
+- **User config file written only when it changes, atomically**
+  (`Functions/init_environment.save_config_dict`). `import pyleecan.definitions`
+  rewrote `main_config_dict.json` at each import: processes importing pyleecan
+  at the same time could read a truncated file (`JSONDecodeError`). The file
+  is now written only when its content changes, through a temporary file
+  replacing it; its content is unchanged (same JSON format).
+- **Class generator speed**: full regeneration ~220 s -> ~95 s, generated files
+  unchanged. The method preparation is reused (errors search, both
+  backends); the module maps are cached; the methods, class drafts and class
+  finishing run in a process pool (`worker_pool.py`; threads were serialized
+  by the GIL); Ruff runs once per step for all the classes instead of ~6
+  processes per class.
 
 ### Status
 

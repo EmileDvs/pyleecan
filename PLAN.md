@@ -551,10 +551,11 @@ packaging standards.
 
 - [ ] Check the imports (time and side effects) when launching the common use
       cases: main simulations, the machine GUI, the main plots. Today
-      `import pyleecan.definitions` loads matplotlib and reads **and rewrites**
-      the user configuration file (`get_config_dict`, not atomic): parallel
-      processes importing it read a truncated file (seen in the generator
-      workers, which are therefore started one after the other).
+      `import pyleecan.definitions` loads matplotlib and the user
+      configuration (`get_config_dict`). The config file used to be rewritten
+      at each import, not atomically (parallel processes read a truncated
+      file): fixed in Phase 1, it is written only when its content changes,
+      atomically (`save_config_dict`, `Tests/New/test_config_dict.py`).
 
 | Today | Target | Note |
 |---|---|---|

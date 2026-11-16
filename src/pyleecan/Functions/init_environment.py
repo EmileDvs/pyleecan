@@ -1,10 +1,12 @@
 import platform
 import shutil
 import sys
-from json import dump, load
+from json import dumps, load
 from logging import getLogger
-from os import makedirs
+from os import fdopen, makedirs, remove, replace
 from os.path import abspath, dirname, isdir, isfile, join, normpath, realpath
+from tempfile import mkstemp
+from time import sleep
 
 from matplotlib import font_manager
 
@@ -42,8 +44,36 @@ def save_config_dict(config_dict):
         level=0,
     )
     CONF_PATH = module.CONF_PATH
-    with open(CONF_PATH, "w") as config_file:
-        dump(config_dict, config_file, sort_keys=True, indent=4, separators=(",", ": "))
+    content = dumps(config_dict, sort_keys=True, indent=4, separators=(",", ": "))
+    # get_config_dict saves the config at each import of pyleecan.definitions:
+    # the file is written only when its content changes, and atomically
+    # (temporary file then replace), so that processes importing pyleecan at
+    # the same time never read a truncated file (same content as before)
+    if isfile(CONF_PATH):
+        with open(CONF_PATH, "r") as config_file:
+            if config_file.read() == content:
+                return
+    descriptor, temp_path = mkstemp(
+        prefix="main_config_dict_", suffix=".tmp", dir=dirname(CONF_PATH)
+    )
+    try:
+        with fdopen(descriptor, "w") as config_file:
+            config_file.write(content)
+        for attempt in range(REPLACE_ATTEMPTS):
+            try:
+                replace(temp_path, CONF_PATH)
+                break
+            except PermissionError:  # Windows: file open in another process
+                if attempt == REPLACE_ATTEMPTS - 1:
+                    raise
+                sleep(REPLACE_DELAY)
+    finally:
+        if isfile(temp_path):
+            remove(temp_path)
+
+
+REPLACE_ATTEMPTS = 20
+REPLACE_DELAY = 0.05  # [s] between two attempts to replace the config file
 
 
 def init_user_dir():
