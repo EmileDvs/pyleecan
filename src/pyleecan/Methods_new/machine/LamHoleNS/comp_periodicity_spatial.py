@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_periodicity_spatial(self):
+def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
     """Compute the periodicity factor of the lamination
 
     Parameters

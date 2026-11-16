@@ -13,7 +13,6 @@ from ..import_data.import_matrix import ImportMatrix
 from .model_bh import ModelBH as _field_type_ModelBH
 
 if TYPE_CHECKING:
-    import numpy as np
     from matplotlib.figure import Figure
 
 

@@ -5,7 +5,7 @@ from ....Classes_new.geometry.arc_3 import Arc3
 from ....Functions_new.Geometry.merge_notch_list import merge_notch_list
 
 
-def build_radius_desc(self, is_bore, sym=1):
+def build_radius_desc(self, is_bore: bool, sym: int = 1) -> list:
     """This method returns an ordered description of the slot/notch
     that defines the bore/yoke radius of the lamination
     (Bore/Yoke shape not taken into account by this method, cf build_radius_lines)

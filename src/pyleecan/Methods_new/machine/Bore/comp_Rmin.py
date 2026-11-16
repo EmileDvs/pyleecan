@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_Rmin(self):
+def comp_Rmin(self) -> float:
     """Compute the minimum radius of the Bore shape
 
     Parameters

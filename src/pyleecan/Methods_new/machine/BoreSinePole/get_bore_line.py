@@ -2,11 +2,15 @@ from ....Classes_new.geometry.segment import Segment
 from ....Methods import ParentMissingError
 import numpy as np
 from scipy.optimize import fmin
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.bore_sine_pole import BoreSinePole
 
 NN = 30  # number of segments per half pole
 
 
-def get_bore_line(self, prop_dict=None):
+def get_bore_line(self, prop_dict: dict | None = None) -> list:
     """Return the bore line description
     adapted sine field pole geometry from the text book:
     "Müller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008."
@@ -98,7 +102,7 @@ def _get_phi_max(obj):
     return min(np.pi / 2, phi_max)
 
 
-def _get_pole_width_max(obj):
+def _get_pole_width_max(obj: BoreSinePole) -> float:
     """Return the max. pole width and the angle of the max. pole width
 
     Parameters
@@ -117,7 +121,7 @@ def _get_pole_width_max(obj):
     return w_max
 
 
-def _get_phi(obj, w):
+def _get_phi(obj: BoreSinePole, w) -> float:
     """Return the angle of the pole width
 
     Parameters

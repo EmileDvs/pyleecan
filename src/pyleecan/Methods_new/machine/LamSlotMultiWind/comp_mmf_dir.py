@@ -1,7 +1,7 @@
 from ....Functions.Load.import_class import import_class
 
 
-def comp_mmf_dir(self, current_dir=None, phase_dir=None, is_plot=False):
+def comp_mmf_dir(self, current_dir: int | None = None, phase_dir: int | None = None, is_plot: bool = False) -> int:
     """Compute the rotation direction of the fundamental magnetomotive force induced by the winding
 
     Parameters

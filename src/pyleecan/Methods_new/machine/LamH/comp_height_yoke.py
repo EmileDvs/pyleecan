@@ -1,4 +1,4 @@
-def comp_height_yoke(self):
+def comp_height_yoke(self) -> float:
     """Compute the yoke height
 
     Parameters

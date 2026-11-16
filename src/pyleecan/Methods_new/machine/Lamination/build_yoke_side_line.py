@@ -6,7 +6,7 @@ from ....Classes_new.geometry.segment import Segment
 
 
 def build_yoke_side_line(
-    self, sym, vent_surf_list, ZBR=None, ZTR=None, ZBL=None, ZTL=None
+    self, sym: int, vent_surf_list, ZBR: complex | None = None, ZTR: complex | None = None, ZBL: complex | None = None, ZTL: complex | None = None
 ):
     """Define the Yoke Side lines of a Lamination by taking into account sym and vent
 

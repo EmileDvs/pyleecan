@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/LamH.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,6 +13,10 @@ from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
 )
 from ..slot.hole import Hole
 from .lamination import Lamination
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 class LamH(Lamination):
@@ -26,7 +30,7 @@ class LamH(Lamination):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamH.comp_angle_d_axis
-    def comp_angle_d_axis(self):
+    def comp_angle_d_axis(self) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -49,7 +53,7 @@ class LamH(Lamination):
             return 0
 
     # Inlined from Methods.Machine.LamH.comp_height_yoke
-    def comp_height_yoke(self):
+    def comp_height_yoke(self) -> float:
         """Compute the yoke height
 
         Parameters
@@ -83,7 +87,7 @@ class LamH(Lamination):
             return self.Rext - R
 
     # Inlined from Methods.Machine.LamH.comp_masses
-    def comp_masses(self):
+    def comp_masses(self) -> dict:
         """Compute the Lamination masses
 
         Parameters
@@ -111,7 +115,7 @@ class LamH(Lamination):
         return M_dict
 
     # Inlined from Methods.Machine.LamH.comp_radius_mid_yoke
-    def comp_radius_mid_yoke(self):
+    def comp_radius_mid_yoke(self) -> float:
         """Compute the Lamination middle of the yoke radius
 
         Parameters
@@ -139,7 +143,7 @@ class LamH(Lamination):
             return (self.Rext + Rmax) / 2
 
     # Inlined from Methods.Machine.LamH.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surfaces
 
         Parameters
@@ -183,7 +187,7 @@ class LamH(Lamination):
         return S_dict
 
     # Inlined from Methods.Machine.LamH.comp_volumes
-    def comp_volumes(self):
+    def comp_volumes(self) -> dict:
         """Compute the Lamination volumes
 
         Parameters
@@ -214,7 +218,7 @@ class LamH(Lamination):
         return V_dict
 
     # Inlined from Methods.Machine.LamH.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int | None:
         """Return the number of pair of pole of the Lamination
 
         Parameters
@@ -236,7 +240,7 @@ class LamH(Lamination):
             return None
 
     # Inlined from Methods.Machine.LamH.get_Zs
-    def get_Zs(self):
+    def get_Zs(self) -> int:
         """Return the number of holes in the lamination
 
         Parameters
@@ -254,7 +258,7 @@ class LamH(Lamination):
         return self.get_pole_pair_number() * 2
 
     # Inlined from Methods.Machine.LamH.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if any of the Holes have magnets
 
         Parameters
@@ -274,21 +278,21 @@ class LamH(Lamination):
     # Inlined from Methods.Machine.LamH.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_show_fig=True,
-        save_path=None,
-        win_title=None,
-        is_clean_plot=False,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        win_title: str | None = None,
+        is_clean_plot: bool = False,
+        is_winding_connection: bool = False,
+    ) -> tuple[Figure, Axes]:
         """Plot a Lamination with Buried Magnets in a matplotlib fig
 
         Parameters
@@ -411,7 +415,7 @@ class LamH(Lamination):
         return fig, ax
 
     # Inlined from Methods.Machine.LamH.set_Lmag
-    def set_Lmag(self, value):
+    def set_Lmag(self, value: float) -> None:
         """Set the Length of the magnet
 
         Parameters
@@ -428,7 +432,7 @@ class LamH(Lamination):
                 mag.Lmag = value
 
     # Inlined from Methods.Machine.LamH.set_pole_pair_number
-    def set_pole_pair_number(self, p):
+    def set_pole_pair_number(self, p: int) -> None:
         """Set the number of pair of pole of the Lamination
 
         Parameters

@@ -32,7 +32,7 @@ class MachineWRSM(MachineSync):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineWRSM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Machine object is correct
 
         Parameters
@@ -66,7 +66,7 @@ class MachineWRSM(MachineSync):
             )
 
     # Inlined from Methods.Machine.MachineWRSM.get_machine_type
-    def get_machine_type(self):
+    def get_machine_type(self) -> str:
         """Return a string with the may information about the machine architecture
 
         Parameters

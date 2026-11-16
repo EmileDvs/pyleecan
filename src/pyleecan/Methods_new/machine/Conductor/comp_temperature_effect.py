@@ -1,4 +1,4 @@
-def comp_temperature_effect(self, T_op, T_ref=20):
+def comp_temperature_effect(self, T_op: float, T_ref: float = 20) -> float:
     """Compute the temperature effect factor for the conductor
 
     Parameters

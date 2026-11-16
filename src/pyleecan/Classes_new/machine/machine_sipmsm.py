@@ -43,7 +43,7 @@ class MachineSIPMSM(MachineSync):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSIPMSM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Machine object is correct
 
         Parameters

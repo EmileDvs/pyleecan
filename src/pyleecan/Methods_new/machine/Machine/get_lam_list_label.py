@@ -1,7 +1,7 @@
 from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
 
 
-def get_lam_list_label(self):
+def get_lam_list_label(self) -> list:
     """Returns the ordered (from internal to external) list of lamination labels
     corresponding to machine.get_lam_list(is_int_to_ext=True, key=None)
 

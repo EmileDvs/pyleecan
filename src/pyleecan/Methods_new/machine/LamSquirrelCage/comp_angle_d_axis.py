@@ -1,4 +1,4 @@
-def comp_angle_d_axis(self):
+def comp_angle_d_axis(self) -> float:
     """Compute the angle between the X axis and the first d+ axis
     By convention a "Tooth" is centered on the X axis
 

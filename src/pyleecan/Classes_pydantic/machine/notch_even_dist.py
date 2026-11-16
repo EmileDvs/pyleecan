@@ -34,7 +34,9 @@ class NotchEvenDist(Notch):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.NotchEvenDist.build_geometry_key
-    def build_geometry_key(self, index=0, sym=1, alpha=0, delta=0):
+    def build_geometry_key(
+        self, index: int = 0, sym: int = 1, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of the keys inside the notch
 
         Parameters
@@ -90,7 +92,7 @@ class NotchEvenDist(Notch):
         return surf_list
 
     # Inlined from Methods.Machine.NotchEvenDist.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the notch
 
         Parameters
@@ -109,7 +111,7 @@ class NotchEvenDist(Notch):
         return self.notch_shape.Zs, False
 
     # Inlined from Methods.Machine.NotchEvenDist.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of ALL THE NOTCHES
 
         Parameters
@@ -126,7 +128,7 @@ class NotchEvenDist(Notch):
         return self.notch_shape.Zs * self.notch_shape.comp_surface()
 
     # Inlined from Methods.Machine.NotchEvenDist.get_key_Ox_radius
-    def get_key_Ox_radius(self):
+    def get_key_Ox_radius(self) -> float | None:
         """Return the Key max/min radius on Ox to close the sliding band in FEMM
 
         Parameters
@@ -162,7 +164,7 @@ class NotchEvenDist(Notch):
             return max(Rright)
 
     # Inlined from Methods.Machine.NotchEvenDist.get_notch_desc_list
-    def get_notch_desc_list(self, sym=1):
+    def get_notch_desc_list(self, sym: int = 1) -> list:
         """Returns an ordered description of the notches
 
         Parameters

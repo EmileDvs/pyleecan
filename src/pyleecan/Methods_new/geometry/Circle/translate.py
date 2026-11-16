@@ -1,7 +1,7 @@
 from . import PointTranslateCircleError
 
 
-def translate(self, Zt: complex):
+def translate(self, Zt: complex) -> None:
     """Translate the Circle object
 
     Parameters

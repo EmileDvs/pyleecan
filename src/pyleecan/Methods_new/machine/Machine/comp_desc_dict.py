@@ -1,4 +1,4 @@
-def comp_desc_dict(self):
+def comp_desc_dict(self) -> list:
     """Compute a dictionary with the main parameters/output of the machine
 
     Parameters

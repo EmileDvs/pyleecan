@@ -35,8 +35,14 @@ class WindingUD(Winding):
 
     # Inlined from Methods.Machine.WindingUD.import_from_csv
     def import_from_csv(
-        self, file_path=None, *, ZS_COL=0, COIL_COL=1, RAD_COL=2, TAN_COL=3
-    ):
+        self,
+        file_path: str | None = None,
+        *,
+        ZS_COL=0,
+        COIL_COL=1,
+        RAD_COL=2,
+        TAN_COL=3,
+    ) -> None:
         """Import the winding matrix from a csv file.
         One matrix for each phase
         Column Slot id, Ntcoil, Rad id, Tan id
@@ -110,7 +116,7 @@ class WindingUD(Winding):
         self.Ntcoil = np.amax(self.wind_mat)
 
     # Inlined from Methods.Machine.WindingUD.init_as_CW1L
-    def init_as_CW1L(self, Zs=None):
+    def init_as_CW1L(self, Zs: int | None = None) -> None:
         """Compute the Winding Matrix (for winding type 2)
         type 2 : TOOTH WINDING, SINGLE LAYER ALTERNATE TEETH WOUND
         (Nlay_rad=1,Nlay_tan=1)
@@ -195,7 +201,7 @@ class WindingUD(Winding):
         self.is_aper_a = None
 
     # Inlined from Methods.Machine.WindingUD.init_as_CW2LR
-    def init_as_CW2LR(self, Zs=None):
+    def init_as_CW2LR(self, Zs: int | None = None) -> None:
         """Compute the Winding Matrix (for winding type 5) (Nlay_rad=1,Nlay_tan=1)
         type 5 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, RADIAL SUPERPOSITION
 
@@ -292,7 +298,7 @@ class WindingUD(Winding):
         self.is_aper_a = None
 
     # Inlined from Methods.Machine.WindingUD.init_as_CW2LT
-    def init_as_CW2LT(self, Zs=None):
+    def init_as_CW2LT(self, Zs: int | None = None) -> None:
         """Compute the Winding Matrix (for winding type 1)
         type 1 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, ORTHORADIAL
         SUPERPOSITION  (Nlay_rad=1,Nlay_tan=2)
@@ -388,7 +394,7 @@ class WindingUD(Winding):
         self.is_aper_a = None
 
     # Inlined from Methods.Machine.WindingUD.init_as_DWL
-    def init_as_DWL(self, Zs=None, nlay=1):
+    def init_as_DWL(self, Zs: int | None = None, nlay: int = 1) -> None:
         """Compute the Winding Matrix (for winding type 3 or 4) (Nlay_rad=1 or 2,Nlay_tan=1)
         type 3 or 4 : DISTRIBUTED SHORTED PITCH INTEGRAL WINDING
 

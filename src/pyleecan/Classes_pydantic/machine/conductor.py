@@ -52,8 +52,14 @@ class Conductor(LegacyModel):
 
     # Inlined from Methods.Machine.Conductor.comp_skin_effect_inductance
     def comp_skin_effect_inductance(
-        self, freq, T_op=20, T_ref=20, b4=None, h4=None, zt=None
-    ):
+        self,
+        freq: float | np.ndarray,
+        T_op: float = 20,
+        T_ref: float = 20,
+        b4: float | None = None,
+        h4: float | None = None,
+        zt: int | None = None,
+    ) -> float:
         """Compute the skin effect factor on inductance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
         All parameters bc, h4, z4, are defined in Fig(4.14) p.249
 
@@ -134,7 +140,14 @@ class Conductor(LegacyModel):
         return kl_skin
 
     # Inlined from Methods.Machine.Conductor.comp_skin_effect_resistance
-    def comp_skin_effect_resistance(self, freq, T_op=20, T_ref=20, b=None, zt=None):
+    def comp_skin_effect_resistance(
+        self,
+        freq: float | np.ndarray,
+        T_op: float = 20,
+        T_ref: float = 20,
+        b: float | None = None,
+        zt: int | None = None,
+    ) -> float:
         """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
         All parameters are defined p.270 / 271
 
@@ -223,7 +236,7 @@ class Conductor(LegacyModel):
         return kr_skin
 
     # Inlined from Methods.Machine.Conductor.comp_temperature_effect
-    def comp_temperature_effect(self, T_op, T_ref=20):
+    def comp_temperature_effect(self, T_op: float, T_ref: float = 20) -> float:
         """Compute the temperature effect factor for the conductor
 
         Parameters

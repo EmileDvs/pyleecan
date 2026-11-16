@@ -29,7 +29,7 @@ class Notch(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Notch.get_label
-    def get_label(self, is_add_id=True):
+    def get_label(self, is_add_id: bool = True) -> str:
         """Return the label of the lamination (Stator-0 for instance)
 
         Parameters
@@ -52,7 +52,7 @@ class Notch(LegacyClass):
             raise ParentMissingError("Error: The notch is not inside a Lamination")
 
     # Inlined from Methods.Machine.Notch.get_Rbo
-    def get_Rbo(self):
+    def get_Rbo(self) -> float:
         """Return the parent lamination bore radius
         (to make lam.notch[ii].notch_shape match lam.slot parent)
 
@@ -74,7 +74,7 @@ class Notch(LegacyClass):
             raise ParentMissingError("Error: The notch is not inside a Lamination")
 
     # Inlined from Methods.Machine.Notch.get_Ryoke
-    def get_Ryoke(self):
+    def get_Ryoke(self) -> float:
         """Return the parent lamination yoke radius
         (to make lam.notch[ii].notch_shape match lam.slot parent)
 
@@ -96,7 +96,7 @@ class Notch(LegacyClass):
             raise ParentMissingError("Error: The notch is not inside a Lamination")
 
     # Inlined from Methods.Machine.Notch.has_key
-    def has_key(self):
+    def has_key(self) -> bool:
         """Check if a there is key in the notch
 
         Parameters
@@ -113,7 +113,7 @@ class Notch(LegacyClass):
         return self.key_mat is not None
 
     # Inlined from Methods.Machine.Notch.is_outwards
-    def is_outwards(self):
+    def is_outwards(self) -> bool:
         """Return if the notch is outwards (on an external lamination) or inwards
         (on an internal lamination).
         (to make lam.notch[ii].notch_shape match lam.slot parent)

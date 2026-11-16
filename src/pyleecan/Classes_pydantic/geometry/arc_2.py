@@ -49,7 +49,7 @@ class Arc2(Arc):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Arc2.check
-    def check(self):
+    def check(self) -> None:
         """assert that the arc is correct (begin != center)
 
         Parameters
@@ -293,7 +293,7 @@ class Arc2(Arc):
         return Zmid
 
     # Inlined from Methods.Geometry.Arc2.reverse
-    def reverse(self):
+    def reverse(self) -> None:
         """Reverse the begin and end point of the Line
 
         Parameters
@@ -309,7 +309,7 @@ class Arc2(Arc):
         self.angle = -self.angle
 
     # Inlined from Methods.Geometry.Arc2.rotate
-    def rotate(self, angle: float):
+    def rotate(self, angle: float) -> None:
         """Rotation of the Arc2 of angle
 
         Parameters
@@ -335,7 +335,7 @@ class Arc2(Arc):
         self.center = self.center * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Arc2.scale
-    def scale(self, scale_factor: float):
+    def scale(self, scale_factor: float) -> None:
         """Scale the coordinates of the begin/end
 
         Parameters
@@ -354,7 +354,7 @@ class Arc2(Arc):
         self.center = self.center * scale_factor
 
     # Inlined from Methods.Geometry.Arc2.split_half
-    def split_half(self, is_begin: bool = True):
+    def split_half(self, is_begin: bool = True) -> None:
         """Cut the line in half (modify the object)
 
         Parameters
@@ -373,7 +373,7 @@ class Arc2(Arc):
         self.angle = self.angle / 2
 
     # Inlined from Methods.Geometry.Arc2.split_point
-    def split_point(self, Z1: complex, is_begin: bool = True):
+    def split_point(self, Z1: complex, is_begin: bool = True) -> None:
         """Cut the Arc according to a point on the arc
 
         Parameters
@@ -402,7 +402,7 @@ class Arc2(Arc):
             self.begin = Z1
 
     # Inlined from Methods.Geometry.Arc2.translate
-    def translate(self, Zt: complex):
+    def translate(self, Zt: complex) -> None:
         """Translate the Arc2 object with
 
         Parameters

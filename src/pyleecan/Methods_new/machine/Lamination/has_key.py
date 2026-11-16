@@ -1,4 +1,4 @@
-def has_key(self):
+def has_key(self) -> bool:
     """Check if a there is key in the Lamination
 
     Parameters

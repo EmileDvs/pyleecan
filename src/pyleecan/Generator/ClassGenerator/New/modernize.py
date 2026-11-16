@@ -526,7 +526,37 @@ def _apply_package_import_style(source, package, package_alias):
                     duplicate_module_imports.add(id(node))
                 has_module_package_import = True
 
+    # With a module import of the package, a local import of it is redundant,
+    # and would make the alias local to the whole function: its uses before
+    # the local import would raise UnboundLocalError. Removed ("pass" when it
+    # is the only statement of its block).
+    sole_statements = set()
+    if has_module_package_import:
+        module_statements = {id(node) for node in tree.body}
+        for node in ast.walk(tree):
+            for field in ("body", "orelse", "finalbody"):
+                block = getattr(node, field, None)
+                if isinstance(block, list) and len(block) == 1:
+                    sole_statements.add(id(block[0]))
+            if id(node) in module_statements:
+                continue
+            if (
+                isinstance(node, ast.ImportFrom)
+                and node.module
+                and (node.module == package or node.module.startswith(package + "."))
+                and not any(alias.name == "*" for alias in node.names)
+            ) or (
+                isinstance(node, ast.Import)
+                and any(
+                    alias.name == package or alias.name.startswith(package + ".")
+                    for alias in node.names
+                )
+            ):
+                duplicate_module_imports.add(id(node))
+
     def add_statement_replacement(node, replacement):
+        if not replacement and id(node) in sole_statements:
+            replacement = b"pass"
         start = line_offsets[node.lineno - 1]
         statement_start = start + node.col_offset
         end = line_offsets[node.end_lineno - 1] + node.end_col_offset

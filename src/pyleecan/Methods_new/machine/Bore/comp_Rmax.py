@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_Rmax(self):
+def comp_Rmax(self) -> float:
     """Compute the maximum radius of the Bore shape
 
     Parameters

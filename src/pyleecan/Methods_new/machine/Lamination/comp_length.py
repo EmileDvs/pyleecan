@@ -1,4 +1,4 @@
-def comp_length(self):
+def comp_length(self) -> float:
     """Compute the total length of the Lamination (including radial
     ventilations duct)
 

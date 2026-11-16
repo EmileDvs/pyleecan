@@ -46,7 +46,7 @@ class Circle(Surface):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Circle.check
-    def check(self):
+    def check(self) -> None:
         """assert the Circle is correct (the radius > 0)
 
         Parameters
@@ -192,7 +192,7 @@ class Circle(Surface):
     def get_patches(
         self,
         color=None,
-        edgecolor=None,
+        edgecolor: str | None = None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
     ) -> list[Circle]:
@@ -251,7 +251,7 @@ class Circle(Surface):
     )
 
     # Inlined from Methods.Geometry.Circle.rotate
-    def rotate(self, angle: float):
+    def rotate(self, angle: float) -> None:
         """Rotation of the Circle of angle
 
         Parameters
@@ -285,7 +285,7 @@ class Circle(Surface):
             self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Circle.translate
-    def translate(self, Zt: complex):
+    def translate(self, Zt: complex) -> None:
         """Translate the Circle object
 
         Parameters

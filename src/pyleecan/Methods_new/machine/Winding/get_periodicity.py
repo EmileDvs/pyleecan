@@ -1,4 +1,4 @@
-def get_periodicity(self):
+def get_periodicity(self) -> tuple[int, bool]:
     """Computes the winding matrix (anti-)periodicity
 
     Parameters

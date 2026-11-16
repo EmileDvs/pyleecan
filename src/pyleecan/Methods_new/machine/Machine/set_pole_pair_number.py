@@ -1,4 +1,4 @@
-def set_pole_pair_number(self, p):
+def set_pole_pair_number(self, p: int) -> None:
     """Set the number of pole pairs of the machine
 
     Parameters

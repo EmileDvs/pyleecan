@@ -400,7 +400,7 @@ class SlotWLSRPM(Slot):
         return surf_list
 
     # Inlined from Methods.Slot.SlotWLSRPM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotW16 object is correct
 
         Parameters

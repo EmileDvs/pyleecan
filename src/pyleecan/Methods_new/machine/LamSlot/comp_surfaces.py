@@ -2,7 +2,7 @@ import numpy as np
 from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_surfaces(self):
+def comp_surfaces(self) -> dict:
     """Compute the Lamination surfaces (Lamination, Ventilation, Slot).
 
     Parameters

@@ -12,6 +12,12 @@ from ....Functions_new.Plot import dict_2D
 from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ....Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
 from ....Functions_new.Winding.gen_phase_list import gen_name
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 PLUS_HATCH = "++"
@@ -20,25 +26,25 @@ MINUS_HATCH = ".."
 
 def plot(
     self,
-    fig=None,
-    ax=None,
-    is_lam_only=False,
-    sym=1,
-    alpha=0,
-    delta=0,
-    is_edge_only=False,
-    edgecolor=None,
-    is_add_arrow=False,
-    is_display=True,
-    is_add_sign=True,
-    is_show_fig=True,
-    save_path=None,
-    win_title=None,
-    is_legend=True,
-    is_clean_plot=False,
-    is_winding_connection=False,
-    is_winding_connection_phase_A=False,
-):
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_lam_only: bool = False,
+    sym: int = 1,
+    alpha: float = 0,
+    delta: complex = 0,
+    is_edge_only: bool = False,
+    edgecolor: str | None = None,
+    is_add_arrow: bool = False,
+    is_display: bool = True,
+    is_add_sign: bool = True,
+    is_show_fig: bool = True,
+    save_path: str | None = None,
+    win_title: str | None = None,
+    is_legend: bool = True,
+    is_clean_plot: bool = False,
+    is_winding_connection: bool = False,
+    is_winding_connection_phase_A: bool = False,
+) -> list | tuple[Figure, Axes]:
     """Plot the Lamination in a matplotlib fig
 
     Parameters
@@ -91,7 +97,7 @@ def plot(
     # Arrow style
     head = None
     style = "Simple, tail_width=2, head_width=8, head_length=12"
-    kw = dict(arrowstyle=style, linewidth=0.8, edgecolor="k")
+    kw: dict[str, Any] = dict(arrowstyle=style, linewidth=0.8, edgecolor="k")
 
     # If the winding is user defined, we can not plot the radial pattern
     if isinstance(self.winding, WindingUD):

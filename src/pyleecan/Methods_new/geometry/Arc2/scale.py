@@ -1,4 +1,4 @@
-def scale(self, scale_factor: float):
+def scale(self, scale_factor: float) -> None:
     """Scale the coordinates of the begin/end
 
     Parameters

@@ -53,7 +53,7 @@ class SlotUD2(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotUD2._set_split_active_surf_dict
-    def _set_split_active_surf_dict(self, value):
+    def _set_split_active_surf_dict(self, value) -> None:
         """setter of split_active_surf_dict"""
         if type(value) is dict:
             for key, obj_list in value.items():
@@ -145,7 +145,7 @@ class SlotUD2(Slot):
             )
 
     # Inlined from Methods.Slot.SlotUD2.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotUD2 is correctly defined"""
 
         if self.line_list is None:

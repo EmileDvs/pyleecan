@@ -1,4 +1,4 @@
-def comp_pattern(self, is_reverse_z=False, is_reverse_angle=False):
+def comp_pattern(self, is_reverse_z: bool = False, is_reverse_angle: bool = False) -> tuple[list, list]:
     """Compute skew pattern by duplicating points in case of stepped skew
 
     Parameters

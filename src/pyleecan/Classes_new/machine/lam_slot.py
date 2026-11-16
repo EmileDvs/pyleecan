@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -15,6 +15,10 @@ from ...Functions_new.Plot.get_color_legend_from_surface import (
 )
 from ..slot.slot import Slot
 from .lamination import Lamination
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -37,7 +41,7 @@ class LamSlot(Lamination):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlot.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Lamination object is correct
 
         Parameters
@@ -74,7 +78,7 @@ class LamSlot(Lamination):
         """
 
     # Inlined from Methods.Machine.LamSlot.comp_angle_d_axis
-    def comp_angle_d_axis(self):
+    def comp_angle_d_axis(self) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -93,7 +97,7 @@ class LamSlot(Lamination):
         return 0
 
     # Inlined from Methods.Machine.LamSlot.comp_height_yoke
-    def comp_height_yoke(self):
+    def comp_height_yoke(self) -> float:
         """Compute the yoke height
 
         Parameters
@@ -113,7 +117,7 @@ class LamSlot(Lamination):
             return self.Rext - self.Rint
 
     # Inlined from Methods.Machine.LamSlot.comp_radius_mec
-    def comp_radius_mec(self):
+    def comp_radius_mec(self) -> float:
         """Compute the mechanical radius of the Lamination [m]
 
         Parameters
@@ -150,7 +154,7 @@ class LamSlot(Lamination):
         return Rmec
 
     # Inlined from Methods.Machine.LamSlot.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surfaces (Lamination, Ventilation, Slot).
 
         Parameters
@@ -188,7 +192,7 @@ class LamSlot(Lamination):
         return S_dict
 
     # Inlined from Methods.Machine.LamSlot.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int:
         """Return the number of pair of pole of the Lamination
 
         Parameters
@@ -206,7 +210,7 @@ class LamSlot(Lamination):
         return self.slot.Zs // 2
 
     # Inlined from Methods.Machine.LamSlot.get_slot_desc_list
-    def get_slot_desc_list(self, sym=1, is_bore=True):
+    def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
         """Returns an ordered description of the slot
 
         Parameters
@@ -251,7 +255,7 @@ class LamSlot(Lamination):
         return slot_list
 
     # Inlined from Methods.Machine.LamSlot.get_surfaces_closing
-    def get_surfaces_closing(self, sym=1):
+    def get_surfaces_closing(self, sym: int = 1) -> list:
         """Return the surfaces needed to close the radii of the Lamination
 
         Parameters
@@ -288,7 +292,7 @@ class LamSlot(Lamination):
             return close_list
 
     # Inlined from Methods.Machine.LamSlot.get_Zs
-    def get_Zs(self):
+    def get_Zs(self) -> float:
         """Return the number of Slot of the Lamination
 
         Parameters
@@ -308,7 +312,7 @@ class LamSlot(Lamination):
             return self.slot.Zs
 
     # Inlined from Methods.Machine.LamSlot.has_magnet
-    def has_magnet(self):
+    def has_magnet(self) -> bool:
         """Return if LamSlot has magnets
 
         Parameters
@@ -329,7 +333,7 @@ class LamSlot(Lamination):
         )
 
     # Inlined from Methods.Machine.LamSlot.has_slot
-    def has_slot(self, is_bore=True):
+    def has_slot(self, is_bore: bool = True) -> bool:
         """Return if the lamination has slot on the requested radius
         (notches not taken into account, cf has_notch)
 
@@ -355,19 +359,19 @@ class LamSlot(Lamination):
     # Inlined from Methods.Machine.LamSlot.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_display=True,
-        is_show_fig=True,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_display: bool = True,
+        is_show_fig: bool = True,
+        is_winding_connection: bool = False,
+    ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination with empty Slots in a matplotlib fig
 
         Parameters
@@ -459,7 +463,7 @@ class LamSlot(Lamination):
             return patches
 
     # Inlined from Methods.Machine.LamSlot.set_pole_pair_number
-    def set_pole_pair_number(self, p):
+    def set_pole_pair_number(self, p: int) -> None:
         """Set the number of pair of pole of the Lamination
 
         Parameters

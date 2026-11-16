@@ -1,4 +1,4 @@
-def comp_height_gap(self):
+def comp_height_gap(self) -> float:
     """Computation of the Height of the gap between the Frame and Outer Lamination
 
     Parameters

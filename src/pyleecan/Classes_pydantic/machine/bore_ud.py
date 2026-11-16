@@ -36,7 +36,7 @@ class BoreUD(Bore):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreUD.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the Bore
 
         Parameters
@@ -55,7 +55,7 @@ class BoreUD(Bore):
         return self.sym, False
 
     # Inlined from Methods.Machine.BoreUD.get_bore_line
-    def get_bore_line(self, label=None):
+    def get_bore_line(self, label=None) -> list:
         """Return the bore line description
 
         Parameters

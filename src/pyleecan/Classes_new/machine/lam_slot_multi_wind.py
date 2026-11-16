@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,6 +21,12 @@ from .lam_slot import LamSlot
 from .lam_slot_multi import LamSlotMulti
 from .winding import Winding
 from .winding_sc import WindingSC
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..scidatatool.data_nd import DataND
 
 
 @dataclass(eq=False)
@@ -50,7 +56,13 @@ class LamSlotMultiWind(LamSlotMulti):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotMultiWind.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+    def build_geometry(
+        self,
+        sym=1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build the geometry of the LamSlotMulti with winding in slots
 
         Parameters
@@ -121,7 +133,7 @@ class LamSlotMultiWind(LamSlotMulti):
         return surf_list
 
     # Inlined from Methods.Machine.LamSlotMultiWind.comp_angle_d_axis
-    def comp_angle_d_axis(self, is_plot=False):
+    def comp_angle_d_axis(self, is_plot: bool = False) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
 
@@ -145,7 +157,12 @@ class LamSlotMultiWind(LamSlotMulti):
         return d_angle
 
     # Inlined from Methods.Machine.LamSlotMultiWind.comp_mmf_dir
-    def comp_mmf_dir(self, current_dir=None, phase_dir=None, is_plot=False):
+    def comp_mmf_dir(
+        self,
+        current_dir: int | None = None,
+        phase_dir: int | None = None,
+        is_plot: bool = False,
+    ) -> int:
         """Compute the rotation direction of the fundamental magnetomotive force induced by the winding
 
         Parameters
@@ -174,7 +191,14 @@ class LamSlotMultiWind(LamSlotMulti):
         return rot_dir
 
     # Inlined from Methods.Machine.LamSlotMultiWind.comp_mmf_unit
-    def comp_mmf_unit(self, Na, Nt, felec=1, current_dir=None, phase_dir=None):
+    def comp_mmf_unit(
+        self,
+        Na: int,
+        Nt: int,
+        felec: float = 1,
+        current_dir: int | None = None,
+        phase_dir: int | None = None,
+    ) -> tuple[DataND, DataND]:
         """Compute the winding Unit magnetomotive force
 
         Parameters
@@ -215,7 +239,13 @@ class LamSlotMultiWind(LamSlotMulti):
         return MMF_U, WF
 
     # Inlined from Methods.Machine.LamSlotMultiWind.comp_wind_function
-    def comp_wind_function(self, angle=None, Na=2048, alpha_mmf0=0, per_a=1):
+    def comp_wind_function(
+        self,
+        angle: np.ndarray | None = None,
+        Na: int = 2048,
+        alpha_mmf0: float = 0,
+        per_a: int = 1,
+    ) -> np.ndarray:
         """Computation of the winding function for the lamination.
         By convention a tooth is centered on the X axis
 
@@ -293,7 +323,7 @@ class LamSlotMultiWind(LamSlotMulti):
         return wf
 
     # Inlined from Methods.Machine.LamSlotMultiWind.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int | None:
         """Return the number of pair of pole of the Lamination
 
         Parameters
@@ -316,22 +346,22 @@ class LamSlotMultiWind(LamSlotMulti):
     # Inlined from Methods.Machine.LamSlotMultiWind.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_display=True,
-        is_add_sign=False,
-        is_show_fig=True,
-        save_path=None,
-        win_title=None,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_display: bool = True,
+        is_add_sign: bool = False,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        win_title: str | None = None,
+        is_winding_connection: bool = False,
+    ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination with empty Slots in a matplotlib fig
 
         Parameters
@@ -514,7 +544,13 @@ class LamSlotMultiWind(LamSlotMulti):
             return patches
 
     # Inlined from Methods.Machine.LamSlotMultiWind.plot_mmf_unit
-    def plot_mmf_unit(self, r_max=100, fig=None, save_path=None, is_show_fig=True):
+    def plot_mmf_unit(
+        self,
+        r_max=100,
+        fig: Figure | None = None,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+    ) -> None:
         """Plot the winding unit mmf as a function of space
         Parameters
         ----------

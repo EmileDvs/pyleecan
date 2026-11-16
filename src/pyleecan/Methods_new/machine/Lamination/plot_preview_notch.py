@@ -2,13 +2,18 @@ from ....Functions.Load.import_class import import_class
 import numpy as np
 from ....definitions import config_dict
 from matplotlib.patches import Patch
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
 STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
 
-def plot_preview_notch(self, index, fig=None, ax=None):
+def plot_preview_notch(self, index: int, fig: Figure | None = None, ax: Axes | None = None) -> tuple[Figure, Axes]:
     """Preview the position/shape of a notch on the lamination
 
     Parameters

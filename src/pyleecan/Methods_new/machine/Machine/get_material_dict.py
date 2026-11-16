@@ -1,7 +1,7 @@
 from ....Classes_new.material.material import Material
 
 
-def get_material_dict(self, path="self", is_unique=False):
+def get_material_dict(self, path: str = "self", is_unique: bool = False) -> dict:
     """
     Get the dict of materials contained in a Machine
 
@@ -33,7 +33,7 @@ def get_material_dict(self, path="self", is_unique=False):
         return mach_mat_dict
 
 
-def get_material(obj, path="self"):
+def get_material(obj, path="self") -> dict:
     """
     Get the dict of materials contained in a pyleecan object
 

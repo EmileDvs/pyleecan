@@ -3,7 +3,7 @@ import numpy as np
 from . import TYPE_SKEW_LIST
 
 
-def comp_angle(self):
+def comp_angle(self) -> None:
     """Compute skew angles and positions
     Parameters
     ----------

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Compute the surface of the Frame including the structural bars
 
     Parameters

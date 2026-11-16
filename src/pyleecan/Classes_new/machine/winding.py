@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,6 +26,10 @@ from .._legacy_class import LegacyClass
 from .._swat_em import datamodel
 from .conductor import Conductor
 from .end_winding import EndWinding
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -150,7 +154,7 @@ class Winding(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Winding.clean
-    def clean(self):
+    def clean(self) -> None:
         """Clean the internal properties (wind_mat and periodicity)
 
         Parameters
@@ -163,7 +167,9 @@ class Winding(LegacyClass):
         self.is_aper_a = None
 
     # Inlined from Methods.Machine.Winding.comp_connection_mat
-    def comp_connection_mat(self, Zs=None, p=None):
+    def comp_connection_mat(
+        self, Zs: int | None = None, p: int | None = None
+    ) -> np.ndarray:
         """Compute the Winding Matrix for
 
         Parameters
@@ -316,7 +322,7 @@ class Winding(LegacyClass):
         return wind_mat
 
     # Inlined from Methods.Machine.Winding.comp_length_endwinding
-    def comp_length_endwinding(self):
+    def comp_length_endwinding(self) -> float:
         """Compute the Winding overhang length on one side for a half-turn[m]
 
         Parameters
@@ -336,7 +342,7 @@ class Winding(LegacyClass):
             return self.Lewout + self.end_winding.comp_length()
 
     # Inlined from Methods.Machine.Winding.comp_Ncps
-    def comp_Ncps(self):
+    def comp_Ncps(self) -> float:
         """Compute the number of conductors per slot
 
         Parameters
@@ -364,7 +370,7 @@ class Winding(LegacyClass):
         return Ncps
 
     # Inlined from Methods.Machine.Winding.comp_Ncspc
-    def comp_Ncspc(self, Zs=None):
+    def comp_Ncspc(self, Zs: int | None = None) -> float:
         """Compute the number of coils in series per parallel circuit
 
         Parameters
@@ -399,7 +405,7 @@ class Winding(LegacyClass):
         return Ncspc
 
     # Inlined from Methods.Machine.Winding.comp_Ntsp
-    def comp_Ntsp(self, Zs=None):
+    def comp_Ntsp(self, Zs: int | None = None) -> float:
         """Compute the number of turns in series per phase
 
         Parameters
@@ -446,7 +452,7 @@ class Winding(LegacyClass):
         return Ntspc_eff
 
     # Inlined from Methods.Machine.Winding.comp_periodicity
-    def comp_periodicity(self, wind_mat=None):
+    def comp_periodicity(self, wind_mat: np.ndarray | None = None) -> tuple[int, bool]:
         """Computes the winding matrix (anti-)periodicity
 
         Parameters
@@ -524,7 +530,7 @@ class Winding(LegacyClass):
         return int(Nperw), bool(is_aper)
 
     # Inlined from Methods.Machine.Winding.comp_phasor_angle
-    def comp_phasor_angle(self, Zs=None):
+    def comp_phasor_angle(self, Zs: int | None = None) -> np.ndarray:
         """Compute the phasor angle of the winding phases related to the first slot
 
         Parameters
@@ -578,7 +584,7 @@ class Winding(LegacyClass):
         return angle_vec
 
     # Inlined from Methods.Machine.Winding.comp_winding_factor
-    def comp_winding_factor(self, Harmonics=[1]):
+    def comp_winding_factor(self, Harmonics: list[float] = [1]) -> np.ndarray:
         """Compute the winding factor of phase 1 (asuming symmetry)
 
         Parameters
@@ -636,16 +642,16 @@ class Winding(LegacyClass):
     # Inlined from Methods.Machine.Winding.export_to_csv
     def export_to_csv(
         self,
-        file_path=None,
-        is_add_header=True,
-        is_skip_empty=False,
+        file_path: str | None = None,
+        is_add_header: bool = True,
+        is_skip_empty: bool = False,
         *,
         ZS_NAME="Slot Id",
         COIL_NAME="Ntcoil",
         RAD_NAME="Rad Layer Id",
         TAN_NAME="Tan Layer Id",
         SEP=",",
-    ):
+    ) -> None:
         """Export the winding matrix to a csv file. One matrix for each phase
         Column Slot id, Ntcoil, Rad id, Tan id
 
@@ -715,7 +721,9 @@ class Winding(LegacyClass):
             csv_file.write(csv_txt)
 
     # Inlined from Methods.Machine.Winding.get_connection_mat
-    def get_connection_mat(self, Zs=None, p=None):
+    def get_connection_mat(
+        self, Zs: int | None = None, p: int | None = None
+    ) -> np.ndarray:
         """Get the Winding Matrix
 
         Parameters
@@ -777,7 +785,7 @@ class Winding(LegacyClass):
         return wind_mat.shape[0:2]
 
     # Inlined from Methods.Machine.Winding.get_periodicity
-    def get_periodicity(self):
+    def get_periodicity(self) -> tuple[int, bool]:
         """Computes the winding matrix (anti-)periodicity
 
         Parameters
@@ -802,13 +810,13 @@ class Winding(LegacyClass):
     # Inlined from Methods.Machine.Winding.plot_linear
     def plot_linear(
         self,
-        fig=None,
-        ax=None,
-        is_max_sym=True,
-        is_show_fig=True,
-        save_path=None,
-        win_title=None,
-        is_legend=True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_max_sym: bool = True,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        win_title: str | None = None,
+        is_legend: bool = True,
     ):
         """Plots the winding linear pattern. Method based on plot_overhang method of swat-em module
 
@@ -1194,7 +1202,7 @@ class Winding(LegacyClass):
         return fig, ax
 
     # Inlined from Methods.Machine.Winding.plot_radial
-    def plot_radial(self, is_show_fig=True):
+    def plot_radial(self, is_show_fig: bool = True) -> None:
         """Plots the winding radial pattern
 
         Parameters

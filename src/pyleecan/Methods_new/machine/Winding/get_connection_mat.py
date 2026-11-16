@@ -1,8 +1,12 @@
 from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat, reverse_layer, change_layer, permute_B_C
 from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
-def get_connection_mat(self, Zs=None, p=None):
+def get_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np.ndarray:
     """Get the Winding Matrix
 
     Parameters

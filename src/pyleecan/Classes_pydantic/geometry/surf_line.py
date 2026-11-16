@@ -34,7 +34,7 @@ class SurfLine(Surface):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.SurfLine.check
-    def check(self):
+    def check(self) -> None:
         """assert the Surface is correct
 
         Parameters
@@ -193,7 +193,7 @@ class SurfLine(Surface):
     def get_patches(
         self,
         color=None,
-        edgecolor=None,
+        edgecolor: str | None = None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
         hatch: str | None = None,
@@ -314,7 +314,7 @@ class SurfLine(Surface):
         return fig, ax
 
     # Inlined from Methods.Geometry.SurfLine.rotate
-    def rotate(self, angle: float):
+    def rotate(self, angle: float) -> None:
         """Rotate the surface
 
         Parameters
@@ -340,7 +340,7 @@ class SurfLine(Surface):
             self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.SurfLine.scale
-    def scale(self, scale_factor: float):
+    def scale(self, scale_factor: float) -> None:
         """Scale the coordinates of the lines
 
         Parameters
@@ -360,7 +360,7 @@ class SurfLine(Surface):
         self.point_ref = self.point_ref * scale_factor
 
     # Inlined from Methods.Geometry.SurfLine.translate
-    def translate(self, Zt: complex):
+    def translate(self, Zt: complex) -> None:
         """Translate the surface
 
         Parameters

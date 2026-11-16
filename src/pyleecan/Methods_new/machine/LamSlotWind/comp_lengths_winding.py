@@ -1,4 +1,4 @@
-def comp_lengths_winding(self):
+def comp_lengths_winding(self) -> dict:
     """Compute the lengths of the Lamination's Winding.
     - Lwtot : total length of lamination winding incl. end-windings and
     radial ventilation ducts [m].

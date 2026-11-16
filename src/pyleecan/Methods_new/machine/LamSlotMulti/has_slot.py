@@ -1,4 +1,4 @@
-def has_slot(self, is_bore=True):
+def has_slot(self, is_bore: bool = True) -> bool:
     """Return if the lamination has slot on the requested radius
     (notches not taken into account, cf has_notch)
 

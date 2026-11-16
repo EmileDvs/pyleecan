@@ -2,7 +2,7 @@ from . import *
 import numpy as np
 
 
-def check(self):
+def check(self) -> None:
     """Make sure that the ventilation parameters are correctly set
 
     Parameters

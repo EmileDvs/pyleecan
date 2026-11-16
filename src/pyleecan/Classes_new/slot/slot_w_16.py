@@ -256,7 +256,7 @@ class SlotW16(Slot):
         return [line for line in curve_list if line is not None]
 
     # Inlined from Methods.Slot.SlotW16.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotW16 object is correct
 
         Parameters

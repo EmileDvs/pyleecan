@@ -5,15 +5,19 @@ from matplotlib.patches import Patch
 from ....definitions import config_dict
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.labels import decode_label, HOLEM_LAB, LAM_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
 
 
 def _plot_arrow_mag(
     self,
-    ax=None,
-    sym=1,
-    alpha=0,
-    delta=0,
-):
+    ax: Axes | None = None,
+    sym: int = 1,
+    alpha: float = 0,
+    delta: complex = 0,
+) -> None:
     """Plot the magnetization direction as arrow on top of the lamination
     (meant to be called by LamHole.plot)
 

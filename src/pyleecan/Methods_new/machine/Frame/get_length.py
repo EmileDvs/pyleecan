@@ -1,4 +1,4 @@
-def get_length(self):
+def get_length(self) -> float:
     """Return the length of the Frame
 
     Parameters

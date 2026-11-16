@@ -5,11 +5,15 @@ import numpy as np
 from ....Functions_new.Plot import dict_2D
 from ....definitions import config_dict
 from ....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 
 
-def plot_mmf_unit(self, save_path=None, is_show_fig=False):
+def plot_mmf_unit(self, save_path: str | None = None, is_show_fig: bool = False) -> Figure:
     """Plot the winding unit mmf as a function of space
 
     Parameters

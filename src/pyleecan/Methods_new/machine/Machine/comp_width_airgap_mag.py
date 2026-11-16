@@ -1,4 +1,4 @@
-def comp_width_airgap_mag(self):
+def comp_width_airgap_mag(self) -> float:
     """Compute the magnetic airgap (distance beetween the two Lamination)
 
     Parameters

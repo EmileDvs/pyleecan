@@ -391,7 +391,7 @@ class SlotW60(Slot):
         return surf_list
 
     # Inlined from Methods.Slot.SlotW60.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotW60 object is correct
 
         Parameters

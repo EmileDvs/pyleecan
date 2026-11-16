@@ -7,7 +7,7 @@ TAN_NAME = "Tan Layer Id"
 SEP = ","
 
 
-def export_to_csv(self, file_path=None, is_add_header=True, is_skip_empty=False):
+def export_to_csv(self, file_path: str | None = None, is_add_header: bool = True, is_skip_empty: bool = False) -> None:
     """Export the winding matrix to a csv file. One matrix for each phase
     Column Slot id, Ntcoil, Rad id, Tan id
 

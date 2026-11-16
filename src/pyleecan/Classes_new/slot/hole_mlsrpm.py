@@ -337,7 +337,7 @@ class HoleMLSRPM(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleMLSRPM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the HoleMLSRPM object is correct
 
         Parameters
@@ -886,7 +886,7 @@ class HoleMLSRPM(HoleMag):
             return fig, ax
 
     # Inlined from Methods.Slot.HoleMLSRPM.remove_magnet
-    def remove_magnet(self):
+    def remove_magnet(self) -> None:
         """Remove the magnet (set to None) of the Hole
 
         Parameters

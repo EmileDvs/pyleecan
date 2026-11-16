@@ -8,6 +8,11 @@ from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
 from ....Classes_new.machine.winding_sc import WindingSC
 from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 PLUS_HATCH = "++"
@@ -16,22 +21,22 @@ MINUS_HATCH = ".."
 
 def plot(
     self,
-    fig=None,
-    ax=None,
-    is_lam_only=False,
-    sym=1,
-    alpha=0,
-    delta=0,
-    is_edge_only=False,
-    edgecolor=None,
-    is_add_arrow=False,
-    is_display=True,
-    is_add_sign=False,
-    is_show_fig=True,
-    save_path=None,
-    win_title=None,
-    is_winding_connection=False,
-):
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_lam_only: bool = False,
+    sym: int = 1,
+    alpha: float = 0,
+    delta: complex = 0,
+    is_edge_only: bool = False,
+    edgecolor: str | None = None,
+    is_add_arrow: bool = False,
+    is_display: bool = True,
+    is_add_sign: bool = False,
+    is_show_fig: bool = True,
+    save_path: str | None = None,
+    win_title: str | None = None,
+    is_winding_connection: bool = False,
+) -> list | tuple[Figure, Axes]:
     """Plot the Lamination with empty Slots in a matplotlib fig
 
     Parameters

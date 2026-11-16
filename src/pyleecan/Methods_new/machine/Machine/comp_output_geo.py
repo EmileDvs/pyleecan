@@ -1,7 +1,7 @@
 from ....Classes_new.output.out_geo import OutGeo
 
 
-def comp_output_geo(self):
+def comp_output_geo(self) -> OutGeo:
     """Compute the main geometry output
 
     Parameters

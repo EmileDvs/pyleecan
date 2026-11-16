@@ -1,7 +1,7 @@
 from . import LMC_SlotTooLong
 
 
-def check(self):
+def check(self) -> None:
     """Check that the Lamination object is correct
 
     Parameters

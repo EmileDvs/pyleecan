@@ -1,4 +1,4 @@
-def check(self):
+def check(self) -> None:
     """assert the Surface is correct
 
     Parameters

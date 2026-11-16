@@ -1,4 +1,4 @@
-def get_surfaces_closing(self, sym=1):
+def get_surfaces_closing(self, sym: int = 1) -> list:
     """Return the surfaces needed to close the radii of the Lamination
 
     Parameters

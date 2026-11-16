@@ -1,4 +1,4 @@
-def get_magnet_number(self, sym=1):
+def get_magnet_number(self, sym: int = 1) -> int:
     """Return the number of magnet on the Lamination
 
     Parameters

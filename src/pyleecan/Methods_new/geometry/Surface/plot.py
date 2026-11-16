@@ -12,10 +12,10 @@ PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
 
 def plot(
     self,
-    fig=None,
-    ax=None,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
     color=PATCH_COLOR,
-    edgecolor=PATCH_EDGE,
+    edgecolor: str = PATCH_EDGE,
     is_edge_only: bool = False,
     linestyle: str | None = None,
     is_disp_point_ref: bool = False,

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_volume(self):
+def comp_volume(self) -> float:
     """Compute the volume of the Frame
 
     Parameters

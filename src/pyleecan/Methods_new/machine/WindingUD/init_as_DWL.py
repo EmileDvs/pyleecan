@@ -5,7 +5,7 @@ from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
 from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
 
 
-def init_as_DWL(self, Zs=None, nlay=1):
+def init_as_DWL(self, Zs: int | None = None, nlay: int = 1) -> None:
     """Compute the Winding Matrix (for winding type 3 or 4) (Nlay_rad=1 or 2,Nlay_tan=1)
     type 3 or 4 : DISTRIBUTED SHORTED PITCH INTEGRAL WINDING
 

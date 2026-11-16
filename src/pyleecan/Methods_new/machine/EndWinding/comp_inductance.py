@@ -1,4 +1,4 @@
-def comp_inductance(self):
+def comp_inductance(self) -> float:
     """Return the enforced end winding inductance
 
     Parameters

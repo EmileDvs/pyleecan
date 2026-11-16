@@ -25,7 +25,7 @@ class MachineSCIM(MachineDFIM):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSCIM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Machine object is correct
 
         Parameters
@@ -66,7 +66,7 @@ class MachineSCIM(MachineDFIM):
             raise M1C_RingTooLarge("The Ring is larger than the stator internal radius")
 
     # Inlined from Methods.Machine.MachineSCIM.get_machine_type
-    def get_machine_type(self):
+    def get_machine_type(self) -> str:
         """Return a string with the may information about the machine architecture
 
         Parameters

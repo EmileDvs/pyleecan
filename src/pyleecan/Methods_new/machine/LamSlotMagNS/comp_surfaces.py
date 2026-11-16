@@ -2,7 +2,7 @@ import numpy as np
 from ....Classes_new.machine.lam_slot import LamSlot
 
 
-def comp_surfaces(self):
+def comp_surfaces(self) -> dict:
     """Compute the Lamination surfaces (Slam, Svent, Sslot, Smag)
 
     Parameters

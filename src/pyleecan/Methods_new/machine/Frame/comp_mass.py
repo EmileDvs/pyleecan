@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_mass(self):
+def comp_mass(self) -> float:
     """Compute the mass of the Frame
 
     Parameters

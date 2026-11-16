@@ -26,7 +26,7 @@ class EndWindingCirc(EndWinding):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.EndWindingCirc.comp_inductance
-    def comp_inductance(self):
+    def comp_inductance(self) -> float:
         """Compute the end winding inductance from "Design of Brushless Permanent-Magnet Machines", J.R Henderson, 2010
 
         Parameters
@@ -87,7 +87,7 @@ class EndWindingCirc(EndWinding):
         return Lw
 
     # Inlined from Methods.Machine.EndWindingCirc.comp_length
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the end winding conductor length on one side for a half-turn
         excluding the straight conductor length outside of the lamination (winding.Lewout).
 

@@ -2,7 +2,7 @@ from ..Slot import SlotCheckError
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """Check that the HoleM60 object is correct
 
     Parameters

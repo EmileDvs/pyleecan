@@ -916,7 +916,12 @@ class Slot(LegacyModel):
             )
 
     # Inlined from Methods.Slot.Slot.plot
-    def plot(self, fig=None, ax=None, is_show_fig=True) -> tuple[Figure, Axes]:
+    def plot(
+        self,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_show_fig: bool = True,
+    ) -> tuple[Figure, Axes]:
         """Plot the Slot in a matplotlib fig
 
         Parameters
@@ -960,8 +965,8 @@ class Slot(LegacyModel):
     def plot_active(
         self,
         wind_mat: np.ndarray | None = None,
-        fig=None,
-        ax=None,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
         is_bar: bool = False,
         is_show_fig: bool = True,
         enforced_default_color: str | None = None,
@@ -1135,7 +1140,9 @@ class Slot(LegacyModel):
         return "w"  # If all the phase are at 0 : the zone is empty => white
 
     # Inlined from Methods.Slot.Slot.set_label
-    def set_label(self, surf_list: list[Surface], Nrad: int, Ntan: int, lam_label: str):
+    def set_label(
+        self, surf_list: list[Surface], Nrad: int, Ntan: int, lam_label: str
+    ) -> None:
         """Set the normalized label on the active surface
         (internal method of build_geometry_active)
 

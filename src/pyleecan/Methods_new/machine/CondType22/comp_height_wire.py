@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_height_wire(self):
+def comp_height_wire(self) -> float:
     """Return wire height
 
     Parameters

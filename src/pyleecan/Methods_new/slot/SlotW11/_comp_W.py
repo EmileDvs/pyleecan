@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def _comp_W(self):
+def _comp_W(self) -> None:
     """Compute W1 and W2 method (cste tooth compatibility)
 
     Parameters

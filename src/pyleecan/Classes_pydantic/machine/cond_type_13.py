@@ -1,11 +1,15 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/CondType13.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import Field
 
 from .conductor import Conductor
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 class CondType13(Conductor):
@@ -50,7 +54,7 @@ class CondType13(Conductor):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType13.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the conductor
 
         Parameters
@@ -68,7 +72,7 @@ class CondType13(Conductor):
         return (2 * self.Wins_wire + self.Wwire) * self.Nwppc_rad
 
     # Inlined from Methods.Machine.CondType13.comp_height_wire
-    def comp_height_wire(self):
+    def comp_height_wire(self) -> float:
         """Return wire diameter
 
         Parameters
@@ -86,7 +90,7 @@ class CondType13(Conductor):
         return self.Wwire
 
     # Inlined from Methods.Machine.CondType13.comp_nb_circumferential_wire
-    def comp_nb_circumferential_wire(self):
+    def comp_nb_circumferential_wire(self) -> int:
         """Return number of adjacent wires in circumferential direction
 
         Parameters
@@ -104,7 +108,7 @@ class CondType13(Conductor):
         return self.Nwppc_tan
 
     # Inlined from Methods.Machine.CondType13.comp_nb_radial_wire
-    def comp_nb_radial_wire(self):
+    def comp_nb_radial_wire(self) -> int:
         """Return number of adjacent wires in radial direction
 
         Parameters
@@ -122,7 +126,7 @@ class CondType13(Conductor):
         return self.Nwppc_rad
 
     # Inlined from Methods.Machine.CondType13.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the conductor
 
         Parameters
@@ -142,7 +146,7 @@ class CondType13(Conductor):
         return S
 
     # Inlined from Methods.Machine.CondType13.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the active surface of the conductor
 
         Parameters
@@ -162,7 +166,7 @@ class CondType13(Conductor):
         return Sact
 
     # Inlined from Methods.Machine.CondType13.comp_width
-    def comp_width(self):
+    def comp_width(self) -> float:
         """Compute the width of the conductor
 
         Parameters
@@ -180,7 +184,7 @@ class CondType13(Conductor):
         return (2 * self.Wins_wire + self.Wwire) * self.Nwppc_tan
 
     # Inlined from Methods.Machine.CondType13.comp_width_wire
-    def comp_width_wire(self):
+    def comp_width_wire(self) -> float:
         """Return wire diameter
 
         Parameters
@@ -198,7 +202,7 @@ class CondType13(Conductor):
         return self.Wwire
 
     # Inlined from Methods.Machine.CondType13.is_round_wire
-    def is_round_wire(self):
+    def is_round_wire(self) -> bool:
         """Return if wire is round
 
         Parameters
@@ -216,7 +220,12 @@ class CondType13(Conductor):
         return True
 
     # Inlined from Methods.Machine.CondType13.plot
-    def plot(self, is_show_fig=True, fig=None, ax=None):
+    def plot(
+        self,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ):
         """Plot a Conductor in a matplotlib fig
 
         Parameters
@@ -242,13 +251,13 @@ class CondType13(Conductor):
     # Inlined from Methods.Machine.CondType13.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
+        is_default: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
     ):
         """Plot the schematics of the slot
 

@@ -4,7 +4,7 @@ from ..Slot import SlotCheckError
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotW23 object is correct
 
     Parameters

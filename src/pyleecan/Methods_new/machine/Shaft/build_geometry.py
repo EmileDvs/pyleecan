@@ -6,7 +6,7 @@ import numpy as np
 from ....Functions_new.labels import SHAFT_LAB, NO_LAM_LAB, BOUNDARY_PROP_LAB, SHAFTSR_LAB, SHAFTSL_LAB, SHAFTR_LAB
 
 
-def build_geometry(self, sym=1, alpha=0, delta=0):
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:
     """Build the geometry of the shaft
 
     Parameters

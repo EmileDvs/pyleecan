@@ -2,7 +2,7 @@ import numpy as np
 from . import WindingError
 
 
-def comp_winding_factor(self, Harmonics=[1]):
+def comp_winding_factor(self, Harmonics: list[float] = [1]) -> np.ndarray:
     """Compute the winding factor of phase 1 (asuming symmetry)
 
     Parameters

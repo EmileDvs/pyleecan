@@ -9,7 +9,7 @@ from ....Functions.Load.import_class import import_class
 from ...simulation.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
 
 
-def comp_mmf_unit(self, Na=None, Nt=None, felec=1, current_dir=None, phase_dir=None):
+def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: float = 1, current_dir: int | None = None, phase_dir: int | None = None) -> tuple[DataTime, DataTime]:
     """Compute the winding unit magnetomotive force for given inputs
 
     Parameters

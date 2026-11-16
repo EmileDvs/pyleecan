@@ -4,7 +4,7 @@ from ....Functions_new.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 import numpy as np
 
 
-def build_geometry_key(self, index=0, sym=1, alpha=0, delta=0):
+def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:
     """Build the geometry of the keys inside the notch
 
     Parameters

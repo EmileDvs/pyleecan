@@ -98,11 +98,11 @@ class Surface(LegacyClass):
         nodeprop=None,
         maxseg=None,
         FEMM_dict: dict | None = None,
-        hide=False,
+        hide: bool = False,
         BC_dict: dict | None = None,
         is_draw: bool = True,
         type_set_BC=0,
-    ):
+    ) -> None:
         """draw the Surface in FEMM
 
         Parameters
@@ -302,10 +302,10 @@ class Surface(LegacyClass):
     # Inlined from Methods.Geometry.Surface.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
         color=None,
-        edgecolor=None,
+        edgecolor: str = None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
         is_disp_point_ref: bool = False,

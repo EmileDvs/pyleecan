@@ -16,11 +16,11 @@ def draw_FEMM(
     nodeprop=None,
     maxseg=None,
     FEMM_dict: dict | None = None,
-    hide=False,
+    hide: bool = False,
     BC_dict: dict | None = None,
     is_draw: bool = True,
     type_set_BC=0,
-):
+) -> None:
     """draw the Surface in FEMM
 
     Parameters

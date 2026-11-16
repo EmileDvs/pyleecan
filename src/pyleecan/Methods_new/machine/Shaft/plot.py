@@ -2,21 +2,26 @@ from matplotlib.patches import Patch
 
 from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 SHAFT_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SHAFT_COLOR"]
 
 
 def plot(
     self,
-    fig=None,
-    ax=None,
-    sym=1,
-    alpha=0,
-    delta=0,
-    is_edge_only=False,
-    edgecolor=None,
-    is_show_fig=True,
-):
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    sym: int = 1,
+    alpha: float = 0,
+    delta: complex = 0,
+    is_edge_only: bool = False,
+    edgecolor: str | None = None,
+    is_show_fig: bool = True,
+) -> tuple[Figure, Axes]:
     """Plot the Shaft in a matplotlib fig
 
     Parameters

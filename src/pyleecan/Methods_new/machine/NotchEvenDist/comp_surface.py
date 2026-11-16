@@ -1,4 +1,4 @@
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Compute the surface of ALL THE NOTCHES
 
     Parameters

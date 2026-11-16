@@ -85,6 +85,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `ty`. Local containers passed to a container field are declared with the
   field type (`curve_list: list[Line] = list()`), and local dicts unpacked as
   keyword arguments as `dict[str, Any]` (Slot: 198 -> 20 `ty` diagnostics).
+  Machine hinted (445/458 parameters, 321/337 returns), with rules for
+  undocumented returns (`-> None`) and conventional parameters, unions
+  (`X or Y`, Returns alternatives), `| None` for explicit `return None`.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,

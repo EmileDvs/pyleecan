@@ -33,7 +33,7 @@ class MachineSyRM(MachineSync):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSyRM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Machine object is correct
 
         Parameters
@@ -68,7 +68,7 @@ class MachineSyRM(MachineSync):
             raise MSy_PError("The stator and the rotor must have the same value for p")
 
     # Inlined from Methods.Machine.MachineSyRM.get_machine_type
-    def get_machine_type(self):
+    def get_machine_type(self) -> str:
         """Return a string with the may information about the machine architecture
 
         Parameters

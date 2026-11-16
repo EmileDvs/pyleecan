@@ -1,4 +1,4 @@
-def has_notch(self, is_bore):
+def has_notch(self, is_bore: bool) -> bool:
     """Check if notches are set on the requested radius
 
     Parameters

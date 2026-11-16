@@ -1,4 +1,4 @@
-def comp_masses(self):
+def comp_masses(self) -> dict:
     """Compute the masses of the Lamination
 
     Parameters

@@ -1,4 +1,4 @@
-def comp_angle_rotor_initial(self):
+def comp_angle_rotor_initial(self) -> float:
     """Compute rotor initial angle between rotor and stator d-axes
     Parameters
     ----------

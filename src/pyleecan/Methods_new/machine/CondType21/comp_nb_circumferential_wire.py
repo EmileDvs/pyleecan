@@ -1,4 +1,4 @@
-def comp_nb_circumferential_wire(self):
+def comp_nb_circumferential_wire(self) -> int:
     """Return number of adjacent wires in circumferential direction
 
     Parameters

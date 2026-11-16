@@ -1,7 +1,11 @@
 from ....Functions_new.labels import decode_label
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.magnet import Magnet
 
 
-def get_magnet_by_label(self, label=None, label_dict=None):
+def get_magnet_by_label(self, label: str | None = None, label_dict: dict | None = None) -> Magnet:
     """Return the magnet corresponding to the label
 
     Parameters

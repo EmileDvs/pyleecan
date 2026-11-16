@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -11,6 +11,12 @@ from ...Functions_new.labels import update_RTS_index
 from ..slot.hole import Hole
 from .lam_slot_wind import LamSlotWind
 from .lam_squirrel_cage import LamSquirrelCage
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..slot.hole import Hole
 
 
 @dataclass(eq=False)
@@ -31,7 +37,13 @@ class LamSquirrelCageMag(LamSquirrelCage):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+    def build_geometry(
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build geometry of the LamSquirrelCage
 
         Parameters
@@ -101,7 +113,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
         return surf_list
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Lamination object is correct
 
         Parameters
@@ -130,7 +142,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
             assert hole.Zh / 2 == p
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surfaces
 
         Parameters
@@ -174,7 +186,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
         return S_dict
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.get_hole_list
-    def get_hole_list(self):
+    def get_hole_list(self) -> list[Hole]:
         """Return the list of all the holes
 
         Parameters
@@ -192,7 +204,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
         return self.hole
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int:
         """Return the number of pair of pole of the Lamination
 
         Parameters
@@ -217,18 +229,18 @@ class LamSquirrelCageMag(LamSquirrelCage):
     # Inlined from Methods.Machine.LamSquirrelCageMag.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_show_fig=True,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_show_fig: bool = True,
+        is_winding_connection: bool = False,
+    ) -> tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
         Parameters
@@ -299,7 +311,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
         return fig, ax
 
     # Inlined from Methods.Machine.LamSquirrelCageMag.set_pole_pair_number
-    def set_pole_pair_number(self, p):
+    def set_pole_pair_number(self, p: int) -> None:
         """Set the number of pair of pole of the Lamination
 
         Parameters

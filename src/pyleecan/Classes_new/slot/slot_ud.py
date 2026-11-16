@@ -74,7 +74,7 @@ class SlotUD(Slot):
         return [line.copy() for line in self.line_list]
 
     # Inlined from Methods.Slot.SlotUD.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotUD is correctly defined"""
 
         if self.line_list is None:
@@ -220,7 +220,9 @@ class SlotUD(Slot):
         return [surface]
 
     # Inlined from Methods.Slot.SlotUD.set_from_point_list
-    def set_from_point_list(self, point_list: list[complex], is_sym: bool = False):
+    def set_from_point_list(
+        self, point_list: list[complex], is_sym: bool = False
+    ) -> None:
         """Set the line_list from a point list (connected by Segments)
 
         Parameters

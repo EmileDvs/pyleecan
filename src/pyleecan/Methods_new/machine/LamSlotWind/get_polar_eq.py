@@ -1,7 +1,11 @@
 from ....Classes_new.slot.slot_w_22 import SlotW22
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
 
-def get_polar_eq(self):
+def get_polar_eq(self) -> LamSlotWind:
     """Returns a polar equivalent of the lamination
 
     Parameters

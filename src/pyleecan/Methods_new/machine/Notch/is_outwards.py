@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def is_outwards(self):
+def is_outwards(self) -> bool:
     """Return if the notch is outwards (on an external lamination) or inwards
     (on an internal lamination).
     (to make lam.notch[ii].notch_shape match lam.slot parent)

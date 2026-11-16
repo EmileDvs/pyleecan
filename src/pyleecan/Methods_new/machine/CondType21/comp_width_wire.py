@@ -1,4 +1,4 @@
-def comp_width_wire(self):
+def comp_width_wire(self) -> float:
     """Return bar width
 
     Parameters

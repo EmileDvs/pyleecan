@@ -1,8 +1,10 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/LamSlotWind.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -45,6 +47,15 @@ from .winding import Winding
 from .winding_sc import WindingSC
 from .winding_ud import WindingUD
 
+if TYPE_CHECKING:
+    from typing import Any
+
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..output.out_geo_lam import OutGeoLam
+    from .lam_slot_wind import LamSlotWind
+
 
 @dataclass(eq=False)
 class LamSlotWind(LamSlot):
@@ -73,7 +84,13 @@ class LamSlotWind(LamSlot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotWind.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+    def build_geometry(
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build the geometry of the Lamination with winding in slots
 
         Parameters
@@ -205,7 +222,7 @@ class LamSlotWind(LamSlot):
         return surf_list
 
     # Inlined from Methods.Machine.LamSlotWind.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Lamination object is correct
 
         Parameters
@@ -243,7 +260,7 @@ class LamSlotWind(LamSlot):
         """
 
     # Inlined from Methods.Machine.LamSlotWind.comp_angle_d_axis
-    def comp_angle_d_axis(self, is_plot=False):
+    def comp_angle_d_axis(self, is_plot: bool = False) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         Parameters
@@ -309,7 +326,7 @@ class LamSlotWind(LamSlot):
         return d_angle
 
     # Inlined from Methods.Machine.LamSlotWind.comp_fill_factor
-    def comp_fill_factor(self):
+    def comp_fill_factor(self) -> float:
         """Compute the fill factor of the winding
 
         Parameters
@@ -340,7 +357,7 @@ class LamSlotWind(LamSlot):
             return S_wind_act / S_slot_wind
 
     # Inlined from Methods.Machine.LamSlotWind.comp_lengths_winding
-    def comp_lengths_winding(self):
+    def comp_lengths_winding(self) -> dict:
         """Compute the lengths of the Lamination's Winding.
         - Lwtot : total length of lamination winding incl. end-windings and
         radial ventilation ducts [m].
@@ -398,7 +415,7 @@ class LamSlotWind(LamSlot):
         }
 
     # Inlined from Methods.Machine.LamSlotWind.comp_masses
-    def comp_masses(self):
+    def comp_masses(self) -> dict:
         """Compute the Lamination masses
 
         Parameters
@@ -455,7 +472,12 @@ class LamSlotWind(LamSlot):
         return M_dict
 
     # Inlined from Methods.Machine.LamSlotWind.comp_mmf_dir
-    def comp_mmf_dir(self, current_dir=None, phase_dir=None, is_plot=False):
+    def comp_mmf_dir(
+        self,
+        current_dir: int | None = None,
+        phase_dir: int | None = None,
+        is_plot: bool = False,
+    ) -> int:
         """Compute the rotation direction of the fundamental magnetomotive force induced by the winding
 
         Parameters
@@ -506,8 +528,13 @@ class LamSlotWind(LamSlot):
 
     # Inlined from Methods.Machine.LamSlotWind.comp_mmf_unit
     def comp_mmf_unit(
-        self, Na=None, Nt=None, felec=1, current_dir=None, phase_dir=None
-    ):
+        self,
+        Na: int | None = None,
+        Nt: int | None = None,
+        felec: float = 1,
+        current_dir: int | None = None,
+        phase_dir: int | None = None,
+    ) -> tuple[DataTime, DataTime]:
         """Compute the winding unit magnetomotive force for given inputs
 
         Parameters
@@ -659,7 +686,7 @@ class LamSlotWind(LamSlot):
         return MMF_U, WF
 
     # Inlined from Methods.Machine.LamSlotWind.comp_number_phase_eq
-    def comp_number_phase_eq(self):
+    def comp_number_phase_eq(self) -> float:
         """Compute the equivalent number of phase
 
         Parameters
@@ -676,7 +703,7 @@ class LamSlotWind(LamSlot):
         return float(self.winding.qs)
 
     # Inlined from Methods.Machine.LamSlotWind.comp_output_geo
-    def comp_output_geo(self):
+    def comp_output_geo(self) -> OutGeoLam:
         """Compute the main geometry output
 
         Parameters
@@ -704,7 +731,7 @@ class LamSlotWind(LamSlot):
         return output
 
     # Inlined from Methods.Machine.LamSlotWind.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the lamination
 
         Parameters
@@ -733,7 +760,7 @@ class LamSlotWind(LamSlot):
         return int(per_a), bool(is_antiper_a)
 
     # Inlined from Methods.Machine.LamSlotWind.comp_resistance_wind
-    def comp_resistance_wind(self, T=20):
+    def comp_resistance_wind(self, T: float = 20) -> float:
         """Compute the DC winding resistance per phase without skin effect at average temperature T degC
 
         Parameters
@@ -774,7 +801,7 @@ class LamSlotWind(LamSlot):
         return R
 
     # Inlined from Methods.Machine.LamSlotWind.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surfaces (Slam, Svent, Sslot, Swind)
 
         Parameters
@@ -801,7 +828,7 @@ class LamSlotWind(LamSlot):
         return S_dict
 
     # Inlined from Methods.Machine.LamSlotWind.comp_volumes
-    def comp_volumes(self):
+    def comp_volumes(self) -> dict:
         """Compute the Lamination volumes (Vlam, Vvent, Vslot, Vwind)
 
         Parameters
@@ -827,7 +854,13 @@ class LamSlotWind(LamSlot):
         return V_dict
 
     # Inlined from Methods.Machine.LamSlotWind.comp_wind_function
-    def comp_wind_function(self, angle=None, Na=2048, alpha_mmf0=0, per_a=1):
+    def comp_wind_function(
+        self,
+        angle: np.ndarray | None = None,
+        Na: int = 2048,
+        alpha_mmf0: float = 0,
+        per_a: int = 1,
+    ) -> np.ndarray:
         """Computation of the winding function for the lamination.
         By convention a tooth is centered on the X axis
 
@@ -903,7 +936,7 @@ class LamSlotWind(LamSlot):
         return wf
 
     # Inlined from Methods.Machine.LamSlotWind.get_polar_eq
-    def get_polar_eq(self):
+    def get_polar_eq(self) -> LamSlotWind:
         """Returns a polar equivalent of the lamination
 
         Parameters
@@ -936,7 +969,7 @@ class LamSlotWind(LamSlot):
         return polar_eq
 
     # Inlined from Methods.Machine.LamSlotWind.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int | None:
         """Return the number of pair of pole of the Lamination
 
         Parameters
@@ -959,25 +992,25 @@ class LamSlotWind(LamSlot):
     # Inlined from Methods.Machine.LamSlotWind.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_display=True,
-        is_add_sign=True,
-        is_show_fig=True,
-        save_path=None,
-        win_title=None,
-        is_legend=True,
-        is_clean_plot=False,
-        is_winding_connection=False,
-        is_winding_connection_phase_A=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_display: bool = True,
+        is_add_sign: bool = True,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        win_title: str | None = None,
+        is_legend: bool = True,
+        is_clean_plot: bool = False,
+        is_winding_connection: bool = False,
+        is_winding_connection_phase_A: bool = False,
+    ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
         Parameters
@@ -1030,7 +1063,7 @@ class LamSlotWind(LamSlot):
         # Arrow style
         head = None
         style = "Simple, tail_width=2, head_width=8, head_length=12"
-        kw = dict(arrowstyle=style, linewidth=0.8, edgecolor="k")
+        kw: dict[str, Any] = dict(arrowstyle=style, linewidth=0.8, edgecolor="k")
 
         # If the winding is user defined, we can not plot the radial pattern
         if isinstance(self.winding, WindingUD):
@@ -1371,7 +1404,9 @@ class LamSlotWind(LamSlot):
             return patches
 
     # Inlined from Methods.Machine.LamSlotWind.plot_mmf_unit
-    def plot_mmf_unit(self, save_path=None, is_show_fig=False):
+    def plot_mmf_unit(
+        self, save_path: str | None = None, is_show_fig: bool = False
+    ) -> Figure:
         """Plot the winding unit mmf as a function of space
 
         Parameters
@@ -1440,11 +1475,11 @@ class LamSlotWind(LamSlot):
     # Inlined from Methods.Machine.LamSlotWind.plot_winding
     def plot_winding(
         self,
-        wind_mat=None,
-        all_slot=False,
-        is_show_fig=True,
-        save_path=None,
-        win_title=None,
+        wind_mat: np.ndarray | None = None,
+        all_slot: bool = False,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        win_title: str | None = None,
     ):
         """Plot the Winding in a matplotlib fig
 
@@ -1609,7 +1644,7 @@ class LamSlotWind(LamSlot):
         return fig, ax
 
     # Inlined from Methods.Machine.LamSlotWind.set_pole_pair_number
-    def set_pole_pair_number(self, p):
+    def set_pole_pair_number(self, p: int) -> None:
         """Set the number of pair of pole of the Lamination
 
         Parameters

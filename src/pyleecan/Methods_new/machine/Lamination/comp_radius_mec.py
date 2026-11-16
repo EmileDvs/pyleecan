@@ -1,4 +1,4 @@
-def comp_radius_mec(self):
+def comp_radius_mec(self) -> float:
     """Compute the mechanical radius of the Lamination [m]
 
     Parameters

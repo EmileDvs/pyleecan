@@ -1,7 +1,7 @@
 from . import WindingError
 
 
-def comp_Ncps(self):
+def comp_Ncps(self) -> float:
     """Compute the number of conductors per slot
 
     Parameters

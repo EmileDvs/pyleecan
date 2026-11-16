@@ -6,9 +6,13 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.surf_ring import SurfRing
 import numpy as np
 from copy import deepcopy
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
-def build_geometry_bar(self, sym=1, alpha=0, delta=0):
+def build_geometry_bar(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:
     """Build the geometry of the structural bars
 
     Parameters
@@ -55,7 +59,7 @@ def build_geometry_bar(self, sym=1, alpha=0, delta=0):
         Z3 = (Z0 + h_gap) * np.exp(rot_angle * 1j)
         Z4 = Z0 * np.exp(rot_angle * 1j)
         # Define Lines
-        curve_list = list()
+        curve_list: list[Line] = list()
         curve_list.append(Segment(begin=Z1, end=Z2))
         curve_list.append(Arc1(begin=Z2, end=Z3, radius=self.Rint))
         curve_list.append(Segment(begin=Z3, end=Z4))

@@ -1,4 +1,4 @@
-def is_round_wire(self):
+def is_round_wire(self) -> bool:
     """Return if wire is round
 
     Parameters

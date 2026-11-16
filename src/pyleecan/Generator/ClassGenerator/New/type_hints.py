@@ -67,7 +67,8 @@ RETURN_OVERRIDES = {
         "plot_schematics_top_flat",
     )
 }
-"""(sub-package, function) -> returns whose docstring is incomplete: the
+"""(sub-package, function) or (sub-package, class, function), the class key
+first -> returns whose docstring is incomplete: the
 alternatives of the union, each a tuple of documented types (a tuple hint
 when there are several)"""
 
@@ -79,10 +80,35 @@ _BH_FUNC_PARAMETERS = {
     "mu_a": ("float",),
 }
 RETURN_OVERRIDES[("material", "BH_func")] = (("float",), ("ndarray",))
+# Lamination plots: the figure, or the patches (is_display=False); the docstring
+# lists both without "or"
+for _class in ("LamSlotWind", "LamSlotMultiWind", "LamSlotMulti"):
+    RETURN_OVERRIDES[("machine", _class, "plot")] = (
+        ("list",),
+        ("matplotlib.figure.Figure", "matplotlib.axes.Axes"),
+    )
+# Periodicity: None when the periodicity cannot be found
+for _key in (
+    ("machine", "comp_periodicity_geo"),
+    ("machine", "comp_periodicity_spatial"),
+    ("machine", "WindingSC", "comp_periodicity"),
+):
+    RETURN_OVERRIDES[_key] = (("int or None", "bool"),)
 # get_BH returns None when the B(H) curve is not defined (checked by MatMagnetics)
 RETURN_OVERRIDES[("material", "get_BH")] = (("ndarray",), ("None",))
 # plot_BH documents "None" but returns the figure
 RETURN_OVERRIDES[("material", "plot_BH")] = (("matplotlib.figure.Figure",),)
+
+CONVENTIONAL_PARAMETERS = {
+    "fig": ("matplotlib.figure.Figure",),
+    "ax": ("matplotlib.axes.Axes",),
+    "edgecolor": ("str",),
+    "save_path": ("str",),
+    "win_title": ("str",),
+    "is_show_fig": ("bool",),
+}
+"""Parameters with the same meaning everywhere (plot functions): their type
+when the docstring does not document them"""
 
 PARAMETER_OVERRIDES = {
     ("material", "BH_func"): _BH_FUNC_PARAMETERS,
@@ -150,12 +176,22 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
         for arg in arguments:
             if arg.annotation is not None or arg.arg in ("self", "cls"):
                 continue
-            if arg.arg not in documented and arg.arg not in overridden:
-                continue
             default = defaults.get(arg.arg)
             is_none = isinstance(default, ast.Constant) and default.value is None
             if arg.arg in overridden:
                 hint = _union_hint(overridden[arg.arg], class_names, imports)
+            elif arg.arg not in documented:
+                # Undocumented: conventional name, or a bool default (flag)
+                if arg.arg in CONVENTIONAL_PARAMETERS:
+                    hint = _union_hint(
+                        CONVENTIONAL_PARAMETERS[arg.arg], class_names, imports
+                    )
+                elif isinstance(default, ast.Constant) and isinstance(
+                    default.value, bool
+                ):
+                    hint = "bool"
+                else:
+                    continue
             else:
                 hint = _annotation(
                     documented[arg.arg], class_names, imports, unrecognized
@@ -178,15 +214,25 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
             else:
                 edits.append((arg.end_lineno, arg.end_col_offset, ": " + hint))
         if node.returns is None:
-            override = RETURN_OVERRIDES.get((subpackage, node.name))
+            override = RETURN_OVERRIDES.get(
+                (subpackage, class_name, node.name),
+                RETURN_OVERRIDES.get((subpackage, node.name)),
+            )
             if override is None:
-                returned = [tuple(_section_types(docstring, "Returns").values())]
+                returned = _documented_returns(docstring)
             else:
                 returned = list(override)
-            alternatives = [
-                _return_hint(texts, class_names, imports, unrecognized)
-                for texts in returned
-            ]
+            if returned == [()] and _returns_nothing(node):
+                # No documented return and no returned value
+                alternatives = ["None"]
+            else:
+                alternatives = [
+                    _return_hint(texts, class_names, imports, unrecognized)
+                    for texts in returned
+                ]
+                if _returns_none_explicitly(node) and "None" not in alternatives:
+                    # "return None" or "return": a case missing in the docstring
+                    alternatives.append("None")
             if all(hint is not None for hint in alternatives):
                 line, column = _signature_end(source, node)
                 edits.append((line, column, " -> " + " | ".join(alternatives)))
@@ -395,17 +441,38 @@ def _default_matches(hint, default):
     return isinstance(value, accepted)
 
 
-def _section_types(docstring, section):
-    """{name: documented type} of a numpydoc section ("Parameters", "Returns")."""
+def _section_text(docstring, section):
+    """Text of a numpydoc section ("Parameters", "Returns"), or None."""
     match = re.search(
         rf"^\s*{section}\s*\n\s*-+\s*\n(.*?)(?=^\s*[A-Z][A-Za-z ]+\s*\n\s*-+\s*$|\Z)",
         docstring,
         re.DOTALL | re.MULTILINE,
     )
-    if match is None:
-        return {}
+    return None if match is None else match.group(1)
+
+
+def _section_types(docstring, section):
+    """{name: documented type} of a numpydoc section ("Parameters", "Returns")."""
+    text = _section_text(docstring, section)
+    return {} if text is None else _entry_types(text)
+
+
+def _documented_returns(docstring):
+    """Alternatives of the documented returns: a tuple of documented types
+    each, the alternatives being separated by a line "or" in the section."""
+    text = _section_text(docstring, "Returns")
+    if text is None:
+        return [()]
+    return [
+        tuple(_entry_types(part).values())
+        for part in re.split(r"^\s*or\s*$", text, flags=re.MULTILINE)
+    ]
+
+
+def _entry_types(text):
+    """{name: documented type} of the entries of a section text."""
     types = {}
-    for line in match.group(1).splitlines():
+    for line in text.splitlines():
         found = re.match(r"^(\w+)\s*:\s*(\S.*)$", line.strip())
         # A documented entry is not indented more than the section
         if found and not line.startswith(" " * 8):
@@ -434,9 +501,20 @@ def _annotation(text, class_names, imports, unrecognized):
         or re.fullmatch(r"list of (.+)", text, re.IGNORECASE)
     )
     if container is not None:
-        item = _annotation(container.group(1), class_names, imports, None)
+        item_text = container.group(1)
+        item = _annotation(item_text, class_names, imports, None)
+        if item is None and item_text.endswith("s"):  # "list of floats"
+            item = _annotation(item_text[:-1], class_names, imports, None)
         if item is not None and not item.endswith("| None"):
             hint = f"dict[str, {item}]" if text.startswith("{") else f"list[{item}]"
+    elif re.search(r"\s+or\s+", text):
+        # Union: "float or ndarray" (each alternative must be recognized)
+        alternatives = [
+            _annotation(part, class_names, imports, None)
+            for part in re.split(r"\s+or\s+", text)
+        ]
+        if all(item is not None for item in alternatives):
+            hint = " | ".join(dict.fromkeys(alternatives))
     elif lowered in BUILTIN_TYPES:
         hint = BUILTIN_TYPES[lowered]
     elif lowered in IMPORTED_TYPES:
@@ -458,6 +536,41 @@ def _return_hint(texts, class_names, imports, unrecognized):
     if not hints or any(hint is None for hint in hints):
         return None
     return hints[0] if len(hints) == 1 else f"tuple[{', '.join(hints)}]"
+
+
+def _returns_nothing(function):
+    """True if a function returns no value: no ``return <value>``, no yield
+    (nested functions excepted), and not a stub (pass, docstring or raise
+    only: an overridden method may return a value)."""
+    body = [
+        statement
+        for statement in function.body
+        if not (
+            isinstance(statement, ast.Expr)
+            and isinstance(statement.value, ast.Constant)
+            and isinstance(statement.value.value, str)
+        )
+    ]
+    if all(isinstance(statement, (ast.Pass, ast.Raise)) for statement in body):
+        return False
+    for node in _walk_scope(function):
+        if isinstance(node, ast.Return) and node.value is not None:
+            return False
+        if isinstance(node, (ast.Yield, ast.YieldFrom, ast.Await)):
+            return False
+    return True
+
+
+def _returns_none_explicitly(function):
+    """True if a function has a ``return None`` or a bare ``return``."""
+    return any(
+        isinstance(node, ast.Return)
+        and (
+            node.value is None
+            or (isinstance(node.value, ast.Constant) and node.value.value is None)
+        )
+        for node in _walk_scope(function)
+    )
 
 
 def _union_hint(texts, class_names, imports):

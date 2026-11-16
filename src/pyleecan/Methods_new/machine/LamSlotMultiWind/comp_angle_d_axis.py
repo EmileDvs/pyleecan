@@ -1,7 +1,7 @@
 from ....Functions.Load.import_class import import_class
 
 
-def comp_angle_d_axis(self, is_plot=False):
+def comp_angle_d_axis(self, is_plot: bool = False) -> float:
     """Compute the angle between the X axis and the first d+ axis
     By convention a "Tooth" is centered on the X axis
 

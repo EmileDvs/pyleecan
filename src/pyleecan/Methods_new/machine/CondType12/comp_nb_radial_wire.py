@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_nb_radial_wire(self):
+def comp_nb_radial_wire(self) -> int:
     """Return number of adjacent wires in radial direction
 
     Parameters

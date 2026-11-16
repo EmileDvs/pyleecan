@@ -25,7 +25,7 @@ class EndWinding(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.EndWinding.comp_inductance
-    def comp_inductance(self):
+    def comp_inductance(self) -> float:
         """Return the enforced end winding inductance
 
         Parameters
@@ -42,7 +42,7 @@ class EndWinding(LegacyModel):
         return self.Lew_enforced
 
     # Inlined from Methods.Machine.EndWinding.comp_length
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the end winding conductor length on one side for a half-turn
         excluding the straight conductor length outside of the lamination (winding.Lewout).
         Since this is the abstract class method the actual length returned will be zero.

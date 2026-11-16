@@ -2,7 +2,7 @@ from ....Classes_new.machine.lamination import Lamination
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """Check that the Lamination object is correct
 
     Parameters

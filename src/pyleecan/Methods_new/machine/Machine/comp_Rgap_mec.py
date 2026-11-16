@@ -1,4 +1,4 @@
-def comp_Rgap_mec(self):
+def comp_Rgap_mec(self) -> float:
     """Returns the radius of the center of the mecanical airgap
 
     Parameters

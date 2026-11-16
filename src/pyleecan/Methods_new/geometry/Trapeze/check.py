@@ -1,7 +1,7 @@
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """Check if the Trapeze object is correct
 
     Parameters

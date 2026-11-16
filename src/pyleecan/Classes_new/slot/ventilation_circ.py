@@ -137,7 +137,7 @@ class VentilationCirc(Hole):
         return surf_list
 
     # Inlined from Methods.Slot.VentilationCirc.check
-    def check(self):
+    def check(self) -> None:
         """Make sure that the ventilation parameters are correctly set
 
         Parameters

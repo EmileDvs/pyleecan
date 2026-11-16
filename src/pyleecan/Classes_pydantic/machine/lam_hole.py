@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/LamHole.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -11,6 +11,11 @@ from ...Functions_pydantic.labels import HOLEM_LAB, decode_label
 from ..slot.hole import Hole
 from .lam_h import LamH
 from .lamination import Lamination
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+
+    from ..slot.hole import Hole
 
 
 class LamHole(LamH):
@@ -32,11 +37,11 @@ class LamHole(LamH):
     # Inlined from Methods.Machine.LamHole._plot_arrow_mag
     def _plot_arrow_mag(
         self,
-        ax=None,
-        sym=1,
-        alpha=0,
-        delta=0,
-    ):
+        ax: Axes | None = None,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+    ) -> None:
         """Plot the magnetization direction as arrow on top of the lamination
         (meant to be called by LamHole.plot)
 
@@ -93,7 +98,13 @@ class LamHole(LamH):
                         )
 
     # Inlined from Methods.Machine.LamHole.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+    def build_geometry(
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build the geometry of the LamHole object
 
         Parameters
@@ -143,7 +154,7 @@ class LamHole(LamH):
         return surf_list
 
     # Inlined from Methods.Machine.LamHole.get_hole_list
-    def get_hole_list(self):
+    def get_hole_list(self) -> list[Hole]:
         """Return the list of all the holes
 
         Parameters
@@ -161,7 +172,7 @@ class LamHole(LamH):
         return self.hole
 
     # Inlined from Methods.Machine.LamHole.get_magnet_number
-    def get_magnet_number(self, sym=1):
+    def get_magnet_number(self, sym: int = 1) -> int:
         """Return the number of magnet on the Lamination
 
         Parameters

@@ -4,7 +4,7 @@ from . import S30_R1Error
 from . import S30_R2Error
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotW30 object is correct
 
     Parameters

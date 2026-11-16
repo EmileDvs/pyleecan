@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_resistance_wind(self, T=20):
+def comp_resistance_wind(self, T: float = 20) -> float:
     """Computation of the equivalent rotor resistance per phase of a cage winding with 'qs' number of phases
 
     Parameters

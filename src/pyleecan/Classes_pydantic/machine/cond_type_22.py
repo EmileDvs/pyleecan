@@ -26,7 +26,7 @@ class CondType22(Conductor):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType22.comp_height_wire
-    def comp_height_wire(self):
+    def comp_height_wire(self) -> float:
         """Return wire height
 
         Parameters
@@ -50,7 +50,7 @@ class CondType22(Conductor):
         return Hbar
 
     # Inlined from Methods.Machine.CondType22.comp_nb_circumferential_wire
-    def comp_nb_circumferential_wire(self):
+    def comp_nb_circumferential_wire(self) -> int:
         """Return number of adjacent wires in circumferential direction
 
         Parameters
@@ -68,7 +68,7 @@ class CondType22(Conductor):
         return 1
 
     # Inlined from Methods.Machine.CondType22.comp_nb_radial_wire
-    def comp_nb_radial_wire(self):
+    def comp_nb_radial_wire(self) -> int:
         """Return number of adjacent wires in radial direction
 
         Parameters
@@ -86,7 +86,7 @@ class CondType22(Conductor):
         return 1
 
     # Inlined from Methods.Machine.CondType22.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the conductor
 
         Parameters
@@ -104,7 +104,7 @@ class CondType22(Conductor):
         return self.Sbar
 
     # Inlined from Methods.Machine.CondType22.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the active surface of the conductor
 
         Parameters
@@ -122,7 +122,7 @@ class CondType22(Conductor):
         return self.Sbar
 
     # Inlined from Methods.Machine.CondType22.comp_width_wire
-    def comp_width_wire(self):
+    def comp_width_wire(self) -> float:
         """Return bar width
 
         Parameters
@@ -146,7 +146,7 @@ class CondType22(Conductor):
         return Wbar
 
     # Inlined from Methods.Machine.CondType22.is_round_wire
-    def is_round_wire(self):
+    def is_round_wire(self) -> bool:
         """Return if wire is round
 
         Parameters

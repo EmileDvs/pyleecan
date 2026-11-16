@@ -19,7 +19,7 @@ class MachineSync(Machine):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSync.comp_angle_rotor_initial
-    def comp_angle_rotor_initial(self):
+    def comp_angle_rotor_initial(self) -> float:
         """Compute rotor initial angle between rotor and stator d-axes
         Parameters
         ----------
@@ -34,7 +34,7 @@ class MachineSync(Machine):
         return self.stator.comp_angle_d_axis() - self.rotor.comp_angle_d_axis()
 
     # Inlined from Methods.Machine.MachineSync.is_synchronous
-    def is_synchronous(self):
+    def is_synchronous(self) -> bool:
         """Return if a machine is synchronous or not
 
         Parameters

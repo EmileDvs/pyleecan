@@ -1,7 +1,7 @@
 from ....Classes_new.machine.lam_slot import LamSlot
 
 
-def comp_volumes(self):
+def comp_volumes(self) -> dict:
     """Compute the Lamination volumes (Vlam, Vvent, Vslot, Vwind)
 
     Parameters

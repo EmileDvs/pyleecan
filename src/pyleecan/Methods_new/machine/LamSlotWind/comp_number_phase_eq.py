@@ -1,4 +1,4 @@
-def comp_number_phase_eq(self):
+def comp_number_phase_eq(self) -> float:
     """Compute the equivalent number of phase
 
     Parameters

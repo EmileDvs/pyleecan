@@ -533,7 +533,7 @@ class SlotW30(Slot):
         return [line for line in curve_list if line is not None]
 
     # Inlined from Methods.Slot.SlotW30.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotW30 object is correct
 
         Parameters

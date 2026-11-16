@@ -9,7 +9,7 @@ from ....Functions_new.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
 import numpy as np
 
 
-def get_notches_surf(self, sym):
+def get_notches_surf(self, sym: int):
     """Return the list of surfaces for notches
 
     Parameters

@@ -2,7 +2,7 @@ import numpy as np
 from . import WindingError
 
 
-def comp_phasor_angle(self, Zs=None):
+def comp_phasor_angle(self, Zs: int | None = None) -> np.ndarray:
     """Compute the phasor angle of the winding phases related to the first slot
 
     Parameters

@@ -1,7 +1,7 @@
 from ..Slot import SlotCheckError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotUD2 is correctly defined"""
 
     if self.line_list is None:

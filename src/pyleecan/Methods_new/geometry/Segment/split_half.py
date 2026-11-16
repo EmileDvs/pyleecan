@@ -1,4 +1,4 @@
-def split_half(self, is_begin: bool = True):
+def split_half(self, is_begin: bool = True) -> None:
     """Cut the line in half (modify the object)
 
     Parameters

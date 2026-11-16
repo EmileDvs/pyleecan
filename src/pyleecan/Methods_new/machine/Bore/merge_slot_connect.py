@@ -4,7 +4,7 @@ from ....Functions_new.Geometry.cut_lines_between_angle import cut_lines_between
 from ....Classes_new.geometry.segment import Segment
 
 
-def merge_slot_connect(self, radius_desc_list, prop_dict, sym):
+def merge_slot_connect(self, radius_desc_list: list, prop_dict: dict, sym: int) -> list:
     """Merge the Bore shape with notches/slot on the bore/yoke
     Connect method: Add lines between radius and notch/slot
     (To use when the radius shape have circular part matchine the radius

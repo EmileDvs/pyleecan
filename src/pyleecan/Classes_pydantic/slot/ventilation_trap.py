@@ -150,7 +150,7 @@ class VentilationTrap(Hole):
         return surf_list
 
     # Inlined from Methods.Slot.VentilationTrap.check
-    def check(self):
+    def check(self) -> None:
         """Make sure that the ventialtion parameters are correctly set
 
         Parameters

@@ -1,7 +1,7 @@
 from . import WindingError
 
 
-def comp_Ntsp(self, Zs=None):
+def comp_Ntsp(self, Zs: int | None = None) -> float:
     """Compute the number of turns in series per phase
 
     Parameters

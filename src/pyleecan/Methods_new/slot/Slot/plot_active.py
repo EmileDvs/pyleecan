@@ -6,6 +6,11 @@ from ....definitions import config_dict
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.Plot import dict_2D
 from ....Functions_new.Winding.gen_phase_list import gen_name
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
@@ -14,8 +19,8 @@ WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
 def plot_active(
     self,
     wind_mat: np.ndarray | None = None,
-    fig=None,
-    ax=None,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
     is_bar: bool = False,
     is_show_fig: bool = True,
     enforced_default_color: str | None = None,

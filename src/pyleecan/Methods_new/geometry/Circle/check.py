@@ -1,7 +1,7 @@
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """assert the Circle is correct (the radius > 0)
 
     Parameters

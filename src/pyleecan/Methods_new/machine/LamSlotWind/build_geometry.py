@@ -5,7 +5,7 @@ from ....Functions_new.labels import update_RTS_index
 from ....Functions_new.labels import BOUNDARY_PROP_LAB, COND_BOUNDARY_PROP_LAB, WIND_LAB, YSMR_LAB, YSML_LAB, decode_label
 
 
-def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
     """Build the geometry of the Lamination with winding in slots
 
     Parameters

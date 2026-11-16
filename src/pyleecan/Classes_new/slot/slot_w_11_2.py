@@ -298,7 +298,7 @@ class SlotW11_2(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW11_2._comp_W
-    def _comp_W(self):
+    def _comp_W(self) -> None:
         """Compute W1 and W2 method (cste tooth compatibility)
 
         Parameters
@@ -368,7 +368,7 @@ class SlotW11_2(Slot):
             )
 
     # Inlined from Methods.Slot.SlotW11_2._set_W3
-    def _set_W3(self, value: float):
+    def _set_W3(self, value: float) -> None:
         """setter of W3
 
         Parameters
@@ -797,7 +797,7 @@ class SlotW11_2(Slot):
         is_add_schematics: bool = True,
         is_add_main_line: bool = True,
         type_add_active: int = 1,
-        save_path=None,
+        save_path: str | None = None,
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
@@ -1118,7 +1118,7 @@ class SlotW11_2(Slot):
         is_add_schematics: bool = True,
         is_add_main_line: bool = True,
         type_add_active: int = 1,
-        save_path=None,
+        save_path: str | None = None,
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,

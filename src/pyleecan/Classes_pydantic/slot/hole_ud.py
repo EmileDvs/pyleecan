@@ -103,7 +103,7 @@ class HoleUD(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleUD.check
-    def check(self):
+    def check(self) -> None:
         """Check that the HoleUD is correctly defined"""
         if self.surf_list is None:
             self.surf_list = []
@@ -177,7 +177,7 @@ class HoleUD(HoleMag):
         return has_mag
 
     # Inlined from Methods.Slot.HoleUD.remove_magnet
-    def remove_magnet(self):
+    def remove_magnet(self) -> None:
         """Remove the magnet (set to None) of the Hole
 
         Parameters

@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def get_Ryoke(self):
+def get_Ryoke(self) -> float:
     """Return the parent lamination yoke radius
     (to make lam.notch[ii].notch_shape match lam.slot parent)
 

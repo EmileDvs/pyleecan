@@ -1,7 +1,7 @@
 from ....Functions_new.Winding.gen_phase_list import gen_name
 
 
-def get_name_phase(self):
+def get_name_phase(self) -> list:
     """Return the name of the winding phases
 
     Parameters

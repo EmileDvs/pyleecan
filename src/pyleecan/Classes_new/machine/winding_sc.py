@@ -29,7 +29,7 @@ class WindingSC(Winding):
     # Inlined from Methods.Machine.WindingSC.comp_connection_mat
     # TODO: update docstring -> there should not be elementary circuits since
     #       every bar could have its own unique current
-    def comp_connection_mat(self, Zs=None, p=None):
+    def comp_connection_mat(self, Zs: int | None = None, p: int | None = None):
         """Compute the Winding Matrix (for winding type 10)
         type 10 : Squirrel cage Winding (elementary circuit loop involving bar n°1
         and bar n°Zr for alphar0_rad=0) (Nlay_rad=Nlay_tan=1)
@@ -105,7 +105,7 @@ class WindingSC(Winding):
         return wind_mat
 
     # Inlined from Methods.Machine.WindingSC.comp_periodicity
-    def comp_periodicity(self):
+    def comp_periodicity(self) -> tuple[int | None, bool]:
         """Computes the winding matrix (anti-)periodicity
 
         Parameters

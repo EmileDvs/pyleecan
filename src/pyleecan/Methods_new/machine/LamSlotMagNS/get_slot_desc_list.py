@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_slot_desc_list(self, sym=1, is_bore=True):
+def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
     """Returns an ordered description of the slot
 
     Parameters

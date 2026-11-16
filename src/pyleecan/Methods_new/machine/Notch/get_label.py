@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def get_label(self, is_add_id=True):
+def get_label(self, is_add_id: bool = True) -> str:
     """Return the label of the lamination (Stator-0 for instance)
 
     Parameters

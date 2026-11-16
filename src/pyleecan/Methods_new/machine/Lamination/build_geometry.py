@@ -3,9 +3,14 @@ from ....Classes_new.geometry.surf_ring import SurfRing
 from ....Functions_new.labels import LAM_LAB, BORE_LAB, YOKE_LAB, RADIUS_PROP_LAB, BOUNDARY_PROP_LAB
 
 from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
+    from ....Classes_new.geometry.line import Line
 
 
-def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False):
     """Build the geometry of the Lamination
 
     Parameters
@@ -63,7 +68,7 @@ def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
     vent_surf_list = list()
     if self.axial_vent not in [None, []]:
         for vent in self.axial_vent:
-            kwargs = dict(alpha=0, delta=0)
+            kwargs: dict[str, Any] = dict(alpha=0, delta=0)
             vent_list = vent.build_geometry(**kwargs)
             surf = transform_hole_surf(
                 hole_surf_list=vent_list, Zh=vent.Zh, sym=sym, is_split=True, **kwargs
@@ -127,7 +132,7 @@ def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
             sym=sym, vent_surf_list=vent_surf_list, ZBR=ZBR, ZTR=ZTR, ZBL=ZBL, ZTL=ZTL
         )
         # Create lines
-        curve_list = list()
+        curve_list: list[Line] = list()
         if self.is_internal:
             curve_list.extend(right_list)
         else:

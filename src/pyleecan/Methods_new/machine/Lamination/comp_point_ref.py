@@ -2,7 +2,7 @@ import numpy as np
 from ....Classes_new.geometry.arc import Arc
 
 
-def comp_point_ref(self, sym=1):
+def comp_point_ref(self, sym: int = 1):
     """Compute coordinates of a point in the lamination
     to assign property in FEA software
     Account for slot, notches and ventilations (TODO)

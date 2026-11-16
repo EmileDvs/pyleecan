@@ -1,4 +1,4 @@
-def get_Zs(self):
+def get_Zs(self) -> int:
     """Return the number of holes in the lamination
 
     Parameters

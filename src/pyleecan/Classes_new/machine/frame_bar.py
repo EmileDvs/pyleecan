@@ -3,7 +3,7 @@
 
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -12,6 +12,9 @@ from ..geometry.arc_2 import Arc2
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from .frame import Frame
+
+if TYPE_CHECKING:
+    from ..geometry.line import Line
 
 
 @dataclass(eq=False)
@@ -37,7 +40,9 @@ class FrameBar(Frame):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.FrameBar.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0):
+    def build_geometry(
+        self, sym: int = 1, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of the Frame with structural Bars
 
         Parameters
@@ -67,7 +72,9 @@ class FrameBar(Frame):
         return surf_list
 
     # Inlined from Methods.Machine.FrameBar.build_geometry_bar
-    def build_geometry_bar(self, sym=1, alpha=0, delta=0):
+    def build_geometry_bar(
+        self, sym: int = 1, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of the structural bars
 
         Parameters
@@ -114,7 +121,7 @@ class FrameBar(Frame):
             Z3 = (Z0 + h_gap) * np.exp(rot_angle * 1j)
             Z4 = Z0 * np.exp(rot_angle * 1j)
             # Define Lines
-            curve_list = []
+            curve_list: list[Line] = []
             curve_list.append(Segment(begin=Z1, end=Z2))
             curve_list.append(Arc1(begin=Z2, end=Z3, radius=self.Rint))
             curve_list.append(Segment(begin=Z3, end=Z4))
@@ -140,7 +147,7 @@ class FrameBar(Frame):
         return surf_list
 
     # Inlined from Methods.Machine.FrameBar.comp_height_gap
-    def comp_height_gap(self):
+    def comp_height_gap(self) -> float:
         """Computation of the Height of the gap between the Frame and Outer Lamination
 
         Parameters
@@ -159,7 +166,7 @@ class FrameBar(Frame):
         return self.Rint - lam_outer.Rext
 
     # Inlined from Methods.Machine.FrameBar.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the Frame including the structural bars
 
         Parameters
@@ -185,7 +192,7 @@ class FrameBar(Frame):
         return S_outer + S_bar
 
     # Inlined from Methods.Machine.FrameBar.comp_surface_bar
-    def comp_surface_bar(self):
+    def comp_surface_bar(self) -> float:
         """Compute the surface of the structural Bars
 
         Parameters
@@ -215,7 +222,7 @@ class FrameBar(Frame):
         return Sbar
 
     # Inlined from Methods.Machine.FrameBar.comp_surface_gap
-    def comp_surface_gap(self):
+    def comp_surface_gap(self) -> float:
         """Compute the surface of the Gap between the Frame and outer Lamination
 
         Parameters

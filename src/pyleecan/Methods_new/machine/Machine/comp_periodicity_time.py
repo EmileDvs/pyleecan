@@ -1,4 +1,4 @@
-def comp_periodicity_time(self, slip=0):
+def comp_periodicity_time(self, slip: float = 0) -> tuple[int, bool, int, bool]:
     """Compute the (anti)-periodicities of the machine in time domain
 
     Parameters

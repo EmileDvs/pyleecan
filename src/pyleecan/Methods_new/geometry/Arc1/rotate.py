@@ -2,7 +2,7 @@ import numpy as np
 from . import AngleRotationArc1Error
 
 
-def rotate(self, angle: float):
+def rotate(self, angle: float) -> None:
     """Rotation of the Arc1 of <angle> rad with 0 as the center
 
     Parameters

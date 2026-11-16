@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def get_Rbo(self):
+def get_Rbo(self) -> float:
     """Return the parent lamination bore radius
     (to make lam.notch[ii].notch_shape match lam.slot parent)
 

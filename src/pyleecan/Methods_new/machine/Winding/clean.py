@@ -1,4 +1,4 @@
-def clean(self):
+def clean(self) -> None:
     """Clean the internal properties (wind_mat and periodicity)
 
     Parameters

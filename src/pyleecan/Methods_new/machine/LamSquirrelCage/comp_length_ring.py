@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_length_ring(self):
+def comp_length_ring(self) -> float:
     """Computation of the squirrel cage end-ring average perimeter (circumferential length)
 
     Parameters

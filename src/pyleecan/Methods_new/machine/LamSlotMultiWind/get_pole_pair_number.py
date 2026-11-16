@@ -1,4 +1,4 @@
-def get_pole_pair_number(self):
+def get_pole_pair_number(self) -> int | None:
     """Return the number of pair of pole of the Lamination
 
     Parameters

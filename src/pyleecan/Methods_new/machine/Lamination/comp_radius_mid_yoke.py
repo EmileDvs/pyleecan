@@ -1,4 +1,4 @@
-def comp_radius_mid_yoke(self):
+def comp_radius_mid_yoke(self) -> float:
     """Compute the Lamination middle of the yoke radius
 
     Parameters

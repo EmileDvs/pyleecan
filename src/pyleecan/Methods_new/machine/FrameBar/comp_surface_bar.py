@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surface_bar(self):
+def comp_surface_bar(self) -> float:
     """Compute the surface of the structural Bars
 
     Parameters

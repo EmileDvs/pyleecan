@@ -1,7 +1,7 @@
 from . import WindingError
 
 
-def comp_Ncspc(self, Zs=None):
+def comp_Ncspc(self, Zs: int | None = None) -> float:
     """Compute the number of coils in series per parallel circuit
 
     Parameters

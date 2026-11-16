@@ -1,8 +1,13 @@
 from matplotlib.patches import Patch, Rectangle
 from ....Functions_new.init_fig import init_fig
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
-def plot(self, fig=None, ax=None):
+def plot(self, fig: Figure | None = None, ax: Axes | None = None) -> tuple[Figure, Axes]:
     """Plot a Conductor in a matplotlib fig
 
     Parameters

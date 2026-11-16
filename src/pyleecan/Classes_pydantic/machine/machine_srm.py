@@ -33,7 +33,7 @@ class MachineSRM(MachineSync):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineSRM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Machine object is correct
 
         Parameters
@@ -63,7 +63,7 @@ class MachineSRM(MachineSync):
             raise SRM_WrongStator("The Stator of a MachineSRM must be a LamSlotWind")
 
     # Inlined from Methods.Machine.MachineSRM.get_machine_type
-    def get_machine_type(self):
+    def get_machine_type(self) -> str:
         """Return a string with the main information about the machine architecture
 
         Parameters
@@ -106,7 +106,7 @@ class MachineSRM(MachineSync):
         return type_str
 
     # Inlined from Methods.Machine.MachineSRM.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int:
         """Returns the number of pole pairs of the machine
 
         Parameters
@@ -123,7 +123,7 @@ class MachineSRM(MachineSync):
         return self.rotor.get_Zs()
 
     # Inlined from Methods.Machine.MachineSRM.set_pole_pair_number
-    def set_pole_pair_number(self, p):
+    def set_pole_pair_number(self, p: int) -> None:
         """Set the number of pole pairs of the machine
 
         Parameters

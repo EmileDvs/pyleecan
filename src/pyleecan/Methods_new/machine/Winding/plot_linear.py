@@ -8,6 +8,11 @@ from ....Functions_new._swat_em.config import config
 from ....Functions_new.Geometry.inter_line_line import inter_line_line
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.Winding.gen_phase_list import gen_name
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
@@ -16,13 +21,13 @@ STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
 def plot_linear(
     self,
-    fig=None,
-    ax=None,
-    is_max_sym=True,
-    is_show_fig=True,
-    save_path=None,
-    win_title=None,
-    is_legend=True,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_max_sym: bool = True,
+    is_show_fig: bool = True,
+    save_path: str | None = None,
+    win_title: str | None = None,
+    is_legend: bool = True,
 ):
     """Plots the winding linear pattern. Method based on plot_overhang method of swat-em module
 

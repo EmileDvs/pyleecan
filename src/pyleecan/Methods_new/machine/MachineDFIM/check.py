@@ -2,7 +2,7 @@ from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 from .. import MachineCheckError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the Machine object is correct
 
     Parameters

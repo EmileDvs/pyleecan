@@ -18,13 +18,13 @@ ARROW_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
 def plot(
     self,
-    fig=None,
-    ax=None,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
     title: str | None = None,
     display_magnet: bool = True,
     is_add_arrow: bool = False,
     is_add_ref: bool = False,
-    is_show_fig=True,
+    is_show_fig: bool = True,
     is_all_hole: bool = False,
 ) -> tuple[Figure, Axes]:
     """Plot the Hole in a matplotlib fig

@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.magnet import Magnet
 
 
-def get_all_mag_obj(self):
+def get_all_mag_obj(self) -> list[Magnet]:
     """Return all the magnet object for all the layers
 
     Parameters

@@ -1,8 +1,10 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/BoreSinePole.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,6 +24,14 @@ from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .bore import Bore
 from .lamination import Lamination
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from .bore_sine_pole import BoreSinePole
 
 
 @dataclass(eq=False)
@@ -64,7 +74,7 @@ class BoreSinePole(Bore):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreSinePole.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the Bore
 
         Parameters
@@ -83,7 +93,7 @@ class BoreSinePole(Bore):
         return self.N, False
 
     # Inlined from Methods.Machine.BoreSinePole.get_bore_line
-    def get_bore_line(self, prop_dict=None, *, NN=30):
+    def get_bore_line(self, prop_dict: dict | None = None, *, NN=30) -> list:
         """Return the bore line description
         adapted sine field pole geometry from the text book:
         "Müller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008."
@@ -174,7 +184,7 @@ class BoreSinePole(Bore):
         return bore_list
 
     @staticmethod
-    def _get_phi(obj, w):
+    def _get_phi(obj: BoreSinePole, w) -> float:
         """Return the angle of the pole width
 
         Parameters
@@ -202,7 +212,7 @@ class BoreSinePole(Bore):
         return min(np.pi / 2, phi_max)
 
     @staticmethod
-    def _get_pole_width_max(obj):
+    def _get_pole_width_max(obj: BoreSinePole) -> float:
         """Return the max. pole width and the angle of the max. pole width
 
         Parameters
@@ -221,7 +231,7 @@ class BoreSinePole(Bore):
         return w_max
 
     # Inlined from Methods.Machine.BoreSinePole.get_pole_shape
-    def get_pole_shape(self, phi):
+    def get_pole_shape(self, phi: float) -> complex:
         """Return the complex coordinates of the point at phi
 
         Parameters
@@ -258,14 +268,14 @@ class BoreSinePole(Bore):
     # Inlined from Methods.Machine.BoreSinePole.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        is_default: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters
@@ -371,7 +381,7 @@ class BoreSinePole(Bore):
                 )
 
             if is_add_main_line:
-                plot_args = dict(
+                plot_args: dict[str, Any] = dict(
                     fig=fig,
                     ax=ax,
                     color=MAIN_LINE_COLOR,

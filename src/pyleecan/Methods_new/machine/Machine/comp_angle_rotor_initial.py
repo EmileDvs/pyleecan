@@ -1,4 +1,4 @@
-def comp_angle_rotor_initial(self):
+def comp_angle_rotor_initial(self) -> float:
     """Set rotor initial angle as 0
 
     Parameters

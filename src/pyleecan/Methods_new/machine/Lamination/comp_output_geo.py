@@ -1,7 +1,7 @@
 from ....Classes_new.output.out_geo_lam import OutGeoLam
 
 
-def comp_output_geo(self):
+def comp_output_geo(self) -> OutGeoLam:
     """Compute the main geometry output
 
     Parameters

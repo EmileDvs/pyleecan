@@ -122,10 +122,10 @@ class Arc(Line):
         maxseg=None,
         element_size=None,
         propname=None,
-        hide=False,
+        hide: bool = False,
         group=None,
         is_draw: bool = True,
-    ):
+    ) -> None:
         """Draw the Arc object in FEMM and assign the property
 
         Parameters

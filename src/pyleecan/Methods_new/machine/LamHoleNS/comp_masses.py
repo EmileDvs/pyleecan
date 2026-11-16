@@ -2,7 +2,7 @@ import numpy as np
 from ....Classes_new.machine.lam_h import LamH
 
 
-def comp_masses(self):
+def comp_masses(self) -> dict:
     """Compute the Lamination masses
 
     Parameters

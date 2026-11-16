@@ -1,4 +1,4 @@
-def convert_to_H0_bore(self):
+def convert_to_H0_bore(self) -> None:
     """Convert the slot to the other definition of H0
 
     Parameters:

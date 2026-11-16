@@ -1,4 +1,4 @@
-def comp_length(self):
+def comp_length(self) -> float:
     """Compute the end winding conductor length on one side for a half-turn
     excluding the straight conductor length outside of the lamination (winding.Lewout).
     Since this is the abstract class method the actual length returned will be zero.

@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/BoreFlower.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,6 +22,10 @@ from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .bore import Bore
 from .lamination import Lamination
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 class BoreFlower(Bore):
@@ -48,7 +52,7 @@ class BoreFlower(Bore):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreFlower.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the Bore
 
         Parameters
@@ -67,7 +71,7 @@ class BoreFlower(Bore):
         return self.N, False
 
     # Inlined from Methods.Machine.BoreFlower.get_bore_line
-    def get_bore_line(self, prop_dict=None):
+    def get_bore_line(self, prop_dict: dict | None = None) -> list:
         """Return the bore line description
 
         Parameters
@@ -109,14 +113,14 @@ class BoreFlower(Bore):
     # Inlined from Methods.Machine.BoreFlower.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        is_default: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters

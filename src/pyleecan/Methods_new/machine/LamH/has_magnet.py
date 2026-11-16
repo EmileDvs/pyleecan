@@ -1,4 +1,4 @@
-def has_magnet(self):
+def has_magnet(self) -> bool:
     """Return if any of the Holes have magnets
 
     Parameters

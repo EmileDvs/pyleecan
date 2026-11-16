@@ -1,4 +1,4 @@
-def comp_length_endwinding(self):
+def comp_length_endwinding(self) -> float:
     """Compute the Winding overhang length on one side for a half-turn[m]
 
     Parameters

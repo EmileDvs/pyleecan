@@ -337,13 +337,13 @@ class Hole(LegacyClass):
     # Inlined from Methods.Slot.Hole.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
         title: str | None = None,
         display_magnet: bool = True,
         is_add_arrow: bool = False,
         is_add_ref: bool = False,
-        is_show_fig=True,
+        is_show_fig: bool = True,
         is_all_hole: bool = False,
     ) -> tuple[Figure, Axes]:
         """Plot the Hole in a matplotlib fig
@@ -458,7 +458,7 @@ class Hole(LegacyClass):
         return fig, ax
 
     # Inlined from Methods.Slot.Hole.set_magnet_by_id
-    def set_magnet_by_id(self, index: int, magnet: Magnet):
+    def set_magnet_by_id(self, index: int, magnet: Magnet) -> None:
         """Set the magnet at the corresponding index
         Raise error if the hole doesn't have a magnet for the corresponding index
 

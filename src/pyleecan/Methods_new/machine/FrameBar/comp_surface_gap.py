@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surface_gap(self):
+def comp_surface_gap(self) -> float:
     """Compute the surface of the Gap between the Frame and outer Lamination
 
     Parameters

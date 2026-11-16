@@ -1,7 +1,7 @@
 from . import PointTranslateSegmentError
 
 
-def translate(self, Zt: complex):
+def translate(self, Zt: complex) -> None:
     """Translate the Segment object
 
     Parameters

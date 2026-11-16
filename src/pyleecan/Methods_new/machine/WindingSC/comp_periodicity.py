@@ -1,7 +1,7 @@
 from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_periodicity(self):
+def comp_periodicity(self) -> tuple[int | None, bool]:
     """Computes the winding matrix (anti-)periodicity
 
     Parameters

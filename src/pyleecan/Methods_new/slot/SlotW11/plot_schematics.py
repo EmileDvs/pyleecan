@@ -25,7 +25,7 @@ def plot_schematics(
     is_add_schematics: bool = True,
     is_add_main_line: bool = True,
     type_add_active: int = 1,
-    save_path=None,
+    save_path: str | None = None,
     is_show_fig: bool = True,
     fig: Figure | None = None,
     ax: Axes | None = None,

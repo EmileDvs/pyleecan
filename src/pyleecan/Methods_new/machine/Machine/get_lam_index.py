@@ -1,4 +1,4 @@
-def get_lam_index(self, label):
+def get_lam_index(self, label: str) -> int | None:
     """Returns list index of the lamination with the given label
     corresponding to machine.get_lam_list(is_int_to_ext=True, key=None).
     For convenience label 'Stator' or 'Rotor' are allowed here to get respective first

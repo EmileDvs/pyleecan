@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/Frame.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -16,6 +16,12 @@ from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..geometry.surf_ring import SurfRing
 from ..material.material import Material
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.line import Line
 
 
 class Frame(LegacyModel):
@@ -52,7 +58,9 @@ class Frame(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Frame.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0):
+    def build_geometry(
+        self, sym: int = 1, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of the Frame
 
         Parameters
@@ -98,7 +106,7 @@ class Frame(LegacyModel):
                 Z3 = Z0 * np.exp(1j * 2 * np.pi / sym)
                 Z1 = self.Rext
                 Z2 = Z1 * np.exp(1j * 2 * np.pi / sym)
-                curve_list = []
+                curve_list: list[Line] = []
                 curve_list.append(Segment(begin=Z0, end=Z1))
                 curve_list.append(Arc1(begin=Z1, end=Z2, radius=self.Rext))
                 curve_list.append(Segment(begin=Z2, end=Z3))
@@ -120,7 +128,7 @@ class Frame(LegacyModel):
         return surf_list
 
     # Inlined from Methods.Machine.Frame.comp_height_eq
-    def comp_height_eq(self):
+    def comp_height_eq(self) -> float:
         """Computation of the Frame equivalent Height for the mechanical model
 
         Parameters
@@ -138,7 +146,7 @@ class Frame(LegacyModel):
         return self.Rext - self.Rint
 
     # Inlined from Methods.Machine.Frame.comp_mass
-    def comp_mass(self):
+    def comp_mass(self) -> float:
         """Compute the mass of the Frame
 
         Parameters
@@ -162,7 +170,7 @@ class Frame(LegacyModel):
             return Vfra * self.mat_type.struct.rho
 
     # Inlined from Methods.Machine.Frame.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the Frame
 
         Parameters
@@ -185,7 +193,7 @@ class Frame(LegacyModel):
         return S_ext - S_int
 
     # Inlined from Methods.Machine.Frame.comp_volume
-    def comp_volume(self):
+    def comp_volume(self) -> float:
         """Compute the volume of the Frame
 
         Parameters
@@ -207,7 +215,7 @@ class Frame(LegacyModel):
             return Sfra * self.Lfra
 
     # Inlined from Methods.Machine.Frame.get_length
-    def get_length(self):
+    def get_length(self) -> float:
         """Return the length of the Frame
 
         Parameters
@@ -230,15 +238,15 @@ class Frame(LegacyModel):
     # Inlined from Methods.Machine.Frame.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_show_fig=True,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_show_fig: bool = True,
+    ) -> tuple[Figure, Axes]:
         """Plot the Frame in a matplotlib fig
 
         Parameters

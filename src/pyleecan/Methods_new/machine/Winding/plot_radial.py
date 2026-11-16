@@ -4,7 +4,7 @@ from ....Functions_new._swat_em import plots
 from ....Functions_new._swat_em.config import config
 
 
-def plot_radial(self, is_show_fig=True):
+def plot_radial(self, is_show_fig: bool = True) -> None:
     """Plots the winding radial pattern
 
     Parameters

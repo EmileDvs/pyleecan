@@ -204,6 +204,8 @@ def test_container_local_left_unchanged():
     def g():
         local = []
         return SurfLine(line_list=local)
+
+    return a, b, c, g
 '''
     result, _ = _hint(source)
     assert result == source  # Not a container, a parameter, a str field, a nested scope
@@ -260,3 +262,93 @@ def test_parameter_overrides_complete_the_docstring():
         "def BH_func(self, H: float | np.ndarray, Bs: float, a: float)"
         " -> float | np.ndarray:"
     ) in result
+
+
+def test_return_none_when_nothing_is_returned():
+    source = '''def check(self):
+    """Doc"""
+    if self.a < 0:
+        raise ValueError("a")
+
+
+def stub(self):
+    """Doc"""
+    pass
+
+
+def values(self):
+    """Doc"""
+    return 1
+'''
+    result, _ = _hint(source)
+    assert "def check(self) -> None:" in result
+    assert "def stub(self):" in result  # May be overridden with a value
+    assert "def values(self):" in result  # Undocumented value
+
+
+def test_undocumented_conventional_and_flag_parameters():
+    source = '''def plot(self, fig=None, edgecolor=None, is_add_arrow=False, other=None):
+    """Doc"""
+    pass
+'''
+    result, _ = _hint(source)
+    assert (
+        "def plot(self, fig: Figure | None = None, edgecolor: str | None = None, "
+        "is_add_arrow: bool = False, other=None):"
+    ) in result
+    assert "    from matplotlib.figure import Figure\n" in result
+
+
+def test_union_and_plural_documented_types():
+    source = '''def f(self, a, b):
+    """Doc
+
+    Parameters
+    ----------
+    a : float or ndarray
+        A value
+    b : list of floats
+        Values
+    """
+    pass
+'''
+    result, _ = _hint(source)
+    assert "def f(self, a: float | np.ndarray, b: list[float]):" in result
+
+
+def test_returns_with_or_alternatives_and_explicit_none():
+    source = '''def plot(self, is_display=True):
+    """Doc
+
+    Returns
+    -------
+    patches : list
+        List of Patches
+
+    or
+
+    fig : Matplotlib.figure.Figure
+        Figure
+    ax : Matplotlib.axes.Axes
+        Axes
+    """
+    if is_display:
+        return 1, 2
+    return []
+
+
+def get_p(self):
+    """Doc
+
+    Returns
+    -------
+    p : int
+        Number of pole pairs
+    """
+    if self.x:
+        return None
+    return 2
+'''
+    result, _ = _hint(source)
+    assert "-> list | tuple[Figure, Axes]:" in result
+    assert "def get_p(self) -> int | None:" in result

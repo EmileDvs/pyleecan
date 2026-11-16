@@ -17,7 +17,7 @@ class MachineAsync(Machine):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineAsync.comp_desc_dict
-    def comp_desc_dict(self):
+    def comp_desc_dict(self) -> list:
         """Compute a dictionary with the main parameters/output of the machine
 
         Parameters
@@ -48,7 +48,7 @@ class MachineAsync(Machine):
         return desc_dict
 
     # Inlined from Methods.Machine.MachineAsync.is_synchronous
-    def is_synchronous(self):
+    def is_synchronous(self) -> bool:
         """Return if a machine is synchronous or not
 
         Parameters

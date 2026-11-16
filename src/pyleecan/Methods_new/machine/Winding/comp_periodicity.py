@@ -2,7 +2,7 @@ import numpy as np
 
 
 
-def comp_periodicity(self, wind_mat=None):
+def comp_periodicity(self, wind_mat: np.ndarray | None = None) -> tuple[int, bool]:
     """Computes the winding matrix (anti-)periodicity
 
     Parameters

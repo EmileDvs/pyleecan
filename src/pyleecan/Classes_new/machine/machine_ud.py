@@ -31,7 +31,9 @@ class MachineUD(Machine):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineUD.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0):
+    def build_geometry(
+        self, sym: int = 1, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of the machine
 
         Parameters
@@ -69,7 +71,7 @@ class MachineUD(Machine):
         return surf_list
 
     # Inlined from Methods.Machine.MachineUD.is_synchronous
-    def is_synchronous(self):
+    def is_synchronous(self) -> bool:
         """Return if a machine is synchronous or not
 
         Parameters

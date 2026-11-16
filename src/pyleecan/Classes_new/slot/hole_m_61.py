@@ -591,7 +591,7 @@ class HoleM61(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleM61.check
-    def check(self):
+    def check(self) -> None:
         """Check that the HoleM61 object is correct
 
         Parameters
@@ -1293,7 +1293,7 @@ class HoleM61(HoleMag):
         return fig, ax
 
     # Inlined from Methods.Slot.HoleM61.remove_magnet
-    def remove_magnet(self):
+    def remove_magnet(self) -> None:
         """Remove the magnet (set to None) of the Hole
 
         Parameters

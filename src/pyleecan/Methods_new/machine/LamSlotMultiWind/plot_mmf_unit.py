@@ -1,7 +1,11 @@
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 
-def plot_mmf_unit(self, r_max=100, fig=None, save_path=None, is_show_fig=True):
+def plot_mmf_unit(self, r_max=100, fig: Figure | None = None, save_path: str | None = None, is_show_fig: bool = True) -> None:
     """Plot the winding unit mmf as a function of space
     Parameters
     ----------

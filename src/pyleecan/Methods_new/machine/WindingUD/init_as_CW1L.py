@@ -5,7 +5,7 @@ from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
 from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
 
 
-def init_as_CW1L(self, Zs=None):
+def init_as_CW1L(self, Zs: int | None = None) -> None:
     """Compute the Winding Matrix (for winding type 2)
     type 2 : TOOTH WINDING, SINGLE LAYER ALTERNATE TEETH WOUND
     (Nlay_rad=1,Nlay_tan=1)

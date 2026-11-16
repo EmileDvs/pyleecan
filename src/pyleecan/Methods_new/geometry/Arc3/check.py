@@ -1,7 +1,7 @@
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """assert that the arc is correct (begin != end)
 
     Parameters

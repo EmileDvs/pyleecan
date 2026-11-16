@@ -1,7 +1,7 @@
 from ..Slot import SlotCheckError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the HoleUD is correctly defined"""
     if self.surf_list is None:
         self.surf_list = list()

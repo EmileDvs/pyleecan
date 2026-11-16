@@ -2,6 +2,12 @@ import matplotlib.pyplot as plt
 from ....Functions_new.init_fig import init_fig
 from matplotlib.patches import Patch
 from ....definitions import config_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+    from ....Classes_new.machine.machine import Machine
 
 REF_EDGE_COLOR = "k"
 COMP_EDGE_COLOR = "r--"
@@ -10,24 +16,24 @@ PATCH_COLOR_ALPHA = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
 
 def plot(
     self,
-    fig=None,
-    ax=None,
-    sym=1,
-    alpha=0,
-    delta=0,
-    is_edge_only=False,
-    edgecolor=None,
-    is_add_arrow=False,
-    comp_machine=None,
-    comp_legend=None,
-    is_show_fig=True,
-    save_path=None,
-    win_title=None,
-    fig_title=None,
-    is_max_sym=False,
-    is_clean_plot=False,
-    is_winding_connection=False,
-):
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    sym: int = 1,
+    alpha: float = 0,
+    delta: complex = 0,
+    is_edge_only: bool = False,
+    edgecolor: str | None = None,
+    is_add_arrow: bool = False,
+    comp_machine: Machine | None = None,
+    comp_legend: str | None = None,
+    is_show_fig: bool = True,
+    save_path: str | None = None,
+    win_title: str | None = None,
+    fig_title: str | None = None,
+    is_max_sym: bool = False,
+    is_clean_plot: bool = False,
+    is_winding_connection: bool = False,
+) -> tuple[Figure, Axes]:
     """Plot the Machine in a matplotlib fig
 
     Parameters

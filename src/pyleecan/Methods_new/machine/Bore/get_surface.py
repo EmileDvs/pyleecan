@@ -1,7 +1,11 @@
 from ....Classes_new.geometry.surf_line import SurfLine
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.surface import Surface
 
 
-def get_surface(self):
+def get_surface(self) -> Surface:
     """Returns the bore shape as a Surface object
 
     Parameters

@@ -1,7 +1,7 @@
 from ....classes_common.check import check_var
 
 
-def _set_W3(self, value: float):
+def _set_W3(self, value: float) -> None:
     """setter of W3
 
     Parameters

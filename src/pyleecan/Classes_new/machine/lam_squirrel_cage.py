@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,6 +27,10 @@ from ..slot.slot_w_22 import SlotW22
 from .cond_type_21 import CondType21
 from .lam_slot import LamSlot
 from .lam_slot_wind import LamSlotWind
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -63,7 +67,13 @@ class LamSquirrelCage(LamSlotWind):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSquirrelCage.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+    def build_geometry(
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build geometry of the LamSquirrelCage
 
         Parameters
@@ -101,7 +111,7 @@ class LamSquirrelCage(LamSlotWind):
         return surf_list
 
     # Inlined from Methods.Machine.LamSquirrelCage.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Lamination object is correct
 
         Parameters
@@ -130,7 +140,7 @@ class LamSquirrelCage(LamSlotWind):
             raise SCC_WrongCond("A LamSquirrelCage's conductor must be a type 2_1")
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_angle_d_axis
-    def comp_angle_d_axis(self):
+    def comp_angle_d_axis(self) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
 
@@ -148,7 +158,7 @@ class LamSquirrelCage(LamSlotWind):
         return 0
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_length_ring
-    def comp_length_ring(self):
+    def comp_length_ring(self) -> float:
         """Computation of the squirrel cage end-ring average perimeter (circumferential length)
 
         Parameters
@@ -169,7 +179,7 @@ class LamSquirrelCage(LamSlotWind):
         return 2 * np.pi * Rmw
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_masses
-    def comp_masses(self):
+    def comp_masses(self) -> dict:
         """Compute the Lamination masses
 
         Parameters
@@ -233,7 +243,7 @@ class LamSquirrelCage(LamSlotWind):
         return M_dict
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_number_phase_eq
-    def comp_number_phase_eq(self):
+    def comp_number_phase_eq(self) -> float:
         """Compute the equivalent number of phase
 
         Parameters
@@ -250,7 +260,7 @@ class LamSquirrelCage(LamSlotWind):
         return self.slot.Zs / float(self.winding.p)
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the lamination
 
         Parameters
@@ -273,7 +283,7 @@ class LamSquirrelCage(LamSlotWind):
         return per_a, is_antiper_a
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_resistance_wind
-    def comp_resistance_wind(self, T=20):
+    def comp_resistance_wind(self, T: float = 20) -> float:
         """Computation of the equivalent rotor resistance per phase of a cage winding with 'qs' number of phases
 
         Parameters
@@ -314,7 +324,7 @@ class LamSquirrelCage(LamSlotWind):
         return Rtot
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_surface_ring
-    def comp_surface_ring(self):
+    def comp_surface_ring(self) -> float:
         """Computation of the ring cross-section surface area
 
         Parameters
@@ -334,7 +344,7 @@ class LamSquirrelCage(LamSlotWind):
         return Lscr * Hscr
 
     # Inlined from Methods.Machine.LamSquirrelCage.get_name_phase
-    def get_name_phase(self):
+    def get_name_phase(self) -> list:
         """Return the name of the winding phases
 
         Parameters
@@ -360,18 +370,18 @@ class LamSquirrelCage(LamSlotWind):
     # Inlined from Methods.Machine.LamSquirrelCage.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_show_fig=True,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_show_fig: bool = True,
+        is_winding_connection: bool = False,
+    ) -> tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
         Parameters
@@ -474,14 +484,14 @@ class LamSquirrelCage(LamSlotWind):
     # Inlined from Methods.Machine.LamSquirrelCage.plot_schematics_scr
     def plot_schematics_scr(
         self,
-        is_default=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-    ):
+        is_default: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the short circuit ring
 
         Parameters
@@ -653,7 +663,13 @@ class LamSquirrelCage(LamSlotWind):
             return fig, ax
 
     # Inlined from Methods.Machine.LamSquirrelCage.plot_side
-    def plot_side(self, fig=None, ax=None, is_show_fig=True, save_path=None):
+    def plot_side(
+        self,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot the side view of the Lamination in a matplotlib fig
         (Z axis left to right)
 

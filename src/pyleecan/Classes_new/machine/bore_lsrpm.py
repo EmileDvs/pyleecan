@@ -40,7 +40,7 @@ class BoreLSRPM(Bore):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.BoreLSRPM.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the Bore
 
         Parameters
@@ -59,7 +59,7 @@ class BoreLSRPM(Bore):
         return self.N, False
 
     # Inlined from Methods.Machine.BoreLSRPM.get_bore_line
-    def get_bore_line(self, prop_dict=None):
+    def get_bore_line(self, prop_dict: dict | None = None) -> list:
         """Return the bore line description
 
         Parameters

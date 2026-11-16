@@ -1,7 +1,7 @@
 from ....classes_common.check import check_var, raise_
 
 
-def _set_W3(self, value):
+def _set_W3(self, value) -> None:
     """setter of W3"""
     check_var("W3", value, "float", Vmin=0)
     self.W3 = value

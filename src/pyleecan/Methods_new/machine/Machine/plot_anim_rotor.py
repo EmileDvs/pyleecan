@@ -5,7 +5,7 @@ from matplotlib.pyplot import subplots
 from matplotlib.patches import Polygon
 
 
-def plot_anim_rotor(self, Nframe, Tanim, Nrot=1, is_loop=True):
+def plot_anim_rotor(self, Nframe: int, Tanim: float, Nrot: float = 1, is_loop: bool = True) -> None:
     """Plot the machine with an animation of the rotor
     (Internal Rotor for now ?)
 

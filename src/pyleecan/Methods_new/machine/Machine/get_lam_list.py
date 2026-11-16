@@ -1,7 +1,7 @@
 from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
 
 
-def get_lam_list(self, is_int_to_ext=True, key=None):
+def get_lam_list(self, is_int_to_ext: bool = True, key: str | None = None) -> list:
     """Returns the ordered list of lamination of the machine
 
     Parameters

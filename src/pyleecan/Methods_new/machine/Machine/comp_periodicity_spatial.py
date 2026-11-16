@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_periodicity_spatial(self):
+def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
     """Compute the (anti)-periodicities of the machine in space domain
 
     Parameters

@@ -1,7 +1,7 @@
 from ....Methods import ParentMissingError
 
 
-def is_yoke(self):
+def is_yoke(self) -> bool:
     """Return if the Shape is for the Bore or Yoke radius
 
     Parameters

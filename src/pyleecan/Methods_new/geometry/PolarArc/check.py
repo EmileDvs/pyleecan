@@ -1,7 +1,7 @@
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """check if the PolarArc object is correct
 
     Parameters

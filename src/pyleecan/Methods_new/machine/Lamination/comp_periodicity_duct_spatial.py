@@ -1,7 +1,7 @@
 from math import gcd
 
 
-def comp_periodicity_duct_spatial(self, per_a, is_antiper_a):
+def comp_periodicity_duct_spatial(self, per_a: int, is_antiper_a: bool) -> tuple[int, bool]:
     """Compute the periodity of the axial cooling ducts
 
     Parameters

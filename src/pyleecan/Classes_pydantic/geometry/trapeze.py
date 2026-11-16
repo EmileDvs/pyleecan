@@ -39,7 +39,7 @@ class Trapeze(Surface):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Trapeze.check
-    def check(self):
+    def check(self) -> None:
         """Check if the Trapeze object is correct
 
         Parameters
@@ -196,7 +196,7 @@ class Trapeze(Surface):
     def get_patches(
         self,
         color=None,
-        edgecolor=None,
+        edgecolor: str | None = None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
     ) -> list[Polygon]:
@@ -269,7 +269,7 @@ class Trapeze(Surface):
     )
 
     # Inlined from Methods.Geometry.Trapeze.rotate
-    def rotate(self, angle: float):
+    def rotate(self, angle: float) -> None:
         """Rotate the surface
 
         Parameters
@@ -292,7 +292,7 @@ class Trapeze(Surface):
         self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Trapeze.translate
-    def translate(self, Zt: complex):
+    def translate(self, Zt: complex) -> None:
         """Translate the Trapeze
 
         Parameters

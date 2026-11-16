@@ -1,4 +1,4 @@
-def comp_surface_ring(self):
+def comp_surface_ring(self) -> float:
     """Computation of the ring cross-section surface area
 
     Parameters

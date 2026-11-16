@@ -4,7 +4,7 @@ from ....Functions_new.Geometry.cut_lines_between_angle import cut_lines_between
 from ....Classes_new.geometry.segment import Segment
 
 
-def merge_slot_intersect(self, radius_desc_list, prop_dict, sym):
+def merge_slot_intersect(self, radius_desc_list: list, prop_dict: dict, sym: int) -> list:
     """Merge the Bore shape with notches/slot on the bore/yoke
     Intersect method: cut lines of notch/slot to make the radius end match notch/slot begin
     technically reduice slot/notch height without changing yoke height

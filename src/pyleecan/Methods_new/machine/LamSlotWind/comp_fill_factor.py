@@ -1,4 +1,4 @@
-def comp_fill_factor(self):
+def comp_fill_factor(self) -> float:
     """Compute the fill factor of the winding
 
     Parameters

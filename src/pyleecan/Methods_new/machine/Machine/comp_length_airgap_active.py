@@ -1,4 +1,4 @@
-def comp_length_airgap_active(self):
+def comp_length_airgap_active(self) -> float:
     """Compute the airgap active length
 
     Parameters

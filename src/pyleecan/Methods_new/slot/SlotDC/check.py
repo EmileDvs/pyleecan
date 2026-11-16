@@ -1,7 +1,7 @@
 from ..Slot import SlotCheckError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotDC object is correct
 
     Parameters

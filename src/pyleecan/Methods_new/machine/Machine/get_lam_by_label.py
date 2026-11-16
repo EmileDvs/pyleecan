@@ -1,7 +1,11 @@
 from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def get_lam_by_label(self, label):
+def get_lam_by_label(self, label: str) -> Lamination:
     """Returns the lamination by its labels. Accepted labels are 'Stator-X' and
     'Rotor-X' with X the number of the lamination starting with 0.
     For convenience also 'Stator' or 'Rotor' are allowed here to get respective first

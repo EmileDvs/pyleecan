@@ -10,7 +10,7 @@ from ....Functions_new.labels import update_RTS_index
 from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 
 
-def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
     """Build the geometry of the LamHole object
 
     Parameters

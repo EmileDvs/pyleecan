@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/Shaft.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -23,6 +23,10 @@ from ..geometry.circle import Circle
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
 from ..material.material import Material
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 class Shaft(LegacyModel):
@@ -54,7 +58,9 @@ class Shaft(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Shaft.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0):
+    def build_geometry(
+        self, sym: int = 1, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of the shaft
 
         Parameters
@@ -114,7 +120,7 @@ class Shaft(LegacyModel):
         return surf_list
 
     # Inlined from Methods.Machine.Shaft.comp_mass
-    def comp_mass(self):
+    def comp_mass(self) -> float:
         """Computation of the Shaft mass
 
         Parameters
@@ -137,15 +143,15 @@ class Shaft(LegacyModel):
     # Inlined from Methods.Machine.Shaft.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_show_fig=True,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_show_fig: bool = True,
+    ) -> tuple[Figure, Axes]:
         """Plot the Shaft in a matplotlib fig
 
         Parameters

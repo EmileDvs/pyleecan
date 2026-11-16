@@ -1,4 +1,4 @@
-def get_key_Ox_radius(self):
+def get_key_Ox_radius(self) -> float | None:
     """Return the Key max/min radius on Ox to close the sliding band in FEMM
 
     Parameters

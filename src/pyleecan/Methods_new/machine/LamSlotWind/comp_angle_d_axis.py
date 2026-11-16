@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_angle_d_axis(self, is_plot=False):
+def comp_angle_d_axis(self, is_plot: bool = False) -> float:
     """Compute the angle between the X axis and the first d+ axis
     By convention a "Tooth" is centered on the X axis
     Parameters
@@ -42,7 +42,7 @@ def comp_angle_d_axis(self, is_plot=False):
 
     if is_plot:
         import matplotlib.pyplot as plt
-        import numpy as np
+        
 
         # Reconstruct fundamental MMF wave
         magmax = np.abs(mmf_ft[indr_fund])

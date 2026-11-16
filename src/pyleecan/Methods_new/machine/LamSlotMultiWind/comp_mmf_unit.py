@@ -1,7 +1,11 @@
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data_nd import DataND
 
 
-def comp_mmf_unit(self, Na, Nt, felec=1, current_dir=None, phase_dir=None):
+def comp_mmf_unit(self, Na: int, Nt: int, felec: float = 1, current_dir: int | None = None, phase_dir: int | None = None) -> tuple[DataND, DataND]:
     """Compute the winding Unit magnetomotive force
 
     Parameters

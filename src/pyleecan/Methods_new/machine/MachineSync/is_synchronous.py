@@ -1,4 +1,4 @@
-def is_synchronous(self):
+def is_synchronous(self) -> bool:
     """Return if a machine is synchronous or not
 
     Parameters

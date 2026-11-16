@@ -1,4 +1,4 @@
-def comp_surface_axial_vent(self):
+def comp_surface_axial_vent(self) -> float:
     """Compute the Lamination axial vent
 
     Parameters

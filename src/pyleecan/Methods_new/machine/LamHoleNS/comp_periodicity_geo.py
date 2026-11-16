@@ -1,4 +1,4 @@
-def comp_periodicity_geo(self):
+def comp_periodicity_geo(self) -> tuple[int | None, bool]:
     """Compute the geometric periodicity factor of the lamination
 
     Parameters

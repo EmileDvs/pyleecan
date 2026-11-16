@@ -4,7 +4,7 @@ from ....Classes_new._swat_em import datamodel
 from . import WindingError
 
 
-def comp_connection_mat(self, Zs=None, p=None):
+def comp_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np.ndarray:
     """Compute the Winding Matrix for
 
     Parameters

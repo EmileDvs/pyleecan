@@ -210,7 +210,7 @@ class SlotW23(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW23._comp_W
-    def _comp_W(self):
+    def _comp_W(self) -> None:
         """Compute W1 and W2 method (cste tooth compatibility)
 
         Parameters
@@ -252,7 +252,7 @@ class SlotW23(Slot):
         self.W2 = 2 * np.sin(alpha_S2 / 2) * R2
 
     # Inlined from Methods.Slot.SlotW23._set_W3
-    def _set_W3(self, value):
+    def _set_W3(self, value) -> None:
         """setter of W3"""
         check_var("W3", value, "float", Vmin=0)
         self.W3 = value
@@ -295,7 +295,7 @@ class SlotW23(Slot):
         return [line for line in curve_list if line is not None]
 
     # Inlined from Methods.Slot.SlotW23.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotW23 object is correct
 
         Parameters

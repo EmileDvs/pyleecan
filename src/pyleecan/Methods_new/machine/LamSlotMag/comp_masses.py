@@ -1,7 +1,7 @@
 from ....Classes_new.machine.lam_slot import LamSlot
 
 
-def comp_masses(self):
+def comp_masses(self) -> dict:
     """Compute the Lamination masses (Mlam, Mmag)
 
     Parameters

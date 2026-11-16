@@ -2,7 +2,7 @@ from . import S16OutterError, S16AlphaT
 import numpy as np
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotW16 object is correct
 
     Parameters

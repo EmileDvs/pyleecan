@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_mass(self):
+def comp_mass(self) -> float:
     """Computation of the Shaft mass
 
     Parameters

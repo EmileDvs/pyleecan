@@ -1,7 +1,11 @@
 from ....Methods import NotImplementedYetError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def get_polar_eq(self):
+def get_polar_eq(self) -> Lamination:
     """Returns a polar equivalent of the lamination
 
     Parameters

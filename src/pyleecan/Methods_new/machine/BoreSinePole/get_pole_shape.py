@@ -2,7 +2,7 @@ from ....Methods import ParentMissingError
 import numpy as np
 
 
-def get_pole_shape(self, phi):
+def get_pole_shape(self, phi: float) -> complex:
     """Return the complex coordinates of the point at phi
 
     Parameters

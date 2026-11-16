@@ -1,9 +1,11 @@
 # Experimental dataclass generated from Generator/ClassesRef/Machine/Lamination.csv
 """Generated experimental dataclass; do not edit by hand."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from math import gcd
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -51,6 +53,15 @@ from .bore import Bore
 from .notch import Notch
 from .notch_even_dist import NotchEvenDist
 from .skew import Skew
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.line import Line
+    from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -144,7 +155,13 @@ class Lamination(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Lamination.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+    def build_geometry(
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ):
         """Build the geometry of the Lamination
 
         Parameters
@@ -202,7 +219,7 @@ class Lamination(LegacyClass):
         vent_surf_list = []
         if self.axial_vent not in [None, []]:
             for vent in self.axial_vent:
-                kwargs = dict(alpha=0, delta=0)
+                kwargs: dict[str, Any] = dict(alpha=0, delta=0)
                 vent_list = vent.build_geometry(**kwargs)
                 surf = transform_hole_surf(
                     hole_surf_list=vent_list,
@@ -277,7 +294,7 @@ class Lamination(LegacyClass):
                 ZTL=ZTL,
             )
             # Create lines
-            curve_list = []
+            curve_list: list[Line] = []
             if self.is_internal:
                 curve_list.extend(right_list)
             else:
@@ -303,7 +320,7 @@ class Lamination(LegacyClass):
         return surf_list
 
     # Inlined from Methods.Machine.Lamination.build_radius_desc
-    def build_radius_desc(self, is_bore, sym=1):
+    def build_radius_desc(self, is_bore: bool, sym: int = 1) -> list:
         """This method returns an ordered description of the slot/notch
         that defines the bore/yoke radius of the lamination
         (Bore/Yoke shape not taken into account by this method, cf build_radius_lines)
@@ -489,7 +506,13 @@ class Lamination(LegacyClass):
         return radius_desc
 
     # Inlined from Methods.Machine.Lamination.build_radius_lines
-    def build_radius_lines(self, is_bore, sym=1, is_reversed=False, prop_dict=None):
+    def build_radius_lines(
+        self,
+        is_bore: bool,
+        sym: int = 1,
+        is_reversed: bool = False,
+        prop_dict: dict | None = None,
+    ) -> list:
         """Create the lines need to draw the selected radius of the Lamination
 
         Parameters
@@ -593,12 +616,12 @@ class Lamination(LegacyClass):
     # Inlined from Methods.Machine.Lamination.build_yoke_side_line
     def build_yoke_side_line(
         self,
-        sym,
+        sym: int,
         vent_surf_list,
-        ZBR=None,
-        ZTR=None,
-        ZBL=None,
-        ZTL=None,
+        ZBR: complex | None = None,
+        ZTR: complex | None = None,
+        ZBL: complex | None = None,
+        ZTL: complex | None = None,
         *,
         DELTA=1e-06,
     ):
@@ -712,7 +735,7 @@ class Lamination(LegacyClass):
         return line_list
 
     # Inlined from Methods.Machine.Lamination.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Lamination object is correct
 
         Parameters
@@ -763,7 +786,7 @@ class Lamination(LegacyClass):
                     )
 
     # Inlined from Methods.Machine.Lamination.comp_angle_q_axis
-    def comp_angle_q_axis(self):
+    def comp_angle_q_axis(self) -> float:
         """Compute the angle between the X axis and the first q+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -784,7 +807,7 @@ class Lamination(LegacyClass):
         return q_angle + np.pi / p / 2
 
     # Inlined from Methods.Machine.Lamination.comp_height_yoke
-    def comp_height_yoke(self):
+    def comp_height_yoke(self) -> float:
         """Compute the yoke height
 
         Parameters
@@ -801,7 +824,7 @@ class Lamination(LegacyClass):
         return self.Rext - self.Rint
 
     # Inlined from Methods.Machine.Lamination.comp_length
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the total length of the Lamination (including radial
         ventilations duct)
 
@@ -822,7 +845,7 @@ class Lamination(LegacyClass):
             return self.L1 + self.Nrvd * self.Wrvd
 
     # Inlined from Methods.Machine.Lamination.comp_masses
-    def comp_masses(self):
+    def comp_masses(self) -> dict:
         """Compute the masses of the Lamination
 
         Parameters
@@ -848,7 +871,7 @@ class Lamination(LegacyClass):
         return M_dict
 
     # Inlined from Methods.Machine.Lamination.comp_output_geo
-    def comp_output_geo(self):
+    def comp_output_geo(self) -> OutGeoLam:
         """Compute the main geometry output
 
         Parameters
@@ -870,7 +893,9 @@ class Lamination(LegacyClass):
         return output
 
     # Inlined from Methods.Machine.Lamination.comp_periodicity_duct_spatial
-    def comp_periodicity_duct_spatial(self, per_a, is_antiper_a):
+    def comp_periodicity_duct_spatial(
+        self, per_a: int, is_antiper_a: bool
+    ) -> tuple[int, bool]:
         """Compute the periodity of the axial cooling ducts
 
         Parameters
@@ -930,7 +955,7 @@ class Lamination(LegacyClass):
         return per_a, is_antiper_a
 
     # Inlined from Methods.Machine.Lamination.comp_periodicity_geo
-    def comp_periodicity_geo(self):
+    def comp_periodicity_geo(self) -> tuple[int | None, bool]:
         """Compute the geometric periodicity factor of the lamination
 
         Parameters
@@ -984,7 +1009,7 @@ class Lamination(LegacyClass):
         return per_a, is_antiper_a
 
     # Inlined from Methods.Machine.Lamination.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the lamination
 
         Parameters
@@ -1036,7 +1061,7 @@ class Lamination(LegacyClass):
         return per_a, is_antiper_a
 
     # Inlined from Methods.Machine.Lamination.comp_point_ref
-    def comp_point_ref(self, sym=1):
+    def comp_point_ref(self, sym: int = 1):
         """Compute coordinates of a point in the lamination
         to assign property in FEA software
         Account for slot, notches and ventilations (TODO)
@@ -1089,7 +1114,7 @@ class Lamination(LegacyClass):
         return Rref * np.exp(1j * angle)
 
     # Inlined from Methods.Machine.Lamination.comp_radius_mec
-    def comp_radius_mec(self):
+    def comp_radius_mec(self) -> float:
         """Compute the mechanical radius of the Lamination [m]
 
         Parameters
@@ -1110,7 +1135,7 @@ class Lamination(LegacyClass):
             return self.Rint
 
     # Inlined from Methods.Machine.Lamination.comp_radius_mid_yoke
-    def comp_radius_mid_yoke(self):
+    def comp_radius_mid_yoke(self) -> float:
         """Compute the Lamination middle of the yoke radius
 
         Parameters
@@ -1132,7 +1157,7 @@ class Lamination(LegacyClass):
             return self.Rext - Hyoke / 2
 
     # Inlined from Methods.Machine.Lamination.comp_surface_axial_vent
-    def comp_surface_axial_vent(self):
+    def comp_surface_axial_vent(self) -> float:
         """Compute the Lamination axial vent
 
         Parameters
@@ -1153,7 +1178,7 @@ class Lamination(LegacyClass):
             return 0
 
     # Inlined from Methods.Machine.Lamination.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surface (Total, Vent).
 
         Parameters
@@ -1207,7 +1232,7 @@ class Lamination(LegacyClass):
         }
 
     # Inlined from Methods.Machine.Lamination.comp_volumes
-    def comp_volumes(self):
+    def comp_volumes(self) -> dict:
         """Compute the volumes of the Lamination
 
         Parameters
@@ -1233,7 +1258,7 @@ class Lamination(LegacyClass):
         return {"Vlam": Vlam, "Vvent": Vvent, "Vyoke": Vyoke, "Vteeth": Vteeth}
 
     # Inlined from Methods.Machine.Lamination.get_label
-    def get_label(self, is_add_id=True):
+    def get_label(self, is_add_id: bool = True) -> str:
         """Return the label of the lamination (Stator-0 for instance)
 
         Parameters
@@ -1268,7 +1293,7 @@ class Lamination(LegacyClass):
         return label
 
     # Inlined from Methods.Machine.Lamination.get_name_phase
-    def get_name_phase(self):
+    def get_name_phase(self) -> list:
         """Return the name of the winding phases
 
         Parameters
@@ -1290,7 +1315,7 @@ class Lamination(LegacyClass):
         return gen_name(self.winding.qs)
 
     # Inlined from Methods.Machine.Lamination.get_notches_surf
-    def get_notches_surf(self, sym):
+    def get_notches_surf(self, sym: int):
         """Return the list of surfaces for notches
 
         Parameters
@@ -1344,7 +1369,7 @@ class Lamination(LegacyClass):
         return surf_list
 
     # Inlined from Methods.Machine.Lamination.get_polar_eq
-    def get_polar_eq(self):
+    def get_polar_eq(self) -> Lamination:
         """Returns a polar equivalent of the lamination
 
         Parameters
@@ -1363,7 +1388,7 @@ class Lamination(LegacyClass):
         )
 
     # Inlined from Methods.Machine.Lamination.get_Rbo
-    def get_Rbo(self):
+    def get_Rbo(self) -> float:
         """Return the bore lamination radius
 
         Parameters
@@ -1384,7 +1409,7 @@ class Lamination(LegacyClass):
             return self.Rint
 
     # Inlined from Methods.Machine.Lamination.get_Ryoke
-    def get_Ryoke(self):
+    def get_Ryoke(self) -> float:
         """Return the yoke lamination radius
 
         Parameters
@@ -1405,7 +1430,7 @@ class Lamination(LegacyClass):
             return self.Rext
 
     # Inlined from Methods.Machine.Lamination.get_surfaces_closing
-    def get_surfaces_closing(self, sym=1):
+    def get_surfaces_closing(self, sym: int = 1) -> list:
         """Return the surfaces needed to close the radii of the Lamination
 
         Parameters
@@ -1428,7 +1453,7 @@ class Lamination(LegacyClass):
             return []
 
     # Inlined from Methods.Machine.Lamination.has_key
-    def has_key(self):
+    def has_key(self) -> bool:
         """Check if a there is key in the Lamination
 
         Parameters
@@ -1447,7 +1472,7 @@ class Lamination(LegacyClass):
         return any([notch.has_key() for notch in self.notch])
 
     # Inlined from Methods.Machine.Lamination.has_notch
-    def has_notch(self, is_bore):
+    def has_notch(self, is_bore: bool) -> bool:
         """Check if notches are set on the requested radius
 
         Parameters
@@ -1475,7 +1500,7 @@ class Lamination(LegacyClass):
             return any([notch.notch_shape.is_bore == False for notch in self.notch])
 
     # Inlined from Methods.Machine.Lamination.has_slot
-    def has_slot(self, is_bore=True):
+    def has_slot(self, is_bore: bool = True) -> bool:
         """Return if the lamination has slot on the requested radius
         (notches not taken into account, cf has_notch)
 
@@ -1495,7 +1520,7 @@ class Lamination(LegacyClass):
         return False
 
     # Inlined from Methods.Machine.Lamination.is_outwards
-    def is_outwards(self):
+    def is_outwards(self) -> bool:
         """Return if the slot is outwards (on an external lamination) or inwards
         (on an internal lamination)
 
@@ -1514,19 +1539,19 @@ class Lamination(LegacyClass):
     # Inlined from Methods.Machine.Lamination.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_show_fig=True,
-        save_path=None,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        is_winding_connection: bool = False,
+    ) -> tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
         Parameters
@@ -1616,7 +1641,9 @@ class Lamination(LegacyClass):
         return fig, ax
 
     # Inlined from Methods.Machine.Lamination.plot_preview_notch
-    def plot_preview_notch(self, index, fig=None, ax=None):
+    def plot_preview_notch(
+        self, index: int, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
         """Preview the position/shape of a notch on the lamination
 
         Parameters

@@ -1,4 +1,4 @@
-def comp_surface(self):
+def comp_surface(self) -> float:
     """Returns the area of the shape
 
     Parameters

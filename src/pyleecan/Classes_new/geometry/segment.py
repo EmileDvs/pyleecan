@@ -49,7 +49,7 @@ class Segment(Line):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.Segment.check
-    def check(self):
+    def check(self) -> None:
         """assert that the line is correct (begin != end)
 
         Parameters
@@ -194,10 +194,10 @@ class Segment(Line):
         propname=None,
         element_size=None,
         automesh=None,
-        hide=False,
+        hide: bool = False,
         group=None,
         is_draw: bool = True,
-    ):
+    ) -> None:
         """<   Draw the segment in FEMM and assign the property
 
         Parameters
@@ -525,7 +525,7 @@ class Segment(Line):
         return fig, ax
 
     # Inlined from Methods.Geometry.Segment.reverse
-    def reverse(self):
+    def reverse(self) -> None:
         """Reverse the begin and end point of the Line
 
         Parameters
@@ -542,7 +542,7 @@ class Segment(Line):
         self.begin = end
 
     # Inlined from Methods.Geometry.Segment.rotate
-    def rotate(self, angle: float):
+    def rotate(self, angle: float) -> None:
         """Rotation of the Segment of angle
 
         Parameters
@@ -569,7 +569,7 @@ class Segment(Line):
         self.end = self.end * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.Segment.scale
-    def scale(self, scale_factor: float):
+    def scale(self, scale_factor: float) -> None:
         """Scale the coordinates of the begin/end
 
         Parameters
@@ -588,7 +588,7 @@ class Segment(Line):
         self.end = self.end * scale_factor
 
     # Inlined from Methods.Geometry.Segment.split_half
-    def split_half(self, is_begin: bool = True):
+    def split_half(self, is_begin: bool = True) -> None:
         """Cut the line in half (modify the object)
 
         Parameters
@@ -687,7 +687,7 @@ class Segment(Line):
             return [self.copy()], [self.copy()]
 
     # Inlined from Methods.Geometry.Segment.split_point
-    def split_point(self, Z1: complex, is_begin: bool = True):
+    def split_point(self, Z1: complex, is_begin: bool = True) -> None:
         """Cut the Segment according to a point on the segment
 
         Parameters
@@ -712,7 +712,7 @@ class Segment(Line):
             self.begin = Z1
 
     # Inlined from Methods.Geometry.Segment.translate
-    def translate(self, Zt: complex):
+    def translate(self, Zt: complex) -> None:
         """Translate the Segment object
 
         Parameters

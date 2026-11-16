@@ -37,7 +37,7 @@ class EndWindingRect(EndWinding):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.EndWindingRect.comp_inductance
-    def comp_inductance(self):
+    def comp_inductance(self) -> float:
         """Compute the end winding inductance based on permeance coefficient stored in EndWindingRect object
         from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
 
@@ -79,7 +79,7 @@ class EndWindingRect(EndWinding):
         return Lw
 
     # Inlined from Methods.Machine.EndWindingRect.comp_length
-    def comp_length(self):
+    def comp_length(self) -> float:
         """Compute the end winding conductor length on one side for a half-turn
         excluding the straight conductor length outside of the lamination (winding.Lewout).
 

@@ -3,7 +3,7 @@ import numpy as np
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
 
-def comp_length(self):
+def comp_length(self) -> float:
     """Compute the end winding conductor length on one side for a half-turn
     excluding the straight conductor length outside of the lamination (winding.Lewout).
 

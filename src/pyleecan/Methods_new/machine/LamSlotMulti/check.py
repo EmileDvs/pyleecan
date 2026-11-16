@@ -2,7 +2,7 @@ from . import LamSlotMultiAlphaError
 import numpy as np
 
 
-def check(self):
+def check(self) -> None:
     """Check that the Lamination object is correct
 
     Parameters

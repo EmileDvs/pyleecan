@@ -2,7 +2,7 @@ from ....Functions.Load.import_class import import_class
 from ....classes_common.check import check_var
 
 
-def _set_split_active_surf_dict(self, value):
+def _set_split_active_surf_dict(self, value) -> None:
     """setter of split_active_surf_dict"""
     if type(value) is dict:
         for key, obj_list in value.items():

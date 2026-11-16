@@ -1,7 +1,7 @@
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotW63 object is correct
 
     Parameters

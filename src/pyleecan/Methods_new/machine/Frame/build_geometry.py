@@ -4,9 +4,13 @@ from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.surf_ring import SurfRing
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.geometry.line import Line
 
 
-def build_geometry(self, sym=1, alpha=0, delta=0):
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:
     """Build the geometry of the Frame
 
     Parameters
@@ -52,7 +56,7 @@ def build_geometry(self, sym=1, alpha=0, delta=0):
             Z3 = Z0 * np.exp(1j * 2 * np.pi / sym)
             Z1 = self.Rext
             Z2 = Z1 * np.exp(1j * 2 * np.pi / sym)
-            curve_list = list()
+            curve_list: list[Line] = list()
             curve_list.append(Segment(begin=Z0, end=Z1))
             curve_list.append(Arc1(begin=Z1, end=Z2, radius=self.Rext))
             curve_list.append(Segment(begin=Z2, end=Z3))

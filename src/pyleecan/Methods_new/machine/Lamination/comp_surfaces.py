@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_surfaces(self):
+def comp_surfaces(self) -> dict:
     """Compute the Lamination surface (Total, Vent).
 
     Parameters

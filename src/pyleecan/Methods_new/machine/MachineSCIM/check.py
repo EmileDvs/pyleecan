@@ -3,7 +3,7 @@ from ....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
 from .. import MachineCheckError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the Machine object is correct
 
     Parameters

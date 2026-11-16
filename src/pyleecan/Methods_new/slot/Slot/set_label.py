@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from ....Classes_new.geometry.surface import Surface
 
 
-def set_label(self, surf_list: list[Surface], Nrad: int, Ntan: int, lam_label: str):
+def set_label(self, surf_list: list[Surface], Nrad: int, Ntan: int, lam_label: str) -> None:
     """Set the normalized label on the active surface
     (internal method of build_geometry_active)
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_skin_effect_resistance(self, freq, T_op=20, T_ref=20, b=None, zt=None):
+def comp_skin_effect_resistance(self, freq: float | np.ndarray, T_op: float = 20, T_ref: float = 20, b: float | None = None, zt: int | None = None) -> float:
     """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
     All parameters are defined p.270 / 271
 

@@ -10,7 +10,7 @@ ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
 STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
 
-def plot(self, fig=None, ax=None, is_show_fig=True) -> tuple[Figure, Axes]:
+def plot(self, fig: Figure | None = None, ax: Axes | None = None, is_show_fig: bool = True) -> tuple[Figure, Axes]:
     """Plot the Slot in a matplotlib fig
 
     Parameters

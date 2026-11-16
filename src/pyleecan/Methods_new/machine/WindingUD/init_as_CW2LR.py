@@ -5,7 +5,7 @@ from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
 from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
 
 
-def init_as_CW2LR(self, Zs=None):
+def init_as_CW2LR(self, Zs: int | None = None) -> None:
     """Compute the Winding Matrix (for winding type 5) (Nlay_rad=1,Nlay_tan=1)
     type 5 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, RADIAL SUPERPOSITION
 

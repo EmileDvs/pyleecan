@@ -6,8 +6,8 @@ from ....Functions_new.labels import BOUNDARY_PROP_LAB, COND_BOUNDARY_PROP_LAB, 
 
 
 def build_geometry(
-    self, is_magnet=True, sym=1, alpha=0, delta=0, is_circular_radius=False
-):
+    self, is_magnet: bool = True, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False
+) -> list:
     """Build the geometry of the LamSlotMag
 
     Parameters

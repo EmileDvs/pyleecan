@@ -1,4 +1,4 @@
-def remove_magnet(self):
+def remove_magnet(self) -> None:
     """Remove the magnet (set to None) of the Hole
 
     Parameters

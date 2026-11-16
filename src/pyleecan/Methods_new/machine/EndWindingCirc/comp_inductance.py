@@ -3,7 +3,7 @@ import numpy as np
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind
 
 
-def comp_inductance(self):
+def comp_inductance(self) -> float:
     """Compute the end winding inductance from "Design of Brushless Permanent-Magnet Machines", J.R Henderson, 2010
 
     Parameters

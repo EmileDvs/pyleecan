@@ -3,7 +3,7 @@ import numpy as np
 from . import *
 
 
-def check(self):
+def check(self) -> None:
     """Check that the Conductor object is correct
 
     Parameters

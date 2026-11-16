@@ -1,4 +1,4 @@
-def merge_slot_translate(self, radius_desc_list, prop_dict, sym):
+def merge_slot_translate(self, radius_desc_list: list, prop_dict: dict, sym: int) -> list:
     """Merge the Bore shape with notches/slot on the bore/yoke
     Translate method: Translate lines of notch/slot to match the radius of the shape
     technically Keep the slot/notch height by reduicing the yoke height

@@ -1,4 +1,4 @@
-def get_Rbo(self):
+def get_Rbo(self) -> float:
     """Return the bore lamination radius
 
     Parameters

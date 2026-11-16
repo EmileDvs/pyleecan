@@ -3,7 +3,7 @@ import numpy as np
 from ....Functions_new.Winding.comp_cond_function import comp_cond_function
 
 
-def comp_wind_function(self, angle=None, Na=2048, alpha_mmf0=0, per_a=1):
+def comp_wind_function(self, angle: np.ndarray | None = None, Na: int = 2048, alpha_mmf0: float = 0, per_a: int = 1) -> np.ndarray:
     """Computation of the winding function for the lamination.
     By convention a tooth is centered on the X axis
 

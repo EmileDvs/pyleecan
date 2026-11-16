@@ -63,7 +63,7 @@ class SlotM17(Slot):
         return []
 
     # Inlined from Methods.Slot.SlotM17.check
-    def check(self):
+    def check(self) -> None:
         """Check that the SlotM17 object is correct
 
         Parameters

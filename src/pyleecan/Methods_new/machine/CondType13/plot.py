@@ -1,5 +1,10 @@
 from ....definitions import config_dict
 from ....Functions_new.init_fig import init_fig
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 COND_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
 INS_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
@@ -8,7 +13,7 @@ COND_COLOR[3] = 1
 INS_COLOR[3] = 1
 
 
-def plot(self, is_show_fig=True, fig=None, ax=None):
+def plot(self, is_show_fig: bool = True, fig: Figure | None = None, ax: Axes | None = None):
     """Plot a Conductor in a matplotlib fig
 
     Parameters

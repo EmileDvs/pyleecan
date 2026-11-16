@@ -1,4 +1,4 @@
-def comp_height_eq(self):
+def comp_height_eq(self) -> float:
     """Computation of the Frame equivalent Height for the mechanical model
 
     Parameters

@@ -1,4 +1,4 @@
-def get_Ryoke(self):
+def get_Ryoke(self) -> float:
     """Return the yoke lamination radius
 
     Parameters

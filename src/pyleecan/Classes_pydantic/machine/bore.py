@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/Bore.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -15,6 +15,12 @@ from ...Functions_pydantic.init_fig import init_fig
 from .._legacy_model import LegacyModel
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ..geometry.surface import Surface
 
 
 class Bore(LegacyModel):
@@ -42,7 +48,7 @@ class Bore(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Bore.comp_Rmax
-    def comp_Rmax(self):
+    def comp_Rmax(self) -> float:
         """Compute the maximum radius of the Bore shape
 
         Parameters
@@ -65,7 +71,7 @@ class Bore(LegacyModel):
         return np.max(np.abs(np.array(point_list)))
 
     # Inlined from Methods.Machine.Bore.comp_Rmin
-    def comp_Rmin(self):
+    def comp_Rmin(self) -> float:
         """Compute the minimum radius of the Bore shape
 
         Parameters
@@ -88,7 +94,7 @@ class Bore(LegacyModel):
         return np.min(np.abs(np.array(point_list)))
 
     # Inlined from Methods.Machine.Bore.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Returns the area of the shape
 
         Parameters
@@ -105,7 +111,7 @@ class Bore(LegacyModel):
         return self.get_surface().comp_surface()
 
     # Inlined from Methods.Machine.Bore.get_surface
-    def get_surface(self):
+    def get_surface(self) -> Surface:
         """Returns the bore shape as a Surface object
 
         Parameters
@@ -124,7 +130,7 @@ class Bore(LegacyModel):
         return SurfLine(line_list=line_list, point_ref=0, label="Bore")
 
     # Inlined from Methods.Machine.Bore.is_yoke
-    def is_yoke(self):
+    def is_yoke(self) -> bool:
         """Return if the Shape is for the Bore or Yoke radius
 
         Parameters
@@ -146,7 +152,7 @@ class Bore(LegacyModel):
             )
 
     # Inlined from Methods.Machine.Bore.merge_slot
-    def merge_slot(self, radius_desc_list, prop_dict, sym):
+    def merge_slot(self, radius_desc_list: list, prop_dict: dict, sym: int) -> list:
         """Merge the Bore shape with notches/slot on the bore/yoke
 
         Parameters
@@ -179,7 +185,9 @@ class Bore(LegacyModel):
             raise Exception("Not implemented yet")
 
     # Inlined from Methods.Machine.Bore.merge_slot_connect
-    def merge_slot_connect(self, radius_desc_list, prop_dict, sym):
+    def merge_slot_connect(
+        self, radius_desc_list: list, prop_dict: dict, sym: int
+    ) -> list:
         """Merge the Bore shape with notches/slot on the bore/yoke
         Connect method: Add lines between radius and notch/slot
         (To use when the radius shape have circular part matchine the radius
@@ -277,7 +285,9 @@ class Bore(LegacyModel):
         return line_list
 
     # Inlined from Methods.Machine.Bore.merge_slot_intersect
-    def merge_slot_intersect(self, radius_desc_list, prop_dict, sym):
+    def merge_slot_intersect(
+        self, radius_desc_list: list, prop_dict: dict, sym: int
+    ) -> list:
         """Merge the Bore shape with notches/slot on the bore/yoke
         Intersect method: cut lines of notch/slot to make the radius end match notch/slot begin
         technically reduice slot/notch height without changing yoke height
@@ -432,7 +442,9 @@ class Bore(LegacyModel):
         return line_list
 
     # Inlined from Methods.Machine.Bore.merge_slot_translate
-    def merge_slot_translate(self, radius_desc_list, prop_dict, sym):
+    def merge_slot_translate(
+        self, radius_desc_list: list, prop_dict: dict, sym: int
+    ) -> list:
         """Merge the Bore shape with notches/slot on the bore/yoke
         Translate method: Translate lines of notch/slot to match the radius of the shape
         technically Keep the slot/notch height by reduicing the yoke height
@@ -455,7 +467,9 @@ class Bore(LegacyModel):
         raise Exception("Not Implemented Yet")
 
     # Inlined from Methods.Machine.Bore.plot
-    def plot(self, fig=None, ax=None):
+    def plot(
+        self, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
         """Plot the Bore in a matplotlib fig
 
         Parameters

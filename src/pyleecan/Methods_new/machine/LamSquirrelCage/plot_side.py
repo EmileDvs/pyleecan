@@ -2,6 +2,11 @@ from matplotlib.patches import Rectangle, Patch
 import matplotlib.pyplot as plt
 from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
 STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
@@ -9,7 +14,7 @@ BAR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["BAR_COLOR"]
 SCR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["SCR_COLOR"]
 
 
-def plot_side(self, fig=None, ax=None, is_show_fig=True, save_path=None):
+def plot_side(self, fig: Figure | None = None, ax: Axes | None = None, is_show_fig: bool = True, save_path: str | None = None) -> tuple[Figure, Axes]:
     """Plot the side view of the Lamination in a matplotlib fig
     (Z axis left to right)
 

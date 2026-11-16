@@ -111,7 +111,7 @@ class Slot19(Slot):
         return curve_list
 
     # Inlined from Methods.Slot.Slot19.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Slot19 object is correct
 
         Parameters

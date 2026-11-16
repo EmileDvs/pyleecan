@@ -4,7 +4,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.arc_3 import Arc3
 
 
-def build_radius_lines(self, is_bore, sym=1, is_reversed=False, prop_dict=None):
+def build_radius_lines(self, is_bore: bool, sym: int = 1, is_reversed: bool = False, prop_dict: dict | None = None) -> list:
     """Create the lines need to draw the selected radius of the Lamination
 
     Parameters

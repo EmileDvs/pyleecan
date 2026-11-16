@@ -1,4 +1,4 @@
-def get_machine_type(self):
+def get_machine_type(self) -> str:
     """Return a string with the main information about the machine architecture
 
     Parameters

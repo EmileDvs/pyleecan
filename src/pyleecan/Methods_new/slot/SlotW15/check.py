@@ -1,7 +1,7 @@
 from . import S15InnerError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotW15 object is correct
 
     Parameters

@@ -1,13 +1,17 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/CondType21.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from matplotlib.patches import Patch, Rectangle
 from pydantic import Field
 
 from ...Functions_pydantic.init_fig import init_fig
 from .conductor import Conductor
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 class CondType21(Conductor):
@@ -37,7 +41,7 @@ class CondType21(Conductor):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType21.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the conductor
 
         Parameters
@@ -55,7 +59,7 @@ class CondType21(Conductor):
         return self.Hbar + 2 * self.Wins
 
     # Inlined from Methods.Machine.CondType21.comp_height_wire
-    def comp_height_wire(self):
+    def comp_height_wire(self) -> float:
         """Return bar height
 
         Parameters
@@ -73,7 +77,7 @@ class CondType21(Conductor):
         return self.Hbar
 
     # Inlined from Methods.Machine.CondType21.comp_nb_circumferential_wire
-    def comp_nb_circumferential_wire(self):
+    def comp_nb_circumferential_wire(self) -> int:
         """Return number of adjacent wires in circumferential direction
 
         Parameters
@@ -91,7 +95,7 @@ class CondType21(Conductor):
         return 1
 
     # Inlined from Methods.Machine.CondType21.comp_nb_radial_wire
-    def comp_nb_radial_wire(self):
+    def comp_nb_radial_wire(self) -> int:
         """Return number of adjacent wires in radial direction
 
         Parameters
@@ -109,7 +113,7 @@ class CondType21(Conductor):
         return 1
 
     # Inlined from Methods.Machine.CondType21.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the conductor
 
         Parameters
@@ -129,7 +133,7 @@ class CondType21(Conductor):
         return S
 
     # Inlined from Methods.Machine.CondType21.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the active surface of the conductor
 
         Parameters
@@ -149,7 +153,7 @@ class CondType21(Conductor):
         return Sact
 
     # Inlined from Methods.Machine.CondType21.comp_width
-    def comp_width(self):
+    def comp_width(self) -> float:
         """Compute the width of the conductor
 
         Parameters
@@ -167,7 +171,7 @@ class CondType21(Conductor):
         return self.Wbar + 2 * self.Wins
 
     # Inlined from Methods.Machine.CondType21.comp_width_wire
-    def comp_width_wire(self):
+    def comp_width_wire(self) -> float:
         """Return bar width
 
         Parameters
@@ -185,7 +189,7 @@ class CondType21(Conductor):
         return self.Wbar
 
     # Inlined from Methods.Machine.CondType21.is_round_wire
-    def is_round_wire(self):
+    def is_round_wire(self) -> bool:
         """Return if wire is round
 
         Parameters
@@ -203,7 +207,9 @@ class CondType21(Conductor):
         return False
 
     # Inlined from Methods.Machine.CondType21.plot
-    def plot(self, fig=None, ax=None):
+    def plot(
+        self, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
         """Plot a Conductor in a matplotlib fig
 
         Parameters

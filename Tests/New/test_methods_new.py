@@ -204,3 +204,29 @@ def test_remove_coding_declaration(source, expected):
     from pyleecan.Generator.ClassGenerator.New.modernize import remove_coding_declaration
 
     assert remove_coding_declaration(source) == expected
+
+
+def test_local_package_import_removed_with_module_import():
+    """A local numpy import would make np local to the whole function
+    (UnboundLocalError before it): removed when the module imports numpy."""
+    from pyleecan.Generator.ClassGenerator.New.modernize import apply_import_styles
+
+    source = '''from numpy import abs as np_abs, pi
+
+
+def f(x, is_plot=False):
+    y = np_abs(x) * pi
+    if is_plot:
+        from numpy import squeeze, argmax
+        z = argmax(squeeze(y))
+    if x:
+        from numpy import cos
+    return y
+'''
+    result = apply_import_styles(source)
+    assert result.count("import numpy as np") == 1
+    assert "        z = np.argmax(np.squeeze(y))\n" in result
+    assert "    if x:\n        pass\n" in result
+    namespace = {}
+    exec(compile(result, "<test>", "exec"), namespace)
+    assert namespace["f"](-2.0, is_plot=True) > 0  # No UnboundLocalError

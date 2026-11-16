@@ -1,4 +1,4 @@
-def comp_width(self):
+def comp_width(self) -> float:
     """Compute the width of the conductor
 
     Parameters

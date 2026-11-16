@@ -3,7 +3,7 @@ import numpy as np
 from ..Slot import SlotCheckError
 
 
-def check(self):
+def check(self) -> None:
     """Check that the SlotM11 object is correct
 
     Parameters

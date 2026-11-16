@@ -2,13 +2,17 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, ClassVar
+from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 import numpy as np
 
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_class import LegacyClass
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
 
@@ -68,7 +72,7 @@ class Skew(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Skew.comp_angle
-    def comp_angle(self):
+    def comp_angle(self) -> None:
         """Compute skew angles and positions
         Parameters
         ----------
@@ -213,7 +217,9 @@ class Skew(LegacyClass):
         self.z_list = z_list
 
     # Inlined from Methods.Machine.Skew.comp_pattern
-    def comp_pattern(self, is_reverse_z=False, is_reverse_angle=False):
+    def comp_pattern(
+        self, is_reverse_z: bool = False, is_reverse_angle: bool = False
+    ) -> tuple[list, list]:
         """Compute skew pattern by duplicating points in case of stepped skew
 
         Parameters
@@ -273,13 +279,13 @@ class Skew(LegacyClass):
     # Inlined from Methods.Machine.Skew.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
         lam_name="",
-        is_show_fig=False,
-        save_path=None,
-        win_title=None,
-    ):
+        is_show_fig: bool = False,
+        save_path: str | None = None,
+        win_title: str | None = None,
+    ) -> None:
         """Plots skew angle
 
         Parameters

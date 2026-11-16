@@ -35,7 +35,7 @@ class MachineIPMSM(MachineSync):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.MachineIPMSM.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Machine object is correct
 
         Parameters
@@ -72,7 +72,7 @@ class MachineIPMSM(MachineSync):
             raise M3C_PError("The stator and the rotor must have the same value for p")
 
     # Inlined from Methods.Machine.MachineIPMSM.get_machine_type
-    def get_machine_type(self):
+    def get_machine_type(self) -> str:
         """Return a string with the may information about the machine architecture
 
         Parameters

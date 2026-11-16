@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_volumes(self):
+def comp_volumes(self) -> dict:
     """Compute the volumes of the Lamination
 
     Parameters

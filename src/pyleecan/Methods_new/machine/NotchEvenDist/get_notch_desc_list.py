@@ -3,7 +3,7 @@ import numpy as np
 from ....Classes_new.geometry.segment import Segment
 
 
-def get_notch_desc_list(self, sym=1):
+def get_notch_desc_list(self, sym: int = 1) -> list:
     """Returns an ordered description of the notches
 
     Parameters

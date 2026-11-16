@@ -1,4 +1,4 @@
-def set_Lmag(self, value):
+def set_Lmag(self, value: float) -> None:
     """Set the Length of the magnet
 
     Parameters

@@ -1,4 +1,4 @@
-def get_pole_pair_number(self):
+def get_pole_pair_number(self) -> int:
     """Returns the number of pole pairs of the machine
 
     Parameters

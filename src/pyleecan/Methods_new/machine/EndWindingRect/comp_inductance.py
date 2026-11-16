@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_inductance(self):
+def comp_inductance(self) -> float:
     """Compute the end winding inductance based on permeance coefficient stored in EndWindingRect object
     from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
 

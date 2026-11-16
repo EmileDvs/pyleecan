@@ -1,4 +1,8 @@
-def get_hole_list(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.slot.hole import Hole
+def get_hole_list(self) -> list[Hole]:
     """Return the list of all the holes
 
     Parameters

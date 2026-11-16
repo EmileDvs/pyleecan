@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -11,6 +11,11 @@ from ...Functions_new.labels import HOLEM_LAB, decode_label
 from ..slot.hole import Hole
 from .lam_h import LamH
 from .lamination import Lamination
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+
+    from ..slot.hole import Hole
 
 
 @dataclass(eq=False)
@@ -38,11 +43,11 @@ class LamHoleNS(LamH):
     # Inlined from Methods.Machine.LamHoleNS._plot_arrow_mag
     def _plot_arrow_mag(
         self,
-        ax=None,
-        sym=1,
-        alpha=0,
-        delta=0,
-    ):
+        ax: Axes | None = None,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+    ) -> None:
         """Plot the magnetization direction as arrow on top of the lamination
         (meant to be called by LamHole.plot)
 
@@ -137,7 +142,13 @@ class LamHoleNS(LamH):
                         )
 
     # Inlined from Methods.Machine.LamHoleNS.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0, is_circular_radius=False):
+    def build_geometry(
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build the geometry of the LamHoleNS object
 
         Parameters
@@ -204,7 +215,7 @@ class LamHoleNS(LamH):
         return surf_list
 
     # Inlined from Methods.Machine.LamHoleNS.comp_masses
-    def comp_masses(self):
+    def comp_masses(self) -> dict:
         """Compute the Lamination masses
 
         Parameters
@@ -228,7 +239,7 @@ class LamHoleNS(LamH):
         return M_dict
 
     # Inlined from Methods.Machine.LamHoleNS.comp_periodicity_geo
-    def comp_periodicity_geo(self):
+    def comp_periodicity_geo(self) -> tuple[int | None, bool]:
         """Compute the geometric periodicity factor of the lamination
 
         Parameters
@@ -247,7 +258,7 @@ class LamHoleNS(LamH):
         return self.comp_periodicity_spatial()
 
     # Inlined from Methods.Machine.LamHoleNS.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the lamination
 
         Parameters
@@ -292,7 +303,7 @@ class LamHoleNS(LamH):
         return per_a, is_antiper_a
 
     # Inlined from Methods.Machine.LamHoleNS.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surfaces
 
         Parameters
@@ -318,7 +329,7 @@ class LamHoleNS(LamH):
         return S_dict
 
     # Inlined from Methods.Machine.LamHoleNS.comp_volumes
-    def comp_volumes(self):
+    def comp_volumes(self) -> dict:
         """Compute the Lamination volumes
 
         Parameters
@@ -342,7 +353,7 @@ class LamHoleNS(LamH):
         return V_dict
 
     # Inlined from Methods.Machine.LamHoleNS.get_hole_list
-    def get_hole_list(self):
+    def get_hole_list(self) -> list[Hole]:
         """Return the list of all the holes (North and South)
 
         Parameters
@@ -362,7 +373,7 @@ class LamHoleNS(LamH):
         return hole_list
 
     # Inlined from Methods.Machine.LamHoleNS.get_magnet_number
-    def get_magnet_number(self, sym=1):
+    def get_magnet_number(self, sym: int = 1) -> int:
         """Return the number of magnet on the Lamination
 
         Parameters

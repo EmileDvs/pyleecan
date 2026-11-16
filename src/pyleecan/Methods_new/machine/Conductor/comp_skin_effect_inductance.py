@@ -2,8 +2,8 @@ import numpy as np
 
 
 def comp_skin_effect_inductance(
-    self, freq, T_op=20, T_ref=20, b4=None, h4=None, zt=None
-):
+    self, freq: float | np.ndarray, T_op: float = 20, T_ref: float = 20, b4: float | None = None, h4: float | None = None, zt: int | None = None
+) -> float:
     """Compute the skin effect factor on inductance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
     All parameters bc, h4, z4, are defined in Fig(4.14) p.249
 

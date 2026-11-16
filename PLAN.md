@@ -509,6 +509,22 @@ hint pass is over for all packages.
 - `SlotUD2._set_split_active_surf_dict`: the `Methods_new` setter still
   imports the legacy `Functions.Load.import_class` and builds
   `pyleecan.Classes` objects with `init_dict=` (to fix for the new backends).
+- Machine:
+  - `BoreSinePole.get_bore_line`: `raise ()` (TODO in the legacy code: a
+    TypeError instead of an explicit error);
+  - `Winding.export_to_csv`, `WindingUD.import_from_csv`: `file_path=None`
+    but used as a str (required parameter?);
+  - `LamHole`/`LamHoleNS._plot_arrow_mag`: the magnet surface stays `None`
+    when no label matches, `ax` may be `None`;
+  - `LamSlotMag.get_all_mag_obj`: optional `mat_type`/`mag` fields assigned
+    without check;
+  - `Machine.plot`: `rotor`/`stator` not declared on the `Machine` base;
+  - implicit `None` returns: `Frame.plot`, `LamSquirrelCage.plot_schematics_scr`,
+    `LamSlotMag.get_magnet_by_label`;
+  - `LamSlotWind.comp_mmf_unit`: lists given to ndarray fields of `Data1D`;
+    `LamSlotWind.plot`: lists for `FancyArrowPatch` positions (tuple);
+    `Machine.plot_anim_rotor`: `Patch.xy`; `NotchEvenDist.get_notch_desc_list`:
+    `<` between str and int.
 - `ModelBH.fit_model`: the last `else` branch calls `self.BH_func(H, Bs, a)`
   with undefined `Bs` and `a` (`NameError`), and `new_BH` is unbound there.
 - Geometry: `Trapeze.get_patches` (`replace`/`in` on an optional style),
@@ -525,7 +541,23 @@ In the order a simulation is built:
       `get_BH` -> `np.ndarray | None` (no curve defined), `plot_BH` ->
       `Figure` (documented "None"). `ty`: 2 diagnostics left (`fit_model`,
       frozen review list). Class tests unchanged.
-- [ ] Machine
+- [x] Machine (`machine` in `HINTED_SUBPACKAGES`): 445/458 parameters and
+      321/337 returns hinted; `ty`: 58 -> 38 diagnostics (review list below).
+      New hint rules, also applied to the hinted packages (slot 832/886
+      parameters and 657/694 returns, geometry 135/164 and 125/131):
+      - `-> None` for an undocumented return when the function returns no
+        value (stubs excepted: an override may return one);
+      - undocumented parameters: conventional names (`fig`, `ax`,
+        `edgecolor`, `save_path`, `win_title`, `is_show_fig`) and flags (bool
+        default);
+      - documented types: unions (`float or ndarray`), plural items
+        (`list of floats`), Returns alternatives separated by a line `or`;
+      - `| None` when the function has a `return None` or a bare `return`;
+      - class-specific return overrides (`(sub-package, class, function)`).
+      Fixed: a local `import numpy as np` in a function using the module `np`
+      (`LamSlotWind.comp_angle_d_axis`, UnboundLocalError in Methods_new): the
+      import style pass removes the local imports of a package imported by the
+      module.
 - [ ] Simulation, Loss, Output, Optimization
 - [ ] Logger chain
 - [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)

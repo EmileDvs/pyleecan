@@ -1,4 +1,4 @@
-def reverse(self):
+def reverse(self) -> None:
     """Reverse the begin and end point of the Line
 
     Parameters

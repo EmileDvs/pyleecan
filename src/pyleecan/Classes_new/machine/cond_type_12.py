@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,6 +14,10 @@ from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, TEXT_BOX
 from ..geometry.segment import Segment
 from .conductor import Conductor
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -56,7 +60,7 @@ class CondType12(Conductor):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.CondType12.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Conductor object is correct
 
         Parameters
@@ -88,7 +92,7 @@ class CondType12(Conductor):
                 raise C12_WireDontFit("The wires are too big to fit in the conductor")
 
     # Inlined from Methods.Machine.CondType12.comp_height
-    def comp_height(self):
+    def comp_height(self) -> float:
         """Compute the height of the conductor
 
         Parameters
@@ -106,7 +110,7 @@ class CondType12(Conductor):
         return self.comp_width()
 
     # Inlined from Methods.Machine.CondType12.comp_height_wire
-    def comp_height_wire(self):
+    def comp_height_wire(self) -> float:
         """Return wire diameter
 
         Parameters
@@ -124,7 +128,7 @@ class CondType12(Conductor):
         return self.Wwire
 
     # Inlined from Methods.Machine.CondType12.comp_nb_circumferential_wire
-    def comp_nb_circumferential_wire(self):
+    def comp_nb_circumferential_wire(self) -> int:
         """Return number of adjacent wires in circumferential direction
 
         Parameters
@@ -142,7 +146,7 @@ class CondType12(Conductor):
         return int(np.sqrt(self.Nwppc))
 
     # Inlined from Methods.Machine.CondType12.comp_nb_radial_wire
-    def comp_nb_radial_wire(self):
+    def comp_nb_radial_wire(self) -> int:
         """Return number of adjacent wires in radial direction
 
         Parameters
@@ -160,7 +164,7 @@ class CondType12(Conductor):
         return int(np.sqrt(self.Nwppc))
 
     # Inlined from Methods.Machine.CondType12.comp_surface
-    def comp_surface(self):
+    def comp_surface(self) -> float:
         """Compute the surface of the conductor
 
         Parameters
@@ -178,7 +182,7 @@ class CondType12(Conductor):
         return np.pi * ((self.comp_width() / 2.0) ** 2)
 
     # Inlined from Methods.Machine.CondType12.comp_surface_active
-    def comp_surface_active(self):
+    def comp_surface_active(self) -> float:
         """Compute the active surface of the conductor
 
         Parameters
@@ -198,7 +202,7 @@ class CondType12(Conductor):
         return Sact
 
     # Inlined from Methods.Machine.CondType12.comp_width
-    def comp_width(self):
+    def comp_width(self) -> float:
         """Compute the width of the conductor
 
         Parameters
@@ -225,7 +229,7 @@ class CondType12(Conductor):
         return width
 
     # Inlined from Methods.Machine.CondType12.comp_width_wire
-    def comp_width_wire(self):
+    def comp_width_wire(self) -> float:
         """Return wire diameter
 
         Parameters
@@ -243,7 +247,7 @@ class CondType12(Conductor):
         return self.Wwire
 
     # Inlined from Methods.Machine.CondType12.is_round_wire
-    def is_round_wire(self):
+    def is_round_wire(self) -> bool:
         """Return if wire is round
 
         Parameters
@@ -261,7 +265,12 @@ class CondType12(Conductor):
         return True
 
     # Inlined from Methods.Machine.CondType12.plot
-    def plot(self, is_show_fig=True, fig=None, ax=None):
+    def plot(
+        self,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+    ) -> tuple[Figure, Axes]:
         """Plot a Conductor in a matplotlib fig
 
         Parameters
@@ -364,15 +373,15 @@ class CondType12(Conductor):
     # Inlined from Methods.Machine.CondType12.plot_schematics
     def plot_schematics(
         self,
-        is_default=False,
-        is_add_schematics=True,
-        is_add_main_line=True,
-        save_path=None,
-        is_show_fig=True,
-        fig=None,
-        ax=None,
-        is_single=False,
-    ):
+        is_default: bool = False,
+        is_add_schematics: bool = True,
+        is_add_main_line: bool = True,
+        save_path: str | None = None,
+        is_show_fig: bool = True,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_single: bool = False,
+    ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
         Parameters

@@ -1,20 +1,25 @@
 from ....Functions_new.init_fig import init_fig
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 def plot(
     self,
-    fig=None,
-    ax=None,
-    is_lam_only=False,
-    sym=1,
-    alpha=0,
-    delta=0,
-    is_edge_only=False,
-    edgecolor=None,
-    is_add_arrow=False,
-    is_show_fig=True,
-    is_winding_connection=False,
-):
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_lam_only: bool = False,
+    sym: int = 1,
+    alpha: float = 0,
+    delta: complex = 0,
+    is_edge_only: bool = False,
+    edgecolor: str | None = None,
+    is_add_arrow: bool = False,
+    is_show_fig: bool = True,
+    is_winding_connection: bool = False,
+) -> tuple[Figure, Axes]:
     """Plot the Lamination in a matplotlib fig
 
     Parameters

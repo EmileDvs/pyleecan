@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from matplotlib.patches import Patch
@@ -14,6 +14,10 @@ from ...Functions_new.Plot.get_color_legend_from_surface import (
 )
 from ..slot.slot import Slot
 from .lamination import Lamination
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -44,7 +48,7 @@ class LamSlotMulti(Lamination):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotMulti.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Lamination object is correct
 
         Parameters
@@ -85,7 +89,7 @@ class LamSlotMulti(Lamination):
             )
 
     # Inlined from Methods.Machine.LamSlotMulti.comp_height_yoke
-    def comp_height_yoke(self):
+    def comp_height_yoke(self) -> float:
         """Compute the yoke height
 
         Parameters
@@ -105,7 +109,7 @@ class LamSlotMulti(Lamination):
         return self.Rext - self.Rint - H
 
     # Inlined from Methods.Machine.LamSlotMulti.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the lamination
 
         Parameters
@@ -135,7 +139,7 @@ class LamSlotMulti(Lamination):
             return 1, is_aper
 
     # Inlined from Methods.Machine.LamSlotMulti.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surfaces (Lamination, Ventilation, Slot).
 
         Parameters
@@ -160,7 +164,7 @@ class LamSlotMulti(Lamination):
         return S_dict
 
     # Inlined from Methods.Machine.LamSlotMulti.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int:
         """Return the number of pair of pole of the Lamination
 
         Parameters
@@ -178,7 +182,7 @@ class LamSlotMulti(Lamination):
         return self.get_Zs() // 2
 
     # Inlined from Methods.Machine.LamSlotMulti.get_slot_desc_list
-    def get_slot_desc_list(self, sym=1, is_bore=True):
+    def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
         """Returns an ordered description of the slot
 
         Parameters
@@ -221,7 +225,7 @@ class LamSlotMulti(Lamination):
         return slot_list
 
     # Inlined from Methods.Machine.LamSlotMulti.get_Zs
-    def get_Zs(self):
+    def get_Zs(self) -> float:
         """Return the number of Slot of the Lamination
 
         Parameters
@@ -239,7 +243,7 @@ class LamSlotMulti(Lamination):
         return len(self.slot_list)
 
     # Inlined from Methods.Machine.LamSlotMulti.has_slot
-    def has_slot(self, is_bore=True):
+    def has_slot(self, is_bore: bool = True) -> bool:
         """Return if the lamination has slot on the requested radius
         (notches not taken into account, cf has_notch)
 
@@ -268,20 +272,20 @@ class LamSlotMulti(Lamination):
     # Inlined from Methods.Machine.LamSlotMulti.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_display=True,
-        is_show_fig=True,
-        is_clean_plot=False,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_display: bool = True,
+        is_show_fig: bool = True,
+        is_clean_plot: bool = False,
+        is_winding_connection: bool = False,
+    ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination with empty Slots in a matplotlib fig
 
         Parameters

@@ -3,7 +3,7 @@ from . import *
 import numpy as np
 
 
-def check(self):
+def check(self) -> None:
     """Check that the HoleM61 object is correct
 
     Parameters

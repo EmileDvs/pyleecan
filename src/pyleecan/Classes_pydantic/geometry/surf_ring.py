@@ -37,7 +37,7 @@ class SurfRing(Surface):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Geometry.SurfRing.check
-    def check(self):
+    def check(self) -> None:
         """assert the Surface is correct
 
         Parameters
@@ -173,7 +173,7 @@ class SurfRing(Surface):
     def get_patches(
         self,
         color=None,
-        edgecolor=None,
+        edgecolor: str | None = None,
         is_edge_only: bool = False,
         linestyle: str | None = None,
     ) -> list[Polygon]:
@@ -273,7 +273,7 @@ class SurfRing(Surface):
         return fig, ax
 
     # Inlined from Methods.Geometry.SurfRing.rotate
-    def rotate(self, angle: float):
+    def rotate(self, angle: float) -> None:
         """Rotate the surface
 
         Parameters
@@ -299,7 +299,7 @@ class SurfRing(Surface):
             self.point_ref = self.point_ref * np.exp(1j * angle)
 
     # Inlined from Methods.Geometry.SurfRing.translate
-    def translate(self, Zt: complex):
+    def translate(self, Zt: complex) -> None:
         """Translate the surface
 
         Parameters

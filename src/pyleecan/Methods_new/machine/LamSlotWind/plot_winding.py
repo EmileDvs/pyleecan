@@ -8,11 +8,11 @@ from ....Functions_new.Winding.gen_phase_list import gen_color, gen_name
 
 def plot_winding(
     self,
-    wind_mat=None,
-    all_slot=False,
-    is_show_fig=True,
-    save_path=None,
-    win_title=None,
+    wind_mat: np.ndarray | None = None,
+    all_slot: bool = False,
+    is_show_fig: bool = True,
+    save_path: str | None = None,
+    win_title: str | None = None,
 ):
     """Plot the Winding in a matplotlib fig
 

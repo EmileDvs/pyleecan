@@ -1,7 +1,9 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/Machine.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
@@ -37,6 +39,13 @@ from ..material.material import Material
 from ..output.out_geo import OutGeo
 from .frame import Frame
 from .shaft import Shaft
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from .lamination import Lamination
+    from .machine import Machine
 
 
 class Machine(LegacyModel):
@@ -83,7 +92,9 @@ class Machine(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Machine.build_geometry
-    def build_geometry(self, sym=1, alpha=0, delta=0):
+    def build_geometry(
+        self, sym: int = 1, alpha: float = 0, delta: complex = 0
+    ) -> list:
         """Build the geometry of the machine
 
         Parameters
@@ -137,7 +148,7 @@ class Machine(LegacyModel):
         return surf_list
 
     # Inlined from Methods.Machine.Machine.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Machine object is correct
 
         Parameters
@@ -211,7 +222,7 @@ class Machine(LegacyModel):
         self.stator.check()
 
     # Inlined from Methods.Machine.Machine.comp_angle_rotor_initial
-    def comp_angle_rotor_initial(self):
+    def comp_angle_rotor_initial(self) -> float:
         """Set rotor initial angle as 0
 
         Parameters
@@ -228,7 +239,7 @@ class Machine(LegacyModel):
         return 0
 
     # Inlined from Methods.Machine.Machine.comp_desc_dict
-    def comp_desc_dict(self):
+    def comp_desc_dict(self) -> list:
         """Compute a dictionary with the main parameters/output of the machine
 
         Parameters
@@ -474,7 +485,7 @@ class Machine(LegacyModel):
         return desc_dict
 
     # Inlined from Methods.Machine.Machine.comp_length_airgap_active
-    def comp_length_airgap_active(self):
+    def comp_length_airgap_active(self) -> float:
         """Compute the airgap active length
 
         Parameters
@@ -492,7 +503,7 @@ class Machine(LegacyModel):
         return min(self.rotor.L1, self.stator.L1)
 
     # Inlined from Methods.Machine.Machine.comp_masses
-    def comp_masses(self):
+    def comp_masses(self) -> dict:
         """Compute the masses of the machine
         - Mmach : Mass total [kg]
         - Mfra : Mass of the Frame [kg]
@@ -535,7 +546,7 @@ class Machine(LegacyModel):
         return M_dict
 
     # Inlined from Methods.Machine.Machine.comp_output_geo
-    def comp_output_geo(self):
+    def comp_output_geo(self) -> OutGeo:
         """Compute the main geometry output
 
         Parameters
@@ -562,7 +573,7 @@ class Machine(LegacyModel):
         return output
 
     # Inlined from Methods.Machine.Machine.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the (anti)-periodicities of the machine in space domain
 
         Parameters
@@ -595,7 +606,7 @@ class Machine(LegacyModel):
         return pera, is_apera
 
     # Inlined from Methods.Machine.Machine.comp_periodicity_time
-    def comp_periodicity_time(self, slip=0):
+    def comp_periodicity_time(self, slip: float = 0) -> tuple[int, bool, int, bool]:
         """Compute the (anti)-periodicities of the machine in time domain
 
         Parameters
@@ -637,7 +648,7 @@ class Machine(LegacyModel):
         return pert_S, is_apert_S, pert_R, is_apert_R
 
     # Inlined from Methods.Machine.Machine.comp_Rgap_mec
-    def comp_Rgap_mec(self):
+    def comp_Rgap_mec(self) -> float:
         """Returns the radius of the center of the mecanical airgap
 
         Parameters
@@ -656,7 +667,7 @@ class Machine(LegacyModel):
         return (stator.comp_radius_mec() + rotor.comp_radius_mec()) / 2
 
     # Inlined from Methods.Machine.Machine.comp_width_airgap_mag
-    def comp_width_airgap_mag(self):
+    def comp_width_airgap_mag(self) -> float:
         """Compute the magnetic airgap (distance beetween the two Lamination)
 
         Parameters
@@ -676,7 +687,7 @@ class Machine(LegacyModel):
             return self.rotor.Rint - self.stator.Rext
 
     # Inlined from Methods.Machine.Machine.comp_width_airgap_mec
-    def comp_width_airgap_mec(self):
+    def comp_width_airgap_mec(self) -> float:
         """Compute the mechanical airgap (mag_airgap - magnet or ring)
 
         Parameters
@@ -696,7 +707,7 @@ class Machine(LegacyModel):
             return self.rotor.comp_radius_mec() - self.stator.comp_radius_mec()
 
     # Inlined from Methods.Machine.Machine.get_lam_by_label
-    def get_lam_by_label(self, label):
+    def get_lam_by_label(self, label: str) -> Lamination:
         """Returns the lamination by its labels. Accepted labels are 'Stator-X' and
         'Rotor-X' with X the number of the lamination starting with 0.
         For convenience also 'Stator' or 'Rotor' are allowed here to get respective first
@@ -746,7 +757,7 @@ class Machine(LegacyModel):
         return self.get_lam_list(is_int_to_ext=True, key=None)[index]
 
     # Inlined from Methods.Machine.Machine.get_lam_index
-    def get_lam_index(self, label):
+    def get_lam_index(self, label: str) -> int | None:
         """Returns list index of the lamination with the given label
         corresponding to machine.get_lam_list(is_int_to_ext=True, key=None).
         For convenience label 'Stator' or 'Rotor' are allowed here to get respective first
@@ -779,7 +790,7 @@ class Machine(LegacyModel):
             return None
 
     # Inlined from Methods.Machine.Machine.get_lam_list
-    def get_lam_list(self, is_int_to_ext=True, key=None):
+    def get_lam_list(self, is_int_to_ext: bool = True, key: str | None = None) -> list:
         """Returns the ordered list of lamination of the machine
 
         Parameters
@@ -826,7 +837,7 @@ class Machine(LegacyModel):
         return lam_list
 
     # Inlined from Methods.Machine.Machine.get_lam_list_label
-    def get_lam_list_label(self):
+    def get_lam_list_label(self) -> list:
         """Returns the ordered (from internal to external) list of lamination labels
         corresponding to machine.get_lam_list(is_int_to_ext=True, key=None)
 
@@ -857,7 +868,7 @@ class Machine(LegacyModel):
         return label_list
 
     # Inlined from Methods.Machine.Machine.get_material_dict
-    def get_material_dict(self, path="self", is_unique=False):
+    def get_material_dict(self, path: str = "self", is_unique: bool = False) -> dict:
         """
         Get the dict of materials contained in a Machine
 
@@ -889,7 +900,7 @@ class Machine(LegacyModel):
             return mach_mat_dict
 
     @staticmethod
-    def get_material(obj, path="self"):
+    def get_material(obj, path="self") -> dict:
         """
         Get the dict of materials contained in a pyleecan object
 
@@ -927,7 +938,7 @@ class Machine(LegacyModel):
         return materials
 
     # Inlined from Methods.Machine.Machine.get_polar_eq
-    def get_polar_eq(self):
+    def get_polar_eq(self) -> Machine:
         """Returns a polar equivalent of the machine
 
         Parameters
@@ -950,7 +961,7 @@ class Machine(LegacyModel):
         return polar_eq
 
     # Inlined from Methods.Machine.Machine.get_pole_pair_number
-    def get_pole_pair_number(self):
+    def get_pole_pair_number(self) -> int:
         """Returns the number of pole pairs of the machine
 
         Parameters
@@ -988,26 +999,26 @@ class Machine(LegacyModel):
     # Inlined from Methods.Machine.Machine.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        comp_machine=None,
-        comp_legend=None,
-        is_show_fig=True,
-        save_path=None,
-        win_title=None,
-        fig_title=None,
-        is_max_sym=False,
-        is_clean_plot=False,
-        is_winding_connection=False,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        comp_machine: Machine | None = None,
+        comp_legend: str | None = None,
+        is_show_fig: bool = True,
+        save_path: str | None = None,
+        win_title: str | None = None,
+        fig_title: str | None = None,
+        is_max_sym: bool = False,
+        is_clean_plot: bool = False,
+        is_winding_connection: bool = False,
         *,
         COMP_EDGE_COLOR="r--",
-    ):
+    ) -> tuple[Figure, Axes]:
         """Plot the Machine in a matplotlib fig
 
         Parameters
@@ -1194,7 +1205,9 @@ class Machine(LegacyModel):
         return fig, ax
 
     # Inlined from Methods.Machine.Machine.plot_anim_rotor
-    def plot_anim_rotor(self, Nframe, Tanim, Nrot=1, is_loop=True):
+    def plot_anim_rotor(
+        self, Nframe: int, Tanim: float, Nrot: float = 1, is_loop: bool = True
+    ) -> None:
         """Plot the machine with an animation of the rotor
         (Internal Rotor for now ?)
 
@@ -1266,7 +1279,7 @@ class Machine(LegacyModel):
         plt.show()
 
     # Inlined from Methods.Machine.Machine.set_pole_pair_number
-    def set_pole_pair_number(self, p):
+    def set_pole_pair_number(self, p: int) -> None:
         """Set the number of pole pairs of the machine
 
         Parameters

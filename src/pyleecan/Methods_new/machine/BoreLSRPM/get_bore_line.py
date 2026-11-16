@@ -5,7 +5,7 @@ from ....Methods import ParentMissingError
 import numpy as np
 
 
-def get_bore_line(self, prop_dict=None):
+def get_bore_line(self, prop_dict: dict | None = None) -> list:
     """Return the bore line description
 
     Parameters

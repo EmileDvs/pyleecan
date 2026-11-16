@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/LamSlotMagNS.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -18,10 +18,14 @@ from ...Functions_pydantic.labels import (
     decode_label,
     update_RTS_index,
 )
+from .._import import import_class
 from ..slot.slot import Slot
 from .lam_slot import LamSlot
 from .lam_slot_m import LamSlotM
 from .magnet import Magnet
+
+if TYPE_CHECKING:
+    from .magnet import Magnet
 
 
 class LamSlotMagNS(LamSlotM):
@@ -40,9 +44,13 @@ class LamSlotMagNS(LamSlotM):
         Default: Slot()
     """
 
-    magnet_north: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_north: Magnet | None = Field(
+        default_factory=lambda: import_class("Magnet")()
+    )
     """North Magnet of the lamination"""
-    magnet_south: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_south: Magnet | None = Field(
+        default_factory=lambda: import_class("Magnet")()
+    )
     """South Magnet of the lamination"""
     slot_south: Slot | None = Field(default_factory=lambda: Slot())
     """South slot of the lamination"""
@@ -52,8 +60,13 @@ class LamSlotMagNS(LamSlotM):
 
     # Inlined from Methods.Machine.LamSlotMagNS.build_geometry
     def build_geometry(
-        self, is_magnet=True, sym=1, alpha=0, delta=0, is_circular_radius=False
-    ):
+        self,
+        is_magnet: bool = True,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build the geometry of the LamSlotMag
 
         Parameters
@@ -223,7 +236,7 @@ class LamSlotMagNS(LamSlotM):
         return surf_list
 
     # Inlined from Methods.Machine.LamSlotMagNS.check
-    def check(self):
+    def check(self) -> None:
         """Check that the Lamination object is correct
 
         Parameters
@@ -249,7 +262,7 @@ class LamSlotMagNS(LamSlotM):
             raise LMC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
 
     # Inlined from Methods.Machine.LamSlotMagNS.comp_masses
-    def comp_masses(self):
+    def comp_masses(self) -> dict:
         """Compute the Lamination masses (Mlam, Mmag)
 
         Parameters
@@ -288,7 +301,7 @@ class LamSlotMagNS(LamSlotM):
         return M_dict
 
     # Inlined from Methods.Machine.LamSlotMagNS.comp_periodicity_geo
-    def comp_periodicity_geo(self):
+    def comp_periodicity_geo(self) -> tuple[int | None, bool]:
         """Compute the geometric periodicity factor of the lamination
 
         Parameters
@@ -307,7 +320,7 @@ class LamSlotMagNS(LamSlotM):
         return self.comp_periodicity_spatial()
 
     # Inlined from Methods.Machine.LamSlotMagNS.comp_periodicity_spatial
-    def comp_periodicity_spatial(self):
+    def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         """Compute the periodicity factor of the lamination
 
         Parameters
@@ -352,7 +365,7 @@ class LamSlotMagNS(LamSlotM):
         return per_a, is_antiper_a
 
     # Inlined from Methods.Machine.LamSlotMagNS.comp_surfaces
-    def comp_surfaces(self):
+    def comp_surfaces(self) -> dict:
         """Compute the Lamination surfaces (Slam, Svent, Sslot, Smag)
 
         Parameters
@@ -379,7 +392,7 @@ class LamSlotMagNS(LamSlotM):
         return S_dict
 
     # Inlined from Methods.Machine.LamSlotMagNS.comp_volumes
-    def comp_volumes(self):
+    def comp_volumes(self) -> dict:
         """Compute the Lamination volumes (Vlam, Vvent, Vslot, Vmag)
 
         Parameters
@@ -406,7 +419,7 @@ class LamSlotMagNS(LamSlotM):
         return V_dict
 
     # Inlined from Methods.Machine.LamSlotMagNS.get_all_mag_obj
-    def get_all_mag_obj(self):
+    def get_all_mag_obj(self) -> list[Magnet]:
         """Return all the magnet object for all the layers
 
         Parameters
@@ -431,7 +444,9 @@ class LamSlotMagNS(LamSlotM):
             )
 
     # Inlined from Methods.Machine.LamSlotMagNS.get_magnet_by_label
-    def get_magnet_by_label(self, label=None, label_dict=None):
+    def get_magnet_by_label(
+        self, label: str | None = None, label_dict: dict | None = None
+    ) -> Magnet:
         """Return the magnet corresponding to the label
 
         Parameters
@@ -461,7 +476,7 @@ class LamSlotMagNS(LamSlotM):
             return self.magnet_south
 
     # Inlined from Methods.Machine.LamSlotMagNS.get_slot_desc_list
-    def get_slot_desc_list(self, sym=1, is_bore=True):
+    def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
         """Returns an ordered description of the slot
 
         Parameters
@@ -518,7 +533,7 @@ class LamSlotMagNS(LamSlotM):
         return slot_list
 
     # Inlined from Methods.Machine.LamSlotMagNS.set_Lmag
-    def set_Lmag(self, value):
+    def set_Lmag(self, value: float) -> None:
         """Set the Length of the magnet
 
         Parameters

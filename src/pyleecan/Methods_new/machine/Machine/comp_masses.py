@@ -1,4 +1,4 @@
-def comp_masses(self):
+def comp_masses(self) -> dict:
     """Compute the masses of the machine
     - Mmach : Mass total [kg]
     - Mfra : Mass of the Frame [kg]

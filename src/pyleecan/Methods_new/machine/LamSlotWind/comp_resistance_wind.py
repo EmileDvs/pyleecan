@@ -1,4 +1,4 @@
-def comp_resistance_wind(self, T=20):
+def comp_resistance_wind(self, T: float = 20) -> float:
     """Compute the DC winding resistance per phase without skin effect at average temperature T degC
 
     Parameters

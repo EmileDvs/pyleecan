@@ -9,10 +9,10 @@ def draw_FEMM(
     propname=None,
     element_size=None,
     automesh=None,
-    hide=False,
+    hide: bool = False,
     group=None,
     is_draw: bool = True,
-):
+) -> None:
     """<   Draw the segment in FEMM and assign the property
 
     Parameters

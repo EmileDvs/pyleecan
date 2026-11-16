@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,6 +14,10 @@ from ...Functions_new.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 from .lam_slot import LamSlot
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -39,7 +43,7 @@ class LamSlotM(LamSlot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotM.comp_angle_d_axis
-    def comp_angle_d_axis(self):
+    def comp_angle_d_axis(self) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -109,7 +113,7 @@ class LamSlotM(LamSlot):
         return mat.shape[0:2]
 
     # Inlined from Methods.Machine.LamSlotM.get_magnet_number
-    def get_magnet_number(self, sym=1):
+    def get_magnet_number(self, sym: int = 1) -> int:
         """Return the number of magnet on the Lamination
 
         Parameters
@@ -131,21 +135,21 @@ class LamSlotM(LamSlot):
     # Inlined from Methods.Machine.LamSlotM.plot
     def plot(
         self,
-        fig=None,
-        ax=None,
-        is_lam_only=False,
-        sym=1,
-        alpha=0,
-        delta=0,
-        is_edge_only=False,
-        edgecolor=None,
-        is_add_arrow=False,
-        is_show_fig=True,
-        win_title=None,
-        is_legend=True,
-        is_clean_plot=False,
-        is_winding_connection=False,
-    ):
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        is_lam_only: bool = False,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_edge_only: bool = False,
+        edgecolor: str | None = None,
+        is_add_arrow: bool = False,
+        is_show_fig: bool = True,
+        win_title: str | None = None,
+        is_legend: bool = True,
+        is_clean_plot: bool = False,
+        is_winding_connection: bool = False,
+    ) -> tuple[Figure, Axes]:
         """Plot a Lamination with Magnets in a matplotlib fig
 
         Parameters

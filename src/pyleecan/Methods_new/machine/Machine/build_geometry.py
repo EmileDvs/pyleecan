@@ -1,4 +1,4 @@
-def build_geometry(self, sym=1, alpha=0, delta=0):
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:
     """Build the geometry of the machine
 
     Parameters
