@@ -2,15 +2,15 @@ import ast
 import builtins
 import re
 import subprocess
-import tempfile
 import warnings
 from copy import deepcopy
 from functools import lru_cache
 from os import listdir, makedirs
-from os.path import basename, dirname, isdir, isfile, join
+from os.path import dirname, isdir, isfile, join
 from pathlib import Path
 from textwrap import indent
 from types import MappingProxyType
+from typing import NamedTuple
 
 # The naming rules of the classes are defined once (classes_common)
 from ....classes_common.class_lookup import NORMALIZATION_CLASS_NAMES, class_module_name
@@ -4136,8 +4136,8 @@ def _remove_redundant_experimental_class_imports(source, soft_name, gen_dict):
     return encoded.decode("utf-8")
 
 
-def _organize_header_imports(source, class_name, class_path):
-    """Run Ruff's import organizer on the generated module header only."""
+def _class_header_end(source, class_name, class_path):
+    """Number of characters of the module header (before the class)."""
     module = ast.parse(source, filename=class_path)
     class_node = next(
         (
@@ -4151,84 +4151,78 @@ def _organize_header_imports(source, class_name, class_path):
         raise ValueError(
             "Could not find generated class " + class_name + " in " + class_path
         )
-    source_header_end = sum(
+    return sum(
         len(line) for line in source.splitlines(keepends=True)[: class_node.lineno - 1]
     )
-    with tempfile.TemporaryDirectory(dir=dirname(class_path)) as temp_dir:
-        temp_path = join(temp_dir, basename(class_path))
-        with open(temp_path, "w", encoding="utf-8") as temp_file:
-            temp_file.write(source)
-        result = subprocess.run(
-            [
-                "ruff",
-                "check",
-                "--select",
-                "F401,I001",
-                "--fix-only",
-                temp_path,
-            ],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            check=False,
+
+
+def _splice_header(processed, source, class_name, class_path):
+    """Header of processed (by Ruff) with the class body of source."""
+    return (
+        processed[: _class_header_end(processed, class_name, class_path)]
+        + source[_class_header_end(source, class_name, class_path) :]
+    )
+
+
+def _ruff_organize(source, class_path):
+    """Ruff import organizer (unused imports, sorting) then formatter."""
+    result = subprocess.run(
+        [
+            "ruff",
+            "check",
+            "--select",
+            RUFF_ORGANIZE_RULES,
+            "--fix-only",
+            "--stdin-filename",
+            class_path,
+            "-",
+        ],
+        input=source,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    if result.returncode:
+        raise RuntimeError(
+            "Ruff could not organize imports in "
+            + class_path
+            + ": "
+            + (result.stderr or result.stdout).strip()
         )
-        if result.returncode:
-            raise RuntimeError(
-                "Ruff could not organize imports in "
-                + class_path
-                + ": "
-                + (result.stderr or result.stdout).strip()
-            )
-        result = subprocess.run(
-            ["ruff", "format", temp_path],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            check=False,
-        )
-        if result.returncode:
-            raise RuntimeError(
-                "Ruff could not format imports in "
-                + class_path
-                + ": "
-                + (result.stderr or result.stdout).strip()
-            )
-        with open(temp_path, encoding="utf-8") as temp_file:
-            organized_source = temp_file.read()
-        organized_module = ast.parse(organized_source, filename=class_path)
-        organized_class = next(
-            node
-            for node in organized_module.body
-            if isinstance(node, ast.ClassDef) and node.name == class_name
-        )
-        organized_header_end = sum(
-            len(line)
-            for line in organized_source.splitlines(keepends=True)[
-                : organized_class.lineno - 1
-            ]
-        )
-    return organized_source[:organized_header_end] + source[source_header_end:]
+    return _format_source_with_ruff(result.stdout, class_path)
+
+
+RUFF_ORGANIZE_RULES = "F401,I001"
+"""Rules of the header import organizer: unused imports and import sorting"""
+
+
+def _organize_header_imports(source, class_name, class_path):
+    """Run Ruff's import organizer on the generated module header only."""
+    _class_header_end(source, class_name, class_path)  # The class must exist
+    return _splice_header(
+        _ruff_organize(source, class_path), source, class_name, class_path
+    )
 
 
 def _regroup_pyleecan_imports(source, class_name, class_path):
     """Regroup generated Pyleecan package imports in the module header."""
+    regrouped_source = _regrouped_pyleecan_imports(source, class_name, class_path)
+    if regrouped_source is None:
+        return source
+    return _splice_header(
+        _format_source_with_ruff(regrouped_source, class_path),
+        source,
+        class_name,
+        class_path,
+    )
+
+
+def _regrouped_pyleecan_imports(source, class_name, class_path):
+    """Module with its Pyleecan imports regrouped (before formatting), or
+    None when there is nothing to regroup."""
     module = ast.parse(source, filename=class_path)
-    class_node = next(
-        (
-            node
-            for node in module.body
-            if isinstance(node, ast.ClassDef) and node.name == class_name
-        ),
-        None,
-    )
-    if class_node is None:
-        raise ValueError(
-            "Could not find generated class " + class_name + " in " + class_path
-        )
-    original_header_end = sum(
-        len(line)
-        for line in source.splitlines(keepends=True)[: class_node.lineno - 1]
-    )
+    _class_header_end(source, class_name, class_path)  # The class must exist
 
     package_order = (
         "pyleecan.Classes",
@@ -4256,7 +4250,7 @@ def _regroup_pyleecan_imports(source, class_name, class_path):
             aliases[(alias.name, alias.asname)] = alias
 
     if not import_nodes:
-        return source
+        return None
 
     grouped_lines = []
     for package in package_order:
@@ -4293,47 +4287,7 @@ def _regroup_pyleecan_imports(source, class_name, class_path):
     regrouped_lines = list(source_lines)
     for start, end, replacement in sorted(import_edits, reverse=True):
         regrouped_lines[start:end] = replacement.splitlines(keepends=True)
-    regrouped_source = "".join(regrouped_lines)
-
-    regrouped_module = ast.parse(regrouped_source, filename=class_path)
-    regrouped_class = next(
-        node
-        for node in regrouped_module.body
-        if isinstance(node, ast.ClassDef) and node.name == class_name
-    )
-    with tempfile.TemporaryDirectory(dir=dirname(class_path)) as temp_dir:
-        temp_path = join(temp_dir, basename(class_path))
-        with open(temp_path, "w", encoding="utf-8") as temp_file:
-            temp_file.write(regrouped_source)
-        result = subprocess.run(
-            ["ruff", "format", temp_path],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            check=False,
-        )
-        if result.returncode:
-            raise RuntimeError(
-                "Ruff could not format grouped imports in "
-                + class_path
-                + ": "
-                + (result.stderr or result.stdout).strip()
-            )
-        with open(temp_path, encoding="utf-8") as temp_file:
-            formatted_source = temp_file.read()
-        formatted_module = ast.parse(formatted_source, filename=class_path)
-        formatted_class = next(
-            node
-            for node in formatted_module.body
-            if isinstance(node, ast.ClassDef) and node.name == class_name
-        )
-        formatted_header_end = sum(
-            len(line)
-            for line in formatted_source.splitlines(keepends=True)[
-                : formatted_class.lineno - 1
-            ]
-        )
-    return formatted_source[:formatted_header_end] + source[original_header_end:]
+    return "".join(regrouped_lines)
 
 
 def _is_numpy_import(node):
@@ -4567,6 +4521,8 @@ def generate_class(
     shared_error_definitions=None,
     backend="dataclass",
     prepared_methods=None,
+    format_output=True,
+    return_draft=False,
 ):
     """Generate a class using the ``Classes_new`` inheritance hierarchy.
 
@@ -4603,6 +4559,14 @@ def generate_class(
         ``_shared_error_definitions`` for the same generation (see
         ``_shared_error_definitions``); the class methods are prepared again
         when the class is missing.
+    format_output : bool, optional
+        False to leave the final import sort and formatting to
+        ``format_generated_files``, run once on all the generated modules.
+    return_draft : bool, optional
+        True to return the class before the end of its generation (a
+        ``ClassDraft``, around the Ruff calls) instead of writing it:
+        ``run_class_steps([class_steps(draft, gen_dict), ...])`` finishes
+        several classes with one Ruff process per step for all of them.
 
     Returns
     -------
@@ -4658,6 +4622,8 @@ def generate_class(
         class_error_definitions,
         shared_error_definitions,
         backend,
+        format_output,
+        return_draft,
     )
 
 
@@ -5226,6 +5192,8 @@ def _generate_dataclass_class(
     class_error_definitions,
     shared_error_definitions,
     backend="dataclass",
+    format_output=True,
+    return_draft=False,
 ):
     """Write a class of the backend using the prepared class methods."""
     constant_references = {}
@@ -5624,9 +5592,98 @@ def _generate_dataclass_class(
     source = redirect_rule_module_name(source, soft_name)
     source = _use_static_default_factories(source, soft_name, gen_dict, generated_name)
     source = _apply_import_style(source, soft_name, import_style, "Classes_new")
-    source = _organize_header_imports(source, generated_name, class_path)
-    source = _regroup_pyleecan_imports(source, generated_name, class_path)
-    source = _organize_header_imports(source, generated_name, class_path)
+    draft = ClassDraft(
+        source,
+        {
+            "soft_name": soft_name,
+            "generated_name": generated_name,
+            "class_path": class_path,
+            "import_style": import_style,
+            "backend": backend,
+            "subpackage": subpackage,
+            "format_output": format_output,
+        },
+    )
+    if return_draft:
+        return draft
+    return run_class_steps([class_steps(draft, gen_dict)])[0]
+
+
+class ClassDraft(NamedTuple):
+    """A generated class before the Ruff steps of the end of its generation
+    (picklable: drafts built in worker processes are finished together)."""
+
+    source: str
+    context: dict
+
+
+def class_steps(draft, gen_dict):
+    """Steps of the end of the generation of a draft (see run_class_steps)."""
+    return _class_source_steps(draft, gen_dict)
+
+
+class ClassState(NamedTuple):
+    """A class during the Ruff steps of the end of its generation.
+
+    step: 0 (first import organization), 1 (formatting of the regrouped
+    imports), 2 (second import organization); source: module source before
+    the Ruff request of the step. Picklable: the steps of the classes can run
+    in worker processes between Ruff requests made for all of them.
+    """
+
+    step: int
+    source: str
+    context: dict
+
+
+def class_state(draft):
+    """State of a draft before its first Ruff request."""
+    return ClassState(0, draft.source, draft.context)
+
+
+def class_request(state):
+    """Ruff request (kind, class path, source) of a class state."""
+    kind = "format" if state.step == 1 else "organize"
+    return (kind, state.context["class_path"], state.source)
+
+
+def advance_class(state, processed, gen_dict):
+    """Next state of a class from the output of its Ruff request.
+
+    Returns
+    -------
+    result : ClassState or str
+        Next state, or the path of the written module (last step)
+    """
+    context = state.context
+    name, path = context["generated_name"], context["class_path"]
+    if state.step == 0:
+        source = _splice_header(processed, state.source, name, path)
+        regrouped = _regrouped_pyleecan_imports(source, name, path)
+        if regrouped is not None:
+            # The header of the formatted source replaces the one of source
+            return ClassState(1, regrouped, {**context, "_body_source": source})
+        return ClassState(2, source, context)
+    if state.step == 1:
+        context = dict(context)
+        body_source = context.pop("_body_source")
+        return ClassState(2, _splice_header(processed, body_source, name, path), context)
+    source = _splice_header(processed, state.source, name, path)
+    return _finish_class_module(source, gen_dict, **context)
+
+
+def _finish_class_module(
+    source,
+    gen_dict,
+    soft_name,
+    generated_name,
+    class_path,
+    import_style,
+    backend,
+    subpackage,
+    format_output,
+):
+    """Last passes of a class (final header imports) and writing."""
     # The header imports are now final: reuse them in the field factories
     source = _use_static_default_factories(source, soft_name, gen_dict, generated_name)
     source = _remove_unused_loader_import(source, soft_name)
@@ -5645,8 +5702,135 @@ def _generate_dataclass_class(
     source = _apply_import_style(
         source, soft_name, import_style, f"{package}.{subpackage}"
     )
-    source = _sort_imports_with_ruff(source, class_path)
-    source = _format_source_with_ruff(source, class_path)
+    if format_output:
+        source = _sort_imports_with_ruff(source, class_path)
+        source = _format_source_with_ruff(source, class_path)
     with open(class_path, "w", encoding="utf-8") as generated_file:
         generated_file.write(source)
     return class_path
+
+
+def _class_source_steps(draft, gen_dict):
+    """End of the class generation, as steps around the Ruff calls.
+
+    A generator over the class states (advance_class): it yields the Ruff
+    requests (kind, class path, source), with kind "organize"
+    (_ruff_organize) or "format" (_format_source_with_ruff), receives the
+    processed source, writes the module and returns its path.
+    run_class_steps runs the requests of several classes together (one Ruff
+    process per request kind for all of them).
+    """
+    state = class_state(draft)
+    while isinstance(state, ClassState):
+        processed = yield class_request(state)
+        state = advance_class(state, processed, gen_dict)
+    return state
+
+
+RUFF_REQUEST_ORDER = ("format", "organize")
+"""Order of the pending request kinds: the classes without a "format" step
+then wait for the others, and the next "organize" runs once for all"""
+
+
+def run_class_steps(steps_list):
+    """Run the steps of several classes (_class_source_steps) together.
+
+    The classes advance in lockstep: the pending Ruff requests of a kind are
+    run in a single Ruff process for all the classes.
+
+    Returns
+    -------
+    paths : list
+        Paths of the generated modules, in the order of steps_list
+    """
+    results = [None] * len(steps_list)
+    requests = {}
+
+    def advance(index, value):
+        try:
+            requests[index] = steps_list[index].send(value)
+        except StopIteration as stop:
+            results[index] = stop.value
+
+    for index in range(len(steps_list)):
+        advance(index, None)
+    while requests:
+        kind = min(
+            (request[0] for request in requests.values()), key=RUFF_REQUEST_ORDER.index
+        )
+        batch = [index for index, request in requests.items() if request[0] == kind]
+        outputs = run_ruff_requests(
+            kind, [(requests[index][1], requests[index][2]) for index in batch]
+        )
+        for index, output in zip(batch, outputs, strict=True):
+            del requests[index]
+            advance(index, output)
+    return results
+
+
+def run_ruff_requests(kind, requests):
+    """Process the sources of requests [(class path, source)] with Ruff.
+
+    One request: through stdin. Several: the sources are written at their
+    class path (the module path selects the Ruff configuration and the import
+    sections, as --stdin-filename does), processed by one Ruff process per
+    command and read back. The modules are written again at the end of their
+    generation.
+    """
+    if len(requests) == 1:
+        path, source = requests[0]
+        if kind == "organize":
+            return [_ruff_organize(source, path)]
+        return [_format_source_with_ruff(source, path)]
+    paths = [path for path, _ in requests]
+    if len(set(paths)) != len(paths):
+        raise ValueError("Several sources for the same module in a Ruff batch")
+    for path, source in requests:
+        with open(path, "w", encoding="utf-8") as module_file:
+            module_file.write(source)
+    commands = [["ruff", "format", "--no-cache", "--quiet", *paths]]
+    if kind == "organize":
+        commands.insert(
+            0,
+            ["ruff", "check", "--no-cache", "--select", RUFF_ORGANIZE_RULES,
+             "--fix-only", "--quiet", *paths],
+        )
+    for command in commands:
+        result = subprocess.run(
+            command, capture_output=True, text=True, encoding="utf-8", check=False
+        )
+        if result.returncode:
+            raise RuntimeError(
+                f"Ruff could not process the generated classes ({kind}): "
+                + (result.stderr or result.stdout).strip()
+            )
+    outputs = []
+    for path in paths:
+        with open(path, encoding="utf-8") as module_file:
+            outputs.append(module_file.read())
+    return outputs
+
+
+def format_generated_files(paths):
+    """Sort the imports and format generated modules: one Ruff run for all.
+
+    Same result as _sort_imports_with_ruff and _format_source_with_ruff on
+    each module (generate_class(..., format_output=False) leaves them to it),
+    with two processes instead of two per module.
+    """
+    paths = sorted(paths)
+    if not paths:
+        return
+    for command in (
+        ["ruff", "check", "--no-cache", "--select", "I", "--fix", "--exit-zero",
+         "--quiet", *paths],
+        ["ruff", "format", "--no-cache", "--quiet", *paths],
+    ):
+        result = subprocess.run(
+            command, capture_output=True, text=True, encoding="utf-8", check=False
+        )
+        if result.returncode:
+            raise RuntimeError(
+                "Ruff could not format the generated classes: "
+                + (result.stderr or result.stdout).strip()
+            )

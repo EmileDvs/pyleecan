@@ -1,5 +1,5 @@
 import json
-from concurrent.futures import ThreadPoolExecutor
+import warnings
 from datetime import datetime
 from os import cpu_count, listdir, makedirs, remove
 from os.path import basename, isdir, isfile, join
@@ -7,14 +7,23 @@ from shutil import rmtree
 
 from pyleecan.definitions import DOC_DIR, INT_DIR, MAIN_DIR, PACKAGE_NAME
 from pyleecan.Generator.ClassGenerator.New.class_generator import (
+    RUFF_REQUEST_ORDER,
+    _prepare_methods_of,
     _shared_error_definitions,
     _write_shared_errors,
+    advance_class,
     backend_package,
+    class_request,
+    class_state,
+    class_steps,
     class_subpackage,
     common_dir,
+    format_generated_files,
     generate_class,
     get_class_import_graph,
     parent_type_mapping,
+    run_class_steps,
+    run_ruff_requests,
     validate_class_module_names,
 )
 from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
@@ -28,6 +37,11 @@ from pyleecan.Generator.ClassGenerator.New.generate_methods_new import (
 )
 from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
     generate_tests,
+)
+from pyleecan.Generator.ClassGenerator.New.worker_pool import (
+    run_tasks,
+    shutdown_pool,
+    worker_count,
 )
 from pyleecan.Generator.read_fct import read_all
 
@@ -163,6 +177,20 @@ def generate_code(
     generation_names = sorted(name for name in gen_dict if name in class_names)
     if prepared_methods is None:
         prepared_methods = {}  # Shared by the error search and the generation
+    if len(class_import_graph) == len(gen_dict):
+        # The methods of all the classes are prepared in parallel (the error
+        # search then reads them from prepared_methods)
+        _prepare_all_methods(
+            gen_dict,
+            prepared_methods,
+            max_workers,
+            {
+                "gen_dict": gen_dict,
+                "class_dir": CLASS_DIR,
+                "soft_name": soft_name,
+                "class_import_graph": class_import_graph,
+            },
+        )
     shared_errors = _shared_error_definitions(
         gen_dict, CLASS_DIR, soft_name, class_import_graph, prepared_methods
     )
@@ -243,6 +271,156 @@ def _write_parent_types(class_dir, gen_dict):
         parent_file.write("}\n")
 
 
+def _prepare_class_task(state, class_name):
+    """Prepare the methods of a class (worker task).
+
+    Returns
+    -------
+    result : tuple
+        (class name, prepared methods, [(warning message, category)])
+    """
+    with warnings.catch_warnings(record=True) as recorded:
+        warnings.simplefilter("always")
+        prepared = _prepare_methods_of(
+            state["gen_dict"],
+            state["class_dir"],
+            class_name,
+            state["soft_name"],
+            state["class_import_graph"],
+        )
+    return (
+        class_name,
+        prepared,
+        [(str(item.message), item.category) for item in recorded],
+    )
+
+
+def _build_drafts_task(state, class_names, prepared_entries):
+    """Build the drafts of a chunk of classes (worker task).
+
+    A draft is a class before the Ruff steps of the end of its generation
+    (class_generator.ClassDraft): the drafts of all the classes are finished
+    together by run_class_steps, with one Ruff process per step for all of
+    them (process creation is slow on Windows and Ruff is starved by busy
+    workers: per-class Ruff calls do not scale).
+
+    Returns
+    -------
+    drafts : list
+        ClassDraft of each class
+    """
+    kwargs = {}
+    if state["class_import_graph"] is not None:
+        kwargs["class_import_graph"] = state["class_import_graph"]
+    drafts = []
+    for class_name, prepared_entry in zip(class_names, prepared_entries, strict=True):
+        print("Generation of " + class_name + " class", flush=True)
+        drafts.append(
+            generate_class(
+                state["gen_dict"],
+                class_name,
+                state["class_dir"],
+                soft_name=state["soft_name"],
+                import_style=state["import_style"],
+                shared_error_definitions=state["shared_error_definitions"],
+                backend=state["backend"],
+                prepared_methods=(
+                    {class_name: prepared_entry} if prepared_entry is not None else None
+                ),
+                format_output=False,
+                return_draft=True,
+                **kwargs,
+            )
+        )
+    return drafts
+
+
+def _advance_classes_task(state, class_states, outputs):
+    """Advance classes with the outputs of their Ruff requests (worker task)."""
+    return [
+        advance_class(class_state_, output, state["gen_dict"])
+        for class_state_, output in zip(class_states, outputs, strict=True)
+    ]
+
+
+def _finish_drafts(drafts, gen_dict, max_workers):
+    """Finish the class drafts (class_generator.advance_class).
+
+    The Ruff requests of the classes run together, one Ruff process per
+    request kind for all the classes; the steps between them run in the
+    workers.
+
+    Returns
+    -------
+    paths : list
+        Paths of the generated modules
+    """
+    pending = [class_state(draft) for draft in drafts]
+    paths = []
+    state = {"gen_dict": gen_dict}
+    while pending:
+        kind = min(
+            (class_request(item)[0] for item in pending), key=RUFF_REQUEST_ORDER.index
+        )
+        batch = [item for item in pending if class_request(item)[0] == kind]
+        pending = [item for item in pending if class_request(item)[0] != kind]
+        outputs = run_ruff_requests(kind, [class_request(item)[1:] for item in batch])
+        size = -(-len(batch) // worker_count(max_workers, len(batch)))
+        results = run_tasks(
+            _advance_classes_task,
+            state,
+            [
+                (batch[start : start + size], outputs[start : start + size])
+                for start in range(0, len(batch), size)
+            ],
+            max_workers,
+        )
+        for result in (item for chunk in results for item in chunk):
+            if isinstance(result, str):
+                paths.append(result)
+            else:
+                pending.append(result)
+    return paths
+
+
+CHUNKS_PER_WORKER = 3
+"""Chunks of classes per worker: more chunks balance the load, fewer chunks
+start fewer Ruff processes"""
+
+
+def _class_chunks(gen_dict, class_names, workers):
+    """Chunks of classes, the largest classes (methods) spread over them."""
+    count = max(1, min(len(class_names), workers * CHUNKS_PER_WORKER))
+    ordered = sorted(
+        class_names, key=lambda name: (-len(gen_dict[name]["methods"]), name)
+    )
+    chunks = [[] for _ in range(count)]
+    for index, name in enumerate(ordered):
+        cycle, position = divmod(index, count)
+        # Back and forth: each chunk gets large and small classes
+        chunks[position if cycle % 2 == 0 else count - 1 - position].append(name)
+    return [sorted(chunk) for chunk in chunks if chunk]
+
+
+def _prepare_all_methods(gen_dict, prepared_methods, max_workers, state):
+    """Prepare (in parallel) the methods of the classes missing in
+    prepared_methods; the warnings other than the inline fallbacks are
+    reported here, the inline fallbacks by the class generation."""
+    missing = [
+        name
+        for name, info in sorted(gen_dict.items())
+        if info.get("methods") and name not in prepared_methods
+    ]
+    results = run_tasks(
+        _prepare_class_task, state, [(name,) for name in missing], max_workers
+    )
+    for name, prepared, recorded in results:
+        prepared_methods[name] = (prepared, recorded)
+        for message, category in recorded:
+            if not message.startswith("Could not inline "):
+                warnings.warn(message, category, stacklevel=2)
+
+
 def _generate_classes(
     gen_dict,
     generation_names,
@@ -255,37 +433,40 @@ def _generate_classes(
     backend="dataclass",
     prepared_methods=None,
 ):
-    def generate_one_class(class_name, import_graph=None):
-        print("Generation of " + class_name + " class")
-        generation_kwargs = {
-            "soft_name": soft_name,
-            "import_style": import_style,
-            "shared_error_definitions": shared_error_definitions,
-            "backend": backend,
-            "prepared_methods": prepared_methods,
-        }
-        if import_graph is not None:
-            generation_kwargs["class_import_graph"] = import_graph
-        generate_class(gen_dict, class_name, class_dir, **generation_kwargs)
-
-    if generation_names and len(class_import_graph) == len(gen_dict):
-        if max_workers is None:
-            max_workers = min(8, cpu_count() or 1)
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [
-                executor.submit(
-                    generate_one_class,
-                    class_name,
-                    class_import_graph,
-                )
-                for class_name in generation_names
-            ]
-            for future in futures:
-                future.result()
-    else:
-        # Preserve the generator's dynamic cycle checks when no complete snapshot exists.
-        for class_name in generation_names:
-            generate_one_class(class_name)
+    """Generate the classes (in parallel, worker_pool), then format them."""
+    prepared_methods = prepared_methods if prepared_methods is not None else {}
+    complete_graph = len(class_import_graph) == len(gen_dict)
+    state = {
+        "gen_dict": gen_dict,
+        "class_dir": class_dir,
+        "soft_name": soft_name,
+        # Without a complete snapshot, the generator's dynamic cycle checks
+        # (one class after the other)
+        "class_import_graph": class_import_graph if complete_graph else None,
+        "import_style": import_style,
+        "backend": backend,
+        "shared_error_definitions": shared_error_definitions,
+    }
+    chunks = _class_chunks(
+        gen_dict, generation_names, worker_count(max_workers, len(generation_names))
+    )
+    if not complete_graph:
+        # Dynamic cycle checks: the classes are written one after the other
+        paths = []
+        for name in generation_names:
+            draft = _build_drafts_task(state, [name], [prepared_methods.get(name)])[0]
+            paths.extend(run_class_steps([class_steps(draft, gen_dict)]))
+        format_generated_files(paths)
+        return
+    results = run_tasks(
+        _build_drafts_task,
+        state,
+        [(chunk, [prepared_methods.get(name) for name in chunk]) for chunk in chunks],
+        max_workers,
+    )
+    drafts = [draft for chunk_drafts in results for draft in chunk_drafts]
+    paths = _finish_drafts(drafts, gen_dict, max_workers)
+    format_generated_files(paths)
 
 
 def run_generate_classes(
@@ -357,6 +538,7 @@ if __name__ == "__main__":
     generate_functions_pydantic()  # From Functions_new
 
     generate_tests()
+    shutdown_pool()  # Workers of the class generation
 
     # list_csv = [
     #     "Data.csv",

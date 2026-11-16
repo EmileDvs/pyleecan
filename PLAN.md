@@ -549,6 +549,13 @@ directly; the test generator redirects the legacy imports
 Done after Phase 1, with the removal of the legacy code, to follow Python
 packaging standards.
 
+- [ ] Check the imports (time and side effects) when launching the common use
+      cases: main simulations, the machine GUI, the main plots. Today
+      `import pyleecan.definitions` loads matplotlib and reads **and rewrites**
+      the user configuration file (`get_config_dict`, not atomic): parallel
+      processes importing it read a truncated file (seen in the generator
+      workers, which are therefore started one after the other).
+
 | Today | Target | Note |
 |---|---|---|
 | `Tests/`, with `Tests/New` | `tests/` at the repository root | `Tests/New` becomes `tests/` once legacy is removed |

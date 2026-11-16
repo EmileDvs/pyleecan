@@ -35,6 +35,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _methods_new_maps,
     class_subpackage,
 )
+from pyleecan.Generator.ClassGenerator.New.worker_pool import run_tasks, worker_count
 from pyleecan.Generator.read_fct import read_all
 
 FROZEN_PACKAGES = frozenset()
@@ -50,7 +51,9 @@ UNRECOGNIZED_TYPES = Counter()
 PACKAGE_INIT = '"""Methods of the {name} sub-package (generated, see generate_methods_new.py)."""\n'
 
 
-def generate_methods(root=None, gen_dict=None, frozen=FROZEN_PACKAGES):
+def generate_methods(
+    root=None, gen_dict=None, frozen=FROZEN_PACKAGES, max_workers=None
+):
     """Write Methods_new from the legacy Methods.
 
     Parameters
@@ -61,6 +64,9 @@ def generate_methods(root=None, gen_dict=None, frozen=FROZEN_PACKAGES):
         Generation dictionary (contains all the csv data)
     frozen : set, optional
         Sub-packages of Methods_new written by hand, left unchanged
+    max_workers : int, optional
+        Number of worker processes modernizing the modules (default: all the
+        CPUs, see worker_pool)
 
     Returns
     -------
@@ -115,6 +121,7 @@ def generate_methods(root=None, gen_dict=None, frozen=FROZEN_PACKAGES):
     # Modernization of the generated modules (frozen packages excluded)
     UNRECOGNIZED_TYPES.clear()
     class_dir = str(root / "Classes_new")
+    modules = []
     for path in sorted(target_root.rglob("*.py")):
         relative = path.relative_to(target_root)
         if len(relative.parts) < 2 or relative.parts[0] in frozen:
@@ -122,13 +129,55 @@ def generate_methods(root=None, gen_dict=None, frozen=FROZEN_PACKAGES):
         parts = list(relative.with_suffix("").parts)
         package_parts = parts[:-1] if parts[-1] != "__init__" else parts[:-1]
         package = ".".join(["pyleecan", METHODS_NEW_PACKAGE, *package_parts])
+        modules.append((str(path), package))
+    state = {"gen_dict": gen_dict, "class_dir": class_dir}
+    if len(modules) < MIN_PARALLEL_MODULES:
+        max_workers = 1  # Not worth starting the worker processes
+    size = -(-len(modules) // (worker_count(max_workers, len(modules)) * 4)) or 1
+    for unrecognized in run_tasks(
+        _modernize_modules_task,
+        state,
+        [(modules[start : start + size],) for start in range(0, len(modules), size)],
+        max_workers,
+    ):
+        UNRECOGNIZED_TYPES.update(unrecognized)
+    return written
+
+
+MIN_PARALLEL_MODULES = 50
+"""Below this number of modules, the modules are modernized in this process"""
+
+
+def _modernize_modules_task(state, modules):
+    """Modernize method modules in place (worker task).
+
+    Parameters
+    ----------
+    state : dict
+        gen_dict and class_dir (Classes_new folder)
+    modules : list
+        (path, package) of the modules
+
+    Returns
+    -------
+    unrecognized : Counter
+        Documented types not turned into a hint
+    """
+    # The workers outlive a generation: the Methods_new maps are read again
+    _bootstrapped_method_dirs.cache_clear()
+    _methods_new_maps.cache_clear()
+    UNRECOGNIZED_TYPES.clear()
+    for path, package in modules:
+        path = Path(path)
         with tokenize.open(path) as source_file:
             source = source_file.read()
             encoding = source_file.encoding
-        modernized = modernize_method_source(source, package, class_dir, gen_dict)
+        modernized = modernize_method_source(
+            source, package, state["class_dir"], state["gen_dict"]
+        )
         if modernized != source:
             path.write_text(modernized, encoding=encoding, newline="")
-    return written
+    return Counter(UNRECOGNIZED_TYPES)
 
 
 def modernize_method_source(source, package, class_dir, gen_dict=None):
