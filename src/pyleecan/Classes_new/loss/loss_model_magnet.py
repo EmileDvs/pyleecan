@@ -29,7 +29,7 @@ class LossModelMagnet(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelMagnet.comp_loss
-    def comp_loss(self):
+    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
         """Calculate eddy-current losses in rotor permanent magnets assuming power density
         is given by (cf. https://www.femm.info/wiki/SPMLoss):
 

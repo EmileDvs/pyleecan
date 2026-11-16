@@ -1,9 +1,14 @@
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
 
 
-def comp_axes(self, output):
+def comp_axes(self, output: Output) -> dict[str, Data]:
     """Compute the axes required in Loss module
 
     Parameters

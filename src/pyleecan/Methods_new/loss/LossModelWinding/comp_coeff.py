@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_coeff(self, T_op=20, T_ref=20):
+def comp_coeff(self, T_op: float = 20, T_ref: float = 20) -> float:
     """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
     All parameters are defined p.270 / 271
     In this method, the returned value is the one from the reference divided by the frequency, as the effect of

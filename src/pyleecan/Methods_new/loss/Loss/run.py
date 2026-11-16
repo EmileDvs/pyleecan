@@ -1,7 +1,7 @@
 from ...simulation.Input import InputError
 
 
-def run(self):
+def run(self) -> None:
     """Run the Loss module
 
     Parameters

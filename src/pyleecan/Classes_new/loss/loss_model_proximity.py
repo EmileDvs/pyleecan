@@ -27,7 +27,7 @@ class LossModelProximity(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelProximity.comp_coeff
-    def comp_coeff(self):
+    def comp_coeff(self) -> None:
         """Compute the Proximity loss coefficient [W/kg]
 
         Parameters
@@ -44,7 +44,7 @@ class LossModelProximity(LossModel):
         self.k_p = kf * np.pi**2 / 8 * sigma * d**2
 
     # Inlined from Methods.Loss.LossModelProximity.comp_loss
-    def comp_loss(self):
+    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
         """Calculate proximity loss density assuming it is given by:
 
             P = k_p * f^2 * B^2

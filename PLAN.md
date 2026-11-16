@@ -541,6 +541,15 @@ hint pass is over for all packages.
     `Data.get_periodicity` / `get_axis_periodic` not declared on `Data`;
   - `OP.get_OP_array`: `append` on a tuple; `InputCurrent.gen_input`: lists
     given to ndarray fields; `get_ref_simu_index`: `int | None` returned.
+- Loss:
+  - optional fields used without check: `LossModelBertotti` /
+    `LossModelSteinmetz.comp_coeff` (`mat_type.mag.LossData.get_data`),
+    `Loss.comp_axes` (`output.mag.meshsolution`), `Loss.comp_all_losses`;
+  - `Solution.field` not declared on `Solution`; private matplotlib
+    `Axes._get_lines` (`comp_coeff` plots);
+  - `LossFEA.run`: ty narrows `self.model_dict` to the type of the dict
+    literal assigned, then rejects `LossModelMagnet` (ty quirk, field typed
+    `dict[str, LossModel]`).
 - `ModelBH.fit_model`: the last `else` branch calls `self.BH_func(H, Bs, a)`
   with undefined `Bs` and `a` (`NameError`), and `new_BH` is unbound there.
 - Geometry: `Trapeze.get_patches` (`replace`/`in` on an optional style),
@@ -582,7 +591,9 @@ In the order a simulation is built:
       Custom setters of `ParamExplorer`, `DataKeeper`, `VarLoad` not wired:
       two storages (`_setter_str` / `_setter_func`) and custom getters, a
       design per backend (see "Custom property setters and getters").
-- [ ] Loss, Output, Optimization
+- [x] Loss (`loss` in `HINTED_SUBPACKAGES`): 8/8 parameters and 16/16
+      returns hinted, no generator change; `ty`: 11 diagnostics (review list).
+- [ ] Output, Optimization
 - [ ] Logger chain
 - [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)
 

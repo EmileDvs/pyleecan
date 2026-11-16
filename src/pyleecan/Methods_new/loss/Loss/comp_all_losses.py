@@ -5,8 +5,8 @@ from ....Classes_new.output.out_loss_model import OutLossModel
 
 def comp_all_losses(
     self,
-    axes_dict=None,
-):
+    axes_dict: dict | None = None,
+) -> None:
     """Compute all the losses models set in model_dict
 
     Parameters

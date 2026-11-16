@@ -4,7 +4,7 @@ import numpy as np
 
 
 
-def comp_loss(self):
+def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     """Calculate loss density in iron core given by group "stator core" or "rotor core"
     assuming power density is given by a Bertotti model
 

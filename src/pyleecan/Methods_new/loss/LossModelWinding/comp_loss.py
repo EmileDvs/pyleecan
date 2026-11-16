@@ -5,7 +5,7 @@ import numpy as np
 from ....Functions_new.Electrical.comp_loss_joule import comp_loss_joule
 
 
-def comp_loss(self):
+def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     """Calculate joule losses in stator windings
 
     Parameters

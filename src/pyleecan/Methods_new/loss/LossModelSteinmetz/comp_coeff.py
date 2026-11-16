@@ -4,9 +4,13 @@ import numpy as np
 from scipy.optimize import curve_fit
 from itertools import groupby
 import textwrap
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.material.material import Material
 
 
-def comp_coeff(self, material):
+def comp_coeff(self, material: Material) -> None:
     """Enables to compute the coefficients of the loss model with a curve fitting
     on loss data stored in the material (Store result in self.k_hy, self.k_ed, self.alpha_f, self.alpha_B)
 

@@ -27,7 +27,7 @@ class LossModelWinding(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelWinding.comp_coeff
-    def comp_coeff(self, T_op=20, T_ref=20):
+    def comp_coeff(self, T_op: float = 20, T_ref: float = 20) -> float:
         """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
         All parameters are defined p.270 / 271
         In this method, the returned value is the one from the reference divided by the frequency, as the effect of
@@ -101,7 +101,7 @@ class LossModelWinding(LossModel):
         return k
 
     # Inlined from Methods.Loss.LossModelWinding.comp_loss
-    def comp_loss(self):
+    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
         """Calculate joule losses in stator windings
 
         Parameters

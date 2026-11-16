@@ -45,7 +45,7 @@ class LossFEA(Loss):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossFEA.run
-    def run(self):
+    def run(self) -> None:
         """Run the LossFEA module
 
         Paramaters

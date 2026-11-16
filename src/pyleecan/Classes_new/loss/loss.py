@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -11,6 +11,10 @@ from .._legacy_class import LegacyClass
 from ..output.out_loss_model import OutLossModel
 from ..scidatatool.data_1d import Data1D
 from .loss_model import LossModel
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from ..scidatatool.data import Data
 
 
 @dataclass(eq=False)
@@ -53,8 +57,8 @@ class Loss(LegacyClass):
     # Inlined from Methods.Loss.Loss.comp_all_losses
     def comp_all_losses(
         self,
-        axes_dict=None,
-    ):
+        axes_dict: dict | None = None,
+    ) -> None:
         """Compute all the losses models set in model_dict
 
         Parameters
@@ -101,7 +105,7 @@ class Loss(LegacyClass):
             out_loss.loss_dict[key] = out_loss_model
 
     # Inlined from Methods.Loss.Loss.comp_axes
-    def comp_axes(self, output):
+    def comp_axes(self, output: Output) -> dict[str, Data]:
         """Compute the axes required in Loss module
 
         Parameters
@@ -142,7 +146,7 @@ class Loss(LegacyClass):
         return axes_dict
 
     # Inlined from Methods.Loss.Loss.run
-    def run(self):
+    def run(self) -> None:
         """Run the Loss module
 
         Parameters

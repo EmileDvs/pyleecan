@@ -21,7 +21,7 @@ class LossModelWindagePyrhonen(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss
-    def comp_loss(self):
+    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
         """Calculate Windage losses
         Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
 

@@ -4,7 +4,7 @@ import numpy as np
 
 
 
-def comp_loss(self):
+def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     """Calculate proximity loss density assuming it is given by:
 
         P = k_p * f^2 * B^2

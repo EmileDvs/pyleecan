@@ -3,13 +3,16 @@
 
 from dataclasses import dataclass, field
 from itertools import groupby
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 
 from .loss_model import LossModel
+
+if TYPE_CHECKING:
+    from ..material.material import Material
 
 
 @dataclass(eq=False)
@@ -40,7 +43,7 @@ class LossModelBertotti(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelBertotti.comp_coeff
-    def comp_coeff(self, material):
+    def comp_coeff(self, material: Material) -> None:
         """Enables to compute the coefficients of the loss model with a curve fitting
         on loss data stored in the material (stored in self.k_hy, self.k_ed, self.k_ex)
 
@@ -235,7 +238,7 @@ class LossModelBertotti(LossModel):
         self.k_ex = popt[2]  # Excess loss coefficient [W/kg]
 
     # Inlined from Methods.Loss.LossModelBertotti.comp_loss
-    def comp_loss(self):
+    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
         """Calculate loss density in iron core given by group "stator core" or "rotor core"
         assuming power density is given by a Bertotti model
 

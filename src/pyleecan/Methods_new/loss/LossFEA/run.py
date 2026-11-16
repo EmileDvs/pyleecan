@@ -5,7 +5,7 @@ from ....Classes_new.loss.loss_model_joule import LossModelJoule
 from ...simulation.Input import InputError
 
 
-def run(self):
+def run(self) -> None:
     """Run the LossFEA module
 
     Paramaters

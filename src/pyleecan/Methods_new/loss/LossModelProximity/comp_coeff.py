@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def comp_coeff(self):
+def comp_coeff(self) -> None:
     """Compute the Proximity loss coefficient [W/kg]
 
     Parameters
