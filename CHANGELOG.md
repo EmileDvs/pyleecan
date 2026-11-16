@@ -5,7 +5,7 @@ All notable changes to pyleecan are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The roadmap of the ongoing refactoring is in
-[PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.md).
+[PLAN.md](PLAN.md).
 
 ## [Unreleased]
 
@@ -131,7 +131,7 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 
 ### Status
 
-Phase 1 progress (see [PLAN.md](src/pyleecan/Generator/ClassGenerator/New/PLAN.md)):
+Phase 1 progress (see [PLAN.md](PLAN.md)):
 
 | Step | Status |
 |---|---|
