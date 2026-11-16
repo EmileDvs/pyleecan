@@ -1,4 +1,4 @@
-def get_resistivity(self, T_op=None, T_ref=20):
+def get_resistivity(self, T_op: float | None = None, T_ref: float = 20) -> float:
     """Get resistivity for given temperature T_op
 
     Parameters

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_Brm(self, T_op=None, T_ref=20):
+def get_Brm(self, T_op: float | None = None, T_ref: float = 20) -> float:
     """Get magnetic remanent flux density
 
     Parameters

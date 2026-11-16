@@ -4,7 +4,7 @@ import numpy as np
 from math import isnan
 
 
-def BH_func(self, H, Bs, mu_a):
+def BH_func(self, H: float | np.ndarray, Bs: float, mu_a: float) -> float | np.ndarray:
     """
     Return the B from H according to piecewise linear saturated model.
 

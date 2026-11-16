@@ -4,7 +4,7 @@ import numpy as np
 from math import isnan
 
 
-def BH_func(self, H, Bs, a):
+def BH_func(self, H: float | np.ndarray, Bs: float, a: float) -> float | np.ndarray:
     """
     Return the B from H according to Langevin model.
 

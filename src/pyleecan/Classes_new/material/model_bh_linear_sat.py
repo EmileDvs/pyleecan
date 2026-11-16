@@ -42,7 +42,9 @@ class ModelBH_linear_sat(ModelBH):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.ModelBH_linear_sat.BH_func
-    def BH_func(self, H, Bs, mu_a):
+    def BH_func(
+        self, H: float | np.ndarray, Bs: float, mu_a: float
+    ) -> float | np.ndarray:
         """
         Return the B from H according to piecewise linear saturated model.
 
@@ -67,7 +69,7 @@ class ModelBH_linear_sat(ModelBH):
         return B
 
     # Inlined from Methods.Material.ModelBH_linear_sat.get_BH
-    def get_BH(self):
+    def get_BH(self) -> np.ndarray | None:
         """
         Return the B(H) curve of the material according to Langevin model.
 

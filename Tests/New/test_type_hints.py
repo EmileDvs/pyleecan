@@ -240,3 +240,23 @@ def test_unpacked_kwargs_dict_annotated():
     assert "    options = self.get_options()\n" in result  # Not built here
     assert "    from typing import Any\n" in result  # Under TYPE_CHECKING
     assert _hint(result)[0] == result
+
+
+def test_parameter_overrides_complete_the_docstring():
+    source = '''def BH_func(self, H, Bs, a):
+    """Doc
+
+    Returns
+    -------
+    B: numpy.ndarray
+        B(H) values
+    """
+    return Bs
+'''
+    result = add_type_hints(
+        source, "pyleecan.Methods_new.material.ModelBH_Langevin", name_maps().gen_dict
+    )
+    assert (
+        "def BH_func(self, H: float | np.ndarray, Bs: float, a: float)"
+        " -> float | np.ndarray:"
+    ) in result

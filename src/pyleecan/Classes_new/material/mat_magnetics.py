@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -11,6 +11,10 @@ from ...Functions_new.init_fig import init_fig
 from .._legacy_class import LegacyClass
 from ..import_data.import_matrix import ImportMatrix
 from .model_bh import ModelBH as _field_type_ModelBH
+
+if TYPE_CHECKING:
+    import numpy as np
+    from matplotlib.figure import Figure
 
 
 @dataclass(eq=False)
@@ -75,7 +79,7 @@ class MatMagnetics(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.MatMagnetics.get_BH
-    def get_BH(self):
+    def get_BH(self) -> np.ndarray | None:
         """Return the B(H) curve of the material according to the Import object.
         If there is no B(H) curve linear data are computed from mur_lin.
 
@@ -117,7 +121,7 @@ class MatMagnetics(LegacyClass):
         return BH
 
     # Inlined from Methods.Material.MatMagnetics.get_Brm
-    def get_Brm(self, T_op=None, T_ref=20):
+    def get_Brm(self, T_op: float | None = None, T_ref: float = 20) -> float:
         """Get magnetic remanent flux density
 
         Parameters
@@ -151,7 +155,7 @@ class MatMagnetics(LegacyClass):
         return Brm
 
     # Inlined from Methods.Material.MatMagnetics.get_Hc
-    def get_Hc(self, T_op=None, T_ref=20):
+    def get_Hc(self, T_op: float | None = None, T_ref: float = 20) -> float:
         """Get magnetic excitation coercitivity
 
         Parameters
@@ -186,7 +190,13 @@ class MatMagnetics(LegacyClass):
         return Hc
 
     # Inlined from Methods.Material.MatMagnetics.plot_BH
-    def plot_BH(self, fig=None, grid=True, color="r", is_show_fig=True):
+    def plot_BH(
+        self,
+        fig: Figure | None = None,
+        grid: bool = True,
+        color: str = "r",
+        is_show_fig: bool = True,
+    ) -> Figure:
         """Plot the curve B(H) at the specified frequency
 
         Parameters

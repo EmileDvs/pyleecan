@@ -1,7 +1,11 @@
 from ....Functions_new.init_fig import init_fig
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 
-def plot_BH(self, fig=None, grid=True, color="r", is_show_fig=True):
+def plot_BH(self, fig: Figure | None = None, grid: bool = True, color: str = "r", is_show_fig: bool = True) -> Figure:
     """Plot the curve B(H) at the specified frequency
 
     Parameters

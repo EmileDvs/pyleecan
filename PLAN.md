@@ -509,6 +509,8 @@ hint pass is over for all packages.
 - `SlotUD2._set_split_active_surf_dict`: the `Methods_new` setter still
   imports the legacy `Functions.Load.import_class` and builds
   `pyleecan.Classes` objects with `init_dict=` (to fix for the new backends).
+- `ModelBH.fit_model`: the last `else` branch calls `self.BH_func(H, Bs, a)`
+  with undefined `Bs` and `a` (`NameError`), and `new_BH` is unbound there.
 - Geometry: `Trapeze.get_patches` (`replace`/`in` on an optional style),
   a `Polygon` returned for `list[Polygon]`, one implicit `None` return.
 
@@ -516,7 +518,13 @@ hint pass is over for all packages.
 
 In the order a simulation is built:
 
-- [ ] Material
+- [x] Material (`material` in `HINTED_SUBPACKAGES`): 19/19 parameters and
+      12/12 returns hinted. The parameters missing in the legacy docstrings
+      (`BH_func`, `plot_BH`) are given by `PARAMETER_OVERRIDES` of
+      `type_hints.py`; return overrides: `BH_func` -> `float | np.ndarray`,
+      `get_BH` -> `np.ndarray | None` (no curve defined), `plot_BH` ->
+      `Figure` (documented "None"). `ty`: 2 diagnostics left (`fit_model`,
+      frozen review list). Class tests unchanged.
 - [ ] Machine
 - [ ] Simulation, Loss, Output, Optimization
 - [ ] Logger chain

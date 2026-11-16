@@ -1,4 +1,8 @@
-def get_BH(self):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+def get_BH(self) -> np.ndarray | None:
     """Return the B(H) curve of the material according to the Import object.
     If there is no B(H) curve linear data are computed from mur_lin.
 

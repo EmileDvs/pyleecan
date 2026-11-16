@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_BH(self):
+def get_BH(self) -> np.ndarray | None:
     """
     Return the B(H) curve of the material according to Langevin model.
 

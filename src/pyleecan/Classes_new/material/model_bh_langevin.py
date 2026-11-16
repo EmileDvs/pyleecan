@@ -43,7 +43,7 @@ class ModelBH_Langevin(ModelBH):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.ModelBH_Langevin.BH_func
-    def BH_func(self, H, Bs, a):
+    def BH_func(self, H: float | np.ndarray, Bs: float, a: float) -> float | np.ndarray:
         """
         Return the B from H according to Langevin model.
 
@@ -72,7 +72,7 @@ class ModelBH_Langevin(ModelBH):
         return B
 
     # Inlined from Methods.Material.ModelBH_Langevin.get_BH
-    def get_BH(self):
+    def get_BH(self) -> np.ndarray | None:
         """
         Return the B(H) curve of the material according to Langevin model.
 

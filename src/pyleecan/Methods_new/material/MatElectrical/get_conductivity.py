@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_conductivity(self, T_op=None, T_ref=20):
+def get_conductivity(self, T_op: float | None = None, T_ref: float = 20) -> float:
     """Get conductivity for given temperature T_op
 
     Parameters

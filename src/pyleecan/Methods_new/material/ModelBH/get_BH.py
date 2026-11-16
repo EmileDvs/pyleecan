@@ -3,7 +3,7 @@ import numpy as np
 from scipy.optimize import curve_fit, root_scalar
 
 
-def get_BH(self):
+def get_BH(self) -> np.ndarray | None:
     """
     Return the B(H) curve of the material (by default do nothing).
 

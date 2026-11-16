@@ -37,7 +37,7 @@ class ModelBH(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Material.ModelBH.fit_model
-    def fit_model(self, BH):
+    def fit_model(self, BH: np.ndarray) -> np.ndarray:
         """
         Fit the BH model parameters based on input B(H) curve of the material, and perform extrapolation.
 
@@ -110,7 +110,7 @@ class ModelBH(LegacyModel):
         return new_BH
 
     # Inlined from Methods.Material.ModelBH.get_BH
-    def get_BH(self):
+    def get_BH(self) -> np.ndarray | None:
         """
         Return the B(H) curve of the material (by default do nothing).
 

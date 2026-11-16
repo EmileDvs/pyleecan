@@ -3,7 +3,7 @@ import numpy as np
 from scipy.optimize import curve_fit, root_scalar
 
 
-def fit_model(self, BH):
+def fit_model(self, BH: np.ndarray) -> np.ndarray:
     """
     Fit the BH model parameters based on input B(H) curve of the material, and perform extrapolation.
 

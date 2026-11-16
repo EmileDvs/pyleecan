@@ -29,6 +29,7 @@ BUILTIN_TYPES = {
     "dict": "dict",
     "list": "list",
     "tuple": "tuple",
+    "none": "None",  # Alternative of a return override (np.ndarray | None)
 }
 """Documented builtin types (lowercase) -> annotation"""
 
@@ -70,6 +71,32 @@ RETURN_OVERRIDES = {
 alternatives of the union, each a tuple of documented types (a tuple hint
 when there are several)"""
 
+# B(H) models: H is a value or an array of values, B follows H
+_BH_FUNC_PARAMETERS = {
+    "H": ("float", "ndarray"),
+    "Bs": ("float",),
+    "a": ("float",),
+    "mu_a": ("float",),
+}
+RETURN_OVERRIDES[("material", "BH_func")] = (("float",), ("ndarray",))
+# get_BH returns None when the B(H) curve is not defined (checked by MatMagnetics)
+RETURN_OVERRIDES[("material", "get_BH")] = (("ndarray",), ("None",))
+# plot_BH documents "None" but returns the figure
+RETURN_OVERRIDES[("material", "plot_BH")] = (("matplotlib.figure.Figure",),)
+
+PARAMETER_OVERRIDES = {
+    ("material", "BH_func"): _BH_FUNC_PARAMETERS,
+    ("material", "plot_BH"): {
+        "fig": ("matplotlib.figure.Figure",),
+        "grid": ("bool",),
+        "color": ("str",),
+        "is_show_fig": ("bool",),
+    },
+}
+"""(sub-package, function) -> {parameter: documented types (alternatives of
+the union)} for the parameters missing in the docstring (legacy Methods are
+not modified)"""
+
 
 def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None):
     """Annotate the functions of a module from their numpydoc docstrings.
@@ -102,6 +129,7 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
             continue
         docstring = ast.get_docstring(node) or ""
         documented = _section_types(docstring, "Parameters")
+        overridden = PARAMETER_OVERRIDES.get((subpackage, node.name), {})
         arguments = node.args.posonlyargs + node.args.args + node.args.kwonlyargs
         defaults = dict(
             zip(
@@ -122,11 +150,16 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
         for arg in arguments:
             if arg.annotation is not None or arg.arg in ("self", "cls"):
                 continue
-            if arg.arg not in documented:
+            if arg.arg not in documented and arg.arg not in overridden:
                 continue
             default = defaults.get(arg.arg)
             is_none = isinstance(default, ast.Constant) and default.value is None
-            hint = _annotation(documented[arg.arg], class_names, imports, unrecognized)
+            if arg.arg in overridden:
+                hint = _union_hint(overridden[arg.arg], class_names, imports)
+            else:
+                hint = _annotation(
+                    documented[arg.arg], class_names, imports, unrecognized
+                )
             if hint is None:
                 continue
             if not _default_matches(hint, default):
@@ -425,6 +458,14 @@ def _return_hint(texts, class_names, imports, unrecognized):
     if not hints or any(hint is None for hint in hints):
         return None
     return hints[0] if len(hints) == 1 else f"tuple[{', '.join(hints)}]"
+
+
+def _union_hint(texts, class_names, imports):
+    """Union of documented types (an override), or None if one is unknown."""
+    hints = [_annotation(text, class_names, imports, None) for text in texts]
+    if any(hint is None for hint in hints):
+        return None
+    return " | ".join(hints)
 
 
 def _signature_end(source, node):
