@@ -80,6 +80,18 @@ uv run python -m pyleecan.Generator.ClassGenerator.New.run_generate_classes
 Rules: a moved pass must keep the generated classes byte-identical; passes are
 idempotent; method sources hold no backend-specific logic.
 
+Pitfalls:
+- The generators delete and rewrite the generated folders: a shell whose
+  working directory is inside one (e.g. `Methods_new/slot`) locks it on Windows
+  (`PermissionError: [WinError 32]`) and the run stops halfway. Run from the
+  repository root.
+- `run_generate_classes(class_list=...)` takes CSV file names
+  (`["ConvertMC.csv"]`), not class names.
+- Type hints: `type_hints.py` drafts them from the numpydoc docstrings; the
+  docstrings of the legacy `Methods` cannot be fixed, so incomplete ones are
+  completed by `PARAMETER_OVERRIDES` / `RETURN_OVERRIDES`. Check a package
+  with `uv run ty check src/pyleecan/Methods_new/<package>`.
+
 ## Tests
 
 - `Tests/` holds the legacy suites; `Tests/New/` holds the generated tree for
