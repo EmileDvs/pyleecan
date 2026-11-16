@@ -5,7 +5,7 @@ from .....Classes_new.slot.slot_w_23 import SlotW23
 from .....Classes_new.slot.slot_w_26 import SlotW26
 
 
-def convert_slot_rotor_to_P(self):
+def convert_slot_rotor_to_P(self) -> None:
     """Selects correct slot for rotor and implements it in obj machine
 
     Parameters

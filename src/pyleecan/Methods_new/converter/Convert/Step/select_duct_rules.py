@@ -3,7 +3,7 @@ from .....Classes_new.slot.ventilation_polar import VentilationPolar
 from .....Classes_new.slot.ventilation_trap import VentilationTrap
 
 
-def select_duct_rules(self, is_stator):
+def select_duct_rules(self, is_stator: bool) -> None:
     """selects step to add rules for duct
 
     Parameters

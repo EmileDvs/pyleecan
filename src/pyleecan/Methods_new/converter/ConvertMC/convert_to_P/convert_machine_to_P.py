@@ -4,7 +4,7 @@ from .....Classes_new.machine.machine_scim import MachineSCIM
 from .....Classes_new.machine.machine_wrsm import MachineWRSM
 
 
-def convert_machine_to_P(self):
+def convert_machine_to_P(self) -> None:
     """Update machine with the correct machine type
 
     Parameters

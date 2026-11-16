@@ -1,4 +1,4 @@
-def select_lamination_rules(self, is_stator):
+def select_lamination_rules(self, is_stator: bool) -> None:
     """selects step to add rules for lamination
 
     Parameters

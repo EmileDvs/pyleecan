@@ -1,7 +1,7 @@
 from .....Classes_new.converter.rule_complex import RuleComplex
 
 
-def add_rule_machine_type(self):
+def add_rule_machine_type(self) -> None:
     """Create and adapt all the rules related to machine type
     Extend rules_list within Converter object
 

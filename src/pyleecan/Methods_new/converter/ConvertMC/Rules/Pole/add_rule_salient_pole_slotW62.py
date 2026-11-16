@@ -3,7 +3,7 @@ from ......Classes_new.converter.rule_equation import RuleEquation
 from ......Classes_new.converter.rule_complex import RuleComplex
 
 
-def add_rule_salient_pole_slotW62(self):
+def add_rule_salient_pole_slotW62(self) -> None:
     """Create and adapt all the rules related to Pole
     Extend rules_list within Converter object
 

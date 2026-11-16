@@ -1,4 +1,4 @@
-def select_bar_rules(self, is_stator):
+def select_bar_rules(self, is_stator: bool) -> None:
     """selects step to add bar rules
 
     Parameters

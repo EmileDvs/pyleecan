@@ -2,7 +2,7 @@ from ......Classes_new.converter.rule_simple import RuleSimple
 from ......Classes_new.converter.rule_equation import RuleEquation
 
 
-def add_rule_slotW29(self, is_stator):
+def add_rule_slotW29(self, is_stator: bool) -> None:
     """Create and adapt all the rules related to slotW29 (lam radius,...)
     Extend rules_list within Converter object
 

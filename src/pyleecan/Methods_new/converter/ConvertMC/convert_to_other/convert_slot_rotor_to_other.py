@@ -4,7 +4,7 @@ from .....Classes_new.slot.slot_w_26 import SlotW26
 from .....Classes_new.slot.slot_w_30 import SlotW30
 
 
-def convert_slot_rotor_to_other(self):
+def convert_slot_rotor_to_other(self) -> None:
     """Selects correct slot for rotor and implements it in dict
 
     Parameters

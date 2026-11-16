@@ -1,4 +1,4 @@
-def select_SCIM_rules(self):
+def select_SCIM_rules(self) -> None:
     """select step to have rules for motor SCIM
 
     Parameters

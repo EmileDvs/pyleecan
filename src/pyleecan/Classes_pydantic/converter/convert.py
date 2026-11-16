@@ -2,7 +2,7 @@
 """Generated experimental pydantic model; do not edit by hand."""
 
 import os
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import Field
 
@@ -45,6 +45,9 @@ from ..slot.ventilation_circ import VentilationCirc
 from ..slot.ventilation_polar import VentilationPolar
 from ..slot.ventilation_trap import VentilationTrap
 
+if TYPE_CHECKING:
+    from ..machine.machine import Machine
+
 
 class Convert(LegacyModel):
     """initialisation of conversion abstract
@@ -83,7 +86,7 @@ class Convert(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.Convert.convert_to_other
-    def convert_to_other(self, machine):
+    def convert_to_other(self, machine: Machine) -> dict:
         """conversion obj machine in dict
 
         Parameters
@@ -129,7 +132,7 @@ class Convert(LegacyModel):
         return self.other_dict
 
     # Inlined from Methods.Converter.Convert.convert_to_P
-    def convert_to_P(self, file_path):
+    def convert_to_P(self, file_path: str) -> Machine:
         """Convert a "other" file to a Pyleecan machine
 
         Parameters
@@ -187,7 +190,7 @@ class Convert(LegacyModel):
         return self.machine
 
     # Inlined from Methods.Converter.Convert.machine_type.select_IPMSM_rules
-    def select_IPMSM_rules(self):
+    def select_IPMSM_rules(self) -> None:
         """select step to have rules for motor IPMSM
 
         Parameters
@@ -206,7 +209,7 @@ class Convert(LegacyModel):
         self.select_skew_rules(is_stator)
 
     # Inlined from Methods.Converter.Convert.machine_type.select_SCIM_rules
-    def select_SCIM_rules(self):
+    def select_SCIM_rules(self) -> None:
         """select step to have rules for motor SCIM
 
         Parameters
@@ -226,7 +229,7 @@ class Convert(LegacyModel):
         self.select_skew_rules(is_stator)
 
     # Inlined from Methods.Converter.Convert.machine_type.select_SIPMSM_rules
-    def select_SIPMSM_rules(self):
+    def select_SIPMSM_rules(self) -> None:
         """select step to have rules for motor SIPMSM
 
         Parameters
@@ -245,7 +248,7 @@ class Convert(LegacyModel):
         self.select_skew_rules(is_stator)
 
     # Inlined from Methods.Converter.Convert.machine_type.select_WRSM_rules
-    def select_WRSM_rules(self):
+    def select_WRSM_rules(self) -> None:
         """select step to have rules for motor WRSM
 
         Parameters
@@ -266,7 +269,7 @@ class Convert(LegacyModel):
         self.select_skew_rules(is_stator)
 
     # Inlined from Methods.Converter.Convert.select_LamSlotWind_rules
-    def select_LamSlotWind_rules(self, is_stator):
+    def select_LamSlotWind_rules(self, is_stator: bool) -> None:
         """select all steps related to lamination
 
         Parameters
@@ -284,7 +287,7 @@ class Convert(LegacyModel):
         self.select_conductor_rules(is_stator)
 
     # Inlined from Methods.Converter.Convert.select_machine_rules
-    def select_machine_rules(self):
+    def select_machine_rules(self) -> None:
         """select the correct machine to add rules
         Parameters
         ----------
@@ -324,7 +327,7 @@ class Convert(LegacyModel):
         self.select_material_rules("machine.frame.mat_type")
 
     # Inlined from Methods.Converter.Convert.Step.select_bar_rules
-    def select_bar_rules(self, is_stator):
+    def select_bar_rules(self, is_stator: bool) -> None:
         """selects step to add bar rules
 
         Parameters
@@ -345,7 +348,7 @@ class Convert(LegacyModel):
         self.select_material_rules("machine.rotor.ring_mat")
 
     # Inlined from Methods.Converter.Convert.Step.select_conductor_rules
-    def select_conductor_rules(self, is_stator):
+    def select_conductor_rules(self, is_stator: bool) -> None:
         """selects step to add rules for conductor
 
         Parameters
@@ -389,7 +392,7 @@ class Convert(LegacyModel):
             self.get_logger().info("Insulator material, Not Implemented")
 
     # Inlined from Methods.Converter.Convert.Step.select_duct_rules
-    def select_duct_rules(self, is_stator):
+    def select_duct_rules(self, is_stator: bool) -> None:
         """selects step to add rules for duct
 
         Parameters
@@ -436,7 +439,7 @@ class Convert(LegacyModel):
             duct_id += 1
 
     # Inlined from Methods.Converter.Convert.Step.select_hole_rules
-    def select_hole_rules(self, is_stator):
+    def select_hole_rules(self, is_stator: bool) -> None:
         """selects step to add rules for hole and adds hole into obj machine
 
         Parameters
@@ -519,7 +522,7 @@ class Convert(LegacyModel):
             hole_id += 1
 
     # Inlined from Methods.Converter.Convert.Step.select_lamination_rules
-    def select_lamination_rules(self, is_stator):
+    def select_lamination_rules(self, is_stator: bool) -> None:
         """selects step to add rules for lamination
 
         Parameters
@@ -541,7 +544,7 @@ class Convert(LegacyModel):
             self.select_material_rules("machine.rotor.mat_type")
 
     # Inlined from Methods.Converter.Convert.Step.select_magnet_rules
-    def select_magnet_rules(self, is_stator):
+    def select_magnet_rules(self, is_stator: bool) -> None:
         """select step to add rules for magnet and convert the magnet
 
         Parameters
@@ -590,7 +593,7 @@ class Convert(LegacyModel):
         self.select_material_rules("machine.rotor.magnet.mat_type")
 
     # Inlined from Methods.Converter.Convert.Step.select_material_rules
-    def select_material_rules(self, path_P):
+    def select_material_rules(self, path_P) -> None:
         """selects rules for material
 
         Parameters
@@ -612,7 +615,7 @@ class Convert(LegacyModel):
             self.add_rule_material_magnetics(path_P, type_material)
 
     # Inlined from Methods.Converter.Convert.Step.select_notch_rules
-    def select_notch_rules(self, is_stator):
+    def select_notch_rules(self, is_stator: bool) -> None:
         """selects step to add rules for notch
 
         Parameters
@@ -648,7 +651,7 @@ class Convert(LegacyModel):
                 self.get_logger().error("Only rules for slotM19 are defined")
 
     # Inlined from Methods.Converter.Convert.Step.select_pole_rules
-    def select_pole_rules(self, is_stator):
+    def select_pole_rules(self, is_stator: bool) -> None:
         """selects step to add rules for pole
 
         Parameters
@@ -683,7 +686,7 @@ class Convert(LegacyModel):
         self.select_material_rules("machine.rotor.slot.wedge_mat")
 
     # Inlined from Methods.Converter.Convert.Step.select_skew_rules
-    def select_skew_rules(self, is_stator):
+    def select_skew_rules(self, is_stator: bool) -> None:
         """selects step to add rules for skew
 
         Parameters
@@ -704,7 +707,7 @@ class Convert(LegacyModel):
             self.add_rule_skew()
 
     # Inlined from Methods.Converter.Convert.Step.select_slot_rotor_rules
-    def select_slot_rotor_rules(self, is_stator):
+    def select_slot_rotor_rules(self, is_stator: bool) -> None:
         """selects step to add rules for slot in rotor and converts slot
 
         Parameters
@@ -742,7 +745,7 @@ class Convert(LegacyModel):
         self.select_material_rules("machine.rotor.slot.wedge_mat")
 
     # Inlined from Methods.Converter.Convert.Step.select_slot_rules
-    def select_slot_rules(self, is_stator):
+    def select_slot_rules(self, is_stator: bool) -> None:
         """selects step to add rules for slot and converts slot
 
         Parameters
@@ -784,7 +787,7 @@ class Convert(LegacyModel):
             self.select_material_rules("machine.stator.slot.wedge_mat")
 
     # Inlined from Methods.Converter.Convert.Step.select_winding_rules
-    def select_winding_rules(self, is_stator):
+    def select_winding_rules(self, is_stator: bool) -> None:
         """select step to add rules for winding
 
         Parameters

@@ -1,4 +1,4 @@
-def select_SIPMSM_machine_dimension(self):
+def select_SIPMSM_machine_dimension(self) -> None:
     """select the correct rule for machine dimension
     if the slot is in surface conversion to machine dimension is different
 

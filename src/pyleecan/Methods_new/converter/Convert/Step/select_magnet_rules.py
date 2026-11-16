@@ -6,7 +6,7 @@ from .....Classes_new.slot.slot_m_15 import SlotM15
 from .....Classes_new.slot.slot_m_16 import SlotM16
 
 
-def select_magnet_rules(self, is_stator):
+def select_magnet_rules(self, is_stator: bool) -> None:
     """select step to add rules for magnet and convert the magnet
 
     Parameters

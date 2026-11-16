@@ -560,6 +560,14 @@ hint pass is over for all packages.
 - Optimization: `OptiGenAlgNsga2Deap` / `OptiBayesAlgSmoot` (`solve`,
   `plot_pareto`, `create_toolbox`): untyped DEAP/SMT objects, optional fields,
   `init_dict=` constructor argument.
+- Converter:
+  - `ConvertMC.convert_slot_to_other` / `convert_slot_rotor_to_other`: the
+    `else` branch builds its error message with `name_slot` before it is
+    assigned (UnboundLocalError instead of NotImplementedError);
+  - `convert_hole_to_P`: optional `hole` list and `other_dict` entries used
+    without check; `convert_slot_to_P`: `init_dict=` constructor argument,
+    `wedge_mat` assigned on an optional slot;
+  - `add_rule_winding`: dict with bool keys given to `dict[str, Any]`.
 - Methods_new still uses the legacy dynamic loaders
   (`import_class("pyleecan.Classes", "X")`, 29 modules): the class generator
   turns them into static imports when inlining ("loaders"/"static_imports"
@@ -616,6 +624,12 @@ In the order a simulation is built:
       list). Recognized: `boolean`, `slice`, classes documented by their
       module path (`....Classes.Output`), special method returns (`__len__`
       -> int...); parameter override `LUT.set_default_simulation`.
+- [x] Converter (`converter` in `HINTED_SUBPACKAGES`): 77/95 parameters and
+      86/100 returns hinted; `ty`: 26 diagnostics (review list).
+      Fixed in type_hints.py: the end of a signature followed by a comment
+      (`def f(self):  # ...`) crashed the method generator (tokens instead of
+      text); a function returning no value gets `-> None` even when its
+      docstring documents a return (the code wins).
 - [ ] Logger chain
 - [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)
 

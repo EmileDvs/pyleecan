@@ -2,7 +2,7 @@ from ......Classes_new.converter.rule_simple import RuleSimple
 from ......Classes_new.converter.rule_equation import RuleEquation
 
 
-def add_rule_parallel_tooth_slotW63(self):
+def add_rule_parallel_tooth_slotW63(self) -> None:
     """Create and adapt all the rules related to Pole
     Extend rules_list within Converter object
 

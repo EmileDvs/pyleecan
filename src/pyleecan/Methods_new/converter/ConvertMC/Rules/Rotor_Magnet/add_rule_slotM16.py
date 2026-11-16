@@ -1,7 +1,7 @@
 from ......Classes_new.converter.rule_simple import RuleSimple
 
 
-def add_rule_slotM16(self):
+def add_rule_slotM16(self) -> None:
     """Create and adapt all the rules related to slotM16
     Extend rules_list within Converter object
 

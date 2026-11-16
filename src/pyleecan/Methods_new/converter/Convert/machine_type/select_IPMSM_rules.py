@@ -1,4 +1,4 @@
-def select_IPMSM_rules(self):
+def select_IPMSM_rules(self) -> None:
     """select step to have rules for motor IPMSM
 
     Parameters

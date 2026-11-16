@@ -6,7 +6,7 @@ from .....Classes_new.slot.slot_m_16 import SlotM16
 from .....Classes_new.slot.slot_m_16 import SlotM16
 
 
-def convert_magnet_to_other(self):
+def convert_magnet_to_other(self) -> None:
     """Selects correct magnet and implements it in dict
 
     Parameters

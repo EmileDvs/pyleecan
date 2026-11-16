@@ -1,7 +1,7 @@
 from .....Classes_new.machine.skew import Skew
 
 
-def select_skew_rules(self, is_stator):
+def select_skew_rules(self, is_stator: bool) -> None:
     """selects step to add rules for skew
 
     Parameters

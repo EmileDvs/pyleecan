@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def init_other_unit(self):
+def init_other_unit(self) -> None:
     """Selects units and creates a dict with all conversion
 
     Parameters

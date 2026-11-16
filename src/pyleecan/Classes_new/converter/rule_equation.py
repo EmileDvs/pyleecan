@@ -2,11 +2,14 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from sympy.solvers import solve
 
 from .rule import Rule
+
+if TYPE_CHECKING:
+    from ..machine.machine import Machine
 
 
 @dataclass(eq=False)
@@ -37,7 +40,9 @@ class RuleEquation(Rule):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.RuleEquation.convert_to_other
-    def convert_to_other(self, other_dict, machine, other_unit_dict):
+    def convert_to_other(
+        self, other_dict: dict, machine: Machine, other_unit_dict: dict
+    ):
         """Selects value in machine and implements it in other_dict
 
         Parameters
@@ -67,7 +72,7 @@ class RuleEquation(Rule):
         return other_dict
 
     # Inlined from Methods.Converter.RuleEquation.convert_to_P
-    def convert_to_P(self, other_dict, machine, other_unit_dict):
+    def convert_to_P(self, other_dict: dict, machine: Machine, other_unit_dict: dict):
         """Selects value in other_dict and implements it in machine
 
         Parameters

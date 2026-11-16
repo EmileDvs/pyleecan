@@ -4,7 +4,7 @@ from .....Classes_new.slot.slot_w_26 import SlotW26
 from .....Classes_new.slot.slot_w_30 import SlotW30
 
 
-def select_slot_rotor_rules(self, is_stator):
+def select_slot_rotor_rules(self, is_stator: bool) -> None:
     """selects step to add rules for slot in rotor and converts slot
 
     Parameters

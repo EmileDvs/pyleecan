@@ -1,7 +1,7 @@
 from ......Classes_new.converter.rule_simple import RuleSimple
 
 
-def add_rule_lamination(self, is_stator):
+def add_rule_lamination(self, is_stator: bool) -> None:
     """Create and adapt all the rules related to lamination (lam radius,...)
     Extend rules_list within Converter object
 

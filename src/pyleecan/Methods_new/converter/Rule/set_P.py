@@ -1,4 +1,10 @@
-def set_P(self, machine, other_value, path):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
+
+
+def set_P(self, machine: Machine, other_value, path: str):
     """Set value in machine
 
     Parameters

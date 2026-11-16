@@ -6,7 +6,7 @@ from .....Classes_new.slot.hole_m_62 import HoleM62
 from .....Classes_new.slot.hole_m_63 import HoleM63
 
 
-def convert_hole_to_other(self):
+def convert_hole_to_other(self) -> None:
     """Selects correct hole and implements it in dict
 
     Parameters

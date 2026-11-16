@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 
-def convert_other_to_dict(self, file_path):
+def convert_other_to_dict(self, file_path: str) -> None:
     """converts file .mot into dict and creates other_unit_dict
 
     Parameters

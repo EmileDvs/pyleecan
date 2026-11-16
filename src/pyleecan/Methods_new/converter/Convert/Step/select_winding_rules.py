@@ -1,7 +1,7 @@
 from .....Classes_new.machine.machine_wrsm import MachineWRSM
 
 
-def select_winding_rules(self, is_stator):
+def select_winding_rules(self, is_stator: bool) -> None:
     """select step to add rules for winding
 
     Parameters

@@ -1,4 +1,4 @@
-def set_other(self, other_dict, P_value, other_unit_dict, path_list):
+def set_other(self, other_dict: dict, P_value, other_unit_dict: dict, path_list: list):
     """Set P_value value in other_dict
 
     Parameters

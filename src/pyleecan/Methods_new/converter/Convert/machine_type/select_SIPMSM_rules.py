@@ -1,4 +1,4 @@
-def select_SIPMSM_rules(self):
+def select_SIPMSM_rules(self) -> None:
     """select step to have rules for motor SIPMSM
 
     Parameters

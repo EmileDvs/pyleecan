@@ -3,7 +3,7 @@ from ......Classes_new.converter.rule_equation import RuleEquation
 from ......Classes_new.converter.rule_complex import RuleComplex
 
 
-def add_rule_slotW14(self, is_stator):
+def add_rule_slotW14(self, is_stator: bool) -> None:
     """Create and adapt all the rules related to slotW14 (lam radius,...)
     Extend rules_list within Converter object
 

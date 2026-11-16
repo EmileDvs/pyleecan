@@ -1,4 +1,4 @@
-def select_WRSM_rules(self):
+def select_WRSM_rules(self) -> None:
     """select step to have rules for motor WRSM
 
     Parameters

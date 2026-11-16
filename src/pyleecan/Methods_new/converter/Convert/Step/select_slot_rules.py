@@ -6,7 +6,7 @@ from .....Classes_new.slot.slot_w_29 import SlotW29
 from .....Classes_new.material.material import Material
 
 
-def select_slot_rules(self, is_stator):
+def select_slot_rules(self, is_stator: bool) -> None:
     """selects step to add rules for slot and converts slot
 
     Parameters

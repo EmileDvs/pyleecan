@@ -1,7 +1,7 @@
 from ....classes_common.check import check_var
 
 
-def _set_fct_name(self, value):
+def _set_fct_name(self, value: str) -> None:
     """find the path of a function
 
     Parameters

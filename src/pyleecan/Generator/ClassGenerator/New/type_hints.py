@@ -11,7 +11,9 @@ The pass is idempotent: annotated parameters and returns are kept.
 """
 
 import ast
+import io
 import re
+import tokenize
 from importlib.util import resolve_name
 
 from pyleecan.classes_common.class_lookup import (
@@ -238,8 +240,8 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
             if returned == [()] and node.name in SPECIAL_METHOD_RETURNS:
                 # Return type fixed by the Python data model
                 alternatives = [SPECIAL_METHOD_RETURNS[node.name]]
-            elif returned == [()] and _returns_nothing(node):
-                # No documented return and no returned value
+            elif override is None and _returns_nothing(node):
+                # No returned value: the code wins over a documented return
                 alternatives = ["None"]
             else:
                 alternatives = [
@@ -603,18 +605,26 @@ def _union_hint(texts, class_names, imports):
 
 
 def _signature_end(source, node):
-    """(line, column) just before the colon ending the def statement."""
-    body_start = node.body[0]
+    """(line, column) of the colon ending the def statement.
+
+    The first ":" outside brackets after "def" (tokens: comments, strings and
+    line layout do not matter, e.g. ``def f(self):  # comment``).
+    """
     lines = source.splitlines(keepends=True)
-    # Search backwards from the first statement for the ":" closing the def
-    line = body_start.lineno - 1
-    while line >= node.lineno - 1:
-        text = lines[line]
-        end = len(text) if line != body_start.lineno - 1 else body_start.col_offset
-        segment = text[:end].rstrip()
-        if segment.endswith(":") and line < body_start.lineno - 1:
-            return line + 1, len(segment) - 1
-        line -= 1
+    text = "".join(lines[node.lineno - 1 : node.body[0].end_lineno])
+    depth = 0
+    try:
+        for token in tokenize.generate_tokens(io.StringIO(text).readline):
+            if token.type != tokenize.OP:
+                continue
+            if token.string in "([{":
+                depth += 1
+            elif token.string in ")]}":
+                depth -= 1
+            elif token.string == ":" and depth == 0:
+                return node.lineno + token.start[0] - 1, token.start[1]
+    except tokenize.TokenError:
+        pass  # Text cut in the body: the colon was not found before
     raise ValueError(f"Cannot find the end of the signature of {node.name}")
 
 

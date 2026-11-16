@@ -1,9 +1,12 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Converter/Rule.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .._legacy_model import LegacyModel
+
+if TYPE_CHECKING:
+    from ..machine.machine import Machine
 
 
 class Rule(LegacyModel):
@@ -37,7 +40,7 @@ class Rule(LegacyModel):
             return self.file_name
 
     # Inlined from Methods.Converter.Rule.get_other
-    def get_other(self, other_dict, other_path_list, other_unit_dict):
+    def get_other(self, other_dict: dict, other_path_list: list, other_unit_dict: dict):
         """Select value in other_dict and change the value to be in SI
 
         Parameters
@@ -72,7 +75,7 @@ class Rule(LegacyModel):
         return other_value  # return in SI
 
     # Inlined from Methods.Converter.Rule.get_P
-    def get_P(self, path_machine, machine):
+    def get_P(self, path_machine: str, machine: Machine):
         """Select value in machine
 
         Parameters
@@ -108,7 +111,9 @@ class Rule(LegacyModel):
         return P_value
 
     # Inlined from Methods.Converter.Rule.set_other
-    def set_other(self, other_dict, P_value, other_unit_dict, path_list):
+    def set_other(
+        self, other_dict: dict, P_value, other_unit_dict: dict, path_list: list
+    ):
         """Set P_value value in other_dict
 
         Parameters
@@ -147,7 +152,7 @@ class Rule(LegacyModel):
         return other_dict
 
     # Inlined from Methods.Converter.Rule.set_P
-    def set_P(self, machine, other_value, path):
+    def set_P(self, machine: Machine, other_value, path: str):
         """Set value in machine
 
         Parameters

@@ -395,3 +395,47 @@ def f(self, flag, idx, out):
     result, _ = _hint(source)
     assert "def __len__(self) -> int:" in result
     assert "def f(self, flag: bool, idx: slice, out: Output):" in result
+
+
+def test_return_hint_after_a_commented_signature():
+    source = '''def f(self):  # conversion: to MotorCAD
+    """Doc
+
+    Returns
+    -------
+    n : int
+        A number
+    """
+    return 1
+
+
+def g(
+    self, a=(1, 2)  # a: tuple
+):
+    """Doc
+
+    Returns
+    -------
+    n : int
+        A number
+    """
+    return 1
+'''
+    result, _ = _hint(source)
+    assert "def f(self) -> int:  # conversion: to MotorCAD" in result
+    assert "\n) -> int:\n" in result
+
+
+def test_documented_return_of_a_function_returning_nothing():
+    source = '''def f(self):
+    """Doc
+
+    Returns
+    -------
+    n : int
+        Documented but never returned
+    """
+    self.n = 1
+'''
+    result, _ = _hint(source)
+    assert "def f(self) -> None:" in result

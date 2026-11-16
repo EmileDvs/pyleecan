@@ -3,7 +3,7 @@ from .....Classes_new.converter.rule_equation import RuleEquation
 from .....Classes_new.converter.rule_complex import RuleComplex
 
 
-def add_rule_material_magnetics(self, path_P, material):
+def add_rule_material_magnetics(self, path_P, material) -> None:
     """Create and adapt all the rules related to machine dimensions (lam radius,...)
     Extend rules_list within Converter object
 

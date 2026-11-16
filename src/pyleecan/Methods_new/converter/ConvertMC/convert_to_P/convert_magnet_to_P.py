@@ -7,7 +7,7 @@ from .....Classes_new.slot.slot_m_15 import SlotM15
 from .....Classes_new.slot.slot_m_16 import SlotM16
 
 
-def convert_magnet_to_P(self):
+def convert_magnet_to_P(self) -> None:
     """Selects correct magnet and implements it in obj machine
 
     Parameters

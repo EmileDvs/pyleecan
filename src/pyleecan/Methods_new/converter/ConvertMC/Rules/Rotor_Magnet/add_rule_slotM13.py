@@ -2,7 +2,7 @@ from ......Classes_new.converter.rule_simple import RuleSimple
 from ......Classes_new.converter.rule_complex import RuleComplex
 
 
-def add_rule_slotM13(self):
+def add_rule_slotM13(self) -> None:
     """Create and adapt all the rules related to slotM13
     Extend rules_list within Converter object
 

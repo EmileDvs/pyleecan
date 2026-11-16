@@ -43,6 +43,7 @@ FROZEN_PACKAGES = frozenset()
 
 HINTED_SUBPACKAGES = frozenset(
     {
+        "converter",
         "geometry",
         "loss",
         "machine",

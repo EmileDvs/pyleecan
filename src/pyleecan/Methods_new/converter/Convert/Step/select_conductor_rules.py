@@ -2,7 +2,7 @@ from .....Classes_new.machine.cond_type_12 import CondType12
 from .....Classes_new.machine.cond_type_11 import CondType11
 
 
-def select_conductor_rules(self, is_stator):
+def select_conductor_rules(self, is_stator: bool) -> None:
     """selects step to add rules for conductor
 
     Parameters

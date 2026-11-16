@@ -1,9 +1,13 @@
 from ....classes_common.errors import ConvertionError
 from .... import __version__
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def convert_to_P(self, file_path):
+def convert_to_P(self, file_path: str) -> Machine:
     """Convert a "other" file to a Pyleecan machine
 
     Parameters

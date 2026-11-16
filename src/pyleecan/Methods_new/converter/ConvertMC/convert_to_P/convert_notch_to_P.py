@@ -2,7 +2,7 @@ from .....Classes_new.machine.notch_even_dist import NotchEvenDist
 from .....Classes_new.slot.slot_m_19 import SlotM19
 
 
-def convert_notch_to_P(self, is_stator):
+def convert_notch_to_P(self, is_stator: bool) -> None:
     """selects step to add rules for notch
 
     Parameters

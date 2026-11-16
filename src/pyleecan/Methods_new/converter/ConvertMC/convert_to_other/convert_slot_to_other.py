@@ -5,7 +5,7 @@ from .....Classes_new.slot.slot_w_23 import SlotW23
 from .....Classes_new.slot.slot_w_29 import SlotW29
 
 
-def convert_slot_to_other(self):
+def convert_slot_to_other(self) -> None:
     """Selects correct slot and implements it in dict
 
     Parameters

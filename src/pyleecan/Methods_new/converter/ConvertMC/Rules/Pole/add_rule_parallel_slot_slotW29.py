@@ -1,7 +1,7 @@
 from ......Classes_new.converter.rule_simple import RuleSimple
 
 
-def add_rule_parallel_slot_slotW29(self):
+def add_rule_parallel_slot_slotW29(self) -> None:
     """Create and adapt all the rules related to Pole
     Extend rules_list within Converter object
 

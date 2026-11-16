@@ -1,4 +1,4 @@
-def select_material_rules(self, path_P):
+def select_material_rules(self, path_P) -> None:
     """selects rules for material
 
     Parameters

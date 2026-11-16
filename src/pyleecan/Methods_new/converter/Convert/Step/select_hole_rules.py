@@ -6,7 +6,7 @@ from .....Classes_new.slot.hole_m_62 import HoleM62
 from .....Classes_new.slot.hole_m_63 import HoleM63
 
 
-def select_hole_rules(self, is_stator):
+def select_hole_rules(self, is_stator: bool) -> None:
     """selects step to add rules for hole and adds hole into obj machine
 
     Parameters

@@ -2,7 +2,7 @@ from ......Classes_new.converter.rule_simple import RuleSimple
 from ......Classes_new.converter.rule_equation import RuleEquation
 
 
-def add_rule_holeM60(self, hole_id):
+def add_rule_holeM60(self, hole_id: int) -> None:
     """Create and adapt all the rules related to Hole
     Extend rules_list within Converter object
 

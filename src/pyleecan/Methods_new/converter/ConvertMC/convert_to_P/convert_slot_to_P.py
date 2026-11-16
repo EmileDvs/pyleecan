@@ -7,7 +7,7 @@ from .....Classes_new.slot.slot_w_29 import SlotW29
 from .....Classes_new.material.material import Material
 
 
-def convert_slot_to_P(self):
+def convert_slot_to_P(self) -> None:
     """Selects correct slot and implements it in obj machine
 
     Parameters

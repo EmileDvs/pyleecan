@@ -1,7 +1,7 @@
 from .....Classes_new.slot.slot_m_19 import SlotM19
 
 
-def select_notch_rules(self, is_stator):
+def select_notch_rules(self, is_stator: bool) -> None:
     """selects step to add rules for notch
 
     Parameters

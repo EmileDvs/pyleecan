@@ -1,8 +1,12 @@
 from ....classes_common.errors import ConvertionError
 from .... import __version__
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def convert_to_other(self, machine):
+def convert_to_other(self, machine: Machine) -> dict:
     """conversion obj machine in dict
 
     Parameters

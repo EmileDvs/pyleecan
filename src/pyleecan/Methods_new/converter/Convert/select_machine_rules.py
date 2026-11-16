@@ -4,7 +4,7 @@ from ....Classes_new.machine.machine_scim import MachineSCIM
 from ....Classes_new.machine.machine_wrsm import MachineWRSM
 
 
-def select_machine_rules(self):
+def select_machine_rules(self) -> None:
     """select the correct machine to add rules
     Parameters
     ----------

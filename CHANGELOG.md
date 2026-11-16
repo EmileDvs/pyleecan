@@ -90,7 +90,7 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   (`X or Y`, Returns alternatives), `| None` for explicit `return None`.
   Simulation hinted (86/97 parameters, 82/90 returns). Loss hinted (8/8 parameters,
   16/16 returns). Output (100/123, 57/80) and Optimization (16/41,
-  8/17) hinted.
+  8/17) hinted. Converter hinted (77/95, 86/100).
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,

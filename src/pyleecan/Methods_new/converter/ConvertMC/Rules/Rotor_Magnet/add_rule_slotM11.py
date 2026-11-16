@@ -3,7 +3,7 @@ from ......Classes_new.converter.rule_equation import RuleEquation
 from ......Classes_new.converter.rule_complex import RuleComplex
 
 
-def add_rule_slotM11(self):
+def add_rule_slotM11(self) -> None:
     """Create and adapt all the rules related to slotM11
     Extend rules_list within Converter object
 

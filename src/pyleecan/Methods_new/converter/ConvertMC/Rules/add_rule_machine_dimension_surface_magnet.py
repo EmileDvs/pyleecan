@@ -2,7 +2,7 @@ from .....Classes_new.converter.rule_simple import RuleSimple
 from .....Classes_new.converter.rule_equation import RuleEquation
 
 
-def add_rule_machine_dimension_surface_magnet(self):
+def add_rule_machine_dimension_surface_magnet(self) -> None:
     """Create and adapt all the rules related to machine dimensions (lam radius,...)
     Extend rules_list within Converter object
 

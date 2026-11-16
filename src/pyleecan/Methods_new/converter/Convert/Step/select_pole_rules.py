@@ -3,7 +3,7 @@ from .....Classes_new.slot.slot_w_62 import SlotW62
 from .....Classes_new.slot.slot_w_29 import SlotW29
 
 
-def select_pole_rules(self, is_stator):
+def select_pole_rules(self, is_stator: bool) -> None:
     """selects step to add rules for pole
 
     Parameters

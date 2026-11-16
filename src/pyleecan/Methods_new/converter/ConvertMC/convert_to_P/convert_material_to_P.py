@@ -1,4 +1,4 @@
-def convert_material_to_P(self, path_P):
+def convert_material_to_P(self, path_P) -> str:
     """Selects correct material path and return path in file.mot
 
     Parameters

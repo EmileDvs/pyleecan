@@ -4,7 +4,7 @@ from .....Classes_new.machine.machine_scim import MachineSCIM
 from .....Classes_new.machine.machine_wrsm import MachineWRSM
 
 
-def convert_machine_to_other(self):  # conversion to MotorCAD
+def convert_machine_to_other(self) -> None:  # conversion to MotorCAD
     """Update other_dict with the correct machine type
 
     Parameters

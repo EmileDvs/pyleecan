@@ -3,7 +3,7 @@ from ......Classes_new.converter.rule_equation import RuleEquation
 from ......Classes_new.converter.rule_complex import RuleComplex
 
 
-def add_rule_notch_slotM19(self, is_stator, nb_notch):
+def add_rule_notch_slotM19(self, is_stator: bool, nb_notch: int) -> None:
     """Create and adapt all the rules related to lamination (lam radius,...)
     Extend rules_list within Converter object
 

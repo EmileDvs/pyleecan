@@ -2,13 +2,9 @@ from deap import base, creator, tools
 from ....Classes_new.output.output import Output
 from ....Classes_new.output.xoutput import XOutput
 from ....Classes_new.simulation.var_simu import VarSimu
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ....Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
 
-def create_toolbox(self) -> OptiGenAlgNsga2Deap:
+def create_toolbox(self) -> None:
     """OptiGenAlgNsga2Deap method to create DEAP toolbox
     Parameters
     ----------

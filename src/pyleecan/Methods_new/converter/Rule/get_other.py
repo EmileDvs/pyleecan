@@ -1,4 +1,4 @@
-def get_other(self, other_dict, other_path_list, other_unit_dict):
+def get_other(self, other_dict: dict, other_path_list: list, other_unit_dict: dict):
     """Select value in other_dict and change the value to be in SI
 
     Parameters

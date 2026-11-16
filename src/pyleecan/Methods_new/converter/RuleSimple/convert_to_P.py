@@ -1,4 +1,10 @@
-def convert_to_P(self, other_dict, machine, other_unit_dict):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
+
+
+def convert_to_P(self, other_dict: dict, machine: Machine, other_unit_dict: dict):
     """Selects value in other_dict and implements it in machine
 
     Parameters

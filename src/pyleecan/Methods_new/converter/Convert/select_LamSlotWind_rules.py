@@ -1,4 +1,4 @@
-def select_LamSlotWind_rules(self, is_stator):
+def select_LamSlotWind_rules(self, is_stator: bool) -> None:
     """select all steps related to lamination
 
     Parameters

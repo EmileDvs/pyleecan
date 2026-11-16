@@ -64,7 +64,7 @@ class ConvertMC(Convert):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_conductor_to_other
-    def convert_conductor_to_other(self, is_stator):
+    def convert_conductor_to_other(self, is_stator) -> None:
         """selects step to add rules for conductor
 
         Parameters
@@ -99,7 +99,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_duct_to_other
-    def convert_duct_to_other(self, is_stator):
+    def convert_duct_to_other(self, is_stator: bool) -> None:
         """selects step to add rules for duct
 
         Parameters
@@ -162,7 +162,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_hole_to_other
-    def convert_hole_to_other(self):
+    def convert_hole_to_other(self) -> None:
         """Selects correct hole and implements it in dict
 
         Parameters
@@ -227,7 +227,7 @@ class ConvertMC(Convert):
         self.get_logger().info(f"Conversion {hole_type} into {name_hole}")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_machine_to_other
-    def convert_machine_to_other(self):  # conversion to MotorCAD
+    def convert_machine_to_other(self) -> None:  # conversion to MotorCAD
         """Update other_dict with the correct machine type
 
         Parameters
@@ -266,7 +266,7 @@ class ConvertMC(Convert):
             self.other_dict["[Calc_Options]"]["Motor_Type"] = name_machine
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_magnet_to_other
-    def convert_magnet_to_other(self):
+    def convert_magnet_to_other(self) -> None:
         """Selects correct magnet and implements it in dict
 
         Parameters
@@ -317,7 +317,7 @@ class ConvertMC(Convert):
         self.get_logger().info(f"Conversion {magnet_type} into {name_slot}")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_material_to_other
-    def convert_material_to_other(self, is_stator, name):
+    def convert_material_to_other(self, is_stator, name) -> None:
         """Selects correct material and implements it in dict
 
         Parameters
@@ -329,7 +329,7 @@ class ConvertMC(Convert):
         return
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_notch_to_other
-    def convert_notch_to_other(self, is_stator):
+    def convert_notch_to_other(self, is_stator: bool) -> None:
         """selection step to add rules for notch
 
         Parameters
@@ -370,7 +370,7 @@ class ConvertMC(Convert):
             self.get_logger().error("Motor-CAD machine can't have stator notch")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_pole_to_other
-    def convert_pole_to_other(self):
+    def convert_pole_to_other(self) -> None:
         """Selects correct pole and implements it in dict
         Parameters
         ----------
@@ -408,7 +408,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_skew_to_other
-    def convert_skew_to_other(self):
+    def convert_skew_to_other(self) -> None:
         """Selects correct skew and implements it in dict
         Parameters
         ----------
@@ -422,7 +422,7 @@ class ConvertMC(Convert):
             self.add_rule_skew()
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_slot_rotor_to_other
-    def convert_slot_rotor_to_other(self):
+    def convert_slot_rotor_to_other(self) -> None:
         """Selects correct slot for rotor and implements it in dict
 
         Parameters
@@ -460,7 +460,7 @@ class ConvertMC(Convert):
             self.other_dict["[Design_Options]"]["Top_Bar"] = name_slot
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_slot_to_other
-    def convert_slot_to_other(self):
+    def convert_slot_to_other(self) -> None:
         """Selects correct slot and implements it in dict
 
         Parameters
@@ -501,7 +501,7 @@ class ConvertMC(Convert):
             self.other_dict["[Calc_Options]"]["Slot_Type"] = name_slot
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.init_other_unit
-    def init_other_unit(self):
+    def init_other_unit(self) -> None:
         """Selects units and creates a dict with all conversion
 
         Parameters
@@ -529,7 +529,7 @@ class ConvertMC(Convert):
         self.other_unit_dict["[]"] = 1  # No unit => No scale
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_conductor_to_P
-    def convert_conductor_to_P(self, is_stator):
+    def convert_conductor_to_P(self, is_stator) -> None:
         """selects step to add rules for conductor in stator
 
         Parameters
@@ -566,7 +566,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_duct_to_P
-    def convert_duct_to_P(self, is_stator):
+    def convert_duct_to_P(self, is_stator: bool) -> None:
         """selection step to add rules for duct
 
         Parameters
@@ -664,7 +664,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_hole_to_P
-    def convert_hole_to_P(self):
+    def convert_hole_to_P(self) -> None:
         """Selects correct hole and implements it in obj machine
 
         Parameters
@@ -751,7 +751,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_machine_to_P
-    def convert_machine_to_P(self):
+    def convert_machine_to_P(self) -> None:
         """Update machine with the correct machine type
 
         Parameters
@@ -803,7 +803,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_magnet_to_P
-    def convert_magnet_to_P(self):
+    def convert_magnet_to_P(self) -> None:
         """Selects correct magnet and implements it in obj machine
 
         Parameters
@@ -861,7 +861,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_material_to_P
-    def convert_material_to_P(self, path_P):
+    def convert_material_to_P(self, path_P) -> str:
         """Selects correct material path and return path in file.mot
 
         Parameters
@@ -912,7 +912,7 @@ class ConvertMC(Convert):
         return material_path
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_notch_to_P
-    def convert_notch_to_P(self, is_stator):
+    def convert_notch_to_P(self, is_stator: bool) -> None:
         """selects step to add rules for notch
 
         Parameters
@@ -945,7 +945,7 @@ class ConvertMC(Convert):
             self.get_logger().error("MC machine can't have notch in stator")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict
-    def convert_other_to_dict(self, file_path):
+    def convert_other_to_dict(self, file_path: str) -> None:
         """converts file .mot into dict and creates other_unit_dict
 
         Parameters
@@ -1076,7 +1076,7 @@ class ConvertMC(Convert):
             return False
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_pole_to_P
-    def convert_pole_to_P(self):
+    def convert_pole_to_P(self) -> None:
         """Selects correct pole and implements it in obj machine
 
         Parameters
@@ -1122,7 +1122,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_skew_to_P
-    def convert_skew_to_P(self):
+    def convert_skew_to_P(self) -> None:
         """Selects correct skew and implements it in obj machine
 
         Parameters
@@ -1143,7 +1143,7 @@ class ConvertMC(Convert):
             self.get_logger().info(f"Conversion skew ")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_slot_rotor_to_P
-    def convert_slot_rotor_to_P(self):
+    def convert_slot_rotor_to_P(self) -> None:
         """Selects correct slot for rotor and implements it in obj machine
 
         Parameters
@@ -1193,7 +1193,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_slot_to_P
-    def convert_slot_to_P(self):
+    def convert_slot_to_P(self) -> None:
         """Selects correct slot and implements it in obj machine
 
         Parameters
@@ -1293,7 +1293,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.add_rule_machine_dimension
-    def add_rule_machine_dimension(self):
+    def add_rule_machine_dimension(self) -> None:
         """Create and adapt all the rules related to machine dimensions (lam radius,...)
         Extend rules_list within Converter object
 
@@ -1430,7 +1430,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.add_rule_machine_dimension_surface_magnet
-    def add_rule_machine_dimension_surface_magnet(self):
+    def add_rule_machine_dimension_surface_magnet(self) -> None:
         """Create and adapt all the rules related to machine dimensions (lam radius,...)
         Extend rules_list within Converter object
 
@@ -1604,7 +1604,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.add_rule_machine_type
-    def add_rule_machine_type(self):
+    def add_rule_machine_type(self) -> None:
         """Create and adapt all the rules related to machine type
         Extend rules_list within Converter object
 
@@ -1619,7 +1619,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.add_rule_material
-    def add_rule_material(self, path_P, material):
+    def add_rule_material(self, path_P, material) -> None:
         """Create and adapt all the rules related to machine dimensions (lam radius,...)
         Extend rules_list within Converter object
 
@@ -1816,7 +1816,7 @@ class ConvertMC(Convert):
                 )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.add_rule_material_magnetics
-    def add_rule_material_magnetics(self, path_P, material):
+    def add_rule_material_magnetics(self, path_P, material) -> None:
         """Create and adapt all the rules related to machine dimensions (lam radius,...)
         Extend rules_list within Converter object
 
@@ -1879,7 +1879,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.add_rule_skew
-    def add_rule_skew(self):
+    def add_rule_skew(self) -> None:
         """Create and adapt all the rules related to skew
         Extend rules_list within Converter object
 
@@ -1897,7 +1897,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM52
-    def add_rule_holeM52(self, hole_id):
+    def add_rule_holeM52(self, hole_id: int) -> None:
         """Create and adapt all the rules related to Hole
         Extend rules_list within Converter object
 
@@ -1960,7 +1960,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM57
-    def add_rule_holeM57(self, hole_id):
+    def add_rule_holeM57(self, hole_id: int) -> None:
         """Create and adapt all the rules related to Hole
         Extend rules_list within Converter object
 
@@ -2051,7 +2051,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM60
-    def add_rule_holeM60(self, hole_id):
+    def add_rule_holeM60(self, hole_id: int) -> None:
         """Create and adapt all the rules related to Hole
         Extend rules_list within Converter object
 
@@ -2149,7 +2149,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM61
-    def add_rule_holeM61(self, hole_id):
+    def add_rule_holeM61(self, hole_id: int) -> None:
         """Create and adapt all the rules related to Hole
         Extend rules_list within Converter object
 
@@ -2219,7 +2219,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM62
-    def add_rule_holeM62(self, hole_id):
+    def add_rule_holeM62(self, hole_id: int) -> None:
         """Create and adapt all the rules related to Hole
         Extend rules_list within Converter object
 
@@ -2283,7 +2283,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Hole.add_rule_holeM63
-    def add_rule_holeM63(self, hole_id):
+    def add_rule_holeM63(self, hole_id: int) -> None:
         """Create and adapt all the rules related to Hole
         Extend rules_list within Converter object
 
@@ -2348,7 +2348,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Lamination.add_rule_lamination
-    def add_rule_lamination(self, is_stator):
+    def add_rule_lamination(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to lamination (lam radius,...)
         Extend rules_list within Converter object
 
@@ -2389,7 +2389,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Lamination.add_rule_notch_slotM19
-    def add_rule_notch_slotM19(self, is_stator, nb_notch):
+    def add_rule_notch_slotM19(self, is_stator: bool, nb_notch: int) -> None:
         """Create and adapt all the rules related to lamination (lam radius,...)
         Extend rules_list within Converter object
 
@@ -2433,7 +2433,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationCirc
-    def add_rule_ventilationCirc(self, is_stator, duct_id):
+    def add_rule_ventilationCirc(self, is_stator: bool, duct_id: int) -> None:
         """Create and adapt all the rules related to lamination (lam radius,...)
         Extend rules_list within Converter object
 
@@ -2614,7 +2614,7 @@ class ConvertMC(Convert):
                 )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationPolar
-    def add_rule_ventilationPolar(self, is_stator, duct_id):
+    def add_rule_ventilationPolar(self, is_stator: bool, duct_id: int) -> None:
         """Create and adapt all the rules related to lamination (lam radius,...)
         Extend rules_list within Converter object
 
@@ -2700,7 +2700,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Lamination.add_rule_ventilationTrap
-    def add_rule_ventilationTrap(self, is_stator, duct_id):
+    def add_rule_ventilationTrap(self, is_stator: bool, duct_id: int) -> None:
         """Create and adapt all the rules related to duct
         Extend rules_list within Converter object
 
@@ -2878,7 +2878,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_slot_slotW29
-    def add_rule_parallel_slot_slotW29(self):
+    def add_rule_parallel_slot_slotW29(self) -> None:
         """Create and adapt all the rules related to Pole
         Extend rules_list within Converter object
 
@@ -2949,7 +2949,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Pole.add_rule_parallel_tooth_slotW63
-    def add_rule_parallel_tooth_slotW63(self):
+    def add_rule_parallel_tooth_slotW63(self) -> None:
         """Create and adapt all the rules related to Pole
         Extend rules_list within Converter object
 
@@ -3046,7 +3046,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Pole.add_rule_salient_pole_slotW62
-    def add_rule_salient_pole_slotW62(self):
+    def add_rule_salient_pole_slotW62(self) -> None:
         """Create and adapt all the rules related to Pole
         Extend rules_list within Converter object
 
@@ -3156,7 +3156,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM11
-    def add_rule_slotM11(self):
+    def add_rule_slotM11(self) -> None:
         """Create and adapt all the rules related to slotM11
         Extend rules_list within Converter object
 
@@ -3219,7 +3219,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM12
-    def add_rule_slotM12(self):
+    def add_rule_slotM12(self) -> None:
         """Create and adapt all the rules related to slotM12
         Extend rules_list within Converter object
 
@@ -3256,7 +3256,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM13
-    def add_rule_slotM13(self):
+    def add_rule_slotM13(self) -> None:
         """Create and adapt all the rules related to slotM13
         Extend rules_list within Converter object
 
@@ -3293,7 +3293,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM14
-    def add_rule_slotM14(self):
+    def add_rule_slotM14(self) -> None:
         """Create and adapt all the rules related to slotM14
         Extend rules_list within Converter object
 
@@ -3348,7 +3348,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM15
-    def add_rule_slotM15(self):
+    def add_rule_slotM15(self) -> None:
         """Create and adapt all the rules related to slotM15
         Extend rules_list within Converter object
 
@@ -3410,7 +3410,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Rotor_Magnet.add_rule_slotM16
-    def add_rule_slotM16(self):
+    def add_rule_slotM16(self) -> None:
         """Create and adapt all the rules related to slotM16
         Extend rules_list within Converter object
 
@@ -3473,7 +3473,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW11
-    def add_rule_slotW11(self, is_stator):
+    def add_rule_slotW11(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW11 (lam radius,...)
         Extend self.rules_list within Converter object
 
@@ -3613,7 +3613,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW14
-    def add_rule_slotW14(self, is_stator):
+    def add_rule_slotW14(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW14 (lam radius,...)
         Extend rules_list within Converter object
 
@@ -3712,7 +3712,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW21
-    def add_rule_slotW21(self, is_stator):
+    def add_rule_slotW21(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW21 (lam radius,...)
         Extend rules_list within Converter object
 
@@ -3824,7 +3824,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW23
-    def add_rule_slotW23(self, is_stator):
+    def add_rule_slotW23(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW23 (lam radius,...)
         Extend rules_list within Converter object
 
@@ -3923,7 +3923,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.add_rule_slotW29
-    def add_rule_slotW29(self, is_stator):
+    def add_rule_slotW29(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW29 (lam radius,...)
         Extend rules_list within Converter object
 
@@ -4026,7 +4026,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW11_2
-    def add_rule_rotor_slotW11_2(self, is_stator):
+    def add_rule_rotor_slotW11_2(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW11 (lam radius,...)
         Extend rules_list within Converter object
         Parameters
@@ -4134,7 +4134,7 @@ class ConvertMC(Convert):
             )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW23
-    def add_rule_rotor_slotW23(self, is_stator):
+    def add_rule_rotor_slotW23(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW23
         Extend rules_list within Converter object
         Parameters
@@ -4216,7 +4216,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW26
-    def add_rule_rotor_slotW26(self, is_stator):
+    def add_rule_rotor_slotW26(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW23 (lam radius,...)
         Extend rules_list within Converter object
 
@@ -4271,7 +4271,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Slot.rotor.add_rule_rotor_slotW30
-    def add_rule_rotor_slotW30(self, is_stator):
+    def add_rule_rotor_slotW30(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to slotW23 (lam radius,...)
         Extend rules_list within Converter object
         Parameters
@@ -4352,7 +4352,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype11
-    def add_rule_condtype11(self, is_stator):
+    def add_rule_condtype11(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to condtype11
         Extend rules_list within Converter object
 
@@ -4428,7 +4428,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Winding.add_rule_condtype12
-    def add_rule_condtype12(self, is_stator):
+    def add_rule_condtype12(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to condtype12
         Extend rules_list within Converter object
 
@@ -4497,7 +4497,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Winding.add_rule_rotor_bar
-    def add_rule_rotor_bar(self, is_stator):
+    def add_rule_rotor_bar(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to condtype12
         Extend rules_list within Converter object
 
@@ -4515,7 +4515,7 @@ class ConvertMC(Convert):
         self.rules_list.append(RuleComplex(fct_name="rotor_bar", folder="MotorCAD"))
 
     # Inlined from Methods.Converter.ConvertMC.Rules.Winding.add_rule_winding
-    def add_rule_winding(self, is_stator):
+    def add_rule_winding(self, is_stator: bool) -> None:
         """Create and adapt all the rules related to winding
         Extend rules_list within Converter object
 
@@ -4581,7 +4581,7 @@ class ConvertMC(Convert):
         )
 
     # Inlined from Methods.Converter.ConvertMC.select_SIPMSM_machine_dimension
-    def select_SIPMSM_machine_dimension(self):
+    def select_SIPMSM_machine_dimension(self) -> None:
         """select the correct rule for machine dimension
         if the slot is in surface conversion to machine dimension is different
 

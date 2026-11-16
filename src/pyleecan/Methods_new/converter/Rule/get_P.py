@@ -1,4 +1,10 @@
-def get_P(self, path_machine, machine):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
+
+
+def get_P(self, path_machine: str, machine: Machine):
     """Select value in machine
 
     Parameters

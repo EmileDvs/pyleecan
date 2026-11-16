@@ -1,7 +1,7 @@
 from .....Classes_new.machine.skew import Skew
 
 
-def convert_skew_to_P(self):
+def convert_skew_to_P(self) -> None:
     """Selects correct skew and implements it in obj machine
 
     Parameters

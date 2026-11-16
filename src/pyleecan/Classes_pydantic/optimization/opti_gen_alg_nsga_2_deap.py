@@ -1,8 +1,6 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Optimization/OptiGenAlgNsga2Deap.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from __future__ import annotations
-
 import random
 from collections.abc import Iterable
 from copy import deepcopy
@@ -32,8 +30,6 @@ from .opti_objective import OptiObjective
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
-
-    from .opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
 
 class OptiGenAlgNsga2Deap(OptiGenAlg):
@@ -167,7 +163,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
                     raise OptimizationAttributeError(mess)
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.create_toolbox
-    def create_toolbox(self) -> OptiGenAlgNsga2Deap:
+    def create_toolbox(self) -> None:
         """OptiGenAlgNsga2Deap method to create DEAP toolbox
         Parameters
         ----------

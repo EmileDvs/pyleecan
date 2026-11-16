@@ -7,7 +7,7 @@ from .....Classes_new.slot.hole_m_62 import HoleM62
 from .....Classes_new.slot.hole_m_63 import HoleM63
 
 
-def convert_hole_to_P(self):
+def convert_hole_to_P(self) -> None:
     """Selects correct hole and implements it in obj machine
 
     Parameters
