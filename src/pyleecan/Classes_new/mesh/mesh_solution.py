@@ -1653,3 +1653,87 @@ class MeshSolution(LegacyClass):
             _description_
         """
         return self.solution_dict.values()
+
+    # Inlined from Methods.Mesh.MeshSolution.get_area
+    def get_area(
+        self, group_names: list[str] | None = None, indices: list | None = None
+    ):
+        """Get the surface area of the specified groups of a MeshSolution
+
+        Parameters
+        ----------
+        self : MeshSolution
+            a MeshSolution object
+        group_names : list of str
+            list of the groups names or string of a single group
+        indices : list
+            list of indices, if not given all indices are considered
+        Return
+        ------
+        area : float
+            surface area of the specified groups and indices
+
+        """
+        if group_names is not None:
+            meshsol = self.get_group(group_names=group_names)
+        else:
+            meshsol = self
+
+        msh = meshsol.mesh
+
+        return msh.get_element_area(indices=indices).sum()
+
+    # Inlined from Methods.Mesh.MeshSolution.get_indices_limited
+    def get_indices_limited(
+        self,
+        label: str | None = None,
+        group_names: list[str] | None = None,
+        max_value: float = float("Inf"),
+        min_value: float = float("-Inf"),
+    ):
+        """Get the indices of the specified groups of a MeshSolution,
+        with the field 'label' values magnitude must be within the given limits.
+
+        Parameters
+        ----------
+        self : MeshSolution
+            a MeshSolution object
+        label : str
+            label of a MeshSolution solution field
+        group_names : list of str
+            list of the groups names or string of a single group
+
+        max_value : float
+            max. field magnitude (over time)
+        min_value : float
+            min. field magnitude (over time)
+
+        Return
+        ------
+        area : float
+            surface area of the specified groups and indices
+
+        """
+        grp = self.get_group(group_names=group_names)
+        msh = grp.mesh
+
+        indices = msh.element_dict["triangle"].indice
+
+        field = grp.get_field(label=label)
+
+        # TODO check field size and axes
+        field_mag = (field[:, :, 0] ** 2 + field[:, :, 1] ** 2) ** (1 / 2)
+        field_max = field_mag.max(axis=0)
+        field_min = field_mag.min(axis=0)
+
+        idx_max = field_max >= max_value
+        idx_min = field_min <= min_value
+
+        idx = idx_max + idx_min
+
+        if any(idx):
+            inds = indices[idx]
+        else:
+            inds = []
+
+        return inds

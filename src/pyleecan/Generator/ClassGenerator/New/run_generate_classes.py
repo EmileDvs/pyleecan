@@ -43,6 +43,7 @@ from pyleecan.Generator.ClassGenerator.New.worker_pool import (
     shutdown_pool,
     worker_count,
 )
+from pyleecan.Generator.ClassGenerator.New.moved_functions import add_moved_methods
 from pyleecan.Generator.read_fct import read_all
 
 PACKAGE_INIT = '''"""Experimental Pyleecan classes based on {kind}.
@@ -144,6 +145,7 @@ def generate_code(
     # Read all the csv files and snapshot imports before generated files are removed.
     if gen_dict is None:
         gen_dict = read_all(DOC_DIR, soft_name=soft_name)
+    add_moved_methods(gen_dict)  # Legacy functions moved to the classes
     validate_class_module_names(gen_dict)
     class_import_graph = get_class_import_graph(
         join(root_path, "Classes"), gen_dict, soft_name

@@ -67,6 +67,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `generate_methods_new.py` | Writes `Methods_new` from legacy `Methods` (modernization pipeline) |
 | `modernize.py`, `source_names.py`, `function_module_names.py` | Shared modernization passes and name mappings for methods and functions |
 | `type_hints.py` | Type hints from the numpydoc docstrings |
+| `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths |
 | `generate_function_new_classes.py` | `Functions_new` |
 | `generate_function_pydantic.py` | `Functions_pydantic` from `Functions_new` |
 | `generate_test_new_classes.py` | `Tests/New` tree from the legacy tests |

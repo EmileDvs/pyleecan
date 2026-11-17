@@ -30,6 +30,7 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_name,
     redirect_function_module_imports,
 )
+from pyleecan.Generator.ClassGenerator.New.moved_functions import MOVED_FUNCTIONS, alias_source
 from pyleecan.Generator.read_fct import read_all
 from pyleecan.Generator.ClassGenerator.New.modernize import (
     _function_import_style,
@@ -780,6 +781,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             with tokenize.open(path) as source_file:
                 source = source_file.read()
                 encoding = source_file.encoding
+            moved = MOVED_FUNCTIONS.get(".".join(relative.with_suffix("").parts))
+            if moved is not None:  # Deprecated alias of the method
+                source = alias_source(".".join(relative.with_suffix("").parts), moved)
             if relative == Path("Load") / "retrocompatibility.py":
                 source = _adapt_retrocompatibility(source, path)
                 source = _adapt_json_retrocompatibility(source, path)

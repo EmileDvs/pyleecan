@@ -404,6 +404,30 @@ are used by a single class, for example `comp_FEMM_torque` and
 `build_meshsolution` (`MagFEMM`), `get_area` (`OutMag`), `cut_lines_between_angle`
 (`Bore`). Another 41 modules are imported by no class, function or GUI module.
 
+Decision (2026-11-17, all packages; 17 modules used by a single class only,
+SciDataTool excluded). Moved (`moved_functions.py`, `MOVED_FUNCTIONS`):
+
+| Legacy function | Method |
+|---|---|
+| `MeshSolution.get_area` | `MeshSolution.get_area` |
+| `MeshSolution.get_indices_limited` | `MeshSolution.get_indices_limited` |
+| `Simulation.VarSimu.run_multisim_step` | `VarSimu.run_multisim_step` (static) |
+
+The method generator writes them in the method folder of the class (first
+parameter renamed `self`, or `@staticmethod`), the class generator adds them to
+the method list (the CSV files are unchanged), the callers in `Methods_new`
+call the method (`self.meshsolution.get_area(...)`), and `Functions_new` /
+`Functions_pydantic` keep the old path as an alias raising a
+`DeprecationWarning`.
+
+Kept as utilities: generic helpers (`circle_from_3_points`,
+`comp_surface_num`, `cut_lines_between_angles`, `make_ndarray_equal`), FEMM
+helpers working on the FEMM handler, not on `MagFEMM` (`comp_FEMM_torque`,
+`comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`), generic MeshSolution builders
+(`build_meshsolution`, `build_solution_data`, `build_solution_vector`),
+pyvista helpers (`plot_glyph_pv`, `plot_surf_deflection`), `get_path_binary`
+(environment); `check_parent` goes with the parent-link refactor.
+
 #### Type hints
 
 Coverage on 2026-11-15: 49 of the 1823 legacy method functions and 11 of the 450
@@ -661,6 +685,10 @@ In the order a simulation is built:
       (`def f(self):  # ...`) crashed the method generator (tokens instead of
       text); a function returning no value gets `-> None` even when its
       docstring documents a return (the code wins).
+- [x] Class-specific functions, all packages: 3 functions moved
+      (`get_area`, `get_indices_limited` to `MeshSolution`,
+      `run_multisim_step` to `VarSimu`), the others stay utilities (see
+      "Class-specific functions").
 - [ ] Logger chain
 - [ ] Functions helpers (`check_parent`, `assign_femm_surface`, `get_logger`)
 

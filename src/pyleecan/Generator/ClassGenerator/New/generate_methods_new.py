@@ -35,6 +35,11 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _methods_new_maps,
     class_subpackage,
 )
+from pyleecan.Generator.ClassGenerator.New.moved_functions import (
+    MOVED_FUNCTIONS,
+    method_source,
+    redirect_moved_calls,
+)
 from pyleecan.Generator.ClassGenerator.New.worker_pool import run_tasks, worker_count
 from pyleecan.Generator.read_fct import read_all
 
@@ -137,6 +142,30 @@ def generate_methods(
         written[name] = sum(
             1 for path in target.rglob("*.py") if path.name != "__init__.py"
         )
+    # Legacy functions moved to a class (moved_functions.py)
+    for legacy_module, target in sorted(MOVED_FUNCTIONS.items()):
+        if target.class_name not in gen_dict:
+            continue  # Partial generation dictionary
+        source, subpackage = classes[target.class_name]
+        if subpackage in frozen:
+            continue
+        legacy_parts = legacy_module.split(".")
+        function_path = root.joinpath("Functions", *legacy_parts).with_suffix(".py")
+        with tokenize.open(function_path) as function_file:
+            function_source = function_file.read()
+        destination = target_root / subpackage / target.class_name / (target.method + ".py")
+        if destination.exists():
+            raise ValueError(f"{destination} exists: method already defined")
+        destination.write_text(
+            method_source(
+                function_source,
+                target,
+                ".".join(["pyleecan", "Functions", *legacy_parts[:-1]]),
+                ".".join(["pyleecan", METHODS_NEW_PACKAGE, subpackage, target.class_name]),
+            ),
+            encoding="utf-8",
+        )
+        written[target.class_name] += 1
     _bootstrapped_method_dirs.cache_clear()
     _methods_new_maps.cache_clear()
 
@@ -236,6 +265,7 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     # The class of a method module: Methods_new.<sub-package>.<Class>[...]
     class_name = parts[3] if len(parts) > 3 and parts[3] in gen_dict else None
     source = remove_coding_declaration(source)
+    source = redirect_moved_calls(source, package, class_name)
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
     source = modernize_names(source, package, gen_dict, class_name)

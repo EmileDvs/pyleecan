@@ -1,25 +1,13 @@
-def get_area(meshsolution, group_names=None, indices=None):
-    """Get the surface area of the specified groups of a MeshSolution
+"""Deprecated alias of MeshSolution.get_area (moved to the class, removed in Phase 2)."""
 
-    Parameters
-    ----------
-    meshsolution : MeshSolution
-        a MeshSolution object
-    group_names : list of str
-        list of the groups names or string of a single group
-    indices : list
-        list of indices, if not given all indices are considered
-    Return
-    ------
-    area : float
-        surface area of the specified groups and indices
+from warnings import warn
 
-    """
-    if group_names is not None:
-        meshsol = meshsolution.get_group(group_names=group_names)
-    else:
-        meshsol = meshsolution
 
-    msh = meshsol.mesh
-
-    return msh.get_element_area(indices=indices).sum()
+def get_area(obj, *args, **kwargs):
+    """Deprecated: use MeshSolution.get_area"""
+    warn(
+        "get_area is deprecated, use MeshSolution.get_area (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return obj.get_area(*args, **kwargs)

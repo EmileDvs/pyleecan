@@ -1,5 +1,3 @@
-from ....Functions_new.MeshSolution.get_area import get_area
-from ....Functions_new.MeshSolution.get_indices_limited import get_indices_limited
 
 
 def get_demag(self, Hmax: float, group_name: str | None = None):
@@ -28,12 +26,12 @@ def get_demag(self, Hmax: float, group_name: str | None = None):
     if group_name is None:
         group_name = "rotor magnets"
     if group_name in self.meshsolution.group.keys():
-        inds = get_indices_limited(
-            self.meshsolution, label="H", group_names=group_name, max_value=Hmax
+        inds = self.meshsolution.get_indices_limited(
+            label="H", group_names=group_name, max_value=Hmax
         )
 
-        area_ref = get_area(self.meshsolution, group_names=group_name)
-        area = get_area(self.meshsolution, group_names=group_name, indices=inds)
+        area_ref = self.meshsolution.get_area(group_names=group_name)
+        area = self.meshsolution.get_area(group_names=group_name, indices=inds)
     else:
         area, area_ref, inds = None, None, []
 

@@ -1,6 +1,5 @@
 import numpy as np
 import itertools
-from ....Functions_new.Simulation.VarSimu.run_multisim_step import run_multisim_step
 from ....Functions_new.Simulation.VarSimu.log_datakeeper_step_result import log_datakeeper_step_result
 from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
@@ -73,7 +72,7 @@ def run(self) -> None:
     nb_simu += 1  # Count reference simulation in progress bar
 
     # Run the simulation & call DataKeeper and post-proc handling errors
-    xoutput_ref = run_multisim_step(
+    xoutput_ref = self.run_multisim_step(
         ref_simu,
         datakeeper_list=keeper_list,  # datakeeper.result will be updated (if needed)
         stop_if_error=True,  # Reference simulation must be correct
@@ -123,7 +122,7 @@ def run(self) -> None:
         simu_step.index = idx
         if idx != ref_simu_index:
             # Run the simulation & call DataKeeper and post-proc handling errors
-            xoutput_step = run_multisim_step(
+            xoutput_step = self.run_multisim_step(
                 simu_step,
                 keeper_list,  # datakeeper.result will be updated (if needed)
                 self.stop_if_error,
