@@ -13,7 +13,14 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 - Source in `src/pyleecan/`, tests in `Tests/`, tutorials in `Tutorials/`.
 - Branch `switch_to_dataclass`: migration of the classes from the legacy
   CSV-generated classes to dataclass and pydantic classes.
-  Roadmap and progress checklist: [PLAN.md](PLAN.md). History: [CHANGELOG.md](CHANGELOG.md).
+  Roadmap and step checklist: [PLAN.md](PLAN.md). Detailed tasks of the
+  remaining steps (review lists, findings): [BACKLOG.md](BACKLOG.md).
+  History: [CHANGELOG.md](CHANGELOG.md).
+- Steps 5–10 change the generators only; Step 11 freezes `Methods_new` (and
+  the listed `Functions_new` modules), which are edited by hand from then on
+  (Steps 12–15). Before the freeze, never edit `Methods_new` by hand.
+- The legacy folders change only through merges of upstream pull requests
+  (Step 7); the generators carry the changes to the new code.
 
 ## Package layout (`src/pyleecan/`)
 
@@ -25,7 +32,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `Classes_new/` | Dataclass + dacite backend, generated | Never by hand: change the generator |
 | `Classes_pydantic/` | Pydantic v2 backend (reference target), generated | Never by hand: change the generator |
 | `Methods_new/` | Methods shared by both backends, written by the method generator from `Methods/` | Generated, except frozen (hand-written) packages |
-| `Functions_new/` | Functions for `Classes_new`, bootstrapped one legacy package at a time | Bootstrapped modules are hand-written |
+| `Functions_new/` | Functions for `Classes_new`, written by the functions generator from `Functions` | Generated, except the modules listed as hand-written at the freeze (Step 11) |
 | `Functions_pydantic/` | Generated from `Functions_new` by import rewriting | Never by hand |
 | `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written, except `errors.py` and `parent_types.py` (generated) |
 | `Generator/` | Legacy generators (`ClassGenerator/*.py`, GUI, UML) and the CSV class definitions (`ClassesRef/`) | Legacy generator: never |
@@ -126,7 +133,8 @@ uv run pytest Tests/Classes
 - One commit per increment; `[WiP]` prefix during the migration.
 - Each new generator feature gets small unit tests.
 - New packages and sub-packages are lowercase (PEP 8).
-- Keep the PLAN.md checkboxes and the CHANGELOG up to date.
+- Keep the PLAN.md and BACKLOG.md checkboxes and the CHANGELOG up to date:
+  details and findings go in BACKLOG.md, PLAN.md stays a short checklist.
 
 ## Keeping this file up to date
 

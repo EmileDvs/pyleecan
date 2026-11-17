@@ -5,7 +5,7 @@ All notable changes to pyleecan are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The roadmap of the ongoing refactoring is in
-[PLAN.md](PLAN.md).
+[PLAN.md](PLAN.md), its detailed tasks in [BACKLOG.md](BACKLOG.md).
 
 ## [Unreleased]
 
@@ -29,8 +29,8 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `Classes_new`. All 281 classes build and round-trip through
   `as_dict`/`from_dict`.
 - **`Functions_new`**: copy of the legacy `Functions` targeting the new
-  classes, with snake_case module names and shared errors in
-  `Classes_new/_error.py`.
+  classes, with snake_case module names and the errors shared in
+  `classes_common/errors.py`.
 - **`Functions_pydantic`**: the new functions for the pydantic classes,
   generated from `Functions_new` by rewriting the imports only
   (`generate_function_pydantic.py`): one source for the function code. All 37
@@ -166,10 +166,19 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 1. Split the bases (target / legacy layer) | done |
 | 2. Type, min and max validation for dataclasses | done |
 | 3. `Functions_pydantic` | done |
-| 4. Phase 1 test architecture (`--backend`) | done (method results: with Step 5) |
-| 5. Package refactor pass (`Methods_new`, no parent links) | in progress: method generator, shared pipeline, Geometry done (hints) |
-| 6. Remaining utility functions | to do |
+| 4. Phase 1 test architecture (`--backend`) | done (method results compared at the freeze, Step 11) |
+| 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
+| 6. Class-specific functions moved to their class | done (3 functions) |
+| 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | to do |
+| 8. Refactor the remaining `Functions` modules (generator) | to do |
+| 9. Logger chain (generator) | to do |
+| 10. Parent links, first pass (generator) | to do |
+| 11. Freeze | to do |
+| 12. Custom property setters and getters (frozen) | to do |
+| 13. Type hints, second pass (frozen) | to do |
+| 14. Utility functions (frozen) | to do |
+| 15. Parent links, second pass (frozen) | to do |
 
 Legacy class tests (`Tests/New/Classes`), with each backend: 2855 passed,
 1 failed (`test_copy_out`: custom property setter of `ParamExplorer`, planned
-in Step 5). Cross tests (`Tests/New/Cross`): 1405 passed.
+in Step 12). Cross tests (`Tests/New/Cross`): 1405 passed.
