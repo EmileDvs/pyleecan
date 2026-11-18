@@ -11,6 +11,9 @@ method-level transformations move here from the class generator, so that the
 class generator only assembles the classes. Methods and functions share the
 same modernization pipeline.
 
+Legacy bugs are fixed in the copied modules (legacy_fixes.py), before the
+modernization.
+
 A frozen package (FROZEN_PACKAGES) is hand-written: the method generator does
 not write it (e.g. the parent-link refactor, which is not mechanical).
 
@@ -35,6 +38,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     _methods_new_maps,
     class_subpackage,
 )
+from pyleecan.Generator.ClassGenerator.New.legacy_fixes import apply_legacy_fixes
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     MOVED_FUNCTIONS,
     method_source,
@@ -166,6 +170,15 @@ def generate_methods(
             encoding="utf-8",
         )
         written[target.class_name] += 1
+    # Fixes of the legacy bugs (legacy_fixes.py)
+    apply_legacy_fixes(
+        target_root,
+        {
+            name: subpackage
+            for name, (_, subpackage) in classes.items()
+            if subpackage not in frozen
+        },
+    )
     _bootstrapped_method_dirs.cache_clear()
     _methods_new_maps.cache_clear()
 

@@ -12,29 +12,42 @@ hand, after the freeze (Step 11).
 ## Step 5: legacy bugs
 
 Found by `ty` on the first type hint pass. These lines raise an exception
-when they run; they are fixed in the generator (method generator pass, or
-an override of the legacy source), each listed under "Fixed" in the
-CHANGELOG. Fixes change the behaviour against legacy only where legacy
-raised an error.
+when they run; they are fixed in the method generator (`legacy_fixes.py`,
+`LEGACY_FIXES`: text replacements in the copies of the legacy modules, before
+the modernization; a fix whose legacy text is not found stops the
+generation), each listed under "Fixed" in the CHANGELOG. Fixes change the
+behaviour against legacy only where legacy raised an error.
 
-- [ ] `VectorField.get_harm_xyz_along`: `pol2cart` not imported (NameError).
-- [ ] `EEC_SCIM._comp_flux_mean`: `n2abc(..., n=...)`, `n2abc` has no `n`
-      parameter (TypeError).
-- [ ] `DataND.compare_along` / `compare_magnitude_along` /
+- [x] `VectorField.get_harm_xyz_along`: `pol2cart` not imported (NameError).
+- [x] `EEC_SCIM._comp_flux_mean`: `n2abc(..., n=...)`, `n2abc` has no `n`
+      parameter (TypeError); `n` is taken from the shape, argument removed.
+- [x] `DataND.compare_along` / `compare_magnitude_along` /
       `compare_phase_along`: `get_interpolation` called without its `index`
-      argument (TypeError; SciDataTool internals).
-- [ ] `ModelBH.fit_model`: the last `else` branch calls `self.BH_func(H, Bs, a)`
-      with undefined `Bs` and `a` (NameError), and `new_BH` is unbound there.
-- [ ] `ConvertMC.convert_slot_to_other` / `convert_slot_rotor_to_other`: the
+      argument (TypeError). The index counts the axes left in each array
+      (`get_along` squeezes the single-value axes, they are not interpolated).
+      Extension axes (`"max"`, `"rms"`...) are still not handled (legacy limit).
+- [x] `ModelBH.fit_model`: the last `else` branch calls `self.BH_func(H, Bs, a)`
+      with undefined `Bs` and `a` (NameError), and `new_BH` is unbound there:
+      smoothing with the fitted parameters. Also found: `Hmax` imposed without
+      `Bmax` left `iteration` unbound; same 1% step as the `Bmax` extrapolation.
+- [x] `ConvertMC.convert_slot_to_other` / `convert_slot_rotor_to_other`: the
       `else` branch builds its error message with `name_slot` before it is
-      assigned (UnboundLocalError instead of NotImplementedError).
-- [ ] `BoreSinePole.get_bore_line`: `raise ()` (TODO in the legacy code: a
-      TypeError instead of an explicit error).
-- [ ] To check (bug or `ty` limit):
-  - `ElecLUTdq.run`: `Pjoule`, `Pstator`... given to a constructor without
-    these fields;
-  - `OP.get_OP_array`: `append` on a tuple;
-  - `NotchEvenDist.get_notch_desc_list`: `<` between str and int.
+      assigned (UnboundLocalError instead of NotImplementedError): the message
+      gives the slot class.
+- [x] `BoreSinePole.get_bore_line`: `raise ()` (TODO in the legacy code: a
+      TypeError): `ValueError` with the number of intersections.
+- [x] Checked (bug or `ty` limit):
+  - `ElecLUTdq.run`: bug, `OutLoss` has no `Pjoule`... fields (TypeError when
+    the LUT has loss models; still the case on `loss_fea`, #751). The losses
+    go to `OutLoss.loss_dict`, one `OutLossModel` (`scalar_value`) per loss,
+    named as in `LUTdq.interp_Ploss_dqh` (`joule`, `stator core`, `magnets`,
+    `rotor core`, `proximity`). To review with #751 (Step 7).
+  - `OP.get_OP_array`: bug, `append` on the `*arg_list` tuple without
+    arguments (AttributeError): converted to a list as in `OPMatrix`. Both
+    `OP` and `OPMatrix` also sized `OP_matrix` before adding the default
+    columns (IndexError): sized after.
+  - `NotchEvenDist.get_notch_desc_list`: `ty` limit (value type of a dict
+    mixing angles and objects).
 
 ## Step 6: class-specific functions
 

@@ -42,10 +42,6 @@ def get_OP_array(self, *arg_list) -> np.ndarray:
             if self.Pem_av_ref is not None:
                 arg_list.append("Pem")
 
-    # Init OP_matrix
-    N_OP = self.get_N_OP()
-    OP_matrix = np.zeros((N_OP, len(arg_list)))
-
     # Setup default argument (N0, Id, Iq, Tem, Pem)
     if len(arg_list) == 0:
         if self.N0 is not None:
@@ -58,6 +54,10 @@ def get_OP_array(self, *arg_list) -> np.ndarray:
             arg_list.append("Tem")
         if self.Pem_av_ref is not None:
             arg_list.append("Pem")
+
+    # Init OP_matrix
+    N_OP = self.get_N_OP()
+    OP_matrix = np.zeros((N_OP, len(arg_list)))
 
     arg_list_lower = [arg.lower() for arg in arg_list]
     # Convertion I0/Phi0 to Id/Iq will be done later

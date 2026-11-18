@@ -450,7 +450,7 @@ class ConvertMC(Convert):
 
         else:
             raise NotImplementedError(
-                f"Type of slot {name_slot} has not equivalent or has not been implementated"
+                f"Type of slot {type(slot).__name__} has not equivalent or has not been implementated"
             )
 
         self.get_logger().info(f"Conversion {slot.__class__.__name__} into {name_slot}")
@@ -492,7 +492,7 @@ class ConvertMC(Convert):
 
         else:
             raise NotImplementedError(
-                f"Type of slot {name_slot} has not equivalent or has not been implementated"
+                f"Type of slot {type(slot).__name__} has not equivalent or has not been implementated"
             )
         self.get_logger().info(f"Conversion {slot.__class__.__name__} into {name_slot}")
 

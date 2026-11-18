@@ -107,9 +107,7 @@ class OP(LegacyModel):
         # Extract arg_list it the function called from another script with *arg_list
         if len(arg_list) == 1 and type(arg_list[0]) == tuple:
             arg_list = arg_list[0]
-
-        # Init OP_matrix
-        OP_matrix = np.zeros((1, len(arg_list)))
+        arg_list = list(arg_list)
 
         # Setup default argument (N0, Id, Iq, Tem, Pem)
         Idq_dict = self.get_Id_Iq()
@@ -124,6 +122,9 @@ class OP(LegacyModel):
                 arg_list.append("Tem")
             if self.Pem_av_ref is not None:
                 arg_list.append("Pem")
+
+        # Init OP_matrix
+        OP_matrix = np.zeros((1, len(arg_list)))
 
         # Set column by column according to arg_list
         I0_dict = self.get_I0_Phi0()

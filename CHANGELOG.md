@@ -142,6 +142,26 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 
 ### Fixed
 
+- **Legacy method bugs fixed in `Methods_new`** (`legacy_fixes.py`, applied
+  by the method generator; the legacy `Methods` are unchanged). Only lines
+  that always raised an exception change:
+  - `VectorField.get_harm_xyz_along`: missing `pol2cart` import (NameError);
+  - `EEC_SCIM._comp_flux_mean`: `n2abc` called with an unknown `n` argument
+    (TypeError);
+  - `DataND.compare_along`, `compare_magnitude_along`, `compare_phase_along`:
+    `get_interpolation` called without the axis index (TypeError);
+  - `ModelBH.fit_model`: smoothing without `Bmax` nor `Hmax` used undefined
+    names (NameError), extrapolation to `Hmax` without `Bmax` used an unbound
+    point count (UnboundLocalError);
+  - `ConvertMC.convert_slot_to_other` / `convert_slot_rotor_to_other`:
+    UnboundLocalError instead of the NotImplementedError of an unsupported
+    slot;
+  - `BoreSinePole.get_bore_line`: `raise ()` (TypeError) replaced by a
+    `ValueError`;
+  - `OP.get_OP_array` / `OPMatrix.get_OP_array` without arguments:
+    AttributeError / IndexError instead of the default columns;
+  - `ElecLUTdq.run` with loss models: `OutLoss` built with unknown fields
+    (TypeError); the losses are stored in `OutLoss.loss_dict`.
 - Generation of the phase axis.
 - **User config file written only when it changes, atomically**
   (`Functions/init_environment.save_config_dict`). `import pyleecan.definitions`

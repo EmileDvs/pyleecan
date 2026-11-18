@@ -37,6 +37,9 @@ def compare_phase_along(self, *args, unit: str = "SI", data_list: list = [], is_
             data_axis_values.append(results)
         # Get the common bases
         common_axis_values = {}
+        # Index of the current axis in each array (single-value axes squeezed)
+        index = 0
+        data_index = [0] * len(data_list)
         for axis in axes.keys():
             common_axis_values[axis] = axes[axis]
             for i, data in enumerate(data_list):
@@ -44,13 +47,20 @@ def compare_phase_along(self, *args, unit: str = "SI", data_list: list = [], is_
                     common_axis_values[axis], data_axis_values[i][axis]
                 )
             # Interpolate over common axis values
-            values = get_interpolation(values, axes[axis], common_axis_values[axis])
-            for i, data in enumerate(data_list):
-                data_values[i] = get_interpolation(
-                    data_values[i],
-                    data_axis_values[i][axis],
-                    common_axis_values[axis],
+            if len(axes[axis]) > 1:
+                values = get_interpolation(
+                    values, axes[axis], common_axis_values[axis], index
                 )
+                index += 1
+            for i, data in enumerate(data_list):
+                if len(data_axis_values[i][axis]) > 1:
+                    data_values[i] = get_interpolation(
+                        data_values[i],
+                        data_axis_values[i][axis],
+                        common_axis_values[axis],
+                        data_index[i],
+                    )
+                    data_index[i] += 1
             return_dict[axis] = common_axis_values[axis]
         # Return axis and values
         return_dict[self.symbol] = values

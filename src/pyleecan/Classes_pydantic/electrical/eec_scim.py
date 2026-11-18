@@ -177,7 +177,7 @@ class EEC_SCIM(EEC):
             for ii in range(p):
                 id0 = qsr_per_pole * ii
                 id1 = qsr_per_pole * (ii + 1)
-                Phi_ab += n2abc(Phi[:, id0:id1], n=qsr_per_pole) / p
+                Phi_ab += n2abc(Phi[:, id0:id1]) / p
         else:
             logger.warning(f"{type(self).__name__}: " + "Not Implemented Yet")
 

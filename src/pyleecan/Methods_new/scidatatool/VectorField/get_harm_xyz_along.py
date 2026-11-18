@@ -1,6 +1,7 @@
 import numpy as np
 
 from ....classes_common.errors import AxisError
+from ....Functions_new.SciDataTool.conversions import pol2cart
 
 
 def get_harm_xyz_along(self, N_harm, *args, unit: str = "SI", is_norm: bool = False, axis_data: list = []):

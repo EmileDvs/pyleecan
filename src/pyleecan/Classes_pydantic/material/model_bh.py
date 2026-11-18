@@ -95,6 +95,9 @@ class ModelBH(LegacyModel):
 
         # Either imposed from method call or calculated from Bmax
         if Hmax is not None:
+            if Bmax is None:
+                # Same step as the extrapolation up to Bmax (1% of the last H)
+                iteration = max(int(np.ceil((Hmax - H[-1]) / (H[-1] * 0.01))), 0)
             added_H = np.linspace(H[-1], Hmax, iteration)
             new_H = np.hstack((H, added_H))
             new_B = self.BH_func(new_H, param1, param2)
@@ -105,7 +108,8 @@ class ModelBH(LegacyModel):
 
         # Last special case: the BH curve is recalculated from the initial H values (then it is not an extrapolation, but a smoothing of the data based on the analytical model)
         else:
-            new_B = self.BH_func(H, Bs, a)
+            new_B = self.BH_func(H, param1, param2)
+            new_BH = np.column_stack((H, new_B))
 
         return new_BH
 

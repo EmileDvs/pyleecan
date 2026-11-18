@@ -145,12 +145,16 @@ class BoreSinePole(Bore):
             )
             inter = line.intersect_line(Rq, Rq + 1j * Rq)
             if len(inter) != 1:
-                raise ()  # TODO
+                raise ValueError(
+                    f"BoreSinePole: {len(inter)} q axis intersections, 1 expected"
+                )
 
             if inter[0].imag <= 0:
                 inter = line.intersect_line(0, Rq)
                 if len(inter) != 1:
-                    raise ()  # TODO
+                    raise ValueError(
+                        f"BoreSinePole: {len(inter)} q axis intersections, 1 expected"
+                    )
 
                 logger.warning("Enforcing permissible q axis air gap (delta_q).")
                 Z.insert(0, inter[0] * np.exp(-1j * alpha1))

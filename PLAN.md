@@ -239,8 +239,9 @@ Creation time with validation (GC on, 2026-11-15): `Segment` 1.8 us (legacy),
 - [x] Type hints drafted from the numpydoc docstrings for all the sub-packages
       (`type_hints.py`, `HINTED_SUBPACKAGES`); coverage and `ty` diagnostics per
       package in the backlog.
-- [ ] Fix the legacy bugs found by `ty` (exceptions raised by legacy code:
-      NameError, TypeError, UnboundLocalError). See [BACKLOG.md](BACKLOG.md#step-5-legacy-bugs).
+- [x] Fix the legacy bugs found by `ty` (exceptions raised by legacy code:
+      NameError, TypeError, UnboundLocalError), in the method generator
+      (`legacy_fixes.py`). See [BACKLOG.md](BACKLOG.md#step-5-legacy-bugs).
 
 ### Step 6: class-specific functions moved to their class — done
 

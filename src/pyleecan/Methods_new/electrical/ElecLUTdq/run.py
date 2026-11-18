@@ -2,6 +2,7 @@ import numpy as np
 
 from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
 from ....Classes_new.output.out_loss import OutLoss
+from ....Classes_new.output.out_loss_model import OutLossModel
 
 from ...simulation.Input import InputError
 
@@ -132,11 +133,18 @@ def run(self) -> None:
     if "Pstator" in out_dict:
         # Store losses
         output.loss = OutLoss(
-            Pjoule=out_dict["Pjoule"],
-            Pstator=out_dict["Pstator"],
-            Pmagnet=out_dict["Pmagnet"],
-            Protor=out_dict["Protor"],
-            Pprox=out_dict["Pprox"],
+            loss_dict={
+                name: OutLossModel(
+                    name=name, scalar_value=out_dict[key], coeff_dict=None
+                )
+                for name, key in [
+                    ("joule", "Pjoule"),
+                    ("stator core", "Pstator"),
+                    ("magnets", "Pmagnet"),
+                    ("rotor core", "Protor"),
+                    ("proximity", "Pprox"),
+                ]
+            }
         )
 
     # Calculate slot current density

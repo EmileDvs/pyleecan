@@ -9,6 +9,7 @@ import numpy as np
 from ...classes_common.errors import InputError
 from ..output.lut_dq import LUTdq
 from ..output.out_loss import OutLoss
+from ..output.out_loss_model import OutLossModel
 from ..simulation.simulation import Simulation
 from .eec_pmsm import EEC_PMSM
 from .electrical import Electrical
@@ -280,11 +281,18 @@ class ElecLUTdq(Electrical):
         if "Pstator" in out_dict:
             # Store losses
             output.loss = OutLoss(
-                Pjoule=out_dict["Pjoule"],
-                Pstator=out_dict["Pstator"],
-                Pmagnet=out_dict["Pmagnet"],
-                Protor=out_dict["Protor"],
-                Pprox=out_dict["Pprox"],
+                loss_dict={
+                    name: OutLossModel(
+                        name=name, scalar_value=out_dict[key], coeff_dict=None
+                    )
+                    for name, key in [
+                        ("joule", "Pjoule"),
+                        ("stator core", "Pstator"),
+                        ("magnets", "Pmagnet"),
+                        ("rotor core", "Protor"),
+                        ("proximity", "Pprox"),
+                    ]
+                }
             )
 
         # Calculate slot current density
