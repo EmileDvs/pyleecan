@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Functions.labels import ROTOR_LAB, STATOR_LAB
+from ....Functions.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 
 
 def comp_loss_freq(self):
@@ -31,35 +31,11 @@ def comp_loss_freq(self):
     if self.parent.is_get_meshsolution and output.mag is None:
         raise ValueError("Cannot calculate losses if OutMag is None")
 
-    if output.mag.meshsolution is not None:
-        # Case with same time periodicities in both stator and rotor frames
-        meshsol = output.mag.meshsolution
-        Igrp = list(meshsol.group["airgap"])
+    # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
+    meshsol, _ = get_frame_meshsolution(output, self.group, "windage losses")
 
-    elif output.mag.meshsolution_dict is None:
-        raise ValueError(
-            "Cannot calculate windage losses if OutMag.meshsolution and OutMag.meshsolution_dict are both None"
-        )
-    else:
-        if (
-            self.group + "_S"
-            not in output.mag.meshsolution_dict[STATOR_LAB + "-0"].group
-        ):
-            raise ValueError("Cannot calculate windage losses for group=" + self.group)
-        if (
-            self.group + "_R"
-            not in output.mag.meshsolution_dict[ROTOR_LAB + "-0"].group
-        ):
-            raise ValueError("Cannot calculate windage losses for group=" + self.group)
-
-        # Get element indices associated to airgap group at stator side
-        Igrp = list(output.mag.meshsolution_dict[STATOR_LAB + "-0"].group["airgap_S"])
-        # Extend with element indices associated to airgap group at rotor side
-        Igrp.extend(
-            list(output.mag.meshsolution_dict[ROTOR_LAB + "-0"].group["airgap_R"])
-        )
-
-        meshsol = output.mag.meshsolution_dict[STATOR_LAB + "-0"]
+    # Get element indices associated to airgap group
+    Igrp = list(meshsol.group[self.group])
 
     machine = output.simu.machine
     L = machine.rotor.L1

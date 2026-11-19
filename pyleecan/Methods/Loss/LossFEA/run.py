@@ -33,7 +33,7 @@ def run(self):
     # Get fundamental frequency
     felec = output.elec.OP.get_felec()
 
-    if output.mag.meshsolution_dict is None and output.mag.meshsolution is None:
+    if output.mag.meshsolution is None:
         raise InputError(
             "The LossFEA object must use a magnetic meshsolution calculated by a magnetics FEA model to run"
         )
@@ -46,14 +46,7 @@ def run(self):
     axes_dict, is_mirror = self.comp_axes(output)
 
     # Get mesh groups names
-    if output.mag.meshsolution_dict is None:
-        # Get group list in meshsolution
-        list_group = list(output.mag.meshsolution.group)
-    else:
-        # Rebuild group list from meshsolutions stored in dict
-        list_group = list()
-        for ms in output.mag.meshsolution_dict.values():
-            list_group.extend(list(ms.group.keys()))
+    list_group = list(output.mag.meshsolution.group)
 
     # Define all relevant loss models
     self.model_dict = {}
@@ -108,9 +101,7 @@ def run(self):
     if "rotor magnets" in list_group:
         self.model_dict["rotor magnets"] = LossModelMagnet(group="rotor magnets")
 
-    if self.is_calc_windage_loss and (
-        "airgap" in list_group or "airgap_S" in list_group or "airgap_R" in list_group
-    ):
+    if self.is_calc_windage_loss and "airgap" in list_group:
         self.model_dict["airgap windage"] = LossModelWindagePyrhonen(group="airgap")
 
     loss_dict = {}
@@ -234,4 +225,3 @@ def run(self):
     if self.is_clean_magmesh and not output.simu.mag.is_get_meshsolution:
         # Remove magnetic meshsolution in OutMag if clean is requested
         output.mag.meshsolution = None
-        output.mag.meshsolution_dict = None

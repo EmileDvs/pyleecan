@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Functions.labels import ROTOR_LAB, STATOR_LAB
+from ....Functions.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 
 
 def comp_loss_freq(self):
@@ -30,26 +30,8 @@ def comp_loss_freq(self):
     if self.parent.is_get_meshsolution and output.mag is None:
         raise ValueError("Cannot calculate Joule losses if OutMag is None")
 
-    if output.mag.meshsolution is not None:
-        # Case with same time periodicities in both stator and rotor frames
-        meshsol = output.mag.meshsolution
-
-    elif output.mag.meshsolution_dict is None:
-        raise ValueError(
-            "Cannot calculate Joule losses if OutMag.meshsolution and OutMag.meshsolution_dict are both None"
-        )
-
-    else:
-        # No need to mirror mesh data, fetching the meshsolution matching with the lamination of interest
-        if "stator" in self.group:
-            meshsol = output.mag.meshsolution_dict[STATOR_LAB + "-0"]
-        else:
-            meshsol = output.mag.meshsolution_dict[ROTOR_LAB + "-0"]
-
-    group_list = list(meshsol.group.keys())
-
-    if self.group not in group_list:
-        raise ValueError("Cannot calculate core losses for group=" + self.group)
+    # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
+    meshsol, suffix = get_frame_meshsolution(output, self.group, "Joule losses")
 
     machine = output.simu.machine
     lam = machine.stator if "stator" in self.group else machine.rotor

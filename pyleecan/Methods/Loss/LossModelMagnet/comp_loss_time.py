@@ -2,7 +2,7 @@ import numpy as np
 
 from ....Classes.LamHole import LamHole
 from ....Classes.LamSlotMag import LamSlotMag
-from ....Functions.labels import ROTOR_LAB, STATOR_LAB
+from ....Functions.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 
 
 def comp_loss_time(self, axes_dict, is_mirror):
@@ -54,36 +54,12 @@ def comp_loss_time(self, axes_dict, is_mirror):
     else:
         kseg = self.comp_kseg(machine)
 
-    if output.mag is None:
-        raise ValueError("Cannot calculate magnet losses if OutMag is None")
-
-    if output.mag.meshsolution is not None:
-        # Case with same time periodicities in both stator and rotor frames
-        meshsol = output.mag.meshsolution
-
-    elif output.mag.meshsolution_dict is None:
-        raise ValueError(
-            "Cannot calculate magnet losses if OutMag.meshsolution and OutMag.meshsolution_dict are both None"
-        )
-    else:
-        if is_mirror:
-            # Rebuild mesh quantities on time steps given by axes_dict
-            meshsol = output.mag.get_meshsolution(Time=axes_dict["time"])
-        else:
-            # No need to mirror mesh data, fetching the meshsolution matching with the lamination of interest
-            if "stator" in self.group:
-                meshsol = output.mag.meshsolution_dict[STATOR_LAB + "-0"]
-            else:
-                meshsol = output.mag.meshsolution_dict[ROTOR_LAB + "-0"]
-
-    group_list = list(meshsol.group.keys())
-
-    if self.group not in group_list:
-        raise ValueError("Cannot calculate magnet losses for group=" + self.group)
+    # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
+    meshsol, suffix = get_frame_meshsolution(output, self.group, "magnet losses")
 
     # Get magnetic vector potential over time and for each element center in current group
-    if "A_z^{element}" in meshsol:
-        Az = meshsol["A_z^{element}"].field
+    if "A_z^{element}" + suffix in meshsol:
+        Az = meshsol["A_z^{element}" + suffix].field
     else:
         raise ValueError(
             "Cannot calculate magnet losses if  A_z calculated on element center is not in meshsolution"

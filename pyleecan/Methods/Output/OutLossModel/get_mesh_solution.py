@@ -32,10 +32,7 @@ def get_mesh_solution(self):
     # output = self.parent.parent
     # axes_dict = self.parent.axes_dict
 
-    # for ms_mag in output.mag.meshsolution_dict.values():
-    #     if self.name in ms_mag.group:
-    #         Igrp = ms_mag.group[self.name]
-    #         break
+    # Igrp = output.mag.meshsolution.group[self.name]
 
     # Indice = Data1D(
     #     name="indice",

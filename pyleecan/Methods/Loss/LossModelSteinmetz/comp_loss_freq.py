@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Functions.labels import ROTOR_LAB, STATOR_LAB
+from ....Functions.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 
 
 def comp_loss_freq(self):
@@ -55,31 +55,11 @@ def comp_loss_freq(self):
     # Get fundamental frequency
     felec = output.elec.OP.get_felec()
 
-    if output.mag is None:
-        raise ValueError("Cannot calculate core losses if OutMag is None")
+    # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
+    meshsol, suffix = get_frame_meshsolution(output, self.group, "core losses")
 
-    if output.mag.meshsolution is not None:
-        # Case with same time periodicities in both stator and rotor frames
-        meshsol = output.mag.meshsolution
-
-    elif output.mag.meshsolution_dict is None:
-        raise ValueError(
-            "Cannot calculate core losses if OutMag.meshsolution and OutMag.meshsolution_dict are both None"
-        )
-    else:
-        # No need to mirror mesh data, fetching the meshsolution matching with the lamination of interest
-        if "stator" in self.group:
-            meshsol = output.mag.meshsolution_dict[STATOR_LAB + "-0"]
-        else:
-            meshsol = output.mag.meshsolution_dict[ROTOR_LAB + "-0"]
-
-    group_list = list(meshsol.group.keys())
-
-    if self.group not in group_list:
-        raise ValueError("Cannot calculate core losses for group=" + self.group)
-
-    if "B" in meshsol:
-        Bvect = meshsol["B"].field
+    if "B" + suffix in meshsol:
+        Bvect = meshsol["B" + suffix].field
     else:
         raise ValueError("Cannot calculate core losses if B is not in meshsolution")
 
