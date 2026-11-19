@@ -115,7 +115,7 @@ def build_meshsolution(
 
     # Store element values in stator frame
     # Reduce mesh quantities to original number of time steps
-    Nt_S = axes_dict["time_S"].get_length(is_smallestperiod=True)
+    Nt_S = time_S.get_length(is_smallestperiod=True)
     B_sol = build_solution_vector(
         field=B_elem[:Nt_S, list_elem_S, None, :],  # quick fix for slice issue
         axis_list=axis_list,
@@ -204,8 +204,8 @@ def build_meshsolution(
         Indice_Node_S = Data1D(name="indice", values=indice_node_S, is_components=True)
         Indice_Node_R = Data1D(name="indice", values=indice_node_R, is_components=True)
 
-        axis_list_node_S = [axes_dict["time_S"].copy(), Indice_Node_S]
-        axis_list_node_R = [axes_dict["time_R"].copy(), Indice_Node_R]
+        axis_list_node_S = [time_S, Indice_Node_S]
+        axis_list_node_R = [time_R, Indice_Node_R]
 
         An_sol_S = build_solution_data(
             field=A_node[:Nt_S, indice_node_S],
