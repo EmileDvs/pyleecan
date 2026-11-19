@@ -199,29 +199,28 @@ def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
                     else:
                         out_dict[quantity] = out_dict[quantity][:Nt_S, ...]
 
-            self.build_meshsolution_dict(
-                out_dict,
-                axes_dict,
-                B_elem,
-                H_elem,
-                mu_elem,
-                A_node,
-                meshFEMM,
-                groups,
-                A_elem,
-            )
+        # self.build_meshsolution_dict(
+        #     out_dict,
+        #     axes_dict,
+        #     B_elem,
+        #     H_elem,
+        #     mu_elem,
+        #     A_node,
+        #     meshFEMM,
+        #     groups,
+        #     A_elem,
+        # )
 
-        else:
-            self.build_meshsolution(
-                out_dict,
-                axes_dict,
-                B_elem,
-                H_elem,
-                mu_elem,
-                A_node,
-                meshFEMM,
-                groups,
-                A_elem,
-            )
+        self.build_meshsolution(
+            out_dict,
+            axes_dict,
+            B_elem,
+            H_elem,
+            mu_elem,
+            A_node,
+            meshFEMM,
+            groups,
+            A_elem,
+        )
 
     return out_dict

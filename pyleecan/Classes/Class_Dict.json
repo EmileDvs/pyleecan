@@ -2062,7 +2062,7 @@
                 "name": "Jrms_max",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
@@ -8353,7 +8353,6 @@
         "is_internal": false,
         "methods": [
             "build_meshsolution",
-            "build_meshsolution_dict",
             "build_MS_sliced",
             "comp_flux_airgap",
             "get_FEMM_mesh_results",
@@ -11409,7 +11408,7 @@
                 "name": "Jrms",
                 "size": "",
                 "type": "float",
-                "unit": "A/m\u00b2",
+                "unit": "A/m\u00c2\u00b2",
                 "value": null
             },
             {
@@ -12302,17 +12301,6 @@
                 "type": "float",
                 "unit": "N.m",
                 "value": 0.001
-            },
-            {
-                "as_dict": "",
-                "desc": "List of FEA software mesh and solution per lamination",
-                "max": "",
-                "min": "",
-                "name": "meshsolution_dict",
-                "size": "",
-                "type": "{MeshSolution}",
-                "unit": "",
-                "value": null
             }
         ]
     },

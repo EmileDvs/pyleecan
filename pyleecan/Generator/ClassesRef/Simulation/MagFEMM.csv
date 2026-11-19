@@ -19,7 +19,6 @@ is_calc_torque_energy,,True to calculate torque from integration of energy deriv
 ,,,,,,,,
 Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
 Simulation,Magnetics,build_meshsolution,VERSION,1,Magnetic module: Finite Element model with FEMM,,,
-,,build_meshsolution_dict,,,,,,
 ,,build_MS_sliced,,,,,,
 ,,comp_flux_airgap,,,,,,
 ,,get_FEMM_mesh_results,,,,,,

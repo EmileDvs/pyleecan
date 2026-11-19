@@ -155,7 +155,6 @@ class OutMag(FrozenClass):
         Tem_slice=None,
         Phi_wind_slice=None,
         Tem_norm=0.001,
-        meshsolution_dict=None,
         init_dict=None,
         init_str=None,
     ):
@@ -210,8 +209,6 @@ class OutMag(FrozenClass):
                 Phi_wind_slice = init_dict["Phi_wind_slice"]
             if "Tem_norm" in list(init_dict.keys()):
                 Tem_norm = init_dict["Tem_norm"]
-            if "meshsolution_dict" in list(init_dict.keys()):
-                meshsolution_dict = init_dict["meshsolution_dict"]
         # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.axes_dict = axes_dict
@@ -232,7 +229,6 @@ class OutMag(FrozenClass):
         self.Tem_slice = Tem_slice
         self.Phi_wind_slice = Phi_wind_slice
         self.Tem_norm = Tem_norm
-        self.meshsolution_dict = meshsolution_dict
 
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
@@ -281,14 +277,6 @@ class OutMag(FrozenClass):
         OutMag_str += "Tem_slice = " + str(self.Tem_slice) + linesep + linesep
         OutMag_str += "Phi_wind_slice = " + str(self.Phi_wind_slice) + linesep + linesep
         OutMag_str += "Tem_norm = " + str(self.Tem_norm) + linesep
-        if len(self.meshsolution_dict) == 0:
-            OutMag_str += "meshsolution_dict = dict()" + linesep
-        for key, obj in self.meshsolution_dict.items():
-            tmp = (
-                self.meshsolution_dict[key].__str__().replace(linesep, linesep + "\t")
-                + linesep
-            )
-            OutMag_str += "meshsolution_dict[" + key + "] =" + tmp + linesep + linesep
         return OutMag_str
 
     def __eq__(self, other):
@@ -331,8 +319,6 @@ class OutMag(FrozenClass):
         if other.Phi_wind_slice != self.Phi_wind_slice:
             return False
         if other.Tem_norm != self.Tem_norm:
-            return False
-        if other.meshsolution_dict != self.meshsolution_dict:
             return False
         return True
 
@@ -624,24 +610,6 @@ class OutMag(FrozenClass):
                 diff_list.append(name + ".Tem_norm" + val_str)
             else:
                 diff_list.append(name + ".Tem_norm")
-        if (other.meshsolution_dict is None and self.meshsolution_dict is not None) or (
-            other.meshsolution_dict is not None and self.meshsolution_dict is None
-        ):
-            diff_list.append(name + ".meshsolution_dict None mismatch")
-        elif self.meshsolution_dict is None:
-            pass
-        elif len(other.meshsolution_dict) != len(self.meshsolution_dict):
-            diff_list.append("len(" + name + "meshsolution_dict)")
-        else:
-            for key in self.meshsolution_dict:
-                diff_list.extend(
-                    self.meshsolution_dict[key].compare(
-                        other.meshsolution_dict[key],
-                        name=name + ".meshsolution_dict[" + str(key) + "]",
-                        ignore_list=ignore_list,
-                        is_add_value=is_add_value,
-                    )
-                )
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -674,9 +642,6 @@ class OutMag(FrozenClass):
             for key, value in self.Phi_wind_slice.items():
                 S += getsizeof(value) + getsizeof(key)
         S += getsizeof(self.Tem_norm)
-        if self.meshsolution_dict is not None:
-            for key, value in self.meshsolution_dict.items():
-                S += getsizeof(value) + getsizeof(key)
         return S
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
@@ -801,19 +766,6 @@ class OutMag(FrozenClass):
                 else:
                     OutMag_dict["Phi_wind_slice"][key] = None
         OutMag_dict["Tem_norm"] = self.Tem_norm
-        if self.meshsolution_dict is None:
-            OutMag_dict["meshsolution_dict"] = None
-        else:
-            OutMag_dict["meshsolution_dict"] = dict()
-            for key, obj in self.meshsolution_dict.items():
-                if obj is not None:
-                    OutMag_dict["meshsolution_dict"][key] = obj.as_dict(
-                        type_handle_ndarray=type_handle_ndarray,
-                        keep_function=keep_function,
-                        **kwargs
-                    )
-                else:
-                    OutMag_dict["meshsolution_dict"][key] = None
         # The class name is added to the dict for deserialisation purpose
         OutMag_dict["__class__"] = "OutMag"
         return OutMag_dict
@@ -879,12 +831,6 @@ class OutMag(FrozenClass):
             for key, obj in self.Phi_wind_slice.items():
                 Phi_wind_slice_val[key] = obj.copy()
         Tem_norm_val = self.Tem_norm
-        if self.meshsolution_dict is None:
-            meshsolution_dict_val = None
-        else:
-            meshsolution_dict_val = dict()
-            for key, obj in self.meshsolution_dict.items():
-                meshsolution_dict_val[key] = obj.copy()
         # Creates new object of the same type with the copied properties
         obj_copy = type(self)(
             axes_dict=axes_dict_val,
@@ -905,7 +851,6 @@ class OutMag(FrozenClass):
             Tem_slice=Tem_slice_val,
             Phi_wind_slice=Phi_wind_slice_val,
             Tem_norm=Tem_norm_val,
-            meshsolution_dict=meshsolution_dict_val,
         )
         return obj_copy
 
@@ -933,7 +878,6 @@ class OutMag(FrozenClass):
         self.Tem_slice = None
         self.Phi_wind_slice = None
         self.Tem_norm = None
-        self.meshsolution_dict = None
 
     def _get_axes_dict(self):
         """getter of axes_dict"""
@@ -1454,45 +1398,5 @@ class OutMag(FrozenClass):
         doc="""Torque normalization
 
         :Type: float
-        """,
-    )
-
-    def _get_meshsolution_dict(self):
-        """getter of meshsolution_dict"""
-        if self._meshsolution_dict is not None:
-            for key, obj in self._meshsolution_dict.items():
-                if obj is not None:
-                    obj.parent = self
-        return self._meshsolution_dict
-
-    def _set_meshsolution_dict(self, value):
-        """setter of meshsolution_dict"""
-        if type(value) is dict:
-            for key, obj in value.items():
-                if isinstance(obj, str):  # Load from file
-                    try:
-                        obj = load_init_dict(obj)[1]
-                    except Exception as e:
-                        self.get_logger().error(
-                            "Error while loading " + obj + ", setting None instead"
-                        )
-                        obj = None
-                        value[key] = None
-                if type(obj) is dict:
-                    class_obj = import_class(
-                        "pyleecan.Classes", obj.get("__class__"), "meshsolution_dict"
-                    )
-                    value[key] = class_obj(init_dict=obj)
-        if type(value) is int and value == -1:
-            value = dict()
-        check_var("meshsolution_dict", value, "{MeshSolution}")
-        self._meshsolution_dict = value
-
-    meshsolution_dict = property(
-        fget=_get_meshsolution_dict,
-        fset=_set_meshsolution_dict,
-        doc="""List of FEA software mesh and solution per lamination
-
-        :Type: {MeshSolution}
         """,
     )

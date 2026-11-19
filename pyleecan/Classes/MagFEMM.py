@@ -23,13 +23,6 @@ except ImportError as error:
     build_meshsolution = error
 
 try:
-    from ..Methods.Simulation.MagFEMM.build_meshsolution_dict import (
-        build_meshsolution_dict,
-    )
-except ImportError as error:
-    build_meshsolution_dict = error
-
-try:
     from ..Methods.Simulation.MagFEMM.build_MS_sliced import build_MS_sliced
 except ImportError as error:
     build_MS_sliced = error
@@ -87,18 +80,6 @@ class MagFEMM(Magnetics):
         )
     else:
         build_meshsolution = build_meshsolution
-    # cf Methods.Simulation.MagFEMM.build_meshsolution_dict
-    if isinstance(build_meshsolution_dict, ImportError):
-        build_meshsolution_dict = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use MagFEMM method build_meshsolution_dict: "
-                    + str(build_meshsolution_dict)
-                )
-            )
-        )
-    else:
-        build_meshsolution_dict = build_meshsolution_dict
     # cf Methods.Simulation.MagFEMM.build_MS_sliced
     if isinstance(build_MS_sliced, ImportError):
         build_MS_sliced = property(
