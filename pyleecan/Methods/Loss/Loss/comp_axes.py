@@ -2,7 +2,7 @@ from numpy import concatenate, unique
 from SciDataTool import Data1D
 
 
-def comp_axes(self, output):
+def comp_axes(self, output, meshsol=None):
     """Compute the axes required in Loss module
 
     Parameters
@@ -11,6 +11,8 @@ def comp_axes(self, output):
         a Loss object
     output : Output
         an Output object (to update)
+    meshsol : MeshSolution
+        magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
 
     Returns
     -------
@@ -18,7 +20,10 @@ def comp_axes(self, output):
         Dict containing Time and Angle axes including (anti-)periodicties used in any Force module
     """
 
-    axes_list = output.mag.get_meshsolution().get_solution().field.get_axes()
+    if meshsol is None:
+        meshsol = output.mag.get_meshsolution()
+
+    axes_list = meshsol.get_solution().field.get_axes()
     Time = axes_list[0]
 
     freqs = Time.get_values(is_oneperiod=True, operation="time_to_freqs")

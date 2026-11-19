@@ -2,7 +2,7 @@ from numpy import array, zeros
 from numpy import sum as np_sum
 
 
-def comp_loss(self):
+def comp_loss(self, meshsol=None):
     """Calculate Windage losses
     Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
 
@@ -10,6 +10,8 @@ def comp_loss(self):
     ----------
     self: LossModelWindagePyrhonen
         a LossModelWindagePyrhonen object
+    meshsol : MeshSolution
+        magnetic meshsolution (default: OutMag.meshsolution, only mesh and groups are used)
 
     Returns
     -------
@@ -46,7 +48,7 @@ def comp_loss(self):
         per_a *= 2
 
     # Get surface elements for windings
-    ms = output.mag.meshsolution
+    ms = meshsol if meshsol is not None else output.mag.meshsolution
     Se = ms.mesh.get_element_area()[ms.group["rotor core"]]
 
     # Constant component and twice the electrical frequency have same joule density values
