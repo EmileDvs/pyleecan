@@ -53,7 +53,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
 
             axes_list = comp_x.axes
 
-            new_solution = MS.get_solution(label=solution.label)
+            new_solution = MS[key]
             new_comp_x = new_solution.field.components["comp_x"]
             new_field_x = new_comp_x.values
             new_comp_y = new_solution.field.components["comp_y"]
@@ -66,7 +66,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
             axes_list = data.axes
             field = data.values
 
-            new_solution = MS.get_solution(label=solution.label)
+            new_solution = MS[key]
             new_field = new_solution.field.values
 
         if "z" in name:
