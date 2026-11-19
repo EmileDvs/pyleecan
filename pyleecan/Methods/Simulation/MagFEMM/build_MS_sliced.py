@@ -1,14 +1,7 @@
-from os.path import isfile
-from shutil import copyfile
-
-from numpy import append, concatenate, zeros
+from numpy import append, concatenate
 from SciDataTool import Data1D
 
-from ....Classes._FEMMHandler import _FEMMHandler
-from ....Classes.OutMagFEMM import OutMagFEMM
-from ....Functions.FEMM.draw_FEMM import draw_FEMM
-from ....Functions.labels import STATOR_LAB
-from ....Functions.MeshSolution.build_meshsolution import build_meshsolution
+from ....Classes.MeshSolution import MeshSolution
 from ....Functions.MeshSolution.build_solution_data import build_solution_data
 from ....Functions.MeshSolution.build_solution_vector import build_solution_vector
 
@@ -110,11 +103,12 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict, Nslices, ii):
 
         solution_dict[key] = new_sol
 
-    MS_sliced_new = build_meshsolution(
+    MS_sliced_new = MeshSolution(
         solution_dict=solution_dict,
         label=MS_sliced.label,
         mesh=MS_sliced.mesh,
         group=MS_sliced.group,
+        dimension=2,
     )
 
     return MS_sliced_new

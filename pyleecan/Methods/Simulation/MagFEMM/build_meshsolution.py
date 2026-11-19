@@ -46,7 +46,7 @@ def build_meshsolution(
     # Separate stator and rotor elements
     list_elem_R = []
     list_elem_S = []
-    for name, ind in groups.items():
+    for name, ind in list(groups.items()):
         if "stator" in name:
             list_elem_S.extend(ind)
         elif "rotor" in name:
@@ -95,7 +95,11 @@ def build_meshsolution(
         is_components=True,
         is_overlay=False,
     )
-    axis_list_R = [axes_dict["time_R"].copy(), Indice_Element_R]
+    if "time_R" in axes_dict:
+        time_R = axes_dict["time_R"].copy()
+    else:
+        time_R = axes_dict["time"].copy()
+    axis_list_R = [time_R, Indice_Element_R]
 
     Indice_Element_S = Data1D(
         name="indice",
@@ -103,7 +107,11 @@ def build_meshsolution(
         is_components=True,
         is_overlay=False,
     )
-    axis_list = [axes_dict["time_S"].copy(), Indice_Element_S]
+    if "time_S" in axes_dict:
+        time_S = axes_dict["time_S"].copy()
+    else:
+        time_S = axes_dict["time"].copy()
+    axis_list = [time_S, Indice_Element_S]
 
     # Store element values in stator frame
     # Reduce mesh quantities to original number of time steps
