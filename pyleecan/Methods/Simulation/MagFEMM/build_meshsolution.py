@@ -2,12 +2,12 @@ from numpy import array, unique
 from numpy import mean as np_mean
 from SciDataTool import Data1D
 
-from ....Functions.MeshSolution.build_meshsolution import build_meshsolution
+from ....Classes.MeshSolution import MeshSolution
 from ....Functions.MeshSolution.build_solution_data import build_solution_data
 from ....Functions.MeshSolution.build_solution_vector import build_solution_vector
 
 
-def build_meshsolution_dict(
+def build_meshsolution(
     self, out_dict, axes_dict, B_elem, H_elem, mu_elem, A_node, meshFEMM, groups, A_elem
 ):
     """Build meshsolution dict from FEMM results.
@@ -46,15 +46,11 @@ def build_meshsolution_dict(
     # Separate stator and rotor elements
     list_elem_R = []
     list_elem_S = []
-    groups_R = {}
-    groups_S = {}
     for name, ind in groups.items():
         if "stator" in name:
             list_elem_S.extend(ind)
-            groups_S[name] = ind
         elif "rotor" in name:
             list_elem_R.extend(ind)
-            groups_R[name] = ind
         elif "airgap" in name:
             if self.Rag_enforced is not None:
                 # Take enforced value
@@ -73,13 +69,12 @@ def build_meshsolution_dict(
                 is_elem_ag_R = elem_ag_dist > Rag**2
             list_elem_ag_R = array(ind)[is_elem_ag_R].tolist()
             list_elem_ag_S = array(ind)[~is_elem_ag_R].tolist()
-
             if len(list_elem_ag_R) > 0:
                 list_elem_R.extend(list_elem_ag_R)
-                groups_R[name + "_R"] = list_elem_ag_R
+                groups[name + "_R"] = list_elem_ag_R
             if len(list_elem_ag_S) > 0:
                 list_elem_S.extend(list_elem_ag_S)
-                groups_S[name + "_S"] = list_elem_ag_S
+                groups[name + "_S"] = list_elem_ag_S
     list_elem_R = unique(list_elem_R).tolist()
     list_elem_S = unique(list_elem_S).tolist()
 
@@ -148,7 +143,9 @@ def build_meshsolution_dict(
         # Only store element flux density B and element vector potential Ae
 
         # Build solution vector/data dicts
-        solution_dict = {solution.label + "_S": solution for solution in [B_sol, Ae_sol]}
+        solution_dict = {
+            solution.label + "_S": solution for solution in [B_sol, Ae_sol]
+        }
 
         for solution in [B_sol_R, Ae_sol_R]:
             solution_dict[solution.label + "_R"] = solution
@@ -222,7 +219,7 @@ def build_meshsolution_dict(
 
         # Build solution vector dicts
         solution_dict = {
-            solution.label: solution
+            solution.label + "_S": solution
             for solution in [B_sol, H_sol, mu_sol, Ae_sol, An_sol_S]
         }
 
@@ -235,13 +232,12 @@ def build_meshsolution_dict(
         axes_dict["indice_node_R"] = Indice_Node_R
 
     # Build meshsolutions dict for stator and rotor frame
-    meshsolution = (
-        build_meshsolution(
-            solution_dict=solution_dict,
-            label="FEMM 2D Magnetostatic",
-            mesh=meshFEMM,
-            group=groups_S,
-        ),
+    meshsolution = MeshSolution(
+        label="FEMM 2D Magnetostatic",
+        mesh=meshFEMM,
+        solution_dict=solution_dict,
+        dimension=2,
+        group=groups,
     )
 
     # Store element indices axes in axes_dict
