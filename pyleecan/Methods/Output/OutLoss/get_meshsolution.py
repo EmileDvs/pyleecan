@@ -1,7 +1,7 @@
 import numpy as np
 
+from ....Classes.MeshSolution import MeshSolution
 from ....Functions.labels import ROTOR_LAB, STATOR_LAB
-from ....Functions.MeshSolution.build_meshsolution import build_meshsolution
 from ....Functions.MeshSolution.build_solution_data import build_solution_data
 
 
@@ -72,11 +72,12 @@ def get_meshsolution(self):
         )
 
         # Build meshsolution
-        self.meshsolution = build_meshsolution(
+        self.meshsolution = MeshSolution(
             solution_dict={solution_data.label: solution_data},
             label=solution_data.label,
             mesh=mesh,
             group=group,
+            dimension=2,
         )
 
     return self.meshsolution

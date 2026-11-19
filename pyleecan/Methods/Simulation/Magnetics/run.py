@@ -127,7 +127,8 @@ def run(self):
                 if isinstance(out_dict_index[key], ndarray):
                     out_dict[key][..., ii + 1] = out_dict_index[key]
                 elif isinstance(out_dict[key], dict):
-                    out_dict[key][key2][..., ii + 1] = out_dict_index[key][key2]
+                    for key2 in out_dict[key]:
+                        out_dict[key][key2][..., ii + 1] = out_dict_index[key][key2]
                 elif isinstance(out_dict[key], MeshSolution):
                     out_dict[key] = self.build_MS_sliced(
                         out_dict[key], out_dict_index[key], axes_dict, Nslices, ii + 2
