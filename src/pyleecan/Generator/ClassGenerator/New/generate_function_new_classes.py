@@ -31,9 +31,11 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     redirect_function_module_imports,
 )
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
+    DEPRECATED_MODULES,
     MOVED_FUNCTIONS,
     REMOVED_FUNCTION_ALIASES,
     alias_source,
+    deprecate_source,
     redirect_moved_calls,
 )
 from pyleecan.Generator.read_fct import read_all
@@ -804,6 +806,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             moved = MOVED_FUNCTIONS.get(".".join(relative.with_suffix("").parts))
             if moved is not None:  # Deprecated alias of the method
                 source = alias_source(".".join(relative.with_suffix("").parts), moved)
+            replacement = DEPRECATED_MODULES.get(".".join(relative.with_suffix("").parts))
+            if replacement is not None:  # Deprecated module: its functions warn
+                source = deprecate_source(source, replacement)
             if relative == Path("Load") / "retrocompatibility.py":
                 source = _adapt_retrocompatibility(source, path)
                 source = _adapt_json_retrocompatibility(source, path)

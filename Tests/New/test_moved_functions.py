@@ -289,3 +289,24 @@ def test_bound_calls():
     ast.parse(result)
     alias = alias_source("Winding.find_wind_phase_color", BOUND["Winding.find_wind_phase_color"])
     assert "return Winding._get_phase_id(*args, **kwargs)" in alias
+
+
+def test_deprecate_source():
+    """The public functions of a deprecated module warn; the private ones do not."""
+    from pyleecan.Generator.ClassGenerator.New.moved_functions import deprecate_source
+
+    source = (
+        '"""Module"""\n\nimport numpy as np\n\n\n'
+        'def plot(data):\n    """Doc"""\n    return data\n\n\n'
+        "def _helper():\n    return 1\n"
+    )
+    result = deprecate_source(source, "use Data.plot")
+    namespace = {}
+    exec(result, namespace)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        assert namespace["plot"](3) == 3
+        assert namespace["_helper"]() == 1
+    assert len(caught) == 1 and caught[0].category is DeprecationWarning
+    assert "plot is deprecated, use Data.plot (removed in Phase 2)" in str(caught[0].message)
+    assert result.startswith('"""Module"""\nfrom warnings import warn\n')

@@ -139,6 +139,60 @@ def build_meshsolution(solution_dict, mesh, label="", dimension=2, group=None):
 """{legacy module below Functions, deleted from the legacy code: source of its
 deprecated alias in Functions_new} (written by the functions generator)"""
 
+DEPRECATED_MODULES = {
+    # Step 8: replaced by the methods of the SciDataTool classes
+    "Plot.plot_2D_Data": "use the plot_2D_Data method of the Data object",
+    "Plot.plot_3D_Data": "use the plot_3D_Data method of the Data object",
+}
+"""{legacy module below Functions: replacement}: the public functions of the
+module warn (DeprecationWarning) in Functions_new, removed in Phase 2"""
+
+
+def deprecate_source(source, replacement):
+    """Add a DeprecationWarning at the start of the public functions of a module.
+
+    Parameters
+    ----------
+    source : str
+        Source of the legacy function module
+    replacement : str
+        What to use instead (in the message)
+
+    Returns
+    -------
+    source : str
+        Source warning on each call of its public functions
+    """
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    inserts = []
+    for node in tree.body:
+        if not isinstance(node, ast.FunctionDef) or node.name.startswith("_"):
+            continue
+        message = f"{node.name} is deprecated, {replacement} (removed in Phase 2)"
+        first = node.body[1] if ast.get_docstring(node) is not None and len(node.body) > 1 else node.body[0]
+        indent = " " * first.col_offset
+        inserts.append(
+            (first.lineno - 1, f"{indent}warn({message!r}, DeprecationWarning, stacklevel=2)\n")
+        )
+    if not inserts:
+        return source
+    for index, text in sorted(inserts, reverse=True):
+        lines.insert(index, text)
+    # Import after the module docstring and the __future__ imports
+    position = 0
+    for node in tree.body:
+        if (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, str)
+        ) or (isinstance(node, ast.ImportFrom) and node.module == "__future__"):
+            position = node.end_lineno
+        else:
+            break
+    lines.insert(position, "from warnings import warn\n")
+    return "".join(lines)
+
 
 def moved_targets(value):
     """The MovedFunction of a MOVED_FUNCTIONS value, as a tuple."""

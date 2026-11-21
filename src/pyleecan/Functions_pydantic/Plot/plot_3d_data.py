@@ -1,3 +1,5 @@
+from warnings import warn
+
 from ...definitions import config_dict
 
 # Import values from config dict
@@ -81,6 +83,11 @@ def plot_3D_Data(
         True to show figure after plot
     """
 
+    warn(
+        "plot_3D_Data is deprecated, use the plot_3D_Data method of the Data object (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     print(
         "WARNING: plot_2D_Data function is deprecated and will be removed from the next release. Please use SciDataTool plot_2D_Data method instead."
     )

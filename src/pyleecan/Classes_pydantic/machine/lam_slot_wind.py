@@ -12,25 +12,36 @@ from matplotlib.patches import FancyArrowPatch, Patch
 from matplotlib.pyplot import plot, subplots
 from pydantic import Field
 
+from ...classes_common.errors import LWC_SlotTooLong
+from ...Classes_new._swat_em import datamodel
 from ...definitions import config_dict
 from ...Functions_pydantic.Electrical.dqh_transformation import dqh2n
 from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.labels import BAR_LAB, BOUNDARY_PROP_LAB, COND_BOUNDARY_PROP_LAB, WIND_LAB, YSML_LAB, YSMR_LAB, decode_label, update_RTS_index
+from ...Functions_pydantic.labels import (
+    BAR_LAB,
+    BOUNDARY_PROP_LAB,
+    COND_BOUNDARY_PROP_LAB,
+    WIND_LAB,
+    YSML_LAB,
+    YSMR_LAB,
+    decode_label,
+    update_RTS_index,
+)
 from ...Functions_pydantic.Plot import dict_2D
-from ...Functions_pydantic.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
 from ...Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
 from ...Functions_pydantic.Winding.gen_phase_list import gen_color, gen_name
-from ...classes_common.errors import LWC_SlotTooLong
-from ...Classes_new._swat_em import datamodel
-from .conductor import Conductor
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_time import DataTime
 from ..simulation.input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
-from .lam_slot import LamSlot
-from .lamination import Lamination
 from ..simulation.op_dq import OPdq
 from ..slot.slot_w_22 import SlotW22
+from .conductor import Conductor
+from .lam_slot import LamSlot
+from .lamination import Lamination
 from .winding import Winding
 from .winding_sc import WindingSC
 from .winding_ud import WindingUD
@@ -57,18 +68,24 @@ class LamSlotWind(LamSlot):
         Default: Winding()
     """
 
-    PHASE_COLORS: ClassVar = config_dict['PLOT']['COLOR_DICT']['PHASE_COLORS']
+    PHASE_COLORS: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 
     Ksfill: float | None = Field(default=None, ge=0, le=1)
     """Imposed Slot Fill factor (if None, will be computed according to the winding and the slot)"""
     winding: Winding | None = Field(default_factory=lambda: Winding())
     """Lamination's Winding"""
 
-    _package: ClassVar[str] = 'Machine'
+    _package: ClassVar[str] = "Machine"
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotWind.build_geometry
-    def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
+    def build_geometry(
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_circular_radius: bool = False,
+    ) -> list:
         """Build the geometry of the Lamination with winding in slots
 
         Parameters
@@ -92,7 +109,11 @@ class LamSlotWind(LamSlot):
         """
         # getting the Lamination surface
         surf_lam = LamSlot.build_geometry(
-            self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius
+            self,
+            sym=sym,
+            alpha=alpha,
+            delta=delta,
+            is_circular_radius=is_circular_radius,
         )
         surf_list = []
         if self.slot is not None and self.slot.Zs != 0:
@@ -224,7 +245,7 @@ class LamSlotWind(LamSlot):
         self.slot.check()
 
         if self.comp_height_yoke() < 0:
-            raise LWC_SlotTooLong("The Slot is too long for the lamination " "(HYoke <0)")
+            raise LWC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
 
         """
         Wt = self.slot.comp_tooth_widths()["WTooth_min"]
@@ -249,7 +270,11 @@ class LamSlotWind(LamSlot):
             angle between the X axis and the first d+ axis
         """
 
-        if self.winding is None or self.winding.qs == 0 or self.winding.conductor is None:
+        if (
+            self.winding is None
+            or self.winding.qs == 0
+            or self.winding.conductor is None
+        ):
             return 0
 
         p = self.get_pole_pair_number()
@@ -274,9 +299,6 @@ class LamSlotWind(LamSlot):
         d_angle = ((2 * np.pi - phimax) / p) % (2 * np.pi / p)
 
         if is_plot:
-        
-        
-
             # Reconstruct fundamental MMF wave
             magmax = np.abs(mmf_ft[indr_fund])
             mmf_waveform = magmax * np.cos(p * angle_stator + phimax)
@@ -287,7 +309,9 @@ class LamSlotWind(LamSlot):
 
             fig, ax = plt.subplots()
             ax.plot(
-                angle_stator, np.squeeze(MMF.get_along("angle[oneperiod]")[MMF.symbol]), "k"
+                angle_stator,
+                np.squeeze(MMF.get_along("angle[oneperiod]")[MMF.symbol]),
+                "k",
             )
             ax.plot(angle_stator, mmf_waveform, "r")
             ax.plot([d_angle, d_angle], [-magmax, magmax], "--k")
@@ -311,7 +335,11 @@ class LamSlotWind(LamSlot):
             fill factor of the winding
         """
 
-        if self.winding is None or self.winding.qs == 0 or self.winding.conductor is None:
+        if (
+            self.winding is None
+            or self.winding.qs == 0
+            or self.winding.conductor is None
+        ):
             return 0
         else:
             # compute the number of conductors per slot
@@ -439,7 +467,12 @@ class LamSlotWind(LamSlot):
         return M_dict
 
     # Inlined from Methods.Machine.LamSlotWind.comp_mmf_dir
-    def comp_mmf_dir(self, current_dir: int | None = None, phase_dir: int | None = None, is_plot: bool = False) -> int:
+    def comp_mmf_dir(
+        self,
+        current_dir: int | None = None,
+        phase_dir: int | None = None,
+        is_plot: bool = False,
+    ) -> int:
         """Compute the rotation direction of the fundamental magnetomotive force induced by the winding
 
         Parameters
@@ -489,7 +522,14 @@ class LamSlotWind(LamSlot):
         return mmf_dir
 
     # Inlined from Methods.Machine.LamSlotWind.comp_mmf_unit
-    def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: float = 1, current_dir: int | None = None, phase_dir: int | None = None) -> tuple[DataTime, DataTime]:
+    def comp_mmf_unit(
+        self,
+        Na: int | None = None,
+        Nt: int | None = None,
+        felec: float = 1,
+        current_dir: int | None = None,
+        phase_dir: int | None = None,
+    ) -> tuple[DataTime, DataTime]:
         """Compute the winding unit magnetomotive force for given inputs
 
         Parameters
@@ -809,7 +849,13 @@ class LamSlotWind(LamSlot):
         return V_dict
 
     # Inlined from Methods.Machine.LamSlotWind.comp_wind_function
-    def comp_wind_function(self, angle: np.ndarray | None = None, Na: int = 2048, alpha_mmf0: float = 0, per_a: int = 1) -> np.ndarray:
+    def comp_wind_function(
+        self,
+        angle: np.ndarray | None = None,
+        Na: int = 2048,
+        alpha_mmf0: float = 0,
+        per_a: int = 1,
+    ) -> np.ndarray:
         """Computation of the winding function for the lamination.
         By convention a tooth is centered on the X axis
 
@@ -833,7 +879,7 @@ class LamSlotWind(LamSlot):
         """
 
         # Space discretization
-    
+
         if angle is None:
             angle = np.linspace(0, np.pi * 2 / per_a, Na, endpoint=False)
         else:
@@ -857,7 +903,9 @@ class LamSlotWind(LamSlot):
         alpha_slot = np.linspace(0, 2 * np.pi / per_a, Zs0, endpoint=False) + np.pi / Zs
 
         # angle of the lay in a slot (Nlay point, end and begin excluded)
-        alpha_lay = np.linspace(-slot_angle / 2, slot_angle / 2, Ntan + 1, endpoint=False)[1:]
+        alpha_lay = np.linspace(
+            -slot_angle / 2, slot_angle / 2, Ntan + 1, endpoint=False
+        )[1:]
 
         if alpha_mmf0 != 0:
             angle = (angle - alpha_mmf0) % (2 * np.pi)
@@ -1009,7 +1057,7 @@ class LamSlotWind(LamSlot):
             Axis containing the plot
         """
         # Arrow style
-    
+
         head = None
         style = "Simple, tail_width=2, head_width=8, head_length=12"
         kw: dict[str, Any] = dict(arrowstyle=style, linewidth=0.8, edgecolor="k")
@@ -1055,9 +1103,14 @@ class LamSlotWind(LamSlot):
         patch_leg, label_leg = [], []
         for surf in surf_list:
             label_dict = decode_label(surf.label)
-            if WIND_LAB in label_dict["surf_type"] or BAR_LAB in label_dict["surf_type"]:
+            if (
+                WIND_LAB in label_dict["surf_type"]
+                or BAR_LAB in label_dict["surf_type"]
+            ):
                 if not is_lam_only:
-                    color, sign = Winding.find_wind_phase_color(wind_mat=wind_mat, label=surf.label)
+                    color, sign = Winding.find_wind_phase_color(
+                        wind_mat=wind_mat, label=surf.label
+                    )
                     if sign == "+" and is_add_sign:
                         hatch = self.PLUS_HATCH
                     elif sign == "-" and is_add_sign:
@@ -1214,7 +1267,7 @@ class LamSlotWind(LamSlot):
                         end_point,
                         connectionstyle="arc3,rad=" + str(angle),
                         facecolor=self.PHASE_COLORS[idx_phase],
-                        **kw
+                        **kw,
                     )
                     patches.append(line)
 
@@ -1348,7 +1401,9 @@ class LamSlotWind(LamSlot):
             return patches
 
     # Inlined from Methods.Machine.LamSlotWind.plot_mmf_unit
-    def plot_mmf_unit(self, save_path: str | None = None, is_show_fig: bool = False) -> Figure:
+    def plot_mmf_unit(
+        self, save_path: str | None = None, is_show_fig: bool = False
+    ) -> Figure:
         """Plot the winding unit mmf as a function of space
 
         Parameters
