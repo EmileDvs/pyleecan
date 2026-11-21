@@ -1,48 +1,17 @@
-from typing import Any, Dict, Optional, Tuple
+"""Deprecated aliases of pv_plotter_pyleecan methods (removed in Phase 2)."""
 
-import pyvista as pv
+from warnings import warn
 
-from ....definitions import config_dict
-
-FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
+from .pv_plotter_pyleecan import FONT_FAMILY_PYVISTA  # noqa: F401
 
 
-def configure_plot(
-    pv_plotter: Optional[pv.plotting.BasePlotter],
-    win_title: str,
-    is_show_axes: bool = True,
-) -> Tuple[pv.plotting.BasePlotter, Dict[str, Any]]:
-    """Configure a pyvista plot. If the plotter doesn't exist, create one depending on available package: PyVista or PyVistaQt.
+def configure_plot(*args, **kwargs):
+    """Deprecated: use pv_plotter_pyleecan.configure_plot"""
+    from .pv_plotter_pyleecan import pv_plotter_pyleecan
 
-    Parameters
-    ----------
-    pv_plotter : pyvista plotter
-        a pyvista plotter
-    win_title : str
-        title of the window
-    save_path : str
-        path where to save the plot
-    """
-
-    if pv_plotter is None:
-        # Instantiate pv_plotter
-        pv_plotter = pv.plotting.Plotter(
-            notebook=False, title=win_title, theme=pv.plotting.themes.DocumentTheme()
-        )
-
-    # isometric view with z towards left
-    pv_plotter.view_isometric()
-
-    if is_show_axes:
-        pv_plotter.add_axes(
-            color="k", x_color="#da3061", y_color="#0069a1", z_color="#bbcf1c"
-        )
-    sargs = dict(
-        interactive=True,
-        title_font_size=12,
-        label_font_size=10,
-        font_family=FONT_FAMILY_PYVISTA,
-        color="black",
+    warn(
+        "configure_plot is deprecated, use pv_plotter_pyleecan.configure_plot (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
     )
-
-    return pv_plotter, sargs
+    return pv_plotter_pyleecan.configure_plot(*args, **kwargs)

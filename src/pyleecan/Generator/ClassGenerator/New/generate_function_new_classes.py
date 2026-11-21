@@ -802,7 +802,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
 
     # The FEMM interface object, from the legacy FEMM modules (femm_object.py)
     interface_modules = {
-        spec: femm_modules(source_dir, spec) if (source_dir / spec.package).is_dir() else {}
+        spec: femm_modules(source_dir, spec)
+        if source_dir.joinpath(*spec.package.split(".")).is_dir()
+        else {}
         for spec in INTERFACE_OBJECTS
     }
     interface_signatures = {
@@ -810,7 +812,7 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
     }
     interface_errors = {
         spec: {
-            module.split(".", 1)[1]: set(errors)
+            module[len(spec.package) + 1 :]: set(errors)
             for module, errors in FUNCTION_ERRORS.items()
             if module.startswith(spec.package + ".")
         }
@@ -820,7 +822,7 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         if modules:
             entries.append(
                 (
-                    source_dir / spec.package / (spec.module + ".py"),
+                    source_dir.joinpath(*spec.package.split("."), spec.module + ".py"),
                     femm_object_source(modules, interface_errors[spec], spec),
                 )
             )
@@ -866,13 +868,13 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             elif moved is not None:  # Deprecated alias of the method
                 source = alias_source(legacy_module, moved, source)
             elif removed_alias is None and any(
-                relative.parts[0] == spec.package and relative.stem in modules
+                ".".join(relative.parts[:-1]) == spec.package and relative.stem in modules
                 for spec, modules in interface_modules.items()
             ):  # Deprecated aliases of the methods of an interface object
                 spec = next(
                     spec
                     for spec, modules in interface_modules.items()
-                    if relative.parts[0] == spec.package and relative.stem in modules
+                    if ".".join(relative.parts[:-1]) == spec.package and relative.stem in modules
                 )
                 source = femm_alias_source(
                     relative.stem,
@@ -895,7 +897,7 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             package = ".".join(["pyleecan", "Functions", *relative.parts[:-1]])
             if moved is None:  # Callers of the moved functions call the methods
                 for spec in INTERFACE_OBJECTS:
-                    if (relative.parts[0], relative.stem) != (spec.package, spec.module):
+                    if (".".join(relative.parts[:-1]), relative.stem) != (spec.package, spec.module):
                         source = redirect_femm_calls(
                             source, package, interface_signatures[spec], spec
                         )

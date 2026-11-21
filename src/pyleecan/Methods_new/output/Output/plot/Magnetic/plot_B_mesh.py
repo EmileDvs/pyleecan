@@ -5,8 +5,6 @@ import numpy as np
 
 
 from ......definitions import config_dict
-from ......Functions_new.Plot.Pyvista.configure_plot import configure_plot
-from ......Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 
 COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
@@ -69,6 +67,9 @@ def plot_B_mesh(
     -------
 
     """
+    # Local import: circular import with the class module
+    from ......Functions_new.Plot.Pyvista.pv_plotter_pyleecan import pv_plotter_pyleecan
+
     MS_B = self.mag.get_meshsolution()
 
     if group_names is not None:
@@ -83,7 +84,7 @@ def plot_B_mesh(
         elif win_title != "" and title == "":
             title = win_title
 
-        pv_plotter, sargs = configure_plot(
+        pv_plotter, sargs = pv_plotter_pyleecan.configure_plot(
             pv_plotter=pv_plotter,
             win_title=win_title,
         )
@@ -125,7 +126,7 @@ def plot_B_mesh(
         # 2D view
         pv_plotter.view_xy()
 
-    plot_mesh_field(
+    pv_plotter_pyleecan.plot_mesh_field(
         pv_plotter,
         sargs,
         field_name,
@@ -203,7 +204,7 @@ def plot_B_mesh(
                 if is_contour:
                     field_At = field_A
             # Compute pyvista object
-            plot_mesh_field(
+            pv_plotter_pyleecan.plot_mesh_field(
                 pv_plotter,
                 sargs,
                 field_name_B,

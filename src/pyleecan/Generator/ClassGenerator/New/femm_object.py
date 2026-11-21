@@ -76,14 +76,27 @@ GMSH = InterfaceObject(
     "Static methods for now (the gmsh API is a module): the object gathers the\n"
     "functions, to be improved later (PLAN.md Step 8).",
 )
-INTERFACE_OBJECTS = (FEMM, GMSH)
+PYVISTA = InterfaceObject(
+    "Plot.Pyvista",
+    "pv_plotter_pyleecan",
+    "pv_plotter_pyleecan",
+    description="Plots of pyleecan with PyVista: the PyVista functions of pyleecan\n\n"
+    "Static methods for now (configure_plot creates the plotter): the object\n"
+    "gathers the functions, to be improved later (PLAN.md Step 8).",
+)
+INTERFACE_OBJECTS = (FEMM, GMSH, PYVISTA)
 """The objects gathering the functions of a Functions folder"""
+
+
+def _up(spec):
+    """Relative import prefix from a module of the folder to pyleecan."""
+    return "." * (len(spec.package.split(".")) + 2)
 
 
 def femm_modules(functions_dir, spec=FEMM):
     """{module name: source} of the legacy FEMM modules."""
     FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
-    folder = Path(functions_dir) / FEMM_PACKAGE
+    folder = Path(functions_dir).joinpath(*FEMM_PACKAGE.split("."))
     return {
         path.stem: path.read_text(encoding="utf-8")
         for path in sorted(folder.glob("*.py"))
@@ -278,7 +291,7 @@ def femm_object_source(modules, shared_errors=None, spec=FEMM):
             elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
                 continue  # Module docstring
             elif isinstance(node, ast.ClassDef) and node.name in shared_errors.get(name, ()):
-                text = f"from ...classes_common.errors import {node.name}"
+                text = f"from {_up(spec)}classes_common.errors import {node.name}"
                 if text not in imports:
                     imports.append(text)
             else:  # Classes, constants
@@ -293,7 +306,7 @@ def femm_object_source(modules, shared_errors=None, spec=FEMM):
             "    def __init__(self, handler=None):",
             '        """Create the object, with a new handler if none is given."""',
             "        if handler is None:",
-            f"            from ...Classes.{HANDLER_CLASS} import {HANDLER_CLASS}",
+            f"            from {_up(spec)}Classes.{HANDLER_CLASS} import {HANDLER_CLASS}",
             "",
             f"            handler = {HANDLER_CLASS}()",
             "        self.handler = handler",
@@ -337,7 +350,7 @@ def femm_alias_source(name, source, modules, shared_errors=None, spec=FEMM):
     shared = [item for item in exported if item in (shared_errors or {}).get(name, ())]
     exported = [item for item in exported if item not in shared]
     if shared:
-        lines.append(f"from ...classes_common.errors import {', '.join(shared)}  # noqa: F401")
+        lines.append(f"from {_up(spec)}classes_common.errors import {', '.join(shared)}  # noqa: F401")
     if exported:
         lines.append(f"from .{FEMM_MODULE} import {', '.join(exported)}  # noqa: F401")
     for node in ast.parse(source).body:

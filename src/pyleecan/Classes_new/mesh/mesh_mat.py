@@ -10,6 +10,7 @@ from typing import ClassVar, Dict, List, Literal, Optional, Tuple, Union
 import meshio
 import numpy as np
 import pyvista as pv
+import pyvista.core  # noqa: F401 (loaded on demand)
 
 from ...definitions import RESULT_DIR
 from ...Functions_new.GUI.log_error import log_error

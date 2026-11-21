@@ -4,8 +4,6 @@ import numpy as np
 
 
 from ....definitions import config_dict
-from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
-from ....Functions_new.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
 
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 
@@ -59,13 +57,16 @@ def plot_glyph(
     -------
     """
     # Init figure
+    # Local import: circular import with the class module
+    from ....Functions_new.Plot.Pyvista.pv_plotter_pyleecan import pv_plotter_pyleecan
+
     if pv_plotter is None:
         if title != "" and win_title == "":
             win_title = title
         elif win_title != "" and title == "":
             title = win_title
 
-        pv_plotter, _ = configure_plot(pv_plotter=pv_plotter, win_title=win_title)
+        pv_plotter, _ = pv_plotter_pyleecan.configure_plot(pv_plotter=pv_plotter, win_title=win_title)
 
         pv_plotter.add_text(
             title,
@@ -93,7 +94,7 @@ def plot_glyph(
     )
 
     # Add field to mesh
-    plot_glyph_pv(
+    pv_plotter_pyleecan.plot_glyph_pv(
         pv_plotter=pv_plotter,
         mesh_pv=mesh_pv,
         vect_field=vect_field,
@@ -131,7 +132,7 @@ def plot_glyph(
             )
 
             # Compute pyvista object
-            plot_glyph_pv(
+            pv_plotter_pyleecan.plot_glyph_pv(
                 pv_plotter=pv_plotter,
                 mesh_pv=mesh_pv,
                 vect_field=vect_field,

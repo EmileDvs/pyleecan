@@ -235,6 +235,21 @@ def test_remove_python2_branches(source, expected):
     assert remove_python2_branches(expected) == expected  # Idempotent
 
 
+def test_pyvista_lazy_submodules_imported():
+    """pv.plotting.X: pyvista.plotting is imported (loaded on demand by pyvista)."""
+    from pyleecan.Generator.ClassGenerator.New.modernize import _apply_pyvista_import_style
+
+    source = (
+        "from pyvista.plotting import Plotter, themes\n\n\n"
+        "def plot():\n    return Plotter(theme=themes.DocumentTheme())\n"
+    )
+    result = _apply_pyvista_import_style(source)
+    assert "import pyvista as pv\nimport pyvista.plotting  # noqa: F401 (loaded on demand)\n" in result
+    assert "pv.plotting.Plotter(theme=pv.plotting.themes.DocumentTheme())" in result
+    assert _apply_pyvista_import_style(result) == result  # Idempotent
+    assert "import pyvista." not in _apply_pyvista_import_style("import pyvista as pv\n\npv.Plotter()\n")
+
+
 def test_remove_sibling_helper_imports(tmp_path):
     """A helper imported from another method module of the class is not imported."""
     from pyleecan.Generator.ClassGenerator.New.class_generator import _remove_sibling_helper_imports

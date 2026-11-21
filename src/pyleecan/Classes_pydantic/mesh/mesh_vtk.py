@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, ClassVar, Literal, Optional
 
 import numpy as np
 import pyvista as pv
+import pyvista.core  # noqa: F401 (loaded on demand)
 from meshio import read
 from pydantic import Field
 from vtk import vtkPointSet

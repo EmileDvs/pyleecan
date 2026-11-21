@@ -1,28 +1,17 @@
-import numpy as np
+"""Deprecated aliases of pv_plotter_pyleecan methods (removed in Phase 2)."""
 
-from ....definitions import config_dict
+from warnings import warn
 
-COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
+from .pv_plotter_pyleecan import COLOR_MAP  # noqa: F401
 
 
-def plot_mesh_field(
-    pv_plotter,
-    sargs,
-    field_name,
-    clim=None,
-    mesh_pv=None,
-    field=None,
-    phase=1,
-    colormap=COLOR_MAP,
-):
-    mesh_pv[field_name] = np.real(field * phase)
-    mesh_field = mesh_pv
+def plot_mesh_field(*args, **kwargs):
+    """Deprecated: use pv_plotter_pyleecan.plot_mesh_field"""
+    from .pv_plotter_pyleecan import pv_plotter_pyleecan
 
-    pv_plotter.add_mesh(
-        mesh_field,
-        scalars=field_name,
-        show_edges=False,
-        cmap=colormap,
-        clim=clim,
-        scalar_bar_args=sargs,
+    warn(
+        "plot_mesh_field is deprecated, use pv_plotter_pyleecan.plot_mesh_field (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
     )
+    return pv_plotter_pyleecan.plot_mesh_field(*args, **kwargs)

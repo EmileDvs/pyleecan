@@ -14,10 +14,6 @@ from scipy.io import savemat
 from ...classes_common.errors import DimError
 from ...definitions import config_dict
 from ...Functions_pydantic.GUI.log_error import log_error
-from ...Functions_pydantic.Plot.Pyvista.configure_plot import configure_plot
-from ...Functions_pydantic.Plot.Pyvista.plot_glyph_pv import plot_glyph_pv
-from ...Functions_pydantic.Plot.Pyvista.plot_mesh_field import plot_mesh_field
-from ...Functions_pydantic.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
 from ...Functions_pydantic.Structural.conversions import cart2pol, pol2cart
 from .._legacy_model import LegacyModel
 from .element_mat import ElementMat
@@ -1062,13 +1058,18 @@ class MeshSolution(LegacyModel):
         """
 
         # Init figure
+        # Local import: circular import with the class module
+        from ...Functions_pydantic.Plot.Pyvista.pv_plotter_pyleecan import (
+            pv_plotter_pyleecan,
+        )
+
         if pv_plotter is None:
             if title != "" and win_title == "":
                 win_title = title
             elif win_title != "" and title == "":
                 title = win_title
 
-            pv_plotter, sargs = configure_plot(
+            pv_plotter, sargs = pv_plotter_pyleecan.configure_plot(
                 pv_plotter=pv_plotter, win_title=win_title
             )
 
@@ -1105,7 +1106,7 @@ class MeshSolution(LegacyModel):
                 clim[0] = -abs(clim[1])
                 clim[1] = abs(clim[1])
 
-        plot_mesh_field(
+        pv_plotter_pyleecan.plot_mesh_field(
             pv_plotter,
             sargs,
             field_name,
@@ -1154,7 +1155,7 @@ class MeshSolution(LegacyModel):
                     field = field_B
                     phase = np.exp(1j * 2 * np.pi * t[i])
                 # Compute pyvista object
-                plot_mesh_field(
+                pv_plotter_pyleecan.plot_mesh_field(
                     pv_plotter,
                     sargs,
                     field_name_B,
@@ -1230,13 +1231,18 @@ class MeshSolution(LegacyModel):
         -------
         """
         # Init figure
+        # Local import: circular import with the class module
+        from ...Functions_pydantic.Plot.Pyvista.pv_plotter_pyleecan import (
+            pv_plotter_pyleecan,
+        )
+
         if pv_plotter is None:
             if title != "" and win_title == "":
                 win_title = title
             elif win_title != "" and title == "":
                 title = win_title
 
-            pv_plotter, sargs = configure_plot(
+            pv_plotter, sargs = pv_plotter_pyleecan.configure_plot(
                 pv_plotter=pv_plotter, win_title=win_title
             )
 
@@ -1287,7 +1293,7 @@ class MeshSolution(LegacyModel):
             surf_pv = mesh.get_mesh_pv()
 
         # Plot deflection surface
-        plot_surf_deflection(
+        pv_plotter_pyleecan.plot_surf_deflection(
             surf_pv=surf_pv,
             vect_field=vect_field,
             field=field_normal_amp,
@@ -1317,7 +1323,7 @@ class MeshSolution(LegacyModel):
                 phase = np.exp(1j * 2 * np.pi * t)
 
                 # Compute pyvista object
-                plot_surf_deflection(
+                pv_plotter_pyleecan.plot_surf_deflection(
                     surf_pv=surf_pv,
                     vect_field=vect_field,
                     field=field_normal_amp,
@@ -1413,13 +1419,20 @@ class MeshSolution(LegacyModel):
         -------
         """
         # Init figure
+        # Local import: circular import with the class module
+        from ...Functions_pydantic.Plot.Pyvista.pv_plotter_pyleecan import (
+            pv_plotter_pyleecan,
+        )
+
         if pv_plotter is None:
             if title != "" and win_title == "":
                 win_title = title
             elif win_title != "" and title == "":
                 title = win_title
 
-            pv_plotter, _ = configure_plot(pv_plotter=pv_plotter, win_title=win_title)
+            pv_plotter, _ = pv_plotter_pyleecan.configure_plot(
+                pv_plotter=pv_plotter, win_title=win_title
+            )
 
             pv_plotter.add_text(
                 title,
@@ -1447,7 +1460,7 @@ class MeshSolution(LegacyModel):
         )
 
         # Add field to mesh
-        plot_glyph_pv(
+        pv_plotter_pyleecan.plot_glyph_pv(
             pv_plotter=pv_plotter,
             mesh_pv=mesh_pv,
             vect_field=vect_field,
@@ -1485,7 +1498,7 @@ class MeshSolution(LegacyModel):
                 )
 
                 # Compute pyvista object
-                plot_glyph_pv(
+                pv_plotter_pyleecan.plot_glyph_pv(
                     pv_plotter=pv_plotter,
                     mesh_pv=mesh_pv,
                     vect_field=vect_field,
@@ -1552,8 +1565,13 @@ class MeshSolution(LegacyModel):
         -------
         """
 
+        # Local import: circular import with the class module
+        from ...Functions_pydantic.Plot.Pyvista.pv_plotter_pyleecan import (
+            pv_plotter_pyleecan,
+        )
+
         if pv_plotter is None:
-            pv_plotter, _ = configure_plot(
+            pv_plotter, _ = pv_plotter_pyleecan.configure_plot(
                 pv_plotter=pv_plotter, win_title=win_title, is_show_axes=is_show_axes
             )
         else:

@@ -775,9 +775,55 @@ def _apply_numpy_import_style(source):
     return _apply_package_import_style(source, "numpy", "np")
 
 
+PYVISTA_LAZY_SUBMODULES = ("plotting", "core", "utilities", "examples")
+"""PyVista submodules loaded on demand: ``pv.plotting`` is not an attribute of
+the package until ``pyvista.plotting`` is imported"""
+
+
 def _apply_pyvista_import_style(source):
-    """Use ``import pyvista as pv`` for PyVista imports and their references."""
-    return _apply_package_import_style(source, "pyvista", "pv")
+    """Use ``import pyvista as pv`` for PyVista imports and their references.
+
+    ``from pyvista.plotting import Plotter`` becomes ``pv.plotting.Plotter``:
+    the submodule is imported next to ``import pyvista as pv`` (the first plot
+    of a process failed with "module 'pyvista' has no attribute 'plotting'").
+    """
+    # The submodule imports added by a previous run: removed, added again below
+    source = "".join(
+        line
+        for line in source.splitlines(keepends=True)
+        if not line.rstrip().endswith(PYVISTA_SUBMODULE_MARK)
+    )
+    source = _apply_package_import_style(source, "pyvista", "pv")
+    return _import_pyvista_submodules(source)
+
+
+PYVISTA_SUBMODULE_MARK = "# noqa: F401 (loaded on demand)"
+
+
+def _import_pyvista_submodules(source):
+    """Import the lazy PyVista submodules used as ``pv.<submodule>.``."""
+    used = sorted(
+        name
+        for name in PYVISTA_LAZY_SUBMODULES
+        if re.search(rf"\bpv\.{name}\.", source) and f"import pyvista.{name}" not in source
+    )
+    if not used:
+        return source
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    inserts = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Import)
+        and any(alias.name == "pyvista" and alias.asname == "pv" for alias in node.names)
+    ]
+    for node in sorted(inserts, key=lambda item: item.lineno, reverse=True):
+        indent = " " * node.col_offset
+        lines.insert(
+            node.end_lineno,
+            "".join(f"{indent}import pyvista.{name}  # noqa: F401 (loaded on demand)\n" for name in used),
+        )
+    return "".join(lines)
 
 
 def _apply_os_import_style(source):

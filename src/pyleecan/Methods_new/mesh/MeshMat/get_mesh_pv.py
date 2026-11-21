@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import meshio
 import pyvista as pv
+import pyvista.core  # noqa: F401 (loaded on demand)
 
 
 from ....definitions import RESULT_DIR

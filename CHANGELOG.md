@@ -140,6 +140,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     (`femm_pyleecan.handler`), one object per FEMM instance;
     `OutMagFEMM.handler_list` holds these objects; the old paths are
     deprecated aliases;
+  - PyVista: the PyVista plot functions are the static methods of one
+    object, `pv_plotter_pyleecan` (`Plot.Pyvista.pv_plotter_pyleecan`);
+    the old paths are deprecated aliases;
   - GMSH: the gmsh functions are the static methods of one object,
     `gmsh_pyleecan` (`GMSH.gmsh_pyleecan`); the old paths are deprecated
     aliases;
@@ -218,6 +221,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   CalcFields solver with an explicit linear system (Elmer >= 26); numpy 2
   compatibility (2-D cross products in `Segment.comp_distance` and
   `ForceTensor.element_loop`, `load`).
+- **PyVista plots**: the first plot of a process failed ("module 'pyvista'
+  has no attribute 'plotting'"): the generated modules import the
+  PyVista submodules loaded on demand.
 - **Class generator**: a helper function imported from another method
   module of the class (`LossModelBertotti` / `LossModelSteinmetz`
   `comp_loss_val`, used by `comp_coeff` and `plot_fitting`) is a static

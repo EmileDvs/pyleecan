@@ -12,8 +12,6 @@ from scipy.io import savemat
 from ...classes_common.errors import GetOutError
 from ...definitions import RESULT_DIR, config_dict
 from ...Functions_pydantic.Plot import fft_dict
-from ...Functions_pydantic.Plot.Pyvista.configure_plot import configure_plot
-from ...Functions_pydantic.Plot.Pyvista.plot_mesh_field import plot_mesh_field
 from .._legacy_model import LegacyModel
 from ..scidatatool.norm_affine import NormAffine
 from ..scidatatool.norm_vector import NormVector
@@ -630,6 +628,11 @@ class Output(LegacyModel):
         -------
 
         """
+        # Local import: circular import with the class module
+        from ...Functions_pydantic.Plot.Pyvista.pv_plotter_pyleecan import (
+            pv_plotter_pyleecan,
+        )
+
         MS_B = self.mag.get_meshsolution()
 
         if group_names is not None:
@@ -644,7 +647,7 @@ class Output(LegacyModel):
             elif win_title != "" and title == "":
                 title = win_title
 
-            pv_plotter, sargs = configure_plot(
+            pv_plotter, sargs = pv_plotter_pyleecan.configure_plot(
                 pv_plotter=pv_plotter,
                 win_title=win_title,
             )
@@ -686,7 +689,7 @@ class Output(LegacyModel):
             # 2D view
             pv_plotter.view_xy()
 
-        plot_mesh_field(
+        pv_plotter_pyleecan.plot_mesh_field(
             pv_plotter,
             sargs,
             field_name,
@@ -764,7 +767,7 @@ class Output(LegacyModel):
                     if is_contour:
                         field_At = field_A
                 # Compute pyvista object
-                plot_mesh_field(
+                pv_plotter_pyleecan.plot_mesh_field(
                     pv_plotter,
                     sargs,
                     field_name_B,

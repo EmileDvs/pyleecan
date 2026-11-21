@@ -6,8 +6,6 @@ import numpy as np
 
 from ....Classes_new.mesh.mesh_vtk import MeshVTK
 from ....definitions import config_dict
-from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
-from ....Functions_new.Plot.Pyvista.plot_surf_deflection import plot_surf_deflection
 
 COLOR_MAP = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
 FONT_FAMILY_PYVISTA = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
@@ -58,13 +56,16 @@ def plot_deflection(
     -------
     """
     # Init figure
+    # Local import: circular import with the class module
+    from ....Functions_new.Plot.Pyvista.pv_plotter_pyleecan import pv_plotter_pyleecan
+
     if pv_plotter is None:
         if title != "" and win_title == "":
             win_title = title
         elif win_title != "" and title == "":
             title = win_title
 
-        pv_plotter, sargs = configure_plot(pv_plotter=pv_plotter, win_title=win_title)
+        pv_plotter, sargs = pv_plotter_pyleecan.configure_plot(pv_plotter=pv_plotter, win_title=win_title)
 
         pv_plotter.add_text(
             title,
@@ -110,7 +111,7 @@ def plot_deflection(
         surf_pv = mesh.get_mesh_pv()
 
     # Plot deflection surface
-    plot_surf_deflection(
+    pv_plotter_pyleecan.plot_surf_deflection(
         surf_pv=surf_pv,
         vect_field=vect_field,
         field=field_normal_amp,
@@ -140,7 +141,7 @@ def plot_deflection(
             phase = np.exp(1j * 2 * np.pi * t)
 
             # Compute pyvista object
-            plot_surf_deflection(
+            pv_plotter_pyleecan.plot_surf_deflection(
                 surf_pv=surf_pv,
                 vect_field=vect_field,
                 field=field_normal_amp,

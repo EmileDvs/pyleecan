@@ -1,5 +1,4 @@
 from ....Classes_new.mesh.mesh_mat import MeshMat
-from ....Functions_new.Plot.Pyvista.configure_plot import configure_plot
 
 
 def plot_mesh(
@@ -37,8 +36,11 @@ def plot_mesh(
     -------
     """
 
+    # Local import: circular import with the class module
+    from ....Functions_new.Plot.Pyvista.pv_plotter_pyleecan import pv_plotter_pyleecan
+
     if pv_plotter is None:
-        pv_plotter, _ = configure_plot(
+        pv_plotter, _ = pv_plotter_pyleecan.configure_plot(
             pv_plotter=pv_plotter, win_title=win_title, is_show_axes=is_show_axes
         )
     else:

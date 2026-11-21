@@ -76,7 +76,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `modernize.py`, `source_names.py`, `function_module_names.py` | Shared modernization passes and name mappings for methods and functions |
 | `type_hints.py` | Type hints from the numpydoc docstrings |
 | `legacy_fixes.py` | Fixes of legacy method bugs (`LEGACY_FIXES`), applied to the `Methods_new` copies before modernization |
-| `femm_object.py` | Interface objects gathering the functions of a folder: `femm_pyleecan` (`Functions/FEMM`, with the handler), `gmsh_pyleecan` (`Functions/GMSH`, static methods); aliases, callers |
+| `femm_object.py` | Interface objects gathering the functions of a folder: `femm_pyleecan` (`Functions/FEMM`, with the handler), `gmsh_pyleecan` (`Functions/GMSH`), `pv_plotter_pyleecan` (`Functions/Plot/Pyvista`) (static methods); aliases, callers |
 | `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths |
 | `generate_function_new_classes.py` | `Functions_new` |
 | `generate_function_pydantic.py` | `Functions_pydantic` from `Functions_new` |
