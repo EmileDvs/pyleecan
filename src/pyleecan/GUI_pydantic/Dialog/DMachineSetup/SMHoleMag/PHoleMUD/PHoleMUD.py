@@ -10,7 +10,7 @@ from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.SMHoleMag.PHoleMUD.Ui_PHoleMUD import Ui_PHoleMUD
 from ......GUI_pydantic.Dialog.DMatLib.WMatSelect.WMatSelect import WMatSelect
 from ......GUI_pydantic.Dxf.DXF_Hole import DXF_Hole
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 
 class PHoleMUD(Ui_PHoleMUD, QWidget):

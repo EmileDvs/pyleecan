@@ -7,7 +7,7 @@ from ......Classes_new.slot.hole_m_60 import HoleM60
 from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SMHoleMag import DEFAULT_MAG_MAT
 from ......GUI_new.Dialog.DMachineSetup.SMHoleMag.PHoleM60.Gen_PHoleM60 import Gen_PHoleM60
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 from ......GUI_new.Resources import pixmap_dict
 

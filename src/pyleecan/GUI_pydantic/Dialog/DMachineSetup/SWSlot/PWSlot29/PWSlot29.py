@@ -7,7 +7,7 @@ from ......Classes_pydantic.slot.slot_w_29 import SlotW29
 from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.SWSlot.PWSlot29.Gen_PWSlot29 import Gen_PWSlot29
 from ......GUI_pydantic.Resources import pixmap_dict
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 translate = PySide6.QtCore.QCoreApplication.translate
 

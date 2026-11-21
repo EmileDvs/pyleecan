@@ -210,6 +210,13 @@ def modernize_gui_source(source, package, root, gen_dict):
         source = redirect_femm_calls(source, package, legacy_signatures(spec), spec)
     source = redirect_moved_calls(source, package, None, gen_dict=gen_dict)
     source = redirect_get_logger(source, package)
+    # The errors of the methods and functions: the shared ones (the GUI
+    # catches the errors raised by the classes)
+    from .modernize import _redirect_shared_error_imports, shared_error_names
+
+    source = _redirect_shared_error_imports(
+        source, package, method_error_names=shared_error_names()
+    )
     source = _redirect_methods_imports(source, package, str(Path(root) / "Classes_new"))
     source = modernize_names(source, package, gen_dict, None)
     from .moved_functions import redirect_moved_modules

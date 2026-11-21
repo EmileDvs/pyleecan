@@ -267,7 +267,7 @@ def apply_import_styles(source):
     return _apply_os_import_style(source)
 
 
-WIRED_SETTER_SUBPACKAGES = frozenset({"slot"})
+WIRED_SETTER_SUBPACKAGES = frozenset({"slot", "scidatatool"})
 """Sub-packages whose legacy custom property setters (``_set_<field>`` method
 modules) are called by the legacy layers when the field is assigned, package by
 package (PLAN.md "Custom property setters and getters")"""
@@ -1496,3 +1496,66 @@ def _redirect_shared_error_imports(
     for start, end, replacement in sorted(replacements, reverse=True):
         data = data[:start] + replacement + data[end:]
     return data.decode("utf-8")
+
+
+def alias_external_class_names(source, class_names, soft_name="pyleecan"):
+    """Alias the external imports named like a pyleecan class.
+
+    ``from matplotlib.patches import Circle`` in a method module clashes with
+    the class ``Circle`` once the method is inlined in a class module (the
+    method then builds a pyleecan Circle): the import becomes ``Circle as
+    Circle_patches`` and the names of the module follow.
+
+    Parameters
+    ----------
+    source : str
+        Source of a method module
+    class_names : set
+        Names of the pyleecan classes
+    soft_name : str
+        Name of the software package (its imports are not external)
+
+    Returns
+    -------
+    source : str
+        Source with the aliased external imports
+    """
+    tree = ast.parse(source)
+    aliases = {}
+    lines = source.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    replacements = []
+    for node in tree.body:
+        if not (
+            isinstance(node, ast.ImportFrom)
+            and node.level == 0
+            and node.module
+            and node.module.split(".")[0] != soft_name
+        ):
+            continue
+        names = []
+        changed = False
+        for alias in node.names:
+            if alias.asname is None and alias.name in class_names:
+                new = f"{alias.name}_{node.module.split('.')[-1]}"
+                aliases[alias.name] = new
+                names.append(ast.alias(alias.name, new))
+                changed = True
+            else:
+                names.append(alias)
+        if changed:
+            start = offsets[node.lineno - 1] + node.col_offset
+            end = offsets[node.end_lineno - 1] + node.end_col_offset
+            text = ast.unparse(ast.ImportFrom(module=node.module, names=names, level=0))
+            replacements.append((start, end, text))
+    if not aliases:
+        return source
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in aliases:
+            start = offsets[node.lineno - 1] + node.col_offset
+            replacements.append((start, start + len(node.id), aliases[node.id]))
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    return source

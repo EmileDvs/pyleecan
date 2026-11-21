@@ -10,7 +10,7 @@ from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic.Dialog.DMachineSetup.SMHoleMag.Ui_SMHoleMag import Ui_SMHoleMag
 from .....GUI_pydantic.Dialog.DMachineSetup.SMHoleMag.WHoleMag.WHoleMag import WHoleMag
 from .....loggers import GUI_LOG_NAME
-from .....Methods_new.slot.Slot import SlotCheckError
+from .....classes_common.errors import SlotCheckError
 
 
 class SMHoleMag(Ui_SMHoleMag, QWidget):

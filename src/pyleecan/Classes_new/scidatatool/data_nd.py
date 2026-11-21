@@ -111,6 +111,8 @@ class DataND(Data):
     is_real: bool = True
     """To indicate if the signal is real (use only positive frequencies)"""
 
+    _custom_setters: ClassVar[tuple[str, ...]] = ("values",)
+    """Fields set by a legacy custom setter (_set_<field>)"""
     _package: ClassVar[str] = "SciDataTool"
     """Name of the package of the legacy class module"""
 
@@ -712,7 +714,7 @@ class DataND(Data):
         if value is not None:
             value = np.squeeze(value)
         value = check_dimensions(value, self.axes)
-        self._values = value
+        self.values = value
 
     # Inlined from Methods.SciDataTool.DataND.change_referential
     def change_referential(

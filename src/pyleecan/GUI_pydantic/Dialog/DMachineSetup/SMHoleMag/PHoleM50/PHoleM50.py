@@ -8,7 +8,7 @@ from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.SMHoleMag import DEFAULT_MAG_MAT
 from ......GUI_pydantic.Dialog.DMachineSetup.SMHoleMag.PHoleM50.Gen_PHoleM50 import Gen_PHoleM50
 from ......GUI_pydantic.Resources import pixmap_dict
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 
 class PHoleM50(Gen_PHoleM50, QWidget):

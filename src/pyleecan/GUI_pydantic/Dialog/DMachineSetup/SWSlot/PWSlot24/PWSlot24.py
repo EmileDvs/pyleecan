@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget
 from ......Classes_pydantic.slot.slot_w_24 import SlotW24
 from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.SWSlot.PWSlot24.Gen_PWSlot24 import Gen_PWSlot24
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 translate = PySide6.QtCore.QCoreApplication.translate
 

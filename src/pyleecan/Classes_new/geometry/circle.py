@@ -4,10 +4,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle as Circle_patches
 
 from ...classes_common.errors import (
     AngleRotationCircleError,
@@ -16,6 +16,9 @@ from ...classes_common.errors import (
 )
 from .arc_3 import Arc3
 from .surface import Surface
+
+if TYPE_CHECKING:
+    from matplotlib.patches import Circle
 
 
 @dataclass(eq=False)
@@ -235,7 +238,7 @@ class Circle(Surface):
         Zi = self.center.imag
 
         return [
-            Circle(
+            Circle_patches(
                 xy=(Zr, Zi),
                 radius=self.radius,
                 facecolor=color,

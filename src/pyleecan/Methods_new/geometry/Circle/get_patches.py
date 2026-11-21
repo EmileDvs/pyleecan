@@ -1,6 +1,10 @@
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle as Circle_patches
 
 from ....definitions import config_dict
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.patches import Circle
 
 PATCH_EDGE = config_dict["PLOT"]["COLOR_DICT"]["PATCH_EDGE"]
 PATCH_COLOR = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR"]
@@ -50,7 +54,7 @@ def get_patches(
     Zi = self.center.imag
 
     return [
-        Circle(
+        Circle_patches(
             xy=(Zr, Zi),
             radius=self.radius,
             facecolor=color,

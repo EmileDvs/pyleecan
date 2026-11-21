@@ -10,7 +10,7 @@ from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new.Dialog.DMachineSetup.DNotchTab.Ui_DNotchTab import Ui_DNotchTab
 from .....GUI_new.Dialog.DMachineSetup.DNotchTab.WNotch.WNotch import WNotch
 from .....loggers import GUI_LOG_NAME
-from .....Methods_new.slot.Slot import SlotCheckError
+from .....classes_common.errors import SlotCheckError
 
 
 class DNotchTab(Ui_DNotchTab, QDialog):

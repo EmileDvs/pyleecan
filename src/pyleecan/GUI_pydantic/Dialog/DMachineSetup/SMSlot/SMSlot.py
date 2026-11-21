@@ -23,7 +23,7 @@ from .....GUI_pydantic.Dialog.DMachineSetup.SMSlot.PMSlot19.PMSlot19 import PMSl
 from .....GUI_pydantic.Dialog.DMachineSetup.SMSlot.Ui_SMSlot import Ui_SMSlot
 from .....GUI_pydantic.Dialog.DMachineSetup.SMSlot.WSlotMag.WSlotMag import WSlotMag
 from .....loggers import GUI_LOG_NAME
-from .....Methods_new.slot.Slot import SlotCheckError
+from .....classes_common.errors import SlotCheckError
 
 # List to convert index of combobox to slot type
 WIDGET_LIST = [

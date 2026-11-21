@@ -50,6 +50,8 @@ class Data(LegacyClass):
     normalizations: dict[str, Normalization] = field(default_factory=dict)
     """Normalizations available for the field and its axes"""
 
+    _custom_setters: ClassVar[tuple[str, ...]] = ("normalizations",)
+    """Fields set by a legacy custom setter (_set_<field>)"""
     _package: ClassVar[str] = "SciDataTool"
     """Name of the package of the legacy class module"""
 
@@ -74,7 +76,7 @@ class Data(LegacyClass):
         if type(value) is int and value == -1:
             value = {}
         check_var("normalizations", value, "{Normalization}")
-        self._normalizations = value
+        self.normalizations = value
 
     # Inlined from Methods.SciDataTool.Data.animate_as_gif
     @staticmethod

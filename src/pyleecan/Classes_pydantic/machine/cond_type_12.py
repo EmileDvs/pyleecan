@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.patches import Circle, Patch
+from matplotlib.patches import Circle as Circle_patches
+from matplotlib.patches import Patch
 from pydantic import Field
 
 from ...classes_common.errors import C12_WireDontFit, NotPlotableError
@@ -302,7 +303,7 @@ class CondType12(Conductor):
 
         # Conductor insultation
         patches_list.append(
-            Circle((0, 0), self.Wins_cond / 2, color=self.COND_INS_COLOR)
+            Circle_patches((0, 0), self.Wins_cond / 2, color=self.COND_INS_COLOR)
         )
 
         # Computation of the center of the wire
@@ -338,10 +339,14 @@ class CondType12(Conductor):
         for center in center_list:
             # Wire insulation
             patches_list.append(
-                Circle(center, self.Wwire / 2 + self.Wins_wire, color=self.INS_COLOR)
+                Circle_patches(
+                    center, self.Wwire / 2 + self.Wins_wire, color=self.INS_COLOR
+                )
             )
             # Wire conductor
-            patches_list.append(Circle(center, self.Wwire / 2, color=self.COND_COLOR))
+            patches_list.append(
+                Circle_patches(center, self.Wwire / 2, color=self.COND_COLOR)
+            )
 
         # Display
         (fig, ax, _, _) = init_fig(fig=fig, ax=ax)

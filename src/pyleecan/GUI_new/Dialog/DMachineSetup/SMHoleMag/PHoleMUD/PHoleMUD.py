@@ -10,7 +10,7 @@ from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SMHoleMag.PHoleMUD.Ui_PHoleMUD import Ui_PHoleMUD
 from ......GUI_new.Dialog.DMatLib.WMatSelect.WMatSelect import WMatSelect
 from ......GUI_new.Dxf.DXF_Hole import DXF_Hole
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 
 class PHoleMUD(Ui_PHoleMUD, QWidget):

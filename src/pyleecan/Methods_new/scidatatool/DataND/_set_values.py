@@ -18,4 +18,4 @@ def _set_values(self, value) -> None:
     if value is not None:
         value = np.squeeze(value)
     value = check_dimensions(value, self.axes)
-    self._values = value
+    self.values = value

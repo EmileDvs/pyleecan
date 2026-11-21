@@ -9,7 +9,7 @@ from ......Functions_pydantic.load import load
 from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.DAVDuct.PVentUD.Gen_PVentUD import Gen_PVentUD
 from ......GUI_pydantic.Dxf.DXF_Surf import DXF_Surf
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 
 class PVentUD(Gen_PVentUD, QWidget):

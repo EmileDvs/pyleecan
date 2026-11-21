@@ -349,6 +349,20 @@ def femm_object_source(modules, shared_errors=None, spec=FEMM):
             f"            handler = {HANDLER_CLASS}()",
             "        self.handler = handler",
             "",
+            # Stored in the outputs (OutMagFEMM.handler_list): saved, copied and
+            # compared as the legacy handler (the file content is unchanged)
+            "    def as_dict(self, **kwargs) -> dict:",
+            '        """Dictionary of the handler (the FEMM instance is not saved)."""',
+            "        return self.handler.as_dict(**kwargs)",
+            "",
+            f'    def copy(self) -> "{spec.class_name}":',
+            '        """New object with a new handler (the FEMM instance is not copied)."""',
+            f"        return {spec.class_name}(handler=self.handler.copy())",
+            "",
+            "    def compare(self, other, ignore_list=None, name=\"self\", is_add_value=False) -> list:",
+            '        """No difference between two FEMM interface objects (as the handler)."""',
+            "        return []",
+            "",
         ]
     body = "\n".join(class_lines) + "\n"
     for method in methods:

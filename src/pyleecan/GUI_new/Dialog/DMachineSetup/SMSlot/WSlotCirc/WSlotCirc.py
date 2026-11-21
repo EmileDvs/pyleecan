@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QWidget
 from ......Classes_new.slot.slot_circ import SlotCirc
 from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SMSlot.WSlotCirc.Gen_WSlotCirc import Gen_WSlotCirc
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 translate = PySide6.QtCore.QCoreApplication.translate
 from ......GUI_new.Resources import pixmap_dict

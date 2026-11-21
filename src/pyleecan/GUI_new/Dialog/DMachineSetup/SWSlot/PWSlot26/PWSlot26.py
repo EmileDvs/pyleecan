@@ -7,7 +7,7 @@ from ......Classes_new.slot.slot_w_26 import SlotW26
 from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SWSlot.PWSlot26.Gen_PWSlot26 import Gen_PWSlot26
 from ......GUI_new.Resources import pixmap_dict
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 translate = PySide6.QtCore.QCoreApplication.translate
 

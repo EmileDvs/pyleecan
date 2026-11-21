@@ -10,7 +10,7 @@ from ......Functions_pydantic.load import load
 from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.SWSlot.PWSlotUD.Ui_PWSlotUD import Ui_PWSlotUD
 from ......GUI_pydantic.Dxf.DXF_Slot import DXF_Slot
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 
 class PWSlotUD(Ui_PWSlotUD, QWidget):

@@ -26,4 +26,4 @@ def _set_normalizations(self, value) -> None:
     if type(value) is int and value == -1:
         value = dict()
     check_var("normalizations", value, "{Normalization}")
-    self._normalizations = value
+    self.normalizations = value

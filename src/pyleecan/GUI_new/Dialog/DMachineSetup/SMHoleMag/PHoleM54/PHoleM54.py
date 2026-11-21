@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QWidget
 from ......Classes_new.slot.hole_m_54 import HoleM54
 from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SMHoleMag.PHoleM54.Gen_PHoleM54 import Gen_PHoleM54
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 
 class PHoleM54(Gen_PHoleM54, QWidget):

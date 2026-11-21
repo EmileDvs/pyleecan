@@ -329,3 +329,23 @@ def f(x, is_plot=False):
     namespace = {}
     exec(compile(result, "<test>", "exec"), namespace)
     assert namespace["f"](-2.0, is_plot=True) > 0  # No UnboundLocalError
+
+
+def test_alias_external_class_names():
+    """matplotlib's Circle does not clash with the Circle class once inlined."""
+    from pyleecan.Generator.ClassGenerator.New.modernize import alias_external_class_names
+
+    source = (
+        "from matplotlib.patches import Circle, Patch\n"
+        "from ....Classes_new.geometry.arc import Arc\n\n\n"
+        "def get_patches(self):\n"
+        "    return [Circle(xy=(0, 0), radius=1), Patch()]\n"
+    )
+    result = alias_external_class_names(source, {"Circle", "Arc", "Patch2"})
+    assert result == (
+        "from matplotlib.patches import Circle as Circle_patches, Patch\n"
+        "from ....Classes_new.geometry.arc import Arc\n\n\n"
+        "def get_patches(self):\n"
+        "    return [Circle_patches(xy=(0, 0), radius=1), Patch()]\n"
+    )
+    assert alias_external_class_names(result, {"Circle"}) == result

@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget
 from ......Classes_new.slot.slot_m_17 import SlotM17
 from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SMSlot.PMSlot17.Gen_PMSlot17 import Gen_PMSlot17
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 translate = PySide6.QtCore.QCoreApplication.translate
 

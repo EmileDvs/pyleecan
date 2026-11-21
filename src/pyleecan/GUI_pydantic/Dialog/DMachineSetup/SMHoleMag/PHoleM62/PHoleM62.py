@@ -7,7 +7,7 @@ from ......Classes_pydantic.slot.hole_m_62 import HoleM62
 from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.SMHoleMag import DEFAULT_MAG_MAT
 from ......GUI_pydantic.Dialog.DMachineSetup.SMHoleMag.PHoleM62.Gen_PHoleM62 import Gen_PHoleM62
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 from .....Resources import pixmap_dict
 

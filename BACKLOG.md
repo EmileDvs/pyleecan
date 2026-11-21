@@ -697,6 +697,29 @@ generated first so that the same passes rewrite its calls.
       keeps the names of the try-guarded imports bound (`draw_GMSH =
       gmsh_pyleecan.draw_GMSH`: gmsh availability check of `WMachineTable`,
       `NameError` before). The three files pass on both backends.
+- [x] (2026-11-21) Hole and slot pages (`test_PHoleM53`, `test_PHoleM52R`,
+      `test_PHoleMUD`, `test_SMHoleMag`, `test_PMSlot17`): the GUI caught the
+      duplicate errors of the `Methods_new` packages (`Methods_new.slot.Slot.
+      SlotCheckError`, not the base of the shared errors raised by the
+      classes): the GUI generator imports the shared errors
+      (`_redirect_shared_error_imports`). All pass on both backends.
+- [x] (2026-11-21) `NewMachine` scenarios (Prius, Benchmark, Benchmark_NS,
+      Railway, Zoe) pass on both backends (they hung on a `log_error`
+      popup): (1) `DataND._set_values` wired (`WIRED_SETTER_SUBPACKAGES`
+      += `scidatatool`, with `Data._set_normalizations`): the values are
+      reshaped to the axes as legacy (`comp_mmf_unit` gave a (1600,) array
+      instead of (1, 1600)); (2) `femm_pyleecan.as_dict` / `copy` /
+      `compare` as the legacy handler (the handlers kept in
+      `OutMagFEMM.handler_list` made the HDF5 save fail); (3)
+      `modernize.alias_external_class_names`: `from matplotlib.patches import
+      Circle` aliased `Circle_patches` (inlined in the `Circle` class it built
+      a pyleecan Circle: `Circle(xy=...)` errors of `Shaft.plot`,
+      `Circle.get_patches`). Side effects: `Tests/New/Methods` + `Functions`
+      + `Plot`: 42 failures fixed per backend (`test_notch`,
+      `test_get_polar_eq_SCIM`, the lamination plots), no new failure.
+- [ ] Left: the stator winding flux plot of `SSimu` with one time step
+      (`plot_2D_Data` label None, as legacy); a GUI test runner without
+      shared result folders; a full per-file GUI run on both backends.
 - [ ] GUI test regressions to investigate (run alone):
       `test_PHoleM53` / `test_PHoleM52R` (`S53_W5CheckError` / check errors
       on the default hole), `test_SMHoleMag` (22 failed), `test_PHoleMUD`,
@@ -894,7 +917,9 @@ no property). The `slot` ones (`SlotW11`/`SlotW11_2`/`SlotW23._set_W3`,
       (`_setter_str` / `_setter_func`) and custom getters.
 - [ ] `DataKeeper._set_keeper`: same pattern (str, lambda or path to a callable).
 - [ ] `VarLoad._set_OP_matrix`.
-- [ ] `DataND._set_values` / `_get_field` / `_get_freqs`, `Data._set_normalizations`.
+- [x] `DataND._set_values`, `Data._set_normalizations` (2026-11-21): wired by
+      the legacy layers (`WIRED_SETTER_SUBPACKAGES`: `scidatatool`).
+- [ ] `DataND._get_field` / `_get_freqs` (custom getters).
 - [x] `RuleComplex._set_fct_name` (2026-11-21): no longer needed, the
       conversions read the rule functions from the static registry when
       they run (`legacy_fixes`: `convert_to_P`, `convert_to_other`).
@@ -1142,6 +1167,13 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 
 ## Phase 2
 
+- [ ] FEMM 5.0 instead of FEMM 4.2 (noted 2026-11-21, PLAN.md
+      Challenges): new `femm_pyleecan.handler` (today the COM interface
+      `win32com` on Windows, wine on Linux); parallel runs on Linux;
+      processes instead of the threads of `solve_FEMM_parallel`
+      (`multiprocessing.dummy.Pool`): one FEMM instance per process, the
+      inputs and results pickled (the `femm_pyleecan` objects are per
+      worker already).
 - [ ] Discuss how to keep the git history when only one backend is kept
       (PLAN.md Challenges): the inlining of the methods into the class
       modules, rename-only commits, the old path -> new location mapping

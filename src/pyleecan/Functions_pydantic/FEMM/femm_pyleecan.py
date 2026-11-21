@@ -98,6 +98,20 @@ class femm_pyleecan:
             handler = _FEMMHandler()
         self.handler = handler
 
+    def as_dict(self, **kwargs) -> dict:
+        """Dictionary of the handler (the FEMM instance is not saved)."""
+        return self.handler.as_dict(**kwargs)
+
+    def copy(self) -> "femm_pyleecan":
+        """New object with a new handler (the FEMM instance is not copied)."""
+        return femm_pyleecan(handler=self.handler.copy())
+
+    def compare(
+        self, other, ignore_list=None, name="self", is_add_value: bool = False
+    ) -> list:
+        """No difference between two FEMM interface objects (as the handler)."""
+        return []
+
     def assign_FEMM_surface(
         self, surf: Surface, prop: str, FEMM_dict: dict, machine: Machine
     ) -> None:

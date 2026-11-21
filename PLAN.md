@@ -441,6 +441,15 @@ the original projects installed in the same environment.
 
 ## Challenges
 
+- **FEMM 5.0 in Phase 2** (next release, to plan). FEMM 4.2 is replaced
+  by FEMM 5.0: the FEMM handler (`_FEMMHandler`, now
+  `classes_common/femm_handler.py` behind `femm_pyleecan.handler`) changes,
+  and the Windows / Linux support evolves (Linux runs FEMM through wine
+  today; FEMM 5.0 should allow parallel runs on Linux too). The parallel
+  solve (`MagFEMM.solve_FEMM_parallel`) uses threads
+  (`multiprocessing.dummy.Pool`, one handler per thread): investigate
+  processes (`multiprocessing` / `concurrent.futures.ProcessPoolExecutor`)
+  instead.
 - **Keep as much git history as possible in Phase 2** (to discuss). When
   the next major release keeps only the chosen backend, the code must keep
   its history (`git log --follow`, `git blame`) from the legacy `Methods`,

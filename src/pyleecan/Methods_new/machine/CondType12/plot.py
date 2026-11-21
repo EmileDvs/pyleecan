@@ -1,4 +1,4 @@
-from matplotlib.patches import Circle, Patch
+from matplotlib.patches import Circle as Circle_patches, Patch
 from ....Functions_new.utils.init_fig import init_fig
 import numpy as np
 
@@ -48,7 +48,7 @@ def plot(self, is_show_fig: bool = True, fig: Figure | None = None, ax: Axes | N
     patches_list = []
 
     # Conductor insultation
-    patches_list.append(Circle((0, 0), self.Wins_cond / 2, color=COND_INS_COLOR))
+    patches_list.append(Circle_patches((0, 0), self.Wins_cond / 2, color=COND_INS_COLOR))
 
     # Computation of the center of the wire
     center_list = []
@@ -83,10 +83,10 @@ def plot(self, is_show_fig: bool = True, fig: Figure | None = None, ax: Axes | N
     for center in center_list:
         # Wire insulation
         patches_list.append(
-            Circle(center, self.Wwire / 2 + self.Wins_wire, color=INS_COLOR)
+            Circle_patches(center, self.Wwire / 2 + self.Wins_wire, color=INS_COLOR)
         )
         # Wire conductor
-        patches_list.append(Circle(center, self.Wwire / 2, color=COND_COLOR))
+        patches_list.append(Circle_patches(center, self.Wwire / 2, color=COND_COLOR))
 
     # Display
     (fig, ax, _, _) = init_fig(fig=fig, ax=ax)

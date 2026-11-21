@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget
 
 from ......Classes_pydantic.slot.slot_m_19 import SlotM19
 from ......GUI_pydantic.Resources import pixmap_dict
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 from ..... import gui_option
 from .Gen_PMSlot19 import Gen_PMSlot19
 

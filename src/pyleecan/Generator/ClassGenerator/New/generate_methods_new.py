@@ -349,6 +349,10 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
     source = modernize_names(source, package, gen_dict, class_name)
+    # External names clashing with a class once inlined (matplotlib Circle)
+    from .modernize import alias_external_class_names
+
+    source = alias_external_class_names(source, set(gen_dict))
     # The modules moved to the utils package (Step 8)
     from .moved_functions import redirect_moved_modules
 

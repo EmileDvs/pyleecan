@@ -8,7 +8,7 @@ from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SMHoleMag import DEFAULT_MAG_MAT
 from ......GUI_new.Dialog.DMachineSetup.SMHoleMag.PHoleM58.Gen_PHoleM58 import Gen_PHoleM58
 from ......GUI_new.Resources import pixmap_dict
-from ......Methods_new.slot.Slot import SlotCheckError
+from ......classes_common.errors import SlotCheckError
 
 
 class PHoleM58(Gen_PHoleM58, QWidget):
