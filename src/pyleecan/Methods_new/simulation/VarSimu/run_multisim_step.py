@@ -1,6 +1,5 @@
 from logging import WARNING
 
-from ....Functions_new.Simulation.VarSimu.log_datakeeper_step_result import log_datakeeper_step_result
 from ....loggers import CONSOLE_LEVEL
 from typing import TYPE_CHECKING
 
@@ -32,6 +31,7 @@ def run_multisim_step(
         To adapt the text ex: "Variable Load Results"
     """
     # Change console logger level from a specific layer (if requested)
+    from ....Classes_new.simulation.var_simu import VarSimu
     if (
         simulation.layer_log_warn is not None
         and simulation.layer >= simulation.layer_log_warn
@@ -87,7 +87,7 @@ def run_multisim_step(
                 datakeeper.result_ref = value
             else:
                 datakeeper.result[index] = value
-        log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type)
+        VarSimu.log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type)
 
         # Run Post datakeeper post-processings
         if post_keeper_postproc_list is not None:

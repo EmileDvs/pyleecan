@@ -2,10 +2,13 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 import random
+import traceback
 from collections.abc import Iterable
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
+from io import StringIO
+from random import choice, sample
 from typing import TYPE_CHECKING, ClassVar
 
 import matplotlib.pyplot as plt
@@ -15,10 +18,6 @@ from deap.base import Toolbox
 from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 
 from ...classes_common.errors import OptimizationAttributeError
-from ...Functions_new.Optimization.check_cstr import check_cstr
-from ...Functions_new.Optimization.evaluate import evaluate
-from ...Functions_new.Optimization.tournamentdcd import tournamentDCD
-from ...Functions_new.Optimization.update import update
 from ..output.output import Output
 from ..output.xoutput import XOutput
 from ..simulation.data_keeper import DataKeeper
@@ -627,7 +626,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             for i in range(0, self.size_pop):
                 time = datetime.now().strftime("%H:%M:%S")
                 self.print_gen_simu(time, 0, i, self.size_pop, nb_error, pop)
-                nb_error += evaluate(self, pop[i])
+                nb_error += self.evaluate(pop[i])
                 self.print_obj(self.problem.obj_func, pop[i])
 
             # Check the constraints violation
@@ -635,7 +634,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             if len(self.problem.constraint) > 0:
                 time = datetime.now().strftime("%H:%M:%S")
                 for indiv in pop:
-                    nb_infeasible += check_cstr(self, indiv) == False
+                    nb_infeasible += self.check_cstr(indiv) == False
             print(
                 "\r{}  gen {:>5}: Finished, {:>4} errors,{:>4} infeasible.\n".format(
                     time, 0, nb_error, nb_infeasible
@@ -673,7 +672,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             ############################
             for ngen in range(1, self.nb_gen):
                 # Extracting parents using
-                parents = tournamentDCD(pop, self.size_pop)
+                parents = self.tournamentDCD(pop, self.size_pop)
 
                 # Copy new indivuals
                 children = []
@@ -693,11 +692,11 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
                     # Mutation
                     is_mutation = self.mutate(indiv1)
                     if is_cross or is_mutation:
-                        update(indiv1)
+                        self.update(indiv1)
 
                     is_mutation = self.mutate(indiv2)
                     if is_cross or is_mutation:
-                        update(indiv2)
+                        self.update(indiv2)
 
                 # Evaluate the children
                 to_eval = []
@@ -711,7 +710,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
                 for i in range(len(to_eval)):
                     time = datetime.now().strftime("%H:%M:%S")
                     self.print_gen_simu(time, ngen, i, self.size_pop, nb_error, to_eval)
-                    nb_error += evaluate(self, to_eval[i])
+                    nb_error += self.evaluate(to_eval[i])
                     self.print_obj(self.problem.obj_func, to_eval[i])
 
                 # Check the constraints violation
@@ -719,7 +718,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
                 if len(self.problem.constraint) > 0:
                     time = datetime.now().strftime("%H:%M:%S")
                     for indiv in to_eval:
-                        nb_infeasible += check_cstr(self, indiv) == False
+                        nb_infeasible += self.check_cstr(indiv) == False
                 print(
                     "\r{}  gen {:>5}: Finished, {:>4} errors,{:>4} infeasible.\n".format(
                         time, ngen, nb_error, nb_infeasible
@@ -844,3 +843,315 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
                 + ", "
             )
         print(msg[:-2] + "\n")
+
+    # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.evaluate
+    def evaluate(self, indiv) -> bool:
+        """Evaluate the individual according to the solver method
+
+        Parameters
+        ----------
+        self : Solver
+            optimization solver
+        indiv : individual
+            individual to evaluate
+
+        Returns
+        -------
+        evaluation_failure : bool
+            failure of the evaluation
+        """
+        # Get solver logger
+        logger = self.get_logger()
+
+        tb = StringIO()  # to store the traceback in case of error
+
+        logger.debug("Design variables :")
+        for i, design_variable in enumerate(indiv.design_var_name_list):
+            logger.debug(design_variable + " : " + str(indiv[i]))
+
+        try:
+            # Run the preprocessing
+            if self.problem.preprocessing is not None:
+                self.problem.preprocessing(indiv.output.simu)
+
+            if self.problem.eval_func == None:
+                indiv.output.simu.run()
+            else:
+                self.problem.eval_func(indiv.output)
+
+            # Add the fitness values, handle exception for each fitness
+            fitness = []
+            for obj_func in self.problem.obj_func:
+                try:
+                    fitness.append(float(obj_func.keeper(indiv.output)))
+                # Raise KeyboardInterrupt to stop optimization
+                except KeyboardInterrupt:
+                    raise KeyboardInterrupt
+
+                # Except error and try to compute the error_keeper
+                except Exception as err:
+                    logger.warning(
+                        "Objectiv computation " + obj_func.name + " failed:" + str(err)
+                    )
+                    if obj_func.error_keeper is None:  # Set fitness value as infinity
+                        fitness.append(float("inf"))
+                    else:
+                        try:
+                            fitness.append(float(obj_func.error_keeper(indiv.output)))
+                        # Raise KeyboardInterrupt to stop optimization
+                        except KeyboardInterrupt:
+                            raise KeyboardInterrupt
+                        # Set the fitness value as infinity
+                        except Exception as err:
+                            logger.warning(
+                                "Objectiv error computation "
+                                + obj_func.name
+                                + " failed:"
+                                + str(err)
+                            )
+                            fitness.append(float("inf"))
+
+            # Add fitness values to indiv object
+            indiv.fitness.values = fitness
+
+            # Execute the DataKeepers
+            for datakeeper in self.problem.datakeeper_list:
+                try:
+                    datakeeper.result.append(datakeeper.keeper(indiv.output))
+                except KeyboardInterrupt:
+                    raise KeyboardInterrupt("Stopped by the user.")
+                except Exception as err:
+                    logger.warning(
+                        "DataKeeper"
+                        + datakeeper.name
+                        + ".keeper execution failed:"
+                        + str(err)
+                    )
+                    if datakeeper.error_keeper:
+                        try:
+                            datakeeper.result.append(
+                                datakeeper.error_keeper(indiv.output.simu)
+                            )
+                        except KeyboardInterrupt:
+                            raise KeyboardInterrupt("Stopped by the user.")
+                        except Exception as err:
+                            logger.warning(
+                                "DataKeeper"
+                                + datakeeper.name
+                                + ".error_keeper execution failed:"
+                                + str(err)
+                            )
+                            datakeeper.result.append(np.nan)
+                    else:
+                        datakeeper.result.append(np.nan)
+
+            indiv.is_simu_valid = True
+
+            evaluation_failure = False  # Evaluation succeed
+
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt("Stopped by the user.")
+
+        except:
+            # Logging
+            print("The following simulation failed :", file=tb)
+
+            if (
+                logger.level > 10
+            ):  # Log design variables values if it is not already done
+                print("Design variables :", file=tb)
+                for i, design_variable in enumerate(indiv.design_var_name_list):
+                    print(design_variable + " : " + str(indiv[i]), file=tb)
+
+            # Log the simulation error
+            traceback.print_exc(file=tb)
+            logger.warning(tb.getvalue())
+
+            # Set fitness as inf
+            indiv.fitness.values = [float("inf") for _ in self.problem.obj_func]
+            indiv.is_simu_valid = False
+
+            # Execute the DataKeepers
+            for datakeeper in self.problem.datakeeper_list:
+                if datakeeper.error_keeper:
+                    try:
+                        datakeeper.result.append(
+                            datakeeper.error_keeper(indiv.output.simu)
+                        )
+                    except KeyboardInterrupt:
+                        raise KeyboardInterrupt("Stopped by the user.")
+                    except Exception as err:
+                        logger.warning(
+                            "DataKeeper"
+                            + datakeeper.name
+                            + ".error_keeper execution failed:"
+                            + str(err)
+                        )
+                        datakeeper.result.append(np.nan)
+                else:
+                    datakeeper.result.append(np.nan)
+
+            # Reset standard output and error
+            evaluation_failure = True  # Evaluation failed
+
+        return evaluation_failure
+
+    # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.check_cstr
+    def check_cstr(self, indiv) -> bool:
+        """Check the number of constraints violations of the individual
+
+        Parameters
+        ----------
+        self : Solver
+            Global optimization problem solver
+        indiv : individual
+            Individual of the population
+
+        Returns
+        -------
+        is_feasible : bool
+            Individual feasibility
+        """
+
+        # Non valid simulation violate every constraints
+        if indiv.is_simu_valid == False:
+            indiv.cstr_viol = len(self.problem.constraint)
+            return True  # To not add errors to infeasible
+
+        # Browse constraints
+        for constraint in self.problem.constraint:
+            # Compute value to compare
+            var_val = constraint.keeper(indiv.output)
+
+            # Compare the value with the constraint
+            type_const = constraint.type_const
+
+            if type_const == "<=":
+                if var_val > constraint.value:
+                    indiv.cstr_viol += 1
+            elif type_const in ["==", "="]:
+                if var_val != constraint.value:
+                    indiv.cstr_viol += 1
+            elif type_const == ">=":
+                if var_val < constraint.value:
+                    indiv.cstr_viol += 1
+            elif type_const == "<":
+                if var_val >= constraint.value:
+                    indiv.cstr_viol += 1
+            elif type_const == ">":
+                if var_val <= constraint.value:
+                    indiv.cstr_viol += 1
+            else:
+                raise ValueError("Wrong type of constraint")
+
+        return indiv.cstr_viol == 0
+
+    # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.tournamentDCD
+    @staticmethod
+    def tournamentDCD(pop: list, size: int) -> list:
+        """Select individuals from the population with a tournament based on the domination and the crowding distance
+        This function is inspired by DEAP selTournamentDCD function at https://github.com/DEAP/deap/blob/master/deap/tools/emo.py
+
+        Parameters
+        ----------
+        pop : list
+            list of individuals created with the DEAP toolbox
+
+        size : int
+            number of individual to select
+
+        Returns
+        -------
+        selection : list
+            list of individuals selected
+        """
+
+        if len(pop) % 4 != 0:
+            raise ValueError("TournamentDCD: pop length must be a multiple of 4")
+
+        if size % 4 != 0:
+            raise ValueError(
+                "TournamentDCD: number of individuals to select must be a multiple of 4"
+            )
+
+        # Sample the population
+        indiv_1 = sample(pop, len(pop))
+        indiv_2 = sample(pop, len(pop))
+
+        selection = []
+
+        # Select individuals
+        for i in range(0, size, 4):
+            selection.append(OptiGenAlgNsga2Deap.choseDCD(indiv_1[i], indiv_1[i + 1]))
+            selection.append(OptiGenAlgNsga2Deap.choseDCD(indiv_2[i], indiv_2[i + 1]))
+            selection.append(
+                OptiGenAlgNsga2Deap.choseDCD(indiv_1[i + 2], indiv_1[i + 3])
+            )
+            selection.append(
+                OptiGenAlgNsga2Deap.choseDCD(indiv_2[i + 2], indiv_2[i + 3])
+            )
+
+        return selection
+
+    @staticmethod
+    def choseDCD(indiv_1, indiv_2):
+        """Chose between two individuals
+
+        Parameters
+        ----------
+        indiv_1 : individual
+        indiv_2 : individual
+
+        Returns
+        -------
+        individual selected
+
+        """
+        if indiv_1.cstr_viol == 0 and indiv_2.cstr_viol > 0:  # only indiv_1 feasible
+            return indiv_1
+        elif indiv_1.cstr_viol > 0 and indiv_2.cstr_viol == 0:  # only indiv_2 feasible
+            return indiv_2
+        elif (
+            indiv_1.cstr_viol > 0 and indiv_2.cstr_viol > 0
+        ):  # indiv_1 and indiv_2 unfeasible
+            # Compare the number of constraint violations
+            if indiv_1.cstr_viol < indiv_2.cstr_viol:
+                return indiv_1
+            elif indiv_1.cstr_viol > indiv_2.cstr_viol:
+                return indiv_2
+            else:
+                return choice([indiv_1, indiv_2])
+        else:  # Both indiv feasible
+            # Check domination, else check crowding distance, else random choice
+            if indiv_1.fitness.dominates(indiv_2.fitness):
+                return indiv_1
+            elif indiv_2.fitness.dominates(indiv_1.fitness):
+                return indiv_2
+            elif indiv_1.fitness.crowding_dist > indiv_2.fitness.crowding_dist:
+                return indiv_1
+            elif indiv_1.fitness.crowding_dist < indiv_2.fitness.crowding_dist:
+                return indiv_2
+            else:
+                return choice([indiv_1, indiv_2])
+
+    # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.update
+    @staticmethod
+    def update(indiv) -> None:
+        """Update the individual output after the mutation
+
+        Parameters
+        ----------
+            indiv : Individual
+
+        """
+
+        indiv.output = type(indiv.output)(simu=indiv.output.simu.as_dict())
+
+        for k, setter in enumerate(indiv.setter_list):
+            setter(indiv.output.simu, indiv[k])
+
+        indiv.is_simu_valid = False
+        indiv.cstr_viol = 0
+
+        # Delete the fitness
+        del indiv.fitness.values

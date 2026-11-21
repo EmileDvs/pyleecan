@@ -1,48 +1,13 @@
-def check_cstr(solver, indiv):
-    """Check the number of constraints violations of the individual
+"""Deprecated alias of OptiGenAlgNsga2Deap.check_cstr (moved to the class, removed in Phase 2)."""
 
-    Parameters
-    ----------
-    solver : Solver
-        Global optimization problem solver
-    indiv : individual
-        Individual of the population
+from warnings import warn
 
-    Returns
-    -------
-    is_feasible : bool
-        Individual feasibility
-    """
 
-    # Non valid simulation violate every constraints
-    if indiv.is_simu_valid == False:
-        indiv.cstr_viol = len(solver.problem.constraint)
-        return True  # To not add errors to infeasible
-
-    # Browse constraints
-    for constraint in solver.problem.constraint:
-        # Compute value to compare
-        var_val = constraint.keeper(indiv.output)
-
-        # Compare the value with the constraint
-        type_const = constraint.type_const
-
-        if type_const == "<=":
-            if var_val > constraint.value:
-                indiv.cstr_viol += 1
-        elif type_const in ["==", "="]:
-            if var_val != constraint.value:
-                indiv.cstr_viol += 1
-        elif type_const == ">=":
-            if var_val < constraint.value:
-                indiv.cstr_viol += 1
-        elif type_const == "<":
-            if var_val >= constraint.value:
-                indiv.cstr_viol += 1
-        elif type_const == ">":
-            if var_val <= constraint.value:
-                indiv.cstr_viol += 1
-        else:
-            raise ValueError("Wrong type of constraint")
-
-    return indiv.cstr_viol == 0
+def check_cstr(obj, *args, **kwargs):
+    """Deprecated: use OptiGenAlgNsga2Deap.check_cstr"""
+    warn(
+        "check_cstr is deprecated, use OptiGenAlgNsga2Deap.check_cstr (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return obj.check_cstr(*args, **kwargs)

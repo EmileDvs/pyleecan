@@ -3,23 +3,19 @@
 
 from __future__ import annotations
 
-from logging import WARNING
+from logging import WARNING, getLogger
 from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import VarSimuError
-from ...Functions_pydantic.Simulation.VarSimu.get_elec_datakeeper_dict import (
-    get_elec_datakeeper_dict,
-)
-from ...Functions_pydantic.Simulation.VarSimu.log_datakeeper_step_result import (
-    log_datakeeper_step_result,
-)
 from ...loggers import CONSOLE_LEVEL
 from .._legacy_model import LegacyModel
 from ..magnetics.mag_femm import MagFEMM
 from ..post.post import Post
+from ..scidatatool.data import Data
+from ..scidatatool.vector_field import VectorField
 from .data_keeper import DataKeeper
 
 if TYPE_CHECKING:
@@ -195,7 +191,7 @@ class VarSimu(LegacyModel):
             list of DataKeeper
         """
 
-        dk_dict = get_elec_datakeeper_dict()
+        dk_dict = self.get_elec_datakeeper_dict()
         dk_list = []
         quantity_list = ["Id", "Iq", "Ud", "Uq"]
 
@@ -581,7 +577,7 @@ class VarSimu(LegacyModel):
                 if self.is_keep_all_output:
                     xoutput.output_list[idx] = xoutput_ref
                 # Print DataKeeper content
-                log_datakeeper_step_result(simu_step, keeper_list, idx, self.NAME)
+                self.log_datakeeper_step_result(simu_step, keeper_list, idx, self.NAME)
             progress += 1
             self.print_progress_bar(nb_simu, progress, simu_step.layer)
 
@@ -747,6 +743,8 @@ class VarSimu(LegacyModel):
             To adapt the text ex: "Variable Load Results"
         """
         # Change console logger level from a specific layer (if requested)
+        from .var_simu import VarSimu
+
         if (
             simulation.layer_log_warn is not None
             and simulation.layer >= simulation.layer_log_warn
@@ -802,10 +800,165 @@ class VarSimu(LegacyModel):
                     datakeeper.result_ref = value
                 else:
                     datakeeper.result[index] = value
-            log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type)
+            VarSimu.log_datakeeper_step_result(
+                simulation, datakeeper_list, index, simu_type
+            )
 
             # Run Post datakeeper post-processings
             if post_keeper_postproc_list is not None:
                 for postproc in post_keeper_postproc_list:
                     postproc.run(result)
         return result
+
+    # Inlined from Methods.Simulation.VarSimu.get_elec_datakeeper_dict
+    @staticmethod
+    def get_elec_datakeeper_dict() -> dict:
+        """Generate DataKeepers to store by default results from input/electric module
+        Returns
+        -------
+        dk_dict: dict
+            dict of DataKeeper for input/electric module
+        """
+
+        dk_dict = {}
+
+        dk_dict["Id"] = DataKeeper(
+            name="Stator current along d-axis",
+            physic="elec",
+            symbol="Id",
+            unit="Arms",
+            keeper="lambda output: output.elec.OP.get_Id_Iq()['Id']",
+        )
+
+        dk_dict["Iq"] = DataKeeper(
+            name="Stator current along q-axis",
+            physic="elec",
+            symbol="Iq",
+            unit="Arms",
+            keeper="lambda output: output.elec.OP.get_Id_Iq()['Iq']",
+        )
+
+        dk_dict["Ud"] = DataKeeper(
+            name="Stator voltage along d-axis",
+            symbol="Ud",
+            unit="Vrms",
+            keeper="lambda output: output.elec.OP.get_Ud_Uq()['Ud']",
+        )
+
+        dk_dict["Uq"] = DataKeeper(
+            name="Stator voltage along q-axis",
+            symbol="Uq",
+            unit="Vrms",
+            keeper="lambda output: output.elec.OP.get_Ud_Uq()['Uq']",
+        )
+
+        dk_dict["I0"] = DataKeeper(
+            name="Stator current rms amplitude",
+            symbol="I0",
+            unit="Arms",
+            keeper="lambda output: output.elec.OP.get_I0_Phi0()['I0']",
+        )
+
+        dk_dict["Phi0"] = DataKeeper(
+            name="Stator current phase",
+            symbol="Phi0",
+            unit="rad",
+            keeper="lambda output: output.elec.OP.get_I0_Phi0()['Phi0']",
+        )
+
+        dk_dict["U0"] = DataKeeper(
+            name="Stator voltage rms amplitude",
+            symbol="U0",
+            unit="Vrms",
+            keeper="lambda output: output.elec.OP.get_U0_UPhi0()['U0']",
+        )
+
+        dk_dict["UPhi0"] = DataKeeper(
+            name="Stator voltage phase",
+            symbol="UPhi0",
+            unit="rad",
+            keeper="lambda output: output.elec.OP.get_U0_UPhi0()['UPhi0']",
+        )
+
+        dk_dict["slip"] = DataKeeper(
+            name="Rotor mechanical slip",
+            symbol="slip",
+            unit="-",
+            keeper="lambda output: output.elec.OP.get_slip()",
+        )
+
+        dk_dict["Tem_av_ref"] = DataKeeper(
+            name="Reference Average Torque",
+            symbol="Tem_av_ref",
+            unit="N.m",
+            keeper="lambda output: output.elec.OP.Tem_av_ref",
+        )
+
+        dk_dict["Tem_av_elec"] = DataKeeper(
+            name="Average Torque from EEC",
+            symbol="Tem_av_elec",
+            unit="N.m",
+            keeper="lambda output: output.elec.Tem_av",
+        )
+
+        return dk_dict
+
+    # Inlined from Methods.Simulation.VarSimu.log_datakeeper_step_result
+    @staticmethod
+    def log_datakeeper_step_result(
+        simulation, datakeeper_list, index, simu_type
+    ) -> None:
+        """Log the content of the datakeeper for the step index (if index=None, use reference)"""
+        if simulation.layer == 2:
+            msg = "    "
+        else:
+            msg = ""
+        if simu_type is not None:
+            msg += simu_type + " "
+        if simulation.index is None:
+            msg += "Reference "
+        msg += "Results: "
+        for datakeeper in datakeeper_list:
+            if index is None:
+                value = datakeeper.result_ref
+            else:
+                value = datakeeper.result[index]
+            # Format log
+            if isinstance(value, np.ndarray):
+                msg += (
+                    datakeeper.symbol
+                    + "=array(min="
+                    + format(np.min(value), ".4g")
+                    + ",max="
+                    + format(np.max(value), ".4g")
+                    + ")"
+                )
+            elif isinstance(value, list):
+                msg += (
+                    datakeeper.symbol
+                    + "=list(min="
+                    + format(np.min(value), ".4g")
+                    + ",max="
+                    + format(np.max(value), ".4g")
+                    + ")"
+                )
+            elif isinstance(value, Data) or isinstance(value, VectorField):
+                msg += datakeeper.symbol + "=" + type(value).__name__
+            elif value is None:
+                pass
+                # msg += datakeeper.symbol + "=None"
+            else:
+                msg += datakeeper.symbol + "=" + format(value, ".4g")
+            if value is not None:
+                if datakeeper.unit is not None:
+                    msg += " [" + datakeeper.unit + "], "
+                else:
+                    msg += ", "
+        msg = msg[:-2]
+
+        # Get logger of the main simulation in parallel mode
+        if simulation.logger_name[0:8] == "Parallel":
+            log = getLogger(simulation.logger_name[9:])
+        else:
+            log = simulation.get_logger()
+        log.info(msg)

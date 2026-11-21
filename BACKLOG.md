@@ -231,8 +231,8 @@ Proposed targets are a starting point; the decision is the maintainer's.
 |---|---|---|---|---|
 | 1 | Dead code | `Plot.plot_2D_Data`, `Plot.plot_3D_Data` (already deprecated), `Plot.animate_as_gif`, `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `Electrical.comp_MTPA`, `getattr_recursive`, `short_filepath`, `Converter.Utils.EquivalentError` (no caller) | remove | |
 | 2 | Winding | `reverse_wind_mat`, `shift_wind_mat` (M6: Winding, WindingSC, WindingUD), `comp_cond_function` (M2: LamSlotWind, LamSlotMultiWind), `gen_phase_list` (M8 F2 T2), `find_wind_phase_color` (M3 F2) | class: `Winding` (wind matrix), `LamSlotWind` (conductor function); utility: phase list and colors | |
-| 3 | Optimization | `check_cstr`, `evaluate`, `tournamentDCD`, `update` (M2 each: OptiGenAlgNsga2Deap, OptiBayesAlgSmoot) | class: `OptiSolver` (shared base) or `OptiGenAlg` | |
-| 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | |
+| 3 | Optimization | `check_cstr`, `evaluate`, `tournamentDCD`, `update` (M2 each: OptiGenAlgNsga2Deap, OptiBayesAlgSmoot) | class: `OptiSolver` (shared base) or `OptiGenAlg` | done (2026-11-21): methods of `OptiGenAlgNsga2Deap` (`evaluate`, `check_cstr`; `tournamentDCD`, `update` static) |
+| 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | done (2026-11-21): static methods of `VarSimu` |
 | 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | |
 | 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | |
 | 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | |
@@ -243,6 +243,43 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | |
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
+
+### Groups 3 and 4 (2026-11-21)
+
+- Optimization: only `OptiGenAlgNsga2Deap.solve` calls the four functions
+  (`OptiBayesAlgSmoot.solve` imported them without using them, and has its
+  own `evaluate(input_x)`): methods of `OptiGenAlgNsga2Deap`, not of
+  `OptiSolver` (an `evaluate` on the base would be overridden with another
+  signature). The functions work on the DEAP individuals of
+  `create_toolbox`. `choseDCD` (helper of `tournamentDCD`) becomes a static
+  method too.
+- Simulation: `get_elec_datakeeper_dict` and `log_datakeeper_step_result`
+  static methods of `VarSimu` (they do not use the object).
+- Generator support added: a static method called from a daughter class
+  (`VarLoadCurrent`, `VarLoadVoltage`: `self.get_elec_datakeeper_dict()`),
+  or from a static method (`run_multisim_step`:
+  `VarSimu.log_datakeeper_step_result`, class imported in the function);
+  the helpers of a static method module are called on the class (class
+  generator; `self.choseDCD` before, a NameError); the Python 2 branches of
+  the `sys.version_info` tests are removed (`remove_python2_branches`, both
+  pipelines: `evaluate` was kept as a broken import of the legacy path,
+  the class generator does not inline a top-level `if`).
+- Checks: `Tests/Classes` 3937 passed; `Tests/New/Classes` 2855 passed and
+  `test_copy_out` failed with each backend; `Tests/New/Cross` 1405 passed;
+  legacy `test_zdt3`, `test_Binh_and_Korn` pass. In `Tests/New`, these two
+  and `test_post_var_simu` fail before reaching the moved methods, as
+  before this change (custom setters: `OptiDesignVarInterval._setter_str`,
+  DataKeeper functions given as strings, Step 13); `tournamentDCD`,
+  `get_elec_datakeeper_dict` and the deprecated aliases checked against
+  legacy with a script (same selection with a fixed seed).
+- `ty`: optimization 65 -> 64, simulation 73 -> 84 (the moved functions
+  are checked in `Methods_new` now: DataKeeper functions given as
+  strings).
+- Found on the way (#751, open): `LossModelBertotti.plot_fitting` and
+  `LossModelSteinmetz.plot_fitting` import the `comp_loss_val` helper of
+  the `comp_coeff` method module: runtime import of a method source in
+  the classes (`test_no_runtime_import_of_method_sources` fails since the
+  #751 merge).
 
 ## Step 9: logger chain
 

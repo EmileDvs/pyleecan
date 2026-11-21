@@ -206,6 +206,49 @@ def test_remove_coding_declaration(source, expected):
     assert remove_coding_declaration(source) == expected
 
 
+@pytest.mark.parametrize(
+    "source, expected",
+    [
+        (  # Python 3 branch kept
+            "import sys\n\nif sys.version_info > (3, 0):\n    from io import StringIO\nelse:\n"
+            "    from StringIO import StringIO\n\nx = 1\n",
+            "import sys\n\nfrom io import StringIO\n\nx = 1\n",
+        ),
+        (  # Python 2 test: the else branch is kept
+            "if sys.version_info < (3,):\n    a = 2\nelse:\n    a = 3\n    b = [\n        1,\n    ]\n",
+            "a = 3\nb = [\n    1,\n]\n",
+        ),
+        (  # No else: nothing left
+            "if sys.version_info < (3, 0):\n    a = 2\nx = 1\n",
+            "x = 1\n",
+        ),
+        (  # Recent version tests are kept
+            "if sys.version_info >= (3, 11):\n    import tomllib\n",
+            "if sys.version_info >= (3, 11):\n    import tomllib\n",
+        ),
+    ],
+)
+def test_remove_python2_branches(source, expected):
+    from pyleecan.Generator.ClassGenerator.New.modernize import remove_python2_branches
+
+    assert remove_python2_branches(source) == expected
+    assert remove_python2_branches(expected) == expected  # Idempotent
+
+
+@pytest.mark.parametrize("package", ["Classes_new", "Classes_pydantic"])
+def test_static_method_calls_its_helpers_on_the_class(package):
+    """A helper of a static method module is called on the class (no self)."""
+    import importlib
+
+    module = importlib.import_module(f"pyleecan.{package}.optimization.opti_gen_alg_nsga_2_deap")
+    tree = ast.parse(Path(module.__file__).read_text(encoding="utf-8"))
+    cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "OptiGenAlgNsga2Deap")
+    method = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "tournamentDCD")
+    source = ast.unparse(method)
+    assert "OptiGenAlgNsga2Deap.choseDCD(" in source
+    assert "self." not in source
+
+
 def test_local_package_import_removed_with_module_import():
     """A local numpy import would make np local to the whole function
     (UnboundLocalError before it): removed when the module imports numpy."""

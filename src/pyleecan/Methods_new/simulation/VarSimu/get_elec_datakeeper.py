@@ -1,4 +1,3 @@
-from ....Functions_new.Simulation.VarSimu.get_elec_datakeeper_dict import get_elec_datakeeper_dict
 
 
 def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
@@ -17,7 +16,7 @@ def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list
         list of DataKeeper
     """
 
-    dk_dict = get_elec_datakeeper_dict()
+    dk_dict = self.get_elec_datakeeper_dict()
     dk_list = []
     quantity_list = ["Id", "Iq", "Ud", "Uq"]
 

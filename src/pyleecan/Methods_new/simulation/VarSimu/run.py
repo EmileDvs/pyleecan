@@ -1,6 +1,5 @@
 import numpy as np
 import itertools
-from ....Functions_new.Simulation.VarSimu.log_datakeeper_step_result import log_datakeeper_step_result
 from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
@@ -144,7 +143,7 @@ def run(self) -> None:
             if self.is_keep_all_output:
                 xoutput.output_list[idx] = xoutput_ref
             # Print DataKeeper content
-            log_datakeeper_step_result(simu_step, keeper_list, idx, self.NAME)
+            self.log_datakeeper_step_result(simu_step, keeper_list, idx, self.NAME)
         progress += 1
         print_progress_bar(nb_simu, progress, simu_step.layer)
 

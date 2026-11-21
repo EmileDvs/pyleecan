@@ -3,9 +3,6 @@
 
 from typing import TYPE_CHECKING, ClassVar
 
-from ...Functions_pydantic.Simulation.VarSimu.get_elec_datakeeper_dict import (
-    get_elec_datakeeper_dict,
-)
 from .input_voltage import InputVoltage
 from .param_explorer_set import ParamExplorerSet
 from .simulation import Simulation
@@ -93,7 +90,7 @@ class VarLoadVoltage(VarLoad):
             list of DataKeeper
         """
 
-        dk_dict = get_elec_datakeeper_dict()
+        dk_dict = self.get_elec_datakeeper_dict()
         dk_list = []
 
         if not is_multi:

@@ -154,9 +154,10 @@ def _redirect_function_errors(source, path, relative_path, class_dir):
 
 def _format_function_source(source, path):
     """Apply the same import styles and Ruff formatting as generated classes."""
-    from .modernize import remove_coding_declaration  # Shared with the methods
+    from .modernize import remove_coding_declaration, remove_python2_branches  # Shared with the methods
 
     source = remove_coding_declaration(source)
+    source = remove_python2_branches(source)
     source = _replace_empty_containers(source, include_tuple=True)
     from .modernize import apply_import_styles  # Shared with the methods
 

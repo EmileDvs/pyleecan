@@ -7,10 +7,6 @@ from ....Classes_new.output.output import Output
 from ....Classes_new.output.xoutput import XOutput
 from ....Classes_new.simulation.data_keeper import DataKeeper
 from ....Classes_new.simulation.param_explorer_set import ParamExplorerSet
-from ....Functions_new.Optimization.evaluate import evaluate
-from ....Functions_new.Optimization.update import update
-from ....Functions_new.Optimization.check_cstr import check_cstr
-from ....Functions_new.Optimization.tournamentdcd import tournamentDCD
 
 
 def create_setter(accessor, attribute):

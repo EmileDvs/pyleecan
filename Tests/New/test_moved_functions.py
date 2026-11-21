@@ -94,6 +94,43 @@ def test_redirect_moved_calls_static():
         redirect_moved_calls(source, "pyleecan.Methods_new.output.OutMag", "OutMag", MOVED)
 
 
+def test_redirect_moved_calls_static_in_daughter_class():
+    """A daughter class calls the static method of its mother class on self."""
+    source = (
+        "from ....Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step\n\n\n"
+        "def get(self):\n"
+        "    return run_multisim_step(simu, keepers, True)\n"
+    )
+    gen_dict = {"VarLoadCurrent": {"mother": "VarLoad"}, "VarLoad": {"mother": "VarSimu"}, "VarSimu": {"mother": ""}}
+    result = redirect_moved_calls(
+        source, "pyleecan.Methods_new.simulation.VarLoadCurrent", "VarLoadCurrent", MOVED, gen_dict=gen_dict
+    )
+    assert "return self.run_multisim_step(simu, keepers, True)" in result
+    # Without the mother classes, the call is refused
+    with pytest.raises(ValueError, match="outside of its class"):
+        redirect_moved_calls(source, "pyleecan.Methods_new.simulation.VarLoadCurrent", "VarLoadCurrent", MOVED)
+
+
+def test_redirect_moved_calls_static_in_static_method():
+    """A static method calls a static method on the class, imported in its body."""
+    source = (
+        "from ....Functions.Simulation.VarSimu.run_multisim_step import run_multisim_step\n\n\n"
+        "@staticmethod\n"
+        "def helper(simulation):\n"
+        '    """Doc"""\n'
+        "    value = 1\n"
+        "    return run_multisim_step(simulation, value)\n"
+    )
+    result = redirect_moved_calls(source, "pyleecan.Methods_new.simulation.VarSimu", "VarSimu", MOVED)
+    assert (
+        '    """Doc"""\n'
+        "    from ....Classes.VarSimu import VarSimu\n"
+        "    value = 1\n"
+        "    return VarSimu.run_multisim_step(simulation, value)\n"
+    ) in result
+    ast.parse(result)
+
+
 def test_redirect_moved_calls_unrelated():
     source = "from .get_area import get_area\n\nget_area(x)\n"
     assert redirect_moved_calls(source, "pyleecan.Methods_new.mesh.Mesh", "Mesh", MOVED) == source

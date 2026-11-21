@@ -1671,6 +1671,14 @@ def _expand_error_wildcard_imports(
     return body, None
 
 
+def _is_static_method_node(node):
+    """True for a method module function without self (@staticmethod)."""
+    return any(
+        isinstance(decorator, ast.Name) and decorator.id == "staticmethod"
+        for decorator in node.decorator_list
+    )
+
+
 def _get_method_source(
     path_to_gen,
     class_pack,
@@ -2225,9 +2233,12 @@ def _get_method_source(
     method_source = _rename_method_references(method_source, renamed_method_names)
     method_source = _rewrite_method_call_targets(method_source, method_call_redirects)
     method_helper_names = inline_helper_names.difference(method_local_names)
+    # The helpers become static methods: called on self, or on the class in a
+    # static method (no self)
+    helper_owner = class_name if _is_static_method_node(method_node) else "self"
     method_source = _rename_method_references(
         method_source,
-        {name: "self." + name for name in method_helper_names},
+        {name: helper_owner + "." + name for name in method_helper_names},
     )
     method_source = _add_literal_keyword_defaults(
         method_source, inline_literal_defaults, used_names

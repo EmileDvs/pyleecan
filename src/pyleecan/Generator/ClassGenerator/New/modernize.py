@@ -7,6 +7,7 @@ inlined in. This module centralizes them (PLAN.md Step 5); the class generator
 imports them for its own passes and keeps only the class assembly.
 
 - ``remove_coding_declaration``: useless UTF-8 encoding declarations
+- ``remove_python2_branches``: Python 2 branches of the ``sys.version_info`` tests
 - ``apply_import_styles`` (``_apply_*_import_style``): ``import numpy as np``,
   ``import pyvista as pv``, ``import os``
 - ``_replace_empty_containers``: ``list()`` -> ``[]``, ``dict()`` -> ``{}``
@@ -23,6 +24,7 @@ changes nothing.
 import ast
 import io
 import re
+import textwrap
 import tokenize
 from bisect import bisect_left
 from importlib.util import resolve_name
@@ -50,6 +52,68 @@ def remove_coding_declaration(source):
             while lines and not lines[0].strip():
                 del lines[0]
             return "".join(lines)
+    return source
+
+
+def _python3_branch(test):
+    """True / False if test compares sys.version_info with (3, ...), else None.
+
+    ``sys.version_info > (3, 0)`` and ``>= (3,)`` are True on Python 3,
+    ``< (3, 0)`` and ``<= (2, ...)`` False.
+    """
+    if not (
+        isinstance(test, ast.Compare)
+        and len(test.ops) == 1
+        and ast.unparse(test.left) == "sys.version_info"
+        and isinstance(test.comparators[0], ast.Tuple)
+    ):
+        return None
+    try:
+        version = ast.literal_eval(test.comparators[0])
+    except ValueError:
+        return None
+    if not version or version[0] not in (2, 3) or tuple(version) > (3, 0):
+        return None
+    op = test.ops[0]
+    if isinstance(op, (ast.Gt, ast.GtE)):
+        return True
+    if isinstance(op, (ast.Lt, ast.LtE)):
+        return False
+    return None
+
+
+def remove_python2_branches(source):
+    """Keep the Python 3 branch of the top-level ``sys.version_info`` tests.
+
+    ``if sys.version_info > (3, 0): from io import StringIO`` ``else: from
+    StringIO import StringIO`` becomes ``from io import StringIO``. Only
+    comparisons with a version up to (3, 0) are resolved.
+    """
+    if "version_info" not in source:
+        return source
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    replacements = []
+    for node in tree.body:
+        if not isinstance(node, ast.If):
+            continue
+        branch = _python3_branch(node.test)
+        if branch is None:
+            continue
+        kept = node.body if branch else node.orelse
+        start = offsets[node.lineno - 1]
+        end = offsets[node.end_lineno]
+        text = (
+            textwrap.dedent("".join(lines[kept[0].lineno - 1 : kept[-1].end_lineno]))
+            if kept
+            else ""
+        )
+        replacements.append((start, end, text))
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
     return source
 
 

@@ -7,10 +7,6 @@ from ....Classes_new.output.output import Output
 from ....Classes_new.output.xoutput import XOutput
 from ....Classes_new.simulation.data_keeper import DataKeeper
 from ....Classes_new.simulation.param_explorer_set import ParamExplorerSet
-from ....Functions_new.Optimization.evaluate import evaluate
-from ....Functions_new.Optimization.update import update
-from ....Functions_new.Optimization.check_cstr import check_cstr
-from ....Functions_new.Optimization.tournamentdcd import tournamentDCD
 
 
 def create_setter(accessor, attribute):
@@ -103,7 +99,7 @@ def solve(self, xoutput=None):
         for i in range(0, self.size_pop):
             time = datetime.now().strftime("%H:%M:%S")
             print_gen_simu(time, 0, i, self.size_pop, nb_error, pop)
-            nb_error += evaluate(self, pop[i])
+            nb_error += self.evaluate(pop[i])
             print_obj(self.problem.obj_func, pop[i])
 
         # Check the constraints violation
@@ -111,7 +107,7 @@ def solve(self, xoutput=None):
         if len(self.problem.constraint) > 0:
             time = datetime.now().strftime("%H:%M:%S")
             for indiv in pop:
-                nb_infeasible += check_cstr(self, indiv) == False
+                nb_infeasible += self.check_cstr(indiv) == False
         print(
             "\r{}  gen {:>5}: Finished, {:>4} errors,{:>4} infeasible.\n".format(
                 time, 0, nb_error, nb_infeasible
@@ -149,7 +145,7 @@ def solve(self, xoutput=None):
         ############################
         for ngen in range(1, self.nb_gen):
             # Extracting parents using
-            parents = tournamentDCD(pop, self.size_pop)
+            parents = self.tournamentDCD(pop, self.size_pop)
 
             # Copy new indivuals
             children = []
@@ -169,11 +165,11 @@ def solve(self, xoutput=None):
                 # Mutation
                 is_mutation = self.mutate(indiv1)
                 if is_cross or is_mutation:
-                    update(indiv1)
+                    self.update(indiv1)
 
                 is_mutation = self.mutate(indiv2)
                 if is_cross or is_mutation:
-                    update(indiv2)
+                    self.update(indiv2)
 
             # Evaluate the children
             to_eval = []
@@ -187,7 +183,7 @@ def solve(self, xoutput=None):
             for i in range(len(to_eval)):
                 time = datetime.now().strftime("%H:%M:%S")
                 print_gen_simu(time, ngen, i, self.size_pop, nb_error, to_eval)
-                nb_error += evaluate(self, to_eval[i])
+                nb_error += self.evaluate(to_eval[i])
                 print_obj(self.problem.obj_func, to_eval[i])
 
             # Check the constraints violation
@@ -195,7 +191,7 @@ def solve(self, xoutput=None):
             if len(self.problem.constraint) > 0:
                 time = datetime.now().strftime("%H:%M:%S")
                 for indiv in to_eval:
-                    nb_infeasible += check_cstr(self, indiv) == False
+                    nb_infeasible += self.check_cstr(indiv) == False
             print(
                 "\r{}  gen {:>5}: Finished, {:>4} errors,{:>4} infeasible.\n".format(
                     time, ngen, nb_error, nb_infeasible

@@ -106,6 +106,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   a static method of `VarSimu`. The old function paths of `Functions_new` and
   `Functions_pydantic` are deprecated aliases (`DeprecationWarning`) until
   Phase 2. The other functions used by a single class stay utilities.
+- **Utility functions refactored, group by group** (Step 8):
+  - Optimization: `evaluate`, `check_cstr`, `tournamentDCD`, `update`
+    become methods of `OptiGenAlgNsga2Deap` (the last two static);
+  - Simulation: `get_elec_datakeeper_dict`, `log_datakeeper_step_result`
+    become static methods of `VarSimu`.
+  The old paths are deprecated aliases until Phase 2.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
 - **`pyleecan.classes_common`**: support shared by the class implementations,
@@ -207,7 +213,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
-| 8. Refactor the remaining `Functions` modules (generator) | in progress (0/14 groups) |
+| 8. Refactor the remaining `Functions` modules (generator) | in progress (2/14 groups) |
 | 9. Logger chain (generator) | to do |
 | 10. GUI, first pass (generator) | to do |
 | 11. Parent links, first pass (generator) | to do |

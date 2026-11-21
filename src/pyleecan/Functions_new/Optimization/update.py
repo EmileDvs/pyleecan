@@ -1,19 +1,15 @@
-def update(indiv):
-    """Update the individual output after the mutation
+"""Deprecated alias of OptiGenAlgNsga2Deap.update (moved to the class, removed in Phase 2)."""
 
-    Parameters
-    ----------
-        indiv : Individual
+from warnings import warn
 
-    """
 
-    indiv.output = type(indiv.output)(simu=indiv.output.simu.as_dict())
+def update(*args, **kwargs):
+    """Deprecated: use OptiGenAlgNsga2Deap.update"""
+    from ...Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
 
-    for k, setter in enumerate(indiv.setter_list):
-        setter(indiv.output.simu, indiv[k])
-
-    indiv.is_simu_valid = False
-    indiv.cstr_viol = 0
-
-    # Delete the fitness
-    del indiv.fitness.values
+    warn(
+        "update is deprecated, use OptiGenAlgNsga2Deap.update (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return OptiGenAlgNsga2Deap.update(*args, **kwargs)

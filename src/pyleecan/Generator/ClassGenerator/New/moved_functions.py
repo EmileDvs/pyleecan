@@ -38,6 +38,22 @@ MOVED_FUNCTIONS = {
     "Simulation.VarSimu.run_multisim_step": MovedFunction(
         "VarSimu", "run_multisim_step", static=True
     ),
+    # Step 8, group 4: datakeepers of the multi-simulations
+    "Simulation.VarSimu.get_elec_datakeeper_dict": MovedFunction(
+        "VarSimu", "get_elec_datakeeper_dict", static=True
+    ),
+    "Simulation.VarSimu.log_datakeeper_step_result": MovedFunction(
+        "VarSimu", "log_datakeeper_step_result", static=True
+    ),
+    # Step 8, group 3: NSGA-II with DEAP (the functions work on the DEAP
+    # individuals of OptiGenAlgNsga2Deap.create_toolbox; OptiBayesAlgSmoot
+    # imported them without using them and has its own evaluate)
+    "Optimization.evaluate": MovedFunction("OptiGenAlgNsga2Deap", "evaluate"),
+    "Optimization.check_cstr": MovedFunction("OptiGenAlgNsga2Deap", "check_cstr"),
+    "Optimization.tournamentDCD": MovedFunction(
+        "OptiGenAlgNsga2Deap", "tournamentDCD", static=True
+    ),
+    "Optimization.update": MovedFunction("OptiGenAlgNsga2Deap", "update", static=True),
 }
 """{legacy function module below Functions: MovedFunction}"""
 
@@ -204,12 +220,34 @@ def alias_source(legacy_module, target):
     return "\n".join(lines) + "\n"
 
 
-def redirect_moved_calls(source, package, class_name=None, moved=None):
+def _class_lineage(class_name, gen_dict):
+    """The class and its mother classes (from the generation dictionary)."""
+    lineage = []
+    while class_name and class_name not in lineage:
+        lineage.append(class_name)
+        class_name = (gen_dict or {}).get(class_name, {}).get("mother") or None
+    return lineage
+
+
+def _is_static_function(node):
+    """True for a function without self: @staticmethod or no parameter."""
+    if any(
+        isinstance(decorator, ast.Name) and decorator.id == "staticmethod"
+        for decorator in node.decorator_list
+    ):
+        return True
+    args = node.args.posonlyargs + node.args.args
+    return not args or args[0].arg != "self"
+
+
+def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=None):
     """Call the moved methods instead of the legacy functions.
 
     ``from ....Functions.MeshSolution.get_area import get_area`` is removed and
-    ``get_area(ms, ...)`` becomes ``ms.get_area(...)``; a static method is
-    called on ``self`` in a method of its class.
+    ``get_area(ms, ...)`` becomes ``ms.get_area(...)``. A static method is
+    called in a method of its class or of a daughter class: on ``self`` in a
+    regular method, on the class in a static method (class imported in the
+    function, as the other class imports of the methods).
 
     Parameters
     ----------
@@ -221,6 +259,8 @@ def redirect_moved_calls(source, package, class_name=None, moved=None):
         Class of the method module
     moved : dict, optional
         {legacy module: MovedFunction} (default: MOVED_FUNCTIONS)
+    gen_dict : dict, optional
+        Generation dictionary, for the mother classes of class_name
 
     Returns
     -------
@@ -264,6 +304,9 @@ def redirect_moved_calls(source, package, class_name=None, moved=None):
         replacements.append((start, end, text))
     if not names:
         return source
+    lineage = _class_lineage(class_name, gen_dict)
+    functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)]
+    class_imports = {}  # Static function: classes to import in its body
     for node in ast.walk(tree):
         if not (
             isinstance(node, ast.Call)
@@ -275,12 +318,27 @@ def redirect_moved_calls(source, package, class_name=None, moved=None):
         func_start = offsets[node.func.lineno - 1] + node.func.col_offset
         func_end = offsets[node.func.end_lineno - 1] + node.func.end_col_offset
         if target.static:
-            if class_name != target.class_name:
+            if target.class_name not in lineage:
                 raise ValueError(
                     f"{package}: call of the static method {target.method} "
-                    "outside of its class is not supported"
+                    "outside of its class (or a daughter class) is not supported"
                 )
-            replacements.append((func_start, func_end, "self." + target.method))
+            caller = next(
+                (f for f in functions if f.lineno <= node.lineno <= f.end_lineno),
+                None,
+            )
+            if caller is None or _is_static_function(caller):
+                if caller is None:
+                    raise ValueError(
+                        f"{package}: call of {target.method} outside of a function"
+                    )
+                class_imports.setdefault(caller.name, (caller, set()))[1].add(
+                    target.class_name
+                )
+                owner = target.class_name
+            else:
+                owner = "self"
+            replacements.append((func_start, func_end, f"{owner}.{target.method}"))
             continue
         if not node.args or isinstance(node.args[0], ast.Starred):
             raise ValueError(f"{package}: call of {target.method} without object")
@@ -299,6 +357,17 @@ def redirect_moved_calls(source, package, class_name=None, moved=None):
         else:
             replacements.append((first_start, first_end, ""))
         replacements.append((func_start, func_end, f"{obj}.{target.method}"))
+    # Class import at the start of the body of the static functions
+    up = "." * len(package.split("."))  # pyleecan.<...>: one dot per package
+    for caller, classes in class_imports.values():
+        body = caller.body
+        first = body[1] if ast.get_docstring(caller) is not None and len(body) > 1 else body[0]
+        indent = " " * first.col_offset
+        start = offsets[first.lineno - 1]
+        text = "".join(
+            f"{indent}from {up}Classes.{name} import {name}\n" for name in sorted(classes)
+        )
+        replacements.append((start, start, text))
     for start, end, replacement in sorted(replacements, reverse=True):
         source = source[:start] + replacement + source[end:]
     return source

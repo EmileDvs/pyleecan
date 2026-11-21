@@ -267,6 +267,7 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
         apply_import_styles,
         modernize_names,
         remove_coding_declaration,
+        remove_python2_branches,
         wire_custom_setter,
     )
     from .source_names import name_maps
@@ -278,7 +279,8 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     # The class of a method module: Methods_new.<sub-package>.<Class>[...]
     class_name = parts[3] if len(parts) > 3 and parts[3] in gen_dict else None
     source = remove_coding_declaration(source)
-    source = redirect_moved_calls(source, package, class_name)
+    source = remove_python2_branches(source)
+    source = redirect_moved_calls(source, package, class_name, gen_dict=gen_dict)
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
     source = modernize_names(source, package, gen_dict, class_name)
