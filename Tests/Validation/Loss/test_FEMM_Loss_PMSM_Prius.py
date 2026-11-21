@@ -241,11 +241,11 @@ def test_LossFEMM_Prius():
 
     lm_steinmetz = LossModelSteinmetz()
     lm_steinmetz.comp_coeff(material)
-    lm_steinmetz.plot_fitting(material, is_show_fig=True)
+    # lm_steinmetz.plot_fitting(material, is_show_fig=True)
 
     lm_bertotti = LossModelBertotti()
     lm_bertotti.comp_coeff(material)
-    lm_bertotti.plot_fitting(material, is_show_fig=True)
+    # lm_bertotti.plot_fitting(material, is_show_fig=True)
 
     simu = Simu1(name="test_FEMM_Loss_Prius", machine=machine)
 
