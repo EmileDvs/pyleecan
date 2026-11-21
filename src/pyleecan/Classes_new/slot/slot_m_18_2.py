@@ -8,13 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError
-from ...Functions_new.labels import (
-    COND_BOUNDARY_PROP_LAB,
-    WIND_LAB,
-    YOKE_LAB,
-    YSML_LAB,
-    YSMR_LAB,
-)
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -24,6 +17,13 @@ from ...Functions_new.Plot import (
     P_FONT_SIZE,
     SC_FONT_SIZE,
     TEXT_BOX,
+)
+from ...Functions_new.utils.labels import (
+    COND_BOUNDARY_PROP_LAB,
+    WIND_LAB,
+    YOKE_LAB,
+    YSML_LAB,
+    YSMR_LAB,
 )
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment

@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget
 from .....Classes_new.machine.lam_slot_wind import LamSlotWind
 from .....Classes_new.machine.machine_ipmsm import MachineIPMSM
 from .....Classes_new.machine.machine_wrsm import MachineWRSM
-from .....Functions_new.GUI.log_error import log_error
+from .....GUI_new.Tools.log_error import log_error
 from .....GUI_new import gui_option
 from .....GUI_new.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
 from .....GUI_new.Dialog.DMachineSetup.DBore.DBore import DBore

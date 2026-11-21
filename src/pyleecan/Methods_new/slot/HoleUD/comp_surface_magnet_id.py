@@ -1,4 +1,4 @@
-from ....Functions_new.labels import HOLEM_LAB
+from ....Functions_new.utils.labels import HOLEM_LAB
 
 
 def comp_surface_magnet_id(self, index: int) -> float:

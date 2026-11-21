@@ -1,5 +1,5 @@
 import numpy as np
-from ....Functions_new.labels import update_RTS_index
+from ....Functions_new.utils.labels import update_RTS_index
 from ....Classes_new.machine.lamination import Lamination
 
 

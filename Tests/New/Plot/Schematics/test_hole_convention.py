@@ -10,7 +10,7 @@ from backend_classes.machine.lam_hole import LamHole
 from backend_classes.machine.magnet import Magnet
 from backend_classes.geometry.arc_1 import Arc1
 from backend_functions.load import load
-from backend_functions.labels import HOLEM_LAB, decode_label
+from backend_functions.utils.labels import HOLEM_LAB, decode_label
 from backend_classes.slot.hole_m_51 import HoleM51
 from pyleecan.definitions import DATA_DIR
 from Tests.New._test_paths import save_plot_path as save_path

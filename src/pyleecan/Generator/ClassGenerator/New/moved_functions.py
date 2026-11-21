@@ -1383,3 +1383,109 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
     for start, end, replacement in sorted(replacements, reverse=True):
         source = source[:start] + replacement + source[end:]
     return source
+
+
+MOVED_MODULES = {
+    # Step 8 group 13 (decision 2026-11-21): the label and path helpers in the
+    # utils package
+    "labels": "utils.labels",
+    "path_tools": "utils.path_tools",
+    # Step 8 group 13: log_error with the GUI, where it is used (the core
+    # methods log their errors instead, legacy_fixes)
+    "GUI.log_error": "GUI_new.Tools.log_error",
+}
+"""{legacy module below Functions: new module below Functions_new, or below
+pyleecan for the GUI (``GUI_new...``, written by the GUI generator)}: whole
+modules moved (constants included); the legacy path is a deprecated module
+re-exporting the names"""
+
+GUI_TARGET = "GUI_new."
+"""Prefix of the moved modules going to the GUI"""
+
+
+def moved_module_target(new, soft_name="pyleecan"):
+    """Absolute module name of a MOVED_MODULES target."""
+    if new.startswith(GUI_TARGET):
+        return f"{soft_name}.{new}"
+    return f"{soft_name}.Functions_new.{new}"
+
+
+def moved_module_redirect(soft_name="pyleecan"):
+    """Redirect (absolute module -> new absolute module) of the moved modules,
+    for generate_gui_new.redirect_imports (legacy or Functions_new imports)."""
+
+    def redirect(module):
+        for package in ("Functions", "Functions_new"):
+            for old, new in MOVED_MODULES.items():
+                prefix = f"{soft_name}.{package}.{old}"
+                if module == prefix or module.startswith(prefix + "."):
+                    return moved_module_target(new, soft_name) + module[len(prefix) :]
+        return None
+
+    return redirect
+
+
+def redirect_moved_modules(source, package, soft_name="pyleecan"):
+    """Import the moved modules (MOVED_MODULES) from their new location."""
+    if not any(old.rpartition(".")[2] in source for old in MOVED_MODULES):
+        return source
+    from .generate_gui_new import redirect_imports
+
+    return redirect_imports(source, package, moved_module_redirect(soft_name))
+
+
+def moved_module_alias_source(legacy_module, source, errors=None):
+    """Deprecated module at the legacy path of a moved module.
+
+    Parameters
+    ----------
+    legacy_module : str
+        Legacy module below Functions
+    source : str
+        Its legacy source (the public names re-exported)
+    errors : dict, optional
+        {legacy error name: shared error name} (classes_common.errors)
+
+    Returns
+    -------
+    source : str
+        Module warning on import and re-exporting the names of the new module
+    """
+    errors = errors or {}
+    new = MOVED_MODULES[legacy_module]
+    names = []
+    for node in ast.parse(source).body:
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
+            candidates = [node.name]
+        elif isinstance(node, ast.Assign):
+            candidates = [t.id for t in node.targets if isinstance(t, ast.Name)]
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+            candidates = [node.target.id]
+        else:
+            candidates = []
+        names += [n for n in candidates if not n.startswith("_") and n not in errors]
+    if new.startswith(GUI_TARGET):  # From the root of the package
+        up = "." * (len(legacy_module.split(".")) + 1)
+        public = f"{new[len(GUI_TARGET) :]} of the GUI package"  # Any backend
+    else:
+        up = "." * len(legacy_module.split("."))
+        public = f"pyleecan.Functions.{new}"
+    message = (
+        f"pyleecan.Functions.{legacy_module} is deprecated, use {public} "
+        "(removed in Phase 2)"
+    )
+    text = (
+        f'"""Deprecated module: moved to {new} (removed in Phase 2)."""\n\n'
+        "from warnings import warn\n\n"
+        f"from {up}{new} import (  # noqa: F401\n"
+        + "".join(f"    {name},\n" for name in dict.fromkeys(names))
+        + ")\n"
+    )
+    if errors:
+        shared = ", ".join(
+            f"{shared} as {legacy}" if shared != legacy else legacy
+            for legacy, shared in sorted(errors.items())
+        )
+        root = "." * (len(legacy_module.split(".")) + 1)
+        text += f"from {root}classes_common.errors import {shared}  # noqa: F401\n"
+    return text + f"\nwarn({message!r}, DeprecationWarning, stacklevel=2)\n"

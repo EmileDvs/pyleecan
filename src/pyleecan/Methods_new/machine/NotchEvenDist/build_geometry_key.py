@@ -1,4 +1,4 @@
-from ....Functions_new.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
+from ....Functions_new.utils.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 
 import numpy as np
 

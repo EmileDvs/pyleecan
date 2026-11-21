@@ -1,7 +1,7 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QMessageBox, QWidget
 
-from .....Functions_pydantic.GUI.log_error import log_error
+from .....GUI_pydantic.Tools.log_error import log_error
 from .....GUI_pydantic.Dialog.DMachineSetup.SPreview.Ui_SPreview import Ui_SPreview
 
 

@@ -1,5 +1,5 @@
 from ....definitions import config_dict
-from ....Functions_new.labels import decode_label
+from ....Functions_new.utils.labels import decode_label
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

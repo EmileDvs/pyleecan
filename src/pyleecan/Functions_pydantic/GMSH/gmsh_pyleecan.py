@@ -23,7 +23,7 @@ from ...Classes_pydantic.geometry.surf_ring import SurfRing
 from ...Classes_pydantic.machine.machine_scim import MachineSCIM
 from ...Classes_pydantic.machine.machine_sipmsm import MachineSIPMSM
 from ...Classes_pydantic.machine.machine_wrsm import MachineWRSM
-from ..labels import (
+from ..utils.labels import (
     AIRBOX_LAB,
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,

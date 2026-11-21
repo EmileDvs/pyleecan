@@ -10,7 +10,7 @@ from logging import getLogger
 
 import numpy as np
 
-from ..Functions_new.labels import HOLEM_LAB, HOLEV_LAB
+from ..Functions_new.utils.labels import HOLEM_LAB, HOLEV_LAB
 from ..loggers import GUI_LOG_NAME
 from .errors import RetroCompatibilityError
 

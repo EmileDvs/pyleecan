@@ -93,7 +93,29 @@ _RULE_FUNCTIONS_IMPORT = (
     "    from ....Functions_new.Converter.rule_functions import rule_function_module\n\n"
 )
 
+def _log_error_fixes(logger):
+    """log_error without popup in a method: the error logged (no GUI import)."""
+    return (
+        LegacyFix(old="from ....Functions.GUI.log_error import log_error\n", new=""),
+        LegacyFix(
+            old="            log_error(\n"
+            "                self,\n"
+            "                err_msg,\n"
+            f"                {logger},\n"
+            "                is_popup=False,\n"
+            "                is_warning=False,\n"
+            "            )\n",
+            new=f"            {logger}.error(err_msg)\n",
+        ),
+    )
+
+
 LEGACY_FIXES = {
+    # log_error moved to the GUI (Step 8 group 13): the core methods calling it
+    # without popup log the error instead of importing the GUI
+    ("MeshMat", "save_vtk.py"): _log_error_fixes("self.get_logger()"),
+    ("MeshVTK", "save_vtk.py"): _log_error_fixes("self.get_logger()"),
+    ("MeshSolution", "export_to_mat.py"): _log_error_fixes("self.mesh.get_logger()"),
     # The functions of a complex rule read from the static registry when the
     # rule is applied (Step 8): the custom setter of fct_name that stored them
     # on the object is not wired in the new classes, and a pydantic model

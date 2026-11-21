@@ -7,13 +7,13 @@ from numpy import array, array_equal, pi, transpose
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QLayout, QMessageBox
 
-from .....Functions_pydantic.GUI.log_error import log_error
+from .....GUI_pydantic.Tools.log_error import log_error
 
 from .....Classes_pydantic.import_data.import_matrix import ImportMatrix
 from .....Classes_pydantic.import_data.import_matrix_val import ImportMatrixVal
 from .....Classes_pydantic.import_data.import_matrix_xls import ImportMatrixXls
 from .....Classes_pydantic.material.material import Material
-from .....Functions_pydantic.path_tools import rel_file_path
+from .....Functions_pydantic.utils.path_tools import rel_file_path
 from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic import gui_option
 from .....GUI_pydantic.Dialog.DMatLib.DMatSetup.Gen_DMatSetup import Gen_DMatSetup

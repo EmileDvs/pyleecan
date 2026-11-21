@@ -1,4 +1,4 @@
-from ....Functions_new.labels import WIND_LAB
+from ....Functions_new.utils.labels import WIND_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

@@ -4,7 +4,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QDialog, QMessageBox, QWidget
 
 from ......Classes_new.slot.hole_ud import HoleUD
-from ......Functions_new.GUI.log_error import log_error
+from ......GUI_new.Tools.log_error import log_error
 from ......Functions_new.load import load
 from ......GUI_new import gui_option
 from ......GUI_new.Dialog.DMachineSetup.SMHoleMag.PHoleMUD.Ui_PHoleMUD import Ui_PHoleMUD

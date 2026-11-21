@@ -8,12 +8,6 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
-from ...Functions_pydantic.labels import (
-    COND_BOUNDARY_PROP_LAB,
-    YOKE_LAB,
-    YSML_LAB,
-    YSMR_LAB,
-)
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -23,6 +17,12 @@ from ...Functions_pydantic.Plot import (
     P_FONT_SIZE,
     SC_FONT_SIZE,
     TEXT_BOX,
+)
+from ...Functions_pydantic.utils.labels import (
+    COND_BOUNDARY_PROP_LAB,
+    YOKE_LAB,
+    YSML_LAB,
+    YSMR_LAB,
 )
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment

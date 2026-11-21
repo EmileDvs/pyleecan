@@ -11,7 +11,8 @@ from ...classes_common.errors import ParentMissingError
 from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.labels import (
+from ...Functions_pydantic.Plot import dict_2D
+from ...Functions_pydantic.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
     DRAW_PROP_LAB,
@@ -23,7 +24,6 @@ from ...Functions_pydantic.labels import (
     YSL_LAB,
     YSR_LAB,
 )
-from ...Functions_pydantic.Plot import dict_2D
 from ...Functions_pydantic.Winding.gen_phase_list import gen_name
 from .._legacy_model import LegacyModel
 from ..geometry.arc_1 import Arc1

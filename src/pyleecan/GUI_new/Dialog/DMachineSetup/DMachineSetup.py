@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget
 from ....Classes_new.converter.convert_mc import ConvertMC
 from ....Classes_new.machine.machine import Machine
 from ....definitions import config_dict
-from ....Functions_new.GUI.log_error import log_error
+from ....GUI_new.Tools.log_error import log_error
 from ....Functions_new.load import load, load_machine_materials
 from ....GUI_new.Dialog.DMachineSetup import mach_index, mach_list
 from ....GUI_new.Dialog.DMachineSetup.SPreview.SPreview import SPreview

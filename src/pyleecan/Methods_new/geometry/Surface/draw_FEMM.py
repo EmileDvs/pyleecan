@@ -1,7 +1,7 @@
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.arc_2 import Arc2
 from ....Classes_new.geometry.arc_3 import Arc3
-from ....Functions_new.labels import DRAW_PROP_LAB, decode_label, BOUNDARY_PROP_LAB, RADIUS_PROP_LAB, YOKE_LAB, BORE_LAB, LAM_LAB
+from ....Functions_new.utils.labels import DRAW_PROP_LAB, decode_label, BOUNDARY_PROP_LAB, RADIUS_PROP_LAB, YOKE_LAB, BORE_LAB, LAM_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

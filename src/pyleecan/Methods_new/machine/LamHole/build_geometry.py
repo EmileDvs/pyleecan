@@ -6,7 +6,7 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.surf_ring import SurfRing
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
-from ....Functions_new.labels import update_RTS_index
+from ....Functions_new.utils.labels import update_RTS_index
 
 
 def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 from ...classes_common.errors import CheckTypeError
 from ...definitions import PYTHON_DEFAULT_ENCODING
-from ...Functions_new.path_tools import abs_file_path
+from ...Functions_new.utils.path_tools import abs_file_path
 from .._legacy_class import LegacyClass
 
 if TYPE_CHECKING:

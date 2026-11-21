@@ -1,4 +1,4 @@
-from ....Functions_new.labels import HOLEV_LAB, VENT_LAB
+from ....Functions_new.utils.labels import HOLEV_LAB, VENT_LAB
 
 
 def get_R_id(self) -> tuple[int, str]:

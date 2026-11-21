@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QDialog, QMessageBox, QWidget
 
 from ......Classes_pydantic.slot.slot_ud import SlotUD
 from ......Classes_pydantic.slot.slot_ud_2 import SlotUD2
-from ......Functions_pydantic.GUI.log_error import log_error
+from ......GUI_pydantic.Tools.log_error import log_error
 from ......Functions_pydantic.load import load
 from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.SWSlot.PWSlotUD.Ui_PWSlotUD import Ui_PWSlotUD

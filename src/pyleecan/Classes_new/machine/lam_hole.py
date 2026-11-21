@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_new.labels import HOLEM_LAB, decode_label
+from ...Functions_new.utils.labels import HOLEM_LAB, decode_label
 from ..slot.hole import Hole
 from .lam_h import LamH
 from .lamination import Lamination

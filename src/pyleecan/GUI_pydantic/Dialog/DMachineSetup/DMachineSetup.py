@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget
 from ....Classes_pydantic.converter.convert_mc import ConvertMC
 from ....Classes_pydantic.machine.machine import Machine
 from ....definitions import config_dict
-from ....Functions_pydantic.GUI.log_error import log_error
+from ....GUI_pydantic.Tools.log_error import log_error
 from ....Functions_pydantic.load import load, load_machine_materials
 from ....GUI_pydantic.Dialog.DMachineSetup import mach_index, mach_list
 from ....GUI_pydantic.Dialog.DMachineSetup.SPreview.SPreview import SPreview

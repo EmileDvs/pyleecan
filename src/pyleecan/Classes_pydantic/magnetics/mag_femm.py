@@ -13,7 +13,7 @@ from pydantic import Field
 from ...classes_common.logger_context import get_logger
 from ...definitions import MAIN_DIR
 from ...Functions_pydantic.FEMM import FEMM_GROUPS
-from ...Functions_pydantic.labels import STATOR_LAB
+from ...Functions_pydantic.utils.labels import STATOR_LAB
 from ..mesh.element_mat import ElementMat
 from ..mesh.fpgn_tri import FPGNTri
 from ..mesh.mesh_mat import MeshMat

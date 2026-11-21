@@ -1,5 +1,5 @@
 import numpy as np
-from ....Functions_new.labels import update_RTS_index, decode_label, BOUNDARY_PROP_LAB, YSR_LAB, YSL_LAB
+from ....Functions_new.utils.labels import update_RTS_index, decode_label, BOUNDARY_PROP_LAB, YSR_LAB, YSL_LAB
 
 
 @staticmethod

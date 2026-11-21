@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import SlotCheckError
 from ...classes_common.parents import container_or_parent
-from ...Functions_new.labels import SOP_LAB, WIND_LAB
+from ...Functions_new.utils.labels import SOP_LAB, WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.line import Line
 from ..geometry.segment import Segment

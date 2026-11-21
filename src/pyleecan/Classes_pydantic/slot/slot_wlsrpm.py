@@ -8,7 +8,6 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError, SLSRPMOutterError
-from ...Functions_pydantic.labels import WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -19,6 +18,7 @@ from ...Functions_pydantic.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from ...Functions_pydantic.utils.labels import WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

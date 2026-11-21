@@ -2,7 +2,7 @@ from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Functions_new.SciDataTool.dqh_transformation import n2abc
-from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB
+from ....Functions_new.utils.labels import STATOR_LAB, ROTOR_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

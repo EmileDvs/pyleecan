@@ -10,10 +10,10 @@ from pydantic import Field
 
 from ...definitions import config_dict
 from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.labels import BAR_LAB, WIND_LAB, decode_label
 from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
+from ...Functions_pydantic.utils.labels import BAR_LAB, WIND_LAB, decode_label
 from ...Functions_pydantic.Winding.gen_phase_list import gen_name
 from .conductor import Conductor
 from .lam_slot import LamSlot

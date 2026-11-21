@@ -15,7 +15,13 @@ from matplotlib.pyplot import plot, subplots
 from ...classes_common.errors import LWC_SlotTooLong
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import (
+from ...Functions_new.Plot import dict_2D
+from ...Functions_new.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
+from ...Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ...Functions_new.SciDataTool.dqh_transformation import dqh2n
+from ...Functions_new.utils.labels import (
     BAR_LAB,
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
@@ -25,12 +31,6 @@ from ...Functions_new.labels import (
     decode_label,
     update_RTS_index,
 )
-from ...Functions_new.Plot import dict_2D
-from ...Functions_new.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
-from ...Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
-from ...Functions_new.SciDataTool.dqh_transformation import dqh2n
 from ...Functions_new.Winding.gen_phase_list import gen_color, gen_name
 from .._swat_em import datamodel
 from ..scidatatool.data_1d import Data1D

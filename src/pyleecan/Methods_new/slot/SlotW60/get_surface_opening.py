@@ -2,7 +2,7 @@ from ....classes_common.parents import container_or_parent
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.surf_line import SurfLine
-from ....Functions_new.labels import SOP_LAB, DRAW_PROP_LAB
+from ....Functions_new.utils.labels import SOP_LAB, DRAW_PROP_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

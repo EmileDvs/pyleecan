@@ -1,8 +1,8 @@
-from ....Functions_new.labels import NOTCH_LAB, YSNR_LAB, YSNL_LAB
+from ....Functions_new.utils.labels import NOTCH_LAB, YSNR_LAB, YSNL_LAB
 from ....Classes_new.machine.notch_even_dist import NotchEvenDist
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
-from ....Functions_new.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
+from ....Functions_new.utils.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
 
 import numpy as np
 

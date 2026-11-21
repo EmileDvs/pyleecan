@@ -168,6 +168,9 @@ def modernize_gui_source(source, package, root, gen_dict):
     source = redirect_get_logger(source, package)
     source = _redirect_methods_imports(source, package, str(Path(root) / "Classes_new"))
     source = modernize_names(source, package, gen_dict, None)
+    from .moved_functions import redirect_moved_modules
+
+    source = redirect_moved_modules(source, package)
     source = redirect_imports(source, package, legacy_module_redirect(root))
     return redirect_imports(
         source, package, package_redirect(LEGACY_GUI_PACKAGE, GUI_PACKAGES["dataclass"])
@@ -276,20 +279,38 @@ def generate_gui(root=None, gen_dict=None):
 
     root = Path(root) if root is not None else Path(MAIN_DIR)
     gen_dict = gen_dict if gen_dict is not None else name_maps().gen_dict
+    from .moved_functions import GUI_TARGET, MOVED_MODULES
+
     dataclass_dir = root / GUI_PACKAGES["dataclass"]
     pydantic_dir = root / GUI_PACKAGES["pydantic"]
-    return {
+    written = {
         dataclass_dir.name: _write_tree(
             root / LEGACY_GUI_PACKAGE,
             dataclass_dir,
             lambda source, package: modernize_gui_source(
                 source, package, root, gen_dict
             ),
-        ),
-        pydantic_dir.name: _write_tree(
-            dataclass_dir, pydantic_dir, pydantic_gui_source
-        ),
+        )
     }
+    # Functions moved to the GUI (moved_functions.MOVED_MODULES)
+    for legacy, new in sorted(MOVED_MODULES.items()):
+        if not new.startswith(GUI_TARGET):
+            continue
+        parts = new.split(".")
+        target = root.joinpath(*parts).with_suffix(".py")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        legacy_path = root.joinpath("Functions", *legacy.split(".")).with_suffix(".py")
+        with tokenize.open(legacy_path) as file:
+            source = file.read()
+        package = ".".join(["pyleecan", *parts[:-1]])
+        target.write_text(
+            modernize_gui_source(source, package, root, gen_dict), encoding="utf-8"
+        )
+        written[dataclass_dir.name] += 1
+    written[pydantic_dir.name] = _write_tree(
+        dataclass_dir, pydantic_dir, pydantic_gui_source
+    )
+    return written
 
 
 if __name__ == "__main__":

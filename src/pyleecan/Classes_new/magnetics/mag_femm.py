@@ -13,7 +13,7 @@ import numpy as np
 from ...classes_common.logger_context import get_logger
 from ...definitions import MAIN_DIR
 from ...Functions_new.FEMM import FEMM_GROUPS
-from ...Functions_new.labels import STATOR_LAB
+from ...Functions_new.utils.labels import STATOR_LAB
 from ..mesh.element_mat import ElementMat
 from ..mesh.fpgn_tri import FPGNTri
 from ..mesh.mesh_mat import MeshMat

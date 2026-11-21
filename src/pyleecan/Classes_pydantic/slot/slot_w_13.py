@@ -14,7 +14,6 @@ from ...classes_common.errors import (
     S13_W12CheckError,
 )
 from ...classes_common.parents import container_or_parent
-from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -26,6 +25,7 @@ from ...Functions_pydantic.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from ...Functions_pydantic.utils.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

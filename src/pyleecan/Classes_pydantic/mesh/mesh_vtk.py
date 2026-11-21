@@ -16,7 +16,6 @@ from vtk import vtkPointSet
 
 from ...classes_common.logger_context import get_logger
 from ...definitions import RESULT_DIR
-from ...Functions_pydantic.GUI.log_error import log_error
 from .._pyleecan_model import NDArray
 from .element_mat import ElementMat
 from .fpgn_seg import FPGNSeg
@@ -530,13 +529,7 @@ class MeshVTK(Mesh):
         else:
             if save_path_L[-1] != "vtk":
                 err_msg = f"Error save path extension is not .vtk"
-                log_error(
-                    self,
-                    err_msg,
-                    get_logger(self),
-                    is_popup=False,
-                    is_warning=False,
-                )
+                get_logger(self).error(err_msg)
 
         # Check if save_path exist
         save_path_2 = os.path.dirname(save_path)

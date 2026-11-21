@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 )
 
 from .....Classes_pydantic.machine.machine import Machine
-from .....Functions_pydantic.GUI.log_error import log_error
+from .....GUI_pydantic.Tools.log_error import log_error
 from .....GUI_pydantic.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY, DMatLib
 from .....GUI_pydantic.Dialog.DMatLib.WMatSelect.Ui_WMatSelect import Ui_WMatSelect
 

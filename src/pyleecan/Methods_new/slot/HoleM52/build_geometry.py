@@ -2,7 +2,7 @@ import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
-from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB
+from ....Functions_new.utils.labels import HOLEV_LAB, HOLEM_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

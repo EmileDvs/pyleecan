@@ -2,7 +2,7 @@ from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 import numpy as np
 from ....Functions_new.init_fig import init_fig
-from ....Functions_new.labels import decode_label, MAG_LAB, LAM_LAB
+from ....Functions_new.utils.labels import decode_label, MAG_LAB, LAM_LAB
 from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from typing import TYPE_CHECKING
 

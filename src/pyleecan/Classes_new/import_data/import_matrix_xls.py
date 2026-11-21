@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from pandas import ExcelFile, read_excel
 
 from ...classes_common.errors import XlsFileError
-from ...Functions_new.path_tools import abs_file_path
+from ...Functions_new.utils.path_tools import abs_file_path
 from .import_matrix import ImportMatrix
 
 if TYPE_CHECKING:

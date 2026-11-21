@@ -7,7 +7,7 @@ from pydantic import Field
 
 from ...classes_common.errors import SlotCheckError
 from ...classes_common.parents import container_or_parent
-from ...Functions_pydantic.labels import SOP_LAB, WIND_LAB
+from ...Functions_pydantic.utils.labels import SOP_LAB, WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.line import Line
 from ..geometry.segment import Segment

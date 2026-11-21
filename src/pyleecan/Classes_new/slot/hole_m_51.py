@@ -15,7 +15,6 @@ from ...classes_common.errors import (
     S51_WCheckError,
 )
 from ...definitions import config_dict
-from ...Functions_new.labels import HOLEM_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -28,6 +27,7 @@ from ...Functions_new.Plot import (
     plot_quote,
 )
 from ...Functions_new.utils.geometry import inter_line_circle
+from ...Functions_new.utils.labels import HOLEM_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

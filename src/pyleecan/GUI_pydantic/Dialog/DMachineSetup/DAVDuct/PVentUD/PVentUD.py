@@ -4,7 +4,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QDialog, QMessageBox, QWidget
 
 from ......Classes_pydantic.slot.hole_ud import HoleUD
-from ......Functions_pydantic.GUI.log_error import log_error
+from ......GUI_pydantic.Tools.log_error import log_error
 from ......Functions_pydantic.load import load
 from ......GUI_pydantic import gui_option
 from ......GUI_pydantic.Dialog.DMachineSetup.DAVDuct.PVentUD.Gen_PVentUD import Gen_PVentUD

@@ -2,7 +2,7 @@ from numpy import pi
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QApplication, QWidget
 
-from ......Functions_new.GUI.log_error import log_error
+from ......GUI_new.Tools.log_error import log_error
 from ......GUI_new.Dialog.DMachineSetup.DAVDuct.PVentCirc.PVentCirc import PVentCirc
 from ......GUI_new.Dialog.DMachineSetup.DAVDuct.PVentPolar.PVentPolar import PVentPolar
 from ......GUI_new.Dialog.DMachineSetup.DAVDuct.PVentTrap.PVentTrap import PVentTrap

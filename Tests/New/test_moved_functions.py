@@ -527,3 +527,33 @@ def test_deprecate_source():
     assert len(caught) == 1 and caught[0].category is DeprecationWarning
     assert "plot is deprecated, use Data.plot (removed in Phase 2)" in str(caught[0].message)
     assert result.startswith('"""Module"""\nfrom warnings import warn\n')
+
+
+def test_moved_modules():
+    """Whole modules moved: imports redirected, deprecated module at the old path."""
+    from pyleecan.Generator.ClassGenerator.New.moved_functions import (
+        moved_module_alias_source,
+        redirect_moved_modules,
+    )
+
+    source = (
+        "from ....Functions.labels import WIND_LAB\n"
+        "from ....Functions_new.path_tools import abs_file_path\n"
+        "from ....Functions.GUI.log_error import log_error\n"
+        "from ....Functions.labelsX import y\n"
+    )
+    package = "pyleecan.Methods_new.machine.Lamination"
+    assert redirect_moved_modules(source, package) == (
+        "from ....Functions_new.utils.labels import WIND_LAB\n"
+        "from ....Functions_new.utils.path_tools import abs_file_path\n"
+        "from ....GUI_new.Tools.log_error import log_error\n"
+        "from ....Functions.labelsX import y\n"
+    )
+    legacy = "import re\nA_LAB = 'A'\n\n\ndef f():\n    pass\n\n\nclass FileError(Exception):\n    pass\n"
+    alias = moved_module_alias_source("path_tools", legacy, {"FileError": "FileError"})
+    compile(alias, "path_tools.py", "exec")
+    assert "from .utils.path_tools import (  # noqa: F401\n    A_LAB,\n    f,\n)\n" in alias
+    assert "from ..classes_common.errors import FileError  # noqa: F401\n" in alias
+    assert "DeprecationWarning" in alias
+    gui = moved_module_alias_source("GUI.log_error", "def log_error():\n    pass\n")
+    assert "from ...GUI_new.Tools.log_error import (  # noqa: F401\n    log_error,\n)\n" in gui

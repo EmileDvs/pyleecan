@@ -20,7 +20,10 @@ from ...classes_common.errors import (
 )
 from ...definitions import config_dict
 from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.labels import (
+from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
+    get_color_legend_from_surface,
+)
+from ...Functions_pydantic.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
     LAM_LAB,
@@ -34,9 +37,6 @@ from ...Functions_pydantic.labels import (
     YSNL_LAB,
     YSNR_LAB,
     YSR_LAB,
-)
-from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
 )
 from ...Functions_pydantic.Winding.gen_phase_list import gen_name
 from .._legacy_model import LegacyModel

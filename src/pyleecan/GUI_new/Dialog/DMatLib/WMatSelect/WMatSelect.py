@@ -2,7 +2,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget
 
 from .....Classes_new.machine.machine import Machine
-from .....Functions_new.GUI.log_error import log_error
+from .....GUI_new.Tools.log_error import log_error
 from .....GUI_new.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY, DMatLib
 from .....GUI_new.Dialog.DMatLib.WMatSelect.Ui_WMatSelect import Ui_WMatSelect
 

@@ -1,7 +1,7 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QListView, QWidget
 
-from .....Functions_new.GUI.log_error import log_error
+from .....GUI_new.Tools.log_error import log_error
 from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new import gui_option
 from .....GUI_new.Dialog.DMachineSetup.SBar.Gen_SBar import Gen_SBar

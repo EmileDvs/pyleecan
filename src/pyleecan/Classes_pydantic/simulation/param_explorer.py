@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 from ...classes_common.errors import CheckTypeError
 from ...definitions import PYTHON_DEFAULT_ENCODING
-from ...Functions_pydantic.path_tools import abs_file_path
+from ...Functions_pydantic.utils.path_tools import abs_file_path
 from .._legacy_model import LegacyModel
 
 if TYPE_CHECKING:

@@ -2,7 +2,7 @@ from numpy import pi
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QApplication, QWidget
 
-from ......Functions_pydantic.GUI.log_error import log_error
+from ......GUI_pydantic.Tools.log_error import log_error
 from ......GUI_pydantic.Dialog.DMachineSetup.DAVDuct.PVentCirc.PVentCirc import PVentCirc
 from ......GUI_pydantic.Dialog.DMachineSetup.DAVDuct.PVentPolar.PVentPolar import PVentPolar
 from ......GUI_pydantic.Dialog.DMachineSetup.DAVDuct.PVentTrap.PVentTrap import PVentTrap

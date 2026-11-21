@@ -3,7 +3,7 @@ import sys
 
 import os
 
-from ....Functions_new.labels import SHAFT_LAB, decode_label, HOLEM_LAB_S, HOLEV_LAB_S, ROTOR_LAB_S, STATOR_LAB_S, LAM_LAB_S, WIND_LAB_S, SHAFT_LAB
+from ....Functions_new.utils.labels import SHAFT_LAB, decode_label, HOLEM_LAB_S, HOLEV_LAB_S, ROTOR_LAB_S, STATOR_LAB_S, LAM_LAB_S, WIND_LAB_S, SHAFT_LAB
 
 
 def _remove_entities(gmsh, labels: list) -> None:

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import (
+from ...Functions_new.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
     DRAW_PROP_LAB,

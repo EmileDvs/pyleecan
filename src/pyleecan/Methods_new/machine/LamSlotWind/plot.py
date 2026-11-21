@@ -7,7 +7,7 @@ from ....Classes_new.machine.winding_sc import WindingSC
 from ....Classes_new.machine.winding_ud import WindingUD
 from ....definitions import config_dict
 from ....Functions_new.init_fig import init_fig
-from ....Functions_new.labels import BAR_LAB, WIND_LAB, decode_label
+from ....Functions_new.utils.labels import BAR_LAB, WIND_LAB, decode_label
 from ....Functions_new.Plot import dict_2D
 from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ....Functions_new.Winding.gen_phase_list import gen_name

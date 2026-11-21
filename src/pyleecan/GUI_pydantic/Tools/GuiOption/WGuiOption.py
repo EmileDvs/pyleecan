@@ -8,7 +8,7 @@ from ....Functions_pydantic.load import load_matlib
 from ....GUI_pydantic.Tools.GuiOption.Ui_GuiOption import Ui_GUIOption
 from ....GUI_pydantic.Dialog.DMatLib.DMatSetup.DMatSetup import DMatSetup
 from ....GUI_pydantic import gui_option
-from ....Functions_pydantic.path_tools import abs_file_path
+from ....Functions_pydantic.utils.path_tools import abs_file_path
 from ....Functions_pydantic.init_environment import save_config_dict
 from ....definitions import config_dict
 from ....Functions_pydantic.load import load_matlib

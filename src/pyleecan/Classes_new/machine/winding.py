@@ -14,8 +14,8 @@ from ...definitions import config_dict
 from ...Functions_new._swat_em import plots
 from ...Functions_new._swat_em.config import config
 from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import decode_label
 from ...Functions_new.utils.geometry import inter_line_line
+from ...Functions_new.utils.labels import decode_label
 from ...Functions_new.Winding.gen_phase_list import gen_name
 from .._legacy_class import LegacyClass
 from .._swat_em import datamodel

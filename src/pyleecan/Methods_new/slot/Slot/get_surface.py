@@ -1,6 +1,6 @@
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.surf_line import SurfLine
-from ....Functions_new.labels import DRAW_PROP_LAB
+from ....Functions_new.utils.labels import DRAW_PROP_LAB
 
 
 def get_surface(self) -> SurfLine:

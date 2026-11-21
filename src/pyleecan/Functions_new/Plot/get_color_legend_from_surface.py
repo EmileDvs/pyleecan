@@ -1,5 +1,5 @@
 from ...definitions import config_dict
-from ..labels import (
+from ..utils.labels import (
     BAR_LAB,
     HOLEM_LAB,
     HOLEV_LAB,

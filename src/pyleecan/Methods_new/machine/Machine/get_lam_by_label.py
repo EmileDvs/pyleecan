@@ -1,4 +1,4 @@
-from ....Functions_new.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
+from ....Functions_new.utils.labels import STATOR_LAB, ROTOR_LAB, ROTOR_LAB_S, STATOR_LAB_S
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

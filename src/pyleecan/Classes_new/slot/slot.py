@@ -11,7 +11,8 @@ from ...classes_common.errors import ParentMissingError
 from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import (
+from ...Functions_new.Plot import dict_2D
+from ...Functions_new.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
     DRAW_PROP_LAB,
@@ -23,7 +24,6 @@ from ...Functions_new.labels import (
     YSL_LAB,
     YSR_LAB,
 )
-from ...Functions_new.Plot import dict_2D
 from ...Functions_new.Winding.gen_phase_list import gen_name
 from .._legacy_class import LegacyClass
 from ..geometry.arc_1 import Arc1

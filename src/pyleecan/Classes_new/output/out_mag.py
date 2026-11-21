@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_new.labels import STATOR_LAB
 from ...Functions_new.SciDataTool.derivation_integration import integrate
+from ...Functions_new.utils.labels import STATOR_LAB
 from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData

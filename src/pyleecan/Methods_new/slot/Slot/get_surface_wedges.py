@@ -1,5 +1,5 @@
 from ....classes_common.parents import container_or_parent
-from ....Functions_new.labels import WEDGE_LAB
+from ....Functions_new.utils.labels import WEDGE_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

@@ -8,7 +8,7 @@ from .....Classes_pydantic.machine.lam_slot_mag import LamSlotMag
 from .....Classes_pydantic.machine.lam_slot_mag_ns import LamSlotMagNS
 from .....Classes_pydantic.slot.slot import Slot
 from .....Classes_pydantic.slot.slot_m_10 import SlotM10
-from .....Functions_pydantic.GUI.log_error import log_error
+from .....GUI_pydantic.Tools.log_error import log_error
 from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
 from .....GUI_pydantic.Dialog.DMachineSetup.SMSlot.PMSlot11.PMSlot11 import PMSlot11

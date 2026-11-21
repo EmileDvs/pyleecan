@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.errors import LMC_SlotTooLong
-from ...Functions_new.labels import (
+from ...Functions_new.utils.labels import (
     BOUNDARY_PROP_LAB,
     COND_BOUNDARY_PROP_LAB,
     LAM_LAB,

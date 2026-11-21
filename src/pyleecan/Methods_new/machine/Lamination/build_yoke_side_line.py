@@ -1,4 +1,4 @@
-from ....Functions_new.labels import BOUNDARY_PROP_LAB, YS_LAB, YSR_LAB, YSL_LAB
+from ....Functions_new.utils.labels import BOUNDARY_PROP_LAB, YS_LAB, YSR_LAB, YSL_LAB
 import numpy as np
 
 DELTA = 1e-6

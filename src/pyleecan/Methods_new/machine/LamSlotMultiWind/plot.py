@@ -1,7 +1,7 @@
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 
-from ....Functions_new.labels import decode_label, WIND_LAB, BAR_LAB
+from ....Functions_new.utils.labels import decode_label, WIND_LAB, BAR_LAB
 from ....Functions_new.Winding.gen_phase_list import gen_name
 from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict

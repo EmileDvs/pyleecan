@@ -1,5 +1,5 @@
 import numpy as np
-from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
+from ....Functions_new.utils.labels import HOLEV_LAB, HOLEM_LAB, LAM_LAB
 
 
 def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:

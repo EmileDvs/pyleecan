@@ -8,10 +8,10 @@ import numpy as np
 from matplotlib.patches import Patch
 
 from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.labels import MAG_LAB, decode_label
 from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
+from ...Functions_pydantic.utils.labels import MAG_LAB, decode_label
 from .._pyleecan_model import NDArray
 from .lam_slot import LamSlot
 

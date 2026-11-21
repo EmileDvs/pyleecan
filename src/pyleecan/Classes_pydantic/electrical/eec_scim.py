@@ -9,8 +9,8 @@ import scipy.interpolate as scp_int
 from pydantic import Field
 
 from ...classes_common.logger_context import get_logger
-from ...Functions_pydantic.labels import ROTOR_LAB, STATOR_LAB
 from ...Functions_pydantic.SciDataTool.dqh_transformation import abc2n, n2abc
+from ...Functions_pydantic.utils.labels import ROTOR_LAB, STATOR_LAB
 from .._pyleecan_model import Complex, NDArray
 from ..import_data.import_gen_vect_lin import ImportGenVectLin
 from ..import_data.import_matrix_val import ImportMatrixVal

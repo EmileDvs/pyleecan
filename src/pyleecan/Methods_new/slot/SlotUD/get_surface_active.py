@@ -1,5 +1,5 @@
 from ....classes_common.parents import container_or_parent
-from ....Functions_new.labels import WIND_LAB
+from ....Functions_new.utils.labels import WIND_LAB
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.surf_line import SurfLine

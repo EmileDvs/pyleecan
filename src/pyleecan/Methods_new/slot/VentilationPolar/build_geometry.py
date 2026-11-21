@@ -2,7 +2,7 @@ import numpy as np
 
 from ....Classes_new.geometry.polar_arc import PolarArc
 from . import *
-from ....Functions_new.labels import VENT_LAB
+from ....Functions_new.utils.labels import VENT_LAB
 
 
 def build_geometry(self, alpha: float = 0, delta: complex = 0) -> list:

@@ -13,7 +13,6 @@ from ...classes_common.errors import (
     S24_W3CheckError,
 )
 from ...classes_common.parents import container_or_parent
-from ...Functions_pydantic.labels import DRAW_PROP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -24,6 +23,7 @@ from ...Functions_pydantic.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from ...Functions_pydantic.utils.labels import DRAW_PROP_LAB, WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

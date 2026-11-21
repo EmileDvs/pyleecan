@@ -1,8 +1,8 @@
 import numpy as np
 
 from ....Classes_new.machine.lam_slot import LamSlot
-from ....Functions_new.labels import update_RTS_index
-from ....Functions_new.labels import BOUNDARY_PROP_LAB, COND_BOUNDARY_PROP_LAB, MAG_LAB, YSMR_LAB, YSML_LAB, LAM_LAB, YOKE_LAB, decode_label
+from ....Functions_new.utils.labels import update_RTS_index
+from ....Functions_new.utils.labels import BOUNDARY_PROP_LAB, COND_BOUNDARY_PROP_LAB, MAG_LAB, YSMR_LAB, YSML_LAB, LAM_LAB, YOKE_LAB, decode_label
 
 
 def build_geometry(

@@ -112,6 +112,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `cut_lines_between_angle`, `comp_surface_num`) in one module; the old
   `Geometry.*` paths are deprecated aliases. `merge_notch_list` is a
   static method of `Lamination`, `transform_hole_surf` of `Hole`.
+- **`labels` and `path_tools` in the `utils` package, `log_error` in the
+  GUI** (Step 8): `Functions.labels` / `Functions.path_tools` /
+  `Functions.GUI.log_error` are deprecated modules re-exporting the names
+  (constants included) from `utils.labels`, `utils.path_tools` and the
+  `Tools.log_error` module of the GUI.
 - **Dead code deprecated** (Step 8): `Plot.Pyvista.get_arrows_plt`,
   `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`,
   `getattr_recursive`, `short_filepath` warn (no caller; removed in

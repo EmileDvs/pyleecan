@@ -15,7 +15,6 @@ from ...classes_common.errors import (
     S30_W3Error,
 )
 from ...classes_common.parents import container_or_parent
-from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -27,6 +26,7 @@ from ...Functions_new.Plot import (
     TEXT_BOX,
 )
 from ...Functions_new.utils.geometry import inter_line_circle, inter_line_line
+from ...Functions_new.utils.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

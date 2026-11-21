@@ -9,10 +9,10 @@ from pydantic import Field
 
 from ...classes_common.errors import LSC_SlotTooLong
 from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.labels import update_RTS_index
 from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
+from ...Functions_pydantic.utils.labels import update_RTS_index
 from ..slot.slot import Slot
 from .lamination import Lamination
 

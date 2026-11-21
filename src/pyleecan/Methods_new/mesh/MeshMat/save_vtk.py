@@ -1,6 +1,5 @@
 from ....classes_common.logger_context import get_logger
 import os
-from ....Functions_new.GUI.log_error import log_error
 
 
 def save_vtk(self, save_path: str) -> None:
@@ -21,13 +20,7 @@ def save_vtk(self, save_path: str) -> None:
     else:
         if save_path_L[-1] != "vtk":
             err_msg = f"Error save path extension is not .vtk"
-            log_error(
-                self,
-                err_msg,
-                get_logger(self),
-                is_popup=False,
-                is_warning=False,
-            )
+            get_logger(self).error(err_msg)
 
     # Check if save_path exist
     save_path_2 = os.path.dirname(save_path)

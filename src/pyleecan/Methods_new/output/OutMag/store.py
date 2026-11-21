@@ -5,7 +5,7 @@ import numpy as np
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.scidatatool.norm_ref import NormRef as Norm_ref
 from ....Classes_new.scidatatool.vector_field import VectorField
-from ....Functions_new.labels import STATOR_LAB
+from ....Functions_new.utils.labels import STATOR_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

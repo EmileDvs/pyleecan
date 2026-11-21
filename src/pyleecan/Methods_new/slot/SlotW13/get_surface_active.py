@@ -1,6 +1,6 @@
 from ....classes_common.parents import container_or_parent
 from ....Classes_new.geometry.surf_line import SurfLine
-from ....Functions_new.labels import WIND_LAB, DRAW_PROP_LAB
+from ....Functions_new.utils.labels import WIND_LAB, DRAW_PROP_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

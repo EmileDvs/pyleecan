@@ -295,6 +295,12 @@ def _rewrite_source(source, path, class_dir):
     rewritten = redirect_function_module_imports(
         rewritten, "Tests.New", function_module_mapping()
     )
+    # The modules moved to the utils package (Step 8)
+    from pyleecan.Generator.ClassGenerator.New.moved_functions import (
+        redirect_moved_modules,
+    )
+
+    rewritten = redirect_moved_modules(rewritten, "Tests.New")
     # The pydantic models (Geometry) only accept keyword arguments
     rewritten = _keyword_geometry_calls(rewritten, "pyleecan", _class_gen_dict())
     ast.parse(rewritten, filename=str(path))

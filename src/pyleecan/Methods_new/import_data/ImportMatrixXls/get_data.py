@@ -2,7 +2,7 @@ from pandas import read_excel, ExcelFile
 from . import XlsFileError
 import os
 
-from ....Functions_new.path_tools import abs_file_path
+from ....Functions_new.utils.path_tools import abs_file_path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

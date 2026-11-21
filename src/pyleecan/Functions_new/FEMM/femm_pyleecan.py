@@ -20,7 +20,7 @@ from ...Classes_new.machine.lam_slot_m import LamSlotM
 from ...Classes_new.machine.lamination import Lamination
 from ...Classes_new.machine.machine_sipmsm import MachineSIPMSM
 from ...Methods import NotImplementedYetError
-from ..labels import (
+from ..utils.labels import (
     AIRGAP_LAB,
     AS_BL_LAB,
     AS_BR_LAB,

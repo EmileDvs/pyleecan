@@ -1,6 +1,6 @@
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.surf_ring import SurfRing
-from ....Functions_new.labels import LAM_LAB, BORE_LAB, YOKE_LAB, RADIUS_PROP_LAB, BOUNDARY_PROP_LAB
+from ....Functions_new.utils.labels import LAM_LAB, BORE_LAB, YOKE_LAB, RADIUS_PROP_LAB, BOUNDARY_PROP_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

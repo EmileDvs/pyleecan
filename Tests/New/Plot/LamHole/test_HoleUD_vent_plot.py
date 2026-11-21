@@ -10,7 +10,7 @@ from backend_classes.slot.ventilation_circ import VentilationCirc
 from backend_classes.slot.hole_ud import HoleUD
 from backend_classes.geometry.segment import Segment
 from backend_classes.geometry.surf_line import SurfLine
-from backend_functions.labels import HOLEV_LAB
+from backend_functions.utils.labels import HOLEV_LAB
 from Tests.New._test_paths import save_plot_path as save_path
 
 

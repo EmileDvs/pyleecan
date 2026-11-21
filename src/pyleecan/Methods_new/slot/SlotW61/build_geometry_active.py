@@ -3,7 +3,7 @@ import numpy as np
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from . import S61_WindError
-from ....Functions_new.labels import WIND_LAB
+from ....Functions_new.utils.labels import WIND_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

@@ -8,7 +8,7 @@ from pandas import ExcelFile, read_excel
 from pydantic import Field
 
 from ...classes_common.errors import XlsFileError
-from ...Functions_pydantic.path_tools import abs_file_path
+from ...Functions_pydantic.utils.path_tools import abs_file_path
 from .import_matrix import ImportMatrix
 
 if TYPE_CHECKING:

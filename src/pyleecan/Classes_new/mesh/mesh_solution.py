@@ -14,7 +14,6 @@ from scipy.io import savemat
 from ...classes_common.errors import DimError
 from ...classes_common.logger_context import get_logger
 from ...definitions import config_dict
-from ...Functions_new.GUI.log_error import log_error
 from ...Functions_new.SciDataTool.conversions import cart2pol_points as cart2pol
 from ...Functions_new.SciDataTool.conversions import pol2cart_points as pol2cart
 from .._legacy_class import LegacyClass
@@ -162,13 +161,7 @@ class MeshSolution(LegacyClass):
         else:
             if save_path_L[-1] != "mat":
                 err_msg = f"Error save path extension is not .mat"
-                log_error(
-                    self,
-                    err_msg,
-                    get_logger(self.mesh),
-                    is_popup=False,
-                    is_warning=False,
-                )
+                get_logger(self.mesh).error(err_msg)
 
         # Check if save_path exist
         save_path_2 = os.path.dirname(save_path)

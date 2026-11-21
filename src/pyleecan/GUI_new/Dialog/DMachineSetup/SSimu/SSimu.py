@@ -18,7 +18,7 @@ from .....Classes_new.simulation.op_dq import OPdq
 from .....Classes_new.simulation.op_dqf import OPdqf
 from .....Classes_new.simulation.simu_1 import Simu1
 from .....definitions import config_dict
-from .....Functions_new.GUI.log_error import log_error
+from .....GUI_new.Tools.log_error import log_error
 from .....Functions_new.init_environment import save_config_dict
 from .....GUI_new import gui_option
 from .....GUI_new.Dialog.DMachineSetup.SSimu.Gen_SSimu import Gen_SSimu

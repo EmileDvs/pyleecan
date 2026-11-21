@@ -3,7 +3,7 @@ import numpy as np
 
 from ....classes_common.femm_handler import _FEMMHandler
 from ....Classes_new.output.out_mag_femm import OutMagFEMM
-from ....Functions_new.labels import STATOR_LAB
+from ....Functions_new.utils.labels import STATOR_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

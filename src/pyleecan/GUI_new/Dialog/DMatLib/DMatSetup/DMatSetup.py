@@ -7,13 +7,13 @@ from numpy import array, array_equal, pi, transpose
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QLayout, QMessageBox
 
-from .....Functions_new.GUI.log_error import log_error
+from .....GUI_new.Tools.log_error import log_error
 
 from .....Classes_new.import_data.import_matrix import ImportMatrix
 from .....Classes_new.import_data.import_matrix_val import ImportMatrixVal
 from .....Classes_new.import_data.import_matrix_xls import ImportMatrixXls
 from .....Classes_new.material.material import Material
-from .....Functions_new.path_tools import rel_file_path
+from .....Functions_new.utils.path_tools import rel_file_path
 from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new import gui_option
 from .....GUI_new.Dialog.DMatLib.DMatSetup.Gen_DMatSetup import Gen_DMatSetup

@@ -1,7 +1,7 @@
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.arc_1 import Arc1
-from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
+from ....Functions_new.utils.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

@@ -2,7 +2,7 @@ from matplotlib.patches import Patch
 import numpy as np
 
 from ....Functions_new.init_fig import init_fig
-from ....Functions_new.labels import HOLEM_LAB, decode_label
+from ....Functions_new.utils.labels import HOLEM_LAB, decode_label
 from ....definitions import config_dict
 from ....Methods import ParentMissingError
 from typing import TYPE_CHECKING

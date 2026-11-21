@@ -7,7 +7,7 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import SlotCheckError
-from ...Functions_new.labels import HOLEM_LAB, HOLEV_LAB, LAM_LAB
+from ...Functions_new.utils.labels import HOLEM_LAB, HOLEV_LAB, LAM_LAB
 from ..geometry.surface import Surface
 from ..machine.magnet import Magnet
 from .hole_mag import HoleMag

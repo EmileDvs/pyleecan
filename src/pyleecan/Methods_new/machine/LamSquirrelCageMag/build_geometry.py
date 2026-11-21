@@ -1,6 +1,6 @@
 import numpy as np
 from ....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
-from ....Functions_new.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
+from ....Functions_new.utils.labels import HOLEV_LAB, HOLEM_LAB, update_RTS_index
 
 
 def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:

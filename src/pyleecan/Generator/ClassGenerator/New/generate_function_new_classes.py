@@ -42,13 +42,16 @@ from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     DEPRECATED_MODULES,
     MERGED_MODULES,
     MOVED_FUNCTIONS,
+    MOVED_MODULES,
     REMOVED_FUNCTION_ALIASES,
     alias_source,
     deprecate_source,
     merged_alias_source,
     merged_location,
     merged_module_source,
+    moved_module_alias_source,
     redirect_moved_calls,
+    redirect_moved_modules,
 )
 from pyleecan.Generator.read_fct import read_all
 from pyleecan.Generator.ClassGenerator.New.modernize import (
@@ -851,9 +854,29 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             for legacy, _ in spec["sources"]
         )
     ]
+    # Moved modules (MOVED_MODULES): the module at its new path, a deprecated
+    # module re-exporting its names at the legacy path
+    moved_module_paths = {
+        source_dir.joinpath(*module.split(".")).with_suffix(".py"): new
+        for module, new in MOVED_MODULES.items()
+    }
+    entries += [
+        (
+            path,
+            moved_module_alias_source(
+                module, path.read_text(encoding="utf-8"), FUNCTION_ERRORS.get(module)
+            ),
+        )
+        for module in sorted(MOVED_MODULES)
+        if (path := source_dir.joinpath(*module.split(".")).with_suffix(".py")).exists()
+    ]
     for path, removed_alias in entries:
         relative = path.relative_to(source_dir)
         output_relative = relative.with_name(function_module_name(relative.stem) + ".py") if path.suffix == ".py" else relative
+        if path in moved_module_paths and removed_alias is None:
+            if moved_module_paths[path].startswith("GUI_new."):
+                continue  # Written by the GUI generator
+            output_relative = Path(*moved_module_paths[path].split(".")).with_suffix(".py")
         destination = output_dir / output_relative
         if relative in SKIPPED_FUNCTION_MODULES:
             # Not generated: remove a copy left by a previous generation
@@ -869,7 +892,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         if path.suffix == ".py":
             legacy_module = ".".join(relative.with_suffix("").parts)
             moved = MOVED_FUNCTIONS.get(legacy_module)
-            shared_errors_imported = False
+            shared_errors_imported = (
+                path in moved_module_paths and removed_alias is not None
+            )  # The deprecated module of a moved module imports them
             if merged_location(legacy_module) is not None and removed_alias is None:
                 # Deprecated aliases of the merged module (and of its methods)
                 source = merged_alias_source(legacy_module, source)
@@ -965,6 +990,13 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             rewritten = redirect_imports(
                 rewritten, generated_package, package_redirect("GUI", GUI_PACKAGES["dataclass"])
             )
+            if not (path in moved_module_paths and removed_alias is not None):
+                rewritten = redirect_moved_modules(rewritten, generated_package)
+            if path in moved_module_paths and removed_alias is None:
+                # The imports are absolute here: relative from the new location
+                generated_package = ".".join(
+                    ["pyleecan", "Functions_new", *output_relative.parts[:-1]]
+                )
             rewritten = _function_import_style(rewritten, generated_package, import_style)
             if relative.with_suffix("").as_posix().replace("/", ".") in HINTED_FUNCTION_MODULES:
                 # Type hints drafted from the docstrings, as the methods

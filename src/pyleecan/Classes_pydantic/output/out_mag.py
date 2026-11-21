@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_pydantic.labels import STATOR_LAB
 from ...Functions_pydantic.SciDataTool.derivation_integration import integrate
+from ...Functions_pydantic.utils.labels import STATOR_LAB
 from .._legacy_model import LegacyModel
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData

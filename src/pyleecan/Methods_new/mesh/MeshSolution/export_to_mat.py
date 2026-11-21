@@ -1,7 +1,6 @@
 from ....classes_common.logger_context import get_logger
 from scipy.io import savemat
 import os
-from ....Functions_new.GUI.log_error import log_error
 
 
 def export_to_mat(self, save_path: str) -> None:
@@ -22,13 +21,7 @@ def export_to_mat(self, save_path: str) -> None:
     else:
         if save_path_L[-1] != "mat":
             err_msg = f"Error save path extension is not .mat"
-            log_error(
-                self,
-                err_msg,
-                get_logger(self.mesh),
-                is_popup=False,
-                is_warning=False,
-            )
+            get_logger(self.mesh).error(err_msg)
 
     # Check if save_path exist
     save_path_2 = os.path.dirname(save_path)

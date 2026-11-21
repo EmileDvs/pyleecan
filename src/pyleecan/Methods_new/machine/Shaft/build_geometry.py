@@ -3,7 +3,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 import numpy as np
-from ....Functions_new.labels import SHAFT_LAB, NO_LAM_LAB, BOUNDARY_PROP_LAB, SHAFTSR_LAB, SHAFTSL_LAB, SHAFTR_LAB
+from ....Functions_new.utils.labels import SHAFT_LAB, NO_LAM_LAB, BOUNDARY_PROP_LAB, SHAFTSR_LAB, SHAFTSL_LAB, SHAFTR_LAB
 
 
 def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:

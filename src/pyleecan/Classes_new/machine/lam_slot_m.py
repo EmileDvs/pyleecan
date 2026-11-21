@@ -9,10 +9,10 @@ import numpy as np
 from matplotlib.patches import Patch
 
 from ...Functions_new.init_fig import init_fig
-from ...Functions_new.labels import MAG_LAB, decode_label
 from ...Functions_new.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
+from ...Functions_new.utils.labels import MAG_LAB, decode_label
 from .lam_slot import LamSlot
 
 if TYPE_CHECKING:

@@ -6,7 +6,7 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_pydantic.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
+from ...Functions_pydantic.utils.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
 from ..slot.hole import Hole
 from ..slot.slot import Slot
 from .notch import Notch

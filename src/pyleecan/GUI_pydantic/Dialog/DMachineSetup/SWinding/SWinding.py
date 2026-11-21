@@ -7,7 +7,7 @@ from .....Classes_pydantic.machine.machine_srm import MachineSRM
 from .....Classes_pydantic.machine.machine_wrsm import MachineWRSM
 from .....Classes_pydantic.machine.winding import Winding
 from .....Classes_pydantic.machine.winding_ud import WindingUD
-from .....Functions_pydantic.GUI.log_error import log_error
+from .....GUI_pydantic.Tools.log_error import log_error
 from .....Functions_pydantic.init_fig import init_fig
 from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic.Dialog.DMachineSetup.SWinding.Gen_SWinding import Gen_SWinding

@@ -1,6 +1,6 @@
 import numpy as np
 from . import *
-from ....Functions_new.labels import VENT_LAB
+from ....Functions_new.utils.labels import VENT_LAB
 
 from ....Classes_new.geometry.circle import Circle
 

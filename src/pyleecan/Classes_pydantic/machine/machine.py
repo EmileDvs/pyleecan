@@ -28,7 +28,7 @@ from ...classes_common.errors import (
 )
 from ...definitions import config_dict
 from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.labels import (
+from ...Functions_pydantic.utils.labels import (
     ROTOR_LAB,
     ROTOR_LAB_S,
     STATOR_LAB,
