@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 import numpy as np
 
+from ...classes_common.logger_context import get_logger
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_class import LegacyClass
@@ -80,7 +81,7 @@ class Skew(LegacyClass):
             a Skew object
         """
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         if self.parent is None:
             raise Exception(

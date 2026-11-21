@@ -8,6 +8,7 @@ import numpy as np
 from pydantic import Field
 from pylab import False_
 
+from ...classes_common.logger_context import get_logger
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_linspace import DataLinspace
@@ -542,7 +543,7 @@ class EEC_PMSM(EEC):
         Is_PWM : DataFreq
             Stator current harmonics as DataFreq
         """
-        self.get_logger().info("Calculating PWM current harmonics")
+        get_logger(self).info("Calculating PWM current harmonics")
 
         # Get fundamental frequency
         felec = self.OP.get_felec()

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 
 from meshio import read
@@ -64,7 +65,7 @@ def build_meshsolution(self) -> bool:
             siz = value.shape[1]
             # only regard max. 3 components
             if siz > 3:
-                self.get_logger().warning(
+                get_logger(self).warning(
                     f'ElmerResultsVTU.build_meshsolution(): size of data "{key}" > 3'
                     + " - "
                     + "Data will be truncated."

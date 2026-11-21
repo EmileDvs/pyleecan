@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import subprocess
 
 from ....Functions_new.get_path_binary import get_path_binary
@@ -38,17 +39,17 @@ def gen_elmer_mesh(self, output: Output) -> dict[str, bool]:
         "-out",
         elmermesh_folder,
     ]
-    self.get_logger().info("Calling ElmerGrid: " + " ".join(map(str, cmd_elmergrid)))
+    get_logger(self).info("Calling ElmerGrid: " + " ".join(map(str, cmd_elmergrid)))
     elmergrid = subprocess.Popen(
         cmd_elmergrid, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     (stdout, stderr) = elmergrid.communicate()
     elmergrid.wait()
-    self.get_logger().info(stdout.decode("UTF-8"))
+    get_logger(self).info(stdout.decode("UTF-8"))
     if elmergrid.returncode != 0:
-        self.get_logger().info("ElmerGrid [Error]: " + stderr.decode("UTF-8"))
+        get_logger(self).info("ElmerGrid [Error]: " + stderr.decode("UTF-8"))
         return False
     elmergrid.terminate()
-    self.get_logger().info("ElmerGrid call complete!")
+    get_logger(self).info("ElmerGrid call complete!")
 
     return True

@@ -8,6 +8,7 @@ from matplotlib.patches import Patch
 from pydantic import Field
 
 from ...classes_common.errors import LamSlotMultiAlphaError
+from ...classes_common.logger_context import get_logger
 from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
@@ -126,7 +127,7 @@ class LamSlotMulti(Lamination):
         """
 
         if self.sym_dict_enforced is not None:
-            self.get_logger().debug("Enforcing symmetry for LamSlotMulti")
+            get_logger(self).debug("Enforcing symmetry for LamSlotMulti")
             return (
                 self.sym_dict_enforced["per_a"],
                 self.sym_dict_enforced["is_antiper_a"],
@@ -135,7 +136,7 @@ class LamSlotMulti(Lamination):
             # Zs = self.get_Zs()
             is_aper = False
             # TODO compute it
-            self.get_logger().debug("Symmetry not available yet for LamSlotMulti")
+            get_logger(self).debug("Symmetry not available yet for LamSlotMulti")
             return 1, is_aper
 
     # Inlined from Methods.Machine.LamSlotMulti.comp_surfaces

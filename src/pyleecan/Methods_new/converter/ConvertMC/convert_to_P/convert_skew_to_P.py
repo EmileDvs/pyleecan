@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.skew import Skew
 
 
@@ -19,4 +20,4 @@ def convert_skew_to_P(self) -> None:
         # initialisation to set the skew in rotor
         self.machine.rotor.skew = Skew()
 
-        self.get_logger().info(f"Conversion skew ")
+        get_logger(self).info(f"Conversion skew ")

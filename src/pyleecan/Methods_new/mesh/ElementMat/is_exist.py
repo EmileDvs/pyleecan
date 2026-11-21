@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 
@@ -18,7 +19,7 @@ def is_exist(self, connectivity: np.ndarray) -> bool:
             True if the element already exist
     """
     if self.nb_node_per_element > 3:
-        self.get_logger().warning(
+        get_logger(self).warning(
             "ElementMat.is_exist doesn't take into account quad node permutations."
         )
 

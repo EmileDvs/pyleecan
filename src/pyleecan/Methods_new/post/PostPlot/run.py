@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from inspect import signature
 import os
 
@@ -20,7 +21,7 @@ def run(self, output: Output) -> None:
 
     """
 
-    output.get_logger().info("Running Post-processing: " + self.name)
+    get_logger(output).info("Running Post-processing: " + self.name)
     try:
         if self.quantity is not None:
             obj = output.get_data_from_str(self.quantity)
@@ -64,6 +65,6 @@ def run(self, output: Output) -> None:
         )
 
     except Exception as e:
-        output.get_logger().error(
+        get_logger(output).error(
             "Error while running Post-processing: " + self.name + "\n" + str(e)
         )

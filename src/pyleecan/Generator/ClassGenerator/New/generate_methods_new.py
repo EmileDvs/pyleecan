@@ -335,6 +335,13 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     for spec in INTERFACE_OBJECTS:
         source = redirect_femm_calls(source, package, legacy_signatures(spec), spec)
     source = redirect_moved_calls(source, package, class_name, gen_dict=gen_dict)
+    # The loggers without the parent chain (Step 9)
+    from .modernize import LOGGER_CONTEXTS, redirect_get_logger, wrap_logger_context
+
+    source = redirect_get_logger(source, package)
+    for context_class, method in LOGGER_CONTEXTS:
+        if class_name == context_class:
+            source = wrap_logger_context(source, package, method)
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
     source = modernize_names(source, package, gen_dict, class_name)

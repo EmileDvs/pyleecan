@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.slot_m_19 import SlotM19
 
 
@@ -34,4 +35,4 @@ def select_notch_rules(self, is_stator: bool) -> None:
         if isinstance(notch.notch_shape, SlotM19):
             self.add_rule_notch_slotM19(is_stator, nb_notch)
         else:
-            self.get_logger().error("Only rules for slotM19 are defined")
+            get_logger(self).error("Only rules for slotM19 are defined")

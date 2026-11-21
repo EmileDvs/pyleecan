@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 import numpy as np
 from . import ElmerResultsError
@@ -21,7 +22,7 @@ def load_data(self) -> list:
     filename = self.file
 
     # some first checks
-    logger = self.get_logger()
+    logger = get_logger(self)
     if filename is None:
         logger.warning("Filename (self.file) not defined.")
         return False

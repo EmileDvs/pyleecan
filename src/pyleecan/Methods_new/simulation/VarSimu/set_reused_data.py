@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....Classes_new.magnetics.mag_femm import MagFEMM
 from ....Classes_new.electrical.elec_lut_dq import ElecLUTdq
 from typing import TYPE_CHECKING
@@ -31,7 +32,7 @@ def set_reused_data(self, simu: Simulation, output: Output, is_log: bool = True,
 
     if self.is_reuse_femm_file and isinstance(simu.mag, MagFEMM):
         if is_log:
-            self.get_logger().info(
+            get_logger(self).info(
                 TAB
                 + simu_type
                 + ": Using same FEMM file for all simulations ("
@@ -43,7 +44,7 @@ def set_reused_data(self, simu: Simulation, output: Output, is_log: bool = True,
 
     if self.is_reuse_LUT and isinstance(simu.elec, ElecLUTdq):
         if is_log:
-            self.get_logger().info(
+            get_logger(self).info(
                 TAB + simu_type + ": Using same LUT for all simulations"
             )
         simu.elec.LUT_enforced = output.simu.elec.LUT_enforced

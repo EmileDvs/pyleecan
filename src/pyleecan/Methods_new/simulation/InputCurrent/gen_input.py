@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -111,7 +112,7 @@ def gen_input(self) -> None:
                 # Get phase_dir from Is
                 phase_dir = get_phase_dir(Is_val, current_dir=outelec.current_dir)
                 if phase_dir != outelec.phase_dir:
-                    self.get_logger().warning(
+                    get_logger(self).warning(
                         "Enforcing outelec.phase_dir="
                         + str(phase_dir)
                         + " to comply with input current"
@@ -119,7 +120,7 @@ def gen_input(self) -> None:
                     outelec.phase_dir = phase_dir
             except Exception:
                 # Cannot calculate phase_dir
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "phase_dir cannot be calculated, please make sure that input.phase_dir="
                     + str(outelec.phase_dir)
                     + " is compliant with enforced currents"
@@ -172,7 +173,7 @@ def gen_input(self) -> None:
                 Ir_val = Ir_val[None, :]
             if Ir_val.shape[1] > qr_per:
                 Ir_val = Ir_val[:, :qr_per]
-                self.get_logger().info(
+                get_logger(self).info(
                     "Restrict input rotor bar currents to smallest spatial periodicity"
                 )
 
@@ -201,11 +202,11 @@ def gen_input(self) -> None:
         # Check PWM phase voltage consistency in current driven mode
         if outelec.PWM.U0 is not None or Ud_ref is not None or Uq_ref is not None:
             if outelec.PWM.U0 is not None:
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "Neglecting U0 given as input of PWM object since voltage will be calculated"
                 )
             if Ud_ref is not None or Uq_ref is not None:
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "Neglecting Ud_ref/Uq_ref given as input since voltage will be calculated"
                 )
         # Set all voltages to None since they will be calculated by Electrical model

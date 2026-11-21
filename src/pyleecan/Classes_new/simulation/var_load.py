@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.check import check_var
+from ...classes_common.logger_context import get_logger
 from ...Functions.load import load_init_dict
 from .._import import import_class
 from .op_matrix import OPMatrix
@@ -46,7 +47,7 @@ class VarLoad(VarSimu):
             try:
                 value = load_init_dict(value)[1]
             except Exception as e:
-                self.get_logger().error(
+                get_logger(self).error(
                     "Error while loading " + value + ", setting None instead"
                 )
                 value = None
@@ -113,7 +114,7 @@ class VarLoad(VarSimu):
             index of the reference simulation (None if must be computed)
         """
         ref_simu_index = None
-        logger = self.get_logger()
+        logger = get_logger(self)
         for ii, simu in enumerate(simu_dict["simulation_list"]):
             diff_list = simu.input.compare(ref_simu.input, name="input")
             # # Remove not meaningfull differences
@@ -175,7 +176,7 @@ class VarLoad(VarSimu):
         ):
             Sinput = self.parent.parent.input
         if Sinput is None:
-            self.get_logger().warning("Can't find input when setting OP_matrix")
+            get_logger(self).warning("Can't find input when setting OP_matrix")
             return
 
         # Set the input OP

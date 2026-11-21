@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.lam_hole import LamHole
 from .....Classes_new.slot.hole_m_52 import HoleM52
 from .....Classes_new.slot.hole_m_57 import HoleM57
@@ -45,7 +46,7 @@ def convert_hole_to_P(self) -> None:
     elif hole_type == "Interior_Flat_Simple":
         self.machine.rotor.hole.append(HoleM63())
         self.machine.rotor.hole[0].top_flat = True
-        self.get_logger().warning(
+        get_logger(self).warning(
             f"HoleM63 : Approximation for H1, Pole Arc isn't present in Pyleecan"
         )
 
@@ -63,7 +64,7 @@ def convert_hole_to_P(self) -> None:
         number_hole = self.other_dict["[Dimensions]"]["VMagnet_Layers"]
         for hole_id in range(number_hole):
             self.machine.rotor.hole.append(HoleM57())
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "HoleM57 : Approximation check the settings for HoleM57"
             )
 
@@ -79,16 +80,16 @@ def convert_hole_to_P(self) -> None:
 
     # writing exception/approximation for Hole
     if isinstance(self.machine.rotor.hole[0], HoleM60):
-        self.get_logger().warning(f"HoleM60 : Approximation for W3, Magnet_Post")
+        get_logger(self).warning(f"HoleM60 : Approximation for W3, Magnet_Post")
 
     if isinstance(self.machine.rotor.hole[0], HoleM63):
-        self.get_logger().warning(f"HoleM63 : Approximation for W0")
+        get_logger(self).warning(f"HoleM63 : Approximation for W0")
 
     if isinstance(self.machine.rotor.hole[0], HoleM57):
-        self.get_logger().warning(
+        get_logger(self).warning(
             f"HoleM57 : Approximation Pole Arc has not equivalent in pyleecan "
         )
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {hole_type} into {type(self.machine.rotor.hole[0]).__name__}"
     )

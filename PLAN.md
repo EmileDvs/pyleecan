@@ -185,7 +185,7 @@ Methods receive their context explicitly instead, for example
 | 6. Class-specific functions moved to their class | generator | done |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | done (open points in the backlog) |
 | 8. Refactor the remaining `Functions` modules | generator | in progress (7/14 groups) |
-| 9. Logger chain | generator | to do |
+| 9. Logger chain | generator | done (parent fallback removed with Step 11) |
 | 10. GUI, first pass | generator | to do |
 | 11. Parent links, first pass | generator | to do |
 | 12. Freeze | gate | to do |
@@ -301,10 +301,14 @@ Replace the `get_logger` chain (walks the parents to find a `logger_name`;
 175 calls: 169 in 94 `Methods_new` modules, 6 in `Functions_new`) by a
 generator pass, before the freeze.
 
-- [ ] Choose the target (per-module loggers, or a context logger set by
-      `Simulation.run`), keeping the per-simulation log files.
-- [ ] Generator pass rewriting the calls, with unit tests; remove the
-      `get_logger` function and method once unused.
+- [x] Target: context logger (`classes_common.logger_context`): the object's
+      `logger_name`, else the simulation run by `Simulation.run`, else the
+      parents (legacy layer, until Step 11), else the default logger; the
+      per-simulation log files kept.
+- [x] Generator pass rewriting the calls (`x.get_logger()` ->
+      `get_logger(x)`), with unit tests; `Functions.get_logger` deprecated.
+- [ ] Remove the parent fallback (Step 11) and the base `get_logger`
+      method (Phase 2, deprecated).
 
 ### Step 10: GUI, first pass (generator)
 

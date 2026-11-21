@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 from ....Classes_new.simulation.op_matrix import OPMatrix
 
@@ -41,7 +42,7 @@ def set_OP_array(self, OP_matrix: np.ndarray, *arg_list, is_update_input: bool =
     ):
         Sinput = self.parent.parent.input
     if Sinput is None:
-        self.get_logger().warning("Can't find input when setting OP_matrix")
+        get_logger(self).warning("Can't find input when setting OP_matrix")
         return
 
     # Set the input OP

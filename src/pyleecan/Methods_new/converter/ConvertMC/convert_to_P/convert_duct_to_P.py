@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.ventilation_circ import VentilationCirc
 from .....Classes_new.slot.ventilation_polar import VentilationPolar
 from .....Classes_new.slot.ventilation_trap import VentilationTrap
@@ -37,7 +38,7 @@ def convert_duct_to_P(self, is_stator: bool) -> None:
             # RectangularDuct
             elif type_duct == "Rect_Ducts":
                 # Error convert is not Implemented
-                self.get_logger().info("Rect_Ducts, Not Implemented")
+                get_logger(self).info("Rect_Ducts, Not Implemented")
                 # Ventilation_class = VentilationTrap
                 return
 
@@ -60,7 +61,7 @@ def convert_duct_to_P(self, is_stator: bool) -> None:
 
         # Selection type of duct
         if type_duct == f"No_{lam_name}_Ducts":
-            self.get_logger().debug(f"No duct to convert at {lam_name}")
+            get_logger(self).debug(f"No duct to convert at {lam_name}")
             return
 
         else:
@@ -70,7 +71,7 @@ def convert_duct_to_P(self, is_stator: bool) -> None:
 
             # Shaft_spoke
             elif type_duct == f"{lam_name}_Shaft_Spoke_Ducts":
-                self.get_logger().info(f"ShaftSpoke ins't define in pyleecan")
+                get_logger(self).info(f"ShaftSpoke ins't define in pyleecan")
 
             # Arcduct
             elif type_duct == f"{lam_name}_Arc_Ducts":
@@ -79,7 +80,7 @@ def convert_duct_to_P(self, is_stator: bool) -> None:
             # RectangularDuct
             elif type_duct == f"{lam_name}_Rect_Ducts" or type_duct == "Rect_Ducts":
                 # Error convert is not Implemented
-                self.get_logger().info("Rect_Ducts, Not Implemented")
+                get_logger(self).info("Rect_Ducts, Not Implemented")
                 return
                 # Ventilation_class = VentilationTrap
 
@@ -96,6 +97,6 @@ def convert_duct_to_P(self, is_stator: bool) -> None:
     for duct_id in range(number_duct):
         axial_vent.append(Ventilation_class())
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {type_duct} into {number_duct} {Ventilation_class.__name__}"
     )

@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.lam_slot_mag import LamSlotMag
 from .....Classes_new.slot.slot_m_11 import SlotM11
 from .....Classes_new.slot.slot_m_12 import SlotM12
@@ -40,7 +41,7 @@ def convert_magnet_to_P(self) -> None:
     elif magnet_type == "Inset_Parallel":
         self.machine.rotor.slot = SlotM15()
         self.machine.rotor.slot.H0 = 0.001  # To pass the check for inset parallel
-        self.get_logger().warning(
+        get_logger(self).warning(
             "Approximation for slotM15 hasn't equivalent in Pyleecan"
         )
 
@@ -60,6 +61,6 @@ def convert_magnet_to_P(self) -> None:
     other_value = self.other_dict["[Dimensions]"]["Pole_Number"]
     self.machine.rotor.set_pole_pair_number(other_value // 2)
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {magnet_type} into {type(self.machine.rotor.slot).__name__}"
     )

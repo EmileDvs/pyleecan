@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 from typing import TYPE_CHECKING
 
@@ -21,7 +22,7 @@ def get_solution(self, indice=None) -> SolutionMat:
         solution
 
     """
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     field_sol = self.get_field()
     axis_name, axis_size = self.get_axes_list()

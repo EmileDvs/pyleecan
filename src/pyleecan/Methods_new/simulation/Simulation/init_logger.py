@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....loggers import gen_logger_config_dict, DEFAULT_LOG_NAME
 from logging.config import dictConfig
 import os
@@ -57,5 +58,5 @@ def init_logger(self, output: XOutput) -> None:
             msg += " " + self.name
         if self.machine.name not in ["", None]:
             msg += " (machine=" + self.machine.name + ")"
-        self.get_logger().debug("###################################")
-        self.get_logger().info(msg)
+        get_logger(self).debug("###################################")
+        get_logger(self).info(msg)

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from . import TYPE_SKEW_LIST
@@ -11,7 +12,7 @@ def comp_angle(self) -> None:
         a Skew object
     """
 
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     if self.parent is None:
         raise Exception("ERROR: The Skew object must be in a Lamination object to run")

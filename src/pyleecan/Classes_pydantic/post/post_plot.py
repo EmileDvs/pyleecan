@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import Field
 
+from ...classes_common.logger_context import get_logger
 from ...Functions_pydantic.Plot import dict_2D, dict_3D
 from .post_method import PostMethod
 
@@ -68,7 +69,7 @@ class PostPlot(PostMethod):
 
         """
 
-        output.get_logger().info("Running Post-processing: " + self.name)
+        get_logger(output).info("Running Post-processing: " + self.name)
         try:
             if self.quantity is not None:
                 obj = output.get_data_from_str(self.quantity)
@@ -114,6 +115,6 @@ class PostPlot(PostMethod):
             )
 
         except Exception as e:
-            output.get_logger().error(
+            get_logger(output).error(
                 "Error while running Post-processing: " + self.name + "\n" + str(e)
             )

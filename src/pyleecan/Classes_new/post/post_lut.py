@@ -5,6 +5,7 @@ import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
+from ...classes_common.logger_context import get_logger
 from .post_method import PostMethod
 
 if TYPE_CHECKING:
@@ -66,5 +67,5 @@ class PostLUT(PostMethod):
         # Save/Store LUT object
         if self.is_save_LUT:
             save_path = os.path.join(LUT.get_path_result(), self.file_name)
-            self.get_logger().info("Saving LUT at: " + save_path)
+            get_logger(self).info("Saving LUT at: " + save_path)
             LUT.save(save_path=save_path)

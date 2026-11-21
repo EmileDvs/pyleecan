@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 def select_bar_rules(self, is_stator: bool) -> None:
     """selects step to add bar rules
 
@@ -12,7 +13,7 @@ def select_bar_rules(self, is_stator: bool) -> None:
 
     self.add_rule_rotor_bar(is_stator)
 
-    self.get_logger().error(
+    get_logger(self).error(
         "Approximation for rotor bar conversion. In pyleecan Rotor bar is centered on the slot contrary to MC Rotor bar could be more flexible"
     )
 

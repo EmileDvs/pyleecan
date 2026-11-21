@@ -7,6 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from .._legacy_model import LegacyModel
 from ..mesh.mesh_solution import MeshSolution
 from ..simulation.slice_model import SliceModel
@@ -177,7 +178,7 @@ class Magnetics(LegacyModel):
                 per_t_S = outgeo.per_t_S
                 if outgeo.is_antiper_t_S:
                     per_t_S *= 2
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "In Magnetic model, Nt_tot="
                     + str(Nt_tot)
                     + " is not divisible by the machine time periodicity ("
@@ -207,7 +208,7 @@ class Magnetics(LegacyModel):
                     # Change stator to rotor periodicity
                     Time_R = Time_S.get_axis_periodic(Nper=pert_R, is_aper=False)
                     Time = Time_R.copy()
-                    self.get_logger().debug(
+                    get_logger(self).debug(
                         f"""In {self.__class__.__name__}, calculating magnetic mesh quantities in stator and rotor frames (is_get_meshsolution=True) : 
                 setting time periodicity from stator frame (period={pert_S}, is_antiper={str(is_apert_S)}) to rotor frame (period={pert_R}, is_antiper=False)"""
                     )
@@ -228,7 +229,7 @@ class Magnetics(LegacyModel):
                 per_a = outgeo.per_a
                 if outgeo.is_antiper_a:
                     per_a *= 2
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "In Magnetic model, Na_tot="
                     + str(Na_tot)
                     + " is not divisible by the machine angular periodicity ("
@@ -282,7 +283,7 @@ class Magnetics(LegacyModel):
             Rotor current matrix accounting for magnetic periodicities [qr_pera,len(time)]
         """
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Extract time vector
         time = Time.get_values(is_smallestperiod=True)
@@ -402,14 +403,14 @@ class Magnetics(LegacyModel):
                 if rotor_skew.type_skew == "linear" and not rotor_skew.is_step:
                     if self.Nslices_enforced is None:
                         Nslices = 5
-                        self.get_logger().debug(
+                        get_logger(self).debug(
                             "Enforce Nslices_enforced = " + str(Nslices)
                         )
                     else:
                         Nslices = self.Nslices_enforced
                     if self.type_distribution_enforced is None:
                         type_distribution = "uniform"
-                        self.get_logger().debug(
+                        get_logger(self).debug(
                             "Enforce type_distribution_enforced = " + type_distribution
                         )
 
@@ -428,7 +429,7 @@ class Magnetics(LegacyModel):
 
                 else:
                     if self.Nslices_enforced is not None:
-                        self.get_logger().info(
+                        get_logger(self).info(
                             "Nslice_enforced is defined but rotor is stepped-skew, set mag.slice_model.Nslices = "
                             + str(rotor_skew.Nstep)
                         )
@@ -457,8 +458,8 @@ class Magnetics(LegacyModel):
             )
         if self.parent.parent is None:
             raise InputError("The Simulation object must be in an Output object to run")
-        self.get_logger().info("Starting Magnetic module")
-        self.get_logger().debug("Using " + self.__class__.__name__ + " object")
+        get_logger(self).info("Starting Magnetic module")
+        get_logger(self).debug("Using " + self.__class__.__name__ + " object")
 
         output = self.parent.parent
 
@@ -488,7 +489,7 @@ class Magnetics(LegacyModel):
         # Calculate airgap flux
         Nslices = len(unique_indices)
         if Nslices > 1:
-            self.get_logger().info("Solving slice 1 / " + str(Nslices))
+            get_logger(self).info("Solving slice 1 / " + str(Nslices))
         out_dict = self.comp_flux_airgap(
             output, axes_dict, Is_val=Is_val, Ir_val=Ir_val
         )
@@ -527,7 +528,7 @@ class Magnetics(LegacyModel):
                             is_loop = False
             if not is_loop:
                 for ii in range(Nslices)[1:]:
-                    self.get_logger().info(
+                    get_logger(self).info(
                         "Solving slice " + str(ii + 1) + " / " + str(Nslices)
                     )
 
@@ -558,7 +559,7 @@ class Magnetics(LegacyModel):
 
             # Loop over other slices
             for ii, index in enumerate(unique_indices[1:]):
-                self.get_logger().info(
+                get_logger(self).info(
                     "Solving slice " + str(ii + 2) + " / " + str(Nslices)
                 )
                 # Assign stator and rotor angle shifts

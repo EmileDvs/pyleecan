@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from ...classes_common.errors import FEMMError
+from ...classes_common.logger_context import get_logger
 from ...Classes_new.geometry.arc_1 import Arc1
 from ...Classes_new.geometry.circle import Circle
 from ...Classes_new.geometry.segment import Segment
@@ -1231,7 +1232,7 @@ class femm_pyleecan:
 
         if transform_list not in [None, []] and is_fast_draw:
             is_fast_draw = False
-            output.get_logger().debug("Removing fast_draw for transform_list in FEMM")
+            get_logger(output).debug("Removing fast_draw for transform_list in FEMM")
 
         # Initialization from output for readibility
         Is = output.elec.Is  # Stator currents waveforms
@@ -1380,7 +1381,7 @@ class femm_pyleecan:
         )
         self.handler.mi_smartmesh(FEMM_dict["mesh"]["smart_mesh"])
         if path_save is not None:
-            output.get_logger().debug("Saving FEMM file at: " + path_save)
+            get_logger(output).debug("Saving FEMM file at: " + path_save)
             self.handler.mi_saveas(path_save)  # Save
             FEMM_dict["path_save"] = path_save
             # femm.mi_close()

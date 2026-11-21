@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from logging import getLogger
 
 import numpy as np
@@ -66,5 +67,5 @@ def log_datakeeper_step_result(simulation: Simulation, datakeeper_list: list, in
     if simulation.logger_name[0:8] == "Parallel":
         log = getLogger(simulation.logger_name[9:])
     else:
-        log = simulation.get_logger()
+        log = get_logger(simulation)
     log.info(msg)

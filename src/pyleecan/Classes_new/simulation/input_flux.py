@@ -6,6 +6,7 @@ from typing import Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.logger_context import get_logger
 from ..import_data.import_matrix_val import ImportMatrixVal
 from ..import_data.import_matrix_xls import ImportMatrixXls
 from ..output.out_mag import OutMag
@@ -95,7 +96,7 @@ class InputFlux(InputCurrent):
         else:
             raise Exception("Cannot import flux if simu.machine is None")
 
-        logger = simu.get_logger()
+        logger = get_logger(simu)
 
         # Import flux components
         out_mag = OutMag()

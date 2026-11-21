@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.logger_context import get_logger
 from ...definitions import MAIN_DIR
 from ...Functions_new.FEMM import FEMM_GROUPS
 from ...Functions_new.labels import STATOR_LAB
@@ -549,7 +550,7 @@ class MagFEMM(Magnetics):
         # Local import: circular import with the class module
         from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Init output
         out_dict = {}
@@ -1045,7 +1046,7 @@ class MagFEMM(Magnetics):
         # Local import: circular import with the class module
         from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
 
-        logger = self.get_logger()
+        logger = get_logger(self)
         is_sliding_band = self.is_sliding_band
 
         if filename is not None:
@@ -1427,7 +1428,7 @@ class MagFEMM(Magnetics):
         else:
             fem_file = self.get_path_save_fem(output)
         nb_worker = self.nb_worker
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Check method parameters
         if nb_worker > cpu_count():
@@ -1495,12 +1496,12 @@ class MagFEMM(Magnetics):
                 os.remove(fem_file[:-4] + "_" + str(w) + ".fem")
             except Exception:
                 filename = fem_file[:-4] + "_" + str(w) + ".fem"
-                self.get_logger().warning("Could not remove file: " + filename)
+                get_logger(self).warning("Could not remove file: " + filename)
 
             try:
                 os.remove(fem_file[:-4] + "_" + str(w) + ".ans")
             except Exception:
                 filename = fem_file[:-4] + "_" + str(w) + ".ans"
-                self.get_logger().warning("Could not remove file: " + filename)
+                get_logger(self).warning("Could not remove file: " + filename)
 
         return B_elem, H_elem, mu_elem, A_node, meshFEMM, groups, A_elem

@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.slot_w_11_2 import SlotW11_2
 from .....Classes_new.slot.slot_w_23 import SlotW23
 from .....Classes_new.slot.slot_w_26 import SlotW26
@@ -33,7 +34,7 @@ def convert_slot_rotor_to_other(self) -> None:
             f"Type of slot {type(slot).__name__} has not equivalent or has not been implementated"
         )
 
-    self.get_logger().info(f"Conversion {slot.__class__.__name__} into {name_slot}")
+    get_logger(self).info(f"Conversion {slot.__class__.__name__} into {name_slot}")
 
     # writting in dict
     if "[Design_Options]" not in self.other_dict:

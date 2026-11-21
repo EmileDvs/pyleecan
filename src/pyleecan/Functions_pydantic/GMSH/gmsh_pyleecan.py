@@ -12,6 +12,7 @@ import gmsh
 import numpy as np
 
 from ...classes_common.errors import GMSHInputError as InputError
+from ...classes_common.logger_context import get_logger
 from ...Classes_pydantic.geometry.arc import Arc
 from ...Classes_pydantic.geometry.arc_1 import Arc1
 from ...Classes_pydantic.geometry.arc_2 import Arc2
@@ -22,7 +23,6 @@ from ...Classes_pydantic.geometry.surf_ring import SurfRing
 from ...Classes_pydantic.machine.machine_scim import MachineSCIM
 from ...Classes_pydantic.machine.machine_sipmsm import MachineSIPMSM
 from ...Classes_pydantic.machine.machine_wrsm import MachineWRSM
-from ..get_logger import get_logger
 from ..labels import (
     AIRBOX_LAB,
     AIRBOX_R_LAB,

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....Classes_new.simulation.param_explorer_set import ParamExplorerSet
 
 
@@ -42,7 +43,7 @@ def check_param(self) -> None:
 
     # Keep every output if there is no DataKeeper defined
     if len(self.datakeeper_list) == 0 and self.is_keep_all_output is False:
-        logger = self.get_logger()
+        logger = get_logger(self)
         logger.warning(
             "No datakeeper has been define in VarParamSweep, setting is_keep_all_output as True."
         )

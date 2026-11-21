@@ -12,6 +12,7 @@ from pydantic import Field
 from scipy.io import savemat
 
 from ...classes_common.errors import DimError
+from ...classes_common.logger_context import get_logger
 from ...definitions import config_dict
 from ...Functions_pydantic.GUI.log_error import log_error
 from ...Functions_pydantic.SciDataTool.conversions import cart2pol_points as cart2pol
@@ -161,7 +162,7 @@ class MeshSolution(LegacyModel):
                 log_error(
                     self,
                     err_msg,
-                    self.mesh.get_logger(),
+                    get_logger(self.mesh),
                     is_popup=False,
                     is_warning=False,
                 )

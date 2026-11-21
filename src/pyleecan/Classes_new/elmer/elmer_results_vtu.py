@@ -9,6 +9,7 @@ import numpy as np
 from meshio import read
 
 from ...classes_common.errors import ElmerResultsVTUError
+from ...classes_common.logger_context import get_logger
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.mesh_vtk import MeshVTK
 from ..mesh.solution_data import SolutionData
@@ -97,7 +98,7 @@ class ElmerResultsVTU(Elmer):
                 siz = value.shape[1]
                 # only regard max. 3 components
                 if siz > 3:
-                    self.get_logger().warning(
+                    get_logger(self).warning(
                         f'ElmerResultsVTU.build_meshsolution(): size of data "{key}" > 3'
                         + " - "
                         + "Data will be truncated."

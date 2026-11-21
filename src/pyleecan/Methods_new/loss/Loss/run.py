@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ...simulation.Input import InputError
 
 
@@ -14,7 +15,7 @@ def run(self) -> None:
     if self.parent.parent is None:
         raise InputError("The Loss object must be in an Output object to run")
 
-    self.get_logger().info("Running Loss module")
+    get_logger(self).info("Running Loss module")
 
     # get output
     output = self.parent.parent

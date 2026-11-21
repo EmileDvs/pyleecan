@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from itertools import repeat
 from typing import List, Optional, Union
 
@@ -27,7 +28,7 @@ def get_element_area(
     areas: ndarray
         Area of the elements
     """
-    logger = self.get_logger()
+    logger = get_logger(self)
     area = []
 
     element_name = _check_element_name(

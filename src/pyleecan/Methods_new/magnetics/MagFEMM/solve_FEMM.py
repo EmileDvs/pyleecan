@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 
 
@@ -96,7 +97,7 @@ def solve_FEMM(
     # Local import: circular import with the class module
     from ....Functions_new.FEMM.femm_pyleecan import femm_pyleecan
 
-    logger = self.get_logger()
+    logger = get_logger(self)
     is_sliding_band = self.is_sliding_band
 
     if filename is not None:

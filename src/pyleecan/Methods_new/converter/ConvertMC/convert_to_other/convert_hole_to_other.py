@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.hole_m_52 import HoleM52
 from .....Classes_new.slot.hole_m_57 import HoleM57
 from .....Classes_new.slot.hole_m_60 import HoleM60
@@ -27,7 +28,7 @@ def convert_hole_to_other(self) -> None:
     # Check that every set of hole have the same type
     for current_hole in self.machine.rotor.hole:
         if isinstance(current_hole, hole.__class__):
-            self.get_logger().error(
+            get_logger(self).error(
                 "In motor-cad, we have just the possibility to set the same type of hole, so we select the first hole"
             )
 
@@ -40,7 +41,7 @@ def convert_hole_to_other(self) -> None:
 
     elif isinstance(hole, HoleM60):
         name_hole = "Interior_V(simple)"
-        self.get_logger().warning(f"Approximation for W3, Magnet_Post")
+        get_logger(self).warning(f"Approximation for W3, Magnet_Post")
 
     elif isinstance(hole, HoleM61):
         name_hole = "Interior_U-Shape"
@@ -68,4 +69,4 @@ def convert_hole_to_other(self) -> None:
     else:
         self.other_dict["[Design_Options]"]["BPM_Rotor"] = name_hole
 
-    self.get_logger().info(f"Conversion {hole_type} into {name_hole}")
+    get_logger(self).info(f"Conversion {hole_type} into {name_hole}")

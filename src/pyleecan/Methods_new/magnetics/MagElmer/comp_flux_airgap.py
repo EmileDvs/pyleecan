@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 import subprocess
 
@@ -62,7 +63,7 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
     # Geometry building
     gmsh_filename = self.get_path_save_fea(output) + ".msh"
     if not self.import_file:  # True if None or len == 0
-        self.get_logger().debug("Drawing machine in GMSH...")
+        get_logger(self).debug("Drawing machine in GMSH...")
         output.mag.internal.FEA_dict = gmsh_pyleecan.draw_GMSH(
             output=output,
             sym=sym,
@@ -76,7 +77,7 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
         )
 
     else:
-        self.get_logger().debug("Reusing the FEA file: " + self.import_file)
+        get_logger(self).debug("Reusing the FEA file: " + self.import_file)
         # output.mag.internal.FEA_dict = self.FEA_dict
         pass
 

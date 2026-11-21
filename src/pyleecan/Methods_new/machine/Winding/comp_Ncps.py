@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from . import WindingError
 
 
@@ -19,7 +20,7 @@ def comp_Ncps(self) -> float:
     Ncps = Ncps_.mean()
 
     if Ncps_.std() != 0:
-        self.get_logger().warning(
+        get_logger(self).warning(
             "LamSlotWind.comp_fill_factor: "
             "Uneven number of conductors per slot. "
             + "Max. number of conductors will be used to compute slot fill factor."

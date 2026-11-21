@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from . import WindingError
 
 
@@ -35,7 +36,7 @@ def comp_Ntsp(self, Zs: int | None = None) -> float:
         abs(self.get_connection_mat(Zs).sum(axis=(0, 1))).sum(axis=0) / self.Npcp / 2
     )
     if Ntspc_eff_.std() != 0:
-        self.get_logger().warning(
+        get_logger(self).warning(
             "Winding.comp_Ntsp: "
             "Uneven number of turns in series per phase. "
             + "Mean number of turns will be used."

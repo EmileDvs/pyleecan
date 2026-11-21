@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.notch_even_dist import NotchEvenDist
 from .....Classes_new.slot.slot_m_19 import SlotM19
 
@@ -27,9 +28,9 @@ def convert_notch_to_P(self, is_stator: bool) -> None:
             self.machine.rotor.notch.append(NotchEvenDist())
             self.machine.rotor.notch[0].notch_shape = SlotM19()
 
-            self.get_logger().info("Add notch for rotor")
-            self.get_logger().warning(
+            get_logger(self).info("Add notch for rotor")
+            get_logger(self).warning(
                 "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
             )
     else:
-        self.get_logger().error("MC machine can't have notch in stator")
+        get_logger(self).error("MC machine can't have notch in stator")

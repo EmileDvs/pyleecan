@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
@@ -14,7 +15,7 @@ def run(self) -> None:
     if self.parent.parent is None:
         raise InputError("The Simulation object must be in an Output object to run")
 
-    self.get_logger().info("Starting Electrical module")
+    get_logger(self).info("Starting Electrical module")
 
     # Get output, machine and OP
     output = self.parent.parent

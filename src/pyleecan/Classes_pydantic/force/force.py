@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from .._legacy_model import LegacyModel
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
@@ -199,7 +200,7 @@ class Force(LegacyModel):
             # Remove time periodicity in Force model
             self.is_periodicity_t = False
             Nt_tot = axes_dict["time"].get_length(is_oneperiod=False)
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "In Force model, Nt_tot="
                 + str(Nt_tot)
                 + " is not divisible by the machine time periodicity ("
@@ -222,7 +223,7 @@ class Force(LegacyModel):
             # Remove time periodicity in Magnetic model
             self.is_periodicity_a = False
             Na_tot = axes_dict["angle"].get_length(is_oneperiod=False)
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "In Force model, Na_tot="
                 + str(Na_tot)
                 + " is not divisible by the machine angular periodicity ("
@@ -244,7 +245,7 @@ class Force(LegacyModel):
                 "ERROR: The Force object must be in an Output object to run"
             )
 
-        self.get_logger().info("Starting Force module")
+        get_logger(self).info("Starting Force module")
 
         output = self.parent.parent
 

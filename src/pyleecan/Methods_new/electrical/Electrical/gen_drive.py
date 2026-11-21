@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -19,7 +20,7 @@ def gen_drive(self, output: Output) -> None:
         an Output object
     """
 
-    self.get_logger().info("Calculating PWM voltage")
+    get_logger(self).info("Calculating PWM voltage")
 
     p = output.simu.machine.get_pole_pair_number()
 

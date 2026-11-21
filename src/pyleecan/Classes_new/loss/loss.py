@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from .._legacy_class import LegacyClass
 from ..output.out_loss_model import OutLossModel
 from ..scidatatool.data_1d import Data1D
@@ -176,7 +177,7 @@ class Loss(LegacyClass):
         if self.parent.parent is None:
             raise InputError("The Loss object must be in an Output object to run")
 
-        self.get_logger().info("Running Loss module")
+        get_logger(self).info("Running Loss module")
 
         # get output
         output = self.parent.parent

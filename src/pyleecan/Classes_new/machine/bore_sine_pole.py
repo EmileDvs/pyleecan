@@ -11,6 +11,7 @@ import numpy as np
 from scipy.optimize import fmin
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.logger_context import get_logger
 from ...definitions import config_dict
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -115,7 +116,7 @@ class BoreSinePole(Bore):
         else:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Compute the shape
         alpha1 = np.pi / self.N  # Half bore pitch [rad]

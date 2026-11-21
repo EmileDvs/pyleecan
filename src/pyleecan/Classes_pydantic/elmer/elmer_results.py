@@ -7,6 +7,7 @@ from typing import Any, ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.logger_context import get_logger
 from .elmer import Elmer
 
 
@@ -96,7 +97,7 @@ class ElmerResults(Elmer):
         filename = self.file
 
         # some first checks
-        logger = self.get_logger()
+        logger = get_logger(self)
         if filename is None:
             logger.warning("Filename (self.file) not defined.")
             return False

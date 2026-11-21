@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 from typing import TYPE_CHECKING
 
@@ -27,7 +28,7 @@ def get_ref_simu_index(self, ref_simu: Simulation, simu_dict: dict) -> int:
         index of the reference simulation (None if must be computed)
     """
     ref_simu_index = None
-    logger = self.get_logger()
+    logger = get_logger(self)
     for ii, simu in enumerate(simu_dict["simulation_list"]):
         diff_list = simu.input.compare(ref_simu.input, name="input")
         # # Remove not meaningfull differences

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 
 from . import _execute, _get_BP_dict
@@ -70,7 +71,7 @@ def gen_mesh(self, output: Output):
         )
 
     # convert to ElmerGrid mesh
-    _gen_mesh(save_dir, "Mesh", lam_name, mag_name, self.get_logger())
+    _gen_mesh(save_dir, "Mesh", lam_name, mag_name, get_logger(self))
 
     return names
 

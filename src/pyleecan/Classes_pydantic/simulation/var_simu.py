@@ -10,6 +10,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import VarSimuError
+from ...classes_common.logger_context import get_logger
 from ...loggers import CONSOLE_LEVEL
 from .._legacy_model import LegacyModel
 from ..magnetics.mag_femm import MagFEMM
@@ -450,7 +451,7 @@ class VarSimu(LegacyModel):
 
         from ..output.output import Output
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Check var_simu parameters
         self.check_param()  # Check isinstance(self.parent, Simulation)
@@ -701,7 +702,7 @@ class VarSimu(LegacyModel):
 
         if self.is_reuse_femm_file and isinstance(simu.mag, MagFEMM):
             if is_log:
-                self.get_logger().info(
+                get_logger(self).info(
                     TAB
                     + simu_type
                     + ": Using same FEMM file for all simulations ("
@@ -713,7 +714,7 @@ class VarSimu(LegacyModel):
 
         if self.is_reuse_LUT and isinstance(simu.elec, ElecLUTdq):
             if is_log:
-                self.get_logger().info(
+                get_logger(self).info(
                     TAB + simu_type + ": Using same LUT for all simulations"
                 )
             simu.elec.LUT_enforced = output.simu.elec.LUT_enforced
@@ -748,7 +749,7 @@ class VarSimu(LegacyModel):
             simulation.layer_log_warn is not None
             and simulation.layer >= simulation.layer_log_warn
         ):
-            simulation.get_logger().handlers[0].level = WARNING
+            get_logger(simulation).handlers[0].level = WARNING
 
         # Run the simulation with/without error handling
         if stop_if_error:
@@ -764,7 +765,7 @@ class VarSimu(LegacyModel):
                 result = None
 
         # Revert logger level
-        simulation.get_logger().handlers[0].level = CONSOLE_LEVEL
+        get_logger(simulation).handlers[0].level = CONSOLE_LEVEL
 
         # Datakeepers
         index = simulation.index
@@ -784,7 +785,7 @@ class VarSimu(LegacyModel):
                 try:
                     value = datakeeper.keeper(result)
                 except Exception as e:
-                    simulation.get_logger().error(
+                    get_logger(simulation).error(
                         "ERROR while calling DataKeeper "
                         + datakeeper.name
                         + " for simulation "
@@ -959,5 +960,5 @@ class VarSimu(LegacyModel):
         if simulation.logger_name[0:8] == "Parallel":
             log = getLogger(simulation.logger_name[9:])
         else:
-            log = simulation.get_logger()
+            log = get_logger(simulation)
         log.info(msg)

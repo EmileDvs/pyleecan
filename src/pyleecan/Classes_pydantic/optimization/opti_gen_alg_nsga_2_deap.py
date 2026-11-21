@@ -17,6 +17,7 @@ from deap.base import Toolbox
 from deap.tools import cxOnePoint, mutPolynomialBounded, selNSGA2
 
 from ...classes_common.errors import OptimizationAttributeError
+from ...classes_common.logger_context import get_logger
 from ..output.output import Output
 from ..output.xoutput import XOutput
 from ..simulation.data_keeper import DataKeeper
@@ -59,7 +60,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             solver to perform the genetic algorithm with DEAP
         """
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Check problem existence
         if self.problem == None:
@@ -559,14 +560,14 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             class containing the results of the simulations
         """
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Check input parameters
         self.check_optimization_input()
 
         # Display information
         try:
-            filename = self.get_logger().handlers[0].stream.name
+            filename = get_logger(self).handlers[0].stream.name
             print(
                 "{} Starting optimization... \n\tLog file: {}\n\tNumber of generations: {}\n\tPopulation size: {}\n".format(
                     datetime.now().strftime("%H:%M:%S"),
@@ -861,7 +862,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
             failure of the evaluation
         """
         # Get solver logger
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         tb = StringIO()  # to store the traceback in case of error
 

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 from typing import TYPE_CHECKING
 
@@ -28,7 +29,7 @@ def comp_I_mag(self, output: Output, Time: Data) -> tuple[np.ndarray, np.ndarray
         Rotor current matrix accounting for magnetic periodicities [qr_pera,len(time)]
     """
 
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # Extract time vector
     time = Time.get_values(is_smallestperiod=True)

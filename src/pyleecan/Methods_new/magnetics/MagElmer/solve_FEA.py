@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import subprocess
 import os
 
@@ -136,7 +137,7 @@ def solve_FEA(self, output: Output, sym: int, angle: np.ndarray, time: np.ndarra
             magnet_dict = machine.rotor.hole[0].get_magnet_dict()
             magnet_0 = magnet_dict["magnet_0"]
         else:
-            self.get_logger().info("ElmerSolver [Error]: Unsupported Machine Geometry")
+            get_logger(self).info("ElmerSolver [Error]: Unsupported Machine Geometry")
             return False
 
         surf_list = machine.build_geometry(sym=sym)
@@ -863,7 +864,7 @@ def solve_FEA(self, output: Output, sym: int, angle: np.ndarray, time: np.ndarra
         ElmerSolver_binary,
         elmer_settings,
     ]
-    self.get_logger().info(
+    get_logger(self).info(
         "Calling ElmerSolver: " + " ".join(map(str, cmd_elmersolver))
     )
     elmersolver = subprocess.Popen(
@@ -871,12 +872,12 @@ def solve_FEA(self, output: Output, sym: int, angle: np.ndarray, time: np.ndarra
     )
     (stdout, stderr) = elmersolver.communicate()
     elmersolver.wait()
-    self.get_logger().info(stdout.decode("UTF-8"))
+    get_logger(self).info(stdout.decode("UTF-8"))
     if elmersolver.returncode != 0:
-        self.get_logger().info("ElmerSolver [Error]: " + stderr.decode("UTF-8"))
+        get_logger(self).info("ElmerSolver [Error]: " + stderr.decode("UTF-8"))
         return False
     elmersolver.terminate()
-    self.get_logger().info("ElmerSolver call complete!")
+    get_logger(self).info("ElmerSolver call complete!")
 
     self.get_meshsolution(output)
 
@@ -922,7 +923,7 @@ def solve_FEA(self, output: Output, sym: int, angle: np.ndarray, time: np.ndarra
     # compute the data for each time step
     # TODO Other than FEMM, in Elmer I think it's possible to compute
     #      all time steps at once
-    self.get_logger().debug("Solving Simulation")
+    get_logger(self).debug("Solving Simulation")
 
     # run the computation
     if self.nb_worker > 1:

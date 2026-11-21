@@ -1,3 +1,4 @@
+from ......classes_common.logger_context import get_logger
 from ......Classes_new.converter.rule_simple import RuleSimple
 from ......Classes_new.converter.rule_complex import RuleComplex
 
@@ -17,7 +18,7 @@ def add_rule_ventilationPolar(self, is_stator: bool, duct_id: int) -> None:
     """
 
     if is_stator:
-        self.get_logger().info("stator_duct, not implemented")
+        get_logger(self).info("stator_duct, not implemented")
         return
     else:
         lam_name_MC = "Rotor"

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 from typing import TYPE_CHECKING
 
@@ -37,5 +38,5 @@ def run(self, LUT: LUT) -> None:
     # Save/Store LUT object
     if self.is_save_LUT:
         save_path = os.path.join(LUT.get_path_result(), self.file_name)
-        self.get_logger().info("Saving LUT at: " + save_path)
+        get_logger(self).info("Saving LUT at: " + save_path)
         LUT.save(save_path=save_path)

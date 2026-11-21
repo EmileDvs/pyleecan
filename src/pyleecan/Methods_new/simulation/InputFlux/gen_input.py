@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.scidatatool.data_pattern import DataPattern
@@ -31,7 +32,7 @@ def gen_input(self) -> None:
     else:
         raise Exception("Cannot import flux if simu.machine is None")
 
-    logger = simu.get_logger()
+    logger = get_logger(simu)
 
     # Import flux components
     out_mag = OutMag()

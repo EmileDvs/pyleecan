@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from logging import WARNING
 
 from ....loggers import CONSOLE_LEVEL
@@ -37,7 +38,7 @@ def run_multisim_step(
         simulation.layer_log_warn is not None
         and simulation.layer >= simulation.layer_log_warn
     ):
-        simulation.get_logger().handlers[0].level = WARNING
+        get_logger(simulation).handlers[0].level = WARNING
 
     # Run the simulation with/without error handling
     if stop_if_error:
@@ -53,7 +54,7 @@ def run_multisim_step(
             result = None
 
     # Revert logger level
-    simulation.get_logger().handlers[0].level = CONSOLE_LEVEL
+    get_logger(simulation).handlers[0].level = CONSOLE_LEVEL
 
     # Datakeepers
     index = simulation.index
@@ -73,7 +74,7 @@ def run_multisim_step(
             try:
                 value = datakeeper.keeper(result)
             except Exception as e:
-                simulation.get_logger().error(
+                get_logger(simulation).error(
                     "ERROR while calling DataKeeper "
                     + datakeeper.name
                     + " for simulation "

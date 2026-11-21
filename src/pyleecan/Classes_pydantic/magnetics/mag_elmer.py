@@ -11,6 +11,7 @@ from pydantic import Field
 
 from ... import __version__
 from ...classes_common.errors import NotImplementedYetError
+from ...classes_common.logger_context import get_logger
 from ...Functions_pydantic.get_path_binary import get_path_binary
 from ...Functions_pydantic.labels import (
     AIRBOX_R_LAB,
@@ -190,7 +191,7 @@ class MagElmer(Magnetics):
         # Geometry building
         gmsh_filename = self.get_path_save_fea(output) + ".msh"
         if not self.import_file:  # True if None or len == 0
-            self.get_logger().debug("Drawing machine in GMSH...")
+            get_logger(self).debug("Drawing machine in GMSH...")
             output.mag.internal.FEA_dict = gmsh_pyleecan.draw_GMSH(
                 output=output,
                 sym=sym,
@@ -204,7 +205,7 @@ class MagElmer(Magnetics):
             )
 
         else:
-            self.get_logger().debug("Reusing the FEA file: " + self.import_file)
+            get_logger(self).debug("Reusing the FEA file: " + self.import_file)
             # output.mag.internal.FEA_dict = self.FEA_dict
             pass
 
@@ -314,20 +315,18 @@ class MagElmer(Magnetics):
             "-out",
             elmermesh_folder,
         ]
-        self.get_logger().info(
-            "Calling ElmerGrid: " + " ".join(map(str, cmd_elmergrid))
-        )
+        get_logger(self).info("Calling ElmerGrid: " + " ".join(map(str, cmd_elmergrid)))
         elmergrid = subprocess.Popen(
             cmd_elmergrid, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         (stdout, stderr) = elmergrid.communicate()
         elmergrid.wait()
-        self.get_logger().info(stdout.decode("UTF-8"))
+        get_logger(self).info(stdout.decode("UTF-8"))
         if elmergrid.returncode != 0:
-            self.get_logger().info("ElmerGrid [Error]: " + stderr.decode("UTF-8"))
+            get_logger(self).info("ElmerGrid [Error]: " + stderr.decode("UTF-8"))
             return False
         elmergrid.terminate()
-        self.get_logger().info("ElmerGrid call complete!")
+        get_logger(self).info("ElmerGrid call complete!")
 
         return True
 
@@ -351,7 +350,7 @@ class MagElmer(Magnetics):
         elmermesh_folder = project_name
         meshsol = MeshSolution(label="Elmer MagnetoDynamics")
         if not self.is_get_mesh or not self.is_save_FEA:
-            self.get_logger().info("MagElmer: MeshSolution is not stored by request.")
+            get_logger(self).info("MagElmer: MeshSolution is not stored by request.")
             return False
 
         meshvtk = MeshVTK(path=elmermesh_folder, name="step_t0002", format="vtu")
@@ -669,7 +668,7 @@ class MagElmer(Magnetics):
                 magnet_dict = machine.rotor.hole[0].get_magnet_dict()
                 magnet_0 = magnet_dict["magnet_0"]
             else:
-                self.get_logger().info(
+                get_logger(self).info(
                     "ElmerSolver [Error]: Unsupported Machine Geometry"
                 )
                 return False
@@ -1419,7 +1418,7 @@ class MagElmer(Magnetics):
             ElmerSolver_binary,
             elmer_settings,
         ]
-        self.get_logger().info(
+        get_logger(self).info(
             "Calling ElmerSolver: " + " ".join(map(str, cmd_elmersolver))
         )
         elmersolver = subprocess.Popen(
@@ -1427,12 +1426,12 @@ class MagElmer(Magnetics):
         )
         (stdout, stderr) = elmersolver.communicate()
         elmersolver.wait()
-        self.get_logger().info(stdout.decode("UTF-8"))
+        get_logger(self).info(stdout.decode("UTF-8"))
         if elmersolver.returncode != 0:
-            self.get_logger().info("ElmerSolver [Error]: " + stderr.decode("UTF-8"))
+            get_logger(self).info("ElmerSolver [Error]: " + stderr.decode("UTF-8"))
             return False
         elmersolver.terminate()
-        self.get_logger().info("ElmerSolver call complete!")
+        get_logger(self).info("ElmerSolver call complete!")
 
         self.get_meshsolution(output)
 
@@ -1478,7 +1477,7 @@ class MagElmer(Magnetics):
         # compute the data for each time step
         # TODO Other than FEMM, in Elmer I think it's possible to compute
         #      all time steps at once
-        self.get_logger().debug("Solving Simulation")
+        get_logger(self).debug("Solving Simulation")
 
         # run the computation
         if self.nb_worker > 1:

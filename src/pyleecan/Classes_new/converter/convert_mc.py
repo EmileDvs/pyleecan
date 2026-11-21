@@ -7,6 +7,7 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.logger_context import get_logger
 from ..machine.cond_type_11 import CondType11
 from ..machine.cond_type_12 import CondType12
 from ..machine.cond_type_13 import CondType13
@@ -96,7 +97,7 @@ class ConvertMC(Convert):
         else:
             self.other_dict["[Winding_Design]"]["Wire_Type"] = conductor_name
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {conductor_type.__class__.__name__} into {conductor_name}"
         )
 
@@ -129,7 +130,7 @@ class ConvertMC(Convert):
         elif len(axial_vent) > 1:
             for duct in axial_vent:
                 if isinstance(duct, axial_vent[0].__class__):
-                    self.get_logger().error(
+                    get_logger(self).error(
                         "A Motor-cad machine can only have one type of axial duct"
                     )
                     break
@@ -159,7 +160,7 @@ class ConvertMC(Convert):
         else:
             self.other_dict["[Through_Vent]"][f"{lam_name_MC}_Duct_Type"] = duct_MC_name
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {axial_vent[0].__name__} into {duct_MC_name}"
         )
 
@@ -185,7 +186,7 @@ class ConvertMC(Convert):
         # Check that every set of hole have the same type
         for current_hole in self.machine.rotor.hole:
             if isinstance(current_hole, hole.__class__):
-                self.get_logger().error(
+                get_logger(self).error(
                     "In motor-cad, we have just the possibility to set the same type of hole, so we select the first hole"
                 )
 
@@ -198,7 +199,7 @@ class ConvertMC(Convert):
 
         elif isinstance(hole, HoleM60):
             name_hole = "Interior_V(simple)"
-            self.get_logger().warning(f"Approximation for W3, Magnet_Post")
+            get_logger(self).warning(f"Approximation for W3, Magnet_Post")
 
         elif isinstance(hole, HoleM61):
             name_hole = "Interior_U-Shape"
@@ -226,7 +227,7 @@ class ConvertMC(Convert):
         else:
             self.other_dict["[Design_Options]"]["BPM_Rotor"] = name_hole
 
-        self.get_logger().info(f"Conversion {hole_type} into {name_hole}")
+        get_logger(self).info(f"Conversion {hole_type} into {name_hole}")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_machine_to_other
     def convert_machine_to_other(self) -> None:  # conversion to MotorCAD
@@ -259,7 +260,7 @@ class ConvertMC(Convert):
                 f"Machine {motor_type} has not equivalent or has not been implementated"
             )
 
-        self.get_logger().info(f"Conversion {motor_type} into {name_machine}")
+        get_logger(self).info(f"Conversion {motor_type} into {name_machine}")
 
         # writting in dict
         if "[Calc_Options]" not in self.other_dict:
@@ -316,7 +317,7 @@ class ConvertMC(Convert):
         else:
             self.other_dict["[Design_Options]"]["BPM_Rotor"] = name_slot
 
-        self.get_logger().info(f"Conversion {magnet_type} into {name_slot}")
+        get_logger(self).info(f"Conversion {magnet_type} into {name_slot}")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_material_to_other
     def convert_material_to_other(self, is_stator, name) -> None:
@@ -354,22 +355,20 @@ class ConvertMC(Convert):
         if not is_stator:
             # A MC machine has the possibility to have a single notch set
             if len_nocth > 1:
-                self.get_logger().info(
-                    "A Motor-cad machine can only have one notch set"
-                )
-                self.get_logger().info("Only the first notch set will be added")
+                get_logger(self).info("A Motor-cad machine can only have one notch set")
+                get_logger(self).info("Only the first notch set will be added")
 
             if isinstance(self.machine.rotor.notch[0].notch_shape, SlotM19):
                 self.add_rule_notch(is_stator)
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
                 )
 
             else:
-                self.get_logger().error("Only the slotM19 can be converted")
+                get_logger(self).error("Only the slotM19 can be converted")
 
         else:
-            self.get_logger().error("Motor-CAD machine can't have stator notch")
+            get_logger(self).error("Motor-CAD machine can't have stator notch")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_other.convert_pole_to_other
     def convert_pole_to_other(self) -> None:
@@ -405,7 +404,7 @@ class ConvertMC(Convert):
         else:
             self.other_dict["[Design_Options]"]["Sync_Rotor"] = name_pole
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {pole_type.__class__.__name__} into {name_pole}"
         )
 
@@ -453,7 +452,7 @@ class ConvertMC(Convert):
                 f"Type of slot {type(slot).__name__} has not equivalent or has not been implementated"
             )
 
-        self.get_logger().info(f"Conversion {slot.__class__.__name__} into {name_slot}")
+        get_logger(self).info(f"Conversion {slot.__class__.__name__} into {name_slot}")
 
         # writting in dict
         if "[Design_Options]" not in self.other_dict:
@@ -494,7 +493,7 @@ class ConvertMC(Convert):
             raise NotImplementedError(
                 f"Type of slot {type(slot).__name__} has not equivalent or has not been implementated"
             )
-        self.get_logger().info(f"Conversion {slot.__class__.__name__} into {name_slot}")
+        get_logger(self).info(f"Conversion {slot.__class__.__name__} into {name_slot}")
 
         # writting in dict
         if "[Calc_Options]" not in self.other_dict:
@@ -563,7 +562,7 @@ class ConvertMC(Convert):
                 f"Type of conductor {conductor_type} has not equivalent or has not implement"
             )
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {conductor_type} into {winding.conductor.__class__.__name__}"
         )
 
@@ -602,7 +601,7 @@ class ConvertMC(Convert):
                 # RectangularDuct
                 elif type_duct == "Rect_Ducts":
                     # Error convert is not Implemented
-                    self.get_logger().info("Rect_Ducts, Not Implemented")
+                    get_logger(self).info("Rect_Ducts, Not Implemented")
                     # Ventilation_class = VentilationTrap
                     return
 
@@ -625,7 +624,7 @@ class ConvertMC(Convert):
 
             # Selection type of duct
             if type_duct == f"No_{lam_name}_Ducts":
-                self.get_logger().debug(f"No duct to convert at {lam_name}")
+                get_logger(self).debug(f"No duct to convert at {lam_name}")
                 return
 
             else:
@@ -635,7 +634,7 @@ class ConvertMC(Convert):
 
                 # Shaft_spoke
                 elif type_duct == f"{lam_name}_Shaft_Spoke_Ducts":
-                    self.get_logger().info(f"ShaftSpoke ins't define in pyleecan")
+                    get_logger(self).info(f"ShaftSpoke ins't define in pyleecan")
 
                 # Arcduct
                 elif type_duct == f"{lam_name}_Arc_Ducts":
@@ -644,7 +643,7 @@ class ConvertMC(Convert):
                 # RectangularDuct
                 elif type_duct == f"{lam_name}_Rect_Ducts" or type_duct == "Rect_Ducts":
                     # Error convert is not Implemented
-                    self.get_logger().info("Rect_Ducts, Not Implemented")
+                    get_logger(self).info("Rect_Ducts, Not Implemented")
                     return
                     # Ventilation_class = VentilationTrap
 
@@ -661,7 +660,7 @@ class ConvertMC(Convert):
         for duct_id in range(number_duct):
             axial_vent.append(Ventilation_class())
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {type_duct} into {number_duct} {Ventilation_class.__name__}"
         )
 
@@ -704,7 +703,7 @@ class ConvertMC(Convert):
         elif hole_type == "Interior_Flat_Simple":
             self.machine.rotor.hole.append(HoleM63())
             self.machine.rotor.hole[0].top_flat = True
-            self.get_logger().warning(
+            get_logger(self).warning(
                 f"HoleM63 : Approximation for H1, Pole Arc isn't present in Pyleecan"
             )
 
@@ -722,7 +721,7 @@ class ConvertMC(Convert):
             number_hole = self.other_dict["[Dimensions]"]["VMagnet_Layers"]
             for hole_id in range(number_hole):
                 self.machine.rotor.hole.append(HoleM57())
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "HoleM57 : Approximation check the settings for HoleM57"
                 )
 
@@ -738,17 +737,17 @@ class ConvertMC(Convert):
 
         # writing exception/approximation for Hole
         if isinstance(self.machine.rotor.hole[0], HoleM60):
-            self.get_logger().warning(f"HoleM60 : Approximation for W3, Magnet_Post")
+            get_logger(self).warning(f"HoleM60 : Approximation for W3, Magnet_Post")
 
         if isinstance(self.machine.rotor.hole[0], HoleM63):
-            self.get_logger().warning(f"HoleM63 : Approximation for W0")
+            get_logger(self).warning(f"HoleM63 : Approximation for W0")
 
         if isinstance(self.machine.rotor.hole[0], HoleM57):
-            self.get_logger().warning(
+            get_logger(self).warning(
                 f"HoleM57 : Approximation Pole Arc has not equivalent in pyleecan "
             )
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {hole_type} into {type(self.machine.rotor.hole[0]).__name__}"
         )
 
@@ -800,7 +799,7 @@ class ConvertMC(Convert):
                 f"Machine {motor_type} has not equivalent in pyleecan or has not been implementated"
             )
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {motor_type} into {type(self.machine).__name__}"
         )
 
@@ -838,7 +837,7 @@ class ConvertMC(Convert):
         elif magnet_type == "Inset_Parallel":
             self.machine.rotor.slot = SlotM15()
             self.machine.rotor.slot.H0 = 0.001  # To pass the check for inset parallel
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "Approximation for slotM15 hasn't equivalent in Pyleecan"
             )
 
@@ -858,7 +857,7 @@ class ConvertMC(Convert):
         other_value = self.other_dict["[Dimensions]"]["Pole_Number"]
         self.machine.rotor.set_pole_pair_number(other_value // 2)
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {magnet_type} into {type(self.machine.rotor.slot).__name__}"
         )
 
@@ -939,12 +938,12 @@ class ConvertMC(Convert):
                 self.machine.rotor.notch.append(NotchEvenDist())
                 self.machine.rotor.notch[0].notch_shape = SlotM19()
 
-                self.get_logger().info("Add notch for rotor")
-                self.get_logger().warning(
+                get_logger(self).info("Add notch for rotor")
+                get_logger(self).warning(
                     "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
                 )
         else:
-            self.get_logger().error("MC machine can't have notch in stator")
+            get_logger(self).error("MC machine can't have notch in stator")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_other_to_dict
     def convert_other_to_dict(self, file_path: str) -> None:
@@ -1105,7 +1104,7 @@ class ConvertMC(Convert):
         elif pole_type == "Sync_Parallel_Slot":
             self.machine.rotor.slot = SlotW29()
             self.machine.rotor.slot.H1 = 0
-            self.get_logger().info(
+            get_logger(self).info(
                 "Approximation for tip angle, not possible in pyleecan"
             )
 
@@ -1114,12 +1113,12 @@ class ConvertMC(Convert):
                 f"Type of pole {pole_type} has not equivalent in pyleecan or has not been implementated"
             )
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {pole_type} into {type(self.machine.rotor.slot).__name__}"
         )
 
         if isinstance(pole_type, SlotW63):
-            self.get_logger().warning(
+            get_logger(self).warning(
                 f"SlotW62 : Approximation for W2 has not equivalent in Motor-CAD"
             )
 
@@ -1142,7 +1141,7 @@ class ConvertMC(Convert):
             # initialisation to set the skew in rotor
             self.machine.rotor.skew = Skew()
 
-            self.get_logger().info(f"Conversion skew ")
+            get_logger(self).info(f"Conversion skew ")
 
     # Inlined from Methods.Converter.ConvertMC.convert_to_P.convert_slot_rotor_to_P
     def convert_slot_rotor_to_P(self) -> None:
@@ -1183,14 +1182,14 @@ class ConvertMC(Convert):
                 f"Type of slot {slot_type} has not equivalent or has not been implementated"
             )
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {slot_type} into {type(self.machine.rotor.slot).__name__}"
         )
 
         # Motor-Cad has possibility to have 2 slots, nested one on top of the other
         # We have dicided to select just the top_BAR
         if self.other_dict["[Design_Options]"]["Bottom_Bar"] != None:
-            self.get_logger().error(
+            get_logger(self).error(
                 f"Conversion with 2 slot in rotor is not accept in Pyleecan"
             )
 
@@ -1222,7 +1221,7 @@ class ConvertMC(Convert):
                 self.machine.stator.slot.is_cstt_tooth = True
                 self.machine.stator.slot.H1_is_rad = True
                 self.machine.stator.is_internal = False
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
                 )
 
@@ -1249,7 +1248,7 @@ class ConvertMC(Convert):
                 self.machine.stator.slot.is_cstt_tooth = False
                 self.machine.stator.slot.H1_is_rad = True
                 self.machine.stator.is_internal = False
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
                 )
 
@@ -1259,14 +1258,14 @@ class ConvertMC(Convert):
             self.machine.stator.slot.wedge_type = 1
 
         elif slot_type == "Slotless":
-            self.get_logger().error("Slotless has not equivalent in Pyleecan")
+            get_logger(self).error("Slotless has not equivalent in Pyleecan")
 
         else:
             raise NotImplementedError(
                 f"type of slot {slot_type} has not equivalent in pyleecan or has not been implementated"
             )
 
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion {slot_type} into {type(self.machine.stator.slot).__name__}"
         )
 
@@ -1284,13 +1283,13 @@ class ConvertMC(Convert):
             self.machine.stator.slot.wedge_mat = Material()
         elif wedge == "Wound_Space":
             self.machine.stator.slot.wedge_mat = None
-            self.get_logger().info(
+            get_logger(self).info(
                 f"Conversion Wound_Space for {type(self.machine.stator.slot).name} has no equivalent in pyleecan. No wedge defined in the converted slot"
             )
 
         else:
             self.machine.stator.slot.wedge_mat = None
-            self.get_logger().warning(
+            get_logger(self).warning(
                 f"Error for conversion of wedge (unknow wedge type: {wedge}). No wedge defined in the converted slot"
             )
 
@@ -2631,7 +2630,7 @@ class ConvertMC(Convert):
         """
 
         if is_stator:
-            self.get_logger().info("stator_duct, not implemented")
+            get_logger(self).info("stator_duct, not implemented")
             return
         else:
             lam_name_MC = "Rotor"

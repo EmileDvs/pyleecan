@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....Classes_new._smoot.smoot import MOO
 from copy import deepcopy
 from datetime import datetime
@@ -30,14 +31,14 @@ def solve(self):
         class containing the results
     """
 
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # Check input parameters
     self.check_optimization_input()
 
     # Display information
     try:
-        filename = self.get_logger().handlers[0].stream.name
+        filename = get_logger(self).handlers[0].stream.name
         print(
             "{} Starting optimization... \n\tLog file: {}\n\tNumber of generations: {}\n\tPopulation size: {}\n".format(
                 datetime.now().strftime("%H:%M:%S"), filename, self.nb_iter

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....Classes_new.scidatatool.data_1d import Data1D
 from typing import TYPE_CHECKING
 
@@ -21,7 +22,7 @@ def get_solution(self, indice=None) -> SolutionMat:
         solution
 
     """
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # create copy to directly manipulate data
     solution = self.copy()

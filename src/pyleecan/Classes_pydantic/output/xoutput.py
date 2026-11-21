@@ -12,6 +12,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from pydantic import Field
 
 from ...classes_common.errors import PlotError, XOutputError
+from ...classes_common.logger_context import get_logger
 from ...definitions import config_dict
 from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
@@ -91,7 +92,7 @@ class XOutput(Output):
             values = np.array(data.value)[index]
         else:
             symbol_ = next(iter(self.keys()))
-            self.get_logger().warning(
+            get_logger(self).warning(
                 f"XOutput.plot_pareto(): Symbol '{symbol}' not found. "
                 + f"Using symbol '{symbol_}' instead."
             )

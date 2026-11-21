@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool
 import os
@@ -156,7 +157,7 @@ def solve_FEMM_parallel(
     else:
         fem_file = self.get_path_save_fem(output)
     nb_worker = self.nb_worker
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # Check method parameters
     if nb_worker > cpu_count():
@@ -222,12 +223,12 @@ def solve_FEMM_parallel(
             os.remove(fem_file[:-4] + "_" + str(w) + ".fem")
         except Exception:
             filename = fem_file[:-4] + "_" + str(w) + ".fem"
-            self.get_logger().warning("Could not remove file: " + filename)
+            get_logger(self).warning("Could not remove file: " + filename)
 
         try:
             os.remove(fem_file[:-4] + "_" + str(w) + ".ans")
         except Exception:
             filename = fem_file[:-4] + "_" + str(w) + ".ans"
-            self.get_logger().warning("Could not remove file: " + filename)
+            get_logger(self).warning("Could not remove file: " + filename)
 
     return B_elem, H_elem, mu_elem, A_node, meshFEMM, groups, A_elem

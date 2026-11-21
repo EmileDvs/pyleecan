@@ -9,6 +9,7 @@ from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from pydantic import Field
 
 from ...classes_common.errors import WindingError
+from ...classes_common.logger_context import get_logger
 from ...Classes_new._swat_em import datamodel
 from ...definitions import config_dict
 from ...Functions_new._swat_em import plots
@@ -269,7 +270,7 @@ class Winding(LegacyModel):
             self.Npcp = Npcp_list[0]
         elif self.Npcp > 2 * p:
             # self.Npcp = 2 * p
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "Number of parallel circuits per phase should be < 2*p, current value is: "
                 + str(self.Npcp)
             )
@@ -287,7 +288,7 @@ class Winding(LegacyModel):
         Nlayer_actual = wdg.get_num_layers()
         if self.Nlayer != Nlayer_actual:
             self.Nlayer = Nlayer_actual
-            self.get_logger().info(
+            get_logger(self).info(
                 "Requested number of layers is not feasible, assign it to: "
                 + str(Nlayer_actual)
             )
@@ -352,7 +353,7 @@ class Winding(LegacyModel):
         Ncps = Ncps_.mean()
 
         if Ncps_.std() != 0:
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "LamSlotWind.comp_fill_factor: "
                 "Uneven number of conductors per slot. "
                 + "Max. number of conductors will be used to compute slot fill factor."
@@ -433,7 +434,7 @@ class Winding(LegacyModel):
             / 2
         )
         if Ntspc_eff_.std() != 0:
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "Winding.comp_Ntsp: "
                 "Uneven number of turns in series per phase. "
                 + "Mean number of turns will be used."

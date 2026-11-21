@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.slot_m_11 import SlotM11
 from .....Classes_new.slot.slot_m_12 import SlotM12
 from .....Classes_new.slot.slot_m_13 import SlotM13
@@ -54,4 +55,4 @@ def convert_magnet_to_other(self) -> None:
     else:
         self.other_dict["[Design_Options]"]["BPM_Rotor"] = name_slot
 
-    self.get_logger().info(f"Conversion {magnet_type} into {name_slot}")
+    get_logger(self).info(f"Conversion {magnet_type} into {name_slot}")

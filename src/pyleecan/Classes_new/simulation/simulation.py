@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from logging.config import dictConfig
 from typing import TYPE_CHECKING, ClassVar
 
+from ...classes_common.logger_context import get_logger, logger_context
 from ...loggers import DEFAULT_LOG_NAME, gen_logger_config_dict
 from .._legacy_class import LegacyClass
 from ..machine.machine import Machine
@@ -187,8 +188,8 @@ class Simulation(LegacyClass):
                 msg += " " + self.name
             if self.machine.name not in ["", None]:
                 msg += " (machine=" + self.machine.name + ")"
-            self.get_logger().debug("###################################")
-            self.get_logger().info(msg)
+            get_logger(self).debug("###################################")
+            get_logger(self).info(msg)
 
     # Inlined from Methods.Simulation.Simulation.run
     def run(self) -> Output:
@@ -199,54 +200,57 @@ class Simulation(LegacyClass):
         output: Output
             Contains simulation results
         """
-        # In-function import to avoid ImportError
-        from ..output.output import Output
-        from ..output.xoutput import XOutput
 
-        if self.layer is None:
-            self.layer = 0  # Top simulation
+        # The objects without logger_name use the logger of the simulation
+        with logger_context(self):
+            # In-function import to avoid ImportError
+            from ..output.output import Output
+            from ..output.xoutput import XOutput
 
-        # Multi-simulation
-        if self.var_simu is not None:
-            # make sure simulation output is of class XOutput
-            if self.parent is None:
-                results = XOutput(simu=self)
-            else:
-                if not isinstance(self.parent, XOutput):
-                    msg = (
-                        "Simulation.run: A multisimulation has been defined, "
-                        + "type XOutput expected for simu.parent, "
-                        + f"got {type(self.parent).__name__}. "
-                        + "Setting new parent XOutput for simu."
-                    )
-                    self.get_logger().warning(msg)
+            if self.layer is None:
+                self.layer = 0  # Top simulation
+
+            # Multi-simulation
+            if self.var_simu is not None:
+                # make sure simulation output is of class XOutput
+                if self.parent is None:
                     results = XOutput(simu=self)
+                else:
+                    if not isinstance(self.parent, XOutput):
+                        msg = (
+                            "Simulation.run: A multisimulation has been defined, "
+                            + "type XOutput expected for simu.parent, "
+                            + f"got {type(self.parent).__name__}. "
+                            + "Setting new parent XOutput for simu."
+                        )
+                        get_logger(self).warning(msg)
+                        results = XOutput(simu=self)
+                    else:
+                        results = self.parent
+
+                # Logger setup
+                self.init_logger(results)
+
+                # Compute the multisimulation
+                self.var_simu.run()
+
+            # 'normal' simulation
+            else:
+                # Output initialization
+                if self.parent is None:
+                    results = Output(simu=self)
                 else:
                     results = self.parent
 
-            # Logger setup
-            self.init_logger(results)
+                # Logger setup
+                self.init_logger(results)
 
-            # Compute the multisimulation
-            self.var_simu.run()
+                # Compute the simulation
+                self.run_single()
 
-        # 'normal' simulation
-        else:
-            # Output initialization
-            if self.parent is None:
-                results = Output(simu=self)
-            else:
-                results = self.parent
-
-            # Logger setup
-            self.init_logger(results)
-
-            # Compute the simulation
-            self.run_single()
-
-        if self.index is None and self.layer == 0:
-            msg = "End of simulation"
-            if self.name not in ["", None]:
-                msg += " " + self.name
-            self.get_logger().info(msg)
-        return results
+            if self.index is None and self.layer == 0:
+                msg = "End of simulation"
+                if self.name not in ["", None]:
+                    msg += " " + self.name
+                get_logger(self).info(msg)
+            return results

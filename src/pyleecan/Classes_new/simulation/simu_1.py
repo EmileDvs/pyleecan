@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from ..electrical.electrical import Electrical
 from ..force.force import Force
 from ..loss.loss import Loss
@@ -64,7 +65,7 @@ class Simu1(Simulation):
             A Simu1 object
 
         """
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         if self.parent is None:
             raise InputError("ERROR: Simulation object must be inside an Output object")

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 from typing import TYPE_CHECKING
 
@@ -221,20 +222,20 @@ def solve_power(self, LUT: LUTdq, Rs: float) -> dict:
 
     # Launch warnings
     if OP.Pem_av_in is None and P_out[i0][imin] < OP.Pem_av_ref:
-        self.get_logger().warning(
+        get_logger(self).warning(
             "Output power cannot be reached within current and voltage constraints, taking maximum feasible power"
         )
 
     elif OP.Pem_av_in is not None and P_in[i0][imin] < OP.Pem_av_in:
-        self.get_logger().warning(
+        get_logger(self).warning(
             "Input power cannot be reached within current and voltage constraints, taking maximum feasible power"
         )
 
     if Umax_interp[i0][imin] > Urms_max:
-        self.get_logger().warning("Voltage constraint cannot be reached")
+        get_logger(self).warning("Voltage constraint cannot be reached")
 
     if Imax_interp[i0][imin] > Irms_max:
-        self.get_logger().warning("Current constraint cannot be reached")
+        get_logger(self).warning("Current constraint cannot be reached")
 
     out_dict = dict()
     out_dict["P_in"] = P_in[i0][imin]

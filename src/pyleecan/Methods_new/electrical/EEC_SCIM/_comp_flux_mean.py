@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Functions_new.SciDataTool.dqh_transformation import n2abc
@@ -30,7 +31,7 @@ def _comp_flux_mean(self, out: Output) -> tuple[float, float]:
     # TODO add option to calculate RMS instead of mean fluxlinkage
 
     # some readability
-    logger = self.get_logger()
+    logger = get_logger(self)
     machine = out.simu.machine
     p = machine.rotor.winding.p
     qsr = machine.rotor.winding.qs

@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.slot_m_19 import SlotM19
 
 
@@ -24,17 +25,17 @@ def convert_notch_to_other(self, is_stator: bool) -> None:
     if not is_stator:
         # A MC machine has the possibility to have a single notch set
         if len_nocth > 1:
-            self.get_logger().info("A Motor-cad machine can only have one notch set")
-            self.get_logger().info("Only the first notch set will be added")
+            get_logger(self).info("A Motor-cad machine can only have one notch set")
+            get_logger(self).info("Only the first notch set will be added")
 
         if isinstance(self.machine.rotor.notch[0].notch_shape, SlotM19):
             self.add_rule_notch(is_stator)
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
             )
 
         else:
-            self.get_logger().error("Only the slotM19 can be converted")
+            get_logger(self).error("Only the slotM19 can be converted")
 
     else:
-        self.get_logger().error("Motor-CAD machine can't have stator notch")
+        get_logger(self).error("Motor-CAD machine can't have stator notch")

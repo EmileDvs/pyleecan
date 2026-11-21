@@ -6,6 +6,7 @@ from typing import ClassVar
 
 import numpy as np
 
+from ...classes_common.logger_context import get_logger
 from .end_winding import EndWinding
 from .lam_slot_wind import LamSlotWind
 
@@ -121,7 +122,7 @@ class EndWindingRect(EndWinding):
             coil_pitch = getattr(self.parent, "coil_pitch", None)
             if coil_pitch is None:
                 coil_pitch = Zs / p / 2
-                self.get_logger().warning(
+                get_logger(self).warning(
                     "EndWindingCirc.comp_lenght_endwinding():"
                     + "Using a coil pitch of one pole pitch for EW length calculation."
                 )

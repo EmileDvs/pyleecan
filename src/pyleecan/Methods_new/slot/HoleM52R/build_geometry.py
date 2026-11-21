@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
@@ -61,7 +62,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
             Z9R = Z9 - self.R0
 
         else:
-            self.get_logger().warning("Radius R0 enforced to 0.")
+            get_logger(self).warning("Radius R0 enforced to 0.")
 
     # Creation of the air curve
     curve_list: list[Line] = list()

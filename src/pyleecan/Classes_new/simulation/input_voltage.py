@@ -7,6 +7,7 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from ..import_data.import_gen_pwm import ImportGenPWM
 from ..output.out_elec import OutElec
 from .input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF, Input
@@ -91,7 +92,7 @@ class InputVoltage(Input):
         else:
             raise InputError("Simulation object should be inside an Output object")
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # Create the correct Output object
         outelec = OutElec()

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....Classes_new.geometry.segment import Segment
 from ....Methods import ParentMissingError
 import numpy as np
@@ -34,7 +35,7 @@ def get_bore_line(self, prop_dict: dict | None = None) -> list:
     else:
         raise ParentMissingError("Error: The slot is not inside a Lamination")
 
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # Compute the shape
     alpha1 = np.pi / self.N  # Half bore pitch [rad]

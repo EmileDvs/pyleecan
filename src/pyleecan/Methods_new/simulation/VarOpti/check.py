@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....Functions.Load.import_class import import_class
 
 
@@ -98,7 +99,7 @@ def check(self) -> None:
 
     # Keep every output if there is no DataKeeper defined
     if len(self.datakeeper_list) == 0 and self.is_keep_all_output is False:
-        logger = self.get_logger()
+        logger = get_logger(self)
         logger.warning(
             "No datakeeper has been define in VarParamSweep, setting is_keep_all_output as True."
         )

@@ -9,6 +9,7 @@ import numpy as np
 
 from ... import __version__
 from ...classes_common.base import PyleecanBase
+from ...classes_common.logger_context import get_logger
 from ...Classes_pydantic._class_info import ClassInfo
 from ...definitions import PACKAGE_NAME
 
@@ -41,7 +42,7 @@ def save_json(
     """
     if isinstance(obj, PyleecanBase):  # Pyleecan obj
         # Get the object logger
-        logger = obj.get_logger()
+        logger = get_logger(obj)
     else:
         logger = getLogger("Pyleecan")
 

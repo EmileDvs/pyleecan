@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.cond_type_12 import CondType12
 from .....Classes_new.machine.cond_type_11 import CondType11
 
@@ -29,6 +30,6 @@ def convert_conductor_to_P(self, is_stator) -> None:
             f"Type of conductor {conductor_type} has not equivalent or has not implement"
         )
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {conductor_type} into {winding.conductor.__class__.__name__}"
     )

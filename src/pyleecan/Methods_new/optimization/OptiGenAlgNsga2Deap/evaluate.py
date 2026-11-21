@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from logging import WARNING
 import traceback
 import sys
@@ -30,7 +31,7 @@ def evaluate(self, indiv: Any) -> bool:
         failure of the evaluation
     """
     # Get solver logger
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     tb = StringIO()  # to store the traceback in case of error
 

@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.lam_slot_wind import LamSlotWind
 from .....Classes_new.slot.slot_w_11 import SlotW11
 from .....Classes_new.slot.slot_w_14 import SlotW14
@@ -34,7 +35,7 @@ def convert_slot_to_P(self) -> None:
             self.machine.stator.slot.is_cstt_tooth = True
             self.machine.stator.slot.H1_is_rad = True
             self.machine.stator.is_internal = False
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
             )
 
@@ -61,7 +62,7 @@ def convert_slot_to_P(self) -> None:
             self.machine.stator.slot.is_cstt_tooth = False
             self.machine.stator.slot.H1_is_rad = True
             self.machine.stator.is_internal = False
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "Approximation: top of slot is flat in Pyleecan contrary to MC top is rounded"
             )
 
@@ -71,14 +72,14 @@ def convert_slot_to_P(self) -> None:
         self.machine.stator.slot.wedge_type = 1
 
     elif slot_type == "Slotless":
-        self.get_logger().error("Slotless has not equivalent in Pyleecan")
+        get_logger(self).error("Slotless has not equivalent in Pyleecan")
 
     else:
         raise NotImplementedError(
             f"type of slot {slot_type} has not equivalent in pyleecan or has not been implementated"
         )
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {slot_type} into {type(self.machine.stator.slot).__name__}"
     )
 
@@ -96,12 +97,12 @@ def convert_slot_to_P(self) -> None:
         self.machine.stator.slot.wedge_mat = Material()
     elif wedge == "Wound_Space":
         self.machine.stator.slot.wedge_mat = None
-        self.get_logger().info(
+        get_logger(self).info(
             f"Conversion Wound_Space for {type(self.machine.stator.slot).name} has no equivalent in pyleecan. No wedge defined in the converted slot"
         )
 
     else:
         self.machine.stator.slot.wedge_mat = None
-        self.get_logger().warning(
+        get_logger(self).warning(
             f"Error for conversion of wedge (unknow wedge type: {wedge}). No wedge defined in the converted slot"
         )

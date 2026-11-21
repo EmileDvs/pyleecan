@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from logging import Logger, FileHandler, Formatter, INFO, NOTSET
 from datetime import datetime
 from ....Classes_new.optimization.opti_objective import OptiObjective
@@ -21,7 +22,7 @@ def check_optimization_input(self) -> None:
         solver to perform the bayesian algorithm with SMT
     """
 
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # Check problem existence
     if self.problem == None:

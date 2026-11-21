@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.logger_context import get_logger
 from .solution import Solution
 
 if TYPE_CHECKING:
@@ -161,7 +162,7 @@ class SolutionMat(Solution):
             solution
 
         """
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         field_sol = self.get_field()
         axis_name, axis_size = self.get_axes_list()

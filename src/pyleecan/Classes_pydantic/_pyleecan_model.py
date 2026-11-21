@@ -130,7 +130,7 @@ class PyleecanModel(BaseModel, PyleecanBase):
     __hash__ = None
 
     def get_logger(self):
-        from ..Functions_pydantic.get_logger import get_logger
+        from ..classes_common.logger_context import get_logger
 
         return get_logger(self)
 

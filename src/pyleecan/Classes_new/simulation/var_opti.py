@@ -12,6 +12,7 @@ from ...classes_common.errors import (
     VarOptiObjectiveError,
     VarOptiSolverError,
 )
+from ...classes_common.logger_context import get_logger
 from ..optimization.opti_constraint import OptiConstraint
 from ..optimization.opti_objective import OptiObjective
 from ..optimization.opti_problem import OptiProblem
@@ -130,7 +131,7 @@ class VarOpti(VarParam):
 
         # Keep every output if there is no DataKeeper defined
         if len(self.datakeeper_list) == 0 and self.is_keep_all_output is False:
-            logger = self.get_logger()
+            logger = get_logger(self)
             logger.warning(
                 "No datakeeper has been define in VarParamSweep, setting is_keep_all_output as True."
             )

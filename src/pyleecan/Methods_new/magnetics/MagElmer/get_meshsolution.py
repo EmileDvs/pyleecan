@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 
 from meshio import read
@@ -38,7 +39,7 @@ def get_meshsolution(self, output: Output) -> MeshSolution:
     elmermesh_folder = project_name
     meshsol = MeshSolution(label="Elmer MagnetoDynamics")
     if not self.is_get_mesh or not self.is_save_FEA:
-        self.get_logger().info("MagElmer: MeshSolution is not stored by request.")
+        get_logger(self).info("MagElmer: MeshSolution is not stored by request.")
         return False
 
     meshvtk = MeshVTK(path=elmermesh_folder, name="step_t0002", format="vtu")

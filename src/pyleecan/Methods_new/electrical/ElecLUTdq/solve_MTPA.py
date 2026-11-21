@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 from typing import TYPE_CHECKING
 
@@ -167,10 +168,10 @@ def solve_MTPA(self, LUT: LUTdq, Rs: float) -> dict:
 
     # Launch warnings
     if Umax_interp[i0][imin] > Urms_max:
-        self.get_logger().warning("Voltage constraint cannot be reached")
+        get_logger(self).warning("Voltage constraint cannot be reached")
 
     if Imax_interp[i0][imin] > Irms_max:
-        self.get_logger().warning("Current constraint cannot be reached")
+        get_logger(self).warning("Current constraint cannot be reached")
 
     out_dict = dict()
 

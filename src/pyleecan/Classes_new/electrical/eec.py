@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import AbstractClassError
+from ...classes_common.logger_context import get_logger
 from .._legacy_class import LegacyClass
 from ..magnetics.magnetics import Magnetics
 from ..simulation.op import OP
@@ -120,7 +121,7 @@ class EEC(LegacyClass):
         else:
             mag_model = self.fluxlink.copy()
 
-        self.get_logger().info("Compute flux linkage with FEMM")
+        get_logger(self).info("Compute flux linkage with FEMM")
 
         if machine is None:
             machine = self.get_machine_from_parent()

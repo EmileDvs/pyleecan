@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....classes_common.errors import ConvertionError
 from .... import __version__
 import os
@@ -25,16 +26,16 @@ def convert_to_P(self, file_path: str) -> Machine:
     self.is_P_to_other = False  # Select rules direction
 
     # add log
-    self.get_logger().info(f"Pyleecan version : {__version__}")
-    self.get_logger().info(f"Path file use to convert : {file_path}")
+    get_logger(self).info(f"Pyleecan version : {__version__}")
+    get_logger(self).info(f"Path file use to convert : {file_path}")
     # conversion file in dict
-    self.get_logger().info("Conversion file .mot into dict")
+    get_logger(self).info("Conversion file .mot into dict")
     self.convert_other_to_dict(file_path)
 
     # To be sure rules_list is empty
     self.rules_list = []
 
-    self.get_logger().info("Conversion dict into obj machine")
+    get_logger(self).info("Conversion dict into obj machine")
 
     # conversion dict into machine
     self.select_machine_rules()
@@ -48,7 +49,7 @@ def convert_to_P(self, file_path: str) -> Machine:
                 self.other_dict, self.machine, self.other_unit_dict
             )
         except Exception as e:
-            self.get_logger().info(f"Error while running rule {rule.get_name()}:\n{e}")
+            get_logger(self).info(f"Error while running rule {rule.get_name()}:\n{e}")
             # raise ConvertionError(f"Error while running rule {rule.get_name()}:\n{e}")
         comp += 1
     # Get machine name from the .mot file name
@@ -58,6 +59,6 @@ def convert_to_P(self, file_path: str) -> Machine:
     file_name_extension = os.path.basename(file_path)
     self.machine.name = os.path.splitext(file_name_extension)[0]
 
-    self.get_logger().info("End of conversion, obj machine is create\n\n\n")
+    get_logger(self).info("End of conversion, obj machine is create\n\n\n")
 
     return self.machine

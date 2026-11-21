@@ -106,6 +106,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   a static method of `VarSimu`. The old function paths of `Functions_new` and
   `Functions_pydantic` are deprecated aliases (`DeprecationWarning`) until
   Phase 2. The other functions used by a single class stay utilities.
+- **Loggers without the parent chain** (Step 9):
+  `classes_common.logger_context.get_logger(obj)` gives the object's
+  logger, else the logger of the simulation in progress
+  (`Simulation.run` sets the context), else the default one; the methods
+  and functions call it (`get_logger(self)`), `Functions.get_logger` is
+  deprecated.
 - **Utility functions refactored, group by group** (Step 8):
   - Optimization: `evaluate`, `check_cstr`, `tournamentDCD`, `update`
     become methods of `OptiGenAlgNsga2Deap` (the last two static);
@@ -268,7 +274,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 6. Class-specific functions moved to their class | done (3 functions) |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
 | 8. Refactor the remaining `Functions` modules (generator) | in progress (7/14 groups) |
-| 9. Logger chain (generator) | to do |
+| 9. Logger chain (generator) | done |
 | 10. GUI, first pass (generator) | to do |
 | 11. Parent links, first pass (generator) | to do |
 | 12. Freeze | to do |

@@ -10,6 +10,7 @@ import gmsh
 import numpy as np
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from ...Functions_new.get_path_binary import get_path_binary
 from ...Functions_new.labels import (
     AIRBOX_R_LAB,
@@ -515,7 +516,7 @@ class StructElmer(Structural):
             )
 
         # convert to ElmerGrid mesh
-        self._gen_mesh(save_dir, "Mesh", lam_name, mag_name, self.get_logger())
+        self._gen_mesh(save_dir, "Mesh", lam_name, mag_name, get_logger(self))
 
         return names
 
@@ -569,7 +570,7 @@ class StructElmer(Structural):
 
         """
         # logger
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         fea_path = self.get_path_save_fea(output)
 
@@ -1022,7 +1023,7 @@ class StructElmer(Structural):
         """
         cwd = self.get_path_save_fea(output)  # current working dir
 
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         for info in self._execute("ElmerSolver", cwd, logger):
             print(info, end="")

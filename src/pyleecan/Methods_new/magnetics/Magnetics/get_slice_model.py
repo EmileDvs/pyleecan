@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.simulation.slice_model import SliceModel
@@ -47,14 +48,14 @@ def get_slice_model(self) -> DataPattern:
             if rotor_skew.type_skew == "linear" and not rotor_skew.is_step:
                 if self.Nslices_enforced is None:
                     Nslices = 5
-                    self.get_logger().debug(
+                    get_logger(self).debug(
                         "Enforce Nslices_enforced = " + str(Nslices)
                     )
                 else:
                     Nslices = self.Nslices_enforced
                 if self.type_distribution_enforced is None:
                     type_distribution = "uniform"
-                    self.get_logger().debug(
+                    get_logger(self).debug(
                         "Enforce type_distribution_enforced = " + type_distribution
                     )
 
@@ -73,7 +74,7 @@ def get_slice_model(self) -> DataPattern:
 
             else:
                 if self.Nslices_enforced is not None:
-                    self.get_logger().info(
+                    get_logger(self).info(
                         "Nslice_enforced is defined but rotor is stepped-skew, set mag.slice_model.Nslices = "
                         + str(rotor_skew.Nstep)
                     )

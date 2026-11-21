@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
     """Compute the periodicity factor of the lamination
 
@@ -15,7 +16,7 @@ def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
     """
 
     if self.sym_dict_enforced is not None:
-        self.get_logger().debug("Enforcing symmetry for LamSlotMulti")
+        get_logger(self).debug("Enforcing symmetry for LamSlotMulti")
         return (
             self.sym_dict_enforced["per_a"],
             self.sym_dict_enforced["is_antiper_a"],
@@ -24,5 +25,5 @@ def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         # Zs = self.get_Zs()
         is_aper = False
         # TODO compute it
-        self.get_logger().debug("Symmetry not available yet for LamSlotMulti")
+        get_logger(self).debug("Symmetry not available yet for LamSlotMulti")
         return 1, is_aper

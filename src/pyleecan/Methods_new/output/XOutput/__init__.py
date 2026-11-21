@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 
@@ -16,7 +17,7 @@ def _get_symbol_data_(self, symbol, index):
         values = np.array(data.value)[index]
     else:  # ParamSetter
         symbol_ = next(iter(self.keys()))
-        self.get_logger().warning(
+        get_logger(self).warning(
             f"XOutput.plot_pareto(): Symbol '{symbol}' not found. "
             + f"Using symbol '{symbol_}' instead."
         )

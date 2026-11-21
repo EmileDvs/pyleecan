@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 
 from ....Functions.Load.import_class import import_class
@@ -41,7 +42,7 @@ def comp_fluxlinkage(self, machine: Machine | None = None, OP: OP | None = None,
     else:
         mag_model = self.fluxlink.copy()
 
-    self.get_logger().info("Compute flux linkage with FEMM")
+    get_logger(self).info("Compute flux linkage with FEMM")
 
     if machine is None:
         machine = self.get_machine_from_parent()

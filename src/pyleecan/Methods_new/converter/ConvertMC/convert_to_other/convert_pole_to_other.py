@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.slot_w_61 import SlotW61
 from .....Classes_new.slot.slot_w_62 import SlotW62
 from .....Classes_new.slot.slot_w_29 import SlotW29
@@ -36,6 +37,6 @@ def convert_pole_to_other(self) -> None:
     else:
         self.other_dict["[Design_Options]"]["Sync_Rotor"] = name_pole
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {pole_type.__class__.__name__} into {name_pole}"
     )

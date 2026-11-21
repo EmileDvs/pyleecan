@@ -6,6 +6,7 @@ from typing import ClassVar, Optional, Union
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.logger_context import get_logger
 from .._legacy_model import LegacyModel
 from .._pyleecan_model import NDArray
 from .gauss_point import GaussPoint
@@ -217,7 +218,7 @@ class ElementMat(LegacyModel):
                 True if the element already exist
         """
         if self.nb_node_per_element > 3:
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "ElementMat.is_exist doesn't take into account quad node permutations."
             )
 

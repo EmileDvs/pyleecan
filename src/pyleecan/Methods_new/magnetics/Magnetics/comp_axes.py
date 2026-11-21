@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -48,7 +49,7 @@ def comp_axes(self, output: Output) -> dict[str, Data]:
             per_t_S = outgeo.per_t_S
             if outgeo.is_antiper_t_S:
                 per_t_S *= 2
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "In Magnetic model, Nt_tot="
                 + str(Nt_tot)
                 + " is not divisible by the machine time periodicity ("
@@ -78,7 +79,7 @@ def comp_axes(self, output: Output) -> dict[str, Data]:
                 # Change stator to rotor periodicity
                 Time_R = Time_S.get_axis_periodic(Nper=pert_R, is_aper=False)
                 Time = Time_R.copy()
-                self.get_logger().debug(
+                get_logger(self).debug(
                     f"""In {self.__class__.__name__ }, calculating magnetic mesh quantities in stator and rotor frames (is_get_meshsolution=True) : 
             setting time periodicity from stator frame (period={pert_S}, is_antiper={str(is_apert_S)}) to rotor frame (period={pert_R}, is_antiper=False)"""
                 )
@@ -99,7 +100,7 @@ def comp_axes(self, output: Output) -> dict[str, Data]:
             per_a = outgeo.per_a
             if outgeo.is_antiper_a:
                 per_a *= 2
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "In Magnetic model, Na_tot="
                 + str(Na_tot)
                 + " is not divisible by the machine angular periodicity ("

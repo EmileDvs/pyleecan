@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ....Functions.load import load_init_dict
 from ....Functions.Load.import_class import import_class
 from ....classes_common.check import check_var
@@ -12,7 +13,7 @@ def _set_OP_matrix(self, value) -> None:
         try:
             value = load_init_dict(value)[1]
         except Exception as e:
-            self.get_logger().error(
+            get_logger(self).error(
                 "Error while loading " + value + ", setting None instead"
             )
             value = None

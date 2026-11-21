@@ -131,6 +131,128 @@ def is_reflective(source):
     )
 
 
+LOGGER_MODULE = "classes_common.logger_context"
+"""Module of get_logger / logger_context below pyleecan (PLAN.md Step 9)"""
+
+LOGGER_CONTEXTS = {("Simulation", "run")}
+"""(class, method) running in the logger context of the object (the objects
+without logger_name use its logger)"""
+
+
+def _module_import_position(tree):
+    """Line index after the module docstring and the __future__ imports."""
+    position = 0
+    for node in tree.body:
+        if (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, str)
+        ) or (isinstance(node, ast.ImportFrom) and node.module == "__future__"):
+            position = node.end_lineno
+        else:
+            break
+    return position
+
+
+def redirect_get_logger(source, package):
+    """Get the loggers without the parent chain (classes_common.logger_context).
+
+    ``x.get_logger()`` -> ``get_logger(x)``; the imports of the legacy
+    ``get_logger`` function (``Functions.get_logger``) import the shared one.
+
+    Parameters
+    ----------
+    source : str
+        Source of a method or function module
+    package : str
+        Package of the module (relative import of classes_common)
+
+    Returns
+    -------
+    source : str
+        Source calling classes_common.logger_context.get_logger
+    """
+    if "get_logger" not in source:
+        return source
+    tree = ast.parse(source)
+    if any(isinstance(node, ast.FunctionDef) and node.name == "get_logger" for node in tree.body):
+        return source  # The legacy function itself
+    lines = source.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    up = "." * len(package.split("."))
+    replacements = []
+    imported = False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and any(a.name == "get_logger" for a in node.names):
+            module = (
+                resolve_name("." * node.level + (node.module or ""), package)
+                if node.level
+                else node.module
+            )
+            if module and module.split(".")[-1] == "get_logger":  # Legacy function
+                start = offsets[node.lineno - 1] + node.col_offset
+                end = offsets[node.end_lineno - 1] + node.end_col_offset
+                replacements.append((start, end, f"from {up}{LOGGER_MODULE} import get_logger"))
+                imported = True
+            elif module and module.endswith(LOGGER_MODULE):
+                imported = True
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "get_logger"
+            and not node.args
+            and not node.keywords
+        ):
+            value = node.func.value
+            start = offsets[node.lineno - 1] + node.col_offset
+            end = offsets[node.end_lineno - 1] + node.end_col_offset
+            value_start = offsets[value.lineno - 1] + value.col_offset
+            value_end = offsets[value.end_lineno - 1] + value.end_col_offset
+            replacements.append((start, end, f"get_logger({source[value_start:value_end]})"))
+    if not replacements:
+        return source
+    calls = any(text.startswith("get_logger(") for _, _, text in replacements)
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    if calls and not imported:
+        tree = ast.parse(source)
+        lines = source.splitlines(keepends=True)
+        lines.insert(_module_import_position(tree), f"from {up}{LOGGER_MODULE} import get_logger\n")
+        source = "".join(lines)
+    return source
+
+
+def wrap_logger_context(source, package, function_name):
+    """Run the body of a method in the logger context of self (Simulation.run)."""
+    tree = ast.parse(source)
+    function = next(
+        (n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == function_name),
+        None,
+    )
+    if function is None or "logger_context(self)" in source:
+        return source
+    lines = source.splitlines(keepends=True)
+    first = function.body[1] if ast.get_docstring(function) is not None and len(function.body) > 1 else function.body[0]
+    start = first.lineno - 1
+    # The comments above the first statement go in the block with it (an
+    # import guard comment must stay just above its import)
+    while start > 0 and lines[start - 1].strip().startswith("#"):
+        start -= 1
+    end = function.end_lineno
+    indent = " " * first.col_offset
+    body = [("    " + line) if line.strip() else line for line in lines[start:end]]
+    up = "." * len(package.split("."))
+    lines[start:end] = [
+        f"{indent}from {up}{LOGGER_MODULE} import logger_context\n\n",
+        f"{indent}# The objects without logger_name use the logger of the simulation\n",
+        f"{indent}with logger_context(self):\n",
+        *body,
+    ]
+    return "".join(lines)
+
+
 def apply_import_styles(source):
     """``import numpy as np``, ``import pyvista as pv`` and ``import os``.
 

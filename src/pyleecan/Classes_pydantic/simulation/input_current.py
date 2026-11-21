@@ -7,6 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from ...Functions_pydantic.SciDataTool.dqh_transformation import get_phase_dir
 from ..electrical.elec_lut_dq import ElecLUTdq
 from ..import_data.import_data import ImportData
@@ -157,7 +158,7 @@ class InputCurrent(InputVoltage):
                     # Get phase_dir from Is
                     phase_dir = get_phase_dir(Is_val, current_dir=outelec.current_dir)
                     if phase_dir != outelec.phase_dir:
-                        self.get_logger().warning(
+                        get_logger(self).warning(
                             "Enforcing outelec.phase_dir="
                             + str(phase_dir)
                             + " to comply with input current"
@@ -165,7 +166,7 @@ class InputCurrent(InputVoltage):
                         outelec.phase_dir = phase_dir
                 except Exception:
                     # Cannot calculate phase_dir
-                    self.get_logger().warning(
+                    get_logger(self).warning(
                         "phase_dir cannot be calculated, please make sure that input.phase_dir="
                         + str(outelec.phase_dir)
                         + " is compliant with enforced currents"
@@ -218,7 +219,7 @@ class InputCurrent(InputVoltage):
                     Ir_val = Ir_val[None, :]
                 if Ir_val.shape[1] > qr_per:
                     Ir_val = Ir_val[:, :qr_per]
-                    self.get_logger().info(
+                    get_logger(self).info(
                         "Restrict input rotor bar currents to smallest spatial periodicity"
                     )
 
@@ -247,11 +248,11 @@ class InputCurrent(InputVoltage):
             # Check PWM phase voltage consistency in current driven mode
             if outelec.PWM.U0 is not None or Ud_ref is not None or Uq_ref is not None:
                 if outelec.PWM.U0 is not None:
-                    self.get_logger().warning(
+                    get_logger(self).warning(
                         "Neglecting U0 given as input of PWM object since voltage will be calculated"
                     )
                 if Ud_ref is not None or Uq_ref is not None:
-                    self.get_logger().warning(
+                    get_logger(self).warning(
                         "Neglecting Ud_ref/Uq_ref given as input since voltage will be calculated"
                     )
             # Set all voltages to None since they will be calculated by Electrical model

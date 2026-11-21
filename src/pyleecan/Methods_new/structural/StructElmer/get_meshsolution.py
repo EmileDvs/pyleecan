@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 
 from ....Classes_new.elmer.elmer_results_vtu import ElmerResultsVTU
@@ -22,7 +23,7 @@ def get_meshsolution(self, output) -> bool:
 
     """
     # logger
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     fea_path = self.get_path_save_fea(output)
 

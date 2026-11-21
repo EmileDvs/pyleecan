@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.slot.ventilation_circ import VentilationCirc
 from .....Classes_new.slot.ventilation_polar import VentilationPolar
 from .....Classes_new.slot.ventilation_trap import VentilationTrap
@@ -31,7 +32,7 @@ def convert_duct_to_other(self, is_stator: bool) -> None:
     elif len(axial_vent) > 1:
         for duct in axial_vent:
             if isinstance(duct, axial_vent[0].__class__):
-                self.get_logger().error(
+                get_logger(self).error(
                     "A Motor-cad machine can only have one type of axial duct"
                 )
                 break
@@ -59,4 +60,4 @@ def convert_duct_to_other(self, is_stator: bool) -> None:
     else:
         self.other_dict["[Through_Vent]"][f"{lam_name_MC}_Duct_Type"] = duct_MC_name
 
-    self.get_logger().info(f"Conversion {axial_vent[0].__name__} into {duct_MC_name}")
+    get_logger(self).info(f"Conversion {axial_vent[0].__name__} into {duct_MC_name}")

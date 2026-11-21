@@ -10,6 +10,7 @@ import numpy as np
 from scipy.io import savemat
 
 from ...classes_common.errors import GetOutError
+from ...classes_common.logger_context import get_logger
 from ...definitions import RESULT_DIR, config_dict
 from ...Functions_new.Plot import fft_dict
 from .._legacy_class import LegacyClass
@@ -262,7 +263,7 @@ class Output(LegacyClass):
             angle_rotor = Time.get_values(normalization="angle_rotor") * np.pi / 180
         else:
             # Recalculate rotor angular position over time (should not happen)
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "angle_rotor not in time normalizations, recalculate rotor angular position over time and add it to normalizations"
             )
             angle_rotor = self.comp_angle_rotor(Time)

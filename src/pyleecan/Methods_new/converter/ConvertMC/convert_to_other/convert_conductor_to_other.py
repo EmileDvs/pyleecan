@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.cond_type_12 import CondType12
 from .....Classes_new.machine.cond_type_13 import CondType13
 
@@ -32,6 +33,6 @@ def convert_conductor_to_other(self, is_stator) -> None:
     else:
         self.other_dict["[Winding_Design]"]["Wire_Type"] = conductor_name
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {conductor_type.__class__.__name__} into {conductor_name}"
     )

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.mesh.mesh_solution import MeshSolution
@@ -10,8 +11,8 @@ def run(self) -> None:
         raise InputError("The Magnetic object must be in a Simulation object to run")
     if self.parent.parent is None:
         raise InputError("The Simulation object must be in an Output object to run")
-    self.get_logger().info("Starting Magnetic module")
-    self.get_logger().debug("Using " + self.__class__.__name__ + " object")
+    get_logger(self).info("Starting Magnetic module")
+    get_logger(self).debug("Using " + self.__class__.__name__ + " object")
 
     output = self.parent.parent
 
@@ -41,7 +42,7 @@ def run(self) -> None:
     # Calculate airgap flux
     Nslices = len(unique_indices)
     if Nslices > 1:
-        self.get_logger().info("Solving slice 1 / " + str(Nslices))
+        get_logger(self).info("Solving slice 1 / " + str(Nslices))
     out_dict = self.comp_flux_airgap(output, axes_dict, Is_val=Is_val, Ir_val=Ir_val)
 
     is_loop = True
@@ -76,7 +77,7 @@ def run(self) -> None:
                         is_loop = False
         if not is_loop:
             for ii in range(Nslices)[1:]:
-                self.get_logger().info(
+                get_logger(self).info(
                     "Solving slice " + str(ii + 1) + " / " + str(Nslices)
                 )
 
@@ -107,7 +108,7 @@ def run(self) -> None:
 
         # Loop over other slices
         for ii, index in enumerate(unique_indices[1:]):
-            self.get_logger().info(
+            get_logger(self).info(
                 "Solving slice " + str(ii + 2) + " / " + str(Nslices)
             )
             # Assign stator and rotor angle shifts

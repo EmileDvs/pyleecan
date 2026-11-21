@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import os
 from ....Functions_new.GUI.log_error import log_error
 
@@ -23,7 +24,7 @@ def save_vtk(self, save_path: str) -> None:
             log_error(
                 self,
                 err_msg,
-                self.get_logger(),
+                get_logger(self),
                 is_popup=False,
                 is_warning=False,
             )

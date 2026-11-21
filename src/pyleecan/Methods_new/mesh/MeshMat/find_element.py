@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 
@@ -98,7 +99,7 @@ def find_element(self, points: np.ndarray, normal_t=None) -> list:
             elif len(element_prop) > 1:
                 index = np.nonzero(np.min(a) == a)[0]
                 if len(index > 1):
-                    logger = self.get_logger()
+                    logger = get_logger(self)
                     logger.warning(
                         f"The target point {point} belongs to more than one element, it may be on an edge. The method returns only one element."
                     )

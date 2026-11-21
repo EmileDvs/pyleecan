@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -29,7 +30,7 @@ def solve_PWM(self, output: Output, is_dqh_freq: bool = False, is_skin_effect_in
     Is_PWM : DataFreq
         Stator current harmonics as DataFreq
     """
-    self.get_logger().info("Calculating PWM current harmonics")
+    get_logger(self).info("Calculating PWM current harmonics")
 
     # Get fundamental frequency
     felec = self.OP.get_felec()

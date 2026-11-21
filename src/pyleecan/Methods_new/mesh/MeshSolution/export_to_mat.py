@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from scipy.io import savemat
 import os
 from ....Functions_new.GUI.log_error import log_error
@@ -24,7 +25,7 @@ def export_to_mat(self, save_path: str) -> None:
             log_error(
                 self,
                 err_msg,
-                self.mesh.get_logger(),
+                get_logger(self.mesh),
                 is_popup=False,
                 is_warning=False,
             )

@@ -12,6 +12,7 @@ import numpy as np
 import pyvista as pv
 import pyvista.core  # noqa: F401 (loaded on demand)
 
+from ...classes_common.logger_context import get_logger
 from ...definitions import RESULT_DIR
 from ...Functions_new.GUI.log_error import log_error
 from .element_mat import ElementMat
@@ -330,7 +331,7 @@ class MeshMat(Mesh):
                 elif len(element_prop) > 1:
                     index = np.nonzero(np.min(a) == a)[0]
                     if len(index > 1):
-                        logger = self.get_logger()
+                        logger = get_logger(self)
                         logger.warning(
                             f"The target point {point} belongs to more than one element, it may be on an edge. The method returns only one element."
                         )
@@ -468,7 +469,7 @@ class MeshMat(Mesh):
         areas: ndarray
             Area of the elements
         """
-        logger = self.get_logger()
+        logger = get_logger(self)
         area = []
 
         element_name = self._check_element_name(
@@ -827,7 +828,7 @@ class MeshMat(Mesh):
                 log_error(
                     self,
                     err_msg,
-                    self.get_logger(),
+                    get_logger(self),
                     is_popup=False,
                     is_warning=False,
                 )

@@ -540,17 +540,37 @@ Proposed targets are a starting point; the decision is the maintainer's.
 169 in 94 `Methods_new` modules, 6 in `Functions_new`
 (`Functions_new/get_logger.py`, `PyleecanClass.get_logger`).
 
-- [ ] Inventory of the `logger_name` values and where they are set
-      (`Simulation`, `Output`, `XOutput`, optimization), and of the log files
-      written per simulation.
-- [ ] Choose the target: per-module loggers (`logging.getLogger(__name__)`),
-      or a context logger (a `contextvars` value set by `Simulation.run` and
-      read by a module-level helper). The per-simulation log file and the
-      multi-simulation logs must keep working.
-- [ ] Generator pass in the shared pipeline rewriting `self.get_logger()` /
-      `get_logger(obj)`, with unit tests; same pass in the functions generator.
-- [ ] Remove `get_logger` (function and base method), or keep it as a
-      deprecated alias.
+- [x] Inventory (2026-11-21): 16 classes have a `logger_name` field
+      (Simulation, its models, the outputs, Machine, OptiSolver, Elmer,
+      Loss); `Simulation.init_logger` sets per-simulation names
+      (`<simulation>`, `<simulation>.Machine`, `.Magnetics`, ...) on the
+      simulation, its models and the output, with the per-simulation log
+      file handlers; 177 `get_logger()` calls in Methods_new / Functions_new.
+- [x] Target (chosen 2026-11-21, maintainer away; to confirm): context
+      logger, `classes_common/logger_context.py`. `get_logger(obj)`: the
+      object's `logger_name`, else the simulation in progress
+      (`logger_context(simulation)`, set by `Simulation.run` around its
+      body, the name read when the logger is requested so after
+      `init_logger`; nested simulations of a multi-simulation get their
+      own context), else the parents (legacy layer, Phase 1), else the
+      default logger. Difference with legacy: an object without
+      `logger_name` in a simulation logs to the simulation logger instead of
+      the logger of its nearest parent with one (`<simulation>` instead of
+      `<simulation>.Machine`): same log file.
+- [x] Generator pass (`modernize.redirect_get_logger`, methods and
+      functions): `x.get_logger()` -> `get_logger(x)`, the imports of the
+      legacy function redirected; `wrap_logger_context` for
+      `LOGGER_CONTEXTS` (`Simulation.run`; the comments above the first
+      statement stay in the block: import guard of `Output` / `XOutput`).
+      Unit tests: `Tests/New/test_logger_context.py`.
+- [x] `Functions.get_logger` deprecated (`DEPRECATED_MODULES`); the base
+      `get_logger` methods (`PyleecanClass`, `PyleecanModel`) use
+      `classes_common.logger_context`.
+- [ ] Remove the parent fallback with the parent links (Step 11), the base
+      method in Phase 2.
+- Checks: class and cross tests as before, Simulation and Machine method
+  tests as before; `test_LossFEMM_Prius` (pydantic) writes the
+  per-simulation log file with the simulation logger names.
 
 ## Step 10: GUI, first pass
 

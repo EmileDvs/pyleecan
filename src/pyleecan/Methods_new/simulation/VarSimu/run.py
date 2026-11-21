@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 import itertools
 from ....Functions.Load.import_class import import_class
@@ -17,7 +18,7 @@ def run(self) -> None:
         A VarSimu object
     """
 
-    logger = self.get_logger()
+    logger = get_logger(self)
     Output = import_class("pyleecan.Classes", "Output")
 
     # Check var_simu parameters

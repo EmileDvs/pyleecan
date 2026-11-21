@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new._swat_em import datamodel
@@ -110,7 +111,7 @@ def comp_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np
         self.Npcp = Npcp_list[0]
     elif self.Npcp > 2 * p:
         # self.Npcp = 2 * p
-        self.get_logger().warning(
+        get_logger(self).warning(
             "Number of parallel circuits per phase should be < 2*p, current value is: "
             + str(self.Npcp)
         )
@@ -128,7 +129,7 @@ def comp_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np
     Nlayer_actual = wdg.get_num_layers()
     if self.Nlayer != Nlayer_actual:
         self.Nlayer = Nlayer_actual
-        self.get_logger().info(
+        get_logger(self).info(
             "Requested number of layers is not feasible, assign it to: "
             + str(Nlayer_actual)
         )

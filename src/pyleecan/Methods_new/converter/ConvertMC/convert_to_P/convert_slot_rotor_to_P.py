@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.lam_squirrel_cage import LamSquirrelCage
 from .....Classes_new.slot.slot_w_11_2 import SlotW11_2
 from .....Classes_new.slot.slot_w_30 import SlotW30
@@ -43,13 +44,13 @@ def convert_slot_rotor_to_P(self) -> None:
             f"Type of slot {slot_type} has not equivalent or has not been implementated"
         )
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {slot_type} into {type(self.machine.rotor.slot).__name__}"
     )
 
     # Motor-Cad has possibility to have 2 slots, nested one on top of the other
     # We have dicided to select just the top_BAR
     if self.other_dict["[Design_Options]"]["Bottom_Bar"] != None:
-        self.get_logger().error(
+        get_logger(self).error(
             f"Conversion with 2 slot in rotor is not accept in Pyleecan"
         )

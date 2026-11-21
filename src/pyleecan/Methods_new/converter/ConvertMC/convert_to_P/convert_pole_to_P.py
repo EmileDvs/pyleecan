@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.lam_slot_wind import LamSlotWind
 from .....Classes_new.slot.slot_w_63 import SlotW63
 from .....Classes_new.slot.slot_w_62 import SlotW62
@@ -31,18 +32,18 @@ def convert_pole_to_P(self) -> None:
     elif pole_type == "Sync_Parallel_Slot":
         self.machine.rotor.slot = SlotW29()
         self.machine.rotor.slot.H1 = 0
-        self.get_logger().info("Approximation for tip angle, not possible in pyleecan")
+        get_logger(self).info("Approximation for tip angle, not possible in pyleecan")
 
     else:
         raise NotImplementedError(
             f"Type of pole {pole_type} has not equivalent in pyleecan or has not been implementated"
         )
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {pole_type} into {type(self.machine.rotor.slot).__name__}"
     )
 
     if isinstance(pole_type, SlotW63):
-        self.get_logger().warning(
+        get_logger(self).warning(
             f"SlotW62 : Approximation for W2 has not equivalent in Motor-CAD"
         )

@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.machine_sipmsm import MachineSIPMSM
 from .....Classes_new.machine.machine_ipmsm import MachineIPMSM
 from .....Classes_new.machine.machine_scim import MachineSCIM
@@ -34,7 +35,7 @@ def convert_machine_to_other(self) -> None:  # conversion to MotorCAD
             f"Machine {motor_type} has not equivalent or has not been implementated"
         )
 
-    self.get_logger().info(f"Conversion {motor_type} into {name_machine}")
+    get_logger(self).info(f"Conversion {motor_type} into {name_machine}")
 
     # writting in dict
     if "[Calc_Options]" not in self.other_dict:

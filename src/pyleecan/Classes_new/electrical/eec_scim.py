@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import scipy.interpolate as scp_int
 
+from ...classes_common.logger_context import get_logger
 from ...Functions_new.labels import ROTOR_LAB, STATOR_LAB
 from ...Functions_new.SciDataTool.dqh_transformation import abc2n, n2abc
 from ..import_data.import_gen_vect_lin import ImportGenVectLin
@@ -130,7 +131,7 @@ class EEC_SCIM(EEC):
         # TODO add option to calculate RMS instead of mean fluxlinkage
 
         # some readability
-        logger = self.get_logger()
+        logger = get_logger(self)
         machine = out.simu.machine
         p = machine.rotor.winding.p
         qsr = machine.rotor.winding.qs

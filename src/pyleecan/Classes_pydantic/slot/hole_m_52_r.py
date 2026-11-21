@@ -14,6 +14,7 @@ from ...classes_common.errors import (
     S52R_R0CheckError,
     S52R_widthCheckError,
 )
+from ...classes_common.logger_context import get_logger
 from ...definitions import config_dict
 from ...Functions_pydantic.labels import HOLEM_LAB
 from ...Functions_pydantic.Plot import (
@@ -196,7 +197,7 @@ class HoleM52R(HoleMag):
                 Z9R = Z9 - self.R0
 
             else:
-                self.get_logger().warning("Radius R0 enforced to 0.")
+                get_logger(self).warning("Radius R0 enforced to 0.")
 
         # Creation of the air curve
         curve_list: list[Line] = []

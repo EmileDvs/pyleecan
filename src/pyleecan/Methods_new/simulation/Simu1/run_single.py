@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ..Input import InputError
 from ....Classes_new.post.post_function import PostFunction
 from ....Classes_new.post.post_method import PostMethod
@@ -12,7 +13,7 @@ def run_single(self) -> None:
         A Simu1 object
 
     """
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     if self.parent is None:
         raise InputError("ERROR: Simulation object must be inside an Output object")

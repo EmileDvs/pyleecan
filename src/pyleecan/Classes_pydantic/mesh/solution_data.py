@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
+from ...classes_common.logger_context import get_logger
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_nd import DataND
@@ -148,7 +149,7 @@ class SolutionData(Solution):
             solution
 
         """
-        logger = self.get_logger()
+        logger = get_logger(self)
 
         # create copy to directly manipulate data
         solution = self.copy()

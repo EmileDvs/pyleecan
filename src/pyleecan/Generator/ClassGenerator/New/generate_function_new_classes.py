@@ -910,6 +910,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                             source, package, interface_signatures[spec], spec
                         )
                 source = redirect_moved_calls(source, package)
+                from .modernize import redirect_get_logger
+
+                source = redirect_get_logger(source, package)
             source = _redirect_shared_error_imports(source, package)
             rewritten, found = _rewrite_source(source, path, relative, class_dir)
             if relative in (

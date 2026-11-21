@@ -6,6 +6,7 @@ from typing import ClassVar, Optional, Union
 
 import numpy as np
 
+from ...classes_common.logger_context import get_logger
 from .._legacy_class import LegacyClass
 from .gauss_point import GaussPoint
 from .ref_element import RefElement
@@ -222,7 +223,7 @@ class ElementMat(LegacyClass):
                 True if the element already exist
         """
         if self.nb_node_per_element > 3:
-            self.get_logger().warning(
+            get_logger(self).warning(
                 "ElementMat.is_exist doesn't take into account quad node permutations."
             )
 

@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....classes_common.femm_handler import _FEMMHandler
@@ -43,7 +44,7 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
     # Local import: circular import with the class module
     from ....Functions_new.FEMM.femm_pyleecan import femm_pyleecan
 
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # Init output
     out_dict = dict()

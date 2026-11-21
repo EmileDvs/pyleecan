@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new.output.out_elec import OutElec
@@ -30,7 +31,7 @@ def gen_input(self) -> None:
     else:
         raise InputError("Simulation object should be inside an Output object")
 
-    logger = self.get_logger()
+    logger = get_logger(self)
 
     # Create the correct Output object
     outelec = OutElec()

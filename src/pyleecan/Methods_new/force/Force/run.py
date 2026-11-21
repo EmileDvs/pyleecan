@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from ...simulation.Input import InputError
 
 
@@ -10,7 +11,7 @@ def run(self) -> None:
     if self.parent.parent is None:
         raise InputError("ERROR: The Force object must be in an Output object to run")
 
-    self.get_logger().info("Starting Force module")
+    get_logger(self).info("Starting Force module")
 
     output = self.parent.parent
 

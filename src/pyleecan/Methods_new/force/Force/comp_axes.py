@@ -1,3 +1,4 @@
+from ....classes_common.logger_context import get_logger
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -50,7 +51,7 @@ def comp_axes(self, output: Output) -> dict[str, Data]:
         # Remove time periodicity in Force model
         self.is_periodicity_t = False
         Nt_tot = axes_dict["time"].get_length(is_oneperiod=False)
-        self.get_logger().warning(
+        get_logger(self).warning(
             "In Force model, Nt_tot="
             + str(Nt_tot)
             + " is not divisible by the machine time periodicity ("
@@ -73,7 +74,7 @@ def comp_axes(self, output: Output) -> dict[str, Data]:
         # Remove time periodicity in Magnetic model
         self.is_periodicity_a = False
         Na_tot = axes_dict["angle"].get_length(is_oneperiod=False)
-        self.get_logger().warning(
+        get_logger(self).warning(
             "In Force model, Na_tot="
             + str(Na_tot)
             + " is not divisible by the machine angular periodicity ("

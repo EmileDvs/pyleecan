@@ -14,6 +14,7 @@ import pyvista.core  # noqa: F401 (loaded on demand)
 from meshio import read
 from vtk import vtkPointSet
 
+from ...classes_common.logger_context import get_logger
 from ...definitions import RESULT_DIR
 from ...Functions_new.GUI.log_error import log_error
 from .element_mat import ElementMat
@@ -532,7 +533,7 @@ class MeshVTK(Mesh):
                 log_error(
                     self,
                     err_msg,
-                    self.get_logger(),
+                    get_logger(self),
                     is_popup=False,
                     is_warning=False,
                 )

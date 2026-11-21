@@ -7,6 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from ..output.out_loss_model import OutLossModel
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
@@ -192,8 +193,8 @@ class LossFEA(Loss):
         if self.parent.parent is None:
             raise InputError("The LossFEA object must be in an Output object to run")
 
-        self.get_logger().info("Starting Loss module")
-        self.get_logger().info("Computing losses with LossFEA model")
+        get_logger(self).info("Starting Loss module")
+        get_logger(self).info("Computing losses with LossFEA model")
 
         # get output
         output = self.parent.parent

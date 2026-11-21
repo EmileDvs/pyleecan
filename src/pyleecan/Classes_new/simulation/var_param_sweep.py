@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import DataKeeperError, ParamExplorerError
+from ...classes_common.logger_context import get_logger
 from .param_explorer_set import ParamExplorerSet
 from .var_param import VarParam
 
@@ -56,7 +57,7 @@ class VarParamSweep(VarParam):
 
         # Keep every output if there is no DataKeeper defined
         if len(self.datakeeper_list) == 0 and self.is_keep_all_output is False:
-            logger = self.get_logger()
+            logger = get_logger(self)
             logger.warning(
                 "No datakeeper has been define in VarParamSweep, setting is_keep_all_output as True."
             )

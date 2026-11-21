@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 import numpy as np
 from typing import TYPE_CHECKING
 
@@ -37,7 +38,7 @@ def get_angle_rotor(self, Time: Data | None = None) -> np.ndarray:
         angle_rotor = Time.get_values(normalization="angle_rotor") * np.pi / 180
     else:
         # Recalculate rotor angular position over time (should not happen)
-        self.get_logger().warning(
+        get_logger(self).warning(
             "angle_rotor not in time normalizations, recalculate rotor angular position over time and add it to normalizations"
         )
         angle_rotor = self.comp_angle_rotor(Time)

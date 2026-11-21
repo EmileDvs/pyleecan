@@ -1,3 +1,4 @@
+from .....classes_common.logger_context import get_logger
 from .....Classes_new.machine.machine_sipmsm import MachineSIPMSM
 from .....Classes_new.machine.machine_ipmsm import MachineIPMSM
 from .....Classes_new.machine.machine_scim import MachineSCIM
@@ -51,6 +52,6 @@ def convert_machine_to_P(self) -> None:
             f"Machine {motor_type} has not equivalent in pyleecan or has not been implementated"
         )
 
-    self.get_logger().info(
+    get_logger(self).info(
         f"Conversion {motor_type} into {type(self.machine).__name__}"
     )

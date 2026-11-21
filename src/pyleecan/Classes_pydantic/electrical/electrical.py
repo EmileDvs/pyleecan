@@ -7,6 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import InputError
+from ...classes_common.logger_context import get_logger
 from .._legacy_model import LegacyModel
 from ..machine.machine_ipmsm import MachineIPMSM
 from ..machine.machine_scim import MachineSCIM
@@ -130,7 +131,7 @@ class Electrical(LegacyModel):
             an Output object
         """
 
-        self.get_logger().info("Calculating PWM voltage")
+        get_logger(self).info("Calculating PWM voltage")
 
         p = output.simu.machine.get_pole_pair_number()
 
@@ -214,7 +215,7 @@ class Electrical(LegacyModel):
         if self.parent.parent is None:
             raise InputError("The Simulation object must be in an Output object to run")
 
-        self.get_logger().info("Starting Electric module")
+        get_logger(self).info("Starting Electric module")
 
         output = self.parent.parent
 

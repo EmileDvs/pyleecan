@@ -8,6 +8,7 @@ from pydantic import Field
 
 from ... import __version__
 from ...classes_common.errors import ConvertionError
+from ...classes_common.logger_context import get_logger
 from .._legacy_model import LegacyModel
 from ..machine.cond_type_11 import CondType11
 from ..machine.cond_type_12 import CondType12
@@ -108,8 +109,8 @@ class Convert(LegacyModel):
 
         self.init_other_unit()
 
-        self.get_logger().info(f"Pyleecan version : {__version__}")
-        self.get_logger().info("Conversion obj machine into dict")
+        get_logger(self).info(f"Pyleecan version : {__version__}")
+        get_logger(self).info("Conversion obj machine into dict")
 
         # conversion machine in dict
         self.select_machine_rules()
@@ -125,9 +126,9 @@ class Convert(LegacyModel):
                     f"Error while running rule {rule.get_name()}:\n{e}"
                 )
 
-        self.get_logger().info("End of conversion, dict is create")
+        get_logger(self).info("End of conversion, dict is create")
 
-        self.get_logger()
+        get_logger(self)
 
         return self.other_dict
 
@@ -150,16 +151,16 @@ class Convert(LegacyModel):
         self.is_P_to_other = False  # Select rules direction
 
         # add log
-        self.get_logger().info(f"Pyleecan version : {__version__}")
-        self.get_logger().info(f"Path file use to convert : {file_path}")
+        get_logger(self).info(f"Pyleecan version : {__version__}")
+        get_logger(self).info(f"Path file use to convert : {file_path}")
         # conversion file in dict
-        self.get_logger().info("Conversion file .mot into dict")
+        get_logger(self).info("Conversion file .mot into dict")
         self.convert_other_to_dict(file_path)
 
         # To be sure rules_list is empty
         self.rules_list = []
 
-        self.get_logger().info("Conversion dict into obj machine")
+        get_logger(self).info("Conversion dict into obj machine")
 
         # conversion dict into machine
         self.select_machine_rules()
@@ -173,7 +174,7 @@ class Convert(LegacyModel):
                     self.other_dict, self.machine, self.other_unit_dict
                 )
             except Exception as e:
-                self.get_logger().info(
+                get_logger(self).info(
                     f"Error while running rule {rule.get_name()}:\n{e}"
                 )
                 # raise ConvertionError(f"Error while running rule {rule.get_name()}:\n{e}")
@@ -185,7 +186,7 @@ class Convert(LegacyModel):
         file_name_extension = os.path.basename(file_path)
         self.machine.name = os.path.splitext(file_name_extension)[0]
 
-        self.get_logger().info("End of conversion, obj machine is create\n\n\n")
+        get_logger(self).info("End of conversion, obj machine is create\n\n\n")
 
         return self.machine
 
@@ -341,7 +342,7 @@ class Convert(LegacyModel):
 
         self.add_rule_rotor_bar(is_stator)
 
-        self.get_logger().error(
+        get_logger(self).error(
             "Approximation for rotor bar conversion. In pyleecan Rotor bar is centered on the slot contrary to MC Rotor bar could be more flexible"
         )
 
@@ -383,13 +384,13 @@ class Convert(LegacyModel):
 
         if is_stator:
             self.select_material_rules("machine.stator.winding.conductor.cond_mat")
-            self.get_logger().info("Insulator material, Not Implemented")
+            get_logger(self).info("Insulator material, Not Implemented")
             # self.select_material_rules("machine.stator.winding.conductor.ins_mat")
 
         else:
             self.select_material_rules("machine.rotor.winding.conductor.cond_mat")
             # self.select_material_rules("machine.rotor.winding.conductor.ins_mat")
-            self.get_logger().info("Insulator material, Not Implemented")
+            get_logger(self).info("Insulator material, Not Implemented")
 
     # Inlined from Methods.Converter.Convert.Step.select_duct_rules
     def select_duct_rules(self, is_stator: bool) -> None:
@@ -648,7 +649,7 @@ class Convert(LegacyModel):
             if isinstance(notch.notch_shape, SlotM19):
                 self.add_rule_notch_slotM19(is_stator, nb_notch)
             else:
-                self.get_logger().error("Only rules for slotM19 are defined")
+                get_logger(self).error("Only rules for slotM19 are defined")
 
     # Inlined from Methods.Converter.Convert.Step.select_pole_rules
     def select_pole_rules(self, is_stator: bool) -> None:
