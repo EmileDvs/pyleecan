@@ -131,7 +131,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     suffix), without the checks of the data axes; the old paths are
     deprecated aliases;
   - `animate_as_gif` becomes a static method of `Data` (any plot of the
-    Data objects).
+    Data objects);
+  - `comp_MTPA` becomes a method of `LUTdq` (`LUT.comp_MTPA(machine,
+    ...)`).
   The old paths are deprecated aliases until Phase 2.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
@@ -240,7 +242,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
-| 8. Refactor the remaining `Functions` modules (generator) | in progress (4/14 groups) |
+| 8. Refactor the remaining `Functions` modules (generator) | in progress (5/14 groups) |
 | 9. Logger chain (generator) | to do |
 | 10. GUI, first pass (generator) | to do |
 | 11. Parent links, first pass (generator) | to do |

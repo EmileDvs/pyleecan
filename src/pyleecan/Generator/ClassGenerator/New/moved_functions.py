@@ -47,6 +47,10 @@ class MovedFunction(NamedTuple):
     local_imports: bool = False
     """True: the class imports of the legacy module go in the method body (the
     class module would import a class depending on it: import cycle)"""
+    self_parameter: str = ""
+    """Parameter of the legacy function that becomes self, when it is not the
+    first one (``comp_MTPA(machine, LUT, ...)`` -> ``LUT.comp_MTPA(machine,
+    ...)``); the alias keeps the legacy signature"""
 
     @property
     def legacy_name(self):
@@ -98,6 +102,10 @@ MOVED_FUNCTIONS = {
         "DataFreq", "n2dqh", function="n2dqh_DataFreq"
     ),
     # Step 8, group 9: animation of any plot of Data objects (no caller)
+    # Step 8, group 8: MTPA from the LUT of a machine (no caller)
+    "Electrical.comp_MTPA": MovedFunction(
+        "LUTdq", "comp_MTPA", self_parameter="LUT", local_imports=True
+    ),
     "Plot.animate_as_gif": MovedFunction(
         "Data", "animate_as_gif", static=True, local_imports=True
     ),
@@ -719,6 +727,42 @@ def _split_moved_siblings(source, module_name, siblings, renames=None):
     return "".join(lines)
 
 
+def _move_parameter_first(source, function_name, parameter):
+    """Move a positional parameter (without default) to the first position."""
+    node = _function_node(ast.parse(source), function_name)
+    arguments = node.args.args
+    names = [argument.arg for argument in arguments]
+    if parameter not in names:
+        raise ValueError(f"{function_name}: no parameter {parameter}")
+    index = names.index(parameter)
+    if index >= len(names) - len(node.args.defaults):
+        raise ValueError(f"{function_name}: {parameter} must not have a default")
+    if index == 0:
+        return source
+    offsets = _line_offsets(source)
+    argument = arguments[index]
+    start = offsets[argument.lineno - 1] + argument.col_offset
+    following = arguments[index + 1]
+    end = offsets[following.lineno - 1] + following.col_offset
+    first = arguments[0]
+    first_start = offsets[first.lineno - 1] + first.col_offset
+    source = source[:start] + source[end:]  # Remove "LUT,\n    "
+    return source[:first_start] + parameter + ", " + source[first_start:]
+
+
+def _self_parameter_alias(source, target, message):
+    """Alias keeping the legacy signature, calling the method on the parameter."""
+    node = _function_node(ast.parse(source), target.legacy_name)
+    names = [argument.arg for argument in node.args.args]
+    call = ", ".join(name for name in names if name != target.self_parameter)
+    return [
+        f"def {target.legacy_name}({ast.unparse(node.args)}):",
+        f'    """Deprecated: use {target.class_name}.{target.method}"""',
+        f'    warn("{message}", DeprecationWarning, stacklevel=2)',
+        f"    return {target.self_parameter}.{target.method}({call})",
+    ]
+
+
 def _localize_class_imports(source, package, function_name):
     """Move the module-level class imports into the body of the function.
 
@@ -794,6 +838,8 @@ def method_source(source, target, old_package, new_package, siblings=()):
         source = (
             source[:name_start] + new_name + source[name_start + len(target.legacy_name) :]
         )
+    if target.self_parameter:  # The parameter becoming self goes first
+        source = _move_parameter_first(source, new_name, target.self_parameter)
     node = _function_node(ast.parse(source), new_name)
     offsets = _line_offsets(source)
     if target.static or target.bound:
@@ -887,7 +933,7 @@ def bound_method_source(source, target):
     return "\n".join(lines) + "\n"
 
 
-def alias_source(legacy_module, target):
+def alias_source(legacy_module, target, source=None):
     """Legacy source of the deprecated aliases kept at the old function path.
 
     The alias goes through the function generator like the other legacy
@@ -909,7 +955,11 @@ def alias_source(legacy_module, target):
             function=item.legacy_name, target=f"{item.class_name}.{item.method}"
         )
         lines += ["", ""]
-        if item.static or item.bound:  # Legacy signature: the static method
+        if item.self_parameter:  # Legacy signature, method on that parameter
+            if source is None:
+                raise ValueError(f"{legacy_module}: the legacy source is required")
+            lines += _self_parameter_alias(source, item, message)
+        elif item.static or item.bound:  # Legacy signature: the static method
             lines += [
                 f"def {item.legacy_name}(*args, **kwargs):",
                 f'    """Deprecated: use {item.class_name}.{item.method}"""',

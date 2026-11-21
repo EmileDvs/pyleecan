@@ -831,7 +831,7 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 source = merged_alias_source(legacy_module, source)
                 moved = moved or True
             elif moved is not None:  # Deprecated alias of the method
-                source = alias_source(legacy_module, moved)
+                source = alias_source(legacy_module, moved, source)
             replacement = DEPRECATED_MODULES.get(".".join(relative.with_suffix("").parts))
             if replacement is not None:  # Deprecated module: its functions warn
                 source = deprecate_source(source, replacement)

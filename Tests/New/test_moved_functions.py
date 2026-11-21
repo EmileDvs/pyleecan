@@ -425,6 +425,32 @@ def test_method_source_local_class_imports():
     ast.parse(result)
 
 
+def test_self_parameter():
+    """The second parameter becomes self; the alias keeps the legacy signature."""
+    source = (
+        'def comp_MTPA(machine, LUT, N0, is_plot=False):\n'
+        '    """MTPA\n\n    Parameters\n    ----------\n    machine : Machine\n        a machine\n'
+        '    LUT : LUTdq\n        a LUT\n    """\n'
+        "    return LUT.get(machine, N0), is_plot\n"
+    )
+    target = MovedFunction("LUTdq", "comp_MTPA", self_parameter="LUT")
+    method = method_source(source, target, "pyleecan.Functions.Electrical", "pyleecan.Methods_new.output.LUTdq")
+    assert "def comp_MTPA(self, machine, N0, is_plot=False):" in method
+    assert "return self.get(machine, N0), is_plot" in method
+    assert "    self : LUTdq\n" in method
+    alias = alias_source("Electrical.comp_MTPA", target, source)
+    namespace = {}
+    exec(alias, namespace)
+
+    class FakeLUT:
+        def comp_MTPA(self, machine, N0, is_plot=False):
+            return machine, N0, is_plot
+
+    with warnings.catch_warnings(record=True):
+        warnings.simplefilter("always")
+        assert namespace["comp_MTPA"]("m", FakeLUT(), 3, is_plot=True) == ("m", 3, True)
+
+
 def test_deprecate_source():
     """The public functions of a deprecated module warn; the private ones do not."""
     from pyleecan.Generator.ClassGenerator.New.moved_functions import deprecate_source
