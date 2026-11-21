@@ -18,6 +18,8 @@ type_distribution_enforced,-,"To enforce type of slice distribution to use for r
 is_current_harm,,0 To compute only the airgap flux from fundamental current harmonics,0,bool,1,,,
 T_mag,deg Celsius,Permanent magnet temperature to adapt magnet remanent flux density,,float,20,,,
 is_periodicity_rotor,,True to consider rotor periodicity over time instead of stator,,bool,0,,,
+is_get_meshsolution,,To save FEA and mesh for latter post-procesing ,0,bool,0,,,
+type_meshsolution,,"0 to save all magnetic quantities in meshsolution, 1 to save only B and Az_elem for loss calculation to optimize memory",0,int,0,0,1,
 ,,,,,,,,
 Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
 Simulation,,comp_axes,VERSION,1,Magnetic module abstract object,,,

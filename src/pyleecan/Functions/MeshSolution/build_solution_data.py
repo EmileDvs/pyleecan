@@ -1,10 +1,13 @@
+from ...Classes.DataFreq import DataFreq
+from ...Classes.DataND import DataND
 from ...Classes.DataTime import DataTime
+
 from ...Classes.SolutionData import SolutionData
 
 
 def build_solution_data(
     field, axis_list, name="", symbol="", unit="", is_real=True, type_element="triangle"
-):
+) -> SolutionData:
     """Build the MeshSolution objets from FEMM outputs.
 
     Parameters
@@ -20,7 +23,14 @@ def build_solution_data(
         a SolutionData object
     """
 
-    data = DataTime(
+    if axis_list[0].name == "time":
+        DataClass = DataTime
+    elif axis_list[0].name == "freqs":
+        DataClass = DataFreq
+    else:
+        DataClass = DataND
+
+    data = DataClass(
         name=name,
         unit=unit,
         symbol=symbol,

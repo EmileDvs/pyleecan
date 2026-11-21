@@ -45,6 +45,11 @@ except ImportError as error:
     get_force_datakeeper = error
 
 try:
+    from ..Methods.Simulation.VarSimu.get_loss_datakeeper import get_loss_datakeeper
+except ImportError as error:
+    get_loss_datakeeper = error
+
+try:
     from ..Methods.Simulation.VarSimu.get_mag_datakeeper import get_mag_datakeeper
 except ImportError as error:
     get_mag_datakeeper = error
@@ -132,6 +137,18 @@ class VarSimu(FrozenClass):
         )
     else:
         get_force_datakeeper = get_force_datakeeper
+    # cf Methods.Simulation.VarSimu.get_loss_datakeeper
+    if isinstance(get_loss_datakeeper, ImportError):
+        get_loss_datakeeper = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VarSimu method get_loss_datakeeper: "
+                    + str(get_loss_datakeeper)
+                )
+            )
+        )
+    else:
+        get_loss_datakeeper = get_loss_datakeeper
     # cf Methods.Simulation.VarSimu.get_mag_datakeeper
     if isinstance(get_mag_datakeeper, ImportError):
         get_mag_datakeeper = property(

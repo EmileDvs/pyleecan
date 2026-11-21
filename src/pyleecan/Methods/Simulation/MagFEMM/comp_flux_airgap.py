@@ -1,13 +1,9 @@
 from numpy import zeros
 
 from ....Classes._FEMMHandler import _FEMMHandler
-from ....Classes.Data1D import Data1D
 from ....Classes.OutMagFEMM import OutMagFEMM
 from ....Functions.FEMM.draw_FEMM import draw_FEMM
 from ....Functions.labels import STATOR_LAB
-from ....Functions.MeshSolution.build_meshsolution import build_meshsolution
-from ....Functions.MeshSolution.build_solution_data import build_solution_data
-from ....Functions.MeshSolution.build_solution_vector import build_solution_vector
 
 
 def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
@@ -185,69 +181,46 @@ def comp_flux_airgap(self, output, axes_dict, Is_val=None, Ir_val=None):
 
     # Store mesh data & solution
     if self.is_get_meshsolution and B_elem is not None:
-        # Define axis
-        Time = Time.copy()
-        meshFEMM.sym = sym
-        meshFEMM.is_antiper_a = is_antiper_a
-        indices_element = meshFEMM.element_dict["triangle"].indice
-        Indices_Element = Data1D(
-            name="indice", values=indices_element, is_components=True, is_overlay=False
-        )
-        # Slice = axes_dict["z"]
-        axis_list = [Time, Indices_Element]
+        if self.is_periodicity_t:
+            # Reduce output quantities to original number of time steps
+            Nt_S = axes_dict["time_S"].get_length(is_smallestperiod=True)
+            quantity_list = [
+                "B_{rad}",
+                "B_{circ}",
+                "Phi_wind",
+                "Tem",
+                "Phi_wind_stator",
+            ]
+            for quantity in quantity_list:
+                if quantity in out_dict:
+                    if quantity == "Phi_wind":
+                        for key, val in out_dict[quantity].items():
+                            out_dict[quantity][key] = val[:Nt_S, ...]
+                    else:
+                        out_dict[quantity] = out_dict[quantity][:Nt_S, ...]
 
-        B_sol = build_solution_vector(
-            field=B_elem[:, :, None, :],  # quick fix for slice issue
-            axis_list=axis_list,
-            name="Magnetic Flux Density",
-            symbol="B",
-            unit="T",
-        )
-        H_sol = build_solution_vector(
-            field=H_elem[:, :, None, :],
-            axis_list=axis_list,
-            name="Magnetic Field",
-            symbol="H",
-            unit="A/m",
-        )
-        mu_sol = build_solution_data(
-            field=mu_elem[:, :, None],
-            axis_list=axis_list,
-            name="Magnetic Permeability",
-            symbol=r"\mu",
-            unit="H/m",
-        )
-        Ae_sol = build_solution_data(
-            field=A_elem[:, :, None],
-            axis_list=axis_list,
-            name="Magnetic Potential Vector (per element)",
-            symbol="A_z^{element}",
-            unit="Wb/m",
-        )
+        # self.build_meshsolution_dict(
+        #     out_dict,
+        #     axes_dict,
+        #     B_elem,
+        #     H_elem,
+        #     mu_elem,
+        #     A_node,
+        #     meshFEMM,
+        #     groups,
+        #     A_elem,
+        # )
 
-        indices_nodes = meshFEMM.node.indice
-        Indices_Nodes = Data1D(name="indice", values=indices_nodes, is_components=True)
-        axis_list_node = [Time, Indices_Nodes]
-
-        An_sol = build_solution_data(
-            field=A_node,
-            axis_list=axis_list_node,
-            name="Magnetic Potential Vector (nodal)",
-            symbol="A_z",
-            unit="Wb/m",
-        )
-        An_sol.type_element = "node"
-
-        solution_dict = {
-            solution.label: solution
-            for solution in [B_sol, H_sol, mu_sol, An_sol, Ae_sol]
-        }
-
-        out_dict["meshsolution"] = build_meshsolution(
-            solution_dict=solution_dict,
-            label="FEMM 2D Magnetostatic",
-            mesh=meshFEMM,
-            group=groups,
+        self.build_meshsolution(
+            out_dict,
+            axes_dict,
+            B_elem,
+            H_elem,
+            mu_elem,
+            A_node,
+            meshFEMM,
+            groups,
+            A_elem,
         )
 
     return out_dict

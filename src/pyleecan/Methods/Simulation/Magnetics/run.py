@@ -1,7 +1,6 @@
-from numpy import zeros, ndarray, iscomplexobj, tile
+from numpy import iscomplexobj, ndarray, zeros
 
-from pyleecan.Classes.MeshSolution import MeshSolution
-
+from ....Classes.MeshSolution import MeshSolution
 from ....Methods.Simulation.Input import InputError
 
 
@@ -137,6 +136,10 @@ def run(self):
                 else:
                     # TODO store other outputs in lists
                     out_dict[key] = out_dict_index[key]
+
+    if self.is_get_meshsolution and self.is_periodicity_t and "time_S" in axes_dict:
+        # Revert time axis to stator referential
+        axes_dict["time"] = axes_dict["time_S"].copy()
 
     # Store magnetic quantities contained in out_dict in OutMag, as Data object if necessary
     output.mag.store(out_dict, axes_dict)

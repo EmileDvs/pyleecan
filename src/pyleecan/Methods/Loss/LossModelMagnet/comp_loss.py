@@ -14,7 +14,7 @@ from ....Classes.LamHole import LamHole
 from ....Classes.LamSlotMag import LamSlotMag
 
 
-def comp_loss(self):
+def comp_loss(self, meshsol=None):
     """Calculate eddy-current losses in rotor permanent magnets assuming power density
     is given by (cf. https://www.femm.info/wiki/SPMLoss):
 
@@ -24,6 +24,8 @@ def comp_loss(self):
     ----------
     self: LossModelMagnet
         a LossModelMagnet object
+    meshsol : MeshSolution
+        magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
 
     Returns
     -------
@@ -102,10 +104,11 @@ def comp_loss(self):
     if output.mag is None:
         raise Exception("Cannot calculate magnet losses if OutMag is None")
 
-    if output.mag.meshsolution is None:
-        raise Exception("Cannot calculate magnet losses if OutMag.meshsolution is None")
-    else:
-        meshsol = output.mag.meshsolution
+    if meshsol is None:
+        if output.mag.meshsolution is None:
+            raise Exception("Cannot calculate magnet losses if OutMag.meshsolution is None")
+        # Merge stator and rotor frame solutions on the same Time axis
+        meshsol = output.mag.get_meshsolution()
 
     group_list = list(meshsol.group.keys())
 

@@ -4,7 +4,7 @@ from numpy import sqrt as np_sqrt
 from numpy import sum as np_sum
 
 
-def comp_loss(self):
+def comp_loss(self, meshsol=None):
     """Calculate loss density in iron core given by group "stator core" or "rotor core"
     assuming power density is given by a Bertotti model
 
@@ -14,6 +14,8 @@ def comp_loss(self):
     ----------
     self: LossModelBertotti
         a LossModelBertotti object
+    meshsol : MeshSolution
+        magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
 
     Returns
     -------
@@ -41,11 +43,7 @@ def comp_loss(self):
     rho = lamination.mat_type.struct.rho
 
     # Compute the coefficients only if at least one is not provided
-    if None in [
-        self.k_hy,
-        self.k_ed,
-        self.k_ex,
-    ]:
+    if None in [self.k_hy, self.k_ed, self.k_ex]:
         material = lamination.mat_type
         self.comp_coeff(material)
 
@@ -61,10 +59,11 @@ def comp_loss(self):
     if output.mag is None:
         raise ValueError("Cannot calculate core losses if OutMag is None")
 
-    if output.mag.meshsolution is None:
-        raise ValueError("Cannot calculate core losses if OutMag.meshsolution is None")
-    else:
-        meshsol = output.mag.meshsolution
+    if meshsol is None:
+        if output.mag.meshsolution is None:
+            raise ValueError("Cannot calculate core losses if OutMag.meshsolution is None")
+        # Merge stator and rotor frame solutions on the same Time axis
+        meshsol = output.mag.get_meshsolution()
 
     group_list = list(meshsol.group.keys())
 

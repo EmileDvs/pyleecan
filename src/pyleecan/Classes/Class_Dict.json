@@ -7722,7 +7722,7 @@
             },
             {
                 "as_dict": "",
-                "desc": "Average stator temperature for Electrical calculation",
+                "desc": "Average stator temperature for Loss calculation",
                 "max": "",
                 "min": "",
                 "name": "Tsta",
@@ -7733,7 +7733,7 @@
             },
             {
                 "as_dict": "",
-                "desc": "Average rotor temperature for Electrical calculation",
+                "desc": "Average rotor temperature for Loss calculation",
                 "max": "",
                 "min": "",
                 "name": "Trot",
@@ -7752,6 +7752,17 @@
                 "type": "bool",
                 "unit": "",
                 "value": 0
+            },
+            {
+                "as_dict": "",
+                "desc": "True to clean meshsolution from OutMag after loss calculation",
+                "max": "",
+                "min": "",
+                "name": "is_clean_magmesh",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": 0
             }
         ]
     },
@@ -7766,6 +7777,7 @@
         "desc": "Simplified loss module, with predefined loss models for a quick setup",
         "is_internal": false,
         "methods": [
+            "comp_axes",
             "run"
         ],
         "mother": "Loss",
@@ -7775,10 +7787,10 @@
         "properties": [
             {
                 "as_dict": "",
-                "desc": "eddy current loss coefficients",
+                "desc": "User-defined eddy-current loss coefficient to enforce in Bertotti and Steinmetz iron loss model",
                 "max": "",
                 "min": "",
-                "name": "k_ed",
+                "name": "k_ed_enforced",
                 "size": "",
                 "type": "float",
                 "unit": "W/(m3*T2*Hz2)",
@@ -7786,10 +7798,10 @@
             },
             {
                 "as_dict": "",
-                "desc": "hysteresis loss coefficients",
+                "desc": "User-defined hysteresis loss coefficient to enforce in Bertotti and Steinmetz iron loss model",
                 "max": "",
                 "min": "",
-                "name": "k_hy",
+                "name": "k_hy_enforced",
                 "size": "",
                 "type": "float",
                 "unit": "W/(m3*T2*Hz)",
@@ -7797,10 +7809,10 @@
             },
             {
                 "as_dict": "",
-                "desc": "proximity loss coefficients",
+                "desc": "User-defined proximity loss coefficient to enforce in proximity loss model",
                 "max": "",
                 "min": "",
-                "name": "k_p",
+                "name": "k_p_enforced",
                 "size": "",
                 "type": "float",
                 "unit": "W/(m3*T2*Hz2)",
@@ -7816,6 +7828,83 @@
                 "type": "int",
                 "unit": "-",
                 "value": 1
+            },
+            {
+                "as_dict": "",
+                "desc": "Loss model for iron cores : \"Bertotti\" or \"Steinmetz\"",
+                "max": "",
+                "min": "",
+                "name": "type_loss_model_core",
+                "size": "1",
+                "type": "str",
+                "unit": "-",
+                "value": "Steinmetz"
+            },
+            {
+                "as_dict": "",
+                "desc": "True to consider lamination stacking factor when calculating core losses",
+                "max": "",
+                "min": "",
+                "name": "is_stacking_factor",
+                "size": "1",
+                "type": "bool",
+                "unit": "-",
+                "value": 1
+            },
+            {
+                "as_dict": "",
+                "desc": "User-defined hysteresis loss coefficient to enforce in Bertotti iron loss model",
+                "max": "",
+                "min": "",
+                "name": "k_ex_enforced",
+                "size": "",
+                "type": "float",
+                "unit": "W/(m3*T2*Hz2)",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "User-defined hysteresis loss exponent for flux density to enforce for in Bertotti and Steinmetz model",
+                "max": "",
+                "min": "",
+                "name": "alpha_B_enforced",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True to calculate windage losses in the airgap",
+                "max": "",
+                "min": "",
+                "name": "is_calc_windage_loss",
+                "size": "1",
+                "type": "bool",
+                "unit": "-",
+                "value": 0
+            },
+            {
+                "as_dict": "",
+                "desc": "User-defined hysteresis loss exponent for frequency to enforce for in Steinmetz model",
+                "max": "",
+                "min": "",
+                "name": "alpha_f_enforced",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "False to calculate average losses in frequency domain, True to calculate dynamic losses over time (not validated yet)",
+                "max": "",
+                "min": "",
+                "name": "is_dynamic",
+                "size": "1",
+                "type": "bool",
+                "unit": "-",
+                "value": 0
             }
         ]
     },
@@ -7867,17 +7956,6 @@
             },
             {
                 "as_dict": "",
-                "desc": "True to show the plot of the curve fitting",
-                "max": "",
-                "min": "",
-                "name": "is_show_fig",
-                "size": "",
-                "type": "bool",
-                "unit": "",
-                "value": false
-            },
-            {
-                "as_dict": "",
                 "desc": "dict of coefficients to compute losses with respect to frequency",
                 "max": "",
                 "min": "",
@@ -7901,7 +7979,10 @@
         "is_internal": false,
         "methods": [
             "comp_coeff",
-            "comp_loss"
+            "comp_loss",
+            "comp_loss_freq",
+            "comp_loss_time",
+            "plot_fitting"
         ],
         "mother": "LossModel",
         "name": "LossModelBertotti",
@@ -7940,6 +8021,28 @@
                 "type": "float",
                 "unit": "W/kg",
                 "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True to consider lamination stacking factor when calculating core losses",
+                "max": "",
+                "min": "",
+                "name": "is_stacking_factor",
+                "size": "",
+                "type": "bool",
+                "unit": "",
+                "value": 0
+            },
+            {
+                "as_dict": "",
+                "desc": "Hysteresis loss exponent",
+                "max": "",
+                "min": "",
+                "name": "alpha_B",
+                "size": "0",
+                "type": "float",
+                "unit": "",
+                "value": null
             }
         ]
     },
@@ -7955,7 +8058,9 @@
         "is_internal": false,
         "methods": [
             "comp_coeff",
-            "comp_loss"
+            "comp_loss",
+            "comp_loss_freq",
+            "comp_loss_time"
         ],
         "mother": "LossModel",
         "name": "LossModelJoule",
@@ -7986,7 +8091,10 @@
         "desc": "Magnet Loss Model Class",
         "is_internal": false,
         "methods": [
-            "comp_loss"
+            "comp_kseg",
+            "comp_loss",
+            "comp_loss_freq",
+            "comp_loss_time"
         ],
         "mother": "LossModel",
         "name": "LossModelMagnet",
@@ -8006,7 +8114,9 @@
         "is_internal": false,
         "methods": [
             "comp_coeff",
-            "comp_loss"
+            "comp_loss",
+            "comp_loss_freq",
+            "comp_loss_time"
         ],
         "mother": "LossModel",
         "name": "LossModelProximity",
@@ -8038,7 +8148,10 @@
         "is_internal": false,
         "methods": [
             "comp_coeff",
-            "comp_loss"
+            "comp_loss",
+            "comp_loss_freq",
+            "comp_loss_time",
+            "plot_fitting"
         ],
         "mother": "LossModel",
         "name": "LossModelSteinmetz",
@@ -8088,6 +8201,17 @@
                 "type": "float",
                 "unit": "-",
                 "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "True to consider lamination stacking factor when calculating core losses",
+                "max": "",
+                "min": "",
+                "name": "is_stacking_factor",
+                "size": "0",
+                "type": "bool",
+                "unit": "-",
+                "value": 0
             }
         ]
     },
@@ -8102,7 +8226,10 @@
         "desc": "Windage loss model",
         "is_internal": false,
         "methods": [
-            "comp_loss"
+            "comp_loss",
+            "comp_loss_freq",
+            "comp_loss_time",
+            "comp_loss_value"
         ],
         "mother": "LossModel",
         "name": "LossModelWindagePyrhonen",
@@ -8836,9 +8963,10 @@
         "desc": "Magnetic module: Finite Element model with FEMM",
         "is_internal": false,
         "methods": [
+            "build_meshsolution",
             "build_MS_sliced",
             "comp_flux_airgap",
-            "get_meshsolution",
+            "get_FEMM_mesh_results",
             "get_path_save",
             "get_path_save_fem",
             "solve_FEMM",
@@ -8903,17 +9031,6 @@
                 "type": "dict",
                 "unit": "",
                 "value": ""
-            },
-            {
-                "as_dict": "",
-                "desc": "To save FEA and mesh for latter post-procesing ",
-                "max": "",
-                "min": "",
-                "name": "is_get_meshsolution",
-                "size": "0",
-                "type": "bool",
-                "unit": "",
-                "value": 0
             },
             {
                 "as_dict": "",
@@ -9341,6 +9458,28 @@
                 "name": "is_periodicity_rotor",
                 "size": "",
                 "type": "bool",
+                "unit": "",
+                "value": 0
+            },
+            {
+                "as_dict": "",
+                "desc": "To save FEA and mesh for latter post-procesing ",
+                "max": "",
+                "min": "",
+                "name": "is_get_meshsolution",
+                "size": "0",
+                "type": "bool",
+                "unit": "",
+                "value": 0
+            },
+            {
+                "as_dict": "",
+                "desc": "0 to save all magnetic quantities in meshsolution, 1 to save only B and Az_elem for loss calculation to optimize memory",
+                "max": "1",
+                "min": "0",
+                "name": "type_meshsolution",
+                "size": "0",
+                "type": "int",
                 "unit": "",
                 "value": 0
             }
@@ -12539,6 +12678,7 @@
             "__len__",
             "get_loss_density_ag",
             "get_loss_overall",
+            "get_meshsolution",
             "get_power_dict",
             "plot_losses"
         ],
@@ -12560,7 +12700,7 @@
             },
             {
                 "as_dict": "",
-                "desc": "Dict containing OutLossModel obects for each type of loss",
+                "desc": "Dict containing OutLossModel objects for each type of loss",
                 "max": "",
                 "min": "",
                 "name": "loss_dict",
@@ -12579,6 +12719,61 @@
                 "type": "str",
                 "unit": "-",
                 "value": "Pyleecan.Loss"
+            },
+            {
+                "as_dict": "",
+                "desc": "FEA software mesh and solution",
+                "max": "",
+                "min": "",
+                "name": "meshsolution",
+                "size": "",
+                "type": "MeshSolution",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Input electric power used to calculate efficiency",
+                "max": "",
+                "min": "",
+                "name": "P_in",
+                "size": "",
+                "type": "float",
+                "unit": "W",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Output mechanical power used to calculate efficiency",
+                "max": "",
+                "min": "",
+                "name": "P_out",
+                "size": "",
+                "type": "float",
+                "unit": "W",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Efficiency (p.u)",
+                "max": "",
+                "min": "",
+                "name": "efficiency",
+                "size": "",
+                "type": "float",
+                "unit": "",
+                "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "Average mechanical torque",
+                "max": "",
+                "min": "",
+                "name": "Tmech_av",
+                "size": "",
+                "type": "float",
+                "unit": "Nm",
+                "value": null
             }
         ]
     },
@@ -12671,6 +12866,17 @@
                 "type": "float",
                 "unit": "",
                 "value": null
+            },
+            {
+                "as_dict": "",
+                "desc": "DataTime containing losses values over time and for each source of losses : core (hysteresis/eddy/excess) / Joule / proximity / Magnet / Windage",
+                "max": "",
+                "min": "",
+                "name": "loss_data",
+                "size": "",
+                "type": "DataND",
+                "unit": "",
+                "value": null
             }
         ]
     },
@@ -12690,6 +12896,7 @@
             "comp_power",
             "comp_torque_MT",
             "get_demag",
+            "get_meshsolution",
             "store"
         ],
         "mother": "",
@@ -12805,7 +13012,7 @@
                 "size": "",
                 "type": "MeshSolution",
                 "unit": "",
-                "value": ""
+                "value": null
             },
             {
                 "as_dict": "",
@@ -13653,7 +13860,7 @@
             },
             {
                 "as_dict": "",
-                "desc": "Full path to the quantity to which apply the plot_method except Output (e.g. mag.B, elec.get_Is, mag.meshsolution)",
+                "desc": "Full path to the quantity to which apply the plot_method except Output (e.g. mag.B, elec.get_Is, mag.get_meshsolution)",
                 "max": "",
                 "min": "",
                 "name": "quantity",
@@ -19633,6 +19840,7 @@
             "generate_simulation_list",
             "get_elec_datakeeper",
             "get_force_datakeeper",
+            "get_loss_datakeeper",
             "get_mag_datakeeper",
             "get_ref_simu_index",
             "run",

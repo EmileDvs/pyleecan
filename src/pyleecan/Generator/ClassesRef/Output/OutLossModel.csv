@@ -5,6 +5,7 @@ coeff_dict,,dict of coefficients to compute the scalar value with respcet to fre
 group,,group to which the loss applies,,str,None,,,
 loss_model,,The name of the loss model used to compute the loss stored in this output,,str,None,,,
 scalar_value,,To store the value of get_loss_scalar (for scalar losses or with coeff_dict cleaned),,float,None,,,
+loss_data,,DataTime containing losses values over time and for each source of losses : core (hysteresis/eddy/excess) / Joule / proximity / Magnet / Windage,,DataND,None,,,
 ,,,,,,,,
 Package,Inherit,Methods,Constant Name,Constant Value,Class description,,,
 Output,,__add__,VERSION,1,Gather the loss module outputs,,,
