@@ -184,7 +184,7 @@ Methods receive their context explicitly instead, for example
 | 5. `Methods_new` generator and type hints, first pass | generator | legacy bugs to fix |
 | 6. Class-specific functions moved to their class | generator | done |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | done (open points in the backlog) |
-| 8. Refactor the remaining `Functions` modules | generator | in progress (6/14 groups) |
+| 8. Refactor the remaining `Functions` modules | generator | in progress (7/14 groups) |
 | 9. Logger chain | generator | to do |
 | 10. GUI, first pass | generator | to do |
 | 11. Parent links, first pass | generator | to do |
@@ -287,8 +287,8 @@ by module, through the generators (moved to a class, merged, or removed).
 The plan per module is given in the backlog.
 
 - [x] Inventory: 96 modules to decide, in 14 groups (backlog).
-- [ ] Groups decided and applied: 6/14 (2 Winding, 3 Optimization,
-      4 Simulation, 5 MeshSolution, 8 Electrical, 10 FEMM;
+- [ ] Groups decided and applied: 7/14 (2 Winding, 3 Optimization,
+      4 Simulation, 5 MeshSolution, 8 Electrical, 10 FEMM, 11 GMSH;
       done groups listed in the CHANGELOG).
 - [ ] Generator passes, one module or group of modules per increment, with
       deprecated aliases at the old paths and the tests unchanged.

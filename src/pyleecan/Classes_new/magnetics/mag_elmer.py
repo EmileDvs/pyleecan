@@ -12,7 +12,6 @@ from meshio import read
 from ... import __version__
 from ...classes_common.errors import NotImplementedYetError
 from ...Functions_new.get_path_binary import get_path_binary
-from ...Functions_new.GMSH.draw_gmsh import draw_GMSH
 from ...Functions_new.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,
@@ -158,6 +157,9 @@ class MagElmer(Magnetics):
         """
 
         # Init output dict
+        # Local import: circular import with the class module
+        from ...Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+
         out_dict = {}
         if output.mag.internal is None:
             output.mag.internal = OutMagElmer()
@@ -194,7 +196,7 @@ class MagElmer(Magnetics):
         gmsh_filename = self.get_path_save_fea(output) + ".msh"
         if not self.import_file:  # True if None or len == 0
             self.get_logger().debug("Drawing machine in GMSH...")
-            output.mag.internal.FEA_dict = draw_GMSH(
+            output.mag.internal.FEA_dict = gmsh_pyleecan.draw_GMSH(
                 output=output,
                 sym=sym,
                 boundary_prop=self._get_BP_dict(),

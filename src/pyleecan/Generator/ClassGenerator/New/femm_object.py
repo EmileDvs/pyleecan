@@ -24,6 +24,7 @@ import re
 import textwrap
 from importlib.util import resolve_name
 from pathlib import Path
+from typing import NamedTuple
 
 from .moved_functions import _line_offsets, _remove_statements
 
@@ -39,8 +40,49 @@ CIRCULAR_COMMENT = "# Local import: circular import with the class module"
 FEMM_HELP = "FEMM interface object (handler and FEMM functions)"
 
 
-def femm_modules(functions_dir):
+class InterfaceObject(NamedTuple):
+    """Object gathering the legacy functions of a Functions folder."""
+
+    package: str
+    """Folder of the legacy functions below Functions"""
+    class_name: str
+    """Name of the class (and of its module in the folder)"""
+    module: str
+    """Module of the class in the folder"""
+    handler: str | None = None
+    """Name of the handler parameter of the legacy functions (None: static
+    methods only)"""
+    handler_class: str | None = None
+    """Class of the handler, built by the callers (replaced by the object)"""
+    description: str = ""
+    """Docstring of the class"""
+
+
+FEMM = InterfaceObject(
+    "FEMM",
+    "femm_pyleecan",
+    "femm_pyleecan",
+    "femm",
+    "_FEMMHandler",
+    "Interface of pyleecan with FEMM: the FEMM handler and the FEMM functions\n\n"
+    "One object per FEMM instance (per parallel worker of MagFEMM, see\n"
+    "OutMagFEMM.handler_list). The FEMM commands are sent with self.handler.",
+)
+GMSH = InterfaceObject(
+    "GMSH",
+    "gmsh_pyleecan",
+    "gmsh_pyleecan",
+    description="Interface of pyleecan with gmsh: the gmsh functions of pyleecan\n\n"
+    "Static methods for now (the gmsh API is a module): the object gathers the\n"
+    "functions, to be improved later (PLAN.md Step 8).",
+)
+INTERFACE_OBJECTS = (FEMM, GMSH)
+"""The objects gathering the functions of a Functions folder"""
+
+
+def femm_modules(functions_dir, spec=FEMM):
     """{module name: source} of the legacy FEMM modules."""
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     folder = Path(functions_dir) / FEMM_PACKAGE
     return {
         path.stem: path.read_text(encoding="utf-8")
@@ -52,17 +94,24 @@ def femm_modules(functions_dir):
 _SIGNATURES = {}
 
 
-def legacy_femm_signatures():
-    """femm_signatures of the legacy FEMM modules of pyleecan (cached)."""
-    if not _SIGNATURES:
+def legacy_signatures(spec=FEMM):
+    """femm_signatures of the legacy modules of an interface object (cached)."""
+    if spec.class_name not in _SIGNATURES:
         from pyleecan.definitions import MAIN_DIR
 
-        _SIGNATURES.update(femm_signatures(femm_modules(Path(MAIN_DIR) / "Functions")))
-    return _SIGNATURES
+        modules = femm_modules(Path(MAIN_DIR) / "Functions", spec)
+        _SIGNATURES[spec.class_name] = femm_signatures(modules, spec)
+    return _SIGNATURES[spec.class_name]
 
 
-def femm_signatures(modules):
+def legacy_femm_signatures():
+    """legacy_signatures of the FEMM interface object."""
+    return legacy_signatures(FEMM)
+
+
+def femm_signatures(modules, spec=FEMM):
     """{function: index of the handler parameter or None} of the FEMM modules."""
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     signatures = {}
     for source in modules.values():
         for node in ast.parse(source).body:
@@ -72,15 +121,17 @@ def femm_signatures(modules):
     return signatures
 
 
-def _is_femm_import(node, package):
+def _is_femm_import(node, package, spec=FEMM):
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     if not isinstance(node, ast.ImportFrom):
         return False
     module = resolve_name("." * node.level + (node.module or ""), package) if node.level else node.module
     return bool(module) and module.startswith(f"pyleecan.Functions.{FEMM_PACKAGE}.")
 
 
-def _call_without_handler(source, offsets, call, index):
+def _call_without_handler(source, offsets, call, index, spec=FEMM):
     """Replacements removing the handler argument of a call (position or keyword)."""
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     argument = None
     if index is not None and index < len(call.args):
         argument = call.args[index]
@@ -109,8 +160,9 @@ def _call_without_handler(source, offsets, call, index):
     return value_text, [(start, end, "")]
 
 
-def _method_source(source, node, signatures):
+def _method_source(source, node, signatures, spec=FEMM):
     """Method (unindented) of a legacy FEMM function."""
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     offsets = _line_offsets(source)
     names = [argument.arg for argument in node.args.args]
     regular = HANDLER in names
@@ -126,7 +178,7 @@ def _method_source(source, node, signatures):
         if index is not None or any(k.arg == HANDLER for k in call.keywords):
             if not regular:
                 raise ValueError(f"{node.name}: call of {func.id} without FEMM handler")
-            _, removal = _call_without_handler(source, offsets, call, index)
+            _, removal = _call_without_handler(source, offsets, call, index, spec)
             replacements.extend(removal)
             argument = call.args[index] if index is not None and index < len(call.args) else None
             if argument is not None:
@@ -189,7 +241,7 @@ def _indent_body(body):
     return body if body.endswith("\n") else body + "\n"
 
 
-def femm_object_source(modules, shared_errors=None):
+def femm_object_source(modules, shared_errors=None, spec=FEMM):
     """Legacy-style source of Functions/FEMM/femm_pyleecan.py.
 
     Parameters
@@ -206,13 +258,14 @@ def femm_object_source(modules, shared_errors=None):
         Module with the imports of the FEMM modules, their module-level
         definitions and the class femm_pyleecan
     """
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     shared_errors = shared_errors or {}
     package = f"pyleecan.Functions.{FEMM_PACKAGE}"
-    signatures = femm_signatures(modules)
+    signatures = femm_signatures(modules, spec)
     imports, definitions, methods = [], [], []
     for name, source in modules.items():
         # Imports of the other FEMM modules (module level or local): removed
-        source = _remove_statements(source, lambda stmt: _is_femm_import(stmt, package))
+        source = _remove_statements(source, lambda stmt: _is_femm_import(stmt, package, spec))
         tree = ast.parse(source)
         lines = source.splitlines(keepends=True)
         for node in tree.body:
@@ -221,7 +274,7 @@ def femm_object_source(modules, shared_errors=None):
                 if text not in imports:
                     imports.append(text)
             elif isinstance(node, ast.FunctionDef):
-                methods.append(_method_source(source, node, signatures))
+                methods.append(_method_source(source, node, signatures, spec))
             elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
                 continue  # Module docstring
             elif isinstance(node, ast.ClassDef) and node.name in shared_errors.get(name, ()):
@@ -231,23 +284,21 @@ def femm_object_source(modules, shared_errors=None):
             else:  # Classes, constants
                 first = node.lineno - 1 - len(getattr(node, "decorator_list", []))
                 definitions.append("".join(lines[first : node.end_lineno]).rstrip() + "\n")
-    class_lines = [
-        f"class {FEMM_CLASS}:",
-        '    """Interface of pyleecan with FEMM: the FEMM handler and the FEMM functions',
-        "",
-        "    One object per FEMM instance (per parallel worker of MagFEMM, see",
-        "    OutMagFEMM.handler_list). The FEMM commands are sent with self.handler.",
-        '    """',
-        "",
-        "    def __init__(self, handler=None):",
-        '        """Create the object, with a new FEMM handler if none is given."""',
-        "        if handler is None:",
-        f"            from ...Classes.{HANDLER_CLASS} import {HANDLER_CLASS}",
-        "",
-        f"            handler = {HANDLER_CLASS}()",
-        "        self.handler = handler",
-        "",
-    ]
+    description = spec.description.split("\n")
+    class_lines = [f"class {FEMM_CLASS}:", '    """' + description[0]]
+    class_lines += [("    " + line).rstrip() for line in description[1:]]
+    class_lines += ['    """', ""]
+    if HANDLER is not None:
+        class_lines += [
+            "    def __init__(self, handler=None):",
+            '        """Create the object, with a new handler if none is given."""',
+            "        if handler is None:",
+            f"            from ...Classes.{HANDLER_CLASS} import {HANDLER_CLASS}",
+            "",
+            f"            handler = {HANDLER_CLASS}()",
+            "        self.handler = handler",
+            "",
+        ]
     body = "\n".join(class_lines) + "\n"
     for method in methods:
         body += "\n" + textwrap.indent(method, "    ", lambda line: line.strip() != "")
@@ -266,9 +317,10 @@ def femm_object_source(modules, shared_errors=None):
     )
 
 
-def femm_alias_source(name, source, modules, shared_errors=None):
+def femm_alias_source(name, source, modules, shared_errors=None, spec=FEMM):
     """Deprecated aliases of a legacy FEMM module (methods of femm_pyleecan)."""
-    signatures = femm_signatures(modules)
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
+    signatures = femm_signatures(modules, spec)
     lines = [
         f'"""Deprecated aliases of {FEMM_CLASS} methods (removed in Phase 2)."""',
         "",
@@ -314,7 +366,7 @@ def femm_alias_source(name, source, modules, shared_errors=None):
     return "\n".join(lines) + "\n"
 
 
-def redirect_femm_calls(source, package, signatures):
+def redirect_femm_calls(source, package, signatures, spec=FEMM):
     """Use the femm_pyleecan object in a method or function module.
 
     - ``from ...Functions.FEMM.x import f``: removed (the other names are
@@ -338,9 +390,10 @@ def redirect_femm_calls(source, package, signatures):
     source : str
         Source using femm_pyleecan
     """
-    if HANDLER not in source and HANDLER_CLASS not in source and not any(
-        name in source for name in signatures
-    ):
+    FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
+    if (HANDLER is None or HANDLER not in source) and (
+        HANDLER_CLASS is None or HANDLER_CLASS not in source
+    ) and not any(name in source for name in signatures):
         return source
     tree = ast.parse(source)
     offsets = _line_offsets(source)
@@ -349,7 +402,7 @@ def redirect_femm_calls(source, package, signatures):
     up = "." * len(package.split("."))
     femm_module = f"{up}Functions.{FEMM_PACKAGE}.{FEMM_MODULE}"
     for node in ast.walk(tree):
-        if not _is_femm_import(node, package) or node.module.split(".")[-1] == FEMM_MODULE:
+        if not _is_femm_import(node, package, spec) or node.module.split(".")[-1] == FEMM_MODULE:
             continue
         functions = [alias for alias in node.names if alias.name in signatures]
         others = [alias for alias in node.names if alias.name not in signatures]
@@ -382,7 +435,7 @@ def redirect_femm_calls(source, package, signatures):
                 elif func.id in imported:
                     name = imported[func.id]
                     index = signatures[name]
-                    value, removal = _call_without_handler(source, offsets, item, index)
+                    value, removal = _call_without_handler(source, offsets, item, index, spec)
                     if value is not None:
                         replacements.extend(removal)
                         if not value.isidentifier():

@@ -1,6 +1,5 @@
 import os
 
-from ....Functions_new.GMSH.draw_gmsh import draw_GMSH
 from . import _execute, _get_BP_dict
 from typing import TYPE_CHECKING
 
@@ -24,6 +23,9 @@ def gen_mesh(self, output: Output):
 
     """
     # readability
+    # Local import: circular import with the class module
+    from ....Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+
     machine = output.simu.machine
     sym_r, is_antipert_r = machine.comp_periodicity_spatial()
 
@@ -35,7 +37,7 @@ def gen_mesh(self, output: Output):
     # draw initial gmsh model
     file_gmsh_geo = os.path.join(save_dir, "GMSH_Machine_Model.geo")
 
-    draw_GMSH(
+    gmsh_pyleecan.draw_GMSH(
         output=output,
         sym=sym_r,  # TODO is it possible to have to use draw_GMSH with sym_r > sym ?
         boundary_prop=_get_BP_dict(),

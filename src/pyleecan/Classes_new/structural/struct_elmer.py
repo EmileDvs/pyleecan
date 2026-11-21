@@ -11,7 +11,6 @@ import numpy as np
 
 from ...classes_common.errors import InputError
 from ...Functions_new.get_path_binary import get_path_binary
-from ...Functions_new.GMSH.draw_gmsh import draw_GMSH
 from ...Functions_new.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,
@@ -469,6 +468,9 @@ class StructElmer(Structural):
 
         """
         # readability
+        # Local import: circular import with the class module
+        from ...Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+
         machine = output.simu.machine
         sym_r, is_antipert_r = machine.comp_periodicity_spatial()
 
@@ -480,7 +482,7 @@ class StructElmer(Structural):
         # draw initial gmsh model
         file_gmsh_geo = os.path.join(save_dir, "GMSH_Machine_Model.geo")
 
-        draw_GMSH(
+        gmsh_pyleecan.draw_GMSH(
             output=output,
             sym=sym_r,  # TODO is it possible to have to use draw_GMSH with sym_r > sym ?
             boundary_prop=self._get_BP_dict(),

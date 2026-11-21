@@ -31,8 +31,7 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     redirect_function_module_imports,
 )
 from pyleecan.Generator.ClassGenerator.New.femm_object import (
-    FEMM_MODULE,
-    FEMM_PACKAGE,
+    INTERFACE_OBJECTS,
     femm_alias_source,
     femm_modules,
     femm_object_source,
@@ -802,17 +801,29 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
     ]
 
     # The FEMM interface object, from the legacy FEMM modules (femm_object.py)
-    legacy_femm = femm_modules(source_dir) if (source_dir / FEMM_PACKAGE).is_dir() else {}
-    signatures = femm_signatures(legacy_femm)
-    femm_errors = {
-        module.split(".", 1)[1]: set(errors)
-        for module, errors in FUNCTION_ERRORS.items()
-        if module.startswith(FEMM_PACKAGE + ".")
+    interface_modules = {
+        spec: femm_modules(source_dir, spec) if (source_dir / spec.package).is_dir() else {}
+        for spec in INTERFACE_OBJECTS
     }
-    if legacy_femm:
-        entries.append(
-            (source_dir / FEMM_PACKAGE / (FEMM_MODULE + ".py"), femm_object_source(legacy_femm, femm_errors))
-        )
+    interface_signatures = {
+        spec: femm_signatures(modules, spec) for spec, modules in interface_modules.items()
+    }
+    interface_errors = {
+        spec: {
+            module.split(".", 1)[1]: set(errors)
+            for module, errors in FUNCTION_ERRORS.items()
+            if module.startswith(spec.package + ".")
+        }
+        for spec in INTERFACE_OBJECTS
+    }
+    for spec, modules in interface_modules.items():
+        if modules:
+            entries.append(
+                (
+                    source_dir / spec.package / (spec.module + ".py"),
+                    femm_object_source(modules, interface_errors[spec], spec),
+                )
+            )
 
     # Merged modules (MERGED_MODULES): written from their legacy modules
     def read_legacy(module):
@@ -854,12 +865,22 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 moved = moved or True
             elif moved is not None:  # Deprecated alias of the method
                 source = alias_source(legacy_module, moved, source)
-            elif (
-                removed_alias is None
-                and relative.parts[0] == FEMM_PACKAGE
-                and relative.stem in legacy_femm
-            ):  # Deprecated aliases of the femm_pyleecan methods
-                source = femm_alias_source(relative.stem, source, legacy_femm, femm_errors)
+            elif removed_alias is None and any(
+                relative.parts[0] == spec.package and relative.stem in modules
+                for spec, modules in interface_modules.items()
+            ):  # Deprecated aliases of the methods of an interface object
+                spec = next(
+                    spec
+                    for spec, modules in interface_modules.items()
+                    if relative.parts[0] == spec.package and relative.stem in modules
+                )
+                source = femm_alias_source(
+                    relative.stem,
+                    source,
+                    interface_modules[spec],
+                    interface_errors[spec],
+                    spec,
+                )
                 moved = "femm"
             replacement = DEPRECATED_MODULES.get(".".join(relative.with_suffix("").parts))
             if replacement is not None:  # Deprecated module: its functions warn
@@ -873,8 +894,11 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 source = _redirect_function_errors(source, path, relative, class_dir)
             package = ".".join(["pyleecan", "Functions", *relative.parts[:-1]])
             if moved is None:  # Callers of the moved functions call the methods
-                if relative.stem != FEMM_MODULE:
-                    source = redirect_femm_calls(source, package, signatures)
+                for spec in INTERFACE_OBJECTS:
+                    if (relative.parts[0], relative.stem) != (spec.package, spec.module):
+                        source = redirect_femm_calls(
+                            source, package, interface_signatures[spec], spec
+                        )
                 source = redirect_moved_calls(source, package)
             source = _redirect_shared_error_imports(source, package)
             rewritten, found = _rewrite_source(source, path, relative, class_dir)

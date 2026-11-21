@@ -140,6 +140,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     (`femm_pyleecan.handler`), one object per FEMM instance;
     `OutMagFEMM.handler_list` holds these objects; the old paths are
     deprecated aliases;
+  - GMSH: the gmsh functions are the static methods of one object,
+    `gmsh_pyleecan` (`GMSH.gmsh_pyleecan`); the old paths are deprecated
+    aliases;
   - the file retrocompatibility is shared by the backends in
     `classes_common.retrocompatibility` (`convert_init_dict` takes the
     class lookup of the backend); the `Load.retrocompatibility` modules
@@ -252,7 +255,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
-| 8. Refactor the remaining `Functions` modules (generator) | in progress (6/14 groups) |
+| 8. Refactor the remaining `Functions` modules (generator) | in progress (7/14 groups) |
 | 9. Logger chain (generator) | to do |
 | 10. GUI, first pass (generator) | to do |
 | 11. Parent links, first pass (generator) | to do |

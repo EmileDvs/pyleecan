@@ -105,6 +105,35 @@ def test_femm_aliases():
     assert all(issubclass(w.category, DeprecationWarning) for w in caught)
 
 
+def test_object_without_handler():
+    """GMSH: static methods only, calls between them on the class."""
+    from pyleecan.Generator.ClassGenerator.New.femm_object import GMSH
+
+    modules = {
+        "draw_GMSH": (
+            "from ...Functions.GMSH.get_box import get_box\n\n\n"
+            'def draw_GMSH(machine, size=1):\n    """Draw"""\n    return get_box(size) + _helper()\n\n\n'
+            "def _helper():\n    return 1\n"
+        ),
+        "get_box": "def get_box(size):\n    return 10 * size\n",
+    }
+    source = femm_object_source(modules, spec=GMSH)
+    assert "def __init__" not in source
+    assert "return gmsh_pyleecan.get_box(size) + gmsh_pyleecan._helper()" in source
+    namespace = {}
+    exec(source, namespace)
+    assert namespace["gmsh_pyleecan"].draw_GMSH(None, size=2) == 21
+    caller = (
+        "from ....Functions.GMSH.draw_GMSH import draw_GMSH\n\n\n"
+        "def gen_mesh(self, output):\n    return draw_GMSH(output.machine, size=2)\n"
+    )
+    result = redirect_femm_calls(
+        caller, "pyleecan.Methods_new.structural.StructElmer", femm_signatures(modules, GMSH), GMSH
+    )
+    assert "return gmsh_pyleecan.draw_GMSH(output.machine, size=2)" in result
+    assert "from ....Functions.GMSH.gmsh_pyleecan import gmsh_pyleecan" in result
+
+
 def test_redirect_femm_calls():
     """Callers use the object: methods, handler commands, construction."""
     source = (

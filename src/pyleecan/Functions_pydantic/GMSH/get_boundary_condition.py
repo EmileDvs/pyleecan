@@ -1,27 +1,15 @@
-from ..labels import BOUNDARY_PROP_LAB
+"""Deprecated aliases of gmsh_pyleecan methods (removed in Phase 2)."""
+
+from warnings import warn
 
 
-def get_boundary_condition(line, boundary_prop):
-    """Returns the boundary name on a line that is used in FEA coupling
+def get_boundary_condition(*args, **kwargs):
+    """Deprecated: use gmsh_pyleecan.get_boundary_condition"""
+    from .gmsh_pyleecan import gmsh_pyleecan
 
-    Parameters
-    ----------
-    line :
-        a line with a label
-
-    Returns
-    -------
-    label : string
-        boundary name
-    """
-    # The id index at the end of lamination label is removed because
-    # MagElemer and StructElmer dictionaries don't support it
-    if line.prop_dict and BOUNDARY_PROP_LAB in line.prop_dict:
-        label_with_id = line.prop_dict[BOUNDARY_PROP_LAB]
-        if "-0" in label_with_id[-2:] or "-1" in label_with_id[-2:]:
-            label_without_id = label_with_id[:-2]
-        else:
-            label_without_id = label_with_id
-        if label_without_id in boundary_prop:
-            return boundary_prop[label_without_id]
-    return ""
+    warn(
+        "get_boundary_condition is deprecated, use gmsh_pyleecan.get_boundary_condition (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return gmsh_pyleecan.get_boundary_condition(*args, **kwargs)

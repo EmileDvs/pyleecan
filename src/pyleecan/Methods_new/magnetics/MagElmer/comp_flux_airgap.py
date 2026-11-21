@@ -1,7 +1,6 @@
 import os
 import subprocess
 
-from ....Functions_new.GMSH.draw_gmsh import draw_GMSH
 from ....Classes_new.output.out_mag_elmer import OutMagElmer
 from . import _get_BP_dict
 from typing import TYPE_CHECKING
@@ -25,6 +24,9 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
     """
 
     # Init output dict
+    # Local import: circular import with the class module
+    from ....Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+
     out_dict = dict()
     if output.mag.internal is None:
         output.mag.internal = OutMagElmer()
@@ -61,7 +63,7 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
     gmsh_filename = self.get_path_save_fea(output) + ".msh"
     if not self.import_file:  # True if None or len == 0
         self.get_logger().debug("Drawing machine in GMSH...")
-        output.mag.internal.FEA_dict = draw_GMSH(
+        output.mag.internal.FEA_dict = gmsh_pyleecan.draw_GMSH(
             output=output,
             sym=sym,
             boundary_prop=_get_BP_dict(),

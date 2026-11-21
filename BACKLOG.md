@@ -239,10 +239,24 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | done (2026-11-21): dqh (methods `DataTime.n2dqh`, `DataFreq.n2dqh`, `DataDual.n2dqh`, the other functions merged in `SciDataTool.dqh_transformation`, checks dropped); `comp_loss_joule` deprecated (not used); `comp_MTPA` method of `LUTdq` |
 | 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | decided (2026-11-21): pyvista plots reworked in a new object `pv_plotter_pyleecan`; `animate_as_gif` to `Data` (static); `get_color_legend_from_surface` to `Machine` (open, below) |
 | 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | done (2026-11-21): object dedicated to the FEMM interface, `femm_pyleecan`, in a new sub-package `femm`, all the functions as its methods; the current handler (`_FEMMHandler`) becomes `femm_pyleecan.handler` |
-| 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | decided (2026-11-21): object dedicated to the gmsh interface, `gmsh_pyleecan`, in a new sub-package `gmsh`, all the functions as its methods |
+| 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | done (2026-11-21): `gmsh_pyleecan` gathers the gmsh functions as static methods (as close as possible to legacy, to be improved later) |
 | 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | decided (2026-11-21): `retrocompatibility` to `classes_common` for now; Phase 2: one class to load (retrocompatibility included) and one class to save the pyleecan objects |
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
+
+### gmsh interface object (2026-11-21)
+
+- `gmsh_pyleecan` (`Functions_new/GMSH/gmsh_pyleecan.py`), from the 7
+  modules of `Functions/GMSH`: static methods only (decision: as close as
+  possible to legacy, the object gathers the functions and is improved
+  later; the gmsh API is a module, no handler). Same generator as
+  `femm_pyleecan` (`femm_object.py`, `InterfaceObject` description:
+  folder, class, handler or none).
+- Callers: `MagElmer.comp_flux_airgap`, `StructElmer.gen_mesh` call
+  `gmsh_pyleecan.draw_GMSH(...)`; the legacy GMSH paths are deprecated
+  aliases.
+- Checks: gmsh tests (`test_gmsh`, `test_gmsh2`) pass with each backend
+  (through the aliases) and legacy; class and cross tests as before.
 
 ### FEMM interface object (2026-11-21)
 

@@ -77,7 +77,7 @@ class femm_pyleecan:
     """
 
     def __init__(self, handler=None):
-        """Create the object, with a new FEMM handler if none is given."""
+        """Create the object, with a new handler if none is given."""
         if handler is None:
             from ...Classes._FEMMHandler import _FEMMHandler
 
