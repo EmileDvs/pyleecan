@@ -250,6 +250,10 @@ Proposed targets are a starting point; the decision is the maintainer's.
   `Data` methods): `DEPRECATED_MODULES`, the functions generator adds a
   `DeprecationWarning` at the start of their public functions
   (`deprecate_source`, with a unit test).
+- `Electrical.comp_loss_joule`: to `LamSlotWind` if used (decision); it
+  is imported by `LUTdq.interp_Ploss_dqh` and `LossModelWinding.comp_loss`
+  but never called: deprecated instead (the unused imports stay in the
+  method modules, importing does not warn).
 - [ ] `Structural.conversions` (decided: deprecated, replaced by
       `SciDataTool.conversions`): not a plain duplicate. `xyz_to_rphiz`,
       `rphiz_to_xyz` and the `_field` versions differ slightly (third

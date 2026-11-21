@@ -1,3 +1,6 @@
+from warnings import warn
+
+
 def comp_loss_joule(lam, T_op, OP, type_skin_effect):
     """Calculate joule losses in given lamination and OP
 
@@ -18,6 +21,11 @@ def comp_loss_joule(lam, T_op, OP, type_skin_effect):
         Joule losses [W]
     """
 
+    warn(
+        "comp_loss_joule is deprecated, it is not used by pyleecan (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     Rs = lam.comp_resistance_wind(T=T_op)
     qs = lam.winding.qs
 

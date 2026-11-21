@@ -143,6 +143,9 @@ DEPRECATED_MODULES = {
     # Step 8: replaced by the methods of the SciDataTool classes
     "Plot.plot_2D_Data": "use the plot_2D_Data method of the Data object",
     "Plot.plot_3D_Data": "use the plot_3D_Data method of the Data object",
+    # Imported by LUTdq.interp_Ploss_dqh and LossModelWinding.comp_loss, never
+    # called (the Joule losses are computed by LossModelJoule)
+    "Electrical.comp_loss_joule": "it is not used by pyleecan",
 }
 """{legacy module below Functions: replacement}: the public functions of the
 module warn (DeprecationWarning) in Functions_new, removed in Phase 2"""

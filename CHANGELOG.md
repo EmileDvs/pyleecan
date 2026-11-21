@@ -123,7 +123,7 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     `build_meshsolution` stays a deprecated alias of the `MeshSolution`
     constructor;
   - deprecated: `plot_2D_Data`, `plot_3D_Data` (use the `Data` methods),
-    `DeprecationWarning` on each call.
+    `comp_loss_joule` (not used), `DeprecationWarning` on each call.
   The old paths are deprecated aliases until Phase 2.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
