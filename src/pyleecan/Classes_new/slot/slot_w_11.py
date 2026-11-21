@@ -349,7 +349,7 @@ class SlotW11(Slot):
             pass
 
     # Inlined from Methods.Slot.SlotW11.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the object.
         The ending point of a curve is the starting point of the next curve
         in the list
@@ -358,6 +358,8 @@ class SlotW11(Slot):
         ----------
         self : SlotW11
             A SlotW11 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

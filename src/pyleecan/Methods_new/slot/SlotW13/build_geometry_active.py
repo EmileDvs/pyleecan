@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
@@ -6,10 +7,12 @@ from ....Functions_new.utils.labels import WIND_LAB, DRAW_PROP_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0):
+def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None):
     """Split the slot winding area in several zone
 
     Parameters
@@ -24,6 +27,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         Angle for rotation (Default value = 0) [rad]
     delta : Complex
         complex for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -31,8 +36,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         List of surface delimiting the winding zone
 
     """
+    lam = container_or_parent(self, lam, "lam")
     # get the name of the lamination
-    lam_label = self.parent.get_label()
+    lam_label = lam.get_label()
 
     point_dict = self._comp_point_coordinate()
     Z4 = point_dict["Z4"]

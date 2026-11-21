@@ -57,7 +57,7 @@ class SlotUD(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotUD.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the object.
         The ending point of a curve is the starting point of the next curve
         in the list
@@ -66,6 +66,8 @@ class SlotUD(Slot):
         ----------
         self : SlotUD
             A SlotUD object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -145,10 +147,10 @@ class SlotUD(Slot):
         type_line_wind = self.type_line_wind
         if self.wind_begin_index is None and self.wind_end_index is None:
             # Winding not define, use complete surface
-            line_list = self.build_geometry()
+            line_list = self.build_geometry(lam=lam)
             type_line_wind = 1  # Enforce Arc1
         else:
-            line_list = self.build_geometry()[
+            line_list = self.build_geometry(lam=lam)[
                 self.wind_begin_index : self.wind_end_index
             ]
 
@@ -205,7 +207,7 @@ class SlotUD(Slot):
         lam = container_or_parent(self, lam, "lam")
 
         # get curve_list
-        line_list = self.build_geometry()
+        line_list = self.build_geometry(lam=lam)
         curve_list_start = line_list[: self.wind_begin_index]
         curve_list_end = line_list[self.wind_end_index :]
         # Active Line

@@ -228,7 +228,7 @@ class SlotW29(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW29.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -237,6 +237,8 @@ class SlotW29(Slot):
         ----------
         self : SlotW29
             A SlotW29 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -264,7 +266,12 @@ class SlotW29(Slot):
 
     # Inlined from Methods.Slot.SlotW29.build_geometry_active
     def build_geometry_active(
-        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+        self,
+        Nrad: int,
+        Ntan: int,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ) -> list:
         """Split the slot winding area in several zone
 
@@ -280,15 +287,18 @@ class SlotW29(Slot):
             Angle for rotation (Default value = 0) [rad]
         delta : Complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_list: list
             List of surface delimiting the winding zone
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # get the name of the lamination
-        lam_label = self.parent.get_label()
+        lam_label = lam.get_label()
 
         point_dict = self._comp_point_coordinate()
         Z5 = point_dict["Z5"]
@@ -738,7 +748,12 @@ class SlotW29(Slot):
         return [surface]
 
     # Inlined from Methods.Slot.SlotW29.get_surface_wedge
-    def get_surface_wedge(self, alpha: float = 0, delta: complex = 0) -> list:
+    def get_surface_wedge(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -749,12 +764,15 @@ class SlotW29(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_list : list
             list of surfaces objects
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # H0=H1=0 no opening
         if self.H0 == 0 and self.H1 == 0:
@@ -773,12 +791,12 @@ class SlotW29(Slot):
         curve_list = [line for line in curve_list if line is not None]
 
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 + self.H1 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 + self.H1 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 + self.H1 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 + self.H1 / 2
 
-        label = self.parent.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        label = lam.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation

@@ -8,6 +8,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError, SLSRPMOutterError
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -174,7 +175,7 @@ class SlotWLSRPM(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotWLSRPM.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -183,6 +184,8 @@ class SlotWLSRPM(Slot):
         ----------
         self : SlotWLSRPM
             A SlotWLSRPM object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -191,7 +194,7 @@ class SlotWLSRPM(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         Z1 = point_dict["Z1"]
@@ -229,6 +232,7 @@ class SlotWLSRPM(Slot):
         is_simplified: bool = False,
         alpha: float = 0,
         delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ):
         """Split the slot active area in several zone
 
@@ -246,6 +250,8 @@ class SlotWLSRPM(Slot):
             Angle for rotation (Default value = 0) [rad]
         delta : Complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -253,9 +259,10 @@ class SlotWLSRPM(Slot):
             List of surface delimiting the active zone
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        lam_label = self.parent.get_label()
-        Rbo = self.get_Rbo()
+        lam_label = lam.get_label()
+        Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         Z1 = point_dict["Z1"]
@@ -375,7 +382,7 @@ class SlotWLSRPM(Slot):
             surf_list.append(surface)
 
         else:  # Default : only one zone
-            curve_list = self.build_geometry()
+            curve_list = self.build_geometry(lam=lam)
 
             # Add a line to close the winding area
             lines: list[Line] = [
@@ -523,7 +530,7 @@ class SlotWLSRPM(Slot):
         st = self.get_name_lam()
 
         # Create curve list
-        curve_list = self.build_geometry()
+        curve_list = self.build_geometry(lam=lam)
         curve_list.append(
             Arc1(
                 begin=curve_list[-1].get_end(),

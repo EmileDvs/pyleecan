@@ -187,7 +187,7 @@ class SlotW22(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW22.build_geometry
-    def build_geometry(self):
+    def build_geometry(self, lam: Lamination | Notch | None = None):
         """Compute the curve (Segment) needed to plot the object.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -196,6 +196,8 @@ class SlotW22(Slot):
         ----------
         self : SlotW22
             A SlotW22 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -219,7 +221,12 @@ class SlotW22(Slot):
 
     # Inlined from Methods.Slot.SlotW22.build_geometry_active
     def build_geometry_active(
-        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+        self,
+        Nrad: int,
+        Ntan: int,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ):
         """Split the slot winding area in several zone
 
@@ -235,6 +242,8 @@ class SlotW22(Slot):
             Angle for rotation (Default value = 0) [rad]
         delta : Complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -242,14 +251,15 @@ class SlotW22(Slot):
             List of surface delimiting the winding zone
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # get the name of the lamination
-        lam_label = self.parent.get_label()
+        lam_label = lam.get_label()
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # Polar Meshgrid
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             r = np.linspace(Rbo + self.H0, Rbo + self.H0 + self.H2, Nrad + 1)
         else:
             r = np.linspace(Rbo - self.H0, Rbo - self.H0 - self.H2, Nrad + 1)

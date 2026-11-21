@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 from scipy.optimize import fsolve
 
@@ -8,10 +9,12 @@ from ....Functions_new.utils.labels import WIND_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0):
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None):
     """Split the slot active area in several zone
 
     Parameters
@@ -28,6 +31,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         Angle for rotation (Default value = 0) [rad]
     delta : Complex
         complex for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -35,9 +40,10 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         List of surface delimiting the active zone
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
-    lam_label = self.parent.get_label()
-    Rbo = self.get_Rbo()
+    lam_label = lam.get_label()
+    Rbo = self.get_Rbo(lam=lam)
 
     point_dict = self._comp_point_coordinate()
     Z1 = point_dict["Z1"]
@@ -149,7 +155,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         surf_list.append(surface)
 
     else:  # Default : only one zone
-        curve_list = self.build_geometry()
+        curve_list = self.build_geometry(lam=lam)
 
         # Add a line to close the winding area
         lines: list[Line] = [

@@ -127,6 +127,7 @@ class LamSlotMagNS(LamSlotM):
                 Ntan=Ntan,
                 alpha=alpha,
                 delta=delta,
+                lam=self,
             )
 
             # for each magnet to draw
@@ -184,6 +185,7 @@ class LamSlotMagNS(LamSlotM):
                 Ntan=Ntan,
                 alpha=alpha,
                 delta=delta,
+                lam=self,
             )
 
             # for each magnet to draw
@@ -518,7 +520,7 @@ class LamSlotMagNS(LamSlotM):
                 slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opN / 2 + np.pi / Zs
                 slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opN / 2 + np.pi / Zs
                 slot_dict["obj"] = self.slot
-                slot_dict["lines"] = self.slot.build_geometry()
+                slot_dict["lines"] = self.slot.build_geometry(lam=self)
                 # Apply rotation
                 for line in slot_dict["lines"]:
                     line.rotate((slot_dict["begin_angle"] + slot_dict["end_angle"]) / 2)
@@ -529,7 +531,7 @@ class LamSlotMagNS(LamSlotM):
                 slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opS / 2 + np.pi / Zs
                 slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opS / 2 + np.pi / Zs
                 slot_dict["obj"] = self.slot_south
-                slot_dict["lines"] = self.slot_south.build_geometry()
+                slot_dict["lines"] = self.slot_south.build_geometry(lam=self)
                 # Apply rotation
                 for line in slot_dict["lines"]:
                     line.rotate((slot_dict["begin_angle"] + slot_dict["end_angle"]) / 2)

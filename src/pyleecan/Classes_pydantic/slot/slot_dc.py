@@ -135,7 +135,7 @@ class SlotDC(Slot):
         return [Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, Z11, Z12, Zc1, Zc2, Zc3]
 
     # Inlined from Methods.Slot.SlotDC.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -144,6 +144,8 @@ class SlotDC(Slot):
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -171,7 +173,7 @@ class SlotDC(Slot):
         ] = self._comp_point_coordinate()
 
         # Adapt the lines according to the lamination
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             sign = 1
             direc = True
         else:
@@ -439,7 +441,7 @@ class SlotDC(Slot):
         st = self.get_name_lam()
 
         # Create curve list
-        curve_list = self.build_geometry()[1:-1]
+        curve_list = self.build_geometry(lam=lam)[1:-1]
         curve_list.append(
             Segment(begin=curve_list[-1].get_end(), end=curve_list[0].get_begin())
         )

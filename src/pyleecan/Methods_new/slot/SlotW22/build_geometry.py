@@ -2,9 +2,14 @@ import numpy as np
 
 from ....Classes_new.geometry.arc_2 import Arc2
 from ....Classes_new.geometry.segment import Segment
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry(self):
+def build_geometry(self, lam: Lamination | Notch | None = None):
     """Compute the curve (Segment) needed to plot the object.
     The ending point of a curve is the starting point of the next curve in
     the list
@@ -13,6 +18,8 @@ def build_geometry(self):
     ----------
     self : SlotW22
         A SlotW22 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

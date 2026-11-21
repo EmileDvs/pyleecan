@@ -41,7 +41,7 @@ def get_surface_wedges(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         surf_list = self.get_surface_opening(lam=lam)
 
     elif wedge_type == 1:
-        surf_list = self.get_surface_wedge()
+        surf_list = self.get_surface_wedge(lam=lam)
 
     else:
         raise NotImplementedError

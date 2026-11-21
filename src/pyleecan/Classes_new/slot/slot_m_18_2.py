@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -107,7 +108,7 @@ class SlotM18_2(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotM18_2.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -116,6 +117,8 @@ class SlotM18_2(Slot):
         ----------
         self : SlotM18_2
             A SlotM18_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -123,7 +126,7 @@ class SlotM18_2(Slot):
             A list of one Arc
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         point_dict = self._comp_point_coordinate()
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
@@ -136,7 +139,12 @@ class SlotM18_2(Slot):
 
     # Inlined from Methods.Slot.SlotM18_2.build_geometry_active
     def build_geometry_active(
-        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+        self,
+        Nrad: int,
+        Ntan: int,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ) -> list:
         """Split the slot active area in several zone
 
@@ -152,6 +160,8 @@ class SlotM18_2(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -159,13 +169,14 @@ class SlotM18_2(Slot):
             List of surface delimiting the active zone
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # get the name of the lamination
-        lam_label = self.parent.get_label()
-        Rbo = self.get_Rbo()
+        lam_label = lam.get_label()
+        Rbo = self.get_Rbo(lam=lam)
 
         if Nrad == 1 and Ntan == 1:
-            surf_list = [self.get_surface_active()]
+            surf_list = [self.get_surface_active(lam=lam)]
             surf_list[0].label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
         elif Nrad == 2 and Ntan == 1:
             point_dict = self._comp_point_coordinate()
@@ -185,7 +196,7 @@ class SlotM18_2(Slot):
                 )
             )
 
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 curve_list.append(
                     Arc1(
                         begin=ZM2,
@@ -210,7 +221,7 @@ class SlotM18_2(Slot):
                 )
             )
 
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 curve_list.append(
                     Arc1(begin=ZM6, end=ZM1, radius=-Rbo, is_trigo_direction=False)
                 )
@@ -239,7 +250,7 @@ class SlotM18_2(Slot):
                 )
             )
 
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 curve_list.append(
                     Arc1(
                         begin=ZM3,
@@ -264,7 +275,7 @@ class SlotM18_2(Slot):
                 )
             )
 
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 curve_list.append(
                     Arc1(
                         begin=ZM5,

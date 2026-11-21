@@ -197,7 +197,7 @@ class SlotCirc(Slot):
             return ((self.W0 / 2) ** 2 + self.H0**2) / (2 * self.H0)
 
     # Inlined from Methods.Slot.SlotCirc.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -206,6 +206,8 @@ class SlotCirc(Slot):
         ----------
         self : SlotCirc
             A SlotCirc object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

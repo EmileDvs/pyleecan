@@ -225,7 +225,7 @@ class SlotW16(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW16.build_geometry
-    def build_geometry(self):
+    def build_geometry(self, lam: Lamination | Notch | None = None):
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -234,6 +234,8 @@ class SlotW16(Slot):
         ----------
         self : SlotW16
             A SlotW16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

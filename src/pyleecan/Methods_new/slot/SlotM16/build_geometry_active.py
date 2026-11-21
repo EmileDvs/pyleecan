@@ -4,10 +4,12 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0) -> list:
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> list:
     """Split the slot winding area in several zone
 
     Parameters
@@ -24,6 +26,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         Angle for rotation (Default value = 0) [rad]
     delta : Complex
         complex for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

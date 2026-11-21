@@ -32,7 +32,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     st = self.get_name_lam()
 
     # Create curve list
-    curve_list = self.build_geometry()
+    curve_list = self.build_geometry(lam=lam)
     curve_list.append(
         Arc1(
             begin=curve_list[-1].get_end(),

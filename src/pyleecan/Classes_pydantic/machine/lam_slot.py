@@ -240,7 +240,7 @@ class LamSlot(Lamination):
             slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - op / 2 + np.pi / Zs
             slot_dict["end_angle"] = 2 * np.pi / Zs * ii + op / 2 + np.pi / Zs
             slot_dict["obj"] = self.slot
-            slot_dict["lines"] = self.slot.build_geometry()
+            slot_dict["lines"] = self.slot.build_geometry(lam=self)
             # Apply rotation
             for line in slot_dict["lines"]:
                 line.rotate((slot_dict["begin_angle"] + slot_dict["end_angle"]) / 2)

@@ -133,6 +133,7 @@ class LamSlotWind(LamSlot):
                     Ntan=Ntan,
                     alpha=alpha,
                     delta=delta,
+                    lam=self,
                 )
 
             st = self.get_label()

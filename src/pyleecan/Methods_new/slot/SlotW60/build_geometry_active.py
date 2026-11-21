@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ..Slot import SlotCheckError
 import numpy as np
 
@@ -8,10 +9,12 @@ from ....Functions_new.utils.labels import WIND_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0) -> list:
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> list:
     """Split the slot winding area in several zone
 
     Parameters
@@ -29,6 +32,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         Angle for rotation (Default value = 0) [rad]
     delta : complex
         complex for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -41,13 +46,14 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         Slot 60 can use only for winding with Nrad=1 and Ntan=2
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
     if Nrad != 1 or Ntan != 2:
         raise S60_WindError("Slot 60 can use only for winding with Nrad=1 and Ntan=2")
     self.check()
 
     # get the name of the lamination
-    lam_label = self.parent.get_label()
+    lam_label = lam.get_label()
 
     line_dict = self._comp_line_dict()
 

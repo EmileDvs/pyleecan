@@ -248,7 +248,7 @@ class SlotW62(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW62.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -257,6 +257,8 @@ class SlotW62(Slot):
         ----------
         self : SlotW62
             A SlotW62 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -287,6 +289,7 @@ class SlotW62(Slot):
         is_simplified: bool = False,
         alpha: float = 0,
         delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ) -> list:
         """Split the slot winding area in several zone
 
@@ -305,6 +308,8 @@ class SlotW62(Slot):
             Angle for rotation (Default value = 0) [rad]
         delta : complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -312,6 +317,7 @@ class SlotW62(Slot):
             List of surface delimiting the winding zone
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         if Nrad != 1 or Ntan != 2:
             raise S62_WindError(
@@ -320,7 +326,7 @@ class SlotW62(Slot):
         self.check()
 
         # get the name of the lamination
-        lam_label = self.parent.get_label()
+        lam_label = lam.get_label()
 
         line_dict = self._comp_line_dict()
 

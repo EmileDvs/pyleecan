@@ -51,7 +51,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
                 Nrad=Nrad,
                 Ntan=Ntan,
                 alpha=alpha,
-                delta=delta,
+                delta=delta, lam=self,
             )
 
         st = self.get_label()

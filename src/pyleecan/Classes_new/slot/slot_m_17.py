@@ -47,7 +47,7 @@ class SlotM17(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM17.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -56,6 +56,8 @@ class SlotM17(Slot):
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

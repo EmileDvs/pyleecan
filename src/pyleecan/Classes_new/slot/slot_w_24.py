@@ -143,7 +143,7 @@ class SlotW24(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW24.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve needed to plot the object.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -152,6 +152,8 @@ class SlotW24(Slot):
         ----------
         self : SlotW24
             A SlotW24 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -171,7 +173,12 @@ class SlotW24(Slot):
 
     # Inlined from Methods.Slot.SlotW24.build_geometry_active
     def build_geometry_active(
-        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+        self,
+        Nrad: int,
+        Ntan: int,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ) -> list:
         """Split the slot winding area in several zone
 
@@ -187,6 +194,8 @@ class SlotW24(Slot):
             Angle for rotation (Default value = 0) [rad]
         delta : Complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -194,9 +203,10 @@ class SlotW24(Slot):
             List of surface delimiting the winding zone
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # get the name of the lamination
-        lam_label = self.parent.get_label()
+        lam_label = lam.get_label()
 
         point_dict = self._comp_point_coordinate()
         Z1 = point_dict["Z1"]

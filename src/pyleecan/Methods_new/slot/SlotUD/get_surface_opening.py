@@ -32,7 +32,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0, lam: Laminat
     lam = container_or_parent(self, lam, "lam")
 
     # get curve_list
-    line_list = self.build_geometry()
+    line_list = self.build_geometry(lam=lam)
     curve_list_start = line_list[: self.wind_begin_index]
     curve_list_end = line_list[self.wind_end_index :]
     # Active Line

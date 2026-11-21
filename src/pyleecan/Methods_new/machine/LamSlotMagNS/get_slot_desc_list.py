@@ -38,7 +38,7 @@ def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
             slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opN / 2 + np.pi / Zs
             slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opN / 2 + np.pi / Zs
             slot_dict["obj"] = self.slot
-            slot_dict["lines"] = self.slot.build_geometry()
+            slot_dict["lines"] = self.slot.build_geometry(lam=self)
             # Apply rotation
             for line in slot_dict["lines"]:
                 line.rotate((slot_dict["begin_angle"] + slot_dict["end_angle"]) / 2)
@@ -49,7 +49,7 @@ def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
             slot_dict["begin_angle"] = 2 * np.pi / Zs * ii - opS / 2 + np.pi / Zs
             slot_dict["end_angle"] = 2 * np.pi / Zs * ii + opS / 2 + np.pi / Zs
             slot_dict["obj"] = self.slot_south
-            slot_dict["lines"] = self.slot_south.build_geometry()
+            slot_dict["lines"] = self.slot_south.build_geometry(lam=self)
             # Apply rotation
             for line in slot_dict["lines"]:
                 line.rotate((slot_dict["begin_angle"] + slot_dict["end_angle"]) / 2)

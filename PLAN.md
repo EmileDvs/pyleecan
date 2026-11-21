@@ -348,7 +348,7 @@ reads are left to Step 16.
       deprecations). Pass 1 done: slot surfaces and active height (`lam`); pass 2: the
       models' `run(output)`; pass 3: `Simu1.run_single(output)`; pass 4:
       the loss models (`loss`, `output`); pass 5: the slot helpers
-      (`get_Rbo`, `get_is_stator`, `is_outwards`).
+      (`get_Rbo`, `get_is_stator`, `is_outwards`); pass 6: the slot geometry.
 
 ### Step 12: freeze
 

@@ -117,7 +117,7 @@ class SlotM12(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotM12.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -126,6 +126,8 @@ class SlotM12(Slot):
         ----------
         self : SlotM12
             A SlotM12 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

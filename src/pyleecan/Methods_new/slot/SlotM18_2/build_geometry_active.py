@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
@@ -5,10 +6,12 @@ from ....Functions_new.utils.labels import WIND_LAB, COND_BOUNDARY_PROP_LAB, YSM
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0) -> list:
+def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> list:
     """Split the slot active area in several zone
 
     Parameters
@@ -23,6 +26,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         float number for rotation (Default value = 0) [rad]
     delta : complex
         complex number for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -30,13 +35,14 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         List of surface delimiting the active zone
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # get the name of the lamination
-    lam_label = self.parent.get_label()
-    Rbo = self.get_Rbo()
+    lam_label = lam.get_label()
+    Rbo = self.get_Rbo(lam=lam)
 
     if Nrad == 1 and Ntan == 1:
-        surf_list = [self.get_surface_active()]
+        surf_list = [self.get_surface_active(lam=lam)]
         surf_list[0].label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
     elif Nrad == 2 and Ntan == 1:
         point_dict = self._comp_point_coordinate()
@@ -54,7 +60,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             Segment(begin=ZM1, end=ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
         )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(
                 Arc1(begin=ZM2, end=ZM5, radius=(Rbo - self.H0_bore), is_trigo_direction=True)
             )
@@ -67,7 +73,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             Segment(begin=ZM5, end=ZM6, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
         )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(Arc1(begin=ZM6, end=ZM1, radius=-Rbo, is_trigo_direction=False))
         else:
             curve_list.append(Arc1(begin=ZM6, end=ZM1, radius=-Rbo, is_trigo_direction=False))
@@ -90,7 +96,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             Segment(begin=ZM2, end=ZM3, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
         )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(
                 Arc1(
                     begin=ZM3,
@@ -113,7 +119,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             Segment(begin=ZM4, end=ZM5, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
         )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(
                 Arc1(begin=ZM5, end=ZM2, radius=-Rbo + self.H0_bore, is_trigo_direction=False)
             )

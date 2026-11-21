@@ -896,12 +896,21 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
         other calls in the slot methods (not given `lam`) use the fallback.
         Checks: as before; FEMM runs, `test_SWSlot`, `test_new_machine_Railway`
         on both backends; `ty` on `Methods_new/slot` unchanged (20).
-  - [ ] Next passes: the slot methods called by the pass 1 ones (`get_Rbo`,
-        `get_is_stator`, `is_outwards`, `build_geometry*`) once their callers
-        pass the container; the loss models' `comp_loss*` (container: the
-        `Loss` object, `self.parent.parent` walks); `Simu1.run_single` itself
-        (`output = self.parent`, called by `Simulation.run` with `results`).
-- [ ] Report the reads left for Step 16.
+  - [x] Pass 6 (2026-11-21): the slot geometry (`build_geometry`,
+        `build_geometry_active`, `get_surface_wedge`) takes `lam` (the
+        laminations pass `self`, the slot methods pass theirs on). Methods
+        of `Methods_new` reading a parent: 275 -> 198 after passes 1-6
+        (labels 79 -> 20, walks 113 -> 65, container reads 183 -> 156).
+        Checks: as before; FEMM runs and GUI scenarios on both backends;
+        `ty` on the slot package unchanged.
+  - [ ] Left for Step 16 (not mechanical): the `plot_schematics` of the
+        slots (51, user entry points, no caller with the container), the
+        machine package (winding, notch, bore, end winding: user entry
+        points and calls on unknown receivers), the `comp_coeff` of the loss
+        models, the sub-outputs reading the `Output`, the optimization and
+        multi-simulation walks.
+- [x] Report the reads left for Step 16: `parent_reads.py` (table above
+      for the first run; after passes 1-6: 198 methods, see pass 6).
 
 ## Step 12: freeze
 
@@ -1155,6 +1164,7 @@ the fallback, the parent links, and makes the argument required.
 | `get_surface_opening` of the Slot family (24 classes) | `lam` | Step 11, pass 1 |
 | `Slot.get_surface_wedges` | `lam` | Step 11, pass 1 |
 | `Slot.get_Rbo`, `Slot.get_is_stator`, `Slot.is_outwards` | `lam` | Step 11, pass 5 |
+| `build_geometry`, `build_geometry_active`, `get_surface_wedge` of the Slot family | `lam` | Step 11, pass 6 |
 | `run` of `Electrical`, `ElecLUTdq`, `Magnetics`, `Force`, `Structural`, `StructElmer`, `Loss`, `LossFEA` | `output` | Step 11, pass 2 |
 | `Simu1.run_single` | `output` | Step 11, pass 3 |
 | `comp_loss`, `comp_loss_freq`, `comp_loss_time`, `comp_loss_value` of the LossModel family | `loss`, `output` | Step 11, pass 4 |

@@ -215,7 +215,7 @@ class SlotW14(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW14.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Segment) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -224,6 +224,8 @@ class SlotW14(Slot):
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -738,7 +740,12 @@ class SlotW14(Slot):
         return [surface]
 
     # Inlined from Methods.Slot.SlotW14.get_surface_wedge
-    def get_surface_wedge(self, alpha: float = 0, delta: complex = 0) -> list:
+    def get_surface_wedge(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -749,12 +756,15 @@ class SlotW14(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_list : list
             list of surfaces objects
         """
+        lam = container_or_parent(self, lam, "lam")
         H1 = self.get_H1()
         # H0=H1=0 no opening
         if self.H0 == 0 and H1 == 0:
@@ -771,12 +781,12 @@ class SlotW14(Slot):
         curve_list = [line for line in curve_list if line is not None]
 
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 + H1 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 + H1 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 + H1 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 + H1 / 2
 
-        label = self.parent.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        label = lam.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation

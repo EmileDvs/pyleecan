@@ -111,6 +111,7 @@ class LamSlotMag(LamSlotM):
                 Ntan=Ntan,
                 alpha=alpha,
                 delta=delta,
+                lam=self,
             )
 
             # for each magnet to draw

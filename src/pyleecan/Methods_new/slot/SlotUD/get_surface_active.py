@@ -35,10 +35,10 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     type_line_wind = self.type_line_wind
     if self.wind_begin_index is None and self.wind_end_index is None:
         # Winding not define, use complete surface
-        line_list = self.build_geometry()
+        line_list = self.build_geometry(lam=lam)
         type_line_wind = 1  # Enforce Arc1
     else:
-        line_list = self.build_geometry()[self.wind_begin_index : self.wind_end_index]
+        line_list = self.build_geometry(lam=lam)[self.wind_begin_index : self.wind_end_index]
 
     # Add closing line
     if type_line_wind == 0:

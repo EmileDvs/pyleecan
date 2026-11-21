@@ -1,7 +1,12 @@
 from ....Functions.Load.import_class import import_class
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0):
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None):
     """Split the slot active area in several zone
     This method assume that the active area is centered on X axis and symetrical
     Otherwise a dedicated build_geometry_active method must be provided
@@ -20,6 +25,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         Angle for rotation (Default value = 0) [rad]
     delta : Complex
         complex for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

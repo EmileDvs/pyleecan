@@ -35,7 +35,7 @@ def get_notch_desc_list(self, sym: int = 1) -> list:
         notch_dict["begin_angle"] = 2 * np.pi / Zs * ii + alpha - op / 2
         notch_dict["end_angle"] = 2 * np.pi / Zs * ii + alpha + op / 2
         notch_dict["obj"] = self.notch_shape
-        notch_dict["lines"] = self.notch_shape.build_geometry()
+        notch_dict["lines"] = self.notch_shape.build_geometry(lam=self)
         # Apply rotation
         for line in notch_dict["lines"]:
             line.rotate((notch_dict["begin_angle"] + notch_dict["end_angle"]) / 2)
@@ -48,7 +48,7 @@ def get_notch_desc_list(self, sym: int = 1) -> list:
         notch_dict["begin_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha - op / 2
         notch_dict["end_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha + op / 2
         notch_dict["obj"] = self.notch_shape
-        notch_dict["lines"] = self.notch_shape.build_geometry()
+        notch_dict["lines"] = self.notch_shape.build_geometry(lam=self)
         # Apply rotation
         for line in notch_dict["lines"]:
             line.rotate((notch_dict["begin_angle"] + notch_dict["end_angle"]) / 2)

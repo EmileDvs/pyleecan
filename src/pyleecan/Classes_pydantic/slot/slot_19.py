@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Slot/Slot19.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -10,6 +10,10 @@ from ...classes_common.errors import S19_W1CheckError
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .slot import Slot
+
+if TYPE_CHECKING:
+    from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 class Slot19(Slot):
@@ -82,7 +86,7 @@ class Slot19(Slot):
         return [Z3, Z2, Z1, Z0]
 
     # Inlined from Methods.Slot.Slot19.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the object.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -91,6 +95,8 @@ class Slot19(Slot):
         ----------
         self : Slot19
             A Slot19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

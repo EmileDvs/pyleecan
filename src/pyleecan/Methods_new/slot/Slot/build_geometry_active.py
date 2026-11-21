@@ -1,7 +1,13 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0):
+def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None):
     """Split the slot active area in several zone
     This method assume that the active area is centered on X axis and symetrical
     Otherwise a dedicated build_geometry_active method must be provided
@@ -18,6 +24,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         Angle for rotation (Default value = 0) [rad]
     delta : Complex
         complex for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -25,10 +33,11 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         List of surface delimiting the active zone
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
     assert Ntan in [1, 2]
 
-    surf_act = self.get_surface_active()
+    surf_act = self.get_surface_active(lam=lam)
 
     # Find the two intersection point with Ox axis
     inter_list = list()
@@ -48,16 +57,16 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
     ), "Can't find the two points of the intersection with 0x axis"
 
     # Sort the intersection points (Ztan1 is closest to the bore)
-    if abs(inter_list[0]) < abs(inter_list[1]) and self.is_outwards():
+    if abs(inter_list[0]) < abs(inter_list[1]) and self.is_outwards(lam=lam):
         Ztan1 = inter_list[0]
         Ztan2 = inter_list[1]
-    elif abs(inter_list[0]) > abs(inter_list[1]) and self.is_outwards():
+    elif abs(inter_list[0]) > abs(inter_list[1]) and self.is_outwards(lam=lam):
         Ztan1 = inter_list[1]
         Ztan2 = inter_list[0]
-    elif abs(inter_list[0]) < abs(inter_list[1]) and not self.is_outwards():
+    elif abs(inter_list[0]) < abs(inter_list[1]) and not self.is_outwards(lam=lam):
         Ztan1 = inter_list[1]
         Ztan2 = inter_list[0]
-    elif abs(inter_list[0]) > abs(inter_list[1]) and not self.is_outwards():
+    elif abs(inter_list[0]) > abs(inter_list[1]) and not self.is_outwards(lam=lam):
         Ztan1 = inter_list[0]
         Ztan2 = inter_list[1]
 
@@ -86,7 +95,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
                     is_join=True,
                     prop_dict_join=None,
                 )
-                if self.is_outwards():
+                if self.is_outwards(lam=lam):
                     surf_list.append(top_surf)
                     surf = bot_surf
                 else:
@@ -98,7 +107,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             surf_list.append(surf.copy())
 
     # Set all label
-    self.set_label(surf_list, Nrad, Ntan, self.parent.get_label())
+    self.set_label(surf_list, Nrad, Ntan, lam.get_label())
 
     # Apply transformation
     for surf in surf_list:

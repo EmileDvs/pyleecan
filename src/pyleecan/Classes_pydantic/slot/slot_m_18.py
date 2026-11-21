@@ -96,7 +96,7 @@ class SlotM18(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotM18.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -105,6 +105,8 @@ class SlotM18(Slot):
         ----------
         self : SlotM18
             A SlotM18 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -112,7 +114,7 @@ class SlotM18(Slot):
             A list of 3 Segments
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         point_dict = self._comp_point_coordinate()
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]

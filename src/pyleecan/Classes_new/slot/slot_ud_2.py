@@ -72,7 +72,7 @@ class SlotUD2(Slot):
         self.split_active_surf_dict = value
 
     # Inlined from Methods.Slot.SlotUD2.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve (Line) needed to plot the object.
         The ending point of a curve is the starting point of the next curve
         in the list
@@ -81,6 +81,8 @@ class SlotUD2(Slot):
         ----------
         self : SlotUD2
             A SlotUD2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -99,6 +101,7 @@ class SlotUD2(Slot):
         is_simplified: bool = False,
         alpha: float = 0,
         delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ):
         """Split the slot active area in several zone
         This method assume that the active area is centered on X axis and symetrical
@@ -118,6 +121,8 @@ class SlotUD2(Slot):
             Angle for rotation (Default value = 0) [rad]
         delta : Complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

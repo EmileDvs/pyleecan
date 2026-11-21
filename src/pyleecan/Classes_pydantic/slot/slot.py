@@ -77,7 +77,12 @@ class Slot(LegacyModel):
 
     # Inlined from Methods.Slot.Slot.build_geometry_active
     def build_geometry_active(
-        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+        self,
+        Nrad: int,
+        Ntan: int,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ):
         """Split the slot active area in several zone
         This method assume that the active area is centered on X axis and symetrical
@@ -95,6 +100,8 @@ class Slot(LegacyModel):
             Angle for rotation (Default value = 0) [rad]
         delta : Complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -102,10 +109,11 @@ class Slot(LegacyModel):
             List of surface delimiting the active zone
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         assert Ntan in [1, 2]
 
-        surf_act = self.get_surface_active()
+        surf_act = self.get_surface_active(lam=lam)
 
         # Find the two intersection point with Ox axis
         inter_list = []
@@ -128,16 +136,16 @@ class Slot(LegacyModel):
         )
 
         # Sort the intersection points (Ztan1 is closest to the bore)
-        if abs(inter_list[0]) < abs(inter_list[1]) and self.is_outwards():
+        if abs(inter_list[0]) < abs(inter_list[1]) and self.is_outwards(lam=lam):
             Ztan1 = inter_list[0]
             Ztan2 = inter_list[1]
-        elif abs(inter_list[0]) > abs(inter_list[1]) and self.is_outwards():
+        elif abs(inter_list[0]) > abs(inter_list[1]) and self.is_outwards(lam=lam):
             Ztan1 = inter_list[1]
             Ztan2 = inter_list[0]
-        elif abs(inter_list[0]) < abs(inter_list[1]) and not self.is_outwards():
+        elif abs(inter_list[0]) < abs(inter_list[1]) and not self.is_outwards(lam=lam):
             Ztan1 = inter_list[1]
             Ztan2 = inter_list[0]
-        elif abs(inter_list[0]) > abs(inter_list[1]) and not self.is_outwards():
+        elif abs(inter_list[0]) > abs(inter_list[1]) and not self.is_outwards(lam=lam):
             Ztan1 = inter_list[0]
             Ztan2 = inter_list[1]
 
@@ -166,7 +174,7 @@ class Slot(LegacyModel):
                         is_join=True,
                         prop_dict_join=None,
                     )
-                    if self.is_outwards():
+                    if self.is_outwards(lam=lam):
                         surf_list.append(top_surf)
                         surf = bot_surf
                     else:
@@ -178,7 +186,7 @@ class Slot(LegacyModel):
                 surf_list.append(surf.copy())
 
         # Set all label
-        self.set_label(surf_list, Nrad, Ntan, self.parent.get_label())
+        self.set_label(surf_list, Nrad, Ntan, lam.get_label())
 
         # Apply transformation
         for surf in surf_list:
@@ -857,7 +865,7 @@ class Slot(LegacyModel):
             surf_list = self.get_surface_opening(lam=lam)
 
         elif wedge_type == 1:
-            surf_list = self.get_surface_wedge()
+            surf_list = self.get_surface_wedge(lam=lam)
 
         else:
             raise NotImplementedError

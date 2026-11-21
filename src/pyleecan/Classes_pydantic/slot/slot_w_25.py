@@ -182,7 +182,7 @@ class SlotW25(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW25.build_geometry
-    def build_geometry(self) -> list:
+    def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the curve needed to plot the object.
         The ending point of a curve is the starting point of the next curve in
         the list
@@ -191,6 +191,8 @@ class SlotW25(Slot):
         ----------
         self : SlotW25
             A SlotW25 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -213,7 +215,12 @@ class SlotW25(Slot):
 
     # Inlined from Methods.Slot.SlotW25.build_geometry_active
     def build_geometry_active(
-        self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0
+        self,
+        Nrad: int,
+        Ntan: int,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ) -> list:
         """Split the slot winding area in several zone
 
@@ -229,6 +236,8 @@ class SlotW25(Slot):
             Angle for rotation (Default value = 0) [rad]
         delta : Complex
             complex for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -236,8 +245,9 @@ class SlotW25(Slot):
             List of surface delimiting the winding zone
 
         """
+        lam = container_or_parent(self, lam, "lam")
         # get the name of the lamination
-        lam_label = self.parent.get_label()
+        lam_label = lam.get_label()
 
         point_dict = self._comp_point_coordinate()
         Z3 = point_dict["Z3"]
@@ -253,7 +263,7 @@ class SlotW25(Slot):
                 1j * np.linspace(np.angle(X[ii]), np.angle(X[ii].conjugate()), Ntan + 1)
             )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             assert abs(Z3) < abs(Z4)
             assert abs(Z6) < abs(Z5)
         assert abs(Z[0][0] - Z3) < 1e-6

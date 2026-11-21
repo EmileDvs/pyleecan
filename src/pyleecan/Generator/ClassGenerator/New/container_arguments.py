@@ -66,6 +66,10 @@ CONTAINER_ARGUMENTS = (
             "get_Rbo",
             "get_is_stator",
             "is_outwards",
+            # Pass 6: the geometry of the slot, built by the laminations
+            "build_geometry",
+            "build_geometry_active",
+            "get_surface_wedge",
         ),
         name="lam",
         doc_type="Lamination or Notch",

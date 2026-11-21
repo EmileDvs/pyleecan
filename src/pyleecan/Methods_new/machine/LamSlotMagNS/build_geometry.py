@@ -58,7 +58,7 @@ def build_geometry(
             Nrad=Nrad,
             Ntan=Ntan,
             alpha=alpha,
-            delta=delta,
+            delta=delta, lam=self,
         )
 
         # for each magnet to draw
@@ -115,7 +115,7 @@ def build_geometry(
             Nrad=Nrad,
             Ntan=Ntan,
             alpha=alpha,
-            delta=delta,
+            delta=delta, lam=self,
         )
 
         # for each magnet to draw
