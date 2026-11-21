@@ -714,7 +714,10 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
   [Phase 2 deprecations](#phase-2-deprecations).
 - Step 16 may still narrow a method to plain values where it clearly helps.
 
-- [ ] Shared helper `container_or_parent` (both backends), with unit tests.
+- [x] Shared helper `container_or_parent(obj, container, name, depth=1)`
+      (`classes_common/parents.py`, both backends): the given container,
+      else the ancestor at `depth` (2 for `self.parent.parent`), None if the
+      chain is broken. Tests: `Tests/New/test_container_or_parent.py`.
 - [ ] Generator passes, one pattern per increment (method, function and test
       generators), with unit tests and the parity tests unchanged; each pass
       reports the methods given a fallback argument (generated list, copied

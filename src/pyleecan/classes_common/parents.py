@@ -60,3 +60,38 @@ def _parent_rule(obj_class, lookup):
         return cls.__name__, parent_types, " or ".join(n for _, n in parent_names)
     return None
 
+
+
+def container_or_parent(obj, container, name, depth=1):
+    """Container of obj: the given one, else the legacy parent (PLAN.md Step 11)
+
+    The methods reading their container take it as an optional argument; the
+    new code passes it, the old calls (``slot.comp_height()``) fall back to the
+    parent links. Every fallback goes through this function: Phase 2 adds the
+    DeprecationWarning here, then removes the fallback with the parent links.
+
+    Parameters
+    ----------
+    obj : object
+        Object whose method reads its container
+    container : object or None
+        Container given by the caller (None: the fallback)
+    name : str
+        Name of the argument (for the Phase 2 warning)
+    depth : int
+        Number of parent links up to the container (2: ``obj.parent.parent``)
+
+    Returns
+    -------
+    container : object or None
+        The given container, else the ancestor of obj at depth (None if the
+        chain is broken)
+    """
+    if container is not None:
+        return container
+    container = obj
+    for _ in range(depth):
+        container = getattr(container, "parent", None)
+        if container is None:
+            return None
+    return container
