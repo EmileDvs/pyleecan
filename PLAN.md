@@ -424,6 +424,7 @@ packaging standards. Details (imports check, executable) in the backlog.
 | `pytest.ini`, `.pylintrc`, `tox.toml` | `pyproject.toml` (`[tool.pytest.ini_options]`, `[tool.ruff]`, type checker) | ruff replaces pylint |
 | `Exe_gen/` | `tools/exe/` | uv-based release script |
 | none | `CHANGELOG.md`, `CONTRIBUTING.md` | the changelog carries the release notes |
+| `load` / `save` functions, `classes_common.retrocompatibility` | one class to load the pyleecan objects (retrocompatibility included) and one class to save them | decided 2026-11-21 (Step 8: the retrocompatibility is in `classes_common` for now) |
 
 Vendored code is installed under the `pyleecan` namespace, not as top-level
 packages: top-level `smoot`, `swat_em` or `scidatatool` packages would clash with

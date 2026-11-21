@@ -35,7 +35,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `Methods_new/` | Methods shared by both backends, written by the method generator from `Methods/` | Generated, except frozen (hand-written) packages |
 | `Functions_new/` | Functions for `Classes_new`, written by the functions generator from `Functions` | Generated, except the modules listed as hand-written at the freeze (Step 12) |
 | `Functions_pydantic/` | Generated from `Functions_new` by import rewriting | Never by hand |
-| `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written, except `errors.py` and `parent_types.py` (generated) |
+| `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written, except `errors.py`, `parent_types.py` and `retrocompatibility.py` (generated) |
 | `Generator/` | Legacy generators (`ClassGenerator/*.py`, GUI, UML) and the CSV class definitions (`ClassesRef/`) | Legacy generator: never |
 | `Generator/ClassGenerator/New/` | New generators (classes, methods, functions, tests) | Yes: this is where changes go |
 | `GUI/`, `Data/`, `Results/` | Legacy GUI, reference machines/materials, outputs | GUI: never (legacy); `GUI_new` / `GUI_pydantic` planned in Step 10 |

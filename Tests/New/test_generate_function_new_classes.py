@@ -113,6 +113,71 @@ def test_generate_functions_skips_unused_legacy_modules(tmp_path):
     assert (output / "other.py").exists()
 
 
+RETRO = '''"""Retro"""
+
+from ...classes_common.errors import RetroCompatibilityError
+from ...loggers import GUI_LOG_NAME
+from ..labels import HOLEM_LAB
+
+OP_VERSION = "1.3.8"
+
+
+def convert_init_dict(init_dict):
+    """Convert
+
+    Parameters
+    ----------
+    init_dict : dict
+        The dictionnary to update
+    """
+    if init_dict:
+        init_dict["OP"] = convert_OP(init_dict)
+
+
+def convert_OP(obj_dict):
+    from ...Classes_new.simulation.op_dq import OPdq
+
+    return OPdq(N0=obj_dict["N0"])
+'''
+
+
+def test_common_retrocompatibility_source():
+    """Shared module: relative imports from classes_common, backend classes from import_class."""
+    from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import (
+        backend_retrocompatibility_source,
+        common_retrocompatibility_source,
+    )
+
+    common = common_retrocompatibility_source(RETRO)
+    ast.parse(common)
+    assert "from .errors import RetroCompatibilityError" in common
+    assert "from ..loggers import GUI_LOG_NAME" in common
+    assert "from ..Functions_new.labels import HOLEM_LAB" in common
+    assert '    OPdq = _import_class("OPdq")' in common
+    assert "Classes_new" not in common.replace("Functions_new", "")
+    assert "def convert_init_dict(init_dict, import_class=None):" in common
+    assert "    import_class : function\n" in common
+    namespace = {"__name__": "pyleecan.classes_common.retro_test", "__package__": "pyleecan.classes_common"}
+    exec(compile(common, "retro_test.py", "exec"), namespace)
+    calls = []
+
+    def lookup(name):
+        calls.append(name)
+        return lambda **kwargs: kwargs
+
+    data = {"N0": 3}
+    namespace["convert_init_dict"](data, import_class=lookup)
+    assert data["OP"] == {"N0": 3} and calls == ["OPdq"]
+    assert namespace["_IMPORT_CLASS"].get() is None  # Reset after the conversion
+    with pytest.raises(namespace["RetroCompatibilityError"]):
+        namespace["convert_init_dict"]({"N0": 1})
+    backend = backend_retrocompatibility_source(RETRO)
+    ast.parse(backend)
+    assert "from ...Classes_new._import import import_class" in backend
+    assert "    convert_OP,\n" in backend and "    OP_VERSION,\n" in backend
+    assert "_common.convert_init_dict(init_dict, import_class=import_class)" in backend
+
+
 def test_generate_functions_writes_aliases_of_deleted_modules(tmp_path, monkeypatch):
     """A module deleted from legacy keeps a deprecated alias (REMOVED_FUNCTION_ALIASES)."""
     source = tmp_path / "Functions"

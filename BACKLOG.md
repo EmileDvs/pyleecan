@@ -244,6 +244,25 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
 
+### retrocompatibility (2026-11-21)
+
+- `classes_common/retrocompatibility.py`, written by the functions
+  generator from the adapted Functions_new module (relative imports from
+  `classes_common`): the conversions building objects (`OPMatrix`,
+  `OPdq`, `WindingUD`) get the class from the lookup of the backend,
+  `convert_init_dict(init_dict, import_class)`, kept for the conversion
+  in a context variable (the converters keep their signatures; an error
+  names the missing lookup).
+- `Functions_new` / `Functions_pydantic` `Load/retrocompatibility.py`:
+  the shared functions re-exported, `convert_init_dict(init_dict)` bound
+  to the `import_class` of the backend (`load` and the tests unchanged).
+- Phase 2 (PLAN.md): one class to load (retrocompatibility included) and
+  one class to save the pyleecan objects.
+- Checks: retrocompatibility tests as before with each backend (2
+  failures before the change: parent type of `VarParamSweep`,
+  `OptiConstraint._keeper_str`); class and cross tests as before; the
+  `OPMatrix` conversion builds the class of each backend.
+
 ### comp_MTPA (2026-11-21)
 
 - Method of `LUTdq` (no caller): the LUT is its second parameter

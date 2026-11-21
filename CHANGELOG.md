@@ -133,7 +133,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   - `animate_as_gif` becomes a static method of `Data` (any plot of the
     Data objects);
   - `comp_MTPA` becomes a method of `LUTdq` (`LUT.comp_MTPA(machine,
-    ...)`).
+    ...)`);
+  - the file retrocompatibility is shared by the backends in
+    `classes_common.retrocompatibility` (`convert_init_dict` takes the
+    class lookup of the backend); the `Load.retrocompatibility` modules
+    of `Functions_new` / `Functions_pydantic` bind it to their classes.
   The old paths are deprecated aliases until Phase 2.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.

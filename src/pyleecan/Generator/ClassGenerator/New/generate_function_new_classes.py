@@ -881,6 +881,21 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             )
             rewritten = _function_import_style(rewritten, generated_package, import_style)
             rewritten = _format_function_source(rewritten, destination)
+            if relative == RETROCOMPATIBILITY_MODULE:
+                # Shared by the backends in classes_common (Step 8), this
+                # module binds it to the classes of Functions_new
+                common = output_dir.parent / "classes_common" / "retrocompatibility.py"
+                if common.parent.is_dir():
+                    common.write_text(
+                        _format_function_source(
+                            common_retrocompatibility_source(rewritten), common
+                        ),
+                        encoding="utf-8",
+                        newline="",
+                    )
+                    rewritten = _format_function_source(
+                        backend_retrocompatibility_source(rewritten), destination
+                    )
             destination.write_text(rewritten, encoding=encoding, newline="")
             issues.extend((relative, line, message) for line, message in found)
         else:
@@ -888,6 +903,139 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         generated.add(destination)
     remove_stale_modules(output_dir, generated)
     return issues
+
+
+RETROCOMPATIBILITY_MODULE = Path("Load") / "retrocompatibility.py"
+"""Legacy module of the file retrocompatibility, shared in classes_common"""
+
+
+def common_retrocompatibility_source(source):
+    """classes_common version of the Functions_new retrocompatibility module.
+
+    The conversions do not depend on the backend, except two of them building
+    objects (OPMatrix, OPdq): ``convert_init_dict(init_dict, import_class)``
+    takes the class lookup of the backend, kept for the conversion in a
+    context variable (the converters keep their signatures).
+    """
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    replacements = []  # (first line, last line, text)
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        module = node.module or ""
+        text = None
+        if node.level and module.startswith("Classes_new"):  # Backend class
+            indent = " " * node.col_offset
+            text = "".join(
+                f'{indent}{alias.asname or alias.name} = _import_class("{alias.name}")\n'
+                for alias in node.names
+            )
+        elif node.level == 3 and module.startswith("classes_common."):
+            text = ast.unparse(
+                ast.ImportFrom(module=module[len("classes_common.") :], names=node.names, level=1)
+            ) + "\n"
+        elif node.level == 3:  # pyleecan.<module>
+            text = ast.unparse(ast.ImportFrom(module=module, names=node.names, level=2)) + "\n"
+        elif node.level == 2:  # pyleecan.Functions_new.<module>
+            text = ast.unparse(
+                ast.ImportFrom(module="Functions_new." + module, names=node.names, level=2)
+            ) + "\n"
+        if text is not None:
+            replacements.append((node.lineno - 1, node.end_lineno, text))
+    for first, last, text in sorted(replacements, reverse=True):
+        lines[first:last] = [text]
+    source = "".join(lines)
+    # The class lookup of the backend, for the conversion in progress
+    function = next(
+        node
+        for node in ast.parse(source).body
+        if isinstance(node, ast.FunctionDef) and node.name == "convert_init_dict"
+    )
+    lines = source.splitlines(keepends=True)
+    body_start = function.body[1].lineno - 1  # After the docstring
+    lines[body_start:function.end_lineno] = [
+        "    token = _IMPORT_CLASS.set(import_class)\n",
+        "    try:\n",
+        *("    " + line if line.strip() else line for line in lines[body_start:function.end_lineno]),
+        "    finally:\n",
+        "        _IMPORT_CLASS.reset(token)\n",
+    ]
+    def_line = function.lineno - 1
+    lines[def_line] = lines[def_line].replace(
+        "def convert_init_dict(init_dict):", "def convert_init_dict(init_dict, import_class=None):"
+    )
+    source = "".join(lines)
+    source = source.replace(
+        "    init_dict : dict\n        The dictionnary to update\n",
+        "    init_dict : dict\n        The dictionnary to update\n"
+        "    import_class : function\n"
+        "        Class lookup of the backend (name -> class), for the conversions\n"
+        "        building objects\n",
+        1,
+    )
+    header = (
+        '"""Retrocompatibility of the pyleecan files, shared by the class backends.\n\n'
+        "Written by the functions generator from Functions/Load/retrocompatibility.py\n"
+        "(PLAN.md Step 8). Functions_new and Functions_pydantic bind\n"
+        "convert_init_dict to their classes.\n"
+        '"""\n\n'
+        "from contextvars import ContextVar\n\n"
+    )
+    helpers = (
+        '\n\n_IMPORT_CLASS = ContextVar("import_class", default=None)\n'
+        '"""Class lookup of the backend during convert_init_dict"""\n\n\n'
+        "def _import_class(name):\n"
+        '    """Class of the backend of the conversion in progress."""\n'
+        "    import_class = _IMPORT_CLASS.get()\n"
+        "    if import_class is None:\n"
+        "        raise RetroCompatibilityError(\n"
+        '            "convert_init_dict needs the class lookup of the backend (import_class) "\n'
+        '            "to convert " + name\n'
+        "        )\n"
+        "    return import_class(name)\n"
+    )
+    tree = ast.parse(source)
+    last_import = max(
+        node.end_lineno for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))
+    )
+    lines = source.splitlines(keepends=True)
+    lines.insert(last_import, helpers)
+    return header + "".join(lines)
+
+
+def backend_retrocompatibility_source(source):
+    """Functions_new module: the shared retrocompatibility with the backend classes."""
+    names = [
+        node.name
+        for node in ast.parse(source).body
+        if isinstance(node, ast.FunctionDef) and node.name != "convert_init_dict"
+    ]
+    names += [
+        target.id
+        for node in ast.parse(source).body
+        if isinstance(node, ast.Assign)
+        for target in node.targets
+        if isinstance(target, ast.Name) and target.id.isupper()
+    ]
+    return (
+        '"""Retrocompatibility of the pyleecan files with the classes of this backend\n'
+        '(shared implementation: classes_common.retrocompatibility)."""\n\n'
+        "from ...Classes_new._import import import_class\n"
+        "from ...classes_common import retrocompatibility as _common\n"
+        "from ...classes_common.retrocompatibility import (  # noqa: F401\n"
+        + "".join(f"    {name},\n" for name in names)
+        + ")\n\n\n"
+        "def convert_init_dict(init_dict):\n"
+        '    """Convert an init_dict from an old version of pyleecan to the current one\n'
+        "    (modification in place)\n\n"
+        "    Parameters\n"
+        "    ----------\n"
+        "    init_dict : dict\n"
+        "        The dictionnary to update\n"
+        '    """\n'
+        "    _common.convert_init_dict(init_dict, import_class=import_class)\n"
+    )
 
 
 def remove_stale_modules(output_dir, generated):
