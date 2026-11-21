@@ -4,7 +4,13 @@ from .Save.save_json import save_json
 from .Save.save_pkl import save_pkl
 
 
-def save(self, save_path="", is_folder=False, type_handle_old=2, type_compression=0):
+def save(
+    self,
+    save_path: str = "",
+    is_folder: bool = False,
+    type_handle_old: int = 2,
+    type_compression: int = 0,
+) -> None:
     """Save the object to the save_path
 
     Parameters

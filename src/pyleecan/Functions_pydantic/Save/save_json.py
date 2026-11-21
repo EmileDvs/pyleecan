@@ -4,6 +4,7 @@ from datetime import datetime
 from json import dump
 from logging import getLogger
 from shutil import move
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -13,14 +14,24 @@ from ...classes_common.logger_context import get_logger
 from ...Classes_pydantic._class_info import ClassInfo
 from ...definitions import PACKAGE_NAME
 
+if TYPE_CHECKING:
+    from typing import Any
+
 
 def save_json(
     obj,
-    save_path="",
-    is_folder=False,
-    type_handle_old=2,
-    type_compression=0,
-    class_to_split=("Simulation", "Machine", "Material", "HoleUD", "SlotUD", "SlotUD2"),
+    save_path: str = "",
+    is_folder: bool = False,
+    type_handle_old: int = 2,
+    type_compression: int = 0,
+    class_to_split: list = (
+        "Simulation",
+        "Machine",
+        "Material",
+        "HoleUD",
+        "SlotUD",
+        "SlotUD2",
+    ),
 ):
     """Save the object to the save_path
 
@@ -93,7 +104,9 @@ def save_json(
     for elem in split_list:
         file_name = list(elem.keys())[0]
         save_obj = elem[file_name]
-        json_kwargs = dict(sort_keys=True, indent=2, separators=(",", ": "))
+        json_kwargs: dict[str, Any] = dict(
+            sort_keys=True, indent=2, separators=(",", ": ")
+        )
         json_file = os.path.join(file_path, file_name)
 
         if type_compression == 1:
@@ -106,7 +119,9 @@ def save_json(
     return obj
 
 
-def setup_save_path(save_path, obj, is_folder, type_handle_old, file_ext, logger):
+def setup_save_path(
+    save_path: str, obj, is_folder: bool, type_handle_old: int, file_ext: str, logger
+):
     """
     Check save_path and modify or create it if needed, i.e. add or remove
     file extension .json or create new name based on class name.
@@ -240,7 +255,9 @@ def build_data(obj, logger):
     return None
 
 
-def split_obj_dict(cls_tupel, obj_dict, folder, split_list, file_ext, logger):
+def split_obj_dict(
+    cls_tupel, obj_dict: dict, folder, split_list, file_ext, logger
+) -> dict:
     """
     Store classes_tuple objects contained in obj_dict in split_list and modify
     the obj_dict.
@@ -319,7 +336,7 @@ def is_json_serializable(obj):
         return False
 
 
-def get_filename(obj, folder, split_list, file_ext, logger):
+def get_filename(obj: dict, folder, split_list: list, file_ext, logger) -> str:
     """
     Get a filename for the object that doesn't exists.
 

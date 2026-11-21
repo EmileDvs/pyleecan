@@ -1,7 +1,14 @@
+from typing import TYPE_CHECKING
 from warnings import warn
 
+if TYPE_CHECKING:
+    from ...Classes_new.machine.lam_slot_wind import LamSlotWind
+    from ...Classes_new.simulation.op import OP
 
-def comp_loss_joule(lam, T_op, OP, type_skin_effect):
+
+def comp_loss_joule(
+    lam: LamSlotWind, T_op: float, OP: OP, type_skin_effect: int
+) -> float:
     """Calculate joule losses in given lamination and OP
 
     Parameters

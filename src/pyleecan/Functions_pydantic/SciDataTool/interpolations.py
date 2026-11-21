@@ -1,8 +1,15 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 from scipy.interpolate import interp1d
 
+if TYPE_CHECKING:
+    pass
 
-def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
+
+def get_common_base(
+    values1: list, values2: list, is_extrap: bool = False, is_downsample: bool = False
+):
     """Returns a common base for vectors values1 and values2
     Parameters
     ----------
@@ -47,7 +54,9 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
     return np.linspace(initial, final, int(number), endpoint=True)
 
 
-def get_interpolation(values, axis_values, new_axis_values, index):
+def get_interpolation(
+    values: np.ndarray, axis_values: list, new_axis_values: list, index: int
+):
     """Returns the interpolated field along one axis, given the new axis
     Parameters
     ----------
@@ -99,7 +108,9 @@ def get_interpolation(values, axis_values, new_axis_values, index):
         return f(new_axis_values)
 
 
-def get_interpolation_step(values, axis_values, new_axis_values, index):
+def get_interpolation_step(
+    values: np.ndarray, axis_values: list, new_axis_values: list, index
+):
     """Returns the interpolated field along one axis, given the new axis
     Parameters
     ----------

@@ -1,7 +1,7 @@
 from cloudpickle import load
 
 
-def load_pkl(file_path):
+def load_pkl(file_path: str):
     """
     Load pyleecan object from pkl file
 

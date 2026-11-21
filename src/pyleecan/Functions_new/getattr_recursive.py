@@ -1,7 +1,7 @@
 from warnings import warn
 
 
-def getattr_recursive(obj, attr_list):
+def getattr_recursive(obj, attr_list: list):
     """
     Function to recursively get an attribute.
 

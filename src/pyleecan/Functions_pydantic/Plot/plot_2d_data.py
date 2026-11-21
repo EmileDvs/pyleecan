@@ -1,6 +1,13 @@
+from typing import TYPE_CHECKING
 from warnings import warn
 
 from ...definitions import config_dict
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ...Classes_pydantic.scidatatool.data import Data
 
 # Import values from config dict
 COLOR_LIST = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"]
@@ -11,35 +18,35 @@ FONT_SIZE_LEGEND = config_dict["PLOT"]["FONT_SIZE_LEGEND"]
 
 
 def plot_2D_Data(
-    data,
+    data: Data,
     *arg_list,
-    is_norm=False,
-    unit="SI",
-    data_list=[],
-    legend_list=[],
-    color_list=None,
-    save_path=None,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    is_logscale_x=False,
-    is_logscale_y=False,
-    is_disp_title=True,
-    is_grid=True,
-    is_auto_ticks=True,
-    fig=None,
-    ax=None,
-    barwidth=100,
-    type_plot=None,
-    fund_harm_dict=None,
-    is_show_fig=None,
-    win_title=None,
-    is_auto_range=True,
+    is_norm: bool = False,
+    unit: str = "SI",
+    data_list: list = [],
+    legend_list: list = [],
+    color_list: list | None = None,
+    save_path: str | None = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    y_min: float | None = None,
+    y_max: float | None = None,
+    is_logscale_x: bool = False,
+    is_logscale_y: bool = False,
+    is_disp_title: bool = True,
+    is_grid: bool = True,
+    is_auto_ticks: bool = True,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    barwidth: float = 100,
+    type_plot: str | None = None,
+    fund_harm_dict: dict | None = None,
+    is_show_fig: bool | None = None,
+    win_title: str | None = None,
+    is_auto_range: bool = True,
     thresh=0.02,
     linestyles=None,
     linewidth_list=[2],
-):
+) -> None:
     """Plots a field as a function of an axis
 
     Parameters

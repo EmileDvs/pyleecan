@@ -184,7 +184,7 @@ Methods receive their context explicitly instead, for example
 | 5. `Methods_new` generator and type hints, first pass | generator | legacy bugs to fix |
 | 6. Class-specific functions moved to their class | generator | done |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | done (open points in the backlog) |
-| 8. Refactor the remaining `Functions` modules | generator | groups done (14/14); type hints of the utilities left |
+| 8. Refactor the remaining `Functions` modules | generator | done |
 | 9. Logger chain | generator | done (parent fallback removed with Step 11) |
 | 10. GUI, first pass | generator | in progress (GUI_new / GUI_pydantic generated) |
 | 11. Parent links, first pass | generator | in progress (classification, helper, passes 1-2) |
@@ -296,7 +296,7 @@ The plan per module is given in the backlog.
       done groups listed in the CHANGELOG).
 - [x] Generator passes, one module or group of modules per increment, with
       deprecated aliases at the old paths and the tests unchanged.
-- [ ] Type hints drafted for the functions that stay utilities, with the same
+- [x] Type hints drafted for the functions that stay utilities, with the same
       pass (`type_hints.py`) in the functions generator; corrections in Step 15.
 
 ### Step 9: logger chain (generator)

@@ -1,4 +1,10 @@
+from typing import TYPE_CHECKING
+
 from ...definitions import config_dict
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
 dict_2D = {
     "color_list": config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"],
@@ -70,7 +76,16 @@ MAIN_LINE_STYLE = "dotted"
 MAIN_LINE_WIDTH = 1
 
 
-def plot_quote(Z1, Zlim1, Zlim2, Z2, offset_label=0, fig=None, ax=None, label=None):
+def plot_quote(
+    Z1,
+    Zlim1,
+    Zlim2,
+    Z2,
+    offset_label=0,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    label=None,
+) -> None:
     """Function to plot a "quote" for the scematics"""
     from ...Classes_new.geometry.segment import Segment
 

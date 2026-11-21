@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from .Plot import fft_dict, ifft_dict
 
+if TYPE_CHECKING:
+    from ...Classes_pydantic.scidatatool.data import Data
 
-def is_axes_in_order(axes_selected, data):
+
+def is_axes_in_order(axes_selected: list, data: Data):
     """Detect if axes given are in order compared to how they are store in a Data object
     Parameters
     ----------

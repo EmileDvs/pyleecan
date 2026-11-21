@@ -3,7 +3,15 @@ import numpy as np
 from .derivation_integration import integrate
 
 
-def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):
+def my_sum(
+    values: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    unit,
+    is_fft,
+    corr_unit="SI",
+) -> np.ndarray:
     """Returns the arithmetic sum of values along given axis
 
     Parameters
@@ -51,7 +59,15 @@ def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):
     return values
 
 
-def my_mean(values, ax_val, index, Nper, is_aper, is_phys, is_fft):
+def my_mean(
+    values: np.ndarray,
+    ax_val: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    is_phys: bool,
+    is_fft,
+) -> np.ndarray:
     """Returns the mean (arithmetic or integral) of values along given axis
 
     Parameters
@@ -99,7 +115,15 @@ def my_mean(values, ax_val, index, Nper, is_aper, is_phys, is_fft):
     return values
 
 
-def root_mean_square(values, ax_val, index, Nper, is_aper, is_phys, is_fft):
+def root_mean_square(
+    values: np.ndarray,
+    ax_val: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    is_phys: bool,
+    is_fft,
+) -> np.ndarray:
     """Returns the root mean square (arithmetic or integral) of values along given axis
 
     Parameters
@@ -131,8 +155,16 @@ def root_mean_square(values, ax_val, index, Nper, is_aper, is_phys, is_fft):
 
 
 def root_sum_square(
-    values, ax_val, index, Nper, is_aper, is_phys, unit, is_fft, corr_unit="SI"
-):
+    values: np.ndarray,
+    ax_val: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    is_phys: bool,
+    unit,
+    is_fft,
+    corr_unit="SI",
+) -> np.ndarray:
     """Returns the root sum square (arithmetic or integral) of values along given axis
 
     Parameters

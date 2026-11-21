@@ -1,9 +1,16 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from ....classes_common.errors import ConvertionError
 
+if TYPE_CHECKING:
+    from ....Classes_pydantic.machine.machine import Machine
 
-def other_to_P(self, machine, other_dict, other_unit_dict):
+
+def other_to_P(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+) -> Machine:
     """Converts motor-cad skew into pyleecan skew
 
     Parameters
@@ -79,7 +86,9 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     return machine
 
 
-def P_to_other(self, machine, other_dict, other_unit_dict=None):
+def P_to_other(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+) -> dict:
     """conversion obj machine in dict
 
     Parameters

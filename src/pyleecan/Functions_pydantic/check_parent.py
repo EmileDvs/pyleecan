@@ -1,4 +1,4 @@
-def check_parent(obj, Nparent):
+def check_parent(obj, Nparent: int) -> bool:
     """Recursively check that the object have the correct number of parent
     For instance: check_parent(stator, 3) will check that
     output.simu.machine.stator exist

@@ -1,7 +1,7 @@
 from cloudpickle import dump
 
 
-def save_pkl(obj, save_path):
+def save_pkl(obj, save_path: str) -> None:
     """Save a Pyleecan object in a pkl file using cloudpickle
 
     Parameters

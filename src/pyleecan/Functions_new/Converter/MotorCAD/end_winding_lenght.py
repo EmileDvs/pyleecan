@@ -1,4 +1,12 @@
-def other_to_P(self, machine, other_dict, other_unit_dict):
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
+
+
+def other_to_P(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+) -> Machine:
     """Converts the MLT motor-cad slot into pyleecan lewout
 
     Parameters
@@ -32,7 +40,9 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     return machine
 
 
-def P_to_other(self, machine, other_dict, other_unit_dict=None):
+def P_to_other(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+) -> dict:
     """conversion obj machine in dict
 
     Parameters

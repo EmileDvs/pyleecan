@@ -207,7 +207,14 @@ utility (`utils/` in Phase 2), or removed (dead code, deprecated first).
 - [ ] Apply the plan, one module or group per increment: deprecated aliases
       at the old paths, callers in `Methods_new` and `Functions_new` updated,
       test generator redirects, tests unchanged.
-- [ ] Type hints drafted for the functions that stay utilities: run the
+- [x] (2026-11-21) every module that stays a utility gets the hints
+      (not the deprecated aliases, the vendored code, nor
+      `Load/retrocompatibility.py`, split into `classes_common` by text):
+      65 modules; `ty` on `Functions_new` 428 -> 582 diagnostics, mostly
+      optional values used without check (`ax: Axes | None` in the
+      SciDataTool plots) and wrong documented return types (Step 15).
+      Tests as before.
+- [x] Type hints drafted for the functions that stay utilities: run the
       `type_hints.py` pass in the functions generator (same rules as the
       methods), report the coverage and the `ty` diagnostics of
       `Functions_new`.

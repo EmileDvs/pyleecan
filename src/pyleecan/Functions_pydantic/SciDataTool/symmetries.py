@@ -1,9 +1,14 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from ...classes_common.errors import AxisError
 
+if TYPE_CHECKING:
+    pass
 
-def rebuild_symmetries(values, axis_index, symmetries):
+
+def rebuild_symmetries(values: np.ndarray, axis_index: int, symmetries: dict):
     """Reconstructs the field of a Data object taking symmetries into account
     Parameters
     ----------
@@ -29,7 +34,7 @@ def rebuild_symmetries(values, axis_index, symmetries):
     return values
 
 
-def rebuild_symmetries_axis(values, symmetries):
+def rebuild_symmetries_axis(values: np.ndarray, symmetries: dict):
     """Reconstructs the field of a Data object taking symmetries into account
     Parameters
     ----------

@@ -6,7 +6,7 @@ from ...definitions import config_dict
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 
 
-def gen_color(N):
+def gen_color(N: int) -> list:
     """Generate a list of phase color
 
     Parameters
@@ -51,7 +51,7 @@ def gen_color(N):
     return color_list
 
 
-def gen_name(N, is_add_phase=False):
+def gen_name(N: int, is_add_phase: bool = False) -> list:
     """Generate a list of phase name
 
     Parameters

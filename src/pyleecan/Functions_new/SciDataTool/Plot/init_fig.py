@@ -1,10 +1,20 @@
 import io
 import pickle
+from typing import TYPE_CHECKING
 
 from matplotlib.pyplot import subplots
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
-def init_fig(fig=None, ax=None, shape="default", is_3d=False):
+
+def init_fig(
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    shape: str = "default",
+    is_3d: bool = False,
+):
     """Get all the handle and legend of a figure or initialize them
     (for matplotlib)
 
@@ -69,7 +79,9 @@ def init_fig(fig=None, ax=None, shape="default", is_3d=False):
     return (fig, axes, patch_leg, label_leg)
 
 
-def init_subplot(fig=None, subplot_index=None, is_3d=False):
+def init_subplot(
+    fig: Figure | None = None, subplot_index: int | None = None, is_3d: bool = False
+):
     """Initialize subplot (given position or automatic stacking)
 
     Parameters
@@ -113,7 +125,7 @@ def init_subplot(fig=None, subplot_index=None, is_3d=False):
     return fig, ax
 
 
-def copy_fig(fig):
+def copy_fig(fig: Figure):
     """Copy the figure to avoid reference passing
 
     Returns

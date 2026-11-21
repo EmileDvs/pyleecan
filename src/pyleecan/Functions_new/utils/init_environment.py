@@ -27,7 +27,7 @@ from ...default_config_dict import default_config_dict
 from ...loggers import GUI_LOG_NAME
 
 
-def save_config_dict(config_dict):
+def save_config_dict(config_dict: dict) -> None:
     """update the config file with config_dict values
 
     Parameters
@@ -76,7 +76,7 @@ REPLACE_ATTEMPTS = 20
 REPLACE_DELAY = 0.05  # [s] between two attempts to replace the config file
 
 
-def init_user_dir():
+def init_user_dir() -> None:
     """Initialize the USER DIR with the default files"""
     # dynamic import to avoid loop
     module = __import__(
@@ -120,7 +120,7 @@ def init_user_dir():
     init_config_dict()
 
 
-def update_user_dir():
+def update_user_dir() -> None:
     """Initialize the USER DIR with the default files"""
     # dynamic import to avoid loop
     module = __import__(
@@ -161,7 +161,7 @@ def update_user_dir():
     logger.debug("Updating USER_DIR GUI in %s", gui_path)
 
 
-def init_config_dict():
+def init_config_dict() -> None:
     """Create the default config dict and save it in USER_DIR"""
     # dynamic import to avoid loop
     module = __import__(
@@ -195,7 +195,7 @@ def init_config_dict():
     logger.debug("Init config_dict at : %s (version=%s)", CONF_PATH, version)
 
 
-def get_config_dict():
+def get_config_dict() -> dict:
     """Return the config dict (update with default to make sure all parameter exist)
 
     Returns

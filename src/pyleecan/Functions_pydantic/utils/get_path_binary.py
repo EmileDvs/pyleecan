@@ -3,7 +3,7 @@ import os
 from distutils.spawn import find_executable
 
 
-def get_path_binary(binary_name, is_include_file=True):
+def get_path_binary(binary_name, is_include_file: bool = True):
     """Function to find path of the executable given by 'binary_name'
 
     Parameters

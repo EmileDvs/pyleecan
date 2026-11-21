@@ -1,7 +1,13 @@
+from typing import TYPE_CHECKING
 from warnings import warn
 
+if TYPE_CHECKING:
+    from ....Classes_pydantic.machine.machine import Machine
 
-def other_to_P(self, machine, other_dict, other_unit_dict=None):
+
+def other_to_P(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+):
     """Conversion H1 in m to slotW11
 
     Parameters
@@ -32,7 +38,9 @@ def other_to_P(self, machine, other_dict, other_unit_dict=None):
     return machine
 
 
-def P_to_other(self, machine, other_dict, other_unit_dict=None):
+def P_to_other(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+) -> dict:
     """conversion obj machine in dict
 
     Parameters

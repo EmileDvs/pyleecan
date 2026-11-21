@@ -1,52 +1,58 @@
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 from . import COLORS, LINESTYLES
 from .init_fig import init_fig
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
 
 def plot_2D(
-    Xdatas,
-    Ydatas,
-    legend_list=[""],
-    color_list=None,
+    Xdatas: np.ndarray,
+    Ydatas: list,
+    legend_list: list = [""],
+    color_list: list | None = None,
     linestyle_list=None,
-    linewidth_list=[1.5],
-    title="",
-    xlabel="",
-    ylabel="",
-    fig=None,
-    ax=None,
-    is_logscale_x=False,
-    is_logscale_y=False,
-    is_disp_title=True,
-    is_grid=True,
-    type_plot="curve",
-    fund_harm=None,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    xticks=None,
+    linewidth_list: list = [1.5],
+    title: str = "",
+    xlabel: str = "",
+    ylabel: str = "",
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_logscale_x: bool = False,
+    is_logscale_y: bool = False,
+    is_disp_title: bool = True,
+    is_grid: bool = True,
+    type_plot: str = "curve",
+    fund_harm: float | None = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    y_min: float | None = None,
+    y_max: float | None = None,
+    xticks: list | None = None,
     xticklabels=None,
-    save_path=None,
-    barwidth=5,
-    is_show_fig=None,
-    win_title=None,
+    save_path: str | None = None,
+    barwidth: float = 5,
+    is_show_fig: bool | None = None,
+    win_title: str | None = None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
-    is_show_legend=True,
-    is_outside_legend=False,
-    is_frame_legend=None,
-    scale_units="x",
-    scale=None,
-    width=0.005,
+    is_show_legend: bool = True,
+    is_outside_legend: bool = False,
+    is_frame_legend: bool | None = None,
+    scale_units: str = "x",
+    scale: float | None = None,
+    width: float = 0.005,
     symbol=".",
-    is_indlabels=False,
+    is_indlabels: bool = False,
     annotations=None,
-):
+) -> None:
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
     Parameters

@@ -1,7 +1,15 @@
+from typing import TYPE_CHECKING
 from warnings import warn
 
+if TYPE_CHECKING:
+    import numpy as np
 
-def comp_FEMM_Jcus(lam, cname, I, j_t0, is_mmf):
+    from ...Classes_new.machine.lam_slot_wind import LamSlotWind
+
+
+def comp_FEMM_Jcus(
+    lam: LamSlotWind, cname: str, I: np.ndarray, j_t0: int, is_mmf: bool
+) -> float:
     """Compute the current density for FEMM [A/mm2]"""
 
     warn(

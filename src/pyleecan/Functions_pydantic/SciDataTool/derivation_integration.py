@@ -4,7 +4,15 @@ import scipy.integrate as scp_int
 from ...classes_common.errors import AxisError
 
 
-def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
+def antiderivate(
+    values: np.ndarray,
+    ax_val: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    is_phys: bool,
+    is_freqs: bool,
+) -> np.ndarray:
     """Returns the anti-derivate of values along given axis
     values is assumed to be periodic and axis is assumed to be a linspace
 
@@ -82,7 +90,15 @@ def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
     return values
 
 
-def integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
+def integrate_local(
+    values: np.ndarray,
+    ax_val: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    is_phys: bool,
+    is_freqs: bool,
+) -> np.ndarray:
     """Returns the local integral of values along given axis (does not change the axis)
 
     Parameters
@@ -133,7 +149,9 @@ def integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
     return values_integ
 
 
-def integrate_local_pattern(values, ax_val, index):
+def integrate_local_pattern(
+    values: np.ndarray, ax_val: np.ndarray, index: int
+) -> np.ndarray:
     """Returns the local integral of values along given axis (does not change the axis)
 
     Parameters
@@ -189,7 +207,15 @@ def integrate_local_pattern(values, ax_val, index):
     return values_int, ax_int
 
 
-def integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=False):
+def integrate(
+    values: np.ndarray,
+    ax_val: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    is_phys: bool,
+    is_mean: bool = False,
+) -> np.ndarray:
     """Returns the integral of values along given axis
 
     Parameters
@@ -271,7 +297,15 @@ def integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=False):
     return values
 
 
-def derivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
+def derivate(
+    values: np.ndarray,
+    ax_val: np.ndarray,
+    index: int,
+    Nper: int,
+    is_aper: bool,
+    is_phys: bool,
+    is_freqs: bool,
+) -> np.ndarray:
     """Returns the first derivate of values along given axis
     values is assumed to be periodic and axis is assumed to be a linspace
 

@@ -1,53 +1,59 @@
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 from .init_fig import init_fig
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
 
 def plot_4D(
-    Xdata,
-    Ydata,
-    Zdata,
-    Sdata=None,
-    is_same_size=False,
+    Xdata: np.ndarray,
+    Ydata: np.ndarray,
+    Zdata: np.ndarray,
+    Sdata: np.ndarray | None = None,
+    is_same_size: bool = False,
     colormap="jet",
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    z_min=None,
-    z_max=None,
-    title="",
-    xlabel="",
-    ylabel="",
-    zlabel="",
-    xticks=None,
-    yticks=None,
-    xticklabels=None,
-    yticklabels=None,
-    annotations=None,
-    annotation_threshold=0.01,
-    fig=None,
-    ax=None,
-    is_logscale_x=False,
-    is_logscale_y=False,
-    is_logscale_z=False,
-    is_disp_title=True,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    y_min: float | None = None,
+    y_max: float | None = None,
+    z_min: float | None = None,
+    z_max: float | None = None,
+    title: str = "",
+    xlabel: str = "",
+    ylabel: str = "",
+    zlabel: str = "",
+    xticks: list | None = None,
+    yticks: list | None = None,
+    xticklabels: list | None = None,
+    yticklabels: list | None = None,
+    annotations: list | None = None,
+    annotation_threshold: float = 0.01,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_logscale_x: bool = False,
+    is_logscale_y: bool = False,
+    is_logscale_z: bool = False,
+    is_disp_title: bool = True,
     type_plot="scatter",
-    save_path=None,
-    is_show_fig=None,
-    is_switch_axes=False,
-    win_title=None,
+    save_path: str | None = None,
+    is_show_fig: bool | None = None,
+    is_switch_axes: bool = False,
+    win_title: str | None = None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
-    is_grid=False,
-    grid_xlw=None,
-    grid_ylw=None,
+    is_grid: bool = False,
+    grid_xlw: float | None = None,
+    grid_ylw: float | None = None,
     marker_color="k",
-    is_hide_annotation=False,
-):
+    is_hide_annotation: bool = False,
+) -> None:
     """Plots a 4D graph
 
     Parameters

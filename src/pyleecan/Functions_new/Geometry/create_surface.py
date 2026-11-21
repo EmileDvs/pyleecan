@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from warnings import warn
 
 from ...classes_common.errors import SurfaceError
@@ -6,8 +7,11 @@ from ...Classes_new.geometry.arc_2 import Arc2
 from ...Classes_new.geometry.segment import Segment
 from ...Classes_new.geometry.surf_line import SurfLine
 
+if TYPE_CHECKING:
+    from ...Classes_new.geometry.line import Line
 
-def create_surface(line_list):
+
+def create_surface(line_list: list) -> SurfLine:
     """Create a surface from a list of Line
 
     Parameters
@@ -24,7 +28,7 @@ def create_surface(line_list):
         DeprecationWarning,
         stacklevel=2,
     )
-    ordered_list = [line_list.pop(0)]
+    ordered_list: list[Line] = [line_list.pop(0)]
     first_element = ordered_list[0]
     if isinstance(first_element, (Arc, Segment)):
         end = first_element.get_end()

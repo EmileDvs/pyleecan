@@ -3,7 +3,9 @@ import numpy as np
 from .set_routines import unique_tol
 
 
-def get_conv_indices(freqs1, freqs2, f_min, f_max, tol_freq):
+def get_conv_indices(
+    freqs1: np.ndarray, freqs2: np.ndarray, f_min: float, f_max: float, tol_freq: float
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Compute frequency array and return indices to perform DataFreq convolution
 
     Parameters
@@ -86,7 +88,14 @@ def get_conv_indices(freqs1, freqs2, f_min, f_max, tol_freq):
     return freqs_un, I0a, I0b, I1, I2
 
 
-def get_conv_amplitudes(amp1, amp2, I0a, I0b, I1, I2):
+def get_conv_amplitudes(
+    amp1: np.ndarray,
+    amp2: np.ndarray,
+    I0a: np.ndarray,
+    I0b: np.ndarray,
+    I1: np.ndarray,
+    I2: np.ndarray,
+) -> np.ndarray:
     """Compute amplitudes resulting from the convolution of input values
 
     Parameters
@@ -145,7 +154,9 @@ def get_conv_amplitudes(amp1, amp2, I0a, I0b, I1, I2):
     return amp
 
 
-def get_sum_indices(freqs1, freqs2, tol_freq):
+def get_sum_indices(
+    freqs1: np.ndarray, freqs2: np.ndarray, tol_freq: float
+) -> tuple[np.ndarray, np.ndarray]:
     """Compute frequency array and return indices to perform DataFreq sum
 
     Parameters
@@ -181,7 +192,9 @@ def get_sum_indices(freqs1, freqs2, tol_freq):
     return freqs_un, I0b
 
 
-def get_sum_amplitudes(amp1, amp2, I0b):
+def get_sum_amplitudes(
+    amp1: np.ndarray, amp2: np.ndarray, I0b: np.ndarray
+) -> np.ndarray:
     """Calculate summed amplitudes of both input amplitudes arrays
 
     Parameters

@@ -2,7 +2,7 @@ import numpy as np
 from h5py import File, Group
 
 
-def load_hdf5(file_path):
+def load_hdf5(file_path: str) -> tuple[str, dict]:
     """
     Load pyleecan object from h5 file
 
@@ -26,7 +26,7 @@ def load_hdf5(file_path):
     return file_path, obj_dict
 
 
-def construct_dict_from_group(group):
+def construct_dict_from_group(group) -> dict:
     """
     construct_dict_from_group create a dictionary and extract datasets and groups from the group
 

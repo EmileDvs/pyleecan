@@ -1,7 +1,14 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
-def other_to_P(self, machine, other_dict, other_unit_dict):
+
+def other_to_P(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+) -> Machine:
     """Conversion of the slot surface_parallel (motor-cad) into the slotM15 (pyleecan)
 
     Parameters
@@ -83,7 +90,9 @@ def other_to_P(self, machine, other_dict, other_unit_dict):
     return machine
 
 
-def P_to_other(self, machine, other_dict, other_unit_dict=None):
+def P_to_other(
+    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+) -> dict:
     """conversion obj machine in dict
 
     Parameters

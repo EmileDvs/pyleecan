@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
+if TYPE_CHECKING:
+    pass
 
-def load_array(file, sep=":", delimiter=","):
+
+def load_array(file: str, sep: str = ":", delimiter: str = ",") -> np.ndarray:
     """Function to load numpy nD arrays. The data delimiter must be choosen correctly.
     Further the file must contain a header on the first line with the arrays shape.
     Example header: '# data: (2, 3, 4, 5)'

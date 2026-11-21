@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,48 +10,52 @@ from mpl_toolkits.mplot3d import art3d
 from . import COLORS
 from .init_fig import init_fig
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
 
 def plot_3D(
-    Xdata,
-    Ydata,
-    Zdata,
+    Xdata: np.ndarray,
+    Ydata: np.ndarray,
+    Zdata: np.ndarray,
     colormap="jet",
     color_list=None,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    z_min=None,
-    z_max=None,
-    title="",
-    xlabel="",
-    ylabel="",
-    zlabel="",
-    xticks=None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    y_min: float | None = None,
+    y_max: float | None = None,
+    z_min: float | None = None,
+    z_max: float | None = None,
+    title: str = "",
+    xlabel: str = "",
+    ylabel: str = "",
+    zlabel: str = "",
+    xticks: list | None = None,
     yticks=None,
     xticklabels=None,
     yticklabels=None,
-    fig=None,
-    ax=None,
-    is_logscale_x=False,
-    is_logscale_y=False,
-    is_logscale_z=False,
-    is_disp_title=True,
-    type_plot="stem",
-    is_contour=False,
-    is_shading_flat=False,
-    save_path=None,
-    is_show_fig=None,
-    is_switch_axes=False,
-    win_title=None,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_logscale_x: bool = False,
+    is_logscale_y: bool = False,
+    is_logscale_z: bool = False,
+    is_disp_title: bool = True,
+    type_plot: str = "stem",
+    is_contour: bool = False,
+    is_shading_flat: bool = False,
+    save_path: str | None = None,
+    is_show_fig: bool | None = None,
+    is_switch_axes: bool = False,
+    win_title: str | None = None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
-    levels=None,
-    gamma=1,
-    n_ticks=7,
-):
+    levels: list[float | int] | None = None,
+    gamma: int | float = 1,
+    n_ticks: int = 7,
+) -> None:
     """Plots a 3D graph ("stem", "surf" or "pcolor")
 
     Parameters

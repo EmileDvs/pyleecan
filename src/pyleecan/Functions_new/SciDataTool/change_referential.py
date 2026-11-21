@@ -5,17 +5,17 @@ from .set_routines import unique_tol
 
 
 def change_referential_spectrum(
-    freqs,
-    wavenumbers_circ,
-    rotation_speed,
-    spectrum,
-    atol=1e-9,
-    freqs_new=np.array([]),
-    I1=np.array([]),
-    Irf_un=np.array([]),
-    is_double_f0=False,
-    atol_freq=1e-6,
-):
+    freqs: np.ndarray,
+    wavenumbers_circ: np.ndarray,
+    rotation_speed: float,
+    spectrum: np.ndarray,
+    atol: float = 1e-9,
+    freqs_new: np.ndarray = np.array([]),
+    I1: np.ndarray = np.array([]),
+    Irf_un: np.ndarray = np.array([]),
+    is_double_f0: bool = False,
+    atol_freq: float = 1e-6,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Compute a new 2D spectrum depending on a rotating referential defined by a speed.
 
     Parameters
@@ -133,15 +133,15 @@ def change_referential_spectrum(
 
 
 def change_referential_waveform(
-    val0,
-    time0,
-    angle0,
-    rotation_speed,
-    is_aper_a=False,
-    is_aper_t=False,
-    ta_in=(),
-    ta_out=(),
-):
+    val0: np.ndarray,
+    time0: np.ndarray,
+    angle0: float,
+    rotation_speed: float,
+    is_aper_a: bool = False,
+    is_aper_t: bool = False,
+    ta_in: tuple = (),
+    ta_out: tuple = (),
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, tuple, tuple]:
     """Change referential of input 3D array defined on time, angle and z given input rotation speed
     (algebric to include rotation direction)
 

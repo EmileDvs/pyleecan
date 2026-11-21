@@ -109,7 +109,7 @@ def inudftn(a: np.ndarray, axes_dict: Dict[int, List[np.ndarray]]) -> np.ndarray
     return res
 
 
-def is_uniform(vect_a, rtol=1e-05, atol=1e-8):
+def is_uniform(vect_a: np.ndarray, rtol: float = 1e-05, atol: float = 1e-8) -> bool:
     """
     Tests if the array vect_a is uniform
     Parameters

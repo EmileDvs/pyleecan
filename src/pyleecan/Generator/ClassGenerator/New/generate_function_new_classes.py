@@ -998,7 +998,16 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                     ["pyleecan", "Functions_new", *output_relative.parts[:-1]]
                 )
             rewritten = _function_import_style(rewritten, generated_package, import_style)
-            if relative.with_suffix("").as_posix().replace("/", ".") in HINTED_FUNCTION_MODULES:
+            legacy_name = relative.with_suffix("").as_posix().replace("/", ".")
+            if legacy_name in HINTED_FUNCTION_MODULES or (
+                # The modules that stay utilities (Step 8): not the deprecated
+                # aliases, not the vendored code
+                removed_alias is None
+                and moved is None
+                and relative.parts[0] not in VENDORED_CLASS_PACKAGES
+                # Split into classes_common below by text (legacy signatures)
+                and relative != RETROCOMPATIBILITY_MODULE
+            ):
                 # Type hints drafted from the docstrings, as the methods
                 from .source_names import name_maps
                 from .type_hints import add_type_hints

@@ -1,6 +1,13 @@
+from typing import TYPE_CHECKING
 from warnings import warn
 
 from ...definitions import config_dict
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+
+    from ...Classes_new.scidatatool.data import Data
 
 # Import values from config dict
 COLOR_LIST = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"]
@@ -12,35 +19,35 @@ FONT_SIZE_LEGEND = config_dict["PLOT"]["FONT_SIZE_LEGEND"]
 
 
 def plot_3D_Data(
-    data,
+    data: Data,
     *arg_list,
-    is_norm=False,
-    unit="SI",
-    save_path=None,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    z_min=None,
-    z_max=None,
-    z_range=None,
+    is_norm: bool = False,
+    unit: str = "SI",
+    save_path: str | None = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    y_min: float | None = None,
+    y_max: float | None = None,
+    z_min: float | None = None,
+    z_max: float | None = None,
+    z_range: float | None = None,
     color_list=None,
     colormap=None,
-    is_auto_ticks=True,
-    is_2D_view=False,
-    N_stem=100,
-    fig=None,
-    ax=None,
-    is_show_fig=None,
-    is_auto_range=True,
-    is_same_size=False,
-    is_logscale_x=False,
-    is_logscale_y=False,
-    is_logscale_z=False,
+    is_auto_ticks: bool = True,
+    is_2D_view: bool = False,
+    N_stem: int = 100,
+    fig: Figure | None = None,
+    ax: Axes | None = None,
+    is_show_fig: bool | None = None,
+    is_auto_range: bool = True,
+    is_same_size: bool = False,
+    is_logscale_x: bool = False,
+    is_logscale_y: bool = False,
+    is_logscale_z: bool = False,
     thresh=0.02,
-    is_switch_axes=False,
-    win_title=None,
-):
+    is_switch_axes: bool = False,
+    win_title: str | None = None,
+) -> None:
     """Plots a field as a function of two axes
 
     Parameters

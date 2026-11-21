@@ -1,7 +1,13 @@
 import numpy as np
 
 
-def union1d_tol(ar1, ar2, tol=1e-6, is_abs_tol=False, return_indices=False):
+def union1d_tol(
+    ar1: np.ndarray,
+    ar2: np.ndarray,
+    tol: float = 1e-6,
+    is_abs_tol: bool = False,
+    return_indices: bool = False,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return the intersect1d values of the input array a given tolerance tol
 
     Parameters
@@ -49,15 +55,15 @@ def union1d_tol(ar1, ar2, tol=1e-6, is_abs_tol=False, return_indices=False):
 
 
 def unique_tol(
-    a,
-    tol=1e-6,
-    is_abs_tol=False,
-    return_index=False,
-    return_inverse=False,
-    return_counts=False,
-    is_stable=False,
-    axis=0,
-):
+    a: np.ndarray,
+    tol: float = 1e-6,
+    is_abs_tol: bool = False,
+    return_index: bool = False,
+    return_inverse: bool = False,
+    return_counts: bool = False,
+    is_stable: bool = False,
+    axis: int = 0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Return the unique values of the input array a given tolerance tol
 
     Parameters
@@ -134,8 +140,13 @@ def unique_tol(
 
 
 def intersect1d_tol(
-    ar1, ar2, tol=1e-6, is_abs_tol=False, return_indices=False, assume_unique=False
-):
+    ar1: np.ndarray,
+    ar2: np.ndarray,
+    tol: float = 1e-6,
+    is_abs_tol: bool = False,
+    return_indices: bool = False,
+    assume_unique: bool = False,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return the intersect1d values of the input array a given tolerance tol
 
     Parameters
@@ -181,7 +192,7 @@ def intersect1d_tol(
         return b
 
 
-def get_relative_tolerance(a, atol):
+def get_relative_tolerance(a: np.ndarray, atol: float) -> float:
     """Calculate relative tolerance given an array a and an absolute tolerance
 
     Parameters

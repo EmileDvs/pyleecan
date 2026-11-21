@@ -6,7 +6,7 @@ from ...classes_common.errors import LoadMissingFileError
 from ...definitions import PYTHON_DEFAULT_ENCODING
 
 
-def load_json(file_path):
+def load_json(file_path: str):
     """Load a json file
 
     Parameters

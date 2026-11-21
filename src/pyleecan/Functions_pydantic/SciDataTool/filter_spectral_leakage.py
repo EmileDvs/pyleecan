@@ -4,16 +4,16 @@ from .set_routines import unique_tol
 
 
 def filter_spectral_leakage(
-    spectrum,
+    spectrum: np.ndarray,
     freqs,
-    freqs_th,
-    Nt,
-    dt,
-    is_freq_pos=True,
-    Wmatf=np.array([]),
-    If=np.array([]),
-    is_plot=False,
-):
+    freqs_th: np.ndarray,
+    Nt: int,
+    dt: float,
+    is_freq_pos: bool = True,
+    Wmatf: np.ndarray = np.array([]),
+    If: np.ndarray = np.array([]),
+    is_plot: bool = False,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Filter spectral leakage from the input spectrum and theoretical frequencies accordingly to the method developed in
     Rainer et al., "Weak Coupling Between Electromagnetic and Structural Models for Electrical Machines",
     IEEE TRANSACTIONS ON MAGNETICS, VOL. 46, NO. 8, AUGUST 2010.
@@ -155,7 +155,7 @@ def filter_spectral_leakage(
     return spectrum_filt, freqs_th, Wmatf, If
 
 
-def my_doorwin(f, Nt, dt, tol0=1e-4):
+def my_doorwin(f: np.ndarray, Nt: int, dt: float, tol0: float = 1e-4) -> np.ndarray:
     """ "Return the Fourier transform of a door window as developed in to the method developed in
     Rainer et al., "Weak Coupling Between Electromagnetic and Structural Models for Electrical Machines",
     IEEE TRANSACTIONS ON MAGNETICS, VOL. 46, NO. 8, AUGUST 2010.

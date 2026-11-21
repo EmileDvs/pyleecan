@@ -1,7 +1,9 @@
 import numpy as np
 
 
-def make_ndarray_equal(vec_ref, vec_to_sort):
+def make_ndarray_equal(
+    vec_ref: np.ndarray, vec_to_sort: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """Compare two ndarray, sort the second to match with the first one.
 
     Parameters

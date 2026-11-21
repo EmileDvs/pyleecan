@@ -1,10 +1,15 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from .nudft_functions import inudftn, is_uniform, nudftn
 from .Plot import fft_dict
 
+if TYPE_CHECKING:
+    pass
 
-def comp_fft_freqs(time, is_time, is_real):
+
+def comp_fft_freqs(time: np.ndarray, is_time: bool, is_real):
     """Computes the frequency/wavenumber vector from the time/space vector
     Parameters
     ----------
@@ -35,7 +40,7 @@ def comp_fft_freqs(time, is_time, is_real):
     return freqs
 
 
-def comp_fft_time(freqs, is_angle, is_real):
+def comp_fft_time(freqs: np.ndarray, is_angle: bool, is_real):
     """Computes the time/space vector from the frequency/wavenumber vector
     Parameters
     ----------
@@ -67,7 +72,7 @@ def comp_fft_time(freqs, is_angle, is_real):
     return time.tolist()
 
 
-def comp_nthoctave_axis(noct, freqmin, freqmax):
+def comp_nthoctave_axis(noct: int, freqmin: float, freqmax: float):
     """Computes the frequency vector between freqmin and freqmax for the 1/n octave
     Parameters
     ----------
@@ -174,7 +179,7 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
 #     return values_FT
 
 
-def comp_fftn(values, axes_list, is_real=True):
+def comp_fftn(values: np.ndarray, axes_list, is_real: bool = True):
     """Computes the Fourier Transform
     Parameters
     ----------
@@ -316,7 +321,7 @@ def comp_fftn(values, axes_list, is_real=True):
 #     return values_IFT
 
 
-def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
+def comp_ifftn(values: np.ndarray, axes_requ_list, is_real: bool = True, axes_list=[]):
     """Computes the Inverse Fourier Transform
     Parameters
     ----------

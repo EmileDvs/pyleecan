@@ -1,7 +1,16 @@
+from typing import TYPE_CHECKING
 from warnings import warn
 
+if TYPE_CHECKING:
+    from .femm_pyleecan import femm_pyleecan
 
-def create_FEMM_bar(femm, is_mmfr, rho, materials):
+
+# -*- coding: utf-8 -*-
+
+
+def create_FEMM_bar(
+    femm: femm_pyleecan, is_mmfr: bool, rho: float, materials: list
+) -> tuple[str, list]:
     """Create the property for LamSquirrel cage on the rotor
 
     Parameters

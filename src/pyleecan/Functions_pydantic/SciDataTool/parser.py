@@ -1,10 +1,15 @@
+from typing import TYPE_CHECKING
+
 from numpy import inf, pi  # import pi for eval  # noqa: F401
 
 from ...classes_common.errors import AxisError
 from ...Classes_pydantic.scidatatool.requested_axis import RequestedAxis
 
+if TYPE_CHECKING:
+    import numpy as np
 
-def read_input_strings(args, axis_data):
+
+def read_input_strings(args: list, axis_data: np.ndarray):
     """Reads the string input into the "get_along" methods to define the axes
     Parameters
     ----------

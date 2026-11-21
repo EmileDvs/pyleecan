@@ -8,7 +8,7 @@ from ... import __version__
 from ...definitions import PACKAGE_NAME
 
 
-def save_hdf5(obj, save_path, obj_dict=None):
+def save_hdf5(obj, save_path: str, obj_dict: dict | None = None) -> None:
     """
     Save a pyleecan obj in hdf5 format
 
@@ -33,7 +33,7 @@ def save_hdf5(obj, save_path, obj_dict=None):
         raise (err)
 
 
-def pyleecan_dict_to_hdf5(file, obj, obj_dict=None):
+def pyleecan_dict_to_hdf5(file, obj, obj_dict: dict | None = None) -> None:
     """
     Save a dict from a pyleecan object in the hdf5 file
 
@@ -73,7 +73,7 @@ def pyleecan_dict_to_hdf5(file, obj, obj_dict=None):
             file[key] = val
 
 
-def list_to_hdf5(file, group_name, name, list_to_save):
+def list_to_hdf5(file, group_name: str, name: str, list_to_save: list) -> None:
     """
     Save a list in the hdf5 file : save it as a ndarray if possible
 
@@ -120,7 +120,7 @@ def list_to_hdf5(file, group_name, name, list_to_save):
             grp[name].attrs["array_list"] = True
 
 
-def dict_to_hdf5(file, prefix, dict_to_save):
+def dict_to_hdf5(file, prefix, dict_to_save) -> None:
     """
     Save a list in the hdf5 file
     """
@@ -130,7 +130,7 @@ def dict_to_hdf5(file, prefix, dict_to_save):
         variable_to_hdf5(file, prefix, value, key)
 
 
-def variable_to_hdf5(file, prefix, variable, name):
+def variable_to_hdf5(file, prefix, variable, name) -> None:
     # Unable to save matrix of string (U=unicode) => Convert to list
     if isinstance(variable, np.ndarray) and "U" in str(variable.dtype):
         variable = variable.tolist()

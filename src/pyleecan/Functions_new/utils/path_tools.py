@@ -5,7 +5,7 @@ from ...classes_common.errors import FileError
 from ...classes_common.errors import PathImportError as ImportError
 
 
-def importName(modulename, name, ignore_error=False):
+def importName(modulename, name, ignore_error: bool = False):
     """Import a named object from a module in the context of this function."""
     try:
         module = __import__(modulename, globals(), locals(), [name])
@@ -35,7 +35,7 @@ def rel_file_path(file_path, wildcard):
     return file_path
 
 
-def abs_file_path(file_path, is_check=True):
+def abs_file_path(file_path, is_check: bool = True):
     """check a file path for a wildcard and replace it to get the abs path"""
     file_path = file_path.replace("\\", "/")
     if "<" in file_path and ">" in file_path:

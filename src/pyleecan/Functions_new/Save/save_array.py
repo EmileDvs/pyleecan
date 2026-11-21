@@ -2,8 +2,14 @@ import numpy as np
 
 
 def save_array(
-    file, data, fmt="%7.2f", delimiter=",", header="data", slice="slice", sep=":"
-):
+    file: str,
+    data,
+    fmt: str = "%7.2f",
+    delimiter: str = ",",
+    header: str = "data",
+    slice="slice",
+    sep: str = ":",
+) -> None:
     """Function to save numpy nD arrays. Therefore the array is sliced except for
     the last 2 dimenions.
 

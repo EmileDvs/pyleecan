@@ -114,7 +114,12 @@ def decode_label(label):
 
 
 def update_RTS_index(
-    label=None, label_dict=None, R_id=None, T_id=None, S_id=None, surf_type_label=None
+    label: str | None = None,
+    label_dict: dict | None = None,
+    R_id: int | None = None,
+    T_id: int | None = None,
+    S_id: int | None = None,
+    surf_type_label: str | None = None,
 ):
     """Update the index part of a label
     Stator_Winding_R0-T0-S0 => Stator_Winding_RX-TY-SZ

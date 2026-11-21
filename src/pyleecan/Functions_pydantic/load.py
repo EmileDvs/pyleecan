@@ -1,4 +1,5 @@
 import os
+from typing import TYPE_CHECKING
 
 from ..classes_common.errors import (
     LoadMissingFolderError,
@@ -11,13 +12,16 @@ from .Load.load_json import load_json
 from .Load.load_pkl import load_pkl
 from .Load.retrocompatibility import convert_init_dict
 
+if TYPE_CHECKING:
+    from ..Classes_pydantic.machine.machine import Machine
+
 # Matlib Keys
 LIB_KEY = "RefMatLib"
 MACH_KEY = "MachineMatLib"
 PATH_KEY = "MATLIB_PATH"
 
 
-def load(file_path):
+def load(file_path: str):
     """Load a pyleecan object from a json file
 
     Parameters
@@ -58,7 +62,7 @@ def load_init_dict(file_path):
         )
 
 
-def init_data(obj, file_path):
+def init_data(obj, file_path: str):
     """
     Initialize pyleecan objects (by init_dict) within list and/or dict data structure.
     Non pyleecan, list or dict type data will be kept as they are.
@@ -111,7 +115,7 @@ def init_data(obj, file_path):
         return obj
 
 
-def _load(file_path, cls_type=None):
+def _load(file_path: str, cls_type=None):
     """Load a list of pyleecan objects from a json file
 
     Parameters
@@ -140,7 +144,7 @@ def _load(file_path, cls_type=None):
     return init_data(obj, file_path)
 
 
-def _convert_collections(obj):
+def _convert_collections(obj) -> None:
     if isinstance(obj, dict):
         convert_init_dict(obj)
     elif isinstance(obj, list):
@@ -156,7 +160,7 @@ def load_dict(file_path):
     return _load(file_path, "dict")
 
 
-def load_matlib_folder(matlib_path):
+def load_matlib_folder(matlib_path: str) -> list:
     """Load all the Material json file from a folder and subfolder
 
     Parameters
@@ -201,7 +205,7 @@ def load_matlib_folder(matlib_path):
     return material_list
 
 
-def load_machine_materials(material_dict, machine):
+def load_machine_materials(material_dict: dict, machine: Machine) -> None:
     """Add the material from a machine that are different from the library one
 
     Parameters
@@ -235,7 +239,7 @@ def load_machine_materials(material_dict, machine):
             name_list.append(mach_mat.name)
 
 
-def load_matlib(matlib_path=None, machine=None):
+def load_matlib(matlib_path: str | None = None, machine: Machine | None = None) -> dict:
     """Load the Material library and the machine materials
 
     Parameters
