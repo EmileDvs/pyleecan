@@ -270,7 +270,7 @@ class SlotM18(Slot):
 
         # get the name of the lamination
         st = self.get_name_lam()
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         ZM1 = point_dict["ZM1"]
@@ -283,7 +283,7 @@ class SlotM18(Slot):
             Segment(begin=ZM1, end=ZM2, prop_dict={COND_BOUNDARY_PROP_LAB: YSMR_LAB})
         )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(
                 Arc1(
                     begin=ZM2, end=ZM3, radius=(Rbo - self.H0), is_trigo_direction=True
@@ -300,7 +300,7 @@ class SlotM18(Slot):
             Segment(begin=ZM3, end=ZM4, prop_dict={COND_BOUNDARY_PROP_LAB: YSML_LAB})
         )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(
                 Arc1(begin=ZM4, end=ZM1, radius=-Rbo, is_trigo_direction=False)
             )

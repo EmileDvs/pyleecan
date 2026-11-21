@@ -50,10 +50,10 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0, lam: Laminat
             line_dict["9-1"],
         ]
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + (self.H0 + H1) / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + (self.H0 + H1) / 2
         else:
-            Zmid = self.get_Rbo() - (self.H0 + H1) / 2
+            Zmid = self.get_Rbo(lam=lam) - (self.H0 + H1) / 2
 
     else:
         # Create curve list
@@ -64,10 +64,10 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0, lam: Laminat
             line_dict["9-1"],
         ]
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 / 2
 
     curve_list = [line for line in curve_list if line is not None]
 

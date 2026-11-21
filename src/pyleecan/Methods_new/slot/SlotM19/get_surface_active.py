@@ -33,7 +33,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     surf_act: Surface
         Surface corresponding to the Active Area
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
     # get the name of the lamination
     st = self.get_name_lam()
 
@@ -49,7 +49,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     curve_list.append(Segment(begin=Z2, end=Z3))
     curve_list.append(Segment(begin=Z3, end=Z4))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         curve_list.append(Arc1(begin=Z4, end=Z1, radius=-Rbo, is_trigo_direction=False))
     else:
         curve_list.append(Arc1(begin=Z4, end=Z1, radius=-Rbo, is_trigo_direction=False))

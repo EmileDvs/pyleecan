@@ -37,16 +37,16 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         Arc1(
             begin=curve_list[-1].get_end(),
             end=curve_list[0].get_begin(),
-            radius=-self.get_Rbo(),
+            radius=-self.get_Rbo(lam=lam),
             is_trigo_direction=False,
         )
     )
 
     # Create surface
-    if self.is_outwards():
-        Zmid = self.get_Rbo() + self.H2 / 2
+    if self.is_outwards(lam=lam):
+        Zmid = self.get_Rbo(lam=lam) + self.H2 / 2
     else:
-        Zmid = self.get_Rbo() - self.H2 / 2
+        Zmid = self.get_Rbo(lam=lam) - self.H2 / 2
     surface = SurfLine(
         line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
     )

@@ -729,10 +729,10 @@ class SlotW11_2(Slot):
 
         # Create surface
         H1 = self.get_H1()
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 + H1 + self.H2 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 + H1 + self.H2 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 - H1 - self.H2 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 - H1 - self.H2 / 2
         label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
@@ -793,10 +793,10 @@ class SlotW11_2(Slot):
             curve.prop_dict.update({DRAW_PROP_LAB: False})
 
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + (self.H0 + H1) / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + (self.H0 + H1) / 2
         else:
-            Zmid = self.get_Rbo() - (self.H0 + H1) / 2
+            Zmid = self.get_Rbo(lam=lam) - (self.H0 + H1) / 2
         label = lam.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 

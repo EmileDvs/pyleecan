@@ -1,13 +1,21 @@
+from ....classes_common.parents import container_or_parent
 from ....Methods import ParentMissingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def get_is_stator(self) -> bool:
+def get_is_stator(self, lam: Lamination | Notch | None = None) -> bool:
     """Return True if the parent lamination is stator and False if is a rotor
 
     Parameters
     ----------
     self : Slot
         A Slot object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -15,8 +23,9 @@ def get_is_stator(self) -> bool:
         True if the Lamination is a stator and False if not
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
-    if self.parent is not None:
-        return self.parent.is_stator
+    if lam is not None:
+        return lam.is_stator
     else:
         raise ParentMissingError("Error: The slot is not inside a Lamination")

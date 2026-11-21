@@ -251,7 +251,7 @@ class SlotM13(Slot):
         ZM3 = point_dict["ZM3"]
         ZM4 = point_dict["ZM4"]
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = np.abs(ZM0)
             R2 = np.abs(ZM1)
             return R2 - R1
@@ -360,7 +360,7 @@ class SlotM13(Slot):
         else:
             curve_list.append(Segment(begin=ZM1, end=ZM2))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(
                 Arc1(begin=ZM2, end=ZM3, radius=-self.Rtopm, is_trigo_direction=False)
             )

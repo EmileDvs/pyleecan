@@ -44,7 +44,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
 
     curve_list: list[Line] = list()
     curve_list.append(Segment(begin=ZM1, end=ZM2))
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=-self.Rtopm, is_trigo_direction=False))
     else:
         curve_list.append(Arc1(begin=ZM2, end=ZM3, radius=self.Rtopm))

@@ -32,7 +32,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
 
     # get the name of the lamination
     st = self.get_name_lam()
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     point_dict = self._comp_point_coordinate()
     ZM1 = point_dict["ZM1"]
@@ -50,7 +50,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     else:
         curve_list.append(Segment(begin=ZM1, end=ZM2))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         curve_list.append(
             Arc1(begin=ZM2, end=ZM3, radius=(Rbo + self.H0 - self.H1), is_trigo_direction=True)
         )
@@ -66,7 +66,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     else:
         curve_list.append(Segment(begin=ZM3, end=ZM4))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         curve_list.append(Arc1(begin=ZM4, end=ZM1, radius=-Rbo - self.H0, is_trigo_direction=False))
     else:
         curve_list.append(Arc1(begin=ZM4, end=ZM1, radius=-Rbo + self.H0, is_trigo_direction=False))

@@ -648,13 +648,15 @@ class Slot(LegacyModel):
         return new_slot
 
     # Inlined from Methods.Slot.Slot.get_is_stator
-    def get_is_stator(self) -> bool:
+    def get_is_stator(self, lam: Lamination | Notch | None = None) -> bool:
         """Return True if the parent lamination is stator and False if is a rotor
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -662,9 +664,10 @@ class Slot(LegacyModel):
             True if the Lamination is a stator and False if not
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.is_stator
+        if lam is not None:
+            return lam.is_stator
         else:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
@@ -690,13 +693,15 @@ class Slot(LegacyModel):
             return "NoLam"
 
     # Inlined from Methods.Slot.Slot.get_Rbo
-    def get_Rbo(self) -> float:
+    def get_Rbo(self, lam: Lamination | Notch | None = None) -> float:
         """Return the parent lamination bore radius
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -704,12 +709,13 @@ class Slot(LegacyModel):
             The parent lamination bore radius [m]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
+        if lam is not None:
             if self.is_bore in [True, None]:
-                return self.parent.get_Rbo()
+                return lam.get_Rbo()
             else:
-                return self.parent.get_Ryoke()
+                return lam.get_Ryoke()
         else:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
@@ -906,7 +912,7 @@ class Slot(LegacyModel):
         return False
 
     # Inlined from Methods.Slot.Slot.is_outwards
-    def is_outwards(self) -> bool:
+    def is_outwards(self, lam: Lamination | Notch | None = None) -> bool:
         """Return if the slot is outwards (on an external lamination) or inwards
         (on an internal lamination)
 
@@ -914,17 +920,20 @@ class Slot(LegacyModel):
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         is_outwards: bool
             True if the Lamination is not internal and false if not
         """
-        if self.parent is not None:
+        lam = container_or_parent(self, lam, "lam")
+        if lam is not None:
             if self.is_bore in [True, None]:
-                return self.parent.is_outwards()
+                return lam.is_outwards()
             else:
-                return not self.parent.is_outwards()
+                return not lam.is_outwards()
         else:
             raise ParentMissingError(
                 "Error: The slot is not inside a Lamination or a Notch"

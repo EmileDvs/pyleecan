@@ -23,7 +23,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
 
     """
     H1 = self.get_H1()
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # alpha is the angle to rotate P0 so ||P1,P10|| = W0
     alpha = np.arcsin(self.W0 / (2 * Rbo))
@@ -31,7 +31,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
     # Compute W1 to have tooth width at W3
     Harc = Rbo * (1 - np.cos(alpha / 2))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         R1 = Rbo - Harc + self.H0 + H1
     else:
         R1 = Rbo + Harc - self.H0 - H1
@@ -42,7 +42,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
 
     Z9 = Rbo * np.exp(-1j * alpha)
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z8 = Z9 + self.H0
         Z7 = Z8 + H1 - (W1 - self.W0) * 1j / 2
     else:
@@ -51,7 +51,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
 
     # Rotate Z7 to get the tooth parallel to Ox
     Z7r = Z7 * np.exp(1j * hsp)
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z6r = Z7r + self.H3
     else:
         Z6r = Z7r - self.H3

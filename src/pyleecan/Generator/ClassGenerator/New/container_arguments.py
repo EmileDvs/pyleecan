@@ -61,6 +61,11 @@ CONTAINER_ARGUMENTS = (
             "get_surface_active",
             "get_surface_opening",
             "get_surface_wedges",
+            # Pass 5: the helpers reading the lamination, called by the methods
+            # above (they pass their lam on) and by the laminations
+            "get_Rbo",
+            "get_is_stator",
+            "is_outwards",
         ),
         name="lam",
         doc_type="Lamination or Notch",

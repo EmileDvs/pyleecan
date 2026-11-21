@@ -298,7 +298,7 @@ class SlotM19(Slot):
         surf_act: Surface
             Surface corresponding to the Active Area
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         # get the name of the lamination
         st = self.get_name_lam()
 
@@ -314,7 +314,7 @@ class SlotM19(Slot):
         curve_list.append(Segment(begin=Z2, end=Z3))
         curve_list.append(Segment(begin=Z3, end=Z4))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             curve_list.append(
                 Arc1(begin=Z4, end=Z1, radius=-Rbo, is_trigo_direction=False)
             )

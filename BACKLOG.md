@@ -890,6 +890,12 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
         cross, method / function / plot tests as before; loss validation
         tests as before (`test_LossFEMM_Prius`: the known `KeyError:
         'overall'`, after FEMM and the loss models ran).
+  - [x] Pass 5 (2026-11-21): `Slot.get_Rbo`, `get_is_stator`, `is_outwards`
+        take `lam` too (added to the pass 1 spec): the pass 1 methods pass
+        it on (90 `get_Rbo(lam=lam)`, 59 `is_outwards(lam=lam)`); the 467
+        other calls in the slot methods (not given `lam`) use the fallback.
+        Checks: as before; FEMM runs, `test_SWSlot`, `test_new_machine_Railway`
+        on both backends; `ty` on `Methods_new/slot` unchanged (20).
   - [ ] Next passes: the slot methods called by the pass 1 ones (`get_Rbo`,
         `get_is_stator`, `is_outwards`, `build_geometry*`) once their callers
         pass the container; the loss models' `comp_loss*` (container: the
@@ -1148,6 +1154,7 @@ the fallback, the parent links, and makes the argument required.
 | `get_surface_active` of the Slot family (38 classes) | `lam` | Step 11, pass 1 |
 | `get_surface_opening` of the Slot family (24 classes) | `lam` | Step 11, pass 1 |
 | `Slot.get_surface_wedges` | `lam` | Step 11, pass 1 |
+| `Slot.get_Rbo`, `Slot.get_is_stator`, `Slot.is_outwards` | `lam` | Step 11, pass 5 |
 | `run` of `Electrical`, `ElecLUTdq`, `Magnetics`, `Force`, `Structural`, `StructElmer`, `Loss`, `LossFEA` | `output` | Step 11, pass 2 |
 | `Simu1.run_single` | `output` | Step 11, pass 3 |
 | `comp_loss`, `comp_loss_freq`, `comp_loss_time`, `comp_loss_value` of the LossModel family | `loss`, `output` | Step 11, pass 4 |

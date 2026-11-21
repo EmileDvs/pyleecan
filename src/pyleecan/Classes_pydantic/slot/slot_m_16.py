@@ -245,7 +245,7 @@ class SlotM16(Slot):
         Z5 = point_dict["Z5"]
         Z6 = point_dict["Z6"]
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = abs((Z3 + Z6) / 2)
             R2 = abs(Z4)
         else:
@@ -338,10 +338,10 @@ class SlotM16(Slot):
         )
 
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 + self.H1 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 + self.H1 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 - self.H1 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 - self.H1 / 2
         surface = SurfLine(
             line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
         )

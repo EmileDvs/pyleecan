@@ -50,10 +50,10 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         curve.prop_dict.update({DRAW_PROP_LAB: False})
 
     # Create surface
-    if self.is_outwards():
-        Zmid = self.get_Rbo() + self.R1 + self.H1 / 2
+    if self.is_outwards(lam=lam):
+        Zmid = self.get_Rbo(lam=lam) + self.R1 + self.H1 / 2
     else:
-        Zmid = self.get_Rbo() - self.R1 - self.H1 / 2
+        Zmid = self.get_Rbo(lam=lam) - self.R1 - self.H1 / 2
     label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
     surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 

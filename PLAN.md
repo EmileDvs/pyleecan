@@ -347,7 +347,8 @@ reads are left to Step 16.
       the methods given a fallback are listed in the backlog (Phase 2
       deprecations). Pass 1 done: slot surfaces and active height (`lam`); pass 2: the
       models' `run(output)`; pass 3: `Simu1.run_single(output)`; pass 4:
-      the loss models (`loss`, `output`).
+      the loss models (`loss`, `output`); pass 5: the slot helpers
+      (`get_Rbo`, `get_is_stator`, `is_outwards`).
 
 ### Step 12: freeze
 

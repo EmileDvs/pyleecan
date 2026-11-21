@@ -349,7 +349,7 @@ class SlotW14(Slot):
 
         """
         H1 = self.get_H1()
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate P0 so ||P1,P10|| = W0
         alpha = np.arcsin(self.W0 / (2 * Rbo))
@@ -357,7 +357,7 @@ class SlotW14(Slot):
         # Compute W1 to have tooth width at W3
         Harc = Rbo * (1 - np.cos(alpha / 2))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = Rbo - Harc + self.H0 + H1
         else:
             R1 = Rbo + Harc - self.H0 - H1
@@ -368,7 +368,7 @@ class SlotW14(Slot):
 
         Z9 = Rbo * np.exp(-1j * alpha)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z8 = Z9 + self.H0
             Z7 = Z8 + H1 - (W1 - self.W0) * 1j / 2
         else:
@@ -377,7 +377,7 @@ class SlotW14(Slot):
 
         # Rotate Z7 to get the tooth parallel to Ox
         Z7r = Z7 * np.exp(1j * hsp)
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z6r = Z7r + self.H3
         else:
             Z6r = Z7r - self.H3
@@ -642,10 +642,10 @@ class SlotW14(Slot):
 
         # Create surface
         label = f"{lam.get_label()}_{WIND_LAB}_R0-T0-S0"
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 + H1 + self.H3 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 + H1 + self.H3 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 - H1 - self.H3 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 - H1 - self.H3 / 2
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation
@@ -701,10 +701,10 @@ class SlotW14(Slot):
                 line_dict["9-1"],
             ]
             # Create surface
-            if self.is_outwards():
-                Zmid = self.get_Rbo() + (self.H0 + H1) / 2
+            if self.is_outwards(lam=lam):
+                Zmid = self.get_Rbo(lam=lam) + (self.H0 + H1) / 2
             else:
-                Zmid = self.get_Rbo() - (self.H0 + H1) / 2
+                Zmid = self.get_Rbo(lam=lam) - (self.H0 + H1) / 2
 
         else:
             # Create curve list
@@ -715,10 +715,10 @@ class SlotW14(Slot):
                 line_dict["9-1"],
             ]
             # Create surface
-            if self.is_outwards():
-                Zmid = self.get_Rbo() + self.H0 / 2
+            if self.is_outwards(lam=lam):
+                Zmid = self.get_Rbo(lam=lam) + self.H0 / 2
             else:
-                Zmid = self.get_Rbo() - self.H0 / 2
+                Zmid = self.get_Rbo(lam=lam) - self.H0 / 2
 
         curve_list = [line for line in curve_list if line is not None]
 

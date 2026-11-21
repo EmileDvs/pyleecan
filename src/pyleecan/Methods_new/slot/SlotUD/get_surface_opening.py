@@ -50,7 +50,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0, lam: Laminat
     bot_line = Arc1(
         begin=curve_list_end[-1].get_end(),
         end=curve_list_start[0].get_begin(),
-        radius=-self.get_Rbo(),
+        radius=-self.get_Rbo(lam=lam),
         is_trigo_direction=False,
     )
 

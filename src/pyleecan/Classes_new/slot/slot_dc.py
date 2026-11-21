@@ -446,10 +446,10 @@ class SlotDC(Slot):
         )
 
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H1 + self.H2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H1 + self.H2
         else:
-            Zmid = self.get_Rbo() - self.H1 - self.H2
+            Zmid = self.get_Rbo(lam=lam) - self.H1 - self.H2
         surface = SurfLine(
             line_list=curve_list, label="Wind_" + st + "_R0_T0_S0", point_ref=Zmid
         )

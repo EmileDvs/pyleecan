@@ -29,7 +29,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
     ZM3 = point_dict["ZM3"]
     ZM4 = point_dict["ZM4"]
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         R1 = np.abs((ZM2 + ZM3) / 2)
         R2 = np.abs(ZM1)
 

@@ -48,7 +48,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
 
     # Create surface
     ZM = line_dict["M-2"].get_begin()
-    Zmid = (self.get_Rbo() + ZM) / 2
+    Zmid = (self.get_Rbo(lam=lam) + ZM) / 2
     label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
     surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 

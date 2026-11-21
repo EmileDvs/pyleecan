@@ -299,7 +299,7 @@ class SlotCirc(Slot):
         else:
             point_dict = self._comp_point_coordinate()
             ZM = point_dict["ZM"]
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             return abs(Rbo - abs(ZM))
 
     # Inlined from Methods.Slot.SlotCirc.comp_surface
@@ -437,7 +437,7 @@ class SlotCirc(Slot):
 
         # Create surface
         ZM = line_dict["M-2"].get_begin()
-        Zmid = (self.get_Rbo() + ZM) / 2
+        Zmid = (self.get_Rbo(lam=lam) + ZM) / 2
         label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 

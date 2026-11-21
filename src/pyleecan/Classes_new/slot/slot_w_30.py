@@ -817,10 +817,10 @@ class SlotW30(Slot):
 
         # Creating surface
         label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 + self.H1 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 + self.H1 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 - self.H1 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 - self.H1 / 2
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation
@@ -877,10 +877,10 @@ class SlotW30(Slot):
             curve.prop_dict.update({DRAW_PROP_LAB: False})
 
         # Create surface
-        if self.is_outwards():
-            Zmid = self.get_Rbo() + self.H0 / 2
+        if self.is_outwards(lam=lam):
+            Zmid = self.get_Rbo(lam=lam) + self.H0 / 2
         else:
-            Zmid = self.get_Rbo() - self.H0 / 2
+            Zmid = self.get_Rbo(lam=lam) - self.H0 / 2
         label = f"{lam.get_label()}_{SOP_LAB}_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
