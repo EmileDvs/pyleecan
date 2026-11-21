@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import scipy.interpolate as scp_int
 
-from ...Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from ..electrical.eec_pmsm import EEC_PMSM
 from ..electrical.electrical import Electrical
 from ..scidatatool.data_nd import DataND
@@ -182,8 +181,7 @@ class LUTdq(LUT):
                 )
 
                 # dqh transform
-                Phi_dqh_mag = n2dqh_DataTime(
-                    Phi_wind0,
+                Phi_dqh_mag = Phi_wind0.n2dqh(
                     is_dqh_rms=True,
                     phase_dir=phase_dir,
                 )
@@ -279,8 +277,7 @@ class LUTdq(LUT):
                     )
 
                     # dqh transform
-                    Phi_dqh = n2dqh_DataTime(
-                        Phi_wind,
+                    Phi_dqh = Phi_wind.n2dqh(
                         is_dqh_rms=True,
                         phase_dir=phase_dir,
                     )

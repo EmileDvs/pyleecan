@@ -1,6 +1,5 @@
 import os
 
-from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
@@ -81,7 +80,7 @@ def comp_fluxlinkage(self, machine: Machine | None = None, OP: OP | None = None,
 
     Phi_wind = out.mag.Phi_wind[stator_label]
 
-    Phidqh = n2dqh_DataTime(Phi_wind, phase_dir=out.elec.phase_dir)
+    Phidqh = Phi_wind.n2dqh(phase_dir=out.elec.phase_dir)
     Phi_dqh_mean = Phidqh.get_along("time=mean", "phase")[Phidqh.symbol]
 
     return Phi_dqh_mean, Phi_wind

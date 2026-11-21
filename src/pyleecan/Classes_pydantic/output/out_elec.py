@@ -6,13 +6,9 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_pydantic.Electrical.dqh_transformation import (
-    dqh2n_DataTime,
-    n2dqh_DataTime,
-)
-from ...Functions_pydantic.Electrical.dqh_transformation_freq import (
+from ...Functions_pydantic.SciDataTool.dqh_transformation import (
     dqh2n_DataFreq,
-    n2dqh_DataFreq,
+    dqh2n_DataTime,
 )
 from .._legacy_model import LegacyModel
 from ..electrical.eec import EEC
@@ -276,15 +272,14 @@ class OutElec(LegacyModel):
             if is_dqh:
                 # Convert to DQH frame
                 if is_freq:
-                    obj = n2dqh_DataFreq(
-                        obj,
+                    obj = obj.n2dqh(
                         is_dqh_rms=True,
                         phase_dir=self.phase_dir,
                         current_dir=self.current_dir,
                         felec=self.OP.get_felec(),
                     )
                 else:
-                    obj = n2dqh_DataTime(obj, is_dqh_rms=True, phase_dir=self.phase_dir)
+                    obj = obj.n2dqh(is_dqh_rms=True, phase_dir=self.phase_dir)
 
         if is_fund_only or is_harm_only:
             if Time is None and not is_dqh:

@@ -5,7 +5,7 @@ from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.electrical.elec_lut_dq import ElecLUTdq
 from ....Classes_new.simulation.input_voltage import InputVoltage
-from ....Functions_new.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
+from ....Functions_new.SciDataTool.dqh_transformation import get_phase_dir
 from ..Input import InputError
 
 
@@ -142,8 +142,7 @@ def gen_input(self) -> None:
                     + " returned"
                 )
             # Compute corresponding Id/Iq reference
-            Idq = n2dqh_DataTime(
-                Is,
+            Idq = Is.n2dqh(
                 is_dqh_rms=True,
                 phase_dir=outelec.phase_dir,
             )

@@ -8,7 +8,7 @@ import numpy as np
 from pydantic import Field
 from pylab import False_
 
-from ...Functions_pydantic.Electrical.dqh_transformation_freq import dqh2n_DataFreq
+from ...Functions_pydantic.SciDataTool.dqh_transformation import dqh2n_DataFreq
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_linspace import DataLinspace

@@ -1,4 +1,3 @@
-from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -36,8 +35,7 @@ def get_Phi_dqh_mag(self) -> DataND:
             )
 
             # dqh transform
-            Phi_dqh_mag = n2dqh_DataTime(
-                Phi_wind0,
+            Phi_dqh_mag = Phi_wind0.n2dqh(
                 is_dqh_rms=True,
                 phase_dir=phase_dir,
             )

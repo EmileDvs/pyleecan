@@ -4,8 +4,8 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
-from ....Functions_new.Electrical.dqh_transformation import dqh2n_DataTime, n2dqh_DataTime
-from ....Functions_new.Electrical.dqh_transformation_freq import dqh2n_DataFreq, n2dqh_DataFreq
+from ....Functions_new.SciDataTool.dqh_transformation import dqh2n_DataTime
+from ....Functions_new.SciDataTool.dqh_transformation import dqh2n_DataFreq
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -145,15 +145,14 @@ def get_electrical(
         if is_dqh:
             # Convert to DQH frame
             if is_freq:
-                obj = n2dqh_DataFreq(
-                    obj,
+                obj = obj.n2dqh(
                     is_dqh_rms=True,
                     phase_dir=self.phase_dir,
                     current_dir=self.current_dir,
                     felec=self.OP.get_felec(),
                 )
             else:
-                obj = n2dqh_DataTime(obj, is_dqh_rms=True, phase_dir=self.phase_dir)
+                obj = obj.n2dqh(is_dqh_rms=True, phase_dir=self.phase_dir)
 
     if is_fund_only or is_harm_only:
         if Time is None and not is_dqh:

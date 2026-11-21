@@ -7,7 +7,7 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import InputError
-from ...Functions_new.Electrical.dqh_transformation import get_phase_dir, n2dqh_DataTime
+from ...Functions_new.SciDataTool.dqh_transformation import get_phase_dir
 from ..electrical.elec_lut_dq import ElecLUTdq
 from ..import_data.import_data import ImportData
 from ..import_data.import_matrix import ImportMatrix
@@ -195,8 +195,7 @@ class InputCurrent(InputVoltage):
                         + " returned"
                     )
                 # Compute corresponding Id/Iq reference
-                Idq = n2dqh_DataTime(
-                    Is,
+                Idq = Is.n2dqh(
                     is_dqh_rms=True,
                     phase_dir=outelec.phase_dir,
                 )

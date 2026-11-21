@@ -15,7 +15,6 @@ from pydantic import Field
 from ...classes_common.errors import LWC_SlotTooLong
 from ...Classes_new._swat_em import datamodel
 from ...definitions import config_dict
-from ...Functions_pydantic.Electrical.dqh_transformation import dqh2n
 from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.labels import (
     BAR_LAB,
@@ -32,6 +31,7 @@ from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 from ...Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ...Functions_pydantic.SciDataTool.dqh_transformation import dqh2n
 from ...Functions_pydantic.Winding.gen_phase_list import gen_color, gen_name
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq

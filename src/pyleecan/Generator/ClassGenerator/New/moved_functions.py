@@ -41,6 +41,14 @@ class MovedFunction(NamedTuple):
     argument, given by ``self.<getter>()`` by default. A caller holding
     ``x = obj.<getter>(...)`` calls ``obj.<method>(..., parameter=x)``; the
     other callers call the static method"""
+    function: str = ""
+    """Name of the legacy function when it differs from the method
+    (``n2dqh_DataTime`` -> ``DataTime.n2dqh``)"""
+
+    @property
+    def legacy_name(self):
+        """Name of the legacy function"""
+        return self.function or self.method
 
     @property
     def implementation(self):
@@ -77,6 +85,15 @@ MOVED_FUNCTIONS = {
         "OptiGenAlgNsga2Deap", "tournamentDCD", static=True
     ),
     "Optimization.update": MovedFunction("OptiGenAlgNsga2Deap", "update", static=True),
+    # Step 8: n phases to dqh transformation of the Data objects (the other
+    # functions of these modules are merged in SciDataTool.dqh_transformation,
+    # MERGED_MODULES; DataDual.n2dqh is a new method, NEW_METHODS)
+    "Electrical.dqh_transformation": MovedFunction(
+        "DataTime", "n2dqh", function="n2dqh_DataTime"
+    ),
+    "Electrical.dqh_transformation_freq": MovedFunction(
+        "DataFreq", "n2dqh", function="n2dqh_DataFreq"
+    ),
     # Step 8, group 5: solution constructors; the magnetic meshsolution of an
     # output and the frame suffix of a group (it reads output.mag)
     "MeshSolution.build_solution_data": MovedFunction(
@@ -149,6 +166,350 @@ DEPRECATED_MODULES = {
 }
 """{legacy module below Functions: replacement}: the public functions of the
 module warn (DeprecationWarning) in Functions_new, removed in Phase 2"""
+
+
+MERGED_MODULES = {
+    # The dqh transformations next to the other SciDataTool utilities; the
+    # Data object functions are methods (n2dqh_DataTime -> DataTime.n2dqh,
+    # n2dqh_DataFreq -> DataFreq.n2dqh); the checks of the DataND axes are
+    # dropped
+    "SciDataTool.dqh_transformation": {
+        "sources": (
+            ("Electrical.dqh_transformation", {}),
+            (
+                "Electrical.dqh_transformation_freq",
+                {
+                    "n2dqh": "n2dqh_freq",
+                    "abc2dqh": "abc2dqh_freq",
+                    "dqh2n": "dqh2n_freq",
+                    "dqh2abc": "dqh2abc_freq",
+                    "get_phase_dir": "get_phase_dir_freq",
+                },
+            ),
+        ),
+        "dropped": ("_check_data", "_check_DataTime", "_check_DataFreq"),
+    },
+}
+"""{new module below Functions: {"sources": ((legacy module, {function: new
+name}), ...), "dropped": functions removed with their calls}}: the functions of
+the legacy modules (except the moved ones) in one module of Functions_new; the
+legacy paths are deprecated aliases"""
+
+NEW_METHODS = {
+    "DataDual": {
+        # DataDual holds the time (axes_dt, values_dt) and frequency data: the
+        # transformation of its DataTime (the checks of the legacy function
+        # switched the axes and values of the object to the time ones)
+        "n2dqh": '''def n2dqh(self, is_dqh_rms=True, phase_dir=None):
+    """n phases to dqh equivalent coordinate transformation of the time data
+
+    Parameters
+    ----------
+    self : DataDual
+        A DataDual object
+    is_dqh_rms : bool
+        True to return dq currents in rms value (Pyleecan convention), False to return peak values
+    phase_dir : int
+        direction of phase distribution: +/-1 (-1 clockwise) to enforce
+
+    Returns
+    -------
+    data_dqh : DataTime
+        data object transformed in dqh frame
+    """
+    from ....Classes.DataTime import DataTime
+
+    data_time = DataTime(
+        name=self.name,
+        unit=self.unit,
+        symbol=self.symbol,
+        axes=self.axes_dt,
+        values=self.values_dt,
+        normalizations=self.normalizations,
+        is_real=self.is_real,
+    )
+    return data_time.n2dqh(is_dqh_rms=is_dqh_rms, phase_dir=phase_dir)
+''',
+    },
+}
+"""{class: {method: source}}: methods without legacy source, written by the
+method generator in Methods_new (legacy-style imports, as the other method
+modules)"""
+
+
+def merged_sources():
+    """Legacy modules merged into another module."""
+    return [
+        module
+        for spec in MERGED_MODULES.values()
+        for module, _ in spec["sources"]
+    ]
+
+
+def merged_location(legacy_module):
+    """(new module, {function: new name}) of a merged legacy module, or None."""
+    for new_module, spec in MERGED_MODULES.items():
+        for module, renames in spec["sources"]:
+            if module == legacy_module:
+                return new_module, renames
+    return None
+
+
+def _merged_spec(legacy_module):
+    for new_module, spec in MERGED_MODULES.items():
+        if legacy_module in [module for module, _ in spec["sources"]]:
+            return new_module, spec
+    return None, None
+
+
+def _remove_statements(source, predicate):
+    """Remove the statements matching predicate (a block left empty gets pass,
+    an else left empty is removed)."""
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    removals = []  # (first line, last line, replacement)
+    for parent in ast.walk(tree):
+        for field in ("body", "orelse", "finalbody"):
+            block = getattr(parent, field, None)
+            if not isinstance(block, list) or not block:
+                continue
+            removed = [stmt for stmt in block if isinstance(stmt, ast.stmt) and predicate(stmt)]
+            if not removed:
+                continue
+            if len(removed) == len(block):
+                if field == "orelse" and isinstance(parent, (ast.If, ast.For, ast.While)) and not (
+                    isinstance(parent, ast.If) and len(block) == 1 and isinstance(block[0], ast.If)
+                ):
+                    # Remove "else:" with the block (and the comments between)
+                    else_line = block[0].lineno - 2
+                    while else_line > 0 and not lines[else_line].strip().startswith("else"):
+                        else_line -= 1
+                    removals.append((else_line, block[-1].end_lineno, ""))
+                    continue
+                indent = " " * block[0].col_offset
+                removals.append((block[0].lineno - 1, block[-1].end_lineno, indent + "pass\n"))
+                continue
+            for stmt in removed:
+                first = stmt.lineno - 1
+                # The comment lines just above the statement go with it
+                while first > 0 and lines[first - 1].strip().startswith("#"):
+                    first -= 1
+                removals.append((first, stmt.end_lineno, ""))
+    for first, last, text in sorted(removals, reverse=True):
+        lines[first:last] = [text] if text else []
+    return "".join(lines)
+
+
+def _is_call_of(stmt, names):
+    return (
+        isinstance(stmt, ast.Expr)
+        and isinstance(stmt.value, ast.Call)
+        and isinstance(stmt.value.func, ast.Name)
+        and stmt.value.func.id in names
+    )
+
+
+def _imports_merged_module(stmt, package):
+    """True for an import from one of the merged legacy modules."""
+    if not isinstance(stmt, ast.ImportFrom):
+        return False
+    module = (
+        resolve_name("." * stmt.level + (stmt.module or ""), package)
+        if stmt.level
+        else stmt.module
+    )
+    return module is not None and module.removeprefix("pyleecan.Functions.") in merged_sources()
+
+
+def drop_merged_calls(source, legacy_module):
+    """Remove the calls of the dropped functions of a merged module."""
+    _, spec = _merged_spec(legacy_module)
+    if spec is None or not spec["dropped"]:
+        return source
+    dropped = set(spec["dropped"])
+    source = _remove_statements(source, lambda stmt: _is_call_of(stmt, dropped))
+    # The imports of the dropped functions (from the other merged module)
+    tree = ast.parse(source)
+    offsets = _line_offsets(source)
+    replacements = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom) or not any(
+            alias.name in dropped for alias in node.names
+        ):
+            continue
+        kept = [alias for alias in node.names if alias.name not in dropped]
+        start = offsets[node.lineno - 1] + node.col_offset
+        end = offsets[node.end_lineno - 1] + node.end_col_offset
+        text = (
+            ast.unparse(ast.ImportFrom(module=node.module, names=kept, level=node.level))
+            if kept
+            else "pass"  # Removed by the next pass if it is not alone in its block
+        )
+        replacements.append((start, end, text))
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    return _remove_statements(
+        source,
+        lambda stmt: isinstance(stmt, ast.Pass)
+        and stmt.col_offset == 0,  # Module-level import left empty
+    )
+
+
+def _rename_names(source, renames):
+    """Rename the functions and the names of renames {old: new} in source."""
+    if not renames:
+        return source
+    tree = ast.parse(source)
+    offsets = _line_offsets(source)
+    replacements = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in renames:
+            start = offsets[node.lineno - 1] + node.col_offset
+            replacements.append((start, start + len(node.id), renames[node.id]))
+        elif isinstance(node, ast.FunctionDef) and node.name in renames:
+            start = offsets[node.lineno - 1]
+            start += source[start:].index("def " + node.name) + 4
+            replacements.append((start, start + len(node.name), renames[node.name]))
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    return source
+
+
+def merged_module_source(new_module, read_source):
+    """Legacy-style source of a merged module (MERGED_MODULES).
+
+    Parameters
+    ----------
+    new_module : str
+        Merged module below Functions ("SciDataTool.dqh_transformation")
+    read_source : callable
+        legacy module below Functions -> its source
+
+    Returns
+    -------
+    source : str
+        Imports and functions of the legacy modules, the moved functions and
+        the dropped ones (with their calls) removed, the functions renamed
+    """
+    spec = MERGED_MODULES[new_module]
+    package = ".".join(["pyleecan", "Functions", *new_module.split(".")[:-1]])
+    imports, functions = [], []
+    for legacy_module, renames in spec["sources"]:
+        old_package = ".".join(["pyleecan", "Functions", *legacy_module.split(".")[:-1]])
+        source = read_source(legacy_module)
+        source = drop_merged_calls(source, legacy_module)
+        # Local imports of the other merged modules: the names are in this module
+        source = _remove_statements(
+            source, lambda stmt: _imports_merged_module(stmt, old_package)
+        )
+        source = _rename_names(source, renames)
+        source = _relocate_relative_imports(source, old_package, package)
+        moved = {
+            target.legacy_name for target in moved_targets(MOVED_FUNCTIONS.get(legacy_module, ()))
+        }
+        tree = ast.parse(source)
+        lines = source.splitlines(keepends=True)
+        for node in tree.body:
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                text = ast.unparse(node)
+                if text not in imports:
+                    imports.append(text)
+            elif isinstance(node, ast.FunctionDef):
+                if node.name in moved or node.name in spec["dropped"]:
+                    continue
+                first = node.lineno - 1 - len(node.decorator_list)
+                functions.append("".join(lines[first : node.end_lineno]).rstrip() + "\n")
+            elif not (
+                isinstance(node, ast.Expr)
+                and isinstance(node.value, ast.Constant)
+                and isinstance(node.value.value, str)
+            ):
+                raise ValueError(f"{legacy_module}: unsupported top-level statement in a merged module")
+    # Class imports in the functions: the classes import the merged module
+    # (their methods use its functions), no import cycle
+    class_imports = {}  # local name: import line
+    module_imports = []
+    for text in imports:
+        node = ast.parse(text).body[0]
+        module = (
+            resolve_name("." * node.level + (node.module or ""), package)
+            if isinstance(node, ast.ImportFrom) and node.level
+            else getattr(node, "module", None)
+        )
+        if isinstance(node, ast.ImportFrom) and module and module.startswith("pyleecan.Classes."):
+            for alias in node.names:
+                class_imports[alias.asname or alias.name] = ast.unparse(
+                    ast.ImportFrom(module=node.module, names=[alias], level=node.level)
+                )
+        else:
+            module_imports.append(text)
+    localized = []
+    for function in functions:
+        node = ast.parse(function).body[0]
+        used = sorted(
+            {n.id for n in ast.walk(node) if isinstance(n, ast.Name)}.intersection(class_imports)
+        )
+        if used:
+            first = node.body[1] if ast.get_docstring(node) is not None and len(node.body) > 1 else node.body[0]
+            lines = function.splitlines(keepends=True)
+            indent = " " * first.col_offset
+            lines.insert(
+                first.lineno - 1,
+                "".join(indent + class_imports[name] + "\n" for name in used) + "\n",
+            )
+            function = "".join(lines)
+        localized.append(function)
+    origins = ", ".join(module for module, _ in spec["sources"])
+    header = f'"""Functions merged from {origins} (PLAN.md Step 8)."""\n\n'
+    return header + "\n".join(module_imports) + "\n\n\n" + "\n\n".join(localized)
+
+
+def merged_alias_source(legacy_module, source):
+    """Deprecated aliases of a merged legacy module (and of its moved functions).
+
+    Parameters
+    ----------
+    legacy_module : str
+        Legacy module below Functions
+    source : str
+        Its legacy source
+
+    Returns
+    -------
+    source : str
+        One deprecated alias per public function: the method for a moved
+        function, the function of the merged module otherwise
+    """
+    new_module, renames = merged_location(legacy_module)
+    _, spec = _merged_spec(legacy_module)
+    moved_value = MOVED_FUNCTIONS.get(legacy_module)
+    moved = moved_targets(moved_value) if moved_value is not None else ()
+    moved_names = {target.legacy_name for target in moved}
+    text = alias_source(legacy_module, moved) if moved else (
+        f'"""Deprecated aliases (merged into {new_module}, removed in Phase 2)."""\n\nfrom warnings import warn\n'
+    )
+    up = "." * (len(legacy_module.split(".")) + 1)
+    new_import = up + "Functions." + new_module
+    for node in ast.parse(source).body:
+        if (
+            not isinstance(node, ast.FunctionDef)
+            or node.name.startswith("_")
+            or node.name in moved_names
+            or node.name in spec["dropped"]
+        ):
+            continue
+        new_name = renames.get(node.name, node.name)
+        message = DEPRECATION_MESSAGE.format(
+            function=node.name, target=f"{new_module}.{new_name}"
+        )
+        text += (
+            f"\n\ndef {node.name}(*args, **kwargs):\n"
+            f'    """Deprecated: use {new_module}.{new_name}"""\n'
+            f"    from {new_import} import {new_name} as function\n\n"
+            f'    warn("{message}", DeprecationWarning, stacklevel=2)\n'
+            f"    return function(*args, **kwargs)\n"
+        )
+    return text
 
 
 def deprecate_source(source, replacement):
@@ -230,6 +591,11 @@ def add_moved_methods(gen_dict, moved=None):
         for name in target.methods:
             if name not in methods:
                 methods.append(name)
+    if moved is None:  # Methods without legacy source
+        for class_name, new_methods in NEW_METHODS.items():
+            if class_name in gen_dict:
+                methods = gen_dict[class_name]["methods"]
+                methods.extend(name for name in new_methods if name not in methods)
     return gen_dict
 
 
@@ -276,12 +642,16 @@ def _relocate_relative_imports(source, old_package, new_package):
     return source
 
 
-def _split_moved_siblings(source, module_name, siblings):
-    """Remove the other moved functions of the module, imported instead.
+def _split_moved_siblings(source, module_name, siblings, renames=None):
+    """Remove the other functions of the module, imported instead.
 
     The import from the legacy module (``from .module import sibling``) is
     then rewritten by ``redirect_moved_calls`` into calls on the class.
+    ``module_name`` is a module of the same folder, or a relative module
+    (``..SciDataTool.dqh_transformation``, a merged module); ``renames``
+    {name: name in that module} imports ``new as name``.
     """
+    renames = renames or {}
     tree = ast.parse(source)
     lines = source.splitlines(keepends=True)
     removed = []
@@ -312,7 +682,33 @@ def _split_moved_siblings(source, module_name, siblings):
         else:
             break
     lines = source.splitlines(keepends=True)
-    lines.insert(position, f"from .{module_name} import {', '.join(imported)}\n")
+    module = module_name if module_name.startswith(".") else "." + module_name
+
+    def import_line(names, indent=""):
+        aliases = ", ".join(
+            f"{renames[name]} as {name}" if renames.get(name, name) != name else name
+            for name in names
+        )
+        return f"{indent}from {module} import {aliases}\n"
+
+    if not module_name.startswith(".."):
+        lines.insert(position, import_line(imported))
+        return "".join(lines)
+    # Merged module: imported in the functions (the merged module imports the
+    # classes, which import their methods: no import cycle)
+    inserts = []
+    for node in tree.body:
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        used_here = sorted(
+            {n.id for n in ast.walk(node) if isinstance(n, ast.Name)}.intersection(imported)
+        )
+        if not used_here:
+            continue
+        first = node.body[1] if ast.get_docstring(node) is not None and len(node.body) > 1 else node.body[0]
+        inserts.append((first.lineno - 1, import_line(used_here, " " * first.col_offset)))
+    for index, text in sorted(inserts, reverse=True):
+        lines.insert(index, text + "\n")
     return "".join(lines)
 
 
@@ -340,20 +736,23 @@ def method_source(source, target, old_package, new_package, siblings=()):
         Source of the method module
     """
     if siblings:
-        module_name, names = siblings
-        source = _split_moved_siblings(source, module_name, set(names))
+        module_name, names = siblings[:2]
+        renames = siblings[2] if len(siblings) > 2 else {}
+        source = _split_moved_siblings(source, module_name, set(names), renames)
     source = _relocate_relative_imports(source, old_package, new_package)
-    node = _function_node(ast.parse(source), target.method)
+    # Name of the method: "_<method>" (bound), the method name (renamed)
+    new_name = target.implementation
+    if new_name != target.legacy_name:
+        node = _function_node(ast.parse(source), target.legacy_name)
+        start = _line_offsets(source)[node.lineno - 1]
+        name_start = start + source[start:].index("def " + target.legacy_name) + 4
+        source = (
+            source[:name_start] + new_name + source[name_start + len(target.legacy_name) :]
+        )
+    node = _function_node(ast.parse(source), new_name)
     offsets = _line_offsets(source)
     if target.static or target.bound:
         start = offsets[node.lineno - 1]
-        if target.bound:  # Legacy body in the static "_<method>"
-            name_start = start + source[start:].index("def " + target.method) + 4
-            source = (
-                source[:name_start]
-                + target.implementation
-                + source[name_start + len(target.method) :]
-            )
         return source[:start] + "@staticmethod\n" + source[start:]
     if not node.args.args:
         raise ValueError(f"{target.method} has no parameter to become self")
@@ -401,7 +800,7 @@ def bound_method_source(source, target):
     default of the bound parameter documented).
     """
     parameter, getter = target.bound
-    node = _function_node(ast.parse(source), target.method)
+    node = _function_node(ast.parse(source), target.legacy_name)
     arguments = node.args
     if arguments.posonlyargs or arguments.vararg or arguments.kwarg or arguments.kwonlyargs:
         raise ValueError(f"{target.method}: only positional parameters are supported")
@@ -462,21 +861,33 @@ def alias_source(legacy_module, target):
     ]
     for item in targets:
         message = DEPRECATION_MESSAGE.format(
-            function=item.method, target=f"{item.class_name}.{item.method}"
+            function=item.legacy_name, target=f"{item.class_name}.{item.method}"
         )
         lines += ["", ""]
         if item.static or item.bound:  # Legacy signature: the static method
             lines += [
-                f"def {item.method}(*args, **kwargs):",
+                f"def {item.legacy_name}(*args, **kwargs):",
                 f'    """Deprecated: use {item.class_name}.{item.method}"""',
                 f"    from {up}Classes.{item.class_name} import {item.class_name}",
                 "",
                 f'    warn("{message}", DeprecationWarning, stacklevel=2)',
                 f"    return {item.class_name}.{item.implementation}(*args, **kwargs)",
             ]
+        elif item.function:
+            # Renamed method (n2dqh_DataFreq -> DataFreq.n2dqh): other classes
+            # have a method of the same name, the legacy function applied the
+            # one of the target class to any object
+            lines += [
+                f"def {item.legacy_name}(obj, *args, **kwargs):",
+                f'    """Deprecated: use {item.class_name}.{item.method}"""',
+                f"    from {up}Classes.{item.class_name} import {item.class_name}",
+                "",
+                f'    warn("{message}", DeprecationWarning, stacklevel=2)',
+                f"    return {item.class_name}.{item.method}(obj, *args, **kwargs)",
+            ]
         else:
             lines += [
-                f"def {item.method}(obj, *args, **kwargs):",
+                f"def {item.legacy_name}(obj, *args, **kwargs):",
                 f'    """Deprecated: use {item.class_name}.{item.method}"""',
                 f'    warn("{message}", DeprecationWarning, stacklevel=2)',
                 f"    return obj.{item.method}(*args, **kwargs)",
@@ -566,7 +977,11 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
         Source calling the methods
     """
     moved = MOVED_FUNCTIONS if moved is None else moved
-    if not any(target.method in source for _, target in all_moved_targets(moved)):
+    if not any(
+        target.legacy_name in source for _, target in all_moved_targets(moved)
+    ) and not any(
+        module.split(".")[-1] in source for module in merged_sources()
+    ):
         return source
     tree = ast.parse(source)
     offsets = _line_offsets(source)
@@ -582,19 +997,39 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
         )
         if not module or not module.startswith("pyleecan.Functions."):
             continue
-        value = moved.get(module[len("pyleecan.Functions.") :])
-        if value is None:
+        key = module[len("pyleecan.Functions.") :]
+        value = moved.get(key)
+        merged = merged_location(key)  # Module merged into another one
+        if value is None and merged is None:
             continue
-        targets = {target.method: target for target in moved_targets(value)}
+        targets = (
+            {target.legacy_name: target for target in moved_targets(value)}
+            if value is not None
+            else {}
+        )
         kept = [alias for alias in node.names if alias.name not in targets]
-        if len(kept) == len(node.names):
+        if merged is None and len(kept) == len(node.names):
             continue
         for alias in node.names:
             if alias.name in targets:
                 names[alias.asname or alias.name] = targets[alias.name]
         start = offsets[node.lineno - 1] + node.col_offset
         end = offsets[node.end_lineno - 1] + node.end_col_offset
-        if kept:
+        if kept and merged is not None:  # From the merged module
+            new_module, renames = merged
+            aliases = []
+            for alias in kept:
+                new_name = renames.get(alias.name, alias.name)
+                local = alias.asname or alias.name
+                aliases.append(ast.alias(new_name, local if local != new_name else None))
+            text = ast.unparse(
+                ast.ImportFrom(
+                    module="Functions." + new_module,
+                    names=aliases,
+                    level=len(package.split(".")),
+                )
+            )
+        elif kept:
             text = ast.unparse(
                 ast.ImportFrom(module=node.module, names=kept, level=node.level)
             )
@@ -603,7 +1038,7 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
             end = offsets[node.end_lineno]
             start = offsets[node.lineno - 1]
         replacements.append((start, end, text))
-    if not names:
+    if not names and not replacements:
         return source
     lineage = _class_lineage(class_name, gen_dict)
     functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)]

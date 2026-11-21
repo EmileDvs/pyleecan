@@ -236,13 +236,44 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | done (2026-11-21): static `SolutionData.build_solution_data`, `SolutionVector.build_solution_vector`; `Output.get_frame_meshsolution` (it reads `output.mag`); deleted `build_meshsolution` kept as a deprecated alias of the `MeshSolution` constructor |
 | 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | decided (2026-11-21): deprecate, the SciDataTool conversions replace it; open: not a plain duplicate (below) |
 | 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | |
-| 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | |
-| 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | |
-| 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | |
-| 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | |
-| 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | |
+| 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | in progress (2026-11-21): dqh done (methods `DataTime.n2dqh`, `DataFreq.n2dqh`, `DataDual.n2dqh`, the other functions merged in `SciDataTool.dqh_transformation`, checks dropped); `comp_loss_joule` deprecated (not used); `comp_MTPA` to `LUTdq` |
+| 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | decided (2026-11-21): pyvista plots reworked in a new object `pv_plotter_pyleecan`; `animate_as_gif` to `Data` (static); `get_color_legend_from_surface` to `Machine` (open, below) |
+| 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | decided (2026-11-21): object dedicated to the FEMM interface, `femm_pyleecan`, in a new sub-package `femm`, all the functions as its methods; the current handler (`_FEMMHandler`) becomes `femm_pyleecan.handler` |
+| 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | decided (2026-11-21): object dedicated to the gmsh interface, `gmsh_pyleecan`, in a new sub-package `gmsh`, all the functions as its methods |
+| 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | decided (2026-11-21): `retrocompatibility` to `classes_common` for now; Phase 2: one class to load (retrocompatibility included) and one class to save the pyleecan objects |
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
+
+### dqh transformations (2026-11-21)
+
+- `n2dqh_DataTime` -> `DataTime.n2dqh`, `n2dqh_DataFreq` -> `DataFreq.n2dqh`
+  (`MovedFunction.function`: legacy name of a renamed method);
+  `DataDual.n2dqh` (new method, `NEW_METHODS`) builds the `DataTime` of
+  its time data (`axes_dt`, `values_dt`) and calls `DataTime.n2dqh`: the
+  legacy checks switched the axes and values of the object to the time
+  ones.
+- The other functions of `Electrical.dqh_transformation` and
+  `Electrical.dqh_transformation_freq` in one module,
+  `Functions_new/SciDataTool/dqh_transformation.py` (`MERGED_MODULES`):
+  the frequency versions renamed `n2dqh_freq`, `abc2dqh_freq`,
+  `dqh2n_freq`, `dqh2abc_freq`, `get_phase_dir_freq` (same names as the
+  time ones); `_check_data`, `_check_DataTime`, `_check_DataFreq` and
+  their calls dropped (an `else` left empty is removed). The class
+  imports of the merged module are in its functions (the classes import
+  it for their methods: import cycle otherwise).
+- The legacy paths are deprecated aliases (a renamed method is called on
+  its class: `DataFreq.n2dqh(obj, ...)`, the legacy function accepted a
+  `DataTime`); the callers of `Methods_new` / `Functions_new` call the
+  methods or import from the merged module (`as` for the renamed
+  functions).
+- Behaviour change: a plain `DataND` (neither `DataTime`, `DataFreq` nor
+  `DataDual`) has no `n2dqh` (the legacy checks accepted it); the callers
+  of pyleecan pass `DataTime` / `DataFreq` objects.
+- Checks: class tests, cross tests as before; dqh tests 10 passed with
+  each backend (through the deprecated aliases); the three methods,
+  `dqh2n_DataTime` and the aliases checked against legacy with a script;
+  `Tests/New/Methods/Simulation` and `Machine` as before; `ty`:
+  scidatatool 32 -> 27, electrical 143 -> 137.
 
 ### Deprecated modules (2026-11-21)
 
@@ -254,6 +285,18 @@ Proposed targets are a starting point; the decision is the maintainer's.
   is imported by `LUTdq.interp_Ploss_dqh` and `LossModelWinding.comp_loss`
   but never called: deprecated instead (the unused imports stay in the
   method modules, importing does not warn).
+- [ ] `Plot.get_color_legend_from_surface` to `Machine` (decided): the
+      module sets default colors in `config_dict` at import
+      (`WEDGE_COLOR`, `KEY_COLOR`, read by `Slot.plot_active` and the
+      `SlotM10` / `SlotM11` schematics) and the plots import its
+      constants (`PHASE_COLORS`, `PLUS_HATCH`, `MINUS_HATCH`): the
+      defaults and the constants to move first (with the pyvista /
+      plot rework, group 9).
+- [ ] `GUI.log_error` (decided: in a GUI module, where it is used most):
+      16 GUI modules and 3 mesh export methods (`MeshVTK.save_vtk`,
+      `MeshMat.save_vtk`, `MeshSolution.export_to_mat`) call it; moved
+      with the GUI in Step 10 (`GUI_new`), the mesh methods logging
+      through their logger (Step 9).
 - [ ] `Structural.conversions` (decided: deprecated, replaced by
       `SciDataTool.conversions`): not a plain duplicate. `xyz_to_rphiz`,
       `rphiz_to_xyz` and the `_field` versions differ slightly (third

@@ -2,7 +2,7 @@ import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
-from ....Functions_new.Electrical.dqh_transformation_freq import dqh2n_DataFreq
+from ....Functions_new.SciDataTool.dqh_transformation import dqh2n_DataFreq
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

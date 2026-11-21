@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, ClassVar
 from pydantic import Field
 
 from ...classes_common.errors import AbstractClassError
-from ...Functions_pydantic.Electrical.dqh_transformation import n2dqh_DataTime
 from .._legacy_model import LegacyModel
 from ..magnetics.magnetics import Magnetics
 from ..simulation.op import OP
@@ -160,7 +159,7 @@ class EEC(LegacyModel):
 
         Phi_wind = out.mag.Phi_wind[stator_label]
 
-        Phidqh = n2dqh_DataTime(Phi_wind, phase_dir=out.elec.phase_dir)
+        Phidqh = Phi_wind.n2dqh(phase_dir=out.elec.phase_dir)
         Phi_dqh_mean = Phidqh.get_along("time=mean", "phase")[Phidqh.symbol]
 
         return Phi_dqh_mean, Phi_wind

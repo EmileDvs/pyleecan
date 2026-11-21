@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import scipy.interpolate as scp_int
 
-from ...Functions_new.Electrical.dqh_transformation import abc2n, n2abc
 from ...Functions_new.labels import ROTOR_LAB, STATOR_LAB
+from ...Functions_new.SciDataTool.dqh_transformation import abc2n, n2abc
 from ..import_data.import_gen_vect_lin import ImportGenVectLin
 from ..import_data.import_matrix_val import ImportMatrixVal
 from .eec import EEC

@@ -4,7 +4,7 @@ from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.simulation.op_dq import OPdq
-from ....Functions_new.Electrical.dqh_transformation import dqh2n
+from ....Functions_new.SciDataTool.dqh_transformation import dqh2n
 from ....Functions.Load.import_class import import_class
 from ...simulation.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
 

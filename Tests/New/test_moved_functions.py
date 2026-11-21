@@ -291,6 +291,124 @@ def test_bound_calls():
     assert "return Winding._get_phase_id(*args, **kwargs)" in alias
 
 
+TIME_MODULE = '''import numpy as np
+
+from ...Classes.DataTime import DataTime
+
+
+def n2dqh_DataTime(data, phase_dir=None):
+    """To the dqh frame"""
+    if phase_dir is None:
+        phase_dir = get_dir(data)
+    else:
+        # Check the data
+        _check(data)
+    return DataTime(values=convert(data.values, phase_dir))
+
+
+def convert(values, phase_dir):
+    return values * phase_dir
+
+
+def get_dir(data):
+    _check(data)
+    from ...Functions.Electrical.freq import get_dir as get_dir_freq
+
+    return get_dir_freq(data.values)
+
+
+def _check(data):
+    if data is None:
+        raise ValueError("no data")
+'''
+FREQ_MODULE = '''from ...Functions.Electrical.time import _check, convert
+
+
+def get_dir(values):
+    return 1
+'''
+MERGED = {
+    "SciDataTool.dqh": {
+        "sources": (("Electrical.time", {}), ("Electrical.freq", {"get_dir": "get_dir_freq"})),
+        "dropped": ("_check",),
+    }
+}
+TIME_MOVED = {"Electrical.time": MovedFunction("DataTime", "n2dqh", function="n2dqh_DataTime")}
+
+
+@pytest.fixture
+def merged(monkeypatch):
+    from pyleecan.Generator.ClassGenerator.New import moved_functions
+
+    monkeypatch.setattr(moved_functions, "MERGED_MODULES", MERGED)
+    monkeypatch.setattr(moved_functions, "MOVED_FUNCTIONS", TIME_MOVED)
+    return moved_functions
+
+
+def test_merged_module_source(merged):
+    """Functions of both modules, renamed, without the moved and dropped ones."""
+    sources = {"Electrical.time": TIME_MODULE, "Electrical.freq": FREQ_MODULE}
+    source = merged.merged_module_source("SciDataTool.dqh", sources.__getitem__)
+    tree = ast.parse(source)
+    names = [node.name for node in tree.body if isinstance(node, ast.FunctionDef)]
+    assert names == ["convert", "get_dir", "get_dir_freq"]
+    assert "_check" not in source and "n2dqh_DataTime" not in source
+    assert "Functions.Electrical" not in source  # Imports between the merged modules removed
+    assert "return get_dir_freq(data.values)" in source
+    # Class imports in the functions, the other imports kept at the top
+    assert "import numpy as np" in source
+    assert "\nfrom ...Classes.DataTime import DataTime" not in source
+
+
+def test_merged_method_and_aliases(merged):
+    """The moved function: checks dropped, siblings from the merged module."""
+    module_source = merged.drop_merged_calls(TIME_MODULE, "Electrical.time")
+    assert "        _check(data)" not in module_source and "    _check(data)\n" not in module_source
+    assert "else" not in module_source and "# Check the data" not in module_source
+    method = merged.method_source(
+        module_source,
+        TIME_MOVED["Electrical.time"],
+        "pyleecan.Functions.Electrical",
+        "pyleecan.Methods_new.scidatatool.DataTime",
+        siblings=("..SciDataTool.dqh", ["convert", "get_dir", "_check"], {}),
+    )
+    assert "def n2dqh(self, phase_dir=None):" in method
+    assert "    from ....Functions.SciDataTool.dqh import convert, get_dir\n" in method
+    aliases = merged.merged_alias_source("Electrical.time", TIME_MODULE)
+    assert "return DataTime.n2dqh(obj, *args, **kwargs)" in aliases
+    assert "from ...Functions.SciDataTool.dqh import convert as function" in aliases
+    assert "def _check" not in aliases
+    ast.parse(aliases)
+    freq_aliases = merged.merged_alias_source("Electrical.freq", FREQ_MODULE)
+    assert "from ...Functions.SciDataTool.dqh import get_dir_freq as function" in freq_aliases
+
+
+def test_merged_module_callers(merged):
+    """Callers import from the merged module (renamed with as) or call the method."""
+    caller = (
+        "from ....Functions.Electrical.time import n2dqh_DataTime, convert\n"
+        "from ....Functions.Electrical.freq import get_dir\n\n\n"
+        "def run(self, data):\n"
+        "    return n2dqh_DataTime(data, phase_dir=get_dir(data.values)), convert\n"
+    )
+    result = merged.redirect_moved_calls(caller, "pyleecan.Methods_new.output.OutElec", "OutElec")
+    assert "from ....Functions.SciDataTool.dqh import convert" in result
+    assert "from ....Functions.SciDataTool.dqh import get_dir_freq as get_dir" in result
+    assert "return data.n2dqh(phase_dir=get_dir(data.values)), convert" in result
+
+
+def test_new_methods_added_to_the_classes():
+    from pyleecan.Generator.ClassGenerator.New.moved_functions import NEW_METHODS
+
+    gen_dict = {"DataDual": {"methods": ["get_along"]}, **{
+        name: {"methods": []} for name in ("DataTime", "DataFreq", "MeshSolution", "VarSimu",
+        "OptiGenAlgNsga2Deap", "Winding", "Conductor", "SolutionData", "SolutionVector", "Output")
+    }}
+    add_moved_methods(gen_dict)
+    assert set(NEW_METHODS["DataDual"]) <= set(gen_dict["DataDual"]["methods"])
+    assert "n2dqh" in gen_dict["DataTime"]["methods"]
+
+
 def test_deprecate_source():
     """The public functions of a deprecated module warn; the private ones do not."""
     from pyleecan.Generator.ClassGenerator.New.moved_functions import deprecate_source

@@ -32,10 +32,14 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
 )
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     DEPRECATED_MODULES,
+    MERGED_MODULES,
     MOVED_FUNCTIONS,
     REMOVED_FUNCTION_ALIASES,
     alias_source,
     deprecate_source,
+    merged_alias_source,
+    merged_location,
+    merged_module_source,
     redirect_moved_calls,
 )
 from pyleecan.Generator.read_fct import read_all
@@ -787,6 +791,23 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         if not source_dir.joinpath(*module.split(".")).with_suffix(".py").exists()
         and source_dir.joinpath(*module.split(".")[:-1]).is_dir()
     ]
+
+    # Merged modules (MERGED_MODULES): written from their legacy modules
+    def read_legacy(module):
+        with tokenize.open(source_dir.joinpath(*module.split(".")).with_suffix(".py")) as file:
+            return file.read()
+
+    entries += [
+        (
+            source_dir.joinpath(*module.split(".")).with_suffix(".py"),
+            merged_module_source(module, read_legacy),
+        )
+        for module, spec in sorted(MERGED_MODULES.items())
+        if all(
+            source_dir.joinpath(*legacy.split(".")).with_suffix(".py").exists()
+            for legacy, _ in spec["sources"]
+        )
+    ]
     for path, removed_alias in entries:
         relative = path.relative_to(source_dir)
         output_relative = relative.with_name(function_module_name(relative.stem) + ".py") if path.suffix == ".py" else relative
@@ -803,9 +824,14 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 source = source_file.read()
                 encoding = source_file.encoding
         if path.suffix == ".py":
-            moved = MOVED_FUNCTIONS.get(".".join(relative.with_suffix("").parts))
-            if moved is not None:  # Deprecated alias of the method
-                source = alias_source(".".join(relative.with_suffix("").parts), moved)
+            legacy_module = ".".join(relative.with_suffix("").parts)
+            moved = MOVED_FUNCTIONS.get(legacy_module)
+            if merged_location(legacy_module) is not None and removed_alias is None:
+                # Deprecated aliases of the merged module (and of its methods)
+                source = merged_alias_source(legacy_module, source)
+                moved = moved or True
+            elif moved is not None:  # Deprecated alias of the method
+                source = alias_source(legacy_module, moved)
             replacement = DEPRECATED_MODULES.get(".".join(relative.with_suffix("").parts))
             if replacement is not None:  # Deprecated module: its functions warn
                 source = deprecate_source(source, replacement)

@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.errors import AxisError
+from ...Functions_new.SciDataTool.dqh_transformation import get_phase_dir_DataFreq
+from ...Functions_new.SciDataTool.dqh_transformation import n2dqh_freq as n2dqh
 from ...Functions_new.SciDataTool.sum_convolution import (
     get_conv_amplitudes,
     get_conv_indices,
@@ -327,3 +329,88 @@ class DataFreq(DataND):
         datadual.values_dt = datatime.values
 
         return datadual
+
+    # Inlined from Methods.SciDataTool.DataFreq.n2dqh
+    def n2dqh(
+        self,
+        current_dir: int,
+        felec: float,
+        is_dqh_rms: bool = True,
+        phase_dir: int | None = None,
+    ) -> DataFreq:
+        """n phases to dqh equivalent coordinate transformation of DataFreq/DataTime object
+
+        Parameters
+        ----------
+        self : DataFreq/DataTime
+            data object containing values over freqs and phase axes
+        is_dqh_rms : boolean
+            True to return dq currents in rms value (Pyleecan convention), False to return peak values
+        phase_dir: int
+            direction of phase distribution: +/-1 (-1 clockwise) to enforce
+        current_dir: int
+            direction of current waveform: +/-1 (-1 clockwise) to enforce
+        felec: float
+            fundamental electrical frequency [Hz]
+
+        Returns
+        -------
+        data_dqh : DataFreq
+            data object transformed in dqh frame
+
+        """
+
+        if phase_dir is None:
+            # Check if input data object is compliant with dqh transformation
+            # and get phase_dir from data object
+            phase_dir = get_phase_dir_DataFreq(self)
+
+        # Get values for one time period converted in electrical angle and for all phases
+        result_n = self.get_along("freqs", "phase", is_squeeze=False)
+
+        # Convert values to dqh frame
+        Z_dqh, freqs_dqh = n2dqh(
+            Z_n=result_n[self.symbol],
+            freqs=result_n["freqs"],
+            phase_dir=phase_dir,
+            current_dir=current_dir,
+            felec=felec,
+            is_dqh_rms=is_dqh_rms,
+        )
+
+        # Create frequency axis
+        norm_freq: dict[str, Normalization] = {}
+        ax_freq = self.axes[0]
+        if ax_freq.normalizations is not None and len(ax_freq.normalizations) > 0:
+            for key, val in ax_freq.normalizations.items():
+                norm_freq[key] = val.copy()
+        Freqs = Data1D(
+            name="freqs", unit="Hz", values=freqs_dqh, normalizations=norm_freq
+        )
+
+        # Create DQH axis
+        axis_dq = Data1D(
+            name="phase",
+            unit="",
+            values=["direct", "quadrature", "homopolar"],
+            is_components=True,
+        )
+
+        # Get normalizations
+        normalizations: dict[str, Normalization] = {}
+        if self.normalizations is not None and len(self.normalizations) > 0:
+            for key, val in self.normalizations.items():
+                normalizations[key] = val.copy()
+
+        # Create DataFreq object in dqh frame
+        data_dqh = DataFreq(
+            name=self.name + " in DQH frame",
+            unit=self.unit,
+            symbol=self.symbol,
+            values=Z_dqh,
+            axes=[Freqs, axis_dq],
+            normalizations=normalizations,
+            is_real=self.is_real,
+        )
+
+        return data_dqh

@@ -1,11 +1,15 @@
 # Experimental pydantic model generated from Generator/ClassesRef/SciDataTool/DataDual.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .._pyleecan_model import NDArray
 from .data import Data
 from .data_nd import DataND
+from .data_time import DataTime
+
+if TYPE_CHECKING:
+    from .data_time import DataTime
 
 
 class DataDual(DataND):
@@ -140,3 +144,33 @@ class DataDual(DataND):
             axes_list = axes
 
         return axes_list
+
+    # Inlined from Methods.SciDataTool.DataDual.n2dqh
+    def n2dqh(self, is_dqh_rms: bool = True, phase_dir: int | None = None) -> DataTime:
+        """n phases to dqh equivalent coordinate transformation of the time data
+
+        Parameters
+        ----------
+        self : DataDual
+            A DataDual object
+        is_dqh_rms : bool
+            True to return dq currents in rms value (Pyleecan convention), False to return peak values
+        phase_dir : int
+            direction of phase distribution: +/-1 (-1 clockwise) to enforce
+
+        Returns
+        -------
+        data_dqh : DataTime
+            data object transformed in dqh frame
+        """
+
+        data_time = DataTime(
+            name=self.name,
+            unit=self.unit,
+            symbol=self.symbol,
+            axes=self.axes_dt,
+            values=self.values_dt,
+            normalizations=self.normalizations,
+            is_real=self.is_real,
+        )
+        return data_time.n2dqh(is_dqh_rms=is_dqh_rms, phase_dir=phase_dir)

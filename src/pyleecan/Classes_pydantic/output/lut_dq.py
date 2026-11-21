@@ -7,7 +7,6 @@ import numpy as np
 import scipy.interpolate as scp_int
 from pydantic import Field
 
-from ...Functions_pydantic.Electrical.dqh_transformation import n2dqh_DataTime
 from .._pyleecan_model import NDArray
 from ..electrical.eec_pmsm import EEC_PMSM
 from ..electrical.electrical import Electrical
@@ -184,8 +183,7 @@ class LUTdq(LUT):
                 )
 
                 # dqh transform
-                Phi_dqh_mag = n2dqh_DataTime(
-                    Phi_wind0,
+                Phi_dqh_mag = Phi_wind0.n2dqh(
                     is_dqh_rms=True,
                     phase_dir=phase_dir,
                 )
@@ -281,8 +279,7 @@ class LUTdq(LUT):
                     )
 
                     # dqh transform
-                    Phi_dqh = n2dqh_DataTime(
-                        Phi_wind,
+                    Phi_dqh = Phi_wind.n2dqh(
                         is_dqh_rms=True,
                         phase_dir=phase_dir,
                     )

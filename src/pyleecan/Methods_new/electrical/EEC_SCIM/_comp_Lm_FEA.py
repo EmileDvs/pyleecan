@@ -4,7 +4,7 @@ from multiprocessing import cpu_count
 from ....Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
 from ....Classes_new.import_data.import_matrix_val import ImportMatrixVal
 
-from ....Functions_new.Electrical.dqh_transformation import abc2n
+from ....Functions_new.SciDataTool.dqh_transformation import abc2n
 
 from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING

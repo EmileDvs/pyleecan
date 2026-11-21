@@ -41,7 +41,10 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
 from pyleecan.Generator.ClassGenerator.New.legacy_fixes import apply_legacy_fixes
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     MOVED_FUNCTIONS,
+    NEW_METHODS,
     bound_method_source,
+    drop_merged_calls,
+    merged_location,
     method_source,
     moved_targets,
     redirect_moved_calls,
@@ -175,19 +178,44 @@ def generate_methods(
                     bound_method_source(function_source, target), encoding="utf-8"
                 )
                 written[target.class_name] += 1
-            # The other moved functions of the module: own method modules
-            siblings = [other.method for other in targets if other is not target]
+            merged = merged_location(legacy_module)
+            if merged is not None:
+                # The other functions are in the merged module (renamed)
+                new_module, renames = merged
+                names = [
+                    node.name
+                    for node in ast.parse(function_source).body
+                    if isinstance(node, ast.FunctionDef) and node.name != target.legacy_name
+                ]
+                module_source = drop_merged_calls(function_source, legacy_module)
+                siblings = ("." * len(legacy_parts) + new_module, names, renames)
+            else:
+                # The other moved functions of the module: own method modules
+                names = [other.legacy_name for other in targets if other is not target]
+                module_source = function_source
+                siblings = (legacy_parts[-1], names) if names else ()
             destination.write_text(
                 method_source(
-                    function_source,
+                    module_source,
                     target,
                     ".".join(["pyleecan", "Functions", *legacy_parts[:-1]]),
                     ".".join(["pyleecan", METHODS_NEW_PACKAGE, subpackage, target.class_name]),
-                    siblings=(legacy_parts[-1], siblings) if siblings else (),
+                    siblings=siblings,
                 ),
                 encoding="utf-8",
             )
             written[target.class_name] += 1
+    # Methods without legacy source (moved_functions.NEW_METHODS)
+    for class_name, methods in sorted(NEW_METHODS.items()):
+        if class_name not in gen_dict or classes[class_name][1] in frozen:
+            continue
+        folder = target_root / classes[class_name][1] / class_name
+        for method_name, method_text in sorted(methods.items()):
+            destination = folder / (method_name + ".py")
+            if destination.exists():
+                raise ValueError(f"{destination} exists: method already defined")
+            destination.write_text(method_text, encoding="utf-8")
+            written[class_name] += 1
     # Fixes of the legacy bugs (legacy_fixes.py)
     apply_legacy_fixes(
         target_root,

@@ -2,7 +2,6 @@ import numpy as np
 
 from ....Classes_new.electrical.eec_pmsm import EEC_PMSM
 
-from ....Functions_new.Electrical.dqh_transformation import n2dqh_DataTime
 
 
 def get_Phi_dqh_mean(self) -> np.ndarray:
@@ -44,8 +43,7 @@ def get_Phi_dqh_mean(self) -> np.ndarray:
                 )
 
                 # dqh transform
-                Phi_dqh = n2dqh_DataTime(
-                    Phi_wind,
+                Phi_dqh = Phi_wind.n2dqh(
                     is_dqh_rms=True,
                     phase_dir=phase_dir,
                 )
