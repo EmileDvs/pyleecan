@@ -45,6 +45,9 @@ class ContainerArgument(NamedTuple):
     caller_value: str = "self"
     """Value passed by the calls on a field of the container: ``self`` (the
     container), or a local name of the calling method (``output``)"""
+    callers: tuple = ()
+    """(class, method, value): calls of the listed methods on ``self`` in that
+    method pass value (e.g. ``Simulation.run`` passes its ``results``)"""
 
 
 CONTAINER_ARGUMENTS = (
@@ -72,6 +75,16 @@ CONTAINER_ARGUMENTS = (
             caller_value="output",
         )
         for model in ("Electrical", "Magnetics", "Force", "Structural", "Loss")
+    ),
+    # The simulation run in its output (pass 3): Simulation.run passes the
+    # output it creates or receives
+    ContainerArgument(
+        base="Simulation",
+        methods=("run_single",),
+        name="output",
+        doc_type="Output",
+        description="Output of the simulation (default: the parent)",
+        callers=(("Simulation", "run", "results"),),
     ),
 )
 """Container arguments added by the generator (Step 11 passes)"""
@@ -406,9 +419,18 @@ def add_container_arguments(source, package, class_name, gen_dict):
                 if node.func.attr not in spec.methods or _has_keyword(node, spec.name):
                     continue
                 if isinstance(receiver, ast.Name) and receiver.id == "self":
-                    if own is spec:
+                    value = next(
+                        (
+                            value
+                            for caller_class, caller_method, value in spec.callers
+                            if caller_class == class_name
+                            and caller_method == function.name
+                        ),
+                        spec.name if own is spec else None,
+                    )
+                    if value is not None:
                         position, text = _keyword_insertion(
-                            source, offsets, node, f"{spec.name}={spec.name}"
+                            source, offsets, node, f"{spec.name}={value}"
                         )
                         text_edits.append((position, position, text))
                 elif (

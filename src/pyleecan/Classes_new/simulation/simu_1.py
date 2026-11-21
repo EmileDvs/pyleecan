@@ -2,16 +2,20 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import InputError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ..electrical.electrical import Electrical
 from ..force.force import Force
 from ..loss.loss import Loss
 from ..magnetics.magnetics import Magnetics
 from ..structural.structural import Structural
 from .simulation import Simulation
+
+if TYPE_CHECKING:
+    from ..output.output import Output
 
 
 @dataclass(eq=False)
@@ -56,20 +60,22 @@ class Simu1(Simulation):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.Simu1.run_single
-    def run_single(self) -> None:
+    def run_single(self, output: Output | None = None) -> None:
         """Run the simulation
 
         Parameters
         ----------
         self : Simu1
             A Simu1 object
+        output : Output, optional
+            Output of the simulation (default: the parent)
 
         """
+        output = container_or_parent(self, output, "output")
         logger = get_logger(self)
 
-        if self.parent is None:
+        if output is None:
             raise InputError("ERROR: Simulation object must be inside an Output object")
-        output = self.parent
         output.geo = self.machine.comp_output_geo()
 
         # Init the input of the first module

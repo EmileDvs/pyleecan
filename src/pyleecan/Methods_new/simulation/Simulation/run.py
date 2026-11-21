@@ -60,7 +60,7 @@ def run(self) -> Output:
             self.init_logger(results)
 
             # Compute the simulation
-            self.run_single()
+            self.run_single(output=results)
 
         if self.index is None and self.layer == 0:
             msg = "End of simulation"

@@ -154,3 +154,37 @@ def test_model_run_caller():
     # Without the local name: left to the fallback
     source = "def f(self):\n    self.elec.run()\n"
     assert add_container_arguments(source, package, "Simu1", MODEL_GEN_DICT) == source
+
+
+def test_explicit_caller():
+    """Simulation.run passes its local results to self.run_single (pass 3)."""
+    gen_dict = {
+        "Simulation": {"mother": "", "properties": []},
+        "Simu1": {"mother": "Simulation", "properties": []},
+    }
+    source = (
+        "def run(self):\n"
+        '    """Run"""\n'
+        "    results = self.parent\n"
+        "    self.run_single()\n"
+        "    return results\n"
+    )
+    result = add_container_arguments(
+        source, "pyleecan.Methods_new.simulation.Simulation", "Simulation", gen_dict
+    )
+    assert "    self.run_single(output=results)\n" in result
+    source = (
+        "def run_single(self):\n"
+        '    """Run the simulation"""\n'
+        "    if self.parent is None:\n"
+        '        raise InputError("in an Output")\n'
+        "    output = self.parent\n"
+        "    output.geo = 1\n"
+    )
+    result = add_container_arguments(
+        source, "pyleecan.Methods_new.simulation.Simu1", "Simu1", gen_dict
+    )
+    assert "def run_single(self, output=None):\n" in result
+    assert '    output = container_or_parent(self, output, "output")\n' in result
+    assert "    if output is None:\n" in result
+    assert "    output = self.parent\n" not in result

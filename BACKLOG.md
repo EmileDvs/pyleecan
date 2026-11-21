@@ -871,6 +871,11 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
         `test_VarParamSweep_fct_save_load` (pydantic), the two of pass 1);
         FEMM runs `test_FEMM_closed_slot`, `test_FEMM_LamSlotMultiWind` pass
         on both backends; `ty` unchanged (535 on the six packages).
+  - [x] Pass 3 (2026-11-21): `Simu1.run_single(output=None)` (the output
+        is the parent), `Simulation.run` passes its `results`
+        (`ContainerArgument.callers`: explicit call sites on `self` passing
+        a local). Checks: class, cross, Simulation method tests as before,
+        FEMM run on both backends.
   - [ ] Next passes: the slot methods called by the pass 1 ones (`get_Rbo`,
         `get_is_stator`, `is_outwards`, `build_geometry*`) once their callers
         pass the container; the loss models' `comp_loss*` (container: the
@@ -1130,6 +1135,7 @@ the fallback, the parent links, and makes the argument required.
 | `get_surface_opening` of the Slot family (24 classes) | `lam` | Step 11, pass 1 |
 | `Slot.get_surface_wedges` | `lam` | Step 11, pass 1 |
 | `run` of `Electrical`, `ElecLUTdq`, `Magnetics`, `Force`, `Structural`, `StructElmer`, `Loss`, `LossFEA` | `output` | Step 11, pass 2 |
+| `Simu1.run_single` | `output` | Step 11, pass 3 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 
