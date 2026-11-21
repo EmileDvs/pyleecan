@@ -127,7 +127,7 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   - dqh transformations: `DataTime.n2dqh`, `DataFreq.n2dqh` and
     `DataDual.n2dqh` (time data) replace `n2dqh_DataTime` /
     `n2dqh_DataFreq`, `DataTime.dqh2n` / `DataFreq.dqh2n` replace
-    `dqh2n_DataTime` / `dqh2n_DataFreq`; the other functions are in one module,
+    `dqh2n_DataTime` / `dqh2n_DataFreq`, `DataDual.dqh2n` (time data); the other functions are in one module,
     `SciDataTool.dqh_transformation` (frequency versions with a `_freq`
     suffix), without the checks of the data axes; the old paths are
     deprecated aliases;

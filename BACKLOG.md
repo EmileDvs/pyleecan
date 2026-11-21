@@ -286,8 +286,9 @@ Proposed targets are a starting point; the decision is the maintainer's.
   method, a function of the merged module with the name of the method is
   imported as `<name>_fct` (`n2dqh as n2dqh_fct`, `n2dqh_freq as
   n2dqh_fct`);
-  `DataDual.n2dqh` (new method, `NEW_METHODS`) builds the `DataTime` of
-  its time data (`axes_dt`, `values_dt`) and calls `DataTime.n2dqh`: the
+  `DataDual.n2dqh` and `DataDual.dqh2n` (new methods, `NEW_METHODS`) build
+  the `DataTime` of its time data (`axes_dt`, `values_dt`) and call the
+  `DataTime` method: the
   legacy checks switched the axes and values of the object to the time
   ones.
 - The other functions of `Electrical.dqh_transformation` and

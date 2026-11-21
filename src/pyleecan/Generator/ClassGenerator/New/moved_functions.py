@@ -247,6 +247,39 @@ NEW_METHODS = {
     )
     return data_time.n2dqh(is_dqh_rms=is_dqh_rms, phase_dir=phase_dir)
 ''',
+        # Same for the inverse transformation (DataTime.dqh2n)
+        "dqh2n": '''def dqh2n(self, n, is_n_rms=False, phase_dir=None):
+    """dqh to n phase coordinate transformation of the time data
+
+    Parameters
+    ----------
+    self : DataDual
+        A DataDual object
+    n : int
+        number of phases
+    is_n_rms : bool
+        True to return n currents in rms value, False to return peak values (Pyleecan convention)
+    phase_dir : int
+        direction of phase distribution: +/-1 (-1 clockwise) to enforce
+
+    Returns
+    -------
+    data_n : DataTime
+        data object containing values over time in n phase frame
+    """
+    from ....Classes.DataTime import DataTime
+
+    data_time = DataTime(
+        name=self.name,
+        unit=self.unit,
+        symbol=self.symbol,
+        axes=self.axes_dt,
+        values=self.values_dt,
+        normalizations=self.normalizations,
+        is_real=self.is_real,
+    )
+    return data_time.dqh2n(n=n, is_n_rms=is_n_rms, phase_dir=phase_dir)
+''',
     },
 }
 """{class: {method: source}}: methods without legacy source, written by the
