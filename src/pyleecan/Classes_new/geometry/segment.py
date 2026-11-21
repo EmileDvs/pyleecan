@@ -12,10 +12,9 @@ from ...classes_common.errors import (
     PointSegmentError,
     PointTranslateSegmentError,
 )
-from ...Functions_new.Geometry.inter_line_circle import inter_line_circle
-from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import TEXT_BOX
+from ...Functions_new.utils.geometry import inter_line_circle, inter_line_line
 from .line import Line
 
 if TYPE_CHECKING:

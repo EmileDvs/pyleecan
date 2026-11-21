@@ -1,5 +1,5 @@
 import numpy as np
-from ....Functions_new.Geometry.inter_line_line import inter_line_line
+from ....Functions_new.utils.geometry import inter_line_line
 
 
 def get_H1(self) -> float:

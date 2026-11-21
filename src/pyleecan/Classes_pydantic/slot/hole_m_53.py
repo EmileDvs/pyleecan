@@ -17,7 +17,6 @@ from ...classes_common.errors import (
     Slot53InterError,
 )
 from ...definitions import config_dict
-from ...Functions_pydantic.Geometry.inter_line_circle import inter_line_circle
 from ...Functions_pydantic.labels import HOLEM_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -29,6 +28,7 @@ from ...Functions_pydantic.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from ...Functions_pydantic.utils.geometry import inter_line_circle
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

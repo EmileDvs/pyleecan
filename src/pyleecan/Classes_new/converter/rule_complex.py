@@ -58,10 +58,10 @@ class RuleComplex(Rule):
 
         # Load the function
         if self._fct_name is not None:
-            module = __import__(
-                f"pyleecan.Functions_new.Converter.MotorCAD.{('curve_bh' if self.fct_name == 'curve_B(H)' else self.fct_name.lower().replace('(', '_').replace(')', ''))}",
-                fromlist=(self.fct_name),
-            )
+            # Local import (circular: the registry imports the rule modules)
+            from ...Functions_new.Converter.rule_functions import rule_function_module
+
+            module = rule_function_module(self.fct_name)
             self.other_to_P = getattr(module, "other_to_P")
             self.P_to_other = getattr(module, "P_to_other")
 
@@ -82,7 +82,12 @@ class RuleComplex(Rule):
         other_unit_dict : dict
             dict with unit to make conversion (key: unit family, value: factor)
         """
-        other_dict = self.P_to_other(self, machine, other_dict)
+        # Local import (circular: the registry imports the rule modules)
+        from ...Functions_new.Converter.rule_functions import rule_function_module
+
+        other_dict = rule_function_module(self.fct_name).P_to_other(
+            self, machine, other_dict
+        )
 
         return other_dict
 
@@ -101,6 +106,11 @@ class RuleComplex(Rule):
         other_unit_dict : dict
             dict with unit to make conversion (key: unit family, value: factor)
         """
-        machine = self.other_to_P(self, machine, other_dict, other_unit_dict)
+        # Local import (circular: the registry imports the rule modules)
+        from ...Functions_new.Converter.rule_functions import rule_function_module
+
+        machine = rule_function_module(self.fct_name).other_to_P(
+            self, machine, other_dict, other_unit_dict
+        )
 
         return machine

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
+from ....Functions_new.utils.geometry import inter_line_circle
 
 
 def intersect_line(self, Z1, Z2) -> list:

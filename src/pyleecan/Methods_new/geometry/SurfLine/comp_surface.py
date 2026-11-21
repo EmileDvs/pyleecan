@@ -1,4 +1,4 @@
-from ....Functions_new.Geometry.comp_surface_num import comp_surface_num
+from ....Functions_new.utils.geometry import comp_surface_num
 
 
 def comp_surface(self, Ndisc: int = 200) -> float:

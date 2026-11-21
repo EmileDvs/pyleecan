@@ -9,7 +9,6 @@ import numpy as np
 
 from ...classes_common.errors import ParentMissingError, S16AlphaT, S16OutterError
 from ...classes_common.parents import container_or_parent
-from ...Functions_new.Geometry.inter_circle_circle import inter_circle_circle
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -21,6 +20,7 @@ from ...Functions_new.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from ...Functions_new.utils.geometry import inter_circle_circle
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

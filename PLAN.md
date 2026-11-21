@@ -287,8 +287,10 @@ by module, through the generators (moved to a class, merged, or removed).
 The plan per module is given in the backlog.
 
 - [x] Inventory: 96 modules to decide, in 14 groups (backlog).
-- [ ] Groups decided and applied: 7/14 (2 Winding, 3 Optimization,
-      4 Simulation, 5 MeshSolution, 8 Electrical, 10 FEMM, 11 GMSH;
+- [ ] Groups decided and applied: 8/14 (2 Winding, 3 Optimization,
+      4 Simulation, 5 MeshSolution, 6 Structural, 8 Electrical, 10 FEMM,
+      11 GMSH; 7 Geometry and 9 Plot in progress; Converter rule
+      functions: static registry;
       done groups listed in the CHANGELOG).
 - [ ] Generator passes, one module or group of modules per increment, with
       deprecated aliases at the old paths and the tests unchanged.

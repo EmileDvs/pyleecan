@@ -140,35 +140,138 @@ def redirect_function_module_imports(source, package, mapping, soft_name="pyleec
     return data.decode("utf-8")
 
 
+RULE_FUNCTIONS_FOLDER = "Converter.MotorCAD"
+"""Folder (below Functions) of the functions of the complex conversion rules
+(``RuleComplex.fct_name``: other_to_P / P_to_other of a module)"""
+
+RULE_FUNCTIONS_MODULE = "Converter.rule_functions"
+"""Generated registry of these functions (below Functions_new), Step 8"""
+
+
 def redirect_rule_module_name(source, soft_name="pyleecan"):
-    """Keep legacy rule names while resolving their renamed MotorCAD modules."""
-    data = source.encode("utf-8")
+    """Resolve the complex rule modules with the static registry (Step 8).
+
+    ``__import__(f"pyleecan.Functions[_new].Converter.MotorCAD.{self.fct_name}",
+    fromlist=...)`` (``RuleComplex._set_fct_name``) becomes
+    ``rule_function_module(self.fct_name)``, imported from the generated
+    registry (``Functions_new/Converter/rule_functions.py``) just before the
+    statement (local import: the registry imports the rule modules, which import
+    classes). The rule names stay the legacy ones (``curve_B(H)``, ``slotW11_H1``).
+    """
+    if "__import__" not in source or "Converter.MotorCAD." not in source:
+        return source
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
     offsets = [0]
-    for index, value in enumerate(data):
-        if value == 10:
-            offsets.append(index + 1)
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    parents = {}
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            parents[id(child)] = node
+    prefixes = {
+        f"{soft_name}.Functions.{RULE_FUNCTIONS_FOLDER}.",
+        f"{soft_name}.Functions_new.{RULE_FUNCTIONS_FOLDER}.",
+    }
     replacements = []
-    prefix = f"{soft_name}.Functions_new.Converter.MotorCAD."
-    for node in ast.walk(ast.parse(source)):
+    for node in ast.walk(tree):
         if not (
-            isinstance(node, ast.JoinedStr)
-            and len(node.values) == 2
-            and isinstance(node.values[0], ast.Constant)
-            and node.values[0].value == prefix
-            and isinstance(node.values[1], ast.FormattedValue)
-            and ast.unparse(node.values[1].value) == "self.fct_name"
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "__import__"
+            and node.args
+            and isinstance(node.args[0], ast.JoinedStr)
+            and len(node.args[0].values) == 2
+            and isinstance(node.args[0].values[0], ast.Constant)
+            and node.args[0].values[0].value in prefixes
+            and isinstance(node.args[0].values[1], ast.FormattedValue)
         ):
             continue
-        node.values[1].value = ast.parse(
-            "('curve_bh' if self.fct_name == 'curve_B(H)' else "
-            "self.fct_name.lower().replace('(', '_').replace(')', ''))",
-            mode="eval",
-        ).body
+        name = ast.unparse(node.args[0].values[1].value)
+        statement = node
+        while not isinstance(statement, ast.stmt):
+            statement = parents[id(statement)]
+        indent = " " * statement.col_offset
+        line_start = offsets[statement.lineno - 1]
+        module = f"{soft_name}.Functions_new.{RULE_FUNCTIONS_MODULE}"
         replacements.append((
             offsets[node.lineno - 1] + node.col_offset,
             offsets[node.end_lineno - 1] + node.end_col_offset,
-            ast.unparse(node).encode("utf-8"),
+            f"rule_function_module({name})",
         ))
-    for start, end, replacement in sorted(replacements, reverse=True):
-        data = data[:start] + replacement + data[end:]
-    return data.decode("utf-8")
+        replacements.append((
+            line_start,
+            line_start,
+            (
+                f"{indent}# Local import (circular: the registry imports the rule modules)\n"
+                f"{indent}from {module} import rule_function_module\n\n"
+            ),
+        ))
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    return source
+
+
+def rule_functions_source(source_dir, deprecated=()):
+    """Source of the registry of the complex rule functions (Functions_new).
+
+    Parameters
+    ----------
+    source_dir : Path
+        Legacy Functions folder
+    deprecated : iterable
+        Legacy module names (below Functions) of the deprecated rule modules:
+        loaded on request only (they warn), not imported by the registry
+
+    Returns
+    -------
+    source : str
+        Source of Functions_new/Converter/rule_functions.py
+    """
+    folder = Path(source_dir).joinpath(*RULE_FUNCTIONS_FOLDER.split("."))
+    names = sorted(path.stem for path in folder.glob("*.py") if path.stem != "__init__")
+    deprecated = {
+        name.rpartition(".")[2]
+        for name in deprecated
+        if name.rpartition(".")[0] == RULE_FUNCTIONS_FOLDER
+    }
+    used = [name for name in names if name not in deprecated]
+    package = RULE_FUNCTIONS_FOLDER.rpartition(".")[2]
+    imports = "".join(f"    {function_module_name(name)},\n" for name in used)
+    entries = "".join(f"    {name!r}: {function_module_name(name)},\n" for name in used)
+    old = "".join(
+        f"    {name!r}: {function_module_name(name)!r},\n"
+        for name in names
+        if name in deprecated
+    )
+    return (
+        '"""Registry of the functions of the complex conversion rules (generated).\n\n'
+        "``RuleComplex.fct_name`` names a module of this registry, whose\n"
+        "``other_to_P`` / ``P_to_other`` functions convert the parameters (the\n"
+        "first argument is the rule). Generated by the functions generator\n"
+        "(``function_module_names.rule_functions_source``): do not edit by hand.\n"
+        '"""\n\n'
+        "from importlib import import_module\n\n"
+        f"from .{package} import (\n{imports})\n\n"
+        f"RULE_FUNCTIONS = {{\n{entries}}}\n"
+        '"""{rule name (RuleComplex.fct_name): module of its functions}"""\n\n'
+        f"DEPRECATED_RULE_FUNCTIONS = {{\n{old}}}\n"
+        '"""{rule name: module name} of the deprecated rule modules (loaded on\n'
+        'request, they warn)"""\n\n\n'
+        "def rule_function_module(fct_name):\n"
+        '    """Module of the functions of a complex rule\n\n'
+        "    Parameters\n"
+        "    ----------\n"
+        "    fct_name : str\n"
+        "        Name of the rule functions (RuleComplex.fct_name)\n\n"
+        "    Returns\n"
+        "    -------\n"
+        "    module : module\n"
+        "        Module with the other_to_P and P_to_other functions\n"
+        '    """\n'
+        "    if fct_name in RULE_FUNCTIONS:\n"
+        "        return RULE_FUNCTIONS[fct_name]\n"
+        "    if fct_name in DEPRECATED_RULE_FUNCTIONS:\n"
+        f'        return import_module(f".{package}.{{DEPRECATED_RULE_FUNCTIONS[fct_name]}}", __package__)\n'
+        '    raise KeyError(f"Unknown complex rule functions: {fct_name!r}")\n'
+    )

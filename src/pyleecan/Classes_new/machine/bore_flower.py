@@ -9,7 +9,6 @@ import numpy as np
 
 from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
-from ...Functions_new.Geometry.comp_flower_arc import comp_flower_arc
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -18,6 +17,7 @@ from ...Functions_new.Plot import (
     MAIN_LINE_WIDTH,
     SC_FONT_SIZE,
 )
+from ...Functions_new.utils.geometry import comp_flower_arc
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .bore import Bore

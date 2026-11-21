@@ -1,41 +1,15 @@
-import numpy as np
+"""Deprecated aliases (merged into utils.geometry, removed in Phase 2)."""
+
+from warnings import warn
 
 
-def cut_lines_between_angles(line_list, begin_angle, end_angle):
-    """Cut a list of lines between two angles
-    Assume that the lines draw a closed surface centered on O
-    Constraint: end_angle - begin_angle < pi (first cut remove half the lines)
+def cut_lines_between_angles(*args, **kwargs):
+    """Deprecated: use utils.geometry.cut_lines_between_angles"""
+    from ..utils.geometry import cut_lines_between_angles as function
 
-    Parameters
-    ----------
-    line_list : [Line]
-        list of line to cut
-    begin_angle : float
-        Begin angle of the cut [rad]
-    end_angle : float
-        End angle of the cut [rad]
-
-    Returns
-    -------
-    cut_lines : [Line]
-        Cut lines between the two angles
-    """
-
-    first_cut = []
-    cut_lines = []
-    # First cut
-    for line in line_list:
-        top_split_list, _ = line.split_line(0, np.exp(1j * begin_angle))
-        first_cut.extend(top_split_list)
-    # Second cut
-    for line in first_cut:
-        _, bot_split_list = line.split_line(0, np.exp(1j * end_angle))
-        cut_lines.extend(bot_split_list)
-
-    # Check that lines are in the correct way
-    if (np.angle(cut_lines[0].get_begin()) % (2 * np.pi)) - (
-        begin_angle % (2 * np.pi)
-    ) > 1e-6:
-        cut_lines = cut_lines[::-1]
-
-    return cut_lines
+    warn(
+        "cut_lines_between_angles is deprecated, use utils.geometry.cut_lines_between_angles (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return function(*args, **kwargs)

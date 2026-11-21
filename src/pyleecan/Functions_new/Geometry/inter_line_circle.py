@@ -1,57 +1,15 @@
-import numpy as np
+"""Deprecated aliases (merged into utils.geometry, removed in Phase 2)."""
+
+from warnings import warn
 
 
-def inter_line_circle(Z1, Z2, R, Zc=0):
-    """INTER_LINE_CIRCLE find the intersection between a circle of center Zc
-    and radius r with a line defined by two points
+def inter_line_circle(*args, **kwargs):
+    """Deprecated: use utils.geometry.inter_line_circle"""
+    from ..utils.geometry import inter_line_circle as function
 
-    Parameters
-    ----------
-    Z1 : complex
-        Complex coordinate of a point on the line
-    Z2 : complex
-        Complex coordinate of another point on the line
-    R : float
-        Radius of the circle [m]
-    Zc : complex
-        Complex coordinate of the center
-
-    Returns
-    -------
-    Zlist: list
-        List of the complex coordinates of the intersection
-    """
-    # Set the coordinate system on the circle center
-    if np.abs(Zc) > 1e-6:
-        Z1 = Z1 - Zc
-        Z2 = Z2 - Zc
-    else:
-        Zc = 0
-
-    x1 = Z1.real
-    y1 = Z1.imag
-    x2 = Z2.real
-    y2 = Z2.imag
-
-    dx = x2 - x1
-    dy = y2 - y1
-    dr = np.sqrt(dx**2 + dy**2)
-    D = x1 * y2 - x2 * y1
-
-    delta = R**2 * dr**2 - D**2
-    if delta < 0:  # 0 point
-        return []
-    elif delta == 0:  # 1 point(tangent)
-        return [(D * dy - 1j * D * dx) / dr**2 + Zc]
-
-    else:  # 2 points
-        if dy < 0:
-            xs1 = (D * dy - dx * np.sqrt(delta)) / dr**2
-            xs2 = (D * dy + dx * np.sqrt(delta)) / dr**2
-        else:
-            xs1 = (D * dy + dx * np.sqrt(delta)) / dr**2
-            xs2 = (D * dy - dx * np.sqrt(delta)) / dr**2
-        ys1 = (-D * dx + abs(dy) * np.sqrt(delta)) / dr**2
-        ys2 = (-D * dx - abs(dy) * np.sqrt(delta)) / dr**2
-
-        return [xs1 + 1j * ys1 + Zc, xs2 + 1j * ys2 + Zc]
+    warn(
+        "inter_line_circle is deprecated, use utils.geometry.inter_line_circle (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return function(*args, **kwargs)

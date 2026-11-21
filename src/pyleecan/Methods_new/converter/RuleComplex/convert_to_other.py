@@ -18,6 +18,11 @@ def convert_to_other(self, other_dict: dict, machine: Machine, other_unit_dict: 
     other_unit_dict : dict
         dict with unit to make conversion (key: unit family, value: factor)
     """
-    other_dict = self.P_to_other(self, machine, other_dict)
+    # Local import (circular: the registry imports the rule modules)
+    from ....Functions_new.Converter.rule_functions import rule_function_module
+
+    other_dict = rule_function_module(self.fct_name).P_to_other(
+        self, machine, other_dict
+    )
 
     return other_dict

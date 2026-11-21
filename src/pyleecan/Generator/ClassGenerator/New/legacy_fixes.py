@@ -88,7 +88,34 @@ _CONVERT_MC_SLOT = LegacyFix(
     new='f"Type of slot {type(slot).__name__} has not equivalent',
 )
 
+_RULE_FUNCTIONS_IMPORT = (
+    "    # Local import (circular: the registry imports the rule modules)\n"
+    "    from ....Functions_new.Converter.rule_functions import rule_function_module\n\n"
+)
+
 LEGACY_FIXES = {
+    # The functions of a complex rule read from the static registry when the
+    # rule is applied (Step 8): the custom setter of fct_name that stored them
+    # on the object is not wired in the new classes, and a pydantic model
+    # cannot hold these attributes
+    ("RuleComplex", "convert_to_P.py"): (
+        LegacyFix(
+            old="    machine = self.other_to_P(self, machine, other_dict, other_unit_dict)\n",
+            new=_RULE_FUNCTIONS_IMPORT
+            + "    machine = rule_function_module(self.fct_name).other_to_P(\n"
+            "        self, machine, other_dict, other_unit_dict\n"
+            "    )\n",
+        ),
+    ),
+    ("RuleComplex", "convert_to_other.py"): (
+        LegacyFix(
+            old="    other_dict = self.P_to_other(self, machine, other_dict)\n",
+            new=_RULE_FUNCTIONS_IMPORT
+            + "    other_dict = rule_function_module(self.fct_name).P_to_other(\n"
+            "        self, machine, other_dict\n"
+            "    )\n",
+        ),
+    ),
     ("VectorField", "get_harm_xyz_along.py"): (
         # pol2cart not imported (NameError)
         LegacyFix(

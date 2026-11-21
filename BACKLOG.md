@@ -212,6 +212,30 @@ utility (`utils/` in Phase 2), or removed (dead code, deprecated first).
       methods), report the coverage and the `ty` diagnostics of
       `Functions_new`.
 
+### Converter rule functions (2026-11-21)
+
+The 24 `Converter/MotorCAD` modules are the functions of the complex
+conversion rules: `other_to_P(self, ...)` / `P_to_other(self, ...)`, with
+`self` the `RuleComplex` (it reads `unit_type`, `param_dict`, `get_other`,
+`set_P`), loaded by name from `RuleComplex.fct_name`.
+
+- [x] Static registry (decided): `Functions_new/Converter/rule_functions.py`,
+      generated (`function_module_names.rule_functions_source`):
+      `RULE_FUNCTIONS = {legacy rule name: module}` and
+      `rule_function_module(fct_name)`; the `__import__` by name of
+      `_set_fct_name` replaced (`redirect_rule_module_name`, local import),
+      and `RuleComplex.convert_to_P` / `convert_to_other` read the registry
+      when they run (`legacy_fixes`), so the unwired custom setter is no
+      longer needed. Result: `Tests/New/Methods/Converter` 49 passed on
+      both backends (43 failed before: `other_to_P` missing; the pydantic
+      loader had a broken module name).
+- [x] `slotW23_H1` deprecated (decided: no rule uses it,
+      `add_rule_slotW23` converts H1 with a simple rule); not imported by
+      the registry, loaded on request (`DEPRECATED_RULE_FUNCTIONS`, it
+      warns).
+- [ ] Docstrings of the rule functions: `self : RuleComplex` (they say
+      `ConvertMC`); rename `self` to `rule` (Step 15).
+
 ### Inventory
 
 126 modules in `Functions` outside `SciDataTool`; 7 vendored (`_swat_em`,
@@ -236,7 +260,7 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | done (2026-11-21): static methods of `VarSimu` |
 | 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | done (2026-11-21): static `SolutionData.build_solution_data`, `SolutionVector.build_solution_vector`; `Output.get_frame_meshsolution` (it reads `output.mag`); deleted `build_meshsolution` kept as a deprecated alias of the `MeshSolution` constructor |
 | 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | done (2026-11-21): deprecated, its functions in `SciDataTool.conversions` (below) |
-| 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | |
+| 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | in progress (2026-11-21): `inter_line_circle`, `inter_line_line` (with `find_line_eq`), `inter_circle_circle`, `circle_from_3_points`, `comp_flower_arc`, `cut_lines_between_angle`, `comp_surface_num` merged in `utils/geometry.py` (`MERGED_MODULES`, the legacy paths deprecated aliases, the callers redirected); `merge_notch_list`, `transform_hole_surf` to decide |
 | 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | done (2026-11-21): dqh (methods `DataTime.n2dqh`, `DataFreq.n2dqh`, `DataDual.n2dqh`, the other functions merged in `SciDataTool.dqh_transformation`, checks dropped); `comp_loss_joule` deprecated (not used); `comp_MTPA` method of `LUTdq` |
 | 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | in progress (2026-11-21): pyvista functions gathered in `pv_plotter_pyleecan` (static methods first, done); `animate_as_gif` to `Data` (static); `get_color_legend_from_surface` to `Machine` (open, below) |
 | 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | done (2026-11-21): object dedicated to the FEMM interface, `femm_pyleecan`, in a new sub-package `femm`, all the functions as its methods; the current handler (`_FEMMHandler`) becomes `femm_pyleecan.handler` |
@@ -841,7 +865,9 @@ no property). The `slot` ones (`SlotW11`/`SlotW11_2`/`SlotW23._set_W3`,
 - [ ] `DataKeeper._set_keeper`: same pattern (str, lambda or path to a callable).
 - [ ] `VarLoad._set_OP_matrix`.
 - [ ] `DataND._set_values` / `_get_field` / `_get_freqs`, `Data._set_normalizations`.
-- [ ] `RuleComplex._set_fct_name`.
+- [x] `RuleComplex._set_fct_name` (2026-11-21): no longer needed, the
+      conversions read the rule functions from the static registry when
+      they run (`legacy_fixes`: `convert_to_P`, `convert_to_other`).
 
 For each: an explicit conversion (field validator, or a method building the
 value), the same in both backends.

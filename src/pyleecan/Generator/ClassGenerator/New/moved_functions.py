@@ -182,6 +182,9 @@ DEPRECATED_MODULES = {
     "Electrical.comp_loss_joule": "it is not used by pyleecan",
     # Step 9: the loggers without the parent chain
     "get_logger": "use classes_common.logger_context.get_logger",
+    # Step 8: no MotorCAD rule uses it (add_rule_slotW23 converts H1 with a
+    # simple rule)
+    "Converter.MotorCAD.slotW23_H1": "it is not used by the MotorCAD conversion rules",
 }
 """{legacy module below Functions: replacement}: the public functions of the
 module warn (DeprecationWarning) in Functions_new, removed in Phase 2"""
@@ -228,6 +231,23 @@ MERGED_MODULES = {
         "dropped": (),
         "identical": ("xyz_to_rphiz", "xyz_to_rphiz_field", "rphiz_to_xyz_field"),
         "errors": ("DimError",),
+    },
+    # Step 8 group 7 (decision 2026-11-21): the geometry utilities in one
+    # module of the utils package
+    "utils.geometry": {
+        "sources": tuple(
+            (f"Geometry.{module}", {})
+            for module in (
+                "inter_line_circle",
+                "inter_line_line",
+                "inter_circle_circle",
+                "circle_from_3_points",
+                "comp_flower_arc",
+                "cut_lines_between_angle",
+                "comp_surface_num",
+            )
+        ),
+        "dropped": (),
     },
 }
 """{new module below Functions: {"sources": ((legacy module, {function: new

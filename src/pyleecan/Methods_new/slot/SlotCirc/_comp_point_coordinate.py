@@ -1,5 +1,5 @@
 import numpy as np
-from ....Functions_new.Geometry.circle_from_3_points import circle_from_3_points
+from ....Functions_new.utils.geometry import circle_from_3_points
 
 
 def _comp_point_coordinate(self) -> dict:

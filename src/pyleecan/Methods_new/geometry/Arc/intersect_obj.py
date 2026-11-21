@@ -1,4 +1,4 @@
-from ....Functions_new.Geometry.inter_circle_circle import inter_circle_circle
+from ....Functions_new.utils.geometry import inter_circle_circle
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

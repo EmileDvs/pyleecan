@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from matplotlib.patches import Polygon
 
-from ...Functions_new.Geometry.comp_surface_num import comp_surface_num
 from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.geometry import comp_surface_num
 from .line import Line
 from .surface import Surface
 

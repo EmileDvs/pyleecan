@@ -1,37 +1,15 @@
-import numpy as np
+"""Deprecated aliases (merged into utils.geometry, removed in Phase 2)."""
+
+from warnings import warn
 
 
-def comp_surface_num(point_list):
-    """Compute the surface of the Polygon defined by the points
+def comp_surface_num(*args, **kwargs):
+    """Deprecated: use utils.geometry.comp_surface_num"""
+    from ..utils.geometry import comp_surface_num as function
 
-    Parameters
-    ----------
-    point_list : list
-        List of complex coordinate of the points
-
-    Returns
-    -------
-    S: float
-        Surface of the closed surface [m**2]
-
-    """
-
-    # We have to be sure that the surface is closed
-    # (ie point_list[0]=point_list[end]) If it's already the case Xi+1 - Xi =0
-    point_list.append(point_list[0])
-
-    point_array = np.array(point_list)
-
-    # We translate the points so every point have imag >=0
-    min_imag = min(point_array.imag)
-    if min_imag < 0:
-        point_array += abs(min_imag) * 1j
-
-    S_acc = 0
-    for ii in range(point_array.size - 1):
-        Var_X = point_array[ii + 1].real - point_array[ii].real
-        Var_Y = point_array[ii + 1].imag + point_array[ii].imag
-
-        S_acc += Var_Y * Var_X
-
-    return abs(S_acc / 2.0)
+    warn(
+        "comp_surface_num is deprecated, use utils.geometry.comp_surface_num (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return function(*args, **kwargs)

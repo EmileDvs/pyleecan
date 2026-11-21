@@ -106,6 +106,15 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   a static method of `VarSimu`. The old function paths of `Functions_new` and
   `Functions_pydantic` are deprecated aliases (`DeprecationWarning`) until
   Phase 2. The other functions used by a single class stay utilities.
+- **Geometry utilities in `utils.geometry`** (Step 8): the intersection
+  and circle helpers (`inter_line_circle`, `inter_line_line`,
+  `inter_circle_circle`, `circle_from_3_points`, `comp_flower_arc`,
+  `cut_lines_between_angle`, `comp_surface_num`) in one module; the old
+  `Geometry.*` paths are deprecated aliases.
+- **Converter rule functions from a static registry** (Step 8):
+  `Converter.rule_functions` maps the rule names to their modules (no
+  import by name); the complex rules work on both backends;
+  `Converter.MotorCAD.slotW23_H1` is deprecated (not used).
 - **GUI on the new classes** (Step 10, first pass): `GUI_new` (dataclass)
   and `GUI_pydantic` are generated from the legacy GUI (same modernization
   as the methods; the Qt resources shared with the legacy GUI).

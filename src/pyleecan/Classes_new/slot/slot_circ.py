@@ -9,7 +9,6 @@ import numpy as np
 
 from ...classes_common.errors import ParentMissingError
 from ...classes_common.parents import container_or_parent
-from ...Functions_new.Geometry.circle_from_3_points import circle_from_3_points
 from ...Functions_new.labels import DRAW_PROP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -21,6 +20,7 @@ from ...Functions_new.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from ...Functions_new.utils.geometry import circle_from_3_points
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

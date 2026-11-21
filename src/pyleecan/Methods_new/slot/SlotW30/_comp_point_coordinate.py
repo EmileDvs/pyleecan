@@ -1,6 +1,6 @@
 import numpy as np
-from ....Functions_new.Geometry.inter_line_line import inter_line_line
-from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
+from ....Functions_new.utils.geometry import inter_line_line
+from ....Functions_new.utils.geometry import inter_line_circle
 
 
 def _comp_point_coordinate(self) -> dict:

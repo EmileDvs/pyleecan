@@ -982,6 +982,18 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         else:
             shutil.copy2(path, destination)
         generated.add(destination)
+    # Static registry of the complex rule functions (Step 8)
+    from .function_module_names import RULE_FUNCTIONS_MODULE, rule_functions_source
+
+    if source_dir.joinpath("Converter", "MotorCAD").is_dir():
+        registry = output_dir.joinpath(*RULE_FUNCTIONS_MODULE.split(".")).with_suffix(".py")
+        registry.write_text(
+            _format_function_source(
+                rule_functions_source(source_dir, DEPRECATED_MODULES), registry
+            ),
+            encoding="utf-8",
+        )
+        generated.add(registry)
     remove_stale_modules(output_dir, generated)
     return issues
 

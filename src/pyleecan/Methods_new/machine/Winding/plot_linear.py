@@ -5,7 +5,7 @@ import numpy as np
 from ....Classes_new._swat_em import datamodel
 from ....definitions import config_dict
 from ....Functions_new._swat_em.config import config
-from ....Functions_new.Geometry.inter_line_line import inter_line_line
+from ....Functions_new.utils.geometry import inter_line_line
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.Winding.gen_phase_list import gen_name
 from typing import TYPE_CHECKING

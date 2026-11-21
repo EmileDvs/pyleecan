@@ -7,8 +7,8 @@ import numpy as np
 from matplotlib.patches import Polygon
 from pydantic import Field
 
-from ...Functions_pydantic.Geometry.comp_surface_num import comp_surface_num
 from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.utils.geometry import comp_surface_num
 from .line import Line
 from .surface import Surface
 

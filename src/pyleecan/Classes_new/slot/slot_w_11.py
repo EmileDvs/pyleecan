@@ -17,7 +17,6 @@ from ...classes_common.errors import (
     S11_W01CheckError,
 )
 from ...classes_common.parents import container_or_parent
-from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -30,6 +29,7 @@ from ...Functions_new.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from ...Functions_new.utils.geometry import inter_line_line
 from ..geometry.arc_1 import Arc1
 from ..geometry.arc_3 import Arc3
 from ..geometry.segment import Segment

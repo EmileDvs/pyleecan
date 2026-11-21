@@ -1,3 +1,6 @@
+from warnings import warn
+
+
 def other_to_P(self, machine, other_dict, other_unit_dict=None):
     """Conversion H1 in m to slotW11
 
@@ -17,6 +20,11 @@ def other_to_P(self, machine, other_dict, other_unit_dict=None):
     machine : Machine
         A obj machine
     """
+    warn(
+        "other_to_P is deprecated, it is not used by the MotorCAD conversion rules (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     H1 = machine.stator.slot.get_H1()
 
     machine.stator.slot.H1 = H1
@@ -43,4 +51,9 @@ def P_to_other(self, machine, other_dict, other_unit_dict=None):
     other_dict : dict
         A dict with the conversion obj machine
     """
+    warn(
+        "P_to_other is deprecated, it is not used by the MotorCAD conversion rules (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     return other_dict

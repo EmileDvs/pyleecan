@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Functions_new.Geometry.cut_lines_between_angle import cut_lines_between_angles
+from ....Functions_new.utils.geometry import cut_lines_between_angles
 from ....Classes_new.geometry.segment import Segment
 
 

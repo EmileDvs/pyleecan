@@ -58,17 +58,46 @@ def test_function_module_mapping_rejects_collisions(tmp_path):
         function_module_mapping(tmp_path)
 
 
-def test_rule_module_name_conversion_keeps_legacy_values():
+def test_rule_module_name_uses_the_registry():
+    """RuleComplex._set_fct_name: the static registry instead of __import__."""
     source = (
-        'name = f"pyleecan.Functions_new.Converter.MotorCAD.{self.fct_name}"\n'
+        "def _set_fct_name(self, value):\n"
+        "    if self._fct_name is not None:\n"
+        "        module = __import__(\n"
+        '            f"pyleecan.Functions.Converter.MotorCAD.{self.fct_name}",\n'
+        "            fromlist=(self.fct_name),\n"
+        "        )\n"
+        '        self.other_to_P = getattr(module, "other_to_P")\n'
     )
     result = redirect_rule_module_name(source)
-    from types import SimpleNamespace
+    assert result == (
+        "def _set_fct_name(self, value):\n"
+        "    if self._fct_name is not None:\n"
+        "        # Local import (circular: the registry imports the rule modules)\n"
+        "        from pyleecan.Functions_new.Converter.rule_functions import "
+        "rule_function_module\n\n"
+        "        module = rule_function_module(self.fct_name)\n"
+        '        self.other_to_P = getattr(module, "other_to_P")\n'
+    )
+    assert redirect_rule_module_name(result) == result
 
-    for name in ("curve_B(H)", "slotW11_H1", "skew"):
-        namespace = {"self": SimpleNamespace(fct_name=name)}
-        exec(result, namespace)  # noqa: S102
-        assert namespace["name"].endswith("." + function_module_name(name))
+
+def test_rule_functions_registry(tmp_path):
+    from pyleecan.Generator.ClassGenerator.New.function_module_names import (
+        rule_functions_source,
+    )
+
+    folder = tmp_path / "Converter" / "MotorCAD"
+    folder.mkdir(parents=True)
+    for name in ("curve_B(H)", "slotW11_H1", "slotW23_H1"):
+        (folder / f"{name}.py").write_text("", encoding="utf-8")
+    source = rule_functions_source(
+        tmp_path, {"Converter.MotorCAD.slotW23_H1": "", "Plot.slotW11_H1": ""}
+    )
+    assert "    'curve_B(H)': curve_bh,\n    'slotW11_H1': slotw11_h1,\n" in source
+    assert "    'slotW23_H1': 'slotw23_h1',\n" in source
+    assert "    slotw23_h1,\n" not in source  # Not imported (it warns)
+    compile(source, "rule_functions.py", "exec")
 
 
 def test_generate_functions_renames_modules_and_references(tmp_path):

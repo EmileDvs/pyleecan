@@ -15,7 +15,6 @@ from ...classes_common.errors import (
     S63_WindError,
 )
 from ...classes_common.parents import container_or_parent
-from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
 from ...Functions_pydantic.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -28,6 +27,7 @@ from ...Functions_pydantic.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from ...Functions_pydantic.utils.geometry import inter_line_line
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

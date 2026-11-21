@@ -18,6 +18,11 @@ def convert_to_P(self, other_dict: dict, machine: Machine, other_unit_dict: dict
     other_unit_dict : dict
         dict with unit to make conversion (key: unit family, value: factor)
     """
-    machine = self.other_to_P(self, machine, other_dict, other_unit_dict)
+    # Local import (circular: the registry imports the rule modules)
+    from ....Functions_new.Converter.rule_functions import rule_function_module
+
+    machine = rule_function_module(self.fct_name).other_to_P(
+        self, machine, other_dict, other_unit_dict
+    )
 
     return machine

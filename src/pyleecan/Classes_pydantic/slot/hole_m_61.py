@@ -9,8 +9,6 @@ from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError, S61_NoneError, S61_WCheckError
 from ...definitions import config_dict
-from ...Functions_pydantic.Geometry.inter_line_circle import inter_line_circle
-from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
 from ...Functions_pydantic.labels import HOLEM_LAB, decode_label
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -23,6 +21,7 @@ from ...Functions_pydantic.Plot import (
     TEXT_BOX,
     plot_quote,
 )
+from ...Functions_pydantic.utils.geometry import inter_line_circle, inter_line_line
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine
