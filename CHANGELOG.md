@@ -207,7 +207,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
-| 8. Refactor the remaining `Functions` modules (generator) | to do |
+| 8. Refactor the remaining `Functions` modules (generator) | in progress (0/14 groups) |
 | 9. Logger chain (generator) | to do |
 | 10. GUI, first pass (generator) | to do |
 | 11. Parent links, first pass (generator) | to do |

@@ -198,7 +198,9 @@ of `Functions` (outside SciDataTool and the vendored code) gets a target:
 moved to a class (`MOVED_FUNCTIONS`), merged with another module, kept as a
 utility (`utils/` in Phase 2), or removed (dead code, deprecated first).
 
-- [ ] Plan per module (given by the maintainer, to be written here).
+- [x] Inventory (2026-11-21, below).
+- [ ] Plan per module: decided with the maintainer, one group at a time
+      (Decision column); each group done is listed in the CHANGELOG.
 - [ ] Generator support for the targets the Step 6 mechanism does not cover
       yet (e.g. merging modules, functions moved together as a group).
 - [ ] Apply the plan, one module or group per increment: deprecated aliases
@@ -208,6 +210,39 @@ utility (`utils/` in Phase 2), or removed (dead code, deprecated first).
       `type_hints.py` pass in the functions generator (same rules as the
       methods), report the coverage and the `ty` diagnostics of
       `Functions_new`.
+
+### Inventory
+
+126 modules in `Functions` outside `SciDataTool`; 7 vendored (`_swat_em`,
+`_smoot`, Phase 2 `_vendor/`) and 23 MotorCAD conversion rules (loaded by
+name by `RuleComplex._set_fct_name`) are out of the per-module work: 96
+modules to decide. Callers counted from the imports (AST) of the legacy
+`Methods` (M), `Functions` (F), `GUI` (G), `Classes` (C) and `Tests` (T);
+the classes are those of the calling methods. Already done in Step 6:
+`MeshSolution.get_area`, `MeshSolution.get_indices_limited`,
+`Simulation.VarSimu.run_multisim_step`; not copied: `copy`.
+
+Targets: **class** (method of a class, `MOVED_FUNCTIONS`), **merge** (into
+another module), **utility** (kept, `utils/` in Phase 2), **remove** (dead
+code: deprecated alias in Phase 1, removed in Phase 2), **other step**.
+Proposed targets are a starting point; the decision is the maintainer's.
+
+| # | Group | Modules (callers) | Proposed target | Decision |
+|---|---|---|---|---|
+| 1 | Dead code | `Plot.plot_2D_Data`, `Plot.plot_3D_Data` (already deprecated), `Plot.animate_as_gif`, `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `Electrical.comp_MTPA`, `getattr_recursive`, `short_filepath`, `Converter.Utils.EquivalentError` (no caller) | remove | |
+| 2 | Winding | `reverse_wind_mat`, `shift_wind_mat` (M6: Winding, WindingSC, WindingUD), `comp_cond_function` (M2: LamSlotWind, LamSlotMultiWind), `gen_phase_list` (M8 F2 T2), `find_wind_phase_color` (M3 F2) | class: `Winding` (wind matrix), `LamSlotWind` (conductor function); utility: phase list and colors | |
+| 3 | Optimization | `check_cstr`, `evaluate`, `tournamentDCD`, `update` (M2 each: OptiGenAlgNsga2Deap, OptiBayesAlgSmoot) | class: `OptiSolver` (shared base) or `OptiGenAlg` | |
+| 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | |
+| 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | |
+| 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | |
+| 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | |
+| 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | |
+| 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | |
+| 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | |
+| 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | |
+| 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | |
+| 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
+| 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
 
 ## Step 9: logger chain
 

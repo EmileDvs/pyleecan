@@ -184,7 +184,7 @@ Methods receive their context explicitly instead, for example
 | 5. `Methods_new` generator and type hints, first pass | generator | legacy bugs to fix |
 | 6. Class-specific functions moved to their class | generator | done |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | done (open points in the backlog) |
-| 8. Refactor the remaining `Functions` modules | generator | to do (plan per module to come) |
+| 8. Refactor the remaining `Functions` modules | generator | in progress (0/14 groups) |
 | 9. Logger chain | generator | to do |
 | 10. GUI, first pass | generator | to do |
 | 11. Parent links, first pass | generator | to do |
@@ -286,7 +286,8 @@ Drastically reduce the number of utility functions left for Phase 2, module
 by module, through the generators (moved to a class, merged, or removed).
 The plan per module is given in the backlog.
 
-- [ ] Plan per module (to come).
+- [x] Inventory: 96 modules to decide, in 14 groups (backlog).
+- [ ] Groups decided and applied: 0/14 (done groups listed in the CHANGELOG).
 - [ ] Generator passes, one module or group of modules per increment, with
       deprecated aliases at the old paths and the tests unchanged.
 - [ ] Type hints drafted for the functions that stay utilities, with the same
