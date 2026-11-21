@@ -398,15 +398,31 @@ def test_merged_module_callers(merged):
 
 
 def test_new_methods_added_to_the_classes():
-    from pyleecan.Generator.ClassGenerator.New.moved_functions import NEW_METHODS
+    from pyleecan.Generator.ClassGenerator.New.moved_functions import NEW_METHODS, all_moved_targets
 
-    gen_dict = {"DataDual": {"methods": ["get_along"]}, **{
-        name: {"methods": []} for name in ("DataTime", "DataFreq", "MeshSolution", "VarSimu",
-        "OptiGenAlgNsga2Deap", "Winding", "Conductor", "SolutionData", "SolutionVector", "Output")
-    }}
+    gen_dict = {target.class_name: {"methods": []} for _, target in all_moved_targets()}
+    gen_dict["DataDual"] = {"methods": ["get_along"]}
     add_moved_methods(gen_dict)
     assert set(NEW_METHODS["DataDual"]) <= set(gen_dict["DataDual"]["methods"])
     assert "n2dqh" in gen_dict["DataTime"]["methods"]
+
+
+def test_method_source_local_class_imports():
+    """local_imports: the class imports go in the method body, marked circular."""
+    source = (
+        "from glob import glob\n\nfrom ...Classes.VectorField import VectorField\n\n\n"
+        'def animate(func, data):\n    """Doc"""\n    return isinstance(data, VectorField)\n'
+    )
+    target = MovedFunction("Data", "animate", static=True, local_imports=True)
+    result = method_source(source, target, "pyleecan.Functions.Plot", "pyleecan.Methods_new.scidatatool.Data")
+    assert "\nfrom ....Classes.VectorField" not in result
+    assert (
+        '    """Doc"""\n'
+        "    # Local import: circular import with the class module\n"
+        "    from ....Classes.VectorField import VectorField\n"
+    ) in result
+    assert "from glob import glob" in result
+    ast.parse(result)
 
 
 def test_deprecate_source():

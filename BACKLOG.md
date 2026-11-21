@@ -244,6 +244,12 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
 
+### animate_as_gif (2026-11-21)
+
+- Static method of `Data` (no caller). Its `VectorField` import goes in
+  the method (`MovedFunction.local_imports`, comment marking the circular
+  import: `VectorField` imports `DataND`, which imports `Data`).
+
 ### dqh transformations (2026-11-21)
 
 - `n2dqh_DataTime` -> `DataTime.n2dqh`, `n2dqh_DataFreq` -> `DataFreq.n2dqh`

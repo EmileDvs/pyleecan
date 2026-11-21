@@ -44,6 +44,9 @@ class MovedFunction(NamedTuple):
     function: str = ""
     """Name of the legacy function when it differs from the method
     (``n2dqh_DataTime`` -> ``DataTime.n2dqh``)"""
+    local_imports: bool = False
+    """True: the class imports of the legacy module go in the method body (the
+    class module would import a class depending on it: import cycle)"""
 
     @property
     def legacy_name(self):
@@ -93,6 +96,10 @@ MOVED_FUNCTIONS = {
     ),
     "Electrical.dqh_transformation_freq": MovedFunction(
         "DataFreq", "n2dqh", function="n2dqh_DataFreq"
+    ),
+    # Step 8, group 9: animation of any plot of Data objects (no caller)
+    "Plot.animate_as_gif": MovedFunction(
+        "Data", "animate_as_gif", static=True, local_imports=True
     ),
     # Step 8, group 5: solution constructors; the magnetic meshsolution of an
     # output and the frame suffix of a group (it reads output.mag)
@@ -712,6 +719,42 @@ def _split_moved_siblings(source, module_name, siblings, renames=None):
     return "".join(lines)
 
 
+def _localize_class_imports(source, package, function_name):
+    """Move the module-level class imports into the body of the function.
+
+    The comment above them keeps them local in the generated class (the class
+    generator hoists the other method imports to the class module).
+    """
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    moved, removals = [], []
+    for node in tree.body:
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        module = (
+            resolve_name("." * node.level + (node.module or ""), package)
+            if node.level
+            else node.module
+        )
+        if module and module.startswith("pyleecan.Classes."):
+            moved.append(ast.unparse(node))
+            removals.append((node.lineno - 1, node.end_lineno))
+    if not moved:
+        return source
+    function = _function_node(tree, function_name)
+    first = function.body[1] if ast.get_docstring(function) is not None and len(function.body) > 1 else function.body[0]
+    indent = " " * first.col_offset
+    block = (
+        f"{indent}# Local import: circular import with the class module\n"
+        + "".join(f"{indent}{text}\n" for text in moved)
+        + "\n"
+    )
+    lines.insert(first.lineno - 1, block)
+    for first_line, last_line in sorted(removals, reverse=True):
+        del lines[first_line:last_line]
+    return "".join(lines)
+
+
 def method_source(source, target, old_package, new_package, siblings=()):
     """Source of the method module of a moved function.
 
@@ -739,6 +782,8 @@ def method_source(source, target, old_package, new_package, siblings=()):
         module_name, names = siblings[:2]
         renames = siblings[2] if len(siblings) > 2 else {}
         source = _split_moved_siblings(source, module_name, set(names), renames)
+    if target.local_imports:
+        source = _localize_class_imports(source, old_package, target.legacy_name)
     source = _relocate_relative_imports(source, old_package, new_package)
     # Name of the method: "_<method>" (bound), the method name (renamed)
     new_name = target.implementation

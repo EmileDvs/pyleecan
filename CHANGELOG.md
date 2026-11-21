@@ -129,7 +129,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     `n2dqh_DataFreq`; the other functions are in one module,
     `SciDataTool.dqh_transformation` (frequency versions with a `_freq`
     suffix), without the checks of the data axes; the old paths are
-    deprecated aliases.
+    deprecated aliases;
+  - `animate_as_gif` becomes a static method of `Data` (any plot of the
+    Data objects).
   The old paths are deprecated aliases until Phase 2.
 - **Class lookup by name** without generated table: `import_class` and
   `ClassInfo` walk the sub-packages.
