@@ -194,6 +194,7 @@ Methods receive their context explicitly instead, for example
 | 15. Utility functions | frozen | to do |
 | 16. Parent links, second pass | frozen | to do |
 | 17. GUI, second pass | frozen | to do |
+| 18. Backend comparison (benchmark) | frozen | to do |
 
 ### Step 0: separate the implementations in the generator — done
 
@@ -387,6 +388,19 @@ can be automated is left to the frozen steps.
       left in the widgets.
 - [ ] GUI tests hand-maintained; the machines built with the GUI give the
       same dump as with the legacy GUI.
+
+### Step 18: backend comparison (benchmark)
+
+The end of Phase 1: pydantic (reference) and dataclass + dacite are compared
+on the same code paths, `Methods_new` / `Functions_new` / `GUI_new` against
+their pydantic counterparts.
+
+- [ ] Benchmark suite: creation, validation on assignment, dump and load
+      (machine files of `Data/Machine`), copy and equality, method results
+      and time, simulations, GUI scenarios (`GUI_new` / `GUI_pydantic`:
+      machine setup, field edits with validation errors).
+- [ ] Report (time, memory, behaviour differences) and conclusion for
+      Phase 2: confirm the reference backend, keep or drop the other one.
 
 ## Phase 2: repository layout
 

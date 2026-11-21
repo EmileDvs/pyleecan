@@ -217,6 +217,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 15. Utility functions (frozen) | to do |
 | 16. Parent links, second pass (frozen) | to do |
 | 17. GUI, second pass (frozen) | to do |
+| 18. Backend comparison (benchmark) | to do |
 
 Legacy class tests (`Tests/New/Classes`), with each backend: 2855 passed,
 1 failed (`test_copy_out`: custom property setter of `ParamExplorer`, planned

@@ -268,8 +268,9 @@ generated first so that the same passes rewrite its calls.
       alias like `backend_classes`); they import the legacy GUI today.
 - [ ] The GUI calls of the logger chain (Step 9) and of the moved functions
       (Step 6, Step 8) rewritten by the same passes.
-- [ ] Decide: `GUI_pydantic` generated, or the GUI run on the reference
-      backend only (pydantic) with `GUI_new` kept for the tests.
+- [x] Decided (2026-11-21): both `GUI_new` (dataclass + dacite) and
+      `GUI_pydantic` are kept, for the final backend comparison (Step 18:
+      the same GUI scenarios run on each backend).
 
 ## Step 11: parent links, first pass
 
@@ -535,6 +536,25 @@ Same signature rule as Step 11 (optional container argument, fallback through
       GUI give the same dump as with the legacy GUI.
 - [ ] The `-1` / `None` conventions left in the GUI removed with the legacy
       layer (Phase 2).
+
+## Step 18: backend comparison (benchmark)
+
+Same scenarios on each backend (`--backend=dataclass|pydantic`, `GUI_new` /
+`GUI_pydantic`), with the legacy classes as a reference where they apply.
+First figures: creation time in Step 2 of the plan (`Segment`, `LamSlotWind`).
+
+- [ ] Micro benchmarks: creation, validated assignment (valid and invalid
+      values), `model_dump` / `model_validate`, `model_copy`, `==`, import
+      time of the class packages.
+- [ ] Machine files: load and save of the 37 files of `Data/Machine`, memory.
+- [ ] Methods and simulations: the parity baseline of the freeze (Step 12)
+      timed per package; a few full simulations (FEMM excluded or timed
+      apart).
+- [ ] GUI scenarios: open a machine, edit the fields of a lamination and a
+      slot (validation errors included), save; same scripted scenario with
+      each GUI (Qt test driver).
+- [ ] Report in the backlog (time, memory, behaviour differences found) and
+      decision for Phase 2.
 
 ## Phase 2 deprecations
 
