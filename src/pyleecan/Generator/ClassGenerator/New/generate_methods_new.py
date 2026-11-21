@@ -342,6 +342,10 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     for context_class, method in LOGGER_CONTEXTS:
         if class_name == context_class:
             source = wrap_logger_context(source, package, method)
+    # The container arguments replacing the parent reads (Step 11)
+    from .container_arguments import add_container_arguments
+
+    source = add_container_arguments(source, package, class_name, gen_dict)
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
     source = modernize_names(source, package, gen_dict, class_name)

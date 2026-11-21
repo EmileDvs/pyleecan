@@ -14,6 +14,8 @@ from .slot import Slot
 
 if TYPE_CHECKING:
     from ..geometry.surface import Surface
+    from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 class SlotUD2(Slot):
@@ -167,7 +169,12 @@ class SlotUD2(Slot):
                 )
 
     # Inlined from Methods.Slot.SlotUD2.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -178,6 +185,8 @@ class SlotUD2(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

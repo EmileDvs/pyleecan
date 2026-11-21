@@ -230,7 +230,7 @@ class LamSlotM(LamSlot):
                 if is_add_arrow and mag_type in [0, 1]:  # Radial or Parallel only
                     # Create arrow coordinates
                     Zs = self.slot.Zs
-                    H = self.slot.comp_height_active()
+                    H = self.slot.comp_height_active(lam=self)
                     for ii in range(Zs // sym):
                         # if mag is not None and mag.type_magnetization == 3:
                         #     off -= pi / 2

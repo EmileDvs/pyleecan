@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
@@ -6,11 +7,13 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.notch import Notch
     from ....Classes_new.geometry.surface import Surface
 
 
-def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> Surface:
     """Return the full active surface
 
     Parameters
@@ -21,18 +24,21 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         float number for rotation (Default value = 0) [rad]
     delta : complex
         complex number for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
     surf_act: Surface
         Surface corresponding to the Active Area
     """
+    lam = container_or_parent(self, lam, "lam")
 
     self.check()
     # get the name of the lamination
     st = self.get_name_lam()
-    Rext = self.parent.Rext
-    Rint = self.parent.Rint
+    Rext = lam.Rext
+    Rint = lam.Rint
 
     Z1 = -Rext * 1j
     Z2 = Rext

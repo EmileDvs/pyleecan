@@ -722,6 +722,29 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
       generators), with unit tests and the parity tests unchanged; each pass
       reports the methods given a fallback argument (generated list, copied
       to [Phase 2 deprecations](#phase-2-deprecations)).
+  - [x] Pass 1 (2026-11-21), `container_arguments.py`
+        (`CONTAINER_ARGUMENTS`, `add_container_arguments`, in the method
+        pipeline before the type hints; tests
+        `Tests/New/test_container_arguments.py`): the slot methods
+        `comp_height_active`, `get_surface_active`, `get_surface_opening`,
+        `get_surface_wedges` take `lam: Lamination | Notch | None = None`
+        (every override of the Slot family, with its docstring entry; the
+        overrides reading `self.parent` read `lam = container_or_parent(self,
+        lam, "lam")` once). The calls on a slot field of the container pass
+        it (`self.slot.get_surface_opening(..., lam=self)` in `LamSlot`,
+        `LamSlotM`, `LamSlotWind`, `LamSquirrelCage`,
+        `self.notch_shape.get_surface_active(lam=self)` in `NotchEvenDist`);
+        the calls on `self` inside these methods pass `lam` on. Other calls
+        (`build_geometry_active`, functions, tests) use the fallback.
+        `fallback_methods(gen_dict, methods_dir)` lists the methods given the
+        argument. Checks: class, cross, Slot and Machine method tests as
+        before (2 pre-existing failures: `test_notch`,
+        `test_get_polar_eq_SCIM`, `Circle(xy=...)`), `ty` on
+        `Methods_new/slot` unchanged (20).
+  - [ ] Next passes: the slot methods called by these (`get_Rbo`,
+        `get_is_stator`, `is_outwards`, `build_geometry*`) once their callers
+        pass the container; the simulation models' `run` (pattern 2, depth
+        2); the loss models (container: the `Loss` object).
 - [ ] Report the reads left for Step 16.
 
 ## Step 12: freeze
@@ -967,7 +990,12 @@ the fallback, the parent links, and makes the argument required.
 
 | Method | Container argument | Added in |
 |---|---|---|
-| (filled by the Step 11 passes) | | |
+| `comp_height_active` of the Slot family (36 classes) | `lam` | Step 11, pass 1 |
+| `get_surface_active` of the Slot family (38 classes) | `lam` | Step 11, pass 1 |
+| `get_surface_opening` of the Slot family (24 classes) | `lam` | Step 11, pass 1 |
+| `Slot.get_surface_wedges` | `lam` | Step 11, pass 1 |
+
+Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 
 Note: the parent links then outlive the legacy layer for one or more
 releases: Phase 2 must keep them (or a minimal version) as a deprecated

@@ -1,13 +1,16 @@
+from ....classes_common.parents import container_or_parent
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import WIND_LAB, DRAW_PROP_LAB
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.notch import Notch
     from ....Classes_new.geometry.surface import Surface
 
 
-def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> Surface:
     """Return the full winding surface
 
     Parameters
@@ -18,12 +21,15 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         float number for rotation (Default value = 0) [rad]
     delta : complex
         complex number for translation (Default value = 0)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
     surf_wind: Surface
         Surface corresponding to the Winding Area
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # Create curve list
     line_dict = self._comp_line_dict()
@@ -63,7 +69,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
         Zmid = self.get_Rbo() + self.H0 + H1 + self.H2 / 2
     else:
         Zmid = self.get_Rbo() - self.H0 - H1 - self.H2 / 2
-    label = self.parent.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+    label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
     surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
     # Apply transformation

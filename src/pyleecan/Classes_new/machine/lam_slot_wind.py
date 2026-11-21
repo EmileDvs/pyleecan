@@ -202,7 +202,7 @@ class LamSlotWind(LamSlot):
                                 )
             # Add wedges if any
             if self.slot.wedge_mat is not None:
-                wedge_list = self.slot.get_surface_wedges()
+                wedge_list = self.slot.get_surface_wedges(lam=self)
                 for ii in range(Zs // sym):  # for each slot
                     # for each wedges surface in the slot
                     for surf in wedge_list:
@@ -953,7 +953,7 @@ class LamSlotWind(LamSlot):
         polar_eq = type(self)(init_dict=self.as_dict())
 
         # Compute the polar dimension of the slot
-        Hwind = self.slot.comp_height_active()
+        Hwind = self.slot.comp_height_active(lam=self)
         Histhmus = self.slot.comp_height() - Hwind
         Wwind = self.slot.comp_angle_active_eq()
         Wisthmus = self.slot.comp_angle_opening()

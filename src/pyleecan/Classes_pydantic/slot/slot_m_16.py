@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 class SlotM16(Slot):
@@ -221,13 +222,15 @@ class SlotM16(Slot):
             return Rbo - abs((Z4 + Z5) / 2)
 
     # Inlined from Methods.Slot.SlotM16.comp_height_active
-    def comp_height_active(self) -> float:
+    def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the winding area
 
         Parameters
         ----------
         self : SlotM16
             A SlotM16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -300,7 +303,12 @@ class SlotM16(Slot):
         return self.W1 * self.H1
 
     # Inlined from Methods.Slot.SlotM16.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -311,6 +319,8 @@ class SlotM16(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

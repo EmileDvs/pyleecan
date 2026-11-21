@@ -8,6 +8,7 @@ from matplotlib.patches import Patch, Polygon
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.labels import (
@@ -36,6 +37,8 @@ if TYPE_CHECKING:
 
     from ..geometry.line import Line
     from ..geometry.surface import Surface
+    from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
     from .slot_ud_2 import SlotUD2
 
 
@@ -371,7 +374,9 @@ class Slot(LegacyModel):
             return Rbo - min(abs(point_list))
 
     # Inlined from Methods.Slot.Slot.comp_height_active
-    def comp_height_active(self, Ndisc: int = 200) -> float:
+    def comp_height_active(
+        self, Ndisc: int = 200, lam: Lamination | Notch | None = None
+    ) -> float:
         """Compute the height of the active area
 
         Parameters
@@ -380,6 +385,8 @@ class Slot(LegacyModel):
             A Slot object
         Ndisc : int
             Number of point to discretize the lines
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -388,7 +395,7 @@ class Slot(LegacyModel):
 
         """
 
-        surf = self.get_surface_active()
+        surf = self.get_surface_active(lam=lam)
 
         point_list = surf.discretize(Ndisc)
         point_list = abs(np.array(point_list))
@@ -805,7 +812,12 @@ class Slot(LegacyModel):
         return SurfLine(line_list=curve_list, label=label)
 
     # Inlined from Methods.Slot.Slot.get_surface_wedges
-    def get_surface_wedges(self, alpha: float = 0, delta: complex = 0) -> list:
+    def get_surface_wedges(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> list:
         """Return the list of surfaces defining the wedges area of the Slot
 
         Parameters
@@ -816,12 +828,15 @@ class Slot(LegacyModel):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_list : list
             list of surfaces objects
         """
+        lam = container_or_parent(self, lam, "lam")
 
         if hasattr(self, "wedge_type"):
             wedge_type = self.wedge_type
@@ -833,7 +848,7 @@ class Slot(LegacyModel):
 
         # By default Wedge is the full opening surface
         if wedge_type == 0:
-            surf_list = self.get_surface_opening()
+            surf_list = self.get_surface_opening(lam=lam)
 
         elif wedge_type == 1:
             surf_list = self.get_surface_wedge()
@@ -841,9 +856,9 @@ class Slot(LegacyModel):
         else:
             raise NotImplementedError
 
-        if self.parent is not None:
+        if lam is not None:
             # Adapt label
-            lam_lab = self.parent.get_label()
+            lam_lab = lam.get_label()
             for surf in surf_list:
                 surf.label = lam_lab + "_" + WEDGE_LAB + "_R0-T0-S0"
 

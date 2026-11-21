@@ -14,6 +14,8 @@ from .slot import Slot
 
 if TYPE_CHECKING:
     from ..geometry.surface import Surface
+    from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 class SlotDC(Slot):
@@ -278,13 +280,15 @@ class SlotDC(Slot):
             return H + Harc
 
     # Inlined from Methods.Slot.SlotDC.comp_height_active
-    def comp_height_active(self) -> float:
+    def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the winding area
 
         Parameters
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -406,7 +410,12 @@ class SlotDC(Slot):
         return S1 + S2 + S3 - Sarc1 + S4 + S5 - Sarc2 - Sarc3
 
     # Inlined from Methods.Slot.SlotDC.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -417,6 +426,8 @@ class SlotDC(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 from pydantic import Field
 
 from ...classes_common.errors import SlotCheckError
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.labels import SOP_LAB, WIND_LAB
 from ..geometry.arc_1 import Arc1
 from ..geometry.line import Line
@@ -15,6 +16,8 @@ from .slot import Slot
 
 if TYPE_CHECKING:
     from ..geometry.surface import Surface
+    from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 class SlotUD(Slot):
@@ -113,7 +116,12 @@ class SlotUD(Slot):
                 )
 
     # Inlined from Methods.Slot.SlotUD.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -124,12 +132,15 @@ class SlotUD(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_wind: Surface
             Surface corresponding to the Winding Area
         """
+        lam = container_or_parent(self, lam, "lam")
         # get curve_list
         type_line_wind = self.type_line_wind
         if self.wind_begin_index is None and self.wind_end_index is None:
@@ -156,7 +167,7 @@ class SlotUD(Slot):
                 )
             )
 
-        label = self.parent.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=line_list, label=label)
         surface.comp_point_ref(is_set=True)
 
@@ -167,7 +178,12 @@ class SlotUD(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotUD.get_surface_opening
-    def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
+    def get_surface_opening(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -178,12 +194,15 @@ class SlotUD(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_list : list
             list of surfaces objects
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # get curve_list
         line_list = self.build_geometry()
@@ -209,7 +228,7 @@ class SlotUD(Slot):
         )
 
         curve_list = curve_list_start + [act_line] + curve_list_end + [bot_line]
-        label = self.parent.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        label = lam.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label)
         surface.comp_point_ref(is_set=True)
 

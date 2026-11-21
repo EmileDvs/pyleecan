@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.Geometry.circle_from_3_points import circle_from_3_points
 from ...Functions_new.labels import DRAW_PROP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
@@ -33,6 +34,7 @@ if TYPE_CHECKING:
     from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 @dataclass(eq=False)
@@ -273,13 +275,15 @@ class SlotCirc(Slot):
         return self.comp_height_active()
 
     # Inlined from Methods.Slot.SlotCirc.comp_height_active
-    def comp_height_active(self) -> float:
+    def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the winding area
 
         Parameters
         ----------
         self : SlotCirc
             A SlotCirc object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -390,7 +394,12 @@ class SlotCirc(Slot):
         self.is_H0_bore = True
 
     # Inlined from Methods.Slot.SlotCirc.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full active surface
 
         Parameters
@@ -401,12 +410,15 @@ class SlotCirc(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_wind: Surface
             Surface corresponding to the Active Area
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Create curve list
         line_dict = self._comp_line_dict()
@@ -426,7 +438,7 @@ class SlotCirc(Slot):
         # Create surface
         ZM = line_dict["M-2"].get_begin()
         Zmid = (self.get_Rbo() + ZM) / 2
-        label = self.parent.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation
@@ -436,7 +448,12 @@ class SlotCirc(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotCirc.get_surface_opening
-    def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
+    def get_surface_opening(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -447,6 +464,8 @@ class SlotCirc(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

@@ -115,7 +115,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
                             )
         # Add wedges if any
         if self.slot.wedge_mat is not None:
-            wedge_list = self.slot.get_surface_wedges()
+            wedge_list = self.slot.get_surface_wedges(lam=self)
             for ii in range(Zs // sym):  # for each slot
                 # for each wedges surface in the slot
                 for surf in wedge_list:

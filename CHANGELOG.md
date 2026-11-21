@@ -106,6 +106,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   a static method of `VarSimu`. The old function paths of `Functions_new` and
   `Functions_pydantic` are deprecated aliases (`DeprecationWarning`) until
   Phase 2. The other functions used by a single class stay utilities.
+- **Container arguments instead of parent reads** (Step 11, first pass):
+  the slot surface methods (`get_surface_active`, `get_surface_opening`,
+  `get_surface_wedges`, `comp_height_active`) take the lamination (or
+  notch) as an optional `lam` argument, passed by the lamination; without
+  it they fall back to the parent (`classes_common.parents.
+  container_or_parent`, deprecated in Phase 2).
 - **Loggers without the parent chain** (Step 9):
   `classes_common.logger_context.get_logger(obj)` gives the object's
   logger, else the logger of the simulation in progress
@@ -276,7 +282,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 8. Refactor the remaining `Functions` modules (generator) | in progress (7/14 groups) |
 | 9. Logger chain (generator) | done |
 | 10. GUI, first pass (generator) | to do |
-| 11. Parent links, first pass (generator) | to do |
+| 11. Parent links, first pass (generator) | in progress |
 | 12. Freeze | to do |
 | 13. Custom property setters and getters (frozen) | to do |
 | 14. Type hints, second pass (frozen) | to do |

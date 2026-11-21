@@ -28,7 +28,7 @@ def get_surfaces_closing(self, sym: int = 1) -> list:
         # for slot to draw
         for ii in range(self.slot.Zs // sym):
             slot_surf = self.slot.get_surface_opening(
-                alpha=slot_pitch * ii + slot_pitch * 0.5
+                alpha=slot_pitch * ii + slot_pitch * 0.5, lam=self
             )
             for jj, surf in enumerate(slot_surf):
                 # Adapt the label

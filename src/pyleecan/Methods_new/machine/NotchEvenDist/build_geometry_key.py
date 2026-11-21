@@ -30,7 +30,7 @@ def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, del
     surf_list = list()
 
     # Get the original surface
-    Nsurf = self.notch_shape.get_surface_active()
+    Nsurf = self.notch_shape.get_surface_active(lam=self)
     Nsurf.label = self.get_label() + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
     Nsurf.rotate(angle=self.alpha)
     # Label definition

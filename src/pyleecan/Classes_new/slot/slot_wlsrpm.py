@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 @dataclass(eq=False)
@@ -494,7 +495,12 @@ class SlotWLSRPM(Slot):
         return self.H2 - self.H3
 
     # Inlined from Methods.Slot.SlotWLSRPM.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -505,6 +511,8 @@ class SlotWLSRPM(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

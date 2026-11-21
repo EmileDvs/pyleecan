@@ -62,7 +62,7 @@ class NotchEvenDist(Notch):
         surf_list = []
 
         # Get the original surface
-        Nsurf = self.notch_shape.get_surface_active()
+        Nsurf = self.notch_shape.get_surface_active(lam=self)
         Nsurf.label = self.get_label() + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
         Nsurf.rotate(angle=self.alpha)
         # Label definition

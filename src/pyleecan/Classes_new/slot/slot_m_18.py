@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 @dataclass(eq=False)
@@ -171,13 +172,15 @@ class SlotM18(Slot):
         return 0
 
     # Inlined from Methods.Slot.SlotM18.comp_height_active
-    def comp_height_active(self) -> float:
+    def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the active area
 
         Parameters
         ----------
         self : SlotM18
             A SlotM18 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -236,7 +239,12 @@ class SlotM18(Slot):
         return abs(S1 - S2)
 
     # Inlined from Methods.Slot.SlotM18.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full active surface
 
         Parameters
@@ -247,6 +255,8 @@ class SlotM18(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

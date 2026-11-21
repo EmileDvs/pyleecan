@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -28,6 +29,7 @@ if TYPE_CHECKING:
     from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 class SlotM17(Slot):
@@ -120,13 +122,15 @@ class SlotM17(Slot):
         return self.parent.Rext - self.parent.Rint
 
     # Inlined from Methods.Slot.SlotM17.comp_height_active
-    def comp_height_active(self) -> float:
+    def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the active area
 
         Parameters
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -134,8 +138,9 @@ class SlotM17(Slot):
             Height of the active area [m]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        return self.parent.Rext - self.parent.Rint
+        return lam.Rext - lam.Rint
 
     # Inlined from Methods.Slot.SlotM17.comp_surface
     def comp_surface(self) -> float:
@@ -175,7 +180,12 @@ class SlotM17(Slot):
         return np.pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
 
     # Inlined from Methods.Slot.SlotM17.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full active surface
 
         Parameters
@@ -186,18 +196,21 @@ class SlotM17(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_act: Surface
             Surface corresponding to the Active Area
         """
+        lam = container_or_parent(self, lam, "lam")
 
         self.check()
         # get the name of the lamination
         st = self.get_name_lam()
-        Rext = self.parent.Rext
-        Rint = self.parent.Rint
+        Rext = lam.Rext
+        Rint = lam.Rint
 
         Z1 = -Rext * 1j
         Z2 = Rext

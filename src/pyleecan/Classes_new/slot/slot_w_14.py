@@ -12,6 +12,7 @@ from ...classes_common.errors import (
     S14_Rbo0CheckError,
     S14_Rbo1CheckError,
 )
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.Geometry.inter_line_line import inter_line_line
 from ...Functions_new.labels import DRAW_PROP_LAB, SOP_LAB, WIND_LAB
 from ...Functions_new.Plot import (
@@ -38,6 +39,7 @@ if TYPE_CHECKING:
     from ..geometry.line import Line
     from ..geometry.surface import Surface
     from ..machine.lamination import Lamination
+    from ..machine.notch import Notch
 
 
 @dataclass(eq=False)
@@ -331,13 +333,15 @@ class SlotW14(Slot):
             return Rbo - abs(Z4)
 
     # Inlined from Methods.Slot.SlotW14.comp_height_active
-    def comp_height_active(self) -> float:
+    def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the winding area
 
         Parameters
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -581,7 +585,12 @@ class SlotW14(Slot):
             return self.H1
 
     # Inlined from Methods.Slot.SlotW14.get_surface_active
-    def get_surface_active(self, alpha: float = 0, delta: complex = 0) -> Surface:
+    def get_surface_active(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> Surface:
         """Return the full winding surface
 
         Parameters
@@ -592,12 +601,15 @@ class SlotW14(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_wind: Surface
             Surface corresponding to the Winding Area
         """
+        lam = container_or_parent(self, lam, "lam")
         # Create curve list
         line_dict = self._comp_line_dict()
         H1 = self.get_H1()
@@ -630,7 +642,7 @@ class SlotW14(Slot):
             curve.prop_dict.update({DRAW_PROP_LAB: False})
 
         # Create surface
-        label = f"{self.parent.get_label()}_{WIND_LAB}_R0-T0-S0"
+        label = f"{lam.get_label()}_{WIND_LAB}_R0-T0-S0"
         if self.is_outwards():
             Zmid = self.get_Rbo() + self.H0 + H1 + self.H3 / 2
         else:
@@ -644,7 +656,12 @@ class SlotW14(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotW14.get_surface_opening
-    def get_surface_opening(self, alpha: float = 0, delta: complex = 0) -> list:
+    def get_surface_opening(
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
+    ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
         Parameters
@@ -655,12 +672,15 @@ class SlotW14(Slot):
             float number for rotation (Default value = 0) [rad]
         delta : complex
             complex number for translation (Default value = 0)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         surf_list : list
             list of surfaces objects
         """
+        lam = container_or_parent(self, lam, "lam")
 
         H1 = self.get_H1()
         # H0=H1=0 no opening
@@ -709,7 +729,7 @@ class SlotW14(Slot):
                 curve.prop_dict = {}
             curve.prop_dict.update({DRAW_PROP_LAB: False})
 
-        label = self.parent.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        label = lam.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation
