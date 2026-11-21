@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_pydantic.Geometry.transform_hole_surf import transform_hole_surf
 from ...Functions_pydantic.labels import HOLEM_LAB, decode_label
 from ..slot.hole import Hole
 from .lam_h import LamH
@@ -128,6 +127,7 @@ class LamHole(LamH):
         """
 
         # getting the Lamination surface
+
         surf_list = Lamination.build_geometry(
             self,
             sym=sym,
@@ -141,7 +141,7 @@ class LamHole(LamH):
             # Create the first hole surface(s)
             surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh)
             surf_list.extend(
-                transform_hole_surf(
+                Hole.transform_hole_surf(
                     hole_surf_list=surf_hole, Zh=hole.Zh, sym=sym, alpha=0, delta=0
                 )
             )

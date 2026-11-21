@@ -1,7 +1,5 @@
-from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ....Functions_new.labels import NOTCH_LAB, YSNR_LAB, YSNL_LAB
 from ....Classes_new.machine.notch_even_dist import NotchEvenDist
-from ....Functions_new.Geometry.merge_notch_list import merge_notch_list
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
@@ -25,6 +23,7 @@ def get_notches_surf(self, sym: int):
         list of surfaces needed for the notches
     """
 
+    from ....Classes_new.slot.hole import Hole
     if self.notch is None:
         self.notch = list()
 
@@ -48,7 +47,7 @@ def get_notches_surf(self, sym: int):
         BC_prop_left = self.get_label() + "_" + YSNL_LAB
         # Generate all the surfaces (handle cut on sym axis)
         surf_list.extend(
-            transform_hole_surf(
+            Hole.transform_hole_surf(
                 hole_surf_list=[Nsurf],
                 Zh=notch.notch_shape.Zs,
                 sym=sym,

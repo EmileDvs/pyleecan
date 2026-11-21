@@ -110,7 +110,8 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   and circle helpers (`inter_line_circle`, `inter_line_line`,
   `inter_circle_circle`, `circle_from_3_points`, `comp_flower_arc`,
   `cut_lines_between_angle`, `comp_surface_num`) in one module; the old
-  `Geometry.*` paths are deprecated aliases.
+  `Geometry.*` paths are deprecated aliases. `merge_notch_list` is a
+  static method of `Lamination`, `transform_hole_surf` of `Hole`.
 - **Converter rule functions from a static registry** (Step 8):
   `Converter.rule_functions` maps the rule names to their modules (no
   import by name); the complex rules work on both backends;

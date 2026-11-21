@@ -15,11 +15,10 @@ from ...classes_common.errors import (
     LC_RadiusError,
     LC_VentYokeIn,
     LC_VentYokeOut,
+    NotchError,
     NotImplementedYetError,
 )
 from ...definitions import config_dict
-from ...Functions_pydantic.Geometry.merge_notch_list import merge_notch_list
-from ...Functions_pydantic.Geometry.transform_hole_surf import transform_hole_surf
 from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.labels import (
     BORE_LAB,
@@ -179,6 +178,7 @@ class Lamination(LegacyModel):
 
         """
         # Label setup
+
         label = self.get_label()
         label_lam = label + "_" + LAM_LAB
         label_bore = label + "_" + LAM_LAB + BORE_LAB
@@ -217,7 +217,7 @@ class Lamination(LegacyModel):
             for vent in self.axial_vent:
                 kwargs: dict[str, Any] = dict(alpha=0, delta=0)
                 vent_list = vent.build_geometry(**kwargs)
-                surf = transform_hole_surf(
+                surf = Hole.transform_hole_surf(
                     hole_surf_list=vent_list,
                     Zh=vent.Zh,
                     sym=sym,
@@ -384,7 +384,7 @@ class Lamination(LegacyModel):
             notch_desc_list = notch_list[0].get_notch_desc_list(sym=sym)
             # If more than one notch, we need to merge and order the description
             for ii in range(len(notch_list) - 1):
-                notch_desc_list = merge_notch_list(
+                notch_desc_list = self.merge_notch_list(
                     notch_desc_list, notch_list[ii + 1].get_notch_desc_list(sym=sym)
                 )
         else:
@@ -394,7 +394,7 @@ class Lamination(LegacyModel):
             slot_desc_list = self.get_slot_desc_list(sym=sym, is_bore=is_bore)
         else:
             slot_desc_list = []
-        all_desc_list = merge_notch_list(notch_desc_list, slot_desc_list)
+        all_desc_list = self.merge_notch_list(notch_desc_list, slot_desc_list)
 
         # Add the radius between each notch/slot
         for ii in range(len(all_desc_list) - 1):
@@ -1350,7 +1350,7 @@ class Lamination(LegacyModel):
             BC_prop_left = self.get_label() + "_" + YSNL_LAB
             # Generate all the surfaces (handle cut on sym axis)
             surf_list.extend(
-                transform_hole_surf(
+                Hole.transform_hole_surf(
                     hole_surf_list=[Nsurf],
                     Zh=notch.notch_shape.Zs,
                     sym=sym,
@@ -1714,3 +1714,47 @@ class Lamination(LegacyModel):
         ax.legend(patch_leg, label_leg)
 
         return fig, ax
+
+    # Inlined from Methods.Machine.Lamination.merge_notch_list
+    @staticmethod
+    def merge_notch_list(notch_list_1: list, notch_list_2: list) -> list:
+        """Merge two notches list
+
+        Parameters
+        ----------
+        notch_list_1 : list
+            First notch list to merge
+        notch_list_2 : list
+            Second notch list to merge
+
+        Returns
+        -------
+        notch_list : list
+            list of dictionary with key: "begin_angle", "end_angle", "obj"
+        """
+        N1 = len(notch_list_1)
+        N2 = len(notch_list_2)
+
+        merged = []
+        ii, jj = 0, 0  # Index to go thought the lists
+
+        while ii < N1 and jj < N2:
+            if (
+                notch_list_1[ii]["begin_angle"] < notch_list_2[jj]["begin_angle"]
+                and notch_list_1[ii]["end_angle"] <= notch_list_2[jj]["begin_angle"]
+            ):  # Add a notch from notch_list_1
+                merged.append(notch_list_1[ii])
+                ii += 1
+            elif (
+                notch_list_2[jj]["begin_angle"] < notch_list_1[ii]["begin_angle"]
+                and notch_list_2[jj]["end_angle"] <= notch_list_1[ii]["begin_angle"]
+            ):  # Add a notch from notch_list_2
+                merged.append(notch_list_2[jj])
+                jj += 1
+            else:
+                raise NotchError("Notches and/or Slots are colliding")
+
+        # One of the list is not "finished"
+        merged = merged + notch_list_1[ii:] + notch_list_2[jj:]
+
+        return merged

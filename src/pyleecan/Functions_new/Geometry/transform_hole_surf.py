@@ -1,108 +1,15 @@
-import numpy as np
+"""Deprecated alias of Hole.transform_hole_surf (moved to the class, removed in Phase 2)."""
 
-from ..labels import BOUNDARY_PROP_LAB, YSL_LAB, YSR_LAB, decode_label, update_RTS_index
+from warnings import warn
 
 
-def transform_hole_surf(
-    hole_surf_list,
-    Zh,
-    sym,
-    alpha,
-    delta,
-    is_split=False,
-    BC_prop_right=None,
-    BC_prop_left=None,
-):
-    """Take a list of surface for a single hole and apply the
-    transformation (rotate, translate, duplicate)
+def transform_hole_surf(*args, **kwargs):
+    """Deprecated: use Hole.transform_hole_surf"""
+    from ...Classes_new.slot.hole import Hole
 
-    Parameters
-    ----------
-    surf_list : list
-        List of the surface to edit (single hole)
-    sym : int
-        Symetry to apply 2 = half the machine (Default value = 1 => full machine)
-    alpha : float
-        Angle for rotation (Default value = 0) [rad]
-    delta : complex
-        Complex for translation (Default value = 0)
-    is_stator : bool
-        True if ventilation is on the stator and 0 on the rotor (Default value = True)
-    is_split : bool
-        When sym>1, call surf.split_line to cut the surfaces
-    BC_prop_right : str
-        BOUNDARY_PROP_LAB to set on right cut
-    BC_prop_left : str
-        BOUNDARY_PROP_LAB to set on left cut
-
-    Returns
-    -------
-    surf_list: list
-        A list of transformed surface
-    """
-
-    assert Zh % sym == 0
-
-    # Default BC
-    lam_label = decode_label(hole_surf_list[0].label)["lam_label"]
-    if BC_prop_right is None:
-        BC_prop_right = lam_label + "_" + YSR_LAB
-    if BC_prop_left is None:
-        BC_prop_left = lam_label + "_" + YSL_LAB
-
-    # Rotate/translate
-    if alpha != 0 or delta != 0:
-        for surf in hole_surf_list:
-            surf.rotate(alpha)
-            surf.translate(delta)
-
-    # Duplicate to have Zh/sym all the hole surfaces
-    surf_list = []
-    for ii in range(Zh // sym):
-        for surf in hole_surf_list:
-            new_surf = surf.copy()
-            new_surf.rotate(ii * 2 * np.pi / Zh)
-            # Update label like "Rotor-0_HoleVoid_R0-T0-S0"
-            new_surf.label = update_RTS_index(label=new_surf.label, S_id=ii)
-            surf_list.append(new_surf)
-
-    # Split the surfaces for symmetry
-    if is_split and sym > 1:
-        # Add an extra surface for each cut (alpha0 > 0)
-        for surf in hole_surf_list:
-            last_surf = surf.copy()
-            last_surf.rotate((ii + 1) * 2 * np.pi / Zh)
-            # Update label like "Rotor-0_HoleVoid_R0-T0-S0"
-            last_surf.label = update_RTS_index(label=last_surf.label, S_id=ii + 1)
-            surf_list.append(last_surf)
-
-            first_surf = surf.copy()
-            first_surf.rotate((Zh - 1) * 2 * np.pi / Zh)
-            # Update label like "Rotor-0_HoleVoid_R0-T0-S0"
-            first_surf.label = update_RTS_index(label=first_surf.label, S_id=Zh - 1)
-            surf_list.append(first_surf)
-
-        cut_list = []
-        for surf in surf_list:
-            # Cut Ox axis
-            top, _ = surf.split_line(
-                0,
-                100,
-                is_join=True,
-                prop_dict_join={BOUNDARY_PROP_LAB: BC_prop_right},
-            )
-            if top is not None and sym > 2:
-                # Cut O-"sym angle" axis
-                _, bot = top.split_line(
-                    0,
-                    100 * np.exp(1j * 2 * np.pi / sym),
-                    is_join=True,
-                    prop_dict_join={BOUNDARY_PROP_LAB: BC_prop_left},
-                )
-                if bot is not None:
-                    cut_list.append(bot)
-            elif top is not None:  # Half the machine => Only one cut required
-                cut_list.append(top)
-        surf_list = cut_list
-
-    return surf_list
+    warn(
+        "transform_hole_surf is deprecated, use Hole.transform_hole_surf (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return Hole.transform_hole_surf(*args, **kwargs)

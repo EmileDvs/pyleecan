@@ -869,12 +869,21 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         if path.suffix == ".py":
             legacy_module = ".".join(relative.with_suffix("").parts)
             moved = MOVED_FUNCTIONS.get(legacy_module)
+            shared_errors_imported = False
             if merged_location(legacy_module) is not None and removed_alias is None:
                 # Deprecated aliases of the merged module (and of its methods)
                 source = merged_alias_source(legacy_module, source)
                 moved = "femm"  # Aliases: the shared errors are imported
             elif moved is not None:  # Deprecated alias of the method
                 source = alias_source(legacy_module, moved, source)
+                errors = FUNCTION_ERRORS.get(legacy_module)
+                if errors:  # The errors of the module, from the shared ones
+                    up = "." * (len(relative.parts) + 1)
+                    source += (
+                        f"\nfrom {up}classes_common.errors import "
+                        f"{', '.join(sorted(set(errors.values())))}  # noqa: F401, E402\n"
+                    )
+                    shared_errors_imported = True
             elif removed_alias is None and any(
                 ".".join(relative.parts[:-1]) == spec.package and relative.stem in modules
                 for spec, modules in interface_modules.items()
@@ -900,7 +909,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 source = _adapt_json_retrocompatibility(source, path)
             elif relative == Path("load.py"):
                 source = _adapt_json_load(source, path)
-            if moved != "femm":  # The FEMM aliases import the shared errors
+            if moved != "femm" and not shared_errors_imported:
+                # The FEMM aliases (and the aliases with errors) import the
+                # shared errors
                 source = _redirect_function_errors(source, path, relative, class_dir)
             package = ".".join(["pyleecan", "Functions", *relative.parts[:-1]])
             if moved is None:  # Callers of the moved functions call the methods

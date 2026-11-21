@@ -6,8 +6,8 @@ from typing import ClassVar
 
 import numpy as np
 
-from ...Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ...Functions_new.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
+from ..slot.hole import Hole
 from ..slot.slot import Slot
 from .notch import Notch
 
@@ -73,7 +73,7 @@ class NotchEvenDist(Notch):
         BC_prop_left = self.get_label() + "_" + YSNL_LAB
         # Generate all the surfaces (handle cut on sym axis)
         surf_list.extend(
-            transform_hole_surf(
+            Hole.transform_hole_surf(
                 hole_surf_list=[Nsurf],
                 Zh=self.notch_shape.Zs,
                 sym=sym,

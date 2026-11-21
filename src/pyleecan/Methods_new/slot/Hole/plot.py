@@ -3,7 +3,6 @@ import numpy as np
 
 from ....Functions_new.init_fig import init_fig
 from ....Functions_new.labels import HOLEM_LAB, decode_label
-from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ....definitions import config_dict
 from ....Methods import ParentMissingError
 from typing import TYPE_CHECKING
@@ -64,7 +63,7 @@ def plot(
     surf_hole = self.build_geometry()
     if is_all_hole:
         # Duplicate the hole surfaces
-        surf_hole = transform_hole_surf(
+        surf_hole = self.transform_hole_surf(
             hole_surf_list=surf_hole, Zh=self.Zh, sym=1, alpha=0, delta=0
         )
 

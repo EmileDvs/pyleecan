@@ -76,6 +76,14 @@ MOVED_FUNCTIONS = {
     "Simulation.VarSimu.run_multisim_step": MovedFunction(
         "VarSimu", "run_multisim_step", static=True
     ),
+    # Step 8, group 7 (decision 2026-11-21): the geometry helpers of the
+    # laminations and holes
+    "Geometry.merge_notch_list": MovedFunction(
+        "Lamination", "merge_notch_list", static=True
+    ),
+    "Geometry.transform_hole_surf": MovedFunction(
+        "Hole", "transform_hole_surf", static=True
+    ),
     # Step 8, group 4: datakeepers of the multi-simulations
     "Simulation.VarSimu.get_elec_datakeeper_dict": MovedFunction(
         "VarSimu", "get_elec_datakeeper_dict", static=True

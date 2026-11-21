@@ -1,13 +1,12 @@
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Classes_new.geometry.surf_ring import SurfRing
 from ....Functions_new.labels import LAM_LAB, BORE_LAB, YOKE_LAB, RADIUS_PROP_LAB, BOUNDARY_PROP_LAB
-
-from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Any
     from ....Classes_new.geometry.line import Line
+
 
 
 def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False):
@@ -32,6 +31,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
 
     """
     # Label setup
+    from ....Classes_new.slot.hole import Hole
     label = self.get_label()
     label_lam = label + "_" + LAM_LAB
     label_bore = label + "_" + LAM_LAB + BORE_LAB
@@ -70,7 +70,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         for vent in self.axial_vent:
             kwargs: dict[str, Any] = dict(alpha=0, delta=0)
             vent_list = vent.build_geometry(**kwargs)
-            surf = transform_hole_surf(
+            surf = Hole.transform_hole_surf(
                 hole_surf_list=vent_list, Zh=vent.Zh, sym=sym, is_split=True, **kwargs
             )
             vent_surf_list.extend(surf)

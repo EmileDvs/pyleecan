@@ -1,7 +1,6 @@
 import numpy as np
 
 from ....Classes_new.machine.lamination import Lamination
-from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 
 
 def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
@@ -28,6 +27,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     """
 
     # getting the Lamination surface
+    from ....Classes_new.slot.hole import Hole
     surf_list = Lamination.build_geometry(
         self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius
     )
@@ -38,7 +38,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         # Create the first hole surface(s)
         surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh)
         surf_list.extend(
-            transform_hole_surf(
+            Hole.transform_hole_surf(
                 hole_surf_list=surf_hole, Zh=int(hole.Zh / 2), sym=sym, alpha=0, delta=0
             )
         )
@@ -46,7 +46,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     for hole in self.hole_south:
         surf_hole = hole.build_geometry(alpha=2 * np.pi / hole.Zh)
         surf_list.extend(
-            transform_hole_surf(
+            Hole.transform_hole_surf(
                 hole_surf_list=surf_hole,
                 Zh=int(hole.Zh / 2),
                 sym=sym,

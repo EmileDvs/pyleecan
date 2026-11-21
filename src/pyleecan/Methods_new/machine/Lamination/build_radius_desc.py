@@ -2,7 +2,6 @@ import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.arc_3 import Arc3
-from ....Functions_new.Geometry.merge_notch_list import merge_notch_list
 
 
 def build_radius_desc(self, is_bore: bool, sym: int = 1) -> list:
@@ -73,7 +72,7 @@ def build_radius_desc(self, is_bore: bool, sym: int = 1) -> list:
         notch_desc_list = notch_list[0].get_notch_desc_list(sym=sym)
         # If more than one notch, we need to merge and order the description
         for ii in range(len(notch_list) - 1):
-            notch_desc_list = merge_notch_list(
+            notch_desc_list = self.merge_notch_list(
                 notch_desc_list, notch_list[ii + 1].get_notch_desc_list(sym=sym)
             )
     else:
@@ -83,7 +82,7 @@ def build_radius_desc(self, is_bore: bool, sym: int = 1) -> list:
         slot_desc_list = self.get_slot_desc_list(sym=sym, is_bore=is_bore)
     else:
         slot_desc_list = list()
-    all_desc_list = merge_notch_list(notch_desc_list, slot_desc_list)
+    all_desc_list = self.merge_notch_list(notch_desc_list, slot_desc_list)
 
     # Add the radius between each notch/slot
     for ii in range(len(all_desc_list) - 1):

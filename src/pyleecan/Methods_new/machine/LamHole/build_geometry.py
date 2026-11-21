@@ -7,7 +7,6 @@ from ....Classes_new.geometry.surf_ring import SurfRing
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Functions_new.labels import update_RTS_index
-from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 
 
 def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
@@ -34,6 +33,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     """
 
     # getting the Lamination surface
+    from ....Classes_new.slot.hole import Hole
     surf_list = Lamination.build_geometry(
         self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius
     )
@@ -43,7 +43,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         # Create the first hole surface(s)
         surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh)
         surf_list.extend(
-            transform_hole_surf(
+            Hole.transform_hole_surf(
                 hole_surf_list=surf_hole, Zh=hole.Zh, sym=sym, alpha=0, delta=0
             )
         )

@@ -1,4 +1,3 @@
-from ....Functions_new.Geometry.transform_hole_surf import transform_hole_surf
 from ....Functions_new.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 
 import numpy as np
@@ -27,6 +26,7 @@ def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, del
 
     """
 
+    from ....Classes_new.slot.hole import Hole
     surf_list = list()
 
     # Get the original surface
@@ -38,7 +38,7 @@ def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, del
     BC_prop_left = self.get_label() + "_" + YSNL_LAB
     # Generate all the surfaces (handle cut on sym axis)
     surf_list.extend(
-        transform_hole_surf(
+        Hole.transform_hole_surf(
             hole_surf_list=[Nsurf],
             Zh=self.notch_shape.Zs,
             sym=sym,
