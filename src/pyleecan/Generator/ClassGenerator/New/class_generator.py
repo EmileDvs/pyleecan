@@ -5059,6 +5059,11 @@ def _assigned_name(assignment):
 def _attribute_docstring(description):
     """Format a CSV description as a safe triple-quoted attribute docstring."""
     escaped_description = repr(description)[1:-1]
+    # repr() quoted with ' leaves the " unescaped: a triple quote or a final "
+    # would close the docstring
+    escaped_description = escaped_description.replace('"""', '\\"\\"\\"')
+    if escaped_description.endswith('"') and not escaped_description.endswith('\\"'):
+        escaped_description = escaped_description[:-1] + '\\"'
     return f'"""{escaped_description}"""'
 
 

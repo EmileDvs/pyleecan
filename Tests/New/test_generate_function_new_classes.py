@@ -113,6 +113,26 @@ def test_generate_functions_skips_unused_legacy_modules(tmp_path):
     assert (output / "other.py").exists()
 
 
+def test_generate_functions_removes_deleted_legacy_modules(tmp_path):
+    """A legacy module deleted upstream does not leave its copy behind."""
+    source = tmp_path / "Functions"
+    output = tmp_path / "Functions_new"
+    classes = tmp_path / "Classes_new"
+    (source / "MeshSolution").mkdir(parents=True)
+    classes.mkdir()
+    (source / "MeshSolution" / "kept.py").write_text(
+        "def kept():\n    return 1\n", encoding="utf-8"
+    )
+    # Copy of a module deleted from the legacy Functions since the last run
+    (output / "MeshSolution").mkdir(parents=True)
+    (output / "MeshSolution" / "deleted.py").write_text(
+        "def deleted():\n    return 1\n", encoding="utf-8"
+    )
+    generate_functions(source, output, classes)
+    assert (output / "MeshSolution" / "kept.py").exists()
+    assert not (output / "MeshSolution" / "deleted.py").exists()
+
+
 def test_rewrite_imports_and_report_unresolved(tmp_path):
     class_dir = tmp_path / "Classes_new"
     class_dir.mkdir()

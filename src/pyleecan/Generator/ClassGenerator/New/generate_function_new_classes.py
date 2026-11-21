@@ -763,6 +763,7 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         raise ValueError("Source and output function trees must be separate")
 
     issues = []
+    generated = set()
     module_mapping = function_module_mapping(source_dir)
     generated_module_paths.cache_clear()
     class_module_paths = generated_module_paths(class_dir)
@@ -832,7 +833,36 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             issues.extend((relative, line, message) for line, message in found)
         else:
             shutil.copy2(path, destination)
+        generated.add(destination)
+    remove_stale_modules(output_dir, generated)
     return issues
+
+
+def remove_stale_modules(output_dir, generated):
+    """Remove the modules of output_dir left by a previous generation.
+
+    A legacy function module deleted or renamed upstream leaves its copy in
+    Functions_new, the tree is not cleared (only the generated files are
+    overwritten).
+
+    Parameters
+    ----------
+    output_dir : Path
+        Root of the generated function tree
+    generated : set
+        Paths written by this generation
+
+    Returns
+    -------
+    removed : list
+        Removed module paths
+    """
+    removed = []
+    for path in sorted(Path(output_dir).rglob("*.py")):
+        if "__pycache__" not in path.parts and path not in generated:
+            path.unlink()
+            removed.append(path)
+    return removed
 
 
 def main():
