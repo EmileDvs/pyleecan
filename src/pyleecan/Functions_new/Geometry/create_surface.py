@@ -1,3 +1,5 @@
+from warnings import warn
+
 from ...classes_common.errors import SurfaceError
 from ...Classes_new.geometry.arc import Arc
 from ...Classes_new.geometry.arc_2 import Arc2
@@ -17,6 +19,11 @@ def create_surface(line_list):
     -------
     surface: SurfLine
     """
+    warn(
+        "create_surface is deprecated, it is not used by pyleecan (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     ordered_list = [line_list.pop(0)]
     first_element = ordered_list[0]
     if isinstance(first_element, (Arc, Segment)):

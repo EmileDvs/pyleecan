@@ -193,6 +193,15 @@ DEPRECATED_MODULES = {
     # Step 8: no MotorCAD rule uses it (add_rule_slotW23 converts H1 with a
     # simple rule)
     "Converter.MotorCAD.slotW23_H1": "it is not used by the MotorCAD conversion rules",
+    # Step 8 group 1 (decision 2026-11-21): dead code, no caller in pyleecan
+    # (the FEMM and pyvista ones are left out of femm_pyleecan /
+    # pv_plotter_pyleecan, at their legacy path)
+    "Plot.Pyvista.get_arrows_plt": "it is not used by pyleecan",
+    "Geometry.create_surface": "it is not used by pyleecan",
+    "FEMM.comp_FEMM_Jcus": "it is not used by pyleecan",
+    "FEMM.create_FEMM_bar": "it is not used by pyleecan",
+    "getattr_recursive": "it is not used by pyleecan",
+    "short_filepath": "it is not used by pyleecan",
 }
 """{legacy module below Functions: replacement}: the public functions of the
 module warn (DeprecationWarning) in Functions_new, removed in Phase 2"""

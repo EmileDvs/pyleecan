@@ -1,15 +1,29 @@
-"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
-
 from warnings import warn
 
 
-def comp_FEMM_Jcus(*args, **kwargs):
-    """Deprecated: use femm_pyleecan.comp_FEMM_Jcus"""
-    from .femm_pyleecan import femm_pyleecan
+def comp_FEMM_Jcus(lam, cname, I, j_t0, is_mmf):
+    """Compute the current density for FEMM [A/mm2]"""
 
     warn(
-        "comp_FEMM_Jcus is deprecated, use femm_pyleecan.comp_FEMM_Jcus (removed in Phase 2)",
+        "comp_FEMM_Jcus is deprecated, it is not used by pyleecan (removed in Phase 2)",
         DeprecationWarning,
         stacklevel=2,
     )
-    return femm_pyleecan.comp_FEMM_Jcus(*args, **kwargs)
+    Npcp = lam.winding.Npcp  # number of parallel circuits  per phase (maximum 2p)
+    (Nrad, Ntan) = lam.winding.get_dim_wind()
+    Nwpc = Nrad * Ntan  # total number of wires / strands in parallel per coil
+    Ksfill = lam.comp_fill_factor()
+    Swire = lam.winding.conductor.comp_surface_active()
+    # Decode the label
+    q_id = int(cname[2:-1])
+    if cname[-1] == "-":
+        s = -1
+    else:
+        s = 1
+
+    if I is None:
+        Jcus = 0
+    else:
+        Jcus = s * 1e-6 * Ksfill * (I[q_id, j_t0] / Npcp) * is_mmf / Swire / Nwpc
+
+    return Jcus

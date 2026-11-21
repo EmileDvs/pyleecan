@@ -254,7 +254,7 @@ Proposed targets are a starting point; the decision is the maintainer's.
 
 | # | Group | Modules (callers) | Proposed target | Decision |
 |---|---|---|---|---|
-| 1 | Dead code | `Plot.plot_2D_Data`, `Plot.plot_3D_Data` (already deprecated), `Plot.animate_as_gif`, `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `Electrical.comp_MTPA`, `getattr_recursive`, `short_filepath`, `Converter.Utils.EquivalentError` (no caller) | remove | |
+| 1 | Dead code | `Plot.plot_2D_Data`, `Plot.plot_3D_Data` (already deprecated), `Plot.animate_as_gif`, `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `Electrical.comp_MTPA`, `getattr_recursive`, `short_filepath`, `Converter.Utils.EquivalentError` (no caller) | remove | done (2026-11-21): deprecated (`DEPRECATED_MODULES`, the functions warn): `get_arrows_plt`, `create_surface`, `comp_FEMM_Jcus`, `create_FEMM_bar` (left out of `femm_pyleecan` / `pv_plotter_pyleecan`, at their legacy path), `getattr_recursive`, `short_filepath`; `plot_2D_Data`, `plot_3D_Data` deprecated before, `animate_as_gif` and `comp_MTPA` moved; `EquivalentError` (a class, shared error) removed in Phase 2 |
 | 2 | Winding | `reverse_wind_mat`, `shift_wind_mat` (M6: Winding, WindingSC, WindingUD), `comp_cond_function` (M2: LamSlotWind, LamSlotMultiWind), `gen_phase_list` (M8 F2 T2), `find_wind_phase_color` (M3 F2) | class: `Winding` (wind matrix), `LamSlotWind` (conductor function); utility: phase list and colors | done (2026-11-21): `Winding`: static `reverse_wind_mat`, `reverse_layer`, `change_layer`, `permute_B_C`, `shift_wind_mat`, `find_wind_phase_color`, regular `get_phase_id` (connection matrix of the winding); `Conductor`: static `comp_cond_function`; `gen_phase_list` stays a utility |
 | 3 | Optimization | `check_cstr`, `evaluate`, `tournamentDCD`, `update` (M2 each: OptiGenAlgNsga2Deap, OptiBayesAlgSmoot) | class: `OptiSolver` (shared base) or `OptiGenAlg` | done (2026-11-21): methods of `OptiGenAlgNsga2Deap` (`evaluate`, `check_cstr`; `tournamentDCD`, `update` static) |
 | 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | done (2026-11-21): static methods of `VarSimu` |
@@ -1090,6 +1090,9 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 | `Functions.MeshSolution.get_indices_limited` | `MeshSolution.get_indices_limited` | Step 6 |
 | `Functions.Simulation.VarSimu.run_multisim_step` | `VarSimu.run_multisim_step` | Step 6 |
 | (Step 8 moves, `get_logger` of Step 9) | | |
+| `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `getattr_recursive`, `short_filepath` | none (dead code) | Step 8 group 1 |
+| `Converter.MotorCAD.slotW23_H1` | none (not used by the rules) | Step 8 |
+| `Converter.Utils.EquivalentError` | none (unused error) | Step 8 group 1 |
 
 - [ ] Decide which other legacy behaviours removed with the legacy layer need
       a deprecation period (`-1` default, `None` everywhere, `as_dict` /

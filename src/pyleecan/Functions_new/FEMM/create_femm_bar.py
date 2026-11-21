@@ -1,19 +1,42 @@
-"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
-
 from warnings import warn
 
 
-def create_FEMM_bar(*args, **kwargs):
-    """Deprecated: use femm_pyleecan.create_FEMM_bar"""
-    from .femm_pyleecan import femm_pyleecan
+def create_FEMM_bar(femm, is_mmfr, rho, materials):
+    """Create the property for LamSquirrel cage on the rotor
+
+    Parameters
+    ----------
+    femm : FEMMHandler
+        client to send command to a FEMM instance
+    is_mmfr : bool
+        1 to compute the rotor magnetomotive force / rotor magnetic field
+    rho : float
+        the Resistivity at 20°C
+    materials : list
+        List of materials already created in FEMM
+
+    Returns
+    -------
+    (str, list)
+        material name "Rotor Bar", updated materials
+
+    """
 
     warn(
-        "create_FEMM_bar is deprecated, use femm_pyleecan.create_FEMM_bar (removed in Phase 2)",
+        "create_FEMM_bar is deprecated, it is not used by pyleecan (removed in Phase 2)",
         DeprecationWarning,
         stacklevel=2,
     )
-    args = list(args)
-    femm = kwargs.pop("femm") if "femm" in kwargs else args.pop(0)
-    if not isinstance(femm, femm_pyleecan):  # FEMM handler
-        femm = femm_pyleecan(femm)
-    return femm.create_FEMM_bar(*args, **kwargs)
+    if is_mmfr:
+        if "Rotor Bar" not in materials:
+            femm.handler.mi_addmaterial(
+                "Rotor Bar", 1, 1, 0, 0, 1e-6 / rho, 0, 0, 1, 0, 0, 0, 0, 0
+            )
+            materials.append("Rotor Bar")
+    else:
+        if "Rotor Bar" not in materials:
+            # replacing the rotor bars by air
+            femm.handler.mi_addmaterial("Rotor Bar", 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+            materials.append("Rotor Bar")
+
+    return "Rotor Bar", materials

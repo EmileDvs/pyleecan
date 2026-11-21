@@ -1,4 +1,5 @@
 import os
+from warnings import warn
 
 
 def short_filepath(filepath, length=40):
@@ -6,6 +7,11 @@ def short_filepath(filepath, length=40):
     truncate a filepath string to the specified length
     but at least returns the filename
     """
+    warn(
+        "short_filepath is deprecated, it is not used by pyleecan (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     filepath = filepath.replace("/", "\\")
     if len(filepath) < length:
         return filepath

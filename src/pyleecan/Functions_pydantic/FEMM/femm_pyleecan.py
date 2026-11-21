@@ -453,31 +453,6 @@ class femm_pyleecan:
 
         return FEMM_dict
 
-    @staticmethod
-    def comp_FEMM_Jcus(
-        lam: LamSlotWind, cname: str, I: np.ndarray, j_t0: int, is_mmf: bool
-    ) -> float:
-        """Compute the current density for FEMM [A/mm2]"""
-
-        Npcp = lam.winding.Npcp  # number of parallel circuits  per phase (maximum 2p)
-        (Nrad, Ntan) = lam.winding.get_dim_wind()
-        Nwpc = Nrad * Ntan  # total number of wires / strands in parallel per coil
-        Ksfill = lam.comp_fill_factor()
-        Swire = lam.winding.conductor.comp_surface_active()
-        # Decode the label
-        q_id = int(cname[2:-1])
-        if cname[-1] == "-":
-            s = -1
-        else:
-            s = 1
-
-        if I is None:
-            Jcus = 0
-        else:
-            Jcus = s * 1e-6 * Ksfill * (I[q_id, j_t0] / Npcp) * is_mmf / Swire / Nwpc
-
-        return Jcus
-
     def comp_FEMM_Phi_wind(
         self,
         qs: int,
@@ -556,45 +531,6 @@ class femm_pyleecan:
         self.handler.mo_clearblock()
 
         return Tem
-
-    def create_FEMM_bar(
-        self, is_mmfr: bool, rho: float, materials: list
-    ) -> tuple[str, list]:
-        """Create the property for LamSquirrel cage on the rotor
-
-        Parameters
-        ----------
-        self : femm_pyleecan
-            client to send command to a FEMM instance
-        is_mmfr : bool
-            1 to compute the rotor magnetomotive force / rotor magnetic field
-        rho : float
-            the Resistivity at 20°C
-        materials : list
-            List of materials already created in FEMM
-
-        Returns
-        -------
-        (str, list)
-            material name "Rotor Bar", updated materials
-
-        """
-
-        if is_mmfr:
-            if "Rotor Bar" not in materials:
-                self.handler.mi_addmaterial(
-                    "Rotor Bar", 1, 1, 0, 0, 1e-6 / rho, 0, 0, 1, 0, 0, 0, 0, 0
-                )
-                materials.append("Rotor Bar")
-        else:
-            if "Rotor Bar" not in materials:
-                # replacing the rotor bars by air
-                self.handler.mi_addmaterial(
-                    "Rotor Bar", 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0
-                )
-                materials.append("Rotor Bar")
-
-        return "Rotor Bar", materials
 
     def create_FEMM_boundary_conditions(self, line_label: str, BC_dict: dict) -> None:
         """Create the boundary conditions in FEMM

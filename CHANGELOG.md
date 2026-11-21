@@ -112,6 +112,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `cut_lines_between_angle`, `comp_surface_num`) in one module; the old
   `Geometry.*` paths are deprecated aliases. `merge_notch_list` is a
   static method of `Lamination`, `transform_hole_surf` of `Hole`.
+- **Dead code deprecated** (Step 8): `Plot.Pyvista.get_arrows_plt`,
+  `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`,
+  `getattr_recursive`, `short_filepath` warn (no caller; removed in
+  Phase 2).
 - **Converter rule functions from a static registry** (Step 8):
   `Converter.rule_functions` maps the rule names to their modules (no
   import by name); the complex rules work on both backends;

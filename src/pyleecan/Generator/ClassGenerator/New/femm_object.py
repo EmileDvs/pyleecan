@@ -118,13 +118,18 @@ def _up(spec):
 
 
 def femm_modules(functions_dir, spec=FEMM):
-    """{module name: source} of the legacy FEMM modules."""
+    """{module name: source} of the legacy FEMM modules (the deprecated modules
+    of moved_functions.DEPRECATED_MODULES excluded: they stay at their path)."""
+    from .moved_functions import DEPRECATED_MODULES
+
     FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     folder = Path(functions_dir).joinpath(*FEMM_PACKAGE.split("."))
     return {
         path.stem: path.read_text(encoding="utf-8")
         for path in sorted(folder.glob("*.py"))
-        if path.name != "__init__.py" and path.stem != FEMM_MODULE
+        if path.name != "__init__.py"
+        and path.stem != FEMM_MODULE
+        and f"{FEMM_PACKAGE}.{path.stem}" not in DEPRECATED_MODULES
     }
 
 
