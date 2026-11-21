@@ -8,7 +8,7 @@ from ....Classes_new.optimization.opti_design_var_interval import OptiDesignVarI
 class OptimizationAttributeError(Exception):
     """Class to Raise an error"""
 
-    def __init__(self, message):
+    def __init__(self, message) -> None:
         self.message = message
 
 

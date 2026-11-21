@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 @staticmethod
 def build_solution_data(
-    field: np.ndarray, axis_list: list, name="", symbol="", unit="", is_real: bool = True, type_element="triangle"
+    field: np.ndarray, axis_list: list, name: str = "", symbol: str = "", unit: str = "", is_real: bool = True, type_element: str = "triangle"
 ) -> SolutionData:
     """Build the MeshSolution objets from FEMM outputs.
 

@@ -5,14 +5,15 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Any
+    from ....Classes_new.machine.machine import Machine
 
 
 def comp_MTPA(
-    self, machine,
-    N0_min,
-    N0_max,
-    Nspeed,
-    Ntorque,
+    self, machine: Machine,
+    N0_min: float,
+    N0_max: float,
+    Nspeed: int,
+    Ntorque: int,
     I_max: float,
     U_max: float,
     Rs: float | None = None,

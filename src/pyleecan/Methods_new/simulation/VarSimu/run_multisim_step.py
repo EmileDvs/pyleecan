@@ -4,17 +4,18 @@ from ....loggers import CONSOLE_LEVEL
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
     from ....Classes_new.simulation.simulation import Simulation
 
 
 @staticmethod
 def run_multisim_step(
     simulation: Simulation,
-    datakeeper_list,
+    datakeeper_list: list,
     stop_if_error: bool,
     post_keeper_postproc_list: list | None = None,
     simu_type: str | None = None,
-):
+) -> Output:
     """Execute a simulation step of a multi-simulation and run datakeepers
 
     Parameters

@@ -190,11 +190,11 @@ class File(str):
 
 
 class Variable:
-    def __init__(self, name=None, value=None):
+    def __init__(self, name=None, value=None) -> None:
         self.name = name
         self.value = value
 
 
 class MATC:
-    def __init__(self, expr=None):
+    def __init__(self, expr=None) -> None:
         self.expr = expr

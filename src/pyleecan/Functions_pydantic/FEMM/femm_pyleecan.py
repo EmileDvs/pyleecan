@@ -2,6 +2,8 @@
 generator from the modules of Functions/FEMM (PLAN.md Step 8).
 """
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from ...classes_common.errors import FEMMError
@@ -68,6 +70,17 @@ from . import (
     precision,
 )
 
+if TYPE_CHECKING:
+    from ...classes_common.femm_handler import _FEMMHandler
+    from ...Classes_pydantic.geometry.line import Line
+    from ...Classes_pydantic.geometry.surface import Surface
+    from ...Classes_pydantic.machine.lam_slot import LamSlot
+    from ...Classes_pydantic.machine.lam_slot_wind import LamSlotWind
+    from ...Classes_pydantic.machine.machine import Machine
+    from ...Classes_pydantic.machine.magnet import Magnet
+    from ...Classes_pydantic.output.output import Output
+    from ...Classes_pydantic.simulation.dxf_import import DXFImport
+
 
 class femm_pyleecan:
     """Interface of pyleecan with FEMM: the FEMM handler and the FEMM functions
@@ -76,15 +89,17 @@ class femm_pyleecan:
     OutMagFEMM.handler_list). The FEMM commands are sent with self.handler.
     """
 
-    def __init__(self, handler=None):
+    def __init__(self, handler: _FEMMHandler | None = None) -> None:
         """Create the object, with a new handler if none is given."""
         if handler is None:
-            from ...Classes._FEMMHandler import _FEMMHandler
+            from ...classes_common.femm_handler import _FEMMHandler
 
             handler = _FEMMHandler()
         self.handler = handler
 
-    def assign_FEMM_surface(self, surf, prop, FEMM_dict, machine):
+    def assign_FEMM_surface(
+        self, surf: Surface, prop: str, FEMM_dict: dict, machine: Machine
+    ) -> None:
         """Assign the property given in parameter to surface having the label given
         Parameters
         ----------
@@ -244,8 +259,13 @@ class femm_pyleecan:
 
     @staticmethod
     def comp_FEMM_dict(
-        machine, Kgeo_fineness, Kmesh_fineness, T_mag, type_calc_leakage=0, sym=1
-    ):
+        machine: Machine,
+        Kgeo_fineness: float,
+        Kmesh_fineness: float,
+        T_mag: float,
+        type_calc_leakage: int = 0,
+        sym: int = 1,
+    ) -> dict:
         """Compute the parameters needed for FEMM simulations
 
         Parameters
@@ -433,7 +453,9 @@ class femm_pyleecan:
         return FEMM_dict
 
     @staticmethod
-    def comp_FEMM_Jcus(lam, cname, I, j_t0, is_mmf):
+    def comp_FEMM_Jcus(
+        lam: LamSlotWind, cname: str, I: np.ndarray, j_t0: int, is_mmf: bool
+    ) -> float:
         """Compute the current density for FEMM [A/mm2]"""
 
         Npcp = lam.winding.Npcp  # number of parallel circuits  per phase (maximum 2p)
@@ -456,8 +478,15 @@ class femm_pyleecan:
         return Jcus
 
     def comp_FEMM_Phi_wind(
-        self, qs, Npcp, is_stator, L1, L2, sym, is_rescale_flux=True
-    ):
+        self,
+        qs: int,
+        Npcp: int,
+        is_stator: bool,
+        L1: float,
+        L2: float,
+        sym: int,
+        is_rescale_flux: bool = True,
+    ) -> float:
         """Compute the total flux linkage of the winding phases
 
         Parameters
@@ -507,7 +536,7 @@ class femm_pyleecan:
                 Phi_wind[0, q] = None
         return Phi_wind
 
-    def comp_FEMM_torque(self, rotor_groups, sym=1):
+    def comp_FEMM_torque(self, rotor_groups: list, sym: int = 1) -> float:
         """Compute the torque of the current FEMM simulation result
         Parameters
         ----------
@@ -527,7 +556,9 @@ class femm_pyleecan:
 
         return Tem
 
-    def create_FEMM_bar(self, is_mmfr, rho, materials):
+    def create_FEMM_bar(
+        self, is_mmfr: bool, rho: float, materials: list
+    ) -> tuple[str, list]:
         """Create the property for LamSquirrel cage on the rotor
 
         Parameters
@@ -564,7 +595,7 @@ class femm_pyleecan:
 
         return "Rotor Bar", materials
 
-    def create_FEMM_boundary_conditions(self, line_label, BC_dict):
+    def create_FEMM_boundary_conditions(self, line_label: str, BC_dict: dict) -> None:
         """Create the boundary conditions in FEMM
 
         Parameters
@@ -686,8 +717,16 @@ class femm_pyleecan:
             BC_dict[label_dict["lam_label"] + "_" + YSR_LAB + "-" + line_id] = bc_name
 
     def create_FEMM_circuit_material(
-        self, circuits, label_dict, is_eddies, lam, I, is_mmf, j_t0, materials
-    ):
+        self,
+        circuits: list,
+        label_dict: dict,
+        is_eddies: bool,
+        lam: LamSlotWind,
+        I: np.ndarray,
+        is_mmf: bool,
+        j_t0: int,
+        materials: list,
+    ) -> tuple[str, list, list]:
         """Set in FEMM circuits property
 
         Parameters
@@ -767,7 +806,14 @@ class femm_pyleecan:
 
         return cname, materials, circuits
 
-    def create_FEMM_magnet(self, is_mmf, is_eddies, materials, mag_obj, T_mag):
+    def create_FEMM_magnet(
+        self,
+        is_mmf: bool,
+        is_eddies: bool,
+        materials: list,
+        mag_obj: Magnet,
+        T_mag: float,
+    ) -> tuple[str, list]:
         """Set the material of the magnet in FEMM
 
         Parameters
@@ -820,18 +866,18 @@ class femm_pyleecan:
 
     def create_FEMM_materials(
         self,
-        machine,
-        surf_list,
-        FEMM_dict,
-        Is,
-        Ir,
-        is_mmfs,
-        is_mmfr,
-        type_BH_stator,
-        type_BH_rotor,
-        is_eddies,
-        j_t0,
-    ):
+        machine: Machine,
+        surf_list: list,
+        FEMM_dict: dict,
+        Is: np.ndarray,
+        Ir: np.ndarray,
+        is_mmfs: bool,
+        is_mmfr: bool,
+        type_BH_stator: int,
+        type_BH_rotor: int,
+        is_eddies: bool,
+        j_t0: int,
+    ) -> tuple[dict, dict]:
         """Add materials in FEMM
 
         Parameters
@@ -1083,7 +1129,7 @@ class femm_pyleecan:
         FEMM_dict["circuits"] = circuits
         return prop_dict, FEMM_dict
 
-    def add_BH_curve(self, BH, mat_name):
+    def add_BH_curve(self, BH: np.ndarray, mat_name: str) -> None:
         """Add the BH curve of a lamination on femm
 
         Parameters
@@ -1101,29 +1147,29 @@ class femm_pyleecan:
 
     def draw_FEMM(
         self,
-        output,
-        is_mmfr,
-        is_mmfs,
-        sym,
-        is_antiper,
-        type_calc_leakage,
-        is_remove_ventS=False,
-        is_remove_ventR=False,
-        is_remove_slotS=False,
-        is_remove_slotR=False,
-        type_BH_stator=0,
-        type_BH_rotor=0,
-        kgeo_fineness=1,
-        kmesh_fineness=1,
-        user_FEMM_dict={},
-        path_save="FEMM_model.fem",
-        is_sliding_band=True,
-        transform_list=[],
-        rotor_dxf=None,
-        stator_dxf=None,
-        is_fast_draw=False,
-        T_mag=20,
-    ):
+        output: Output,
+        is_mmfr: bool,
+        is_mmfs: bool,
+        sym: int,
+        is_antiper: bool,
+        type_calc_leakage: int,
+        is_remove_ventS: bool = False,
+        is_remove_ventR: bool = False,
+        is_remove_slotS: bool = False,
+        is_remove_slotR: bool = False,
+        type_BH_stator: int = 0,
+        type_BH_rotor: int = 0,
+        kgeo_fineness: float = 1,
+        kmesh_fineness: float = 1,
+        user_FEMM_dict: dict = {},
+        path_save: str = "FEMM_model.fem",
+        is_sliding_band: bool = True,
+        transform_list: list = [],
+        rotor_dxf: DXFImport | None = None,
+        stator_dxf: DXFImport | None = None,
+        is_fast_draw: bool = False,
+        T_mag: float = 20,
+    ) -> dict:
         """Draws and assigns the property of the machine in FEMM
 
         Parameters
@@ -1343,21 +1389,21 @@ class femm_pyleecan:
 
     def draw_FEMM_lamination(
         self,
-        machine,
-        lam,
-        sym,
-        FEMM_dict,
-        transform_list,
-        lam_dxf,
-        BC_dict,
-        Is,
-        Ir,
-        is_mmfs=True,
-        is_mmfr=True,
-        type_BH_stator=0,
-        type_BH_rotor=0,
-        is_fast_draw=False,
-    ):
+        machine: Machine,
+        lam: Lamination,
+        sym: int,
+        FEMM_dict: dict,
+        transform_list: list,
+        lam_dxf: DXFImport,
+        BC_dict: dict,
+        Is: np.ndarray,
+        Ir: np.ndarray,
+        is_mmfs: bool = True,
+        is_mmfr: bool = True,
+        type_BH_stator: int = 0,
+        type_BH_rotor: int = 0,
+        is_fast_draw: bool = False,
+    ) -> dict:
         """Draw a Lamination in FEMM
 
         Parameters
@@ -1501,20 +1547,20 @@ class femm_pyleecan:
 
     def draw_FEMM_surfaces(
         self,
-        machine,
-        surf_list,
-        FEMM_dict,
-        BC_dict,
-        Is,
-        Ir,
-        is_mmfs,
-        is_mmfr,
-        type_BH_stator,
-        type_BH_rotor,
-        type_assign=0,
-        type_set_BC=0,
-        is_draw=True,
-    ):
+        machine: Machine,
+        surf_list: list,
+        FEMM_dict: dict,
+        BC_dict: dict,
+        Is: np.ndarray,
+        Ir: np.ndarray,
+        is_mmfs: bool,
+        is_mmfr: bool,
+        type_BH_stator: int,
+        type_BH_rotor: int,
+        type_assign: int = 0,
+        type_set_BC: int = 0,
+        is_draw: bool = True,
+    ) -> dict:
         """Draw a list of surfaces in FEMM
 
         Parameters
@@ -1605,7 +1651,9 @@ class femm_pyleecan:
         return FEMM_dict
 
     @staticmethod
-    def get_airgap_surface(lam_int, lam_ext, sym=1):
+    def get_airgap_surface(
+        lam_int: Lamination, lam_ext: Lamination, sym: int = 1
+    ) -> tuple[list, complex]:
         """Returns a list of surface in the airgap without sliding band surface
 
         Parameters
@@ -1632,7 +1680,7 @@ class femm_pyleecan:
         point_ref = (Rgap_mec_int + Wgap_mec / 2) * np.exp(1j * np.pi / sym / 2)
 
         if sym == 1:
-            line_list = []
+            line_list: list[Line] = []
         else:
             Z1 = lam_int.get_Rbo()
             Z2 = lam_ext.get_Rbo()
@@ -1640,7 +1688,7 @@ class femm_pyleecan:
             Z1_bis = Z1 * np.exp(1j * 2 * np.pi / sym)
             Z2_bis = Z2 * np.exp(1j * 2 * np.pi / sym)
 
-            line_list = [
+            line_list: list[Line] = [
                 Segment(begin=Z1, end=Z2, prop_dict={BOUNDARY_PROP_LAB: AS_BR_LAB}),
                 Segment(
                     begin=Z1_bis, end=Z2_bis, prop_dict={BOUNDARY_PROP_LAB: AS_BL_LAB}
@@ -1658,7 +1706,7 @@ class femm_pyleecan:
 
         return surf_list, point_ref
 
-    def get_FEMM_BC_propname(self, line_label, BC_dict):
+    def get_FEMM_BC_propname(self, line_label: str, BC_dict: dict) -> str:
         """Get/create the Boundary coundition corresponding the line
 
         Parameters
@@ -1681,7 +1729,7 @@ class femm_pyleecan:
         return BC_dict[line_label]
 
     @staticmethod
-    def get_mesh_param(label_dict, FEMM_dict):
+    def get_mesh_param(label_dict: str, FEMM_dict: dict) -> dict:
         """Returns main mesh parameters corresponding to a surface label
         Parameters
         ----------
@@ -1812,7 +1860,7 @@ class femm_pyleecan:
         return mesh_dict
 
     @staticmethod
-    def get_sliding_band(sym, lam_int, lam_ext):
+    def get_sliding_band(sym: int, lam_int: Lamination, lam_ext: Lamination) -> list:
         """Returns  a list of surface in the airgap including the sliding band surface
 
         Parameters
@@ -1882,7 +1930,7 @@ class femm_pyleecan:
             Z2 = Rgap_mec_int + W_sb
             Z3 = Z2 * np.exp(1j * 2 * np.pi / sym)
             Z4 = Z1 * np.exp(1j * 2 * np.pi / sym)
-            airgap_lines = []
+            airgap_lines: list[Line] = []
             airgap_lines.append(  # Bottom Right side
                 Segment(begin=Z1, end=Z2, prop_dict={BOUNDARY_PROP_LAB: SBS_BR_LAB})
             )
@@ -1939,7 +1987,9 @@ class femm_pyleecan:
         return surf_list
 
     @staticmethod
-    def _get_radius_boundary(sym, lam_int, lam_ext):
+    def _get_radius_boundary(
+        sym: int, lam_int: LamSlot, lam_ext: LamSlot
+    ) -> tuple[float, float]:
         """Returns the radii of the laminations on the x axis
 
         Parameters
@@ -1992,7 +2042,9 @@ class femm_pyleecan:
 
         return Rint, Rext
 
-    def set_FEMM_circuit_prop(self, circuits, Clabel, I=None):
+    def set_FEMM_circuit_prop(
+        self, circuits: list, Clabel: str, I: np.ndarray | None = None
+    ) -> list:
         """Create or update the property of a circuit
 
         Parameters
@@ -2031,7 +2083,14 @@ class femm_pyleecan:
 
         return circuits
 
-    def set_FEMM_wind_material(self, materials, cname, Jcus=0, Cduct=None, dwire=None):
+    def set_FEMM_wind_material(
+        self,
+        materials: list,
+        cname: str,
+        Jcus: float = 0,
+        Cduct: float | None = None,
+        dwire: float | None = None,
+    ) -> list:
         """Create or update the property of a winding material
 
         Parameters
@@ -2078,8 +2137,15 @@ class femm_pyleecan:
         return materials
 
     def update_FEMM_simulation(
-        self, FEMM_dict, is_internal_rotor, is_sliding_band, angle_rotor, Is, Ir, ii
-    ):
+        self,
+        FEMM_dict: dict,
+        is_internal_rotor: bool,
+        is_sliding_band: bool,
+        angle_rotor: np.ndarray,
+        Is: np.ndarray,
+        Ir: np.ndarray,
+        ii: int,
+    ) -> None:
         """Update the simulation by changing the rotor position and
         updating the currents
         Parameters

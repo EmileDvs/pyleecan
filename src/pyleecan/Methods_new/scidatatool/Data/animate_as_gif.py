@@ -7,13 +7,14 @@ from matplotlib.pyplot import subplots
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from ....Classes_new.scidatatool.data import Data
 
 
 
 @staticmethod
 def animate_as_gif(
-    func,
+    func: Callable,
     data_list: Data | list[Data],
     save_path: str = "./",
     file_name: str = "animated_plot.gif",
@@ -82,7 +83,7 @@ def animate_as_gif(
         else:
             if isinstance(data_list, VectorField):
                 if component_list is None:  # default: extract all components
-                    component_list = data.components.keys()
+                    component_list = data_list.components.keys()
                 ncomp = len(component_list)
                 for j in range(0, index_max, index_step):
                     fig, axs = subplots(1, ncomp, tight_layout=True, figsize=(20, 10))

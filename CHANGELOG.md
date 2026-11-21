@@ -117,6 +117,8 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     `get_phase_id` a regular method of `Winding` reading its connection
     matrix (`wind_mat` optional); `comp_cond_function` a static method
     of `Conductor`; `gen_phase_list` stays a utility;
+  - the methods added to the classes and the interface objects have type
+    hints (drafted from the docstrings, completed by overrides);
   - MeshSolution: `build_solution_data`, `build_solution_vector` become
     static constructors of `SolutionData` / `SolutionVector`,
     `get_frame_meshsolution` a method of `Output`; the deleted
@@ -132,7 +134,7 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     suffix), without the checks of the data axes; the old paths are
     deprecated aliases;
   - `animate_as_gif` becomes a static method of `Data` (any plot of the
-    Data objects);
+    Data objects; its VectorField branch used an undefined name, fixed);
   - `comp_MTPA` becomes a method of `LUTdq` (`LUT.comp_MTPA(machine,
     ...)`);
   - FEMM: the FEMM functions are the methods of one interface object,

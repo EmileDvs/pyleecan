@@ -10,12 +10,12 @@ class File(str):
 # class to represent type 'Variable' in Elmer
 # TODO multiple variable as list
 class Variable:
-    def __init__(self, name=None, value=None):
+    def __init__(self, name=None, value=None) -> None:
         self.name = name
         self.value = value
 
 
 # class to represent MATC expressions in Elmer
 class MATC:
-    def __init__(self, expr=None):
+    def __init__(self, expr=None) -> None:
         self.expr = expr

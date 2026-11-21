@@ -219,11 +219,11 @@ class SolutionVector(Solution):
     def build_solution_vector(
         field: np.ndarray,
         axis_list: list,
-        name="",
-        symbol="",
-        unit="",
+        name: str = "",
+        symbol: str = "",
+        unit: str = "",
         is_real: bool = True,
-        type_element="triangle",
+        type_element: str = "triangle",
     ) -> SolutionVector:
         """Build a SolutionVector object
 

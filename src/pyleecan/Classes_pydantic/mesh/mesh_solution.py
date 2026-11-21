@@ -1672,7 +1672,7 @@ class MeshSolution(LegacyModel):
     # Inlined from Methods.Mesh.MeshSolution.get_area
     def get_area(
         self, group_names: list[str] | None = None, indices: list | None = None
-    ):
+    ) -> float:
         """Get the surface area of the specified groups of a MeshSolution
 
         Parameters
@@ -1705,7 +1705,7 @@ class MeshSolution(LegacyModel):
         group_names: list[str] | None = None,
         max_value: float = float("Inf"),
         min_value: float = float("-Inf"),
-    ):
+    ) -> np.ndarray | list:
         """Get the indices of the specified groups of a MeshSolution,
         with the field 'label' values magnitude must be within the given limits.
 

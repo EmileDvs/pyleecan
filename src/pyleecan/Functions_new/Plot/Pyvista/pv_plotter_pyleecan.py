@@ -37,7 +37,7 @@ class pv_plotter_pyleecan:
         pv_plotter: Optional[pv.plotting.BasePlotter],
         win_title: str,
         is_show_axes: bool = True,
-    ):
+    ) -> Tuple[pv.plotting.BasePlotter, Dict[str, Any]]:
         """Configure a pyvista plot. If the plotter doesn't exist, create one depending on available package: PyVista or PyVistaQt.
 
         Parameters
@@ -83,7 +83,7 @@ class pv_plotter_pyleecan:
         factor: float,
         is_point_arrow: bool,
         phase: complex = 1 + 0j,
-    ):
+    ) -> Tuple[pv.PolyData, float]:
         """Create a pyvista arrow plot
 
         Parameters
@@ -136,13 +136,13 @@ class pv_plotter_pyleecan:
 
     @staticmethod
     def plot_glyph_pv(
-        pv_plotter,
+        pv_plotter: Any,
         mesh_pv: pv.UnstructuredGrid,
         vect_field: np.ndarray,
-        is_point_arrow,
-        factor=1,
-        phase=1,
-    ):
+        is_point_arrow: bool,
+        factor: float = 1,
+        phase: complex = 1,
+    ) -> None:
         """Plot a vector field as arrow (or glyph) using pyvista plotter.
 
         Parameters
@@ -198,15 +198,15 @@ class pv_plotter_pyleecan:
 
     @staticmethod
     def plot_mesh_field(
-        pv_plotter,
-        sargs,
-        field_name,
-        clim=None,
-        mesh_pv=None,
-        field=None,
-        phase=1,
-        colormap=COLOR_MAP,
-    ):
+        pv_plotter: Any,
+        sargs: dict,
+        field_name: str,
+        clim: list | None = None,
+        mesh_pv: Any | None = None,
+        field: np.ndarray | None = None,
+        phase: complex = 1,
+        colormap: str = COLOR_MAP,
+    ) -> None:
         mesh_pv[field_name] = np.real(field * phase)
         mesh_field = mesh_pv
 
@@ -221,16 +221,16 @@ class pv_plotter_pyleecan:
 
     @staticmethod
     def plot_surf_deflection(
-        pv_plotter,
-        sargs,
-        surf_pv,
-        vect_field,
-        field,
-        field_name,
-        clim=None,
-        factor=None,
-        phase=1,
-    ):
+        pv_plotter: Any,
+        sargs: dict,
+        surf_pv: Any,
+        vect_field: np.ndarray,
+        field: np.ndarray,
+        field_name: str,
+        clim: list | None = None,
+        factor: float | None = None,
+        phase: complex = 1,
+    ) -> None:
         """Plot a vector field as arrow (or glyph) using pyvista plotter.
 
         Parameters

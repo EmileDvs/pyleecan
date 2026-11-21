@@ -17,6 +17,7 @@ from .lut import LUT
 if TYPE_CHECKING:
     from typing import Any
 
+    from ..machine.machine import Machine
     from ..scidatatool.data_nd import DataND
 
 
@@ -628,11 +629,11 @@ class LUTdq(LUT):
     # Inlined from Methods.Output.LUTdq.comp_MTPA
     def comp_MTPA(
         self,
-        machine,
-        N0_min,
-        N0_max,
-        Nspeed,
-        Ntorque,
+        machine: Machine,
+        N0_min: float,
+        N0_max: float,
+        Nspeed: int,
+        Ntorque: int,
         I_max: float,
         U_max: float,
         Rs: float | None = None,

@@ -56,6 +56,8 @@ class InterfaceObject(NamedTuple):
     """Class of the handler, built by the callers (replaced by the object)"""
     description: str = ""
     """Docstring of the class"""
+    handler_module: str = "classes_common.femm_handler"
+    """Module of the handler class below pyleecan"""
 
 
 FEMM = InterfaceObject(
@@ -86,6 +88,28 @@ PYVISTA = InterfaceObject(
 )
 INTERFACE_OBJECTS = (FEMM, GMSH, PYVISTA)
 """The objects gathering the functions of a Functions folder"""
+
+
+def _returns(node):
+    """Return annotation of a function signature (" -> X" or "")."""
+    return f" -> {ast.unparse(node.returns)}" if node.returns is not None else ""
+
+
+def _is_type_checking_block(node):
+    return (
+        isinstance(node, ast.If)
+        and isinstance(node.test, ast.Name)
+        and node.test.id == "TYPE_CHECKING"
+        and not node.orelse
+    )
+
+
+def _add_type_hints(source, package):
+    """Type hints of the functions of a legacy module (type_hints.py)."""
+    from .source_names import name_maps
+    from .type_hints import add_type_hints
+
+    return add_type_hints(source, package, name_maps().gen_dict)
 
 
 def _up(spec):
@@ -243,9 +267,9 @@ def _method_source(source, node, signatures, spec=FEMM):
             kwarg=arguments.kwarg,
             defaults=[d for i, d in enumerate(defaults) if first_default + i != index],
         )
-        signature = f"def {node.name}({ast.unparse(new_args)}):\n"
+        signature = f"def {node.name}({ast.unparse(new_args)}){_returns(node)}:\n"
         return signature + _indent_body(body)
-    signature = f"@staticmethod\ndef {node.name}({ast.unparse(node.args)}):\n"
+    signature = f"@staticmethod\ndef {node.name}({ast.unparse(node.args)}){_returns(node)}:\n"
     return signature + _indent_body(body)
 
 
@@ -275,7 +299,7 @@ def femm_object_source(modules, shared_errors=None, spec=FEMM):
     shared_errors = shared_errors or {}
     package = f"pyleecan.Functions.{FEMM_PACKAGE}"
     signatures = femm_signatures(modules, spec)
-    imports, definitions, methods = [], [], []
+    imports, definitions, methods, type_checking = [], [], [], []
     for name, source in modules.items():
         # Imports of the other FEMM modules (module level or local): removed
         source = _remove_statements(source, lambda stmt: _is_femm_import(stmt, package, spec))
@@ -290,6 +314,14 @@ def femm_object_source(modules, shared_errors=None, spec=FEMM):
                 methods.append(_method_source(source, node, signatures, spec))
             elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
                 continue  # Module docstring
+            elif _is_type_checking_block(node):  # One block for the module
+                for item in node.body:
+                    text = ast.unparse(item)
+                    if text not in type_checking and not (
+                        isinstance(item, ast.ImportFrom)
+                        and [alias.name for alias in item.names] == [FEMM_CLASS]
+                    ):
+                        type_checking.append(text)
             elif isinstance(node, ast.ClassDef) and node.name in shared_errors.get(name, ()):
                 text = f"from {_up(spec)}classes_common.errors import {node.name}"
                 if text not in imports:
@@ -302,11 +334,12 @@ def femm_object_source(modules, shared_errors=None, spec=FEMM):
     class_lines += [("    " + line).rstrip() for line in description[1:]]
     class_lines += ['    """', ""]
     if HANDLER is not None:
+        type_checking.append(f"from {_up(spec)}{spec.handler_module} import {HANDLER_CLASS}")
         class_lines += [
-            "    def __init__(self, handler=None):",
+            f"    def __init__(self, handler: {HANDLER_CLASS} | None = None) -> None:",
             '        """Create the object, with a new handler if none is given."""',
             "        if handler is None:",
-            f"            from {_up(spec)}Classes.{HANDLER_CLASS} import {HANDLER_CLASS}",
+            f"            from {_up(spec)}{spec.handler_module} import {HANDLER_CLASS}",
             "",
             f"            handler = {HANDLER_CLASS}()",
             "        self.handler = handler",
@@ -320,6 +353,12 @@ def femm_object_source(modules, shared_errors=None, spec=FEMM):
         f"generator from the modules of Functions/{FEMM_PACKAGE} (PLAN.md Step 8).\n"
         '"""\n\n'
     )
+    if type_checking:  # The class imports of the type hints
+        if "from typing import TYPE_CHECKING" not in imports:
+            imports.append("from typing import TYPE_CHECKING")
+        imports.append(
+            "\nif TYPE_CHECKING:\n" + "\n".join(f"    {text}" for text in type_checking)
+        )
     return (
         header
         + "\n".join(imports)

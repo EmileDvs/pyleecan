@@ -1,10 +1,16 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
+
+
 def get_indices_limited(
     self,
     label: str | None = None,
     group_names: list[str] | None = None,
     max_value: float = float("Inf"),
     min_value: float = float("-Inf"),
-):
+) -> np.ndarray | list:
     """Get the indices of the specified groups of a MeshSolution,
     with the field 'label' values magnitude must be within the given limits.
 

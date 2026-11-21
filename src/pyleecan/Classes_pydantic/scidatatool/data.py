@@ -18,7 +18,7 @@ from .._legacy_model import LegacyModel
 from .normalization import Normalization
 
 if TYPE_CHECKING:
-    from .data import Data
+    from collections.abc import Callable
 
 
 class Data(LegacyModel):
@@ -78,7 +78,7 @@ class Data(LegacyModel):
     # Inlined from Methods.SciDataTool.Data.animate_as_gif
     @staticmethod
     def animate_as_gif(
-        func,
+        func: Callable,
         data_list: Data | list[Data],
         save_path: str = "./",
         file_name: str = "animated_plot.gif",
@@ -149,7 +149,7 @@ class Data(LegacyModel):
             else:
                 if isinstance(data_list, VectorField):
                     if component_list is None:  # default: extract all components
-                        component_list = data.components.keys()
+                        component_list = data_list.components.keys()
                     ncomp = len(component_list)
                     for j in range(0, index_max, index_step):
                         fig, axs = subplots(

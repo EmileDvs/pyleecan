@@ -938,6 +938,12 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 rewritten, "pyleecan", "Classes_new", class_module_paths
             )
             rewritten = _function_import_style(rewritten, generated_package, import_style)
+            if relative.with_suffix("").as_posix().replace("/", ".") in HINTED_FUNCTION_MODULES:
+                # Type hints drafted from the docstrings, as the methods
+                from .source_names import name_maps
+                from .type_hints import add_type_hints
+
+                rewritten = add_type_hints(rewritten, generated_package, name_maps().gen_dict)
             rewritten = _format_function_source(rewritten, destination)
             if relative == RETROCOMPATIBILITY_MODULE:
                 # Shared by the backends in classes_common (Step 8), this
@@ -962,6 +968,13 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
     remove_stale_modules(output_dir, generated)
     return issues
 
+
+HINTED_FUNCTION_MODULES = {
+    f"{spec.package}.{spec.module}" for spec in INTERFACE_OBJECTS
+} | set(MERGED_MODULES)
+"""Function modules with type hints drafted from their docstrings (the
+interface objects and the merged modules of Step 8; the other utilities: Step 8
+task)"""
 
 RETROCOMPATIBILITY_MODULE = Path("Load") / "retrocompatibility.py"
 """Legacy module of the file retrocompatibility, shared in classes_common"""

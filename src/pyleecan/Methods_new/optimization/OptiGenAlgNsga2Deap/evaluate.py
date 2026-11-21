@@ -7,10 +7,14 @@ from io import StringIO
 import os
 from datetime import datetime
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
 
 
 
-def evaluate(self, indiv) -> bool:
+def evaluate(self, indiv: Any) -> bool:
     """Evaluate the individual according to the solver method
 
     Parameters

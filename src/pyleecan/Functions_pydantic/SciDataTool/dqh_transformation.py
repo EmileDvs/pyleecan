@@ -1,12 +1,23 @@
 """Functions merged from Electrical.dqh_transformation, Electrical.dqh_transformation_freq (PLAN.md Step 8)."""
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from ..Winding.gen_phase_list import gen_name
 from .set_routines import union1d_tol
 
+if TYPE_CHECKING:
+    from ...Classes_pydantic.scidatatool.data_freq import DataFreq
+    from ...Classes_pydantic.scidatatool.data_time import DataTime
 
-def n2dqh(Z_n, angle_elec, is_dqh_rms=True, phase_dir=None):
+
+def n2dqh(
+    Z_n: np.ndarray,
+    angle_elec: np.ndarray,
+    is_dqh_rms: bool = True,
+    phase_dir: int | None = None,
+) -> np.ndarray:
     """n phases to dqh equivalent coordinate transformation
 
     Parameters
@@ -39,7 +50,7 @@ def n2dqh(Z_n, angle_elec, is_dqh_rms=True, phase_dir=None):
     return Z_dqh
 
 
-def n2abc(Z_n, phase_dir=None):
+def n2abc(Z_n: np.ndarray, phase_dir: int | None = None) -> np.ndarray:
     """n phase to 3 phases equivalent coordinate transformation, i.e. Clarke transformation
 
     Parameters
@@ -65,7 +76,7 @@ def n2abc(Z_n, phase_dir=None):
     return Z_abc
 
 
-def abc2dqh(Z_abc, angle_elec):
+def abc2dqh(Z_abc: np.ndarray, angle_elec: np.ndarray) -> np.ndarray:
     """alpha-beta-gamma to dqh coordinate transformation
 
     Parameters
@@ -100,7 +111,13 @@ def abc2dqh(Z_abc, angle_elec):
     return Z_dqh
 
 
-def dqh2n(Z_dqh, angle_elec, n, is_n_rms=False, phase_dir=None):
+def dqh2n(
+    Z_dqh: np.ndarray,
+    angle_elec: np.ndarray,
+    n: int,
+    is_n_rms: bool = False,
+    phase_dir: int | None = None,
+) -> np.ndarray:
     """dqh to n phase coordinate transformation
 
     Parameters
@@ -131,7 +148,7 @@ def dqh2n(Z_dqh, angle_elec, n, is_n_rms=False, phase_dir=None):
     return Z_n
 
 
-def abc2n(Z_abc, n=3, phase_dir=None):
+def abc2n(Z_abc: np.ndarray, n: int = 3, phase_dir: int | None = None) -> np.ndarray:
     """3 phase equivalent to n phase coordinate transformation, i.e. Clarke transformation
 
     Parameters
@@ -158,7 +175,7 @@ def abc2n(Z_abc, n=3, phase_dir=None):
     return Z_n
 
 
-def dqh2abc(Z_dqh, angle_elec):
+def dqh2abc(Z_dqh: np.ndarray, angle_elec: np.ndarray) -> np.ndarray:
     """dqh to alpha-beta-gamma coordinate transformation
 
     Parameters
@@ -190,7 +207,9 @@ def dqh2abc(Z_dqh, angle_elec):
     return Z_abc
 
 
-def comp_Clarke_transform(n, is_inv=False, phase_dir=None):
+def comp_Clarke_transform(
+    n: int, is_inv: bool = False, phase_dir: int | None = None
+) -> np.ndarray:
     """Compute Clarke transformation for given number of phases and rotating direction of phases
 
     Parameters
@@ -224,7 +243,7 @@ def comp_Clarke_transform(n, is_inv=False, phase_dir=None):
     return mat
 
 
-def get_phase_dir_DataTime(data_n):
+def get_phase_dir_DataTime(data_n: DataTime) -> int:
     """Get the phase rotating direction of input n-phase DataTime object
 
     Parameters
@@ -250,7 +269,7 @@ def get_phase_dir_DataTime(data_n):
     return phase_dir
 
 
-def get_phase_dir(Z_n, current_dir):
+def get_phase_dir(Z_n: np.ndarray, current_dir: int) -> int:
     """Get the phase rotating direction of input n-phase quantity by looking at phase of maximum component
 
     Parameters
@@ -278,7 +297,14 @@ def get_phase_dir(Z_n, current_dir):
     return phase_dir
 
 
-def n2dqh_freq(Z_n, freqs, phase_dir, current_dir, felec, is_dqh_rms=True):
+def n2dqh_freq(
+    Z_n: np.ndarray,
+    freqs: np.ndarray,
+    phase_dir: int,
+    current_dir: int,
+    felec: float,
+    is_dqh_rms: bool = True,
+) -> tuple[np.ndarray, np.ndarray]:
     """n phases to dqh equivalent coordinate transformation
 
     Parameters
@@ -313,7 +339,9 @@ def n2dqh_freq(Z_n, freqs, phase_dir, current_dir, felec, is_dqh_rms=True):
     return Z_dqh, freqs_dqh
 
 
-def abc2dqh_freq(Z_abc, freqs, current_dir, felec):
+def abc2dqh_freq(
+    Z_abc: np.ndarray, freqs: np.ndarray, current_dir: int, felec: float
+) -> tuple[np.ndarray, np.ndarray]:
     """alpha-beta-gamma to dqh coordinate transformation
 
     Parameters
@@ -375,7 +403,15 @@ def abc2dqh_freq(Z_abc, freqs, current_dir, felec):
     return Z_dqh[I0, :], freqs_dqh[I0]
 
 
-def dqh2n_freq(Z_dqh, freqs, current_dir, felec, n, phase_dir=None, is_n_rms=False):
+def dqh2n_freq(
+    Z_dqh: np.ndarray,
+    freqs: np.ndarray,
+    current_dir: int,
+    felec: float,
+    n: int,
+    phase_dir: int | None = None,
+    is_n_rms: bool = False,
+) -> tuple[np.ndarray, np.ndarray]:
     """dqh to n phase coordinate transformation
 
     Parameters
@@ -414,7 +450,9 @@ def dqh2n_freq(Z_dqh, freqs, current_dir, felec, n, phase_dir=None, is_n_rms=Fal
     return Z_n, freqs_abc
 
 
-def dqh2abc_freq(Z_dqh, freqs, current_dir, felec):
+def dqh2abc_freq(
+    Z_dqh: np.ndarray, freqs: np.ndarray, current_dir: int, felec: float
+) -> tuple[np.ndarray, np.ndarray]:
     """dqh to alpha-beta-gamma coordinate transformation
 
     Parameters
@@ -478,7 +516,7 @@ def dqh2abc_freq(Z_dqh, freqs, current_dir, felec):
     return Z_abc[I0, :], freqs_abc[I0]
 
 
-def get_phase_dir_DataFreq(data_n):
+def get_phase_dir_DataFreq(data_n: DataFreq) -> int:
     """Get the phase rotating direction of input n-phase DataFreq object
 
     Parameters
@@ -504,7 +542,7 @@ def get_phase_dir_DataFreq(data_n):
     return phase_dir
 
 
-def get_phase_dir_freq(Z_n, current_dir):
+def get_phase_dir_freq(Z_n: np.ndarray, current_dir: int) -> int:
     """Get the phase rotating direction of input n-phase quantity by looking at phase of maximum component
 
     Parameters

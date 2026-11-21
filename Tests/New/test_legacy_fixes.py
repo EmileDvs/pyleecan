@@ -65,8 +65,17 @@ def test_legacy_fixes_apply(key):
     """Each fix applies to the current legacy module and gives valid Python"""
     class_name, module = key
     gen_dict = _gen_dict()
-    path = Path(MAIN_DIR, "Methods", *gen_dict[class_name]["package"].split("."))
-    with tokenize.open(path / class_name / module) as source_file:
+    path = Path(MAIN_DIR, "Methods", *gen_dict[class_name]["package"].split(".")) / class_name / module
+    if not path.exists():  # Function moved to the class (moved_functions.py)
+        from pyleecan.Generator.ClassGenerator.New.moved_functions import all_moved_targets
+
+        legacy_module = next(
+            legacy
+            for legacy, target in all_moved_targets()
+            if target.class_name == class_name and module == target.implementation + ".py"
+        )
+        path = Path(MAIN_DIR, "Functions", *legacy_module.split(".")).with_suffix(".py")
+    with tokenize.open(path) as source_file:
         source = source_file.read()
     fixed = apply_fixes(source, LEGACY_FIXES[key], "/".join(key))
     assert fixed != source

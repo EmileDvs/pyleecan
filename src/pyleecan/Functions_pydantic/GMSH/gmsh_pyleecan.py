@@ -6,6 +6,7 @@ import cmath
 import os
 import sys
 from math import ceil, sqrt
+from typing import TYPE_CHECKING
 
 import gmsh
 import numpy as np
@@ -57,6 +58,16 @@ from ..labels import (
     short_label,
 )
 
+if TYPE_CHECKING:
+    from typing import Any
+
+    from ...Classes_pydantic.geometry.line import Line
+    from ...Classes_pydantic.geometry.surface import Surface
+    from ...Classes_pydantic.machine.lam_slot import LamSlot
+    from ...Classes_pydantic.machine.machine import Machine
+    from ...Classes_pydantic.output.output import Output
+
+
 tol = 1e-6
 
 
@@ -68,7 +79,9 @@ class gmsh_pyleecan:
     """
 
     @staticmethod
-    def comp_gmsh_mesh_dict(surface, element_size, user_mesh_dict={}):
+    def comp_gmsh_mesh_dict(
+        surface: Surface, element_size: float, user_mesh_dict: dict = {}
+    ) -> dict:
         """Returns the number of mesh elements on each line of the surface
         to match the element_size.
 
@@ -122,18 +135,18 @@ class gmsh_pyleecan:
 
     @staticmethod
     def draw_GMSH(
-        output,
-        sym,
-        boundary_prop,
-        is_lam_only_S=False,
-        is_lam_only_R=False,
-        user_mesh_dict={},
-        path_save="GMSH_model.msh",
-        is_sliding_band=False,
-        is_airbox=False,
-        is_set_labels=False,
-        is_run=False,
-    ):
+        output: Output,
+        sym: int,
+        boundary_prop: dict,
+        is_lam_only_S: bool = False,
+        is_lam_only_R: bool = False,
+        user_mesh_dict: dict = {},
+        path_save: str = "GMSH_model.msh",
+        is_sliding_band: bool = False,
+        is_airbox: bool = False,
+        is_set_labels: bool = False,
+        is_run: bool = False,
+    ) -> dict:
         """Draws a machine mesh in GMSH format
 
         Parameters
@@ -998,8 +1011,14 @@ class gmsh_pyleecan:
 
     @staticmethod
     def draw_surf_line(
-        surf, mesh_dict, boundary_prop, model, gmsh_dict, nsurf, mesh_size
-    ):
+        surf: Surface,
+        mesh_dict: dict,
+        boundary_prop: dict,
+        model: Any,
+        gmsh_dict: dict,
+        nsurf: int,
+        mesh_size: float,
+    ) -> None:
         """Draw the lines of a surface and handles the Arc>180deg
 
         Parameters
@@ -1073,8 +1092,14 @@ class gmsh_pyleecan:
 
     @staticmethod
     def _add_agline_to_dict(
-        gmodel, line, d={}, idx=0, mesh_size=0.01, n_elements=0, bc=None
-    ):
+        gmodel: Any,
+        line: Line,
+        d: dict = {},
+        idx: int = 0,
+        mesh_size: float = 0.01,
+        n_elements: int = 0,
+        bc: str | None = None,
+    ) -> None:
         """Draw a new Air Gap line and add it to GMSH dictionary if it does not exist
 
         Parameters
@@ -1232,7 +1257,7 @@ class gmsh_pyleecan:
         return None
 
     @staticmethod
-    def _find_lines_from_point(d={}, ptag=-1):
+    def _find_lines_from_point(d: dict = {}, ptag: int = -1) -> int:
         """Find lines that have the given point tag
 
         Parameters
@@ -1260,7 +1285,9 @@ class gmsh_pyleecan:
         return lines
 
     @staticmethod
-    def _find_point_tag(d={}, p=complex(0.0, 0.0)):
+    def _find_point_tag(
+        d: dict = {}, p: complex = complex(0.0, 0.0)
+    ) -> tuple[int, float, float]:
         """Find a point in the GMSH dictionary
 
         Parameters
@@ -1294,7 +1321,7 @@ class gmsh_pyleecan:
         return None, p.real, p.imag
 
     @staticmethod
-    def _find_points_from_line(d={}, ltag=-1):
+    def _find_points_from_line(d: dict = {}, ltag: int = -1) -> float:
         """Find points tag from existing lines
 
         Parameters
@@ -1333,15 +1360,15 @@ class gmsh_pyleecan:
 
     @staticmethod
     def gen_3D_mesh(
-        lamination,
-        save_path="Lamination.msh",
-        sym=-1,
-        mesh_size=0.005,
-        user_mesh_dict=None,
-        is_rect=False,
-        Nlayer=20,
-        display=True,
-    ):
+        lamination: LamSlot,
+        save_path: str = "Lamination.msh",
+        sym: int = -1,
+        mesh_size: float = 0.005,
+        user_mesh_dict: dict | None = None,
+        is_rect: bool = False,
+        Nlayer: int = 20,
+        display: bool = True,
+    ) -> None:
         """Draw 3D mesh of the lamination
         Parameters
         ----------
@@ -1477,7 +1504,7 @@ class gmsh_pyleecan:
         gmsh.finalize()
 
     @staticmethod
-    def get_air_box(sym, machine):
+    def get_air_box(sym: int, machine: float) -> list:
         """Returns  an outer surface surrounding the external lamination
 
         Parameters
@@ -1518,7 +1545,7 @@ class gmsh_pyleecan:
             Z0 = Z1 * np.exp(1j * 2 * np.pi / sym)
             Z2 = R_ab
             Z3 = Z2 * np.exp(1j * 2 * np.pi / sym)
-            airbox_lines = []
+            airbox_lines: list[Line] = []
             airbox_lines.append(
                 Segment(begin=Z1, end=Z2, prop_dict={BOUNDARY_PROP_LAB: AIRBOX_SR_LAB})
             )
@@ -1554,7 +1581,7 @@ class gmsh_pyleecan:
         return surf_list
 
     @staticmethod
-    def get_boundary_condition(line, boundary_prop):
+    def get_boundary_condition(line: Line, boundary_prop: dict) -> str:
         """Returns the boundary name on a line that is used in FEA coupling
 
         Parameters
@@ -1580,7 +1607,7 @@ class gmsh_pyleecan:
         return ""
 
     @staticmethod
-    def get_sliding_band(sym, machine):
+    def get_sliding_band(sym: int, machine: Machine) -> list:
         """Returns  a list of surface in the airgap including the sliding band surface
 
         Parameters
@@ -1680,7 +1707,7 @@ class gmsh_pyleecan:
             Z0 = 0 * np.exp(1j * 2 * np.pi / sym)
             Z2 = Rgap_mec_int + W_sb
             Z3 = Z2 * np.exp(1j * 2 * np.pi / sym)
-            airgap_lines = []
+            airgap_lines: list[Line] = []
             airgap_lines.append(
                 Segment(begin=Z0, end=Z2, prop_dict={BOUNDARY_PROP_LAB: AS_BR_LAB})
             )

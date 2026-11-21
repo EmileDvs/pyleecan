@@ -9,7 +9,7 @@ from ....Classes_new.mesh.solution_vector import SolutionVector
 
 @staticmethod
 def build_solution_vector(
-    field: np.ndarray, axis_list: list, name="", symbol="", unit="", is_real: bool = True, type_element="triangle"
+    field: np.ndarray, axis_list: list, name: str = "", symbol: str = "", unit: str = "", is_real: bool = True, type_element: str = "triangle"
 ) -> SolutionVector:
     """Build a SolutionVector object
 

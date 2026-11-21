@@ -1,4 +1,10 @@
-def check_cstr(self, indiv) -> bool:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
+
+
+def check_cstr(self, indiv: Any) -> bool:
     """Check the number of constraints violations of the individual
 
     Parameters

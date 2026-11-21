@@ -1,4 +1,4 @@
-def get_area(self, group_names: list[str] | None = None, indices: list | None = None):
+def get_area(self, group_names: list[str] | None = None, indices: list | None = None) -> float:
     """Get the surface area of the specified groups of a MeshSolution
 
     Parameters

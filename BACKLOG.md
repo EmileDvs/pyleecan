@@ -245,6 +245,29 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
 
+### Type hints of the Step 8 methods (2026-11-21)
+
+- Moved methods (`Methods_new`): 94/94 parameters, 29/29 returns, with
+  overrides for the docstrings missing types (`type_hints.py`); DEAP
+  individuals typed `Any`; `callable` / `function` -> `Callable`.
+- Interface objects and merged module (`Functions_new`): the type hint
+  pass runs in the functions generator for `HINTED_FUNCTION_MODULES`
+  (after the import rewriting), and covers the methods of the classes:
+  `femm_pyleecan` 133/133 parameters, 23/23 returns; `gmsh_pyleecan`
+  48/48, 11/11; `pv_plotter_pyleecan` 32/32, 5/5;
+  `SciDataTool.dqh_transformation` 48/48, 15/15. The handler of
+  `femm_pyleecan` comes from `classes_common.femm_handler` (it was the
+  legacy class).
+- `ty` with the hints: femm_pyleecan 97, gmsh_pyleecan 68,
+  pv_plotter_pyleecan 5, dqh_transformation 5 diagnostics (known causes:
+  `Machine.rotor`, optional fields, legacy 0/1 for bool, `init_dict`);
+  Methods_new optimization 64, scidatatool 41, output 107.
+- Legacy bugs found: `animate_as_gif` used an undefined `data` (NameError,
+  fixed in `legacy_fixes.py`); [ ] `comp_MTPA` (no caller) calls
+  `EEC.comp_parameters` with arguments that no longer exist (`Trot`,
+  `Id_array`, `Iq_array`) and `EEC.solve` with too many arguments: to
+  update to the current EEC API.
+
 ### PyVista object (2026-11-21)
 
 - `pv_plotter_pyleecan` (`Functions_new/Plot/Pyvista/pv_plotter_pyleecan.py`),

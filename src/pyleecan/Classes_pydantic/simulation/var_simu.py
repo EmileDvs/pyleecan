@@ -722,11 +722,11 @@ class VarSimu(LegacyModel):
     @staticmethod
     def run_multisim_step(
         simulation: Simulation,
-        datakeeper_list,
+        datakeeper_list: list,
         stop_if_error: bool,
         post_keeper_postproc_list: list | None = None,
         simu_type: str | None = None,
-    ):
+    ) -> Output:
         """Execute a simulation step of a multi-simulation and run datakeepers
 
         Parameters
@@ -905,7 +905,7 @@ class VarSimu(LegacyModel):
     # Inlined from Methods.Simulation.VarSimu.log_datakeeper_step_result
     @staticmethod
     def log_datakeeper_step_result(
-        simulation, datakeeper_list, index, simu_type
+        simulation: Simulation, datakeeper_list: list, index: int | None, simu_type: str
     ) -> None:
         """Log the content of the datakeeper for the step index (if index=None, use reference)"""
         if simulation.layer == 2:

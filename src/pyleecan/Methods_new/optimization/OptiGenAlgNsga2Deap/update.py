@@ -1,5 +1,11 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
+
+
 @staticmethod
-def update(indiv) -> None:
+def update(indiv: Any) -> None:
     """Update the individual output after the mutation
 
     Parameters

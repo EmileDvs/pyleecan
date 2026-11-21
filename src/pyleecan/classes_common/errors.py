@@ -596,7 +596,7 @@ class OPMatrixException(Exception):
 class OptimizationAttributeError(Exception):
     """Class to Raise an error"""
 
-    def __init__(self, message):
+    def __init__(self, message) -> None:
         self.message = message
 
 

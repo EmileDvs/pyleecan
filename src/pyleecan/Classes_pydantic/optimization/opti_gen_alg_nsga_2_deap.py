@@ -8,7 +8,7 @@ from copy import deepcopy
 from datetime import datetime
 from io import StringIO
 from random import choice, sample
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,6 +28,8 @@ from .opti_gen_alg import OptiGenAlg
 from .opti_objective import OptiObjective
 
 if TYPE_CHECKING:
+    from typing import Any
+
     from matplotlib.axes import Axes
 
 
@@ -843,7 +845,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         print(msg[:-2] + "\n")
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.evaluate
-    def evaluate(self, indiv) -> bool:
+    def evaluate(self, indiv: Any) -> bool:
         """Evaluate the individual according to the solver method
 
         Parameters
@@ -995,7 +997,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
         return evaluation_failure
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.check_cstr
-    def check_cstr(self, indiv) -> bool:
+    def check_cstr(self, indiv: Any) -> bool:
         """Check the number of constraints violations of the individual
 
         Parameters
@@ -1134,7 +1136,7 @@ class OptiGenAlgNsga2Deap(OptiGenAlg):
 
     # Inlined from Methods.Optimization.OptiGenAlgNsga2Deap.update
     @staticmethod
-    def update(indiv) -> None:
+    def update(indiv: Any) -> None:
         """Update the individual output after the mutation
 
         Parameters

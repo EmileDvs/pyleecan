@@ -54,6 +54,9 @@ IMPORTED_TYPES = {
     "matplotlib.patches.polygon": ("Polygon", ("matplotlib.patches", "Polygon")),
     "matplotlib.patches.circle": ("Circle", ("matplotlib.patches", "Circle")),
     "logger": ("Logger", ("logging", "Logger")),
+    "callable": ("Callable", ("collections.abc", "Callable")),
+    "any": ("Any", ("typing", "Any")),
+    "function": ("Callable", ("collections.abc", "Callable")),
 }
 """Documented types needing an import -> (annotation, (module, name)); a
 ("numpy", "np") import is ``import numpy as np``"""
@@ -105,6 +108,19 @@ for _key in (
 RETURN_OVERRIDES[("material", "get_BH")] = (("ndarray",), ("None",))
 # plot_BH documents "None" but returns the figure
 RETURN_OVERRIDES[("material", "plot_BH")] = (("matplotlib.figure.Figure",),)
+# Step 8: functions moved to the classes, undocumented returns
+RETURN_OVERRIDES[("mesh", "get_area")] = (("float",),)
+RETURN_OVERRIDES[("mesh", "get_indices_limited")] = (("ndarray",), ("list",))
+RETURN_OVERRIDES[("simulation", "run_multisim_step")] = (("Output",),)
+# Step 8: interface objects, undocumented returns
+RETURN_OVERRIDES[("FEMM", "comp_FEMM_Jcus")] = (("float",),)
+RETURN_OVERRIDES[("FEMM", "comp_FEMM_torque")] = (("float",),)
+RETURN_OVERRIDES[("FEMM", "create_FEMM_bar")] = (("str", "list"),)
+RETURN_OVERRIDES[("FEMM", "create_FEMM_circuit_material")] = (("str", "list", "list"),)
+RETURN_OVERRIDES[("FEMM", "create_FEMM_magnet")] = (("str", "list"),)
+RETURN_OVERRIDES[("FEMM", "create_FEMM_materials")] = (("dict", "dict"),)
+RETURN_OVERRIDES[("FEMM", "_get_radius_boundary")] = (("float", "float"),)
+RETURN_OVERRIDES[("GMSH", "_add_agline_to_dict")] = (("None",),)
 # find_wind_phase_color documents the color only: it returns (color, sign), the
 # color being "w" or an RGBA list of PHASE_COLORS
 RETURN_OVERRIDES[("machine", "find_wind_phase_color")] = (
@@ -142,6 +158,95 @@ PARAMETER_OVERRIDES = {
     },
     # None on purpose (plots without winding matrix: first phase color)
     ("machine", "find_wind_phase_color"): {"wind_mat": ("ndarray", "None")},
+    # Step 8: functions moved to the classes, parameters missing in their
+    # docstrings
+    ("scidatatool", "animate_as_gif"): {"func": ("callable",)},
+    **{
+        ("mesh", name): {
+            "name": ("str",),
+            "symbol": ("str",),
+            "unit": ("str",),
+            "type_element": ("str",),
+        }
+        for name in ("build_solution_data", "build_solution_vector")
+    },
+    # DEAP individuals (lists of design variable values with attributes added
+    # by DEAP: fitness, output...): not typed
+    **{
+        ("optimization", name): {"indiv": ("any",)}
+        for name in ("check_cstr", "evaluate", "update")
+    },
+    ("output", "comp_MTPA"): {
+        "machine": ("Machine",),
+        "N0_min": ("float",),
+        "N0_max": ("float",),
+        "Nspeed": ("int",),
+        "Ntorque": ("int",),
+    },
+    ("simulation", "log_datakeeper_step_result"): {
+        "simulation": ("Simulation",),
+        "datakeeper_list": ("list",),
+        "index": ("int", "None"),
+        "simu_type": ("str",),
+    },
+    ("simulation", "run_multisim_step"): {"datakeeper_list": ("list",)},
+    # Step 8: interface objects (femm_pyleecan, gmsh_pyleecan,
+    # pv_plotter_pyleecan), parameters missing in the docstrings; objects of
+    # the external APIs (gmsh model, PyVista plotters and meshes) not typed
+    ("FEMM", "comp_FEMM_Jcus"): {
+        "lam": ("LamSlotWind",),
+        "cname": ("str",),
+        "I": ("ndarray",),
+        "j_t0": ("int",),
+        "is_mmf": ("bool",),
+    },
+    ("FEMM", "comp_FEMM_torque"): {"rotor_groups": ("list",), "sym": ("int",)},
+    ("FEMM", "create_FEMM_boundary_conditions"): {
+        "line_label": ("str",),
+        "BC_dict": ("dict",),
+    },
+    ("FEMM", "create_FEMM_circuit_material"): {
+        "is_eddies": ("bool",),
+        "is_mmf": ("bool",),
+        "j_t0": ("int",),
+        "materials": ("list",),
+    },
+    ("FEMM", "create_FEMM_magnet"): {"is_mmf": ("bool",)},
+    ("FEMM", "create_FEMM_materials"): {"j_t0": ("int",)},
+    ("FEMM", "draw_FEMM"): {"type_BH_rotor": ("int",)},
+    ("FEMM", "draw_FEMM_surfaces"): {"type_set_BC": ("int",)},
+    ("FEMM", "get_airgap_surface"): {
+        "lam_int": ("Lamination",),
+        "lam_ext": ("Lamination",),
+        "sym": ("int",),
+    },
+    ("FEMM", "get_sliding_band"): {"lam_int": ("Lamination",), "lam_ext": ("Lamination",)},
+    ("FEMM", "_get_radius_boundary"): {"sym": ("int",)},
+    ("GMSH", "comp_gmsh_mesh_dict"): {"surface": ("Surface",), "user_mesh_dict": ("dict",)},
+    ("GMSH", "draw_surf_line"): {"model": ("any",)},
+    ("GMSH", "_add_agline_to_dict"): {"gmodel": ("any",), "line": ("Line",), "d": ("dict",)},
+    **{
+        ("GMSH", name): {"d": ("dict",)}
+        for name in ("_find_lines_from_point", "_find_point_tag", "_find_points_from_line")
+    },
+    ("GMSH", "get_boundary_condition"): {"line": ("Line",), "boundary_prop": ("dict",)},
+    ("Plot", "plot_glyph_pv"): {"pv_plotter": ("any",)},
+    ("Plot", "plot_mesh_field"): {
+        "pv_plotter": ("any",),
+        "sargs": ("dict",),
+        "field_name": ("str",),
+        "clim": ("list", "None"),
+        "mesh_pv": ("any",),
+        "field": ("ndarray",),
+        "phase": ("complex",),
+        "colormap": ("str",),
+    },
+    ("Plot", "plot_surf_deflection"): {
+        "pv_plotter": ("any",),
+        "sargs": ("dict",),
+        "surf_pv": ("any",),
+        "vect_field": ("ndarray",),
+    },
 }
 """(sub-package, function) -> {parameter: documented types (alternatives of
 the union)} for the parameters missing in the docstring (legacy Methods are
@@ -175,7 +280,15 @@ def add_type_hints(source, package, gen_dict, class_name=None, unrecognized=None
     edits = []  # (start, end, text) in characters of a line, by line
     imports = {}  # name -> (module, name)
     string_annotations = False  # Classes of string annotations to import
-    for node in tree.body:
+    # The functions of the module and the methods of its classes (the
+    # interface objects of the functions: femm_pyleecan...)
+    functions = list(tree.body) + [
+        item
+        for node in tree.body
+        if isinstance(node, ast.ClassDef)
+        for item in node.body
+    ]
+    for node in functions:
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
         docstring = ast.get_docstring(node) or ""

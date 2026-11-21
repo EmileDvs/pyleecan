@@ -182,6 +182,18 @@ LEGACY_FIXES = {
             "    arg_list_lower = [arg.lower() for arg in arg_list]\n",
         ),
     ),
+    ("Data", "animate_as_gif.py"): (
+        # Function moved from Plot.animate_as_gif (Step 8): the VectorField
+        # branch of a single Data object used an undefined name (NameError)
+        LegacyFix(
+            old="            if isinstance(data_list, VectorField):\n"
+            "                if component_list is None:  # default: extract all components\n"
+            "                    component_list = data.components.keys()\n",
+            new="            if isinstance(data_list, VectorField):\n"
+            "                if component_list is None:  # default: extract all components\n"
+            "                    component_list = data_list.components.keys()\n",
+        ),
+    ),
     ("ElecLUTdq", "run.py"): (
         # OutLoss has no Pjoule... fields (TypeError): one OutLossModel per
         # loss, named as in LUTdq.interp_Ploss_dqh

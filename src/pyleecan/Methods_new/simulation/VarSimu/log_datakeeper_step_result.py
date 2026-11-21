@@ -6,10 +6,14 @@ import numpy as np
 
 from ....Classes_new.scidatatool.data import Data
 from ....Classes_new.scidatatool.vector_field import VectorField
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
 
 
 @staticmethod
-def log_datakeeper_step_result(simulation, datakeeper_list, index, simu_type) -> None:
+def log_datakeeper_step_result(simulation: Simulation, datakeeper_list: list, index: int | None, simu_type: str) -> None:
     """Log the content of the datakeeper for the step index (if index=None, use reference)"""
     if simulation.layer == 2:
         msg = "    "
