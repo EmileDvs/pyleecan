@@ -6,10 +6,10 @@ from typing import ClassVar
 
 import numpy as np
 
-from ...Functions_new.MeshSolution.build_solution_data import build_solution_data
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
+from ..mesh.solution_data import SolutionData
 from ..scidatatool.data import Data
 from .out_loss_model import OutLossModel
 
@@ -170,7 +170,7 @@ class OutLoss(LegacyClass):
                 loss_density[:, Igrp] += outloss.loss_density
 
             # Build SolutionData
-            solution_data = build_solution_data(
+            solution_data = SolutionData.build_solution_data(
                 field=loss_density,
                 axis_list=axis_list,
                 name="Loss density",

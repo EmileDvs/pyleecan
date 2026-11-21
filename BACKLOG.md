@@ -233,7 +233,7 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 2 | Winding | `reverse_wind_mat`, `shift_wind_mat` (M6: Winding, WindingSC, WindingUD), `comp_cond_function` (M2: LamSlotWind, LamSlotMultiWind), `gen_phase_list` (M8 F2 T2), `find_wind_phase_color` (M3 F2) | class: `Winding` (wind matrix), `LamSlotWind` (conductor function); utility: phase list and colors | done (2026-11-21): `Winding`: static `reverse_wind_mat`, `reverse_layer`, `change_layer`, `permute_B_C`, `shift_wind_mat`, `find_wind_phase_color`, regular `get_phase_id` (connection matrix of the winding); `Conductor`: static `comp_cond_function`; `gen_phase_list` stays a utility |
 | 3 | Optimization | `check_cstr`, `evaluate`, `tournamentDCD`, `update` (M2 each: OptiGenAlgNsga2Deap, OptiBayesAlgSmoot) | class: `OptiSolver` (shared base) or `OptiGenAlg` | done (2026-11-21): methods of `OptiGenAlgNsga2Deap` (`evaluate`, `check_cstr`; `tournamentDCD`, `update` static) |
 | 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | done (2026-11-21): static methods of `VarSimu` |
-| 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | |
+| 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | done (2026-11-21): static `SolutionData.build_solution_data`, `SolutionVector.build_solution_vector`; `Output.get_frame_meshsolution` (it reads `output.mag`); deleted `build_meshsolution` kept as a deprecated alias of the `MeshSolution` constructor |
 | 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | |
 | 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | |
 | 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | |
@@ -243,6 +243,19 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | |
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
+
+### Group 5 (2026-11-21)
+
+- `get_frame_meshsolution(output, group, loss_name)` takes the output:
+  regular method of `Output` (`output.get_frame_meshsolution(group, ...)`
+  in the 12 loss models), not of `MeshSolution`.
+- `build_meshsolution` (deleted by #751, it only called the `MeshSolution`
+  constructor): deprecated alias written by the functions generator
+  (`REMOVED_FUNCTION_ALIASES`, for the modules deleted from legacy).
+- Checks: class tests and cross tests as before; `Tests/New/Methods/Mesh`
+  and `test_loss_models` as before (`test_plot_contour_1group`: pyvista
+  generator bug); constructors, `get_frame_meshsolution` and the alias
+  checked against legacy with a script.
 
 ### Group 2 (2026-11-21)
 

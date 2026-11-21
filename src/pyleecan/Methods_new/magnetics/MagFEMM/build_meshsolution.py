@@ -3,8 +3,6 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 
 from ....Classes_new.mesh.mesh_solution import MeshSolution
-from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
-from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -42,6 +40,8 @@ def build_meshsolution(
 
     """
 
+    from ....Classes_new.mesh.solution_data import SolutionData
+    from ....Classes_new.mesh.solution_vector import SolutionVector
     machine = self.parent.machine
 
     # Get the angular symmetry factor
@@ -120,14 +120,14 @@ def build_meshsolution(
     # Store element values in stator frame
     # Reduce mesh quantities to original number of time steps
     Nt_S = time_S.get_length(is_smallestperiod=True)
-    B_sol = build_solution_vector(
+    B_sol = SolutionVector.build_solution_vector(
         field=B_elem[:Nt_S, list_elem_S, None, :],  # quick fix for slice issue
         axis_list=axis_list,
         name="Magnetic Flux Density",
         symbol="B",
         unit="T",
     )
-    Ae_sol = build_solution_data(
+    Ae_sol = SolutionData.build_solution_data(
         field=A_elem[:Nt_S, list_elem_S, None],
         axis_list=axis_list,
         name="Magnetic Potential Vector (per element)",
@@ -136,14 +136,14 @@ def build_meshsolution(
     )
 
     # Store element values in rotor frame
-    B_sol_R = build_solution_vector(
+    B_sol_R = SolutionVector.build_solution_vector(
         field=B_elem[:, list_elem_R, None, :],  # quick fix for slice issue
         axis_list=axis_list_R,
         name="Magnetic Flux Density",
         symbol="B",
         unit="T",
     )
-    Ae_sol_R = build_solution_data(
+    Ae_sol_R = SolutionData.build_solution_data(
         field=A_elem[:, list_elem_R, None],
         axis_list=axis_list_R,
         name="Magnetic Potential Vector (per element)",
@@ -170,14 +170,14 @@ def build_meshsolution(
             is_overlay=False,
         )
 
-        H_sol = build_solution_vector(
+        H_sol = SolutionVector.build_solution_vector(
             field=H_elem[:Nt_S, list_elem_S, None, :],
             axis_list=axis_list,
             name="Magnetic Field",
             symbol="H",
             unit="A/m",
         )
-        mu_sol = build_solution_data(
+        mu_sol = SolutionData.build_solution_data(
             field=mu_elem[:Nt_S, list_elem_S, None],
             axis_list=axis_list,
             name="Magnetic Permeability",
@@ -185,14 +185,14 @@ def build_meshsolution(
             unit="H/m",
         )
 
-        H_sol_R = build_solution_vector(
+        H_sol_R = SolutionVector.build_solution_vector(
             field=H_elem[:, list_elem_R, None, :],
             axis_list=axis_list_R,
             name="Magnetic Field",
             symbol="H",
             unit="A/m",
         )
-        mu_sol_R = build_solution_data(
+        mu_sol_R = SolutionData.build_solution_data(
             field=mu_elem[:, list_elem_R, None],
             axis_list=axis_list_R,
             name="Magnetic Permeability",
@@ -211,7 +211,7 @@ def build_meshsolution(
         axis_list_node_S = [time_S, Indice_Node_S]
         axis_list_node_R = [time_R, Indice_Node_R]
 
-        An_sol_S = build_solution_data(
+        An_sol_S = SolutionData.build_solution_data(
             field=A_node[:Nt_S, indice_node_S],
             axis_list=axis_list_node_S,
             name="Magnetic Potential Vector (nodal)",
@@ -220,7 +220,7 @@ def build_meshsolution(
             type_element="node",
         )
 
-        An_sol_R = build_solution_data(
+        An_sol_R = SolutionData.build_solution_data(
             field=A_node[:, indice_node_R],
             axis_list=axis_list_node_R,
             name="Magnetic Potential Vector (nodal)",

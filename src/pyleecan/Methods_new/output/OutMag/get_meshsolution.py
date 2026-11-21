@@ -3,8 +3,6 @@ import numpy as np
 from ....Classes_new.mesh.mesh_solution import MeshSolution
 from ....Classes_new.mesh.solution_data import SolutionData
 from ....Classes_new.mesh.solution_vector import SolutionVector
-from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
-from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -33,6 +31,8 @@ def get_meshsolution(self, Time: Data1D | None = None) -> MeshSolution | None:
         MeshSolution containing magnetic quantities for both stator and rotor elements
     """
 
+    from ....Classes_new.mesh.solution_data import SolutionData
+    from ....Classes_new.mesh.solution_vector import SolutionVector
     if self.meshsolution is None:
         return None
 
@@ -114,7 +114,7 @@ def get_meshsolution(self, Time: Data1D | None = None) -> MeshSolution | None:
                     sol_val[:, ind_S, :, ii] = comp_S.values.swapaxes(0, 1)
                     sol_val[:, ind_R, :, ii] = comp_R.values.swapaxes(0, 1)
 
-            solution_dict[label] = build_solution_vector(
+            solution_dict[label] = SolutionVector.build_solution_vector(
                 field=sol_val,
                 axis_list=axis_list,
                 name=vf_S.name,
@@ -149,7 +149,7 @@ def get_meshsolution(self, Time: Data1D | None = None) -> MeshSolution | None:
                 sol_val[:, ind_S, :] = dt_S.values
                 sol_val[:, ind_R, :] = dt_R.values
 
-            solution_dict[label] = build_solution_data(
+            solution_dict[label] = SolutionData.build_solution_data(
                 field=sol_val,
                 axis_list=axis_list,
                 name=dt_S.name,

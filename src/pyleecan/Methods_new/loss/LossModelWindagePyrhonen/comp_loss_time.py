@@ -1,10 +1,9 @@
 import numpy as np
-
-from ....Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+
 
 
 def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[np.ndarray, dict[str, np.ndarray]]:
@@ -39,7 +38,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
         raise ValueError("Cannot calculate windage losses if OutMag is None")
 
     # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
-    meshsol, _ = get_frame_meshsolution(output, self.group, "windage losses")
+    meshsol, _ = output.get_frame_meshsolution(self.group, "windage losses")
 
     Nt = axes_dict["time"].get_length(is_smallestperiod=True)
 

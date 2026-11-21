@@ -1,6 +1,5 @@
 import numpy as np
 
-from ....Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 
 
 def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
@@ -32,7 +31,7 @@ def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
         raise ValueError("Cannot calculate losses if OutMag is None")
 
     # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
-    meshsol, _ = get_frame_meshsolution(output, self.group, "windage losses")
+    meshsol, _ = output.get_frame_meshsolution(self.group, "windage losses")
 
     # Get element indices associated to airgap group
     Igrp = list(meshsol.group[self.group])

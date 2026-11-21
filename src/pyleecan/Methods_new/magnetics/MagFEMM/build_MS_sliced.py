@@ -2,8 +2,6 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 
 from ....Classes_new.mesh.mesh_solution import MeshSolution
-from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
-from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -43,6 +41,8 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
                 MeshSolution object containing magnetic quantities B, H, mu for each time step
     """
 
+    from ....Classes_new.mesh.solution_data import SolutionData
+    from ....Classes_new.mesh.solution_vector import SolutionVector
     solution_dict: dict[str, Solution] = {}
 
     for key, solution in MS_sliced.items():
@@ -88,7 +88,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
         new_axis_list = [axes_list[0], axes_list[1], axis_slice]
 
         if hasattr(solution.field, "components"):
-            new_sol = build_solution_vector(
+            new_sol = SolutionVector.build_solution_vector(
                 field=new_field,
                 axis_list=new_axis_list,
                 name=comp_x.name,
@@ -97,7 +97,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
                 type_element=solution.type_element,
             )
         else:
-            new_sol = build_solution_data(
+            new_sol = SolutionData.build_solution_data(
                 field=new_field,
                 axis_list=new_axis_list,
                 name=data.name,

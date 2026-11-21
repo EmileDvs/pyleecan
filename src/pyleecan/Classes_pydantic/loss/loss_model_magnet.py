@@ -5,9 +5,6 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_pydantic.MeshSolution.get_frame_meshsolution import (
-    get_frame_meshsolution,
-)
 from ..machine.lam_hole import LamHole
 from ..machine.lam_slot_mag import LamSlotMag
 from ..slot.hole_m_50 import HoleM50
@@ -404,7 +401,7 @@ class LossModelMagnet(LossModel):
         felec = output.elec.OP.get_felec()
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "magnet losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "magnet losses")
 
         # Get magnetic vector potential over time and for each element center in current group
         if "A_z^{element}" + suffix in meshsol:
@@ -527,7 +524,7 @@ class LossModelMagnet(LossModel):
             kseg = self.comp_kseg(machine)
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "magnet losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "magnet losses")
 
         # Get magnetic vector potential over time and for each element center in current group
         if "A_z^{element}" + suffix in meshsol:

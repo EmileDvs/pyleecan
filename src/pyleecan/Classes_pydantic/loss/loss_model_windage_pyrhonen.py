@@ -5,9 +5,6 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_pydantic.MeshSolution.get_frame_meshsolution import (
-    get_frame_meshsolution,
-)
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
@@ -116,7 +113,7 @@ class LossModelWindagePyrhonen(LossModel):
             raise ValueError("Cannot calculate losses if OutMag is None")
 
         # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
-        meshsol, _ = get_frame_meshsolution(output, self.group, "windage losses")
+        meshsol, _ = output.get_frame_meshsolution(self.group, "windage losses")
 
         # Get element indices associated to airgap group
         Igrp = list(meshsol.group[self.group])
@@ -187,7 +184,7 @@ class LossModelWindagePyrhonen(LossModel):
             raise ValueError("Cannot calculate windage losses if OutMag is None")
 
         # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
-        meshsol, _ = get_frame_meshsolution(output, self.group, "windage losses")
+        meshsol, _ = output.get_frame_meshsolution(self.group, "windage losses")
 
         Nt = axes_dict["time"].get_length(is_smallestperiod=True)
 

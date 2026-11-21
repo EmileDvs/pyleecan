@@ -77,6 +77,17 @@ MOVED_FUNCTIONS = {
         "OptiGenAlgNsga2Deap", "tournamentDCD", static=True
     ),
     "Optimization.update": MovedFunction("OptiGenAlgNsga2Deap", "update", static=True),
+    # Step 8, group 5: solution constructors; the magnetic meshsolution of an
+    # output and the frame suffix of a group (it reads output.mag)
+    "MeshSolution.build_solution_data": MovedFunction(
+        "SolutionData", "build_solution_data", static=True
+    ),
+    "MeshSolution.build_solution_vector": MovedFunction(
+        "SolutionVector", "build_solution_vector", static=True
+    ),
+    "MeshSolution.get_frame_meshsolution": MovedFunction(
+        "Output", "get_frame_meshsolution"
+    ),
     # Step 8, group 2: winding matrix operations (Winding), single conductor
     # winding function (Conductor); gen_phase_list stays a utility
     "Winding.comp_cond_function": MovedFunction(
@@ -102,6 +113,31 @@ MOVED_FUNCTIONS = {
 """{legacy function module below Functions: MovedFunction or tuple of them}"""
 
 DEPRECATION_MESSAGE = "{function} is deprecated, use {target} (removed in Phase 2)"
+
+REMOVED_FUNCTION_ALIASES = {
+    # Deleted upstream (#751): it only called the MeshSolution constructor
+    "MeshSolution.build_meshsolution": '''"""Deprecated alias of the MeshSolution constructor (removed in Phase 2)."""
+
+from warnings import warn
+
+
+def build_meshsolution(solution_dict, mesh, label="", dimension=2, group=None):
+    """Deprecated: use MeshSolution(label=, mesh=, solution_dict=, dimension=, group=)"""
+    from ...Classes.MeshSolution import MeshSolution
+
+    warn(
+        "build_meshsolution is deprecated, use MeshSolution(label=..., mesh=..., "
+        "solution_dict=..., dimension=..., group=...) (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return MeshSolution(
+        label=label, mesh=mesh, solution_dict=solution_dict, dimension=dimension, group=group
+    )
+''',
+}
+"""{legacy module below Functions, deleted from the legacy code: source of its
+deprecated alias in Functions_new} (written by the functions generator)"""
 
 
 def moved_targets(value):

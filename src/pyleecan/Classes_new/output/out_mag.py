@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...Functions_new.labels import STATOR_LAB
-from ...Functions_new.MeshSolution.build_solution_data import build_solution_data
-from ...Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 from ...Functions_new.SciDataTool.derivation_integration import integrate
 from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
@@ -448,7 +446,7 @@ class OutMag(LegacyClass):
                         sol_val[:, ind_S, :, ii] = comp_S.values.swapaxes(0, 1)
                         sol_val[:, ind_R, :, ii] = comp_R.values.swapaxes(0, 1)
 
-                solution_dict[label] = build_solution_vector(
+                solution_dict[label] = SolutionVector.build_solution_vector(
                     field=sol_val,
                     axis_list=axis_list,
                     name=vf_S.name,
@@ -483,7 +481,7 @@ class OutMag(LegacyClass):
                     sol_val[:, ind_S, :] = dt_S.values
                     sol_val[:, ind_R, :] = dt_R.values
 
-                solution_dict[label] = build_solution_data(
+                solution_dict[label] = SolutionData.build_solution_data(
                     field=sol_val,
                     axis_list=axis_list,
                     name=dt_S.name,

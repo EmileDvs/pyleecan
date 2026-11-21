@@ -5,9 +5,6 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_pydantic.MeshSolution.get_frame_meshsolution import (
-    get_frame_meshsolution,
-)
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
@@ -222,7 +219,7 @@ class LossModelJoule(LossModel):
             raise ValueError("Cannot calculate Joule losses if OutMag is None")
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "Joule losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "Joule losses")
 
         machine = output.simu.machine
         lam = machine.stator if "stator" in self.group else machine.rotor
@@ -318,7 +315,7 @@ class LossModelJoule(LossModel):
             raise ValueError("Cannot calculate Joule losses if OutMag is None")
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "Joule losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "Joule losses")
 
         machine = output.simu.machine
         lam = machine.stator if "stator" in self.group else machine.rotor

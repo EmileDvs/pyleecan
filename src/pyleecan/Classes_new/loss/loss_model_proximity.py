@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
@@ -202,7 +201,7 @@ class LossModelProximity(LossModel):
         felec = output.elec.OP.get_felec()
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "proximity losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "proximity losses")
 
         if "B" + suffix in meshsol:
             Bvect = meshsol["B" + suffix].field
@@ -286,7 +285,7 @@ class LossModelProximity(LossModel):
         k_p = self.k_p
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "proximity losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "proximity losses")
 
         if "B" + suffix in meshsol:
             Bvect = meshsol["B" + suffix].field

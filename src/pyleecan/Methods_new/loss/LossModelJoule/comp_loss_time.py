@@ -1,10 +1,9 @@
 import numpy as np
-
-from ....Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+
 
 
 def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[np.ndarray, dict[str, np.ndarray]]:
@@ -39,7 +38,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
         raise ValueError("Cannot calculate Joule losses if OutMag is None")
 
     # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-    meshsol, suffix = get_frame_meshsolution(output, self.group, "Joule losses")
+    meshsol, suffix = output.get_frame_meshsolution(self.group, "Joule losses")
 
     machine = output.simu.machine
     lam = machine.stator if "stator" in self.group else machine.rotor

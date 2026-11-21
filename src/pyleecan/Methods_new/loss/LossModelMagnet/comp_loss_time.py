@@ -2,7 +2,6 @@ import numpy as np
 
 from ....Classes_new.machine.lam_hole import LamHole
 from ....Classes_new.machine.lam_slot_mag import LamSlotMag
-from ....Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -59,7 +58,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
         kseg = self.comp_kseg(machine)
 
     # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-    meshsol, suffix = get_frame_meshsolution(output, self.group, "magnet losses")
+    meshsol, suffix = output.get_frame_meshsolution(self.group, "magnet losses")
 
     # Get magnetic vector potential over time and for each element center in current group
     if "A_z^{element}" + suffix in meshsol:

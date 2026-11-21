@@ -1,11 +1,16 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Mesh/SolutionVector.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ..scidatatool.data_1d import Data1D
+from ..scidatatool.data_freq import DataFreq
+from ..scidatatool.data_nd import DataND
+from ..scidatatool.data_time import DataTime
 from ..scidatatool.vector_field import VectorField
 from .solution import Solution
 
@@ -201,5 +206,79 @@ class SolutionVector(Solution):
 
                 # set new field data
                 field.values = field_dict[field.symbol]
+
+        return solution
+
+    # Inlined from Methods.Mesh.SolutionVector.build_solution_vector
+    @staticmethod
+    def build_solution_vector(
+        field: np.ndarray,
+        axis_list: list,
+        name="",
+        symbol="",
+        unit="",
+        is_real: bool = True,
+        type_element="triangle",
+    ) -> SolutionVector:
+        """Build a SolutionVector object
+
+        Parameters
+        ----------
+        field : ndarray
+            a vector vield
+        axis_list : list
+            a list of SciDataTool axis
+
+        Returns
+        -------
+        solution: SolutionVector
+            a SolutionVector object
+        """
+
+        if axis_list[0].name == "time":
+            DataClass = DataTime
+        elif axis_list[0].name == "freqs":
+            DataClass = DataFreq
+        else:
+            DataClass = DataND
+
+        components: dict[str, DataND] = {}
+
+        x_data = DataClass(
+            name=name,
+            unit=unit,
+            symbol=symbol + "x",
+            axes=axis_list,
+            values=field[..., 0],
+            is_real=is_real,
+        )
+        components["comp_x"] = x_data
+
+        y_data = DataClass(
+            name=name,
+            unit=unit,
+            symbol=symbol + "y",
+            axes=axis_list,
+            values=field[..., 1],
+            is_real=is_real,
+        )
+        components["comp_y"] = y_data
+
+        if field.shape[-1] == 3 and not np.all(field[..., 2] == 0):
+            z_data = DataClass(
+                name=name,
+                unit=unit,
+                symbol=symbol + "z",
+                axes=axis_list,
+                values=field[..., 2],
+                is_real=is_real,
+            )
+            components["comp_z"] = z_data
+
+        vectorfield = VectorField(name=name, symbol=symbol, components=components)
+
+        solution = SolutionVector(
+            field=vectorfield, label=symbol, type_element=type_element
+        )
 
         return solution

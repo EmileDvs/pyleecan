@@ -1,7 +1,6 @@
 import numpy as np
 
 from ....Classes_new.mesh.mesh_solution import MeshSolution
-from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
 
 
 def get_meshsolution(self) -> MeshSolution:
@@ -19,6 +18,7 @@ def get_meshsolution(self) -> MeshSolution:
 
     """
 
+    from ....Classes_new.mesh.solution_data import SolutionData
     if self.meshsolution is None:
         # Get magnetic output
         outmag = self.parent.mag
@@ -44,7 +44,7 @@ def get_meshsolution(self) -> MeshSolution:
             loss_density[:, Igrp] += outloss.loss_density
 
         # Build SolutionData
-        solution_data = build_solution_data(
+        solution_data = SolutionData.build_solution_data(
             field=loss_density,
             axis_list=axis_list,
             name="Loss density",

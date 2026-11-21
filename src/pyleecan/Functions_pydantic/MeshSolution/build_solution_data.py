@@ -1,41 +1,15 @@
-from ...Classes_pydantic.mesh.solution_data import SolutionData
-from ...Classes_pydantic.scidatatool.data_freq import DataFreq
-from ...Classes_pydantic.scidatatool.data_nd import DataND
-from ...Classes_pydantic.scidatatool.data_time import DataTime
+"""Deprecated alias of SolutionData.build_solution_data (moved to the class, removed in Phase 2)."""
+
+from warnings import warn
 
 
-def build_solution_data(
-    field, axis_list, name="", symbol="", unit="", is_real=True, type_element="triangle"
-) -> SolutionData:
-    """Build the MeshSolution objets from FEMM outputs.
+def build_solution_data(*args, **kwargs):
+    """Deprecated: use SolutionData.build_solution_data"""
+    from ...Classes_pydantic.mesh.solution_data import SolutionData
 
-    Parameters
-    ----------
-    field : ndarray
-        a data field
-    axis_list : list
-        a list of SciDataTool axis
-
-    Returns
-    -------
-    solution: SolutionData
-        a SolutionData object
-    """
-
-    if axis_list[0].name == "time":
-        DataClass = DataTime
-    elif axis_list[0].name == "freqs":
-        DataClass = DataFreq
-    else:
-        DataClass = DataND
-
-    data = DataClass(
-        name=name,
-        unit=unit,
-        symbol=symbol,
-        axes=axis_list,
-        values=field,
-        is_real=is_real,
+    warn(
+        "build_solution_data is deprecated, use SolutionData.build_solution_data (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
     )
-
-    return SolutionData(field=data, label=symbol, type_element=type_element)
+    return SolutionData.build_solution_data(*args, **kwargs)

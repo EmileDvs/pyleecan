@@ -32,6 +32,7 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
 )
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     MOVED_FUNCTIONS,
+    REMOVED_FUNCTION_ALIASES,
     alias_source,
     redirect_moved_calls,
 )
@@ -772,9 +773,19 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
     module_mapping = function_module_mapping(source_dir)
     generated_module_paths.cache_clear()
     class_module_paths = generated_module_paths(class_dir)
-    for path in sorted(source_dir.rglob("*")):
-        if not path.is_file() or "__pycache__" in path.parts or path.suffix == ".pyc":
-            continue
+    # Legacy modules, then the aliases of the modules deleted from legacy
+    entries = [
+        (path, None)
+        for path in sorted(source_dir.rglob("*"))
+        if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc"
+    ]
+    entries += [
+        (source_dir.joinpath(*module.split(".")).with_suffix(".py"), alias)
+        for module, alias in sorted(REMOVED_FUNCTION_ALIASES.items())
+        if not source_dir.joinpath(*module.split(".")).with_suffix(".py").exists()
+        and source_dir.joinpath(*module.split(".")[:-1]).is_dir()
+    ]
+    for path, removed_alias in entries:
         relative = path.relative_to(source_dir)
         output_relative = relative.with_name(function_module_name(relative.stem) + ".py") if path.suffix == ".py" else relative
         destination = output_dir / output_relative
@@ -783,10 +794,13 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             destination.unlink(missing_ok=True)
             continue
         destination.parent.mkdir(parents=True, exist_ok=True)
-        if path.suffix == ".py":
+        if removed_alias is not None:
+            source, encoding = removed_alias, "utf-8"
+        elif path.suffix == ".py":
             with tokenize.open(path) as source_file:
                 source = source_file.read()
                 encoding = source_file.encoding
+        if path.suffix == ".py":
             moved = MOVED_FUNCTIONS.get(".".join(relative.with_suffix("").parts))
             if moved is not None:  # Deprecated alias of the method
                 source = alias_source(".".join(relative.with_suffix("").parts), moved)

@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 
-from ...Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
@@ -338,7 +337,7 @@ class LossModelSteinmetz(LossModel):
         felec = output.elec.OP.get_felec()
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "core losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "core losses")
 
         if "B" + suffix in meshsol:
             Bvect = meshsol["B" + suffix].field
@@ -456,7 +455,7 @@ class LossModelSteinmetz(LossModel):
         alpha_B = self.alpha_B
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-        meshsol, suffix = get_frame_meshsolution(output, self.group, "core losses")
+        meshsol, suffix = output.get_frame_meshsolution(self.group, "core losses")
 
         if "B" + suffix in meshsol:
             Bvect = meshsol["B" + suffix].field

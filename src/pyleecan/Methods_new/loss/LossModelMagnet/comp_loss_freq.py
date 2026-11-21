@@ -2,7 +2,6 @@ import numpy as np
 
 from ....Classes_new.machine.lam_hole import LamHole
 from ....Classes_new.machine.lam_slot_mag import LamSlotMag
-from ....Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 
 
 def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
@@ -55,7 +54,7 @@ def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]
     felec = output.elec.OP.get_felec()
 
     # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-    meshsol, suffix = get_frame_meshsolution(output, self.group, "magnet losses")
+    meshsol, suffix = output.get_frame_meshsolution(self.group, "magnet losses")
 
     # Get magnetic vector potential over time and for each element center in current group
     if "A_z^{element}" + suffix in meshsol:

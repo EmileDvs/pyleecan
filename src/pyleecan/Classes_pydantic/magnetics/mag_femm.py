@@ -18,10 +18,6 @@ from ...Functions_pydantic.FEMM.comp_femm_torque import comp_FEMM_torque
 from ...Functions_pydantic.FEMM.draw_femm import draw_FEMM
 from ...Functions_pydantic.FEMM.update_femm_simulation import update_FEMM_simulation
 from ...Functions_pydantic.labels import STATOR_LAB
-from ...Functions_pydantic.MeshSolution.build_solution_data import build_solution_data
-from ...Functions_pydantic.MeshSolution.build_solution_vector import (
-    build_solution_vector,
-)
 from ..mesh.element_mat import ElementMat
 from ..mesh.fpgn_tri import FPGNTri
 from ..mesh.mesh_mat import MeshMat
@@ -29,6 +25,8 @@ from ..mesh.mesh_solution import MeshSolution
 from ..mesh.node_mat import NodeMat
 from ..mesh.ref_triangle_3 import RefTriangle3
 from ..mesh.scalar_product_l2 import ScalarProductL2
+from ..mesh.solution_data import SolutionData
+from ..mesh.solution_vector import SolutionVector
 from ..output.out_mag_femm import OutMagFEMM
 from ..scidatatool.data_1d import Data1D
 from ..simulation.dxf_import import DXFImport
@@ -257,14 +255,14 @@ class MagFEMM(Magnetics):
         # Store element values in stator frame
         # Reduce mesh quantities to original number of time steps
         Nt_S = time_S.get_length(is_smallestperiod=True)
-        B_sol = build_solution_vector(
+        B_sol = SolutionVector.build_solution_vector(
             field=B_elem[:Nt_S, list_elem_S, None, :],  # quick fix for slice issue
             axis_list=axis_list,
             name="Magnetic Flux Density",
             symbol="B",
             unit="T",
         )
-        Ae_sol = build_solution_data(
+        Ae_sol = SolutionData.build_solution_data(
             field=A_elem[:Nt_S, list_elem_S, None],
             axis_list=axis_list,
             name="Magnetic Potential Vector (per element)",
@@ -273,14 +271,14 @@ class MagFEMM(Magnetics):
         )
 
         # Store element values in rotor frame
-        B_sol_R = build_solution_vector(
+        B_sol_R = SolutionVector.build_solution_vector(
             field=B_elem[:, list_elem_R, None, :],  # quick fix for slice issue
             axis_list=axis_list_R,
             name="Magnetic Flux Density",
             symbol="B",
             unit="T",
         )
-        Ae_sol_R = build_solution_data(
+        Ae_sol_R = SolutionData.build_solution_data(
             field=A_elem[:, list_elem_R, None],
             axis_list=axis_list_R,
             name="Magnetic Potential Vector (per element)",
@@ -307,14 +305,14 @@ class MagFEMM(Magnetics):
                 is_overlay=False,
             )
 
-            H_sol = build_solution_vector(
+            H_sol = SolutionVector.build_solution_vector(
                 field=H_elem[:Nt_S, list_elem_S, None, :],
                 axis_list=axis_list,
                 name="Magnetic Field",
                 symbol="H",
                 unit="A/m",
             )
-            mu_sol = build_solution_data(
+            mu_sol = SolutionData.build_solution_data(
                 field=mu_elem[:Nt_S, list_elem_S, None],
                 axis_list=axis_list,
                 name="Magnetic Permeability",
@@ -322,14 +320,14 @@ class MagFEMM(Magnetics):
                 unit="H/m",
             )
 
-            H_sol_R = build_solution_vector(
+            H_sol_R = SolutionVector.build_solution_vector(
                 field=H_elem[:, list_elem_R, None, :],
                 axis_list=axis_list_R,
                 name="Magnetic Field",
                 symbol="H",
                 unit="A/m",
             )
-            mu_sol_R = build_solution_data(
+            mu_sol_R = SolutionData.build_solution_data(
                 field=mu_elem[:, list_elem_R, None],
                 axis_list=axis_list_R,
                 name="Magnetic Permeability",
@@ -352,7 +350,7 @@ class MagFEMM(Magnetics):
             axis_list_node_S = [time_S, Indice_Node_S]
             axis_list_node_R = [time_R, Indice_Node_R]
 
-            An_sol_S = build_solution_data(
+            An_sol_S = SolutionData.build_solution_data(
                 field=A_node[:Nt_S, indice_node_S],
                 axis_list=axis_list_node_S,
                 name="Magnetic Potential Vector (nodal)",
@@ -361,7 +359,7 @@ class MagFEMM(Magnetics):
                 type_element="node",
             )
 
-            An_sol_R = build_solution_data(
+            An_sol_R = SolutionData.build_solution_data(
                 field=A_node[:, indice_node_R],
                 axis_list=axis_list_node_R,
                 name="Magnetic Potential Vector (nodal)",
@@ -485,7 +483,7 @@ class MagFEMM(Magnetics):
             new_axis_list = [axes_list[0], axes_list[1], axis_slice]
 
             if hasattr(solution.field, "components"):
-                new_sol = build_solution_vector(
+                new_sol = SolutionVector.build_solution_vector(
                     field=new_field,
                     axis_list=new_axis_list,
                     name=comp_x.name,
@@ -494,7 +492,7 @@ class MagFEMM(Magnetics):
                     type_element=solution.type_element,
                 )
             else:
-                new_sol = build_solution_data(
+                new_sol = SolutionData.build_solution_data(
                     field=new_field,
                     axis_list=new_axis_list,
                     name=data.name,

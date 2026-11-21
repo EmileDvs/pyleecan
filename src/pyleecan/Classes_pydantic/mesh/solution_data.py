@@ -1,10 +1,14 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Mesh/SolutionData.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, ClassVar
 
 from ..scidatatool.data_1d import Data1D
+from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_nd import DataND
+from ..scidatatool.data_time import DataTime
 from .solution import Solution
 
 if TYPE_CHECKING:
@@ -192,3 +196,47 @@ class SolutionData(Solution):
             solution.field.values = field_dict[self.field.symbol]
 
         return solution
+
+    # Inlined from Methods.Mesh.SolutionData.build_solution_data
+    @staticmethod
+    def build_solution_data(
+        field: np.ndarray,
+        axis_list: list,
+        name="",
+        symbol="",
+        unit="",
+        is_real: bool = True,
+        type_element="triangle",
+    ) -> SolutionData:
+        """Build the MeshSolution objets from FEMM outputs.
+
+        Parameters
+        ----------
+        field : ndarray
+            a data field
+        axis_list : list
+            a list of SciDataTool axis
+
+        Returns
+        -------
+        solution: SolutionData
+            a SolutionData object
+        """
+
+        if axis_list[0].name == "time":
+            DataClass = DataTime
+        elif axis_list[0].name == "freqs":
+            DataClass = DataFreq
+        else:
+            DataClass = DataND
+
+        data = DataClass(
+            name=name,
+            unit=unit,
+            symbol=symbol,
+            axes=axis_list,
+            values=field,
+            is_real=is_real,
+        )
+
+        return SolutionData(field=data, label=symbol, type_element=type_element)

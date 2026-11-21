@@ -1,10 +1,9 @@
 import numpy as np
-
-from ....Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+
 
 
 def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[np.ndarray, dict[str, np.ndarray]]:
@@ -65,7 +64,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
     alpha_B = self.alpha_B
 
     # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
-    meshsol, suffix = get_frame_meshsolution(output, self.group, "core losses")
+    meshsol, suffix = output.get_frame_meshsolution(self.group, "core losses")
 
     if "B" + suffix in meshsol:
         Bvect = meshsol["B" + suffix].field

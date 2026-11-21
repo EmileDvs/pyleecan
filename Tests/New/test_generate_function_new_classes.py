@@ -113,6 +113,28 @@ def test_generate_functions_skips_unused_legacy_modules(tmp_path):
     assert (output / "other.py").exists()
 
 
+def test_generate_functions_writes_aliases_of_deleted_modules(tmp_path, monkeypatch):
+    """A module deleted from legacy keeps a deprecated alias (REMOVED_FUNCTION_ALIASES)."""
+    source = tmp_path / "Functions"
+    output = tmp_path / "Functions_new"
+    classes = tmp_path / "Classes_new"
+    (source / "MeshSolution").mkdir(parents=True)
+    classes.mkdir()
+    (source / "MeshSolution" / "kept.py").write_text("def kept():\n    return 1\n", encoding="utf-8")
+    monkeypatch.setattr(
+        generate_function_new_classes,
+        "REMOVED_FUNCTION_ALIASES",
+        {
+            "MeshSolution.gone": "from warnings import warn\n\n\ndef gone():\n    warn('x', DeprecationWarning)\n",
+            "Missing.gone": "def gone():\n    pass\n",  # Folder deleted too: no alias
+        },
+    )
+    generate_functions(source, output, classes)
+    assert "DeprecationWarning" in (output / "MeshSolution" / "gone.py").read_text(encoding="utf-8")
+    assert (output / "MeshSolution" / "kept.py").exists()
+    assert not (output / "Missing").exists()
+
+
 def test_generate_functions_removes_deleted_legacy_modules(tmp_path):
     """A legacy module deleted upstream does not leave its copy behind."""
     source = tmp_path / "Functions"
