@@ -746,7 +746,6 @@ class VarSimu(LegacyClass):
             To adapt the text ex: "Variable Load Results"
         """
         # Change console logger level from a specific layer (if requested)
-        from .var_simu import VarSimu
 
         if (
             simulation.layer_log_warn is not None

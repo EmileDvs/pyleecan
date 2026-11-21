@@ -14,7 +14,6 @@ from ..labels import (
     decode_label,
     get_obj_from_label,
 )
-from ..Winding.find_wind_phase_color import get_phase_id
 from .get_mesh_param import get_mesh_param
 
 
@@ -65,7 +64,9 @@ def assign_FEMM_surface(femm, surf, prop, FEMM_dict, machine):
             Ntan_id = label_dict["T_id"]  # zone tangential coordinate
             Zs_id = label_dict["S_id"]  # Zone slot number coordinate
             # Get the phase value in the correct slot zone
-            q_id = get_phase_id(wind_mat, Nrad_id, Ntan_id, Zs_id)
+            q_id = lam_obj.winding.get_phase_id(
+                Nrad_id, Ntan_id, Zs_id, wind_mat=wind_mat
+            )
             if ROTOR_LAB in label_dict["lam_type"]:  # Winding on the rotor
                 Clabel = "Circr" + str(q_id)
             else:  # winding on the stator

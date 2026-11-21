@@ -40,7 +40,6 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from .lamination import Lamination
-    from .machine import Machine
 
 
 @dataclass(eq=False)

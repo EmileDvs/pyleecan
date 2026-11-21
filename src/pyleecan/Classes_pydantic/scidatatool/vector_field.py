@@ -30,7 +30,6 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from .data_nd import DataND
-    from .vector_field import VectorField
 
 
 class VectorField(LegacyModel):

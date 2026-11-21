@@ -103,6 +103,11 @@ for _key in (
 RETURN_OVERRIDES[("material", "get_BH")] = (("ndarray",), ("None",))
 # plot_BH documents "None" but returns the figure
 RETURN_OVERRIDES[("material", "plot_BH")] = (("matplotlib.figure.Figure",),)
+# find_wind_phase_color documents the color only: it returns (color, sign), the
+# color being "w" or an RGBA list of PHASE_COLORS
+RETURN_OVERRIDES[("machine", "find_wind_phase_color")] = (
+    ("str or list", "str or None"),
+)
 
 SPECIAL_METHOD_RETURNS = {
     "__len__": "int",
@@ -133,6 +138,8 @@ PARAMETER_OVERRIDES = {
         "color": ("str",),
         "is_show_fig": ("bool",),
     },
+    # None on purpose (plots without winding matrix: first phase color)
+    ("machine", "find_wind_phase_color"): {"wind_mat": ("ndarray", "None")},
 }
 """(sub-package, function) -> {parameter: documented types (alternatives of
 the union)} for the parameters missing in the docstring (legacy Methods are

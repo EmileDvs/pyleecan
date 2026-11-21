@@ -1,5 +1,3 @@
-from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat, reverse_layer, change_layer, permute_B_C
-from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -36,13 +34,13 @@ def get_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np.
     wind_mat = self.wind_mat.copy()
     # Apply the transformations
     if self.is_reverse_wind:
-        wind_mat = reverse_wind_mat(wind_mat)
+        wind_mat = self.reverse_wind_mat(wind_mat)
     if self.Nslot_shift_wind not in [0, None]:
-        wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+        wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
     if self.is_reverse_layer:
-        wind_mat = reverse_layer(wind_mat)
+        wind_mat = self.reverse_layer(wind_mat)
     if self.is_change_layer:
-        wind_mat = change_layer(wind_mat)
+        wind_mat = self.change_layer(wind_mat)
     if self.is_permute_B_C:
-        wind_mat = permute_B_C(wind_mat)
+        wind_mat = self.permute_B_C(wind_mat)
     return wind_mat

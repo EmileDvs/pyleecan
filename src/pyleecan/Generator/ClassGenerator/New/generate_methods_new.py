@@ -41,7 +41,9 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
 from pyleecan.Generator.ClassGenerator.New.legacy_fixes import apply_legacy_fixes
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     MOVED_FUNCTIONS,
+    bound_method_source,
     method_source,
+    moved_targets,
     redirect_moved_calls,
 )
 from pyleecan.Generator.ClassGenerator.New.worker_pool import run_tasks, worker_count
@@ -147,29 +149,45 @@ def generate_methods(
             1 for path in target.rglob("*.py") if path.name != "__init__.py"
         )
     # Legacy functions moved to a class (moved_functions.py)
-    for legacy_module, target in sorted(MOVED_FUNCTIONS.items()):
-        if target.class_name not in gen_dict:
-            continue  # Partial generation dictionary
-        source, subpackage = classes[target.class_name]
-        if subpackage in frozen:
-            continue
+    for legacy_module, value in sorted(MOVED_FUNCTIONS.items()):
+        targets = moved_targets(value)
         legacy_parts = legacy_module.split(".")
-        function_path = root.joinpath("Functions", *legacy_parts).with_suffix(".py")
-        with tokenize.open(function_path) as function_file:
-            function_source = function_file.read()
-        destination = target_root / subpackage / target.class_name / (target.method + ".py")
-        if destination.exists():
-            raise ValueError(f"{destination} exists: method already defined")
-        destination.write_text(
-            method_source(
-                function_source,
-                target,
-                ".".join(["pyleecan", "Functions", *legacy_parts[:-1]]),
-                ".".join(["pyleecan", METHODS_NEW_PACKAGE, subpackage, target.class_name]),
-            ),
-            encoding="utf-8",
-        )
-        written[target.class_name] += 1
+        function_source = None
+        for target in targets:
+            if target.class_name not in gen_dict:
+                continue  # Partial generation dictionary
+            source, subpackage = classes[target.class_name]
+            if subpackage in frozen:
+                continue
+            if function_source is None:
+                function_path = root.joinpath("Functions", *legacy_parts).with_suffix(".py")
+                with tokenize.open(function_path) as function_file:
+                    function_source = function_file.read()
+            folder = target_root / subpackage / target.class_name
+            destination = folder / (target.implementation + ".py")
+            if destination.exists():
+                raise ValueError(f"{destination} exists: method already defined")
+            if target.bound:  # Regular method calling the static implementation
+                wrapper = folder / (target.method + ".py")
+                if wrapper.exists():
+                    raise ValueError(f"{wrapper} exists: method already defined")
+                wrapper.write_text(
+                    bound_method_source(function_source, target), encoding="utf-8"
+                )
+                written[target.class_name] += 1
+            # The other moved functions of the module: own method modules
+            siblings = [other.method for other in targets if other is not target]
+            destination.write_text(
+                method_source(
+                    function_source,
+                    target,
+                    ".".join(["pyleecan", "Functions", *legacy_parts[:-1]]),
+                    ".".join(["pyleecan", METHODS_NEW_PACKAGE, subpackage, target.class_name]),
+                    siblings=(legacy_parts[-1], siblings) if siblings else (),
+                ),
+                encoding="utf-8",
+            )
+            written[target.class_name] += 1
     # Fixes of the legacy bugs (legacy_fixes.py)
     apply_legacy_fixes(
         target_root,

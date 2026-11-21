@@ -30,7 +30,11 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_name,
     redirect_function_module_imports,
 )
-from pyleecan.Generator.ClassGenerator.New.moved_functions import MOVED_FUNCTIONS, alias_source
+from pyleecan.Generator.ClassGenerator.New.moved_functions import (
+    MOVED_FUNCTIONS,
+    alias_source,
+    redirect_moved_calls,
+)
 from pyleecan.Generator.read_fct import read_all
 from pyleecan.Generator.ClassGenerator.New.modernize import (
     _function_import_style,
@@ -793,6 +797,8 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 source = _adapt_json_load(source, path)
             source = _redirect_function_errors(source, path, relative, class_dir)
             package = ".".join(["pyleecan", "Functions", *relative.parts[:-1]])
+            if moved is None:  # Callers of the moved functions call the methods
+                source = redirect_moved_calls(source, package)
             source = _redirect_shared_error_imports(source, package)
             rewritten, found = _rewrite_source(source, path, relative, class_dir)
             if relative in (

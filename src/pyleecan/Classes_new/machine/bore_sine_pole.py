@@ -31,8 +31,6 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
-    from .bore_sine_pole import BoreSinePole
-
 
 @dataclass(eq=False)
 class BoreSinePole(Bore):

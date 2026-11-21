@@ -1,8 +1,6 @@
 import numpy as np
 
 from ..Winding import WindingError
-from ....Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
-from ....Functions_new.Winding.shift_wind_mat import shift_wind_mat
 
 
 # TODO: update docstring -> there should not be elementary circuits since
@@ -76,9 +74,9 @@ def comp_connection_mat(self, Zs: int | None = None, p: int | None = None):
         self.Nslot_shift_wind = 0
     # Apply the transformations
     if self.is_reverse_wind:
-        wind_mat = reverse_wind_mat(wind_mat)
+        wind_mat = self.reverse_wind_mat(wind_mat)
     if self.Nslot_shift_wind != 0:
-        wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+        wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
 
     return wind_mat
 

@@ -14,9 +14,8 @@ from ...Functions_new.labels import BAR_LAB, WIND_LAB, decode_label
 from ...Functions_new.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
-from ...Functions_new.Winding.comp_cond_function import comp_cond_function
-from ...Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
 from ...Functions_new.Winding.gen_phase_list import gen_name
+from .conductor import Conductor
 from .lam_slot import LamSlot
 from .lam_slot_multi import LamSlotMulti
 from .winding import Winding
@@ -269,6 +268,7 @@ class LamSlotMultiWind(LamSlotMulti):
         """
 
         # Space discretization
+
         if angle is None:
             angle = np.linspace(0, np.pi * 2 / per_a, Na, endpoint=False)
         else:
@@ -312,7 +312,9 @@ class LamSlotMultiWind(LamSlotMulti):
                 # Extended winding matrix [Na, Zs, qs]
                 Xwind = np.repeat(Xwind, Na, axis=0)
                 # Single winding function in every slot and angle for nth layer [Na, Zs]
-                Xwf = -0.5 * comp_cond_function(Xalpha_slot, slot_opening, Xangle)
+                Xwf = -0.5 * Conductor.comp_cond_function(
+                    Xalpha_slot, slot_opening, Xangle
+                )
 
                 for q in range(qs):
                     wf[q, :] += np.sum(Xwind[n, ii, q] * Xwf, axis=1)
@@ -429,7 +431,7 @@ class LamSlotMultiWind(LamSlotMulti):
                 or BAR_LAB in label_dict["surf_type"]
             ):
                 if not is_lam_only:
-                    color, sign = find_wind_phase_color(
+                    color, sign = Winding.find_wind_phase_color(
                         wind_mat=wind_mat, label=surf.label
                     )
                     if sign == "+" and is_add_sign:

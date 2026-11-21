@@ -80,7 +80,6 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from .data import Data
-    from .data_nd import DataND
 
 
 @dataclass(eq=False)

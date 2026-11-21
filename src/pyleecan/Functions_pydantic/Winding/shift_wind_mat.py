@@ -1,24 +1,15 @@
-import numpy as np
+"""Deprecated alias of Winding.shift_wind_mat (moved to the class, removed in Phase 2)."""
+
+from warnings import warn
 
 
-def shift_wind_mat(wind_mat, Nshift):
-    """Shift the Winding Matrix of Nshift number of Slot
+def shift_wind_mat(*args, **kwargs):
+    """Deprecated: use Winding.shift_wind_mat"""
+    from ...Classes_pydantic.machine.winding import Winding
 
-    Parameters
-    ----------
-    wind_mat : numpy.ndarray
-        A Winding Matrix (Nlay_r, Nlay_theta, Zs,
-        qs) (created by comp_connection_mat)
-    Nshift : int
-        Number of Slot to shift (Integer 0 < Nshift < Zs)
-
-    Returns
-    -------
-    shift_wind_mat: numpy.ndarray
-        The shifted matrix along the Slot
-
-    """
-    assert len(wind_mat.shape) == 4, "wind_mat has a wrong shape (dim 4)"
-    assert Nshift % 1 == 0, "Nshift must be an integer"
-
-    return np.roll(wind_mat, shift=Nshift, axis=2)
+    warn(
+        "shift_wind_mat is deprecated, use Winding.shift_wind_mat (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return Winding.shift_wind_mat(*args, **kwargs)

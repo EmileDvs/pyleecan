@@ -15,14 +15,8 @@ from ...Functions_new._swat_em import plots
 from ...Functions_new._swat_em.config import config
 from ...Functions_pydantic.Geometry.inter_line_line import inter_line_line
 from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.labels import decode_label
 from ...Functions_pydantic.Winding.gen_phase_list import gen_name
-from ...Functions_pydantic.Winding.reverse_wind_mat import (
-    change_layer,
-    permute_B_C,
-    reverse_layer,
-    reverse_wind_mat,
-)
-from ...Functions_pydantic.Winding.shift_wind_mat import shift_wind_mat
 from .._legacy_model import LegacyModel
 from .._pyleecan_model import NDArray
 from .conductor import Conductor
@@ -751,15 +745,15 @@ class Winding(LegacyModel):
         wind_mat = self.wind_mat.copy()
         # Apply the transformations
         if self.is_reverse_wind:
-            wind_mat = reverse_wind_mat(wind_mat)
+            wind_mat = self.reverse_wind_mat(wind_mat)
         if self.Nslot_shift_wind not in [0, None]:
-            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+            wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
         if self.is_reverse_layer:
-            wind_mat = reverse_layer(wind_mat)
+            wind_mat = self.reverse_layer(wind_mat)
         if self.is_change_layer:
-            wind_mat = change_layer(wind_mat)
+            wind_mat = self.change_layer(wind_mat)
         if self.is_permute_B_C:
-            wind_mat = permute_B_C(wind_mat)
+            wind_mat = self.permute_B_C(wind_mat)
         return wind_mat
 
     # Inlined from Methods.Machine.Winding.get_dim_wind
@@ -1245,3 +1239,242 @@ class Winding(LegacyModel):
             ]
         plt = plots._polar_layout_plot(None, None, wdg)
         plt.plot(show=is_show_fig, optimize_overhang=False)
+
+    # Inlined from Methods.Machine.Winding.reverse_wind_mat
+    @staticmethod
+    def reverse_wind_mat(wind_mat: np.ndarray) -> np.ndarray:
+        """reverse a Winding Matrix along the slot
+
+        Parameters
+        ----------
+        wind_mat : numpy.ndarray
+            A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
+            (created by comp_connection_mat)
+
+        Returns
+        -------
+        wind_mat: numpy.ndarray
+            The reverse matrix along the Slot
+
+        """
+        assert len(wind_mat.shape) == 4, "wind_mat has a wrong shape (dim 4)"
+
+        wind_mat = wind_mat[:, :, ::-1, :]
+        if wind_mat.shape[1] == 2:
+            wind_mat = wind_mat[:, ::-1, :, :]
+
+        return wind_mat
+
+    # Inlined from Methods.Machine.Winding.reverse_layer
+    @staticmethod
+    def reverse_layer(wind_mat: np.ndarray) -> np.ndarray:
+        """reverse the Winding Matrix along the layer
+
+        Parameters
+        ----------
+        wind_mat : numpy.ndarray
+            A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
+            (created by comp_connection_mat)
+
+        Returns
+        -------
+        wind_mat: numpy.ndarray
+            The reverse matrix along the layer
+
+        """
+        assert len(wind_mat.shape) == 4, "wind_mat has a wrong shape (dim 4)"
+
+        wind_mat = wind_mat[:, ::-1, :, :]
+        wind_mat = wind_mat[::-1, :, :, :]
+
+        return wind_mat
+
+    # Inlined from Methods.Machine.Winding.change_layer
+    @staticmethod
+    def change_layer(wind_mat: np.ndarray) -> np.ndarray:
+        """Change the Winding Matrix along the layer
+
+        Parameters
+        ----------
+        wind_mat : numpy.ndarray
+            A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
+            (created by comp_connection_mat)
+
+        Returns
+        -------
+        wind_mat: numpy.ndarray
+            The winding matrix with changed layers
+
+        """
+        wind_shape = wind_mat.shape
+        assert len(wind_shape) == 4, "wind_mat has a wrong shape (dim 4)"
+
+        if wind_shape[0] == 1 and wind_shape[1] != 1:
+            wind_mat2 = np.zeros(
+                (wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3])
+            )
+            wind_mat2[:, 0, :, :] = wind_mat[0, :, :, :]
+            return wind_mat2
+        elif wind_shape[0] != 1 and wind_shape[1] == 1:
+            wind_mat2 = np.zeros(
+                (wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3])
+            )
+            wind_mat2[0, :, :, :] = wind_mat[:, 0, :, :]
+            return wind_mat2
+        else:
+            return wind_mat
+
+    # Inlined from Methods.Machine.Winding.permute_B_C
+    @staticmethod
+    def permute_B_C(wind_mat: np.ndarray) -> np.ndarray:
+        """Permute B & C phases
+
+        Parameters
+        ----------
+        wind_mat : numpy.ndarray
+            A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
+            (created by comp_connection_mat)
+
+        Returns
+        -------
+        wind_mat: numpy.ndarray
+            The winding matrix with permuted phases
+
+        """
+        wind_shape = wind_mat.shape
+        assert len(wind_shape) == 4, "wind_mat has a wrong shape (dim 4)"
+        assert wind_shape[3] > 2
+
+        wind_mat2 = wind_mat.copy()
+        wind_mat2[:, :, :, 1] = wind_mat[:, :, :, 2]
+        wind_mat2[:, :, :, 2] = wind_mat[:, :, :, 1]
+        return wind_mat2
+
+    # Inlined from Methods.Machine.Winding.shift_wind_mat
+    @staticmethod
+    def shift_wind_mat(wind_mat: np.ndarray, Nshift: int) -> np.ndarray:
+        """Shift the Winding Matrix of Nshift number of Slot
+
+        Parameters
+        ----------
+        wind_mat : numpy.ndarray
+            A Winding Matrix (Nlay_r, Nlay_theta, Zs,
+            qs) (created by comp_connection_mat)
+        Nshift : int
+            Number of Slot to shift (Integer 0 < Nshift < Zs)
+
+        Returns
+        -------
+        shift_wind_mat: numpy.ndarray
+            The shifted matrix along the Slot
+
+        """
+        assert len(wind_mat.shape) == 4, "wind_mat has a wrong shape (dim 4)"
+        assert Nshift % 1 == 0, "Nshift must be an integer"
+
+        return np.roll(wind_mat, shift=Nshift, axis=2)
+
+    # Inlined from Methods.Machine.Winding.find_wind_phase_color
+    @staticmethod
+    def find_wind_phase_color(
+        label: str, wind_mat: np.ndarray | None
+    ) -> tuple[str | list, str | None]:
+        """Returns Color phase of the Winding surface
+
+        Parameters
+        ----------
+        label : str
+            the label of the surface
+
+        wind_mat : numpy.ndarray
+            A matrix [Nrad,Ntan,Zs,qs] representing the winding
+
+        Returns
+        -------
+        color: str
+            Color of the zone
+
+        """
+
+        label_dict = decode_label(label)
+        Nrad = label_dict["R_id"]
+        Ntan = label_dict["T_id"]
+        Zs_id = label_dict["S_id"]
+        if wind_mat is not None:
+            q_id = Winding._get_phase_id(wind_mat, Nrad, Ntan, Zs_id)
+            if q_id is None:  # No phase => White
+                color = "w"
+                sign = None
+            else:
+                # Looping colors when there are more than 8 phases
+                color = Winding.PHASE_COLORS[q_id % len(Winding.PHASE_COLORS)]
+                if wind_mat[Nrad, Ntan, Zs_id, q_id] > 0:
+                    sign = "+"
+                elif wind_mat[Nrad, Ntan, Zs_id, q_id] < 0:
+                    sign = "-"
+                else:
+                    sign = None
+        else:
+            color = Winding.PHASE_COLORS[0]
+            sign = None
+
+        return color, sign
+
+    # Inlined from Methods.Machine.Winding._get_phase_id
+    @staticmethod
+    def _get_phase_id(
+        wind_mat: np.ndarray, Nrad: int, Ntan: int, Zs: int
+    ) -> int | None:
+        """Return the id of the corresponding phase for the zone (Nrad,Ntan,Zs)
+
+        Parameters
+        ----------
+        wind_mat : numpy.ndarray
+            A matrix [Nrad,Ntan,Zs,qs] representing the winding
+        Nrad : int
+            Zone radial coordinate
+        Ntan : int
+            Zone tagential coordinate
+        Zs : int
+            Zone slot number coordinate
+
+        Returns
+        -------
+        q_id: int
+            Id of the phase
+
+        """
+        A = wind_mat[Nrad, Ntan, Zs, :]
+        for zz in range(len(A)):
+            if A[zz] != 0:
+                return zz
+        return None  # If all the phase are at 0 : the zone is empty
+
+    # Inlined from Methods.Machine.Winding.get_phase_id
+    def get_phase_id(
+        self, Nrad: int, Ntan: int, Zs: int, wind_mat: np.ndarray | None = None
+    ) -> int:
+        """Return the id of the corresponding phase for the zone (Nrad,Ntan,Zs)
+
+        Parameters
+        ----------
+        self : Winding
+            A Winding object
+        wind_mat : numpy.ndarray
+            A matrix [Nrad,Ntan,Zs,qs] representing the winding
+            (default: self.get_connection_mat())
+        Nrad : int
+            Zone radial coordinate
+        Ntan : int
+            Zone tagential coordinate
+        Zs : int
+            Zone slot number coordinate
+
+        Returns
+        -------
+        q_id: int
+            Id of the phase
+        """
+        if wind_mat is None:
+            wind_mat = self.get_connection_mat()
+        return self._get_phase_id(wind_mat, Nrad, Ntan, Zs)

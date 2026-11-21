@@ -2,7 +2,6 @@ from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 
 from ....Functions_new.labels import decode_label, WIND_LAB, BAR_LAB
-from ....Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
 from ....Functions_new.Winding.gen_phase_list import gen_name
 from ....Functions_new.init_fig import init_fig
 from ....definitions import config_dict
@@ -76,6 +75,7 @@ def plot(
         Axis containing the plot
     """
 
+    from ....Classes_new.machine.winding import Winding
     (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
     # getting the number of phases and winding connection matrix
@@ -101,7 +101,7 @@ def plot(
         label_dict = decode_label(surf.label)
         if WIND_LAB in label_dict["surf_type"] or BAR_LAB in label_dict["surf_type"]:
             if not is_lam_only:
-                color, sign = find_wind_phase_color(wind_mat=wind_mat, label=surf.label)
+                color, sign = Winding.find_wind_phase_color(wind_mat=wind_mat, label=surf.label)
                 if sign == "+" and is_add_sign:
                     hatch = PLUS_HATCH
                 elif sign == "-" and is_add_sign:

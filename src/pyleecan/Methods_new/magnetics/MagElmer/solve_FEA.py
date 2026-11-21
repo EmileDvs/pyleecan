@@ -10,7 +10,6 @@ from ....Classes_new.machine.machine_ipmsm import MachineIPMSM
 from ....Classes_new.machine.machine_sipmsm import MachineSIPMSM
 from ....Functions_new.get_path_binary import get_path_binary
 from ....Functions_new.labels import AIRGAP_LAB, BOT_LAB, HOLEM_LAB_S, HOLEV_LAB_S, LAM_LAB_S, MAG_LAB, NO_LAM_LAB, ROTOR_LAB, ROTOR_LAB_S, SHAFT_LAB, SLID_LAB, STATOR_LAB_S, WIND_LAB_S, decode_label, get_obj_from_label, short_label
-from ....Functions_new.Winding.find_wind_phase_color import get_phase_id
 from ....Methods import NotImplementedYetError
 from typing import TYPE_CHECKING
 
@@ -223,7 +222,7 @@ def solve_FEA(self, output: Output, sym: int, angle: np.ndarray, time: np.ndarra
                 Ntan_id = label_dict["T_id"]  # zone tangential coordinate
                 Zs_id = label_dict["S_id"]  # Zone slot number coordinate
                 # Get the phase value in the correct slot zone
-                q_id = get_phase_id(wind_mat, Nrad_id, Ntan_id, Zs_id)
+                q_id = lam_obj.winding.get_phase_id(Nrad_id, Ntan_id, Zs_id, wind_mat=wind_mat)
                 Ncond = wind_mat[Nrad_id, Ntan_id, Zs_id, q_id]
                 s = np.sign(Ncond)
                 if bodies.get(label, None) is not None:

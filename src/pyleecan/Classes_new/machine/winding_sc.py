@@ -7,8 +7,6 @@ from typing import ClassVar
 import numpy as np
 
 from ...classes_common.errors import WindingError, WindingT10DefQsError
-from ...Functions_new.Winding.reverse_wind_mat import reverse_wind_mat
-from ...Functions_new.Winding.shift_wind_mat import shift_wind_mat
 from .lamination import Lamination
 from .winding import Winding
 
@@ -98,9 +96,9 @@ class WindingSC(Winding):
             self.Nslot_shift_wind = 0
         # Apply the transformations
         if self.is_reverse_wind:
-            wind_mat = reverse_wind_mat(wind_mat)
+            wind_mat = self.reverse_wind_mat(wind_mat)
         if self.Nslot_shift_wind != 0:
-            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+            wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
 
         return wind_mat
 

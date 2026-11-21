@@ -230,7 +230,7 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | # | Group | Modules (callers) | Proposed target | Decision |
 |---|---|---|---|---|
 | 1 | Dead code | `Plot.plot_2D_Data`, `Plot.plot_3D_Data` (already deprecated), `Plot.animate_as_gif`, `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `Electrical.comp_MTPA`, `getattr_recursive`, `short_filepath`, `Converter.Utils.EquivalentError` (no caller) | remove | |
-| 2 | Winding | `reverse_wind_mat`, `shift_wind_mat` (M6: Winding, WindingSC, WindingUD), `comp_cond_function` (M2: LamSlotWind, LamSlotMultiWind), `gen_phase_list` (M8 F2 T2), `find_wind_phase_color` (M3 F2) | class: `Winding` (wind matrix), `LamSlotWind` (conductor function); utility: phase list and colors | |
+| 2 | Winding | `reverse_wind_mat`, `shift_wind_mat` (M6: Winding, WindingSC, WindingUD), `comp_cond_function` (M2: LamSlotWind, LamSlotMultiWind), `gen_phase_list` (M8 F2 T2), `find_wind_phase_color` (M3 F2) | class: `Winding` (wind matrix), `LamSlotWind` (conductor function); utility: phase list and colors | done (2026-11-21): `Winding`: static `reverse_wind_mat`, `reverse_layer`, `change_layer`, `permute_B_C`, `shift_wind_mat`, `find_wind_phase_color`, regular `get_phase_id` (connection matrix of the winding); `Conductor`: static `comp_cond_function`; `gen_phase_list` stays a utility |
 | 3 | Optimization | `check_cstr`, `evaluate`, `tournamentDCD`, `update` (M2 each: OptiGenAlgNsga2Deap, OptiBayesAlgSmoot) | class: `OptiSolver` (shared base) or `OptiGenAlg` | done (2026-11-21): methods of `OptiGenAlgNsga2Deap` (`evaluate`, `check_cstr`; `tournamentDCD`, `update` static) |
 | 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | done (2026-11-21): static methods of `VarSimu` |
 | 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | |
@@ -243,6 +243,53 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | |
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
+
+### Group 2 (2026-11-21)
+
+- Decision: `comp_cond_function` (single conductor winding function) to
+  `Conductor`; the other functions to `Winding`, including the other
+  public functions of their modules (`reverse_layer`, `change_layer`,
+  `permute_B_C` of `reverse_wind_mat.py`, `get_phase_id` of
+  `find_wind_phase_color.py`, used by `MagElmer` and the FEMM
+  functions); `gen_phase_list` stays a utility.
+- Static or regular (decision 2026-11-21): `self.wind_mat` is the raw
+  matrix; `get_connection_mat` applies the transformations to a copy.
+  The five transformations stay static (steps on an intermediate matrix
+  of `get_connection_mat` / `WindingUD.init_as_*`). `get_phase_id` is a
+  regular method reading the connection matrix:
+  `get_phase_id(self, Nrad, Ntan, Zs, wind_mat=None)`, default
+  `self.get_connection_mat()`, legacy body in the static
+  `_get_phase_id(wind_mat, ...)`; the callers holding `wind_mat =
+  obj.get_connection_mat(...)` call `obj.get_phase_id(...,
+  wind_mat=wind_mat)` (MagElmer, FEMM). `find_wind_phase_color` stays
+  static: the plots call it without matrix on purpose (no winding,
+  `WindingSC`, `get_connection_mat` error: first phase color); it calls
+  `Winding._get_phase_id`. Regular method with the guard in the plots:
+  Step 16.
+- Generator support added (`moved_functions.py`): several moved functions
+  in one legacy module (tuple in `MOVED_FUNCTIONS`: one method module
+  each, one deprecated alias each, calls between them on the class); a
+  static method called outside its class (`LamSlotWind.plot`,
+  `comp_wind_function`, `MagElmer.solve_FEA`) goes through the class,
+  imported in the calling function; the same redirection in the
+  functions generator (`Functions_new` FEMM functions call the method,
+  not the deprecated alias); bound functions (`MovedFunction.bound`:
+  regular method with the parameter optional, static `_<method>`
+  implementation, receiver taken from the nearest `x = obj.getter(...)`
+  assignment of the caller). Class generator: a module constant of a
+  static method is read on the class (`Winding.PHASE_COLORS`; it was
+  read on the first argument); the imports of the module's own class in
+  the functions and `if TYPE_CHECKING:` blocks are removed
+  (`Winding`, `XOutput`, `DataFreq`, `DataND`, `VectorField`, `VarSimu`).
+  Type hints: `find_wind_phase_color` takes `wind_mat` or None and
+  returns `(color, sign)` (overrides; `ty` machine stays at 38).
+- Checks: `Tests/Classes` 3937 passed; `Tests/New/Classes` 2855 passed and
+  `test_copy_out` failed with each backend; `Tests/New/Cross` 1405 passed;
+  `Tests/New/Methods/Machine` 77 passed, 2 failed as before
+  (`test_get_polar_eq_SCIM`, `test_notch`: `Circle(xy=...)`); winding
+  tests and plots (29 files): the same 23 failures as before the change;
+  the 8 moved functions (and `get_phase_id` with its default) and the
+  aliases checked against legacy with a script, on each backend.
 
 ### Groups 3 and 4 (2026-11-21)
 
@@ -597,6 +644,11 @@ Same signature rule as Step 11 (optional container argument, fallback through
       `container_or_parent`; the parent links stay only in the legacy layer.
 - [ ] The `GUI_new` calls of each refactored package updated in the same
       increment.
+- [ ] `Winding.find_wind_phase_color` as a regular method reading the
+      connection matrix (like `get_phase_id`): `LamSlotWind.plot` and
+      `LamSlotMultiWind.plot` call it on the winding when there is one,
+      and keep the first phase color without winding / for `WindingSC`
+      (Step 8 group 2).
 
 ## Step 17: GUI, second pass
 

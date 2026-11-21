@@ -50,7 +50,6 @@ from ...Functions_pydantic.labels import (
     get_obj_from_label,
     short_label,
 )
-from ...Functions_pydantic.Winding.find_wind_phase_color import get_phase_id
 from ..machine.machine_ipmsm import MachineIPMSM
 from ..machine.machine_sipmsm import MachineSIPMSM
 from ..mesh.mesh_solution import MeshSolution
@@ -765,7 +764,9 @@ class MagElmer(Magnetics):
                     Ntan_id = label_dict["T_id"]  # zone tangential coordinate
                     Zs_id = label_dict["S_id"]  # Zone slot number coordinate
                     # Get the phase value in the correct slot zone
-                    q_id = get_phase_id(wind_mat, Nrad_id, Ntan_id, Zs_id)
+                    q_id = lam_obj.winding.get_phase_id(
+                        Nrad_id, Ntan_id, Zs_id, wind_mat=wind_mat
+                    )
                     Ncond = wind_mat[Nrad_id, Ntan_id, Zs_id, q_id]
                     s = np.sign(Ncond)
                     if bodies.get(label, None) is not None:

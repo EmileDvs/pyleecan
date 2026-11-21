@@ -32,8 +32,6 @@ from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
     get_color_legend_from_surface,
 )
 from ...Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
-from ...Functions_pydantic.Winding.comp_cond_function import comp_cond_function
-from ...Functions_pydantic.Winding.find_wind_phase_color import find_wind_phase_color
 from ...Functions_pydantic.Winding.gen_phase_list import gen_color, gen_name
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
@@ -41,6 +39,7 @@ from ..scidatatool.data_time import DataTime
 from ..simulation.input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
 from ..simulation.op_dq import OPdq
 from ..slot.slot_w_22 import SlotW22
+from .conductor import Conductor
 from .lam_slot import LamSlot
 from .lamination import Lamination
 from .winding import Winding
@@ -54,7 +53,6 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..output.out_geo_lam import OutGeoLam
-    from .lam_slot_wind import LamSlotWind
 
 
 class LamSlotWind(LamSlot):
@@ -881,6 +879,7 @@ class LamSlotWind(LamSlot):
         """
 
         # Space discretization
+
         if angle is None:
             angle = np.linspace(0, np.pi * 2 / per_a, Na, endpoint=False)
         else:
@@ -921,7 +920,7 @@ class LamSlotWind(LamSlot):
             # Extended winding matrix [Na, Zs, qs]
             Xwind = np.repeat(Xwind, Na, axis=0)
             # Single winding function in every slot and angle for nth layer [Na, Zs]
-            Xwf = -0.5 * comp_cond_function(Xalpha_slot, slot_opening, Xangle)
+            Xwf = -0.5 * Conductor.comp_cond_function(Xalpha_slot, slot_opening, Xangle)
 
             for q in range(qs):
                 # winding function of qth phase (sum over layers) [qs, Na]
@@ -1058,6 +1057,7 @@ class LamSlotWind(LamSlot):
             Axis containing the plot
         """
         # Arrow style
+
         head = None
         style = "Simple, tail_width=2, head_width=8, head_length=12"
         kw: dict[str, Any] = dict(arrowstyle=style, linewidth=0.8, edgecolor="k")
@@ -1108,7 +1108,7 @@ class LamSlotWind(LamSlot):
                 or BAR_LAB in label_dict["surf_type"]
             ):
                 if not is_lam_only:
-                    color, sign = find_wind_phase_color(
+                    color, sign = Winding.find_wind_phase_color(
                         wind_mat=wind_mat, label=surf.label
                     )
                     if sign == "+" and is_add_sign:

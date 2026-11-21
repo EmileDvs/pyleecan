@@ -2325,7 +2325,11 @@ def _get_method_source(
         method_source,
         hoisted_names,
         method_name,
-        (
+        # Hoisted module names are class attributes: read on the instance, or
+        # on the class in a static method (its first argument is not self)
+        class_name
+        if _is_static_method_node(method_node)
+        else (
             method_node.args.posonlyargs[0].arg
             if method_node.args.posonlyargs
             else method_node.args.args[0].arg
@@ -3635,17 +3639,32 @@ def _remove_experimental_self_imports(source, soft_name, class_name, output_name
         if value == ord("\n"):
             offsets.append(index + 1)
     replacements = []
-    for node in tree.body:
+    # Imports in the functions too (a moved static method calling a sibling on
+    # its class imports the class in its body): only of the classes of the
+    # module, and not the only statement of a block
+    sole_statements = {
+        id(block[0])
+        for parent in ast.walk(tree)
+        for field in ("body", "orelse", "finalbody")
+        for block in [getattr(parent, field, None)]
+        if isinstance(block, list) and len(block) == 1
+    }
+    class_names = {node.name for node in tree.body if isinstance(node, ast.ClassDef)}
+    for node in ast.walk(tree):
         if not (
             isinstance(node, ast.ImportFrom)
             and node.level == 0
             and node.module in module_names
         ):
             continue
+        local = node not in tree.body
+        if local and id(node) in sole_statements:
+            continue
+        removable = class_names if local else defined_names
         remaining = [
             alias
             for alias in node.names
-            if alias.name not in defined_names
+            if alias.name not in removable
             or alias.asname not in (None, alias.name)
         ]
         if len(remaining) == len(node.names):

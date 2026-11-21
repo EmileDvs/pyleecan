@@ -1,6 +1,5 @@
 import numpy as np
 
-from ....Functions_new.Winding.comp_cond_function import comp_cond_function
 
 
 def comp_wind_function(self, angle: np.ndarray | None = None, Na: int = 2048, alpha_mmf0: float = 0, per_a: int = 1) -> np.ndarray:
@@ -27,6 +26,7 @@ def comp_wind_function(self, angle: np.ndarray | None = None, Na: int = 2048, al
     """
 
     # Space discretization
+    from ....Classes_new.machine.conductor import Conductor
     if angle is None:
         angle = np.linspace(0, np.pi * 2 / per_a, Na, endpoint=False)
     else:
@@ -70,7 +70,7 @@ def comp_wind_function(self, angle: np.ndarray | None = None, Na: int = 2048, al
             # Extended winding matrix [Na, Zs, qs]
             Xwind = np.repeat(Xwind, Na, axis=0)
             # Single winding function in every slot and angle for nth layer [Na, Zs]
-            Xwf = -0.5 * comp_cond_function(Xalpha_slot, slot_opening, Xangle)
+            Xwf = -0.5 * Conductor.comp_cond_function(Xalpha_slot, slot_opening, Xangle)
 
             for q in range(qs):
                 wf[q, :] += np.sum(Xwind[n, ii, q] * Xwf, axis=1)

@@ -10,7 +10,6 @@ from ....Functions_new.init_fig import init_fig
 from ....Functions_new.labels import BAR_LAB, WIND_LAB, decode_label
 from ....Functions_new.Plot import dict_2D
 from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
-from ....Functions_new.Winding.find_wind_phase_color import find_wind_phase_color
 from ....Functions_new.Winding.gen_phase_list import gen_name
 from typing import TYPE_CHECKING
 
@@ -95,6 +94,7 @@ def plot(
         Axis containing the plot
     """
     # Arrow style
+    from ....Classes_new.machine.winding import Winding
     head = None
     style = "Simple, tail_width=2, head_width=8, head_length=12"
     kw: dict[str, Any] = dict(arrowstyle=style, linewidth=0.8, edgecolor="k")
@@ -142,7 +142,7 @@ def plot(
         label_dict = decode_label(surf.label)
         if WIND_LAB in label_dict["surf_type"] or BAR_LAB in label_dict["surf_type"]:
             if not is_lam_only:
-                color, sign = find_wind_phase_color(wind_mat=wind_mat, label=surf.label)
+                color, sign = Winding.find_wind_phase_color(wind_mat=wind_mat, label=surf.label)
                 if sign == "+" and is_add_sign:
                     hatch = PLUS_HATCH
                 elif sign == "-" and is_add_sign:

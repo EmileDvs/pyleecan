@@ -26,7 +26,6 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..simulation.simulation import Simulation
-    from .xoutput import XOutput
 
 
 class XOutput(Output):

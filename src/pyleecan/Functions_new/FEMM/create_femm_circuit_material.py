@@ -1,7 +1,6 @@
 import numpy as np
 
 from ..labels import ROTOR_LAB
-from ..Winding.find_wind_phase_color import get_phase_id
 from .set_femm_circuit_prop import set_FEMM_circuit_prop
 from .set_femm_wind_material import set_FEMM_wind_material
 
@@ -52,7 +51,7 @@ def create_FEMM_circuit_material(
     Ntan_id = label_dict["T_id"]  # zone tangential coordinate
     Zs_id = label_dict["S_id"]  # Zone slot number coordinate
     # Get the phase value in the correct slot zone
-    q_id = get_phase_id(wind_mat, Nrad_id, Ntan_id, Zs_id)
+    q_id = lam.winding.get_phase_id(Nrad_id, Ntan_id, Zs_id, wind_mat=wind_mat)
     s = np.sign(wind_mat[Nrad_id, Ntan_id, Zs_id, q_id])
 
     # circuit definition

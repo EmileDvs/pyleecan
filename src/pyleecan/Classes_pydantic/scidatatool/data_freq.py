@@ -21,7 +21,6 @@ from .normalization import Normalization
 
 if TYPE_CHECKING:
     from .data import Data
-    from .data_freq import DataFreq
     from .data_time import DataTime
     from .normalization import Normalization
 

@@ -1,107 +1,51 @@
-import numpy as np
+"""Deprecated alias of Winding.reverse_wind_mat, Winding.reverse_layer, Winding.change_layer, Winding.permute_B_C (moved to the class, removed in Phase 2)."""
+
+from warnings import warn
 
 
-def reverse_wind_mat(wind_mat):
-    """reverse a Winding Matrix along the slot
+def reverse_wind_mat(*args, **kwargs):
+    """Deprecated: use Winding.reverse_wind_mat"""
+    from ...Classes_pydantic.machine.winding import Winding
 
-    Parameters
-    ----------
-    wind_mat : numpy.ndarray
-        A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
-        (created by comp_connection_mat)
-
-    Returns
-    -------
-    wind_mat: numpy.ndarray
-        The reverse matrix along the Slot
-
-    """
-    assert len(wind_mat.shape) == 4, "wind_mat has a wrong shape (dim 4)"
-
-    wind_mat = wind_mat[:, :, ::-1, :]
-    if wind_mat.shape[1] == 2:
-        wind_mat = wind_mat[:, ::-1, :, :]
-
-    return wind_mat
+    warn(
+        "reverse_wind_mat is deprecated, use Winding.reverse_wind_mat (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return Winding.reverse_wind_mat(*args, **kwargs)
 
 
-def reverse_layer(wind_mat):
-    """reverse the Winding Matrix along the layer
+def reverse_layer(*args, **kwargs):
+    """Deprecated: use Winding.reverse_layer"""
+    from ...Classes_pydantic.machine.winding import Winding
 
-    Parameters
-    ----------
-    wind_mat : numpy.ndarray
-        A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
-        (created by comp_connection_mat)
-
-    Returns
-    -------
-    wind_mat: numpy.ndarray
-        The reverse matrix along the layer
-
-    """
-    assert len(wind_mat.shape) == 4, "wind_mat has a wrong shape (dim 4)"
-
-    wind_mat = wind_mat[:, ::-1, :, :]
-    wind_mat = wind_mat[::-1, :, :, :]
-
-    return wind_mat
+    warn(
+        "reverse_layer is deprecated, use Winding.reverse_layer (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return Winding.reverse_layer(*args, **kwargs)
 
 
-def change_layer(wind_mat):
-    """Change the Winding Matrix along the layer
+def change_layer(*args, **kwargs):
+    """Deprecated: use Winding.change_layer"""
+    from ...Classes_pydantic.machine.winding import Winding
 
-    Parameters
-    ----------
-    wind_mat : numpy.ndarray
-        A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
-        (created by comp_connection_mat)
-
-    Returns
-    -------
-    wind_mat: numpy.ndarray
-        The winding matrix with changed layers
-
-    """
-    wind_shape = wind_mat.shape
-    assert len(wind_shape) == 4, "wind_mat has a wrong shape (dim 4)"
-
-    if wind_shape[0] == 1 and wind_shape[1] != 1:
-        wind_mat2 = np.zeros(
-            (wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3])
-        )
-        wind_mat2[:, 0, :, :] = wind_mat[0, :, :, :]
-        return wind_mat2
-    elif wind_shape[0] != 1 and wind_shape[1] == 1:
-        wind_mat2 = np.zeros(
-            (wind_shape[1], wind_shape[0], wind_shape[2], wind_shape[3])
-        )
-        wind_mat2[0, :, :, :] = wind_mat[:, 0, :, :]
-        return wind_mat2
-    else:
-        return wind_mat
+    warn(
+        "change_layer is deprecated, use Winding.change_layer (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return Winding.change_layer(*args, **kwargs)
 
 
-def permute_B_C(wind_mat):
-    """Permute B & C phases
+def permute_B_C(*args, **kwargs):
+    """Deprecated: use Winding.permute_B_C"""
+    from ...Classes_pydantic.machine.winding import Winding
 
-    Parameters
-    ----------
-    wind_mat : numpy.ndarray
-        A Winding Matrix (Nlay_r, Nlay_theta, Zs, qs)
-        (created by comp_connection_mat)
-
-    Returns
-    -------
-    wind_mat: numpy.ndarray
-        The winding matrix with permuted phases
-
-    """
-    wind_shape = wind_mat.shape
-    assert len(wind_shape) == 4, "wind_mat has a wrong shape (dim 4)"
-    assert wind_shape[3] > 2
-
-    wind_mat2 = wind_mat.copy()
-    wind_mat2[:, :, :, 1] = wind_mat[:, :, :, 2]
-    wind_mat2[:, :, :, 2] = wind_mat[:, :, :, 1]
-    return wind_mat2
+    warn(
+        "permute_B_C is deprecated, use Winding.permute_B_C (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return Winding.permute_B_C(*args, **kwargs)

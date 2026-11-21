@@ -14,8 +14,6 @@ from ...classes_common.errors import (
     WindingT2DefNtError,
     WindingT5DefMsError,
 )
-from ...Functions_pydantic.Winding.reverse_wind_mat import reverse_wind_mat
-from ...Functions_pydantic.Winding.shift_wind_mat import shift_wind_mat
 from .winding import Winding
 
 
@@ -189,9 +187,9 @@ class WindingUD(Winding):
         self.Nlayer = 1
         # Apply the transformations
         if self.is_reverse_wind:
-            wind_mat = reverse_wind_mat(wind_mat)
+            wind_mat = self.reverse_wind_mat(wind_mat)
         if self.Nslot_shift_wind > 0:
-            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+            wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
 
         self.wind_mat = wind_mat
         # Matrix changed, compute again periodicity
@@ -286,9 +284,9 @@ class WindingUD(Winding):
         self.Nlayer = 2
         # Apply the transformations
         if self.is_reverse_wind:
-            wind_mat = reverse_wind_mat(wind_mat)
+            wind_mat = self.reverse_wind_mat(wind_mat)
         if self.Nslot_shift_wind > 0:
-            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+            wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
 
         self.wind_mat = wind_mat
         # Matrix changed, compute again periodicity
@@ -382,9 +380,9 @@ class WindingUD(Winding):
         self.Nlayer = 2
         # Apply the transformations
         if self.is_reverse_wind:
-            wind_mat = reverse_wind_mat(wind_mat)
+            wind_mat = self.reverse_wind_mat(wind_mat)
         if self.Nslot_shift_wind > 0:
-            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+            wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
 
         self.wind_mat = wind_mat
         # Matrix changed, compute again periodicity
@@ -479,9 +477,9 @@ class WindingUD(Winding):
         self.Nlayer = nlay
         # Apply the transformations
         if self.is_reverse_wind:
-            wind_mat = reverse_wind_mat(wind_mat)
+            wind_mat = self.reverse_wind_mat(wind_mat)
         if self.Nslot_shift_wind > 0:
-            wind_mat = shift_wind_mat(wind_mat, self.Nslot_shift_wind)
+            wind_mat = self.shift_wind_mat(wind_mat, self.Nslot_shift_wind)
 
         self.wind_mat = wind_mat
         # Matrix changed, compute again periodicity

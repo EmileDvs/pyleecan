@@ -9,9 +9,15 @@ becomes a method of that class:
   ``@staticmethod`` (function not using the object);
 - the class generator adds the method to the class (the CSV files are not
   changed: ``add_moved_methods`` extends the generation dictionary);
-- the callers in Methods_new call the method (``obj.method(...)``);
+- the callers in Methods_new and Functions_new call the method
+  (``obj.method(...)``; a static method on ``self`` in its class, else on the
+  class, imported in the calling function);
 - the function generator keeps the old function path in Functions_new as a
   deprecated alias, until Phase 2.
+
+A legacy module can hold several moved functions (a tuple of MovedFunction):
+each one gets its own method module, and calls between them go through the
+class.
 """
 
 import ast
@@ -28,6 +34,23 @@ class MovedFunction(NamedTuple):
     """Name of the method (and of the legacy function)"""
     static: bool = False
     """True: @staticmethod (the function does not use the object)"""
+    bound: tuple = ()
+    """(parameter, getter): the first parameter of the legacy function is data
+    of the object. The legacy body becomes the static method "_<method>", and
+    "<method>" a regular method taking that parameter as an optional keyword
+    argument, given by ``self.<getter>()`` by default. A caller holding
+    ``x = obj.<getter>(...)`` calls ``obj.<method>(..., parameter=x)``; the
+    other callers call the static method"""
+
+    @property
+    def implementation(self):
+        """Name of the method holding the legacy body"""
+        return "_" + self.method if self.bound else self.method
+
+    @property
+    def methods(self):
+        """Names of the methods added to the class"""
+        return (self.implementation, self.method) if self.bound else (self.method,)
 
 
 MOVED_FUNCTIONS = {
@@ -54,10 +77,44 @@ MOVED_FUNCTIONS = {
         "OptiGenAlgNsga2Deap", "tournamentDCD", static=True
     ),
     "Optimization.update": MovedFunction("OptiGenAlgNsga2Deap", "update", static=True),
+    # Step 8, group 2: winding matrix operations (Winding), single conductor
+    # winding function (Conductor); gen_phase_list stays a utility
+    "Winding.comp_cond_function": MovedFunction(
+        "Conductor", "comp_cond_function", static=True
+    ),
+    "Winding.reverse_wind_mat": (
+        MovedFunction("Winding", "reverse_wind_mat", static=True),
+        MovedFunction("Winding", "reverse_layer", static=True),
+        MovedFunction("Winding", "change_layer", static=True),
+        MovedFunction("Winding", "permute_B_C", static=True),
+    ),
+    "Winding.shift_wind_mat": MovedFunction("Winding", "shift_wind_mat", static=True),
+    # get_phase_id reads the connection matrix of the winding (regular method,
+    # wind_mat optional); find_wind_phase_color stays static: the plots call
+    # it without matrix on purpose (no winding, WindingSC: first phase color)
+    "Winding.find_wind_phase_color": (
+        MovedFunction("Winding", "find_wind_phase_color", static=True),
+        MovedFunction(
+            "Winding", "get_phase_id", bound=("wind_mat", "get_connection_mat")
+        ),
+    ),
 }
-"""{legacy function module below Functions: MovedFunction}"""
+"""{legacy function module below Functions: MovedFunction or tuple of them}"""
 
 DEPRECATION_MESSAGE = "{function} is deprecated, use {target} (removed in Phase 2)"
+
+
+def moved_targets(value):
+    """The MovedFunction of a MOVED_FUNCTIONS value, as a tuple."""
+    return (value,) if isinstance(value, MovedFunction) else tuple(value)
+
+
+def all_moved_targets(moved=None):
+    """[(legacy module, MovedFunction)] of all the moved functions."""
+    moved = MOVED_FUNCTIONS if moved is None else moved
+    return [
+        (module, target) for module, value in moved.items() for target in moved_targets(value)
+    ]
 
 
 def add_moved_methods(gen_dict, moved=None):
@@ -75,11 +132,11 @@ def add_moved_methods(gen_dict, moved=None):
     gen_dict : dict
         The same dictionary
     """
-    moved = MOVED_FUNCTIONS if moved is None else moved
-    for target in moved.values():
+    for _, target in all_moved_targets(moved):
         methods = gen_dict[target.class_name]["methods"]
-        if target.method not in methods:
-            methods.append(target.method)
+        for name in target.methods:
+            if name not in methods:
+                methods.append(name)
     return gen_dict
 
 
@@ -126,7 +183,47 @@ def _relocate_relative_imports(source, old_package, new_package):
     return source
 
 
-def method_source(source, target, old_package, new_package):
+def _split_moved_siblings(source, module_name, siblings):
+    """Remove the other moved functions of the module, imported instead.
+
+    The import from the legacy module (``from .module import sibling``) is
+    then rewritten by ``redirect_moved_calls`` into calls on the class.
+    """
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    removed = []
+    for node in reversed(tree.body):
+        if isinstance(node, ast.FunctionDef) and node.name in siblings:
+            first = node.lineno - 1 - len(node.decorator_list)
+            del lines[first : node.end_lineno]
+            removed.append(node.name)
+    if not removed:
+        return source
+    source = "".join(lines)
+    used = {
+        node.id for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Name)
+    }
+    imported = sorted(name for name in removed if name in used)
+    if not imported:
+        return source
+    # After the module docstring and the __future__ imports
+    tree = ast.parse(source)
+    position = 0
+    for node in tree.body:
+        if (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, str)
+        ) or (isinstance(node, ast.ImportFrom) and node.module == "__future__"):
+            position = node.end_lineno
+        else:
+            break
+    lines = source.splitlines(keepends=True)
+    lines.insert(position, f"from .{module_name} import {', '.join(imported)}\n")
+    return "".join(lines)
+
+
+def method_source(source, target, old_package, new_package, siblings=()):
     """Source of the method module of a moved function.
 
     Parameters
@@ -139,17 +236,31 @@ def method_source(source, target, old_package, new_package):
         Package of the legacy module ("pyleecan.Functions.MeshSolution")
     new_package : str
         Package of the method module ("pyleecan.Methods.MeshSolution")
+    siblings : tuple, optional
+        (legacy module name, names of the other moved functions of the module):
+        removed from the method module, imported from the legacy module (calls
+        redirected to the class by redirect_moved_calls)
 
     Returns
     -------
     source : str
         Source of the method module
     """
+    if siblings:
+        module_name, names = siblings
+        source = _split_moved_siblings(source, module_name, set(names))
     source = _relocate_relative_imports(source, old_package, new_package)
     node = _function_node(ast.parse(source), target.method)
     offsets = _line_offsets(source)
-    if target.static:
+    if target.static or target.bound:
         start = offsets[node.lineno - 1]
+        if target.bound:  # Legacy body in the static "_<method>"
+            name_start = start + source[start:].index("def " + target.method) + 4
+            source = (
+                source[:name_start]
+                + target.implementation
+                + source[name_start + len(target.method) :]
+            )
         return source[:start] + "@staticmethod\n" + source[start:]
     if not node.args.args:
         raise ValueError(f"{target.method} has no parameter to become self")
@@ -182,41 +293,101 @@ def method_source(source, target, old_package, new_package):
     return source
 
 
+def bound_method_source(source, target):
+    """Source of the regular method of a bound moved function.
+
+    ``get_phase_id(wind_mat, Nrad, Ntan, Zs)`` with bound=("wind_mat",
+    "get_connection_mat") becomes::
+
+        def get_phase_id(self, Nrad, Ntan, Zs, wind_mat=None):
+            if wind_mat is None:
+                wind_mat = self.get_connection_mat()
+            return self._get_phase_id(wind_mat, Nrad, Ntan, Zs)
+
+    The docstring of the legacy function is kept (with ``self`` and the
+    default of the bound parameter documented).
+    """
+    parameter, getter = target.bound
+    node = _function_node(ast.parse(source), target.method)
+    arguments = node.args
+    if arguments.posonlyargs or arguments.vararg or arguments.kwarg or arguments.kwonlyargs:
+        raise ValueError(f"{target.method}: only positional parameters are supported")
+    names = [argument.arg for argument in arguments.args]
+    if not names or names[0] != parameter:
+        raise ValueError(f"{target.method}: the first parameter must be {parameter}")
+    defaults = dict(zip(names[len(names) - len(arguments.defaults) :], arguments.defaults))
+    if parameter in defaults:
+        raise ValueError(f"{target.method}: {parameter} must not have a default")
+    signature = ["self"] + [
+        name + ("=" + ast.unparse(defaults[name]) if name in defaults else "")
+        for name in names[1:]
+    ] + [parameter + "=None"]
+    lines = [f"def {target.method}({', '.join(signature)}):"]
+    docstring = ast.get_docstring(node, clean=True)
+    if docstring is not None:
+        doc_lines = docstring.split("\n")
+        for index, line in enumerate(doc_lines):
+            if line.strip() == "----------" and index and doc_lines[index - 1].strip() == "Parameters":
+                doc_lines[index + 1 : index + 1] = [
+                    f"self : {target.class_name}",
+                    f"    A {target.class_name} object",
+                ]
+                break
+        for index, line in enumerate(doc_lines):
+            if line.split(":")[0].strip() == parameter and ":" in line:
+                end = index + 1
+                while end < len(doc_lines) and doc_lines[end].startswith("    "):
+                    end += 1
+                doc_lines.insert(end, f"    (default: self.{getter}())")
+                break
+        body = "\n".join(("    " + line).rstrip() for line in doc_lines)
+        lines.append('    """' + body.lstrip() + "\n    " + '"""')
+    lines += [
+        f"    if {parameter} is None:",
+        f"        {parameter} = self.{getter}()",
+        f"    return self.{target.implementation}({', '.join(names)})",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def alias_source(legacy_module, target):
-    """Legacy source of the deprecated alias kept at the old function path.
+    """Legacy source of the deprecated aliases kept at the old function path.
 
     The alias goes through the function generator like the other legacy
-    function modules (class imports relocated, pydantic rewriting).
+    function modules (class imports relocated, pydantic rewriting). ``target``
+    is a MovedFunction or a tuple of them (one alias per moved function of the
+    module).
     """
+    targets = moved_targets(target)
     depth = len(legacy_module.split("."))  # Functions/<...>/<module>.py
     up = "." * (depth + 1)
-    message = DEPRECATION_MESSAGE.format(
-        function=target.method, target=f"{target.class_name}.{target.method}"
-    )
+    moved_names = ", ".join(f"{t.class_name}.{t.method}" for t in targets)
     lines = [
-        f'"""Deprecated alias of {target.class_name}.{target.method} '
-        '(moved to the class, removed in Phase 2)."""',
+        f'"""Deprecated alias of {moved_names} (moved to the class, removed in Phase 2)."""',
         "",
         "from warnings import warn",
-        "",
-        "",
     ]
-    if target.static:
-        lines += [
-            f"def {target.method}(*args, **kwargs):",
-            f'    """Deprecated: use {target.class_name}.{target.method}"""',
-            f"    from {up}Classes.{target.class_name} import {target.class_name}",
-            "",
-            f'    warn("{message}", DeprecationWarning, stacklevel=2)',
-            f"    return {target.class_name}.{target.method}(*args, **kwargs)",
-        ]
-    else:
-        lines += [
-            f"def {target.method}(obj, *args, **kwargs):",
-            f'    """Deprecated: use {target.class_name}.{target.method}"""',
-            f'    warn("{message}", DeprecationWarning, stacklevel=2)',
-            f"    return obj.{target.method}(*args, **kwargs)",
-        ]
+    for item in targets:
+        message = DEPRECATION_MESSAGE.format(
+            function=item.method, target=f"{item.class_name}.{item.method}"
+        )
+        lines += ["", ""]
+        if item.static or item.bound:  # Legacy signature: the static method
+            lines += [
+                f"def {item.method}(*args, **kwargs):",
+                f'    """Deprecated: use {item.class_name}.{item.method}"""',
+                f"    from {up}Classes.{item.class_name} import {item.class_name}",
+                "",
+                f'    warn("{message}", DeprecationWarning, stacklevel=2)',
+                f"    return {item.class_name}.{item.implementation}(*args, **kwargs)",
+            ]
+        else:
+            lines += [
+                f"def {item.method}(obj, *args, **kwargs):",
+                f'    """Deprecated: use {item.class_name}.{item.method}"""',
+                f'    warn("{message}", DeprecationWarning, stacklevel=2)',
+                f"    return obj.{item.method}(*args, **kwargs)",
+            ]
     return "\n".join(lines) + "\n"
 
 
@@ -240,14 +411,48 @@ def _is_static_function(node):
     return not args or args[0].arg != "self"
 
 
+def _bound_receiver(call, caller, target, source, offsets):
+    """Object of a bound call: ``x = obj.<getter>(...)`` before ``f(x, ...)``.
+
+    Returns the source of ``obj`` when the first argument is a name whose
+    nearest assignment before the call, in the calling function, is a call of
+    the getter of the target; else None.
+    """
+    if caller is None or not call.args or not isinstance(call.args[0], ast.Name):
+        return None
+    name = call.args[0].id
+    getter = target.bound[1]
+    assignments = [
+        node
+        for node in ast.walk(caller)
+        if isinstance(node, ast.Assign)
+        and node.lineno < call.lineno
+        and any(isinstance(t, ast.Name) and t.id == name for t in node.targets)
+    ]
+    if not assignments:
+        return None
+    value = max(assignments, key=lambda node: node.lineno).value
+    if not (
+        isinstance(value, ast.Call)
+        and isinstance(value.func, ast.Attribute)
+        and value.func.attr == getter
+    ):
+        return None
+    obj = value.func.value
+    start = offsets[obj.lineno - 1] + obj.col_offset
+    end = offsets[obj.end_lineno - 1] + obj.end_col_offset
+    return source[start:end]
+
+
 def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=None):
     """Call the moved methods instead of the legacy functions.
 
     ``from ....Functions.MeshSolution.get_area import get_area`` is removed and
     ``get_area(ms, ...)`` becomes ``ms.get_area(...)``. A static method is
-    called in a method of its class or of a daughter class: on ``self`` in a
-    regular method, on the class in a static method (class imported in the
-    function, as the other class imports of the methods).
+    called on ``self`` in a regular method of its class or of a daughter
+    class, else on the class (static method, other class, function), the class
+    being imported in the calling function (as the other class imports of the
+    methods).
 
     Parameters
     ----------
@@ -268,7 +473,7 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
         Source calling the methods
     """
     moved = MOVED_FUNCTIONS if moved is None else moved
-    if not any(target.method in source for target in moved.values()):
+    if not any(target.method in source for _, target in all_moved_targets(moved)):
         return source
     tree = ast.parse(source)
     offsets = _line_offsets(source)
@@ -282,15 +487,18 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
             if node.level
             else node.module
         )
-        if not module.startswith("pyleecan.Functions."):
+        if not module or not module.startswith("pyleecan.Functions."):
             continue
-        target = moved.get(module[len("pyleecan.Functions.") :])
-        if target is None:
+        value = moved.get(module[len("pyleecan.Functions.") :])
+        if value is None:
             continue
-        kept = [alias for alias in node.names if alias.name != target.method]
+        targets = {target.method: target for target in moved_targets(value)}
+        kept = [alias for alias in node.names if alias.name not in targets]
+        if len(kept) == len(node.names):
+            continue
         for alias in node.names:
-            if alias.name == target.method:
-                names[alias.asname or alias.name] = target
+            if alias.name in targets:
+                names[alias.asname or alias.name] = targets[alias.name]
         start = offsets[node.lineno - 1] + node.col_offset
         end = offsets[node.end_lineno - 1] + node.end_col_offset
         if kept:
@@ -317,28 +525,45 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
         target = names[node.func.id]
         func_start = offsets[node.func.lineno - 1] + node.func.col_offset
         func_end = offsets[node.func.end_lineno - 1] + node.func.end_col_offset
-        if target.static:
-            if target.class_name not in lineage:
-                raise ValueError(
-                    f"{package}: call of the static method {target.method} "
-                    "outside of its class (or a daughter class) is not supported"
-                )
-            caller = next(
-                (f for f in functions if f.lineno <= node.lineno <= f.end_lineno),
-                None,
-            )
-            if caller is None or _is_static_function(caller):
-                if caller is None:
-                    raise ValueError(
-                        f"{package}: call of {target.method} outside of a function"
+        caller = next(
+            (f for f in functions if f.lineno <= node.lineno <= f.end_lineno), None
+        )
+        if target.bound:
+            receiver = _bound_receiver(node, caller, target, source, offsets)
+            if receiver is not None:  # obj.method(..., parameter=x)
+                first = node.args[0]
+                first_start = offsets[first.lineno - 1] + first.col_offset
+                first_end = offsets[first.end_lineno - 1] + first.end_col_offset
+                value = source[first_start:first_end]
+                rest = node.args[1:] + node.keywords
+                if rest:
+                    following = min(rest, key=lambda item: (item.lineno, item.col_offset))
+                    replacements.append(
+                        (first_start, offsets[following.lineno - 1] + following.col_offset, "")
                     )
+                    closing = offsets[node.end_lineno - 1] + node.end_col_offset - 1
+                    replacements.append((closing, closing, f", {target.bound[0]}={value}"))
+                else:
+                    replacements.append(
+                        (first_start, first_end, f"{target.bound[0]}={value}")
+                    )
+                replacements.append((func_start, func_end, f"{receiver}.{target.method}"))
+                continue
+        if target.static or target.bound:
+            if caller is None:
+                raise ValueError(
+                    f"{package}: call of {target.method} outside of a function"
+                )
+            if target.class_name in lineage and not _is_static_function(caller):
+                owner = "self"  # Method of the class or of a daughter class
+            else:  # Static method, other class or function: on the class
                 class_imports.setdefault(caller.name, (caller, set()))[1].add(
                     target.class_name
                 )
                 owner = target.class_name
-            else:
-                owner = "self"
-            replacements.append((func_start, func_end, f"{owner}.{target.method}"))
+            replacements.append(
+                (func_start, func_end, f"{owner}.{target.implementation}")
+            )
             continue
         if not node.args or isinstance(node.args[0], ast.Starred):
             raise ValueError(f"{package}: call of {target.method} without object")

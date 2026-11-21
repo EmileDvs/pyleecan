@@ -61,7 +61,6 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..geometry.line import Line
-    from .lamination import Lamination
 
 
 class Lamination(LegacyModel):
