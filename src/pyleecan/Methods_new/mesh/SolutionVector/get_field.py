@@ -1,6 +1,6 @@
 import numpy as np
 
-from ....Functions_new.Structural.conversions import pol2cart
+from ....Functions_new.SciDataTool.conversions import pol2cart_points as pol2cart
 
 
 def get_field(self, *args, is_squeeze: bool = False, node=None, is_rthetaz: bool = False) -> np.ndarray:

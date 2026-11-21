@@ -235,7 +235,7 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 3 | Optimization | `check_cstr`, `evaluate`, `tournamentDCD`, `update` (M2 each: OptiGenAlgNsga2Deap, OptiBayesAlgSmoot) | class: `OptiSolver` (shared base) or `OptiGenAlg` | done (2026-11-21): methods of `OptiGenAlgNsga2Deap` (`evaluate`, `check_cstr`; `tournamentDCD`, `update` static) |
 | 4 | Simulation | `VarSimu.get_elec_datakeeper_dict` (M3), `VarSimu.log_datakeeper_step_result` (M1 F1) | class: `VarSimu` (as `run_multisim_step`) | done (2026-11-21): static methods of `VarSimu` |
 | 5 | MeshSolution | `build_solution_data`, `build_solution_vector` (M3-4: MagFEMM, OutMag, OutLoss), `get_frame_meshsolution` (M12: loss models) | class: `SolutionData` / `SolutionVector` constructors (classmethods), `MeshSolution` method | done (2026-11-21): static `SolutionData.build_solution_data`, `SolutionVector.build_solution_vector`; `Output.get_frame_meshsolution` (it reads `output.mag`); deleted `build_meshsolution` kept as a deprecated alias of the `MeshSolution` constructor |
-| 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | decided (2026-11-21): deprecate, the SciDataTool conversions replace it; open: not a plain duplicate (below) |
+| 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | done (2026-11-21): deprecated, its functions in `SciDataTool.conversions` (below) |
 | 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | |
 | 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | done (2026-11-21): dqh (methods `DataTime.n2dqh`, `DataFreq.n2dqh`, `DataDual.n2dqh`, the other functions merged in `SciDataTool.dqh_transformation`, checks dropped); `comp_loss_joule` deprecated (not used); `comp_MTPA` method of `LUTdq` |
 | 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | in progress (2026-11-21): pyvista functions gathered in `pv_plotter_pyleecan` (static methods first, done); `animate_as_gif` to `Data` (static); `get_color_legend_from_surface` to `Machine` (open, below) |
@@ -420,16 +420,16 @@ Proposed targets are a starting point; the decision is the maintainer's.
       `MeshMat.save_vtk`, `MeshSolution.export_to_mat`) call it; moved
       with the GUI in Step 10 (`GUI_new`), the mesh methods logging
       through their logger (Step 9).
-- [ ] `Structural.conversions` (decided: deprecated, replaced by
-      `SciDataTool.conversions`): not a plain duplicate. `xyz_to_rphiz`,
-      `rphiz_to_xyz` and the `_field` versions differ slightly (third
-      component handling); `cart2pol(values, points)` /
-      `pol2cart(values, points)` compute the angle from the points
-      (SciDataTool: `cart2pol(field_x, field_y, phi)`); `DimError` is
-      imported by `MeshSolution.get_field`. The 4 callers
-      (`MeshSolution.get_field`, `SolutionVector.get_field`,
-      `Mode.get_shape_pol`, `Mode.get_shape_xyz`) need equivalent calls
-      checked on the numbers before the module warns.
+- [x] `Structural.conversions` deprecated (2026-11-21): merged into
+      `SciDataTool.conversions` (`MERGED_MODULES`, the target being one of
+      the merged legacy modules): `xyz_to_rphiz`, `xyz_to_rphiz_field`,
+      `rphiz_to_xyz_field` give the same results as the SciDataTool ones
+      (not duplicated); `cart2pol` / `pol2cart` (angle from the points)
+      added as `cart2pol_points` / `pol2cart_points`, `rphiz_to_xyz` (z kept)
+      as `rphiz_to_xyz_3d`; `DimError` from the shared errors. Callers
+      (`MeshSolution.get_field`, `SolutionVector.get_field`, `Mode`) import
+      the SciDataTool functions; checked against legacy with a script,
+      `Tests/New/Methods/Mesh` 42 passed with each backend.
 
 ### Group 5 (2026-11-21)
 

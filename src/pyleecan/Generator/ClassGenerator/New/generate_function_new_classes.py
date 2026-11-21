@@ -788,10 +788,18 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
     generated_module_paths.cache_clear()
     class_module_paths = generated_module_paths(class_dir)
     # Legacy modules, then the aliases of the modules deleted from legacy
+    # (a merge target that is also one of its legacy modules: written by the
+    # merge, the legacy module is not copied)
+    merge_targets = {
+        source_dir.joinpath(*module.split(".")).with_suffix(".py") for module in MERGED_MODULES
+    }
     entries = [
         (path, None)
         for path in sorted(source_dir.rglob("*"))
-        if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc"
+        if path.is_file()
+        and "__pycache__" not in path.parts
+        and path.suffix != ".pyc"
+        and path not in merge_targets
     ]
     entries += [
         (source_dir.joinpath(*module.split(".")).with_suffix(".py"), alias)
@@ -864,7 +872,7 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             if merged_location(legacy_module) is not None and removed_alias is None:
                 # Deprecated aliases of the merged module (and of its methods)
                 source = merged_alias_source(legacy_module, source)
-                moved = moved or True
+                moved = "femm"  # Aliases: the shared errors are imported
             elif moved is not None:  # Deprecated alias of the method
                 source = alias_source(legacy_module, moved, source)
             elif removed_alias is None and any(

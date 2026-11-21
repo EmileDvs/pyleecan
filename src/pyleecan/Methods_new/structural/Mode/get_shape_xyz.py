@@ -1,4 +1,4 @@
-from ....Functions_new.Structural.conversions import pol2cart
+from ....Functions_new.SciDataTool.conversions import pol2cart_points as pol2cart
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

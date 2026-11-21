@@ -14,7 +14,8 @@ from scipy.io import savemat
 from ...classes_common.errors import DimError
 from ...definitions import config_dict
 from ...Functions_new.GUI.log_error import log_error
-from ...Functions_new.Structural.conversions import cart2pol, pol2cart
+from ...Functions_new.SciDataTool.conversions import cart2pol_points as cart2pol
+from ...Functions_new.SciDataTool.conversions import pol2cart_points as pol2cart
 from .._legacy_class import LegacyClass
 from .element_mat import ElementMat
 from .mesh import Mesh

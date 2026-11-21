@@ -417,6 +417,43 @@ def test_merged_module_callers(merged):
     assert "return data.n2dqh(phase_dir=get_dir(data.values)), convert" in result
 
 
+def test_merge_into_a_source(monkeypatch):
+    """A module merged into another legacy module: identical, renamed, errors."""
+    from pyleecan.Generator.ClassGenerator.New import moved_functions
+
+    spec = {
+        "SciDataTool.conv": {
+            "sources": (("SciDataTool.conv", {}), ("Structural.conv", {"f": "f_points"})),
+            "dropped": (),
+            "identical": ("same",),
+            "errors": ("DimError",),
+        }
+    }
+    monkeypatch.setattr(moved_functions, "MERGED_MODULES", spec)
+    monkeypatch.setattr(moved_functions, "MOVED_FUNCTIONS", {})
+    sources = {
+        "SciDataTool.conv": "UNITS = 1\n\n\ndef same(x):\n    return x\n\n\ndef f(a, b, c):\n    return a\n",
+        "Structural.conv": (
+            "class DimError(Exception):\n    pass\n\n\n"
+            "def same(x):\n    return x\n\n\ndef f(values, points):\n    return same(values)\n"
+        ),
+    }
+    merged = moved_functions.merged_module_source("SciDataTool.conv", sources.__getitem__)
+    tree = ast.parse(merged)
+    assert [n.name for n in tree.body if isinstance(n, ast.FunctionDef)] == ["same", "f", "f_points"]
+    assert "UNITS = 1" in merged and "from ...classes_common.errors import DimError" in merged
+    alias = moved_functions.merged_alias_source("Structural.conv", sources["Structural.conv"])
+    assert "from ...classes_common.errors import DimError  # noqa: F401" in alias
+    assert "import f_points as function" in alias
+    caller = "from ....Functions.Structural.conv import DimError, f\n"
+    result = moved_functions.redirect_moved_calls(caller, "pyleecan.Methods_new.mesh.MeshSolution")
+    assert "from ....Functions.SciDataTool.conv import f_points as f" in result
+    assert "from ....classes_common.errors import DimError" in result
+    # The merge target itself: imports unchanged
+    same = "from ....Functions.SciDataTool.conv import f\n"
+    assert moved_functions.redirect_moved_calls(same, "pyleecan.Methods_new.mesh.MeshSolution") == same
+
+
 def test_new_methods_added_to_the_classes():
     from pyleecan.Generator.ClassGenerator.New.moved_functions import NEW_METHODS, all_moved_targets
 

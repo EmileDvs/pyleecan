@@ -1,9 +1,16 @@
+"""Functions merged from SciDataTool.conversions, Structural.conversions (PLAN.md Step 8)."""
+
+from typing import TYPE_CHECKING
+
 import numpy as np
 
-from ...classes_common.errors import UnitError
+from ...classes_common.errors import DimError, UnitError
 from .fft_functions import comp_fft_freqs, comp_fft_time, comp_nthoctave_axis
 
-# List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
+if TYPE_CHECKING:
+    pass
+
+
 unit_symbols = [
     ("dimless", 1.0, (0, 0, 0, 0, 0, 0)),  # dimensionless
     ("degC", 1.0, (0, 0, 0, 1, 0, 0)),  # degree Celsius
@@ -33,7 +40,8 @@ unit_symbols = [
     ("H", 1.0, (1, -2, -2, 0, 0, -2)),  # Henry
     ("m", 1.0, (1, 0, 0, 0, 0, 0)),  # meter
 ]
-# Dictionnary of the prefixes and their values
+
+
 unit_prefixes = {
     "Y": 1e24,
     "Z": 1e21,
@@ -178,7 +186,7 @@ def get_unit_integrate(unit_str, axis_unit):
     return unit_str
 
 
-def convert(values, unit1, unit2):
+def convert(values: np.ndarray, unit1: str, unit2: str):
     """Converts values from unit1 to unit2
     Parameters
     ----------
@@ -237,7 +245,7 @@ def convert(values, unit1, unit2):
             )
 
 
-def to_dB(values, unit, ref_value=1.0):
+def to_dB(values: np.ndarray, unit: str, ref_value: float = 1.0):
     """Converts values into dB normalized with ref_value
 
     Parameters
@@ -270,7 +278,7 @@ def to_dB(values, unit, ref_value=1.0):
     return values_dB
 
 
-def to_dBA(values, freqs, unit, ref_value=1.0):
+def to_dBA(values: np.ndarray, freqs: np.ndarray, unit: str, ref_value: float = 1.0):
     """Converts values into dBA (requires frequency vector)
 
     Parameters
@@ -291,7 +299,7 @@ def to_dBA(values, freqs, unit, ref_value=1.0):
     return dB_to_dBA(values, freqs)
 
 
-def dB_to_dBA(values, freqs, noct=None):
+def dB_to_dBA(values: np.ndarray, freqs: np.ndarray, noct=None):
     """Converts values from dB into dBA (requires frequency vector)
 
     Parameters
@@ -395,7 +403,7 @@ def dB_to_dBA(values, freqs, noct=None):
         return values_dBA
 
 
-def to_noct(values, freqs, noct=3):
+def to_noct(values: np.ndarray, freqs: np.ndarray, noct: int = 3):
     """Converts values into 1/nth octave band (requires frequency vector)
 
     Parameters
@@ -444,7 +452,7 @@ def to_noct(values, freqs, noct=3):
     return [values, np.array(f_oct)]
 
 
-def xyz_to_rphiz(values):
+def xyz_to_rphiz(values: np.ndarray):
     """Converts axis values from cartesian coordinates into cylindrical coordinates
 
     Parameters
@@ -467,7 +475,7 @@ def xyz_to_rphiz(values):
     return np.column_stack((r, phi, z))
 
 
-def rphiz_to_xyz(values):
+def rphiz_to_xyz(values: np.ndarray):
     """Converts axis values from cylindrical coordinates into cartesian coordinates
 
     Parameters
@@ -494,7 +502,7 @@ def rphiz_to_xyz(values):
         return np.column_stack((x, y))
 
 
-def xyz_to_rphiz_field(values, phi):
+def xyz_to_rphiz_field(values: np.ndarray, phi: np.ndarray):
     """Converts field values from cartesian coordinates into cylindrical coordinates
 
     Parameters
@@ -521,7 +529,7 @@ def xyz_to_rphiz_field(values, phi):
     return np.column_stack((field_r, field_phi, field_z))
 
 
-def rphiz_to_xyz_field(values, phi):
+def rphiz_to_xyz_field(values: np.ndarray, phi: np.ndarray):
     """Converts field values from cylindrical coordinates into cartesian coordinates
 
     Parameters
@@ -622,3 +630,62 @@ def pol2cart(field_r, field_phi, phi):
     field_y = field_r * sin_phi_reshaped + field_phi * cos_phi_reshaped
 
     return (field_x, field_y)
+
+
+def rphiz_to_xyz_3d(values: np.ndarray):
+    """Converts axis values from cylindrical coordinates into cartesian coordinates
+
+    Parameters
+    ----------
+    values: array
+        Values of the axis to convert (Nx3)
+    Returns
+    -------
+    ndarray of the axis (Nx3)
+    """
+
+    r = values[:, 0]
+    phi = values[:, 1]
+    z = values[:, 2]
+
+    affixe = r * np.exp(1j * phi)
+    x = np.real(affixe)
+    y = np.imag(affixe)
+
+    return np.column_stack((x, y, z))
+
+
+def cart2pol_points(values: np.ndarray, points):
+    """Converts field values from cartesian coordinates into cylindrical coordinates
+
+    Parameters
+    ----------
+    values: array
+        Values of the field to convert (Nx3)
+    phi: array
+        Values of the angle axis (N)
+    Returns
+    -------
+    ndarray of the field (Nx3)
+    """
+
+    phi = xyz_to_rphiz(points)[:, 1]
+    return xyz_to_rphiz_field(values, phi)
+
+
+def pol2cart_points(values: np.ndarray, points):
+    """Converts field values from cylindrical coordinates into cartesian coordinates
+
+    Parameters
+    ----------
+    values: array
+        Values of the field to convert (Nx3)
+    phi: array
+        Values of the angle axis (N)
+    Returns
+    -------
+    ndarray of the field (Nx3)
+    """
+
+    phi = xyz_to_rphiz(points)[:, 1]
+    return rphiz_to_xyz_field(values, phi)

@@ -72,24 +72,25 @@ def test_rule_module_name_conversion_keeps_legacy_values():
 
 
 def test_generate_functions_renames_modules_and_references(tmp_path):
+    # A folder without interface object (the FEMM folder is femm_pyleecan)
     source = tmp_path / "Functions"
     output = tmp_path / "Functions_new"
     classes = tmp_path / "Classes_new"
-    (source / "FEMM").mkdir(parents=True)
+    (source / "Machine").mkdir(parents=True)
     classes.mkdir()
-    (source / "FEMM" / "comp_FEMM_dict.py").write_text(
+    (source / "Machine" / "comp_FEMM_dict.py").write_text(
         "def comp_FEMM_dict():\n    return 3\n", encoding="utf-8"
     )
-    (source / "FEMM" / "draw.py").write_text(
+    (source / "Machine" / "draw.py").write_text(
         "from .comp_FEMM_dict import comp_FEMM_dict\n", encoding="utf-8"
     )
     generate_functions(source, output, classes)
-    assert (output / "FEMM" / "comp_femm_dict.py").exists()
-    assert not (output / "FEMM" / "comp_FEMM_dict.py").exists() or (
-        output / "FEMM" / "comp_FEMM_dict.py"
-    ).samefile(output / "FEMM" / "comp_femm_dict.py")
+    assert (output / "Machine" / "comp_femm_dict.py").exists()
+    assert not (output / "Machine" / "comp_FEMM_dict.py").exists() or (
+        output / "Machine" / "comp_FEMM_dict.py"
+    ).samefile(output / "Machine" / "comp_femm_dict.py")
     assert "from .comp_femm_dict import comp_FEMM_dict" in (
-        output / "FEMM" / "draw.py"
+        output / "Machine" / "draw.py"
     ).read_text(encoding="utf-8")
 
 

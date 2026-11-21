@@ -1,7 +1,8 @@
 from ....Classes_new.mesh.solution_vector import SolutionVector
 from ....Classes_new.mesh.mesh_mat import MeshMat
 from ....Classes_new.mesh.mesh_vtk import MeshVTK
-from ....Functions_new.Structural.conversions import cart2pol, pol2cart; from ....classes_common.errors import DimError
+from ....Functions_new.SciDataTool.conversions import cart2pol_points as cart2pol, pol2cart_points as pol2cart
+from ....classes_common.errors import DimError
 import numpy as np
 
 

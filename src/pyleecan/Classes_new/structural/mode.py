@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_new.Structural.conversions import cart2pol, pol2cart
+from ...Functions_new.SciDataTool.conversions import cart2pol_points as cart2pol
+from ...Functions_new.SciDataTool.conversions import pol2cart_points as pol2cart
 from ..mesh.solution_mat import SolutionMat
 
 if TYPE_CHECKING:

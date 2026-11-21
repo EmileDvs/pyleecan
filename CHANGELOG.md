@@ -124,6 +124,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     `get_frame_meshsolution` a method of `Output`; the deleted
     `build_meshsolution` stays a deprecated alias of the `MeshSolution`
     constructor;
+  - `Structural.conversions` deprecated: its functions are in
+    `SciDataTool.conversions` (`cart2pol_points`, `pol2cart_points`,
+    `rphiz_to_xyz_3d` for the ones differing from the SciDataTool
+    functions);
   - deprecated: `plot_2D_Data`, `plot_3D_Data` (use the `Data` methods),
     `comp_loss_joule` (not used), `DeprecationWarning` on each call;
   - dqh transformations: `DataTime.n2dqh`, `DataFreq.n2dqh` and

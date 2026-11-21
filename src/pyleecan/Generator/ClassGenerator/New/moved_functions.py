@@ -206,6 +206,27 @@ MERGED_MODULES = {
         ),
         "dropped": ("_check_data", "_check_DataTime", "_check_DataFreq"),
     },
+    # Structural.conversions deprecated (decision 2026-11-21): its functions in
+    # SciDataTool.conversions. xyz_to_rphiz, xyz_to_rphiz_field and
+    # rphiz_to_xyz_field give the same results as the SciDataTool ones
+    # (identical); cart2pol / pol2cart (angle from the points) and
+    # rphiz_to_xyz (z kept) are different functions (renamed)
+    "SciDataTool.conversions": {
+        "sources": (
+            ("SciDataTool.conversions", {}),
+            (
+                "Structural.conversions",
+                {
+                    "cart2pol": "cart2pol_points",
+                    "pol2cart": "pol2cart_points",
+                    "rphiz_to_xyz": "rphiz_to_xyz_3d",
+                },
+            ),
+        ),
+        "dropped": (),
+        "identical": ("xyz_to_rphiz", "xyz_to_rphiz_field", "rphiz_to_xyz_field"),
+        "errors": ("DimError",),
+    },
 }
 """{new module below Functions: {"sources": ((legacy module, {function: new
 name}), ...), "dropped": functions removed with their calls}}: the functions of
@@ -467,8 +488,29 @@ def merged_module_source(new_module, read_source):
             elif isinstance(node, ast.FunctionDef):
                 if node.name in moved or node.name in spec["dropped"]:
                     continue
+                if legacy_module != spec["sources"][0][0] and node.name in spec.get(
+                    "identical", ()
+                ):
+                    continue  # Same function in the first module
                 first = node.lineno - 1 - len(node.decorator_list)
                 functions.append("".join(lines[first : node.end_lineno]).rstrip() + "\n")
+            elif isinstance(node, (ast.Assign, ast.AnnAssign)):  # Constants
+                first = node.lineno - 1
+                functions.insert(
+                    len([f for f in functions if not f.startswith("def ")]),
+                    "".join(lines[first : node.end_lineno]).rstrip() + "\n",
+                )
+            elif isinstance(node, ast.ClassDef) and node.name in spec.get("errors", ()):
+                # Shared errors (classes_common.errors)
+                text = ast.unparse(
+                    ast.ImportFrom(
+                        module="classes_common.errors",
+                        names=[ast.alias(node.name)],
+                        level=len(package.split(".")),
+                    )
+                )
+                if text not in imports:
+                    imports.append(text)
             elif not (
                 isinstance(node, ast.Expr)
                 and isinstance(node.value, ast.Constant)
@@ -540,6 +582,13 @@ def merged_alias_source(legacy_module, source):
     )
     up = "." * (len(legacy_module.split(".")) + 1)
     new_import = up + "Functions." + new_module
+    errors = [
+        node.name
+        for node in ast.parse(source).body
+        if isinstance(node, ast.ClassDef) and node.name in spec.get("errors", ())
+    ]
+    if errors:  # The shared errors of the legacy module
+        text += f"from {up}classes_common.errors import {', '.join(errors)}  # noqa: F401\n"
     for node in ast.parse(source).body:
         if (
             not isinstance(node, ast.FunctionDef)
@@ -1140,6 +1189,8 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
         key = module[len("pyleecan.Functions.") :]
         value = moved.get(key)
         merged = merged_location(key)  # Module merged into another one
+        if merged is not None and merged[0] == key and not merged[1]:
+            merged = None  # The merge target itself: same module, same names
         if value is None and merged is None:
             continue
         targets = (
@@ -1157,18 +1208,40 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
         end = offsets[node.end_lineno - 1] + node.end_col_offset
         if kept and merged is not None:  # From the merged module
             new_module, renames = merged
+            # The shared errors from classes_common.errors
+            shared = set(_merged_spec(key)[1].get("errors", ()))
+            error_aliases = [alias for alias in kept if alias.name in shared]
+            kept = [alias for alias in kept if alias.name not in shared]
+            error_text = (
+                ast.unparse(
+                    ast.ImportFrom(
+                        module="classes_common.errors",
+                        names=error_aliases,
+                        level=len(package.split(".")),
+                    )
+                )
+                if error_aliases
+                else ""
+            )
             aliases = []
             for alias in kept:
                 new_name = renames.get(alias.name, alias.name)
                 local = alias.asname or alias.name
                 aliases.append(ast.alias(new_name, local if local != new_name else None))
-            text = ast.unparse(
-                ast.ImportFrom(
-                    module="Functions." + new_module,
-                    names=aliases,
-                    level=len(package.split(".")),
+            text = (
+                ast.unparse(
+                    ast.ImportFrom(
+                        module="Functions." + new_module,
+                        names=aliases,
+                        level=len(package.split(".")),
+                    )
                 )
+                if aliases
+                else ""
             )
+            if error_text:
+                indent = " " * node.col_offset
+                text = error_text if not text else text + "\n" + indent + error_text
         elif kept:
             text = ast.unparse(
                 ast.ImportFrom(module=node.module, names=kept, level=node.level)
