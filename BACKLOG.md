@@ -642,9 +642,55 @@ These reads follow five patterns:
 4. Navigation helpers (`get_machine_from_parent`, `check_parent`): explicit arguments.
 5. The logger chain: Step 9.
 
-- [ ] Script classifying every `self.parent` read of `Methods_new` by pattern,
+- [x] Script classifying every `self.parent` read of `Methods_new` by pattern,
       and by "mechanical" (the container is known from the call sites in
-      `Methods_new`) or not; report here.
+      `Methods_new`) or not: `Generator/ClassGenerator/New/parent_reads.py`
+      (`python -m pyleecan.Generator.ClassGenerator.New.parent_reads`), tests
+      `Tests/New/test_parent_reads.py`. Report (2026-11-21), reads per
+      method of the class folders (the methods moved from Functions
+      included; Step 9 removed the logger reads):
+
+      | Package | Methods | logger | label | walk | check | container | other | Mechanical |
+      |---|---|---|---|---|---|---|---|---|
+      | electrical | 7 | 0 | 0 | 9 | 2 | 2 | 2 | 0 |
+      | force | 1 | 0 | 0 | 2 | 1 | 0 | 0 | 0 |
+      | loss | 26 | 0 | 0 | 50 | 2 | 19 | 0 | 0 |
+      | machine | 45 | 0 | 1 | 28 | 39 | 69 | 11 | 0 |
+      | magnetics | 3 | 0 | 0 | 2 | 1 | 2 | 0 | 0 |
+      | output | 16 | 0 | 0 | 2 | 4 | 17 | 3 | 0 |
+      | simulation | 18 | 0 | 0 | 13 | 11 | 7 | 21 | 0 |
+      | slot | 151 | 0 | 78 | 0 | 69 | 62 | 57 | 45 |
+      | structural | 8 | 0 | 0 | 7 | 3 | 5 | 0 | 0 |
+      | **total** | 275 | 0 | 79 | 113 | 132 | 183 | 94 | 45 |
+
+      Columns: `label` = `self.parent.get_label()`, `walk` =
+      `self.parent.parent...`, `check` = `self.parent is (not) None`,
+      `container` = `self.parent.<attr or method>`, `other` = the parent
+      passed on. A method is mechanical when it is called only on a typed
+      field of its container (`self.slot.get_surface_active()` in a
+      `Lamination` method) or on `self` in its class family, never on an
+      unknown receiver: the generator can then pass `self` as the
+      container. Findings:
+      - Slot: the 45 mechanical methods are the `get_surface_active` /
+        `get_surface_opening` / `get_surface_wedges` / `comp_height_active`
+        (labels and lamination reads), called by the lamination's
+        `build_geometry`. Not mechanical: `plot_schematics` (51, user entry
+        points), `build_geometry` (17) and `build_geometry_active` (14)
+        (also called on unknown receivers: `slot.build_geometry()` in the
+        functions and the tests), `get_Rbo`, `get_is_stator`,
+        `is_outwards`. These need the optional argument with its fallback.
+      - Simulation models (`run` of Electrical, Force, Loss, ...): pattern 2,
+        `self.parent.parent` is the output; the call sites go through
+        `Simulation.run`; one pass for all the `run` methods.
+      - Loss models (`comp_loss*`): `self.parent.parent` is the simulation
+        (machine, output); called by `Loss.comp_all_losses` on the items of
+        `model_dict` (unknown receiver for the script): mechanical in fact,
+        the container is the `Loss` object.
+      - Machine: `Winding` (lamination reads), `Notch` / `Bore` (lamination
+        reads), `EndWinding*` (`self.parent.parent` = the lamination),
+        `Lamination.plot` and `get_label` (user entry points): optional
+        argument with the fallback.
+      - Output: sub-outputs (`OutMag`, `OutElec`, ...) read the `Output`.
 Signature rule (decided 2026-11-17): the container becomes an **optional
 argument with a parent fallback**, and the container is passed, not the
 values read from it:
