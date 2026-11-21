@@ -634,8 +634,20 @@ generated first so that the same passes rewrite its calls.
       `CheckTypeError`/`CheckMinError`/`CheckMaxError`, pydantic raises
       `ValidationError`: one base (or a conversion in `LegacyModel`) decided
       with the contract tests; the error message shown on the field.
-- [ ] `Tests/New/GUI` generated against `GUI_new` / `GUI_pydantic` (backend
-      alias like `backend_classes`); they import the legacy GUI today.
+- [x] `Tests/New/GUI` generated against `GUI_new` / `GUI_pydantic` (2026-11-21:
+      alias `backend_gui` in `Tests/New/_backend.py`, the `pyleecan.GUI` and
+      `pyleecan.GUI_new` imports and `mock.patch` strings rewritten by the
+      test generator). Run per file (the folder in one process crashes Qt
+      on garbage collection, before and after), 6 files in parallel (noisy:
+      the files share `Tests/Results`): dataclass 321 -> 453 passed, 222 ->
+      122 errors, 25 -> 31 failed; pydantic 339 -> 440 passed, 244 -> 136
+      errors, 24 -> 33 failed (legacy GUI -> backend GUI).
+- [ ] GUI test regressions to investigate (run alone): `test_DMachineSetup`,
+      `test_SPreview` (`ValueError: list.index(x): x not in list`),
+      `test_PHoleM53` / `test_PHoleM52R` (`S53_W5CheckError` / check errors
+      on the default hole), `test_SMHoleMag` (22 failed), `test_PHoleMUD`,
+      `test_PMSlot17`, the `NewMachine` scenarios (error instead of
+      failure); and a runner without shared result folders.
 - [ ] The GUI calls of the logger chain (Step 9) and of the moved functions
       (Step 6, Step 8) rewritten by the same passes.
 - [x] Decided (2026-11-21): both `GUI_new` (dataclass + dacite) and

@@ -9,9 +9,9 @@ from backend_classes.machine.lam_slot_wind import LamSlotWind
 from backend_classes.machine.machine_wrsm import MachineWRSM
 from backend_classes.slot.slot_w_60 import SlotW60
 from backend_classes.slot.slot_w_61 import SlotW61
-from pyleecan.GUI.Dialog.DMachineSetup.SWPole.PWSlot60.PWSlot60 import PWSlot60
-from pyleecan.GUI.Dialog.DMachineSetup.SWPole.PWSlot61.PWSlot61 import PWSlot61
-from pyleecan.GUI.Dialog.DMachineSetup.SWPole.SWPole import SWPole
+from backend_gui.Dialog.DMachineSetup.SWPole.PWSlot60.PWSlot60 import PWSlot60
+from backend_gui.Dialog.DMachineSetup.SWPole.PWSlot61.PWSlot61 import PWSlot61
+from backend_gui.Dialog.DMachineSetup.SWPole.SWPole import SWPole
 
 
 class TestSWPole(object):

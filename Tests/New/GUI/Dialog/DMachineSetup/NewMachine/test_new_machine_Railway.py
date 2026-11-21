@@ -11,25 +11,21 @@ import mock
 import pytest
 from backend_classes.machine.machine_scim import MachineSCIM
 from backend_classes.machine.shaft import Shaft
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
-from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (
-    SMachineDimension,
-)
-from pyleecan.GUI.Dialog.DMachineSetup.SMachineType.SMachineType import SMachineType
-from pyleecan.GUI.Dialog.DMachineSetup.SBar.SBar import SBar
-from pyleecan.GUI.Dialog.DMachineSetup.SSimu.SSimu import SSimu
-from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.SWindCond import SWindCond
-from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.PCondType11.PCondType11 import (
-    PCondType11,
-)
-from pyleecan.GUI.Dialog.DMachineSetup.SBar.PCondType21.PCondType21 import PCondType21
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
+from backend_gui.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import SMachineDimension
+from backend_gui.Dialog.DMachineSetup.SMachineType.SMachineType import SMachineType
+from backend_gui.Dialog.DMachineSetup.SBar.SBar import SBar
+from backend_gui.Dialog.DMachineSetup.SSimu.SSimu import SSimu
+from backend_gui.Dialog.DMachineSetup.SWindCond.SWindCond import SWindCond
+from backend_gui.Dialog.DMachineSetup.SWindCond.PCondType11.PCondType11 import PCondType11
+from backend_gui.Dialog.DMachineSetup.SBar.PCondType21.PCondType21 import PCondType21
 from backend_classes.machine.cond_type_11 import CondType11
 from backend_classes.machine.cond_type_12 import CondType12
-from pyleecan.GUI.Dialog.DMachineSetup.SWinding.SWinding import SWinding
-from pyleecan.GUI.Dialog.DMachineSetup.SPreview.SPreview import SPreview
-from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.SWSlot import SWSlot
-from pyleecan.GUI.Dialog.DMachineSetup.SSkew.SSkew import SSkew
+from backend_gui.Dialog.DMachineSetup.SWinding.SWinding import SWinding
+from backend_gui.Dialog.DMachineSetup.SPreview.SPreview import SPreview
+from backend_gui.Dialog.DMachineSetup.SWSlot.SWSlot import SWSlot
+from backend_gui.Dialog.DMachineSetup.SSkew.SSkew import SSkew
 
 from Tests.New.GUI import gui_option  # Set unit as [m]
 

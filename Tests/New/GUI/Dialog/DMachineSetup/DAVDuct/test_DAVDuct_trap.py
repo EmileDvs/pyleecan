@@ -8,10 +8,8 @@ from PySide6.QtWidgets import QTabBar
 
 from backend_classes.machine.lamination import Lamination
 from backend_classes.slot.ventilation_trap import VentilationTrap
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.PVentTrap.PVentTrap import (
-    PVentTrap,
-)
+from backend_gui.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
+from backend_gui.Dialog.DMachineSetup.DAVDuct.PVentTrap.PVentTrap import PVentTrap
 from Tests.New.GUI.Dialog.DMachineSetup.DAVDuct import VENT_TRAP_INDEX
 from numpy import pi
 

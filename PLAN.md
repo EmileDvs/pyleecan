@@ -327,7 +327,7 @@ passes rewrite its calls together with the methods.
 - [ ] Input validation: one error contract for the GUI whatever the backend
       (`CheckTypeError` against `ValidationError` on assignment, the `check()`
       errors), the error shown on the field.
-- [ ] `Tests/New/GUI` run on `GUI_new` with each backend (they mix the legacy
+- [x] `Tests/New/GUI` run on `GUI_new` with each backend (they mix the legacy
       GUI and the new classes today).
 
 ### Step 11: parent links, first pass (generator)

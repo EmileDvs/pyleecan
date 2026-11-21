@@ -6,8 +6,8 @@ from PySide6.QtTest import QTest
 from backend_classes.material.material import Material
 from backend_classes.slot.hole_m_57 import HoleM57
 from backend_classes.machine.lam_hole import LamHole
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
-from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleM57.PHoleM57 import PHoleM57
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SMHoleMag.PHoleM57.PHoleM57 import PHoleM57
 
 
 class TestPHoleM57(object):

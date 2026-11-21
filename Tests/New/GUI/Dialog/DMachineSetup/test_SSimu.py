@@ -13,7 +13,7 @@ import numpy as np
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 
-from pyleecan.GUI.Dialog.DMachineSetup.SSimu.SSimu import SSimu
+from backend_gui.Dialog.DMachineSetup.SSimu.SSimu import SSimu
 from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 from backend_classes.loss.loss_fea import LossFEA

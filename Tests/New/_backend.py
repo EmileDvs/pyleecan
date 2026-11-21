@@ -8,6 +8,7 @@ alias                   --backend=dataclass         --backend=pydantic
 ======================  ==========================  ==============================
 ``backend_classes``     ``pyleecan.Classes_new``    ``pyleecan.Classes_pydantic``
 ``backend_functions``   ``pyleecan.Functions_new``  ``pyleecan.Functions_pydantic``
+``backend_gui``         ``pyleecan.GUI_new``        ``pyleecan.GUI_pydantic``
 ======================  ==========================  ==============================
 
 An alias module IS the module of the implementation (same object): classes,
@@ -24,10 +25,12 @@ BACKENDS = {
     "dataclass": {
         "backend_classes": "pyleecan.Classes_new",
         "backend_functions": "pyleecan.Functions_new",
+        "backend_gui": "pyleecan.GUI_new",
     },
     "pydantic": {
         "backend_classes": "pyleecan.Classes_pydantic",
         "backend_functions": "pyleecan.Functions_pydantic",
+        "backend_gui": "pyleecan.GUI_pydantic",
     },
 }
 DEFAULT_BACKEND = "dataclass"

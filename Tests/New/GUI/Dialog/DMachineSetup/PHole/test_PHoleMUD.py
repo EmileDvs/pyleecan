@@ -8,12 +8,12 @@ from PySide6 import QtWidgets
 
 from backend_classes.machine.lam_hole import LamHole
 from backend_classes.slot.hole_ud import HoleUD
-from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleMUD.PHoleMUD import PHoleMUD
+from backend_gui.Dialog.DMachineSetup.SMHoleMag.PHoleMUD.PHoleMUD import PHoleMUD
 from Tests.New.GUI import gui_option  # Set unit to m
 from Tests import TEST_DATA_DIR
 from backend_classes.material.material import Material
 from backend_functions.load import load_matlib
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.definitions import DATA_DIR
 
 

@@ -6,11 +6,11 @@ import pytest
 from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
+from backend_gui.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
 from Tests.New.GUI import gui_option  # Set unit as [m]
 from backend_classes.machine.lam_slot_wind import LamSlotWind
 from backend_classes.slot.slot_w_25 import SlotW25
-from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.PWSlot25.PWSlot25 import PWSlot25
+from backend_gui.Dialog.DMachineSetup.SWSlot.PWSlot25.PWSlot25 import PWSlot25
 
 
 class TestPWSlot25(object):

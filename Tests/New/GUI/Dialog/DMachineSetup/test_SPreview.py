@@ -6,9 +6,9 @@ import pytest
 from PySide6 import QtWidgets
 
 from Tests.New._test_paths import save_gui_path
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.GUI.Dialog.DMachineSetup.SSimu.SSimu import SSimu
-from pyleecan.GUI.Dialog.DMachineSetup.SPreview.SPreview import SPreview
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.SSimu.SSimu import SSimu
+from backend_gui.Dialog.DMachineSetup.SPreview.SPreview import SPreview
 from pyleecan.definitions import DATA_DIR as data_test, MAIN_DIR
 from backend_functions.load import load_matlib
 

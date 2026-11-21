@@ -9,7 +9,7 @@ from PySide6.QtGui import *
 from PySide6 import QtWidgets
 
 from backend_functions.load import load_matlib
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from pyleecan.definitions import DATA_DIR
 
 matlib_path = join(DATA_DIR, "Material")

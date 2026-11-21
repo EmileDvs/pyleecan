@@ -8,7 +8,7 @@ from numpy import pi
 from Tests.New.GUI import gui_option  # Set unit as [m]
 from backend_classes.machine.lam_slot_mag import LamSlotMag
 from backend_classes.slot.slot_circ import SlotCirc
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.WSlotCirc.WSlotCirc import WSlotCirc
+from backend_gui.Dialog.DMachineSetup.SMSlot.WSlotCirc.WSlotCirc import WSlotCirc
 
 
 import pytest

@@ -10,8 +10,8 @@ from backend_classes.machine.machine_ipmsm import MachineIPMSM
 from backend_classes.slot.hole_m_51 import HoleM51
 from backend_classes.machine.lam_hole import LamHole
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleM51.PHoleM51 import PHoleM51
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SMHoleMag.PHoleM51.PHoleM51 import PHoleM51
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from PySide6.QtCore import Qt
 
 

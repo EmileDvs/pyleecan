@@ -187,3 +187,23 @@ def test_generation_uses_default_repository_paths(tmp_path, monkeypatch):
     assert (tests_dir / "New" / "Methods" / "sample.py").read_text(
         encoding="utf-8"
     ) == "from pyleecan.Functions_new.load import load\n"
+
+
+def test_alias_gui_imports():
+    """The GUI imports of the tests go to the GUI of the tested backend."""
+    from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
+        alias_backend_imports,
+    )
+
+    source = (
+        "from pyleecan.GUI.Dialog.DMatLib.DMatLib import DMatLib\n"
+        "from pyleecan.GUI_new.Tools.FloatEdit import FloatEdit\n"
+        'mock.patch("pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup.QFileDialog")\n'
+        "from pyleecan.GUIOther import x\n"
+    )
+    assert alias_backend_imports(source) == (
+        "from backend_gui.Dialog.DMatLib.DMatLib import DMatLib\n"
+        "from backend_gui.Tools.FloatEdit import FloatEdit\n"
+        "mock.patch('backend_gui.Dialog.DMachineSetup.DMachineSetup.QFileDialog')\n"
+        "from pyleecan.GUIOther import x\n"
+    )

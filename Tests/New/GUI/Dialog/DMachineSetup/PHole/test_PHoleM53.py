@@ -9,8 +9,8 @@ from Tests.New.GUI import gui_option  # Set unit as [m]
 from backend_classes.slot.hole_m_53 import HoleM53
 from backend_classes.machine.lam_hole import LamHole
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.PHoleM53.PHoleM53 import PHoleM53
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SMHoleMag.PHoleM53.PHoleM53 import PHoleM53
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 
 
 class TestPHoleM53(object):

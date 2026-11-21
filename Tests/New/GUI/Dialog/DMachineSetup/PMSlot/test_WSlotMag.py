@@ -20,18 +20,18 @@ from backend_classes.slot.slot_m_17 import SlotM17
 from backend_classes.slot.slot_m_18 import SlotM18
 from backend_classes.slot.slot_m_19 import SlotM19
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.WSlotMag.WSlotMag import WSlotMag
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot11.PMSlot11 import PMSlot11
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot12.PMSlot12 import PMSlot12
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot13.PMSlot13 import PMSlot13
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot14.PMSlot14 import PMSlot14
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot15.PMSlot15 import PMSlot15
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot16.PMSlot16 import PMSlot16
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot17.PMSlot17 import PMSlot17
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot18.PMSlot18 import PMSlot18
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot19.PMSlot19 import PMSlot19
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SMSlot.WSlotMag.WSlotMag import WSlotMag
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot11.PMSlot11 import PMSlot11
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot12.PMSlot12 import PMSlot12
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot13.PMSlot13 import PMSlot13
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot14.PMSlot14 import PMSlot14
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot15.PMSlot15 import PMSlot15
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot16.PMSlot16 import PMSlot16
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot17.PMSlot17 import PMSlot17
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot18.PMSlot18 import PMSlot18
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot19.PMSlot19 import PMSlot19
 import pytest
 from Tests.New.GUI import gui_option  # Set unit as [m]
 

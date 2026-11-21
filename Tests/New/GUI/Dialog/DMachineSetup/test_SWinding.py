@@ -12,7 +12,7 @@ from backend_classes.machine.machine_scim import MachineSCIM
 from backend_classes.slot.slot_w_22 import SlotW22
 from backend_classes.machine.winding import Winding
 from backend_classes.machine.winding_ud import WindingUD
-from pyleecan.GUI.Dialog.DMachineSetup.SWinding.SWinding import SWinding
+from backend_gui.Dialog.DMachineSetup.SWinding.SWinding import SWinding
 
 from Tests.New._test_paths import save_gui_path
 

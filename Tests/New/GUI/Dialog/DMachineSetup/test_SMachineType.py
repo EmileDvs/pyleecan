@@ -19,7 +19,7 @@ from backend_classes.machine.machine_scim import MachineSCIM
 from backend_classes.machine.machine_sipmsm import MachineSIPMSM
 from backend_classes.machine.machine_sy_rm import MachineSyRM
 from backend_classes.machine.machine_wrsm import MachineWRSM
-from pyleecan.GUI.Dialog.DMachineSetup.SMachineType.SMachineType import SMachineType
+from backend_gui.Dialog.DMachineSetup.SMachineType.SMachineType import SMachineType
 
 
 class TestSMachineType(object):

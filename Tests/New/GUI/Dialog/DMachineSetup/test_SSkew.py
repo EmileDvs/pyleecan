@@ -9,7 +9,7 @@ from numpy.testing import assert_almost_equal
 from PySide6 import QtWidgets
 
 from backend_classes.machine.skew import Skew
-from pyleecan.GUI.Dialog.DMachineSetup.SSkew.SSkew import SSkew
+from backend_gui.Dialog.DMachineSetup.SSkew.SSkew import SSkew
 from backend_functions.load import load
 from pyleecan.definitions import DATA_DIR
 

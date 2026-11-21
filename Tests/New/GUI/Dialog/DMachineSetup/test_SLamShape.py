@@ -13,8 +13,8 @@ from backend_classes.machine.machine_scim import MachineSCIM
 from backend_classes.material.material import Material
 from backend_classes.slot.ventilation_circ import VentilationCirc
 from backend_classes.slot.ventilation_trap import VentilationTrap
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
-from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
 
 
 class TestSLamShape(object):

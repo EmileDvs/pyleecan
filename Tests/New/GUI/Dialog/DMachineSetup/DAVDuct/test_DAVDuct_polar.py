@@ -8,10 +8,8 @@ from PySide6.QtWidgets import QTabBar
 
 from backend_classes.machine.lamination import Lamination
 from backend_classes.slot.ventilation_polar import VentilationPolar
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.PVentPolar.PVentPolar import (
-    PVentPolar,
-)
+from backend_gui.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
+from backend_gui.Dialog.DMachineSetup.DAVDuct.PVentPolar.PVentPolar import PVentPolar
 from Tests.New.GUI.Dialog.DMachineSetup.DAVDuct import VENT_POLAR_INDEX
 from numpy import pi
 

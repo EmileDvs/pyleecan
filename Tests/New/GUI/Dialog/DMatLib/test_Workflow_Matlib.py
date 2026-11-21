@@ -5,15 +5,13 @@ import pytest
 import mock
 from PySide6 import QtWidgets
 from backend_functions.load import LIB_KEY, MACH_KEY, load, load_matlib
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.SMHoleMag import SMHoleMag
-from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (
-    SMachineDimension,
-)
-from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
-from pyleecan.GUI.Dialog.DMachineSetup.SWindCond.SWindCond import SWindCond
-from pyleecan.GUI.Dialog.DMachineSetup.SBar.SBar import SBar
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import DMatLib
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.SMHoleMag.SMHoleMag import SMHoleMag
+from backend_gui.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import SMachineDimension
+from backend_gui.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
+from backend_gui.Dialog.DMachineSetup.SWindCond.SWindCond import SWindCond
+from backend_gui.Dialog.DMachineSetup.SBar.SBar import SBar
+from backend_gui.Dialog.DMatLib.DMatLib import DMatLib
 
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_gui_path as save_path

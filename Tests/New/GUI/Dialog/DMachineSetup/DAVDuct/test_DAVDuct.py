@@ -9,16 +9,10 @@ from backend_classes.machine.lamination import Lamination
 from backend_classes.slot.ventilation_circ import VentilationCirc
 from backend_classes.slot.ventilation_polar import VentilationPolar
 from backend_classes.slot.ventilation_trap import VentilationTrap
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.PVentCirc.PVentCirc import (
-    PVentCirc,
-)
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.PVentPolar.PVentPolar import (
-    PVentPolar,
-)
-from pyleecan.GUI.Dialog.DMachineSetup.DAVDuct.PVentTrap.PVentTrap import (
-    PVentTrap,
-)
+from backend_gui.Dialog.DMachineSetup.DAVDuct.DAVDuct import DAVDuct
+from backend_gui.Dialog.DMachineSetup.DAVDuct.PVentCirc.PVentCirc import PVentCirc
+from backend_gui.Dialog.DMachineSetup.DAVDuct.PVentPolar.PVentPolar import PVentPolar
+from backend_gui.Dialog.DMachineSetup.DAVDuct.PVentTrap.PVentTrap import PVentTrap
 from Tests.New.GUI.Dialog.DMachineSetup.DAVDuct import (
     VENT_CIRC_INDEX,
     VENT_POLAR_INDEX,

@@ -9,7 +9,7 @@ from PySide6.QtTest import QTest
 from backend_classes.machine.lam_slot_wind import LamSlotWind
 from Tests.New.GUI import gui_option  # Set unit as [m]
 from backend_classes.slot.slot_w_60 import SlotW60
-from pyleecan.GUI.Dialog.DMachineSetup.SWPole.PWSlot60.PWSlot60 import PWSlot60
+from backend_gui.Dialog.DMachineSetup.SWPole.PWSlot60.PWSlot60 import PWSlot60
 
 
 class TestPWSlot60(object):

@@ -14,7 +14,7 @@ from PySide6.QtWidgets import QMessageBox
 from backend_classes.material.mat_magnetics import MatMagnetics
 from backend_classes.material.material import Material
 from backend_classes.import_data.import_matrix_val import ImportMatrixVal
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import DMatLib, LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMatLib.DMatLib import DMatLib, LIB_KEY, MACH_KEY
 import matplotlib.pyplot as plt
 from Tests.New.GUI import gui_option  # Set unit as [m]
 from Tests import TEST_DATA_DIR

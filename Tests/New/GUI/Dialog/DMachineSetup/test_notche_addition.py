@@ -14,13 +14,13 @@ from backend_classes.slot.slot_m_11 import SlotM11
 from backend_classes.slot.slot_circ import SlotCirc
 from pyleecan.definitions import DATA_DIR
 from backend_functions.load import load_matlib, load
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.GUI.Dialog.DMachineSetup.DNotchTab.DNotchTab import DNotchTab
-from pyleecan.GUI.Dialog.DMachineSetup.DNotchTab.WNotch.WNotch import WNotch
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot11.PMSlot11 import PMSlot11
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.WSlotCirc.WSlotCirc import WSlotCirc
-from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.DNotchTab.DNotchTab import DNotchTab
+from backend_gui.Dialog.DMachineSetup.DNotchTab.WNotch.WNotch import WNotch
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot11.PMSlot11 import PMSlot11
+from backend_gui.Dialog.DMachineSetup.SMSlot.WSlotCirc.WSlotCirc import WSlotCirc
+from backend_gui.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
 from Tests.New._test_paths import save_gui_path as save_path
 
 matlib_path = join(DATA_DIR, "Material")

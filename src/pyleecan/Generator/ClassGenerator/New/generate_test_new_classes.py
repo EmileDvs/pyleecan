@@ -9,9 +9,10 @@ as do legacy-only imports and dynamic loading.
 Running copied tests still imports Tests/__init__.py, which clears Tests/Results.
 
 The copied tests import the classes and functions from the alias packages
-``backend_classes`` and ``backend_functions``, mapped by ``pytest --backend``
-to Classes_new/Functions_new (dataclass) or Classes_pydantic/Functions_pydantic
-(pydantic), see Tests/New/_backend.py.
+``backend_classes``, ``backend_functions`` and ``backend_gui``, mapped by
+``pytest --backend`` to Classes_new/Functions_new/GUI_new (dataclass) or
+Classes_pydantic/Functions_pydantic/GUI_pydantic (pydantic), see
+Tests/New/_backend.py.
 """
 
 import ast
@@ -70,8 +71,11 @@ RESULT_NAMES = {
 BACKEND_ALIASES = {
     "pyleecan.Classes_new": "backend_classes",
     "pyleecan.Functions_new": "backend_functions",
+    "pyleecan.GUI_new": "backend_gui",
+    "pyleecan.GUI": "backend_gui",  # The legacy GUI: GUI_new / GUI_pydantic
 }
-"""Package of the dataclass implementation -> alias package of the tested one"""
+"""Package of the dataclass implementation -> alias package of the tested one
+(the legacy GUI imports of the tests go to the GUI of the tested backend)"""
 
 
 def alias_backend_imports(source):

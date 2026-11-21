@@ -16,13 +16,13 @@ from backend_classes.machine.machine_sipmsm import MachineSIPMSM
 from backend_classes.machine.machine_wrsm import MachineWRSM
 from backend_classes.machine.machine_srm import MachineSRM
 from backend_classes.machine.machine_lspm import MachineLSPM
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
 from backend_functions.load import load_matlib
 from Tests.New._test_paths import save_gui_path as save_path
 from Tests import TEST_DATA_DIR
 from pyleecan.definitions import DATA_DIR
 
-from pyleecan.GUI.Dialog.DMachineSetup.SMachineType.SMachineType import SMachineType
+from backend_gui.Dialog.DMachineSetup.SMachineType.SMachineType import SMachineType
 
 load_test = list()
 load_test.append({"type": "SCIM", "index": 0, "name": "SCIM_001", "p": 1, "count": 12})

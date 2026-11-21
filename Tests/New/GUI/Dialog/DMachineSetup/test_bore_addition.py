@@ -12,13 +12,11 @@ from backend_classes.machine.bore_flower import BoreFlower
 from backend_classes.machine.bore_sine_pole import BoreSinePole
 from pyleecan.definitions import DATA_DIR
 from backend_functions.load import load_matlib, load
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.GUI.Dialog.DMachineSetup.DBore.DBore import DBore
-from pyleecan.GUI.Dialog.DMachineSetup.DBore.PBoreSinePole.PBoreSinePole import (
-    PBoreSinePole,
-)
-from pyleecan.GUI.Dialog.DMachineSetup.DBore.PBoreFlower.PBoreFlower import PBoreFlower
-from pyleecan.GUI.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMachineSetup.DBore.DBore import DBore
+from backend_gui.Dialog.DMachineSetup.DBore.PBoreSinePole.PBoreSinePole import PBoreSinePole
+from backend_gui.Dialog.DMachineSetup.DBore.PBoreFlower.PBoreFlower import PBoreFlower
+from backend_gui.Dialog.DMachineSetup.SLamShape.SLamShape import SLamShape
 from Tests.New._test_paths import save_gui_path as save_path
 
 matlib_path = join(DATA_DIR, "Material")

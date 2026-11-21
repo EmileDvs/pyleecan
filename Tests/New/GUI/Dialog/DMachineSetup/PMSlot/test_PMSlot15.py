@@ -8,9 +8,9 @@ from numpy import pi
 from Tests.New.GUI import gui_option  # Set unit as [m]
 from backend_classes.machine.lam_slot_mag import LamSlotMag
 from backend_classes.slot.slot_m_15 import SlotM15
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot15.PMSlot15 import PMSlot15
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot15.PMSlot15 import PMSlot15
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 
 
 import pytest

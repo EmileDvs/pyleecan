@@ -10,9 +10,9 @@ from backend_classes.machine.lam_slot_mag import LamSlotMag
 from backend_classes.slot.slot_m_10 import SlotM10
 from backend_classes.machine.magnet import Magnet
 from backend_classes.machine.notch import Notch
-from pyleecan.GUI.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
+from backend_gui.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 
 
 import pytest

@@ -14,10 +14,10 @@ from backend_classes.machine.machine_scim import MachineSCIM
 from backend_classes.material.material import Material
 from backend_classes.slot.slot_w_22 import SlotW22
 from Tests.New.GUI import gui_option  # Set unit as [m]
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
-from pyleecan.GUI.Dialog.DMachineSetup.SBar.PCondType21.PCondType21 import PCondType21
-from pyleecan.GUI.Dialog.DMachineSetup.SBar.PCondType22.PCondType22 import PCondType22
-from pyleecan.GUI.Dialog.DMachineSetup.SBar.SBar import SBar
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SBar.PCondType21.PCondType21 import PCondType21
+from backend_gui.Dialog.DMachineSetup.SBar.PCondType22.PCondType22 import PCondType22
+from backend_gui.Dialog.DMachineSetup.SBar.SBar import SBar
 
 
 class TestSBar(object):

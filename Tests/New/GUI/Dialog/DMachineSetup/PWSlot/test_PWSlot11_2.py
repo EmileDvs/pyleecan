@@ -9,10 +9,10 @@ from Tests.New.GUI import gui_option  # Set unit as [m]
 from backend_classes.machine.lam_slot_mag import LamSlotMag
 from backend_classes.slot.slot_w_11_2 import SlotW11_2
 from backend_classes.machine.lam_slot_wind import LamSlotWind
-from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.PWSlot11.PWSlot11 import PWSlot11
+from backend_gui.Dialog.DMachineSetup.SWSlot.PWSlot11.PWSlot11 import PWSlot11
 from backend_classes.machine.notch import Notch
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
+from backend_gui.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
 
 import pytest
 

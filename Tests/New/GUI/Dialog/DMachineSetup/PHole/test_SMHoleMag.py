@@ -25,8 +25,8 @@ from backend_classes.slot.hole_m_61 import HoleM61
 from backend_classes.slot.hole_m_62 import HoleM62
 from backend_classes.slot.hole_m_63 import HoleM63
 from backend_classes.slot.hole_ud import HoleUD
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
-from pyleecan.GUI.Dialog.DMachineSetup.SMHoleMag.SMHoleMag import SMHoleMag
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SMHoleMag.SMHoleMag import SMHoleMag
 from backend_classes.material.material import Material
 
 from Tests.New.GUI import gui_option  # Set unit as [m]

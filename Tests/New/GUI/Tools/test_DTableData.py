@@ -7,7 +7,7 @@ from PySide6 import QtWidgets
 from PySide6.QtTest import QTest
 from os import remove
 from os.path import isfile, join
-from pyleecan.GUI.Tools.WTableData.DTableData import DTableData
+from backend_gui.Tools.WTableData.DTableData import DTableData
 from Tests.New._test_paths import save_gui_path as save_path
 
 import pytest

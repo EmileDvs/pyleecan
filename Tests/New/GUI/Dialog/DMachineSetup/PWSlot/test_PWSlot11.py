@@ -7,8 +7,8 @@ from PySide6.QtTest import QTest
 from backend_classes.machine.lam_slot_wind import LamSlotWind
 from backend_classes.material.material import Material
 from backend_classes.slot.slot_w_11 import SlotW11
-from pyleecan.GUI.Dialog.DMachineSetup.SWSlot.PWSlot11.PWSlot11 import PWSlot11
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.SWSlot.PWSlot11.PWSlot11 import PWSlot11
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 
 
 class TestPWSlot11:

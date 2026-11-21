@@ -11,11 +11,9 @@ from backend_classes.machine.frame import Frame
 from backend_classes.machine.lam_slot_wind import LamSlotWind
 from backend_classes.machine.machine_scim import MachineSCIM
 from backend_classes.material.material import Material
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
+from backend_gui.Dialog.DMatLib.DMatLib import MACH_KEY, LIB_KEY
 from backend_classes.machine.shaft import Shaft
-from pyleecan.GUI.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import (
-    SMachineDimension,
-)
+from backend_gui.Dialog.DMachineSetup.SMachineDimension.SMachineDimension import SMachineDimension
 
 
 class TestSMachineDimension(object):

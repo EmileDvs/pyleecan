@@ -8,8 +8,8 @@ from shutil import copyfile, rmtree
 from PySide6 import QtWidgets
 
 from backend_functions.load import load, load_matlib
-from pyleecan.GUI.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
-from pyleecan.GUI.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
+from backend_gui.Dialog.DMachineSetup.DMachineSetup import DMachineSetup
+from backend_gui.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY
 from Tests import TEST_DATA_DIR
 from Tests.New._test_paths import save_load_path as save_path
 
