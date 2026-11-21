@@ -606,7 +606,8 @@ generated first so that the same passes rewrite its calls.
       `.ui` and `.json` files copied. `Resources` (28 MB) is not copied:
       `__init__.py` (`pixmap_dict`) copied, `pyleecan_rc.py` is a generated
       shim loading the legacy compiled resources by path (without importing
-      the legacy GUI package), registered once for both backends.
+      the legacy GUI package), registered once for both backends (decided
+      2026-11-21: the new GUIs use the legacy resources).
       `GUI_pydantic` from `GUI_new` by import rewriting
       (`pydantic_gui_source`). The functions generators redirect the GUI
       imports too (`set_plot_gui_icon`: `GUI_new.Resources` /
@@ -619,6 +620,12 @@ generated first so that the same passes rewrite its calls.
 - [ ] `import_class("pyleecan.Classes", ...)` in
       `Tools/WTreeEdit/TreeEditContextMenu.py` still names the legacy
       package: the backend class lookup instead.
+- [ ] Legacy imports left in the new code (functions generator):
+      `Functions_new/Load/import_class.py` imports
+      `Classes._check.InitUnKnowClassError` (the Load modules are
+      deferred by the shared-error pass; `classes_common.errors` has it),
+      and 9 modules import `NotImplementedYetError` from the legacy
+      `Methods` package.
 - [ ] `Gen_*` classes generated from `ClassInfo` (min, max, unit,
       description) instead of the CSV files (`Generator/gui_generator.py`),
       so that they survive the Phase 2 removal of the CSV files.
@@ -746,6 +753,8 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
         `Tests/New/test_container_arguments.py`): the slot methods
         `comp_height_active`, `get_surface_active`, `get_surface_opening`,
         `get_surface_wedges` take `lam: Lamination | Notch | None = None`
+        (name decided 2026-11-21: `lam` for the container of a slot, notch
+        included)
         (every override of the Slot family, with its docstring entry; the
         overrides reading `self.parent` read `lam = container_or_parent(self,
         lam, "lam")` once). The calls on a slot field of the container pass
@@ -1057,6 +1066,10 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 
 ## Phase 2
 
+- [ ] Discuss how to keep the git history when only one backend is kept
+      (PLAN.md Challenges): the inlining of the methods into the class
+      modules, rename-only commits, the old path -> new location mapping
+      (noted 2026-11-21).
 - [ ] Check the imports (time and side effects) of the common use cases: main
       simulations, the machine GUI, the main plots. Today
       `import pyleecan.definitions` loads matplotlib and the user configuration

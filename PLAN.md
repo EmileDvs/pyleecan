@@ -437,6 +437,17 @@ the original projects installed in the same environment.
 
 ## Challenges
 
+- **Keep as much git history as possible in Phase 2** (to discuss). When
+  the next major release keeps only the chosen backend, the code must keep
+  its history (`git log --follow`, `git blame`) from the legacy `Methods`,
+  `Functions` and `GUI` modules. Difficult because the methods are inlined
+  into the generated class modules: one class module gathers many method
+  files, which git sees as new code. Options to weigh: keep the methods in
+  their own modules (no inlining in the final layout), move files with
+  dedicated rename commits (`git mv`, no content change in the same
+  commit) before any rewrite, record the mapping old path -> new location
+  for `git blame --ignore-revs-file` / documentation, and decide the order
+  of the renames (lowercase packages, `Methods_new` -> final package).
 - **Same behaviour for both implementations.** Errors (`ValidationError` against
   `CheckTypeError`) and lax conversions (int to float, list to ndarray, numpy
   scalars) are specified once, in the contract tests, so the implementations
