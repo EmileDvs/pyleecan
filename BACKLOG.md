@@ -688,8 +688,16 @@ generated first so that the same passes rewrite its calls.
       the files share `Tests/Results`): dataclass 321 -> 453 passed, 222 ->
       122 errors, 25 -> 31 failed; pydantic 339 -> 440 passed, 244 -> 136
       errors, 24 -> 33 failed (legacy GUI -> backend GUI).
-- [ ] GUI test regressions to investigate (run alone): `test_DMachineSetup`,
-      `test_SPreview` (`ValueError: list.index(x): x not in list`),
+- [x] (2026-11-21) `test_DMachineSetup`, `test_SMachineType`, `test_SPreview`:
+      the dynamic import `__import__(PACKAGE_NAME + ".GUI.Dialog...")` of
+      `SMachineType` loaded the legacy GUI (legacy machine classes:
+      `list.index` error), now redirected (`redirect_dynamic_imports`, GUI
+      and pydantic GUI); the interface object pass (`redirect_femm_calls`)
+      now rewrites the calls in the methods of the classes (GUI widgets) and
+      keeps the names of the try-guarded imports bound (`draw_GMSH =
+      gmsh_pyleecan.draw_GMSH`: gmsh availability check of `WMachineTable`,
+      `NameError` before). The three files pass on both backends.
+- [ ] GUI test regressions to investigate (run alone):
       `test_PHoleM53` / `test_PHoleM52R` (`S53_W5CheckError` / check errors
       on the default hole), `test_SMHoleMag` (22 failed), `test_PHoleMUD`,
       `test_PMSlot17`, the `NewMachine` scenarios (error instead of

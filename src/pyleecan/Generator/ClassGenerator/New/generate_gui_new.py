@@ -93,6 +93,50 @@ def redirect_imports(source, package, redirect):
     return source
 
 
+def redirect_dynamic_imports(source, old, new, soft_name="pyleecan"):
+    """Redirect the package named in the dynamic imports of a module.
+
+    The first argument of ``__import__`` / ``import_module``: a string
+    (``"pyleecan.GUI.x"``) or a concatenation ending with one
+    (``PACKAGE_NAME + ".GUI.x"``); ``old`` -> ``new`` (``GUI`` -> ``GUI_new``).
+    """
+    if "__import__" not in source and "import_module" not in source:
+        return source
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    names = ("__import__", "import_module")
+    replacements = []
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.Call) and node.args):
+            continue
+        func = node.func
+        if not (
+            (isinstance(func, ast.Name) and func.id in names)
+            or (isinstance(func, ast.Attribute) and func.attr == "import_module")
+        ):
+            continue
+        argument = node.args[0]
+        if isinstance(argument, ast.BinOp) and isinstance(argument.op, ast.Add):
+            argument = argument.right
+        if not (isinstance(argument, ast.Constant) and isinstance(argument.value, str)):
+            continue
+        value = argument.value
+        for prefix in (f"{soft_name}.{old}", f".{old}"):
+            if value == prefix or value.startswith(prefix + "."):
+                value = prefix[: -len(old)] + new + value[len(prefix) :]
+                break
+        if value != argument.value:
+            start = offsets[argument.lineno - 1] + argument.col_offset
+            end = offsets[argument.end_lineno - 1] + argument.end_col_offset
+            replacements.append((start, end, '"' + value + '"'))
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    return source
+
+
 def _parenthesized(text, column):
     """Multi-line ``from x import (a, b)`` of an unparsed import."""
     head, _, names = text.partition(" import ")
@@ -172,6 +216,9 @@ def modernize_gui_source(source, package, root, gen_dict):
 
     source = redirect_moved_modules(source, package)
     source = redirect_imports(source, package, legacy_module_redirect(root))
+    source = redirect_dynamic_imports(
+        source, LEGACY_GUI_PACKAGE, GUI_PACKAGES["dataclass"]
+    )
     return redirect_imports(
         source, package, package_redirect(LEGACY_GUI_PACKAGE, GUI_PACKAGES["dataclass"])
     )
@@ -194,6 +241,9 @@ def pydantic_gui_source(source, package):
                 return new
         return None
 
+    source = redirect_dynamic_imports(
+        source, GUI_PACKAGES["dataclass"], GUI_PACKAGES["pydantic"]
+    )
     return redirect_imports(source, package, redirect)
 
 

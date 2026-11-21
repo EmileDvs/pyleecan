@@ -458,6 +458,15 @@ def redirect_femm_calls(source, package, signatures, spec=FEMM):
     imported = {}  # local name: function
     up = "." * len(package.split("."))
     femm_module = f"{up}Functions.{FEMM_PACKAGE}.{FEMM_MODULE}"
+    # Imports guarded by a try (availability check of an optional dependency,
+    # e.g. gmsh): the legacy names stay bound, to the methods of the object
+    guarded = {
+        id(item)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Try)
+        for statement in node.body
+        for item in ast.walk(statement)
+    }
     for node in ast.walk(tree):
         if not _is_femm_import(node, package, spec) or node.module.split(".")[-1] == FEMM_MODULE:
             continue
@@ -472,8 +481,26 @@ def redirect_femm_calls(source, package, signatures, spec=FEMM):
             if others
             else "pass"
         )
+        if id(node) in guarded and functions:
+            indent = " " * node.col_offset
+            lines = [f"from {femm_module} import {FEMM_CLASS}"]
+            if others:
+                lines.append(text)
+            lines += [
+                f"{alias.asname or alias.name} = {FEMM_CLASS}.{alias.name}"
+                for alias in functions
+            ]
+            text = ("\n" + indent).join(lines)
         replacements.append((start, end, text))
+    # The module functions and the methods of its classes
     functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)]
+    functions += [
+        item
+        for node in tree.body
+        if isinstance(node, ast.ClassDef)
+        for item in node.body
+        if isinstance(item, ast.FunctionDef)
+    ]
     class_imports = {}  # function: needs femm_pyleecan
     method_names = set(signatures) | {"handler"}
     for function in functions:

@@ -70,3 +70,22 @@ def test_pydantic_gui_source():
         "from ....GUI_pydantic.Tools.FloatEdit import FloatEdit\n"
         "from ....classes_common.errors import SlotCheckError\n"
     )
+
+
+def test_redirect_dynamic_imports():
+    from pyleecan.Generator.ClassGenerator.New.generate_gui_new import (
+        redirect_dynamic_imports,
+    )
+
+    source = (
+        'm = __import__(PACKAGE_NAME + ".GUI.Dialog.DMachineSetup", fromlist=["x"])\n'
+        'n = import_module("pyleecan.GUI.Tools")\n'
+        'o = __import__(PACKAGE_NAME + ".GUI_other")\n'
+    )
+    result = redirect_dynamic_imports(source, "GUI", "GUI_new")
+    assert result == (
+        'm = __import__(PACKAGE_NAME + ".GUI_new.Dialog.DMachineSetup", fromlist=["x"])\n'
+        'n = import_module("pyleecan.GUI_new.Tools")\n'
+        'o = __import__(PACKAGE_NAME + ".GUI_other")\n'
+    )
+    assert redirect_dynamic_imports(result, "GUI_new", "GUI_pydantic").count("GUI_pydantic") == 2

@@ -156,3 +156,29 @@ def test_redirect_femm_calls():
     assert "from ....Functions.FEMM.femm_pyleecan import FEMMError" in result
     assert "    # Local import: circular import with the class module\n" in result
     assert "Functions.FEMM.draw import" not in result and "Functions.FEMM.mesh" not in result
+
+
+def test_redirect_calls_in_class_methods():
+    """GUI widgets: calls in methods; a try-guarded import keeps its name bound."""
+    source = (
+        "from ...Functions.FEMM.mesh import mesh\n"
+        "try:\n"
+        "    from ...Functions.FEMM.draw import draw\n"
+        "except Exception as e:\n"
+        "    draw = e\n\n\n"
+        "class Widget:\n"
+        "    def run(self, femm, output):\n"
+        "        if isinstance(draw, Exception):\n"
+        "            return None\n"
+        "        return draw(femm, output.surf, size=mesh(2))\n"
+    )
+    package = "pyleecan.GUI_new.Dialog"
+    result = redirect_femm_calls(source, package, femm_signatures(MODULES))
+    ast.parse(result)
+    assert (
+        "try:\n"
+        "    from ...Functions.FEMM.femm_pyleecan import femm_pyleecan\n"
+        "    draw = femm_pyleecan.draw\n"
+        "except Exception as e:\n"
+    ) in result
+    assert "        return femm.draw(output.surf, size=femm_pyleecan.mesh(2))\n" in result

@@ -42,7 +42,7 @@ class SMachineType(Gen_SMachineType, QWidget):
 
         # Dynamic import to avoid import loop
         module = __import__(
-            PACKAGE_NAME + ".GUI.Dialog.DMachineSetup", fromlist=["DMachineSetup"]
+            PACKAGE_NAME + ".GUI_new.Dialog.DMachineSetup", fromlist=["DMachineSetup"]
         )
         self.mach_list = getattr(module, "mach_list")
         self.mach_index = getattr(module, "mach_index")

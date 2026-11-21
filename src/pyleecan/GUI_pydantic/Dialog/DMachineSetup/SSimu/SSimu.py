@@ -181,6 +181,9 @@ class SSimu(Gen_SSimu, QWidget):
 
     def run(self):
         """Run the current simulation"""
+        # Local import: circular import with the class module
+        from .....Functions_pydantic.FEMM.femm_pyleecan import femm_pyleecan
+
         if self.w_path_result.get_path() in [None, ""]:
             QMessageBox().critical(
                 self, self.tr("Error"), "Please select a result folder"
@@ -208,9 +211,9 @@ class SSimu(Gen_SSimu, QWidget):
         self.simu.save(join(self.simu.path_result, self.simu.name + ".json"))
         # Check FEMM installation
         try:
-            femm = _FEMMHandler()
-            femm.openfemm(1)  # 1 == open in background, 0 == open normally
-            femm.closefemm()
+            femm = femm_pyleecan()
+            femm.handler.openfemm(1)  # 1 == open in background, 0 == open normally
+            femm.handler.closefemm()
         except Exception as e:
             msgBox = QMessageBox()
             msgBox.setTextFormat(Qt.RichText)

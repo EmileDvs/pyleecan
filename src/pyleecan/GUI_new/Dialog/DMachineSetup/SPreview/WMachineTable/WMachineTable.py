@@ -17,11 +17,13 @@ from ......loggers import GUI_LOG_NAME
 from ......Methods_new.magnetics.MagElmer import MagElmer_BP_dict
 
 try:
-    pass
+    from ......Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+    draw_GMSH = gmsh_pyleecan.draw_GMSH
 except Exception as e:
     draw_GMSH = e
 try:
-    pass
+    from ......Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+    gen_3D_mesh = gmsh_pyleecan.gen_3D_mesh
 except Exception as e:
     gen_3D_mesh = e
 
@@ -114,13 +116,16 @@ class WMachineTable(Ui_WMachineTable, QWidget):
     def draw_FEMM(self):
         """Draw the Machine in FEMM"""
 
+        # Local import: circular import with the class module
+        from ......Functions_new.FEMM.femm_pyleecan import femm_pyleecan
+
         save_file_path = self.get_save_path(ext=".fem", file_type="FEMM (*.fem)")
         # Avoid bug due to user closing the popup witout selecting a file
         if save_file_path is [None, ""]:
             return
 
         try:
-            femm = _FEMMHandler()
+            femm = femm_pyleecan()
 
             # Periodicity
             sym, is_antiper = self.machine.comp_periodicity_spatial()
@@ -165,8 +170,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
                 normalization="angle_rotor"
             )
             # Draw the machine
-            FEMM_dict = draw_FEMM(
-                femm,
+            FEMM_dict = femm.draw_FEMM(
                 output,
                 is_mmfr=True,
                 is_mmfs=True,
@@ -178,8 +182,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
                 is_fast_draw=False,
             )
             # Set the current
-            update_FEMM_simulation(
-                femm=femm,
+            femm.update_FEMM_simulation(
                 FEMM_dict=FEMM_dict,
                 is_sliding_band=True,
                 is_internal_rotor=self.machine.rotor.is_internal,
@@ -188,7 +191,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
                 Ir=None,
                 ii=0,
             )
-            femm.mi_saveas(save_file_path)  # Save
+            femm.handler.mi_saveas(save_file_path)  # Save
         except Exception as e:
             err_msg = (
                 "Error while drawing machine "
@@ -197,9 +200,12 @@ class WMachineTable(Ui_WMachineTable, QWidget):
                 + str(e)
             )
             log_error(self, err_msg)
-        femm.closefemm()
+        femm.handler.closefemm()
 
     def draw_GMSH(self):
+        # Local import: circular import with the class module
+        from ......Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+
         save_file_path = self.get_save_path(ext=".msh", file_type="GMSH (*.msh)")
         # Avoid bug due to user closing the popup witout selecting a file
         if save_file_path is [None, ""]:
@@ -211,7 +217,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
             sym, is_antiper = self.machine.comp_periodicity_spatial()
             if is_antiper:
                 sym *= 2
-            draw_GMSH(
+            gmsh_pyleecan.draw_GMSH(
                 output=myResults,
                 sym=sym,
                 boundary_prop=MagElmer_BP_dict,
@@ -232,12 +238,15 @@ class WMachineTable(Ui_WMachineTable, QWidget):
             log_error(self, err_msg)
 
     def draw_GMSH_3D(self):
+        # Local import: circular import with the class module
+        from ......Functions_new.GMSH.gmsh_pyleecan import gmsh_pyleecan
+
         save_file_path = self.get_save_path(ext="_stator.msh", file_type="GMSH (*.msh)")
         # Avoid bug due to user closing the popup witout selecting a file
         if save_file_path is [None, ""]:
             return
         try:
-            gen_3D_mesh(
+            gmsh_pyleecan.gen_3D_mesh(
                 lamination=self.machine.stator,
                 save_path=save_file_path,
                 mesh_size=(self.machine.stator.Rext - self.machine.stator.Rint) / 20,
