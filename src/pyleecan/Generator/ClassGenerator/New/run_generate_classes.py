@@ -32,6 +32,7 @@ from pyleecan.Generator.ClassGenerator.New.generate_function_new_classes import 
 from pyleecan.Generator.ClassGenerator.New.generate_function_pydantic import (
     generate_functions_pydantic,
 )
+from pyleecan.Generator.ClassGenerator.New.generate_gui_new import generate_gui
 from pyleecan.Generator.ClassGenerator.New.generate_methods_new import (
     generate_methods,
 )
@@ -538,6 +539,7 @@ if __name__ == "__main__":
 
     generate_functions()
     generate_functions_pydantic()  # From Functions_new
+    generate_gui()  # GUI_new from GUI, GUI_pydantic from GUI_new
 
     generate_tests()
     shutdown_pool()  # Workers of the class generation

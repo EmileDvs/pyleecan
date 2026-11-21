@@ -186,7 +186,7 @@ Methods receive their context explicitly instead, for example
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | done (open points in the backlog) |
 | 8. Refactor the remaining `Functions` modules | generator | in progress (7/14 groups) |
 | 9. Logger chain | generator | done (parent fallback removed with Step 11) |
-| 10. GUI, first pass | generator | to do |
+| 10. GUI, first pass | generator | in progress (GUI_new / GUI_pydantic generated) |
 | 11. Parent links, first pass | generator | in progress (classification, helper, passes 1-2) |
 | 12. Freeze | gate | to do |
 | 13. Custom property setters and getters | frozen | to do |
@@ -318,7 +318,7 @@ through the methods it calls: `check()`, `comp_*`) and validates the user
 input against the objects. It is generated before Step 11, so that the parent
 passes rewrite its calls together with the methods.
 
-- [ ] GUI generator: `GUI_new` from `GUI` with the shared modernization
+- [x] GUI generator: `GUI_new` from `GUI` with the shared modernization
       pipeline (class and function imports, keyword constructors, shared
       errors, `-1`/`None` conventions); Qt Designer modules (`Ui_*`) copied;
       `GUI_pydantic` from `GUI_new` by import rewriting.

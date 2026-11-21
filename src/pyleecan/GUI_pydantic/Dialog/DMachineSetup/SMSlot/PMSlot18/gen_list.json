@@ -1,0 +1,11 @@
+[
+    {
+        "cls": "SlotM18",
+        "name": "H0",
+        "widget": [
+            "in_H0",
+            "lf_H0"
+        ],
+        "xls": "Slot"
+    }
+]

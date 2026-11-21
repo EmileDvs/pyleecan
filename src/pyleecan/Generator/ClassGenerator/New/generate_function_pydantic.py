@@ -64,6 +64,13 @@ def rewrite_function_source(source, module_parts, import_style="relative"):
         BACKENDS["pydantic"],
         (SOURCE_PACKAGE, TARGET_PACKAGE),
     )
+    from .generate_gui_new import GUI_PACKAGES, package_redirect, redirect_imports
+
+    source = redirect_imports(
+        source,
+        source_package,
+        package_redirect(GUI_PACKAGES["dataclass"], GUI_PACKAGES["pydantic"]),
+    )
     return _function_import_style(source, target_package, import_style)
 
 

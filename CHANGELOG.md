@@ -106,6 +106,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   a static method of `VarSimu`. The old function paths of `Functions_new` and
   `Functions_pydantic` are deprecated aliases (`DeprecationWarning`) until
   Phase 2. The other functions used by a single class stay utilities.
+- **GUI on the new classes** (Step 10, first pass): `GUI_new` (dataclass)
+  and `GUI_pydantic` are generated from the legacy GUI (same modernization
+  as the methods; the Qt resources shared with the legacy GUI).
 - **Container arguments instead of parent reads** (Step 11, first pass):
   the slot surface methods (`get_surface_active`, `get_surface_opening`,
   `get_surface_wedges`, `comp_height_active`) take the lamination (or
@@ -282,7 +285,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
 | 8. Refactor the remaining `Functions` modules (generator) | in progress (7/14 groups) |
 | 9. Logger chain (generator) | done |
-| 10. GUI, first pass (generator) | to do |
+| 10. GUI, first pass (generator) | in progress |
 | 11. Parent links, first pass (generator) | in progress |
 | 12. Freeze | to do |
 | 13. Custom property setters and getters (frozen) | to do |

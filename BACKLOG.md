@@ -594,13 +594,31 @@ winding inside its lamination and call its methods (`check()`, `comp_*`),
 which read the parents. Step 11 changes these signatures: the GUI must be
 generated first so that the same passes rewrite its calls.
 
-- [ ] GUI generator (`generate_gui_new.py`, new generator module): `GUI_new`
-      from `GUI` with the shared pipeline (`modernize.py`: imports of
-      `Classes_new` / `Functions_new` and of the sub-packages, keyword
-      constructors, shared errors from `classes_common/errors.py`, `-1`
-      conventions); `Ui_*` modules and resources copied; `GUI_pydantic` by
-      import rewriting (same as `generate_function_pydantic.py`). Unit tests
-      per pass.
+- [x] GUI generator (`generate_gui_new.py`, 2026-11-21, called by
+      `run_generate_classes` after the functions): `GUI_new` from `GUI` with
+      the method pipeline (FEMM object, moved functions, loggers, `Methods`
+      imports, `modernize_names`: class and function imports, keyword
+      constructors, shared errors), then `MODULE_REDIRECTS`
+      (`Classes._ClassInfo`), the `Functions.x` left (`Functions.load`,
+      `Functions.Load.import_class`) to `Functions_new.x`, and the GUI
+      self-imports to `GUI_new` (`redirect_imports`, relative imports kept
+      from the package root). `Ui_*` modules go through the same pipeline;
+      `.ui` and `.json` files copied. `Resources` (28 MB) is not copied:
+      `__init__.py` (`pixmap_dict`) copied, `pyleecan_rc.py` is a generated
+      shim loading the legacy compiled resources by path (without importing
+      the legacy GUI package), registered once for both backends.
+      `GUI_pydantic` from `GUI_new` by import rewriting
+      (`pydantic_gui_source`). The functions generators redirect the GUI
+      imports too (`set_plot_gui_icon`: `GUI_new.Resources` /
+      `GUI_pydantic.Resources`). Tests: `Tests/New/test_generate_gui_new.py`.
+      Check: the 375 modules of each package import (Qt offscreen); the only
+      legacy module still loaded is `Classes._check` (from
+      `Functions_new/Load/import_class.py`: `InitUnKnowClassError`).
+- [ ] `-1` conventions and the GUI-specific legacy idioms (no pass yet):
+      review on the generated code with the GUI tests.
+- [ ] `import_class("pyleecan.Classes", ...)` in
+      `Tools/WTreeEdit/TreeEditContextMenu.py` still names the legacy
+      package: the backend class lookup instead.
 - [ ] `Gen_*` classes generated from `ClassInfo` (min, max, unit,
       description) instead of the CSV files (`Generator/gui_generator.py`),
       so that they survive the Phase 2 removal of the CSV files.

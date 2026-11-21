@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 
-from ...GUI.Resources import pixmap_dict
+from ...GUI_new.Resources import pixmap_dict
 
 
 def set_plot_gui_icon():

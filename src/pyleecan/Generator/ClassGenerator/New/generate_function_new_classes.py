@@ -948,6 +948,12 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
             rewritten = relocate_class_imports(
                 rewritten, "pyleecan", "Classes_new", class_module_paths
             )
+            # The GUI of the backend (GUI resources: set_plot_gui_icon)
+            from .generate_gui_new import GUI_PACKAGES, package_redirect, redirect_imports
+
+            rewritten = redirect_imports(
+                rewritten, generated_package, package_redirect("GUI", GUI_PACKAGES["dataclass"])
+            )
             rewritten = _function_import_style(rewritten, generated_package, import_style)
             if relative.with_suffix("").as_posix().replace("/", ".") in HINTED_FUNCTION_MODULES:
                 # Type hints drafted from the docstrings, as the methods

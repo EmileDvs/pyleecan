@@ -38,7 +38,8 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written (incl. `logger_context.py`: loggers without parents), except `errors.py`, `parent_types.py` and `retrocompatibility.py` (generated) |
 | `Generator/` | Legacy generators (`ClassGenerator/*.py`, GUI, UML) and the CSV class definitions (`ClassesRef/`) | Legacy generator: never |
 | `Generator/ClassGenerator/New/` | New generators (classes, methods, functions, tests) | Yes: this is where changes go |
-| `GUI/`, `Data/`, `Results/` | Legacy GUI, reference machines/materials, outputs | GUI: never (legacy); `GUI_new` / `GUI_pydantic` planned in Step 10 |
+| `GUI/`, `Data/`, `Results/` | Legacy GUI, reference machines/materials, outputs | GUI: never (legacy) |
+| `GUI_new/`, `GUI_pydantic/` | GUI on the dataclass / pydantic classes, generated from `GUI` (Step 10); `Resources/pyleecan_rc.py` is a shim loading the legacy compiled resources | Never by hand: change the generator |
 
 ### New class backends
 
@@ -81,6 +82,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths |
 | `generate_function_new_classes.py` | `Functions_new` |
 | `generate_function_pydantic.py` | `Functions_pydantic` from `Functions_new` |
+| `generate_gui_new.py` | `GUI_new` from `GUI` (method pipeline, GUI imports redirected), `GUI_pydantic` from `GUI_new` (imports) |
 | `generate_test_new_classes.py` | `Tests/New` tree from the legacy tests |
 
 Full regeneration:
