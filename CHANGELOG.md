@@ -203,19 +203,21 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 1. Split the bases (target / legacy layer) | done |
 | 2. Type, min and max validation for dataclasses | done |
 | 3. `Functions_pydantic` | done |
-| 4. Phase 1 test architecture (`--backend`) | done (method results compared at the freeze, Step 11) |
+| 4. Phase 1 test architecture (`--backend`) | done (method results compared at the freeze, Step 12) |
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
 | 8. Refactor the remaining `Functions` modules (generator) | to do |
 | 9. Logger chain (generator) | to do |
-| 10. Parent links, first pass (generator) | to do |
-| 11. Freeze | to do |
-| 12. Custom property setters and getters (frozen) | to do |
-| 13. Type hints, second pass (frozen) | to do |
-| 14. Utility functions (frozen) | to do |
-| 15. Parent links, second pass (frozen) | to do |
+| 10. GUI, first pass (generator) | to do |
+| 11. Parent links, first pass (generator) | to do |
+| 12. Freeze | to do |
+| 13. Custom property setters and getters (frozen) | to do |
+| 14. Type hints, second pass (frozen) | to do |
+| 15. Utility functions (frozen) | to do |
+| 16. Parent links, second pass (frozen) | to do |
+| 17. GUI, second pass (frozen) | to do |
 
 Legacy class tests (`Tests/New/Classes`), with each backend: 2855 passed,
 1 failed (`test_copy_out`: custom property setter of `ParamExplorer`, planned
-in Step 12). Cross tests (`Tests/New/Cross`): 1405 passed.
+in Step 13). Cross tests (`Tests/New/Cross`): 1405 passed.

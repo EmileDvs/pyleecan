@@ -7,7 +7,7 @@ when all its tasks are done.
 
 Modes: **generator** tasks change `Generator/ClassGenerator/New/` (never the
 generated folders); **frozen** tasks edit `Methods_new` / `Functions_new` by
-hand, after the freeze (Step 11).
+hand, after the freeze (Step 12).
 
 ## Step 5: legacy bugs
 
@@ -69,7 +69,7 @@ helpers working on the FEMM handler, not on `MagFEMM` (`comp_FEMM_torque`,
 `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`), generic MeshSolution builders
 (`build_meshsolution`, `build_solution_data`, `build_solution_vector`),
 pyvista helpers (`plot_glyph_pv`, `plot_surf_deflection`), `get_path_binary`
-(environment); `check_parent` goes with the parent links (Step 15). These
+(environment); `check_parent` goes with the parent links (Step 16). These
 decisions may be revised by the per-module plan of Step 8.
 
 ## Step 7: integrate the open legacy pull requests
@@ -150,7 +150,7 @@ How the merge was done (to repeat for the next `loss_fea` commits):
   `_attribute_docstring`); a legacy function module deleted upstream
   (`Functions/MeshSolution/build_meshsolution.py`) stayed in `Functions_new`
   and `Functions_pydantic` (`remove_stale_modules`; the hand-written modules
-  of the freeze will have to be excluded, Step 11).
+  of the freeze will have to be excluded, Step 12).
 
 Checks: `Tests/Classes` 3937 passed; `Tests/New/Classes` 2855 passed and
 `test_copy_out` failed with each backend (as before); `Tests/New/Cross` 1405
@@ -172,11 +172,11 @@ Open points:
       `"stator joule"`, `"rotor magnets"`, `"stator proximity"`;
       `LUTdq.interp_Ploss_dqh` and the `ElecLUTdq.run` fix use `"joule"`,
       `"magnets"`, `"proximity"`. To align on `loss_fea`.
-- [ ] `ty` diagnostics of the packages touched (Step 13 table): loss 11 ->
+- [ ] `ty` diagnostics of the packages touched (Step 14 table): loss 11 ->
       64, magnetics 144 -> 159, output 81 -> 83, simulation 62 -> 73. No new
       legacy bug (Step 5 kind); known causes: `Machine.rotor`,
       `Data.get_values` / `get_length`, `Solution.field` not declared on the
-      bases, optional fields, DataKeeper functions given as strings (Step 12),
+      bases, optional fields, DataKeeper functions given as strings (Step 13),
       two Returns sections listing 2 values for 3 returned
       (`LossModelJoule.comp_loss_freq`, `LossModelWindagePyrhonen.comp_loss_freq`).
 
@@ -189,7 +189,7 @@ For each merge:
 - `Tests/Classes`, `Tests/New/Classes` (both backends), `Tests/New/Cross` and
   the method tests of the packages touched pass;
 - `HINTED_SUBPACKAGES` coverage and `ty` diagnostics of the packages touched
-  updated in the Step 13 table; new legacy bugs added to Step 5.
+  updated in the Step 14 table; new legacy bugs added to Step 5.
 
 ## Step 8: refactor the remaining `Functions` modules
 
@@ -227,7 +227,51 @@ utility (`utils/` in Phase 2), or removed (dead code, deprecated first).
 - [ ] Remove `get_logger` (function and base method), or keep it as a
       deprecated alias.
 
-## Step 10: parent links, first pass
+## Step 10: GUI, first pass
+
+Inventory of the legacy GUI (`src/pyleecan/GUI`, 2026-11-21):
+
+| Item | Count |
+|---|---|
+| Python modules | 375, of which 92 Qt Designer modules (`Ui_*`) |
+| Modules importing classes | 89 (104 distinct classes) |
+| `Gen_*` widget classes (legacy GUI generator, from the CSV files) | 64 |
+| `check()` calls (validation of the edited objects) | 74 in 55 modules |
+| `except SlotCheckError` | 53 |
+| Direct object parent reads (`hole.parent.parent`, `lam = self.hole.parent.copy()`) | 9 in 5 modules |
+| Field assignments from widgets (`self.obj.X = ...`, `self.lam...`, `self.slot...`) | about 94 |
+| `-1` conventions | 12 |
+| `get_logger` calls | 14 |
+| Legacy tests (`Tests/GUI`), generated copies (`Tests/New/GUI`) | 78, 78 |
+
+Most of the parent dependency is indirect: the dialogs edit a slot, hole or
+winding inside its lamination and call its methods (`check()`, `comp_*`),
+which read the parents. Step 11 changes these signatures: the GUI must be
+generated first so that the same passes rewrite its calls.
+
+- [ ] GUI generator (`generate_gui_new.py`, new generator module): `GUI_new`
+      from `GUI` with the shared pipeline (`modernize.py`: imports of
+      `Classes_new` / `Functions_new` and of the sub-packages, keyword
+      constructors, shared errors from `classes_common/errors.py`, `-1`
+      conventions); `Ui_*` modules and resources copied; `GUI_pydantic` by
+      import rewriting (same as `generate_function_pydantic.py`). Unit tests
+      per pass.
+- [ ] `Gen_*` classes generated from `ClassInfo` (min, max, unit,
+      description) instead of the CSV files (`Generator/gui_generator.py`),
+      so that they survive the Phase 2 removal of the CSV files.
+- [ ] Validation errors: the GUI catches the shared errors whatever the
+      backend. On assignment, the dataclass backend raises
+      `CheckTypeError`/`CheckMinError`/`CheckMaxError`, pydantic raises
+      `ValidationError`: one base (or a conversion in `LegacyModel`) decided
+      with the contract tests; the error message shown on the field.
+- [ ] `Tests/New/GUI` generated against `GUI_new` / `GUI_pydantic` (backend
+      alias like `backend_classes`); they import the legacy GUI today.
+- [ ] The GUI calls of the logger chain (Step 9) and of the moved functions
+      (Step 6, Step 8) rewritten by the same passes.
+- [ ] Decide: `GUI_pydantic` generated, or the GUI run on the reference
+      backend only (pydantic) with `GUI_new` kept for the tests.
+
+## Step 11: parent links, first pass
 
 Parent reads found in the legacy methods on 2026-11-15:
 
@@ -276,16 +320,16 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
   `classes_common`), so the Phase 2 warning is added in one place and every
   site is found by a search. Each site is also listed in
   [Phase 2 deprecations](#phase-2-deprecations).
-- Step 15 may still narrow a method to plain values where it clearly helps.
+- Step 16 may still narrow a method to plain values where it clearly helps.
 
 - [ ] Shared helper `container_or_parent` (both backends), with unit tests.
 - [ ] Generator passes, one pattern per increment (method, function and test
       generators), with unit tests and the parity tests unchanged; each pass
       reports the methods given a fallback argument (generated list, copied
       to [Phase 2 deprecations](#phase-2-deprecations)).
-- [ ] Report the reads left for Step 15.
+- [ ] Report the reads left for Step 16.
 
-## Step 11: freeze
+## Step 12: freeze
 
 - [ ] Move the "loaders" and "static_imports" passes (with dynamic imports and
       normalization renames, the chain that depends on the class imports)
@@ -302,8 +346,8 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
 - [ ] Parity baseline: run `Tests/New/Methods` per package with each backend;
       record the results here (passed / failed per package); compare the
       method results between backends (Step 4 item).
-- [ ] Freeze mechanism (decided 2026-11-17: all at once, since Steps 12–15
-      cover every package): all sub-packages in `FROZEN_PACKAGES`
+- [ ] Freeze mechanism (decided 2026-11-17: all at once, since Steps 13–17
+      cover every package): `GUI_new` frozen with them; all sub-packages in `FROZEN_PACKAGES`
       (`generate_methods_new.py`); a list of the hand-written modules in the
       functions generator (`generate_function_new_classes.py`), which keeps
       writing the others and the deprecated aliases.
@@ -311,7 +355,7 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
 - [ ] CLAUDE.md: `Methods_new` and the frozen `Functions_new` modules edited by
       hand; which generator modules are still in use.
 
-## Step 12: custom property setters and getters
+## Step 13: custom property setters and getters
 
 Legacy classes with their own property setter or getter methods, inlined in
 the new classes but not wired to the fields (a dataclass or pydantic field has
@@ -330,7 +374,7 @@ no property). The `slot` ones (`SlotW11`/`SlotW11_2`/`SlotW23._set_W3`,
 For each: an explicit conversion (field validator, or a method building the
 value), the same in both backends.
 
-## Step 13: type hints, second pass
+## Step 14: type hints, second pass
 
 Conventions: class annotations use imports under `if TYPE_CHECKING:` (lazy
 annotations of Python 3.14, no `from __future__ import annotations`, which the
@@ -405,7 +449,7 @@ Review list by package (behaviour or class definition to decide):
         `Machine.plot_anim_rotor`: `Patch.xy`.
 - Simulation:
   - [ ] `ParamExplorer` (`getter`, `setter`), `DataKeeper` (`keeper`): str
-        given to callable fields (Step 12);
+        given to callable fields (Step 13);
   - [ ] `VarParamSweep.generate_simulation_list`: `init_dict=` constructor
         argument (legacy layer only);
   - [ ] optional fields used without check: `VarSimu.set_reused_data`
@@ -447,7 +491,7 @@ Then:
 
 - [ ] `py.typed` marker; checker made stricter step by step.
 
-## Step 14: utility functions
+## Step 15: utility functions
 
 First audit (2026-11-15, from imports): 26 of the 145 legacy `Functions`
 modules are used by a single class (17 after review, Step 6), and 41 modules
@@ -458,20 +502,39 @@ generator; this step finishes by hand what the generator could not do.
 - [ ] Complete the type hints of the utility functions (from the Step 8 draft).
 - [ ] Mark the class-independent functions for `src/pyleecan/utils/` (Phase 2).
 
-## Step 15: parent links, second pass
+## Step 16: parent links, second pass
 
-Same signature rule as Step 10 (optional container argument, fallback through
+Same signature rule as Step 11 (optional container argument, fallback through
 `container_or_parent`); each new site is added to
 [Phase 2 deprecations](#phase-2-deprecations).
 
-- [ ] Remove the reads left by Step 10, package by package (Slot, Machine,
+- [ ] Remove the reads left by Step 11, package by package (Slot, Machine,
       Simulation, Loss, Output, Optimization).
 - [ ] Function helpers with explicit arguments: `check_parent`,
       `assign_femm_surface`.
 - [ ] Tests of a refactored package hand-maintained; numerical parity against
-      legacy, from the Step 11 baseline.
+      legacy, from the Step 12 baseline.
 - [ ] No parent read left in `Methods_new` and `Functions_new` outside
       `container_or_parent`; the parent links stay only in the legacy layer.
+- [ ] The `GUI_new` calls of each refactored package updated in the same
+      increment.
+
+## Step 17: GUI, second pass
+
+- [ ] Direct parent reads of the dialogs (9 in 5 modules: hole and magnet
+      pages reading `hole.parent.parent`, lamination copies): the container
+      passed explicitly to the page.
+- [ ] Parent wiring the dialogs rely on (an object edited inside its
+      container so that its methods see the lamination): replaced by the
+      explicit container of Step 16.
+- [ ] Input validation on the target model: the dialog edits a working copy,
+      validation by the model (validated assignment or `model_validate` of the
+      edited dump), errors reported per field; widget limits from `ClassInfo`
+      only; the `check()` errors kept for the geometric consistency.
+- [ ] GUI tests hand-maintained, with each backend; machines built with the
+      GUI give the same dump as with the legacy GUI.
+- [ ] The `-1` / `None` conventions left in the GUI removed with the legacy
+      layer (Phase 2).
 
 ## Phase 2 deprecations
 
@@ -479,13 +542,13 @@ Register of what Phase 1 keeps for compatibility and Phase 2 must deprecate
 or remove. Every Phase 1 step adding such a compatibility path adds its sites
 here.
 
-Parent fallbacks (Steps 10 and 15): in Phase 2, `container_or_parent` raises a
+Parent fallbacks (Steps 11 and 16): in Phase 2, `container_or_parent` raises a
 `DeprecationWarning` when the container is not given; a later release removes
 the fallback, the parent links, and makes the argument required.
 
 | Method | Container argument | Added in |
 |---|---|---|
-| (filled by the Step 10 passes) | | |
+| (filled by the Step 11 passes) | | |
 
 Note: the parent links then outlive the legacy layer for one or more
 releases: Phase 2 must keep them (or a minimal version) as a deprecated
