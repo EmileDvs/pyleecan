@@ -19,7 +19,7 @@ from .....Classes_pydantic.simulation.op_dqf import OPdqf
 from .....Classes_pydantic.simulation.simu_1 import Simu1
 from .....definitions import config_dict
 from .....GUI_pydantic.Tools.log_error import log_error
-from .....Functions_pydantic.init_environment import save_config_dict
+from .....Functions_pydantic.utils.init_environment import save_config_dict
 from .....GUI_pydantic import gui_option
 from .....GUI_pydantic.Dialog.DMachineSetup.SSimu.Gen_SSimu import Gen_SSimu
 from .....loggers import GUI_LOG_NAME

@@ -1,29 +1,11 @@
-import numpy as np
+"""Deprecated module: moved to utils.make_ndarray_equal (removed in Phase 2)."""
 
+from warnings import warn
 
-def make_ndarray_equal(vec_ref, vec_to_sort):
-    """Compare two ndarray, sort the second to match with the first one.
+from .utils.make_ndarray_equal import make_ndarray_equal
 
-    Parameters
-    ----------
-    vec_ref : ndarray
-        reference vector
-    vec_to_sort : ndarray
-        vector to sort
-
-    Returns
-    -------
-    Isort: ndarray
-        Vector of indice to sort the vec_to_sort
-    vec: ndarray
-        Sorted vector
-
-    """
-
-    nb = len(vec_ref)
-    Isort = np.zeros(nb)
-
-    for i in range(nb):
-        Isort[i] = np.where(vec_ref[i] == vec_to_sort)
-
-    return Isort, vec_to_sort[Isort]
+warn(
+    "pyleecan.Functions.make_ndarray_equal is deprecated, use pyleecan.Functions.utils.make_ndarray_equal (removed in Phase 2)",
+    DeprecationWarning,
+    stacklevel=2,
+)

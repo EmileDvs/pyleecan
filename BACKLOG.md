@@ -271,7 +271,7 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | done (2026-11-21): object dedicated to the FEMM interface, `femm_pyleecan`, in a new sub-package `femm`, all the functions as its methods; the current handler (`_FEMMHandler`) becomes `femm_pyleecan.handler` |
 | 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | done (2026-11-21): `gmsh_pyleecan` gathers the gmsh functions as static methods (as close as possible to legacy, to be improved later) |
 | 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | decided (2026-11-21): `retrocompatibility` to `classes_common` for now; Phase 2: one class to load (retrocompatibility included) and one class to save the pyleecan objects; closed as it is (decided 2026-11-21) |
-| 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | in progress (2026-11-21): `labels` and `path_tools` moved to the `utils` package (`MOVED_MODULES`: whole modules, the legacy paths deprecated modules re-exporting the names); `log_error` moved to the GUI (`GUI_new/Tools/log_error.py`, the mesh methods log their errors); `init_environment`, `make_ndarray_equal`, `get_path_binary` to decide |
+| 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | done (2026-11-21): `labels`, `path_tools`, `init_environment`, `make_ndarray_equal`, `get_path_binary` moved to the `utils` package (`MOVED_MODULES`: whole modules, the legacy paths deprecated modules re-exporting the names); `log_error` moved to the GUI (`GUI_new/Tools/log_error.py`, the mesh methods log their errors) |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | covered by the other steps (decided 2026-11-21) |
 
 ### Type hints of the Step 8 methods (2026-11-21)
@@ -1101,7 +1101,7 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 | `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `getattr_recursive`, `short_filepath` | none (dead code) | Step 8 group 1 |
 | `Converter.MotorCAD.slotW23_H1` | none (not used by the rules) | Step 8 |
 | `Converter.Utils.EquivalentError` | none (unused error) | Step 8 group 1 |
-| `labels`, `path_tools` (modules) | `utils.labels`, `utils.path_tools` | Step 8 group 13 |
+| `labels`, `path_tools`, `init_environment`, `make_ndarray_equal`, `get_path_binary` (modules) | the same modules in `utils` | Step 8 group 13 |
 | `GUI.log_error` (module) | `Tools.log_error` of the GUI package | Step 8 group 13 |
 
 - [ ] Decide which other legacy behaviours removed with the legacy layer need

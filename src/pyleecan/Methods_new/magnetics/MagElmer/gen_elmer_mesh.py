@@ -1,7 +1,7 @@
 from ....classes_common.logger_context import get_logger
 import subprocess
 
-from ....Functions_new.get_path_binary import get_path_binary
+from ....Functions_new.utils.get_path_binary import get_path_binary
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

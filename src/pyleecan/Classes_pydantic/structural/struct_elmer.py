@@ -12,7 +12,7 @@ from pydantic import Field
 from ...classes_common.errors import InputError
 from ...classes_common.logger_context import get_logger
 from ...classes_common.parents import container_or_parent
-from ...Functions_pydantic.get_path_binary import get_path_binary
+from ...Functions_pydantic.utils.get_path_binary import get_path_binary
 from ...Functions_pydantic.utils.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,

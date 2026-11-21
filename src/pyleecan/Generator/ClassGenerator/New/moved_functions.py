@@ -1390,6 +1390,9 @@ MOVED_MODULES = {
     # utils package
     "labels": "utils.labels",
     "path_tools": "utils.path_tools",
+    "init_environment": "utils.init_environment",
+    "make_ndarray_equal": "utils.make_ndarray_equal",
+    "get_path_binary": "utils.get_path_binary",
     # Step 8 group 13: log_error with the GUI, where it is used (the core
     # methods log their errors instead, legacy_fixes)
     "GUI.log_error": "GUI_new.Tools.log_error",

@@ -12,7 +12,7 @@ from meshio import read
 from ... import __version__
 from ...classes_common.errors import NotImplementedYetError
 from ...classes_common.logger_context import get_logger
-from ...Functions_new.get_path_binary import get_path_binary
+from ...Functions_new.utils.get_path_binary import get_path_binary
 from ...Functions_new.utils.labels import (
     AIRBOX_R_LAB,
     AIRBOX_SL_LAB,

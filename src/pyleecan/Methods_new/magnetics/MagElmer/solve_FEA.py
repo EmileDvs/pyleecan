@@ -9,7 +9,7 @@ import numpy as np
 from .... import __version__
 from ....Classes_new.machine.machine_ipmsm import MachineIPMSM
 from ....Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from ....Functions_new.get_path_binary import get_path_binary
+from ....Functions_new.utils.get_path_binary import get_path_binary
 from ....Functions_new.utils.labels import AIRGAP_LAB, BOT_LAB, HOLEM_LAB_S, HOLEV_LAB_S, LAM_LAB_S, MAG_LAB, NO_LAM_LAB, ROTOR_LAB, ROTOR_LAB_S, SHAFT_LAB, SLID_LAB, STATOR_LAB_S, WIND_LAB_S, decode_label, get_obj_from_label, short_label
 from ....Methods import NotImplementedYetError
 from typing import TYPE_CHECKING

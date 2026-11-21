@@ -9,7 +9,7 @@ from ....GUI_new.Tools.GuiOption.Ui_GuiOption import Ui_GUIOption
 from ....GUI_new.Dialog.DMatLib.DMatSetup.DMatSetup import DMatSetup
 from ....GUI_new import gui_option
 from ....Functions_new.utils.path_tools import abs_file_path
-from ....Functions_new.init_environment import save_config_dict
+from ....Functions_new.utils.init_environment import save_config_dict
 from ....definitions import config_dict
 from ....Functions_new.load import load_matlib
 from ....Classes_new.material.material import Material
