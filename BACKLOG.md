@@ -82,10 +82,45 @@ generators then carry the changes to the new code.
       update skew expected losses"): finished by the maintainer, except the
       time-domain core loss model (`comp_loss_time`, check commented in
       `test_LossFEMM_Prius`), left open.
-- [ ] #748: merge, regenerate, check.
-- [ ] #749: merge, regenerate, check.
+- [x] #748: merge, regenerate, check (2026-11-21, with #749 and #752).
+- [x] #749: merge, regenerate, check.
 - [x] #751: merge, regenerate, check (2026-11-21, details below).
-- [ ] #752: merge, regenerate, check.
+- [x] #752: merge, regenerate, check.
+
+### #748, #749, #752 merge (2026-11-21)
+
+The three pull requests are merged upstream (Eomys/pyleecan master
+1e940df98, old layout). Through `loss_fea_src`: branch `upstream_old` =
+`loss_fea` + upstream master (old layout, conflicts resolved there),
+merged into `loss_fea_src`, then into `switch_to_dataclass`. `loss_fea`
+itself is unchanged (it does not contain upstream master yet).
+
+- #748 applies to `MagFEMM.get_FEMM_mesh_results` (`get_meshsolution`
+  renamed by `loss_fea`); the `"\\mu"` labels of #752 kept with
+  `mag.get_meshsolution()` in the FEMM meshsolution and parallelization
+  tests.
+- On this branch, the escapes of #752 were already fixed (raw strings,
+  `/` in `path_tools`): kept; `setup.py` stays deleted.
+- Regeneration: Segment, ForceTensor, MagElmer, MagFEMM, `load` and their
+  tests only. The GUI change of #752 (`DMachineSetup`) has no new
+  counterpart (GUI not migrated).
+
+Checks: `Tests/Classes` 3937 passed; `Tests/New/Classes` 2855 passed and
+`test_copy_out` failed with each backend; `Tests/New/Cross` 1405 passed;
+`Tests/New/Methods` Geometry, Slot, Import, Simulation, Mesh: same failures
+as before, plus `test_import_mesh_unv[unv_file0]` (below).
+`ty`: geometry 21 -> 22, force 68, magnetics 159; force coverage 11/23,
+5/10 (new `cross2d` helper of #752 not hinted).
+
+- [ ] Generator bug (pre-existing): the pyvista import pass turns
+      `from pyvista.plotting import Plotter` into `pv.plotting.Plotter` with
+      `import pyvista as pv` only; pyvista 0.49 loads `pyvista.plotting`
+      lazily (`AttributeError: module 'pyvista' has no attribute
+      'plotting'`). The first plot of a process fails
+      (`Functions_new/Plot/Pyvista/configure_plot.py`):
+      `test_plot_contour_1group` before, `test_import_mesh_unv[unv_file0]`
+      now that #752 fixed its file paths. Fix: also import the submodule
+      (`import pyvista.plotting`) in `_apply_pyvista_import_style`.
 
 ### #751 merge (2026-11-21)
 

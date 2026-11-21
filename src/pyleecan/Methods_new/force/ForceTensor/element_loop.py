@@ -1,5 +1,11 @@
 import numpy as np
 
+
+def cross2d(a, b):
+    """z component of the cross product of two 2-D vectors
+    (np.cross no longer accepts 2-D vectors since numpy 2.0)"""
+    return a[0] * b[1] - a[1] * b[0]
+
 import matplotlib.pyplot as plt
 from typing import TYPE_CHECKING
 
@@ -95,7 +101,7 @@ def element_loop(
 
             # Triangle orientation, needed for normal orientation. 1 if trigo oriented, -1 otherwise
             orientation_sign = np.sign(
-                np.cross(
+                cross2d(
                     element_coordinate[1] - element_coordinate[0],
                     element_coordinate[2] - element_coordinate[0],
                 )
@@ -125,7 +131,7 @@ def element_loop(
                 )
                 normal_to_edge = (
                     normal_to_edge_unoriented
-                    * np.sign(np.cross(normal_to_edge_unoriented, edge_vector))
+                    * np.sign(cross2d(normal_to_edge_unoriented, edge_vector))
                     * orientation_sign
                 )
                 normal_to_edge.reshape(dim, 1)

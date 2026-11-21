@@ -171,6 +171,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   - `ElecLUTdq.run` with loss models: `OutLoss` built with unknown fields
     (TypeError); the losses are stored in `OutLoss.loss_dict`.
 - Generation of the phase axis.
+- **Upstream fixes carried to the new code** (#748, #749, #752): MagFEMM
+  mesh extraction without a hardcoded Windows separator; MagElmer
+  CalcFields solver with an explicit linear system (Elmer >= 26); numpy 2
+  compatibility (2-D cross products in `Segment.comp_distance` and
+  `ForceTensor.element_loop`, `load`).
 - **Class generator**: a CSV description ending with a double quote
   produced an invalid attribute docstring (SyntaxError).
 - **Functions generator**: a legacy function module deleted upstream no
@@ -201,7 +206,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 4. Phase 1 test architecture (`--backend`) | done (method results compared at the freeze, Step 11) |
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
-| 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | #751 merged |
+| 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
 | 8. Refactor the remaining `Functions` modules (generator) | to do |
 | 9. Logger chain (generator) | to do |
 | 10. Parent links, first pass (generator) | to do |

@@ -115,7 +115,9 @@ class Segment(Line):
             > np.pi / 2
         ):
             return np.linalg.norm(P - B)
-        return np.linalg.norm(np.cross(A - B, A - P)) / np.linalg.norm(B - A)
+        # z component of the 2-D cross product (numpy 2 removed np.cross for 2-D vectors)
+        u, v = A - B, A - P
+        return abs(u[0] * v[1] - u[1] * v[0]) / np.linalg.norm(B - A)
 
     # Inlined from Methods.Geometry.Segment.comp_length
     def comp_length(self) -> float:

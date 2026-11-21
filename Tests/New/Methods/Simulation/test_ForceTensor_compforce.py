@@ -1,5 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+
+
+def cross2d(a, b):
+    """z component of the cross product of two 2-D vectors
+    (np.cross no longer accepts 2-D vectors since numpy 2.0)"""
+    return a[0] * b[1] - a[1] * b[0]
 import pytest
 
 from backend_classes.mesh.element_mat import ElementMat

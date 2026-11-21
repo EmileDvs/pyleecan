@@ -790,7 +790,7 @@ class MagFEMM(Magnetics):
 
         idworker = str(id_worker)  # For parallelization TODO
 
-        path_txt = os.path.join(MAIN_DIR, "Functions", "FEMM") + "\\"
+        path_txt = os.path.join(MAIN_DIR, "Functions", "FEMM")
         path_lua_in = os.path.join(path_txt, "get_mesh_data_FEMM.lua")
         path_lua_out = os.path.join(save_path, "get_mesh_data_FEMM" + idworker + ".lua")
         path_txt_out = save_path + "\\"

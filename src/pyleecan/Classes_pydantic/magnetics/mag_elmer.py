@@ -1274,6 +1274,13 @@ class MagElmer(Magnetics):
                 "\tCalculate Maxwell Stress = Logical True\n"
                 "\tCalculate JxB = Logical True\n"
                 "\tCalculate Magnetic Field Strength = Logical True\n"
+                # Elmer >= 26 requires an explicit linear system for CalcFields
+                "\tLinear System Solver = Iterative\n"
+                "\tLinear System Iterative Method = CG\n"
+                "\tLinear System Preconditioning = ILU0\n"
+                "\tLinear System Max Iterations = 1000\n"
+                "\tLinear System Convergence Tolerance = 1.0e-8\n"
+                "\tLinear System Abort Not Converged = Logical False\n"
                 "End\n"
             )
 
