@@ -95,11 +95,13 @@ MOVED_FUNCTIONS = {
     # Step 8: n phases to dqh transformation of the Data objects (the other
     # functions of these modules are merged in SciDataTool.dqh_transformation,
     # MERGED_MODULES; DataDual.n2dqh is a new method, NEW_METHODS)
-    "Electrical.dqh_transformation": MovedFunction(
-        "DataTime", "n2dqh", function="n2dqh_DataTime"
+    "Electrical.dqh_transformation": (
+        MovedFunction("DataTime", "n2dqh", function="n2dqh_DataTime"),
+        MovedFunction("DataTime", "dqh2n", function="dqh2n_DataTime"),
     ),
-    "Electrical.dqh_transformation_freq": MovedFunction(
-        "DataFreq", "n2dqh", function="n2dqh_DataFreq"
+    "Electrical.dqh_transformation_freq": (
+        MovedFunction("DataFreq", "n2dqh", function="n2dqh_DataFreq"),
+        MovedFunction("DataFreq", "dqh2n", function="dqh2n_DataFreq"),
     ),
     # Step 8, group 9: animation of any plot of Data objects (no caller)
     # Step 8, group 8: MTPA from the LUT of a machine (no caller)
@@ -657,16 +659,18 @@ def _relocate_relative_imports(source, old_package, new_package):
     return source
 
 
-def _split_moved_siblings(source, module_name, siblings, renames=None):
+def _split_moved_siblings(source, module_name, siblings, renames=None, method_name=None):
     """Remove the other functions of the module, imported instead.
 
     The import from the legacy module (``from .module import sibling``) is
     then rewritten by ``redirect_moved_calls`` into calls on the class.
     ``module_name`` is a module of the same folder, or a relative module
     (``..SciDataTool.dqh_transformation``, a merged module); ``renames``
-    {name: name in that module} imports ``new as name``.
+    {name: name in that module} imports ``new as name``. A function of a
+    merged module with the name of the method (``n2dqh`` in
+    ``DataTime.n2dqh``) is imported as ``<name>_fct``.
     """
-    renames = renames or {}
+    renames = dict(renames or {})
     tree = ast.parse(source)
     lines = source.splitlines(keepends=True)
     removed = []
@@ -684,6 +688,12 @@ def _split_moved_siblings(source, module_name, siblings, renames=None):
     imported = sorted(name for name in removed if name in used)
     if not imported:
         return source
+    if module_name.startswith("..") and method_name in imported:
+        # Same name as the method: imported as <name>_fct
+        local = method_name + "_fct"
+        source = _rename_names(source, {method_name: local})
+        renames[local] = renames.get(method_name, method_name)
+        imported = sorted(local if name == method_name else name for name in imported)
     # After the module docstring and the __future__ imports
     tree = ast.parse(source)
     position = 0
@@ -825,7 +835,9 @@ def method_source(source, target, old_package, new_package, siblings=()):
     if siblings:
         module_name, names = siblings[:2]
         renames = siblings[2] if len(siblings) > 2 else {}
-        source = _split_moved_siblings(source, module_name, set(names), renames)
+        source = _split_moved_siblings(
+            source, module_name, set(names), renames, method_name=target.method
+        )
     if target.local_imports:
         source = _localize_class_imports(source, old_package, target.legacy_name)
     source = _relocate_relative_imports(source, old_package, new_package)

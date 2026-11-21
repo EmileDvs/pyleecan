@@ -4,8 +4,6 @@ import numpy as np
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
-from ....Functions_new.SciDataTool.dqh_transformation import dqh2n_DataTime
-from ....Functions_new.SciDataTool.dqh_transformation import dqh2n_DataFreq
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -120,8 +118,7 @@ def get_electrical(
         if is_dqh:
             obj = A_dqh
         elif is_freq:
-            obj = dqh2n_DataFreq(
-                A_dqh,
+            obj = A_dqh.dqh2n(
                 n=qs,
                 current_dir=self.current_dir,
                 felec=self.OP.felec,
@@ -129,7 +126,7 @@ def get_electrical(
                 phase_dir=self.phase_dir,
             )
         else:
-            obj = dqh2n_DataTime(A_dqh, n=qs, is_n_rms=False, phase_dir=self.phase_dir)
+            obj = A_dqh.dqh2n(n=qs, is_n_rms=False, phase_dir=self.phase_dir)
             if is_aper:
                 obj.axes[0].symmetries["antiperiod"] = obj.axes[0].symmetries.pop(
                     "period"

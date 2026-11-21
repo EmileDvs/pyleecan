@@ -6,10 +6,6 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_pydantic.SciDataTool.dqh_transformation import (
-    dqh2n_DataFreq,
-    dqh2n_DataTime,
-)
 from .._legacy_model import LegacyModel
 from ..electrical.eec import EEC
 from ..import_data.import_gen_pwm import ImportGenPWM
@@ -245,8 +241,7 @@ class OutElec(LegacyModel):
             if is_dqh:
                 obj = A_dqh
             elif is_freq:
-                obj = dqh2n_DataFreq(
-                    A_dqh,
+                obj = A_dqh.dqh2n(
                     n=qs,
                     current_dir=self.current_dir,
                     felec=self.OP.felec,
@@ -254,9 +249,7 @@ class OutElec(LegacyModel):
                     phase_dir=self.phase_dir,
                 )
             else:
-                obj = dqh2n_DataTime(
-                    A_dqh, n=qs, is_n_rms=False, phase_dir=self.phase_dir
-                )
+                obj = A_dqh.dqh2n(n=qs, is_n_rms=False, phase_dir=self.phase_dir)
                 if is_aper:
                     obj.axes[0].symmetries["antiperiod"] = obj.axes[0].symmetries.pop(
                         "period"

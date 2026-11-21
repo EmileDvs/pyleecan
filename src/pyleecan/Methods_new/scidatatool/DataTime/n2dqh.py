@@ -31,7 +31,7 @@ def n2dqh(self, is_dqh_rms: bool = True, phase_dir: int | None = None) -> DataTi
 
     """
 
-    from ....Functions_new.SciDataTool.dqh_transformation import get_phase_dir_DataTime, n2dqh
+    from ....Functions_new.SciDataTool.dqh_transformation import get_phase_dir_DataTime, n2dqh as n2dqh_fct
 
     if phase_dir is None:
         # Check if input data object is compliant with dqh transformation
@@ -50,7 +50,7 @@ def n2dqh(self, is_dqh_rms: bool = True, phase_dir: int | None = None) -> DataTi
     ]
 
     # Convert values to dqh frame
-    data_dqh_val = n2dqh(data_n_val, angle_elec, is_dqh_rms, phase_dir)
+    data_dqh_val = n2dqh_fct(data_n_val, angle_elec, is_dqh_rms, phase_dir)
 
     # Get time axis on one period
     per_t, is_aper_t = self.axes[0].get_periodicity()

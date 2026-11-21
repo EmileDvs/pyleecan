@@ -8,7 +8,6 @@ import numpy as np
 from pydantic import Field
 from pylab import False_
 
-from ...Functions_pydantic.SciDataTool.dqh_transformation import dqh2n_DataFreq
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_linspace import DataLinspace
@@ -665,8 +664,7 @@ class EEC_PMSM(EEC):
         # Is_PWM_dqh.plot_2D_Data("freqs=[0,20000]", "phase[]")
 
         # Convert I_dqh spectrum back to stator frame
-        Is_PWM_n = dqh2n_DataFreq(
-            Is_PWM_dqh,
+        Is_PWM_n = Is_PWM_dqh.dqh2n(
             n=qs,
             phase_dir=output.elec.phase_dir,
             current_dir=output.elec.current_dir,

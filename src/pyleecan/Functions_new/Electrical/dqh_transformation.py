@@ -1,4 +1,4 @@
-"""Deprecated alias of DataTime.n2dqh (moved to the class, removed in Phase 2)."""
+"""Deprecated alias of DataTime.n2dqh, DataTime.dqh2n (moved to the class, removed in Phase 2)."""
 
 from warnings import warn
 
@@ -13,6 +13,18 @@ def n2dqh_DataTime(obj, *args, **kwargs):
         stacklevel=2,
     )
     return DataTime.n2dqh(obj, *args, **kwargs)
+
+
+def dqh2n_DataTime(obj, *args, **kwargs):
+    """Deprecated: use DataTime.dqh2n"""
+    from ...Classes_new.scidatatool.data_time import DataTime
+
+    warn(
+        "dqh2n_DataTime is deprecated, use DataTime.dqh2n (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return DataTime.dqh2n(obj, *args, **kwargs)
 
 
 def n2dqh(*args, **kwargs):
@@ -45,18 +57,6 @@ def abc2dqh(*args, **kwargs):
 
     warn(
         "abc2dqh is deprecated, use SciDataTool.dqh_transformation.abc2dqh (removed in Phase 2)",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return function(*args, **kwargs)
-
-
-def dqh2n_DataTime(*args, **kwargs):
-    """Deprecated: use SciDataTool.dqh_transformation.dqh2n_DataTime"""
-    from ..SciDataTool.dqh_transformation import dqh2n_DataTime as function
-
-    warn(
-        "dqh2n_DataTime is deprecated, use SciDataTool.dqh_transformation.dqh2n_DataTime (removed in Phase 2)",
         DeprecationWarning,
         stacklevel=2,
     )

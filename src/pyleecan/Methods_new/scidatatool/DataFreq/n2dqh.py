@@ -34,7 +34,7 @@ def n2dqh(self, current_dir: int, felec: float, is_dqh_rms: bool = True, phase_d
 
     """
 
-    from ....Functions_new.SciDataTool.dqh_transformation import get_phase_dir_DataFreq, n2dqh_freq as n2dqh
+    from ....Functions_new.SciDataTool.dqh_transformation import get_phase_dir_DataFreq, n2dqh_freq as n2dqh_fct
 
     if phase_dir is None:
         # Check if input data object is compliant with dqh transformation
@@ -45,7 +45,7 @@ def n2dqh(self, current_dir: int, felec: float, is_dqh_rms: bool = True, phase_d
     result_n = self.get_along("freqs", "phase", is_squeeze=False)
 
     # Convert values to dqh frame
-    Z_dqh, freqs_dqh = n2dqh(
+    Z_dqh, freqs_dqh = n2dqh_fct(
         Z_n=result_n[self.symbol],
         freqs=result_n["freqs"],
         phase_dir=phase_dir,

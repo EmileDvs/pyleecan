@@ -280,8 +280,12 @@ Proposed targets are a starting point; the decision is the maintainer's.
 
 ### dqh transformations (2026-11-21)
 
-- `n2dqh_DataTime` -> `DataTime.n2dqh`, `n2dqh_DataFreq` -> `DataFreq.n2dqh`
-  (`MovedFunction.function`: legacy name of a renamed method);
+- `n2dqh_DataTime` -> `DataTime.n2dqh`, `n2dqh_DataFreq` -> `DataFreq.n2dqh`,
+  `dqh2n_DataTime` -> `DataTime.dqh2n`, `dqh2n_DataFreq` -> `DataFreq.dqh2n`
+  (`MovedFunction.function`: legacy name of a renamed method); in a
+  method, a function of the merged module with the name of the method is
+  imported as `<name>_fct` (`n2dqh as n2dqh_fct`, `n2dqh_freq as
+  n2dqh_fct`);
   `DataDual.n2dqh` (new method, `NEW_METHODS`) builds the `DataTime` of
   its time data (`axes_dt`, `values_dt`) and calls `DataTime.n2dqh`: the
   legacy checks switched the axes and values of the object to the time

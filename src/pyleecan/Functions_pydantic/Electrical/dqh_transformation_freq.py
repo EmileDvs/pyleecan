@@ -1,4 +1,4 @@
-"""Deprecated alias of DataFreq.n2dqh (moved to the class, removed in Phase 2)."""
+"""Deprecated alias of DataFreq.n2dqh, DataFreq.dqh2n (moved to the class, removed in Phase 2)."""
 
 from warnings import warn
 
@@ -13,6 +13,18 @@ def n2dqh_DataFreq(obj, *args, **kwargs):
         stacklevel=2,
     )
     return DataFreq.n2dqh(obj, *args, **kwargs)
+
+
+def dqh2n_DataFreq(obj, *args, **kwargs):
+    """Deprecated: use DataFreq.dqh2n"""
+    from ...Classes_pydantic.scidatatool.data_freq import DataFreq
+
+    warn(
+        "dqh2n_DataFreq is deprecated, use DataFreq.dqh2n (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return DataFreq.dqh2n(obj, *args, **kwargs)
 
 
 def n2dqh(*args, **kwargs):
@@ -33,18 +45,6 @@ def abc2dqh(*args, **kwargs):
 
     warn(
         "abc2dqh is deprecated, use SciDataTool.dqh_transformation.abc2dqh_freq (removed in Phase 2)",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return function(*args, **kwargs)
-
-
-def dqh2n_DataFreq(*args, **kwargs):
-    """Deprecated: use SciDataTool.dqh_transformation.dqh2n_DataFreq"""
-    from ..SciDataTool.dqh_transformation import dqh2n_DataFreq as function
-
-    warn(
-        "dqh2n_DataFreq is deprecated, use SciDataTool.dqh_transformation.dqh2n_DataFreq (removed in Phase 2)",
         DeprecationWarning,
         stacklevel=2,
     )

@@ -383,6 +383,26 @@ def test_merged_method_and_aliases(merged):
     assert "from ...Functions.SciDataTool.dqh import get_dir_freq as function" in freq_aliases
 
 
+def test_merged_function_with_the_method_name(merged):
+    """A merged function named as the method is imported as <name>_fct."""
+    source = (
+        "def n2dqh_DataTime(data):\n    return n2dqh(data.values)\n\n\n"
+        "def n2dqh(values):\n    return values\n"
+    )
+    target = MovedFunction("DataTime", "n2dqh", function="n2dqh_DataTime")
+    method = merged.method_source(
+        source, target, "pyleecan.Functions.Electrical", "pyleecan.Methods_new.scidatatool.DataTime",
+        siblings=("..SciDataTool.dqh", ["n2dqh"], {}),
+    )
+    assert "    from ....Functions.SciDataTool.dqh import n2dqh as n2dqh_fct\n" in method
+    assert "return n2dqh_fct(self.values)" in method
+    renamed = merged.method_source(
+        source, target, "pyleecan.Functions.Electrical", "pyleecan.Methods_new.scidatatool.DataFreq",
+        siblings=("..SciDataTool.dqh", ["n2dqh"], {"n2dqh": "n2dqh_freq"}),
+    )
+    assert "import n2dqh_freq as n2dqh_fct\n" in renamed
+
+
 def test_merged_module_callers(merged):
     """Callers import from the merged module (renamed with as) or call the method."""
     caller = (
