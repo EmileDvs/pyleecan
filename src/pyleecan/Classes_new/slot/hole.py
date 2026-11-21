@@ -9,7 +9,7 @@ from matplotlib.patches import Patch
 
 from ...classes_common.errors import MagnetIndexError, ParentMissingError
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import (
     BOUNDARY_PROP_LAB,
     HOLEM_LAB,

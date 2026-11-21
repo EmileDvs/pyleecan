@@ -8,6 +8,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...definitions import config_dict
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -55,6 +56,7 @@ class SlotM10(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
+    KEY_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"].get("KEY_COLOR", "y")
 
     W0: float = Field(default=0, ge=0, json_schema_extra={"unit": "m"})
     """Slot isthmus width."""

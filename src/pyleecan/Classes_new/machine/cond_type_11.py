@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, ClassVar
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, Rectangle
 
-from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -17,6 +16,7 @@ from ...Functions_new.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from ...Functions_new.utils.init_fig import init_fig
 from ..geometry.segment import Segment
 from .conductor import Conductor
 

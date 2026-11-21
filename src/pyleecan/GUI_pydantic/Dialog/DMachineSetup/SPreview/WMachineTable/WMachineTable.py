@@ -11,7 +11,7 @@ from ......Classes_pydantic.output.output import Output
 from ......Classes_pydantic.simulation.simu_1 import Simu1
 from ......definitions import config_dict
 from ......GUI_pydantic.Tools.log_error import log_error
-from ......Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ......GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from ......GUI_pydantic.Dialog.DMachineSetup.SPreview.WMachineTable.Ui_WMachineTable import Ui_WMachineTable
 from ......loggers import GUI_LOG_NAME
 from ......Methods_new.magnetics.MagElmer import MagElmer_BP_dict

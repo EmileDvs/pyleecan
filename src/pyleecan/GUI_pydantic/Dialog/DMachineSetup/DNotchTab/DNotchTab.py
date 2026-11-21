@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QDialog, QMessageBox
 from .....Classes_pydantic.machine.notch_even_dist import NotchEvenDist
 from .....Classes_pydantic.slot.slot_m_10 import SlotM10
 from .....classes_common.errors import NotchError
-from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic.Dialog.DMachineSetup.DNotchTab.Ui_DNotchTab import Ui_DNotchTab
 from .....GUI_pydantic.Dialog.DMachineSetup.DNotchTab.WNotch.WNotch import WNotch
 from .....loggers import GUI_LOG_NAME

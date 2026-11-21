@@ -1,7 +1,7 @@
 import numpy as np
 
 from ....definitions import config_dict
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from . import _get_symbol_data_
 from typing import TYPE_CHECKING

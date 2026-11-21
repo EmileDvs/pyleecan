@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QMessageBox, QSizePolicy, QWidget
 
 from .....Classes_new.slot.hole_m_50 import HoleM50
 from .....Classes_new.material.material import Material
-from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new.Dialog.DMachineSetup.SMHoleMag.Ui_SMHoleMag import Ui_SMHoleMag
 from .....GUI_new.Dialog.DMachineSetup.SMHoleMag.WHoleMag.WHoleMag import WHoleMag
 from .....loggers import GUI_LOG_NAME

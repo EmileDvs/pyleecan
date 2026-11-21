@@ -110,7 +110,89 @@ def _log_error_fixes(logger):
     )
 
 
+_LEGEND_COLORS_AT_IMPORT = '''if "WEDGE_COLOR" not in config_dict["PLOT"]["COLOR_DICT"]:
+    config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"] = "y"
+WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
+
+if "KEY_COLOR" not in config_dict["PLOT"]["COLOR_DICT"]:
+    config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"] = "y"
+KEY_COLOR = config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"]
+
+VENT_COLOR = config_dict["PLOT"]["COLOR_DICT"]["VENT_COLOR"]
+ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
+STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
+MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
+PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
+BAR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["BAR_COLOR"]
+
+PLUS_HATCH = "++"
+MINUS_HATCH = ".."
+'''
+
+_LEGEND_COLORS_AT_CALL = '''        Legend to display for the surface
+    """
+    # The colors of the configuration when called (the defaults of the
+    # wedges and keys added once)
+    color_dict = config_dict["PLOT"]["COLOR_DICT"]
+    color_dict.setdefault("WEDGE_COLOR", "y")
+    color_dict.setdefault("KEY_COLOR", "y")
+    WEDGE_COLOR = color_dict["WEDGE_COLOR"]
+    KEY_COLOR = color_dict["KEY_COLOR"]
+    VENT_COLOR = color_dict["VENT_COLOR"]
+    ROTOR_COLOR = color_dict["ROTOR_COLOR"]
+    STATOR_COLOR = color_dict["STATOR_COLOR"]
+    MAGNET_COLOR = color_dict["MAGNET_COLOR"]
+    BAR_COLOR = color_dict["BAR_COLOR"]
+'''
+
 LEGACY_FIXES = {
+    # Step 8 group 9 (decision 2026-11-21): Machine.get_color_legend_from_surface
+    # reads the plot colors when called, not when the module is imported (the
+    # unused PHASE_COLORS and hatches dropped)
+    ("Machine", "get_color_legend_from_surface.py"): (
+        LegacyFix(old=_LEGEND_COLORS_AT_IMPORT, new=""),
+        LegacyFix(
+            old='''        Legend to display for the surface
+    """
+''',
+            new=_LEGEND_COLORS_AT_CALL,
+        ),
+    ),
+    # The defaults of the wedge and key colors were set in the configuration
+    # by the import of get_color_legend_from_surface (now read when called):
+    # the other plots read them with the same default
+    ("Slot", "plot_active.py"): (
+        LegacyFix(
+            old='config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]',
+            new='config_dict["PLOT"]["COLOR_DICT"].get("WEDGE_COLOR", "y")',
+        ),
+    ),
+    ("SlotM10", "plot_schematics.py"): (
+        LegacyFix(
+            old='config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"]',
+            new='config_dict["PLOT"]["COLOR_DICT"].get("KEY_COLOR", "y")',
+        ),
+    ),
+    ("SlotM11", "plot_schematics.py"): (
+        LegacyFix(
+            old='config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"]',
+            new='config_dict["PLOT"]["COLOR_DICT"].get("KEY_COLOR", "y")',
+        ),
+    ),
+    # set_plot_gui_icon moved to the GUI (Step 8 group 9): imported when the
+    # plot is shown, so that the class module does not import the GUI (Qt)
+    ("LamSlotWind", "plot_mmf_unit.py"): (
+        LegacyFix(
+            old="from ....Functions.Plot.set_plot_gui_icon import set_plot_gui_icon\n",
+            new="",
+        ),
+        LegacyFix(
+            old="    set_plot_gui_icon()\n",
+            new="    # Local import (circular: the GUI imports the classes)\n"
+            "    from ....Functions.Plot.set_plot_gui_icon import set_plot_gui_icon\n\n"
+            "    set_plot_gui_icon()\n",
+        ),
+    ),
     # log_error moved to the GUI (Step 8 group 13): the core methods calling it
     # without popup log the error instead of importing the GUI
     ("MeshMat", "save_vtk.py"): _log_error_fixes("self.get_logger()"),

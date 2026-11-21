@@ -14,7 +14,7 @@ from .....Classes_pydantic.import_data.import_matrix_val import ImportMatrixVal
 from .....Classes_pydantic.import_data.import_matrix_xls import ImportMatrixXls
 from .....Classes_pydantic.material.material import Material
 from .....Functions_pydantic.utils.path_tools import rel_file_path
-from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic import gui_option
 from .....GUI_pydantic.Dialog.DMatLib.DMatSetup.Gen_DMatSetup import Gen_DMatSetup
 from .....loggers import GUI_LOG_NAME

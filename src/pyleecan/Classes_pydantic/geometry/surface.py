@@ -5,7 +5,7 @@ from math import ceil
 from typing import TYPE_CHECKING, ClassVar
 
 from ...definitions import config_dict
-from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,

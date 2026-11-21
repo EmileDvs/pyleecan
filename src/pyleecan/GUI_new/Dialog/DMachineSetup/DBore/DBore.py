@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QDialog, QMessageBox
 
 from .....Classes_new.machine.bore_flower import BoreFlower
 from .....GUI_new.Tools.log_error import log_error
-from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new.Dialog.DMachineSetup.DBore.PBoreFlower.PBoreFlower import PBoreFlower
 from .....GUI_new.Dialog.DMachineSetup.DBore.PBoreSinePole.PBoreSinePole import PBoreSinePole
 from .....GUI_new.Dialog.DMachineSetup.DBore.Ui_DBore import Ui_DBore

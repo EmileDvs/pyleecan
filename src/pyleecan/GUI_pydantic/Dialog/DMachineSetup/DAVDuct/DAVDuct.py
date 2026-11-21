@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QDialog, QMessageBox
 
 from .....Classes_pydantic.machine.lamination import Lamination
 from .....Classes_pydantic.slot.ventilation_circ import VentilationCirc
-from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic.Dialog.DMachineSetup.DAVDuct.Ui_DAVDuct import Ui_DAVDuct
 from .....GUI_pydantic.Dialog.DMachineSetup.DAVDuct.WVent.WVent import WVent
 

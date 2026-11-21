@@ -1,5 +1,5 @@
 from matplotlib.patches import Circle, Patch
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 import numpy as np
 
 from ....definitions import config_dict

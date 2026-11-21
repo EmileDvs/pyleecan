@@ -267,7 +267,7 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 6 | Structural | `conversions` (M4: MeshSolution, Mode, SolutionVector; pol2cart, cart2pol...) | utility (math), merge with Geometry utilities | done (2026-11-21): deprecated, its functions in `SciDataTool.conversions` (below) |
 | 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | done (2026-11-21): `inter_line_circle`, `inter_line_line` (with `find_line_eq`), `inter_circle_circle`, `circle_from_3_points`, `comp_flower_arc`, `cut_lines_between_angle`, `comp_surface_num` merged in `utils/geometry.py` (`MERGED_MODULES`, the legacy paths deprecated aliases, the callers redirected); static `Lamination.merge_notch_list`, static `Hole.transform_hole_surf` (the alias of `merge_notch_list` imports the shared `NotchError`) |
 | 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | done (2026-11-21): dqh (methods `DataTime.n2dqh`, `DataFreq.n2dqh`, `DataDual.n2dqh`, the other functions merged in `SciDataTool.dqh_transformation`, checks dropped); `comp_loss_joule` deprecated (not used); `comp_MTPA` method of `LUTdq` |
-| 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | in progress (2026-11-21): pyvista functions gathered in `pv_plotter_pyleecan` (static methods first, done); `animate_as_gif` to `Data` (static); `get_color_legend_from_surface` to `Machine` (open, below) |
+| 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | done (2026-11-21): pyvista functions in `pv_plotter_pyleecan` (static methods); `animate_as_gif` to `Data`; `get_color_legend_from_surface` static method of `Machine` (the colors read from the configuration when called); `init_fig` to `utils`; `set_plot_gui_icon` to the GUI (`Tools`, imported by `LamSlotWind.plot_mmf_unit` when it plots) |
 | 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | done (2026-11-21): object dedicated to the FEMM interface, `femm_pyleecan`, in a new sub-package `femm`, all the functions as its methods; the current handler (`_FEMMHandler`) becomes `femm_pyleecan.handler` |
 | 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | done (2026-11-21): `gmsh_pyleecan` gathers the gmsh functions as static methods (as close as possible to legacy, to be improved later) |
 | 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | decided (2026-11-21): `retrocompatibility` to `classes_common` for now; Phase 2: one class to load (retrocompatibility included) and one class to save the pyleecan objects; closed as it is (decided 2026-11-21) |
@@ -437,7 +437,14 @@ Proposed targets are a starting point; the decision is the maintainer's.
   is imported by `LUTdq.interp_Ploss_dqh` and `LossModelWinding.comp_loss`
   but never called: deprecated instead (the unused imports stay in the
   method modules, importing does not warn).
-- [ ] `Plot.get_color_legend_from_surface` to `Machine` (decided): the
+- [x] `Plot.get_color_legend_from_surface` to `Machine` (done
+      2026-11-21: static method, local import in the lamination plots;
+      the colors read when called, `legacy_fixes`; `Slot.plot_active`
+      and the `SlotM10` / `SlotM11` schematics read `WEDGE_COLOR` /
+      `KEY_COLOR` with the `"y"` default the import used to set). Left:
+      the `Slot.KEY_COLOR` class constant (CSV) reads the configuration
+      without default (as legacy: `KeyError` on a configuration without
+      it). The legacy note: the
       module sets default colors in `config_dict` at import
       (`WEDGE_COLOR`, `KEY_COLOR`, read by `Slot.plot_active` and the
       `SlotM10` / `SlotM11` schematics) and the plots import its
@@ -1103,6 +1110,9 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 | `Converter.Utils.EquivalentError` | none (unused error) | Step 8 group 1 |
 | `labels`, `path_tools`, `init_environment`, `make_ndarray_equal`, `get_path_binary` (modules) | the same modules in `utils` | Step 8 group 13 |
 | `GUI.log_error` (module) | `Tools.log_error` of the GUI package | Step 8 group 13 |
+| `init_fig` (module) | `utils.init_fig` | Step 8 group 9 |
+| `Plot.set_plot_gui_icon` (module) | `Tools.set_plot_gui_icon` of the GUI package | Step 8 group 9 |
+| `Plot.get_color_legend_from_surface` | `Machine.get_color_legend_from_surface` | Step 8 group 9 |
 
 - [ ] Decide which other legacy behaviours removed with the legacy layer need
       a deprecation period (`-1` default, `None` everywhere, `as_dict` /

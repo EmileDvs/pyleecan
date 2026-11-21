@@ -6,7 +6,7 @@ from pyleecan.definitions import DATA_DIR
 from os.path import join, isdir, isfile
 from os import makedirs, remove
 import matplotlib.pyplot as plt
-from backend_functions.init_fig import init_fig
+from backend_functions.utils.init_fig import init_fig
 
 
 SCHEMATICS_PATH = join(save_path, "Schematics")

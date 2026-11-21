@@ -7,7 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import BHShapeError
-from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.utils.init_fig import init_fig
 from .._legacy_model import LegacyModel
 from ..import_data.import_matrix import ImportMatrix
 from .model_bh import ModelBH as _field_type_ModelBH

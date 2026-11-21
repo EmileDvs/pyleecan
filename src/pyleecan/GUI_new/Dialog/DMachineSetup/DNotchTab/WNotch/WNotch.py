@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 
 from ......Classes_new.machine.lam_slot import LamSlot
-from ......Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ......GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from ......GUI_new.Dialog.DMachineSetup.DNotchTab.WNotch.Ui_WNotch import Ui_WNotch
 from ......GUI_new.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
 from ......GUI_new.Dialog.DMachineSetup.SMSlot.PMSlot11.PMSlot11 import PMSlot11

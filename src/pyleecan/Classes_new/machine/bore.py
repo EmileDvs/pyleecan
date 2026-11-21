@@ -8,8 +8,8 @@ import numpy as np
 
 from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
 from ...Functions_new.utils.geometry import cut_lines_between_angles
+from ...Functions_new.utils.init_fig import init_fig
 from .._legacy_class import LegacyClass
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

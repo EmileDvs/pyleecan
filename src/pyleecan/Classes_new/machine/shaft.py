@@ -8,7 +8,7 @@ import numpy as np
 from matplotlib.patches import Patch
 
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import (
     BOUNDARY_PROP_LAB,
     NO_LAM_LAB,

@@ -18,13 +18,13 @@ from ...Classes_pydantic.machine.lam_slot import LamSlot
 from ...Classes_pydantic.slot.slot_ud import SlotUD
 from ...Classes_pydantic.geometry.segment import Segment
 from ...definitions import config_dict
-from ...Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ...GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from ...GUI_pydantic.Dxf.dxf_to_pyleecan import dxf_to_pyleecan_list, convert_dxf_with_FEMM
 from ...GUI_pydantic.Resources import pixmap_dict
 from ...GUI_pydantic.Tools.MPLCanvas import MPLCanvas
 from ...loggers import GUI_LOG_NAME
 from .Ui_DXF_Slot import Ui_DXF_Slot
-from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.utils.init_fig import init_fig
 
 # Column index for table
 TYPE_COL = 0

@@ -1,6 +1,6 @@
 from matplotlib.patches import Patch, Wedge
 from ....Classes_new.machine.lam_slot_wind import LamSlotWind
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 from ....definitions import config_dict
 from typing import TYPE_CHECKING
 

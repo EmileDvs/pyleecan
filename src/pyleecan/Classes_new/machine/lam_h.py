@@ -8,12 +8,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
+from ...Functions_new.utils.init_fig import init_fig
 from ..slot.hole import Hole
 from .lamination import Lamination
+from .machine import Machine
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
@@ -339,6 +337,7 @@ class LamH(Lamination):
         """
 
         # Lamination bore
+
         if self.is_stator:
             lam_name = "Stator"
         else:
@@ -351,7 +350,7 @@ class LamH(Lamination):
         patches = []
 
         for surf in surf_list:
-            color, legend = get_color_legend_from_surface(surf, is_lam_only)
+            color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
             if color is not None:
                 patches.extend(

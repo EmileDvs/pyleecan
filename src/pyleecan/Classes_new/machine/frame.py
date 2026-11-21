@@ -8,7 +8,7 @@ import numpy as np
 from matplotlib.patches import Patch
 
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.init_fig import init_fig
 from .._legacy_class import LegacyClass
 from ..geometry.arc_1 import Arc1
 from ..geometry.circle import Circle

@@ -5812,6 +5812,14 @@ def _finish_class_module(
         package,
         ("Functions_new", FUNCTION_PACKAGES[backend]),
     )
+    if f"{soft_name}.GUI_new" in source:  # The GUI of the backend (Step 8)
+        from .generate_gui_new import GUI_PACKAGES, package_redirect, redirect_imports
+
+        source = redirect_imports(
+            source,
+            f"{soft_name}.{package}.{subpackage}",
+            package_redirect(GUI_PACKAGES["dataclass"], GUI_PACKAGES[backend], soft_name),
+        )
     source = _apply_import_style(
         source, soft_name, import_style, f"{package}.{subpackage}"
     )

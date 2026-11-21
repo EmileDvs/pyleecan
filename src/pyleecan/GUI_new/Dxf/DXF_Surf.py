@@ -31,7 +31,7 @@ from ...GUI_new import gui_option
 from ...loggers import GUI_LOG_NAME
 from .Ui_DXF_Surf import Ui_DXF_Surf
 from ...Functions_new.utils.labels import HOLEM_LAB, HOLEV_LAB
-from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.init_fig import init_fig
 
 # Column index for table
 

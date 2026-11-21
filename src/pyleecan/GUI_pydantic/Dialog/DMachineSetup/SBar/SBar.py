@@ -2,7 +2,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QListView, QWidget
 
 from .....GUI_pydantic.Tools.log_error import log_error
-from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic import gui_option
 from .....GUI_pydantic.Dialog.DMachineSetup.SBar.Gen_SBar import Gen_SBar
 from .....GUI_pydantic.Dialog.DMachineSetup.SBar.PCondType21.PCondType21 import PCondType21

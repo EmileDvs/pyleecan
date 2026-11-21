@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import update_RTS_index
 from ..slot.hole import Hole
 from .lam_slot_wind import LamSlotWind

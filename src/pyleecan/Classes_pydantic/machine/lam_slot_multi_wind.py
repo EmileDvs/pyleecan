@@ -9,15 +9,13 @@ from matplotlib.patches import Patch
 from pydantic import Field
 
 from ...definitions import config_dict
-from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import BAR_LAB, WIND_LAB, decode_label
 from ...Functions_pydantic.Winding.gen_phase_list import gen_name
 from .conductor import Conductor
 from .lam_slot import LamSlot
 from .lam_slot_multi import LamSlotMulti
+from .machine import Machine
 from .winding import Winding
 from .winding_sc import WindingSC
 
@@ -446,7 +444,7 @@ class LamSlotMultiWind(LamSlotMulti):
                         )
                     )
             else:
-                color, legend = get_color_legend_from_surface(surf, is_lam_only)
+                color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
                 if color is not None:
                     patches.extend(

@@ -14,8 +14,8 @@ from pydantic import Field
 from ...classes_common.errors import PlotError, XOutputError
 from ...classes_common.logger_context import get_logger
 from ...definitions import config_dict
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ..optimization.opti_objective import OptiObjective
 from ..simulation.data_keeper import DataKeeper
 from ..simulation.param_explorer import ParamExplorer

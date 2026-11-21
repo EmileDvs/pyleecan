@@ -14,8 +14,8 @@ from ...Classes_new._swat_em import datamodel
 from ...definitions import config_dict
 from ...Functions_new._swat_em import plots
 from ...Functions_new._swat_em.config import config
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.utils.geometry import inter_line_line
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import decode_label
 from ...Functions_pydantic.Winding.gen_phase_list import gen_name
 from .._legacy_model import LegacyModel

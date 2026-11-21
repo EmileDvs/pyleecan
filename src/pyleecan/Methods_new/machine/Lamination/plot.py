@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
-from ....Functions_new.init_fig import init_fig
-from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from ....Functions_new.utils.init_fig import init_fig
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -61,6 +60,7 @@ def plot(
     ax : Matplotlib.axes.Axes object
         Axis containing the plot
     """
+    from ....Classes_new.machine.machine import Machine
     (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
     surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
@@ -68,7 +68,7 @@ def plot(
 
     # Color Selection for Surfaces
     for surf in surf_list:
-        color, legend = get_color_legend_from_surface(surf, is_lam_only)
+        color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
         if color is not None:
             patches.extend(

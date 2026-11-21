@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, Rectangle
 from pydantic import Field
 
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -17,6 +16,7 @@ from ...Functions_pydantic.Plot import (
     SC_FONT_SIZE,
     TEXT_BOX,
 )
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ..geometry.segment import Segment
 from .conductor import Conductor
 

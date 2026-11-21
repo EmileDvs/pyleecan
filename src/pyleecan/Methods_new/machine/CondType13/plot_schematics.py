@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.machine.lam_slot import LamSlot
 from ....Classes_new.geometry.segment import Segment

@@ -7,13 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
-from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import MAG_LAB, decode_label
 from .._pyleecan_model import NDArray
 from .lam_slot import LamSlot
+from .machine import Machine
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
@@ -202,7 +200,7 @@ class LamSlotM(LamSlot):
         patches = []
         for surf in surf_list:
             label_dict = decode_label(surf.label)
-            color, legend = get_color_legend_from_surface(surf, is_lam_only)
+            color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
             if color is not None:
                 patches.extend(

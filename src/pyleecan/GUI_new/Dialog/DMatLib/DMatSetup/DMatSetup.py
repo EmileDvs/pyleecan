@@ -14,7 +14,7 @@ from .....Classes_new.import_data.import_matrix_val import ImportMatrixVal
 from .....Classes_new.import_data.import_matrix_xls import ImportMatrixXls
 from .....Classes_new.material.material import Material
 from .....Functions_new.utils.path_tools import rel_file_path
-from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new import gui_option
 from .....GUI_new.Dialog.DMatLib.DMatSetup.Gen_DMatSetup import Gen_DMatSetup
 from .....loggers import GUI_LOG_NAME

@@ -10,8 +10,8 @@ from pydantic import Field
 from ...classes_common.errors import ParentMissingError
 from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.Plot import dict_2D
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
@@ -63,7 +63,7 @@ class Slot(LegacyModel):
     ROTOR_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
     STATOR_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     PHASE_COLORS: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
-    WEDGE_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
+    WEDGE_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"].get("WEDGE_COLOR", "y")
 
     Zs: int = Field(default=36, ge=0)
     """slot number"""

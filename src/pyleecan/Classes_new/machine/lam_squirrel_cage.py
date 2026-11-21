@@ -10,7 +10,6 @@ from matplotlib.patches import Patch, Rectangle, Wedge
 
 from ...classes_common.errors import SCC_NotARotor, SCC_WrongCond
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -20,6 +19,7 @@ from ...Functions_new.Plot import (
     SC_FONT_SIZE,
     plot_quote,
 )
+from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import BAR_LAB, WIND_LAB
 from ..geometry.segment import Segment
 from ..material.material import Material

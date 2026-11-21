@@ -18,13 +18,13 @@ from ...Classes_new.machine.lam_slot import LamSlot
 from ...Classes_new.slot.slot_ud import SlotUD
 from ...Classes_new.geometry.segment import Segment
 from ...definitions import config_dict
-from ...Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ...GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from ...GUI_new.Dxf.dxf_to_pyleecan import dxf_to_pyleecan_list, convert_dxf_with_FEMM
 from ...GUI_new.Resources import pixmap_dict
 from ...GUI_new.Tools.MPLCanvas import MPLCanvas
 from ...loggers import GUI_LOG_NAME
 from .Ui_DXF_Slot import Ui_DXF_Slot
-from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.init_fig import init_fig
 
 # Column index for table
 TYPE_COL = 0

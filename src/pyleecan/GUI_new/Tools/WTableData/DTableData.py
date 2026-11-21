@@ -7,7 +7,7 @@ from os.path import isfile
 from PySide6.QtWidgets import QMessageBox
 from ..WImport.WImportExcel.WImportExcel import WImportExcel
 import matplotlib.pyplot as plt
-from ....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from ....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from PySide6.QtCore import Signal
 
 

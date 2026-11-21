@@ -19,10 +19,7 @@ from ...classes_common.errors import (
     NotImplementedYetError,
 )
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
-from ...Functions_new.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
+from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
@@ -49,6 +46,7 @@ from ..material.material import Material
 from ..output.out_geo_lam import OutGeoLam
 from ..slot.hole import Hole
 from .bore import Bore
+from .machine import Machine
 from .notch import Notch
 from .notch_even_dist import NotchEvenDist
 from .skew import Skew
@@ -1587,6 +1585,7 @@ class Lamination(LegacyClass):
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
         """
+
         (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
         surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
@@ -1594,7 +1593,7 @@ class Lamination(LegacyClass):
 
         # Color Selection for Surfaces
         for surf in surf_list:
-            color, legend = get_color_legend_from_surface(surf, is_lam_only)
+            color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
             if color is not None:
                 patches.extend(

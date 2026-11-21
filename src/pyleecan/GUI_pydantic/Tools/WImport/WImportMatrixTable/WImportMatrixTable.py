@@ -5,7 +5,7 @@ from pandas import DataFrame
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget
 
-from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....Classes_pydantic.import_data.import_matrix_val import ImportMatrixVal
 from .....Classes_pydantic.import_data.import_matrix_xls import ImportMatrixXls
 from .....definitions import USER_DIR

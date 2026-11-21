@@ -10,7 +10,7 @@ from os.path import join, isdir, isfile
 from os import makedirs, remove
 from numpy import exp, pi
 import matplotlib.pyplot as plt
-from backend_functions.init_fig import init_fig
+from backend_functions.utils.init_fig import init_fig
 from backend_functions.Plot import ARROW_WIDTH, SC_FONT_SIZE
 
 ARROW_COLOR = "r"

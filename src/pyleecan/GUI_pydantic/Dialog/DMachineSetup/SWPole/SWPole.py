@@ -9,7 +9,7 @@ from .....Classes_pydantic.slot.slot_w_60 import SlotW60
 from .....Classes_pydantic.slot.slot_w_61 import SlotW61
 from .....Classes_pydantic.slot.slot_w_62 import SlotW62
 from .....Classes_pydantic.slot.slot_w_63 import SlotW63
-from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic.Dialog.DMachineSetup.SWPole.PWSlot60.PWSlot60 import PWSlot60
 from .....GUI_pydantic.Dialog.DMachineSetup.SWPole.PWSlot61.PWSlot61 import PWSlot61
 from .....GUI_pydantic.Dialog.DMachineSetup.SWPole.PWSlot62.PWSlot62 import PWSlot62

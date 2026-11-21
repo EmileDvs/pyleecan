@@ -11,9 +11,9 @@ from ...classes_common.errors import (
     PointSegmentError,
     PointTranslateSegmentError,
 )
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.Plot import TEXT_BOX
 from ...Functions_pydantic.utils.geometry import inter_line_circle, inter_line_line
+from ...Functions_pydantic.utils.init_fig import init_fig
 from .._pyleecan_model import Complex
 from .line import Line
 

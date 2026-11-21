@@ -6,10 +6,9 @@ from ....Classes_new._swat_em import datamodel
 from ....Classes_new.machine.winding_sc import WindingSC
 from ....Classes_new.machine.winding_ud import WindingUD
 from ....definitions import config_dict
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 from ....Functions_new.utils.labels import BAR_LAB, WIND_LAB, decode_label
 from ....Functions_new.Plot import dict_2D
-from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from ....Functions_new.Winding.gen_phase_list import gen_name
 from typing import TYPE_CHECKING
 
@@ -94,6 +93,7 @@ def plot(
         Axis containing the plot
     """
     # Arrow style
+    from ....Classes_new.machine.machine import Machine
     from ....Classes_new.machine.winding import Winding
     head = None
     style = "Simple, tail_width=2, head_width=8, head_length=12"
@@ -158,7 +158,7 @@ def plot(
                     )
                 )
         else:
-            color, legend = get_color_legend_from_surface(surf, is_lam_only)
+            color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
             if color is not None:
                 patches.extend(

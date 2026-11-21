@@ -8,13 +8,11 @@ from matplotlib.patches import Patch
 from pydantic import Field
 
 from ...classes_common.errors import LSC_SlotTooLong
-from ...Functions_pydantic.init_fig import init_fig
-from ...Functions_pydantic.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import update_RTS_index
 from ..slot.slot import Slot
 from .lamination import Lamination
+from .machine import Machine
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
@@ -416,7 +414,7 @@ class LamSlot(Lamination):
         surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
         patches = []
         for surf in surf_list:
-            color, legend = get_color_legend_from_surface(surf, is_lam_only)
+            color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
             if color is not None:
                 patches.extend(

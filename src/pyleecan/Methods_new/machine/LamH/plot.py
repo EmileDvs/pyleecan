@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
-from ....Functions_new.init_fig import init_fig
-from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
+from ....Functions_new.utils.init_fig import init_fig
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -70,6 +69,7 @@ def plot(
     """
 
     # Lamination bore
+    from ....Classes_new.machine.machine import Machine
     if self.is_stator:
         lam_name = "Stator"
     else:
@@ -82,7 +82,7 @@ def plot(
     patches = list()
 
     for surf in surf_list:
-        color, legend = get_color_legend_from_surface(surf, is_lam_only)
+        color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
         if color is not None:
             patches.extend(

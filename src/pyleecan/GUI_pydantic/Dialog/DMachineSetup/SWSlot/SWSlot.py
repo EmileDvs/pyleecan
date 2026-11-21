@@ -13,7 +13,7 @@ from .....Classes_pydantic.slot.slot_ud_2 import SlotUD2
 from .....Classes_pydantic.slot.slot_w_11 import SlotW11
 from .....Classes_pydantic.slot.slot_w_11_2 import SlotW11_2
 from .....Functions_pydantic.Load.import_class import import_class
-from .....Functions_pydantic.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_pydantic.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_pydantic.Dialog.DMachineSetup.SWSlot.Gen_SWSlot import Gen_SWSlot
 from .....GUI_pydantic.Dialog.DMachineSetup.SWSlot.PWSlot10.PWSlot10 import PWSlot10
 from .....GUI_pydantic.Dialog.DMachineSetup.SWSlot.PWSlot11.PWSlot11 import PWSlot11

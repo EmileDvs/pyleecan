@@ -10,8 +10,8 @@ from matplotlib.patches import Patch, Polygon
 from ...classes_common.errors import ParentMissingError
 from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import dict_2D
+from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import (
     BORE_LAB,
     BOUNDARY_PROP_LAB,
@@ -64,7 +64,7 @@ class Slot(LegacyClass):
     ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
     STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
     PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
-    WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"]["WEDGE_COLOR"]
+    WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"].get("WEDGE_COLOR", "y")
 
     Zs: int = field(default=36, metadata={"min": 0})
     """slot number"""

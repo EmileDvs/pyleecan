@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 from ....definitions import config_dict
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 from ....Functions_new.utils.labels import decode_label, HOLEM_LAB, LAM_LAB
 from typing import TYPE_CHECKING
 

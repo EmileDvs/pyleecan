@@ -14,13 +14,9 @@ from matplotlib.pyplot import plot, subplots
 
 from ...classes_common.errors import LWC_SlotTooLong
 from ...definitions import config_dict
-from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import dict_2D
-from ...Functions_new.Plot.get_color_legend_from_surface import (
-    get_color_legend_from_surface,
-)
-from ...Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
 from ...Functions_new.SciDataTool.dqh_transformation import dqh2n
+from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import (
     BAR_LAB,
     BOUNDARY_PROP_LAB,
@@ -42,6 +38,7 @@ from ..slot.slot_w_22 import SlotW22
 from .conductor import Conductor
 from .lam_slot import LamSlot
 from .lamination import Lamination
+from .machine import Machine
 from .winding import Winding
 from .winding_sc import WindingSC
 from .winding_ud import WindingUD
@@ -1129,7 +1126,7 @@ class LamSlotWind(LamSlot):
                         )
                     )
             else:
-                color, legend = get_color_legend_from_surface(surf, is_lam_only)
+                color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
                 if color is not None:
                     patches.extend(
@@ -1468,6 +1465,9 @@ class LamSlotWind(LamSlot):
             save_path=save_path,
             **dict_2D_0,
         )
+        # Local import (circular: the GUI imports the classes)
+        from ...GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
+
         set_plot_gui_icon()
 
         return fig

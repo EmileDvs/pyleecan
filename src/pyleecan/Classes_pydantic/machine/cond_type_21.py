@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 from matplotlib.patches import Patch, Rectangle
 from pydantic import Field
 
-from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.utils.init_fig import init_fig
 from .conductor import Conductor
 
 if TYPE_CHECKING:

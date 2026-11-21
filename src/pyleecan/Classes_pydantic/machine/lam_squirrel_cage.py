@@ -10,7 +10,6 @@ from pydantic import Field
 
 from ...classes_common.errors import SCC_NotARotor, SCC_WrongCond
 from ...definitions import config_dict
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -20,6 +19,7 @@ from ...Functions_pydantic.Plot import (
     SC_FONT_SIZE,
     plot_quote,
 )
+from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import BAR_LAB, WIND_LAB
 from ..geometry.segment import Segment
 from ..material.material import Material

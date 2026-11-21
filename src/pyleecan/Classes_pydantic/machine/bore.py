@@ -8,8 +8,8 @@ from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
 from ...definitions import config_dict
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.utils.geometry import cut_lines_between_angles
+from ...Functions_pydantic.utils.init_fig import init_fig
 from .._legacy_model import LegacyModel
 from ..geometry.segment import Segment
 from ..geometry.surf_line import SurfLine

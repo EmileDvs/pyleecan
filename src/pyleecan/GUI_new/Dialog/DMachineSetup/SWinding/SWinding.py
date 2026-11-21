@@ -8,8 +8,8 @@ from .....Classes_new.machine.machine_wrsm import MachineWRSM
 from .....Classes_new.machine.winding import Winding
 from .....Classes_new.machine.winding_ud import WindingUD
 from .....GUI_new.Tools.log_error import log_error
-from .....Functions_new.init_fig import init_fig
-from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....Functions_new.utils.init_fig import init_fig
+from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new.Dialog.DMachineSetup.SWinding.Gen_SWinding import Gen_SWinding
 
 IDX_SINGLE_LAYER = 0

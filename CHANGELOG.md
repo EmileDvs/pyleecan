@@ -112,6 +112,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `cut_lines_between_angle`, `comp_surface_num`) in one module; the old
   `Geometry.*` paths are deprecated aliases. `merge_notch_list` is a
   static method of `Lamination`, `transform_hole_surf` of `Hole`.
+- **Plot helpers** (Step 8): `get_color_legend_from_surface` is a static
+  method of `Machine` (the colors read from the configuration when
+  called); `init_fig` is in `utils`, `set_plot_gui_icon` in the
+  `Tools` of the GUI; the old paths are deprecated.
 - **Root helpers in the `utils` package, `log_error` in the GUI** (Step 8):
   `labels`, `path_tools`, `init_environment`, `make_ndarray_equal` and
   `get_path_binary` are in `utils`, `log_error` in the `Tools.log_error`
@@ -302,7 +306,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
-| 8. Refactor the remaining `Functions` modules (generator) | in progress (7/14 groups) |
+| 8. Refactor the remaining `Functions` modules (generator) | groups done (14/14) |
 | 9. Logger chain (generator) | done |
 | 10. GUI, first pass (generator) | in progress |
 | 11. Parent links, first pass (generator) | in progress |

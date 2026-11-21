@@ -9,7 +9,7 @@ from .....Classes_new.machine.lam_slot_mag_ns import LamSlotMagNS
 from .....Classes_new.slot.slot import Slot
 from .....Classes_new.slot.slot_m_10 import SlotM10
 from .....GUI_new.Tools.log_error import log_error
-from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new.Dialog.DMachineSetup.SMSlot.PMSlot10.PMSlot10 import PMSlot10
 from .....GUI_new.Dialog.DMachineSetup.SMSlot.PMSlot11.PMSlot11 import PMSlot11
 from .....GUI_new.Dialog.DMachineSetup.SMSlot.PMSlot12.PMSlot12 import PMSlot12

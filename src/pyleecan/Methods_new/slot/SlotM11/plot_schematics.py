@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.lamination import Lamination
 
 MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
-KEY_COLOR = config_dict["PLOT"]["COLOR_DICT"]["KEY_COLOR"]
+KEY_COLOR = config_dict["PLOT"]["COLOR_DICT"].get("KEY_COLOR", "y")
 
 
 def plot_schematics(

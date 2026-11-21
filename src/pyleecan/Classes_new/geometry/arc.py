@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_new.init_fig import init_fig
 from ...Functions_new.Plot import TEXT_BOX
 from ...Functions_new.utils.geometry import inter_circle_circle, inter_line_circle
+from ...Functions_new.utils.init_fig import init_fig
 from .line import Line
 from .segment import Segment
 

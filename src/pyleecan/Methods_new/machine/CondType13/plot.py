@@ -1,5 +1,5 @@
 from ....definitions import config_dict
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

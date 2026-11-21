@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...Functions_pydantic.init_fig import init_fig
 from ...Functions_pydantic.Plot import TEXT_BOX
 from ...Functions_pydantic.utils.geometry import inter_circle_circle, inter_line_circle
+from ...Functions_pydantic.utils.init_fig import init_fig
 from .line import Line
 from .segment import Segment
 

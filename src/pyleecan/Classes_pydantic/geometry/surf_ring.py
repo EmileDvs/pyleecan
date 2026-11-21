@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...Functions_pydantic.init_fig import init_fig
+from ...Functions_pydantic.utils.init_fig import init_fig
 from .surface import Surface
 
 if TYPE_CHECKING:

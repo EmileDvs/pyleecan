@@ -13,7 +13,7 @@ from .....Classes_new.slot.slot_ud_2 import SlotUD2
 from .....Classes_new.slot.slot_w_11 import SlotW11
 from .....Classes_new.slot.slot_w_11_2 import SlotW11_2
 from .....Functions_new.Load.import_class import import_class
-from .....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
+from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new.Dialog.DMachineSetup.SWSlot.Gen_SWSlot import Gen_SWSlot
 from .....GUI_new.Dialog.DMachineSetup.SWSlot.PWSlot10.PWSlot10 import PWSlot10
 from .....GUI_new.Dialog.DMachineSetup.SWSlot.PWSlot11.PWSlot11 import PWSlot11

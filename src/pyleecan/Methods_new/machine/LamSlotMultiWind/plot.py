@@ -3,10 +3,9 @@ import matplotlib.pyplot as plt
 
 from ....Functions_new.utils.labels import decode_label, WIND_LAB, BAR_LAB
 from ....Functions_new.Winding.gen_phase_list import gen_name
-from ....Functions_new.init_fig import init_fig
+from ....Functions_new.utils.init_fig import init_fig
 from ....definitions import config_dict
 from ....Classes_new.machine.winding_sc import WindingSC
-from ....Functions_new.Plot.get_color_legend_from_surface import get_color_legend_from_surface
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -75,6 +74,7 @@ def plot(
         Axis containing the plot
     """
 
+    from ....Classes_new.machine.machine import Machine
     from ....Classes_new.machine.winding import Winding
     (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
@@ -117,7 +117,7 @@ def plot(
                     )
                 )
         else:
-            color, legend = get_color_legend_from_surface(surf, is_lam_only)
+            color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)
 
             if color is not None:
                 patches.extend(

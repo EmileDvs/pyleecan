@@ -13,7 +13,7 @@ from os.path import join, isdir, isfile
 from os import makedirs, remove
 from numpy import exp, pi
 import matplotlib.pyplot as plt
-from backend_functions.init_fig import init_fig
+from backend_functions.utils.init_fig import init_fig
 from backend_functions.Plot import ARROW_COLOR, ARROW_WIDTH, SC_FONT_SIZE, MAIN_LINE_COLOR, MAIN_LINE_STYLE, MAIN_LINE_WIDTH
 
 SCHEMATICS_PATH = join(save_path, "Schematics")

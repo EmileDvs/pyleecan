@@ -4,7 +4,6 @@ import numpy as np
 
 from ....Functions_new.Plot import dict_2D
 from ....definitions import config_dict
-from ....Functions_new.Plot.set_plot_gui_icon import set_plot_gui_icon
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -75,6 +74,9 @@ def plot_mmf_unit(self, save_path: str | None = None, is_show_fig: bool = False)
         save_path=save_path,
         **dict_2D_0,
     )
+    # Local import (circular: the GUI imports the classes)
+    from ....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
+
     set_plot_gui_icon()
 
     return fig

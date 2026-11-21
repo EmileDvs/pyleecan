@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.errors import BHShapeError
-from ...Functions_new.init_fig import init_fig
+from ...Functions_new.utils.init_fig import init_fig
 from .._legacy_class import LegacyClass
 from ..import_data.import_matrix import ImportMatrix
 from .model_bh import ModelBH as _field_type_ModelBH

@@ -78,6 +78,12 @@ MOVED_FUNCTIONS = {
     ),
     # Step 8, group 7 (decision 2026-11-21): the geometry helpers of the
     # laminations and holes
+    # Step 8 group 9 (decision 2026-11-21): the legend of the machine plots
+    # (the colors read from the configuration when called, legacy_fixes);
+    # called by the lamination plots (local import: Machine imports them)
+    "Plot.get_color_legend_from_surface": MovedFunction(
+        "Machine", "get_color_legend_from_surface", static=True, local_imports=True
+    ),
     "Geometry.merge_notch_list": MovedFunction(
         "Lamination", "merge_notch_list", static=True
     ),
@@ -1391,6 +1397,9 @@ MOVED_MODULES = {
     "labels": "utils.labels",
     "path_tools": "utils.path_tools",
     "init_environment": "utils.init_environment",
+    # Step 8 group 9 (decision 2026-11-21): the plot helpers
+    "init_fig": "utils.init_fig",
+    "Plot.set_plot_gui_icon": "GUI_new.Tools.set_plot_gui_icon",
     "make_ndarray_equal": "utils.make_ndarray_equal",
     "get_path_binary": "utils.get_path_binary",
     # Step 8 group 13: log_error with the GUI, where it is used (the core

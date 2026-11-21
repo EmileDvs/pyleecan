@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError, SlotCheckError
+from ...definitions import config_dict
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -56,6 +57,7 @@ class SlotM10(Slot):
     """
 
     IS_SYMMETRICAL: ClassVar = 1
+    KEY_COLOR = config_dict["PLOT"]["COLOR_DICT"].get("KEY_COLOR", "y")
 
     W0: float = field(default=0, metadata={"unit": "m", "min": 0})
     """Slot isthmus width."""
