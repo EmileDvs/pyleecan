@@ -11,7 +11,6 @@ def plot_mesh(self, group_names: list | None = None, save_path: str | None = Non
         path to save the figure
 
     """
-
     return (
         self.get_mesh_solution()
         .get_group(group_names)
@@ -21,3 +20,14 @@ def plot_mesh(self, group_names: list | None = None, save_path: str | None = Non
             save_path=save_path,
         )
     )
+
+    # TODO : do time-dependent version
+    # return (
+    #     self.get_mesh_solution()
+    #     .get_group(group_names)
+    #     .plot_contour(
+    #         "time[0]",
+    #         label=f"{self.name} loss density",
+    #         save_path=save_path,
+    #     )
+    # )

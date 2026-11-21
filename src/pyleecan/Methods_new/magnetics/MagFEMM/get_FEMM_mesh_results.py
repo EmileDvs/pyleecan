@@ -17,9 +17,9 @@ if TYPE_CHECKING:
     from ....classes_common.femm_handler import _FEMMHandler
 
 
-def get_meshsolution(
+def get_FEMM_mesh_results(
     self, femm: _FEMMHandler, FEMM_dict, save_path: str, j_t0: int, id_worker: int = 0, is_get_mesh: bool = False
-) -> tuple[MeshMat, np.ndarray, np.ndarray, np.ndarray, dict]:
+) -> tuple[MeshMat, np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict, np.ndarray]:
     """Load the mesh data and solution data. FEMM must be working and a simulation must have been solved.
 
     Parameters
@@ -41,14 +41,18 @@ def get_meshsolution(
     -------
     mesh: MeshMat
         Object containing magnetic mesh
-    B: ndarray
-        3D Magnetic flux density for each element (Nelem, 3) [T]
+    B : ndarray
+            3D Magnetic flux density for each element (Nelem, 3) [T]
     H : ndarray
         3D Magnetic field for each element (Nelem, 3) [A/m]
     mu : ndarray
         Magnetic relative permeability for each element (Nelem,1) []
+    A : ndarray
+        Magnetic Vector Potential for each node (Nnode,1) []
     groups: dict
         Dict whose values are group label and values are array of indices of related elements
+    A_elem : ndarray
+        Magnetic Vector Potential for each elem (Nelem,1) []
 
     """
 

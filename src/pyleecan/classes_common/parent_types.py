@@ -9,6 +9,7 @@ PARENT_TYPES = {
         ("out_force", "OutForce"),
         ("out_geo", "OutGeo"),
         ("out_loss", "OutLoss"),
+        ("out_loss_model", "OutLossModel"),
         ("out_mag", "OutMag"),
         ("out_struct", "OutStruct"),
         ("output", "Output"),
@@ -84,6 +85,7 @@ PARENT_TYPES = {
     ("mesh", "Mesh"): (("mesh_solution", "MeshSolution"),),
     ("mesh_solution", "MeshSolution"): (
         ("out_force", "OutForce"),
+        ("out_loss", "OutLoss"),
         ("out_mag", "OutMag"),
         ("out_struct", "OutStruct"),
     ),

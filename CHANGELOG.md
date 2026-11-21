@@ -92,6 +92,14 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   16/16 returns). Output (100/123, 57/80) and Optimization (16/41,
   8/17) hinted. Converter hinted (77/95, 86/100).
   All the other packages of Methods_new hinted (first pass).
+- **Loss models of #751** (merged from `loss_fea`), carried to both new
+  implementations by the generators: frequency and time loss models
+  (`comp_loss_freq`, `comp_loss_time`) for Bertotti, Steinmetz, Joule,
+  proximity, magnet and windage losses, fitting plots, `LossFEA` with
+  enforced and fitted coefficients, loss DataKeepers
+  (`VarSimu.get_loss_datakeeper`), `OutLoss` input/output power,
+  efficiency and torque; `OutMag.meshsolution` holds the stator and rotor
+  frame solutions (`B_S`/`B_R`), merged by `OutMag.get_meshsolution()`.
 - **Class-specific functions moved to their class**
   (`Generator/ClassGenerator/New/moved_functions.py`): `get_area` and
   `get_indices_limited` become methods of `MeshSolution`, `run_multisim_step`
@@ -163,6 +171,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   - `ElecLUTdq.run` with loss models: `OutLoss` built with unknown fields
     (TypeError); the losses are stored in `OutLoss.loss_dict`.
 - Generation of the phase axis.
+- **Class generator**: a CSV description ending with a double quote
+  produced an invalid attribute docstring (SyntaxError).
+- **Functions generator**: a legacy function module deleted upstream no
+  longer stays in `Functions_new` and `Functions_pydantic`.
 - **User config file written only when it changes, atomically**
   (`Functions/init_environment.save_config_dict`). `import pyleecan.definitions`
   rewrote `main_config_dict.json` at each import: processes importing pyleecan
@@ -189,7 +201,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 4. Phase 1 test architecture (`--backend`) | done (method results compared at the freeze, Step 11) |
 | 5. `Methods_new` generator and type hints, first pass | done for all packages; legacy bugs found by `ty` to fix |
 | 6. Class-specific functions moved to their class | done (3 functions) |
-| 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | to do |
+| 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | #751 merged |
 | 8. Refactor the remaining `Functions` modules (generator) | to do |
 | 9. Logger chain (generator) | to do |
 | 10. Parent links, first pass (generator) | to do |

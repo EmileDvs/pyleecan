@@ -4,7 +4,6 @@ import numpy as np
 
 
 
-
 from ......definitions import config_dict
 from ......Functions_new.Plot.Pyvista.configure_plot import configure_plot
 from ......Functions_new.Plot.Pyvista.plot_mesh_field import plot_mesh_field
@@ -70,7 +69,7 @@ def plot_B_mesh(
     -------
 
     """
-    MS_B = self.mag.meshsolution
+    MS_B = self.mag.get_meshsolution()
 
     if group_names is not None:
         MS_B_plot = MS_B.get_group(group_names)

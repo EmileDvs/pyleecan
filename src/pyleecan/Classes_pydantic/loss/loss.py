@@ -13,6 +13,7 @@ from ..scidatatool.data_1d import Data1D
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
+    from ..mesh.mesh_solution import MeshSolution
     from ..output.output import Output
     from ..scidatatool.data import Data
 
@@ -29,13 +30,16 @@ class Loss(LegacyModel):
         Dict of loss model whose key is a lamination and value is the associated loss model (alternative to model_index/model_list)
         Default: None
     Tsta : float
-        Average stator temperature for Electrical calculation
+        Average stator temperature for Loss calculation
         Unit: deg Celsius; Default: 20
     Trot : float
-        Average rotor temperature for Electrical calculation
+        Average rotor temperature for Loss calculation
         Unit: deg Celsius; Default: 20
     is_get_meshsolution : bool
         True to save loss density map as meshsolution
+        Default: False
+    is_clean_magmesh : bool
+        True to clean meshsolution from OutMag after loss calculation
         Default: False
     """
 
@@ -44,11 +48,13 @@ class Loss(LegacyModel):
     model_dict: dict[str, LossModel] | None = None
     """Dict of loss model whose key is a lamination and value is the associated loss model (alternative to model_index/model_list)"""
     Tsta: float = Field(default=20, json_schema_extra={"unit": "deg Celsius"})
-    """Average stator temperature for Electrical calculation"""
+    """Average stator temperature for Loss calculation"""
     Trot: float = Field(default=20, json_schema_extra={"unit": "deg Celsius"})
-    """Average rotor temperature for Electrical calculation"""
+    """Average rotor temperature for Loss calculation"""
     is_get_meshsolution: bool = False
     """True to save loss density map as meshsolution"""
+    is_clean_magmesh: bool = False
+    """True to clean meshsolution from OutMag after loss calculation"""
 
     _package: ClassVar[str] = "Loss"
     """Name of the package of the legacy class module"""
@@ -57,6 +63,7 @@ class Loss(LegacyModel):
     def comp_all_losses(
         self,
         axes_dict: dict | None = None,
+        meshsol: MeshSolution | None = None,
     ) -> None:
         """Compute all the losses models set in model_dict
 
@@ -66,6 +73,8 @@ class Loss(LegacyModel):
             A Loss object
         axes_dict : dict
             Dict containing axes for loss calculation
+        meshsol : MeshSolution
+            magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
         """
 
         output = self.parent.parent
@@ -74,7 +83,8 @@ class Loss(LegacyModel):
         if axes_dict is not None:
             out_loss.axes_dict = axes_dict
 
-        meshsol = output.mag.meshsolution
+        if meshsol is None:
+            meshsol = output.mag.get_meshsolution()
         group = meshsol.group
         freqs = axes_dict["freqs"].get_values()
         Nelem = meshsol.mesh.element_dict["triangle"].nb_element
@@ -82,7 +92,7 @@ class Loss(LegacyModel):
         out_loss.loss_dict = {}
         for key, model in self.model_dict.items():
             # Compute losses for each model
-            P_density, f_array = model.comp_loss()
+            P_density, f_array = model.comp_loss(meshsol=meshsol)
             if self.is_get_meshsolution:
                 loss_density = np.zeros((freqs.size, Nelem))
                 If = np.argmin(np.abs(freqs[:, None] - f_array[None, :]), axis=0)[
@@ -104,7 +114,9 @@ class Loss(LegacyModel):
             out_loss.loss_dict[key] = out_loss_model
 
     # Inlined from Methods.Loss.Loss.comp_axes
-    def comp_axes(self, output: Output) -> dict[str, Data]:
+    def comp_axes(
+        self, output: Output, meshsol: MeshSolution | None = None
+    ) -> dict[str, Data]:
         """Compute the axes required in Loss module
 
         Parameters
@@ -113,6 +125,8 @@ class Loss(LegacyModel):
             a Loss object
         output : Output
             an Output object (to update)
+        meshsol : MeshSolution
+            magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
 
         Returns
         -------
@@ -120,7 +134,10 @@ class Loss(LegacyModel):
             Dict containing Time and Angle axes including (anti-)periodicties used in any Force module
         """
 
-        axes_list = output.mag.meshsolution.get_solution().field.get_axes()
+        if meshsol is None:
+            meshsol = output.mag.get_meshsolution()
+
+        axes_list = meshsol.get_solution().field.get_axes()
         Time = axes_list[0]
 
         freqs = Time.get_values(is_oneperiod=True, operation="time_to_freqs")
@@ -163,6 +180,9 @@ class Loss(LegacyModel):
         # get output
         output = self.parent.parent
 
-        axes_dict = self.comp_axes(output)
+        # Merge stator and rotor frame magnetic solutions once for all loss models
+        meshsol = output.mag.get_meshsolution()
+
+        axes_dict = self.comp_axes(output, meshsol=meshsol)
         # Comp and store in output
-        self.comp_all_losses(axes_dict)
+        self.comp_all_losses(axes_dict, meshsol=meshsol)

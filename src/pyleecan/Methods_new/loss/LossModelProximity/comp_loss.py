@@ -1,10 +1,14 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 
 
 
 
-def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
+def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Calculate proximity loss density assuming it is given by:
 
         P = k_p * f^2 * B^2
@@ -13,6 +17,8 @@ def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     ----------
     self: LossModelProximity
         a LossModelProximity object
+    meshsol : MeshSolution
+        magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
 
     Returns
     -------
@@ -47,10 +53,11 @@ def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     if output.mag is None:
         raise Exception("Cannot calculate core losses if OutMag is None")
 
-    if output.mag.meshsolution is None:
-        raise Exception("Cannot calculate core losses if OutMag.meshsolution is None")
-    else:
-        meshsol = output.mag.meshsolution
+    if meshsol is None:
+        if output.mag.meshsolution is None:
+            raise Exception("Cannot calculate core losses if OutMag.meshsolution is None")
+        # Merge stator and rotor frame solutions on the same Time axis
+        meshsol = output.mag.get_meshsolution()
 
     group_list = list(meshsol.group.keys())
 

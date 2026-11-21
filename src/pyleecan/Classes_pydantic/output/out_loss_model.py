@@ -10,6 +10,7 @@ from .._pyleecan_model import NDArray
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData
 from ..scidatatool.data_freq import DataFreq
+from ..scidatatool.data_nd import DataND
 
 if TYPE_CHECKING:
     from .out_loss_model import OutLossModel
@@ -38,6 +39,9 @@ class OutLossModel(LegacyModel):
     scalar_value : float or None
         To store the value of get_loss_scalar (for scalar losses or with coeff_dict cleaned)
         Default: None
+    loss_data : DataND or None
+        DataTime containing losses values over time and for each source of losses : core (hysteresis/eddy/excess) / Joule / proximity / Magnet / Windage
+        Default: None
     """
 
     name: str = ""
@@ -52,6 +56,8 @@ class OutLossModel(LegacyModel):
     """The name of the loss model used to compute the loss stored in this output"""
     scalar_value: float | None = None
     """To store the value of get_loss_scalar (for scalar losses or with coeff_dict cleaned)"""
+    loss_data: DataND | None = None
+    """DataTime containing losses values over time and for each source of losses : core (hysteresis/eddy/excess) / Joule / proximity / Magnet / Windage"""
 
     _package: ClassVar[str] = "Output"
     """Name of the package of the legacy class module"""
@@ -292,7 +298,43 @@ class OutLossModel(LegacyModel):
         # global_loss_density = np.zeros((freqs.size, Nelem))
         # global_loss_density[If, Ie] += self.loss_density
 
-        ms_mag = output.mag.meshsolution
+        # TODO : Do time dependent version
+        # output = self.parent.parent
+        # axes_dict = self.parent.axes_dict
+
+        # Igrp = output.mag.meshsolution.group[self.name]
+
+        # Indice = Data1D(
+        #     name="indice",
+        #     values=Igrp,
+        #     is_components=True,
+        #     is_overlay=False,
+        # )
+
+        # Loss_density_df = DataTime(
+        #     name=f"{self.name} loss density",
+        #     unit="W/m3",
+        #     symbol="L",
+        #     values=self.loss_density,
+        #     is_real=True,
+        #     axes=[axes_dict["time"], Indice],
+        # )
+
+        # Loss_density_sd = SolutionData(
+        #     label=Loss_density_df.name,
+        #     field=Loss_density_df,
+        #     unit=Loss_density_df.unit,
+        # )
+
+        # ms_loss = MeshSolution(
+        #     label=Loss_density_sd.label,
+        #     group=ms_mag.group,
+        #     mesh=ms_mag.mesh,
+        #     solution_dict={Loss_density_sd.label: Loss_density_sd},
+        #     dimension=2,
+        # )
+
+        ms_mag = output.mag.get_meshsolution()
 
         Loss_density_df = DataFreq(
             name=f"{self.name} loss density",
@@ -333,7 +375,6 @@ class OutLossModel(LegacyModel):
             path to save the figure
 
         """
-
         return (
             self.get_mesh_solution()
             .get_group(group_names)

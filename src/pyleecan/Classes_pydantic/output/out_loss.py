@@ -6,8 +6,10 @@ from typing import ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...Functions_pydantic.MeshSolution.build_solution_data import build_solution_data
 from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_model import LegacyModel
+from ..mesh.mesh_solution import MeshSolution
 from ..scidatatool.data import Data
 from .out_loss_model import OutLossModel
 
@@ -21,19 +23,44 @@ class OutLoss(LegacyModel):
         Dict containing axes data used for Magnetics
         Default: None
     loss_dict : {OutLossModel}
-        Dict containing OutLossModel obects for each type of loss
+        Dict containing OutLossModel objects for each type of loss
         Default: {}
     logger_name : str
         Name of the logger to use
         Default: "Pyleecan.Loss"
+    meshsolution : MeshSolution or None
+        FEA software mesh and solution
+        Default: None
+    P_in : float or None
+        Input electric power used to calculate efficiency
+        Unit: W; Default: None
+    P_out : float or None
+        Output mechanical power used to calculate efficiency
+        Unit: W; Default: None
+    efficiency : float or None
+        Efficiency (p.u)
+        Default: None
+    Tmech_av : float or None
+        Average mechanical torque
+        Unit: Nm; Default: None
     """
 
     axes_dict: dict[str, Data] | None = None
     """Dict containing axes data used for Magnetics"""
     loss_dict: dict[str, OutLossModel] = Field(default_factory=dict)
-    """Dict containing OutLossModel obects for each type of loss"""
+    """Dict containing OutLossModel objects for each type of loss"""
     logger_name: str = "Pyleecan.Loss"
     """Name of the logger to use"""
+    meshsolution: MeshSolution | None = None
+    """FEA software mesh and solution"""
+    P_in: float | None = Field(default=None, json_schema_extra={"unit": "W"})
+    """Input electric power used to calculate efficiency"""
+    P_out: float | None = Field(default=None, json_schema_extra={"unit": "W"})
+    """Output mechanical power used to calculate efficiency"""
+    efficiency: float | None = None
+    """Efficiency (p.u)"""
+    Tmech_av: float | None = Field(default=None, json_schema_extra={"unit": "Nm"})
+    """Average mechanical torque"""
 
     _package: ClassVar[str] = "Output"
     """Name of the package of the legacy class module"""
@@ -98,6 +125,67 @@ class OutLoss(LegacyModel):
                 overall_loss += loss.scalar_value
 
         return overall_loss
+
+    # Inlined from Methods.Output.OutLoss.get_meshsolution
+    def get_meshsolution(self) -> MeshSolution:
+        """Get loss density meshsolution
+
+        Parameters
+        ----------
+        self : OutLoss
+            an OutLoss object
+
+        Returns
+        -------
+        ms_loss : MeshSolution
+            Losses as function of time on the machine mesh
+
+        """
+
+        if self.meshsolution is None:
+            # Get magnetic output
+            outmag = self.parent.mag
+
+            # Get mesh and groups from magnetic meshsolution
+            meshsol = outmag.meshsolution
+            mesh = meshsol.mesh
+            group = meshsol.group
+
+            # Get axes
+            Ndim1 = list(self.loss_dict.values())[0].loss_density.shape[0]
+            Indice_Element = self.axes_dict["indice_element"]
+            Nelem = Indice_Element.get_length()
+            if list(self.loss_dict.values())[0].loss_density.shape[0] == 1:
+                axis_list = [self.axes_dict["freqs"].copy(), Indice_Element.copy()]
+            else:
+                axis_list = [self.axes_dict["time"].copy(), Indice_Element.copy()]
+
+            # Get loss density values stored in OutLossModelTime objects
+            loss_density = np.zeros((Ndim1, Nelem), dtype=float)
+            for outloss in self.loss_dict.values():
+                Igrp = group[outloss.group]
+                loss_density[:, Igrp] += outloss.loss_density
+
+            # Build SolutionData
+            solution_data = build_solution_data(
+                field=loss_density,
+                axis_list=axis_list,
+                name="Loss density",
+                symbol="L",
+                unit="W/m3",
+                type_element="triangle",
+            )
+
+            # Build meshsolution
+            self.meshsolution = MeshSolution(
+                solution_dict={solution_data.label: solution_data},
+                label=solution_data.label,
+                mesh=mesh,
+                group=group,
+                dimension=2,
+            )
+
+        return self.meshsolution
 
     # Inlined from Methods.Output.OutLoss.get_power_dict
     def get_power_dict(self) -> dict[str, float]:

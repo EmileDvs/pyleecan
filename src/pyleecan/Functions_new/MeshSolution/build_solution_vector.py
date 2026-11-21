@@ -1,13 +1,15 @@
 import numpy as np
 
 from ...Classes_new.mesh.solution_vector import SolutionVector
+from ...Classes_new.scidatatool.data_freq import DataFreq
+from ...Classes_new.scidatatool.data_nd import DataND
 from ...Classes_new.scidatatool.data_time import DataTime
 from ...Classes_new.scidatatool.vector_field import VectorField
 
 
 def build_solution_vector(
     field, axis_list, name="", symbol="", unit="", is_real=True, type_element="triangle"
-):
+) -> SolutionVector:
     """Build a SolutionVector object
 
     Parameters
@@ -23,9 +25,16 @@ def build_solution_vector(
         a SolutionVector object
     """
 
+    if axis_list[0].name == "time":
+        DataClass = DataTime
+    elif axis_list[0].name == "freqs":
+        DataClass = DataFreq
+    else:
+        DataClass = DataND
+
     components = {}
 
-    x_data = DataTime(
+    x_data = DataClass(
         name=name,
         unit=unit,
         symbol=symbol + "x",
@@ -35,7 +44,7 @@ def build_solution_vector(
     )
     components["comp_x"] = x_data
 
-    y_data = DataTime(
+    y_data = DataClass(
         name=name,
         unit=unit,
         symbol=symbol + "y",
@@ -46,7 +55,7 @@ def build_solution_vector(
     components["comp_y"] = y_data
 
     if field.shape[-1] == 3 and not np.all(field[..., 2] == 0):
-        z_data = DataTime(
+        z_data = DataClass(
             name=name,
             unit=unit,
             symbol=symbol + "z",

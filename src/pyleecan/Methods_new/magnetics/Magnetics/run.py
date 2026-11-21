@@ -1,7 +1,6 @@
 import numpy as np
 
 from ....Classes_new.mesh.mesh_solution import MeshSolution
-
 from ...simulation.Input import InputError
 
 
@@ -137,6 +136,10 @@ def run(self) -> None:
                 else:
                     # TODO store other outputs in lists
                     out_dict[key] = out_dict_index[key]
+
+    if self.is_get_meshsolution and self.is_periodicity_t and "time_S" in axes_dict:
+        # Revert time axis to stator referential
+        axes_dict["time"] = axes_dict["time_S"].copy()
 
     # Store magnetic quantities contained in out_dict in OutMag, as Data object if necessary
     output.mag.store(out_dict, axes_dict)

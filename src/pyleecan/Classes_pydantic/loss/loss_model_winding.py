@@ -1,11 +1,14 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Loss/LossModelWinding.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from .loss_model import LossModel
+
+if TYPE_CHECKING:
+    from ..mesh.mesh_solution import MeshSolution
 
 
 class LossModelWinding(LossModel):
@@ -99,13 +102,17 @@ class LossModelWinding(LossModel):
         return k
 
     # Inlined from Methods.Loss.LossModelWinding.comp_loss
-    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
+    def comp_loss(
+        self, meshsol: MeshSolution | None = None
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate joule losses in stator windings
 
         Parameters
         ----------
         self: LossModelWinding
             a LossModelWinding object
+        meshsol : MeshSolution
+            magnetic meshsolution (default: OutMag.meshsolution, only mesh and groups are used)
 
         Returns
         -------
@@ -159,7 +166,7 @@ class LossModelWinding(LossModel):
         Lst = lam.L1
 
         # Get surface elements for windings
-        ms = output.mag.meshsolution
+        ms = meshsol if meshsol is not None else output.mag.meshsolution
         Se = ms.mesh.get_element_area()[ms.group[self.group]]
 
         # Constant component and twice the electrical frequency have same joule density values

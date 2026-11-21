@@ -31,7 +31,7 @@ def solve_FEMM(
     start_t: int = 0,
     end_t: int | None = None,
     Nmess=4,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, MeshMat, dict]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, MeshMat, dict, np.ndarray]:
     """
     Solve FEMM model to calculate airgap flux density, torque instantaneous/average/ripple values,
     flux induced in stator windings and flux density, field and permeability maps
@@ -79,16 +79,20 @@ def solve_FEMM(
 
     Returns
     -------
-    B: ndarray
-        3D Magnetic flux density for all time steps and each element (Nt, Nelem, 3) [T]
-    H : ndarray
-        3D Magnetic field for all time steps and each element (Nt, Nelem, 3) [A/m]
-    mu : ndarray
-        Magnetic relative permeability for all time steps and each element (Nt, Nelem) []
-    mesh: MeshMat
-        Object containing magnetic mesh at first time step
+    B_elem: ndarray
+        3D Magnetic flux density for each element (Nelem, 3) [T]
+    H_elem : ndarray
+        3D Magnetic field for each element (Nelem, 3) [A/m]
+    mu_elem : ndarray
+        Magnetic relative permeability for each element (Nelem,1) []
+    A_node : ndarray
+        Magnetic Vector Potential for each node (Nnode,1) []
+    meshFEMM: MeshMat
+        Object containing magnetic mesh
     groups: dict
         Dict whose values are group label and values are array of indices of related elements
+    A_elem : ndarray
+        Magnetic Vector Potential for each elem (Nelem,1) []
 
     """
 
@@ -261,7 +265,7 @@ def solve_FEMM(
         # Load mesh data & solution
         if self.is_get_meshsolution:
             # Get mesh data and magnetic quantities from .ans file
-            meshFEMMi, Bi, Hi, mui, Ani, groupsi, Aei = self.get_meshsolution(
+            meshFEMMi, Bi, Hi, mui, Ani, groupsi, Aei = self.get_FEMM_mesh_results(
                 femm,
                 FEMM_dict,
                 save_path,

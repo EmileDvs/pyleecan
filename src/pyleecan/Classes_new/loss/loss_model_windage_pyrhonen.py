@@ -2,11 +2,16 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
 from .loss_model import LossModel
+
+if TYPE_CHECKING:
+    from ..mesh.mesh_solution import MeshSolution
+    from ..scidatatool.data import Data
 
 
 @dataclass(eq=False)
@@ -21,7 +26,68 @@ class LossModelWindagePyrhonen(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss
-    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
+    def comp_loss(
+        self, meshsol: MeshSolution | None = None
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Calculate Windage losses
+        Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
+
+        Parameters
+        ----------
+        self: LossModelWindagePyrhonen
+            a LossModelWindagePyrhonen object
+        meshsol : MeshSolution
+            magnetic meshsolution (default: OutMag.meshsolution, only mesh and groups are used)
+
+        Returns
+        -------
+        Pjoule_density : ndarray
+            loss density function of frequency and elements [W/m3]
+        freqs: ndarray
+            frequency vector [Hz]
+        """
+
+        if self.parent.parent is None:
+            raise ValueError("Cannot calculate losses if simu is not in an Output")
+        else:
+            output = self.parent.parent.parent
+
+        if output.elec is None:
+            raise ValueError("Cannot calculate losses if OutElec is None")
+
+        if self.parent.is_get_meshsolution and output.mag is None:
+            raise ValueError("Cannot calculate losses if OutMag is None")
+
+        machine = output.simu.machine
+        L = machine.rotor.L1
+        OP = output.elec.OP
+        felec = OP.get_felec()
+
+        Ploss = self.comp_loss_value()
+
+        power = 3
+
+        coeff = Ploss / felec**power
+
+        per_a = output.geo.per_a
+        if output.geo.is_antiper_a:
+            per_a *= 2
+
+        # Get surface elements for windings
+        ms = meshsol if meshsol is not None else output.mag.meshsolution
+        Se = ms.mesh.get_element_area()[ms.group["rotor core"]]
+
+        # Constant component and twice the electrical frequency have same joule density values
+        freqs = np.array([felec])
+        P_density = np.zeros((freqs.size, Se.size))
+        P_density[0, :] = Ploss / (per_a * L * np.sum(Se))
+
+        self.coeff_dict = {str(power): coeff}
+
+        return P_density, freqs
+
+    # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss_freq
+    def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
         """Calculate Windage losses
         Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
 
@@ -36,6 +102,144 @@ class LossModelWindagePyrhonen(LossModel):
             loss density function of frequency and elements [W/m3]
         freqs: ndarray
             frequency vector [Hz]
+        """
+
+        if self.parent.parent is None:
+            raise ValueError("Cannot calculate losses if simu is not in an Output")
+        else:
+            output = self.parent.parent.parent
+
+        if output.elec is None:
+            raise ValueError("Cannot calculate losses if OutElec is None")
+
+        if self.parent.is_get_meshsolution and output.mag is None:
+            raise ValueError("Cannot calculate losses if OutMag is None")
+
+        # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
+        meshsol, _ = get_frame_meshsolution(output, self.group, "windage losses")
+
+        # Get element indices associated to airgap group
+        Igrp = list(meshsol.group[self.group])
+
+        machine = output.simu.machine
+        L = machine.rotor.L1
+        OP = output.elec.OP
+        felec = OP.get_felec()
+
+        Ploss = self.comp_loss_value()
+
+        power = 3
+
+        coeff = Ploss / felec**power
+
+        # Get mesh spatial symmetries (including (anti)-periodicities)
+        per_a = meshsol.mesh.sym
+
+        # Get surface elements for airgap
+        Se = meshsol.mesh.get_element_area()[Igrp]
+
+        # Compute the loss density for each element
+        # When distributing windage losses on airgap elements, missing area of sliding band
+        freqs = np.array([felec])
+        Pwindage_density = np.zeros((freqs.size, Se.size))
+        Pwindage_density[0, :] = Ploss / (per_a * L * np.sum(Se))
+
+        Pwindage_dict = {"Airgap windage losses": np.array([Ploss])}
+
+        self.coeff_dict = {str(power): coeff}
+
+        return Pwindage_density, Pwindage_dict, freqs
+
+    # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss_time
+    def comp_loss_time(
+        self, axes_dict: dict[str, Data], is_mirror: bool
+    ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
+        """Calculate windage losses and assume they are constant over time
+
+        Parameters
+        ----------
+        self: LossModelWindagePyrhonen
+            a LossModelWindagePyrhonen object
+        axes_dict: {Data}
+            Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
+        is_mirror : bool
+            True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+
+        Returns
+        -------
+        Pwindage_density : ndarray
+            Windage loss density function of time and elements [W/m3]
+        Pwindage_dict: {ndarray}
+            Dict containing the array of windage losses over time
+        """
+
+        if self.parent.parent is None:
+            raise ValueError(
+                "Cannot calculate windage losses if simu is not in an Output"
+            )
+        else:
+            output = self.parent.parent.parent
+
+        if output.elec is None:
+            raise ValueError("Cannot calculate windage losses if OutElec is None")
+
+        if self.parent.is_get_meshsolution and output.mag is None:
+            raise ValueError("Cannot calculate windage losses if OutMag is None")
+
+        # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
+        meshsol, _ = get_frame_meshsolution(output, self.group, "windage losses")
+
+        Nt = axes_dict["time"].get_length(is_smallestperiod=True)
+
+        # Get element indices associated to airgap group
+        Igrp = list(meshsol.group[self.group])
+
+        # Get mesh spatial symmetries (including (anti)-periodicities)
+        per_a = meshsol.mesh.sym
+
+        machine = output.simu.machine
+        Lst = machine.stator.L1
+
+        # Get airgap windage losses
+        Ploss = self.comp_loss_value()
+
+        # Assign same airgap windage losses at every time step
+        Pwindage = Ploss * np.ones(Nt, dtype=float)
+
+        # Get surface and number of all elements
+        Se_all = meshsol.mesh.get_element_area()
+
+        # Get element surface associated to group
+        Se = Se_all[Igrp]
+
+        # Compute the loss density for each element
+        # When distributing windage losses on airgap elements, missing area of sliding band
+        Pwindage_density = Pwindage[:, None] / (per_a * Lst * Se.sum())
+
+        Pwindage_dict = {"Airgap windage losses": Pwindage}
+
+        # Get fundamental frequency
+        felec = output.elec.OP.get_felec()
+
+        # Save coefficients to rebuild losses for same (Id,Iq) but at a different speed
+        self.coeff_dict = {"3": Ploss / felec**3}
+
+        return Pwindage_density, Pwindage_dict
+
+    # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss_value
+    def comp_loss_value(self) -> float:
+        """Calculate Windage losses
+        Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
+
+        Parameters
+        ----------
+        self: LossModelWindagePyrhonen
+            a LossModelWindagePyrhonen object
+
+        Returns
+        -------
+        Ploss : float
+            overall windage loss value [W/m3]
         """
 
         if self.parent.parent is None:
@@ -94,23 +298,4 @@ class LossModelWindagePyrhonen(LossModel):
 
         Ploss = P1 + P2
 
-        power = 3
-
-        coeff = Ploss / felec**power
-
-        per_a = output.geo.per_a
-        if output.geo.is_antiper_a:
-            per_a *= 2
-
-        # Get surface elements for windings
-        ms = output.mag.meshsolution
-        Se = ms.mesh.get_element_area()[ms.group["rotor core"]]
-
-        # Constant component and twice the electrical frequency have same joule density values
-        freqs = np.array([felec])
-        P_density = np.zeros((freqs.size, Se.size))
-        P_density[0, :] = Ploss / (per_a * L * np.sum(Se))
-
-        self.coeff_dict = {str(power): coeff}
-
-        return P_density, freqs
+        return Ploss

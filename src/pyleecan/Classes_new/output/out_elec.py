@@ -203,6 +203,7 @@ class OutElec(LegacyClass):
             qs = lamination.winding.qs
             phase_label = "phase_" + data_dict["lam_label"]
             Phase = self.axes_dict[phase_label].copy()
+
             if is_freq:
                 N = 1
                 Freqs = Data1D(
@@ -240,6 +241,12 @@ class OutElec(LegacyClass):
             else:
                 # Enforce zero values in quantity
                 A_val = np.zeros((N, qs))
+
+            if qs != 3 and A_val.shape[1] != qs:
+                # Case where qs>3, Phase axis contains qs labels but A_val matrix 2nd dimension relates to DQH (size 3 and not qs)
+                Phase_dqh = self.axes_dict[phase_label].copy()
+                Phase_dqh.values = np.array(["D", "Q", "H"])
+                axes_list[1] = Phase_dqh
 
             A_dqh = DataClass(
                 name=data_dict["name"],

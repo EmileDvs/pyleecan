@@ -1,10 +1,14 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 
 
 
 
-def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
+def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Calculate loss density in iron core given by group "stator core" or "rotor core"
     assuming power density is given by a Steinmetz model:
 
@@ -14,6 +18,8 @@ def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     ----------
     self: LossModelSteinmetz
         a LossModelSteinmetz object
+    meshsol : MeshSolution
+        magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
 
     Returns
     -------
@@ -63,10 +69,11 @@ def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     if output.mag is None:
         raise ValueError("Cannot calculate core losses if OutMag is None")
 
-    if output.mag.meshsolution is None:
-        raise ValueError("Cannot calculate core losses if OutMag.meshsolution is None")
-    else:
-        meshsol = output.mag.meshsolution
+    if meshsol is None:
+        if output.mag.meshsolution is None:
+            raise ValueError("Cannot calculate core losses if OutMag.meshsolution is None")
+        # Merge stator and rotor frame solutions on the same Time axis
+        meshsol = output.mag.get_meshsolution()
 
     group_list = list(meshsol.group.keys())
 

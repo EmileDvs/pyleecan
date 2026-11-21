@@ -1,17 +1,19 @@
 from os import makedirs
-from os.path import join, isdir
+from os.path import isdir, join
+
 import pytest
-from numpy import array, linspace, ones, pi, zeros, sqrt, cos
-from Tests.New._test_paths import save_plot_path
+from numpy import array, cos, linspace, ones, pi, sqrt, zeros
+
 from backend_classes.simulation.input_current import InputCurrent
 from backend_classes.magnetics.mag_elmer import MagElmer
-from backend_classes.slot.slot_m_10 import SlotM10
-from backend_classes.simulation.simu_1 import Simu1
 from backend_classes.simulation.op_dq import OPdq
 from backend_classes.output.output import Output
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.slot.slot_m_10 import SlotM10
+from pyleecan.definitions import DATA_DIR
 from backend_functions.load import load
 from backend_functions.Plot import dict_2D
-from pyleecan.definitions import DATA_DIR
+from Tests.New._test_paths import save_plot_path
 
 # Gather results in the same folder
 save_path = join(save_plot_path, "Elmer")
@@ -108,9 +110,9 @@ def test_ipm_Elmer():
     # outp.mag.Tem.plot_2D_Data("time", **dict_2D)
     # outp.elec.get_Is().plot_2D_Data("time", "phase", **dict_2D)
     # outp.mag.Tem.plot_2D_Data("time[smallestperiod]", **dict_2D)
-    # outp.mag.meshsolution.plot_contour(label="B")
-    # outp.mag.meshsolution.plot_contour(label="A")
-    # outp.mag.meshsolution.plot_contour(label="J")
+    # outp.mag.get_meshsolution().plot_contour(label="B")
+    # outp.mag.get_meshsolution().plot_contour(label="A")
+    # outp.mag.get_meshsolution().plot_contour(label="J")
 
 
 @pytest.mark.MagElmer
@@ -172,9 +174,9 @@ def test_spm_Elmer():
     outp.mag.Tem.plot_2D_Data("time", **dict_2D)
     # outp.elec.get_Is().plot_2D_Data("time", "phase", **dict_2D)
     # outp.mag.Tem.plot_2D_Data("time[smallestperiod]", **dict_2D)
-    # outp.mag.meshsolution.plot_contour(label="B")
-    # outp.mag.meshsolution.plot_contour(label="A")
-    # outp.mag.meshsolution.plot_contour(label="J")
+    # outp.mag.get_meshsolution().plot_contour(label="B")
+    # outp.mag.get_meshsolution().plot_contour(label="A")
+    # outp.mag.get_meshsolution().plot_contour(label="J")
 
 
 if __name__ == "__main__":

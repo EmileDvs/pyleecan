@@ -1,7 +1,7 @@
 # Pyleecan class refactoring plan
 
 Status of the migration from the legacy CSV-generated classes to modern Python
-class models. Branch: `switch_to_dataclass`. Last update: 2026-11-17.
+class models. Branch: `switch_to_dataclass`. Last update: 2026-11-21.
 
 - Detailed tasks of the remaining steps: [BACKLOG.md](BACKLOG.md).
 - What is done, in release-note form: [CHANGELOG.md](CHANGELOG.md).
@@ -174,7 +174,7 @@ Methods receive their context explicitly instead, for example
 | 4. Phase 1 test architecture (`--backend`) | generator | done |
 | 5. `Methods_new` generator and type hints, first pass | generator | legacy bugs to fix |
 | 6. Class-specific functions moved to their class | generator | done |
-| 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | to do (#751: work left on `loss_fea`) |
+| 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | #751 merged; #748, #749, #752 to do |
 | 8. Refactor the remaining `Functions` modules | generator | to do (plan per module to come) |
 | 9. Logger chain | generator | to do |
 | 10. Parent links, first pass | generator | to do |
@@ -256,8 +256,11 @@ Four pull requests on the legacy code are merged before the freeze, so their
 changes go through the generators (methods, functions, classes, tests) like
 the rest of the legacy code, instead of being ported by hand afterwards.
 
-- [ ] #751: finish the remaining work on the `loss_fea` branch.
-- [ ] Merge #748, #749, #751 and #752 into `switch_to_dataclass`; resolve
+- [x] #751: finish the remaining work on the `loss_fea` branch (time-domain
+      core loss model left open).
+- [x] #751 merged (through `loss_fea_src`, `src/` layout), regenerated and
+      checked; open points in the backlog.
+- [ ] Merge #748, #749 and #752 into `switch_to_dataclass`; resolve
       the conflicts on the generator side only.
 - [ ] Full regeneration; new or changed classes, methods and tests checked
       in both backends (class tests, cross tests, method tests of the

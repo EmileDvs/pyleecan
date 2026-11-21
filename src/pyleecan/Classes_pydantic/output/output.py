@@ -629,7 +629,7 @@ class Output(LegacyModel):
         -------
 
         """
-        MS_B = self.mag.meshsolution
+        MS_B = self.mag.get_meshsolution()
 
         if group_names is not None:
             MS_B_plot = MS_B.get_group(group_names)

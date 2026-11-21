@@ -1,11 +1,18 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Loss/LossModelJoule.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...Functions_pydantic.MeshSolution.get_frame_meshsolution import (
+    get_frame_meshsolution,
+)
 from .loss_model import LossModel
+
+if TYPE_CHECKING:
+    from ..mesh.mesh_solution import MeshSolution
+    from ..scidatatool.data import Data
 
 
 class LossModelJoule(LossModel):
@@ -106,13 +113,17 @@ class LossModelJoule(LossModel):
         return k
 
     # Inlined from Methods.Loss.LossModelJoule.comp_loss
-    def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
+    def comp_loss(
+        self, meshsol: MeshSolution | None = None
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate joule losses in stator windings
 
         Parameters
         ----------
         self: LossModelJoule
             a LossModelJoule object
+        meshsol : MeshSolution
+            magnetic meshsolution (default: OutMag.meshsolution, only mesh and groups are used)
 
         Returns
         -------
@@ -166,7 +177,7 @@ class LossModelJoule(LossModel):
         Lst = lam.L1
 
         # Get surface elements for windings
-        ms = output.mag.meshsolution
+        ms = meshsol if meshsol is not None else output.mag.meshsolution
         Se = ms.mesh.get_element_area()[ms.group[self.group]]
 
         # Constant component and twice the electrical frequency have same joule density values
@@ -179,3 +190,187 @@ class LossModelJoule(LossModel):
         self.coeff_dict = {"2": A, "0": B}
 
         return Pjoule_density, freqs
+
+    # Inlined from Methods.Loss.LossModelJoule.comp_loss_freq
+    def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
+        """Calculate joule losses in stator windings
+
+        Parameters
+        ----------
+        self: LossModelJoule
+            a LossModelJoule object
+
+        Returns
+        -------
+        Pjoule_density : ndarray
+            Joule loss density function of frequency and elements [W/m3]
+        freqs: ndarray
+            frequency vector [Hz]
+        """
+
+        if self.parent.parent is None:
+            raise ValueError(
+                "Cannot calculate joule losses if simu is not in an Output"
+            )
+        else:
+            output = self.parent.parent.parent
+
+        if output.elec is None:
+            raise ValueError("Cannot calculate joule losses if OutElec is None")
+
+        if self.parent.is_get_meshsolution and output.mag is None:
+            raise ValueError("Cannot calculate Joule losses if OutMag is None")
+
+        # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
+        meshsol, suffix = get_frame_meshsolution(output, self.group, "Joule losses")
+
+        machine = output.simu.machine
+        lam = machine.stator if "stator" in self.group else machine.rotor
+        T_op = self.parent.Tsta if "stator" in self.group else self.parent.Trot
+        Lst = lam.L1
+
+        OP = output.elec.OP
+        felec = OP.get_felec()
+
+        Rs = lam.comp_resistance_wind(T=T_op)
+        qs = lam.winding.qs
+
+        if self.type_skin_effect > 0:
+            # Account for skin effect
+            k = self.comp_coeff(
+                T_op=T_op,
+            )
+        else:
+            k = 0
+
+        # Get mesh spatial symmetries (including (anti)-periodicities)
+        per_a = meshsol.mesh.sym
+
+        # Get stator currents over frequency and phases
+        Is = output.elec.get_Is()
+        result = Is.get_along("freqs", "phase[]")
+        Is_val = result[Is.symbol]
+        freqs = result["freqs"]
+
+        # Calculate Joule losses over time (Assuming fundamental skin correction factor the same for all harmonics)
+        Pjoule = (
+            Rs * (1 + k * felec**2) * np.sum(0.5 * np.abs(Is_val) ** 2, axis=1)
+        )  # Sum over phases
+
+        # Get surface and number of all elements
+        Se_all = meshsol.mesh.get_element_area()
+
+        # Get element indices associated to group
+        Igrp = meshsol.group[self.group]
+
+        # Get element surface associated to group
+        Se = Se_all[Igrp]
+
+        # Calculate uniform element density and sum over frequencies to get average loss density value per element
+        Pjoule_density = np.zeros((1, Se.size))
+        Pjoule_val = Pjoule.sum()
+        Pjoule_density[0, :] = Pjoule_val / (per_a * Lst * Se.sum())
+
+        # Store losses contribution for each frequency in dict
+        Pjoule_dict = {self.group + " losses": Pjoule}
+
+        # Get eddy-current proximity loss polynomial coefficient
+        A = Pjoule_val / (1 + k * felec**2) * k
+        B = Pjoule_val / (1 + k * felec**2)
+        self.coeff_dict = {"2": A, "0": B}
+
+        return Pjoule_density, Pjoule_dict, freqs
+
+    # Inlined from Methods.Loss.LossModelJoule.comp_loss_time
+    def comp_loss_time(
+        self, axes_dict: dict[str, Data], is_mirror: bool
+    ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
+        """Calculate Joule losses in stator windings over time
+
+        Parameters
+        ----------
+        self: LossModelJoule
+            a LossModelJoule object
+        axes_dict: {Data}
+                Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
+        is_mirror : bool
+                True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+
+        Returns
+        -------
+        Pjoule_density : ndarray
+            Joule loss density function of time and elements [W/m3]
+        Pjoule_dict: {ndarray}
+            Dict containing the array of Joule losses over time
+        """
+
+        if self.parent.parent is None:
+            raise ValueError(
+                "Cannot calculate Joule losses if simu is not in an Output"
+            )
+        else:
+            output = self.parent.parent.parent
+
+        if output.elec is None:
+            raise ValueError("Cannot calculate Joule losses if OutElec is None")
+
+        if self.parent.is_get_meshsolution and output.mag is None:
+            raise ValueError("Cannot calculate Joule losses if OutMag is None")
+
+        # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
+        meshsol, suffix = get_frame_meshsolution(output, self.group, "Joule losses")
+
+        machine = output.simu.machine
+        lam = machine.stator if "stator" in self.group else machine.rotor
+        T_op = self.parent.Tsta if "stator" in self.group else self.parent.Trot
+        Lst = lam.L1
+        Rs = lam.comp_resistance_wind(T=T_op)
+
+        if self.type_skin_effect > 0:
+            # Account for skin effect
+            k = self.comp_coeff(
+                T_op=T_op,
+            )
+        else:
+            k = 0
+
+        # Get mesh spatial symmetries (including (anti)-periodicities)
+        per_a = meshsol.mesh.sym
+
+        # Get stator currents over time and phases
+        Is = output.elec.get_Is()
+        if is_mirror:
+            # Rebuild mesh quantities on time steps given by axes_dict
+            time_val = axes_dict["time"].get_values(is_smallestperiod=True)
+            Is_val = Is.get_along(
+                "time=axis_data", "phase[]", axis_data={"time": time_val}
+            )[Is.symbol]
+        else:
+            Is_val = Is.get_along("time[smallestperiod]", "phase[]")[Is.symbol]
+
+        # Calculate Joule losses over time
+        Pjoule = Rs * (1 + k) * np.sum(Is_val**2, axis=1)  # Sum over phases
+
+        # Get surface and number of all elements
+        Se_all = meshsol.mesh.get_element_area()
+
+        # Get element indices associated to group
+        Igrp = meshsol.group[self.group]
+
+        # Get element surface associated to group
+        Se = Se_all[Igrp]
+
+        # Calculate uniform element density
+        Pjoule_density = Pjoule[:, None] / (per_a * Lst * Se.sum())
+
+        Pjoule_dict = {self.group + " losses": Pjoule}
+
+        OP = output.elec.OP
+        felec = OP.get_felec()
+        Pjoule_val = Pjoule.mean()
+        A = Pjoule_val / (1 + k * felec**2) * k
+        B = Pjoule_val / (1 + k * felec**2)
+
+        self.coeff_dict = {"2": A, "0": B}
+
+        return Pjoule_density, Pjoule_dict

@@ -1,15 +1,15 @@
 import numpy as np
 import pytest
-from SciDataTool.Classes.Data1D import Data1D
-from SciDataTool.Classes.DataLinspace import DataLinspace
-from SciDataTool.Classes.DataTime import DataTime
-from SciDataTool.Classes.VectorField import VectorField
 
+from pyleecan.Classes.Data1D import Data1D
+from pyleecan.Classes.DataLinspace import DataLinspace
+from pyleecan.Classes.DataTime import DataTime
 from pyleecan.Classes.ImportMatrixVal import ImportMatrixVal
 from pyleecan.Classes.LossModelBertotti import LossModelBertotti
 from pyleecan.Classes.LossModelSteinmetz import LossModelSteinmetz
 from pyleecan.Classes.Material import Material
 from pyleecan.Classes.MatMagnetics import MatMagnetics
+from pyleecan.Classes.VectorField import VectorField
 
 BERTOTTI_PARAMETERS = {
     "k_hy": 0.25,

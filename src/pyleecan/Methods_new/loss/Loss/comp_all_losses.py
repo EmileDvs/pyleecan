@@ -1,11 +1,16 @@
 import numpy as np
 
 from ....Classes_new.output.out_loss_model import OutLossModel
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 
 def comp_all_losses(
     self,
     axes_dict: dict | None = None,
+    meshsol: MeshSolution | None = None,
 ) -> None:
     """Compute all the losses models set in model_dict
 
@@ -15,6 +20,8 @@ def comp_all_losses(
         A Loss object
     axes_dict : dict
         Dict containing axes for loss calculation
+    meshsol : MeshSolution
+        magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
     """
 
     output = self.parent.parent
@@ -23,7 +30,8 @@ def comp_all_losses(
     if axes_dict is not None:
         out_loss.axes_dict = axes_dict
 
-    meshsol = output.mag.meshsolution
+    if meshsol is None:
+        meshsol = output.mag.get_meshsolution()
     group = meshsol.group
     freqs = axes_dict["freqs"].get_values()
     Nelem = meshsol.mesh.element_dict["triangle"].nb_element
@@ -31,7 +39,7 @@ def comp_all_losses(
     out_loss.loss_dict = dict()
     for key, model in self.model_dict.items():
         # Compute losses for each model
-        P_density, f_array = model.comp_loss()
+        P_density, f_array = model.comp_loss(meshsol=meshsol)
         if self.is_get_meshsolution:
             loss_density = np.zeros((freqs.size, Nelem))
             If = np.argmin(np.abs(freqs[:, None] - f_array[None, :]), axis=0)[:, None]

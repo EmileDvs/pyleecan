@@ -3,15 +3,21 @@ import numpy as np
 
 
 from ....Functions_new.Electrical.comp_loss_joule import comp_loss_joule
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 
-def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
+def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Calculate joule losses in stator windings
 
     Parameters
     ----------
     self: LossModelWinding
         a LossModelWinding object
+    meshsol : MeshSolution
+        magnetic meshsolution (default: OutMag.meshsolution, only mesh and groups are used)
 
     Returns
     -------
@@ -63,7 +69,7 @@ def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     Lst = lam.L1
 
     # Get surface elements for windings
-    ms = output.mag.meshsolution
+    ms = meshsol if meshsol is not None else output.mag.meshsolution
     Se = ms.mesh.get_element_area()[ms.group[self.group]]
 
     # Constant component and twice the electrical frequency have same joule density values

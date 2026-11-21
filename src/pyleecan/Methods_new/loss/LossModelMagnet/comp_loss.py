@@ -12,9 +12,13 @@ from ....Classes_new.slot.hole_m_57 import HoleM57
 from ....Classes_new.slot.hole_m_58 import HoleM58
 from ....Classes_new.machine.lam_hole import LamHole
 from ....Classes_new.machine.lam_slot_mag import LamSlotMag
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.mesh.mesh_solution import MeshSolution
 
 
-def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
+def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Calculate eddy-current losses in rotor permanent magnets assuming power density
     is given by (cf. https://www.femm.info/wiki/SPMLoss):
 
@@ -24,6 +28,8 @@ def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     ----------
     self: LossModelMagnet
         a LossModelMagnet object
+    meshsol : MeshSolution
+        magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
 
     Returns
     -------
@@ -102,10 +108,11 @@ def comp_loss(self) -> tuple[np.ndarray, np.ndarray]:
     if output.mag is None:
         raise Exception("Cannot calculate magnet losses if OutMag is None")
 
-    if output.mag.meshsolution is None:
-        raise Exception("Cannot calculate magnet losses if OutMag.meshsolution is None")
-    else:
-        meshsol = output.mag.meshsolution
+    if meshsol is None:
+        if output.mag.meshsolution is None:
+            raise Exception("Cannot calculate magnet losses if OutMag.meshsolution is None")
+        # Merge stator and rotor frame solutions on the same Time axis
+        meshsol = output.mag.get_meshsolution()
 
     group_list = list(meshsol.group.keys())
 

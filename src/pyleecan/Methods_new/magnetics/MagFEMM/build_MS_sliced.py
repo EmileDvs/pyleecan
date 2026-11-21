@@ -1,13 +1,14 @@
 import numpy as np
-
 from ....Classes_new.scidatatool.data_1d import Data1D
-from ....Functions_new.MeshSolution.build_meshsolution import build_meshsolution
+
+from ....Classes_new.mesh.mesh_solution import MeshSolution
 from ....Functions_new.MeshSolution.build_solution_data import build_solution_data
 from ....Functions_new.MeshSolution.build_solution_vector import build_solution_vector
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.mesh.solution import Solution
 
 
 def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii) -> dict:
@@ -42,7 +43,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
                 MeshSolution object containing magnetic quantities B, H, mu for each time step
     """
 
-    solution_dict = {}
+    solution_dict: dict[str, Solution] = {}
 
     for key, solution in MS_sliced.items():
         # Define axis
@@ -57,7 +58,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
 
             axes_list = comp_x.axes
 
-            new_solution = MS.get_solution(label=solution.label)
+            new_solution = MS[key]
             new_comp_x = new_solution.field.components["comp_x"]
             new_field_x = new_comp_x.values
             new_comp_y = new_solution.field.components["comp_y"]
@@ -70,7 +71,7 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
             axes_list = data.axes
             field = data.values
 
-            new_solution = MS.get_solution(label=solution.label)
+            new_solution = MS[key]
             new_field = new_solution.field.values
 
         if "z" in name:
@@ -107,11 +108,12 @@ def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
 
         solution_dict[key] = new_sol
 
-    MS_sliced_new = build_meshsolution(
+    MS_sliced_new = MeshSolution(
         solution_dict=solution_dict,
         label=MS_sliced.label,
         mesh=MS_sliced.mesh,
         group=MS_sliced.group,
+        dimension=2,
     )
 
     return MS_sliced_new

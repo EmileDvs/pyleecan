@@ -1,9 +1,9 @@
 from os import makedirs
-from os.path import join, isdir
-import pytest
+from os.path import isdir, join
 from shutil import copyfile
 
 import matplotlib.pyplot as plt
+import pytest
 from numpy import array, linspace, ones, pi, zeros
 
 from pyleecan.Classes.import_all import *
@@ -12,25 +12,25 @@ try:
     from backend_functions.GMSH.gen_3d_mesh import gen_3D_mesh
 except ImportError as error:
     gen_3D_mesh = error
-from Tests.New._test_paths import save_plot_path
-from Tests.New.Plot.LamWind import wind_mat
-from backend_functions.load import load
-from backend_classes.simulation.input_current import InputCurrent
-from backend_classes.magnetics.mag_femm import MagFEMM
-from backend_classes.simulation.simu_1 import Simu1
-from backend_classes.output.output import Output
-from backend_classes.slot.slot_ud_2 import SlotUD2
-from backend_classes.optimization.opti_design_var_interval import OptiDesignVarInterval
-from backend_classes.optimization.opti_objective import OptiObjective
-from backend_classes.optimization.opti_problem import OptiProblem
-from backend_classes.import_data.import_matrix_val import ImportMatrixVal
-from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
-from backend_classes.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+import random
 
 import numpy as np
-import random
-from backend_functions.load import load
+
+from backend_classes.import_data.import_gen_vect_lin import ImportGenVectLin
+from backend_classes.import_data.import_matrix_val import ImportMatrixVal
+from backend_classes.simulation.input_current import InputCurrent
+from backend_classes.magnetics.mag_femm import MagFEMM
+from backend_classes.optimization.opti_design_var_interval import OptiDesignVarInterval
+from backend_classes.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+from backend_classes.optimization.opti_objective import OptiObjective
+from backend_classes.optimization.opti_problem import OptiProblem
+from backend_classes.output.output import Output
+from backend_classes.simulation.simu_1 import Simu1
+from backend_classes.slot.slot_ud_2 import SlotUD2
 from pyleecan.definitions import DATA_DIR
+from backend_functions.load import load
+from Tests.New._test_paths import save_plot_path
+from Tests.New.Plot.LamWind import wind_mat
 
 # Gather results in the same folder
 save_path = join(save_plot_path, "ICEM_2020")
@@ -598,7 +598,7 @@ def test_ecc_FEMM():
         join(save_path, "fig_19_Transform_list_model.fem"),
     )
     # Plot, check, save
-    out.mag.meshsolution.plot_mesh(
+    out.mag.get_meshsolution().plot_mesh(
         save_path=join(save_path, "fig_19_transform_list.png"), is_show_fig=False
     )
 

@@ -17,9 +17,6 @@ class LossModel(LegacyModel):
     group : str
         Group in which the loss will be computed
         Default: ""
-    is_show_fig : bool
-        True to show the plot of the curve fitting
-        Default: False
     coeff_dict : dict or None
         dict of coefficients to compute losses with respect to frequency
         Default: None
@@ -29,8 +26,6 @@ class LossModel(LegacyModel):
     """Name of the loss simulation (has to be unique)"""
     group: str = ""
     """Group in which the loss will be computed"""
-    is_show_fig: bool = False
-    """True to show the plot of the curve fitting"""
     coeff_dict: dict[str, Any] | None = None
     """dict of coefficients to compute losses with respect to frequency"""
 
