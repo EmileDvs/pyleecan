@@ -1181,7 +1181,14 @@ def redirect_moved_calls(source, package, class_name=None, moved=None, gen_dict=
     if not names and not replacements:
         return source
     lineage = _class_lineage(class_name, gen_dict)
-    functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)]
+    # Functions of the module and methods of its classes (femm_pyleecan)
+    functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)] + [
+        item
+        for node in tree.body
+        if isinstance(node, ast.ClassDef)
+        for item in node.body
+        if isinstance(item, ast.FunctionDef)
+    ]
     class_imports = {}  # Static function: classes to import in its body
     for node in ast.walk(tree):
         if not (

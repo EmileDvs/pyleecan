@@ -39,6 +39,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     class_subpackage,
 )
 from pyleecan.Generator.ClassGenerator.New.legacy_fixes import apply_legacy_fixes
+from pyleecan.Generator.ClassGenerator.New.femm_object import legacy_femm_signatures, redirect_femm_calls
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     MOVED_FUNCTIONS,
     NEW_METHODS,
@@ -326,6 +327,8 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     class_name = parts[3] if len(parts) > 3 and parts[3] in gen_dict else None
     source = remove_coding_declaration(source)
     source = remove_python2_branches(source)
+    # The FEMM interface object (femm_object.py), then the moved functions
+    source = redirect_femm_calls(source, package, legacy_femm_signatures())
     source = redirect_moved_calls(source, package, class_name, gen_dict=gen_dict)
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os

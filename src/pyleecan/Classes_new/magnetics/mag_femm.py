@@ -10,13 +10,8 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
-from ...classes_common.femm_handler import _FEMMHandler
 from ...definitions import MAIN_DIR
 from ...Functions_new.FEMM import FEMM_GROUPS
-from ...Functions_new.FEMM.comp_femm_phi_wind import comp_FEMM_Phi_wind
-from ...Functions_new.FEMM.comp_femm_torque import comp_FEMM_torque
-from ...Functions_new.FEMM.draw_femm import draw_FEMM
-from ...Functions_new.FEMM.update_femm_simulation import update_FEMM_simulation
 from ...Functions_new.labels import STATOR_LAB
 from ..mesh.element_mat import ElementMat
 from ..mesh.fpgn_tri import FPGNTri
@@ -33,7 +28,7 @@ from ..simulation.dxf_import import DXFImport
 from .magnetics import Magnetics
 
 if TYPE_CHECKING:
-    from ...classes_common.femm_handler import _FEMMHandler
+    from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
     from ..mesh.mesh_mat import MeshMat
     from ..mesh.solution import Solution
     from ..output.output import Output
@@ -551,6 +546,9 @@ class MagFEMM(Magnetics):
                     MeshSolution object containing magnetic quantities B, H, mu for each time step
         """
 
+        # Local import: circular import with the class module
+        from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
+
         logger = self.get_logger()
 
         # Init output
@@ -588,13 +586,12 @@ class MagFEMM(Magnetics):
         # Setup the FEMM simulation
         # Geometry building and assigning property in FEMM
         # Instanciate a new FEMM
-        femm = _FEMMHandler()
+        femm = femm_pyleecan()
         output.mag.internal.handler_list.append(femm)
         if self.import_file is None:
             path_femm = self.get_path_save_fem(output)
             logger.debug("Drawing machine in FEMM at " + path_femm)
-            FEMM_dict = draw_FEMM(
-                femm,
+            FEMM_dict = femm.draw_FEMM(
                 output,
                 is_mmfr=self.is_mmfr,
                 is_mmfs=self.is_mmfs,
@@ -646,7 +643,7 @@ class MagFEMM(Magnetics):
         # Solve for all time step and store all the results in out_dict
         if self.nb_worker > 1:
             # A Femm handler will be created for each worker
-            femm.closefemm()
+            femm.handler.closefemm()
             output.mag.internal.handler_list.remove(femm)
             # With parallelization
             (
@@ -743,7 +740,7 @@ class MagFEMM(Magnetics):
     # Inlined from Methods.Simulation.MagFEMM.get_FEMM_mesh_results
     def get_FEMM_mesh_results(
         self,
-        femm: _FEMMHandler,
+        femm: femm_pyleecan,
         FEMM_dict,
         save_path: str,
         j_t0: int,
@@ -810,7 +807,7 @@ class MagFEMM(Magnetics):
         # Run the LUA externally using FEMM LUA console and store the data in the
         # temporary text files
         path_lua_out2 = path_lua_out.replace("\\", "/")
-        femm.callfemm('dofile("' + path_lua_out2 + '")')
+        femm.handler.callfemm('dofile("' + path_lua_out2 + '")')
 
         # Delete the LUA script
         os.remove(path_lua_out)
@@ -1045,6 +1042,9 @@ class MagFEMM(Magnetics):
 
         """
 
+        # Local import: circular import with the class module
+        from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
+
         logger = self.get_logger()
         is_sliding_band = self.is_sliding_band
 
@@ -1052,15 +1052,15 @@ class MagFEMM(Magnetics):
             # Open FEMM instance if filename is not None (parallel case)
             try:
                 # Try to open FEMM instance if handler already exists (first parallelized handler)
-                femm.openfemm(1)
+                femm.handler.openfemm(1)
             except Exception:
                 # Create a new FEMM handler in case of parallelization on another FEMM instance
-                femm = _FEMMHandler()
+                femm = femm_pyleecan()
                 output.mag.internal.handler_list.append(femm)
                 # Open a new FEMM instance associated to new handler
-                femm.openfemm(1)
+                femm.handler.openfemm(1)
             # Open FEMM file
-            femm.opendocument(filename)
+            femm.handler.opendocument(filename)
         else:
             # FEMM instance and file is already open, get filename from output
             filename = self.get_path_save_fem(output)
@@ -1144,12 +1144,11 @@ class MagFEMM(Magnetics):
             if not is_sliding_band:
                 # Reload model for each time step if no sliding band
                 if ii > start_t:
-                    femm.opendocument(fileinit_fem)
-                femm.mi_saveas(filetemp_fem)
+                    femm.handler.opendocument(fileinit_fem)
+                femm.handler.mi_saveas(filetemp_fem)
 
             # Update rotor position and currents
-            update_FEMM_simulation(
-                femm=femm,
+            femm.update_FEMM_simulation(
                 FEMM_dict=FEMM_dict,
                 is_sliding_band=is_sliding_band,
                 is_internal_rotor=is_internal_rotor,
@@ -1163,18 +1162,18 @@ class MagFEMM(Magnetics):
             if is_sliding_band and self.is_set_previous and ii > start_t:
                 if os.path.isfile(ans_file):
                     # Setup .ans file path in FEMM model
-                    femm.mi_setprevious(ans_file, 0)
+                    femm.handler.mi_setprevious(ans_file, 0)
                 else:
                     logger.warning("Cannot reuse result .ans file: " + ans_file)
             else:
                 # Make sure that no file path is filled in FEMM model
-                femm.mi_setprevious("", 0)
+                femm.handler.mi_setprevious("", 0)
 
             # Run the computation
-            femm.mi_analyze()
+            femm.handler.mi_analyze()
 
             # Load results
-            femm.mi_loadsolution()
+            femm.handler.mi_loadsolution()
 
             # Get the flux result
             if is_sliding_band:
@@ -1182,10 +1181,12 @@ class MagFEMM(Magnetics):
                     (
                         out_dict["B_{rad}"][ii, jj],
                         out_dict["B_{circ}"][ii, jj],
-                    ) = femm.mo_getgapb("bc_ag2", angle[jj] * 180 / np.pi)
+                    ) = femm.handler.mo_getgapb("bc_ag2", angle[jj] * 180 / np.pi)
             else:
                 for jj in range(Na):
-                    B = femm.mo_getb(Rag * np.cos(angle[jj]), Rag * np.sin(angle[jj]))
+                    B = femm.handler.mo_getb(
+                        Rag * np.cos(angle[jj]), Rag * np.sin(angle[jj])
+                    )
                     out_dict["B_{rad}"][ii, jj] = B[0] * np.cos(angle[jj]) + B[
                         1
                     ] * np.sin(angle[jj])
@@ -1197,16 +1198,15 @@ class MagFEMM(Magnetics):
             if self.is_calc_torque_energy:
                 label_rot = machine.rotor.get_label()
                 rotor_groups = FEMM_dict["groups"]["lam_group_list"][label_rot]
-                out_dict["Tem"][ii] = comp_FEMM_torque(
-                    femm, rotor_groups=rotor_groups, sym=sym
+                out_dict["Tem"][ii] = femm.comp_FEMM_torque(
+                    rotor_groups=rotor_groups, sym=sym
                 )
 
             if "Phi_wind" in out_dict:
                 # Phi_wind computation
                 # TODO fix inconsistency for multi lam machines here
                 for key in out_dict["Phi_wind"].keys():
-                    out_dict["Phi_wind"][key][ii, :] = comp_FEMM_Phi_wind(
-                        femm,
+                    out_dict["Phi_wind"][key][ii, :] = femm.comp_FEMM_Phi_wind(
                         qs[key],
                         Npcp[key],
                         is_stator=machine.get_lam_by_label(key).is_stator,
@@ -1252,8 +1252,8 @@ class MagFEMM(Magnetics):
                 A_elem[ii0, :] = Aei
 
             if not is_sliding_band:
-                femm.mi_close()
-                femm.mo_close
+                femm.handler.mi_close()
+                femm.handler.mo_close
 
         if Nloop > Nmess and Nt > 1 and k2 <= Nmess:
             logger.info("Solving time step: 100%")
@@ -1277,7 +1277,7 @@ class MagFEMM(Magnetics):
 
         # Close FEMM handler
         if is_close_femm:
-            femm.closefemm()
+            femm.handler.closefemm()
             output.mag.internal.handler_list.remove(femm)
 
         out_dict["Rag"] = Rag
@@ -1287,7 +1287,7 @@ class MagFEMM(Magnetics):
     # Inlined from Methods.Simulation.MagFEMM.solve_FEMM_parallel
     def solve_FEMM_parallel(
         self,
-        femm: _FEMMHandler,
+        femm: femm_pyleecan,
         output: Output,
         out_dict: dict,
         FEMM_dict: dict,
@@ -1353,6 +1353,9 @@ class MagFEMM(Magnetics):
 
         # The following function must be in solve_FEMM_parallel to access
         # to its variable without passing them in arguments
+        # Local import: circular import with the class module
+        from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
+
         def solve_FEMM_single(femm_handler, filename, start_t, end_t):
             """
             Call FEMM to compute airgap flux density from start_t to end_t timesteps
@@ -1455,7 +1458,7 @@ class MagFEMM(Magnetics):
         #   - femm_file
         #   - start_time : index of the first time step to compute
         #   - end_time : index of the last time step to compute
-        femm_handler = [_FEMMHandler() for i in range(nb_worker)]
+        femm_handler = [femm_pyleecan() for i in range(nb_worker)]
         femm_files = [
             fem_file[:-4] + "_" + str(i) + ".fem" for i in range(1, nb_worker + 1)
         ]

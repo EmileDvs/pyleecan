@@ -1,24 +1,19 @@
-from .create_femm_boundary_conditions import create_FEMM_boundary_conditions
+"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
+
+from warnings import warn
 
 
-def get_FEMM_BC_propname(femm, line_label, BC_dict):
-    """Get/create the Boundary coundition corresponding the line
+def get_FEMM_BC_propname(*args, **kwargs):
+    """Deprecated: use femm_pyleecan.get_FEMM_BC_propname"""
+    from .femm_pyleecan import femm_pyleecan
 
-    Parameters
-    ----------
-    femm : FEMMHandler
-        client to send command to a FEMM instance
-    line_label : str
-        BOUNDARY_PROP_LAB of the line
-    BC_dict : dict
-        Boundary condition dict ([line label] = BC name)
-
-    Returns
-    -------
-    propname : str
-        Name of the property to set
-    """
-
-    if line_label not in BC_dict:
-        create_FEMM_boundary_conditions(femm, line_label, BC_dict)
-    return BC_dict[line_label]
+    warn(
+        "get_FEMM_BC_propname is deprecated, use femm_pyleecan.get_FEMM_BC_propname (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    args = list(args)
+    femm = kwargs.pop("femm") if "femm" in kwargs else args.pop(0)
+    if not isinstance(femm, femm_pyleecan):  # FEMM handler
+        femm = femm_pyleecan(femm)
+    return femm.get_FEMM_BC_propname(*args, **kwargs)

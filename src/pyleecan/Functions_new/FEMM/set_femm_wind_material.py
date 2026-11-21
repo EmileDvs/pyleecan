@@ -1,45 +1,19 @@
-def set_FEMM_wind_material(femm, materials, cname, Jcus=0, Cduct=None, dwire=None):
-    """Create or update the property of a winding material
+"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
 
-    Parameters
-    ----------
-    femm : FEMMHandler
-        client to send command to a FEMM instance
-    materials: list
-        list the name of all materials
-    cname: str
-        name of the material to create/update
-    Jcus : float
-        Applied source current density [A/mm^2]
-    Cduct : float
-        Electrical conductivity of the material [MS/m]
-    dwire : float
-        Diameter of each of the wire’s constituent strand [mm]
+from warnings import warn
 
-    Returns
-    -------
-    circuits : list
-        list the name of the circuits in FEMM
 
-    """
-    if cname not in materials:
-        # Create a new material
-        femm.mi_addmaterial(
-            cname,
-            1,  # Relative permeability in the x- or r-direction
-            1,  # Relative permeability in the y- or z-direction
-            0,  # Permanent magnet coercivity [A/m]
-            Jcus,
-            Cduct,
-            0,  # Lamination thickness [mm]
-            0,  # Hysteresis lag angle [deg], (used for nonlinear BH curves)
-            1,  # Fraction of the volume occupied per lamination that is actually filled withiron
-            0,  # LamType (Not laminated)
-            0,  # Hysteresis lag [deg] in the x-direction for linear problems
-            0,  # Hysteresis lag [deg] in the y-direction for linear problems
-            1,  # Number of strands in the wire build
-            dwire,
-        )
-        materials.append(cname)
+def set_FEMM_wind_material(*args, **kwargs):
+    """Deprecated: use femm_pyleecan.set_FEMM_wind_material"""
+    from .femm_pyleecan import femm_pyleecan
 
-    return materials
+    warn(
+        "set_FEMM_wind_material is deprecated, use femm_pyleecan.set_FEMM_wind_material (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    args = list(args)
+    femm = kwargs.pop("femm") if "femm" in kwargs else args.pop(0)
+    if not isinstance(femm, femm_pyleecan):  # FEMM handler
+        femm = femm_pyleecan(femm)
+    return femm.set_FEMM_wind_material(*args, **kwargs)

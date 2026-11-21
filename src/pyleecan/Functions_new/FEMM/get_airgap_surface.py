@@ -1,57 +1,15 @@
-import numpy as np
+"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
 
-from ...Classes_new.geometry.segment import Segment
-from ...Classes_new.geometry.surf_line import SurfLine
-from ..labels import AIRGAP_LAB, AS_BL_LAB, AS_BR_LAB, BOUNDARY_PROP_LAB, NO_LAM_LAB
+from warnings import warn
 
 
-def get_airgap_surface(lam_int, lam_ext, sym=1):
-    """Returns a list of surface in the airgap without sliding band surface
+def get_airgap_surface(*args, **kwargs):
+    """Deprecated: use femm_pyleecan.get_airgap_surface"""
+    from .femm_pyleecan import femm_pyleecan
 
-    Parameters
-    ----------
-    lam_int:
-        Internal lamination
-    lam_ext:
-        External lamination
-
-    Returns
-    -------
-    surf_list: list
-        List of surface in the airgap without sliding band surface
-    point_ref: complex
-        Airgap point ref
-    """
-
-    surf_list = []
-
-    Rgap_mec_int = lam_int.comp_radius_mec()
-    Rgap_mec_ext = lam_ext.comp_radius_mec()
-    Wgap_mec = Rgap_mec_ext - Rgap_mec_int
-
-    point_ref = (Rgap_mec_int + Wgap_mec / 2) * np.exp(1j * np.pi / sym / 2)
-
-    if sym == 1:
-        line_list = []
-    else:
-        Z1 = lam_int.get_Rbo()
-        Z2 = lam_ext.get_Rbo()
-
-        Z1_bis = Z1 * np.exp(1j * 2 * np.pi / sym)
-        Z2_bis = Z2 * np.exp(1j * 2 * np.pi / sym)
-
-        line_list = [
-            Segment(begin=Z1, end=Z2, prop_dict={BOUNDARY_PROP_LAB: AS_BR_LAB}),
-            Segment(begin=Z1_bis, end=Z2_bis, prop_dict={BOUNDARY_PROP_LAB: AS_BL_LAB}),
-        ]
-
-    # Middle
-    surf_list.append(
-        SurfLine(
-            line_list=line_list,
-            point_ref=point_ref,
-            label=NO_LAM_LAB + "_" + AIRGAP_LAB,
-        )
+    warn(
+        "get_airgap_surface is deprecated, use femm_pyleecan.get_airgap_surface (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
     )
-
-    return surf_list, point_ref
+    return femm_pyleecan.get_airgap_surface(*args, **kwargs)

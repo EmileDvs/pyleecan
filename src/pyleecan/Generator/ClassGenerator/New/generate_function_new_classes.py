@@ -30,6 +30,15 @@ from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_name,
     redirect_function_module_imports,
 )
+from pyleecan.Generator.ClassGenerator.New.femm_object import (
+    FEMM_MODULE,
+    FEMM_PACKAGE,
+    femm_alias_source,
+    femm_modules,
+    femm_object_source,
+    femm_signatures,
+    redirect_femm_calls,
+)
 from pyleecan.Generator.ClassGenerator.New.moved_functions import (
     DEPRECATED_MODULES,
     MERGED_MODULES,
@@ -792,6 +801,19 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
         and source_dir.joinpath(*module.split(".")[:-1]).is_dir()
     ]
 
+    # The FEMM interface object, from the legacy FEMM modules (femm_object.py)
+    legacy_femm = femm_modules(source_dir) if (source_dir / FEMM_PACKAGE).is_dir() else {}
+    signatures = femm_signatures(legacy_femm)
+    femm_errors = {
+        module.split(".", 1)[1]: set(errors)
+        for module, errors in FUNCTION_ERRORS.items()
+        if module.startswith(FEMM_PACKAGE + ".")
+    }
+    if legacy_femm:
+        entries.append(
+            (source_dir / FEMM_PACKAGE / (FEMM_MODULE + ".py"), femm_object_source(legacy_femm, femm_errors))
+        )
+
     # Merged modules (MERGED_MODULES): written from their legacy modules
     def read_legacy(module):
         with tokenize.open(source_dir.joinpath(*module.split(".")).with_suffix(".py")) as file:
@@ -832,6 +854,13 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 moved = moved or True
             elif moved is not None:  # Deprecated alias of the method
                 source = alias_source(legacy_module, moved, source)
+            elif (
+                removed_alias is None
+                and relative.parts[0] == FEMM_PACKAGE
+                and relative.stem in legacy_femm
+            ):  # Deprecated aliases of the femm_pyleecan methods
+                source = femm_alias_source(relative.stem, source, legacy_femm, femm_errors)
+                moved = "femm"
             replacement = DEPRECATED_MODULES.get(".".join(relative.with_suffix("").parts))
             if replacement is not None:  # Deprecated module: its functions warn
                 source = deprecate_source(source, replacement)
@@ -840,9 +869,12 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 source = _adapt_json_retrocompatibility(source, path)
             elif relative == Path("load.py"):
                 source = _adapt_json_load(source, path)
-            source = _redirect_function_errors(source, path, relative, class_dir)
+            if moved != "femm":  # The FEMM aliases import the shared errors
+                source = _redirect_function_errors(source, path, relative, class_dir)
             package = ".".join(["pyleecan", "Functions", *relative.parts[:-1]])
             if moved is None:  # Callers of the moved functions call the methods
+                if relative.stem != FEMM_MODULE:
+                    source = redirect_femm_calls(source, package, signatures)
                 source = redirect_moved_calls(source, package)
             source = _redirect_shared_error_imports(source, package)
             rewritten, found = _rewrite_source(source, path, relative, class_dir)

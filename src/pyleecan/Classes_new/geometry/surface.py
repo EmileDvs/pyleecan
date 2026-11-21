@@ -6,8 +6,6 @@ from math import ceil
 from typing import TYPE_CHECKING, ClassVar
 
 from ...definitions import config_dict
-from ...Functions_new.FEMM.get_femm_bc_propname import get_FEMM_BC_propname
-from ...Functions_new.FEMM.get_mesh_param import get_mesh_param
 from ...Functions_new.init_fig import init_fig
 from ...Functions_new.labels import (
     BORE_LAB,
@@ -28,7 +26,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
-    from ...classes_common.femm_handler import _FEMMHandler
+    from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
     from .line import Line
 
 
@@ -94,7 +92,7 @@ class Surface(LegacyClass):
     # Inlined from Methods.Geometry.Surface.draw_FEMM
     def draw_FEMM(
         self,
-        femm: _FEMMHandler,
+        femm: femm_pyleecan,
         nodeprop=None,
         maxseg=None,
         FEMM_dict: dict | None = None,
@@ -133,6 +131,9 @@ class Surface(LegacyClass):
 
         """
         # Check if the Surface is correct
+        # Local import: circular import with the class module
+        from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
+
         self.check()
 
         # Draw all the lines
@@ -156,7 +157,7 @@ class Surface(LegacyClass):
                     and not line.prop_dict[DRAW_PROP_LAB]
                 ):
                     continue  #  This line should not be drawn
-            mesh_dict = get_mesh_param(label_dict, FEMM_dict)
+            mesh_dict = femm_pyleecan.get_mesh_param(label_dict, FEMM_dict)
 
             group = mesh_dict["group"]
             if isinstance(group, list):
@@ -167,8 +168,7 @@ class Surface(LegacyClass):
                 is_yoke_BC = LAM_LAB + YOKE_LAB in line.prop_dict[BOUNDARY_PROP_LAB]
 
                 if type_set_BC == 0 or (type_set_BC == 1 and is_yoke_BC):
-                    propname = get_FEMM_BC_propname(
-                        femm=femm,
+                    propname = femm.get_FEMM_BC_propname(
                         line_label=line.prop_dict[BOUNDARY_PROP_LAB],
                         BC_dict=BC_dict,
                     )

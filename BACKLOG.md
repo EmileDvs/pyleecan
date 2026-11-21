@@ -238,11 +238,38 @@ Proposed targets are a starting point; the decision is the maintainer's.
 | 7 | Geometry | `inter_line_circle` (M17), `inter_line_line` (M12), `inter_circle_circle` (M2), `circle_from_3_points` (M2), `comp_flower_arc` (M4), `cut_lines_between_angle` (M2), `comp_surface_num` (M1), `merge_notch_list` (M2 G1: Lamination), `transform_hole_surf` (M6: Hole, Lamination...) | utility (geometry); class: `Lamination.merge_notch_list`, `Hole` / `Lamination` for `transform_hole_surf` | |
 | 8 | Electrical | `dqh_transformation` (M8 F1 T2), `dqh_transformation_freq` (M2 F1 T1), `comp_loss_joule` (M2: LUTdq, LossModelWinding) | utility (dqh); class or merge for `comp_loss_joule` | done (2026-11-21): dqh (methods `DataTime.n2dqh`, `DataFreq.n2dqh`, `DataDual.n2dqh`, the other functions merged in `SciDataTool.dqh_transformation`, checks dropped); `comp_loss_joule` deprecated (not used); `comp_MTPA` method of `LUTdq` |
 | 9 | Plot | `init_fig` (M32 G4), `get_color_legend_from_surface` (M7: laminations), `set_plot_gui_icon` (M1 G15), `Pyvista.configure_plot` (M5), `Pyvista.plot_mesh_field` (M2), `Pyvista.plot_glyph_pv` (M1), `Pyvista.plot_surf_deflection` (M1) | utility (plot); pyvista helpers merged in one module | decided (2026-11-21): pyvista plots reworked in a new object `pv_plotter_pyleecan`; `animate_as_gif` to `Data` (static); `get_color_legend_from_surface` to `Machine` (open, below) |
-| 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | decided (2026-11-21): object dedicated to the FEMM interface, `femm_pyleecan`, in a new sub-package `femm`, all the functions as its methods; the current handler (`_FEMMHandler`) becomes `femm_pyleecan.handler` |
+| 10 | FEMM | 18 used modules (draw, materials, circuits, boundary conditions, sliding band, mesh parameters; mostly F callers inside FEMM, M: MagFEMM, Surface, HoleM61) | utility package (`femm/`), with `MagFEMM` / `Surface` methods for `comp_FEMM_torque`, `comp_FEMM_Phi_wind`, `get_FEMM_BC_propname`, `get_mesh_param` | done (2026-11-21): object dedicated to the FEMM interface, `femm_pyleecan`, in a new sub-package `femm`, all the functions as its methods; the current handler (`_FEMMHandler`) becomes `femm_pyleecan.handler` |
 | 11 | GMSH | 7 modules (`draw_GMSH` M2: MagElmer, StructElmer; `gen_3D_mesh` G1 T2; the others F) | utility package (`gmsh/`) | decided (2026-11-21): object dedicated to the gmsh interface, `gmsh_pyleecan`, in a new sub-package `gmsh`, all the functions as its methods |
 | 12 | Load / Save | `load` (M3 G7 C281 T113), `save` (C281), `load_switch` (generated), `Load.*` (6), `Save.*` (4) | utility package (`io/`), `load_switch` replaced by the class lookup | decided (2026-11-21): `retrocompatibility` to `classes_common` for now; Phase 2: one class to load (retrocompatibility included) and one class to save the pyleecan objects |
 | 13 | Root helpers | `labels` (M117 F20), `init_environment` (G2), `path_tools` (M4 G2), `make_ndarray_equal` (M1), `get_path_binary` (M3), `GUI.log_error` (M3 G16) | utility; `log_error` with the GUI (Step 10) | |
 | 14 | Other steps | `get_logger` (Step 9), `check_parent` (Step 16), `Load.import_class` (`classes_common.class_lookup`, Step 12 loaders), `Converter.Utils.ConvertionError` (shared errors, done) | other step | |
+
+### FEMM interface object (2026-11-21)
+
+- `femm_pyleecan`, plain helper class written by the functions generator
+  (`femm_object.py`) from the 20 modules of `Functions/FEMM`, in
+  `Functions_new/FEMM/femm_pyleecan.py` (and `Functions_pydantic`): a
+  `femm` sub-package would be the same folder as `FEMM` on Windows, and
+  `Classes_new` is rewritten at each run (Phase 2: `pyleecan/femm/`).
+- One object per FEMM handler (per parallel worker): `self.handler` is
+  the `_FEMMHandler`; `OutMagFEMM.handler_list` holds the objects. The
+  functions taking `femm` are methods (`femm.mi_...` ->
+  `self.handler.mi_...`, `femm` given to another function -> the
+  object), the others static methods; `FEMMError` imported from the
+  shared errors.
+- Callers (`MagFEMM` methods, geometry `draw_FEMM`, `HoleM61`): calls
+  `f(femm, ...)` -> `femm.f(...)`, `_FEMMHandler()` -> `femm_pyleecan()`,
+  `femm.mi_...` -> `femm.handler.mi_...` in the functions with a `femm`
+  variable; the import of `femm_pyleecan` stays in the function (circular
+  import comment). Type hints: `femm : FEMMHandler` -> `femm_pyleecan`.
+- The legacy FEMM paths are deprecated aliases (a handler or a
+  `femm_pyleecan` object accepted). The GUI (legacy) still uses the
+  legacy functions (Step 10).
+- Checks: `test_LossFEMM_Prius` runs FEMM through `femm_pyleecan` with each
+  backend, up to the known loss error (`KeyError: 'overall'`, #751 open
+  point), as before; legacy passes; class, cross, geometry and slot tests
+  as before; `ty` geometry 22, magnetics 159 (unchanged); unit tests
+  `Tests/New/test_femm_object.py`.
 
 ### retrocompatibility (2026-11-21)
 

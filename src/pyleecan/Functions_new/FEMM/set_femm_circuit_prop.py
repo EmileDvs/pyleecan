@@ -1,38 +1,19 @@
-def set_FEMM_circuit_prop(femm, circuits, Clabel, I=None):
-    """Create or update the property of a circuit
+"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
 
-    Parameters
-    ----------
-    femm : FEMMHandler
-        client to send command to a FEMM instance
-    circuits: list
-        list the name of all circuits
-    Clabel: str
-        the label of the circuit surface
-    q_id : int
-        Index of the phase
-    I : ndarray
-        Lamination currents for given time step and for all phases [qs,1]
+from warnings import warn
 
-    Returns
-    -------
-    circuits : list
-        list the name of the circuits in FEMM
 
-    """
+def set_FEMM_circuit_prop(*args, **kwargs):
+    """Deprecated: use femm_pyleecan.set_FEMM_circuit_prop"""
+    from .femm_pyleecan import femm_pyleecan
 
-    # Find phase index of current surface label
-    q_id = int(Clabel[5:])
-
-    if Clabel not in circuits:
-        # Create new circuit
-        femm.mi_addcircprop(Clabel, 0, 1)
-        circuits.append(Clabel)
-
-    # Update circuit
-    if I is not None:
-        femm.mi_modifycircprop(Clabel, 1, I[q_id])
-    else:
-        femm.mi_modifycircprop(Clabel, 1, 0)
-
-    return circuits
+    warn(
+        "set_FEMM_circuit_prop is deprecated, use femm_pyleecan.set_FEMM_circuit_prop (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    args = list(args)
+    femm = kwargs.pop("femm") if "femm" in kwargs else args.pop(0)
+    if not isinstance(femm, femm_pyleecan):  # FEMM handler
+        femm = femm_pyleecan(femm)
+    return femm.set_FEMM_circuit_prop(*args, **kwargs)

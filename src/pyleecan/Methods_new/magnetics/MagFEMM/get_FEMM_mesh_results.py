@@ -14,11 +14,11 @@ from ....Functions_new.FEMM import FEMM_GROUPS
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ....classes_common.femm_handler import _FEMMHandler
+    from ....Functions_new.FEMM.femm_pyleecan import femm_pyleecan
 
 
 def get_FEMM_mesh_results(
-    self, femm: _FEMMHandler, FEMM_dict, save_path: str, j_t0: int, id_worker: int = 0, is_get_mesh: bool = False
+    self, femm: femm_pyleecan, FEMM_dict, save_path: str, j_t0: int, id_worker: int = 0, is_get_mesh: bool = False
 ) -> tuple[MeshMat, np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict, np.ndarray]:
     """Load the mesh data and solution data. FEMM must be working and a simulation must have been solved.
 
@@ -78,7 +78,7 @@ def get_FEMM_mesh_results(
     # Run the LUA externally using FEMM LUA console and store the data in the
     # temporary text files
     path_lua_out2 = path_lua_out.replace("\\", "/")
-    femm.callfemm('dofile("' + path_lua_out2 + '")')
+    femm.handler.callfemm('dofile("' + path_lua_out2 + '")')
 
     # Delete the LUA script
     os.remove(path_lua_out)

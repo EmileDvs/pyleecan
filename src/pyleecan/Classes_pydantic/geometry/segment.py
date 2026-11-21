@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
-    from ...classes_common.femm_handler import _FEMMHandler
+    from ...Functions_pydantic.FEMM.femm_pyleecan import femm_pyleecan
     from .line import Line
 
 
@@ -190,7 +190,7 @@ class Segment(Line):
     # Inlined from Methods.Geometry.Segment.draw_FEMM
     def draw_FEMM(
         self,
-        femm: _FEMMHandler,
+        femm: femm_pyleecan,
         nodeprop=None,
         propname=None,
         element_size=None,
@@ -239,25 +239,25 @@ class Segment(Line):
 
         if is_draw:
             # Adding nodes
-            femm.mi_addnode(X1, Y1)
-            femm.mi_addnode(X2, Y2)
+            femm.handler.mi_addnode(X1, Y1)
+            femm.handler.mi_addnode(X2, Y2)
 
         # Adding property on the node
-        femm.mi_selectnode(X1, Y1)
-        femm.mi_setnodeprop(nodeprop, group)
-        femm.mi_clearselected()
-        femm.mi_selectnode(X2, Y2)
-        femm.mi_setnodeprop(nodeprop, group)
-        femm.mi_clearselected()
+        femm.handler.mi_selectnode(X1, Y1)
+        femm.handler.mi_setnodeprop(nodeprop, group)
+        femm.handler.mi_clearselected()
+        femm.handler.mi_selectnode(X2, Y2)
+        femm.handler.mi_setnodeprop(nodeprop, group)
+        femm.handler.mi_clearselected()
 
         if is_draw:
             # Adding the segment
-            femm.mi_addsegment(X1, Y1, X2, Y2)
+            femm.handler.mi_addsegment(X1, Y1, X2, Y2)
 
         # Set property of the segment
-        femm.mi_selectsegment((X1 + X2) / 2, (Y1 + Y2) / 2)
-        femm.mi_setsegmentprop(propname, element_size, automesh, hide, group)
-        femm.mi_clearselected()
+        femm.handler.mi_selectsegment((X1 + X2) / 2, (Y1 + Y2) / 2)
+        femm.handler.mi_setsegmentprop(propname, element_size, automesh, hide, group)
+        femm.handler.mi_clearselected()
 
     # Inlined from Methods.Geometry.Segment.get_begin
     def get_begin(self) -> complex:

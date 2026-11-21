@@ -11,11 +11,12 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ....Classes_new.mesh.mesh_mat import MeshMat
     from ....Classes_new.output.output import Output
+    from ....Functions_new.FEMM.femm_pyleecan import femm_pyleecan
 
 
 def solve_FEMM_parallel(
     self,
-    femm: _FEMMHandler,
+    femm: femm_pyleecan,
     output: Output,
     out_dict: dict,
     FEMM_dict: dict,
@@ -81,6 +82,9 @@ def solve_FEMM_parallel(
 
     # The following function must be in solve_FEMM_parallel to access
     # to its variable without passing them in arguments
+    # Local import: circular import with the class module
+    from ....Functions_new.FEMM.femm_pyleecan import femm_pyleecan
+
     def solve_FEMM_single(femm_handler, filename, start_t, end_t):
         """
         Call FEMM to compute airgap flux density from start_t to end_t timesteps
@@ -183,7 +187,7 @@ def solve_FEMM_parallel(
     #   - femm_file
     #   - start_time : index of the first time step to compute
     #   - end_time : index of the last time step to compute
-    femm_handler = [_FEMMHandler() for i in range(nb_worker)]
+    femm_handler = [femm_pyleecan() for i in range(nb_worker)]
     femm_files = [
         fem_file[:-4] + "_" + str(i) + ".fem" for i in range(1, nb_worker + 1)
     ]

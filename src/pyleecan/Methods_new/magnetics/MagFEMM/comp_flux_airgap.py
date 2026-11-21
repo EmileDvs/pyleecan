@@ -2,7 +2,6 @@ import numpy as np
 
 from ....classes_common.femm_handler import _FEMMHandler
 from ....Classes_new.output.out_mag_femm import OutMagFEMM
-from ....Functions_new.FEMM.draw_femm import draw_FEMM
 from ....Functions_new.labels import STATOR_LAB
 from typing import TYPE_CHECKING
 
@@ -41,6 +40,9 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
                 MeshSolution object containing magnetic quantities B, H, mu for each time step
     """
 
+    # Local import: circular import with the class module
+    from ....Functions_new.FEMM.femm_pyleecan import femm_pyleecan
+
     logger = self.get_logger()
 
     # Init output
@@ -78,13 +80,12 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
     # Setup the FEMM simulation
     # Geometry building and assigning property in FEMM
     # Instanciate a new FEMM
-    femm = _FEMMHandler()
+    femm = femm_pyleecan()
     output.mag.internal.handler_list.append(femm)
     if self.import_file is None:
         path_femm = self.get_path_save_fem(output)
         logger.debug("Drawing machine in FEMM at " + path_femm)
-        FEMM_dict = draw_FEMM(
-            femm,
+        FEMM_dict = femm.draw_FEMM(
             output,
             is_mmfr=self.is_mmfr,
             is_mmfs=self.is_mmfs,
@@ -136,7 +137,7 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
     # Solve for all time step and store all the results in out_dict
     if self.nb_worker > 1:
         # A Femm handler will be created for each worker
-        femm.closefemm()
+        femm.handler.closefemm()
         output.mag.internal.handler_list.remove(femm)
         # With parallelization
         (

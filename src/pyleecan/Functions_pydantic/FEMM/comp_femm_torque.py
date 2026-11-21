@@ -1,19 +1,19 @@
-def comp_FEMM_torque(femm, rotor_groups, sym=1):
-    """Compute the torque of the current FEMM simulation result
-    Parameters
-    ----------
-    femm : FEMMHandler
-        client to send command to a FEMM instance
-    FEMM_dict : dict
-        dict containig FEMM parameters
-    """
+"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
 
-    # Select rotor groups
-    femm.mo_seteditmode("area")
-    for grp in rotor_groups:
-        femm.mo_groupselectblock(grp)
-    Tem = sym * femm.mo_blockintegral(22)
+from warnings import warn
 
-    femm.mo_clearblock()
 
-    return Tem
+def comp_FEMM_torque(*args, **kwargs):
+    """Deprecated: use femm_pyleecan.comp_FEMM_torque"""
+    from .femm_pyleecan import femm_pyleecan
+
+    warn(
+        "comp_FEMM_torque is deprecated, use femm_pyleecan.comp_FEMM_torque (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    args = list(args)
+    femm = kwargs.pop("femm") if "femm" in kwargs else args.pop(0)
+    if not isinstance(femm, femm_pyleecan):  # FEMM handler
+        femm = femm_pyleecan(femm)
+    return femm.comp_FEMM_torque(*args, **kwargs)

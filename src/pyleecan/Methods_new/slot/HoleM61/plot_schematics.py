@@ -8,7 +8,6 @@ from ....definitions import config_dict
 from ....Functions_new.Geometry.inter_line_circle import inter_line_circle
 from ....Functions_new.Plot import ARROW_COLOR, ARROW_WIDTH, MAIN_LINE_COLOR, MAIN_LINE_STYLE, MAIN_LINE_WIDTH, P_FONT_SIZE, SC_FONT_SIZE, SC_LINE_COLOR, SC_LINE_STYLE, SC_LINE_WIDTH, TEXT_BOX, plot_quote
 
-from ....Functions_new.FEMM.get_mesh_param import get_mesh_param
 from ....Functions_new.labels import decode_label, HOLEM_LAB
 from ....Methods import ParentMissingError
 from typing import TYPE_CHECKING

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
-    from ...classes_common.femm_handler import _FEMMHandler
+    from ...Functions_pydantic.FEMM.femm_pyleecan import femm_pyleecan
     from .line import Line
 
 
@@ -115,7 +115,7 @@ class Arc(Line):
     # Inlined from Methods.Geometry.Arc.draw_FEMM
     def draw_FEMM(
         self,
-        femm: _FEMMHandler,
+        femm: femm_pyleecan,
         nodeprop=None,
         maxseg=None,
         element_size=None,
@@ -166,24 +166,24 @@ class Arc(Line):
 
         if is_draw:
             # Adding nodes
-            femm.mi_addnode(X1, Y1)
-            femm.mi_addnode(X3, Y3)
+            femm.handler.mi_addnode(X1, Y1)
+            femm.handler.mi_addnode(X3, Y3)
 
-        femm.mi_selectnode(X1, Y1)
-        femm.mi_setnodeprop(nodeprop, group)
-        femm.mi_clearselected()
+        femm.handler.mi_selectnode(X1, Y1)
+        femm.handler.mi_setnodeprop(nodeprop, group)
+        femm.handler.mi_clearselected()
 
-        femm.mi_selectnode(X3, Y3)
-        femm.mi_setnodeprop(nodeprop, group)
-        femm.mi_clearselected()
+        femm.handler.mi_selectnode(X3, Y3)
+        femm.handler.mi_setnodeprop(nodeprop, group)
+        femm.handler.mi_clearselected()
 
         if np.abs(angle) > 180:
             if is_draw:
-                femm.mi_addnode(X2, Y2)
+                femm.handler.mi_addnode(X2, Y2)
 
-            femm.mi_selectnode(X2, Y2)
-            femm.mi_setnodeprop(nodeprop, group)
-            femm.mi_clearselected()
+            femm.handler.mi_selectnode(X2, Y2)
+            femm.handler.mi_setnodeprop(nodeprop, group)
+            femm.handler.mi_clearselected()
 
         # invert the nodes
         if angle < 0:
@@ -192,24 +192,24 @@ class Arc(Line):
 
         if is_draw:
             if angle > 180:
-                femm.mi_addarc(X1, Y1, X2, Y2, angle / 2, 2)
-                femm.mi_addarc(X2, Y2, X3, Y3, angle / 2, 2)
+                femm.handler.mi_addarc(X1, Y1, X2, Y2, angle / 2, 2)
+                femm.handler.mi_addarc(X2, Y2, X3, Y3, angle / 2, 2)
             else:
-                femm.mi_addarc(X1, Y1, X3, Y3, angle, 2)
+                femm.handler.mi_addarc(X1, Y1, X3, Y3, angle, 2)
 
         # Set Arc properties
         if angle > 180:
             cent = self.get_center()
             mid1 = cent + (mid - cent) * np.exp(1j * angle / 4)
             mid2 = cent + (mid - cent) * np.exp(-1j * angle / 4)
-            femm.mi_selectarcsegment(mid1.real, mid1.imag)
-            femm.mi_selectarcsegment(mid2.real, mid1.imag)
+            femm.handler.mi_selectarcsegment(mid1.real, mid1.imag)
+            femm.handler.mi_selectarcsegment(mid2.real, mid1.imag)
         else:
-            femm.mi_selectarcsegment(X2, Y2)
+            femm.handler.mi_selectarcsegment(X2, Y2)
 
         maxseg = self.comp_maxseg(element_size, maxseg)
-        femm.mi_setarcsegmentprop(maxseg, propname, hide, group)
-        femm.mi_clearselected()
+        femm.handler.mi_setarcsegmentprop(maxseg, propname, hide, group)
+        femm.handler.mi_clearselected()
 
     # Inlined from Methods.Geometry.Arc.intersect_line
     def intersect_line(self, Z1, Z2) -> list:

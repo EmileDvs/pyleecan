@@ -45,9 +45,11 @@ IMPORTED_TYPES = {
     "numpy array": ("np.ndarray", ("numpy", "np")),
     "matplotlib.figure.figure": ("Figure", ("matplotlib.figure", "Figure")),
     "matplotlib.axes.axes": ("Axes", ("matplotlib.axes", "Axes")),
+    # The femm parameters hold the FEMM interface object (femm_object.py), its
+    # handler is femm.handler
     "femmhandler": (
-        "_FEMMHandler",
-        ("pyleecan.classes_common.femm_handler", "_FEMMHandler"),
+        "femm_pyleecan",
+        ("pyleecan.Functions_new.FEMM.femm_pyleecan", "femm_pyleecan"),
     ),
     "matplotlib.patches.polygon": ("Polygon", ("matplotlib.patches", "Polygon")),
     "matplotlib.patches.circle": ("Circle", ("matplotlib.patches", "Circle")),

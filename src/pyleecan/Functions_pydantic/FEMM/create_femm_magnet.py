@@ -1,50 +1,19 @@
-def create_FEMM_magnet(femm, is_mmf, is_eddies, materials, mag_obj, T_mag):
-    """Set the material of the magnet in FEMM
+"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
 
-    Parameters
-    ----------
-    femm : FEMMHandler
-        client to send command to a FEMM instance
-    is_mmfr : bool
-        1 to compute the lamination magnetomotive force / magnetic field
-    is_eddies : bool
-        1 to calculate eddy currents
-    materials : list
-        list of materials already created in FEMM
-    mag_obj : Magnet
-        Magnet object to set the material
-    T_mag: float
-        Permanent magnet temperature [deg Celsius]
+from warnings import warn
 
-    Returns
-    -------
-    (str, list)
-        property, materials
 
-    """
+def create_FEMM_magnet(*args, **kwargs):
+    """Deprecated: use femm_pyleecan.create_FEMM_magnet"""
+    from .femm_pyleecan import femm_pyleecan
 
-    rho = mag_obj.mat_type.elec.rho  # Resistivity
-    Hcm = mag_obj.mat_type.mag.get_Hc(T_op=T_mag)  # Magnet coercitivity field
-    mur = mag_obj.mat_type.mag.mur_lin
-
-    mat_name = mag_obj.mat_type.name
-    if mat_name not in materials:
-        femm.mi_addmaterial(
-            mat_name,
-            mur,
-            mur,
-            is_mmf * Hcm,
-            0,
-            is_mmf * is_eddies * 1e-6 / rho,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-        )
-        materials.append(mat_name)
-
-    return mat_name, materials
+    warn(
+        "create_FEMM_magnet is deprecated, use femm_pyleecan.create_FEMM_magnet (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    args = list(args)
+    femm = kwargs.pop("femm") if "femm" in kwargs else args.pop(0)
+    if not isinstance(femm, femm_pyleecan):  # FEMM handler
+        femm = femm_pyleecan(femm)
+    return femm.create_FEMM_magnet(*args, **kwargs)

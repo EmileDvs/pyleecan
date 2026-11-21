@@ -1,71 +1,19 @@
-import numpy as np
+"""Deprecated aliases of femm_pyleecan methods (removed in Phase 2)."""
 
-from .set_femm_circuit_prop import set_FEMM_circuit_prop
+from warnings import warn
 
 
-def update_FEMM_simulation(
-    femm,
-    FEMM_dict,
-    is_internal_rotor,
-    is_sliding_band,
-    angle_rotor,
-    Is,
-    Ir,
-    ii,
-):
-    """Update the simulation by changing the rotor position and
-    updating the currents
-    Parameters
-    ----------
-    femm : FEMMHandler
-        client to send command to a FEMM instance
-    FEMM_dict : dict
-        Dictionary containing main FEMM definition / properties
-    is_internal_rotor: bool
-        True if it is an Internal Rotor topology
-    is_sliding_band: bool
-        True if it is an Internal Rotor topology
-    angle_rotor: ndarray
-        Vector of rotor angular position over time [Nt,]
-    Is : ndarray
-        Stator currents function of phase and time [qs,Nt]
-    Ir : ndarray
-        Rotor currents function of phase and time [qr,Nt]
-    ii : int
-        Time step index
-    """
+def update_FEMM_simulation(*args, **kwargs):
+    """Deprecated: use femm_pyleecan.update_FEMM_simulation"""
+    from .femm_pyleecan import femm_pyleecan
 
-    if is_sliding_band:  # No rotation without sliding band.
-        # Rotor rotation using sliding band
-        if is_internal_rotor:
-            femm.mi_modifyboundprop("bc_ag2", 10, 180 * angle_rotor[ii] / np.pi)
-        else:
-            femm.mi_modifyboundprop("bc_ag2", 11, 180 * angle_rotor[ii] / np.pi)
-
-    else:
-        # Select and rotate rotor groups
-        femm.mi_seteditmode("group")
-        for key, val in FEMM_dict["groups"]["lam_group_list"].items():
-            if "Rotor" in key:
-                for ind in val:
-                    femm.mi_selectgroup(ind)
-        femm.mi_moverotate(0, 0, 180 * angle_rotor[ii] / np.pi)
-
-    # Update currents
-    if Is is not None or Ir is not None:
-        circuits = FEMM_dict["circuits"]
-        for label in circuits:
-            if "Circs" in label and Is is not None:  # Stator
-                set_FEMM_circuit_prop(
-                    femm,
-                    circuits,
-                    label,
-                    Is[:, ii],
-                )
-            if "Circr" in label and Ir is not None:  # Rotor
-                set_FEMM_circuit_prop(
-                    femm,
-                    circuits,
-                    label,
-                    Ir[:, ii],
-                )
+    warn(
+        "update_FEMM_simulation is deprecated, use femm_pyleecan.update_FEMM_simulation (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    args = list(args)
+    femm = kwargs.pop("femm") if "femm" in kwargs else args.pop(0)
+    if not isinstance(femm, femm_pyleecan):  # FEMM handler
+        femm = femm_pyleecan(femm)
+    return femm.update_FEMM_simulation(*args, **kwargs)
