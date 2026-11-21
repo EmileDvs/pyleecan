@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 import numpy as np
 
@@ -6,19 +7,29 @@ from ....Classes_new.output.out_loss import OutLoss
 from ....Classes_new.output.out_loss_model import OutLossModel
 
 from ...simulation.Input import InputError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def run(self) -> None:
-    """Run the ElecLUTdq module"""
-    if self.parent is None:
+def run(self, output: Output | None = None) -> None:
+    """Run the ElecLUTdq module
+
+    Parameters
+    ----------
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
+    """
+    output = container_or_parent(self, output, "output", depth=2)
+    if output is None and self.parent is None:
         raise InputError("The Electrical object must be in a Simulation object to run")
-    if self.parent.parent is None:
+    if output is None:
         raise InputError("The Simulation object must be in an Output object to run")
 
     get_logger(self).info("Starting Electrical module")
 
     # Get output, machine and OP
-    output = self.parent.parent
 
     machine = output.simu.machine
     OP = output.elec.OP

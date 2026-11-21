@@ -187,7 +187,7 @@ Methods receive their context explicitly instead, for example
 | 8. Refactor the remaining `Functions` modules | generator | in progress (7/14 groups) |
 | 9. Logger chain | generator | done (parent fallback removed with Step 11) |
 | 10. GUI, first pass | generator | to do |
-| 11. Parent links, first pass | generator | in progress (classification, helper, pass 1) |
+| 11. Parent links, first pass | generator | in progress (classification, helper, passes 1-2) |
 | 12. Freeze | gate | to do |
 | 13. Custom property setters and getters | frozen | to do |
 | 14. Type hints, second pass | frozen | to do |
@@ -341,7 +341,8 @@ reads are left to Step 16.
       Decisions).
 - [ ] Generator passes for the mechanical patterns, one pattern per increment;
       the methods given a fallback are listed in the backlog (Phase 2
-      deprecations). Pass 1 done: slot surfaces and active height (`lam`).
+      deprecations). Pass 1 done: slot surfaces and active height (`lam`); pass 2: the
+      models' `run(output)`.
 
 ### Step 12: freeze
 

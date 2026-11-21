@@ -8,6 +8,7 @@ import numpy as np
 
 from ...classes_common.errors import InputError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from .._legacy_class import LegacyClass
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
@@ -236,20 +237,25 @@ class Force(LegacyClass):
         return axes_dict
 
     # Inlined from Methods.Simulation.Force.run
-    def run(self) -> None:
-        """Run the Force module"""
-        if self.parent is None:
+    def run(self, output: Output | None = None) -> None:
+        """Run the Force module
+
+        Parameters
+        ----------
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
+        """
+        output = container_or_parent(self, output, "output", depth=2)
+        if output is None and self.parent is None:
             raise InputError(
                 "ERROR: The Force object must be in a Simulation object to run"
             )
-        if self.parent.parent is None:
+        if output is None:
             raise InputError(
                 "ERROR: The Force object must be in an Output object to run"
             )
 
         get_logger(self).info("Starting Force module")
-
-        output = self.parent.parent
 
         # Compute and store time and angle axes from previous output
         # and returns additional axes in axes_dict

@@ -20,6 +20,7 @@ all know the container (``parent_reads.py``).
 """
 
 import ast
+import re
 from typing import NamedTuple
 
 FALLBACK_MODULE = "classes_common.parents"
@@ -41,6 +42,9 @@ class ContainerArgument(NamedTuple):
     """Documentation of the argument"""
     depth: int = 1
     """Number of parent links up to the container"""
+    caller_value: str = "self"
+    """Value passed by the calls on a field of the container: ``self`` (the
+    container), or a local name of the calling method (``output``)"""
 
 
 CONTAINER_ARGUMENTS = (
@@ -55,6 +59,19 @@ CONTAINER_ARGUMENTS = (
         name="lam",
         doc_type="Lamination or Notch",
         description="Lamination (or notch) holding the slot (default: the parent)",
+    ),
+    # The models of a simulation: run(output), called by Simu1.run_single
+    *(
+        ContainerArgument(
+            base=model,
+            methods=("run",),
+            name="output",
+            doc_type="Output",
+            description="Output of the simulation (default: the parent of the simulation)",
+            depth=2,
+            caller_value="output",
+        )
+        for model in ("Electrical", "Magnetics", "Force", "Structural", "Loss")
     ),
 )
 """Container arguments added by the generator (Step 11 passes)"""
@@ -142,29 +159,64 @@ def _has_keyword(call, name):
     )
 
 
-def _is_self_parent(node):
-    return (
+def _parent_chain(node):
+    """Number of ``.parent`` of a ``self.parent.parent...`` read (0 otherwise)."""
+    length = 0
+    while (
         isinstance(node, ast.Attribute)
         and node.attr == "parent"
         and isinstance(node.ctx, ast.Load)
-        and isinstance(node.value, ast.Name)
-        and node.value.id == "self"
+    ):
+        length += 1
+        node = node.value
+    return length if isinstance(node, ast.Name) and node.id == "self" else 0
+
+
+def _is_none_test(node):
+    """``x is None`` (one comparison)."""
+    return (
+        isinstance(node, ast.Compare)
+        and len(node.ops) == 1
+        and isinstance(node.ops[0], ast.Is)
+        and isinstance(node.comparators[0], ast.Constant)
+        and node.comparators[0].value is None
     )
 
 
+DROPPED = "# <container_or_parent: dropped>\n"
+"""Marker of a line removed by the pass (the container assignment)"""
+
+ONE_LINE_DOCSTRING = re.compile(r"^(\s*)(\"\"\"|''')(.*)\2\s*$")
+
+
 def _docstring_entry(lines, function, spec):
-    """(line index, lines) adding the argument to the docstring, or None."""
+    """(line index, deleted lines, new lines) documenting the argument, or None."""
     if ast.get_docstring(function) is None:
         return None
     doc = function.body[0]
     start, end = doc.lineno - 1, doc.end_lineno  # Lines of the docstring
-    if end - start < 2:
-        return None  # One-line docstring
-    indent = " " * function.body[0].col_offset
+    indent = " " * doc.col_offset
     entry = [
         f"{indent}{spec.name} : {spec.doc_type}, optional\n",
         f"{indent}    {spec.description}\n",
     ]
+    if end - start < 2:  # One-line docstring: made a multi-line one
+        found = ONE_LINE_DOCSTRING.match(lines[start])
+        if found is None:
+            return None
+        quotes = found.group(2)
+        return (
+            start,
+            1,
+            [
+                f"{indent}{quotes}{found.group(3)}\n",
+                "\n",
+                f"{indent}Parameters\n",
+                f"{indent}----------\n",
+                *entry,
+                f"{indent}{quotes}\n",
+            ],
+        )
 
     def header(index):
         return (
@@ -183,24 +235,115 @@ def _docstring_entry(lines, function, spec):
         for line_index in range(index, stop):
             if lines[line_index].strip():
                 last = line_index + 1
-        return last, entry
+        return last, 0, entry
     # No Parameters section: before the first section, else before the end
     stop = sections[0] if sections else end - 1
     block = [f"{indent}Parameters\n", f"{indent}----------\n", *entry, "\n"]
     if not sections:
         block = ["\n", *block[:-1]]
-    return stop, block
+    return stop, 0, block
+
+
+def _local_names(function):
+    """Arguments and assigned names of a function."""
+    args = function.args
+    names = {a.arg for a in [*args.posonlyargs, *args.args, *args.kwonlyargs]}
+    names |= {
+        node.id
+        for node in ast.walk(function)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
+    }
+    return names
+
+
+def _own_method_edits(source, offsets, lines, function, spec):
+    """Text and line edits of a method given the container argument."""
+    text_edits = []  # (start, end, text)
+    line_edits = []  # (line index, deleted lines, new lines)
+    args = function.args
+    # The argument, after the last one (before **kwargs)
+    nodes = [*args.posonlyargs, *args.args, *args.defaults, *args.kwonlyargs]
+    nodes += [d for d in args.kw_defaults if d is not None]
+    if args.vararg is not None:
+        nodes.append(args.vararg)
+    last = max(nodes, key=lambda n: (n.end_lineno, n.end_col_offset))
+    position = _position(offsets, last.end_lineno, last.end_col_offset)
+    text_edits.append((position, position, f", {spec.name}=None"))
+    entry = _docstring_entry(lines, function, spec)
+    if entry is not None:
+        line_edits.append(entry)
+    parents = {}
+    for node in ast.walk(function):
+        for child in ast.iter_child_nodes(node):
+            parents[id(child)] = node
+    reads = []  # Reads of the container: self.parent * depth
+    tests = []  # None tests of a shorter chain (depth > 1)
+    dropped = []  # Statements "name = self.parent * depth"
+    for node in ast.walk(function):
+        if isinstance(node, ast.Assign) and (
+            len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and node.targets[0].id == spec.name
+            and _parent_chain(node.value) == spec.depth
+        ):
+            dropped.append(node)
+        length = _parent_chain(node)
+        if length == 0:
+            continue
+        outer = parents.get(id(node))
+        if length == spec.depth:
+            reads.append(node)
+        elif length < spec.depth and _parent_chain(outer) == 0 and _is_none_test(outer):
+            tests.append(outer)
+    if not reads:
+        return text_edits, line_edits, False
+    dropped_values = {id(node.value) for node in dropped}
+    for node in reads:
+        if id(node) in dropped_values:
+            continue
+        start = _position(offsets, node.lineno, node.col_offset)
+        end = _position(offsets, node.end_lineno, node.end_col_offset)
+        text_edits.append((start, end, spec.name))
+    for node in tests:
+        # The parent links are checked only without the container
+        start = _position(offsets, node.lineno, node.col_offset)
+        end = _position(offsets, node.end_lineno, node.end_col_offset)
+        text = f"{spec.name} is None and {source[start:end]}"
+        if not isinstance(parents.get(id(node)), (ast.If, ast.While)):
+            text = f"({text})"
+        text_edits.append((start, end, text))
+    for node in dropped:
+        indent = " " * node.col_offset
+        line_edits.append(
+            (node.lineno - 1, node.end_lineno - node.lineno + 1, [indent + DROPPED])
+        )
+    # The container read once, after the docstring
+    body = function.body[0]
+    indent = " " * body.col_offset
+    depth = f", depth={spec.depth}" if spec.depth != 1 else ""
+    line = (
+        f"{indent}{spec.name} = container_or_parent("
+        f'self, {spec.name}, "{spec.name}"{depth})\n'
+    )
+    if ast.get_docstring(function) is not None:
+        line_edits.append((body.end_lineno, 0, [line]))
+    else:
+        line_edits.append((body.lineno - 1, 0, [line]))
+    return text_edits, line_edits, True
 
 
 def add_container_arguments(source, package, class_name, gen_dict):
     """Add the container arguments of CONTAINER_ARGUMENTS to a method module.
 
     - a method of the list in a class of the family gets the argument (and
-      its docstring entry); when it reads ``self.parent``, the container is
-      read once with ``container_or_parent`` and ``self.parent`` replaced;
-      its calls of the listed methods on ``self`` pass the argument on;
+      its docstring entry); when it reads the container (``self.parent``, or
+      ``self.parent.parent`` for a depth of 2), the container is read once
+      with ``container_or_parent`` and the reads replaced (the shorter chains
+      tested against None are tested only without the container); its calls
+      of the listed methods on ``self`` pass the argument on;
     - in the methods of any class, the calls of the listed methods on a field
-      typed in the family (``self.slot.get_surface_active()``) pass ``self``.
+      typed in the family (``self.slot.get_surface_active()``) pass the
+      container (``caller_value``: ``self``, or a local name of the caller).
 
     Parameters
     ----------
@@ -227,8 +370,8 @@ def add_container_arguments(source, package, class_name, gen_dict):
     tree = ast.parse(source)
     lines = source.splitlines(keepends=True)
     offsets = _offsets(source)
-    insertions = []  # (position, text) in the source
-    line_insertions = []  # (line index, lines)
+    text_edits = []  # (start, end, text) in the source
+    line_edits = []  # (line index, deleted lines, new lines)
     fields = _field_types(gen_dict, class_name)
     families = {spec.base: family(gen_dict, spec.base) for spec in CONTAINER_ARGUMENTS}
     fallback = False
@@ -243,40 +386,16 @@ def add_container_arguments(source, package, class_name, gen_dict):
             ),
             None,
         )
-        argument_names = {
+        local_names = _local_names(function)
+        if own is not None and own.name not in {
             a.arg for a in [*function.args.args, *function.args.kwonlyargs]
-        }
-        if own is not None and own.name not in argument_names:
-            # The argument, after the last one (before **kwargs)
-            args = function.args
-            nodes = [*args.args, *args.defaults, *args.kwonlyargs]
-            nodes += [d for d in args.kw_defaults if d is not None]
-            if args.vararg is not None:
-                nodes.append(args.vararg)
-            last = max(nodes, key=lambda n: (n.end_lineno, n.end_col_offset))
-            text = f", {own.name}=None"
-            insertions.append(
-                (_position(offsets, last.end_lineno, last.end_col_offset), text)
+        }:
+            texts, line_changes, reads = _own_method_edits(
+                source, offsets, lines, function, own
             )
-            entry = _docstring_entry(lines, function, own)
-            if entry is not None:
-                line_insertions.append(entry)
-            reads = [node for node in ast.walk(function) if _is_self_parent(node)]
-            if reads:
-                fallback = True
-                for node in reads:
-                    start = _position(offsets, node.lineno, node.col_offset)
-                    end = _position(offsets, node.end_lineno, node.end_col_offset)
-                    insertions.append((start, None, end, own.name))
-                # The container read once, after the docstring
-                body = function.body[0]
-                indent = " " * body.col_offset
-                depth = f", depth={own.depth}" if own.depth != 1 else ""
-                line = f'{indent}{own.name} = container_or_parent(self, {own.name}, "{own.name}"{depth})\n'
-                if ast.get_docstring(function) is not None:
-                    line_insertions.append((body.end_lineno, [line]))
-                else:
-                    line_insertions.append((body.lineno - 1, [line]))
+            text_edits += texts
+            line_edits += line_changes
+            fallback |= reads
         for node in ast.walk(function):
             if not (
                 isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
@@ -286,41 +405,50 @@ def add_container_arguments(source, package, class_name, gen_dict):
             for spec in CONTAINER_ARGUMENTS:
                 if node.func.attr not in spec.methods or _has_keyword(node, spec.name):
                     continue
-                if (
-                    isinstance(receiver, ast.Name)
-                    and receiver.id == "self"
-                    and own is spec
-                ):
-                    insertions.append(
-                        _keyword_insertion(
+                if isinstance(receiver, ast.Name) and receiver.id == "self":
+                    if own is spec:
+                        position, text = _keyword_insertion(
                             source, offsets, node, f"{spec.name}={spec.name}"
                         )
-                    )
+                        text_edits.append((position, position, text))
                 elif (
                     isinstance(receiver, ast.Attribute)
                     and isinstance(receiver.value, ast.Name)
                     and receiver.value.id == "self"
                     and fields.get(receiver.attr) in families[spec.base]
-                ):
-                    insertions.append(
-                        _keyword_insertion(source, offsets, node, f"{spec.name}=self")
+                    and (
+                        spec.caller_value == "self" or spec.caller_value in local_names
                     )
-    if not insertions and not line_insertions:
+                ):
+                    position, text = _keyword_insertion(
+                        source, offsets, node, f"{spec.name}={spec.caller_value}"
+                    )
+                    text_edits.append((position, position, text))
+    if not text_edits and not line_edits:
         return source
-    # Text edits from the end (positions of the original source)
-    for edit in sorted(insertions, key=lambda e: e[0], reverse=True):
-        if len(edit) == 2:
-            position, text = edit
-            source = source[:position] + text + source[position:]
-        else:
-            start, _, end, text = edit
-            source = source[:start] + text + source[end:]
-    # Line insertions: the text edits above do not add lines before them
-    # (one-line edits), so the line indexes still hold
+    # Text edits from the end (positions of the original source); they do
+    # not add or remove lines, so the line indexes of line_edits still hold
+    for start, end, text in sorted(text_edits, key=lambda e: e[:2], reverse=True):
+        source = source[:start] + text + source[end:]
     lines = source.splitlines(keepends=True)
-    for index, new_lines in sorted(line_insertions, key=lambda e: e[0], reverse=True):
-        lines[index:index] = new_lines
-    source = "".join(lines)
+    for index, deleted, new_lines in sorted(
+        line_edits, key=lambda e: e[0], reverse=True
+    ):
+        lines[index : index + deleted] = new_lines
+    # Dropped statements removed, with the blank line after them when the line
+    # before is blank
+    kept = []
+    skip_blank = False
+    for line in lines:
+        if line.strip() == DROPPED.strip():
+            skip_blank = bool(kept) and not kept[-1].strip()
+            continue
+        if skip_blank and not line.strip():
+            skip_blank = False
+            continue
+        skip_blank = False
+        kept.append(line)
+    source = "".join(kept)
     if fallback and "import container_or_parent" not in source:
         up = "." * len(package.split("."))
         from .modernize import _module_import_position

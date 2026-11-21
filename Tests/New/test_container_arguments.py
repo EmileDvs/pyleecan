@@ -92,3 +92,65 @@ def test_container_calls():
     assert (
         add_container_arguments(source, "x.y.z.Machine", "Machine", GEN_DICT) == source
     )
+
+
+MODEL_GEN_DICT = {
+    "Electrical": {"mother": "", "properties": []},
+    "Simulation": {"mother": "", "properties": []},
+    "Simu1": {
+        "mother": "Simulation",
+        "properties": [{"name": "elec", "type": "Electrical"}],
+    },
+}
+
+
+def test_model_run_depth_2():
+    """run(output): the guards check the parent links only without output."""
+    source = (
+        "def run(self):\n"
+        '    """Run the Electrical module"""\n'
+        "    if self.parent is None:\n"
+        '        raise InputError("in a Simulation")\n'
+        "    if self.parent.parent is None:\n"
+        '        raise InputError("in an Output")\n\n'
+        "    output = self.parent.parent\n\n"
+        "    machine = output.simu.machine\n"
+    )
+    package = "pyleecan.Methods_new.electrical.Electrical"
+    result = add_container_arguments(source, package, "Electrical", MODEL_GEN_DICT)
+    ast.parse(result)
+    assert result == (
+        "from ....classes_common.parents import container_or_parent\n"
+        "def run(self, output=None):\n"
+        '    """Run the Electrical module\n\n'
+        "    Parameters\n"
+        "    ----------\n"
+        "    output : Output, optional\n"
+        "        Output of the simulation (default: the parent of the simulation)\n"
+        '    """\n'
+        '    output = container_or_parent(self, output, "output", depth=2)\n'
+        "    if output is None and self.parent is None:\n"
+        '        raise InputError("in a Simulation")\n'
+        "    if output is None:\n"
+        '        raise InputError("in an Output")\n\n'
+        "    machine = output.simu.machine\n"
+    )
+    assert (
+        add_container_arguments(result, package, "Electrical", MODEL_GEN_DICT) == result
+    )
+
+
+def test_model_run_caller():
+    """The simulation passes its output (a local name of the caller)."""
+    source = (
+        "def run_single(self):\n"
+        "    output = self.parent\n"
+        "    if self.elec is not None:\n"
+        "        self.elec.run()\n"
+    )
+    package = "pyleecan.Methods_new.simulation.Simu1"
+    result = add_container_arguments(source, package, "Simu1", MODEL_GEN_DICT)
+    assert "        self.elec.run(output=output)\n" in result
+    # Without the local name: left to the fallback
+    source = "def f(self):\n    self.elec.run()\n"
+    assert add_container_arguments(source, package, "Simu1", MODEL_GEN_DICT) == source

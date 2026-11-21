@@ -8,6 +8,7 @@ import numpy as np
 
 from ...classes_common.errors import InputError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from .._legacy_class import LegacyClass
 from ..machine.machine_ipmsm import MachineIPMSM
 from ..machine.machine_scim import MachineSCIM
@@ -207,18 +208,23 @@ class Electrical(LegacyClass):
         output.elec.axes_dict["time"] = Time_PWM
 
     # Inlined from Methods.Simulation.Electrical.run
-    def run(self) -> None:
-        """Run the Electrical module"""
-        if self.parent is None:
+    def run(self, output: Output | None = None) -> None:
+        """Run the Electrical module
+
+        Parameters
+        ----------
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
+        """
+        output = container_or_parent(self, output, "output", depth=2)
+        if output is None and self.parent is None:
             raise InputError(
                 "The Electrical object must be in a Simulation object to run"
             )
-        if self.parent.parent is None:
+        if output is None:
             raise InputError("The Simulation object must be in an Output object to run")
 
         get_logger(self).info("Starting Electric module")
-
-        output = self.parent.parent
 
         machine = output.simu.machine
 

@@ -741,10 +741,25 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
         before (2 pre-existing failures: `test_notch`,
         `test_get_polar_eq_SCIM`, `Circle(xy=...)`), `ty` on
         `Methods_new/slot` unchanged (20).
-  - [ ] Next passes: the slot methods called by these (`get_Rbo`,
+  - [x] Pass 2 (2026-11-21): the models' `run(output=None)` (pattern 2,
+        `depth=2`, `caller_value="output"`) for the Electrical, Magnetics,
+        Force, Structural and Loss families (`Electrical`, `ElecLUTdq`,
+        `Magnetics`, `Force`, `Structural`, `StructElmer`, `Loss`, `LossFEA`):
+        `output = container_or_parent(self, output, "output", depth=2)`, the
+        guards `self.parent is None` checked only without output (`output is
+        None and self.parent is None`, same legacy errors), the assignment
+        `output = self.parent.parent` dropped; `Simu1.run_single` passes its
+        `output`. The pass also turns a one-line docstring into one with a
+        Parameters section. Checks: class, cross, Slot / Machine / Simulation
+        method tests as before (pre-existing failures: `test_simu_get_OP_array`,
+        `test_VarParamSweep_fct_save_load` (pydantic), the two of pass 1);
+        FEMM runs `test_FEMM_closed_slot`, `test_FEMM_LamSlotMultiWind` pass
+        on both backends; `ty` unchanged (535 on the six packages).
+  - [ ] Next passes: the slot methods called by the pass 1 ones (`get_Rbo`,
         `get_is_stator`, `is_outwards`, `build_geometry*`) once their callers
-        pass the container; the simulation models' `run` (pattern 2, depth
-        2); the loss models (container: the `Loss` object).
+        pass the container; the loss models' `comp_loss*` (container: the
+        `Loss` object, `self.parent.parent` walks); `Simu1.run_single` itself
+        (`output = self.parent`, called by `Simulation.run` with `results`).
 - [ ] Report the reads left for Step 16.
 
 ## Step 12: freeze
@@ -994,6 +1009,7 @@ the fallback, the parent links, and makes the argument required.
 | `get_surface_active` of the Slot family (38 classes) | `lam` | Step 11, pass 1 |
 | `get_surface_opening` of the Slot family (24 classes) | `lam` | Step 11, pass 1 |
 | `Slot.get_surface_wedges` | `lam` | Step 11, pass 1 |
+| `run` of `Electrical`, `ElecLUTdq`, `Magnetics`, `Force`, `Structural`, `StructElmer`, `Loss`, `LossFEA` | `output` | Step 11, pass 2 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 

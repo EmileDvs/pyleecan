@@ -4,6 +4,7 @@
 from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import InputError
+from ...classes_common.parents import container_or_parent
 from .._legacy_model import LegacyModel
 from ..output.out_struct import OutStruct
 
@@ -55,18 +56,23 @@ class Structural(LegacyModel):
             output.struct.axes_dict[key] = val
 
     # Inlined from Methods.Simulation.Structural.run
-    def run(self) -> None:
-        """Run the Structural module"""
-        if self.parent is None:
+    def run(self, output: Output | None = None) -> None:
+        """Run the Structural module
+
+        Parameters
+        ----------
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
+        """
+        output = container_or_parent(self, output, "output", depth=2)
+        if output is None and self.parent is None:
             raise InputError(
                 "ERROR: The Structural object must be in a Simulation object to run"
             )
-        if self.parent.parent is None:
+        if output is None:
             raise InputError(
                 "ERROR: The Simulation object must be in an Output object to run"
             )
-
-        output = self.parent.parent
 
         self.comp_axes(output)
 

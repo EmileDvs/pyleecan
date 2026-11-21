@@ -111,7 +111,8 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   `get_surface_wedges`, `comp_height_active`) take the lamination (or
   notch) as an optional `lam` argument, passed by the lamination; without
   it they fall back to the parent (`classes_common.parents.
-  container_or_parent`, deprecated in Phase 2).
+  container_or_parent`, deprecated in Phase 2). The models' `run` take the
+  simulation output (`run(output=None)`), passed by `Simu1.run_single`.
 - **Loggers without the parent chain** (Step 9):
   `classes_common.logger_context.get_logger(obj)` gives the object's
   logger, else the logger of the simulation in progress
