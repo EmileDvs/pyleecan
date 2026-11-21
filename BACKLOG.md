@@ -612,8 +612,8 @@ Proposed targets are a starting point; the decision is the maintainer's.
 - [x] `Functions.get_logger` deprecated (`DEPRECATED_MODULES`); the base
       `get_logger` methods (`PyleecanClass`, `PyleecanModel`) use
       `classes_common.logger_context`.
-- [ ] Remove the parent fallback with the parent links (Step 11), the base
-      method in Phase 2.
+- [ ] Remove the parent fallback and the base method in Phase 2, with the
+      parent links (decided 2026-11-21: the fallback stays in Phase 1).
 - Checks: class and cross tests as before, Simulation and Machine method
   tests as before; `test_LossFEMM_Prius` (pydantic) writes the
   per-simulation log file with the simulation logger names.
@@ -1186,6 +1186,7 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 | `Plot.Pyvista.get_arrows_plt`, `Geometry.create_surface`, `FEMM.comp_FEMM_Jcus`, `FEMM.create_FEMM_bar`, `getattr_recursive`, `short_filepath` | none (dead code) | Step 8 group 1 |
 | `Converter.MotorCAD.slotW23_H1` | none (not used by the rules) | Step 8 |
 | `Converter.Utils.EquivalentError` | none (unused error) | Step 8 group 1 |
+| Logger parent fallback (`classes_common.logger_context.get_logger`) | removed with the parent links | Step 9 (kept in Phase 1) |
 | `labels`, `path_tools`, `init_environment`, `make_ndarray_equal`, `get_path_binary` (modules) | the same modules in `utils` | Step 8 group 13 |
 | `GUI.log_error` (module) | `Tools.log_error` of the GUI package | Step 8 group 13 |
 | `init_fig` (module) | `utils.init_fig` | Step 8 group 9 |

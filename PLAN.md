@@ -185,7 +185,7 @@ Methods receive their context explicitly instead, for example
 | 6. Class-specific functions moved to their class | generator | done |
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | done (open points in the backlog) |
 | 8. Refactor the remaining `Functions` modules | generator | done |
-| 9. Logger chain | generator | done (parent fallback removed with Step 11) |
+| 9. Logger chain | generator | done (parent fallback kept until Phase 2) |
 | 10. GUI, first pass | generator | in progress (GUI_new / GUI_pydantic generated) |
 | 11. Parent links, first pass | generator | in progress (classification, helper, passes 1-2) |
 | 12. Freeze | gate | to do |
@@ -307,12 +307,12 @@ generator pass, before the freeze.
 
 - [x] Target: context logger (`classes_common.logger_context`): the object's
       `logger_name`, else the simulation run by `Simulation.run`, else the
-      parents (legacy layer, until Step 11), else the default logger; the
+      parents (legacy layer, until Phase 2), else the default logger; the
       per-simulation log files kept.
 - [x] Generator pass rewriting the calls (`x.get_logger()` ->
       `get_logger(x)`), with unit tests; `Functions.get_logger` deprecated.
-- [ ] Remove the parent fallback (Step 11) and the base `get_logger`
-      method (Phase 2, deprecated).
+- [ ] Remove the parent fallback and the base `get_logger` method in
+      Phase 2, with the parent links (decided 2026-11-21: kept in Phase 1).
 
 ### Step 10: GUI, first pass (generator)
 
