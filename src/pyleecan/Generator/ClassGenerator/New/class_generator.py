@@ -1679,6 +1679,75 @@ def _is_static_method_node(node):
     )
 
 
+def _remove_sibling_helper_imports(source, module, method_dir, meth):
+    """Remove the imports of helpers defined in another method module of the class.
+
+    ``from .comp_coeff import comp_loss_val`` in ``plot_fitting``: the helper
+    ``comp_loss_val`` of the method module ``comp_coeff`` becomes a static
+    method of the class when ``comp_coeff`` is inlined, so ``plot_fitting``
+    calls it on the class instead of importing the method module at runtime.
+    The method function of the sibling module itself is not a helper.
+
+    Parameters
+    ----------
+    source : str
+        Source of the method module
+    module : ast.Module
+        Parsed source
+    method_dir : str
+        Folder of the method modules of the class
+    meth : str
+        Method (module path below method_dir, "a.b" for a sub-folder)
+
+    Returns
+    -------
+    source : str
+        Source without the sibling helper imports
+    names : set
+        Local names of the removed helpers
+    """
+    package_depth = len(meth.split(".")) - 1  # Method in a sub-folder
+    lines = source.splitlines(keepends=True)
+    names = set()
+    edits = []  # (first line, last line, replacement)
+    for node in module.body:
+        if not (
+            isinstance(node, ast.ImportFrom)
+            and node.level == 1 + package_depth
+            and node.module
+            and "." not in node.module
+        ):
+            continue
+        sibling_parts = [*meth.split(".")[:-1], node.module]
+        if sibling_parts[-1] == meth.split(".")[-1]:
+            continue
+        sibling_path = join(method_dir, *sibling_parts) + ".py"
+        if not isfile(sibling_path):
+            continue
+        sibling = ast.parse(_read_method_source(sibling_path), filename=sibling_path)
+        helpers = {
+            item.name
+            for item in sibling.body
+            if isinstance(item, ast.FunctionDef)
+            and item.name != node.module
+            and (not item.decorator_list or _is_static_method_node(item))
+        }
+        removed = [alias for alias in node.names if alias.name in helpers and alias.asname is None]
+        if not removed:
+            continue
+        names.update(alias.name for alias in removed)
+        kept = [alias for alias in node.names if alias not in removed]
+        replacement = (
+            ast.unparse(ast.ImportFrom(module=node.module, names=kept, level=node.level)) + "\n"
+            if kept
+            else ""
+        )
+        edits.append((node.lineno - 1, node.end_lineno, replacement))
+    for first, last, replacement in sorted(edits, reverse=True):
+        lines[first:last] = [replacement]
+    return "".join(lines), names
+
+
 def _get_method_source(
     path_to_gen,
     class_pack,
@@ -1708,6 +1777,13 @@ def _get_method_source(
         return None, [], [], [], "method source file is missing"
 
     module = ast.parse(source, filename=method_path)
+    # Helpers imported from another method module of the class: static methods
+    # of the class (inlined with that method), called on self or on the class
+    source, sibling_helper_names = _remove_sibling_helper_imports(
+        source, module, method_dir, meth
+    )
+    if sibling_helper_names:
+        module = ast.parse(source, filename=method_path)
     module_values = {
         node.targets[0].id: ast.unparse(node.value)
         for node in module.body
@@ -1749,7 +1825,7 @@ def _get_method_source(
         for node in module.body
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
         and node is not method_node
-        and not node.decorator_list
+        and (not node.decorator_list or _is_static_method_node(node))
     }
     inline_helper_names = set()
     pending_helpers = list(used_names.intersection(helper_function_nodes))
@@ -2232,7 +2308,9 @@ def _get_method_source(
         method_source = "".join(lines)
     method_source = _rename_method_references(method_source, renamed_method_names)
     method_source = _rewrite_method_call_targets(method_source, method_call_redirects)
-    method_helper_names = inline_helper_names.difference(method_local_names)
+    method_helper_names = inline_helper_names.union(sibling_helper_names).difference(
+        method_local_names
+    )
     # The helpers become static methods: called on self, or on the class in a
     # static method (no self)
     helper_owner = class_name if _is_static_method_node(method_node) else "self"

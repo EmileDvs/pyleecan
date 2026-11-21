@@ -275,11 +275,17 @@ Proposed targets are a starting point; the decision is the maintainer's.
 - `ty`: optimization 65 -> 64, simulation 73 -> 84 (the moved functions
   are checked in `Methods_new` now: DataKeeper functions given as
   strings).
-- Found on the way (#751, open): `LossModelBertotti.plot_fitting` and
-  `LossModelSteinmetz.plot_fitting` import the `comp_loss_val` helper of
-  the `comp_coeff` method module: runtime import of a method source in
-  the classes (`test_no_runtime_import_of_method_sources` fails since the
-  #751 merge).
+- Found on the way (#751, fixed): `LossModelBertotti.plot_fitting` and
+  `LossModelSteinmetz.plot_fitting` imported the `comp_loss_val` helper of
+  the `comp_coeff` method module (a module function decorated
+  `@staticmethod` in legacy): runtime import of a method source in the
+  classes (`test_no_runtime_import_of_method_sources` failed since the
+  #751 merge). Class generator: a `@staticmethod` module function is a
+  helper like an undecorated one, and a helper imported from another
+  method module of the class is called on the class
+  (`_remove_sibling_helper_imports`): `comp_loss_val` is a static method
+  in the body of both classes, called by `comp_coeff` and `plot_fitting`
+  as `self.comp_loss_val`.
 
 ## Step 9: logger chain
 

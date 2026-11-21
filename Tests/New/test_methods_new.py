@@ -235,6 +235,31 @@ def test_remove_python2_branches(source, expected):
     assert remove_python2_branches(expected) == expected  # Idempotent
 
 
+def test_remove_sibling_helper_imports(tmp_path):
+    """A helper imported from another method module of the class is not imported."""
+    from pyleecan.Generator.ClassGenerator.New.class_generator import _remove_sibling_helper_imports
+
+    (tmp_path / "comp_coeff.py").write_text(
+        "@staticmethod\ndef comp_loss_val(x):\n    return x\n\n\n"
+        "def other(x):\n    return x\n\n\n"
+        "def comp_coeff(self):\n    return comp_loss_val(1)\n",
+        encoding="utf-8",
+    )
+    source = (
+        "import numpy as np\n"
+        "from .comp_coeff import comp_loss_val, other, comp_coeff\n\n\n"
+        "def plot_fitting(self):\n    return comp_loss_val(2)\n"
+    )
+    result, names = _remove_sibling_helper_imports(source, ast.parse(source), str(tmp_path), "plot_fitting")
+    assert names == {"comp_loss_val", "other"}
+    # The method of the sibling module is not a helper: its import is kept
+    assert "from .comp_coeff import comp_coeff\n" in result
+    assert "comp_loss_val, other" not in result
+    # Unknown module: unchanged
+    unknown = "from .missing import helper\n"
+    assert _remove_sibling_helper_imports(unknown, ast.parse(unknown), str(tmp_path), "plot_fitting") == (unknown, set())
+
+
 @pytest.mark.parametrize("package", ["Classes_new", "Classes_pydantic"])
 def test_static_method_calls_its_helpers_on_the_class(package):
     """A helper of a static method module is called on the class (no self)."""

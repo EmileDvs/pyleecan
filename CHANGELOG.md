@@ -182,6 +182,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   CalcFields solver with an explicit linear system (Elmer >= 26); numpy 2
   compatibility (2-D cross products in `Segment.comp_distance` and
   `ForceTensor.element_loop`, `load`).
+- **Class generator**: a helper function imported from another method
+  module of the class (`LossModelBertotti` / `LossModelSteinmetz`
+  `comp_loss_val`, used by `comp_coeff` and `plot_fitting`) is a static
+  method of the class instead of a runtime import of the method module;
+  the helpers of a static method are called on the class (they were
+  called on an undefined `self`).
 - **Class generator**: a CSV description ending with a double quote
   produced an invalid attribute docstring (SyntaxError).
 - **Functions generator**: a legacy function module deleted upstream no

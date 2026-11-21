@@ -9,7 +9,6 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from ...Functions_new.MeshSolution.get_frame_meshsolution import get_frame_meshsolution
-from ...Methods_new.loss.LossModelBertotti.comp_coeff import comp_loss_val
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
@@ -97,7 +96,7 @@ class LossModelBertotti(LossModel):
             for index, value in zip(free_indices, free_parameters):
                 fitted_parameters[index] = value
 
-            return comp_loss_val(xdata, *fitted_parameters)
+            return self.comp_loss_val(xdata, *fitted_parameters)
 
         loss_data = material.mag.LossData.get_data()
 
@@ -122,6 +121,36 @@ class LossModelBertotti(LossModel):
 
             for index, value in zip(free_indices, popt):
                 setattr(self, parameter_names[index], value)
+
+    @staticmethod
+    def comp_loss_val(
+        xdata: np.ndarray, k_hy: float, k_ed: float, k_ex: float, alpha_B: float
+    ) -> np.ndarray:
+        """A function that compute the loss with respect to the maximum value and the frequency of the magnetic flux density
+
+        Parameters
+        ----------
+        xdata : ndarray
+            input matrix with f in the first line and B in the second line
+        k_hy : float
+            hysteresis loss coefficient
+        k_ed : float
+            Eddy current loss coefficient
+        k_ex : float
+            excess loss coefficient
+        alpha_B : float
+            hysteresis flux density amplitude exponent
+
+        Returns
+        -------
+        loss : ndarray
+            loss for each value of f and B in the input array
+        """
+
+        f = xdata[0]
+        B = xdata[1]
+
+        return k_hy * f * B**alpha_B + k_ed * (f * B) ** 2 + k_ex * (f * B) ** 1.5
 
     # Inlined from Methods.Loss.LossModelBertotti.comp_loss
     def comp_loss(
@@ -605,7 +634,7 @@ class LossModelBertotti(LossModel):
                 marker="o",
             )
 
-            loss_val = comp_loss_val(
+            loss_val = self.comp_loss_val(
                 x_check, self.k_hy, self.k_ed, self.k_ex, self.alpha_B
             )
             plt.plot(
