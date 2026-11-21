@@ -5,11 +5,14 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.parents import container_or_parent
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
     from ..mesh.mesh_solution import MeshSolution
+    from ..output.output import Output
     from ..scidatatool.data import Data
+    from .loss import Loss
 
 
 class LossModelWindagePyrhonen(LossModel):
@@ -24,7 +27,10 @@ class LossModelWindagePyrhonen(LossModel):
 
     # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss
     def comp_loss(
-        self, meshsol: MeshSolution | None = None
+        self,
+        meshsol: MeshSolution | None = None,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate Windage losses
         Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
@@ -35,6 +41,10 @@ class LossModelWindagePyrhonen(LossModel):
             a LossModelWindagePyrhonen object
         meshsol : MeshSolution
             magnetic meshsolution (default: OutMag.meshsolution, only mesh and groups are used)
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -43,16 +53,18 @@ class LossModelWindagePyrhonen(LossModel):
         freqs: ndarray
             frequency vector [Hz]
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent is None:
+        if output is None and self.parent.parent is None:
             raise ValueError("Cannot calculate losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate losses if OutElec is None")
 
-        if self.parent.is_get_meshsolution and output.mag is None:
+        if loss.is_get_meshsolution and output.mag is None:
             raise ValueError("Cannot calculate losses if OutMag is None")
 
         machine = output.simu.machine
@@ -60,7 +72,7 @@ class LossModelWindagePyrhonen(LossModel):
         OP = output.elec.OP
         felec = OP.get_felec()
 
-        Ploss = self.comp_loss_value()
+        Ploss = self.comp_loss_value(loss=loss, output=output)
 
         power = 3
 
@@ -84,7 +96,9 @@ class LossModelWindagePyrhonen(LossModel):
         return P_density, freqs
 
     # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss_freq
-    def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
+    def comp_loss_freq(
+        self, loss: Loss | None = None, output: Output | None = None
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate Windage losses
         Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
 
@@ -92,6 +106,10 @@ class LossModelWindagePyrhonen(LossModel):
         ----------
         self: LossModelWindagePyrhonen
             a LossModelWindagePyrhonen object
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -100,16 +118,18 @@ class LossModelWindagePyrhonen(LossModel):
         freqs: ndarray
             frequency vector [Hz]
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent is None:
+        if output is None and self.parent.parent is None:
             raise ValueError("Cannot calculate losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate losses if OutElec is None")
 
-        if self.parent.is_get_meshsolution and output.mag is None:
+        if loss.is_get_meshsolution and output.mag is None:
             raise ValueError("Cannot calculate losses if OutMag is None")
 
         # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
@@ -123,7 +143,7 @@ class LossModelWindagePyrhonen(LossModel):
         OP = output.elec.OP
         felec = OP.get_felec()
 
-        Ploss = self.comp_loss_value()
+        Ploss = self.comp_loss_value(loss=loss, output=output)
 
         power = 3
 
@@ -149,7 +169,11 @@ class LossModelWindagePyrhonen(LossModel):
 
     # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss_time
     def comp_loss_time(
-        self, axes_dict: dict[str, Data], is_mirror: bool
+        self,
+        axes_dict: dict[str, Data],
+        is_mirror: bool,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Calculate windage losses and assume they are constant over time
 
@@ -161,6 +185,10 @@ class LossModelWindagePyrhonen(LossModel):
             Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
         is_mirror : bool
             True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -169,18 +197,20 @@ class LossModelWindagePyrhonen(LossModel):
         Pwindage_dict: {ndarray}
             Dict containing the array of windage losses over time
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent is None:
+        if output is None and self.parent.parent is None:
             raise ValueError(
                 "Cannot calculate windage losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate windage losses if OutElec is None")
 
-        if self.parent.is_get_meshsolution and output.mag is None:
+        if loss.is_get_meshsolution and output.mag is None:
             raise ValueError("Cannot calculate windage losses if OutMag is None")
 
         # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
@@ -198,7 +228,7 @@ class LossModelWindagePyrhonen(LossModel):
         Lst = machine.stator.L1
 
         # Get airgap windage losses
-        Ploss = self.comp_loss_value()
+        Ploss = self.comp_loss_value(loss=loss, output=output)
 
         # Assign same airgap windage losses at every time step
         Pwindage = Ploss * np.ones(Nt, dtype=float)
@@ -224,7 +254,9 @@ class LossModelWindagePyrhonen(LossModel):
         return Pwindage_density, Pwindage_dict
 
     # Inlined from Methods.Loss.LossModelWindagePyrhonen.comp_loss_value
-    def comp_loss_value(self) -> float:
+    def comp_loss_value(
+        self, loss: Loss | None = None, output: Output | None = None
+    ) -> float:
         """Calculate Windage losses
         Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
 
@@ -232,22 +264,28 @@ class LossModelWindagePyrhonen(LossModel):
         ----------
         self: LossModelWindagePyrhonen
             a LossModelWindagePyrhonen object
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
         Ploss : float
             overall windage loss value [W/m3]
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent is None:
+        if output is None and self.parent.parent is None:
             raise ValueError("Cannot calculate losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate losses if OutElec is None")
 
-        if self.parent.is_get_meshsolution and output.mag is None:
+        if loss.is_get_meshsolution and output.mag is None:
             raise ValueError("Cannot calculate losses if OutMag is None")
 
         machine = output.simu.machine

@@ -346,7 +346,8 @@ reads are left to Step 16.
 - [ ] Generator passes for the mechanical patterns, one pattern per increment;
       the methods given a fallback are listed in the backlog (Phase 2
       deprecations). Pass 1 done: slot surfaces and active height (`lam`); pass 2: the
-      models' `run(output)`; pass 3: `Simu1.run_single(output)`.
+      models' `run(output)`; pass 3: `Simu1.run_single(output)`; pass 4:
+      the loss models (`loss`, `output`).
 
 ### Step 12: freeze
 

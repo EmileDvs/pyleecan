@@ -1,12 +1,15 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.loss.loss import Loss
+    from ....Classes_new.output.output import Output
 
 
 
-def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[np.ndarray, dict[str, np.ndarray]]:
+def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss | None = None, output: Output | None = None) -> tuple[np.ndarray, dict[str, np.ndarray]]:
     """Calculate loss density over time in iron core given by group "stator core" or "rotor core"
     assuming power density is given by a Bertotti model
 
@@ -23,6 +26,10 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
         Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
     is_mirror : bool
         True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+    loss : Loss, optional
+        Loss object holding the model (default: the parent)
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
 
     Returns
     -------
@@ -31,11 +38,12 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
     Pcore_dict: {ndarray}
         Dict containing the array of core losses over time
     """
+    output = container_or_parent(self, output, "output", depth=3)
 
-    if self.parent.parent.parent is None:
+    if output is None:
         raise ValueError("Cannot calculate core losses if simu is not in an Output")
     else:
-        output = self.parent.parent.parent
+        pass
 
     machine = output.simu.machine
 

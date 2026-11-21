@@ -8,12 +8,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 
+from ...classes_common.parents import container_or_parent
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
     from ..material.material import Material
     from ..mesh.mesh_solution import MeshSolution
+    from ..output.output import Output
     from ..scidatatool.data import Data
+    from .loss import Loss
 
 
 @dataclass(eq=False)
@@ -153,7 +156,10 @@ class LossModelBertotti(LossModel):
 
     # Inlined from Methods.Loss.LossModelBertotti.comp_loss
     def comp_loss(
-        self, meshsol: MeshSolution | None = None
+        self,
+        meshsol: MeshSolution | None = None,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate loss density in iron core given by group "stator core" or "rotor core"
         assuming power density is given by a Bertotti model
@@ -166,6 +172,10 @@ class LossModelBertotti(LossModel):
             a LossModelBertotti object
         meshsol : MeshSolution
             magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -174,11 +184,12 @@ class LossModelBertotti(LossModel):
         freqs: ndarray
             frequency vector [Hz]
         """
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise ValueError("Cannot calculate core losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 
@@ -303,7 +314,9 @@ class LossModelBertotti(LossModel):
         return Pcore_density, freqs
 
     # Inlined from Methods.Loss.LossModelBertotti.comp_loss_freq
-    def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
+    def comp_loss_freq(
+        self, loss: Loss | None = None, output: Output | None = None
+    ) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
         """Calculate loss density in iron core given by group "stator core" or "rotor core"
         assuming power density is given by a Bertotti model depending on frequency:
 
@@ -313,6 +326,10 @@ class LossModelBertotti(LossModel):
         ----------
         self: LossModelBertotti
             a LossModelBertotti object
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -323,11 +340,12 @@ class LossModelBertotti(LossModel):
         freqs: ndarray
             frequency vector of magnetic flux density harmonics [Hz]
         """
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise ValueError("Cannot calculate core losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 
@@ -421,7 +439,11 @@ class LossModelBertotti(LossModel):
 
     # Inlined from Methods.Loss.LossModelBertotti.comp_loss_time
     def comp_loss_time(
-        self, axes_dict: dict[str, Data], is_mirror: bool
+        self,
+        axes_dict: dict[str, Data],
+        is_mirror: bool,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Calculate loss density over time in iron core given by group "stator core" or "rotor core"
         assuming power density is given by a Bertotti model
@@ -439,6 +461,10 @@ class LossModelBertotti(LossModel):
             Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
         is_mirror : bool
             True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -447,11 +473,12 @@ class LossModelBertotti(LossModel):
         Pcore_dict: {ndarray}
             Dict containing the array of core losses over time
         """
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise ValueError("Cannot calculate core losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 

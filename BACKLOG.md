@@ -876,6 +876,20 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
         (`ContainerArgument.callers`: explicit call sites on `self` passing
         a local). Checks: class, cross, Simulation method tests as before,
         FEMM run on both backends.
+  - [x] Pass 4 (2026-11-21): the loss models' `comp_loss`,
+        `comp_loss_freq`, `comp_loss_time`, `comp_loss_value` take `loss`
+        (their `Loss` object, depth 1) and `output` (depth 3), given by
+        `Loss.comp_all_losses` and `LossFEA.run` in their loops over
+        `model_dict`. The pass now supports several container arguments per
+        method (the deepest first; the chains it rewrites are not rewritten
+        again), loop variables over a list or dict field as receivers, one
+        docstring edit for all the arguments, `pass` for a dropped
+        assignment alone in its block. `comp_coeff` left to the fallback (a
+        local named `loss` in two of them; `self.parent.parent.machine` in
+        `LossModelProximity` / `LossModelWinding`: Step 16). Checks: class,
+        cross, method / function / plot tests as before; loss validation
+        tests as before (`test_LossFEMM_Prius`: the known `KeyError:
+        'overall'`, after FEMM and the loss models ran).
   - [ ] Next passes: the slot methods called by the pass 1 ones (`get_Rbo`,
         `get_is_stator`, `is_outwards`, `build_geometry*`) once their callers
         pass the container; the loss models' `comp_loss*` (container: the
@@ -1136,6 +1150,7 @@ the fallback, the parent links, and makes the argument required.
 | `Slot.get_surface_wedges` | `lam` | Step 11, pass 1 |
 | `run` of `Electrical`, `ElecLUTdq`, `Magnetics`, `Force`, `Structural`, `StructElmer`, `Loss`, `LossFEA` | `output` | Step 11, pass 2 |
 | `Simu1.run_single` | `output` | Step 11, pass 3 |
+| `comp_loss`, `comp_loss_freq`, `comp_loss_time`, `comp_loss_value` of the LossModel family | `loss`, `output` | Step 11, pass 4 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 

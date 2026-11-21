@@ -1,8 +1,14 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.loss.loss import Loss
+    from ....Classes_new.output.output import Output
 
 
 
-def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
+def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
     """Calculate loss density in iron core given by group "stator core" or "rotor core"
     assuming power density is given by a Bertotti model depending on frequency:
 
@@ -12,6 +18,10 @@ def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]
     ----------
     self: LossModelBertotti
         a LossModelBertotti object
+    loss : Loss, optional
+        Loss object holding the model (default: the parent)
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
 
     Returns
     -------
@@ -22,11 +32,12 @@ def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]
     freqs: ndarray
         frequency vector of magnetic flux density harmonics [Hz]
     """
+    output = container_or_parent(self, output, "output", depth=3)
 
-    if self.parent.parent.parent is None:
+    if output is None:
         raise ValueError("Cannot calculate core losses if simu is not in an Output")
     else:
-        output = self.parent.parent.parent
+        pass
 
     machine = output.simu.machine
 

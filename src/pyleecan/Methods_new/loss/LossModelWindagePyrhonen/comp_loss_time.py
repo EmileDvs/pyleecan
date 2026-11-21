@@ -1,12 +1,15 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.loss.loss import Loss
+    from ....Classes_new.output.output import Output
 
 
 
-def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[np.ndarray, dict[str, np.ndarray]]:
+def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss | None = None, output: Output | None = None) -> tuple[np.ndarray, dict[str, np.ndarray]]:
     """Calculate windage losses and assume they are constant over time
 
     Parameters
@@ -17,6 +20,10 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
         Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
     is_mirror : bool
         True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+    loss : Loss, optional
+        Loss object holding the model (default: the parent)
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
 
     Returns
     -------
@@ -25,16 +32,18 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
     Pwindage_dict: {ndarray}
         Dict containing the array of windage losses over time
     """
+    loss = container_or_parent(self, loss, "loss")
+    output = container_or_parent(self, output, "output", depth=3)
 
-    if self.parent.parent is None:
+    if output is None and self.parent.parent is None:
         raise ValueError("Cannot calculate windage losses if simu is not in an Output")
     else:
-        output = self.parent.parent.parent
+        pass
 
     if output.elec is None:
         raise ValueError("Cannot calculate windage losses if OutElec is None")
 
-    if self.parent.is_get_meshsolution and output.mag is None:
+    if loss.is_get_meshsolution and output.mag is None:
         raise ValueError("Cannot calculate windage losses if OutMag is None")
 
     # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
@@ -52,7 +61,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool) -> tuple[n
     Lst = machine.stator.L1
 
     # Get airgap windage losses
-    Ploss = self.comp_loss_value()
+    Ploss = self.comp_loss_value(loss=loss, output=output)
 
     # Assign same airgap windage losses at every time step
     Pwindage = Ploss * np.ones(Nt, dtype=float)

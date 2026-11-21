@@ -188,3 +188,49 @@ def test_explicit_caller():
     assert '    output = container_or_parent(self, output, "output")\n' in result
     assert "    if output is None:\n" in result
     assert "    output = self.parent\n" not in result
+
+
+LOSS_GEN_DICT = {
+    "LossModel": {"mother": "", "properties": []},
+    "LossModelJoule": {"mother": "LossModel", "properties": []},
+    "Loss": {"mother": "", "properties": [{"name": "model_dict", "type": "{LossModel}"}]},
+}
+
+
+def test_two_containers():
+    """A loss model reads its Loss (depth 1) and the output (depth 3)."""
+    source = (
+        "def comp_loss(self):\n"
+        '    """Joule losses"""\n'
+        "    if self.parent.parent is None:\n"
+        '        raise ValueError("in an Output")\n'
+        "    else:\n"
+        "        output = self.parent.parent.parent\n"
+        "    T_op = self.parent.Tsta\n"
+        "    return output.elec, T_op\n"
+    )
+    package = "pyleecan.Methods_new.loss.LossModelJoule"
+    result = add_container_arguments(source, package, "LossModelJoule", LOSS_GEN_DICT)
+    ast.parse(result)
+    assert "def comp_loss(self, loss=None, output=None):\n" in result
+    assert '    output = container_or_parent(self, output, "output", depth=3)\n' in result
+    assert '    loss = container_or_parent(self, loss, "loss")\n' in result
+    assert "    if output is None and self.parent.parent is None:\n" in result
+    assert "    else:\n        pass\n" in result
+    assert "    T_op = loss.Tsta\n" in result
+    assert add_container_arguments(result, package, "LossModelJoule", LOSS_GEN_DICT) == result
+
+
+def test_loop_receivers():
+    """Loss.comp_all_losses passes itself and its output to its models."""
+    source = (
+        "def comp_all_losses(self):\n"
+        "    output = self.parent.parent\n"
+        "    for key, model in self.model_dict.items():\n"
+        "        P, f = model.comp_loss(meshsol=None)\n"
+        "    for model in self.model_dict.values():\n"
+        "        model.comp_loss_freq()\n"
+    )
+    result = add_container_arguments(source, "pyleecan.Methods_new.loss.Loss", "Loss", LOSS_GEN_DICT)
+    assert "model.comp_loss(meshsol=None, loss=self, output=output)" in result
+    assert "model.comp_loss_freq(loss=self, output=output)" in result

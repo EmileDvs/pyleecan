@@ -6,11 +6,14 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.parents import container_or_parent
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
     from ..mesh.mesh_solution import MeshSolution
+    from ..output.output import Output
     from ..scidatatool.data import Data
+    from .loss import Loss
 
 
 @dataclass(eq=False)
@@ -49,7 +52,10 @@ class LossModelProximity(LossModel):
 
     # Inlined from Methods.Loss.LossModelProximity.comp_loss
     def comp_loss(
-        self, meshsol: MeshSolution | None = None
+        self,
+        meshsol: MeshSolution | None = None,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate proximity loss density assuming it is given by:
 
@@ -61,6 +67,10 @@ class LossModelProximity(LossModel):
             a LossModelProximity object
         meshsol : MeshSolution
             magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -69,11 +79,12 @@ class LossModelProximity(LossModel):
         freqs: ndarray
             frequency vector [Hz]
         """
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise Exception("Cannot calculate core losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 
@@ -160,7 +171,9 @@ class LossModelProximity(LossModel):
         return Pcore_density, freqs
 
     # Inlined from Methods.Loss.LossModelProximity.comp_loss_freq
-    def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
+    def comp_loss_freq(
+        self, loss: Loss | None = None, output: Output | None = None
+    ) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
         """Calculate proximity loss density assuming it is given by an eddy-current loss model depending on frequency:
 
             P = k_p * f^2 * B^2
@@ -169,6 +182,10 @@ class LossModelProximity(LossModel):
         ----------
         self: LossModelProximity
             a LossModelProximity object
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -179,13 +196,14 @@ class LossModelProximity(LossModel):
         freqs: ndarray
             frequency vector of magnetic flux density harmonics [Hz]
         """
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate proximity losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 
@@ -244,7 +262,11 @@ class LossModelProximity(LossModel):
 
     # Inlined from Methods.Loss.LossModelProximity.comp_loss_time
     def comp_loss_time(
-        self, axes_dict: dict[str, Data], is_mirror: bool
+        self,
+        axes_dict: dict[str, Data],
+        is_mirror: bool,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Calculate proximity loss density over time
 
@@ -258,6 +280,10 @@ class LossModelProximity(LossModel):
             Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
         is_mirror : bool
             True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -266,13 +292,14 @@ class LossModelProximity(LossModel):
         Pprox_dict: {ndarray}
             Dict containing the array of proximity losses over time
         """
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate proximity losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 

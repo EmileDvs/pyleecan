@@ -50,6 +50,9 @@ class ContainerArgument(NamedTuple):
     method pass value (e.g. ``Simulation.run`` passes its ``results``)"""
 
 
+LOSS_MODEL_METHODS = ("comp_loss", "comp_loss_freq", "comp_loss_time", "comp_loss_value")
+"""Methods of the loss models taking their Loss object and the output"""
+
 CONTAINER_ARGUMENTS = (
     ContainerArgument(
         base="Slot",
@@ -86,6 +89,30 @@ CONTAINER_ARGUMENTS = (
         description="Output of the simulation (default: the parent)",
         callers=(("Simulation", "run", "results"),),
     ),
+    # The loss models (pass 4): their Loss object and the output, given by
+    # Loss.comp_all_losses / LossFEA.run (loops over model_dict); comp_coeff
+    # left to the fallback (a local named loss in two of them)
+    *(
+        ContainerArgument(
+            base="LossModel",
+            methods=LOSS_MODEL_METHODS,
+            name=name,
+            doc_type=doc_type,
+            description=description,
+            depth=depth,
+            caller_value=caller_value,
+        )
+        for name, doc_type, description, depth, caller_value in (
+            ("loss", "Loss", "Loss object holding the model (default: the parent)", 1, "self"),
+            (
+                "output",
+                "Output",
+                "Output of the simulation (default: the parent of the simulation)",
+                3,
+                "output",
+            ),
+        )
+    ),
 )
 """Container arguments added by the generator (Step 11 passes)"""
 
@@ -108,7 +135,8 @@ def _field_types(gen_dict, class_name):
     fields = {}
     for name in _lineage(gen_dict, class_name):
         for prop in gen_dict[name].get("properties", []):
-            prop_type = str(prop.get("type", "")).split(".")[-1]
+            # The item type of a list or dict field ("[Notch]", "{LossModel}")
+            prop_type = str(prop.get("type", "")).strip("[]{}").split(".")[-1]
             fields.setdefault(prop["name"], prop_type)
     return fields
 
@@ -202,17 +230,19 @@ DROPPED = "# <container_or_parent: dropped>\n"
 ONE_LINE_DOCSTRING = re.compile(r"^(\s*)(\"\"\"|''')(.*)\2\s*$")
 
 
-def _docstring_entry(lines, function, spec):
-    """(line index, deleted lines, new lines) documenting the argument, or None."""
+def _docstring_entry(lines, function, specs):
+    """(line index, deleted lines, new lines) documenting the arguments, or None."""
     if ast.get_docstring(function) is None:
         return None
     doc = function.body[0]
     start, end = doc.lineno - 1, doc.end_lineno  # Lines of the docstring
     indent = " " * doc.col_offset
-    entry = [
-        f"{indent}{spec.name} : {spec.doc_type}, optional\n",
-        f"{indent}    {spec.description}\n",
-    ]
+    entry = []
+    for spec in specs:
+        entry += [
+            f"{indent}{spec.name} : {spec.doc_type}, optional\n",
+            f"{indent}    {spec.description}\n",
+        ]
     if end - start < 2:  # One-line docstring: made a multi-line one
         found = ONE_LINE_DOCSTRING.match(lines[start])
         if found is None:
@@ -269,8 +299,48 @@ def _local_names(function):
     return names
 
 
-def _own_method_edits(source, offsets, lines, function, spec):
-    """Text and line edits of a method given the container argument."""
+def _loop_item_types(function, fields):
+    """{loop variable: item type} of the loops over a field of self.
+
+    ``for model in self.model_list``, ``for model in self.model_dict.values()``
+    and ``for key, model in self.model_dict.items()``.
+    """
+    types = {}
+    for node in ast.walk(function):
+        if not isinstance(node, ast.For):
+            continue
+        iterator, method = node.iter, None
+        if (
+            isinstance(iterator, ast.Call)
+            and isinstance(iterator.func, ast.Attribute)
+            and iterator.func.attr in ("items", "values")
+            and not iterator.args
+        ):
+            iterator, method = iterator.func.value, iterator.func.attr
+        if not (
+            isinstance(iterator, ast.Attribute)
+            and isinstance(iterator.value, ast.Name)
+            and iterator.value.id == "self"
+            and iterator.attr in fields
+        ):
+            continue
+        target = node.target
+        if method == "items":
+            if not (isinstance(target, ast.Tuple) and len(target.elts) == 2):
+                continue
+            target = target.elts[1]
+        if isinstance(target, ast.Name):
+            types[target.id] = fields[iterator.attr]
+    return types
+
+
+def _own_method_edits(source, offsets, lines, function, spec, claimed=None):
+    """Text and line edits of a method given the container argument.
+
+    claimed: ids of the nodes rewritten by a deeper container argument of the
+    same method (skipped here), updated with the nodes rewritten here.
+    """
+    claimed = set() if claimed is None else claimed
     text_edits = []  # (start, end, text)
     line_edits = []  # (line index, deleted lines, new lines)
     args = function.args
@@ -282,9 +352,6 @@ def _own_method_edits(source, offsets, lines, function, spec):
     last = max(nodes, key=lambda n: (n.end_lineno, n.end_col_offset))
     position = _position(offsets, last.end_lineno, last.end_col_offset)
     text_edits.append((position, position, f", {spec.name}=None"))
-    entry = _docstring_entry(lines, function, spec)
-    if entry is not None:
-        line_edits.append(entry)
     parents = {}
     for node in ast.walk(function):
         for child in ast.iter_child_nodes(node):
@@ -301,15 +368,22 @@ def _own_method_edits(source, offsets, lines, function, spec):
         ):
             dropped.append(node)
         length = _parent_chain(node)
-        if length == 0:
+        if length == 0 or id(node) in claimed:
             continue
         outer = parents.get(id(node))
         if length == spec.depth:
             reads.append(node)
-        elif length < spec.depth and _parent_chain(outer) == 0 and _is_none_test(outer):
+        elif (
+            length < spec.depth
+            and _parent_chain(outer) == 0
+            and _is_none_test(outer)
+            and id(outer) not in claimed
+        ):
             tests.append(outer)
     if not reads:
         return text_edits, line_edits, False
+    for node in [*reads, *tests]:  # Not rewritten again by a shallower one
+        claimed.update(id(item) for item in ast.walk(node))
     dropped_values = {id(node.value) for node in dropped}
     for node in reads:
         if id(node) in dropped_values:
@@ -327,8 +401,18 @@ def _own_method_edits(source, offsets, lines, function, spec):
         text_edits.append((start, end, text))
     for node in dropped:
         indent = " " * node.col_offset
+        block = next(
+            (
+                getattr(parents[id(node)], name)
+                for name in ("body", "orelse", "finalbody")
+                if node in getattr(parents[id(node)], name, [])
+            ),
+            [],
+        )
+        # The only statement of its block (else: output = ...): pass
+        text = "pass\n" if len(block) == 1 else DROPPED
         line_edits.append(
-            (node.lineno - 1, node.end_lineno - node.lineno + 1, [indent + DROPPED])
+            (node.lineno - 1, node.end_lineno - node.lineno + 1, [indent + text])
         )
     # The container read once, after the docstring
     body = function.body[0]
@@ -391,30 +475,43 @@ def add_container_arguments(source, package, class_name, gen_dict):
     for function in tree.body:
         if not isinstance(function, ast.FunctionDef):
             continue
-        own = next(
+        # The container arguments of the method, the deepest first (their
+        # parent chains contain the shorter ones)
+        owns = sorted(
             (
                 spec
                 for spec in CONTAINER_ARGUMENTS
                 if function.name in spec.methods and class_name in families[spec.base]
             ),
-            None,
+            key=lambda spec: -spec.depth,
         )
         local_names = _local_names(function)
-        if own is not None and own.name not in {
-            a.arg for a in [*function.args.args, *function.args.kwonlyargs]
-        }:
+        argument_names = {a.arg for a in [*function.args.args, *function.args.kwonlyargs]}
+        claimed = set()
+        added = [own for own in owns if own.name not in argument_names]
+        # The docstring entries, in the order of the arguments
+        entry = _docstring_entry(
+            lines, function, sorted(added, key=CONTAINER_ARGUMENTS.index)
+        ) if added else None
+        if entry is not None:
+            line_edits.append(entry)
+        for own in owns:
+            if own.name in argument_names:
+                continue
             texts, line_changes, reads = _own_method_edits(
-                source, offsets, lines, function, own
+                source, offsets, lines, function, own, claimed
             )
             text_edits += texts
             line_edits += line_changes
             fallback |= reads
+        loop_types = _loop_item_types(function, fields)
         for node in ast.walk(function):
             if not (
                 isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
             ):
                 continue
             receiver = node.func.value
+            keywords = []  # The keywords added to this call
             for spec in CONTAINER_ARGUMENTS:
                 if node.func.attr not in spec.methods or _has_keyword(node, spec.name):
                     continue
@@ -426,13 +523,19 @@ def add_container_arguments(source, package, class_name, gen_dict):
                             if caller_class == class_name
                             and caller_method == function.name
                         ),
-                        spec.name if own is spec else None,
+                        spec.name if spec in owns else None,
                     )
                     if value is not None:
-                        position, text = _keyword_insertion(
-                            source, offsets, node, f"{spec.name}={value}"
-                        )
-                        text_edits.append((position, position, text))
+                        keywords.append(f"{spec.name}={value}")
+                elif (
+                    # A loop variable over a list or dict field of the container
+                    isinstance(receiver, ast.Name)
+                    and loop_types.get(receiver.id) in families[spec.base]
+                    and (
+                        spec.caller_value == "self" or spec.caller_value in local_names
+                    )
+                ):
+                    keywords.append(f"{spec.name}={spec.caller_value}")
                 elif (
                     isinstance(receiver, ast.Attribute)
                     and isinstance(receiver.value, ast.Name)
@@ -442,10 +545,12 @@ def add_container_arguments(source, package, class_name, gen_dict):
                         spec.caller_value == "self" or spec.caller_value in local_names
                     )
                 ):
-                    position, text = _keyword_insertion(
-                        source, offsets, node, f"{spec.name}={spec.caller_value}"
-                    )
-                    text_edits.append((position, position, text))
+                    keywords.append(f"{spec.name}={spec.caller_value}")
+            if keywords:
+                position, text = _keyword_insertion(
+                    source, offsets, node, ", ".join(dict.fromkeys(keywords))
+                )
+                text_edits.append((position, position, text))
     if not text_edits and not line_edits:
         return source
     # Text edits from the end (positions of the original source); they do

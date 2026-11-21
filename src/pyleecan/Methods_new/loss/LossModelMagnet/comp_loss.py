@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 
@@ -15,10 +16,12 @@ from ....Classes_new.machine.lam_slot_mag import LamSlotMag
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.loss.loss import Loss
     from ....Classes_new.mesh.mesh_solution import MeshSolution
+    from ....Classes_new.output.output import Output
 
 
-def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np.ndarray]:
+def comp_loss(self, meshsol: MeshSolution | None = None, loss: Loss | None = None, output: Output | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Calculate eddy-current losses in rotor permanent magnets assuming power density
     is given by (cf. https://www.femm.info/wiki/SPMLoss):
 
@@ -30,6 +33,10 @@ def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np
         a LossModelMagnet object
     meshsol : MeshSolution
         magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
+    loss : Loss, optional
+        Loss object holding the model (default: the parent)
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
 
     Returns
     -------
@@ -38,11 +45,13 @@ def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np
     freqs: ndarray
         frequency vector [Hz]
     """
+    loss = container_or_parent(self, loss, "loss")
+    output = container_or_parent(self, output, "output", depth=3)
 
-    if self.parent.parent.parent is None:
+    if output is None:
         raise Exception("Cannot calculate core losses if simu is not in an Output")
     else:
-        output = self.parent.parent.parent
+        pass
 
     machine = output.simu.machine
 
@@ -165,7 +174,7 @@ def comp_loss(self, meshsol: MeshSolution | None = None) -> tuple[np.ndarray, np
         if ii == 0:
             freqs = Az_df["freqs"]
             w = 2 * np.pi * freqs[:, None]
-            sigma_m = magnet.mat_type.elec.get_conductivity(T_op=self.parent.Trot)
+            sigma_m = magnet.mat_type.elec.get_conductivity(T_op=loss.Trot)
             # if self.type_skin_effect:
             #     # Get magnet conductivity including skin effect
             #     magnet_cond = CondType21(Hbar=Hmag, Wbar=1, cond_mat=magnet.mat_type)

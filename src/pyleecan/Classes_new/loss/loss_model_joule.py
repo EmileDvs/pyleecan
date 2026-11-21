@@ -6,11 +6,14 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.parents import container_or_parent
 from .loss_model import LossModel
 
 if TYPE_CHECKING:
     from ..mesh.mesh_solution import MeshSolution
+    from ..output.output import Output
     from ..scidatatool.data import Data
+    from .loss import Loss
 
 
 @dataclass(eq=False)
@@ -113,7 +116,10 @@ class LossModelJoule(LossModel):
 
     # Inlined from Methods.Loss.LossModelJoule.comp_loss
     def comp_loss(
-        self, meshsol: MeshSolution | None = None
+        self,
+        meshsol: MeshSolution | None = None,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate joule losses in stator windings
 
@@ -123,6 +129,10 @@ class LossModelJoule(LossModel):
             a LossModelJoule object
         meshsol : MeshSolution
             magnetic meshsolution (default: OutMag.meshsolution, only mesh and groups are used)
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -131,23 +141,25 @@ class LossModelJoule(LossModel):
         freqs: ndarray
             frequency vector [Hz]
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent is None:
+        if output is None and self.parent.parent is None:
             raise ValueError(
                 "Cannot calculate joule losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate joule losses if OutElec is None")
 
-        if self.parent.is_get_meshsolution and output.mag is None:
+        if loss.is_get_meshsolution and output.mag is None:
             raise ValueError("Cannot calculate joule losses if OutMag is None")
 
         machine = output.simu.machine
         lam = machine.stator if "stator" in self.group else machine.rotor
-        T_op = self.parent.Tsta if "stator" in self.group else self.parent.Trot
+        T_op = loss.Tsta if "stator" in self.group else loss.Trot
 
         OP = output.elec.OP
         felec = OP.get_felec()
@@ -191,13 +203,19 @@ class LossModelJoule(LossModel):
         return Pjoule_density, freqs
 
     # Inlined from Methods.Loss.LossModelJoule.comp_loss_freq
-    def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
+    def comp_loss_freq(
+        self, loss: Loss | None = None, output: Output | None = None
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate joule losses in stator windings
 
         Parameters
         ----------
         self: LossModelJoule
             a LossModelJoule object
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -206,18 +224,20 @@ class LossModelJoule(LossModel):
         freqs: ndarray
             frequency vector [Hz]
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent is None:
+        if output is None and self.parent.parent is None:
             raise ValueError(
                 "Cannot calculate joule losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate joule losses if OutElec is None")
 
-        if self.parent.is_get_meshsolution and output.mag is None:
+        if loss.is_get_meshsolution and output.mag is None:
             raise ValueError("Cannot calculate Joule losses if OutMag is None")
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
@@ -225,7 +245,7 @@ class LossModelJoule(LossModel):
 
         machine = output.simu.machine
         lam = machine.stator if "stator" in self.group else machine.rotor
-        T_op = self.parent.Tsta if "stator" in self.group else self.parent.Trot
+        T_op = loss.Tsta if "stator" in self.group else loss.Trot
         Lst = lam.L1
 
         OP = output.elec.OP
@@ -282,7 +302,11 @@ class LossModelJoule(LossModel):
 
     # Inlined from Methods.Loss.LossModelJoule.comp_loss_time
     def comp_loss_time(
-        self, axes_dict: dict[str, Data], is_mirror: bool
+        self,
+        axes_dict: dict[str, Data],
+        is_mirror: bool,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Calculate Joule losses in stator windings over time
 
@@ -294,6 +318,10 @@ class LossModelJoule(LossModel):
                 Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
         is_mirror : bool
                 True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -302,18 +330,20 @@ class LossModelJoule(LossModel):
         Pjoule_dict: {ndarray}
             Dict containing the array of Joule losses over time
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent is None:
+        if output is None and self.parent.parent is None:
             raise ValueError(
                 "Cannot calculate Joule losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate Joule losses if OutElec is None")
 
-        if self.parent.is_get_meshsolution and output.mag is None:
+        if loss.is_get_meshsolution and output.mag is None:
             raise ValueError("Cannot calculate Joule losses if OutMag is None")
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated
@@ -321,7 +351,7 @@ class LossModelJoule(LossModel):
 
         machine = output.simu.machine
         lam = machine.stator if "stator" in self.group else machine.rotor
-        T_op = self.parent.Tsta if "stator" in self.group else self.parent.Trot
+        T_op = loss.Tsta if "stator" in self.group else loss.Trot
         Lst = lam.L1
         Rs = lam.comp_resistance_wind(T=T_op)
 

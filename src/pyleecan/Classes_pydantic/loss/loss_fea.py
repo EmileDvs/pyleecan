@@ -284,10 +284,12 @@ class LossFEA(Loss):
         for group_name, model in self.model_dict.items():
             if self.is_dynamic:
                 loss_density, loss_val_dict = model.comp_loss_time(
-                    axes_dict, is_mirror=is_mirror
+                    axes_dict, is_mirror=is_mirror, loss=self, output=output
                 )
             else:
-                loss_density, loss_val_dict, freqs = model.comp_loss_freq()
+                loss_density, loss_val_dict, freqs = model.comp_loss_freq(
+                    loss=self, output=output
+                )
 
             loss_mean = 0
             list_loss_val = []

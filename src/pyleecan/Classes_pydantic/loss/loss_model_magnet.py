@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.parents import container_or_parent
 from ..machine.lam_hole import LamHole
 from ..machine.lam_slot_mag import LamSlotMag
 from ..slot.hole_m_50 import HoleM50
@@ -18,7 +19,9 @@ from .loss_model import LossModel
 if TYPE_CHECKING:
     from ..machine.machine import Machine
     from ..mesh.mesh_solution import MeshSolution
+    from ..output.output import Output
     from ..scidatatool.data import Data
+    from .loss import Loss
 
 
 class LossModelMagnet(LossModel):
@@ -100,7 +103,10 @@ class LossModelMagnet(LossModel):
 
     # Inlined from Methods.Loss.LossModelMagnet.comp_loss
     def comp_loss(
-        self, meshsol: MeshSolution | None = None
+        self,
+        meshsol: MeshSolution | None = None,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Calculate eddy-current losses in rotor permanent magnets assuming power density
         is given by (cf. https://www.femm.info/wiki/SPMLoss):
@@ -113,6 +119,10 @@ class LossModelMagnet(LossModel):
             a LossModelMagnet object
         meshsol : MeshSolution
             magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -121,11 +131,13 @@ class LossModelMagnet(LossModel):
         freqs: ndarray
             frequency vector [Hz]
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise Exception("Cannot calculate core losses if simu is not in an Output")
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 
@@ -255,7 +267,7 @@ class LossModelMagnet(LossModel):
             if ii == 0:
                 freqs = Az_df["freqs"]
                 w = 2 * np.pi * freqs[:, None]
-                sigma_m = magnet.mat_type.elec.get_conductivity(T_op=self.parent.Trot)
+                sigma_m = magnet.mat_type.elec.get_conductivity(T_op=loss.Trot)
                 # if self.type_skin_effect:
                 #     # Get magnet conductivity including skin effect
                 #     magnet_cond = CondType21(Hbar=Hmag, Wbar=1, cond_mat=magnet.mat_type)
@@ -349,7 +361,9 @@ class LossModelMagnet(LossModel):
         return Pmagnet_density, freqs
 
     # Inlined from Methods.Loss.LossModelMagnet.comp_loss_freq
-    def comp_loss_freq(self) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
+    def comp_loss_freq(
+        self, loss: Loss | None = None, output: Output | None = None
+    ) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
         """Calculate eddy-current losses in rotor permanent magnets assuming power density depending on frequency
         is given by (cf. https://www.femm.info/wiki/SPMLoss):
 
@@ -359,6 +373,10 @@ class LossModelMagnet(LossModel):
         ----------
         self: LossModelMagnet
             a LossModelMagnet object
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -369,13 +387,15 @@ class LossModelMagnet(LossModel):
         freqs: ndarray
             frequency vector of magnetic flux density harmonics [Hz]
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate magnet losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 
@@ -389,7 +409,7 @@ class LossModelMagnet(LossModel):
         Lst = machine.rotor.L1
 
         # Get magnet electrical conductivity
-        sigma_m = magnet.mat_type.elec.get_conductivity(T_op=self.parent.Trot)
+        sigma_m = magnet.mat_type.elec.get_conductivity(T_op=loss.Trot)
 
         # Get magnet segmentation coefficient
         if magnet.Lmag is None or magnet.Nseg is None or magnet.Nseg == 1:
@@ -471,7 +491,11 @@ class LossModelMagnet(LossModel):
 
     # Inlined from Methods.Loss.LossModelMagnet.comp_loss_time
     def comp_loss_time(
-        self, axes_dict: dict[str, Data], is_mirror: bool
+        self,
+        axes_dict: dict[str, Data],
+        is_mirror: bool,
+        loss: Loss | None = None,
+        output: Output | None = None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Calculate eddy-current losses in rotor permanent magnets in time domain assuming power density
         is given by (cf. https://www.femm.info/wiki/SPMLoss):
@@ -486,6 +510,10 @@ class LossModelMagnet(LossModel):
             Dict containing Time (including (anti-)periodicties) and Indices axes used in any Loss module
         is_mirror : bool
             True to mirror magnetic mesh quantities calculate in stator and rotor frames to get the same Time axis
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -495,13 +523,15 @@ class LossModelMagnet(LossModel):
             Dict containing the array of magnet losses over time
 
         """
+        loss = container_or_parent(self, loss, "loss")
+        output = container_or_parent(self, output, "output", depth=3)
 
-        if self.parent.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate magnet losses if simu is not in an Output"
             )
         else:
-            output = self.parent.parent.parent
+            pass
 
         machine = output.simu.machine
 
@@ -515,7 +545,7 @@ class LossModelMagnet(LossModel):
         Lst = machine.rotor.L1
 
         # Get magnet electrical conductivity
-        sigma_m = magnet.mat_type.elec.get_conductivity(T_op=self.parent.Trot)
+        sigma_m = magnet.mat_type.elec.get_conductivity(T_op=loss.Trot)
 
         # Get magnet segmentation coefficient
         if magnet.Lmag is None or magnet.Nseg is None or magnet.Nseg == 1:

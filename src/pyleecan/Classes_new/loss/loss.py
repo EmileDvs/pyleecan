@@ -95,7 +95,9 @@ class Loss(LegacyClass):
         out_loss.loss_dict = {}
         for key, model in self.model_dict.items():
             # Compute losses for each model
-            P_density, f_array = model.comp_loss(meshsol=meshsol)
+            P_density, f_array = model.comp_loss(
+                meshsol=meshsol, loss=self, output=output
+            )
             if self.is_get_meshsolution:
                 loss_density = np.zeros((freqs.size, Nelem))
                 If = np.argmin(np.abs(freqs[:, None] - f_array[None, :]), axis=0)[

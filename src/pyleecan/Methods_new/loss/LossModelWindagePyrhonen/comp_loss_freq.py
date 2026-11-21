@@ -1,8 +1,14 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.loss.loss import Loss
+    from ....Classes_new.output.output import Output
 
 
 
-def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
+def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Calculate Windage losses
     Equation from "Design of Rotating Electrical Machines", Second Edition, Pyrhönen, Jokinen, Hrabovcovà p528
 
@@ -10,6 +16,10 @@ def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
     ----------
     self: LossModelWindagePyrhonen
         a LossModelWindagePyrhonen object
+    loss : Loss, optional
+        Loss object holding the model (default: the parent)
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
 
     Returns
     -------
@@ -18,16 +28,18 @@ def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
     freqs: ndarray
         frequency vector [Hz]
     """
+    loss = container_or_parent(self, loss, "loss")
+    output = container_or_parent(self, output, "output", depth=3)
 
-    if self.parent.parent is None:
+    if output is None and self.parent.parent is None:
         raise ValueError("Cannot calculate losses if simu is not in an Output")
     else:
-        output = self.parent.parent.parent
+        pass
 
     if output.elec is None:
         raise ValueError("Cannot calculate losses if OutElec is None")
 
-    if self.parent.is_get_meshsolution and output.mag is None:
+    if loss.is_get_meshsolution and output.mag is None:
         raise ValueError("Cannot calculate losses if OutMag is None")
 
     # Get magnetic meshsolution (airgap group contains elements of both stator and rotor frames)
@@ -41,7 +53,7 @@ def comp_loss_freq(self) -> tuple[np.ndarray, np.ndarray]:
     OP = output.elec.OP
     felec = OP.get_felec()
 
-    Ploss = self.comp_loss_value()
+    Ploss = self.comp_loss_value(loss=loss, output=output)
 
     power = 3
 
