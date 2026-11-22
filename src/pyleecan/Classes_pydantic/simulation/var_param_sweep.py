@@ -69,7 +69,7 @@ class VarParamSweep(VarParam):
                 raise DataKeeperError("DataKeeper.keeper must be defined")
 
     # Inlined from Methods.Simulation.VarParamSweep.generate_simulation_list
-    def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
+    def generate_simulation_list(self, ref_simu: Simulation) -> dict:
         """Generate all the simulation for the multi-simulation
 
         Parameters
@@ -84,11 +84,6 @@ class VarParamSweep(VarParam):
         multisim_dict : dict
             dictionary containing the simulation and paramexplorer list
         """
-
-        if ref_simu is None:
-            raise ValueError(
-                "generate_simulation_list needs the reference simulation (ref_simu)"
-            )
 
         # Build the list
         setter_list = []  # Store ParamExplorer setters

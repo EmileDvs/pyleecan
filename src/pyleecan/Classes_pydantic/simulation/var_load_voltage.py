@@ -24,7 +24,7 @@ class VarLoadVoltage(VarLoad):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarLoadVoltage.generate_simulation_list
-    def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
+    def generate_simulation_list(self, ref_simu: Simulation) -> dict:
         """Generate all the simulation for the multi-simulation
 
         Parameters
@@ -39,11 +39,6 @@ class VarLoadVoltage(VarLoad):
         multisim_dict : dict
             dictionary containing the simulation and paramexplorer list
         """
-
-        if ref_simu is None:
-            raise ValueError(
-                "generate_simulation_list needs the reference simulation (ref_simu)"
-            )
 
         # Get InputCurrent list
         list_input = self.get_input_list()

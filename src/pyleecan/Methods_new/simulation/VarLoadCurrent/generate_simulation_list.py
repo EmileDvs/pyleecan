@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from ....Classes_new.simulation.simulation import Simulation
 
 
-def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
+def generate_simulation_list(self, ref_simu: Simulation) -> dict:
     """Generate all the simulation for the multi-simulation
 
     Parameters
@@ -21,9 +21,6 @@ def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
     multisim_dict : dict
         dictionary containing the simulation and paramexplorer list
     """
-
-    if ref_simu is None:
-        raise ValueError("generate_simulation_list needs the reference simulation (ref_simu)")
 
     # Get InputCurrent list
     list_input = self.get_input_list()

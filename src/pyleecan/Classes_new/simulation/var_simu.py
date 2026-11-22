@@ -162,7 +162,7 @@ class VarSimu(LegacyClass):
         self.datakeeper_list.extend(datakeeper_list)
 
     # Inlined from Methods.Simulation.VarSimu.generate_simulation_list
-    def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
+    def generate_simulation_list(self, ref_simu: Simulation) -> dict:
         """Generate all the simulation for the multi-simulation
 
         Parameters

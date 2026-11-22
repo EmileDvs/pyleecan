@@ -1189,10 +1189,10 @@ Recurring causes, to solve once where possible:
       `OutGeoLam.BH_curve`, `Simulation.mag` / `elec`, `MeshSolution.group`
       (loss models), `OutLossModel.coeff_dict`, `LUT.simu.var_simu`,
       `LUT.get_eec()` (`EEC_SCIM.update_from_ref`); `LUTdq.comp_MTPA` reads
-      the equivalent circuit once. The `ref_simu=None` parameter of the
-      `generate_simulation_list` methods (VarParamSweep, VarLoadCurrent,
-      VarLoadVoltage) raises a `ValueError` (a parameter, not a field;
-      signature kept). Existing checks (`ValueError` / `Exception` of the
+      the equivalent circuit once. `ref_simu` of the
+      `generate_simulation_list` methods (VarSimu, VarParamSweep,
+      VarLoadCurrent, VarLoadVoltage) is a required parameter (its None
+      default always failed; `VarSimu.run` passes it). Existing checks (`ValueError` / `Exception` of the
       loss models) kept. Left: fields of objects built just before
       (`ElementMat.indice` in `get_FEMM_mesh_results`, `DataND.axes` of a
       `dqh2n` result), local variables and matplotlib returns (review list).
@@ -1206,7 +1206,7 @@ Recurring causes, to solve once where possible:
       Largest groups left: `DataND` (49, mostly the too narrow hints of the
       SciDataTool plot functions), `EEC_SCIM` (30), `MagElmer` (27),
       `OptiGenAlgNsga2Deap` (26), `MagFEMM` (26), `LUTdq` (22). Then -> 465
-      (`FieldMissingError` checks).
+      (`FieldMissingError` checks) -> 464 (required `ref_simu`).
 - [ ] Implicit `None` returns (a missing case: raise an error or return a value).
 
 Review list by package (behaviour or class definition to decide):
@@ -1245,8 +1245,8 @@ Review list by package (behaviour or class definition to decide):
         argument (legacy layer only);
   - [x] (2026-11-22) optional fields used without check:
         `VarSimu.set_reused_data` (`output.mag.internal`,
-        `output.simu.elec`), `generate_simulation_list` (`ref_simu`):
-        explicit errors;
+        `output.simu.elec`): explicit errors; `generate_simulation_list`:
+        `ref_simu` required;
   - [ ] `Input.comp_axis_*`: `int | None` periodicities compared;
   - [ ] `InputCurrent.gen_input`: lists given to ndarray fields;
         `get_ref_simu_index`: `int | None` returned.
