@@ -6,7 +6,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ...classes_common.errors import FEMMError, NotImplementedYetError
+from ...classes_common.errors import (
+    FEMMError,
+    FieldMissingError,
+    NotImplementedYetError,
+)
 from ...classes_common.logger_context import get_logger
 from ...Classes_pydantic.geometry.arc_1 import Arc1
 from ...Classes_pydantic.geometry.circle import Circle
@@ -944,6 +948,10 @@ class femm_pyleecan:
                 elif ROTOR_LAB in label_dict["lam_type"]:
                     wedge_mat = rotor.slot.wedge_mat
                     lam_mat = rotor.mat_type
+                if wedge_mat is None:  # No wedge surface without material
+                    raise FieldMissingError(
+                        "Slot.wedge_mat is None: a wedge surface needs its material"
+                    )
                 mat_name = wedge_mat.name
                 # Check if the wedge has the same material as the lamination
                 if mat_name == lam_mat.name:

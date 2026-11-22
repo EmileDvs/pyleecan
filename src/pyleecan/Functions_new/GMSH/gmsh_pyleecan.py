@@ -1257,7 +1257,7 @@ class gmsh_pyleecan:
         return None
 
     @staticmethod
-    def _find_lines_from_point(d: dict = {}, ptag: int = -1) -> int:
+    def _find_lines_from_point(d: dict = {}, ptag: int = -1) -> list:
         """Find lines that have the given point tag
 
         Parameters
@@ -1287,7 +1287,7 @@ class gmsh_pyleecan:
     @staticmethod
     def _find_point_tag(
         d: dict = {}, p: complex = complex(0.0, 0.0)
-    ) -> tuple[int, float, float]:
+    ) -> tuple[int | None, float, float]:
         """Find a point in the GMSH dictionary
 
         Parameters
@@ -1321,7 +1321,7 @@ class gmsh_pyleecan:
         return None, p.real, p.imag
 
     @staticmethod
-    def _find_points_from_line(d: dict = {}, ltag: int = -1) -> float:
+    def _find_points_from_line(d: dict = {}, ltag: int = -1) -> list:
         """Find points tag from existing lines
 
         Parameters
@@ -1504,7 +1504,7 @@ class gmsh_pyleecan:
         gmsh.finalize()
 
     @staticmethod
-    def get_air_box(sym: int, machine: float) -> list:
+    def get_air_box(sym: int, machine: Machine) -> list:
         """Returns  an outer surface surrounding the external lamination
 
         Parameters

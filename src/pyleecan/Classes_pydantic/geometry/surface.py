@@ -2,7 +2,7 @@
 """Generated experimental pydantic model; do not edit by hand."""
 
 from math import ceil
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from ...definitions import config_dict
 from ...Functions_pydantic.utils.init_fig import init_fig
@@ -55,6 +55,15 @@ class Surface(LegacyModel):
 
     _package: ClassVar[str] = "Geometry"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+        from .line import Line
+
+        def get_lines(self, *args: Any, **kwargs: Any) -> list[Line]: ...
+
+        def comp_surface(self, *args: Any, **kwargs: Any) -> float: ...
 
     # Inlined from Methods.Geometry.Surface.comp_mesh_dict
     def comp_mesh_dict(self, element_size: float, prefix: str = "") -> dict:

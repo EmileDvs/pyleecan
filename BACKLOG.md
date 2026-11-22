@@ -1370,6 +1370,14 @@ generator; this step finishes by hand what the generator could not do.
         legacy `is_eddies = 0` given as bool, `Lamination(init_dict=...)`
         (`init_dict` item of Step 14), `comp_periodicity_geo` typed
         `int | None`. `ty` on `Functions_new` 357 -> 265.
+  - [x] (2026-11-22) `gmsh_pyleecan` 52 -> 27: wrong documented types
+        overridden (`type_hints.py`): `get_air_box(machine: Machine)` (said
+        `float`), returns of `_find_lines_from_point` (list),
+        `_find_point_tag` (`int | None`, x, y), `_find_points_from_line`
+        (list); `Surface` declares `get_lines` / `comp_surface` of its
+        daughters (`TYPE_CHECKING_MEMBERS`). Left: the nested gmsh dicts
+        (untyped values: `in` and `update` on unions). gmsh tests 18
+        passed. `ty` on `Functions_new` 265 -> 237.
 - [ ] Mark the class-independent functions for `src/pyleecan/utils/` (Phase 2).
 
 ## Step 16: parent links, second pass

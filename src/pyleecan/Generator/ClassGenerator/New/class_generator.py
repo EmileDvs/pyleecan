@@ -4811,6 +4811,13 @@ TYPE_CHECKING_MEMBERS = {
         )
     },
     "Arc": {"lines": (f"def comp_radius({_ANY_ARGS}) -> float: ...",)},
+    "Surface": {
+        "classes": ("Line",),
+        "lines": (
+            f"def get_lines({_ANY_ARGS}) -> list[Line]: ...",
+            f"def comp_surface({_ANY_ARGS}) -> float: ...",
+        ),
+    },
     "Solution": {"lines": ("field: Any",)},
     "Mesh": {
         "lines": (

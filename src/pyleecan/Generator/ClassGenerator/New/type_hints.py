@@ -121,6 +121,12 @@ RETURN_OVERRIDES[("FEMM", "create_FEMM_magnet")] = (("str", "list"),)
 RETURN_OVERRIDES[("FEMM", "create_FEMM_materials")] = (("dict", "dict"),)
 RETURN_OVERRIDES[("FEMM", "_get_radius_boundary")] = (("float", "float"),)
 RETURN_OVERRIDES[("GMSH", "_add_agline_to_dict")] = (("None",),)
+# Step 15: wrong documented returns of the gmsh helpers (a list of line tags
+# documented "int", None when the point is new, the three point tags of a
+# line documented "float")
+RETURN_OVERRIDES[("GMSH", "_find_lines_from_point")] = (("list",),)
+RETURN_OVERRIDES[("GMSH", "_find_point_tag")] = (("int or None", "float", "float"),)
+RETURN_OVERRIDES[("GMSH", "_find_points_from_line")] = (("list",),)
 # find_wind_phase_color documents the color only: it returns (color, sign), the
 # color being "w" or an RGBA list of PHASE_COLORS
 RETURN_OVERRIDES[("machine", "find_wind_phase_color")] = (
@@ -230,6 +236,8 @@ PARAMETER_OVERRIDES = {
         for name in ("_find_lines_from_point", "_find_point_tag", "_find_points_from_line")
     },
     ("GMSH", "get_boundary_condition"): {"line": ("Line",), "boundary_prop": ("dict",)},
+    # Step 15: documented "float"
+    ("GMSH", "get_air_box"): {"machine": ("Machine",)},
     ("Plot", "plot_glyph_pv"): {"pv_plotter": ("any",)},
     ("Plot", "plot_mesh_field"): {
         "pv_plotter": ("any",),
