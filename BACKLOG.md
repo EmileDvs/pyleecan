@@ -661,8 +661,14 @@ generated first so that the same passes rewrite its calls.
       Check: the 375 modules of each package import (Qt offscreen); the only
       legacy module still loaded is `Classes._check` (from
       `Functions_new/Load/import_class.py`: `InitUnKnowClassError`).
-- [ ] `-1` conventions and the GUI-specific legacy idioms (no pass yet):
-      review on the generated code with the GUI tests.
+- [x] (2026-11-22, reviewed) `-1` conventions and the GUI-specific legacy
+      idioms: no pass needed in Step 10. No `-1` is assigned to a field in
+      `GUI_new`: the `-1` are Qt "no index / no row" values, local default
+      sentinels (`set_Wins_wire(Wins_wire=-1)`) or arithmetic. The legacy
+      idioms used (`_set_None()` 44 calls, `copy()` 29, `init_dict` 15) are
+      provided by both legacy layers (`LegacyClass`, `LegacyModel`) and run
+      by the GUI tests, which pass on both backends. Their removal goes with
+      the legacy layer (Step 17), as the 14 parent reads (`.parent`).
 - [x] (2026-11-22) `import_class("pyleecan.Classes", ...)` in
       `Tools/WTreeEdit/TreeEditContextMenu.py` named the legacy package:
       `redirect_class_loader` (GUI generator) calls the class lookup of the
@@ -700,11 +706,21 @@ generated first so that the same passes rewrite its calls.
       tests: `Tests/New/Cross/test_validation_errors.py` (910 float fields
       with limits or a wrong type: same error class and message on legacy,
       dataclass and pydantic). The error shown on the field: Step 17.
-- [ ] Dataclass backend: the assignment of an unknown attribute is accepted
-      silently (`trapeze.unknown = 1`); legacy raises `FrozenError`, pydantic
-      `AttributeError`. To reject in `LegacyClass` (except the replaced
-      methods, as `LegacyModel`), after a check of the code that sets
-      attributes freely.
+- [x] (2026-11-22) Dataclass backend: the assignment of an unknown
+      attribute was accepted silently (`trapeze.unknown = 1`); legacy raises
+      `FrozenError`, pydantic `AttributeError`. `LegacyClass` rejects it as
+      `FrozenClass` (`AttributeError`, `FrozenError` message; the fields,
+      `parent`, the private names and the existing attributes, e.g. a method
+      replaced by a mock, can be set). Scan of the `self.x = ...` of
+      `Methods_new` that are neither fields nor attributes of their class: 9,
+      all false positives (helper exception and Elmer classes, `ModelBH`
+      fields of its daughters) except `RuleComplex._set_fct_name`, see below.
+- [ ] `RuleComplex(fct_name=...)`: `other_to_P` / `P_to_other` are not set on
+      both backends (the inlined `_set_fct_name` is not a wired custom
+      setter; legacy sets them in its constructor). Unused by the new
+      `convert_to_P` / `convert_to_other` (they call `rule_function_module`):
+      drop the two assignments from the method, or declare them if the
+      setter is wired.
 - [x] `Tests/New/GUI` generated against `GUI_new` / `GUI_pydantic` (2026-11-21:
       alias `backend_gui` in `Tests/New/_backend.py`, the `pyleecan.GUI` and
       `pyleecan.GUI_new` imports and `mock.patch` strings rewritten by the

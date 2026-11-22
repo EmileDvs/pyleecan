@@ -21,7 +21,8 @@ Legacy behaviours:
   modes), ``from_dict``, ``copy``, ``compare`` and ``_set_None``.
 
 An existing method can be replaced on an object (e.g. a mock in tests): a
-dataclass allows it natively.
+dataclass allows it natively. As FrozenClass, a new public attribute is
+rejected (``AttributeError``, the message of the legacy ``FrozenError``).
 """
 
 from copy import deepcopy
@@ -108,6 +109,14 @@ class LegacyClass(PyleecanClass, metaclass=_LegacyConstructor):
             call_custom_setter(self, name, value)
             return
         is_field = name != "parent" and name in self.__dataclass_fields__
+        if not (is_field or name == "parent" or name.startswith("_")) and not hasattr(
+            self, name
+        ):
+            # Like FrozenClass (and LegacyModel): no new public attribute (an
+            # existing one, e.g. a method replaced by a mock, can be set)
+            raise AttributeError(
+                f'{type(self).__name__} class has no "{name}" property'
+            )
         if is_field and type(value) is int and value == -1:
             class_name = self.__dataclass_fields__[name].metadata.get("default_class")
             if class_name is not None:

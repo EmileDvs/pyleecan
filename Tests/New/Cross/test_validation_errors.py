@@ -119,3 +119,19 @@ def test_target_model_keeps_validation_error():
         Target(x=-1.0)
     with pytest.raises(ValidationError):
         Target.model_validate({"x": -1.0})
+
+
+@pytest.mark.parametrize("backend", ["dataclass", "pydantic"])
+def test_unknown_attribute_rejected_like_legacy(backend):
+    from unittest.mock import MagicMock
+
+    import_class = {"dataclass": import_dataclass, "pydantic": import_pydantic}[backend]
+    legacy = _legacy_class("Trapeze")()
+    expected = _outcome(lambda: setattr(legacy, "unknown", 1))
+    assert expected[0] == "FrozenError"
+    trapeze = import_class("Trapeze")()
+    with pytest.raises(AttributeError) as info:
+        trapeze.unknown = 1
+    assert str(info.value) == expected[1]
+    trapeze.get_lines = MagicMock(return_value=[])  # Existing method: replaced
+    assert trapeze.get_lines() == []

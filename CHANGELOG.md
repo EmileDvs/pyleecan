@@ -241,6 +241,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - **GUI widget limits and help from the classes**: the `Gen_*` modules of
   `GUI_new` / `GUI_pydantic` (spinbox and float edit limits, tooltips) are
   written from `ClassInfo` instead of the CSV class definitions.
+- **Unknown attributes rejected by the dataclass classes (legacy layer)**:
+  as the legacy classes, `obj.unknown = 1` raises an `AttributeError` (it
+  was accepted silently); an existing method can still be replaced.
 - **Validation errors of the pydantic classes (legacy layer)**: a rejected
   value raises the legacy errors (`CheckMinError`, `CheckMaxError`,
   `CheckTypeError`, same message as the legacy and dataclass classes; the
